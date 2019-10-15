@@ -1,0 +1,226 @@
+﻿@using ViewGlobalizationResolver = FWLog.Web.Backoffice.Helpers.Globalization.ViewGlobalizationResolver 
+
+@{
+    var resolver = ViewGlobalizationResolver.GetResolver();    
+}
+
+@resolver.RenderMomentLocaleScript()
+@resolver.RenderBootstrapSelectScript()
+
+<script>
+    (function (dart, resources) {
+
+        // DataTables
+        var setDataTablesGlobalOptions = function () {
+
+            $.extend(true, $.fn.dataTable.defaults, {
+                "language": {
+                    "url": "@resolver.GetDataTableLanguageUrl()"
+                },
+                "serverSide": true,
+                "searching": false,
+                "stateSave": true
+            });
+        };
+
+        // jQuery Mask
+        var applyMask = function () {
+        
+            var cpfCnpjMaskBehavior = function (val) {
+                // Os digitos extras no CPF servem para permitir que um CNPJ seja colado no campo,
+                // sem que o CNPJ seja cortado por conta da máscara do CPF.
+                return val.replace(/\D/g, '').length <= 11 ? '000.000.000-009999' : '00.000.000/0000-00';
+            };
+
+            var cpfCnpjOptions = {
+                onKeyPress: function (val, e, field, options) {
+                    field.mask(cpfCnpjMaskBehavior.apply({}, arguments), options);
+                }
+            };
+
+            var phoneOptions = {
+                onChange: function (value, event, input) {
+                    if (value.length > 14) {
+                        $(input).mask('(00) 00000-0000', phoneOptions);
+                    }
+                    else {
+                        $(input).mask('(00) 0000-00000', phoneOptions);
+                    }
+                }
+            };
+
+            $('.cpf').mask('000.000.000-00');
+            $('.cnpj').mask('00.000.000/0000-00');
+            $('.brazil-phone').each(function (index) {
+                $(this).mask(createPhoneMask($(this).val(), false), phoneOptions);
+            });
+            $('.cep').mask('00000-000');
+            $('.cpf-cnpj').mask(cpfCnpjMaskBehavior, cpfCnpjOptions);            
+            $('.decimal').mask('@resolver.GetDecimalNumberMask()', { reverse: true });
+            $('.integer').mask("#0", { reverse: true });
+            $('.alpha-only').mask('Z', { translation: { 'Z': { pattern: /[a-zA-ZÀ-ÿ ]/, recursive: true } } });
+        }
+
+        var createPhoneMask = function (value, alreadyMask) {
+            value = value.replace(/\D/g, '');
+
+            if (value.length > 10) {
+                return '(00) 00000-0000';
+            }
+            else {
+                return '(00) 0000-00000';
+            }
+        }   
+
+        // jQuery Validate
+        var configValidator = function () {
+            $.validator.setDefaults({ ignore: ':hidden:not(.can-validate)' });
+
+            // jQuery validator sem globalização considera datas diferente do formato inglês inválido.
+            // Como o componente da data já limpa o campo se ele estiver inválido, a validação jQuery é desabilitada.
+            $.validator.methods.date = function (value, element, param) {
+                return true;
+            }
+
+            $.validator.addMethod("cpf", function (value, element, params) {
+                return dart.validations.isValidCpf(value);
+            });
+
+            $.validator.addMethod("cnpj", function (value, element, params) {
+                return dart.validations.isValidCnpj(value);
+            });
+
+            $.validator.addMethod("cpforcnpj", function (value, element, params) {
+                return dart.validations.isValidCpfOrCnpj(value);
+            });
+            
+            $.validator.unobtrusive.adapters.add("cpf", ["cpf"], function (options) {
+                options.rules["cpf"] = {};
+                options.messages["cpf"] = options.message;
+            });
+
+            $.validator.unobtrusive.adapters.add("cnpj", ["cnpj"], function (options) {
+                options.rules["cnpj"] = {};
+                options.messages["cnpj"] = options.message;
+            });
+
+            $.validator.unobtrusive.adapters.add("cpforcnpj", ["cpforcnpj"], function (options) {
+                options.rules["cpforcnpj"] = {};
+                options.messages["cpforcnpj"] = options.message;
+            });
+
+            // RequiredIf
+            $.validator.unobtrusive.adapters.add('requiredif', ['dependentproperty', 'desiredvalue'], function (options) {
+                options.rules['requiredif'] = options.params;
+                options.messages['requiredif'] = options.message;
+            });
+
+            $.validator.addMethod('requiredif', function (value, element, parameters) {
+                var desiredvalue = parameters.desiredvalue;
+                desiredvalue = (desiredvalue == null ? '' : desiredvalue).toString();
+                var controlType = $("input[id$='" + parameters.dependentproperty + "']").attr("type");
+                var actualvalue = {}
+                if (controlType == "checkbox" || controlType == "radio") {
+                    var control = $("input[id$='" + parameters.dependentproperty + "']:checked");
+                    actualvalue = control.val();
+                } else {
+                    actualvalue = $("#" + parameters.dependentproperty).val();
+                }
+                if ($.trim(desiredvalue).toLowerCase() === $.trim(actualvalue).toLocaleLowerCase()) {
+                    var isValid = $.validator.methods.required.call(this, value, element, parameters);
+                    return isValid;
+                }
+                return true;
+            });
+
+
+        };
+
+        // DateTimePicker
+        var loadDateTimePicker = function () {
+
+            // Utiliza o formato do plugin momentjs. Mais informações em: https://momentjs.com/
+            var formatMapping = [
+                { moment: 'L LT', alias: 'datetime' }, // formato: dia, mes, ano, hora, minuto
+                { moment: 'L', alias: 'shortdate' }, // formato: dia, mes, ano
+                { moment: 'LT', alias: 'time' } // formato: hora, minuto
+            ];
+
+            // Transforma um formato alias para o formato moment.
+            // Se não existir o alias, retorna ele mesmo.
+            var resolveFormat = function (format) {
+                for (var i = 0; i < formatMapping.length; i++) {
+                    if (format == formatMapping[i].alias) {
+                        return formatMapping[i].moment;
+                    }
+                }
+                return format;
+            };
+
+            $('[data-format].date').each(function () {
+                $(this).datetimepicker({
+                    locale: moment.locale(),
+                    format: resolveFormat($(this).attr('data-format')),
+                    allowInputToggle: true
+                });
+
+                // Atualiza o jQuery validate, pois o campo pode ficar vermelho mesmo após escolher a data.
+                $(this).on('dp.change', function (e) {
+                    $(this).find('input').valid();
+                });
+            });
+        };
+
+        // PNotify
+        var setPNotifyGlobalOptions = function () {
+            PNotify.prototype.options.styling = 'bootstrap3';
+
+            PNotify.success = function (options) {
+                options.type = 'success';
+                options.title = options.title !== undefined ? options.title : resources.get('SuccessTitle');
+                new PNotify(options);
+            };
+
+            PNotify.error = function (options) {
+                options.type = 'error';
+                options.title = options.title !== undefined ? options.title : resources.get('ErrorTitle');
+                new PNotify(options);
+            };
+
+            PNotify.info = function (options) {
+                options.type = 'info';
+                options.title = options.title !== undefined ? options.title : resources.get('InfoTitle');
+                new PNotify(options);
+            };
+
+            PNotify.warning = function (options) {
+                options.type = 'warning';
+                options.title = options.title !== undefined ? options.title : resources.get('WarningTitle');
+                new PNotify(options);
+            };
+        };
+
+        // Dart
+        var configDart = function () {
+
+            @{               
+                string config = Json.Encode(new
+                { 
+                    saveTempFileUrl = Url.Action("SaveTempFile", "File"),
+                    downloadFileUrl = Url.Action("Download", "File"),
+                    saveTempFileAndCropUrl = Url.Action("SaveTempFileAndCrop", "File")
+                });
+            }
+
+            dart.config = @Html.Raw(config);
+        };
+
+        setDataTablesGlobalOptions();
+        applyMask();
+        configValidator();
+        loadDateTimePicker();
+        setPNotifyGlobalOptions();
+        configDart();
+
+    })(window.dart = window.dart || {}, dart.resources);
+</script>

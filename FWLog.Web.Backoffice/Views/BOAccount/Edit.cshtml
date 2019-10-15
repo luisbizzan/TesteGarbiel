@@ -1,0 +1,89 @@
+﻿@model FWLog.Web.Backoffice.Models.BOAccountCtx.BOAccountEditViewModel
+@using Res = Resources.BOAccountStrings
+
+@{
+    ViewBag.Title = Res.EditPageTitle;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {    
+    @BundleHelper.RenderViewScript()
+}
+
+<!-- title -->
+<div class="page-title">
+    <div class="title">
+        <h3>@Res.EditPageTitle</h3>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","BOHome")">@Resources.CommonStrings.HomeMenuItem</a></li>
+        <li class="active">@Resources.CommonStrings.UserMenuGroup</li>
+        <li><a href="@Url.Action("Index")">@Resources.CommonStrings.BOAccountMenuItem</a></li>
+        <li class="active">@Resources.CommonStrings.EditBreadcrumbItem</li>
+    </ol>
+</div>
+<!-- /title -->
+@using (Html.BeginForm("Edit"))
+{
+    @Html.HiddenFor(x => x.UserName)
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>@Res.UserHeader</h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <!-- fields -->
+            <div class="row">
+                <div class="col-sm-12 col-lg-6">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.UserName, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @disabled = "disabled" })
+                        @Html.ValidationMessageFor(m => m.UserName)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Email)
+                    </div>
+                    <div class="form-section-divider">
+                        <h3 class="pull-left">@Res.GroupsHeader</h3>
+                        <div class="btn-group btn-group-sm pull-right">
+                            <button type="button" class="btn btn-default form-group" id="checkAllGroups"><i class="fa fa-check-square-o"></i> @Res.CheckAllLabel</button>
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="javascript:void(0);" id="uncheckAllGroups"><i class="fa fa-square-o"></i> @Res.UncheckAllLabel</a></li>
+                            </ul>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="row">
+                        @for (int i = 0; i < Model.Groups.Count(); i++)
+                        {
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.HiddenFor(m => m.Groups[i].Name)
+                                        @Html.CheckBoxFor(m => m.Groups[i].IsSelected, new { data_group = "" })
+                                        @Html.DisplayFor(m => m.Groups[i].Name)
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <!-- /fields -->
+            <!-- footer -->
+            <div class="ln_solid"></div>            
+            <div class="row col-xs-12 form-buttons">
+                <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.CancelAction</a>
+                <button type="submit" class="btn btn-primary">@Resources.CommonStrings.ConfirmAction</button>
+            </div>      
+            <!-- /footer -->
+        </div>
+    </div>
+
+
+}

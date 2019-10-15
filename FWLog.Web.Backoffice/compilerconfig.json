@@ -1,0 +1,10 @@
+﻿[
+  {
+    "outputFile": "Content/gentelella/custom.css",
+    "inputFile": "Content/gentelella/custom.scss"
+  },
+  {
+    "outputFile": "Content/dart/dart-template.css",
+    "inputFile": "Content/dart/dart-template.scss"
+  }
+]

@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CB5B241F-4BF3-439A-8995-4A05D9C3367E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FWLog.Data</RootNamespace>
+    <AssemblyName>FWLog.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Dart-Library.CORE, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dart-Library.CORE.2.0.0\lib\net461\Dart-Library.CORE.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.12.2.1100\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess.EntityFramework, Version=6.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.EntityFramework.12.2.1100\lib\net45\Oracle.ManagedDataAccess.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities.cs" />
+    <Compile Include="EnumsAndConsts\ActionTypeNames.cs" />
+    <Compile Include="EnumsAndConsts\ApplicationEnum.cs" />
+    <Compile Include="EnumsAndConsts\ApplicationLogLevel.cs" />
+    <Compile Include="EnumsAndConsts\GetObjectFromLogEnum.cs" />
+    <Compile Include="GlobalResources\Entity\EntityStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntityStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalResources\General\GeneralStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GeneralStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalResources\Mail\MailStrings.en.Designer.cs">
+      <DependentUpon>MailStrings.en.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="GlobalResources\Mail\MailStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MailStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Logging\LogAttribute.cs" />
+    <Compile Include="Metadata\ApplicationLogMetadata.cs" />
+    <Compile Include="Metadata\ApplicationMetadata.cs" />
+    <Compile Include="Metadata\AspNetRolesMetadata.cs" />
+    <Compile Include="Metadata\AspNetUsersMetadata.cs" />
+    <Compile Include="Metadata\BOLogSystemMetadata.cs" />
+    <Compile Include="Models\Application.cs" />
+    <Compile Include="Models\ApplicationSession.cs" />
+    <Compile Include="Models\BOLogSystem.cs" />
+    <Compile Include="Models\AspNetUsers.cs" />
+    <Compile Include="Models\AspNetPermissions.cs" />
+    <Compile Include="Models\ApplicationLog.cs" />
+    <Compile Include="Models\AspNetRoles.cs" />
+    <Compile Include="Models\FilterCtx\ApplicationLogFilter.cs" />
+    <Compile Include="Models\FilterCtx\BOLogSystemFilter.cs" />
+    <Compile Include="Models\FilterCtx\DataTableFilter.cs" />
+    <Compile Include="Models\FilterCtx\BOGroupFilter.cs" />
+    <Compile Include="Logging\BackOfficeAuditLog.cs" />
+    <Compile Include="Logging\IAuditLog.cs" />
+    <Compile Include="Logging\IBackOfficeUserInfo.cs" />
+    <Compile Include="Logging\WebApiAuditLog.cs" />
+    <Compile Include="Models\DataTablesCtx\ApplicationLogTableRow.cs" />
+    <Compile Include="Models\DataTablesCtx\BOLogSystemTableRow.cs" />
+    <Compile Include="Models\DataTablesCtx\BOGroupTableRow.cs" />
+    <Compile Include="Models\GeneralCtx\BOLogSystemColumnChanges.cs" />
+    <Compile Include="Models\GeneralCtx\BOLogSystemDetails.cs" />
+    <Compile Include="Models\GeneralCtx\BOLogSystemCreation.cs" />
+    <Compile Include="Models\GeneralCtx\LogEntity.cs" />
+    <Compile Include="Models\ApplicationLanguage.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\GeneralCtx\ApplicationLanguageRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\ApplicationLogRepository.cs" />
+    <Compile Include="Repository\BackofficeCtx\BOLogSystemRepository.cs" />
+    <Compile Include="Repository\CommonCtx\BaseRepository.cs" />
+    <Compile Include="Repository\CommonCtx\CacheRepository.cs" />
+    <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\ApplicationSessionRepository.cs" />
+    <Compile Include="Resources\Mail\MailResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MailResource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="UnitOfWork.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RecoverPassword.html" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GlobalResources\Entity\EntityStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>EntityStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GlobalResources\General\GeneralStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>GeneralStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GlobalResources\Mail\MailStrings.en.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MailStrings.en.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GlobalResources\Mail\MailStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MailStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Mail\MailResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>MailResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

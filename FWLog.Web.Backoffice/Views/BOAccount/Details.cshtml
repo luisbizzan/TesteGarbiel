@@ -1,0 +1,67 @@
+﻿@model FWLog.Web.Backoffice.Models.BOAccountCtx.BOAccountDetailsViewModel
+@using Res = Resources.BOAccountStrings
+
+@{
+    ViewBag.Title = Res.DetailsPageTitle;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- title -->
+<div class="page-title">
+    <div class="title">
+        <h3>@Res.DetailsPageTitle</h3>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","BOHome")">@Resources.CommonStrings.HomeMenuItem</a></li>
+        <li class="active">@Resources.CommonStrings.UserMenuGroup</li>
+        <li><a href="@Url.Action("Index")">@Resources.CommonStrings.BOAccountMenuItem</a></li>
+        <li class="active">@Resources.CommonStrings.DetailsBreadcrumbItem</li>
+    </ol>
+</div>
+<!-- /title -->
+@Html.HiddenFor(x => x.UserName)
+<div class="x_panel">
+    <div class="x_title">
+        <h2>@Res.UserHeader</h2>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+        <!-- fields -->
+        <div class="row">
+            <div class="col-xs-12 col-lg-6">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.UserName, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-section-divider">
+                    <h3>@Res.GroupsHeader</h3>
+                </div>
+                <div class="row">
+                    @for (int i = 0; i < Model.Groups.Count(); i++)
+                    {
+                        <div class="col-xs-12 col-sm-6">
+                            <div class="checkbox disabled">
+                                <label>
+                                    @Html.HiddenFor(m => m.Groups[i].Name)
+                                    @Html.CheckBoxFor(m => m.Groups[i].IsSelected, new { @disabled = "disabled" })
+                                    @Html.DisplayFor(m => m.Groups[i].Name)
+                                </label>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <!-- /fields -->
+        <!-- footer -->
+        <div class="ln_solid"></div>
+        <div class="row col-xs-12 form-buttons">
+            <a href="@Url.Action("Index")" class="btn btn-default"> @Resources.CommonStrings.BackAction</a>
+        </div>
+        <!-- /footer -->
+    </div>
+</div>

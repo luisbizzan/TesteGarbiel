@@ -1,0 +1,486 @@
+﻿<#@ template language="C#" HostSpecific="True" Debug="True" #>
+<#@ output extension="cs" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Data.Linq" #>
+<#@ ScaffoldingAssembly Processor="ScaffoldingAssemblyLoader" #>
+<#
+string routePrefix;
+if (String.IsNullOrEmpty(AreaName)) 
+{
+    routePrefix = ControllerRootName;
+}
+else
+{
+    routePrefix = AreaName + "/" + ControllerRootName;
+}
+#>
+<#@ assembly name="System.ComponentModel.DataAnnotations" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="Microsoft.AspNet.Scaffolding.Core.Metadata" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.ComponentModel.DataAnnotations" #>
+<#@ parameter type="System.String" name="ControllerName" #>
+<#@ parameter type="System.String" name="ControllerRootName" #>
+<#@ parameter type="System.String" name="Namespace" #>
+<#@ parameter type="System.String" name="AreaName" #>
+<#@ parameter type="System.String" name="ContextTypeName" #>
+<#@ parameter type="System.String" name="ModelTypeName" #>
+<#@ parameter type="System.String" name="ModelVariable" #>
+<#@ parameter type="Microsoft.AspNet.Scaffolding.Core.Metadata.ModelMetadata" name="ModelMetadata" #>
+<#@ parameter type="System.String" name="EntitySetVariable" #>
+<#@ parameter type="System.Boolean" name="UseAsync" #>
+<#@ parameter type="System.Boolean" name="IsOverpostingProtectionRequired" #>
+<#@ parameter type="System.String" name="BindAttributeIncludeText" #>
+<#@ parameter type="System.String" name ="OverpostingWarningMessage" #>
+<#@ parameter type="System.Collections.Generic.HashSet<System.String>" name="RequiredNamespaces" #>
+
+<#
+    var contextTypeName = ContextTypeName;
+    var entitySetName = ModelMetadata.EntitySetName;
+    var entitySetVar = EntitySetVariable ?? (String.IsNullOrEmpty(entitySetName) ? entitySetName : (entitySetName.Substring(0, 1).ToLowerInvariant() + entitySetName.Substring(1)));
+    var primaryKeyName = ModelMetadata.PrimaryKeys[0].PropertyName;
+    var primaryKeyShortTypeName = ModelMetadata.PrimaryKeys[0].ShortTypeName;
+    var primaryKeyDefaultValue = ModelMetadata.PrimaryKeys[0].DefaultValue;
+    var primaryKeyType = ModelMetadata.PrimaryKeys[0].TypeName;
+    var lambdaVar = ModelVariable[0];
+    var relatedProperties = ModelMetadata.RelatedEntities.ToDictionary(item => item.AssociationPropertyName);
+    var projectName = Namespace.Split('.')[0];
+
+    string bindAttribute;
+    if (IsOverpostingProtectionRequired)
+    {
+        bindAttribute = String.Format("[Bind(Include = \"{0}\")] ", BindAttributeIncludeText);
+    }
+    else
+    {
+        bindAttribute = String.Empty;
+    }
+#>
+
+#region UnitOfWor TODO: Colar código no arquivo UnitOfWork.cs do projeto Data
+private <#= entitySetName #>Repository _<#= entitySetVar #>Repository;
+
+public <#= entitySetName #>Repository <#= entitySetName #>Repository
+{
+    get => _<#= entitySetVar #>Repository ?? (_<#= entitySetVar #>Repository = new <#= entitySetName #>Repository(_context));
+}
+
+#endregion
+
+#region Profile TODO: Mover para o caminho da namespace
+using System;
+using AutoMapper;
+using FWLog.Data;
+using FWLog.Data.Models.FilterCtx;
+using Dart.Web.Backoffice.Models.<#= entitySetName #>Ctx;
+
+namespace FWLog.Web.Backoffice.Mapping
+{
+    public class <#= entitySetName #>Profile : Profile
+    {
+        public <#= entitySetName #>Profile() 
+        {
+            CreateMap<<#= entitySetName #>TableRow, <#= entitySetName #>ListItemViewModel>();
+
+            CreateMap<<#= entitySetName #>, <#= entitySetName #>CreateViewModel>().ReverseMap();
+
+            CreateMap<<#= entitySetName #>, <#= entitySetName #>DetailsViewModel>();
+
+            CreateMap<<#= entitySetName #>FilterViewModel, <#= entitySetName #>Filter>();
+        }
+    }
+}
+#endregion
+
+#region Permission TODO: Mover a classe para dentro da classe Permissions
+
+namespace FWLog.Web.Backoffice.EnumsAndConsts
+{
+    public class <#= entitySetName #> : PermissionGroupBuildItem
+    {
+        // TODO: Remover as que não existirem.
+        public const string List = "<#= entitySetName #>List";
+        public const string Create = "<#= entitySetName #>Create";
+        public const string Edit = "<#= entitySetName #>Edit";
+        public const string Delete = "<#= entitySetName #>Delete";
+
+        public <#= entitySetName #>() : base(Display.FromResource(nameof(Res.<#= entitySetName #>)))
+        {
+            Register(List, Display.FromResource(nameof(Res.<#= entitySetName #>List)));
+            Register(Create, Display.FromResource(nameof(Res.<#= entitySetName #>Create)));
+            Register(Edit, Display.FromResource(nameof(Res.<#= entitySetName #>Edit)));
+            Register(Delete, Display.FromResource(nameof(Res.<#= entitySetName #>Delete)));
+        }
+    }
+}
+#endregion
+
+#region ListViewModel TODO: Mover para o caminho da namespace
+using System;
+
+namespace FWLog.Web.Backoffice.Models.<#= entitySetName #>Ctx
+{
+    public class <#= entitySetName #>ListViewModel
+    {
+        public <#= entitySetName #>ListItemViewModel EmptyItem { get; set; }
+
+        public <#= entitySetName #>FilterViewModel Filter { get; set; }
+
+        public <#= entitySetName #>ListViewModel()
+        {
+            EmptyItem = new <#= entitySetName #>ListItemViewModel();
+            Filter = new <#= entitySetName #>FilterViewModel();
+        }
+    }
+
+    public class <#= entitySetName #>ListItemViewModel
+    {
+<# 
+foreach (PropertyMetadata property in ModelMetadata.Properties) { 
+    if (property.PropertyName.StartsWith("Id")) {
+#>
+        public <#= property.ShortTypeName #> <#= property.PropertyName #> { get; set; }
+<# 
+    break;
+    } 
+}	 
+#>
+
+        // TODO: Criar colunas do DataTable, deve conter as mesmas propriedades da classe <#= entitySetName #>TableRow
+    }
+
+    public class <#= entitySetName #>FilterViewModel
+    {
+        // TODO: Criar propriedades de filtro, deve conter os mesmos campos da classe <#= entitySetName #>Filter
+    }
+}
+#endregion ListViewModel
+
+#region CreateViewModel TODO: Mover para o caminho da namespace
+using System;
+
+namespace FWLog.Web.Backoffice.Models.<#= entitySetName #>Ctx
+{
+    public class <#= entitySetName #>CreateViewModel
+    {
+<# 
+foreach (PropertyMetadata property in ModelMetadata.Properties) { 
+    if (!property.IsAssociation) {
+#>
+        public <#= property.ShortTypeName #> <#= property.PropertyName #> { get; set; }
+
+<# 
+    } 
+}	 
+#>
+    }
+}
+#endregion CreateViewModel
+
+#region DetailsViewModel TODO: Mover para o caminho da namespace
+using System;
+
+namespace FWLog.Web.Backoffice.Models.<#= entitySetName #>Ctx
+{
+    public class <#= entitySetName #>DetailsViewModel
+    {
+<# 
+foreach (PropertyMetadata property in ModelMetadata.Properties) { 
+    if (!property.IsAssociation) {
+#>
+        public <#= property.ShortTypeName #> <#= property.PropertyName #> { get; set; }
+
+<# 
+    } 
+}	 
+#>
+    }
+}
+#endregion DetailsViewModel
+
+#region Filter TODO: Mover para o caminho da namespace
+using System;
+
+namespace FWLog.Data.Models.FilterCtx
+{
+    public class <#= entitySetName #>Filter
+    {
+        // TODO: Criar propriedades de filtro, deve conter os mesmos campos da classe <#= entitySetName #>FilterViewModel
+    }
+}
+#endregion
+
+#region TableRow TODO: Mover para o caminho da namespace
+using System;
+
+namespace FWLog.Data.Models.DataTablesCtx
+{
+    public class <#= entitySetName #>TableRow
+    {
+<# 
+foreach (PropertyMetadata property in ModelMetadata.Properties) { 
+    if (property.PropertyName.StartsWith("Id")) {
+#>
+        public <#= property.ShortTypeName #> <#= property.PropertyName #> { get; set; }
+<# 
+    break;
+    } 
+}	 
+#>
+        // TODO: Criar colunas do DataTable, deve conter as mesmas propriedades da classe <#= entitySetName #>ListItemViewModel
+    }
+}
+#endregion
+
+#region Repository TODO: Mover para o caminho da namespace
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Data.Entity;	
+using FWLog.Data.Models.FilterCtx;
+using FWLog.Data.Repository.CommonCtx;
+using FWLog.Data.Models.DataTablesCtx;
+
+namespace FWLog.Data.Repository.GeneralCtx
+{
+    public class <#= entitySetName #>Repository : GenericRepository<<#= entitySetName #>>
+    {
+        public <#= entitySetName #>Repository(Entities entities) : base (entities)
+        { 
+        }
+
+        public IList<<#= entitySetName #>TableRow> SearchForDataTable(DataTableFilter<<#= entitySetName #>Filter> filter, out int totalRecordsFiltered, out int totalRecords)
+        {
+            totalRecords = Entities.<#= entitySetName #>.Count();
+
+            IQueryable<<#= entitySetName #>TableRow> query = Entities.<#= entitySetName #>.AsNoTracking()
+                .Select(e => new <#= entitySetName #>TableRow
+                {
+<# 
+foreach (PropertyMetadata property in ModelMetadata.Properties) { 
+    if (property.PropertyName.StartsWith("Id")) {
+#>
+                    <#= property.PropertyName #> = e.<#= property.PropertyName #>
+<# 
+    break;
+    } 
+}	 
+#>
+                    // TODO: Todas as propriedades da classe <#= entitySetName #>TableRow devem ser setadas aqui
+                });
+
+            // TODO: Todas as propriedades existentes na class <#= entitySetName #>Filter deve conter um where aqui, considere o código a seguir como exemplo
+            //if (!string.IsNullOrEmpty(filter.CustomFilter.Name))
+            //{
+                //query = query.Where(x => x.Name.Contains(filter.CustomFilter.Name));
+            //}
+
+            // Quantidade total de registros com filtros aplicados, sem Skip() e Take().
+            totalRecordsFiltered = query.Count();
+
+            query = query
+                .OrderBy(filter.OrderByColumn, filter.OrderByDirection)
+                .Skip(filter.Start)
+                .Take(filter.Length);
+
+            return query.ToList();
+        }
+    }
+}
+#endregion
+
+#region Services TODO: Mover para o caminho da namespace 
+using System;
+using System.Collections.Generic;
+using FWLog.Data;
+
+namespace FWLog.Services.Services
+{
+    public class <#= entitySetName #>Service
+    {
+        UnitOfWork _uow;
+
+        public <#= entitySetName #>Service(UnitOfWork uow) 
+        {
+            _uow = uow;
+        }
+
+        public void Add(<#= entitySetName #> <#= entitySetVar #>)
+        {
+            // Adicionar validações se necessário...
+
+            _uow.<#= entitySetName #>Repository.Add(<#= entitySetVar #>);
+            _uow.SaveChanges();
+        }
+
+        public void Edit(<#= entitySetName #> <#= entitySetVar #>)
+        {
+            // Adicionar validações se necessário...
+
+            _uow.<#= entitySetName #>Repository.Update(<#= entitySetVar #>);
+            _uow.SaveChanges();
+        }
+
+        public void Delete(<#= entitySetName #> <#= entitySetVar #>)
+        {
+            // Adicionar validações se necessário...
+
+            _uow.<#= entitySetName #>Repository.Delete(<#= entitySetVar #>);
+            _uow.SaveChanges();
+        }
+    }
+}
+#endregion 
+
+using AutoMapper;
+using FWLog.Data;
+using FWLog.Data.Models.FilterCtx;
+using FWLog.Data.Models;
+using FWLog.Data.Models.GeneralCtx;
+using FWLog.Data.Models.DataTablesCtx;
+using FWLog.Services.Services;
+using Dart.Web.Backoffice.EnumsAndConsts;
+using Dart.Web.Backoffice.Helpers;
+using Dart.Web.Backoffice.Models.<#= entitySetName #>Ctx;
+using Dart.Web.Backoffice.Models.CommonCtx;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Resources;
+using System.Web.Mvc;
+using System.Web;
+
+namespace <#= Namespace #>
+{
+    public class <#= ControllerName #> : BOBaseController
+    {
+        UnitOfWork _uow;
+        <#= entitySetName #>Service _<#= entitySetVar #>Service;
+
+        public <#= ControllerName #>(UnitOfWork uow, <#= entitySetName #>Service <#= entitySetVar #>Service)
+        {
+            _uow = uow;
+            _<#= entitySetVar #>Service = <#= entitySetVar #>Service;
+        }
+        
+		[ApplicationAuthorize(Permissions = Permissions.<#= entitySetName #>.List)]
+        public ActionResult Index()
+        {
+            return View(new <#= entitySetName #>ListViewModel());
+        }
+
+        [ApplicationAuthorize(Permissions = Permissions.<#= entitySetName #>.List)]
+        public ActionResult PageData(DataTableFilter<<#= entitySetName #>FilterViewModel> model)
+        {
+            int recordsFiltered, totalRecords;
+            var filter = Mapper.Map<DataTableFilter<<#= entitySetName #>Filter>>(model);
+            IEnumerable<<#= entitySetName #>TableRow> result = _uow.<#= entitySetName #>Repository.SearchForDataTable(filter, out recordsFiltered, out totalRecords);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {	
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = recordsFiltered,
+                Data = Mapper.Map<IEnumerable<<#= entitySetName #>ListItemViewModel>>(result)
+            });
+        }
+
+        [ApplicationAuthorize(Permissions = Permissions.<#= entitySetName #>.Create)]
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.<#= entitySetName #>.Create)]
+        public ActionResult Create(<#= entitySetName #>CreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var <#= entitySetVar #> = Mapper.Map<<#= entitySetName #>>(model);
+
+            _<#= entitySetVar #>Service.Add(<#= entitySetVar #>);
+
+            Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
+            return RedirectToAction("Index");
+        }
+
+        [ApplicationAuthorize(Permissions = Permissions.<#= entitySetName #>.Edit)]
+        public ActionResult Edit(int id)
+        {
+            <#= entitySetName #> <#= entitySetVar #> = _uow.<#= entitySetName #>Repository.GetById(id);
+
+            if (<#= entitySetVar #> == null)
+            {
+                throw new HttpException(404, "Not found");
+            }
+
+            var model = Mapper.Map<<#= entitySetName #>CreateViewModel>(<#= entitySetVar #>);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.<#= entitySetName #>.Edit)]
+        public ActionResult Edit(<#= entitySetName #>CreateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            <#= entitySetName #> <#= entitySetVar #> = Mapper.Map<<#= entitySetName #>>(model);
+
+            _<#= entitySetVar #>Service.Edit(<#= entitySetVar #>);
+
+            Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
+            return RedirectToAction("Index");
+        }
+
+        [ApplicationAuthorize(Permissions = Permissions.<#= entitySetName #>.List)]
+        public ActionResult Details(int id)
+        {
+            <#= entitySetName #> <#= entitySetVar #> = _uow.<#= entitySetName #>Repository.GetById(id);
+
+            if (<#= entitySetVar #> == null)
+            {
+                throw new HttpException(404, "Not found");
+            }
+
+            var model = Mapper.Map<<#= entitySetName #>DetailsViewModel>(<#= entitySetVar #>);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.<#= entitySetName #>.Delete)]
+        public JsonResult AjaxDelete(int id)
+        {
+            try
+            {
+                _<#= entitySetVar #>Service.Delete(_uow.<#= entitySetName #>Repository.GetById(id));
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
+                }, JsonRequestBehavior.DenyGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = Resources.CommonStrings.RegisterHasRelationshipsErrorMessage
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
+    }
+}

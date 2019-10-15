@@ -1,0 +1,42 @@
+﻿@using FWLog.Web.Backoffice.EnumsAndConsts
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/style-bundles/vendors/nprogress")    
+    @Styles.Render("~/style-bundles/bootstrap")
+    @Styles.Render("~/style-bundles/vendors/pnotify")
+    @Styles.Render("~/style-bundles/vendors/datatables")
+    @Styles.Render("~/style-bundles/vendors/iCheck")
+    @Styles.Render("~/style-bundles/vendors/datetimepicker")
+    @Styles.Render("~/style-bundles/vendors/dropzone")
+    @Styles.Render("~/style-bundles/vendors/bootstrap-select")
+
+</head>
+<body class="nav-md login">
+    <div class="container body">
+        <div class="main_container">                        
+            @RenderBody()
+        </div>
+    </div>
+    @Html.Partial("_JavaScriptGlobalResources")
+    @Scripts.Render("~/script-bundles/jquery")
+    @Scripts.Render("~/script-bundles/jqueryval")
+    @Scripts.Render("~/script-bundles/vendors/nprogress")
+    @Scripts.Render("~/script-bundles/bootstrap")
+    @Scripts.Render("~/script-bundles/vendors/pnotify")
+    @Scripts.Render("~/script-bundles/vendors/datatables")
+    @Scripts.Render("~/script-bundles/vendors/iCheck")
+    @Scripts.Render("~/script-bundles/vendors/moment")
+    @Scripts.Render("~/script-bundles/vendors/datetimepicker")
+    @Scripts.Render("~/script-bundles/vendors/mask")
+    @Scripts.Render("~/script-bundles/vendors/dropzone")
+    @Scripts.Render("~/script-bundles/vendors/bootstrap-select")
+    @Html.Partial("_ScriptGlobalOptions")
+    @Scripts.Render("~/script-bundles/dart")
+    @Html.Partial("_Notify")
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

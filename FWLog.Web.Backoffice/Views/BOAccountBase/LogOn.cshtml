@@ -1,0 +1,63 @@
+﻿@model FWLog.Web.Backoffice.Models.BOAccountBaseCtx.LogOnViewModel
+@using Res = Resources.BOAccountBaseStrings;
+
+@{
+    ViewBag.Title = Res.LogOnPageTitle;
+    Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+            logOnUrl = Url.Action("LogOn")
+        }
+    )
+}
+
+<div class="login_wrapper">
+    @using (Html.BeginForm())
+    {
+        <div class="login-margin-container">
+            <div class="login-container">
+                <div class="login-logo">
+                    <img src="@Url.Content("~/Content/images/logo.png")" />
+                </div>
+                @if (Model != null && !String.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <p class="text-danger">@Model.ErrorMessage</p>
+                }               
+                <div class="form-group">
+                    @Html.LabelFor(m => m.UserName, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", placeholder = Res.UserNamePlaceholder })
+                    @Html.ValidationMessageFor(m => m.UserName)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Password, new { @type="password", @class = "form-control", placeholder = Res.PasswordPlaceholder })
+                    @Html.ValidationMessageFor(m => m.Password)
+                </div>
+                <button type="submit" class="btn btn-block btn-primary" id="confirm-btn">@Res.EnterAction</button>
+                <div class="text-center login-link-container">
+                    <a href="@Url.Action("RecoverPassword")" class="reset_pass">@Res.ForgotPasswordLink</a>
+                </div>
+                @if (Model.CanChangeLanguage)
+                {
+                    <div class="text-right language-container">
+                        <div class="btn-group dropup">
+                            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @Model.LanguageSelectList.First(x => x.Value == Model.CurrentLanguage).Text <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                @foreach(SelectListItem item in Model.LanguageSelectList.Where(x => x.Value != Model.CurrentLanguage))
+                                {
+                                    <li><a href="javascript:void(0);" data-language="@item.Value">@item.Text</a></li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

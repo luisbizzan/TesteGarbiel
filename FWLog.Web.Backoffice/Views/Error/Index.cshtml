@@ -1,0 +1,28 @@
+﻿@using Res = Resources.ErrorStrings
+
+@{
+    if (Request.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutExternal.cshtml";
+    }
+
+    ViewBag.Title = Res.IndexPageTitle;
+}
+
+<div class="col-middle getpoints">
+    <div class="text-center error-page">
+        <h1 class="error-title no-number">@Res.IndexPageHeader</h1>
+        <div class="error-description">
+            <p>
+                @Res.IndexPageDescription
+            </p>
+        </div>
+        <div class="error-footer">
+            <a href="@Url.Action("Index", "BOHome")" class="btn btn-primary">@Res.BackToHomeAction</a>
+        </div>
+    </div>
+</div>

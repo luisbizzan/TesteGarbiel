@@ -1,0 +1,128 @@
+﻿<#@ template language="C#" HostSpecific="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+<# 
+    string projectName = this.Host.ResolveParameterValue("-", "-", "projects").Split('.')[0];
+
+    string boolType = "System.Boolean"; 
+
+    string dateTimeType = "System.DateTime";
+
+    string selectType = "System.Web.Mvc.SelectList";
+
+    List<string> decimalTypes = new List<string>();
+    decimalTypes.Add("System.Decimal");
+    decimalTypes.Add("System.Double");
+
+    List<string> integerTypes = new List<string>();
+    integerTypes.Add("System.Int64");
+    integerTypes.Add("System.Int32");
+    integerTypes.Add("System.Int16");
+#>
+@model FWLog.Web.Backoffice.Models.<#= ViewDataTypeShortName #>Ctx.<#= ViewDataTypeShortName #>CreateViewModel
+
+@{
+    ViewBag.Title = "Criação de <#= ViewDataTypeShortName #>"; // TODO: Traduzir nome da entidade
+<# if(IsLayoutPageSelected && !String.IsNullOrEmpty(LayoutPageFile)) { #> 
+    Layout = "<#= LayoutPageFile #>";
+<# } else { #>
+    Layout = "~/Views/Shared/_Layout.cshtml";
+<# } #>
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript()
+}
+
+<!-- title -->
+<div class="page-title">
+    <div class="title">
+        <h3>@ViewBag.Title</h3>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","BOHome")">@Resources.CommonStrings.HomeMenuItem</a></li>
+        <li class="active"> @* TODO: Colocar nome do menu da tela *@ </li>
+        <li><a href="@Url.Action("Index")"><#= ViewDataTypeShortName #></a></li> // TODO: Traduzir nome da entidade
+        <li class="active">Criação</li>
+    </ol>
+</div>
+<!-- /title -->
+
+@using (Html.BeginForm())
+{
+    <div class="x_panel">
+        <div class="x_title">
+            <h2><#= ViewDataTypeShortName #></h2> @* TODO: Traduzir nome da entidade *@
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <!-- fields -->
+            <div class="row">
+                <div class="col-xs-12 col-lg-6">				
+<# 
+foreach (PropertyMetadata property in ModelMetadata.Properties) { 
+    if (!property.PropertyName.StartsWith("Id") && !property.IsAssociation) {
+        if (property.TypeName.Equals(boolType)) { 
+#>
+                    <div class="checkbox">
+                        <label>
+                            @Html.CheckBoxFor(m => m.<#= property.PropertyName #>)
+                            @Html.DisplayNameFor(m => m.<#= property.PropertyName #>)
+                        </label>
+                    </div>
+<# } else if (property.TypeName.Equals(dateTimeType)) { #>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.<#= property.PropertyName #>, new { @class = "control-label" })
+                        <div class="input-group date" data-format="L">
+                            @Html.TextBoxFor(m => m.<#= property.PropertyName #>, new { @class = "form-control" })
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                            @Html.ValidationMessageFor(m => m.<#= property.PropertyName #>)
+                    </div>
+<# } else if (property.TypeName.Equals(decimalTypes)) { #>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.<#= property.PropertyName #>, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.<#= property.PropertyName #>, new { @class = "form-control decimal" })
+                        @Html.ValidationMessageFor(m => m.<#= property.PropertyName #>)
+                    </div>
+<# } else if (property.TypeName.Equals(integerTypes)) { #>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.<#= property.PropertyName #>, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.<#= property.PropertyName #>, new { @class = "form-control integer" })
+                        @Html.ValidationMessageFor(m => m.<#= property.PropertyName #>)
+                    </div>
+<# } else if (property.TypeName.Equals(selectType)) { #>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.<#= property.PropertyName #>, new { @class = "control-label" })
+                        @Html.DropDownListFor(m => TODO: Coloque o Model que o valor deverá ser inserido, Model.<#= property.PropertyName #>, @Resources.CommonStrings.Select, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.<#= property.PropertyName #>)
+                    </div>
+<# } else { #>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.<#= property.PropertyName #>, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.<#= property.PropertyName #>, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.<#= property.PropertyName #>)
+                    </div>
+<# 
+        } 
+    } 
+}
+#>
+                </div>
+            </div>
+            <!-- /fields -->
+            <!-- footer -->
+            <div class="ln_solid"></div>
+            <div class="row col-xs-12 form-buttons">
+                <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.CancelAction</a>
+                <button type="submit" class="btn btn-primary">@Resources.CommonStrings.ConfirmAction</button>
+            </div>
+            <!-- /footer -->
+        </div>
+    </div>
+}
+
+
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

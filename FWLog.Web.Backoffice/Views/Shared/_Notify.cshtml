@@ -1,0 +1,43 @@
+﻿@using FWLog.Web.Backoffice.Models.CommonCtx;
+@using Newtonsoft.Json;
+@using FWLog.Web.Backoffice.Helpers
+
+@if (TempData["Notify"] != null && TempData["Notify"] is NotifyModel)
+{
+    NotifyModel model = (NotifyModel)TempData["Notify"];
+
+    <script>
+        (function (undefined) {
+
+            var options = @Html.Raw(JsonConvert.SerializeObject(model));
+
+            @* Adicionado essa validação porque se vier nulo ou vazio, queremos usar o titulo padrão *@
+            options.title = options.title || undefined;
+
+            $(document).ready(function () {
+                @{
+                    switch (model.Type)
+                    {
+                        case NotifyType.Success:
+                            <text>PNotify.success(options);</text>
+                            break;
+
+                        case NotifyType.Error:
+                            <text>PNotify.error(options);</text>
+                            break;
+
+                        case NotifyType.Warning:
+                            <text>PNotify.warning(options);</text>
+                            break;
+
+                        case NotifyType.Info:
+                            <text>PNotify.info(options);</text>
+                            break;
+                    }
+                }
+            });
+
+        })();
+
+    </script>
+}

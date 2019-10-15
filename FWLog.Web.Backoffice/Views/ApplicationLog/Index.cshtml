@@ -1,0 +1,105 @@
+﻿@model FWLog.Web.Backoffice.Models.ApplicationLogCtx.ApplicationLogListViewModel
+@using Res = Resources.ApplicationLogStrings
+@using FWLog.AspNet.Identity
+
+@{
+    ViewBag.Title = Res.IndexPageTitle;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+            detailsUrl = Url.Action("Details"),
+            detailsVisible = User.HasPermission(Permissions.ApplicationLog.List),
+            pageDataUrl = Url.Action("PageData")
+        }
+    )
+}
+
+<!-- title -->
+<div class="page-title">
+    <div class="title">
+        <h3>@ViewBag.Title</h3>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","BOHome")">@Resources.CommonStrings.HomeMenuItem</a></li>
+        <li class="active">@Resources.CommonStrings.UserMenuGroup</li>
+        <li class="active">@Resources.CommonStrings.ApplicationLogMenuItem</li>
+    </ol>
+</div>
+<!-- /title -->
+<!-- filter -->
+<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2 class="collapse-link">
+                <i class="fa fa-chevron-down fa-fw"></i> @Resources.CommonStrings.FilterHeader
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content" style="display: block;">
+            <div class="row">
+                <div class="col-xs-12 col-sm-3 form-group">
+                    @Html.LabelFor(m => m.Filter.Level)
+                    @Html.DropDownListFor(m => m.Filter.Level, Model.Filter.LevelOptions, "ALL", new { @class = "form-control", data_field = "Level" })
+                </div>
+                <div class="col-xs-12 col-sm-3 form-group">
+                    @Html.LabelFor(m => m.Filter.Message)
+                    @Html.TextBoxFor(m => m.Filter.Message, new { @class = "form-control", data_field = "Message" })
+                </div>
+                <div class="col-xs-12 col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Filter.CreatedStart)
+                        <div class='input-group date'>
+                            @Html.TextBoxFor(m => m.Filter.CreatedStart, new { @class = "form-control", data_field = "CreatedStart" })
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-3">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Filter.CreatedEnd)
+                        <div class='input-group date'>
+                            @Html.TextBoxFor(m => m.Filter.CreatedEnd, new { @class = "form-control", data_field = "CreatedEnd" })
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 form-buttons">
+                    <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
+                    <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- /filter -->
+<!-- table -->
+<div class="x_panel">
+    <div class="x_title">
+        <h4>@Resources.CommonStrings.ListHeader</h4>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+        <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(m => m.EmptyItem.Level)</th>
+                    <th>@Html.DisplayNameFor(m => m.EmptyItem.Message)</th>
+                    <th>@Html.DisplayNameFor(m => m.EmptyItem.ApplicationName)</th>
+                    <th>@Html.DisplayNameFor(m => m.EmptyItem.Created)</th>
+                    <th>@Resources.CommonStrings.ActionsLabel</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<!-- /table -->

@@ -1,0 +1,52 @@
+﻿@model FWLog.Web.Backoffice.Models.ExampleCtx.AutoCompleteViewModel
+
+@{
+    ViewBag.Title = "Auto Complete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+            urlAutoComplete = Url.Action("SearchForAutoComplete")
+        }
+    )
+}
+
+<form>
+    <!-- title -->
+    <div class="page-title">
+        <div class="title">
+            <h3>@ViewBag.Title</h3>
+        </div>
+        <ol class="breadcrumb">
+            <li><a href="@Url.Action("Index", "BOHome")">Início</a></li>
+            <li class="active">Exemplo</li>
+            <li class="active">Auto Complete</li>
+        </ol>
+    </div>
+    <!-- /title -->
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Auto Complete</h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <!-- fields -->
+            <div class="row">
+                <div class="col-xs-12 col-sm-4 form-group">
+                    @Html.LabelFor(m => m.AutoCompleteDisplay, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.AutoCompleteDisplay, new { @class = "form-control", placeholder = "Digite para pesquisar..." })
+                    @Html.HiddenFor(m => m.AutoCompleteSelectedValue, new { @class = "can-validate" })
+                    @Html.ValidationMessageFor(m => m.AutoCompleteSelectedValue)
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                    <label class="control-label">Valor Selecionado</label>
+                    <input type="text" id="testvalor" class="form-control" readonly="readonly" />
+                </div>
+            </div>
+            <!-- /fields -->
+        </div>
+    </div>
+</form>

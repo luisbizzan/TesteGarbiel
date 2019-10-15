@@ -1,0 +1,81 @@
+﻿@model FWLog.Web.Backoffice.Models.BOGroupCtx.BOGroupDetailsViewModel
+@using Res = Resources.BOGroupStrings
+
+@{
+    ViewBag.Title = Res.DetailsPageTitle;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript()
+}
+
+<!-- title -->
+<div class="page-title">
+    <div class="title">
+        <h3>@Res.DetailsPageTitle</h3>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","BOHome")">@Resources.CommonStrings.HomeMenuItem</a></li>
+        <li class="active">@Resources.CommonStrings.UserMenuGroup</li>
+        <li><a href="@Url.Action("Index")">@Resources.CommonStrings.GroupMenuItem</a></li>
+        <li class="active">@Resources.CommonStrings.DetailsBreadcrumbItem</li>
+    </ol>
+</div>
+<!-- /title -->
+
+<div class="x_panel" id="pageGroupCreate">
+    <div class="x_title">
+        <h2>@Res.GroupHeader</h2>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+        <!-- fields -->
+        <div class="row">
+            <div class="col-xs-12 col-lg-6">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Name, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @readonly = "readonly" })                    
+                </div>
+                <div class="form-section-divider">
+                    <h3>@Res.PermissionsHeader</h3>
+                </div>
+                <div class="row">
+                    @for (int i = 0; i < Model.RoleGroups.Count; i++)
+                    {
+                        <div class="col-xs-12 col-sm-6 ">
+                            <div class="panel panel-default checkbox-panel">
+                                <div class="panel-heading">
+                                    @Model.RoleGroups[i].DisplayName
+                                </div>
+                                <div class="panel-body" id="panelPermission">
+                                    @for (int j = 0; j < Model.RoleGroups[i].Permissions.Count; j++)
+                                    {
+                                        <div class="col-xs-12">
+                                            <div class="checkbox disabled">
+                                                <label>
+                                                    @Html.HiddenFor(m => m.RoleGroups[i].Permissions[j].Name)
+                                                    @Html.CheckBoxFor(m => m.RoleGroups[i].Permissions[j].IsSelected, new { disabled = "disabled", data_role = "" })
+                                                    @Html.DisplayFor(m => m.RoleGroups[i].Permissions[j].DisplayName)
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <!-- /fields -->
+        <!-- footer -->
+        <div class="ln_solid"></div>
+        <div class="row col-xs-12 form-buttons">
+            <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.BackAction</a>
+            <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-primary">@Resources.CommonStrings.EditAction</a>
+        </div>
+        <!-- /footer -->
+    </div>
+</div>
+

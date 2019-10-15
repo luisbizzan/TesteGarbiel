@@ -1,0 +1,174 @@
+﻿@using DartDigital.Library.Web.IO;
+@using FWLog.Web.Backoffice.EnumsAndConsts;
+
+@model FWLog.Web.Backoffice.Models.ExampleCtx.UploadModel
+
+@{
+    ViewBag.Title = "Example Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- title -->
+<div class="page-title">
+    <div class="title">
+        <h3>Upload de Arquivos</h3>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","BOHome")">Início</a></li>
+        <li class="active">Exemplos</li>
+        <li class="active">Upload de Arquivos</li>
+    </ol>
+</div>
+<!-- /title -->
+
+<div class="row">
+    <div class="col-xs-12">
+        @using (Html.BeginForm("UploadCreate", "Example", FormMethod.Post, new { enctype = "multipart/form-data", name = "create" }))
+        {
+            <div class="x_panel">
+                <div class="x_title">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <h2>Inclusão</h2>
+                        </div>
+                        <div class="col-xs-6">
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 form-group">
+                            @Html.Label("Criar", new { @class = "control-label" })
+                            <div class="dropzone form-control" data-required="true" data-config-unique-name="Example" data-input-name="fileName" data-max-file="1" data-scroll="false" data-readonly="false" data-url="@Url.Action("SaveTempFile", "File")" data-accepted-files="image/*">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 form-group">
+                            <button type="submit" class="btn btn-primary" data-filter="clear">Criar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @using (Html.BeginForm("UploadEdit", "Example", FormMethod.Post, new { enctype = "multipart/form-data", name = "edit" }))
+        {
+            <div class="x_panel">
+                <div class="x_title">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <h2>Edição</h2>
+                        </div>
+                        <div class="col-xs-6">
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 form-group">
+                            @Html.Label("Editar", new { @class = "control-label" })
+                            <div class="dropzone form-control" data-required="true" data-config-unique-name="Example" data-input-name="fileName" data-max-file="5" data-scroll="false" data-readonly="false">
+                                <div class="dropzone-load-file"
+                                     data-name="@Model.ImageName"
+                                     data-path="@Url.Content("~/" + FileHelper.Current.GetImagePath(FileUploadDefinitions.ExampleConfig, Model.ImageName))"
+                                     data-config-unique-name="Example">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 form-group">
+                            <button type="submit" class="btn btn-primary" data-filter="clear">Editar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @using (Html.BeginForm("UploadDelete", "Example", FormMethod.Post, new { enctype = "multipart/form-data", name = "delete" }))
+        {
+            <div class="x_panel">
+                <div class="x_title">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <h2>Exclusão</h2>
+                        </div>
+                        <div class="col-xs-6">
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li>
+                                    <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 form-group">
+                            @Html.Label("Excluir", new { @class = "control-label" })
+                            <div class="dropzone form-control" data-input-name="fileName" data-max-file="2" data-scroll="false" data-readonly="true">
+                                <div class="dropzone-load-file"
+                                     data-name="@Model.ImageName"
+                                     data-path="@Url.Content("~/" + FileHelper.Current.GetImagePath(FileUploadDefinitions.ExampleConfig, Model.ImageName))"
+                                     data-config-unique-name="Example">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 form-group">
+                            <button type="submit" class="btn btn-primary" data-filter="clear">Excluir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="x_panel">
+            <div class="x_title">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <h2>Visualização</h2>
+                    </div>
+                    <div class="col-xs-6">
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li>
+                                <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4 form-group">
+                        @Html.Label("Viualizar", new { @class = "control-label" })
+                        <div class="dropzone form-control" data-max-file="2" data-scroll="false" data-readonly="true">
+                            <div class="dropzone-load-file"
+                                 data-name="@Model.ImageName"
+                                 data-path="@Url.Content("~/" + FileHelper.Current.GetImagePath(FileUploadDefinitions.ExampleConfig, Model.ImageName))"
+                                 data-config-unique-name="Example">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

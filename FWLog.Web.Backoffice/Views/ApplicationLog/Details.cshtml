@@ -1,0 +1,65 @@
+﻿@model FWLog.Web.Backoffice.Models.ApplicationLogCtx.ApplicationLogDetailsViewModel
+@using Res = Resources.ApplicationLogStrings
+
+@{
+    ViewBag.Title = Res.DetailsPageTitle;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript()
+}
+
+<!-- title -->
+<div class="page-title">
+    <div class="title">
+        <h3>@Res.IndexPageTitle</h3>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","BOHome")">@Resources.CommonStrings.HomeMenuItem</a></li>
+        <li class="active">@Resources.CommonStrings.UserMenuGroup</li>
+        <li><a href="@Url.Action("Index")">@Resources.CommonStrings.ApplicationLogMenuItem</a></li>
+        <li class="active">@Resources.CommonStrings.DetailsBreadcrumbItem</li>
+    </ol>
+</div>
+<!-- /title -->
+<div class="x_panel">
+    <div class="x_title">
+        <h4>@Res.ApplicationLogHeader</h4>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+        <!-- fields-->
+        <div class="row">
+            <div class="col-xs-12 col-lg-6">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Level, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Level, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Created, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Created, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ApplicationName, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.ApplicationName, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Message, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Message, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Exception, new { @class = "control-label" })
+                    @Html.TextAreaFor(m => m.Exception, new { @class = "form-control", @readonly = "readonly", rows = "10" })
+                </div>
+            </div>
+        </div>        
+        <!-- /fields -->
+        <!-- footer -->
+        <div class="ln_solid"></div>
+        <div class="row col-xs-12 form-buttons">
+                <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.BackAction</a>
+        </div>
+        <!-- /footer -->
+    </div>
+</div>

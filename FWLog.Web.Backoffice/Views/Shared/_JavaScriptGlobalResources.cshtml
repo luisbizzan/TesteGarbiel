@@ -1,0 +1,42 @@
+﻿@using System.Collections;
+@using System.Globalization;
+@using System.Resources;
+@using Res = Resources.JavaScriptStrings;
+
+@{    
+    ResourceSet resourceSet = Res.ResourceManager.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
+    Dictionary<string, string> resourceDictionary = new Dictionary<string, string>();
+
+    foreach (DictionaryEntry entry in resourceSet)
+    {
+        string key = entry.Key.ToString();
+        string value = entry.Value.ToString();
+        resourceDictionary.Add(key, value);
+    }
+}
+
+<script>
+
+    (function (dart, undefined) {
+
+        dart.resources = (function () {
+
+            var _resources = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(resourceDictionary));
+            
+            var get = function (key) {
+                if (_resources.hasOwnProperty(key)) {
+                    return _resources[key];
+                } else {
+                    return null;
+                }
+            };
+
+            return {
+                get: get
+            };
+
+        })();
+
+    })(window.dart = window.dart || {});
+
+</script>

@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="IndexPageTitle" xml:space="preserve">
+    <value>Lista de Usuário</value>
+  </data>
+  <data name="SearchAction" xml:space="preserve">
+    <value>Pesquisar</value>
+  </data>
+  <data name="CheckAllLabel" xml:space="preserve">
+    <value>Marcar Todos</value>
+  </data>
+  <data name="ConfirmNewPasswordCompareMessage" xml:space="preserve">
+    <value>A nova senha e a confirmação da nova senha não estão iguais.</value>
+  </data>
+  <data name="ConfirmNewPasswordLabel" xml:space="preserve">
+    <value>Confirmação Nova Senha</value>
+  </data>
+  <data name="ConfirmPasswordCompareMessage" xml:space="preserve">
+    <value>A senha e a confirmação de senha devem ser iguais.</value>
+  </data>
+  <data name="ConfirmPasswordLabel" xml:space="preserve">
+    <value>Confirmação de Senha</value>
+  </data>
+  <data name="CreatePageTitle" xml:space="preserve">
+    <value>Criação de Usuário</value>
+  </data>
+  <data name="CreationDateLabel" xml:space="preserve">
+    <value>Data de Criação</value>
+  </data>
+  <data name="DetailsPageTitle" xml:space="preserve">
+    <value>Visualização de Usuário</value>
+  </data>
+  <data name="DisabledLabel" xml:space="preserve">
+    <value>Inativo?</value>
+  </data>
+  <data name="EditPageTitle" xml:space="preserve">
+    <value>Edição de Usuário</value>
+  </data>
+  <data name="EmailLabel" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="GroupsHeader" xml:space="preserve">
+    <value>Grupos</value>
+  </data>
+  <data name="NewPasswordLabel" xml:space="preserve">
+    <value>Nova Senha</value>
+  </data>
+  <data name="OldPasswordLabel" xml:space="preserve">
+    <value>Senha Atual</value>
+  </data>
+  <data name="PasswordLabel" xml:space="preserve">
+    <value>Senha</value>
+  </data>
+  <data name="UserHeader" xml:space="preserve">
+    <value>Usuário</value>
+  </data>
+  <data name="UserNameLabel" xml:space="preserve">
+    <value>Nome de Usuário</value>
+  </data>
+  <data name="DeleteModalMessage" xml:space="preserve">
+    <value>Deseja realmente excluir esse registro?</value>
+  </data>
+  <data name="DeleteModalTitle" xml:space="preserve">
+    <value>Confirmação</value>
+  </data>
+  <data name="ResetPasswordAction" xml:space="preserve">
+    <value>Resetar Senha</value>
+  </data>
+  <data name="ResetPasswordModalMessage" xml:space="preserve">
+    <value>Deseja realmente resetar a senha desse usuário?</value>
+  </data>
+  <data name="ResetPasswordModalTitle" xml:space="preserve">
+    <value>Confirmação</value>
+  </data>
+  <data name="UnlockAction" xml:space="preserve">
+    <value>Desbloquear</value>
+  </data>
+  <data name="UnlockModalMessage" xml:space="preserve">
+    <value>Deseja realmente desbloquear esse usuário?</value>
+  </data>
+  <data name="UnlockModalTitle" xml:space="preserve">
+    <value>Confirmação</value>
+  </data>
+  <data name="CurrentPasswordInvalidMessage" xml:space="preserve">
+    <value>Senha atual inválida.</value>
+  </data>
+  <data name="MembershipDefaultErrorMessage" xml:space="preserve">
+    <value>Ocorreu um erro não reconhecido. Por favor, verifique seus dados e tente novamente. Se o problema persistir, por favor contate o administrador.</value>
+  </data>
+  <data name="MembershipDuplicateEmailMessage" xml:space="preserve">
+    <value>Este email está em uso por outro usuário. Por favor, escolha outro.</value>
+  </data>
+  <data name="MembershipDuplicateUserNameMessage" xml:space="preserve">
+    <value>Nome de usuário existente. Por favor, escolha outro.</value>
+  </data>
+  <data name="MembershipInvalidAnswerMessage" xml:space="preserve">
+    <value>A resposta de requisição de senha está errada. Por favor, corrija-a.</value>
+  </data>
+  <data name="MembershipInvalidEmailMessage" xml:space="preserve">
+    <value>O email informado é inválido. Por favor, corrija-o.</value>
+  </data>
+  <data name="MembershipInvalidPasswordMessage" xml:space="preserve">
+    <value>A senha é inválida. Por favor, escolha outra.</value>
+  </data>
+  <data name="MembershipInvalidQuestionMessage" xml:space="preserve">
+    <value>A pergunta de requisição de senha está errada. Por favor, corrija-a.</value>
+  </data>
+  <data name="MembershipInvalidUserNameMessage" xml:space="preserve">
+    <value>O nome de usuário está inválido. Por favor, corrija-o.</value>
+  </data>
+  <data name="MembershipProviderErrorMessage" xml:space="preserve">
+    <value>A autenticação retornou um erro. Por favor, verifique seus dados e tente novamente. Se o problema persistir, por favor contate o administrador.</value>
+  </data>
+  <data name="MembshipUserRejectedMessage" xml:space="preserve">
+    <value>A criação do usuário foi cancelada. Por favor, verifique seus dados e tente novamente. Se o problema persistir, por favor contate o administrador.</value>
+  </data>
+  <data name="PasswordChangedSuccessMessage" xml:space="preserve">
+    <value>Senha alterada com sucesso.</value>
+  </data>
+  <data name="UserPasswordResetErrorMessage" xml:space="preserve">
+    <value>Erro ao resetar a senha do usuário. Por favor, tente novamente. Se o problema persistir contate o administrador do sistema.</value>
+  </data>
+  <data name="UserPasswordResetSuccessMessage" xml:space="preserve">
+    <value>Senha resetada com sucesso para o usuário: {0}. A nova senha é: {1}</value>
+  </data>
+  <data name="UserUnlockedErrorMessage" xml:space="preserve">
+    <value>Erro ao desbloquear usuário. Por favor, tente novamente. Se o problema persistir contate o administrador do sistema.</value>
+  </data>
+  <data name="UserUnlockedSuccessMessage" xml:space="preserve">
+    <value>Usuário desbloqueado com sucesso.</value>
+  </data>
+  <data name="ChangePasswordPageTitle" xml:space="preserve">
+    <value>Alteração de Senha</value>
+  </data>
+  <data name="PasswordHeader" xml:space="preserve">
+    <value>Senha</value>
+  </data>
+  <data name="DeleteAction" xml:space="preserve">
+    <value>Excluir</value>
+  </data>
+  <data name="DeleteMassModalMessage" xml:space="preserve">
+    <value>Deseja realmente excluir {0} registro(s)?</value>
+  </data>
+  <data name="UnlockMassModalMessage" xml:space="preserve">
+    <value>Deseja realmente desbloquear {0} usuário(s)?</value>
+  </data>
+  <data name="UserMassUnlockErrorMessage" xml:space="preserve">
+    <value>Erro ao desbloquear o(s) usuário(s). Por favor, tente novamente. Se o problema persistir contate o administrador do sistema.</value>
+  </data>
+  <data name="UserMassUnlockSuccessMessage" xml:space="preserve">
+    <value>Usuário(s) desbloqueado(s) com sucesso.</value>
+  </data>
+  <data name="UncheckAllLabel" xml:space="preserve">
+    <value>Desmarcar Todos</value>
+  </data>
+  <data name="UserEmailAlreadyExistsMessage" xml:space="preserve">
+    <value>Já existe um usuário cadastrado com esse e-mail. Por favor escolha outro.</value>
+  </data>
+  <data name="UserNameAlreadyExistsMessage" xml:space="preserve">
+    <value>Já existe um usuário cadastrado com esse nome. Por favor escolha outro.</value>
+  </data>
+</root>

@@ -1,0 +1,94 @@
+﻿@model FWLog.Web.Backoffice.Models.BOGroupCtx.BOGroupListViewModel
+@using FWLog.AspNet.Identity
+@using Res = Resources.BOGroupStrings
+
+@{
+    ViewBag.Title = Res.IndexPageTitle;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+            detailsUrl = Url.Action("Details"),
+            detailsVisible = User.HasPermission(Permissions.Role.List),
+            editUrl = Url.Action("Edit"),
+            editVisible = User.HasPermission(Permissions.Role.Edit),
+            deleteUrl = Url.Action("AjaxDelete"),
+            deleteVisible = User.HasPermission(Permissions.Role.List),
+            pageDataUrl = Url.Action("PageData")
+        }
+    )
+}
+
+<!-- title -->
+<div class="page-title">
+    <div class="title">
+        <h3>@ViewBag.Title</h3>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","BOHome")">@Resources.CommonStrings.HomeMenuItem</a></li>
+        <li class="active">@Resources.CommonStrings.UserMenuGroup</li>
+        <li class="active">@Resources.CommonStrings.GroupMenuItem</li>
+    </ol>
+</div>
+<!-- /title -->
+<!-- filter -->
+<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2 class="collapse-link">
+                <i class="fa fa-chevron-down fa-fw"></i> @Resources.CommonStrings.FilterHeader
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content" style="display: block;">
+            <div class="row">
+                <div class="col-xs-12 form-group">
+                    @Html.LabelFor(m => m.Filter.Name)
+                    @Html.TextBoxFor(m => m.Filter.Name, new { @class = "form-control", data_field = "Name" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 form-buttons">
+                    <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
+                    <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- /filter -->
+<!-- table -->
+<div class="row">
+    <div class="col-xs-12">
+        <div class="x_panel">
+            <!-- panel-title -->
+            <div class="x_title">
+                <h2>@Res.ListHeader</h2>
+                <div class="nav navbar-right panel_toolbox">
+                    @if (User.HasPermission(Permissions.Role.Create))
+                    {
+                        <a class="btn btn-primary btn-dt-action" href="@Url.Action("Create")"><i class="fa fa-fw fa-plus"></i> @Resources.CommonStrings.CreateAction</a>
+                    }
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <!-- /panel-title -->
+            <!-- panel-content -->
+            <div class="x_content">
+                <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Name)</th>
+                            <th>@Resources.CommonStrings.ActionsLabel</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <!-- /panel-contet -->
+        </div>
+    </div>
+</div>
+<!-- /table -->

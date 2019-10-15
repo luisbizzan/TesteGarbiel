@@ -1,0 +1,169 @@
+﻿<#@ template language="C#" HostSpecific="True" Debug="True" #>
+<#@ output extension=".cshtml" #>
+<#@ include file="Imports.include.t4" #>
+<# string projectName = this.Host.ResolveParameterValue("-", "-", "projects").Split('.')[0]; #>
+@model FWLog.Web.Backoffice.Models.<#= ViewDataTypeShortName #>Ctx.<#= ViewDataTypeShortName #>ListViewModel
+@using Dart.Web.Backoffice.EnumsAndConsts
+
+@{
+    ViewBag.Title = "Lista de <#= ViewDataTypeShortName #>";
+<# if(IsLayoutPageSelected && !String.IsNullOrEmpty(LayoutPageFile)) { #>
+    Layout = "<#= LayoutPageFile #>";
+<# } else { #>
+    Layout = "~/Views/Shared/_Layout.cshtml";
+<# } #>
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+            detailsUrl = Url.Action("Details"),
+            detailsVisible = User.HasPermission(Permissions.<#= ViewDataTypeShortName #>.List),
+            editUrl = Url.Action("Edit"),
+            editVisible = User.HasPermission(Permissions.<#= ViewDataTypeShortName #>.Edit),
+            deleteUrl = Url.Action("AjaxDelete"),
+            deleteVisible = User.HasPermission(Permissions.<#= ViewDataTypeShortName #>.Delete),
+            pageDataUrl = Url.Action("PageData")
+        }
+    )
+
+    @* TODO: JAVASCRIPT - Criar arquivo no caminho [root]/Scripts/Views/<#= ViewDataTypeShortName #>/index.js e mover código para lá *@
+    (function () {
+
+        var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
+            return [
+                {
+                    action: 'details',
+                    href: view.detailsUrl + '?id=' + full.<#= ModelMetadata.Properties.FirstOrDefault(p => p.PropertyName.StartsWith("Id")).PropertyName #>,
+                    visible: view.detailsVisible
+                },
+                {
+                    action: 'edit',
+                    href: view.editUrl + '?id=' + full.<#= ModelMetadata.Properties.FirstOrDefault(p => p.PropertyName.StartsWith("Id")).PropertyName #>,
+                    visible: view.editVisible
+                },
+                {
+                    action: 'delete',
+                    attrs: { 'data-delete-url': view.deleteUrl + '?id=' + full.<#= ModelMetadata.Properties.FirstOrDefault(p => p.PropertyName.StartsWith("Id")).PropertyName #> },
+                    visible: view.deleteVisible
+                },
+            ];
+        });
+
+        $('#dataTable').DataTable({
+            ajax: {
+                "url": view.pageDataUrl,
+                "type": "POST",
+                "data": function (data) {
+                    dart.dataTables.saveFilterToData(data);
+                }
+            },
+            initComplete: function (settings, json) {
+                dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
+            },
+            stateSaveParams: function (settings, data) {
+                dart.dataTables.saveFilterToData(data);
+            },
+            stateLoadParams: function (settings, data) {
+                dart.dataTables.loadFilterFromData(data);
+            },
+            columns: [
+                // TODO: Todas as proriedades da classe <#= ViewDataTypeShortName #>ListItemViewModel devem estar listadas aqui 
+                { data: '<#= ModelMetadata.Properties.FirstOrDefault(p => p.PropertyName.StartsWith("Id")).PropertyName #>' },
+                actionsColumn
+            ]
+        });
+
+        // Delete
+        $('#dataTable').on('click', '[data-delete-url]', function () {
+
+            var deleteUrl = $(this).attr('data-delete-url');
+            var $table = $(this).closest('table');
+
+            dart.modalAjaxDelete.open({
+                deleteUrl: deleteUrl,
+                onConfirm: function () {
+                    $table.DataTable().ajax.reload(null, false);
+                }
+            });
+        });
+
+        dart.dataTables.loadFormFilterEvents();
+
+    })();
+    @* FIM JAVASCRIPT *@
+}
+
+<!-- title -->
+<div class="page-title">
+    <div class="title">
+        <h3>@ViewBag.Title</h3>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","BOHome")">@Resources.CommonStrings.HomeMenuItem</a></li>     
+        <li class="active"> @* TODO: Colocar nome do menu da tela *@ </li>
+        <li class="active"><#= ViewDataTypeShortName #></li>
+    </ol>
+</div>
+<!-- /title -->
+<!-- filter -->
+<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2 class="collapse-link">
+                <i class="fa fa-chevron-down fa-fw"></i> @Resources.CommonStrings.FilterHeader
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content" style="display: block;">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 form-group">
+                    @* Coloque aqui seus campos de filtro *@
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 form-buttons">
+                    <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
+                    <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- /filter -->
+<!-- table -->
+<div class="row">
+    <div class="col-xs-12">
+        <div class="x_panel">
+            <!-- panel-title -->
+            <div class="x_title">
+                <h2>Lista</h2>
+                @if (User.HasPermission(Permissions.<#= ViewDataTypeShortName #>.Create)) 
+                {
+                    <div class="nav navbar-right panel_toolbox">
+                        <a class="btn btn-primary btn-dt-action" href="@Url.Action("Create")"><i class="fa fa-fw fa-plus"></i> @Resources.CommonStrings.CreateAction </a>
+                    </div>
+                }
+                <div class="clearfix"></div>
+            </div>
+            <!-- /panel-title -->
+            <!-- panel-content -->
+            <div class="x_content">
+                <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.<#= ModelMetadata.Properties.FirstOrDefault(p => p.PropertyName.StartsWith("Id")).PropertyName #>)</th>
+                            @* TODO: Todas as propriedades da classe <#= ViewDataTypeShortName #>ListItemViewModel devem estar aqui *@
+                            <th>@Resources.CommonStrings.ActionsLabel</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <!-- /panel-content -->
+        </div>
+    </div>
+</div>
+<!-- /table -->
+
+<#@ include file="ModelMetadataFunctions.cs.include.t4" #>

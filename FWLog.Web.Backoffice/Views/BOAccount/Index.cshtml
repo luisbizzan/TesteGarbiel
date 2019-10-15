@@ -1,0 +1,112 @@
+﻿@model FWLog.Web.Backoffice.Models.BOAccountCtx.BOAccountListViewModel
+@using Res = Resources.BOAccountStrings
+@using FWLog.AspNet.Identity
+
+@{
+    ViewBag.Title = Res.IndexPageTitle;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+            detailsUrl = Url.Action("Details"),
+            detailsVisible = User.HasPermission(Permissions.BOAccount.List),
+            editUrl = Url.Action("Edit"),
+            editVisible = User.HasPermission(Permissions.BOAccount.Edit),
+            deleteUrl = Url.Action("AjaxDelete"),
+            deleteVisible = User.HasPermission(Permissions.BOAccount.Delete),
+            resetPassUrl = Url.Action("AjaxResetPassword"),
+            resetPassVisible = User.HasPermission(Permissions.BOAccount.Edit),
+            unlockUrl = Url.Action("AjaxUnlock"),
+            unlockVisible = User.HasPermission(Permissions.BOAccount.Edit),
+            pageDataUrl = Url.Action("PageData", "BOAccount"),
+            unlockMassUrl = Url.Action("AjaxMassUnlock"),
+            deleteMassUrl = Url.Action("AjaxMassDelete"),
+            deleteModalTitle = Res.DeleteModalTitle,
+            deleteModalMessage = Res.DeleteModalMessage,
+            resetPasswordModalTitle = Res.ResetPasswordModalTitle,
+            resetPasswordModalMessage = Res.ResetPasswordModalMessage,
+            resetPasswordAction = Res.ResetPasswordAction,
+            unlockModalTitle = Res.UnlockModalTitle,
+            unlockModalMessage = Res.UnlockModalMessage,
+            unlockAction = Res.UnlockAction,
+            deleteAction = Res.DeleteAction,
+            deleteMassModalMessage = Res.DeleteMassModalMessage,
+            unlockMassModalMessage = Res.UnlockMassModalMessage
+        }
+    )
+}
+
+<!-- title -->
+<div class="page-title">
+    <div class="title">
+        <h3>@ViewBag.Title</h3>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="@Url.Action("Index","BOHome")">@Resources.CommonStrings.HomeMenuItem</a></li>
+        <li class="active">@Resources.CommonStrings.UserMenuGroup</li>
+        <li class="active">@Resources.CommonStrings.BOAccountMenuItem</li>
+    </ol>
+</div>
+<!-- /title -->
+<!-- filter -->
+<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2 class="collapse-link">
+                <i class="fa fa-chevron-down fa-fw"></i> @Resources.CommonStrings.FilterHeader
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content" style="display: block;">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 form-group">
+                    @Html.LabelFor(m => m.Filter.UserName)
+                    @Html.TextBoxFor(m => m.Filter.UserName, new { @class = "form-control", data_field = "UserName" })
+                </div>
+                <div class="col-xs-12 col-sm-6 form-group">
+                    @Html.LabelFor(m => m.Filter.Email)
+                    @Html.TextBoxFor(m => m.Filter.Email, new { @class = "form-control", data_field = "Email" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 form-buttons">
+                    <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
+                    <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- /filter -->
+<!-- table -->
+<div class="x_panel">
+    <!-- panel-title -->
+    <div class="x_title">
+        <h2>@Resources.CommonStrings.ListHeader</h2>
+        <div class="nav navbar-right panel_toolbox">
+            @if (User.HasPermission(Permissions.BOAccount.Create))
+            {
+                <a class="btn btn-primary btn-dt-action" href="@Url.Action("Create")"><i class="fa fa-fw fa-plus"></i> @Resources.CommonStrings.CreateAction</a>
+            }
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <!-- /panel-title -->
+    <!-- panel-content -->
+    <div class="x_content">
+        <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(m => m.EmptyItem.UserName)</th>
+                    <th>@Html.DisplayNameFor(m => m.EmptyItem.Email)</th>
+                    <th>@Resources.CommonStrings.ActionsLabel</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <!-- /panel-content -->
+</div>
+<!-- /table -->
