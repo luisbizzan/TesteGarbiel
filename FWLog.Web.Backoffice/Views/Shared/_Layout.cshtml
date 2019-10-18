@@ -7,6 +7,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@ViewBag.Title</title>
+    <script>
+        var HOST_URL = "@HtmlRequestHelper.Host()"
+        var CONTROLLER_PATH = "@( HtmlRequestHelper.Controller() + '/')"
+    </script>
     @Styles.Render("~/style-bundles/vendors/nprogress")
     @Styles.Render("~/style-bundles/vendors/dropzone")
     @Styles.Render("~/style-bundles/bootstrap")

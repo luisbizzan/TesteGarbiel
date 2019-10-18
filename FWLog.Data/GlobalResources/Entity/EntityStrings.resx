@@ -297,4 +297,13 @@
   <data name="AspNetUsers_UserName" xml:space="preserve">
     <value>Nome de Usuário</value>
   </data>
+  <data name="CompanyName" xml:space="preserve">
+    <value>RazãoSocial</value>
+  </data>
+  <data name="IdCompany" xml:space="preserve">
+    <value>Código da Empresa</value>
+  </data>
+  <data name="Initials" xml:space="preserve">
+    <value>Sigla</value>
+  </data>
 </root>

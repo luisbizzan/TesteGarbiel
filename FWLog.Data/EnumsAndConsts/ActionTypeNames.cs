@@ -1,4 +1,4 @@
-﻿using FWLog.Data.GlobalResources.General;
+﻿using Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;

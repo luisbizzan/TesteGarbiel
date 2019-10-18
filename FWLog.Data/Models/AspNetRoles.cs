@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Data
 {
-    public partial class AspNetRoles
+    public class AspNetRoles
     {
         public AspNetRoles()
         {
-            this.AspNetUsers = new HashSet<AspNetUsers>();
+            AspNetUsers = new HashSet<AspNetUsers>();
         }
 
         [Key]

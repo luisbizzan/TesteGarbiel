@@ -2,7 +2,7 @@
 
 namespace FWLog.Data
 {
-    public partial class AspNetPermissions
+    public class AspNetPermissions
     {
         [Key]
         public string Id { get; set; }

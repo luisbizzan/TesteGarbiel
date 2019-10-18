@@ -16,6 +16,9 @@ using System.Web.Mvc;
 using System.Web.Security;
 using Res = Resources.BOAccountBaseStrings;
 using FWLog.Data.Models;
+using FWLog.Web.Backoffice.EnumsAndConsts;
+using System.Collections.Generic;
+using FWLog.Data.Models.GeneralCtx;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -213,23 +216,29 @@ namespace FWLog.Web.Backoffice.Controllers
 
             try
             {
+                int companyId = CompanyId != null ? CompanyId.Value : _uow.CompanyRepository.FirstCompany(applicationUser.Id);
+                
+                //TODO Lançar esse erro por falta de empresa relacionado ao usuário
+
                 var applicationSession = new ApplicationSession
                 {
                     IdAspNetUsers = applicationUser.Id,
                     IdApplication = applicationUser.ApplicationId,
                     DataLogin = DateTime.Now,
-                    DataUltimaAcao = DateTime.Now
+                    DataUltimaAcao = DateTime.Now,
+                    CompanyId = companyId
                 };
 
                 _uow.ApplicationSessionRepository.Add(applicationSession);
                 _uow.SaveChanges();
 
                 applicationUser.IdApplicationSession = applicationSession.IdApplicationSession;
-                //applicationUser.IdCompany = 3;
-
+                
+                CookieSaveCompany(companyId);
+                
                 UserManager.Update(applicationUser);
             }
-            catch { }
+            catch (Exception e) {  }
         }
     }
 }

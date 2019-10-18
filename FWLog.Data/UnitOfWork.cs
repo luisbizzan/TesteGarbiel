@@ -20,6 +20,12 @@ namespace FWLog.Data
         private ApplicationLanguageRepository _applicationLanguageRepository;
         private ApplicationLogRepository _applicationLogRepository;
         private ApplicationSessionRepository _applicationSessionRepository;
+        private CompanyRepository _companyRepository;
+
+        public CompanyRepository CompanyRepository
+        {
+            get => _companyRepository ?? (_companyRepository = new CompanyRepository(_context));
+        }
 
         public BOLogSystemRepository BOLogSystemRepository
         {

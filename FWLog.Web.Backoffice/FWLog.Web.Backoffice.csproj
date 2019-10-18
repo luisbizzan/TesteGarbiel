@@ -226,15 +226,18 @@
     <Compile Include="App_Start\NinjectModules\GeneralModule.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
+    <Compile Include="Controllers\CompanyController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="EnumsAndConsts\CompanyCookie.cs" />
     <Compile Include="GlobalResources\SpecialFolders\Permission\PermissionStrings.Designer.cs">
       <DependentUpon>PermissionStrings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Helpers\ApplicationAuthorize.cs" />
+    <Compile Include="Helpers\HtmlRequestHelper.cs" />
     <Compile Include="Startup.cs" />
     <Content Include="Content\dart\dart-template.css">
       <DependentUpon>dart-template.scss</DependentUpon>
@@ -243,6 +246,7 @@
       <DependentUpon>dart-template.css</DependentUpon>
     </Content>
     <Content Include="Scripts\dart\autoComplete.js" />
+    <Content Include="Scripts\dart\company.js" />
     <Content Include="Scripts\dart\documentReady.js" />
     <Content Include="Scripts\dart\dropzoneImageCropper.js" />
     <None Include="Content\dart\dart-template.scss" />
@@ -364,6 +368,7 @@
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
+    <Content Include="Views\Shared\_ChangeCompany.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
@@ -614,6 +619,8 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
+    <Folder Include="Models\CompanyCtx\" />
+    <Folder Include="Views\Company\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

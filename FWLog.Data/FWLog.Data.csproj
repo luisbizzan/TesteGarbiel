@@ -90,11 +90,6 @@
       <DependentUpon>MailStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="Logging\LogAttribute.cs" />
-    <Compile Include="Metadata\ApplicationLogMetadata.cs" />
-    <Compile Include="Metadata\ApplicationMetadata.cs" />
-    <Compile Include="Metadata\AspNetRolesMetadata.cs" />
-    <Compile Include="Metadata\AspNetUsersMetadata.cs" />
-    <Compile Include="Metadata\BOLogSystemMetadata.cs" />
     <Compile Include="Models\Application.cs" />
     <Compile Include="Models\ApplicationSession.cs" />
     <Compile Include="Models\BOLogSystem.cs" />
@@ -102,6 +97,9 @@
     <Compile Include="Models\AspNetPermissions.cs" />
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
+    <Compile Include="Models\GeneralCtx\CompanySelectedItem.cs" />
+    <Compile Include="Models\UserCompany.cs" />
+    <Compile Include="Models\Company.cs" />
     <Compile Include="Models\FilterCtx\ApplicationLogFilter.cs" />
     <Compile Include="Models\FilterCtx\BOLogSystemFilter.cs" />
     <Compile Include="Models\FilterCtx\DataTableFilter.cs" />
@@ -125,6 +123,7 @@
     <Compile Include="Repository\CommonCtx\BaseRepository.cs" />
     <Compile Include="Repository\CommonCtx\CacheRepository.cs" />
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\CompanyRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ApplicationSessionRepository.cs" />
     <Compile Include="Resources\Mail\MailResource.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -152,10 +151,12 @@
     <EmbeddedResource Include="GlobalResources\Entity\EntityStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>EntityStrings.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Resources</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Include="GlobalResources\General\GeneralStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>GeneralStrings.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Resources</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Include="GlobalResources\Mail\MailStrings.en.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

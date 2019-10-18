@@ -172,8 +172,14 @@ namespace FWLog.Web.Backoffice
             var userManager = HttpContext.Current.GetOwinContext().GetUserManager<BackofficeUserManager>();
             var user = (ClaimsPrincipal)User;
 
+            var companyId = 0;
+            if (Request.Cookies[CompanyCookie.CookieName] != null && Request.Cookies[CompanyCookie.CookieName][CompanyCookie.CompanyId] != null)
+            {
+                companyId = Convert.ToInt32(Request.Cookies[CompanyCookie.CookieName][CompanyCookie.CompanyId]);
+            }
+
             string userId = user.Identity.GetUserId();
-            IList<string> permissions = await userManager.GetPermissionsAsync(userId);//Alterar aqui
+            IList<string> permissions = await userManager.GetPermissionsAsync(userId, companyId);
             HttpContext.Current.User = new ApplicationClaimsPrincipal(user, permissions); 
         }
     }

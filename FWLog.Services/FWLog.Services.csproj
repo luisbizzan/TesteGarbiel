@@ -59,6 +59,7 @@
     <Reference Include="System.ComponentModel.Primitives, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ComponentModel.Primitives.4.3.0\lib\net45\System.ComponentModel.Primitives.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
@@ -80,6 +81,10 @@
       <DependentUpon>GeneralStrings.resx</DependentUpon>
     </Compile>
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
+    <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
+    <Compile Include="Model\TokenErrrorResponse.cs" />
+    <Compile Include="Model\TokenResponse.cs" />
+    <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\PasswordService.cs" />
     <Compile Include="Services\BOAccountService.cs" />
     <Compile Include="Services\BOLogSystemService.cs" />

@@ -4,14 +4,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Data
 {
-    public partial class BOLogSystem
+    public class BOLogSystem
     {
         [Key]
         public long IdBOLogSystem { get; set; }
         public string UserId { get; set; }
         public string ActionType { get; set; }
         public string IP { get; set; }
-        public System.DateTime ExecutionDate { get; set; }
+        public DateTime ExecutionDate { get; set; }
         public string Entity { get; set; }
         public string OldEntity { get; set; }
         public string NewEntity { get; set; }

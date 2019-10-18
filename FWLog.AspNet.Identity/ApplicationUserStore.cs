@@ -443,21 +443,20 @@ namespace FWLog.AspNet.Identity
 
         // Custom implementation
 
-        public Task<IList<string>> GetPermissionsAsync(ApplicationUser user)
+        public Task<IList<string>> GetPermissionsAsync(ApplicationUser user, int? companyId = null)//TODO retirar nullable depois de ajustar api
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            IList<string> roleIds = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == 7).Select(s => s.RoleId).ToList();//TODO Ajustar
+            IList<string> roleIds = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == companyId).Select(s => s.RoleId).ToList();
             IList<string> permissions = db.Users
                 .Where(x => x.Id == user.Id && x.ApplicationId == this.appId)
                 .SelectMany(x => x.Permissions.Select(y => y.Permission.Name))
                 .Union(
                     db.Roles
                     .Where(w => roleIds.Contains(w.Id))
-                    //.Where(x => x.Users.Any(y => y.UserId == user.Id))
                     .SelectMany(x => x.RolePermissions.Select(y => y.Permission.Name))
                 )
                 .ToList();
@@ -471,7 +470,7 @@ namespace FWLog.AspNet.Identity
 
             user.ApplicationId = this.appId;
 
-            IList<UserRole> userRoles = this.db.Roles                 
+            IList<UserRole> userRoles = this.db.Roles
                 .Where(x => x.ApplicationId == this.appId && roles.Contains(x.Name))
                 .ToList()
                 .Select(x => new UserRole { RoleId = x.Id, UserId = user.Id, CompanyId = companyId })

@@ -1,5 +1,4 @@
 ﻿using FWLog.Data.EnumsAndConsts;
-using FWLog.Data.GlobalResources.Entity;
 using FWLog.Data.Logging;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
@@ -13,13 +12,11 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Data.Entity.Core.Metadata.Edm;
-using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using Res = FWLog.Data.GlobalResources.General.GeneralStrings;
-using FWLog.Data.Models;
+using Res = Resources.GeneralStrings;
 
 namespace FWLog.Data.Repository.BackofficeCtx
 {

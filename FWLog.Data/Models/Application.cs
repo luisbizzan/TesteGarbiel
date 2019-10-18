@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Data
 {
-    public partial class Application
+    public class Application
     {
         public Application()
         {
-            this.AspNetRoles = new HashSet<AspNetRoles>();
-            this.AspNetUsers = new HashSet<AspNetUsers>();
-            this.ApplicationSession = new HashSet<ApplicationSession>();
-            this.AspNetPermissions = new HashSet<AspNetPermissions>();
+            AspNetRoles = new HashSet<AspNetRoles>();
+            AspNetUsers = new HashSet<AspNetUsers>();
+            ApplicationSession = new HashSet<ApplicationSession>();
+            AspNetPermissions = new HashSet<AspNetPermissions>();
         }
 
         [Key]

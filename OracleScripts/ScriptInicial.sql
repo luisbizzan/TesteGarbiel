@@ -107,7 +107,7 @@ CREATE TABLE "AspNetUserRoles" (
   "UserId" VARCHAR2(128) NOT NULL,
   "RoleId" VARCHAR2(128) NOT NULL,
   "CompanyId" NUMBER NOT NULL,
-  PRIMARY KEY ("UserId", "RoleId", "CompanyId")
+  PRIMARY KEY ("UserId", "RoleId", "IdCompany")
 ) ;
 
 CREATE INDEX IdentityRole_Users ON "AspNetUserRoles" ("RoleId");
@@ -234,10 +234,55 @@ BEGIN
 END;
 /
 
-
-
 -- Constraints for table AspNetUser
 ALTER TABLE "AspNetUsers"
 	ADD CONSTRAINT ApplicationSession_Users FOREIGN KEY ("IdApplicationSession") REFERENCES "ApplicationSession" ("IdApplicationSession") ON DELETE CASCADE;
+
+GO
+
+CREATE TABLE "Company" (
+	"CompanyId" NUMBER(10) NOT NULL,
+	"CompanyName" VARCHAR2(500) NOT NULL,		
+	"Initials" VARCHAR2(2) NOT NULL,
+	PRIMARY KEY ("CompanyId")	
+) ;
+
+CREATE SEQUENCE Company_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER Company_seq_tr
+ BEFORE INSERT ON "Company" FOR EACH ROW
+ WHEN (NEW."CompanyId" IS NULL)
+BEGIN
+ SELECT Company_seq.NEXTVAL INTO :NEW."CompanyId" FROM DUAL;
+END;
+
+INSERT INTO "Company" ("CompanyName", "Initials") VALUES ('FW-Matriz', 'FW');
+INSERT INTO "Company" ("CompanyName", "Initials") VALUES ('Ribeirão Preto', 'RB');
 	
+
+ALTER TABLE "AspNetUserRoles"
+	ADD CONSTRAINT IdentityRole_Company_Delete FOREIGN KEY ("CompanyId") REFERENCES "Company" ("CompanyId") ON DELETE CASCADE;
+
+
+CREATE TABLE "UserCompany" (
+  "UserId" VARCHAR2(128) NOT NULL, 
+  "CompanyId" NUMBER NOT NULL,
+  PRIMARY KEY ("UserId", "CompanyId")
+) ;
+
+ALTER TABLE "UserCompany" ADD CONSTRAINT UserCompany_AspNetUsers FOREIGN KEY ("UserId") REFERENCES "AspNetUsers" ("Id");
+
+ALTER TABLE "UserCompany" ADD CONSTRAINT UserCompany_Company FOREIGN KEY ("CompanyId") REFERENCES "Company" ("CompanyId"); 
+
+ALTER TABLE "ApplicationSession" ADD "CompanyId" NUMBER(10) NOT NULL;
+
+ALTER TABLE "ApplicationSession" ADD CONSTRAINT ApplicationSession_Company FOREIGN KEY ("CompanyId") REFERENCES "Company" ("CompanyId"); 
+
+
+CREATE TABLE "UserProfile"
+  "UserProfileId" NUMBER(10) NOT NULL, 
+  "UserId" VARCHAR2(128) NOT NULL, 
+  "CompanyId" NUMBER NOT NULL,
+  PRIMARY KEY ("UserProfile")
+) ;
 

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Resources {
+namespace FWLog.Web.Api.GlobalResources {
     using System;
     
     
@@ -22,24 +22,24 @@ namespace Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class GeneralStrings {
+    internal class AccountResource {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal GeneralStrings() {
+        internal AccountResource() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FWLog.Data.GlobalResources.General.GeneralStrings", typeof(GeneralStrings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FWLog.Web.Api.GlobalResources.AccountResource", typeof(AccountResource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,65 +61,56 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Adicionar.
+        ///   Looks up a localized string similar to O e-mail do usuário deve ser informado para recuperação da senha..
         /// </summary>
-        public static string ActionTypeNameAdd {
+        internal static string EmailRequired {
             get {
-                return ResourceManager.GetString("ActionTypeNameAdd", resourceCulture);
+                return ResourceManager.GetString("EmailRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Excluir.
+        ///   Looks up a localized string similar to Usuário ou senha inválidos..
         /// </summary>
-        public static string ActionTypeNameDelete {
+        internal static string InvalidUserOrPassword {
             get {
-                return ResourceManager.GetString("ActionTypeNameDelete", resourceCulture);
+                return ResourceManager.GetString("InvalidUserOrPassword", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Editar.
+        ///   Looks up a localized string similar to A senha deve ser informada..
         /// </summary>
-        public static string ActionTypeNameEdit {
+        internal static string PasswordRequired {
             get {
-                return ResourceManager.GetString("ActionTypeNameEdit", resourceCulture);
+                return ResourceManager.GetString("PasswordRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Máximo {1} dígitos..
+        ///   Looks up a localized string similar to O usuário está bloqueado para acessar o aplicativo..
         /// </summary>
-        public static string InvalidMaxLenght {
+        internal static string UserLockedOut {
             get {
-                return ResourceManager.GetString("InvalidMaxLenght", resourceCulture);
+                return ResourceManager.GetString("UserLockedOut", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Não.
+        ///   Looks up a localized string similar to O usuário não tem permissão para acessar o aplicativo..
         /// </summary>
-        public static string No {
+        internal static string UserNameRequired {
             get {
-                return ResourceManager.GetString("No", resourceCulture);
+                return ResourceManager.GetString("UserNameRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} é obrigatório..
+        ///   Looks up a localized string similar to O usuário não tem permissão para acessar o aplicativo..
         /// </summary>
-        public static string Required {
+        internal static string UserPermissionDenied {
             get {
-                return ResourceManager.GetString("Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sim.
-        /// </summary>
-        public static string Yes {
-            get {
-                return ResourceManager.GetString("Yes", resourceCulture);
+                return ResourceManager.GetString("UserPermissionDenied", resourceCulture);
             }
         }
     }

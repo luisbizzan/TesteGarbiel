@@ -191,9 +191,19 @@
     <Compile Include="App_Start\NinjectDependencyResolver.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\ApiBaseController.cs" />
-    <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="EnumsAndConsts\App.cs" />
+    <Compile Include="GlobalResources\AccountResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AccountResource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\ApiErrorBuilder.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
+    <Compile Include="Models\Account\PermissionsModelResponse.cs" />
+    <Compile Include="Models\Account\RecoverPasswordModelRequest.cs" />
+    <Compile Include="Models\Account\LoginModelResponse.cs" />
+    <Compile Include="Models\Account\LoginModelRequest.cs" />
     <Compile Include="Models\ApiErrorModelResponse.cs" />
     <Compile Include="Models\TestCtx\TestCreateRequest.cs" />
     <Compile Include="Models\TestCtx\TestCreateResponse.cs" />
@@ -233,6 +243,10 @@
     <Folder Include="Security\" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="GlobalResources\AccountResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AccountResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="GlobalResources\General\GeneralStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>GeneralStrings.Designer.cs</LastGenOutput>

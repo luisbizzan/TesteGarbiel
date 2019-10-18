@@ -81,6 +81,7 @@ namespace FWLog.Web.Api.Helpers
 
             actionContext.ControllerContext.RequestContext.Principal = customUser;
             Thread.CurrentPrincipal = customUser;
+            //TODO verificar como pegar idempresa da requisição
         }
     }
 }

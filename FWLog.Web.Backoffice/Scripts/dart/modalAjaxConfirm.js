@@ -9,7 +9,7 @@
             $modal.remove();
         };
 
-        var getHtml = function (title, message, confirmEvent, confirmText, cancelText) {
+        var getHtml = function (title, message, confirmEvent, confirmText, cancelText, cancelEvent) {
 
             var container = $('<div/>', { 'class': 'modal fade', 'role': 'dialog' });
 
@@ -24,7 +24,7 @@
                 .append($('<p/>', { 'text': message }));
 
             var footer = $('<div/>', { 'class': 'modal-footer' })
-                .append($('<button/>', { 'type': 'button', 'class': 'btn btn-default', 'data-dismiss': 'modal', 'style': 'min-width:125px', 'text': cancelText }))
+                .append($('<button/>', { 'type': 'button', 'class': 'btn btn-default', 'data-dismiss': 'modal', 'style': 'min-width:125px', 'text': cancelText, 'click': cancelEvent }))
                 .append($('<button/>', { 'type': 'button', 'class': 'btn btn-primary', 'style': 'min-width:125px', 'text': confirmText, 'click': confirmEvent }));
 
             var complete = container.append(
@@ -62,6 +62,7 @@
             var title = options.title || resources.get("ConfirmTitle");
             var message = options.message || resources.get("ActionConfirmationMessage");            
             var onConfirm = options.onConfirm || function () { };
+            var onCancel = options.onCancel || function () { };
             var confirmText = options.confirmText || resources.get("ConfirmAction");
             var cancelText = options.cancelText || resources.get("CancelAction");            
 
@@ -70,7 +71,12 @@
                 postUrl(options.url, onConfirm);
             };
 
-            var $modal = getHtml(title, message, confirmEvent, confirmText, cancelText).appendTo('body');
+            var cancelEvent = function () {
+                $modal.modal('hide');
+                onCancel();
+            };
+
+            var $modal = getHtml(title, message, confirmEvent, confirmText, cancelText, cancelEvent).appendTo('body');
 
             $modal.modal('show');
         };   

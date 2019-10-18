@@ -16,7 +16,7 @@ namespace FWLog.Web.Backoffice.Mapping
 
             CreateMap<ApplicationUser, ApplicationUser>();
 
-            CreateMap<ApplicationUser, BOAccountCreateViewModel>(); // TODO: Implementar IsApproved em Create, Edit e Details. Ou remover checkbox inativo.
+            CreateMap<ApplicationUser, BOAccountCreateViewModel>(); 
 
             CreateMap<ApplicationUser, BOAccountEditViewModel>();
 

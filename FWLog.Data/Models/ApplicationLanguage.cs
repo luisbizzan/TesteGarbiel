@@ -2,7 +2,7 @@
 
 namespace FWLog.Data
 {
-    public partial class ApplicationLanguage
+    public class ApplicationLanguage
     {
         [Key]
         public int IdApplicationLanguage { get; set; }
