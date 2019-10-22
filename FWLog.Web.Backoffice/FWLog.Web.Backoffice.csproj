@@ -226,11 +226,18 @@
     <Compile Include="App_Start\NinjectModules\GeneralModule.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
+    <Compile Include="Controllers\BORecebimentoNotaController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="EnumsAndConsts\CompanyCookie.cs" />
+    <Compile Include="EnumsAndConsts\StatusNotaRecebimento.cs" />
+    <Compile Include="GlobalResources\BORecebimentoNota\BORecebimentoNotaStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BORecebimentoNotaStrings.resx</DependentUpon>
+    </Compile>
     <Compile Include="GlobalResources\SpecialFolders\Permission\PermissionStrings.Designer.cs">
       <DependentUpon>PermissionStrings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -238,6 +245,7 @@
     </Compile>
     <Compile Include="Helpers\ApplicationAuthorize.cs" />
     <Compile Include="Helpers\HtmlRequestHelper.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Startup.cs" />
     <Content Include="Content\dart\dart-template.css">
       <DependentUpon>dart-template.scss</DependentUpon>
@@ -369,6 +377,7 @@
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
     <Content Include="Views\Shared\_ChangeCompany.cshtml" />
+    <Content Include="Views\BORecebimentoNota\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
@@ -406,7 +415,7 @@
     <Content Include="Content\vendors\nprogress\nprogress.css" />
     <Content Include="Content\vendors\pnotify\pnotify.custom.min.css" />
     <Content Include="Global.asax" />
-    <Content Include="Content\Site.css" />
+    <Content Include="Content\site.css" />
     <Content Include="Scripts\bootstrap\bootstrap.js" />
     <Content Include="Scripts\bootstrap\bootstrap.min.js" />
     <Content Include="Scripts\dart\cropManager.js" />
@@ -663,6 +672,11 @@
     <EmbeddedResource Include="GlobalResources\BOLogSystem\BOLogSystemStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>BOLogSystemStrings.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Resources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GlobalResources\BORecebimentoNota\BORecebimentoNotaStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>BORecebimentoNotaStrings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Include="GlobalResources\Common\CommonStrings.resx">
