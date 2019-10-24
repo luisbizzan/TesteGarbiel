@@ -9,6 +9,7 @@ namespace FWLog.Web.Api.Models.Account
         public string UserName { get; set; }
         [Required(ErrorMessageResourceName = nameof(AccountResource.PasswordRequired), ErrorMessageResourceType = typeof(AccountResource))]
         public string Password { get; set; }
+        [Required(ErrorMessageResourceName = nameof(AccountResource.PasswordRequired), ErrorMessageResourceType = typeof(AccountResource))]
         public int CompanyId { get; set; }
     }
 }

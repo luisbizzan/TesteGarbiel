@@ -213,4 +213,7 @@
   <data name="SendAction" xml:space="preserve">
     <value>Enviar</value>
   </data>
+  <data name="ChangeCompanySuccess" xml:space="preserve">
+    <value>Empresa alterada com sucesso.</value>
+  </data>
 </root>

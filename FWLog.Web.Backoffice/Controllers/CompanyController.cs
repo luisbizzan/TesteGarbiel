@@ -1,9 +1,6 @@
 ﻿using FWLog.Data;
-using FWLog.Data.Models;
-using FWLog.Data.Models.GeneralCtx;
 using FWLog.Web.Backoffice.Helpers;
-using System.Collections.Generic;
-using System.Linq;
+using FWLog.Web.Backoffice.Models.CommonCtx;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -28,16 +25,21 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_ChangeCompany");
         }
 
-
-        public void ChangeCompany(int companyId)
-        {
-            if (CompanyId == companyId)
-            {
-                return;
-            }
-
-            var userInfo = new BackOfficeUserInfo();           
+        public JsonResult ChangeCompany(int companyId)
+        {           
+            var userInfo = new BackOfficeUserInfo();
             CookieSaveCompany(companyId);
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = Resources.CommonStrings.ChangeCompanySuccess
+            }, JsonRequestBehavior.DenyGet);
+        }
+
+        public int GetCompanyId()
+        {
+            return CompanyId;
         }
     }
 }

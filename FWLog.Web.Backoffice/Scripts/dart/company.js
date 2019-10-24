@@ -1,19 +1,21 @@
-﻿$(function () {  
-    $("#OldCompanyId").val($('#ddlCompany').val());
+﻿$(function () {
+
+    GetCompanyId();
 
     $('#ddlCompany').change(function (e) {
         dart.modalAjaxConfirm.open({
             title: 'Empresa',
             message: "Deseja realmente mudar a empresa?",
-            url: HOST_URL + "Company/ChangeCompany?companyId=" + $('#ddlCompany').val()            
+            url: HOST_URL + "Company/ChangeCompany?companyId=" + $('#ddlCompany').val(),
+            onCancel: cancelChangeCompany
         });
-    });    
+    });
 });
 
-//Ajustar para cancelar.
+var cancelChangeCompany = GetCompanyId;
 
-function ChangeEmpresa() {
-    $.post(HOST_URL + "Company/ChangeCompany", { id: $("#ddlCompany").val() }, function (result) {
-        location.reload();
+function GetCompanyId() {
+    $.post(HOST_URL + "Company/GetCompanyId", function (result) {
+        $("#ddlCompany").val(result);
     });
 }

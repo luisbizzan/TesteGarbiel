@@ -29,9 +29,7 @@ namespace FWLog.Web.Api
             {
                 var managers = new Managers { UserManager = userManager, RoleManager = roleManager };
 
-                CreatePermissions(managers);
-                CreateTestRole(managers);
-                CreateTestUser(managers);
+                CreatePermissions(managers);                
 
                 // Adicione aqui todas as roles, usuários, etc que forem necessários.
             }
@@ -41,31 +39,7 @@ namespace FWLog.Web.Api
         {
             Permissions permissions = new Permissions();
             PermissionManager.CreatePermissionsIfNotExists(builder: permissions, roleManager: managers.RoleManager);
-        }
-
-        static void CreateTestRole(Managers managers)
-        {
-            //var role = new ApplicationRole("Test");
-
-            //string[] permissions = new string[]
-            //{
-            //    Permissions.Test.Create,
-            //    Permissions.Test.Edit,
-            //    Permissions.Test.Delete,
-            //    Permissions.Test.List
-            //};
-
-            //PermissionManager.CreateRoleIfNotExists(role, permissions, managers.RoleManager);
-        }
-
-        static void CreateTestUser(Managers managers)
-        {
-            string email = "teste@dartdigital.com.br";
-            var user = new ApplicationUser { Email = email, UserName = email };
-
-            PermissionManager.CreateUserIfNotExists(user, "123teste", "Test", managers.UserManager, managers.RoleManager);
-        }
-
+        }          
 
         private class Managers
         {

@@ -241,7 +241,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             ApplicationUser oldUser = Mapper.Map<ApplicationUser>(user);
             user.Email = model.Email;
-            IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, 7);
+            IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, CompanyId);
 
             if (!result.Succeeded)
             {

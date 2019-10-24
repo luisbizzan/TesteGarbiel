@@ -216,7 +216,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             try
             {
-                int companyId = CompanyId != null ? CompanyId.Value : _uow.CompanyRepository.FirstCompany(applicationUser.Id);
+                int companyId = CompanyId != 0 ? CompanyId : _uow.CompanyRepository.FirstCompany(applicationUser.Id);
                 
                 //TODO Lançar esse erro por falta de empresa relacionado ao usuário
 

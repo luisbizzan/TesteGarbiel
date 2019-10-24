@@ -77,19 +77,19 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 var cookie = new HttpCookie(CompanyCookie.CookieName);
                 cookie.Values[CompanyCookie.CompanyId] = companyId.ToString();
-                cookie.Values[CompanyCookie.ListCompanies] = jsonCompanies;
+                cookie.Values[CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
                 cookie.Expires = DateTime.UtcNow.AddHours(8);
                 Response.Cookies.Add(cookie);
             }
             else
             {
                 Response.Cookies[CompanyCookie.CookieName][CompanyCookie.CompanyId] = companyId.ToString();
-                Response.Cookies[CompanyCookie.CookieName][CompanyCookie.ListCompanies] = jsonCompanies;
+                Response.Cookies[CompanyCookie.CookieName][CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
                 Response.Cookies[CompanyCookie.CookieName].Expires = DateTime.UtcNow.AddHours(8);
             }
         }
 
-        public int? CompanyId
+        public int CompanyId
         {
             get
             {
@@ -99,9 +99,9 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
                 else
                 {
-                    return null;
+                    return 0;
                 }
-                //TODO lançar erro se não encontrar empresa?
+                //TODO lançar erro se não encontrar empresa? Ou retornar para a página de login?
             }
         }
 
@@ -111,9 +111,9 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 if (Request.Cookies[CompanyCookie.CookieName] != null && Request.Cookies[CompanyCookie.CookieName][CompanyCookie.ListCompanies] != null)
                 {
-                    var jsonCompanies = Request.Cookies[CompanyCookie.CookieName][CompanyCookie.ListCompanies].ToString();
+                    var jsonCompanies = Server.UrlDecode(Request.Cookies[CompanyCookie.CookieName][CompanyCookie.ListCompanies].ToString());
                     var companies = JsonConvert.DeserializeObject<IEnumerable<CompanySelectedItem>>(jsonCompanies);
-
+                   
                     return companies;
                 }
                 else

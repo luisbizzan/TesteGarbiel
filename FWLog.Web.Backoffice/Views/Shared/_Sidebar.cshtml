@@ -12,10 +12,7 @@
             new MenuItem { Text = Res.GroupMenuItem, Url = Url.Action("Index", "BOGroup"), RequirePermission = Permissions.Role.List },
             new MenuItem { Text = Res.ApplicationLogMenuItem, Url = Url.Action("Index", "ApplicationLog"), RequirePermission = Permissions.ApplicationLog.List },
             new MenuItem { Text = Res.BOLogSystemMenuItem, Url = Url.Action("Index", "BOLogSystem"), RequirePermission = Permissions.BOLogSystem.List }            
-        ),
-        new MenuGroup(text: "Exemplos", icon: "fa fa-codepen").SetItems(
-            new MenuItem { Text = "Upload de arquivos", Url = Url.Action("Upload", "Example") }
-        )
+        )       
     );
 }
 

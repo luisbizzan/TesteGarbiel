@@ -205,10 +205,6 @@
     <Compile Include="Models\Account\LoginModelResponse.cs" />
     <Compile Include="Models\Account\LoginModelRequest.cs" />
     <Compile Include="Models\ApiErrorModelResponse.cs" />
-    <Compile Include="Models\TestCtx\TestCreateRequest.cs" />
-    <Compile Include="Models\TestCtx\TestCreateResponse.cs" />
-    <Compile Include="Models\TestCtx\TestEditRequest.cs" />
-    <Compile Include="Models\TestCtx\TestEditResponse.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Helpers\ApplicationAuthorize.cs" />
     <Compile Include="App_Start\AutoMapperConfig.cs" />
@@ -246,10 +242,12 @@
     <EmbeddedResource Include="GlobalResources\AccountResource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AccountResource.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GlobalResources\General\GeneralStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>GeneralStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

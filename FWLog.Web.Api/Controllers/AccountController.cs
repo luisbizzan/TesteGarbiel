@@ -63,7 +63,8 @@ namespace FWLog.Web.Api.Controllers
                 DataLogin = DateTime.Now,
                 DataUltimaAcao = DateTime.Now,
                 IdApplication = 2,
-                IdAspNetUsers = applicationUser.Id
+                IdAspNetUsers = applicationUser.Id,
+                CompanyId = loginRequest.CompanyId
             };
 
             _unitOfWork.ApplicationSessionRepository.Add(applicationSession);

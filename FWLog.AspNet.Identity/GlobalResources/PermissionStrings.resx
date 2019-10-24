@@ -159,4 +159,10 @@
   <data name="RoleList" xml:space="preserve">
     <value>Listagem</value>
   </data>
+  <data name="UserApp" xml:space="preserve">
+    <value>Aplicativo</value>
+  </data>
+  <data name="UserAppLogin" xml:space="preserve">
+    <value>Login</value>
+  </data>
 </root>

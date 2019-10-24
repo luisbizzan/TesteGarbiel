@@ -24,7 +24,7 @@ namespace FWLog.Services.Services
 
             var contentString = "grant_type=password&username={0}&password={1}";
             var content = new StringContent(string.Format(contentString, userName, password), Encoding.UTF8, "application/x-www-form-urlencoded");
-            HttpResponseMessage syncResponse = await httpClient.PostAsync("api/v1/oauth/token", content);
+            HttpResponseMessage syncResponse = await httpClient.PostAsync("/api/v1/token", content);
             string responseString = await syncResponse.Content.ReadAsStringAsync();
 
             if (!syncResponse.IsSuccessStatusCode)
