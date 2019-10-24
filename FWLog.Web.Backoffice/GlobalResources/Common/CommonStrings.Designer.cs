@@ -259,6 +259,51 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Recebimento.
+        /// </summary>
+        public static string MenuRecebimento {
+            get {
+                return ResourceManager.GetString("MenuRecebimento", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Etiquetas.
+        /// </summary>
+        public static string MenuRecebimentoeEtiquetas {
+            get {
+                return ResourceManager.GetString("MenuRecebimentoeEtiquetas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notas.
+        /// </summary>
+        public static string MenuRecebimentoNotas {
+            get {
+                return ResourceManager.GetString("MenuRecebimentoNotas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quarentena.
+        /// </summary>
+        public static string MenuRecebimentoQuarentena {
+            get {
+                return ResourceManager.GetString("MenuRecebimentoQuarentena", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Relatórios.
+        /// </summary>
+        public static string MenuRecebimentoRelatorios {
+            get {
+                return ResourceManager.GetString("MenuRecebimentoRelatorios", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Registro criado com sucesso..
         /// </summary>
         public static string RegisterCreatedSuccessMessage {

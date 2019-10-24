@@ -118,7 +118,8 @@ namespace FWLog.Web.Backoffice
                 .Include("~/Content/bootstrap/bootstrap.min.css", new CssRewriteUrlTransformWrapper())
                 .Include(
                     "~/Content/gentelella/custom.css",
-                    "~/Content/dart/dart-template.css"
+                    "~/Content/dart/dart-template.css",
+                    "~/Content/site.css"
                 ));
 
             bundles.Add(new StyleBundle("~/style-bundles/vendors/pnotify").Include(
