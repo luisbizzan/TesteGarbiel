@@ -183,7 +183,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 throw new HttpException(404, "Not found");
             }
 
-            IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);//aqui
+            IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);
             var model = Mapper.Map<BOAccountEditViewModel>(user);
 
             model.Groups = Mapper.Map<List<GroupItemViewModel>>(groups);

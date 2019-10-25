@@ -22,9 +22,9 @@ namespace FWLog.AspNet.Identity
             return _appUserStore.GetPermissionsAsync(new ApplicationUser { Id = userId }, companyId);
         }
 
-        public IList<string> GetPermissions(string userId)
+        public IList<string> GetPermissions(string userId, int companyId)
         {
-            return _appUserStore.GetPermissionsAsync(new ApplicationUser { Id = userId }).Result;
+            return _appUserStore.GetPermissionsAsync(new ApplicationUser { Id = userId }, companyId).Result;
         }
 
         public async Task<IdentityResult> UpdateAsync(ApplicationUser user, IEnumerable<string> roles, int companyId)

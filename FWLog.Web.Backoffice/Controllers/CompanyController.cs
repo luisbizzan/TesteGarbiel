@@ -28,8 +28,8 @@ namespace FWLog.Web.Backoffice.Controllers
         public JsonResult ChangeCompany(int companyId)
         {           
             var userInfo = new BackOfficeUserInfo();
-            CookieSaveCompany(companyId);
-
+            CookieSaveCompany(companyId, userInfo.UserId.ToString());
+           
             return Json(new AjaxGenericResultModel
             {
                 Success = true,

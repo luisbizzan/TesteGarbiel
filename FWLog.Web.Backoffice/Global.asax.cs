@@ -135,11 +135,12 @@ namespace FWLog.Web.Backoffice
                         break;
                 }
             }
-
-            if (Request.IsLocal)
-            {
-                return;
-            }
+                        
+            //TODO retirar comentárioo
+            //if (Request.IsLocal)
+            //{
+            //    return;
+            //}
 
             Response.TrySkipIisCustomErrors = true;
 
@@ -173,9 +174,11 @@ namespace FWLog.Web.Backoffice
             var user = (ClaimsPrincipal)User;
 
             var companyId = 0;
-            if (Request.Cookies[CompanyCookie.CookieName] != null && Request.Cookies[CompanyCookie.CookieName][CompanyCookie.CompanyId] != null)
+            HttpCookie cookie = Request.Cookies[CompanyCookie.CookieName];
+
+            if (cookie != null && cookie[CompanyCookie.CompanyId] != null && cookie[CompanyCookie.CompanyId] != string.Empty)
             {
-                companyId = Convert.ToInt32(Request.Cookies[CompanyCookie.CookieName][CompanyCookie.CompanyId]);
+                companyId = Convert.ToInt32(cookie[CompanyCookie.CompanyId]);
             }
 
             string userId = user.Identity.GetUserId();

@@ -68,8 +68,17 @@ namespace FWLog.Web.Backoffice.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    await CreateApplicationSession(model.UserName);
-                    return RedirectToLocal(returnUrl);
+                    ApplicationUser applicationUser = await UserManager.FindByNameAsync(model.UserName);
+                    if (_uow.CompanyRepository.FirstCompany(applicationUser.Id) > 0)
+                    {
+                        await CreateApplicationSession(model.UserName);
+                        return RedirectToLocal(returnUrl);
+                    }
+                    else
+                    {
+                        model.ErrorMessage = Res.UserCompanyError;
+                    }
+                    break;
                 case SignInStatus.LockedOut:
                     model.ErrorMessage = await GetLogOnLockoutMessageAsync(loginAttempUtc, model.UserName);
                     break;
@@ -214,12 +223,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 return;
             }
 
+            int companyId = CompanyId != 0 ? CompanyId : _uow.CompanyRepository.FirstCompany(applicationUser.Id);
+
             try
             {
-                int companyId = CompanyId != 0 ? CompanyId : _uow.CompanyRepository.FirstCompany(applicationUser.Id);
-                
-                //TODO Lançar esse erro por falta de empresa relacionado ao usuário
-
                 var applicationSession = new ApplicationSession
                 {
                     IdAspNetUsers = applicationUser.Id,
@@ -234,11 +241,11 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 applicationUser.IdApplicationSession = applicationSession.IdApplicationSession;
                 
-                CookieSaveCompany(companyId);
-                
+                CookieSaveCompany(companyId, applicationUser.Id);
+
                 UserManager.Update(applicationUser);
             }
-            catch (Exception e) {  }
+            catch (Exception e) { }
         }
     }
 }

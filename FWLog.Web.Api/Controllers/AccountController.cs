@@ -24,7 +24,7 @@ namespace FWLog.Web.Api.Controllers
             _unitOfWork = unitOfWork;
             _accountService = accountService;
         }
-
+                
         [AllowAnonymous]
         [HttpPost]
         [Route("api/v1/account/login")]
@@ -79,7 +79,7 @@ namespace FWLog.Web.Api.Controllers
 
         [HttpGet]
         [Route("api/v1/account/permissions")]
-        public async Task<IHttpActionResult> Permissions(int companyId)
+        public async Task<IHttpActionResult> UserPermissions(int companyId)
         {
             IList<string> permissions = await UserManager.GetPermissionsAsync(User.Identity.GetUserId(), companyId);
 

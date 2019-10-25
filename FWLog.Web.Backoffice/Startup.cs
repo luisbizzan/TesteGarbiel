@@ -52,7 +52,7 @@ namespace Identity
             if (adminUser == null)
             {
                 adminUser = new ApplicationUser { UserName = email, Email = email };
-                adminUser.Id = Guid.NewGuid().ToString();//TODO Verificar problema com Shinobu
+                adminUser.Id = Guid.NewGuid().ToString();
                 IdentityResult result = userManager.Create(adminUser, App.UserPass);
 
                 if (!result.Succeeded)

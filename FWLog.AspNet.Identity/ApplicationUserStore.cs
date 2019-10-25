@@ -443,7 +443,7 @@ namespace FWLog.AspNet.Identity
 
         // Custom implementation
 
-        public Task<IList<string>> GetPermissionsAsync(ApplicationUser user, int? companyId = null)//TODO retirar nullable depois de ajustar api
+        public Task<IList<string>> GetPermissionsAsync(ApplicationUser user, int companyId)
         {
             if (user == null)
             {

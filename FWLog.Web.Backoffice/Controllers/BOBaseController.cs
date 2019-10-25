@@ -65,27 +65,41 @@ namespace FWLog.Web.Backoffice.Controllers
             return base.BeginExecuteCore(callback, state);
         }
 
-        public void CookieSaveCompany(int companyId)
+        public void CookieSaveCompany(int companyId, string userId)
         {
-            var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
-            var userInfo = new BackOfficeUserInfo();
+            HttpCookie cookie = Request.Cookies[CompanyCookie.CookieName];
 
-            var companies = uow.CompanyRepository.GetAllByUserId(userInfo.UserId.ToString());
+            if (companyId == 0)
+            {
+                if (cookie != null)
+                {
+                    cookie[CompanyCookie.CompanyId] = string.Empty;
+                    cookie.Expires = DateTime.UtcNow.AddHours(8);
+                    Response.Cookies.Add(cookie);
+                }
+
+                return;
+            }
+
+            var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
+            
+            var companies = uow.CompanyRepository.GetAllByUserId(userId);
             var jsonCompanies = JsonConvert.SerializeObject(companies);
 
-            if (Response.Cookies[CompanyCookie.CookieName] == null)
+            if (cookie == null)
             {
-                var cookie = new HttpCookie(CompanyCookie.CookieName);
+                var newCookie = new HttpCookie(CompanyCookie.CookieName);
+                newCookie.Values[CompanyCookie.CompanyId] = companyId.ToString();
+                newCookie.Values[CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
+                newCookie.Expires = DateTime.UtcNow.AddHours(8);
+                Response.Cookies.Add(newCookie);
+            }
+            else
+            {
                 cookie.Values[CompanyCookie.CompanyId] = companyId.ToString();
                 cookie.Values[CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
                 cookie.Expires = DateTime.UtcNow.AddHours(8);
                 Response.Cookies.Add(cookie);
-            }
-            else
-            {
-                Response.Cookies[CompanyCookie.CookieName][CompanyCookie.CompanyId] = companyId.ToString();
-                Response.Cookies[CompanyCookie.CookieName][CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
-                Response.Cookies[CompanyCookie.CookieName].Expires = DateTime.UtcNow.AddHours(8);
             }
         }
 
@@ -93,15 +107,41 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             get
             {
-                if (Request.Cookies[CompanyCookie.CookieName] != null && Request.Cookies[CompanyCookie.CookieName][CompanyCookie.CompanyId] != null)
+                HttpCookie cookie = Request.Cookies[CompanyCookie.CookieName];
+
+                if (cookie != null && cookie[CompanyCookie.CompanyId] != null && cookie[CompanyCookie.CompanyId] != string.Empty)
                 {
-                    return Convert.ToInt32(Request.Cookies[CompanyCookie.CookieName][CompanyCookie.CompanyId].ToString());
+                    var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
+                    var userInfo = new BackOfficeUserInfo();
+
+                    var companyId = Convert.ToInt32(cookie[CompanyCookie.CompanyId].ToString());
+
+                    if (userInfo.UserId != null)
+                    {
+                        var companies = uow.CompanyRepository.GetAllByUserId(userInfo.UserId.ToString());
+                        var jsonCompanies = JsonConvert.SerializeObject(companies);
+
+                        if (companyId > 0 && companies.Where(w => w.CompanyId == companyId).ToList().Count == 0)
+                        {
+                            cookie[CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
+
+                            throw new ConpanyException(string.Format("O usuário não pertence mais a empresa com o código: {0}", companyId));
+                        }
+                        else if (cookie.Expires < DateTime.UtcNow)
+                        {
+                            cookie.Values[CompanyCookie.ListCompanies] = companyId.ToString();
+                            cookie.Values[CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
+                            cookie.Expires = DateTime.UtcNow.AddHours(8);
+                            Response.Cookies.Add(cookie);
+                        }
+                    }
+
+                    return companyId;
                 }
                 else
                 {
                     return 0;
                 }
-                //TODO lançar erro se não encontrar empresa? Ou retornar para a página de login?
             }
         }
 
@@ -109,21 +149,21 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             get
             {
-                if (Request.Cookies[CompanyCookie.CookieName] != null && Request.Cookies[CompanyCookie.CookieName][CompanyCookie.ListCompanies] != null)
+                HttpCookie cookie = Request.Cookies[CompanyCookie.CookieName];
+
+                if (cookie != null && cookie[CompanyCookie.ListCompanies] != null && cookie[CompanyCookie.ListCompanies] != string.Empty)
                 {
-                    var jsonCompanies = Server.UrlDecode(Request.Cookies[CompanyCookie.CookieName][CompanyCookie.ListCompanies].ToString());
+                    var jsonCompanies = Server.UrlDecode(cookie[CompanyCookie.ListCompanies].ToString());
                     var companies = JsonConvert.DeserializeObject<IEnumerable<CompanySelectedItem>>(jsonCompanies);
-                   
+
                     return companies;
                 }
                 else
                 {
                     var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
                     var userInfo = new BackOfficeUserInfo();
-                    return uow.CompanyRepository.GetAllByUserId(userInfo.UserId.ToString());                    
+                    return uow.CompanyRepository.GetAllByUserId(userInfo.UserId.ToString());
                 }
-
-                //TODO lançar erro se não encontrar empresa?
             }
         }
     }
