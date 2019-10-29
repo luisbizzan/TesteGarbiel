@@ -63,7 +63,7 @@ namespace FWLog.AspNet.Identity
     public class ApplicationUser: IdentityUser<string, IdentityUserLogin, UserRole, IdentityUserClaim>, IUser, IUser<string>
     {
         public int ApplicationId { get; set; }
-        public int? IdApplicationSession { get; set; }
+        public long? IdApplicationSession { get; set; }
         public virtual ICollection<UserPermission> Permissions { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager, string authenticationType)

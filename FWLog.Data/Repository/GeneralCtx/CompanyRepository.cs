@@ -13,7 +13,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         }
 
-        public int FirstCompany(string userId)
+        public long FirstCompany(string userId)
         {
             var company = Entities.UserCompany.Where(w => w.UserId == userId).OrderBy(o => o.Company.CompanyName).FirstOrDefault();
             if (company != null)

@@ -6,7 +6,7 @@ namespace FWLog.Data
     public partial class ApplicationLog
     {
         [Key]
-        public int IdApplicationLog { get; set; }
+        public long IdApplicationLog { get; set; }
         public DateTime Created { get; set; }
         public string Level { get; set; }
         public string Message { get; set; }

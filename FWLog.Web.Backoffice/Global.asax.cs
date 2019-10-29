@@ -70,7 +70,7 @@ namespace FWLog.Web.Backoffice
             GlobalContext.Properties["idApplication"] = ApplicationEnum.BackOffice.GetHashCode();
 
             ClientDataTypeModelValidatorProvider.ResourceClassKey = nameof(Resources.ModelValidationStrings);
-            DefaultModelBinder.ResourceClassKey = nameof(Resources.ModelValidationStrings);
+            DefaultModelBinder.ResourceClassKey = nameof(Resources.ModelValidationStrings);            
         }
 
         private void RegisterLocalizationAdapters()
@@ -135,12 +135,11 @@ namespace FWLog.Web.Backoffice
                         break;
                 }
             }
-                        
-            //TODO retirar comentárioo
-            //if (Request.IsLocal)
-            //{
-            //    return;
-            //}
+
+            if (Request.IsLocal)
+            {
+                return;
+            }
 
             Response.TrySkipIisCustomErrors = true;
 

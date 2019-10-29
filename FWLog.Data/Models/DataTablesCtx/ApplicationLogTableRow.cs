@@ -8,7 +8,7 @@ namespace FWLog.Data.Models.DataTablesCtx
 {
     public class ApplicationLogTableRow
     {
-        public int IdApplicationLog { get; set; }
+        public long IdApplicationLog { get; set; }
 
         public System.DateTime Created { get; set; }
 

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using ResGen = Resources.GeneralStrings;
 
-namespace FWLog.Data.Models
+namespace FWLog.Data
 {
     public class UserCompany
     { 
@@ -12,7 +12,7 @@ namespace FWLog.Data.Models
 
         [Key, Column(Order = 1)]
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
-        public int CompanyId { get; set; }
+        public long CompanyId { get; set; }
                 
         public virtual Company Company { get; set; }
     }

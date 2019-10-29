@@ -1,6 +1,7 @@
 ﻿using FWLog.Data;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -26,10 +27,10 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         public JsonResult ChangeCompany(int companyId)
-        {           
+        {
             var userInfo = new BackOfficeUserInfo();
             CookieSaveCompany(companyId, userInfo.UserId.ToString());
-           
+
             return Json(new AjaxGenericResultModel
             {
                 Success = true,

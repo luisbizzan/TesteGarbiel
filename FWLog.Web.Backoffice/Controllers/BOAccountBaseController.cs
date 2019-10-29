@@ -223,7 +223,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return;
             }
 
-            int companyId = CompanyId != 0 ? CompanyId : _uow.CompanyRepository.FirstCompany(applicationUser.Id);
+            long companyId = CompanyId != 0 ? CompanyId : _uow.CompanyRepository.FirstCompany(applicationUser.Id);
 
             try
             {
