@@ -65,7 +65,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return base.BeginExecuteCore(callback, state);
         }
 
-        public void CookieSaveCompany(int companyId, string userId)
+        public void CookieSaveCompany(long companyId, string userId)
         {
             HttpCookie cookie = Request.Cookies[CompanyCookie.CookieName];
 

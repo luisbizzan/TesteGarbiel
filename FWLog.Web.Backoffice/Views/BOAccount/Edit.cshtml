@@ -13,14 +13,8 @@
 <!-- title -->
 <div class="page-title">
     <div class="title">
-        <h3>@Res.EditPageTitle</h3>
-    </div>
-    <ol class="breadcrumb">
-        <li><a href="@Url.Action("Index","BOHome")">@Resources.CommonStrings.HomeMenuItem</a></li>
-        <li class="active">@Resources.CommonStrings.UserMenuGroup</li>
-        <li><a href="@Url.Action("Index")">@Resources.CommonStrings.BOAccountMenuItem</a></li>
-        <li class="active">@Resources.CommonStrings.EditBreadcrumbItem</li>
-    </ol>
+        <h3 class="title-sml">@Res.EditPageTitle</h3>
+    </div>  
 </div>
 <!-- /title -->
 @using (Html.BeginForm("Edit"))

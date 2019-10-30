@@ -7,13 +7,8 @@ namespace FWLog.Data
 {
     public class ApplicationSession
     {
-        public ApplicationSession()
-        {
-            AspNetUsers = new HashSet<AspNetUsers>();
-        }
-
         [Key]
-        public int IdApplicationSession { get; set; }
+        public long IdApplicationSession { get; set; }
         public string IdAspNetUsers { get; set; }
         public int IdApplication { get; set; }
         public DateTime DataLogin { get; set; }

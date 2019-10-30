@@ -158,16 +158,16 @@ BEGIN
 END;
 /
 
--- TABLE ApplicationLog
-CREATE TABLE "ApplicationLog" (
-	"IdApplicationLog" NUMBER(10) NOT NULL,
-	"Created" TIMESTAMP(3) NOT NULL,
-	"Level" VARCHAR2(50) NOT NULL,
-	"Message" VARCHAR2(4000) NOT NULL,
-	"Exception" CLOB NOT NULL,
-	"IdApplication" NUMBER(10) NOT NULL,
-	PRIMARY KEY ("IdApplicationLog"),
-	FOREIGN KEY ("IdApplication") REFERENCES "Application" ("IdApplication")
+-- drop TABLE ApplicationLog
+CREATE TABLE "DART"."APPLICATIONLOG" 
+(	
+    "IDAPPLICATIONLOG" NUMBER(10,0) NOT NULL ENABLE, 
+	"CREATED" TIMESTAMP (3) NOT NULL ENABLE, 
+	"LOGLEVEL" VARCHAR2(50) NOT NULL ENABLE, 
+	"MESSAGE" VARCHAR2(4000) NOT NULL ENABLE, 
+	"LOGEXCEPTION" CLOB NOT NULL ENABLE, 
+	"IDAPPLICATION"  VARCHAR2(22) NOT NULL ENABLE, 
+	 PRIMARY KEY ("IDAPPLICATIONLOG")	
 ) ;
 
 -- Generate ID using sequence and trigger
@@ -247,6 +247,24 @@ CREATE TABLE "Company" (
 	PRIMARY KEY ("CompanyId")	
 ) ;
 
+ALTER TABLE "Company" ADD
+("TradingName" VARCHAR2(500) NOT NULL,		
+"CNPJ" VARCHAR2(500) NOT NULL,		
+"Addresszipcode" NUMBER NOT NULL,		
+"Address" VARCHAR2(500) NOT NULL,		
+"AddressNumber" NUMBER(10) NOT NULL,
+"AddressComplement" VARCHAR2(500) NULL,		
+"AddressNeighborhood" VARCHAR2(500) NOT NULL,		
+"AddressState" VARCHAR2(500) NOT NULL,		
+"AddressCity" VARCHAR2(500) NOT NULL,		
+"PhoneNumber" VARCHAR2(15) NOT NULL,
+"CompanyType" NUMBER(10) NOT NULL,
+"Disabled"	NUMBER(3) NOT NULL);
+
+ALTER TABLE "Company" ALTER COLUMN ("Disabled" NUMBER(1) DEFAULT 0 NOT NULL);
+
+ALTER TABLE DART."Company" MODIFY "Disabled" NUMBER(1);
+
 CREATE SEQUENCE Company_seq START WITH 1 INCREMENT BY 1;
 
 CREATE OR REPLACE TRIGGER Company_seq_tr
@@ -256,9 +274,14 @@ BEGIN
  SELECT Company_seq.NEXTVAL INTO :NEW."CompanyId" FROM DUAL;
 END;
 
-INSERT INTO "Company" ("CompanyName", "Initials") VALUES ('FW-Matriz', 'FW');
-INSERT INTO "Company" ("CompanyName", "Initials") VALUES ('Ribeirão Preto', 'RB');
-	
+INSERT INTO "Company" ("CompanyName", "Initials", "TradingName", "CNPJ", "AddressZipCode", "Address", "AddressNumber", "AddressComplement", "AddressNeighborhood",
+"AddressState", "AddressCity", "PhoneNumber", "CompanyType", "Disabled" ) 
+VALUES ('FW-Matriz', 'FW', 'Ribeirão Preto Filial', '08203386000140',14014014,'Rua teste', 123, 'Complemento', 'Bairo', 'Estado', 'Cidade', 5516955165516,1,0);
+INSERT INTO "Company" ("CompanyName", "Initials", "TradingName", "CNPJ", "AddressZipCode", "Address", "AddressNumber", "AddressComplement", "AddressNeighborhood",
+"AddressState", "AddressCity", "PhoneNumber", "CompanyType", "Disabled" )  
+VALUES ('Ribeirão Preto', 'RB', 'Ribeirão Preto Filial', '08203386000140',14014014,'Rua teste', 123, 'Complemento', 'Bairo', 'Estado', 'Cidade', 5516955165516,1,0);
+
+
 
 ALTER TABLE "AspNetUserRoles"
 	ADD CONSTRAINT IdentityRole_Company_Delete FOREIGN KEY ("CompanyId") REFERENCES "Company" ("CompanyId") ON DELETE CASCADE;
@@ -269,6 +292,10 @@ CREATE TABLE "UserCompany" (
   "CompanyId" NUMBER NOT NULL,
   PRIMARY KEY ("UserId", "CompanyId")
 ) ;
+
+
+
+
 
 ALTER TABLE "UserCompany" ADD CONSTRAINT UserCompany_AspNetUsers FOREIGN KEY ("UserId") REFERENCES "AspNetUsers" ("Id");
 

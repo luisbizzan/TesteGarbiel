@@ -158,16 +158,15 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             }
 
-            ///TODO Ajustar Log
-            //var userInfo = new BackOfficeUserInfo();
-            //_boLogSystemService.Add(new BOLogSystemCreation
-            //{
-            //    ActionType = ActionTypeNames.Add,
-            //    IP = userInfo.IP,
-            //    UserId = userInfo.UserId,
-            //    EntityName = nameof(AspNetUsers),
-            //    NewEntity = new AspNetUsersLogSerializeModel(user.UserName)
-            //});
+            var userInfo = new BackOfficeUserInfo();
+            _boLogSystemService.Add(new BOLogSystemCreation
+            {
+                ActionType = ActionTypeNames.Add,
+                IP = userInfo.IP,
+                UserId = userInfo.UserId,
+                EntityName = nameof(AspNetUsers),
+                NewEntity = new AspNetUsersLogSerializeModel(user.UserName)
+            });
 
             Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
             return RedirectToAction("Index");
@@ -248,17 +247,16 @@ namespace FWLog.Web.Backoffice.Controllers
                 throw new InvalidOperationException(Resources.CommonStrings.RequestUnexpectedErrorMessage);
             }
 
-            ///TODO Ajustar Log
-            //var userInfo = new BackOfficeUserInfo();
-            //_boLogSystemService.Add(new BOLogSystemCreation
-            //{
-            //    ActionType = ActionTypeNames.Edit,
-            //    IP = userInfo.IP,
-            //    UserId = userInfo.UserId,
-            //    EntityName = nameof(AspNetUsers),
-            //    OldEntity = new AspNetUsersLogSerializeModel(oldUser.UserName),
-            //    NewEntity = new AspNetUsersLogSerializeModel(user.UserName)
-            //});
+            var userInfo = new BackOfficeUserInfo();
+            _boLogSystemService.Add(new BOLogSystemCreation
+            {
+                ActionType = ActionTypeNames.Edit,
+                IP = userInfo.IP,
+                UserId = userInfo.UserId,
+                EntityName = nameof(AspNetUsers),
+                OldEntity = new AspNetUsersLogSerializeModel(oldUser.UserName),
+                NewEntity = new AspNetUsersLogSerializeModel(user.UserName)
+            });
 
             Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
             return RedirectToAction("Index");
@@ -360,17 +358,16 @@ namespace FWLog.Web.Backoffice.Controllers
                     throw new InvalidOperationException(Resources.CommonStrings.RequestUnexpectedErrorMessage);
                 }
 
-                ///TODO Ajustar Log
-                //var userInfo = new BackOfficeUserInfo();
-                //_boLogSystemService.Add(new BOLogSystemCreation
-                //{
-                //    ActionType = ActionTypeNames.Edit,
-                //    IP = userInfo.IP,
-                //    UserId = userInfo.UserId,
-                //    EntityName = nameof(AspNetUsers),
-                //    OldEntity = new AspNetUsersLogSerializeModel(oldUser.UserName),
-                //    NewEntity = new AspNetUsersLogSerializeModel(user.UserName)
-                //});
+                var userInfo = new BackOfficeUserInfo();
+                _boLogSystemService.Add(new BOLogSystemCreation
+                {
+                    ActionType = ActionTypeNames.Edit,
+                    IP = userInfo.IP,
+                    UserId = userInfo.UserId,
+                    EntityName = nameof(AspNetUsers),
+                    OldEntity = new AspNetUsersLogSerializeModel(oldUser.UserName),
+                    NewEntity = new AspNetUsersLogSerializeModel(user.UserName)
+                });
 
                 return Json(new AjaxGenericResultModel
                 {

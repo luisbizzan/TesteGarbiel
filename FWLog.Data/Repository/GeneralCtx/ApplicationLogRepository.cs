@@ -19,7 +19,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public override ApplicationLog GetById(long id)
         {
-            return Entities.ApplicationLog.Include(x => x.Application).FirstOrDefault(x => x.IdApplicationLog == id);
+            return Entities.ApplicationLog.FirstOrDefault(x => x.IdApplicationLog == id);
         }
 
         public IList<ApplicationLog> SearchByMessage(string message, int takeCount)
@@ -31,16 +31,18 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             totalRecords = Entities.ApplicationLog.Count();
 
-            IQueryable<ApplicationLogTableRow> query = Entities.ApplicationLog.AsNoTracking()
-                .Select(x => new ApplicationLogTableRow
-                {
-                    IdApplicationLog = x.IdApplicationLog,
-                    Created = x.Created,
-                    Level = x.Level,
-                    Message = x.Message,
-                    ApplicationName = x.Application.Name
-                });
 
+            IQueryable<ApplicationLogTableRow> query = (from appLog in Entities.ApplicationLog.AsNoTracking()
+                                                        join app in Entities.Application on appLog.IdApplication equals app.IdApplication
+                                                        select new ApplicationLogTableRow
+                                                        {
+                                                            IdApplicationLog = appLog.IdApplicationLog,
+                                                            Created = appLog.Created,
+                                                            Level = appLog.Level,
+                                                            Message = appLog.Message,
+                                                            ApplicationName = app.Name
+                                                        });
+                   
             if (!String.IsNullOrEmpty(model.CustomFilter.Message))
             {
                 query = query.Where(x => x.Message.Contains(model.CustomFilter.Message));

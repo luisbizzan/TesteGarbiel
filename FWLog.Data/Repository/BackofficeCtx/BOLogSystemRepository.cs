@@ -58,21 +58,21 @@ namespace FWLog.Data.Repository.BackofficeCtx
 
             foreach (string name in entityNames)
             {
-                MetadataTypeAttribute metadataTypeAttr = GetMetadataTypeForEntity(name);
+                Type entity = GetTypeForEntity(name);
 
-                if (metadataTypeAttr == null)
+                if (entity == null)
                 {
                     continue;
                 }
 
-                LogAttribute logAttr = metadataTypeAttr.MetadataClassType.GetCustomAttributes(typeof(LogAttribute), false).FirstOrDefault() as LogAttribute;
+                var logName = GetTranslationForEntity(entity);
 
-                if (logAttr == null)
+                if (logName == entity.Name)
                 {
                     continue;
                 }
 
-                logEntities.Add(new LogEntity { OriginalName = name, TranslatedName = GetTranslationForEntity(metadataTypeAttr, name) });
+                logEntities.Add(new LogEntity { OriginalName = name, TranslatedName = logName });
             }
 
             return logEntities;
@@ -87,7 +87,12 @@ namespace FWLog.Data.Repository.BackofficeCtx
                 return null;
             }
 
-            MetadataTypeAttribute entityMetadataType = GetMetadataTypeForEntity(log.Entity);
+            Type entity = GetTypeForEntity(log.Entity);
+
+            if (entity == null)
+            {
+                return null;
+            }
 
             var details = new BOLogSystemDetails
             {
@@ -98,7 +103,7 @@ namespace FWLog.Data.Repository.BackofficeCtx
                 IP = log.IP,
                 ExecutionDate = log.ExecutionDate,
                 Entity = log.Entity,
-                TranslatedEntity = GetTranslationForEntity(entityMetadataType, log.Entity),
+                TranslatedEntity = GetTranslationForEntity(entity),
                 ColumnChanges = GetColumnChanges(log)
             };
 
@@ -115,8 +120,7 @@ namespace FWLog.Data.Repository.BackofficeCtx
 
             foreach (BOLogSystemRelated item in scopeEntities)
             {
-                MetadataTypeAttribute itemEntityMetadataType = GetMetadataTypeForEntity(item.Entity);
-                item.TranslatedEntity = GetTranslationForEntity(itemEntityMetadataType, item.Entity);
+                item.TranslatedEntity = GetTranslationForEntity(entity);
             }
 
             details.RelatedLogs = scopeEntities;
@@ -182,9 +186,9 @@ namespace FWLog.Data.Repository.BackofficeCtx
 
             foreach (BOLogSystemTableRow item in result)
             {
-                MetadataTypeAttribute entityMetadataType = GetMetadataTypeForEntity(item.Entity);
+                Type entity = GetTypeForEntity(item.Entity);
                 item.ActionType = ActionTypeNames.GetAll().First(x => x.Value == item.ActionType).DisplayName;
-                item.Entity = GetTranslationForEntity(entityMetadataType, item.Entity);
+                item.Entity = GetTranslationForEntity(entity);
             }
 
             return result;
@@ -196,15 +200,14 @@ namespace FWLog.Data.Repository.BackofficeCtx
             Dictionary<string, string> newEntityDictionary = DeserializeEntity(log.NewEntity, log);
             var columnChanges = new List<BOLogSystemColumnChanges>();
 
-            MetadataTypeAttribute entityMetadataType = GetMetadataTypeForEntity(log.Entity);
+            Type entity = GetTypeForEntity(log.Entity);
 
-            // New Entity
             foreach (var item in newEntityDictionary)
             {
                 columnChanges.Add(new BOLogSystemColumnChanges
                 {
                     OriginalName = item.Key,
-                    TranslatedName = GetTranslationForProperty(entityMetadataType, item.Key),
+                    TranslatedName = GetTranslationForProperty(entity, item.Key),
                     NewValue = item.Value
                 });
             }
@@ -223,7 +226,7 @@ namespace FWLog.Data.Repository.BackofficeCtx
                     columnChanges.Add(new BOLogSystemColumnChanges
                     {
                         OriginalName = item.Key,
-                        TranslatedName = GetTranslationForProperty(entityMetadataType, item.Key),
+                        TranslatedName = GetTranslationForProperty(entity, item.Key),
                         OldValue = item.Value
                     });
                 }
@@ -259,7 +262,6 @@ namespace FWLog.Data.Repository.BackofficeCtx
             foreach (var property in tempDic.Keys)
             {
                 PropertyInfo propertyInfo = entityType != null ? entityType.GetProperty(property) : null;
-                PropertyInfo propertyInfoMetadata = entityTypeMetadata != null ? entityTypeMetadata.GetProperty(property) : null;
 
                 if (!entityDic[property].NullOrEmpty())
                 {
@@ -292,74 +294,56 @@ namespace FWLog.Data.Repository.BackofficeCtx
                         Double value = Double.Parse(entityDic[property], System.Globalization.NumberStyles.AllowDecimalPoint, new CultureInfo("en-US"));
                         entityDic[property] = value.ToString("N2");
                     }
-                }
-
-                if (propertyInfoMetadata != null)
-                {
-                    var removeEntityFromLog = entityTypeMetadata.GetCustomAttributes(typeof(RemoveFromLogAttribute), false).FirstOrDefault() as RemoveFromLogAttribute;
-
-                    if (removeEntityFromLog != null)
-                        continue;
-
-                    var displayNameAttributeMetadata = propertyInfoMetadata.GetCustomAttributes(typeof(DisplayNameAttribute), false).FirstOrDefault() as DisplayNameAttribute;
-
-                    if (displayNameAttributeMetadata != null) //Update key with the metadata value
-                    {
-                        string value = entityDic[property];
-                        entityDic.Remove(property);
-                        entityDic[displayNameAttributeMetadata.DisplayName] = value;
-                    }
-                }
-
-            }
+                }              
+            }           
 
             return entityDic;
         }
 
-        private string GetTranslationForProperty(MetadataTypeAttribute entityMetadataType, string propName)
+        private string GetTranslationForProperty(Type entity, string propName)
         {
-            if (entityMetadataType == null)
+            if (entity == null)
             {
                 return propName;
             }
 
-            PropertyInfo info = entityMetadataType.MetadataClassType.GetProperty(propName);
+            PropertyInfo propertyInfo = entity.GetProperty(propName);
 
-            if (info == null)
+            if (propertyInfo == null)
             {
                 return propName;
             }
 
-            var logAttr = (LogAttribute)info.GetCustomAttributes(typeof(LogAttribute)).FirstOrDefault();
+            LogAttribute propLogAttr = (LogAttribute)propertyInfo.GetCustomAttributes(typeof(LogAttribute), false).FirstOrDefault();
 
-            if (logAttr == null)
+            if (propLogAttr == null)
             {
                 return propName;
             }
 
-            string displayName = logAttr.GetDisplayName();
+            string displayName = propLogAttr.GetDisplayName();
             return String.IsNullOrEmpty(displayName) ? propName : displayName;
         }
 
-        private string GetTranslationForEntity(MetadataTypeAttribute entityMetadataType, string entityName)
+        private string GetTranslationForEntity(Type entity)
         {
-            if (entityMetadataType == null)
+            if (entity == null)
             {
-                return entityName;
+                return entity.Name;
             }
 
-            var logAttr = (LogAttribute)entityMetadataType.MetadataClassType.GetCustomAttributes(typeof(LogAttribute), false).FirstOrDefault();
+            LogAttribute logAttr = (LogAttribute)entity.GetCustomAttributes(typeof(LogAttribute), false).FirstOrDefault();
 
             if (logAttr == null)
             {
-                return entityName;
+                return entity.Name;
             }
 
             string displayName = logAttr.GetDisplayName();
-            return String.IsNullOrEmpty(displayName) ? entityName : displayName;
+            return String.IsNullOrEmpty(displayName) ? entity.Name : displayName;
         }
 
-        private MetadataTypeAttribute GetMetadataTypeForEntity(string entityName)
+        private Type GetTypeForEntity(string entityName)
         {
             string entitiesNamespace = Entities.GetType().Namespace;
             Type entityType = Type.GetType(String.Concat(entitiesNamespace, ".", entityName, ",", entitiesNamespace));
@@ -369,7 +353,7 @@ namespace FWLog.Data.Repository.BackofficeCtx
                 return null;
             }
 
-            return entityType.GetCustomAttributes(typeof(MetadataTypeAttribute), false).FirstOrDefault() as MetadataTypeAttribute;
+            return entityType;
         }
     }
 }
