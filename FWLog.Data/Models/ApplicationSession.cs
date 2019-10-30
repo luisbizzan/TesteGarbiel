@@ -19,7 +19,7 @@ namespace FWLog.Data
         public DateTime DataLogin { get; set; }
         public DateTime DataUltimaAcao { get; set; }
         public DateTime? DataLogout { get; set; }                
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
 
         public virtual Application Application { get; set; }
         public virtual ICollection<AspNetUsers> AspNetUsers { get; set; }

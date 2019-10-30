@@ -1,9 +1,7 @@
 ﻿using FWLog.AspNet.Identity;
 using FWLog.Web.Api.App_Start;
-using FWLog.Web.Api.EnumsAndConsts;
 using Microsoft.Owin;
 using Owin;
-using System.Linq;
 
 [assembly: OwinStartup(typeof(FWLog.Web.Api.Startup))]
 namespace FWLog.Web.Api
@@ -28,10 +26,7 @@ namespace FWLog.Web.Api
             using (CreateManagers(out userManager, out roleManager))
             {
                 var managers = new Managers { UserManager = userManager, RoleManager = roleManager };
-
-                CreatePermissions(managers);                
-
-                // Adicione aqui todas as roles, usuários, etc que forem necessários.
+                CreatePermissions(managers);
             }
         }
 
@@ -39,7 +34,7 @@ namespace FWLog.Web.Api
         {
             Permissions permissions = new Permissions();
             PermissionManager.CreatePermissionsIfNotExists(builder: permissions, roleManager: managers.RoleManager);
-        }          
+        }
 
         private class Managers
         {
@@ -47,6 +42,4 @@ namespace FWLog.Web.Api
             public ApplicationRoleManager RoleManager { get; set; }
         }
     }
-
-
 }
