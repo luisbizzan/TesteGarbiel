@@ -34,14 +34,8 @@
 <!-- title -->
 <div class="page-title">
     <div class="title">
-        <h3>@ViewBag.Title</h3>
-    </div>
-    <ol class="breadcrumb">
-        <li><a href="@Url.Action("Index","BOHome")">@Resources.CommonStrings.HomeMenuItem</a></li>
-        <li class="active"> @* TODO: Colocar nome do menu da tela *@ </li>
-        <li><a href="@Url.Action("Index")"><#= ViewDataTypeShortName #></a></li> @* TODO: Traduzir nome da entidade *@
-        <li class="active">Visualização</li>
-    </ol>
+        <h3 class="title-sml">@ViewBag.Title</h3>
+    </div>    
 </div>
 <!-- /title -->
 

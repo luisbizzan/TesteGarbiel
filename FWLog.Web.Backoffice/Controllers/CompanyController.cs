@@ -1,7 +1,6 @@
 ﻿using FWLog.Data;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
-using System.Linq;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers

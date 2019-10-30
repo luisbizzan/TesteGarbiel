@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FWLog.Data.Models.DataTablesCtx
 {
@@ -10,7 +6,7 @@ namespace FWLog.Data.Models.DataTablesCtx
     {
         public long IdApplicationLog { get; set; }
 
-        public System.DateTime Created { get; set; }
+        public DateTime Created { get; set; }
 
         public string Level { get; set; }
 

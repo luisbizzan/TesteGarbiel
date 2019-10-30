@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DartDigital.Library.Attributes;
 
 namespace FWLog.Data.EnumsAndConsts
 {
     public enum ApplicationEnum
     {
+        [EnumStringValue("BackOffice")]
         BackOffice = 1,
+        [EnumStringValue("Api")]
         Api = 2
     }
 }

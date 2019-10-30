@@ -1,7 +1,5 @@
 ﻿using FWLog.Data.Logging;
-using FWLog.Data.Models;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace FWLog.Data
