@@ -3,6 +3,6 @@
     public class CompanySelectedItem
     {
         public long CompanyId { get; set; }
-        public string CompanyName { get; set; }
+        public string Name { get; set; }
     }
 }

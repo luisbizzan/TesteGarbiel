@@ -478,6 +478,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             }
 
+            CookieSaveCompany(0, applicationUser.Id, true);
+
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("LogOn", "BOAccountBase");
         }

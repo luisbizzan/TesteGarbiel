@@ -65,24 +65,32 @@ namespace FWLog.Web.Backoffice.Controllers
             return base.BeginExecuteCore(callback, state);
         }
 
-        public void CookieSaveCompany(long companyId, string userId)
+        public void CookieSaveCompany(long companyId, string userId, bool logoff = false)
         {
             HttpCookie cookie = Request.Cookies[CompanyCookie.CookieName];
 
             if (companyId == 0)
             {
-                if (cookie != null)
+                if (cookie == null)
                 {
-                    cookie[CompanyCookie.CompanyId] = string.Empty;
-                    cookie.Expires = DateTime.UtcNow.AddHours(8);
-                    Response.Cookies.Add(cookie);
+                    return;
                 }
+
+                cookie[CompanyCookie.CompanyId] = string.Empty;
+
+                if (logoff)
+                {
+                    cookie[CompanyCookie.ListCompanies] = string.Empty;
+                }
+
+                cookie.Expires = DateTime.UtcNow.AddHours(8);
+                Response.Cookies.Add(cookie);
 
                 return;
             }
 
             var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
-            
+
             var companies = uow.CompanyRepository.GetAllByUserId(userId);
             var jsonCompanies = JsonConvert.SerializeObject(companies);
 
@@ -116,24 +124,15 @@ namespace FWLog.Web.Backoffice.Controllers
 
                     var companyId = Convert.ToInt32(cookie[CompanyCookie.CompanyId].ToString());
 
-                    if (userInfo.UserId != null)
+                    if (userInfo.UserId != null && cookie.Expires < DateTime.UtcNow)
                     {
                         var companies = uow.CompanyRepository.GetAllByUserId(userInfo.UserId.ToString());
                         var jsonCompanies = JsonConvert.SerializeObject(companies);
 
-                        if (companyId > 0 && companies.Where(w => w.CompanyId == companyId).ToList().Count == 0)
-                        {
-                            cookie[CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
-
-                            throw new ConpanyException(string.Format("O usuário não pertence mais a empresa com o código: {0}", companyId));
-                        }
-                        else if (cookie.Expires < DateTime.UtcNow)
-                        {
-                            cookie.Values[CompanyCookie.ListCompanies] = companyId.ToString();
-                            cookie.Values[CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
-                            cookie.Expires = DateTime.UtcNow.AddHours(8);
-                            Response.Cookies.Add(cookie);
-                        }
+                        cookie.Values[CompanyCookie.ListCompanies] = companyId.ToString();
+                        cookie.Values[CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
+                        cookie.Expires = DateTime.UtcNow.AddHours(8);
+                        Response.Cookies.Add(cookie);
                     }
 
                     return companyId;

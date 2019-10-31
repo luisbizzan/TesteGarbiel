@@ -1,6 +1,7 @@
 ﻿using FWLog.Data;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -21,7 +22,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult GetCompanies()
         {
-            ViewData["Companies"] = new SelectList(Companies, "CompanyId", "CompanyName");
+            ViewData["Companies"] = new SelectList(Companies, "CompanyId", "Name");
             return PartialView("_ChangeCompany");
         }
 

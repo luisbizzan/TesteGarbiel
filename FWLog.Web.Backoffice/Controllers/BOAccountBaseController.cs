@@ -223,8 +223,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 return;
             }
 
-            long companyId = CompanyId != 0 ? CompanyId : _uow.CompanyRepository.FirstCompany(applicationUser.Id);
-            //TODO Verificar se a empresa do cookie ainda pertence ao usuário.
+            long companyId = _uow.CompanyRepository.FirstCompany(applicationUser.Id);
+
             try
             {
                 var applicationSession = new ApplicationSession

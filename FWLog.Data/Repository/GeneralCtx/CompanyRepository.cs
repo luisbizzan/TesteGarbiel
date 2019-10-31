@@ -26,12 +26,19 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public IEnumerable<CompanySelectedItem> GetAllByUserId(string userId)
         {
-            return Entities.UserCompany.Where(w => w.UserId == userId).OrderBy(o => o.Company.CompanyName)
-                .Select(s => new CompanySelectedItem
-                {
-                    CompanyName = s.Company.CompanyName,
-                    CompanyId = s.Company.CompanyId
-                }).ToList();
+            var companies = Entities.UserCompany.Where(w => w.UserId == userId).OrderBy(o => o.Company.CompanyName)
+                .Select(s => new { 
+                    s.Company.Initials,
+                    s.Company.TradingName,
+                    s.Company.CompanyId
+                    }
+                ).ToList();
+
+            return companies.Select(s => new CompanySelectedItem
+            {
+                Name = string.Format("{0} - {1}", s.Initials, s.TradingName),
+                CompanyId = s.CompanyId
+            }).ToList();
         }
 
     }
