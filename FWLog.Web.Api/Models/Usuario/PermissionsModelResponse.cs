@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FWLog.Web.Api.Models.Account
+namespace FWLog.Web.Api.Models.Usuario
 {
     public class PermissionsModelResponse
     {

@@ -3,7 +3,6 @@ using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Services.Services;
 using FWLog.Web.Api.GlobalResources;
-using FWLog.Web.Api.Models.Account;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
@@ -11,15 +10,16 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Linq;
 using System;
+using FWLog.Web.Api.Models.Usuario;
 
 namespace FWLog.Web.Api.Controllers
 {
-    public class AccountController : ApiBaseController
+    public class UsuarioController : ApiBaseController
     {
         private AccountService _accountService;
         private UnitOfWork _unitOfWork;
 
-        public AccountController(UnitOfWork unitOfWork, AccountService accountService)
+        public UsuarioController(UnitOfWork unitOfWork, AccountService accountService)
         {
             _unitOfWork = unitOfWork;
             _accountService = accountService;
@@ -27,7 +27,7 @@ namespace FWLog.Web.Api.Controllers
                 
         [AllowAnonymous]
         [HttpPost]
-        [Route("api/v1/account/login")]
+        [Route("api/v1/usuario/login")]
         public async Task<IHttpActionResult> Login(LoginModelRequest loginRequest)
         {
             if (!ModelState.IsValid)
@@ -35,27 +35,27 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(ModelState);
             }
 
-            SignInStatus signInResult = await SignInManager.PasswordSignInAsync(loginRequest.UserName, loginRequest.Password, false, shouldLockout: true);
+            SignInStatus signInResult = await SignInManager.PasswordSignInAsync(loginRequest.Usuario, loginRequest.Senha, false, shouldLockout: true);
 
             if (signInResult == SignInStatus.Failure)
             {
-                return ApiBadRequest(AccountResource.InvalidUserOrPassword, loginRequest.UserName);
+                return ApiBadRequest(AccountResource.InvalidUserOrPassword, loginRequest.Usuario);
             }
 
             if (signInResult == SignInStatus.LockedOut)
             {
-                return ApiForbidden(AccountResource.UserLockedOut, loginRequest.UserName);
+                return ApiForbidden(AccountResource.UserLockedOut, loginRequest.Usuario);
             }
 
-            ApplicationUser applicationUser = await UserManager.FindByNameAsync(loginRequest.UserName);
-            IList<string> userPermissions = await UserManager.GetPermissionsAsync(applicationUser.Id, loginRequest.CompanyId);
+            ApplicationUser applicationUser = await UserManager.FindByNameAsync(loginRequest.Usuario);
+            IList<string> userPermissions = await UserManager.GetPermissionsAsync(applicationUser.Id);
 
             if (userPermissions == null || !userPermissions.Any(w => w.Equals("UserAppLogin", StringComparison.OrdinalIgnoreCase)))
             {
-                return ApiForbidden(AccountResource.UserPermissionDenied, loginRequest.UserName);
+                return ApiForbidden(AccountResource.UserPermissionDenied, loginRequest.Usuario);
             }
 
-            var token = await _accountService.Token(loginRequest.UserName, loginRequest.Password);
+            var token = await _accountService.Token(loginRequest.Usuario, loginRequest.Senha);
             var response = Mapper.Map<LoginModelResponse>(token);
 
             var applicationSession = new ApplicationSession
@@ -63,8 +63,7 @@ namespace FWLog.Web.Api.Controllers
                 DataLogin = DateTime.Now,
                 DataUltimaAcao = DateTime.Now,
                 IdApplication = 2,
-                IdAspNetUsers = applicationUser.Id,
-                CompanyId = loginRequest.CompanyId
+                IdAspNetUsers = applicationUser.Id
             };
 
             _unitOfWork.ApplicationSessionRepository.Add(applicationSession);
@@ -81,7 +80,7 @@ namespace FWLog.Web.Api.Controllers
         [Route("api/v1/account/permissions")]
         public async Task<IHttpActionResult> UserPermissions(int companyId)
         {
-            IList<string> permissions = await UserManager.GetPermissionsAsync(User.Identity.GetUserId(), companyId);
+            IList<string> permissions = await UserManager.GetPermissionsAsync(User.Identity.GetUserId());
 
             var permissionsResponse = new PermissionsModelResponse
             {

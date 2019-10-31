@@ -173,7 +173,7 @@ namespace FWLog.Web.Backoffice
             }
 
             string userId = user.Identity.GetUserId();
-            IList<string> permissions = await userManager.GetPermissionsAsync(userId, companyId);
+            IList<string> permissions = await userManager.GetPermissionsAsync(userId);
             HttpContext.Current.User = new ApplicationClaimsPrincipal(user, permissions); 
         }
     }
