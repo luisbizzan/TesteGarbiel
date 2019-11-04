@@ -35,7 +35,47 @@
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DANFE)
                     @Html.TextBoxFor(m => m.Filter.DANFE, new { @class = "form-control", data_field = "DANFE" })
-                </div>                
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.IdStatus)
+                    @*@Html.DropDownListFor(m => m.Filter.IdStatus, Model.Filter.Status, " ", new { @class = "form-control", multiple = "multiple" })*@
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.DataInicial)
+                    @Html.TextBoxFor(m => m.Filter.DataInicial, new { @class = "form-control", data_field = "DataInicial" })
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.DataFinal)
+                    @Html.TextBoxFor(m => m.Filter.DataFinal, new { @class = "form-control", data_field = "DataFinal" })
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.PrazoInicial)
+                    @Html.TextBoxFor(m => m.Filter.PrazoInicial, new { @class = "form-control", data_field = "PrazoInicial" })
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.PrazoFinal)
+                    @Html.TextBoxFor(m => m.Filter.PrazoFinal, new { @class = "form-control", data_field = "PrazoFinal" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.Fornecedor)
+                    @Html.TextBoxFor(m => m.Filter.Atraso, new { @class = "form-control", data_field = "Fornecedor" })
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.Atraso)
+                    @Html.TextBoxFor(m => m.Filter.Atraso, new { @class = "form-control", data_field = "Atraso" })
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.QuantidadePeca)
+                    @Html.TextBoxFor(m => m.Filter.QuantidadePeca, new { @class = "form-control", data_field = "QuantidadePeca" })
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.Volume)
+                    @Html.TextBoxFor(m => m.Filter.Volume, new { @class = "form-control", data_field = "Volume" })
+                </div>
             </div>
             <div class="row">
                 <div class="col-xs-12 form-buttons">
