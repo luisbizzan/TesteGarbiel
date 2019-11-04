@@ -2,7 +2,7 @@
 {
     public class CompanySelectedItem
     {
-        public int CompanyId { get; set; }
-        public string CompanyName { get; set; }
+        public long CompanyId { get; set; }
+        public string Name { get; set; }
     }
 }

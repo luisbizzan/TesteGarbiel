@@ -298,12 +298,36 @@
     <value>Nome de Usuário</value>
   </data>
   <data name="CompanyName" xml:space="preserve">
-    <value>RazãoSocial</value>
+    <value>Razão Social</value>
   </data>
   <data name="IdCompany" xml:space="preserve">
     <value>Código da Empresa</value>
   </data>
   <data name="Initials" xml:space="preserve">
     <value>Sigla</value>
+  </data>
+  <data name="ApplicationId" xml:space="preserve">
+    <value>Código da Aplicação</value>
+  </data>
+  <data name="RoleId" xml:space="preserve">
+    <value>Código do Grupo</value>
+  </data>
+  <data name="RoleName" xml:space="preserve">
+    <value>Nome do Grupo</value>
+  </data>
+  <data name="Company" xml:space="preserve">
+    <value>Empresa</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="EmailConfirmed" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UserId" xml:space="preserve">
+    <value>Código do Usuário</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>Nome do Usuário</value>
   </data>
 </root>

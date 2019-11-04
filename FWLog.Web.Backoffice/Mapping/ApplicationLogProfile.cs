@@ -5,6 +5,7 @@ using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Web.Backoffice.Models.ApplicationLogCtx;
 using System;
 using DartDigital.Library.Web.Globalization;
+using FWLog.Data.EnumsAndConsts;
 
 namespace FWLog.Web.Backoffice.Mapping
 {
@@ -13,7 +14,7 @@ namespace FWLog.Web.Backoffice.Mapping
         public ApplicationLogProfile()
         {
             CreateMap<ApplicationLog, ApplicationLogDetailsViewModel>()
-                .ForMember(x => x.ApplicationName, op => op.MapFrom(x => x.Application.Name))
+                .ForMember(x => x.ApplicationName, op => op.MapFrom(x => MapApplicationEnum(Convert.ToInt32(x.IdApplication))))
                 .ForMember(x => x.Created, op => op.MapFrom(x => DateTimeConvert.FromUtc(x.Created).ToSessionTime()));
 
             CreateMap<ApplicationLogTableRow, ApplicationLogListItemViewModel>()
@@ -29,6 +30,11 @@ namespace FWLog.Web.Backoffice.Mapping
             CreateMap<ApplicationLogFilterViewModel, ApplicationLogFilter>()
                 .ForMember(x => x.CreatedStart, op => op.MapFrom(x => DateTimeConvert.FromSessionTime(x.CreatedStart).ToUtc()))
                 .ForMember(x => x.CreatedEnd, op => op.MapFrom(x => DateTimeConvert.FromSessionTime(x.CreatedEnd).ToUtc()));
+        }
+
+        public string MapApplicationEnum(int idApplication)
+        {
+            return ((ApplicationEnum)idApplication).GetValueString();
         }
     }
 }

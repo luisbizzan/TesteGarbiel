@@ -115,6 +115,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Empresa alterada com sucesso..
+        /// </summary>
+        public static string ChangeCompanySuccess {
+            get {
+                return ResourceManager.GetString("ChangeCompanySuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alterar Senha.
         /// </summary>
         public static string ChangePasswordAction {

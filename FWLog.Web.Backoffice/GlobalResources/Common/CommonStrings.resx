@@ -228,4 +228,7 @@
   <data name="MenuRecebimentoRelatorios" xml:space="preserve">
     <value>Relatórios</value>
   </data>
+  <data name="ChangeCompanySuccess" xml:space="preserve">
+    <value>Empresa alterada com sucesso.</value>
+  </data>
 </root>

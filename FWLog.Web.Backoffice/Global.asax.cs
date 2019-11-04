@@ -1,26 +1,18 @@
 ﻿using FWLog.AspNet.Identity;
 using FWLog.Data.EnumsAndConsts;
-using FWLog.Services.Services;
 using FWLog.Web.Backoffice.App_Start;
-using FWLog.Web.Backoffice.App_Start.NinjectModules;
 using FWLog.Web.Backoffice.EnumsAndConsts;
-using FWLog.Web.Backoffice.Helpers;
 using DartDigital.Library.Web.Globalization;
 using DartDigital.Library.Web.IO;
 using DartDigital.Library.Web.ModelValidation;
 using DartDigital.Library.Web.ModelValidation.Adapters;
-//using DartDigital.Library.Web.Security.Backoffice;
 using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
-using Ninject;
-using Ninject.Web.Common.WebHost;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -67,10 +59,10 @@ namespace FWLog.Web.Backoffice
             FileHelper.SetCurrent(AppDomain.CurrentDomain.BaseDirectory);
 
             // Coluna IdApplication da tabela Application, utilizado no log4net
-            GlobalContext.Properties["idApplication"] = ApplicationEnum.BackOffice.GetHashCode();
+            GlobalContext.Properties["idApplication"] = ApplicationEnum.BackOffice.GetHashCode().ToString();
 
             ClientDataTypeModelValidatorProvider.ResourceClassKey = nameof(Resources.ModelValidationStrings);
-            DefaultModelBinder.ResourceClassKey = nameof(Resources.ModelValidationStrings);
+            DefaultModelBinder.ResourceClassKey = nameof(Resources.ModelValidationStrings);            
         }
 
         private void RegisterLocalizationAdapters()
@@ -173,13 +165,15 @@ namespace FWLog.Web.Backoffice
             var user = (ClaimsPrincipal)User;
 
             var companyId = 0;
-            if (Request.Cookies[CompanyCookie.CookieName] != null && Request.Cookies[CompanyCookie.CookieName][CompanyCookie.CompanyId] != null)
+            HttpCookie cookie = Request.Cookies[CompanyCookie.CookieName];
+
+            if (cookie != null && cookie[CompanyCookie.CompanyId] != null && cookie[CompanyCookie.CompanyId] != string.Empty)
             {
-                companyId = Convert.ToInt32(Request.Cookies[CompanyCookie.CookieName][CompanyCookie.CompanyId]);
+                companyId = Convert.ToInt32(cookie[CompanyCookie.CompanyId]);
             }
 
             string userId = user.Identity.GetUserId();
-            IList<string> permissions = await userManager.GetPermissionsAsync(userId, companyId);
+            IList<string> permissions = await userManager.GetPermissionsAsync(userId);
             HttpContext.Current.User = new ApplicationClaimsPrincipal(user, permissions); 
         }
     }

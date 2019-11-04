@@ -443,14 +443,14 @@ namespace FWLog.AspNet.Identity
 
         // Custom implementation
 
-        public Task<IList<string>> GetPermissionsAsync(ApplicationUser user, int? companyId = null)//TODO retirar nullable depois de ajustar api
+        public Task<IList<string>> GetPermissionsAsync(ApplicationUser user)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            IList<string> roleIds = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == companyId).Select(s => s.RoleId).ToList();
+            IList<string> roleIds = db.UserRoles.Where(x => x.UserId == user.Id).Select(s => s.RoleId).ToList();
             IList<string> permissions = db.Users
                 .Where(x => x.Id == user.Id && x.ApplicationId == this.appId)
                 .SelectMany(x => x.Permissions.Select(y => y.Permission.Name))

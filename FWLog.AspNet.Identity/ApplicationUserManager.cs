@@ -17,12 +17,12 @@ namespace FWLog.AspNet.Identity
             _appUserStore = store;
         }
 
-        public Task<IList<string>> GetPermissionsAsync(string userId, int companyId)
+        public Task<IList<string>> GetPermissionsAsync(string userId)
         {
-            return _appUserStore.GetPermissionsAsync(new ApplicationUser { Id = userId }, companyId);
+            return _appUserStore.GetPermissionsAsync(new ApplicationUser { Id = userId });
         }
 
-        public IList<string> GetPermissions(string userId)
+        public IList<string> GetPermissions(string userId, int companyId)
         {
             return _appUserStore.GetPermissionsAsync(new ApplicationUser { Id = userId }).Result;
         }

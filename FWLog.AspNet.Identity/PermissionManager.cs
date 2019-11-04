@@ -73,6 +73,7 @@ namespace FWLog.AspNet.Identity
             }
             else
             {
+                user.Id = Guid.NewGuid().ToString();
                 var result = userManager.Create(user, password);
 
                 if (!result.Succeeded)

@@ -16,6 +16,8 @@ using System.Threading;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
+using System.Collections.Specialized;
+using System;
 
 namespace FWLog.Web.Api.Helpers
 {
@@ -74,14 +76,15 @@ namespace FWLog.Web.Api.Helpers
 
             string userId = user.Identity.GetUserId();
 
+            NameValueCollection parameters = HttpUtility.ParseQueryString(actionContext.Request.RequestUri.Query);
+
             var userManager = actionContext.Request.GetOwinContext().GetUserManager<WebApiUserManager>();
-            IList<string> permissions = userManager.GetPermissions(userId);
+            IList<string> permissions = userManager.GetPermissions(userId, Convert.ToInt32(parameters["IdCompany"]));
 
             var customUser = new ApplicationClaimsPrincipal((ClaimsPrincipal)user, permissions);
 
             actionContext.ControllerContext.RequestContext.Principal = customUser;
             Thread.CurrentPrincipal = customUser;
-            //TODO verificar como pegar idempresa da requisição
         }
     }
 }

@@ -1,9 +1,12 @@
-﻿using System;
+﻿using FWLog.Data.Logging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using ResEnt = Resources.EntityStrings;
 
 namespace FWLog.Data
 {
+    [Log(DisplayName = nameof(ResEnt.AspNetUsers), ResourceType = typeof(ResEnt))]
     public class AspNetUsers
     {
         public AspNetUsers()
@@ -13,8 +16,13 @@ namespace FWLog.Data
         }
 
         [Key]
+        [Log(DisplayName = nameof(ResEnt.UserId), ResourceType = typeof(ResEnt))]
         public string Id { get; set; }
-        public int ApplicationId { get; set; }
+
+        [Log(DisplayName = nameof(ResEnt.UserName), ResourceType = typeof(ResEnt))]
+        public string UserName { get; set; }
+
+        [Log(DisplayName = nameof(ResEnt.Email), ResourceType = typeof(ResEnt))]
         public string Email { get; set; }
         public bool EmailConfirmed { get; set; }
         public string PasswordHash { get; set; }
@@ -25,12 +33,10 @@ namespace FWLog.Data
         public DateTime? LockoutEndDateUtc { get; set; }
         public bool LockoutEnabled { get; set; }
         public int AccessFailedCount { get; set; }
-        public string UserName { get; set; }
-        public int? ApplicationSessionId { get; set; }
+        public int ApplicationId { get; set; }
+        public int? IdApplicationSession { get; set; }
 
-        public virtual Application Application { get; set; }
-        public virtual ICollection<BOLogSystem> BOLogSystem { get; set; }
-        public virtual ApplicationSession ApplicationSession { get; set; }
+        public virtual ICollection<BOLogSystem> BOLogSystem { get; set; }        
         public virtual ICollection<AspNetRoles> AspNetRoles { get; set; }
     }
 }

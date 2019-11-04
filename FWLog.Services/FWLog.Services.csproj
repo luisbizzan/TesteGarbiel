@@ -70,6 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\ConpanyException.cs" />
     <Compile Include="GlobalResources\General\GeneralStrings.en.Designer.cs">
       <DependentUpon>GeneralStrings.en.resx</DependentUpon>
       <AutoGen>True</AutoGen>

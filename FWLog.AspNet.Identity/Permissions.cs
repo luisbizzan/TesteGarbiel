@@ -63,5 +63,15 @@ namespace FWLog.AspNet.Identity
                 Register(Delete, Display.FromResource(nameof(Res.BOAccountDelete)));
             }
         }
+
+        public class UserApp : PermissionGroupBuildItem
+        {
+            public const string UserAppLogin = "UserAppLogin";
+
+            public UserApp() : base(Display.FromResource(nameof(Res.UserApp)))
+            {
+                Register(UserAppLogin, Display.FromResource(nameof(Res.UserAppLogin)));
+            }
+        }
     }
 }

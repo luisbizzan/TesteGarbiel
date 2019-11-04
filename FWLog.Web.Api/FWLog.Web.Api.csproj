@@ -191,7 +191,7 @@
     <Compile Include="App_Start\NinjectDependencyResolver.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\ApiBaseController.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="EnumsAndConsts\App.cs" />
     <Compile Include="GlobalResources\AccountResource.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -200,15 +200,11 @@
     </Compile>
     <Compile Include="Helpers\ApiErrorBuilder.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
-    <Compile Include="Models\Account\PermissionsModelResponse.cs" />
-    <Compile Include="Models\Account\RecoverPasswordModelRequest.cs" />
-    <Compile Include="Models\Account\LoginModelResponse.cs" />
-    <Compile Include="Models\Account\LoginModelRequest.cs" />
+    <Compile Include="Models\Usuario\PermissionsModelResponse.cs" />
+    <Compile Include="Models\Usuario\RecoverPasswordModelRequest.cs" />
+    <Compile Include="Models\Usuario\LoginModelResponse.cs" />
+    <Compile Include="Models\Usuario\LoginModelRequest.cs" />
     <Compile Include="Models\ApiErrorModelResponse.cs" />
-    <Compile Include="Models\TestCtx\TestCreateRequest.cs" />
-    <Compile Include="Models\TestCtx\TestCreateResponse.cs" />
-    <Compile Include="Models\TestCtx\TestEditRequest.cs" />
-    <Compile Include="Models\TestCtx\TestEditResponse.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Helpers\ApplicationAuthorize.cs" />
     <Compile Include="App_Start\AutoMapperConfig.cs" />
@@ -246,10 +242,12 @@
     <EmbeddedResource Include="GlobalResources\AccountResource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AccountResource.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GlobalResources\General\GeneralStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>GeneralStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -109,17 +109,8 @@ namespace FWLog.Data.Logging
 
             var oldEntity = Activator.CreateInstance(entityTrueType);
             var entityName = entityTrueType.Name;
-            MetadataTypeAttribute metadataAttr = (MetadataTypeAttribute)entityTrueType.GetCustomAttributes(typeof(MetadataTypeAttribute), false).FirstOrDefault();
-
-            Type entityTypeMetadata = metadataAttr == null ? null : metadataAttr.MetadataClassType;
-
-            // Se não houver metadata, também não há atributo "Log".
-            if (entityTypeMetadata == null)
-            {
-                return null;
-            }
-
-            var logAttr = entityTypeMetadata.GetCustomAttributes(typeof(LogAttribute), false).FirstOrDefault();
+           
+            var logAttr = entityTrueType.GetCustomAttributes(typeof(LogAttribute), false).FirstOrDefault();
 
             if (logAttr == null)
             {
@@ -132,7 +123,7 @@ namespace FWLog.Data.Logging
 
             if (actionType == ActionTypeNames.Edit.Value)
             {
-                foreach (var databaseColumn in DartDigital.Library.Helpers.DbHelper.GetDatabaseColumnsNames(entityTrueType))
+                foreach (var databaseColumn in DbHelper.GetDatabaseColumnsNames(entityTrueType))
                 {
                     var propertyInfo = entityTrueType.GetProperty(databaseColumn);
                     propertyInfo.SetValue(oldEntity, (entry.OriginalValues[databaseColumn] == DBNull.Value ? null : entry.OriginalValues[databaseColumn]), null);
@@ -144,18 +135,13 @@ namespace FWLog.Data.Logging
                 foreach (var property in entry.CurrentValues.PropertyNames)
                 {
                     var propertyInfo = entityTrueType.GetProperty(property);
-                    var propertyInfoMetadata = entityTypeMetadata != null ? entityTypeMetadata.GetProperty(property) : null;
+                    
+                    LogAttribute propLogAttr = (LogAttribute)propertyInfo.GetCustomAttributes(typeof(LogAttribute), false).FirstOrDefault();
 
-                    if (propertyInfoMetadata != null)
+                    if (propLogAttr == null)
                     {
-                        LogAttribute propLogAttr = (LogAttribute)propertyInfoMetadata.GetCustomAttributes(typeof(LogAttribute), false).FirstOrDefault();
-
-                        if (propLogAttr == null)
-                        {
-                            continue;
-                        }
+                        continue;
                     }
-
 
                     var originalValueProperty = entry.OriginalValues[property];
                     var currentValueProperty = entry.CurrentValues[property];
@@ -184,16 +170,11 @@ namespace FWLog.Data.Logging
                 foreach (var property in DbHelper.GetDatabaseColumnsNames(entityTrueType))
                 {
                     var propertyInfo = entityTrueType.GetProperty(property);
-                    var propertyInfoMetadata = entityTypeMetadata != null ? entityTypeMetadata.GetProperty(property) : null;
+                    LogAttribute propLogAttr = (LogAttribute)propertyInfo.GetCustomAttributes(typeof(LogAttribute), false).FirstOrDefault();
 
-                    if (propertyInfoMetadata != null)
+                    if (propLogAttr == null)
                     {
-                        LogAttribute propLogAttr = (LogAttribute)propertyInfoMetadata.GetCustomAttributes(typeof(LogAttribute), false).FirstOrDefault();
-
-                        if (propLogAttr == null)
-                        {
-                            continue;
-                        }
+                        continue;
                     }
 
                     Object valueProperty = null;

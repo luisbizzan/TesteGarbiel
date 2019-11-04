@@ -72,8 +72,8 @@
             };
 
             var cancelEvent = function () {
-                $modal.modal('hide');
                 onCancel();
+                $modal.modal('hide');
             };
 
             var $modal = getHtml(title, message, confirmEvent, confirmText, cancelText, cancelEvent).appendTo('body');

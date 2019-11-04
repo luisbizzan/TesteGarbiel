@@ -72,3 +72,48 @@ footer {
 .reset_pass {
     color: #155831 !important;
 }
+
+.checkbox {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.control-label {
+    margin-bottom: 0 !important;
+}
+
+.form-control {
+    height: 28px !important;
+    padding: 3px 12px !important;
+}
+
+.title-sml {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.ln-solid {
+    margin-top: 10px !important;
+    margin-bottom: 15px !important;
+}
+
+.x_title {
+    margin-top: 2px !important;
+    margin-bottom: 2px !important;
+}
+
+.btn {
+    padding: 3px 6px !important;
+}
+
+.btn-row-actions {
+    padding: 0px 6px !important;
+}
+
+.form-control-lg {
+    height: 34px !important;
+}
+
+.input-group-addon {
+    font-size: 12px !important;
+}
