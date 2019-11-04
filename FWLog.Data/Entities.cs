@@ -14,7 +14,7 @@ namespace FWLog.Data
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("DART");
-            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();           
+            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
         }
 
         public virtual DbSet<Application> Application { get; set; }
@@ -26,6 +26,7 @@ namespace FWLog.Data
         public virtual DbSet<ApplicationLog> ApplicationLog { get; set; }
         public virtual DbSet<Company> Company { get; set; }
         public virtual DbSet<UserCompany> UserCompany { get; set; }
+        public virtual DbSet<PerfilUsuario> PerfilUsuario { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 

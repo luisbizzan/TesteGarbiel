@@ -83,7 +83,6 @@ namespace FWLog.Web.Backoffice.Controllers
                     cookie[CompanyCookie.ListCompanies] = string.Empty;
                 }
 
-                cookie.Expires = DateTime.UtcNow.AddHours(8);
                 Response.Cookies.Add(cookie);
 
                 return;
@@ -99,14 +98,14 @@ namespace FWLog.Web.Backoffice.Controllers
                 var newCookie = new HttpCookie(CompanyCookie.CookieName);
                 newCookie.Values[CompanyCookie.CompanyId] = companyId.ToString();
                 newCookie.Values[CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
-                newCookie.Expires = DateTime.UtcNow.AddHours(8);
+                newCookie.Expires = DateTime.MaxValue;
                 Response.Cookies.Add(newCookie);
             }
             else
             {
                 cookie.Values[CompanyCookie.CompanyId] = companyId.ToString();
                 cookie.Values[CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
-                cookie.Expires = DateTime.UtcNow.AddHours(8);
+                cookie.Expires = DateTime.MaxValue;
                 Response.Cookies.Add(cookie);
             }
         }
@@ -118,24 +117,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 HttpCookie cookie = Request.Cookies[CompanyCookie.CookieName];
 
                 if (cookie != null && cookie[CompanyCookie.CompanyId] != null && cookie[CompanyCookie.CompanyId] != string.Empty)
-                {
-                    var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
-                    var userInfo = new BackOfficeUserInfo();
-
-                    var companyId = Convert.ToInt32(cookie[CompanyCookie.CompanyId].ToString());
-
-                    if (userInfo.UserId != null && cookie.Expires < DateTime.UtcNow)
-                    {
-                        var companies = uow.CompanyRepository.GetAllByUserId(userInfo.UserId.ToString());
-                        var jsonCompanies = JsonConvert.SerializeObject(companies);
-
-                        cookie.Values[CompanyCookie.ListCompanies] = companyId.ToString();
-                        cookie.Values[CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
-                        cookie.Expires = DateTime.UtcNow.AddHours(8);
-                        Response.Cookies.Add(cookie);
-                    }
-
-                    return companyId;
+                {   
+                    return Convert.ToInt32(cookie[CompanyCookie.CompanyId].ToString());
                 }
                 else
                 {

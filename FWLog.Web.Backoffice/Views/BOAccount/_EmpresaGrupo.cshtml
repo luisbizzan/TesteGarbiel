@@ -1,0 +1,78 @@
+﻿@model List<FWLog.Web.Backoffice.Models.BOAccountCtx.EmpresaGrupoViewModel>
+@using Res = Resources.CommonStrings;
+
+@for (int i = 0; i < Model.Count(); i++)
+{
+    <div class="x_panel panelEmpresa">
+        <div class="x_title">
+            @Html.Label(Model[i].Name)
+            @Html.Hidden(string.Format("EmpresasGrupos[{0}].Name", i.ToString()), Model[i].Name, new { @class = "companyName" })
+            @Html.Hidden(string.Format("EmpresasGrupos[{0}].CompanyId", i.ToString()), Model[i].CompanyId, new { @class = "companyId" })
+            <div class="btn-group btn-group-sm pull-right">
+                <button type="button" class="btn btn-default form-group checkAllGroups"><i class="fa fa-check-square-o"></i> @Res.CheckAllLabel</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="javascript:void(0);" class="uncheckAllGroups"><i class="fa fa-square-o"></i> @Res.UncheckAllLabel</a></li>
+                </ul>
+                <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
+            </div>
+        </div>
+        <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            @for (int grupo = 0; grupo < Model[i].Grupos.Count(); grupo++)
+            {
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="checkbox">
+                        <label>
+                            @Html.Hidden(string.Format("EmpresasGrupos[{0}].Grupos[{1}].Name", i, grupo), Model[i].Grupos[grupo].Name, new { @class = "NomeGrupo" })
+                            @Html.CheckBox(string.Format("EmpresasGrupos[{0}].Grupos[{1}].IsSelected", i, grupo), Model[i].Grupos[grupo].IsSelected, new { data_group = "" })
+                            @Html.DisplayFor(m => m[i].Grupos[grupo].Name)
+                        </label>
+                    </div>
+                </div>
+
+            }
+        </div>
+    </div>
+}
+
+
+@*@model FWLog.Web.Backoffice.Models.BOAccountCtx.BOAccountCreateViewModel
+    @using Res = Resources.CommonStrings;
+
+    @for (int i = 0; i < Model.EmpresasGrupos.Count(); i++)
+    {
+        <div class="x_panel panelEmpresa">
+            <div class="x_title">
+                @Html.Label(Model.EmpresasGrupos[i].Name)
+                @Html.HiddenFor(m => m.EmpresasGrupos[i].Name, new { @class = "companyName" })
+                @Html.HiddenFor(m => m.EmpresasGrupos[i].CompanyId, new { @class = "companyId" })
+                <div class="btn-group btn-group-sm pull-right">
+                    <button type="button" class="btn btn-default form-group checkAllGroups"><i class="fa fa-check-square-o"></i> @Res.CheckAllLabel</button>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="javascript:void(0);" class="uncheckAllGroups"><i class="fa fa-square-o"></i> @Res.UncheckAllLabel</a></li>
+                    </ul>
+                    <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
+                </div>
+            </div>
+            <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                @for (int grupo = 0; grupo < Model.EmpresasGrupos[i].Grupos.Count(); grupo++)
+                {
+                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                        <div class="checkbox">
+                            <label>
+                                @Html.HiddenFor(m => m.EmpresasGrupos[i].Grupos[grupo].Name, new { @class = "NomeGrupo" })
+                                @Html.CheckBoxFor(m => m.EmpresasGrupos[i].Grupos[grupo].IsSelected, new { data_group = "" })
+                                @Html.DisplayFor(m => m.EmpresasGrupos[i].Grupos[grupo].Name)
+                            </label>
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    }*@

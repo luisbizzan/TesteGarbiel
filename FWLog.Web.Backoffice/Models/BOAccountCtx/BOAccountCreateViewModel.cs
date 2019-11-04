@@ -1,4 +1,5 @@
 ﻿using DartDigital.Library.Web.ModelValidation;
+using FWLog.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -29,6 +30,17 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
         [Compare("Password", ErrorMessageResourceName = nameof(Res.ConfirmPasswordCompareMessage), ErrorMessageResourceType = typeof(Res))]
         public string ConfirmPassword { get; set; }
 
-        public List<GroupItemViewModel> Groups { get; set; } = new List<GroupItemViewModel>();
+        public PerfilUsuario PerfilUsuario { get; set; }
+
+        public List<EmpresaGrupoViewModel> EmpresasGrupos { get; set; } = new List<EmpresaGrupoViewModel>();
     }
+
+    public class EmpresaGrupoViewModel
+    {
+        public long CompanyId { get; set; }
+        public string Name { get; set; }
+
+        public List<GroupItemViewModel> Grupos { get; set; } = new List<GroupItemViewModel>();
+    }
+
 }

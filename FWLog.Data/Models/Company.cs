@@ -38,5 +38,6 @@ namespace FWLog.Data
         public string PhoneNumber { get; set; }
         public int CompanyType { get; set; }
         public int Disabled { get; set; }
+        //TODO acrescentar displayname
     }
 }

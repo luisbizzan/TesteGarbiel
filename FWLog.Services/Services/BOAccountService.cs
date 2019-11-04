@@ -45,5 +45,17 @@ namespace FWLog.Services.Services
 
             client.SendMail(mailParams);
         }
+
+        public void EditPerfilUsuario(PerfilUsuario perfilModel)
+        {
+            var perfil = _uow.PerfilUsuarioRepository.GetById(perfilModel.PerfilUsuarioId);
+
+            perfil.Departamento = perfilModel.Departamento;
+            perfil.Cargo = perfilModel.Cargo;
+            perfil.DataNascimento = perfilModel.DataNascimento;
+            perfil.EmpresaId = perfilModel.EmpresaId;
+
+            _uow.SaveChanges();
+        }
     }
 }

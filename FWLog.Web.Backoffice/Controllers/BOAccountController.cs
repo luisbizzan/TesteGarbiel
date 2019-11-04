@@ -84,30 +84,40 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
         public ActionResult Create()
         {
-            List<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name).ToList();
+            ViewData["Companies"] = new SelectList(Companies, "CompanyId", "Name");
 
-            var model = new BOAccountCreateViewModel
-            {
-                Groups = Mapper.Map<List<GroupItemViewModel>>(groups)
-            };
+            var model = new BOAccountCreateViewModel();
 
             return View(model);
         }
 
+        public ActionResult AdicionarEmpresa(long companyId)
+        {
+            List<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name).ToList();
+
+            var model = new BOAccountCreateViewModel();
+            var empGrupos = new EmpresaGrupoViewModel();
+
+            empGrupos.CompanyId = companyId;
+            empGrupos.Name = Companies.First(f => f.CompanyId == companyId).Name;
+            empGrupos.Grupos = Mapper.Map<List<GroupItemViewModel>>(groups);
+            model.EmpresasGrupos.Add(empGrupos);
+
+            return PartialView("_EmpresaGrupo", model.EmpresasGrupos);
+        }
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
         public async Task<ActionResult> Create(BOAccountCreateViewModel model)
         {
+            ViewData["Companies"] = new SelectList(Companies, "CompanyId", "Name");
+
             Func<string, ViewResult> errorView = (error) =>
             {
                 if (error != null)
                 {
                     Notify.Error(Resources.CommonStrings.RequestUnexpectedErrorMessage);
                 }
-
-                List<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name).ToList();
-                model.Groups = Mapper.Map<List<GroupItemViewModel>>(groups);
                 return View(model);
             };
 
@@ -136,6 +146,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
+            user.Id = Guid.NewGuid().ToString();
             var result = await UserManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
@@ -143,18 +154,27 @@ namespace FWLog.Web.Backoffice.Controllers
                 throw new InvalidOperationException(Resources.CommonStrings.RequestUnexpectedErrorMessage);
             }
 
-            IEnumerable<string> selectedRoles = model.Groups.Where(x => x.IsSelected).Select(x => x.Name);
+            model.PerfilUsuario.UsuarioId = user.Id;
+            _uow.PerfilUsuarioRepository.Add(model.PerfilUsuario);
+            _uow.SaveChanges();
 
-            if (selectedRoles.Any())
+            model.EmpresasGrupos.ForEach(f => _uow.UserCompanyRepository.Add(new UserCompany(user.Id, f.CompanyId)));
+            _uow.SaveChanges();
+
+            foreach (var item in model.EmpresasGrupos)
             {
-                result = await UserManager.AddToRolesAsync(user.Id, selectedRoles.ToArray());
+                IEnumerable<string> selectedRoles = item.Grupos.Where(x => x.IsSelected).Select(x => x.Name);
 
-                if (!result.Succeeded)
+                if (selectedRoles.Any())
                 {
-                    Notify.Error(Resources.CommonStrings.RequestUnexpectedErrorMessage);
-                    List<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name).ToList();
-                    model.Groups = Mapper.Map<List<GroupItemViewModel>>(groups);
-                    return View(model);
+                    result = UserManager.AddToRolesByCompany(user, selectedRoles.ToArray(), item.CompanyId);
+
+                    if (!result.Succeeded)
+                    {
+                        Notify.Error(Resources.CommonStrings.RequestUnexpectedErrorMessage);
+
+                        return View(model);
+                    }
                 }
             }
 
@@ -165,7 +185,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 IP = userInfo.IP,
                 UserId = userInfo.UserId,
                 EntityName = nameof(AspNetUsers),
-                NewEntity = new AspNetUsersLogSerializeModel(user.UserName)
+                NewEntity = new AspNetUsersLogSerializeModel(user.UserName)//TODO Verificar Log
             });
 
             Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
@@ -175,6 +195,8 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Edit)]
         public async Task<ActionResult> Edit(string id)
         {
+            ViewData["Companies"] = new SelectList(Companies, "CompanyId", "Name");
+
             ApplicationUser user = await UserManager.FindByNameAsync(id);
 
             if (user == null)
@@ -182,17 +204,34 @@ namespace FWLog.Web.Backoffice.Controllers
                 throw new HttpException(404, "Not found");
             }
 
-            IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);
+            var companies = _uow.UserCompanyRepository.GetAllCompaniesByUserId(user.Id.ToString());
+
+            var perfil = _uow.PerfilUsuarioRepository.GetByUserId(user.Id.ToString());
+
             var model = Mapper.Map<BOAccountEditViewModel>(user);
+            model.PerfilUsuario = perfil;
 
-            model.Groups = Mapper.Map<List<GroupItemViewModel>>(groups);
-
-            IList<string> selectedRoles = await UserManager.GetRolesAsync(user.Id);
-
-            foreach (GroupItemViewModel group in model.Groups)
+            foreach (var company in companies)
             {
-                if (selectedRoles.Contains(group.Name))
-                    group.IsSelected = true;
+                IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);
+
+                var empGrupos = new EmpresaGrupoViewModel();
+
+                empGrupos.CompanyId = company;
+                empGrupos.Name = Companies.First(f => f.CompanyId == company).Name;
+                empGrupos.Grupos = Mapper.Map<List<GroupItemViewModel>>(groups);
+
+                IList<string> selectedRoles = await UserManager.GetUserRolesByCompanyId(user.Id, company);
+
+                foreach (GroupItemViewModel group in empGrupos.Grupos)
+                {
+                    if (selectedRoles.Contains(group.Name))
+                    {
+                        group.IsSelected = true;
+                    }
+                }
+
+                model.EmpresasGrupos.Add(empGrupos);
             }
 
             return View(model);
@@ -202,19 +241,10 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Edit)]
         public async Task<ActionResult> Edit(BOAccountEditViewModel model)
         {
-            IEnumerable<string> selectedRoles = model.Groups.Where(x => x.IsSelected).Select(x => x.Name);
+            ViewData["Companies"] = new SelectList(Companies, "CompanyId", "Name");
 
             Func<ViewResult> errorView = () =>
-            {
-                IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);
-                model.Groups = Mapper.Map<List<GroupItemViewModel>>(groups);
-
-                foreach (GroupItemViewModel group in model.Groups)
-                {
-                    if (selectedRoles.Contains(group.Name))
-                        group.IsSelected = true;
-                }
-
+            {                
                 return View(model);
             };
 
@@ -240,12 +270,27 @@ namespace FWLog.Web.Backoffice.Controllers
 
             ApplicationUser oldUser = Mapper.Map<ApplicationUser>(user);
             user.Email = model.Email;
-            IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, CompanyId);
 
-            if (!result.Succeeded)
+
+            foreach (var item in model.EmpresasGrupos)
             {
-                throw new InvalidOperationException(Resources.CommonStrings.RequestUnexpectedErrorMessage);
+                IEnumerable<string> selectedRoles = item.Grupos.Where(x => x.IsSelected).Select(x => x.Name);
+
+                if (selectedRoles.Any())
+                {
+                    IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, item.CompanyId);
+
+                    if (!result.Succeeded)
+                    {
+                        throw new InvalidOperationException(Resources.CommonStrings.RequestUnexpectedErrorMessage);
+                    }
+                }
             }
+
+            _boService.EditPerfilUsuario(model.PerfilUsuario);
+
+            //model.EmpresasGrupos.ForEach(f => _uow.UserCompanyRepository.Add(new UserCompany(user.Id.ToString(), f.CompanyId)));
+            //_uow.SaveChanges();
 
             var userInfo = new BackOfficeUserInfo();
             _boLogSystemService.Add(new BOLogSystemCreation

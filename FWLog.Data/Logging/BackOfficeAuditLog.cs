@@ -73,7 +73,7 @@ namespace FWLog.Data.Logging
             {
                 nonLogChanges = entities.SaveChangesWithoutLog();
 
-                if (boLogSystemList != null)
+                if (!boLogSystemList.NullOrEmpty())
                 {
                     for (int i = 0; i < objectStateEntryList.Count; i++)
                     {

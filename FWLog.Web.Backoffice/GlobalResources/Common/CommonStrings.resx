@@ -231,4 +231,10 @@
   <data name="ChangeCompanySuccess" xml:space="preserve">
     <value>Empresa alterada com sucesso.</value>
   </data>
+  <data name="CheckAllLabel" xml:space="preserve">
+    <value>Marcar Todos</value>
+  </data>
+  <data name="UncheckAllLabel" xml:space="preserve">
+    <value>Desmarcar Todos</value>
+  </data>
 </root>
