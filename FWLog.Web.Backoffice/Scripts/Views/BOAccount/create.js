@@ -35,7 +35,7 @@
         });
     });
 
-    $('.btnSalvar').on('click', function () {
+    $('.btnSalvar').on('click', function () {        
         $("#EmpresasSelecionadas").find(".panelEmpresa").each(function (i, e) {
             $(this).find(".companyId").attr('id', `EmpresasGrupos_${i}__CompanyId`);
             $(this).find(".companyId").attr('name', `EmpresasGrupos[${i}].CompanyId`);
@@ -72,4 +72,6 @@ function loadButtons() {
     $('.uncheckAllGroups').on('click', function () {
         $(this).parents(".panelEmpresa").find("[data-group]").prop('checked', false);
     });
+
+    $("[data-group]").on('click', function () { $(".validationEmpresa").text(""); });
 }

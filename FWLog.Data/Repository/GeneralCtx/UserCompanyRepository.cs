@@ -17,5 +17,15 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.UserCompany.Where(w => w.UserId == userId).Select(s => s.CompanyId).ToList();
         }
+
+        public void DeleteByUserId(string userId, long companyId)
+        {
+            var rel = Entities.UserCompany.Where(w => w.UserId == userId && w.CompanyId == companyId).FirstOrDefault();
+
+            if (rel != null)
+            {
+                Entities.UserCompany.Remove(rel);
+            }
+        }
     }
 }

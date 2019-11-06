@@ -276,4 +276,10 @@
   <data name="UserNameAlreadyExistsMessage" xml:space="preserve">
     <value>Já existe um usuário cadastrado com esse nome. Por favor escolha outro.</value>
   </data>
+  <data name="RequiredOnlyCompany" xml:space="preserve">
+    <value>Relacione o usuário ao menos à uma empresa.</value>
+  </data>
+  <data name="RequiredOnlyGroup" xml:space="preserve">
+    <value>Relacione pelo menos um grupo à empresa adicionada ao usuário.</value>
+  </data>
 </root>

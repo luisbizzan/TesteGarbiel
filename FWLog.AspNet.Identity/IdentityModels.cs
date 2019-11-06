@@ -98,7 +98,6 @@ namespace FWLog.AspNet.Identity
     [Table("AspNetUserRoles", Schema = "DART")]
     public class UserRole : IdentityUserRole
     {
-        [Key, Column(Order = 2)]
         public long CompanyId { get; set; }
     }
 
@@ -116,10 +115,10 @@ namespace FWLog.AspNet.Identity
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("DART");
-
-            modelBuilder.Entity<UserRole>().HasKey(k=> new { k.UserId, k.RoleId, k.CompanyId});
-
+            
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<UserRole>().HasKey(k => new { k.UserId, k.RoleId, k.CompanyId });
         }
 
         static ApplicationDbContext()

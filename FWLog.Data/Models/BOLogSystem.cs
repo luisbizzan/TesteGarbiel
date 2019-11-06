@@ -9,7 +9,7 @@ namespace FWLog.Data
     {
         [Key]
         public long IdBOLogSystem { get; set; }        
-        public string AspNetUsersId { get; set; }
+        public string UserId { get; set; }
         public string ActionType { get; set; }
         public string IP { get; set; }
         public DateTime ExecutionDate { get; set; }
@@ -18,11 +18,12 @@ namespace FWLog.Data
         public string NewEntity { get; set; }
         public string ScopeIdentifier { get; set; }
 
+        [ForeignKey("UserId")]
         public virtual AspNetUsers AspNetUsers { get; set; }
 
         public void SetUserId(object value)
         {
-            PropertyInfo userIdProp = typeof(BOLogSystem).GetProperty(nameof(AspNetUsersId));
+            PropertyInfo userIdProp = typeof(BOLogSystem).GetProperty(nameof(UserId));
             Type userIdType = userIdProp.PropertyType;
 
             userIdProp.SetValue(this, value);

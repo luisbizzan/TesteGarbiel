@@ -453,7 +453,7 @@ namespace FWLog.AspNet.Identity
             IList<string> roles = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == companyId).Select(s => s.RoleId).ToList();
 
             IList<string> rolesName = db.Roles.Where(w => roles.Contains(w.Id)).Select(s => s.Name).ToList();
-           
+
             return Task.FromResult(rolesName);
         }
 
@@ -504,23 +504,20 @@ namespace FWLog.AspNet.Identity
             ValidateRoles(roles);
 
             user.ApplicationId = this.appId;
-            
+
             IList<UserRole> userRoles = this.db.Roles
                 .Where(x => x.ApplicationId == this.appId && roles.Contains(x.Name))
                 .ToList()
                 .Select(x => new UserRole { RoleId = x.Id, UserId = user.Id, CompanyId = companyId })
                 .ToList();
 
-            ApplicationUser dbEntity = this.db.Users.Include(x => x.Roles).FirstOrDefault(x => x.Id == user.Id);
+            var dbEntity = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == companyId).ToList();
 
-            this.db.Entry(dbEntity).CurrentValues.SetValues(user);
-            //TODO continuar aqui
+            List<UserRole> userRolesToAdd = userRoles.Where(x => !dbEntity.Any(y => y.RoleId == x.RoleId)).ToList();
+            List<UserRole> userRolesToRemove = dbEntity.Where(x => !userRoles.Any(y => y.RoleId == x.RoleId)).ToList();
 
-            List<UserRole> userRolesToAdd = userRoles.Where(x => !dbEntity.Roles.Where(y => y.RoleId == x.RoleId && y.CompanyId == companyId).Any()).ToList();
-            userRolesToAdd.ForEach(x => dbEntity.Roles.Add(x));
-
-            List<UserRole> userRolesToRemove = dbEntity.Roles.Where(x => !userRoles.Any(y => y.RoleId == x.RoleId && y.CompanyId == companyId)).ToList();
-            userRolesToRemove.ForEach(x => dbEntity.Roles.Remove(x));
+            userRolesToAdd.ForEach(x => db.UserRoles.Add(x));
+            userRolesToRemove.ForEach(x => db.UserRoles.Remove(x));
 
             return this.db.SaveChangesAsync();
         }

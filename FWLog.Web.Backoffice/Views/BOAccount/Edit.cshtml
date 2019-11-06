@@ -29,33 +29,33 @@
             <!-- fields -->
             <div class="row">
                 <div class="">
-                    <div class="form-group col-sm-12 col-md-6 col-lg-3 col-xl-3">
+                    @Html.HiddenFor(m => m.PerfilUsuario.PerfilUsuarioId)
+                    <div class="form-group col-sm-12 col-md-6 col-lg-4 col-xl-4">
                         @Html.LabelFor(m => m.UserName, new { @class = "control-label" })
                         @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @disabled = "disabled" })
                         @Html.ValidationMessageFor(m => m.UserName)
                     </div>
-                    <div class="form-group col-sm-12 col-md-6 col-lg-3 col-xl-3">
+                    <div class="form-group col-sm-12 col-md-6 col-lg-4 col-xl-4">
                         @Html.LabelFor(m => m.Email, new { @class = "control-label" })
                         @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.Email)
                     </div>
-                    <div class="form-group col-sm-12 col-md-6 col-lg-3">
+                    <div class="form-group col-sm-12 col-md-6 col-lg-4 col-xl-4">
                         @Html.LabelFor(m => m.PerfilUsuario.Departamento, new { @class = "control-label" })
                         @Html.TextBoxFor(m => m.PerfilUsuario.Departamento, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.PerfilUsuario.Departamento)
                     </div>
-                    <div class="form-group col-sm-12 col-md-6 col-lg-3">
+                    <div class="form-group col-sm-12 col-md-6 col-lg-4 col-xl-4">
                         @Html.LabelFor(m => m.PerfilUsuario.Cargo, new { @class = "control-label" })
                         @Html.TextBoxFor(m => m.PerfilUsuario.Cargo, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.PerfilUsuario.Cargo)
-                        @Html.HiddenFor(m => m.PerfilUsuario.PerfilUsuarioId)
                     </div>
-                    <div class="form-group col-sm-12 col-md-6 col-lg-3">
+                    <div class="form-group col-sm-12 col-md-6 col-lg-4 col-xl-4">
                         @Html.LabelFor(m => m.PerfilUsuario.DataNascimento, new { @class = "control-label" })
-                        @Html.TextBoxFor(m => m.PerfilUsuario.DataNascimento, new { @class = "form-control date" })
+                        @Html.TextBoxFor(m => m.PerfilUsuario.DataNascimento, new { @class = "form-control dateMask" })
                         @Html.ValidationMessageFor(m => m.PerfilUsuario.DataNascimento)
                     </div>
-                    <div class="form-group col-sm-12 col-md-6 col-lg-3">
+                    <div class="form-group col-sm-12 col-md-6 col-lg-4 col-xl-4">
                         @Html.LabelFor(m => m.PerfilUsuario.EmpresaId, new { @class = "control-label" })
                         @Html.DropDownListFor(m => m.PerfilUsuario.EmpresaId, new SelectList((System.Collections.IEnumerable)ViewData["Companies"], "Value", "Text"), @Resources.CommonStrings.Select, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.PerfilUsuario.EmpresaId)
@@ -75,19 +75,20 @@
                         <button type="button" id="btnAddEmpresa" class="btn btn-primary btn-dt-action m-r-sm">
                             <i class="fa fa-plus"></i> Adicionar
                         </button>
-                        <span class="text-danger validationEmpresa"></span>
+
                     </div>
                 </div>
             </div>
             <div id="EmpresasSelecionadas">
                 @Html.Partial("_EmpresaGrupo", Model.EmpresasGrupos)
             </div>
+            <span class="text-danger validationEmpresa">@Html.ValidationMessageFor(m => m.EmpresasGrupos)</span>
             <!-- /fields -->
             <!-- footer -->
             <div class="ln_solid"></div>
             <div class="row col-xs-12 form-buttons">
                 <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.CancelAction</a>
-                <button type="submit" class="btn btn-primary">@Resources.CommonStrings.ConfirmAction</button>
+                <button type="submit" class="btn btn-primary btnSalvar">@Resources.CommonStrings.ConfirmAction</button>
             </div>
             <!-- /footer -->
         </div>

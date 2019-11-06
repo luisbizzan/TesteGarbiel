@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Text;
 
 using Res = FWLog.Services.GlobalResources.General.GeneralStrings;
+using System.Linq;
+using FWLog.Data.Models.GeneralCtx;
 
 namespace FWLog.Services.Services
 {
@@ -54,6 +56,21 @@ namespace FWLog.Services.Services
             perfil.Cargo = perfilModel.Cargo;
             perfil.DataNascimento = perfilModel.DataNascimento;
             perfil.EmpresaId = perfilModel.EmpresaId;
+
+            _uow.SaveChanges();
+        }
+
+        public void EditUsuarioEmpresas(IEnumerable<CompanySelectedItem> empresasUserOn, List<long> empresasUserEdit, string userId)
+        {
+            var empOld = _uow.UserCompanyRepository.GetAllCompaniesByUserId(userId);
+
+            empOld = empresasUserOn.Where(w => empOld.Contains(w.CompanyId)).Select(s => s.CompanyId).ToList();
+
+            List<long> empAdd = empresasUserEdit.Where(x => !empOld.Any(y => y == x)).ToList();
+            List<long> empRem = empOld.Where(x => !empresasUserEdit.Any(y => y == x)).ToList();
+
+            empAdd.ForEach(x => _uow.UserCompanyRepository.Add(new UserCompany(userId, x)));
+            empRem.ForEach(x => _uow.UserCompanyRepository.DeleteByUserId(userId, x));
 
             _uow.SaveChanges();
         }
