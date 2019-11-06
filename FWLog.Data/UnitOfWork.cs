@@ -26,7 +26,7 @@ namespace FWLog.Data
         {
             get => _userCompanyRepository ?? (_userCompanyRepository = new UserCompanyRepository(_context));
         }
-        
+
         public CompanyRepository CompanyRepository
         {
             get => _companyRepository ?? (_companyRepository = new CompanyRepository(_context));
