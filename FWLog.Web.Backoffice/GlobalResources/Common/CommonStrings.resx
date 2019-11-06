@@ -243,4 +243,7 @@
   <data name="PrinterMenuItem" xml:space="preserve">
     <value>Impressoras</value>
   </data>
+  <data name="RegisterNotFound" xml:space="preserve">
+    <value>Registro não encontrado.</value>
+  </data>
 </root>

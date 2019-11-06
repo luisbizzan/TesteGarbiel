@@ -376,6 +376,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Registro não encontrado..
+        /// </summary>
+        public static string RegisterNotFound {
+            get {
+                return ResourceManager.GetString("RegisterNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Houve um erro inesperado durante a requisição..
         /// </summary>
         public static string RequestUnexpectedErrorMessage {

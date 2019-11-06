@@ -240,23 +240,20 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Role.Delete)]
-        public async Task<JsonResult> AjaxDelete(string id)
+        public JsonResult AjaxDelete(long id)
         {
-            ApplicationRole role = await RoleManager.FindByIdAsync(id);
-
-            if (role == null)
-            {
-                throw new HttpException(404, "Not found");
-            }
-
             try
             {
-                IdentityResult result = await RoleManager.DeleteAsync(role);
+                var entity = _uow.BOPrinterRepository.All().FirstOrDefault(x => x.Id == id);
 
-                if (!result.Succeeded)
+                if (entity == null)
                 {
-                    throw new InvalidOperationException(Resources.CommonStrings.RequestUnexpectedErrorMessage);
+                    throw new InvalidOperationException(Resources.CommonStrings.RegisterNotFound);
                 }
+
+                _uow.BOPrinterRepository.Delete(entity);
+
+                _uow.SaveChanges();
 
                 return Json(new AjaxGenericResultModel
                 {
