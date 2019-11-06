@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CompanyLabel" xml:space="preserve">
+    <value>Empresa</value>
+  </data>
   <data name="CreatePageTitle" xml:space="preserve">
     <value>Criação de Impressora</value>
   </data>
@@ -126,6 +129,9 @@
   <data name="IndexPageTitle" xml:space="preserve">
     <value>Impressoras</value>
   </data>
+  <data name="IPLabel" xml:space="preserve">
+    <value>Endereço IP</value>
+  </data>
   <data name="ListHeader" xml:space="preserve">
     <value>Lista</value>
   </data>
@@ -134,5 +140,8 @@
   </data>
   <data name="PrinterHeader" xml:space="preserve">
     <value>Impressora</value>
+  </data>
+  <data name="PrinterTypeLabel" xml:space="preserve">
+    <value>Tipo</value>
   </data>
 </root>

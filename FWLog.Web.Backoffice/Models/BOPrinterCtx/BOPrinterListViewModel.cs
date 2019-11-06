@@ -23,8 +23,10 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         [Display(Name = nameof(Res.NameLabel), ResourceType = typeof(Res))]
         public string Name { get; set; }
 
+        [Display(Name = nameof(Res.PrinterTypeLabel), ResourceType = typeof(Res))]
         public string PrinterType { get; set; }
 
+        [Display(Name = nameof(Res.CompanyLabel), ResourceType = typeof(Res))]
         public string Company { get; set; }
     }
 

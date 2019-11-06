@@ -8,11 +8,9 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BOPrinterCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
-using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -121,7 +119,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             try
             {
-                var entity = new Printer() { Id = 5, Name = model.Name, IP = model.IP, CompanyId = model.CompanyId, PrinterTypeId = model.PrinterTypeId };
+                var entity = new Printer() { Name = model.Name, IP = model.IP, CompanyId = model.CompanyId, PrinterTypeId = model.PrinterTypeId };
 
                 _uow.BOPrinterRepository.Add(entity);
 

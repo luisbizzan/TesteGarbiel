@@ -19,7 +19,7 @@ namespace Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class BOPrinterStrings {
@@ -61,6 +61,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Empresa.
+        /// </summary>
+        public static string CompanyLabel {
+            get {
+                return ResourceManager.GetString("CompanyLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Criação de Impressora.
         /// </summary>
         public static string CreatePageTitle {
@@ -88,6 +97,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Endereço IP.
+        /// </summary>
+        public static string IPLabel {
+            get {
+                return ResourceManager.GetString("IPLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lista.
         /// </summary>
         public static string ListHeader {
@@ -111,6 +129,15 @@ namespace Resources {
         public static string PrinterHeader {
             get {
                 return ResourceManager.GetString("PrinterHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tipo.
+        /// </summary>
+        public static string PrinterTypeLabel {
+            get {
+                return ResourceManager.GetString("PrinterTypeLabel", resourceCulture);
             }
         }
     }
