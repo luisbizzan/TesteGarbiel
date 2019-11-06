@@ -18,23 +18,31 @@
     <div class="x_content">
         <!-- fields-->
         <div class="row">
-            <div class="col-xs-12 col-lg-6">
+            <div class="col-xs-12 col-sm-6 col-lg-4">
                 <div class="form-group">
                     @Html.LabelFor(m => m.Level, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Level, new { @class = "form-control", @readonly = "readonly" })
                 </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
                 <div class="form-group">
                     @Html.LabelFor(m => m.Created, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Created, new { @class = "form-control", @readonly = "readonly" })
                 </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
                 <div class="form-group">
                     @Html.LabelFor(m => m.ApplicationName, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.ApplicationName, new { @class = "form-control", @readonly = "readonly" })
                 </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
                 <div class="form-group">
                     @Html.LabelFor(m => m.Message, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Message, new { @class = "form-control", @readonly = "readonly" })
                 </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
                 <div class="form-group">
                     @Html.LabelFor(m => m.Exception, new { @class = "control-label" })
                     @Html.TextAreaFor(m => m.Exception, new { @class = "form-control", @readonly = "readonly", rows = "10" })

@@ -22,12 +22,17 @@ namespace FWLog.AspNet.Identity
             return _appUserStore.GetPermissionsAsync(new ApplicationUser { Id = userId });
         }
 
+        public Task<IList<string>> GetPermissionsByCompanyIdAsync(string userId, long companyId)
+        {
+            return _appUserStore.GetPermissionsByCompanyIdAsync(new ApplicationUser { Id = userId }, companyId);
+        }
+
         public IList<string> GetPermissions(string userId, int companyId)
         {
             return _appUserStore.GetPermissionsAsync(new ApplicationUser { Id = userId }).Result;
         }
 
-        public async Task<IdentityResult> UpdateAsync(ApplicationUser user, IEnumerable<string> roles, int companyId)
+        public async Task<IdentityResult> UpdateAsync(ApplicationUser user, IEnumerable<string> roles, long companyId)
         {
             await _appUserStore.UpdateAsync(user, roles, companyId);
             return IdentityResult.Success;
@@ -51,10 +56,15 @@ namespace FWLog.AspNet.Identity
             return IdentityResult.Success;
         }
 
-        public IdentityResult AddToRolesByCompany(ApplicationUser user, IEnumerable<string> permissions, int companyId)
+        public IdentityResult AddToRolesByCompany(ApplicationUser user, IEnumerable<string> roles, long companyId)
         {
-            _appUserStore.AddToRolesByCompany(user, permissions, companyId).Wait();
+            _appUserStore.AddToRolesByCompany(user, roles, companyId).Wait();
             return IdentityResult.Success;
+        }
+
+        public Task<IList<string>> GetUserRolesByCompanyId(string userId, long companyId)
+        {
+            return _appUserStore.GetUserRolesByCompanyId(new ApplicationUser { Id = userId }, companyId);
         }
     }
 }

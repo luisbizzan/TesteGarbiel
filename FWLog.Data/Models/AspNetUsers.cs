@@ -11,7 +11,6 @@ namespace FWLog.Data
     {
         public AspNetUsers()
         {
-            BOLogSystem = new HashSet<BOLogSystem>();
             AspNetRoles = new HashSet<AspNetRoles>();
         }
 
@@ -36,7 +35,6 @@ namespace FWLog.Data
         public int ApplicationId { get; set; }
         public int? IdApplicationSession { get; set; }
 
-        public virtual ICollection<BOLogSystem> BOLogSystem { get; set; }        
         public virtual ICollection<AspNetRoles> AspNetRoles { get; set; }
     }
 }

@@ -378,6 +378,7 @@
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
     <Content Include="Views\Shared\_ChangeCompany.cshtml" />
     <Content Include="Views\BORecebimentoNota\Index.cshtml" />
+    <Content Include="Views\BOAccount\_EmpresaGrupo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
@@ -683,6 +684,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>CommonStrings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GlobalResources\Error\ErrorStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

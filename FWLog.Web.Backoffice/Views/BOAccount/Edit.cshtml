@@ -6,7 +6,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@section Scripts {    
+@section Scripts {
     @BundleHelper.RenderViewScript()
 }
 
@@ -21,59 +21,67 @@
         <div class="x_content">
             <!-- fields -->
             <div class="row">
-                <div class="col-xs-12 col-sm-12">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6 col-lg-6">
-                            <div class="form-group">
-                                @Html.LabelFor(m => m.UserName, new { @class = "control-label" })
-                                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @disabled = "disabled" })
-                                @Html.ValidationMessageFor(m => m.UserName)
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-6 col-lg-6">
-                            <div class="form-group">
-                                @Html.LabelFor(m => m.Email, new { @class = "control-label" })
-                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                                @Html.ValidationMessageFor(m => m.Email)
-                            </div>
-                        </div>
+                <div class="">
+                    @Html.HiddenFor(m => m.PerfilUsuario.PerfilUsuarioId)
+                    <div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-4 ">
+                        @Html.LabelFor(m => m.UserName, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @disabled = "disabled" })
+                        @Html.ValidationMessageFor(m => m.UserName)
                     </div>
-                    <div class="form-section-divider">
-                        <label class="control-label">@Res.GroupsHeader</label>
-                        <div class="btn-group btn-group-sm pull-right">
-                            <button type="button" class="btn btn-default form-group" id="checkAllGroups"><i class="fa fa-check-square-o"></i> @Res.CheckAllLabel</button>
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a href="javascript:void(0);" id="uncheckAllGroups"><i class="fa fa-square-o"></i> @Res.UncheckAllLabel</a></li>
-                            </ul>
-                        </div>
-                        <div class="clearfix"></div>
+                    <div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                        @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Email)
                     </div>
-                    <div class="row">
-                        @for (int i = 0; i < Model.Groups.Count(); i++)
-                        {
-                            <div class="col-xs-6 col-sm-4 col-lg-3">
-                                <div class="checkbox">
-                                    <label>
-                                        @Html.HiddenFor(m => m.Groups[i].Name)
-                                        @Html.CheckBoxFor(m => m.Groups[i].IsSelected, new { data_group = "" })
-                                        @Html.DisplayFor(m => m.Groups[i].Name)
-                                    </label>
-                                </div>
-                            </div>
-                        }
+                    <div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                        @Html.LabelFor(m => m.PerfilUsuario.Departamento, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.PerfilUsuario.Departamento, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.PerfilUsuario.Departamento)
+                    </div>
+                    <div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                        @Html.LabelFor(m => m.PerfilUsuario.Cargo, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.PerfilUsuario.Cargo, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.PerfilUsuario.Cargo)
+                    </div>
+                    <div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                        @Html.LabelFor(m => m.PerfilUsuario.DataNascimento, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.PerfilUsuario.DataNascimento, new { @class = "form-control dateMask" })
+                        @Html.ValidationMessageFor(m => m.PerfilUsuario.DataNascimento)
+                    </div>
+                    <div class="form-group col-xs-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                        @Html.LabelFor(m => m.PerfilUsuario.EmpresaId, new { @class = "control-label" })
+                        @Html.DropDownListFor(m => m.PerfilUsuario.EmpresaId, new SelectList((System.Collections.IEnumerable)ViewData["Companies"], "Value", "Text"), @Resources.CommonStrings.Select, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.PerfilUsuario.EmpresaId)
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="x_title">
+                    <h2>Relacionamento de Empresas</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div style="padding-top: 7px">
+                    <div class="form-group col-sm-12 col-md-6 col-lg-3 col-xl-3">
+                        @Html.DropDownList("ddlEmpresas", new SelectList((System.Collections.IEnumerable)ViewData["Companies"], "Value", "Text"), "Selecione a empresa", new { @class = "form-control" })
+                    </div>
+                    <div>
+                        <button type="button" id="btnAddEmpresa" class="btn btn-primary btn-dt-action m-r-sm">
+                            <i class="fa fa-plus"></i> Adicionar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="EmpresasSelecionadas">
+                @Html.Partial("_EmpresaGrupo", Model.EmpresasGrupos)
+            </div>
+            <span class="text-danger validationEmpresa">@Html.ValidationMessageFor(m => m.EmpresasGrupos)</span>
             <!-- /fields -->
             <!-- footer -->
-            <div class="ln_solid"></div>            
+            <div class="ln_solid"></div>
             <div class="row col-xs-12 form-buttons">
                 <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.CancelAction</a>
-                <button type="submit" class="btn btn-primary">@Resources.CommonStrings.ConfirmAction</button>
-            </div>      
+                <button type="submit" class="btn btn-primary btnSalvar">@Resources.CommonStrings.ConfirmAction</button>
+            </div>
             <!-- /footer -->
         </div>
     </div>

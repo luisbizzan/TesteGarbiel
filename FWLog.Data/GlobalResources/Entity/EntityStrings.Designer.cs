@@ -511,6 +511,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cargo.
+        /// </summary>
+        public static string Cargo {
+            get {
+                return ResourceManager.GetString("Cargo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Empresa.
         /// </summary>
         public static string Company {
@@ -525,6 +534,24 @@ namespace Resources {
         public static string CompanyName {
             get {
                 return ResourceManager.GetString("CompanyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data de Nascimento.
+        /// </summary>
+        public static string DataNascimento {
+            get {
+                return ResourceManager.GetString("DataNascimento", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Departamento.
+        /// </summary>
+        public static string Departamento {
+            get {
+                return ResourceManager.GetString("Departamento", resourceCulture);
             }
         }
         
@@ -547,6 +574,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Empresa principal.
+        /// </summary>
+        public static string EmpresaPrincipal {
+            get {
+                return ResourceManager.GetString("EmpresaPrincipal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Código da Empresa.
         /// </summary>
         public static string IdCompany {
@@ -561,6 +597,15 @@ namespace Resources {
         public static string Initials {
             get {
                 return ResourceManager.GetString("Initials", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Código do Perfil do Usuário.
+        /// </summary>
+        public static string PerfilUsuarioId {
+            get {
+                return ResourceManager.GetString("PerfilUsuarioId", resourceCulture);
             }
         }
         

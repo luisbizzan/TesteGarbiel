@@ -443,6 +443,20 @@ namespace FWLog.AspNet.Identity
 
         // Custom implementation
 
+        public Task<IList<string>> GetUserRolesByCompanyId(ApplicationUser user, long companyId)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            IList<string> roles = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == companyId).Select(s => s.RoleId).ToList();
+
+            IList<string> rolesName = db.Roles.Where(w => roles.Contains(w.Id)).Select(s => s.Name).ToList();
+
+            return Task.FromResult(rolesName);
+        }
+
         public Task<IList<string>> GetPermissionsAsync(ApplicationUser user)
         {
             if (user == null)
@@ -464,7 +478,28 @@ namespace FWLog.AspNet.Identity
             return Task.FromResult(permissions);
         }
 
-        public Task UpdateAsync(ApplicationUser user, IEnumerable<string> roles, int companyId)
+        public Task<IList<string>> GetPermissionsByCompanyIdAsync(ApplicationUser user, long companyId)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            IList<string> roleIds = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == companyId).Select(s => s.RoleId).ToList();
+            IList<string> permissions = db.Users
+                .Where(x => x.Id == user.Id && x.ApplicationId == this.appId)
+                .SelectMany(x => x.Permissions.Select(y => y.Permission.Name))
+                .Union(
+                    db.Roles
+                    .Where(w => roleIds.Contains(w.Id))
+                    .SelectMany(x => x.RolePermissions.Select(y => y.Permission.Name))
+                )
+                .ToList();
+
+            return Task.FromResult(permissions);
+        }
+
+        public Task UpdateAsync(ApplicationUser user, IEnumerable<string> roles, long companyId)
         {
             ValidateRoles(roles);
 
@@ -476,15 +511,13 @@ namespace FWLog.AspNet.Identity
                 .Select(x => new UserRole { RoleId = x.Id, UserId = user.Id, CompanyId = companyId })
                 .ToList();
 
-            ApplicationUser dbEntity = this.db.Users.Include(x => x.Roles).FirstOrDefault(x => x.Id == user.Id);
+            var dbEntity = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == companyId).ToList();
 
-            this.db.Entry(dbEntity).CurrentValues.SetValues(user);
+            List<UserRole> userRolesToAdd = userRoles.Where(x => !dbEntity.Any(y => y.RoleId == x.RoleId)).ToList();
+            List<UserRole> userRolesToRemove = dbEntity.Where(x => !userRoles.Any(y => y.RoleId == x.RoleId)).ToList();
 
-            List<UserRole> userRolesToAdd = userRoles.Where(x => !dbEntity.Roles.Any(y => y.RoleId == x.RoleId)).ToList();
-            userRolesToAdd.ForEach(x => dbEntity.Roles.Add(x));
-
-            List<UserRole> userRolesToRemove = dbEntity.Roles.Where(x => !userRoles.Any(y => y.RoleId == x.RoleId)).ToList();
-            userRolesToRemove.ForEach(x => dbEntity.Roles.Remove(x));
+            userRolesToAdd.ForEach(x => db.UserRoles.Add(x));
+            userRolesToRemove.ForEach(x => db.UserRoles.Remove(x));
 
             return this.db.SaveChangesAsync();
         }
@@ -518,14 +551,14 @@ namespace FWLog.AspNet.Identity
             return this.db.SaveChangesAsync();
         }
 
-        public Task AddToRolesByCompany(ApplicationUser user, IEnumerable<string> roles, int companyId)
+        public Task AddToRolesByCompany(ApplicationUser user, IEnumerable<string> roles, long companyId)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            IList<UserRole> userRoles = this.db.UserRoles.Where(x => x.UserId == user.Id).ToList();
+            IList<UserRole> userRoles = this.db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == companyId).ToList();
 
             IList<ApplicationRole> appRoles = this.db.Roles.Where(x => x.ApplicationId == this.appId).ToList();
 
@@ -540,7 +573,7 @@ namespace FWLog.AspNet.Identity
 
                 if (!userRoles.Any(x => x.RoleId == found.Id))
                 {
-                    //this.db.UserRole.Add(new UserRole { RoleId = found.Id, UserId = user.Id, CompnyId = companyId });
+                    this.db.UserRoles.Add(new UserRole { RoleId = found.Id, UserId = user.Id, CompanyId = companyId });
                 }
             }
 

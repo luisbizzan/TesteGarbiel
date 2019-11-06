@@ -263,6 +263,11 @@ namespace FWLog.Data.Repository.BackofficeCtx
             {
                 PropertyInfo propertyInfo = entityType != null ? entityType.GetProperty(property) : null;
 
+                if (propertyInfo == null)
+                {
+                    continue;
+                }
+
                 if (!entityDic[property].NullOrEmpty())
                 {
                     if (propertyInfo.PropertyType == typeof(Boolean) || propertyInfo.PropertyType == typeof(Boolean?) ||

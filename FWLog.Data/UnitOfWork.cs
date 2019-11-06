@@ -21,7 +21,14 @@ namespace FWLog.Data
         private ApplicationLogRepository _applicationLogRepository;
         private ApplicationSessionRepository _applicationSessionRepository;
         private CompanyRepository _companyRepository;
+        private PerfilUsuarioRepository _perfilUsuarioRepository;
+        private UserCompanyRepository _userCompanyRepository;
 
+        public UserCompanyRepository UserCompanyRepository
+        {
+            get => _userCompanyRepository ?? (_userCompanyRepository = new UserCompanyRepository(_context));
+        }
+        
         public CompanyRepository CompanyRepository
         {
             get => _companyRepository ?? (_companyRepository = new CompanyRepository(_context));
@@ -45,6 +52,11 @@ namespace FWLog.Data
         public ApplicationSessionRepository ApplicationSessionRepository
         {
             get => _applicationSessionRepository ?? (_applicationSessionRepository = new ApplicationSessionRepository(_context));
+        }
+
+        public PerfilUsuarioRepository PerfilUsuarioRepository
+        {
+            get => _perfilUsuarioRepository ?? (_perfilUsuarioRepository = new PerfilUsuarioRepository(_context));
         }
 
         public TransactionScope CreateTransactionScope()

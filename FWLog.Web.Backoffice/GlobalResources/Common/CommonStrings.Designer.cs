@@ -133,6 +133,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Marcar Todos.
+        /// </summary>
+        public static string CheckAllLabel {
+            get {
+                return ResourceManager.GetString("CheckAllLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Limpar.
         /// </summary>
         public static string ClearAction {
@@ -390,6 +399,15 @@ namespace Resources {
         public static string SendAction {
             get {
                 return ResourceManager.GetString("SendAction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Desmarcar Todos.
+        /// </summary>
+        public static string UncheckAllLabel {
+            get {
+                return ResourceManager.GetString("UncheckAllLabel", resourceCulture);
             }
         }
         

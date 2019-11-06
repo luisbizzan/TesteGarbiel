@@ -1,12 +1,7 @@
 ﻿(function () {
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        return [
-            {
-                action: 'details',
-                href: view.detailsUrl + '?id=' + full.UserName,
-                visible: view.detailsVisible
-            },
+        return [           
             {
                 action: 'edit',
                 href: view.editUrl + '?id=' + full.UserName,

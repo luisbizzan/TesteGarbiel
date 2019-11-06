@@ -171,9 +171,9 @@ namespace FWLog.Web.Backoffice
             {
                 companyId = Convert.ToInt32(cookie[CompanyCookie.CompanyId]);
             }
-
+                        
             string userId = user.Identity.GetUserId();
-            IList<string> permissions = await userManager.GetPermissionsAsync(userId);
+            IList<string> permissions = await userManager.GetPermissionsByCompanyIdAsync(userId, companyId);
             HttpContext.Current.User = new ApplicationClaimsPrincipal(user, permissions); 
         }
     }
