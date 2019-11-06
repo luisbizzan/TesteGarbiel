@@ -1,4 +1,4 @@
-﻿.left_col {
+﻿.left_col, .main_container {
     background: #155831 !important;
 }
 
@@ -46,6 +46,7 @@
 
 body {
     color: #333333db !important;
+    background: #155831 !important;
 }
 
 .toggle a i {
@@ -116,4 +117,14 @@ footer {
 
 .input-group-addon {
     font-size: 12px !important;
+}
+
+@media (max-width: 667px) {
+    .nav > li > a {
+        padding: 5px 15px 5px !important;        
+    }
+
+    .navbar-nav > li > a {
+        line-height: 20px !important;
+    }
 }

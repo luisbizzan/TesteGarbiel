@@ -142,6 +142,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configurações.
+        /// </summary>
+        public static string ConfigurationMenuGroup {
+            get {
+                return ResourceManager.GetString("ConfigurationMenuGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Confirmar.
         /// </summary>
         public static string ConfirmAction {

@@ -231,4 +231,7 @@
   <data name="ChangeCompanySuccess" xml:space="preserve">
     <value>Empresa alterada com sucesso.</value>
   </data>
+  <data name="ConfigurationMenuGroup" xml:space="preserve">
+    <value>Configurações</value>
+  </data>
 </root>
