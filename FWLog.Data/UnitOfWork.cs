@@ -2,11 +2,7 @@
 using FWLog.Data.Repository.BackofficeCtx;
 using FWLog.Data.Repository.GeneralCtx;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 
 namespace FWLog.Data
@@ -14,13 +10,15 @@ namespace FWLog.Data
     public class UnitOfWork : IDisposable
     {
         private bool _disposed = false;
-        private Entities _context;
+        private readonly Entities _context;
 
         private BOLogSystemRepository _boLogSystemRepository;
         private ApplicationLanguageRepository _applicationLanguageRepository;
         private ApplicationLogRepository _applicationLogRepository;
         private ApplicationSessionRepository _applicationSessionRepository;
         private CompanyRepository _companyRepository;
+        private BOPrinterRepository _boPrinterRepository;
+        private BOPrinterTypeRepository _boPrinterTypeRepository;
 
         public CompanyRepository CompanyRepository
         {
@@ -45,6 +43,16 @@ namespace FWLog.Data
         public ApplicationSessionRepository ApplicationSessionRepository
         {
             get => _applicationSessionRepository ?? (_applicationSessionRepository = new ApplicationSessionRepository(_context));
+        }
+
+        public BOPrinterRepository BOPrinterRepository
+        {
+            get => _boPrinterRepository ?? (_boPrinterRepository = new BOPrinterRepository(_context));
+        }
+
+        public BOPrinterTypeRepository BOPrinterTypeRepository
+        {
+            get => _boPrinterTypeRepository ?? (_boPrinterTypeRepository = new BOPrinterTypeRepository(_context));
         }
 
         public TransactionScope CreateTransactionScope()

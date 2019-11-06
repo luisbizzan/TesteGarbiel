@@ -1,0 +1,51 @@
+﻿@model FWLog.Web.Backoffice.Models.BOPrinterCtx.BOPrinterDetailsViewModel
+@using Res = Resources.BOPrinterStrings
+
+@{
+    ViewBag.Title = Res.DetailsPageTitle;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- title -->
+<div class="page-title">
+    <div class="title">
+        <h3>@Res.DetailsPageTitle</h3>
+    </div>
+</div>
+<!-- /title -->
+<div class="x_panel">
+    <div class="x_title">
+        <h2>@Res.PrinterHeader</h2>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+        <!-- fields -->
+        <div class="row">
+            <div class="col-sm-12 col-xs-12">
+                <div class="form-group col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.Name, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.IP, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.IP, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.PrinterType, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.PrinterType, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.Company, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Company, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+        </div>
+        <!-- /fields -->
+        <!-- footer -->
+        <div class="ln_solid"></div>
+        <div class="row col-xs-12 form-buttons">
+            <a href="@Url.Action("Index")" class="btn btn-default"> @Resources.CommonStrings.BackAction</a>
+        </div>
+        <!-- /footer -->
+    </div>
+</div>

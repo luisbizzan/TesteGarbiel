@@ -33,7 +33,6 @@ namespace FWLog.AspNet.Identity
                 Register(Edit, Display.FromResource(nameof(Res.RoleEdit)));
                 Register(Delete, Display.FromResource(nameof(Res.RoleDelete)));
             }
-
         }
 
         // BOLogSystem

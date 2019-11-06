@@ -1,4 +1,5 @@
 ﻿using FWLog.Data.Logging;
+using FWLog.Data.Models;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
@@ -14,7 +15,7 @@ namespace FWLog.Data
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("DART");
-            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();           
+            modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
         }
 
         public virtual DbSet<Application> Application { get; set; }
@@ -26,6 +27,8 @@ namespace FWLog.Data
         public virtual DbSet<ApplicationLog> ApplicationLog { get; set; }
         public virtual DbSet<Company> Company { get; set; }
         public virtual DbSet<UserCompany> UserCompany { get; set; }
+        public virtual DbSet<Printer> Printer { get; set; }
+        public virtual DbSet<PrinterType> PrinterType { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 
@@ -36,8 +39,7 @@ namespace FWLog.Data
 
         public override int SaveChanges()
         {
-            int nonLogChanges;
-            AuditLog.AddLogsToContextAndSaveChanges(this, out nonLogChanges);
+            AuditLog.AddLogsToContextAndSaveChanges(this, out int nonLogChanges);
 
             return nonLogChanges;
         }

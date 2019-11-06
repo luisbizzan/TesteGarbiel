@@ -22,14 +22,14 @@ namespace Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class BOGroupStrings {
+    public class BOPrinterStrings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal BOGroupStrings() {
+        internal BOPrinterStrings() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FWLog.Web.Backoffice.GlobalResources.BOGroup.BOGroupStrings", typeof(BOGroupStrings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FWLog.Web.Backoffice.GlobalResources.BOPrinter.BOPrinterStrings", typeof(BOPrinterStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,16 +61,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Marcar Todos.
-        /// </summary>
-        public static string CheckAllLabel {
-            get {
-                return ResourceManager.GetString("CheckAllLabel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Criação de Grupo.
+        ///   Looks up a localized string similar to Criação de Impressora.
         /// </summary>
         public static string CreatePageTitle {
             get {
@@ -79,7 +70,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Visualização de Grupo.
+        ///   Looks up a localized string similar to Visualização de Impressoras.
         /// </summary>
         public static string DetailsPageTitle {
             get {
@@ -88,34 +79,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Edição de Grupo.
-        /// </summary>
-        public static string EditPageTitle {
-            get {
-                return ResourceManager.GetString("EditPageTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Já existe um grupo cadastrado com esse nome. Por favor escolha outro..
-        /// </summary>
-        public static string GroupAlreadyExistsMessage {
-            get {
-                return ResourceManager.GetString("GroupAlreadyExistsMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Grupo.
-        /// </summary>
-        public static string GroupHeader {
-            get {
-                return ResourceManager.GetString("GroupHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Lista de Grupo.
+        ///   Looks up a localized string similar to Impressoras.
         /// </summary>
         public static string IndexPageTitle {
             get {
@@ -142,29 +106,11 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Permissões.
+        ///   Looks up a localized string similar to Impressora.
         /// </summary>
-        public static string PermissionsHeader {
+        public static string PrinterHeader {
             get {
-                return ResourceManager.GetString("PermissionsHeader", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Digite para pesquisar....
-        /// </summary>
-        public static string SearchPlaceholder {
-            get {
-                return ResourceManager.GetString("SearchPlaceholder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Desmarcar Todos.
-        /// </summary>
-        public static string UncheckAllLabel {
-            get {
-                return ResourceManager.GetString("UncheckAllLabel", resourceCulture);
+                return ResourceManager.GetString("PrinterHeader", resourceCulture);
             }
         }
     }

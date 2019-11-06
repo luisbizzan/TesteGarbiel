@@ -69,6 +69,7 @@
     <Compile Include="EnumsAndConsts\ApplicationEnum.cs" />
     <Compile Include="EnumsAndConsts\ApplicationLogLevel.cs" />
     <Compile Include="EnumsAndConsts\GetObjectFromLogEnum.cs" />
+    <Compile Include="ExtensionMethods\LinqExtension.cs" />
     <Compile Include="GlobalResources\Entity\EntityStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -98,6 +99,8 @@
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
     <Compile Include="Models\GeneralCtx\CompanySelectedItem.cs" />
+    <Compile Include="Models\Printer.cs" />
+    <Compile Include="Models\PrinterType.cs" />
     <Compile Include="Models\UserCompany.cs" />
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\FilterCtx\ApplicationLogFilter.cs" />
@@ -123,6 +126,8 @@
     <Compile Include="Repository\CommonCtx\BaseRepository.cs" />
     <Compile Include="Repository\CommonCtx\CacheRepository.cs" />
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />
     <Compile Include="Repository\GeneralCtx\CompanyRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ApplicationSessionRepository.cs" />
     <Compile Include="Resources\Mail\MailResource.Designer.cs">

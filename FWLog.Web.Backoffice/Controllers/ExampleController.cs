@@ -13,7 +13,7 @@ namespace FWLog.Web.Backoffice.Controllers
 {
     public class ExampleController : BOBaseController
     {
-        UnitOfWork _uow;
+        private readonly UnitOfWork _uow;
 
         public ExampleController(UnitOfWork uow)
         {
@@ -196,9 +196,5 @@ namespace FWLog.Web.Backoffice.Controllers
 
         #endregion
 
-
     }
-
-
-
 }

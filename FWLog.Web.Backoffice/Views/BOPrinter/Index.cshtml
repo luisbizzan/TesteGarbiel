@@ -1,6 +1,6 @@
-﻿@model FWLog.Web.Backoffice.Models.BOGroupCtx.BOGroupListViewModel
+﻿@model FWLog.Web.Backoffice.Models.BOPrinterCtx.BOPrinterListViewModel
 @using FWLog.AspNet.Identity
-@using Res = Resources.BOGroupStrings
+@using Res = Resources.BOPrinterStrings
 
 @{
     ViewBag.Title = Res.IndexPageTitle;
@@ -76,6 +76,8 @@
                     <thead>
                         <tr>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Name)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.PrinterType)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Company)</th>
                             <th>@Resources.CommonStrings.ActionsLabel</th>
                         </tr>
                     </thead>

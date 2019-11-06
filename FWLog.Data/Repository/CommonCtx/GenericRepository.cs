@@ -1,5 +1,4 @@
-﻿using FWLog.Data.Logging;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
@@ -7,7 +6,7 @@ namespace FWLog.Data.Repository.CommonCtx
 {
     public abstract class GenericRepository<TEntity> : BaseRepository where TEntity : class
     {
-        private readonly IDbSet<TEntity> _dbSet;
+        protected readonly IDbSet<TEntity> _dbSet;
 
         public GenericRepository(Entities entities) : base(entities)
         {
@@ -22,6 +21,11 @@ namespace FWLog.Data.Repository.CommonCtx
         public virtual IEnumerable<TEntity> GetAll()
         {
             return _dbSet.ToList();
+        }
+
+        public virtual IQueryable<TEntity> All()
+        {
+            return _dbSet;
         }
 
         public virtual void Add(TEntity entity)

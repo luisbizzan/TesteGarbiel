@@ -1,9 +1,5 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Web;
 
 namespace FWLog.Web.Backoffice.App_Start
 {
@@ -15,6 +11,8 @@ namespace FWLog.Web.Backoffice.App_Start
             {
                 config.AddProfiles(Assembly.GetExecutingAssembly());
             });
+
+            //Mapper.AssertConfigurationIsValid();
         }
     }
 }

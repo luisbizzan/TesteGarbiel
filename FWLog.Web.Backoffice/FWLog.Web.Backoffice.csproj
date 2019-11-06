@@ -226,6 +226,7 @@
     <Compile Include="App_Start\NinjectModules\GeneralModule.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
+    <Compile Include="Controllers\BOPrinterController.cs" />
     <Compile Include="Controllers\BORecebimentoNotaController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
     <Compile Include="Controllers\FileController.cs" />
@@ -233,6 +234,11 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="EnumsAndConsts\CompanyCookie.cs" />
     <Compile Include="EnumsAndConsts\StatusNotaRecebimento.cs" />
+    <Compile Include="GlobalResources\BOPrinter\BOPrinterStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BOPrinterStrings.resx</DependentUpon>
+    </Compile>
     <Compile Include="GlobalResources\BORecebimentoNota\BORecebimentoNotaStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -245,6 +251,10 @@
     </Compile>
     <Compile Include="Helpers\ApplicationAuthorize.cs" />
     <Compile Include="Helpers\HtmlRequestHelper.cs" />
+    <Compile Include="Mapping\BOPrinterProfile.cs" />
+    <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
+    <Compile Include="Models\BOPrinterCtx\BOPrinterListViewModel.cs" />
+    <Compile Include="Models\BOPrinterCtx\BOPrinterCreateViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Startup.cs" />
     <Content Include="Content\dart\dart-template.css">
@@ -253,6 +263,11 @@
     <Content Include="Content\dart\dart-template.min.css">
       <DependentUpon>dart-template.css</DependentUpon>
     </Content>
+    <EmbeddedResource Include="GlobalResources\BOPrinter\BOPrinterStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>BOPrinterStrings.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Resources</CustomToolNamespace>
+    </EmbeddedResource>
     <Content Include="Scripts\dart\autoComplete.js" />
     <Content Include="Scripts\dart\company.js" />
     <Content Include="Scripts\dart\documentReady.js" />
@@ -374,10 +389,15 @@
     <Compile Include="Models\CommonCtx\FileUploadResponseModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Scripts\dart\waitingDialog.js" />
+    <Content Include="Scripts\Views\BOPrinter\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
     <Content Include="Views\Shared\_ChangeCompany.cshtml" />
     <Content Include="Views\BORecebimentoNota\Index.cshtml" />
+    <Content Include="Views\BOPrinter\Index.cshtml" />
+    <Content Include="Views\BOPrinter\Create.cshtml" />
+    <Content Include="Views\BOPrinter\Details.cshtml" />
+    <Content Include="Views\BOPrinter\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
