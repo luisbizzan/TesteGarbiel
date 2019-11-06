@@ -66,6 +66,9 @@ namespace FWLog.AspNet.Identity
         public long? IdApplicationSession { get; set; }
         public virtual ICollection<UserPermission> Permissions { get; set; }
 
+        [ForeignKey("UserId")]
+        public virtual ICollection<UserRole> UserRoles { get; set; }
+
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager, string authenticationType)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
@@ -80,7 +83,7 @@ namespace FWLog.AspNet.Identity
     {
         public int ApplicationId { get; set; }
         public virtual ICollection<RolePermission> RolePermissions { get; set; }
-        
+
         public ApplicationRole()
         {
 
@@ -95,8 +98,7 @@ namespace FWLog.AspNet.Identity
     [Table("AspNetUserRoles", Schema = "DART")]
     public class UserRole : IdentityUserRole
     {
-        [Key, Column(Order = 2)]
-        public int CompanyId { get; set; }
+        public long CompanyId { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string, IdentityUserLogin, UserRole, IdentityUserClaim>
@@ -113,8 +115,10 @@ namespace FWLog.AspNet.Identity
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("DART");
-
+            
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<UserRole>().HasKey(k => new { k.UserId, k.RoleId, k.CompanyId });
         }
 
         static ApplicationDbContext()

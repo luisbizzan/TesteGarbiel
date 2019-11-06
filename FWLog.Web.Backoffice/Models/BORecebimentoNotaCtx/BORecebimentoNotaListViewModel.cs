@@ -1,5 +1,5 @@
-﻿using FWLog.Web.Backoffice.EnumsAndConsts;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
@@ -45,11 +45,13 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
         public string Nota { get; set; }
 
+        [Display(Name = "Prazo Recebimento (dias)")]
         public string Prazo { get; set; }
         
         public string DANFE { get; set; }
 
-        public int Status { get; set; }
+        [Display(Name = "Status")]
+        public List<int> IdStatus { get; set; }
 
         [Display(Name = "Data Inicial (Entrada)")]
         public DateTime DataInicial { get; set; }
@@ -63,10 +65,14 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Prazo Final")]
         public DateTime PrazoFinal { get; set; }
 
+        [Display(Name = "Atraso (dias)")]
         public int Atraso { get; set; }
 
-        [Display(Name = "Qtde. Peças")]
+        [Display(Name = "Quantidade de Peças")]
         public int QuantidadePeca { get; set; }
+
+        [Display(Name = "Quantidade de Volumes")]
+        public int Volume { get; set; }
 
         public string Fornecedor { get; set; }
 
@@ -82,7 +88,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Tempo Final")]
         public TimeSpan TempoFinal { get; set; }
 
-        public SelectList ListaStatus { get; set; }
+        public SelectList Status { get; set; }
 
     }
 

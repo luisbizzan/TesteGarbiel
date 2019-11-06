@@ -330,4 +330,19 @@
   <data name="UserName" xml:space="preserve">
     <value>Nome do Usuário</value>
   </data>
+  <data name="Cargo" xml:space="preserve">
+    <value>Cargo</value>
+  </data>
+  <data name="DataNascimento" xml:space="preserve">
+    <value>Data de Nascimento</value>
+  </data>
+  <data name="Departamento" xml:space="preserve">
+    <value>Departamento</value>
+  </data>
+  <data name="PerfilUsuarioId" xml:space="preserve">
+    <value>Código do Perfil do Usuário</value>
+  </data>
+  <data name="EmpresaPrincipal" xml:space="preserve">
+    <value>Empresa principal</value>
+  </data>
 </root>

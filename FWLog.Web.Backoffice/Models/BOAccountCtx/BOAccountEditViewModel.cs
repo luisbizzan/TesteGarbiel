@@ -1,9 +1,7 @@
 ﻿using DartDigital.Library.Web.ModelValidation;
-using System;
+using FWLog.Data;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 using Res = Resources.BOAccountStrings;
 
 namespace FWLog.Web.Backoffice.Models.BOAccountCtx
@@ -18,11 +16,13 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
         [Display(Name = nameof(Res.EmailLabel), ResourceType = typeof(Res))]
         public string Email { get; set; }
 
-        public List<GroupItemViewModel> Groups { get; set; }
+        public PerfilUsuario PerfilUsuario { get; set; }
+
+        public List<EmpresaGrupoViewModel> EmpresasGrupos { get; set; } = new List<EmpresaGrupoViewModel>();
 
         public BOAccountEditViewModel()
         {
-            Groups = new List<GroupItemViewModel>();
+            EmpresasGrupos = new List<EmpresaGrupoViewModel>();
         }
     }
 }

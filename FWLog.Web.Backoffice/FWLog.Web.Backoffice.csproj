@@ -398,6 +398,7 @@
     <Content Include="Views\BOPrinter\Create.cshtml" />
     <Content Include="Views\BOPrinter\Details.cshtml" />
     <Content Include="Views\BOPrinter\Edit.cshtml" />
+    <Content Include="Views\BOAccount\_EmpresaGrupo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
@@ -703,6 +704,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>CommonStrings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GlobalResources\Error\ErrorStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

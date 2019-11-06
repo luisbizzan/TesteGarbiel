@@ -47,5 +47,6 @@ namespace FWLog.Data
 
         #endregion
 
+        //TODO acrescentar displayname
     }
 }

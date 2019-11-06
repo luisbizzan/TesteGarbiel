@@ -29,6 +29,7 @@ namespace FWLog.Data
         public virtual DbSet<UserCompany> UserCompany { get; set; }
         public virtual DbSet<Printer> Printer { get; set; }
         public virtual DbSet<PrinterType> PrinterType { get; set; }
+        public virtual DbSet<PerfilUsuario> PerfilUsuario { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 

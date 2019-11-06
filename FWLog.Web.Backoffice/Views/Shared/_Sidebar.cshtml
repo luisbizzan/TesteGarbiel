@@ -9,13 +9,15 @@
         new MenuItem { Text = Res.HomeMenuItem, Icon = "fa fa-home", Url = Url.Action("Index", "BOHome") },
         new MenuGroup(text: Res.MenuRecebimento, icon: "fa fa-truck").SetItems(
             new MenuItem { Text = Res.MenuRecebimentoNotas, Url = Url.Action("Index", "BORecebimentoNota"), RequirePermission = Permissions.BOAccount.List },
-            new MenuItem { Text = Res.MenuRecebimentoeEtiquetas, Url = Url.Action("Index", "BOGroup"), RequirePermission = Permissions.Role.List },
-            new MenuItem { Text = Res.MenuRecebimentoQuarentena, Url = Url.Action("Index", "ApplicationLog"), RequirePermission = Permissions.ApplicationLog.List },
-            new MenuItem { Text = Res.MenuRecebimentoRelatorios, Url = Url.Action("Index", "BOLogSystem"), RequirePermission = Permissions.BOLogSystem.List }
+            new MenuItem { Text = Res.MenuRecebimentoeEtiquetas, Url = Url.Action("", ""), RequirePermission = Permissions.Role.List },
+            new MenuItem { Text = Res.MenuRecebimentoQuarentena, Url = Url.Action("", ""), RequirePermission = Permissions.ApplicationLog.List },
+            new MenuItem { Text = Res.MenuRecebimentoRelatorios, Url = Url.Action("", ""), RequirePermission = Permissions.BOLogSystem.List }
         ),
         new MenuGroup(text: Res.UserMenuGroup, icon: "fa fa-user").SetItems(
             new MenuItem { Text = Res.BOAccountMenuItem, Url = Url.Action("Index", "BOAccount"), RequirePermission = Permissions.BOAccount.List },
-            new MenuItem { Text = Res.GroupMenuItem, Url = Url.Action("Index", "BOGroup"), RequirePermission = Permissions.Role.List },
+            new MenuItem { Text = Res.GroupMenuItem, Url = Url.Action("Index", "BOGroup"), RequirePermission = Permissions.Role.List }
+        ),
+        new MenuGroup(text: Res.ConfigurationMenuGroup, icon: "fa fa-cog").SetItems(
             new MenuItem { Text = Res.ApplicationLogMenuItem, Url = Url.Action("Index", "ApplicationLog"), RequirePermission = Permissions.ApplicationLog.List },
             new MenuItem { Text = Res.BOLogSystemMenuItem, Url = Url.Action("Index", "BOLogSystem"), RequirePermission = Permissions.BOLogSystem.List }
         ),

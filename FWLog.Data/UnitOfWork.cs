@@ -19,7 +19,14 @@ namespace FWLog.Data
         private CompanyRepository _companyRepository;
         private BOPrinterRepository _boPrinterRepository;
         private BOPrinterTypeRepository _boPrinterTypeRepository;
+        private PerfilUsuarioRepository _perfilUsuarioRepository;
+        private UserCompanyRepository _userCompanyRepository;
 
+        public UserCompanyRepository UserCompanyRepository
+        {
+            get => _userCompanyRepository ?? (_userCompanyRepository = new UserCompanyRepository(_context));
+        }
+        
         public CompanyRepository CompanyRepository
         {
             get => _companyRepository ?? (_companyRepository = new CompanyRepository(_context));
@@ -53,6 +60,9 @@ namespace FWLog.Data
         public BOPrinterTypeRepository BOPrinterTypeRepository
         {
             get => _boPrinterTypeRepository ?? (_boPrinterTypeRepository = new BOPrinterTypeRepository(_context));
+        public PerfilUsuarioRepository PerfilUsuarioRepository
+        {
+            get => _perfilUsuarioRepository ?? (_perfilUsuarioRepository = new PerfilUsuarioRepository(_context));
         }
 
         public TransactionScope CreateTransactionScope()
