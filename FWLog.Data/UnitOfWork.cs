@@ -60,6 +60,8 @@ namespace FWLog.Data
         public BOPrinterTypeRepository BOPrinterTypeRepository
         {
             get => _boPrinterTypeRepository ?? (_boPrinterTypeRepository = new BOPrinterTypeRepository(_context));
+        }
+
         public PerfilUsuarioRepository PerfilUsuarioRepository
         {
             get => _perfilUsuarioRepository ?? (_perfilUsuarioRepository = new PerfilUsuarioRepository(_context));
