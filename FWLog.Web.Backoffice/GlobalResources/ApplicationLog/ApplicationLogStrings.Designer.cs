@@ -8,11 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Resources
-{
+namespace Resources {
     using System;
-
-
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,180 +22,148 @@ namespace Resources
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class ApplicationLogStrings
-    {
-
+    public class ApplicationLogStrings {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ApplicationLogStrings()
-        {
+        internal ApplicationLogStrings() {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if (object.ReferenceEquals(resourceMan, null))
-                {
+        public static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FWLog.Web.Backoffice.GlobalResources.ApplicationLog.ApplicationLogStrings", typeof(ApplicationLogStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture
-        {
-            get
-            {
+        public static global::System.Globalization.CultureInfo Culture {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Log de Erro.
         /// </summary>
-        public static string ApplicationLogHeader
-        {
-            get
-            {
+        public static string ApplicationLogHeader {
+            get {
                 return ResourceManager.GetString("ApplicationLogHeader", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Aplicação.
         /// </summary>
-        public static string ApplicationNameLabel
-        {
-            get
-            {
+        public static string ApplicationNameLabel {
+            get {
                 return ResourceManager.GetString("ApplicationNameLabel", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Data Final.
         /// </summary>
-        public static string CreatedEndLabel
-        {
-            get
-            {
+        public static string CreatedEndLabel {
+            get {
                 return ResourceManager.GetString("CreatedEndLabel", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Criação.
         /// </summary>
-        public static string CreatedLabel
-        {
-            get
-            {
+        public static string CreatedLabel {
+            get {
                 return ResourceManager.GetString("CreatedLabel", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Data Inicial.
         /// </summary>
-        public static string CreatedStartLabel
-        {
-            get
-            {
+        public static string CreatedStartLabel {
+            get {
                 return ResourceManager.GetString("CreatedStartLabel", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Visualização de Erro.
         /// </summary>
-        public static string DetailsPageTitle
-        {
-            get
-            {
+        public static string DetailsPageTitle {
+            get {
                 return ResourceManager.GetString("DetailsPageTitle", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Exceção.
         /// </summary>
-        public static string ExceptionLabel
-        {
-            get
-            {
+        public static string ExceptionLabel {
+            get {
                 return ResourceManager.GetString("ExceptionLabel", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Código.
         /// </summary>
-        public static string IdApplicationLogLabel
-        {
-            get
-            {
+        public static string IdApplicationLogLabel {
+            get {
                 return ResourceManager.GetString("IdApplicationLogLabel", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Lista de Log de Erro.
         /// </summary>
-        public static string IndexPageTitle
-        {
-            get
-            {
+        public static string IndexPageTitle {
+            get {
                 return ResourceManager.GetString("IndexPageTitle", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Nível.
         /// </summary>
-        public static string LevelLabel
-        {
-            get
-            {
+        public static string LevelLabel {
+            get {
                 return ResourceManager.GetString("LevelLabel", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Lista.
         /// </summary>
-        public static string ListHeader
-        {
-            get
-            {
+        public static string ListHeader {
+            get {
                 return ResourceManager.GetString("ListHeader", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Mensagem.
         /// </summary>
-        public static string MessageLabel
-        {
-            get
-            {
+        public static string MessageLabel {
+            get {
                 return ResourceManager.GetString("MessageLabel", resourceCulture);
             }
         }

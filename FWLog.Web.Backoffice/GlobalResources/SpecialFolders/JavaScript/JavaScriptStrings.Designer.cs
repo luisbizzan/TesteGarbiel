@@ -8,11 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Resources
-{
+namespace Resources {
     using System;
-
-
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,301 +22,247 @@ namespace Resources
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class JavaScriptStrings
-    {
-
+    public class JavaScriptStrings {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal JavaScriptStrings()
-        {
+        internal JavaScriptStrings() {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if (object.ReferenceEquals(resourceMan, null))
-                {
+        public static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FWLog.Web.Backoffice.GlobalResources.SpecialFolders.JavaScript.JavaScriptStrings", typeof(JavaScriptStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture
-        {
-            get
-            {
+        public static global::System.Globalization.CultureInfo Culture {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Deseja realmente efetuar essa ação?.
         /// </summary>
-        public static string ActionConfirmationMessage
-        {
-            get
-            {
+        public static string ActionConfirmationMessage {
+            get {
                 return ResourceManager.GetString("ActionConfirmationMessage", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Houve um erro inesperado durante a requisição. Por favor, tente novamente. Se o problema persistir contate o administrador do sistema..
         /// </summary>
-        public static string AjaxErrorMessage
-        {
-            get
-            {
+        public static string AjaxErrorMessage {
+            get {
                 return ResourceManager.GetString("AjaxErrorMessage", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Cancelar.
         /// </summary>
-        public static string CancelAction
-        {
-            get
-            {
+        public static string CancelAction {
+            get {
                 return ResourceManager.GetString("CancelAction", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Confirmar.
         /// </summary>
-        public static string ConfirmAction
-        {
-            get
-            {
+        public static string ConfirmAction {
+            get {
                 return ResourceManager.GetString("ConfirmAction", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Confirmação.
         /// </summary>
-        public static string ConfirmTitle
-        {
-            get
-            {
+        public static string ConfirmTitle {
+            get {
                 return ResourceManager.GetString("ConfirmTitle", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Excluir.
         /// </summary>
-        public static string DeleteAction
-        {
-            get
-            {
+        public static string DeleteAction {
+            get {
                 return ResourceManager.GetString("DeleteAction", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Deseja realmente excluir esse registro?.
         /// </summary>
-        public static string DeletionConfirmationMessage
-        {
-            get
-            {
+        public static string DeletionConfirmationMessage {
+            get {
                 return ResourceManager.GetString("DeletionConfirmationMessage", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Baixar arquivo.
         /// </summary>
-        public static string DownloadFileAction
-        {
-            get
-            {
+        public static string DownloadFileAction {
+            get {
                 return ResourceManager.GetString("DownloadFileAction", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Não há arquivos.
         /// </summary>
-        public static string DropzoneNoFilesMessage
-        {
-            get
-            {
+        public static string DropzoneNoFilesMessage {
+            get {
                 return ResourceManager.GetString("DropzoneNoFilesMessage", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Remover arquivo.
         /// </summary>
-        public static string DropzoneRemoveFileAction
-        {
-            get
-            {
+        public static string DropzoneRemoveFileAction {
+            get {
                 return ResourceManager.GetString("DropzoneRemoveFileAction", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Obrigatório incluir ao menos um arquivo..
         /// </summary>
-        public static string DropzoneRequired
-        {
-            get
-            {
+        public static string DropzoneRequired {
+            get {
                 return ResourceManager.GetString("DropzoneRequired", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Arraste o arquivo ou clique aqui para selecioná-lo.
         /// </summary>
-        public static string DropzoneSelectFileMessage
-        {
-            get
-            {
+        public static string DropzoneSelectFileMessage {
+            get {
                 return ResourceManager.GetString("DropzoneSelectFileMessage", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Editar.
         /// </summary>
-        public static string EditAction
-        {
-            get
-            {
+        public static string EditAction {
+            get {
                 return ResourceManager.GetString("EditAction", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Erro.
         /// </summary>
-        public static string ErrorTitle
-        {
-            get
-            {
+        public static string ErrorTitle {
+            get {
                 return ResourceManager.GetString("ErrorTitle", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Tipo do arquivo é inválido..
         /// </summary>
-        public static string FileTypeInvalid
-        {
-            get
-            {
+        public static string FileTypeInvalid {
+            get {
                 return ResourceManager.GetString("FileTypeInvalid", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Info.
         /// </summary>
-        public static string InfoTitle
-        {
-            get
-            {
+        public static string InfoTitle {
+            get {
                 return ResourceManager.GetString("InfoTitle", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Limite máximo de arquivos foi excedido..
         /// </summary>
-        public static string MaxFilesExceeded
-        {
-            get
-            {
+        public static string MaxFilesExceeded {
+            get {
                 return ResourceManager.GetString("MaxFilesExceeded", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Ações em Lote.
         /// </summary>
-        public static string MultipleActions
-        {
-            get
-            {
+        public static string MultipleActions {
+            get {
                 return ResourceManager.GetString("MultipleActions", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Nenhum item selecionado..
         /// </summary>
-        public static string NoItemsSelected
-        {
-            get
-            {
+        public static string NoItemsSelected {
+            get {
                 return ResourceManager.GetString("NoItemsSelected", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Selecione uma área.
         /// </summary>
-        public static string SelectAnAreaTitle
-        {
-            get
-            {
+        public static string SelectAnAreaTitle {
+            get {
                 return ResourceManager.GetString("SelectAnAreaTitle", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Sucesso.
         /// </summary>
-        public static string SuccessTitle
-        {
-            get
-            {
+        public static string SuccessTitle {
+            get {
                 return ResourceManager.GetString("SuccessTitle", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Visualizar.
         /// </summary>
-        public static string ViewAction
-        {
-            get
-            {
+        public static string ViewAction {
+            get {
                 return ResourceManager.GetString("ViewAction", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Aviso.
         /// </summary>
-        public static string WarningTitle
-        {
-            get
-            {
+        public static string WarningTitle {
+            get {
                 return ResourceManager.GetString("WarningTitle", resourceCulture);
             }
         }

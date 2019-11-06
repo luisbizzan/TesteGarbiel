@@ -8,11 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Resources
-{
+namespace Resources {
     using System;
-
-
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,258 +22,212 @@ namespace Resources
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class ModelValidationStrings
-    {
-
+    public class ModelValidationStrings {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ModelValidationStrings()
-        {
+        internal ModelValidationStrings() {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if (object.ReferenceEquals(resourceMan, null))
-                {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FWLog.Web.Backoffice.GlobalResources.SpecialFolders.ModelValidation.ModelValidatio" +
-                            "nStrings", typeof(ModelValidationStrings).Assembly);
+        public static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FWLog.Web.Backoffice.GlobalResources.SpecialFolders.ModelValidation.ModelValidati" +
+                            "onStrings", typeof(ModelValidationStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture
-        {
-            get
-            {
+        public static global::System.Globalization.CultureInfo Culture {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Os campos &quot;{0}&apos; e &quot;{1}&quot; devem ser iguais..
         /// </summary>
-        public static string CompareAttribute
-        {
-            get
-            {
+        public static string CompareAttribute {
+            get {
                 return ResourceManager.GetString("CompareAttribute", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ser uma data..
         /// </summary>
-        public static string FieldMustBeDate
-        {
-            get
-            {
+        public static string FieldMustBeDate {
+            get {
                 return ResourceManager.GetString("FieldMustBeDate", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ser um e-mail..
         /// </summary>
-        public static string FieldMustBeEmail
-        {
-            get
-            {
+        public static string FieldMustBeEmail {
+            get {
                 return ResourceManager.GetString("FieldMustBeEmail", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ser um número..
         /// </summary>
-        public static string FieldMustBeNumeric
-        {
-            get
-            {
+        public static string FieldMustBeNumeric {
+            get {
                 return ResourceManager.GetString("FieldMustBeNumeric", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ser conter somente letras..
         /// </summary>
-        public static string MvcAlphaOnlyValidationAttribute
-        {
-            get
-            {
+        public static string MvcAlphaOnlyValidationAttribute {
+            get {
                 return ResourceManager.GetString("MvcAlphaOnlyValidationAttribute", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ser um telefone válido..
         /// </summary>
-        public static string MvcBrazilPhoneValidationAttribute
-        {
-            get
-            {
+        public static string MvcBrazilPhoneValidationAttribute {
+            get {
                 return ResourceManager.GetString("MvcBrazilPhoneValidationAttribute", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ser um CEP válido..
         /// </summary>
-        public static string MvcCepValidationAttribute
-        {
-            get
-            {
+        public static string MvcCepValidationAttribute {
+            get {
                 return ResourceManager.GetString("MvcCepValidationAttribute", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ser um CNPJ válido..
         /// </summary>
-        public static string MvcCnpjValidationAttribute
-        {
-            get
-            {
+        public static string MvcCnpjValidationAttribute {
+            get {
                 return ResourceManager.GetString("MvcCnpjValidationAttribute", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ser um CPF ou CNPJ válido..
         /// </summary>
-        public static string MvcCpfOrCnpjValidationAttribute
-        {
-            get
-            {
+        public static string MvcCpfOrCnpjValidationAttribute {
+            get {
                 return ResourceManager.GetString("MvcCpfOrCnpjValidationAttribute", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ser um CPF válido..
         /// </summary>
-        public static string MvcCpfValidationAttribute
-        {
-            get
-            {
+        public static string MvcCpfValidationAttribute {
+            get {
                 return ResourceManager.GetString("MvcCpfValidationAttribute", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ser um e-mail válido..
         /// </summary>
-        public static string MvcEmailValidationAttribute
-        {
-            get
-            {
+        public static string MvcEmailValidationAttribute {
+            get {
                 return ResourceManager.GetString("MvcEmailValidationAttribute", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ser um endereço de IP válido..
         /// </summary>
-        public static string MvcIPAddressValidationAttribute
-        {
-            get
-            {
+        public static string MvcIPAddressValidationAttribute {
+            get {
                 return ResourceManager.GetString("MvcIPAddressValidationAttribute", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ser uma URL válida..
         /// </summary>
-        public static string MvcUrlValidationAttribute
-        {
-            get
-            {
+        public static string MvcUrlValidationAttribute {
+            get {
                 return ResourceManager.GetString("MvcUrlValidationAttribute", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O valor {0} não é válido para {1}..
         /// </summary>
-        public static string PropertyValueInvalid
-        {
-            get
-            {
+        public static string PropertyValueInvalid {
+            get {
                 return ResourceManager.GetString("PropertyValueInvalid", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Um valor é obrigatório..
         /// </summary>
-        public static string PropertyValueRequired
-        {
-            get
-            {
+        public static string PropertyValueRequired {
+            get {
                 return ResourceManager.GetString("PropertyValueRequired", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ter um comprimento de {1} até {2}..
         /// </summary>
-        public static string RangeAttribute
-        {
-            get
-            {
+        public static string RangeAttribute {
+            get {
                 return ResourceManager.GetString("RangeAttribute", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} é obrigatório..
         /// </summary>
-        public static string RequiredAttribute
-        {
-            get
-            {
+        public static string RequiredAttribute {
+            get {
                 return ResourceManager.GetString("RequiredAttribute", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} é obrigatório..
         /// </summary>
-        public static string RequiredIfAttribute
-        {
-            get
-            {
+        public static string RequiredIfAttribute {
+            get {
                 return ResourceManager.GetString("RequiredIfAttribute", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} deve ser uma cadeia de caracteres com no mínimo {2} e no máximo {1} de comprimento..
         /// </summary>
-        public static string StringLengthAttribute
-        {
-            get
-            {
+        public static string StringLengthAttribute {
+            get {
                 return ResourceManager.GetString("StringLengthAttribute", resourceCulture);
             }
         }
