@@ -1,4 +1,7 @@
-﻿namespace FWLog.Web.Backoffice.Models.PrinterTypeCtx
+﻿using System.ComponentModel.DataAnnotations;
+using Res = Resources.PrinterTypeStrings;
+
+namespace FWLog.Web.Backoffice.Models.PrinterTypeCtx
 {
     public class PrinterTypeListViewModel
     {
@@ -17,15 +20,13 @@
     {
         public int Id { get; set; }
 
+        [Display(Name = nameof(Res.NameLabel), ResourceType = typeof(Res))]
         public string Name { get; set; }
-
-        // TODO: Criar colunas do DataTable, deve conter as mesmas propriedades da classe PrinterTypeTableRow
     }
 
     public class PrinterTypeFilterViewModel
     {
+        [Display(Name = nameof(Res.NameLabel), ResourceType = typeof(Res))]
         public string Name { get; set; }
-
-        // TODO: Criar propriedades de filtro, deve conter os mesmos campos da classe PrinterTypeFilter
     }
 }

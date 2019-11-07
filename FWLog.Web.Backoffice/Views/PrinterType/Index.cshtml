@@ -1,8 +1,9 @@
 ﻿@model FWLog.Web.Backoffice.Models.PrinterTypeCtx.PrinterTypeListViewModel
 @using FWLog.AspNet.Identity
+@using Res = Resources.PrinterTypeStrings
 
 @{
-    ViewBag.Title = "Lista de PrinterType";
+    ViewBag.Title = Res.IndexPageTitle;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -58,7 +59,7 @@
         <div class="x_panel">
             <!-- panel-title -->
             <div class="x_title">
-                <h2>Lista</h2>
+                <h2>@Res.ListHeader</h2>
                 @if (User.HasPermission(Permissions.PrinterType.Create))
                 {
                     <div class="nav navbar-right panel_toolbox">
@@ -74,7 +75,6 @@
                     <thead>
                         <tr>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Name)</th>
-                            @* TODO: Todas as propriedades da classe PrinterTypeListItemViewModel devem estar aqui *@
                             <th>@Resources.CommonStrings.ActionsLabel</th>
                         </tr>
                     </thead>

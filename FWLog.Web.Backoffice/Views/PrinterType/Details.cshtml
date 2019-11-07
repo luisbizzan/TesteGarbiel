@@ -1,4 +1,5 @@
 ﻿@model FWLog.Web.Backoffice.Models.PrinterTypeCtx.PrinterTypeDetailsViewModel
+@using Res = Resources.PrinterTypeStrings
 
 @{
     ViewBag.Title = "Visualização de PrinterType"; // TODO: Traduzir nome da entidade
@@ -19,7 +20,7 @@
 
 <div class="x_panel">
     <div class="x_title">
-        <h2>PrinterType</h2> @* TODO: Traduzir nome da entidade *@
+        <h2>@Res.PrinterTypeHeader</h2>
         <div class="clearfix"></div>
     </div>
     <div class="x_content">

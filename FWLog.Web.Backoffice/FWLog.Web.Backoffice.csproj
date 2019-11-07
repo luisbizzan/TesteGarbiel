@@ -245,6 +245,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>BORecebimentoNotaStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="GlobalResources\PrinterType\PrinterTypeStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PrinterTypeStrings.resx</DependentUpon>
+    </Compile>
     <Compile Include="GlobalResources\SpecialFolders\Permission\PermissionStrings.Designer.cs">
       <DependentUpon>PermissionStrings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -271,6 +276,11 @@
     <EmbeddedResource Include="GlobalResources\BOPrinter\BOPrinterStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>BOPrinterStrings.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Resources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GlobalResources\PrinterType\PrinterTypeStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PrinterTypeStrings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources</CustomToolNamespace>
     </EmbeddedResource>
     <Content Include="Scripts\dart\autoComplete.js" />

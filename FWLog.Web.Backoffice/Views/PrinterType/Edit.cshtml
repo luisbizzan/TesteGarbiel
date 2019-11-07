@@ -1,7 +1,8 @@
 ﻿@model FWLog.Web.Backoffice.Models.PrinterTypeCtx.PrinterTypeCreateViewModel
+@using Res = Resources.PrinterTypeStrings
 
 @{
-    ViewBag.Title = "Edição de PrinterType"; 
+    ViewBag.Title = "Edição de PrinterType";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -13,7 +14,7 @@
 <div class="page-title">
     <div class="title">
         <h3 class="title-sml">@ViewBag.Title</h3>
-    </div>   
+    </div>
 </div>
 <!-- /title -->
 
@@ -21,7 +22,7 @@
 {
     <div class="x_panel">
         <div class="x_title">
-        <h2>PrinterType</h2> @* TODO: Traduzir nome da entidade *@
+            <h2>@Res.PrinterTypeHeader</h2>
             <div class="clearfix"></div>
         </div>
         <div class="x_content">
