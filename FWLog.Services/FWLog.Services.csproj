@@ -52,6 +52,9 @@
     <Reference Include="Oracle.ManagedDataAccess.EntityFramework, Version=6.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
       <HintPath>..\packages\Oracle.ManagedDataAccess.EntityFramework.12.2.1100\lib\net45\Oracle.ManagedDataAccess.EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="Polly, Version=7.0.0.0, Culture=neutral, PublicKeyToken=c8a3ffc3f8f825cc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Polly.7.1.1\lib\netstandard2.0\Polly.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Annotations, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ComponentModel.Annotations.4.4.1\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
@@ -82,6 +85,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GeneralStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\HttpService.cs" />
+    <Compile Include="IntegracaoSankhya\SankhyaLogin.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
@@ -116,5 +121,6 @@
       <LastGenOutput>GeneralStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
