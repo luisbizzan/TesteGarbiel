@@ -72,5 +72,21 @@ namespace FWLog.AspNet.Identity
                 Register(UserAppLogin, Display.FromResource(nameof(Res.UserAppLogin)));
             }
         }
+
+        public class PrinterType : PermissionGroupBuildItem
+        {
+            public const string List = "PrinterTypeList";
+            public const string Create = "PrinterTypeCreate";
+            public const string Edit = "PrinterTypeEdit";
+            public const string Delete = "PrinterTypeDelete";
+
+            public PrinterType() : base(Display.FromResource(nameof(Res.PrinterType)))
+            {
+                Register(List, Display.FromResource(nameof(Res.List)));
+                Register(Create, Display.FromResource(nameof(Res.Create)));
+                Register(Edit, Display.FromResource(nameof(Res.Edit)));
+                Register(Delete, Display.FromResource(nameof(Res.Delete)));
+            }
+        }
     }
 }

@@ -144,6 +144,21 @@
   <data name="BOLogSystemList" xml:space="preserve">
     <value>Listagem</value>
   </data>
+  <data name="Create" xml:space="preserve">
+    <value>Criação</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Exclusão</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edição</value>
+  </data>
+  <data name="List" xml:space="preserve">
+    <value>Listagem</value>
+  </data>
+  <data name="PrinterType" xml:space="preserve">
+    <value>Tipo de Impressora</value>
+  </data>
   <data name="Role" xml:space="preserve">
     <value>Grupo</value>
   </data>
