@@ -11,6 +11,7 @@ using System.Web.Http;
 using System.Linq;
 using System;
 using FWLog.Web.Api.Models.Usuario;
+using FWLog.Services.IntegracaoSankhya;
 
 namespace FWLog.Web.Api.Controllers
 {
