@@ -17,6 +17,11 @@ namespace FWLog.Web.Backoffice.Helpers.Bundling
             return RenderViewScript(null);
         }
 
+        public static IHtmlString RenderViewScriptModal()
+        {
+            return RenderViewScriptModal(null);
+        }
+
         public static IHtmlString RenderViewScript(Object viewObj)
         {
             var action = HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString();
@@ -35,6 +40,26 @@ namespace FWLog.Web.Backoffice.Helpers.Bundling
             }
 
             return new HtmlString(GenerateViewObject(viewObj).ToString() + RenderViewScript(action, controller).ToString());
+        }
+
+        public static IHtmlString RenderViewScriptModal(Object viewObj)
+        {
+            var action = HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString();
+            var controller = HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString();
+
+            string bundlePath = GetViewScriptBundlePath(action, controller);
+
+            if (!BundleTable.Bundles.Any(x => String.Equals(x.Path, bundlePath, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                return new HtmlString(String.Empty);
+            }
+
+            if (viewObj == null)
+            {
+                return RenderViewScript(action, controller);
+            }
+
+            return new HtmlString(GenerateViewObjectModal(viewObj).ToString() + RenderViewScript(action, controller).ToString());
         }
 
         public static IHtmlString RenderViewStyle()
@@ -67,6 +92,17 @@ namespace FWLog.Web.Backoffice.Helpers.Bundling
             HtmlString scriptString = new HtmlString(
                 "<script>" +
                 "var view = " + Json.Encode(obj) + ";" +
+                "</script>"
+            );
+
+            return scriptString;
+        }
+
+        private static IHtmlString GenerateViewObjectModal(Object obj)
+        {
+            HtmlString scriptString = new HtmlString(
+                "<script>" +
+                 "var view_modal = " + Json.Encode(obj) + ";" +
                 "</script>"
             );
 

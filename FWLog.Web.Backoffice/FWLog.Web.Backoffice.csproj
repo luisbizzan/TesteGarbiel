@@ -255,6 +255,7 @@
     <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterListViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterCreateViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\BODetalhesEtiquetaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Startup.cs" />
     <Content Include="Content\dart\dart-template.css">
@@ -390,6 +391,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Scripts\Views\BOPrinter\index.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
     <Content Include="Views\Shared\_ChangeCompany.cshtml" />
@@ -399,6 +401,7 @@
     <Content Include="Views\BOPrinter\Details.cshtml" />
     <Content Include="Views\BOPrinter\Edit.cshtml" />
     <Content Include="Views\BOAccount\_EmpresaGrupo.cshtml" />
+    <Content Include="Views\BORecebimentoNota\DetalhesEtiquetaConferencia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
