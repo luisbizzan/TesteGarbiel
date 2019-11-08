@@ -85,7 +85,7 @@ namespace FWLog.Services.Integracao
 
             if (!login.IsSuccessStatusCode)
             {
-                throw new UnauthorizedException("O sistema não obteve sucesso na autorização da Integração Sankhya.");
+                throw new Exception("O sistema não obteve sucesso na autorização da Integração Sankhya.");
             }
 
             string responseContent = login.Content.ReadAsStringAsync().Result;
@@ -96,13 +96,13 @@ namespace FWLog.Services.Integracao
             string status = root.Attribute("status")?.Value;
             if (status != "1")
             {
-                throw new UnauthorizedException("O sistema não obteve o status 1 na autorização da Integração Sankhya.");
+                throw new Exception("O sistema não obteve o status 1 na autorização da Integração Sankhya.");
             }
 
             string jsessionid = root.Element("responseBody").Element("jsessionid")?.Value;
             if (jsessionid == null)
             {
-                throw new UnauthorizedException("O sistema não obteve o jsessionid na autorização da Integração Sankhya.");
+                throw new Exception("O sistema não obteve o jsessionid na autorização da Integração Sankhya.");
             }
 
             UltimaAutenticacao = DateTime.UtcNow;
@@ -120,7 +120,10 @@ namespace FWLog.Services.Integracao
 
             if (DateTime.UtcNow - UltimaAutenticacao > TimeSpan.FromMinutes(Convert.ToInt32(expiracao)))
             {
-                Token = Instance.Login();
+                lock (padlock)
+                {
+                    Token = Instance.Login();
+                }
             }
 
             return Token;
@@ -147,7 +150,7 @@ namespace FWLog.Services.Integracao
 
             if (!httpResponse.IsSuccessStatusCode)
             {
-                throw new HttpRequestException(string.Format("O sistema obteve o status {0} na consulta da 'DbExplorerSP' Integração Sankhya", httpResponse.StatusCode));
+                throw new Exception(string.Format("O sistema obteve o status {0} na consulta da 'DbExplorerSP' Integração Sankhya", httpResponse.StatusCode));
             }
 
             string result = httpResponse.Content.ReadAsStringAsync().Result;
@@ -180,6 +183,10 @@ namespace FWLog.Services.Integracao
             string sql = string.Format("SELECT {0} FROM {1}", sqlColunas, classAttr.DisplayName);
 
             var resultJson = await Instance.ExecuteQuery(sql);
+            if (resultJson == null)
+            {
+                return resultList;
+            }
 
             ExecuteQueryResponse resultObj = JsonConvert.DeserializeObject<ExecuteQueryResponse>(resultJson);
 

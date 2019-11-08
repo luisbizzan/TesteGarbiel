@@ -93,7 +93,7 @@
     <Compile Include="Model\IntegracaoSankhya\ExecuteQueryFieldsMetadata.cs" />
     <Compile Include="Model\IntegracaoSankhya\ExecuteQueryResponseBody.cs" />
     <Compile Include="Model\IntegracaoSankhya\ExecuteQueryResponse.cs" />
-    <Compile Include="Model\NotaFiscal.cs" />
+    <Compile Include="Model\NotaFiscalIntegracao.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
     <Compile Include="Model\TokenResponse.cs" />

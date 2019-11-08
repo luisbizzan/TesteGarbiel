@@ -8,7 +8,7 @@ namespace FWLog.Services.Model
     {
         public string NUMNOTA { get; set; }
         public string SERIENOTA { get; set; }        
-        public string CODPARCTRANSPFINAL { get; set; }
+        public string CODPARCTRANSP { get; set; }
         public string CHAVENFE { get; set; }
         public string DANFE { get; set; }        
         public string VLRNOTA { get; set; }

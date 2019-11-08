@@ -30,6 +30,15 @@ namespace FWLog.Data
         public virtual DbSet<Printer> Printer { get; set; }
         public virtual DbSet<PrinterType> PrinterType { get; set; }
         public virtual DbSet<PerfilUsuario> PerfilUsuario { get; set; }
+        public virtual DbSet<Fornecedor> Fornecedor { get; set; }
+        public virtual DbSet<FreteTipo> FreteTipo { get; set; }
+        public virtual DbSet<Lote> Lote { get; set; }
+        public virtual DbSet<LoteStatus> LoteStatus { get; set; }
+        public virtual DbSet<NotaFiscal> NotaFiscal { get; set; }
+        public virtual DbSet<NotaFiscalItem> NotaFiscalItem { get; set; }
+        public virtual DbSet<Produto> Produto { get; set; }
+        public virtual DbSet<Transportadora> Transportadora { get; set; }
+        public virtual DbSet<UnidadeMedida> UnidadeMedida { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 

@@ -9,6 +9,6 @@ namespace FWLog.Data
         public int ApplicationId { get; set; }
         public string Name { get; set; }
 
-        public virtual Application Application { get; set; }
+        public Application Application { get; set; }
     }
 }

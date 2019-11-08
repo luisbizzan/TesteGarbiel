@@ -35,6 +35,6 @@ namespace FWLog.Data
         public int ApplicationId { get; set; }
         public int? IdApplicationSession { get; set; }
 
-        public virtual ICollection<AspNetRoles> AspNetRoles { get; set; }
+        public ICollection<AspNetRoles> AspNetRoles { get; set; }
     }
 }

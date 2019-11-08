@@ -1,6 +1,13 @@
-﻿namespace FWLog.Data.Repository.GeneralCtx
+﻿using FWLog.Data.Models;
+using FWLog.Data.Repository.CommonCtx;
+
+namespace FWLog.Data.Repository.GeneralCtx
 {
-    public class ProdutoRepository
+    public class ProdutoRepository : GenericRepository<Produto>
     {
+        public ProdutoRepository(Entities entities) : base(entities)
+        {
+
+        }
     }
 }
