@@ -1,0 +1,55 @@
+﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.BODetalhesEtiquetaConferenciaViewModel
+@{
+    Layout = null;
+
+    @BundleHelper.RenderViewScriptModal()
+}
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">×</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Imprimir Etiquetas de Conferência</h4>
+        </div>
+        <div class="modal-body">
+            <div class="x_panel">
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-7">
+                            <div class="form-group">
+                                @Html.Label("Nota Fiscal")
+                                @Html.TextBoxFor(m => m.NumeroNotaFiscal, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-5">
+                            <div class="form-group">
+                                @Html.Label("Fornecedor")
+                                @Html.TextBoxFor(m => m.NomeFornecedor, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="form-group">
+                                @Html.Label("Data Hora Recebimento")
+                                @Html.TextBoxFor(m => m.DataHoraRecebimento, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <div class="form-group">
+                                @Html.Label("Quantidade de Volumes")
+                                @Html.TextBoxFor(m => m.QuantidadeVolumes, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row navbar-right">
+                        <div class="col-sm-12 col-lg-12">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                            <button type="button" class="btn btn-primary"><i class="fa fa-fw fa-print"></i> Impirmir Etiquetas</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

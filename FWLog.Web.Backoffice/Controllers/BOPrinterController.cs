@@ -87,7 +87,7 @@ namespace FWLog.Web.Backoffice.Controllers
             int totalRecords = all.Count();
             int recordsFiltered = query.Count();
 
-            List<Printer> result = query.PaginationResult(model);
+            IList<Printer> result = query.PaginationResult(model);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
@@ -234,6 +234,36 @@ namespace FWLog.Web.Backoffice.Controllers
 
             Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
             return RedirectToAction("Index");
+        }
+
+        public ActionResult Selecionar()
+        {
+            var listaImpressoras = new List<BOPrinterSelecionarImpressoraViewModel>();
+
+            listaImpressoras.Add(new BOPrinterSelecionarImpressoraViewModel
+            {
+                Id = 1,
+                Nome = "Impressora 01"
+            });
+
+            listaImpressoras.Add(new BOPrinterSelecionarImpressoraViewModel
+            {
+                Id = 2,
+                Nome = "Impressora 02"
+            });
+
+            listaImpressoras.Add(new BOPrinterSelecionarImpressoraViewModel
+            {
+                Id = 3,
+                Nome = "Impressora 03"
+            });
+
+            var viewModel = new BOPrinterSelecionarViewModel
+            {
+                Impressoras = listaImpressoras
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
