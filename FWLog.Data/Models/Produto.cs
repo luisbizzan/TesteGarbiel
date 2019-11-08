@@ -1,13 +1,18 @@
-﻿namespace FWLog.Data.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace FWLog.Data.Models
 {
     public class Produto
     {
+        [Key]
         public int IdProduto { get; set; }
         public string Descricao { get; set; }
         public string Referencia { get; set; }
         public int IdUnidadeMedida { get; set; }
         public decimal Peso { get; set; }
 
-        public virtual UnidadeMedida UnidadeMedida { get; set; }
+        [ForeignKey(nameof(IdUnidadeMedida))]
+        public UnidadeMedida UnidadeMedida { get; set; }
     }
 }

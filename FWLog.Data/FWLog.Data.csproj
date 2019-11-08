@@ -141,6 +141,7 @@
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\FreteTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\FornecedorRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalRepository.cs" />
@@ -196,6 +197,9 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>MailResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Attributes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

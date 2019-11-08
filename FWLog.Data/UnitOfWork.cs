@@ -3,6 +3,9 @@ using FWLog.Data.Repository.BackofficeCtx;
 using FWLog.Data.Repository.GeneralCtx;
 using System;
 using System.Configuration;
+using System.Data.Entity.Validation;
+using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
 
 namespace FWLog.Data
@@ -21,6 +24,48 @@ namespace FWLog.Data
         private BOPrinterTypeRepository _boPrinterTypeRepository;
         private PerfilUsuarioRepository _perfilUsuarioRepository;
         private UserCompanyRepository _userCompanyRepository;
+        private FornecedorRepository _fornecedorRepository;
+        private FreteTipoRepository _freteTipoRepository;
+        private LoteRepository _loteRepository;
+        private ProdutoRepository _produtoRepository;
+        private TransportadoraRepository _transportadoraRepository;
+        private UnidadeMedidaRepository _unidadeMedidaRepository;
+        private NotaFiscalRepository _notaFiscalRepository;
+
+        public NotaFiscalRepository NotaFiscalRepository
+        {
+            get => _notaFiscalRepository ?? (_notaFiscalRepository = new NotaFiscalRepository(_context));
+        }
+
+        public UnidadeMedidaRepository UnidadeMedidaRepository
+        {
+            get => _unidadeMedidaRepository ?? (_unidadeMedidaRepository = new UnidadeMedidaRepository(_context));
+        }
+
+        public TransportadoraRepository TransportadoraRepository
+        {
+            get => _transportadoraRepository ?? (_transportadoraRepository = new TransportadoraRepository(_context));
+        }
+
+        public ProdutoRepository ProdutoRepository
+        {
+            get => _produtoRepository ?? (_produtoRepository = new ProdutoRepository(_context));
+        }
+
+        public LoteRepository LoteRepository
+        {
+            get => _loteRepository ?? (_loteRepository = new LoteRepository(_context));
+        }
+
+        public FreteTipoRepository FreteTipoRepository
+        {
+            get => _freteTipoRepository ?? (_freteTipoRepository = new FreteTipoRepository(_context));
+        }
+
+        public FornecedorRepository FornecedorRepository
+        {
+            get => _fornecedorRepository ?? (_fornecedorRepository = new FornecedorRepository(_context));
+        }
 
         public UserCompanyRepository UserCompanyRepository
         {
@@ -93,6 +138,30 @@ namespace FWLog.Data
             opts.Timeout = timeout.Value;
 
             return new TransactionScope(TransactionScopeOption.Required, opts);
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            try
+            {
+                return await _context.SaveChangesAsync();
+            }
+            catch (DbEntityValidationException e)
+            {
+                string msg = string.Empty;
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    msg = string.Format("Entidade do tipo \"{0}\" no estado \"{1}\" tem os seguintes erros de validação:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    StringBuilder strb = new StringBuilder();
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        strb.Append(string.Format("{2} Property: \"{0}\", Erro: \"{1}\"", ve.PropertyName, ve.ErrorMessage, Environment.NewLine));
+                    }
+
+                    msg = string.Concat(msg, strb.ToString());
+                }
+                throw new Exception(msg);
+            }
         }
 
         public int SaveChanges()

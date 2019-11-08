@@ -14,7 +14,7 @@ namespace FWLog.Data
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
         public long CompanyId { get; set; }
 
-        public virtual Company Company { get; set; }
+        public Company Company { get; set; }
 
         public UserCompany(string userId, long companyId)
         {

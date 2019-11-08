@@ -26,7 +26,7 @@ namespace FWLog.Data
         [Log(DisplayName = nameof(ResEnt.Company), ResourceType = typeof(ResEnt))]
         public int ApplicationId { get; set; }
 
-        public virtual Application Application { get; set; }
-        public virtual ICollection<AspNetUsers> AspNetUsers { get; set; }
+        public Application Application { get; set; }
+        public ICollection<AspNetUsers> AspNetUsers { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace FWLog.Data
         public string ScopeIdentifier { get; set; }
 
         [ForeignKey("UserId")]
-        public virtual AspNetUsers AspNetUsers { get; set; }
+        public AspNetUsers AspNetUsers { get; set; }
 
         public void SetUserId(object value)
         {

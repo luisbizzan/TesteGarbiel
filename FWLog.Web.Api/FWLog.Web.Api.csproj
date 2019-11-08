@@ -191,6 +191,7 @@
     <Compile Include="App_Start\NinjectDependencyResolver.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\ApiBaseController.cs" />
+    <Compile Include="Controllers\NotaFiscalController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="EnumsAndConsts\App.cs" />
     <Compile Include="GlobalResources\AccountResource.Designer.cs">
@@ -237,6 +238,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Security\" />
+    <Folder Include="Views\Teste\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GlobalResources\AccountResource.resx">
