@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\UnauthorizedException.cs" />
     <Compile Include="Exceptions\ConpanyException.cs" />
     <Compile Include="GlobalResources\General\GeneralStrings.en.Designer.cs">
       <DependentUpon>GeneralStrings.en.resx</DependentUpon>
@@ -85,13 +86,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GeneralStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\HttpService.cs" />
-    <Compile Include="IntegracaoSankhya\SankhyaLogin.cs" />
+    <Compile Include="Integracao\Helpers\HttpService.cs" />
+    <Compile Include="Integracao\Helpers\QueryPropertyAttribute.cs" />
+    <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
+    <Compile Include="Model\IntegracaoSankhya\ExecuteQueryFieldsMetadata.cs" />
+    <Compile Include="Model\IntegracaoSankhya\ExecuteQueryResponseBody.cs" />
+    <Compile Include="Model\IntegracaoSankhya\ExecuteQueryResponse.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
     <Compile Include="Model\TokenResponse.cs" />
     <Compile Include="Services\AccountService.cs" />
+    <Compile Include="Services\NotaFiscalService.cs" />
     <Compile Include="Services\PasswordService.cs" />
     <Compile Include="Services\BOAccountService.cs" />
     <Compile Include="Services\BOLogSystemService.cs" />
