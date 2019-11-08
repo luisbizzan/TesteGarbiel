@@ -4,4 +4,10 @@
             $("#modalEtiquetaConferencia").modal();
         });
     });
+
+    $("#imprimirRelatorio").click(function () {
+        $("#modalImpressoras").load("BOPrinter/Selecionar", function () {
+            $("#modalImpressoras").modal();
+        });
+    });
 })();

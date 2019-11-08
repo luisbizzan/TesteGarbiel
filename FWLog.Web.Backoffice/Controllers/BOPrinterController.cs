@@ -236,6 +236,36 @@ namespace FWLog.Web.Backoffice.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult Selecionar()
+        {
+            var listaImpressoras = new List<BOPrinterSelecionarImpressoraViewModel>();
+
+            listaImpressoras.Add(new BOPrinterSelecionarImpressoraViewModel
+            {
+                Id = 1,
+                Nome = "Impressora 01"
+            });
+
+            listaImpressoras.Add(new BOPrinterSelecionarImpressoraViewModel
+            {
+                Id = 2,
+                Nome = "Impressora 02"
+            });
+
+            listaImpressoras.Add(new BOPrinterSelecionarImpressoraViewModel
+            {
+                Id = 3,
+                Nome = "Impressora 03"
+            });
+
+            var viewModel = new BOPrinterSelecionarViewModel
+            {
+                Impressoras = listaImpressoras
+            };
+
+            return View(viewModel);
+        }
+
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Role.Delete)]
         public JsonResult AjaxDelete(long id)

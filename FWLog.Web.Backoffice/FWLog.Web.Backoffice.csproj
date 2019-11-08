@@ -255,6 +255,7 @@
     <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterListViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterCreateViewModel.cs" />
+    <Compile Include="Models\BOPrinterCtx\BOPrinterSelecionarViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODetalhesEtiquetaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Startup.cs" />
@@ -402,6 +403,7 @@
     <Content Include="Views\BOPrinter\Edit.cshtml" />
     <Content Include="Views\BOAccount\_EmpresaGrupo.cshtml" />
     <Content Include="Views\BORecebimentoNota\DetalhesEtiquetaConferencia.cshtml" />
+    <Content Include="Views\BOPrinter\Selecionar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
