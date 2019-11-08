@@ -20,7 +20,8 @@
         new MenuGroup(text: Res.ConfigurationMenuGroup, icon: "fa fa-cog").SetItems(
             new MenuItem { Text = Res.PrinterMenuItem, Url = Url.Action("Index", "BOPrinter"), RequirePermission = Permissions.BOAccount.List }, // TODO: Configurar a permissão
             new MenuItem { Text = Res.BOLogSystemMenuItem, Url = Url.Action("Index", "BOLogSystem"), RequirePermission = Permissions.BOLogSystem.List },
-            new MenuItem { Text = Res.ApplicationLogMenuItem, Url = Url.Action("Index", "ApplicationLog"), RequirePermission = Permissions.ApplicationLog.List }
+            new MenuItem { Text = Res.ApplicationLogMenuItem, Url = Url.Action("Index", "ApplicationLog"), RequirePermission = Permissions.ApplicationLog.List },
+            new MenuItem { Text = Res.PrinterTypeMenuItem, Url = Url.Action("Index", "PrinterType"), RequirePermission = Permissions.PrinterType.List }
         )
     );
 }
