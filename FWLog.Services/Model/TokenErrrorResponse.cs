@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace FWLog.Services.Model.AccountService
+namespace FWLog.Services.Model
 {
     public class TokenErrrorResponse
     {

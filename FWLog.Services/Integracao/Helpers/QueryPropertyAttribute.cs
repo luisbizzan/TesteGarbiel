@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace FWLog.Services.Integracao.Helpers
 {
-    public class QueryPropertyAttribute : Attribute
+    public class TabelaIntegracaoAttribute : Attribute
     {
         public string DisplayName { get; set; }
         public Type ResourceType { get; set; }

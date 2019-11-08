@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
-using FWLog.Services.Integracao.Helpers;
 using FWLog.Services.Integracao;
+using FWLog.Services.Model;
+using System.Collections.Generic;
 
 namespace FWLog.Services.Services
 {
@@ -8,31 +9,9 @@ namespace FWLog.Services.Services
     {
         public async Task ConsultaNotaFiscalCompra()
         {
-            await IntegracaoSankhya.Instance.PreExecuteQuery<Teste>();
-        }
-    }
+            List<NotaFiscalIntegracao> notasInt = await IntegracaoSankhya.Instance.PreExecuteQuery<NotaFiscalIntegracao>();
 
-    [QueryProperty(DisplayName = "TGFCAB")]
-    public class Teste
-    {
-        [QueryProperty(DisplayName = "NUMNOTA")]
-        public string Numero { get; set; }
 
-        [QueryProperty(DisplayName = "CODEMP")]
-        public string Empresa { get; set; }
-
-        public string Naomapeado { get; set; }
-    }
-
-    public class QueryColumn
-    {
-        public string ColumnField { get; set; }
-        public string NameField { get; set; }
-
-        public QueryColumn(string columnField, string nameField)
-        {
-            ColumnField = columnField;
-            NameField = nameField;
         }
     }
 }

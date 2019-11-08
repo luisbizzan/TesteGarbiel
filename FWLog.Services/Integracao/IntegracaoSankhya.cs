@@ -32,7 +32,7 @@ namespace FWLog.Services.Integracao
                 }
             }
         }
-               
+
         private string BaseURL
         {
             get
@@ -74,9 +74,9 @@ namespace FWLog.Services.Integracao
                 return value;
             }
         }
-                
+
         private string Login()
-        {   
+        {
             var contentLogin = new StringContent(string.Format(xmlLogin, Usuario, Senha), Encoding.UTF8, "text/xml");
 
             string uriLogin = string.Concat(BaseURL, "serviceName=MobileLoginSP.login");
@@ -140,7 +140,7 @@ namespace FWLog.Services.Integracao
             string jsonContent = JsonConvert.SerializeObject(queryJson);
 
             StringContent contentString = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                       
+
             var uri = string.Format("{0}serviceName=DbExplorerSP.executeQuery&mgeSession={1}", BaseURL, Instance.GetToken());
 
             HttpResponseMessage httpResponse = await HttpService.Instance.PostAsync(uri, contentString);
@@ -152,7 +152,7 @@ namespace FWLog.Services.Integracao
 
             string result = httpResponse.Content.ReadAsStringAsync().Result;
 
-            return result;           
+            return result;
         }
 
         public async Task<List<TClass>> PreExecuteQuery<TClass>() where TClass : class, new()
@@ -160,29 +160,22 @@ namespace FWLog.Services.Integracao
             Type typeClass = typeof(TClass);
             List<TClass> resultList = null;
 
-            QueryPropertyAttribute classAttr = (QueryPropertyAttribute)typeClass.GetCustomAttributes(typeof(QueryPropertyAttribute), false).FirstOrDefault();
+            TabelaIntegracaoAttribute classAttr = (TabelaIntegracaoAttribute)typeClass.GetCustomAttributes(typeof(TabelaIntegracaoAttribute), false).FirstOrDefault();
 
             if (classAttr == null)
             {
                 return resultList;
             }
 
-            var listColumns = new List<QueryColumn>();
+            var listColumns = new List<string>();
 
             PropertyInfo[] properties = typeClass.GetProperties();
             foreach (var propertyInfo in properties)
             {
-                QueryPropertyAttribute queryProperty = (QueryPropertyAttribute)propertyInfo.GetCustomAttributes(typeof(QueryPropertyAttribute), false).FirstOrDefault();
-
-                if (queryProperty == null)
-                {
-                    continue;
-                }
-
-                listColumns.Add(new QueryColumn(queryProperty.DisplayName, propertyInfo.Name));
+                listColumns.Add(propertyInfo.Name);
             }
 
-            var sqlColunas = string.Join(",", listColumns.Select(s => s.ColumnField).ToArray());
+            var sqlColunas = string.Join(",", listColumns.ToArray());
 
             string sql = string.Format("SELECT {0} FROM {1}", sqlColunas, classAttr.DisplayName);
 
@@ -194,11 +187,10 @@ namespace FWLog.Services.Integracao
             foreach (var row in resultObj.responseBody.rows)
             {
                 var newClass = new TClass();
-
                 for (var i = 0; i <= listColumns.Count() - 1; i++)
                 {
-                    PropertyInfo propertySet = typeClass.GetProperty(listColumns[i].NameField);
-                    propertySet.SetValue(newClass, row[i].ToString(), null);
+                    PropertyInfo propertySet = typeClass.GetProperty(listColumns[i]);
+                    propertySet.SetValue(newClass, row[i], null);
                 }
 
                 resultList.Add(newClass);
