@@ -87,7 +87,7 @@ namespace FWLog.Web.Backoffice.Controllers
             int totalRecords = all.Count();
             int recordsFiltered = query.Count();
 
-            List<Printer> result = query.PaginationResult(model);
+            IList<Printer> result = query.PaginationResult(model);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {

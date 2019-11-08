@@ -232,6 +232,7 @@
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\PrinterTypeController.cs" />
     <Compile Include="EnumsAndConsts\CompanyCookie.cs" />
     <Compile Include="EnumsAndConsts\StatusNotaRecebimento.cs" />
     <Compile Include="GlobalResources\BOPrinter\BOPrinterStrings.Designer.cs">
@@ -244,6 +245,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>BORecebimentoNotaStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="GlobalResources\PrinterType\PrinterTypeStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PrinterTypeStrings.resx</DependentUpon>
+    </Compile>
     <Compile Include="GlobalResources\SpecialFolders\Permission\PermissionStrings.Designer.cs">
       <DependentUpon>PermissionStrings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -252,12 +258,16 @@
     <Compile Include="Helpers\ApplicationAuthorize.cs" />
     <Compile Include="Helpers\HtmlRequestHelper.cs" />
     <Compile Include="Mapping\BOPrinterProfile.cs" />
+    <Compile Include="Mapping\PrinterTypeProfile.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterListViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterCreateViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterSelecionarViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODetalhesEtiquetaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
+    <Compile Include="Models\PrinterTypeCtx\PrinterTypeCreateViewModel.cs" />
+    <Compile Include="Models\PrinterTypeCtx\PrinterTypeDetailsViewModel.cs" />
+    <Compile Include="Models\PrinterTypeCtx\PrinterTypeListViewModel.cs" />
     <Compile Include="Startup.cs" />
     <Content Include="Content\dart\dart-template.css">
       <DependentUpon>dart-template.scss</DependentUpon>
@@ -268,6 +278,11 @@
     <EmbeddedResource Include="GlobalResources\BOPrinter\BOPrinterStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>BOPrinterStrings.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Resources</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GlobalResources\PrinterType\PrinterTypeStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PrinterTypeStrings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources</CustomToolNamespace>
     </EmbeddedResource>
     <Content Include="Scripts\dart\autoComplete.js" />
@@ -393,6 +408,7 @@
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Scripts\Views\BOPrinter\index.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\index.js" />
+    <Content Include="Scripts\Views\PrinterType\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
     <Content Include="Views\Shared\_ChangeCompany.cshtml" />
@@ -404,6 +420,10 @@
     <Content Include="Views\BOAccount\_EmpresaGrupo.cshtml" />
     <Content Include="Views\BORecebimentoNota\DetalhesEtiquetaConferencia.cshtml" />
     <Content Include="Views\BOPrinter\Selecionar.cshtml" />
+    <Content Include="Views\PrinterType\Create.cshtml" />
+    <Content Include="Views\PrinterType\Details.cshtml" />
+    <Content Include="Views\PrinterType\Edit.cshtml" />
+    <Content Include="Views\PrinterType\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

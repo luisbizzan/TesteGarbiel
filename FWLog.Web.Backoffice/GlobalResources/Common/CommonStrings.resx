@@ -246,4 +246,7 @@
   <data name="RegisterNotFound" xml:space="preserve">
     <value>Registro não encontrado.</value>
   </data>
+  <data name="PrinterTypeMenuItem" xml:space="preserve">
+    <value>Tipos de impressora</value>
+  </data>
 </root>
