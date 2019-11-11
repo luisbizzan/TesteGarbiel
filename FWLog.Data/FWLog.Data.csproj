@@ -145,6 +145,7 @@
     <Compile Include="Repository\GeneralCtx\FornecedorRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteStatusRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\NotaFiscalItemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TransportadoraRepository.cs" />

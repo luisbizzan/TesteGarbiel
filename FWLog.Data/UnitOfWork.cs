@@ -32,6 +32,12 @@ namespace FWLog.Data
         private UnidadeMedidaRepository _unidadeMedidaRepository;
         private NotaFiscalRepository _notaFiscalRepository;
         private LoteStatusRepository _loteStatusRepository;
+        private NotaFiscalItemRepository _notaFiscalItemRepository;
+
+        public NotaFiscalItemRepository NotaFiscalItemRepository
+        {
+            get => _notaFiscalItemRepository ?? (_notaFiscalItemRepository = new NotaFiscalItemRepository(_context));
+        }
 
         public NotaFiscalRepository NotaFiscalRepository
         {
