@@ -31,10 +31,16 @@ namespace FWLog.Data
         private TransportadoraRepository _transportadoraRepository;
         private UnidadeMedidaRepository _unidadeMedidaRepository;
         private NotaFiscalRepository _notaFiscalRepository;
+        private LoteStatusRepository _loteStatusRepository;
 
         public NotaFiscalRepository NotaFiscalRepository
         {
             get => _notaFiscalRepository ?? (_notaFiscalRepository = new NotaFiscalRepository(_context));
+        }
+
+        public LoteStatusRepository LoteStatusRepository
+        {
+            get => _loteStatusRepository ?? (_loteStatusRepository = new LoteStatusRepository(_context));
         }
 
         public UnidadeMedidaRepository UnidadeMedidaRepository

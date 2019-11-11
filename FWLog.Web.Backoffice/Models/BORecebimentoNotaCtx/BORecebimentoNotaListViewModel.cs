@@ -43,7 +43,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
     {
         public string Lote { get; set; }
 
-        public string Nota { get; set; }
+        public int? Nota { get; set; }
 
         [Display(Name = "Prazo Recebimento (dias)")]
         public string Prazo { get; set; }
@@ -51,30 +51,33 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public string DANFE { get; set; }
 
         [Display(Name = "Status")]
-        public List<int> IdStatus { get; set; }
+        public int? IdStatus { get; set; }
 
         [Display(Name = "Data Inicial (Entrada)")]
-        public DateTime DataInicial { get; set; }
+        public DateTime? DataInicial { get; set; }
 
         [Display(Name = "Data Final (Entrada)")]
-        public DateTime DataFinal { get; set; }
+        public DateTime? DataFinal { get; set; }
 
         [Display(Name = "Prazo Inicial")]
-        public DateTime PrazoInicial { get; set; }
+        public DateTime? PrazoInicial { get; set; }
 
         [Display(Name = "Prazo Final")]
-        public DateTime PrazoFinal { get; set; }
+        public DateTime? PrazoFinal { get; set; }
 
         [Display(Name = "Atraso (dias)")]
-        public int Atraso { get; set; }
+        public int? Atraso { get; set; }
 
         [Display(Name = "Quantidade de Peças")]
-        public int QuantidadePeca { get; set; }
+        public int? QuantidadePeca { get; set; }
 
         [Display(Name = "Quantidade de Volumes")]
-        public int Volume { get; set; }
+        public int? Volume { get; set; }
 
-        public string Fornecedor { get; set; }
+        public string RazaoSocialFornecedor { get; set; }
+
+        [Display(Name = "Fornecedor")]
+        public int? IdFornecedor { get; set; }
 
         [Display(Name = "Recebido por")]
         public string RecebidoPor { get; set; }
@@ -88,7 +91,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Tempo Final")]
         public TimeSpan TempoFinal { get; set; }
 
-        public SelectList Status { get; set; }
+        public SelectList ListaStatus { get; set; }
 
     }
 

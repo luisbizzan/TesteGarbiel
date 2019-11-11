@@ -5,9 +5,6 @@ namespace FWLog.Data.Repository.GeneralCtx
 {
     public class NotaFiscalRepository : GenericRepository<NotaFiscal>
     {
-        public NotaFiscalRepository(Entities entities) : base(entities)
-        {
-
-        }
+        public NotaFiscalRepository(Entities entities) : base(entities) { }        
     }
 }
