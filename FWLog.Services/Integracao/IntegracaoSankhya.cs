@@ -158,7 +158,7 @@ namespace FWLog.Services.Integracao
             return result;
         }
 
-        public async Task<List<TClass>> PreExecuteQuery<TClass>() where TClass : class, new()
+        public async Task<List<TClass>> PreExecuteQuery<TClass>(string where = null) where TClass : class, new()
         {
             Type typeClass = typeof(TClass);
             List<TClass> resultList = null;
@@ -179,8 +179,8 @@ namespace FWLog.Services.Integracao
             }
 
             var sqlColunas = string.Join(",", listColumns.ToArray());
-
-            string sql = string.Format("SELECT {0} FROM {1}", sqlColunas, classAttr.DisplayName);
+            
+            string sql = string.Format("SELECT {0} FROM {1} {2}", sqlColunas, classAttr.DisplayName, where);
 
             var resultJson = await Instance.ExecuteQuery(sql);
             if (resultJson == null)

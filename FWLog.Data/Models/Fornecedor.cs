@@ -5,7 +5,7 @@ namespace FWLog.Data
     public class Fornecedor
     {
         [Key]
-        public int IdFornecedor { get; set; }
+        public long IdFornecedor { get; set; }
         public string Codigo { get; set; }
         public string NomeFantasia { get; set; }
         public string RazaoSocial { get; set; }
