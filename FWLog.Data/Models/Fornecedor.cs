@@ -1,7 +1,10 @@
-﻿namespace FWLog.Data.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FWLog.Data
 {
     public class Fornecedor
     {
+        [Key]
         public int IdFornecedor { get; set; }
         public string Codigo { get; set; }
         public string NomeFantasia { get; set; }

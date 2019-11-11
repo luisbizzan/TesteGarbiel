@@ -1,13 +1,13 @@
 ﻿using DartDigital.Library.Mail;
 using Newtonsoft.Json;
 using FWLog.Services.GlobalResources.General;
-using FWLog.Services.Model.AccountService;
 using FWLog.Services.Templates;
 using System;
 using System.Configuration;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using FWLog.Services.Model;
 
 namespace FWLog.Services.Services
 {

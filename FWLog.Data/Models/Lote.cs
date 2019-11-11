@@ -1,9 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
 {
     public class Lote
     {
+        [Key]
         public int IdLote { get; set; }
         public int IdLoteStatus { get; set; }
         public int IdNotaFiscal { get; set; }
@@ -14,7 +17,10 @@ namespace FWLog.Data.Models
         public string RecebidoPor { get; set; }
         public string ConferidoPor { get; set; }
 
-        public virtual LoteStatus LoteStatus { get; set; }
-        public virtual NotaFiscal NotaFiscal { get; set; }
+        [ForeignKey(nameof(IdLoteStatus))]
+        public LoteStatus LoteStatus { get; set; }
+
+        [ForeignKey(nameof(IdNotaFiscal))]
+        public NotaFiscal NotaFiscal { get; set; }
     }
 }

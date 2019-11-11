@@ -1,6 +1,13 @@
-﻿namespace FWLog.Data.Repository.GeneralCtx
+﻿using FWLog.Data.Models;
+using FWLog.Data.Repository.CommonCtx;
+
+namespace FWLog.Data.Repository.GeneralCtx
 {
-    public class FornecedorRepository
+    public class FornecedorRepository : GenericRepository<Fornecedor>
     {
+        public FornecedorRepository(Entities entities) : base(entities)
+        {
+
+        }
     }
 }
