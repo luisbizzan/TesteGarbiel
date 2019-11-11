@@ -6,10 +6,10 @@ namespace FWLog.Data.Models
     public class Produto
     {
         [Key]
-        public int IdProduto { get; set; }
+        public long IdProduto { get; set; }
         public string Descricao { get; set; }
         public string Referencia { get; set; }
-        public int IdUnidadeMedida { get; set; }
+        public long IdUnidadeMedida { get; set; }
         public decimal Peso { get; set; }
 
         [ForeignKey(nameof(IdUnidadeMedida))]
