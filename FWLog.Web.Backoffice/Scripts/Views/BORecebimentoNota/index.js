@@ -22,7 +22,7 @@
                 Lote: $("#Filter_Lote").val(),
                 Nota: $("#Filter_Nota").val(),
                 DANFE: $("#Filter_DANFE").val(),
-                IdStatus: $("#Filter_IdStatus").val(),
+                IdStatus: $("#Filter_ListaStatus").val(),
                 DataInicial: $("#Filter_DataInicial").val(),
                 DataFinal: $("#Filter_DataFinal").val(),
                 PrazoInicial: $("#Filter_PrazoInicial").val(),

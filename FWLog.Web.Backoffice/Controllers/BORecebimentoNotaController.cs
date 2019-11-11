@@ -95,7 +95,18 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var relatorioRequest = new RelatorioRecebimentoNotasRequest
             {
-                Nota = viewModel.Nota
+                Lote = viewModel.Lote,
+                Nota = viewModel.Nota,
+                DANFE = viewModel.DANFE,
+                IdStatus = viewModel.IdStatus,
+                DataInicial = viewModel.DataInicial,
+                DataFinal = viewModel.DataFinal,
+                PrazoInicial = viewModel.PrazoInicial,
+                PrazoFinal = viewModel.PrazoFinal,
+                IdFornecedor = viewModel.IdFornecedor,
+                Atraso = viewModel.Atraso,
+                QuantidadePeca = viewModel.QuantidadePeca,
+                Volume = viewModel.Volume
             };
 
             byte[] relatorio = _relatorioService.GerarRelatorioRecebimentoNotas(relatorioRequest);
