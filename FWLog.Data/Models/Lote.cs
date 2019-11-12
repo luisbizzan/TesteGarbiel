@@ -7,22 +7,22 @@ namespace FWLog.Data.Models
     public class Lote
     {
         [Key]
-
-        public int? IdLote { get; set; }
-        public int? IdLoteStatus { get; set; }
-        public int? IdNotaFiscal { get; set; }
-        public DateTime? DataCompra { get; set; }
+        public long IdLote { get; set; }
+        public long IdLoteStatus { get; set; }
+        public long IdNotaFiscal { get; set; }
         public DateTime? DataRecebimento { get; set; }
-        public int? QuantidadePeca { get; set; }
-        public int? QuantidadeVolume { get; set; }
+        public long QuantidadePeca { get; set; }
+        public long QuantidadeVolume { get; set; }
         public string IdUsuarioRecebimento { get; set; }
 
         [ForeignKey(nameof(IdLoteStatus))]
-        public LoteStatus LoteStatus { get; set; }
+        public virtual LoteStatus LoteStatus { get; set; }
 
         [ForeignKey(nameof(IdNotaFiscal))]
-        public NotaFiscal NotaFiscal { get; set; }
+        public virtual NotaFiscal NotaFiscal { get; set; }
 
-        public AspNetUsers UsuarioRecebimento { get; set; }
+		[ForeignKey(nameof(IdUsuarioRecebimento))]
+        public virtual AspNetUsers UsuarioRecebimento { get; set; }
+
     }
 }

@@ -5,6 +5,26 @@
         });
     });
 
+    $("#RegistrarRecebimentoNota").click(function () {
+        $("#modalEtiquetaConferencia").load("BORecebimentoNota/RegistrarRecebimentoNota", function () {
+           //Definir
+        });
+    });
+
+    //Alterar chamada
+    $("#Registro").click(function () {
+        $("#modalRegistroRecebimento").load("BORecebimentoNota/ExibirModalRegistroRecebimento", function () {
+            $("#modalRegistroRecebimento").modal();
+
+            $('#ChaveAcesso').keypress(function (event) {
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if (keycode === 13) {
+                    $("#RegistroRecebimentoDetalhes").load("BORecebimentoNota/CarregarDadosNotaFiscalRegistro?chaveAcesso=" + $('#ChaveAcesso').val(), function () { });
+                }
+            });
+        });
+    });
+
     $("#imprimirRelatorio").click(function () {
         $("#modalImpressoras").load("BOPrinter/Selecionar", function () {
             $("#modalImpressoras").modal();
@@ -43,6 +63,7 @@
                 window.URL.revokeObjectURL(url);
             }
         });
+    });
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [

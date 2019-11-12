@@ -268,6 +268,7 @@
     <Compile Include="Models\BORecebimentoNotaCtx\BODownloadRelatorioNotasViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirRelatorioNotasViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\BORegistroRecebimentoViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeCreateViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeDetailsViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeListViewModel.cs" />
@@ -428,6 +429,8 @@
     <Content Include="Views\PrinterType\Details.cshtml" />
     <Content Include="Views\PrinterType\Edit.cshtml" />
     <Content Include="Views\PrinterType\Index.cshtml" />
+    <Content Include="Views\BORecebimentoNota\RegistroRecebimento.cshtml" />
+    <Content Include="Views\BORecebimentoNota\RegistroRecebimentoDetalhes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

@@ -112,8 +112,8 @@
                     @Html.TextBoxFor(m => m.Filter.QuantidadePeca, new { @class = "form-control", data_field = "QuantidadePeca" })
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
-                    @Html.LabelFor(m => m.Filter.Volume)
-                    @Html.TextBoxFor(m => m.Filter.Volume, new { @class = "form-control", data_field = "Volume" })
+                    @Html.LabelFor(m => m.Filter.QuantidadeVolume)
+                    @Html.TextBoxFor(m => m.Filter.QuantidadeVolume, new { @class = "form-control", data_field = "Volume" })
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(model => model.Filter.IdUsuarioRecebimento, htmlAttributes: new { @class = "control-label" })
@@ -151,6 +151,7 @@
                     <button type="button" class="btn btn-default" data-filter="clear" id="limpaPesquisaRecebimentoNota">@Resources.CommonStrings.ClearAction</button>
                     <button type="button" class="btn btn-primary" data-filter="search" id="pesquisaPacienteElemento">@Resources.CommonStrings.SearchAction</button>
                     @*<a id="imprimirEtiquetaConferencia" class="btn btn-danger"><i class="fa fa-fw fa-crosshairs"></i>Tela Imprimir Etiqueta Volumes</a>*@
+                    @*<a id="Registro" class="btn btn-danger"><i class="fa fa-fw fa-crosshairs"></i>Registro</a>*@
                 </div>
             </div>
         </div>
@@ -172,7 +173,7 @@
             <div class="x_content">
                 <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
                     <thead>
-                        <tr>
+                        <tr>                            
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Lote)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Nota)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.QuantidadePeca)</th>
@@ -191,3 +192,4 @@
 </div>
 <div class="modal" id="modalEtiquetaConferencia"></div>
 <div class="modal" id="modalImpressoras"></div>
+<div class="modal" id="modalRegistroRecebimento"></div>

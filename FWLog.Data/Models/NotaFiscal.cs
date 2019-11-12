@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
@@ -11,6 +12,7 @@ namespace FWLog.Data.Models
         public int Serie { get; set; }
         public string DANFE { get; set; }
         public long IdFornecedor { get; set; }
+        public DateTime DataEmissao { get; set; }
         public decimal ValorTotal { get; set; }
         public long IdTransportadora { get; set; }
         public long IdFreteTipo { get; set; }
@@ -24,12 +26,12 @@ namespace FWLog.Data.Models
         public long CodigoNotaFiscal { get; set; }
 
         [ForeignKey(nameof(IdFornecedor))]
-        public Fornecedor Fornecedor { get; set; }
+        public virtual Fornecedor Fornecedor { get; set; }
 
         [ForeignKey(nameof(IdTransportadora))]
-        public Transportadora Transportadora { get; set; }
+        public virtual Transportadora Transportadora { get; set; }
 
         [ForeignKey(nameof(IdFreteTipo))]
-        public FreteTipo FreteTipo { get; set; }
+        public virtual FreteTipo FreteTipo { get; set; }
     }
 }
