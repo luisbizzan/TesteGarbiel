@@ -50,30 +50,61 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult PageData(DataTableFilter<BORecebimentoNotaFilterViewModel> model)
         {
+            List<BORecebimentoNotaListItemViewModel> boRecebimentoNotaListItemViewModel = new List<BORecebimentoNotaListItemViewModel>();
             int totalRecords = 0;
             int totalRecordsFiltered = 0;
 
-            var lote = _uow.LoteRepository.GetAll().ToList();
+            var query = _uow.LoteRepository.ObterLote().AsQueryable();
 
-            totalRecords = lote.Count;
-
-            var query = lote.AsQueryable();
+            totalRecords = query.Count();
 
             if (!string.IsNullOrEmpty(model.CustomFilter.DANFE))
                 query = query.Where(x => x.NotaFiscal.DANFE == model.CustomFilter.DANFE);
 
-            if (!string.IsNullOrEmpty(model.CustomFilter.Lote))
+            if (model.CustomFilter.Lote != null && model.CustomFilter.Lote != 0)
                 query = query.Where(x => x.IdLote == Convert.ToInt32(model.CustomFilter.Lote));
 
             if (model.CustomFilter.Nota != null && model.CustomFilter.Nota != 0)
                 query = query.Where(x => x.NotaFiscal.Numero == model.CustomFilter.Nota);
+
+            if (model.CustomFilter.Prazo != null && model.CustomFilter.Prazo != 0)
+                query = query.Where(x => x.DataRecebimento == DateTime.Now.AddDays(Convert.ToDouble(model.CustomFilter.Prazo)));
+
+            if (model.CustomFilter.IdStatus != null && model.CustomFilter.IdStatus != 0)
+                query = query.Where(x => x.LoteStatus.IdLoteStatus == model.CustomFilter.IdStatus);
+
+            if (query.Count() > 0)
+            {
+                foreach (var item in query)
+                {
+                    int? atraso = null;
+                    
+                    if (item.DataCompra != null)
+                    {
+                        TimeSpan? data = DateTime.Now - item.DataCompra;
+                        atraso = data.Value.Days;
+                    }
+                    
+                    boRecebimentoNotaListItemViewModel.Add(new BORecebimentoNotaListItemViewModel()
+                    {
+                        Lote = item.IdLote,
+                        Nota = item.NotaFiscal.Numero,
+                        Fornecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
+                        QuantidadePeca = item.QuantidadePeca,
+                        QuantidadeVolume = item.QuantidadeVolume,
+                        Status = item.LoteStatus.Descricao,
+                        Prazo = item.DataCompra.ToString(),
+                        Atraso = atraso
+                    });
+                }
+            }
 
             return DataTableResult.FromModel(new DataTableResponseModel()
             {
                 Draw = model.Draw,
                 RecordsTotal = totalRecords,
                 RecordsFiltered = totalRecordsFiltered,
-                Data = Mapper.Map<IEnumerable<BORecebimentoNotaListItemViewModel>>(lote)
+                Data = boRecebimentoNotaListItemViewModel
             });
         }
 

@@ -258,6 +258,7 @@
     <Compile Include="Helpers\ApplicationAuthorize.cs" />
     <Compile Include="Helpers\HtmlRequestHelper.cs" />
     <Compile Include="Mapping\BOPrinterProfile.cs" />
+    <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
     <Compile Include="Mapping\PrinterTypeProfile.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterListViewModel.cs" />
