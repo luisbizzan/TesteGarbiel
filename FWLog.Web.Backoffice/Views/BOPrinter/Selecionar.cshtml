@@ -11,26 +11,45 @@
             <button type="button" class="close" data-dismiss="modal">
                 <span aria-hidden="true">×</span>
             </button>
-            <h4 class="modal-title" id="myModalLabel">Lista de Impressoras</h4>
+            <h4 class="modal-title" id="myModalLabel">Selecione uma impressora</h4>
         </div>
         <div class="modal-body">
             <div class="x_panel">
                 <div class="x_content">
                     <div class="row">
-                        @foreach (var impressora in Model.Impressoras)
+                        @if (Model.Impressoras.Count > 0)
                         {
-                        <div class="col-sm-12 col-lg-12">
-                            <div class="form-group">
-                                @Html.RadioButton("IdImpressora", impressora.Id, new { Id = "IdImpressora" + impressora.Id })
-                                <label for="IdImpressora@(impressora.Id)">@impressora.Nome</label>
+                            if (Model.Impressoras.Count == 1)
+                            {
+                                <div class="col-sm-12 col-lg-12">
+                                    <h2>A impressão será enviada para <b>@Model.Impressoras.First().Nome</b></h2>
+                                    @Html.Hidden("IdImpressora", Model.Impressoras.First().Id)
+                                </div>
+                            }
+                            else
+                            {
+                                foreach (var impressora in Model.Impressoras)
+                                {
+                                <div class="col-sm-12 col-lg-12">
+                                    <div class="form-group">
+                                        @Html.RadioButton("IdImpressora", impressora.Id, new { Id = "IdImpressora" + impressora.Id })
+                                        <label for="IdImpressora@(impressora.Id)">@impressora.Nome</label>
+                                    </div>
+                                </div>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-sm-12 col-lg-12">
+                                Nenhuma impressora configurada.
                             </div>
-                        </div>
                         }
                     </div>
                     <div class="row navbar-right">
                         <div class="col-sm-12 col-lg-12">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                            <button type="button" class="btn btn-primary"><i class="fa fa-fw fa-print"></i> Impirmir</button>
+                            <button type="button" id="btnFechar" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                            <button type="button" id="btnImprimir" class="btn btn-primary"><i class="fa fa-fw fa-print"></i> Impirmir</button>
                         </div>
                     </div>
                 </div>

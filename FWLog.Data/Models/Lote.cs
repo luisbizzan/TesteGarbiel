@@ -10,17 +10,19 @@ namespace FWLog.Data.Models
         public long IdLote { get; set; }
         public long IdLoteStatus { get; set; }
         public long IdNotaFiscal { get; set; }
-        public DateTime DataCompra { get; set; }
-        public DateTime DataRecebimento { get; set; }
-        public int QuantidadePeca { get; set; }
-        public int QuantidadeVolume { get; set; }
-        public string RecebidoPor { get; set; }
-        public string ConferidoPor { get; set; }
+        public DateTime? DataRecebimento { get; set; }
+        public long QuantidadePeca { get; set; }
+        public long QuantidadeVolume { get; set; }
+        public string IdUsuarioRecebimento { get; set; }
 
         [ForeignKey(nameof(IdLoteStatus))]
         public virtual LoteStatus LoteStatus { get; set; }
 
         [ForeignKey(nameof(IdNotaFiscal))]
         public virtual NotaFiscal NotaFiscal { get; set; }
+
+		[ForeignKey(nameof(IdUsuarioRecebimento))]
+        public virtual AspNetUsers UsuarioRecebimento { get; set; }
+
     }
 }

@@ -21,7 +21,6 @@ namespace FWLog.Services.Services
         {
             var lote = _uow.LoteRepository.GetById(idLote);
 
-            lote.RecebidoPor = userId;
             lote.IdLoteStatus = LoteStatusEnum.Recebido.GetHashCode();
 
             _uow.SaveChanges();
