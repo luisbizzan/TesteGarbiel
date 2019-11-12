@@ -115,6 +115,7 @@
                     <button type="button" class="btn btn-default" data-filter="clear" id="limpaPesquisaRecebimentoNota">@Resources.CommonStrings.ClearAction</button>
                     <button type="button" class="btn btn-primary" data-filter="search" id="pesquisaPacienteElemento">@Resources.CommonStrings.SearchAction</button>
                     @*<a id="imprimirEtiquetaConferencia" class="btn btn-danger"><i class="fa fa-fw fa-crosshairs"></i>Tela Imprimir Etiqueta Volumes</a>*@
+                    @*<a id="Registro" class="btn btn-danger"><i class="fa fa-fw fa-crosshairs"></i>Registro</a>*@
                 </div>
             </div>
         </div>
@@ -136,7 +137,7 @@
             <div class="x_content">
                 <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
                     <thead>
-                        <tr>
+                        <tr>                            
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Lote)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Nota)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.QuantidadePeca)</th>
@@ -155,3 +156,4 @@
 </div>
 <div class="modal" id="modalEtiquetaConferencia"></div>
 <div class="modal" id="modalImpressoras"></div>
+<div class="modal" id="modalRegistroRecebimento"></div>

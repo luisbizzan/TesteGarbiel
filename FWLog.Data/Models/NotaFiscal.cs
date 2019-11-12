@@ -24,12 +24,12 @@ namespace FWLog.Data.Models
         public long CodigoNotaFiscal { get; set; }
 
         [ForeignKey(nameof(IdFornecedor))]
-        public Fornecedor Fornecedor { get; set; }
+        public virtual Fornecedor Fornecedor { get; set; }
 
         [ForeignKey(nameof(IdTransportadora))]
-        public Transportadora Transportadora { get; set; }
+        public virtual Transportadora Transportadora { get; set; }
 
         [ForeignKey(nameof(IdFreteTipo))]
-        public FreteTipo FreteTipo { get; set; }
+        public virtual FreteTipo FreteTipo { get; set; }
     }
 }

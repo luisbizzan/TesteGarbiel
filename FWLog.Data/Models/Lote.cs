@@ -18,9 +18,9 @@ namespace FWLog.Data.Models
         public string ConferidoPor { get; set; }
 
         [ForeignKey(nameof(IdLoteStatus))]
-        public LoteStatus LoteStatus { get; set; }
+        public virtual LoteStatus LoteStatus { get; set; }
 
         [ForeignKey(nameof(IdNotaFiscal))]
-        public NotaFiscal NotaFiscal { get; set; }
+        public virtual NotaFiscal NotaFiscal { get; set; }
     }
 }
