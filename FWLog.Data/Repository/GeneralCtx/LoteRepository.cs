@@ -27,7 +27,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                     lote = conn.Query<Lote, NotaFiscal, Fornecedor, FreteTipo, LoteStatus, AspNetUsers, Lote>(
                         "SELECT " +
                             "A.\"IdLote\", " +
-                            "A.\"DataCompra\", " +
                             "A.\"DataRecebimento\", " +
                             "A.\"QuantidadePeca\", " +
                             "A.\"QuantidadeVolume\", " +
@@ -45,6 +44,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "B.\"Status\", " +
                             "B.\"Chave\", " +
                             "B.\"CodigoNotaFiscal\", " +
+                            "B.\"DataEmissao\", " +
                             "C.*, " +
                             "D.\"IdFreteTipo\", " +
                             "D.\"Sigla\", " +
