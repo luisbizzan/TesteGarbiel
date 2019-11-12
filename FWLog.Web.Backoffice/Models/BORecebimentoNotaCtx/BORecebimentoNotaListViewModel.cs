@@ -20,17 +20,17 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
     public class BORecebimentoNotaListItemViewModel
     {
-        public int? Lote { get; set; }
+        public long? Lote { get; set; }
 
-        public int? Nota { get; set; }
+        public long? Nota { get; set; }
 
         [Display(Name = "Qtde. Peça")]
-        public int? QuantidadePeca { get; set; }
+        public long? QuantidadePeca { get; set; }
 
         [Display(Name = "Qtde. Volume")]
-        public int? QuantidadeVolume { get; set; }
+        public long? QuantidadeVolume { get; set; }
 
-        public int? Atraso { get; set; }
+        public long? Atraso { get; set; }
 
         public string Prazo { get; set; }
 
@@ -43,15 +43,15 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
     {
         public string DANFE { get; set; }
 
-        public int? Lote { get; set; }
+        public long? Lote { get; set; }
 
-        public int? Nota { get; set; }
+        public long? Nota { get; set; }
 
         [Display(Name = "Prazo Recebimento (dias)")]
-        public int? Prazo { get; set; }
+        public long? Prazo { get; set; }
         
         [Display(Name = "Status")]
-        public int? IdStatus { get; set; }
+        public long? IdStatus { get; set; }
 
         [Display(Name = "Data Inicial (Entrada)")]
         public DateTime? DataInicial { get; set; }
@@ -69,23 +69,23 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public int? Atraso { get; set; }
 
         [Display(Name = "Quantidade de Peças")]
-        public int? QuantidadePeca { get; set; }
+        public long? QuantidadePeca { get; set; }
 
         [Display(Name = "Quantidade de Volumes")]
-        public int? Volume { get; set; }
+        public long? QuantidadeVolume { get; set; }
 
         [Display(Name = "Fornecedor")]
-        public int? IdFornecedor { get; set; }
+        public long? IdFornecedor { get; set; }
 
         public string RazaoSocialFornecedor { get; set; }
 
         [Display(Name = "Recebido por")]
-        public int? IdUsuarioRecebimento { get; set; }
+        public string IdUsuarioRecebimento { get; set; }
 
         public string UserNameRecebimento { get; set; }
 
         [Display(Name = "Conferido por")]
-        public int? IdUsuarioConferencia { get; set; }
+        public string IdUsuarioConferencia { get; set; }
 
         public string UserNameConferencia { get; set; }
 

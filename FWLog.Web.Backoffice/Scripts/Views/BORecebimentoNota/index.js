@@ -43,6 +43,7 @@
                 window.URL.revokeObjectURL(url);
             }
         });
+    });
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [

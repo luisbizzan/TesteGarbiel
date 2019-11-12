@@ -64,33 +64,42 @@ namespace FWLog.Web.Backoffice.Controllers
             if (model.CustomFilter.Nota != null && model.CustomFilter.Nota != 0)
                 query = query.Where(x => x.NotaFiscal.Numero == model.CustomFilter.Nota);
 
-            if (model.CustomFilter.Prazo != null && model.CustomFilter.Prazo != 0)
-                query = query.Where(x => x.DataRecebimento == DateTime.Now.AddDays(Convert.ToDouble(model.CustomFilter.Prazo)));
+            if (model.CustomFilter.IdFornecedor != null && model.CustomFilter.IdFornecedor != 0)
+                query = query.Where(x => x.NotaFiscal.Fornecedor.IdFornecedor == model.CustomFilter.IdFornecedor);
+
+            if (model.CustomFilter.QuantidadePeca != null && model.CustomFilter.QuantidadePeca != 0)
+                query = query.Where(x => x.QuantidadePeca == model.CustomFilter.QuantidadePeca);
+
+            if (model.CustomFilter.QuantidadeVolume != null && model.CustomFilter.QuantidadeVolume != 0)
+                query = query.Where(x => x.QuantidadeVolume == model.CustomFilter.QuantidadeVolume);
 
             if (model.CustomFilter.IdStatus != null && model.CustomFilter.IdStatus != 0)
                 query = query.Where(x => x.LoteStatus.IdLoteStatus == model.CustomFilter.IdStatus);
+
+            if (model.CustomFilter.Prazo != null && model.CustomFilter.Prazo != 0)
+                query = query.Where(x => x.DataRecebimento == DateTime.Now.AddDays(Convert.ToDouble(model.CustomFilter.Prazo)));
 
             if (query.Count() > 0)
             {
                 foreach (var item in query)
                 {
-                    int? atraso = null;
+                    long? atraso = null;
                     
-                    if (item.DataCompra != null)
+                    if (item.NotaFiscal.DataEmissao != null)
                     {
-                        TimeSpan? data = DateTime.Now - item.DataCompra;
+                        TimeSpan? data = DateTime.Now - item.NotaFiscal.DataEmissao;
                         atraso = data.Value.Days;
                     }
                     
                     boRecebimentoNotaListItemViewModel.Add(new BORecebimentoNotaListItemViewModel()
                     {
-                        Lote = item.IdLote,
-                        Nota = item.NotaFiscal.Numero,
+                        Lote = item.IdLote == 0 ? (long?)null : item.IdLote,
+                        Nota = item.NotaFiscal.Numero == 0 ? (long?)null : item.NotaFiscal.Numero,                         
                         Fornecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
-                        QuantidadePeca = item.QuantidadePeca,
-                        QuantidadeVolume = item.QuantidadeVolume,
+                        QuantidadePeca = item.QuantidadePeca == 0 ? (long?)null : item.QuantidadePeca,
+                        QuantidadeVolume = item.QuantidadeVolume == 0 ? (long?)null : item.QuantidadeVolume,
                         Status = item.LoteStatus.Descricao,
-                        Prazo = item.DataCompra.ToString(),
+                        Prazo = item.NotaFiscal.DataEmissao.ToString(),
                         Atraso = atraso
                     });
                 }
