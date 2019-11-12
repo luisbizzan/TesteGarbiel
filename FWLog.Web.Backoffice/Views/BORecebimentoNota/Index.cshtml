@@ -10,6 +10,12 @@
     @FWLog.Web.Backoffice.Helpers.Bundling.BundleHelper.RenderViewScript(
                         new
                         {
+                            detailsUrl = Url.Action(""),
+                            detailsVisible = User.HasPermission(Permissions.Role.List),
+                            editUrl = Url.Action("Edit"),
+                            editVisible = User.HasPermission(Permissions.Role.Edit),
+                            deleteUrl = Url.Action("AjaxDelete"),
+                            deleteVisible = User.HasPermission(Permissions.Role.List),
                             pageDataUrl = Url.Action("PageData")
                         }
                     )
@@ -111,6 +117,36 @@
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.Volume)
                     @Html.TextBoxFor(m => m.Filter.Volume, new { @class = "form-control", data_field = "Volume" })
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdUsuarioRecebimento, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.UserNameRecebimento, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarUsuarioRecebimento" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparUsuarioRecebimento" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(model => model.Filter.IdUsuarioRecebimento)
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdUsuarioConferencia, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.UserNameConferencia, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarUsuarioConferencia" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparUsuarioConferencia" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(model => model.Filter.IdUsuarioConferencia)
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.TempoInicial)
+                    @Html.TextBoxFor(m => m.Filter.TempoInicial, new { @class = "form-control", data_field = "TempoInicial" })
+                </div>
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.TempoFinal)
+                    @Html.TextBoxFor(m => m.Filter.TempoFinal, new { @class = "form-control", data_field = "TempoFinal" })
                 </div>
             </div>
             <div class="row">
