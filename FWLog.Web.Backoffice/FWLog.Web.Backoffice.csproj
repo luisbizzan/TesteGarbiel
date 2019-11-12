@@ -265,6 +265,7 @@
     <Compile Include="Models\BOPrinterCtx\BOPrinterSelecionarViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODetalhesEtiquetaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODownloadRelatorioNotasViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirRelatorioNotasViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeCreateViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeDetailsViewModel.cs" />
@@ -407,6 +408,7 @@
     <Compile Include="Models\CommonCtx\FileUploadResponseModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Scripts\dart\waitingDialog.js" />
+    <Content Include="Scripts\Views\BOPrinter\selecionar.js" />
     <Content Include="Scripts\Views\BOPrinter\index.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\index.js" />
     <Content Include="Scripts\Views\PrinterType\index.js" />

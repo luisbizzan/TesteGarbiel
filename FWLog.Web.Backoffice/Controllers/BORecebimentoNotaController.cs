@@ -11,6 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using FWLog.Data.Models;
+using System.Net.Sockets;
+using System.Net;
 
 namespace FWLog.Web.Backoffice.Controllers
 {   
@@ -112,6 +115,64 @@ namespace FWLog.Web.Backoffice.Controllers
             byte[] relatorio = _relatorioService.GerarRelatorioRecebimentoNotas(relatorioRequest);
 
             return File(relatorio, "application/pdf", "Relatório Recebimento Notas.pdf");
+        }
+
+        [HttpPost]
+        public JsonResult ImprimirRelatorioNotas(BOImprimirRelatorioNotasViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                var relatorioRequest = new RelatorioRecebimentoNotasRequest
+                {
+                    Lote = viewModel.Lote,
+                    Nota = viewModel.Nota,
+                    DANFE = viewModel.DANFE,
+                    IdStatus = viewModel.IdStatus,
+                    DataInicial = viewModel.DataInicial,
+                    DataFinal = viewModel.DataFinal,
+                    PrazoInicial = viewModel.PrazoInicial,
+                    PrazoFinal = viewModel.PrazoFinal,
+                    IdFornecedor = viewModel.IdFornecedor,
+                    Atraso = viewModel.Atraso,
+                    QuantidadePeca = viewModel.QuantidadePeca,
+                    Volume = viewModel.Volume
+                };
+
+                byte[] relatorio = _relatorioService.GerarRelatorioRecebimentoNotas(relatorioRequest);
+
+                Printer impressora = _uow.BOPrinterRepository.GetById(viewModel.IdImpressora);
+                var ipPorta = impressora.IP.Split(':');
+
+                Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                {
+                    NoDelay = true
+                };
+
+                IPAddress ip = IPAddress.Parse(ipPorta[0]);
+                IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
+                clientSocket.Connect(ipep);
+
+                NetworkStream ns = new NetworkStream(clientSocket);
+                ns.Write(relatorio, 0, relatorio.Length);
+                ns.Close();
+                clientSocket.Close();
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.DenyGet);
+            }
+            catch (Exception)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.DenyGet);
+            }
         }
     }
 }

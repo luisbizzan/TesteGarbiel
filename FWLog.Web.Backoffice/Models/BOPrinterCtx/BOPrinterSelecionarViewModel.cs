@@ -9,7 +9,7 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
 
     public class BOPrinterSelecionarImpressoraViewModel
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Nome { get; set; }
     }
 }
