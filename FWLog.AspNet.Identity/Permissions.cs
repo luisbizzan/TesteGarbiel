@@ -88,5 +88,23 @@ namespace FWLog.AspNet.Identity
                 Register(Delete, Display.FromResource(nameof(Res.Delete)));
             }
         }
+
+        public class Recebimento : PermissionGroupBuildItem
+        {
+            public const string List = "RecebimentoList";
+            public const string Create = "RecebimentoCreate";
+            public const string Edit = "RecebimentoEdit";
+            public const string Delete = "RecebimentoDelete";
+            public const string RegistrarRecebimento = "RegistrarRecebimento";
+
+            public Recebimento() : base(Display.FromResource(nameof(Res.PrinterType)))
+            {
+                Register(List, Display.FromResource(nameof(Res.List)));
+                Register(Create, Display.FromResource(nameof(Res.Create)));
+                Register(Edit, Display.FromResource(nameof(Res.Edit)));
+                Register(Delete, Display.FromResource(nameof(Res.Delete)));
+                Register(RegistrarRecebimento, "Registrar Recebimento");
+            }
+        }
     }
 }

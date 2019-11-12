@@ -11,12 +11,14 @@
                         new
                         {
                             detailsUrl = Url.Action(""),
-                            detailsVisible = User.HasPermission(Permissions.Role.List),
+                            detailsVisible = User.HasPermission(Permissions.Recebimento.List),
                             editUrl = Url.Action("Edit"),
-                            editVisible = User.HasPermission(Permissions.Role.Edit),
+                            editVisible = User.HasPermission(Permissions.Recebimento.Edit),
                             deleteUrl = Url.Action("AjaxDelete"),
-                            deleteVisible = User.HasPermission(Permissions.Role.List),
-                            pageDataUrl = Url.Action("PageData")
+                            deleteVisible = User.HasPermission(Permissions.Recebimento.List),
+                            pageDataUrl = Url.Action("PageData"),
+                            registrarRecebimento = User.HasPermission(Permissions.Recebimento.RegistrarRecebimento),
+                            registrarRecebimentoUrl = Url.Action("ExibirModalRegistroRecebimento"),
                         }
                     )
 }
@@ -150,8 +152,7 @@
                 <div class="col-xs-12 form-buttons">
                     <button type="button" class="btn btn-default" data-filter="clear" id="limpaPesquisaRecebimentoNota">@Resources.CommonStrings.ClearAction</button>
                     <button type="button" class="btn btn-primary" data-filter="search" id="pesquisaPacienteElemento">@Resources.CommonStrings.SearchAction</button>
-                    @*<a id="imprimirEtiquetaConferencia" class="btn btn-danger"><i class="fa fa-fw fa-crosshairs"></i>Tela Imprimir Etiqueta Volumes</a>*@
-                    @*<a id="Registro" class="btn btn-danger"><i class="fa fa-fw fa-crosshairs"></i>Registro</a>*@
+                    @*<a id="imprimirEtiquetaConferencia" class="btn btn-danger"><i class="fa fa-fw fa-crosshairs"></i>Tela Imprimir Etiqueta Volumes</a>*@                    
                 </div>
             </div>
         </div>

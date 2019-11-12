@@ -14,6 +14,12 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
 
         }
+
+        public Lote PesquisarLotePorNotaFiscal(long idNotaFiscal)
+        {
+            return Entities.Lote.FirstOrDefault(f => f.IdNotaFiscal == idNotaFiscal);
+        }
+
         public IEnumerable<Lote> ObterLote()
         {
             IEnumerable<Lote> lote = null;
