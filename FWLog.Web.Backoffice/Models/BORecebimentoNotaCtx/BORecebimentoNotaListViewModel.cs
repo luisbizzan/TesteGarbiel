@@ -20,17 +20,17 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
     public class BORecebimentoNotaListItemViewModel
     {
-        public string Lote { get; set; }
+        public int? Lote { get; set; }
 
-        public string Nota { get; set; }
+        public int? Nota { get; set; }
 
         [Display(Name = "Qtde. Peça")]
-        public int QuantidadePeca { get; set; }
+        public int? QuantidadePeca { get; set; }
 
         [Display(Name = "Qtde. Volume")]
-        public int QuantidadeVolume { get; set; }
+        public int? QuantidadeVolume { get; set; }
 
-        public int Atraso { get; set; }
+        public int? Atraso { get; set; }
 
         public string Prazo { get; set; }
 
@@ -41,15 +41,15 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
     public class BORecebimentoNotaFilterViewModel
     {
-        public string Lote { get; set; }
+        public string DANFE { get; set; }
+
+        public int? Lote { get; set; }
 
         public int? Nota { get; set; }
 
         [Display(Name = "Prazo Recebimento (dias)")]
-        public string Prazo { get; set; }
+        public int? Prazo { get; set; }
         
-        public string DANFE { get; set; }
-
         [Display(Name = "Status")]
         public int? IdStatus { get; set; }
 
@@ -74,22 +74,26 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Quantidade de Volumes")]
         public int? Volume { get; set; }
 
-        public string RazaoSocialFornecedor { get; set; }
-
         [Display(Name = "Fornecedor")]
         public int? IdFornecedor { get; set; }
 
+        public string RazaoSocialFornecedor { get; set; }
+
         [Display(Name = "Recebido por")]
-        public string RecebidoPor { get; set; }
+        public int? IdUsuarioRecebimento { get; set; }
+
+        public string UserNameRecebimento { get; set; }
 
         [Display(Name = "Conferido por")]
-        public string ConferidoPor { get; set; }
+        public int? IdUsuarioConferencia { get; set; }
 
-        [Display(Name = "Tempo Inicial")]
-        public TimeSpan TempoInicial { get; set; }
+        public string UserNameConferencia { get; set; }
 
-        [Display(Name = "Tempo Final")]
-        public TimeSpan TempoFinal { get; set; }
+        [Display(Name = "Tempo Inicial (Conferência)")]
+        public TimeSpan? TempoInicial { get; set; }
+
+        [Display(Name = "Tempo Final (Conferência)")]
+        public TimeSpan? TempoFinal { get; set; }
 
         public SelectList ListaStatus { get; set; }
 
