@@ -5,6 +5,11 @@
         });
     });
 
+    $("#detalhesEntradaConferencia").click(function () {
+        $("#modalDetalhesEntradaConferencia").load("BORecebimentoNota/DetalhesEntradaConferencia/26", function () {
+            $("#modalDetalhesEntradaConferencia").modal();
+        });
+    });
    
     $("#imprimirRelatorio").click(function () {
         $("#modalImpressoras").load("BOPrinter/Selecionar", function () {
