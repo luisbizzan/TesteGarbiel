@@ -54,25 +54,28 @@
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
             {
-                action: 'details',
-                href: view.detalhesEntradaConferencia + '/' + full.Id,
-                visible: view.detailsVisible
-            },
-            {
-                action: 'edit',
-                href: view.editUrl + '?id=' + full.Id,
-                visible: view.editVisible
+                text: "Detalhes da Nota",
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+                icon: 'fa fa-eye',
+                visible: view.registrarRecebimento
             },
             {
                 text: "Registrar Recebimento",
                 attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
-                icon: 'fa fa-exclamation-circle',
+                icon: 'fa fa-pencil-square',
                 visible: view.registrarRecebimento
             },
             {
-                action: 'delete',
-                attrs: { 'data-delete-url': view.deleteUrl + '?id=' + full.Id },
-                visible: view.deleteVisible
+                text: "Registrar Conferência",
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+                icon: 'fa fa-check-square',
+                visible: view.registrarRecebimento
+            },
+            {
+                text: "Tratar Divergência",
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+                icon: 'fa fa-warning',
+                visible: view.registrarRecebimento
             }
         ];
     });
