@@ -37,8 +37,8 @@ namespace FWLog.Web.Backoffice.Controllers
             var model = new BORecebimentoNotaListViewModel();
 
             model.Filter = new BORecebimentoNotaFilterViewModel()
-            {
-                ListaStatus = new SelectList(
+                {
+                    ListaStatus = new SelectList(
                     _uow.LoteStatusRepository.GetAll().Select(x => new SelectListItem
                     {
                         Value = x.IdLoteStatus.ToString(),
@@ -134,6 +134,21 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(viewModel);
         }
 
+
+        [HttpGet]
+        public ActionResult EntradaConferencia()
+        {
+            var viewModel = new BODetalhesEtiquetaConferenciaViewModel
+            {
+                NumeroNotaFiscal = "42-10/04-84.684.182/0001-57-55-001-000.000.002-010.804.210-8",
+                DataHoraRecebimento = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                NomeFornecedor = "Nome do Fornecedor Nota Fiscal",
+                QuantidadeVolumes = "05"
+            };
+
+            return View(viewModel);
+        }
+
         [HttpPost]
         public ActionResult DownloadRelatorioNotas(BODownloadRelatorioNotasViewModel viewModel)
         {
@@ -173,7 +188,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult CarregarDadosNotaFiscalRegistro(string chaveAcesso, string idNotaFiscal)
         {
             var model = new BORegistroRecebimentoViewModel();
-             
+
             var notafiscal = _uow.NotaFiscalRepository.GetById(Convert.ToInt64(idNotaFiscal));
 
             if (notafiscal.Chave != chaveAcesso)
@@ -184,7 +199,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             var dataAtual = DateTime.UtcNow;
-                       
+
             model.ChaveAcesso = notafiscal.Chave;
             model.DataRecebimento = dataAtual.ToString("dd/MM/yyyy");
             model.HoraRecebimento = dataAtual.ToString("HH:mm:ss");
@@ -195,7 +210,7 @@ namespace FWLog.Web.Backoffice.Controllers
             if (notafiscal.FreteTipo.Sigla == "F")
             {
                 model.ValorFrete = notafiscal.ValorFrete;
-                model.NumeroConhecimento = notafiscal.NumeroConhecimento;               
+                model.NumeroConhecimento = notafiscal.NumeroConhecimento;
                 model.TransportadoraNome = notafiscal.Transportadora.RazaoSocial;
                 model.Peso = notafiscal.PesoBruto;
                 model.ExibeCamposFrete = false;
@@ -204,7 +219,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 model.ExibeCamposFrete = true;
             }
-         
+
             return PartialView("RegistroRecebimentoDetalhes", model);
         }
 

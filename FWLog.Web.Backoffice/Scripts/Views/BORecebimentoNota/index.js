@@ -13,7 +13,7 @@
 
     $("#RegistrarRecebimentoNota").click(function () {
         $("#modalEtiquetaConferencia").load("BORecebimentoNota/RegistrarRecebimentoNota", function () {
-           //Definir
+            //Definir
         });
     });
 
@@ -87,6 +87,12 @@
                 text: "Registrar Recebimento",
                 attrs: { 'data-id': full.IdNotaFiscal },
                 icon: 'fa fa-exclamation-circle',
+                visible: view.registrarRecebimento
+            },
+            {
+                text: "Conferir Nota",
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'conferirNota' },
+                icon: 'fa fa-check-square-o',
                 visible: view.registrarRecebimento
             },
             {
@@ -171,7 +177,13 @@
         ]
     });
     dart.dataTables.loadFormFilterEvents();
+
+    adicionaEventos();
 })();
+
+function adicionaEventos() {
+    $(document.body).on('click', "[action='conferirNota']", conferirNota);
+}
 
 function Imprimir() {
     $.ajax({
@@ -244,4 +256,9 @@ function CarregarBotoesRegistrar() {
             });*/
         });
     });
+}
+
+
+function conferirNota() {
+    debugger
 }
