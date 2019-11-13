@@ -234,7 +234,7 @@ function CarregarBotoesRegistrar() {
     $("[action='click']").unbind();
     $("[action='click']").click(function () {
 
-        if ($($(this).parents("tr").children()[0]).text() !== "") {
+        if ($($(this).parents(".trRow").children()[0]).text() !== "") {
             alert("O recebimento da nota fiscal já foi registrado.");
             return;
         }
