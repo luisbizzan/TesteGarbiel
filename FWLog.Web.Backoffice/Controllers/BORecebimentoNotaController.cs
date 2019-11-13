@@ -256,5 +256,15 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.DenyGet);
             }
         }
+
+        [HttpGet]
+        public ActionResult DetalhesEntradaConferencia(long id)
+        {
+            NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+
+            var model = new BODetalhesEntradaConferenciaViewModel();
+
+            return View(model);
+        }
     }
 }

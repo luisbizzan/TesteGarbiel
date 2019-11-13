@@ -264,6 +264,7 @@
     <Compile Include="Models\BOPrinterCtx\BOPrinterListViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterCreateViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterSelecionarViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\BODetalhesEntradaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODetalhesEtiquetaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODownloadRelatorioNotasViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirRelatorioNotasViewModel.cs" />
@@ -412,6 +413,7 @@
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Scripts\Views\BOPrinter\selecionar.js" />
     <Content Include="Scripts\Views\BOPrinter\index.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\detalhesEntradaConferencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\index.js" />
     <Content Include="Scripts\Views\PrinterType\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
@@ -431,6 +433,7 @@
     <Content Include="Views\PrinterType\Index.cshtml" />
     <Content Include="Views\BORecebimentoNota\RegistroRecebimento.cshtml" />
     <Content Include="Views\BORecebimentoNota\RegistroRecebimentoDetalhes.cshtml" />
+    <Content Include="Views\BORecebimentoNota\DetalhesEntradaConferencia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

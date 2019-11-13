@@ -5,6 +5,12 @@
         });
     });
 
+    $("#detalhesEntradaConferencia").click(function () {
+        $("#modalDetalhesEntradaConferencia").load("BORecebimentoNota/DetalhesEntradaConferencia/26", function () {
+            $("#modalDetalhesEntradaConferencia").modal();
+        });
+    });
+
     $("#RegistrarRecebimentoNota").click(function () {
         $("#modalEtiquetaConferencia").load("BORecebimentoNota/RegistrarRecebimentoNota", function () {
            //Definir
@@ -69,7 +75,7 @@
         return [
             {
                 action: 'details',
-                href: view.detailsUrl + '?id=' + full.Id,
+                href: view.detalhesEntradaConferencia + '/' + full.Id,
                 visible: view.detailsVisible
             },
             {
@@ -81,7 +87,7 @@
                 action: 'delete',
                 attrs: { 'data-delete-url': view.deleteUrl + '?id=' + full.Id },
                 visible: view.deleteVisible
-            },
+            }
         ];
     });
 
