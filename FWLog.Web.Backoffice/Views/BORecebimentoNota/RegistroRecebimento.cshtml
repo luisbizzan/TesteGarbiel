@@ -20,18 +20,20 @@
                         <div class="col-sm-12 col-lg-12">
                             <div class="form-group">
                                 @Html.Label("Chave de Acesso")
-                                @Html.TextBoxFor(m => m.ChaveAcesso, new { @class = "form-control" })       
+                                @Html.TextBoxFor(m => m.ChaveAcesso, new { @class = "form-control integer" })
                                 @Html.ValidationMessageFor(m => m.ChaveAcesso)
-                                @Html.HiddenFor(m => m.IdNotaFiscal)
+                                @Html.HiddenFor(m => m.IdNotaFiscal)                                
                             </div>
+                            <span class="text-danger validacaoChaveAcesso"></span>
                         </div>
                         <div id="RegistroRecebimentoDetalhes">
                             @Html.Partial("RegistroRecebimentoDetalhes", Model)
                         </div>
                     </div>
                     <div class="row navbar-right">
-                        <div class="col-sm-12 col-lg-12">                           
-                            <button type="button" id="RegistrarRecebimentoNota" class="btn btn-primary"><i class="fa fa-fw fa-print"></i> Confirmar</button>
+                        <div class="col-sm-12 col-lg-12">
+                            <span class="text-danger validacaoConfirmar"></span>
+                            <button type="button" id="RegistrarRecebimentoNota" class="btn btn-primary"><i class="fa fa-fw fa-floppy-o"></i> Confirmar</button>
                         </div>
                     </div>
                 </div>
