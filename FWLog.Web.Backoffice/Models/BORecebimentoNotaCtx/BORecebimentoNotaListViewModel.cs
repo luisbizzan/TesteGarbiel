@@ -24,11 +24,14 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
         public long? Nota { get; set; }
 
-        [Display(Name = "Qtde. Peça")]
+        [Display(Name = "Peças")]
         public long? QuantidadePeca { get; set; }
 
-        [Display(Name = "Qtde. Volume")]
+        [Display(Name = "Volumes")]
         public long? QuantidadeVolume { get; set; }
+
+        [Display(Name = "Recebido")]
+        public string RecebidoEm { get; set; }
 
         public long? Atraso { get; set; }
 
@@ -39,6 +42,9 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public string Status { get; set; }
 
         public long IdNotaFiscal { get; set; }
+
+        [Display(Name = "Recebido por")]
+        public string IdUsuarioRecebimento { get; set; }
     }
 
     public class BORecebimentoNotaFilterViewModel
@@ -49,25 +55,22 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
         public long? Nota { get; set; }
 
-        [Display(Name = "Prazo Recebimento (dias)")]
-        public long? Prazo { get; set; }
-        
         [Display(Name = "Status")]
         public long? IdStatus { get; set; }
 
-        [Display(Name = "Data Inicial (Entrada)")]
+        [Display(Name = "Data de Recebimento Inicial")]
         public DateTime? DataInicial { get; set; }
 
-        [Display(Name = "Data Final (Entrada)")]
+        [Display(Name = "Data de Recebimento Final")]
         public DateTime? DataFinal { get; set; }
 
-        [Display(Name = "Prazo Inicial")]
+        [Display(Name = "Prazo de Entrega Inicial")]
         public DateTime? PrazoInicial { get; set; }
 
-        [Display(Name = "Prazo Final")]
+        [Display(Name = "Prazo de Entrega Final")]
         public DateTime? PrazoFinal { get; set; }
 
-        [Display(Name = "Atraso (dias)")]
+        [Display(Name = "Atraso na Entrega (dias)")]
         public int? Atraso { get; set; }
 
         [Display(Name = "Quantidade de Peças")]
@@ -91,10 +94,10 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
         public string UserNameConferencia { get; set; }
 
-        [Display(Name = "Tempo Inicial (Conferência)")]
+        [Display(Name = "Tempo de Conferência Inicial")]
         public TimeSpan? TempoInicial { get; set; }
 
-        [Display(Name = "Tempo Final (Conferência)")]
+        [Display(Name = "Tempo de Conferência Final")]
         public TimeSpan? TempoFinal { get; set; }
 
         public SelectList ListaStatus { get; set; }

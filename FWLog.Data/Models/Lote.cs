@@ -11,7 +11,6 @@ namespace FWLog.Data.Models
         public long IdLoteStatus { get; set; }
         public long IdNotaFiscal { get; set; }
         public DateTime? DataRecebimento { get; set; }
-        public long QuantidadePeca { get; set; }
         public long QuantidadeVolume { get; set; }
         public string IdUsuarioRecebimento { get; set; }
 

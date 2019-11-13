@@ -232,6 +232,7 @@
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\BOFornecedorController.cs" />
     <Compile Include="Controllers\PrinterTypeController.cs" />
     <Compile Include="EnumsAndConsts\CompanyCookie.cs" />
     <Compile Include="EnumsAndConsts\StatusNotaRecebimento.cs" />
@@ -260,6 +261,8 @@
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
     <Compile Include="Mapping\PrinterTypeProfile.cs" />
+    <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
+    <Compile Include="Models\BOFornecedorCtx\BOFornecedorSearchModalViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterListViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterCreateViewModel.cs" />
@@ -411,6 +414,8 @@
     <Compile Include="Models\CommonCtx\FileUploadResponseModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Scripts\dart\waitingDialog.js" />
+    <Content Include="Scripts\Views\BOAccount\searchModal.js" />
+    <Content Include="Scripts\Views\BOFornecedor\searchModal.js" />
     <Content Include="Scripts\Views\BOPrinter\selecionar.js" />
     <Content Include="Scripts\Views\BOPrinter\index.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\detalhesEntradaConferencia.js" />
@@ -434,6 +439,8 @@
     <Content Include="Views\BORecebimentoNota\RegistroRecebimento.cshtml" />
     <Content Include="Views\BORecebimentoNota\RegistroRecebimentoDetalhes.cshtml" />
     <Content Include="Views\BORecebimentoNota\DetalhesEntradaConferencia.cshtml" />
+    <Content Include="Views\BOFornecedor\SearchModal.cshtml" />
+    <Content Include="Views\BOAccount\SearchModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
