@@ -42,7 +42,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "B.\"ValorFrete\", " +
                             "B.\"NumeroConhecimento\", " +
                             "B.\"PesoBruto\", " +
-                            "B.\"PesoLiquido\", " +
                             "B.\"Especie\", " +
                             "B.\"Quantidade\", " +
                             "B.\"Status\", " +

@@ -42,7 +42,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     _uow.LoteStatusRepository.GetAll().Select(x => new SelectListItem
                     {
                         Value = x.IdLoteStatus.ToString(),
-                        Text = x.Descricao
+                        Text = x.Descricao,
                     }), "Value", "Text"
                 )
             };
