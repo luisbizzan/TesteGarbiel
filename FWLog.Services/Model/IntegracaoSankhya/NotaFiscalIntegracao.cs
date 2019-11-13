@@ -22,3 +22,4 @@ namespace FWLog.Services.Model
         public string NUMCF { get; set; }
     }
 }
+

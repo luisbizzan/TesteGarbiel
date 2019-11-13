@@ -200,7 +200,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 IP = userInfo.IP,
                 UserId = userInfo.UserId,
                 EntityName = nameof(AspNetUsers),
-                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, model.PerfilUsuario, empresasGruposNew.ToString())//TODO Verificar Log
+                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, model.PerfilUsuario, empresasGruposNew.ToString())
             });
 
             Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);

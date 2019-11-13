@@ -14,6 +14,7 @@ using FWLog.Data.Models;
 using System.Net.Sockets;
 using System.Net;
 using System.Globalization;
+using Newtonsoft.Json;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -217,51 +218,80 @@ namespace FWLog.Web.Backoffice.Controllers
 
         }
 
-        public ActionResult CarregarDadosNotaFiscalRegistro(string chaveAcesso, string idNotaFiscal)
+        public JsonResult ValidarNotaFiscalRegistro(string chaveAcesso, long idNotaFiscal)
         {
             var model = new BORegistroRecebimentoViewModel();
-             
+
             var notafiscal = _uow.NotaFiscalRepository.GetById(Convert.ToInt64(idNotaFiscal));
 
             if (notafiscal.Chave != chaveAcesso)
             {
-                ModelState.AddModelError(nameof(model.ChaveAcesso), "A Chave de Acesso não condiz com a chave cadastrada na nota fiscal do Lote selecionado.");
-                //TODO Ajustar
-                return PartialView("RegistroRecebimentoDetalhes", model);
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "A Chave de Acesso não condiz com a chave cadastrada na nota fiscal do Lote selecionado.",
+                });
             }
 
-            var dataAtual = DateTime.UtcNow;
+            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(idNotaFiscal);
+
+            if (lote != null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Já existe um lote aberto para esta nota fiscal",
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+            });
+        }
+
+        public ActionResult CarregarDadosNotaFiscalRegistro(string id)
+        {
+            var model = new BORegistroRecebimentoViewModel();
+            var notafiscal = _uow.NotaFiscalRepository.GetById(Convert.ToInt64(id));
                        
+            var dataAtual = DateTime.UtcNow;
+
             model.ChaveAcesso = notafiscal.Chave;
             model.DataRecebimento = dataAtual.ToString("dd/MM/yyyy");
             model.HoraRecebimento = dataAtual.ToString("HH:mm:ss");
             model.FornecedorNome = notafiscal.Fornecedor.RazaoSocial;
             model.NumeroSerieNotaFiscal = string.Format("{0}-{1}", notafiscal.Numero, notafiscal.Serie);
-            model.ValorTotal = notafiscal.ValorTotal;
+            model.ValorTotal = notafiscal.ValorTotal.ToString("n2");
+            model.DataAtual = dataAtual;
+            model.ValorFrete = notafiscal.ValorFrete.ToString("n2");
+            model.NumeroConhecimento = notafiscal.NumeroConhecimento;
+            model.TransportadoraNome = notafiscal.Transportadora.RazaoSocial;
+            model.Peso = notafiscal.PesoBruto.ToString("n2");
+            model.NotaFiscalPesquisada = true;
 
-            if (notafiscal.FreteTipo.Sigla == "F")
-            {
-                model.ValorFrete = notafiscal.ValorFrete;
-                model.NumeroConhecimento = notafiscal.NumeroConhecimento;               
-                model.TransportadoraNome = notafiscal.Transportadora.RazaoSocial;
-                model.Peso = notafiscal.PesoBruto;
-                model.ExibeCamposFrete = false;
-            }
-            else
-            {
-                model.ExibeCamposFrete = true;
-            }
-         
             return PartialView("RegistroRecebimentoDetalhes", model);
         }
 
-        public ActionResult RegistrarRecebimentoNota(long idNotaFiscal, Decimal ValorFrete, string nroConhecimento, int idTransportadora, Decimal peso, int volumes, DateTime dataRecebimento)
+        public JsonResult RegistrarRecebimentoNota(long idNotaFiscal, DateTime dataRecebimento, int qtdVolumes)
         {
-            var userInfo = new BackOfficeUserInfo();
-            _LoteService.RegistrarRecebimentoNotaFiscal(idNotaFiscal, userInfo.UserId.ToString(), dataRecebimento);
+            if (!(idNotaFiscal > 0) || !(qtdVolumes > 0))
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Selecione a nota fiscal e insira a quantidade de volumes para confirmar o recebimento."
+                });
+            }
 
-            var modal = new BORegistroRecebimentoViewModel();
-            return PartialView("RegistroRecebimento", modal);
+            var userInfo = new BackOfficeUserInfo();
+            _LoteService.RegistrarRecebimentoNotaFiscal(idNotaFiscal, userInfo.UserId.ToString(), dataRecebimento, qtdVolumes);
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = "Recebimento da nota fiscal registrado com sucesso. Lote gerado"
+            });
         }
 
         [HttpPost]
