@@ -1,0 +1,197 @@
+﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.BODetalhesEntradaConferenciaViewModel
+@{
+    Layout = null;
+
+    @BundleHelper.RenderViewScriptModal()
+}
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
+                <li class="nav-item active">
+                    <a class="nav-link" id="entradaConferenciaTab" data-toggle="tab" href="#entradaConferencia" role="tab" aria-controls="entradaConferencia" aria-selected="true">Entrada\Conferência</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="divergenciasTab" data-toggle="tab" href="#divergencias" role="tab" aria-controls="divergencias" aria-selected="false">Divergências</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade active in" id="entradaConferencia" role="tabpanel" aria-labelledby="entradaConferenciaTab">
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-12">
+                            <h2>Entrada</h2>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-12">
+                            @Html.Label("DANFE"): 12345678945654551200221001020210
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Lote"): 1234
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Nota"): 45
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Chegada"): 12/11/2019
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Status"): Aguardando Recebimento
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Fornecedor"): 4587 - VTO AEDCSER
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Quantidade"): 200
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Atraso"): 1
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Compras"): 10/11/2019
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Volumes"): 4
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Prazo"): 10
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("CNPJ"): 123456125478/0001-85
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Recebido por"): Suporte Dart
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Valor Total"): R$ 45.000,00
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Frete"): R$ 300,00
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Nro. Conhecimento"): 45645
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Transportadora"): Nome Transportadora
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-12">
+                            @Html.Label("Peso Conhecimento"): 100
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-12">
+                            <h2>Conferência</h2>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Tipo de Conferência"): Quantidade
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Conferido por"): Suporte Dart
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Início"): 12/11/2019 10:25:01
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Fim"): 12/11/2019 11:00:45
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-12">
+                            @Html.Label("Tempo Total"): 25 minutos
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-12">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Referência</th>
+                                        <th>Quantidade</th>
+                                        <th>Início Conferência</th>
+                                        <th>Termino Conferência</th>
+                                        <th>Conferido por</th>
+                                        <th>Tempo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="even">
+                                        <td>121000040</td>
+                                        <td>20</td>
+                                        <td>10/11/2019 10:50:22</td>
+                                        <td>10/11/2019 10:55:33</td>
+                                        <td>Suporte Dart</td>
+                                        <td>5 minutos</td>
+                                    </tr>
+                                    <tr class="odd">
+                                        <td>121000040</td>
+                                        <td>20</td>
+                                        <td>10/11/2019 10:50:22</td>
+                                        <td>10/11/2019 10:55:33</td>
+                                        <td>Suporte Dart</td>
+                                        <td>5 minutos</td>
+                                    </tr>
+                                    <tr class="even">
+                                        <td>121000040</td>
+                                        <td>20</td>
+                                        <td>10/11/2019 10:50:22</td>
+                                        <td>10/11/2019 10:55:33</td>
+                                        <td>Suporte Dart</td>
+                                        <td>5 minutos</td>
+                                    </tr>
+                                    <tr class="odd">
+                                        <td>121000040</td>
+                                        <td>20</td>
+                                        <td>10/11/2019 10:50:22</td>
+                                        <td>10/11/2019 10:55:33</td>
+                                        <td>Suporte Dart</td>
+                                        <td>5 minutos</td>
+                                    </tr>
+                                    <tr class="even">
+                                        <td>121000040</td>
+                                        <td>20</td>
+                                        <td>10/11/2019 10:50:22</td>
+                                        <td>10/11/2019 10:55:33</td>
+                                        <td>Suporte Dart</td>
+                                        <td>5 minutos</td>
+                                    </tr>
+                                    <tr class="odd">
+                                        <td>121000040</td>
+                                        <td>20</td>
+                                        <td>10/11/2019 10:50:22</td>
+                                        <td>10/11/2019 10:55:33</td>
+                                        <td>Suporte Dart</td>
+                                        <td>5 minutos</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="divergencias" role="tabpanel" aria-labelledby="divergenciasTab">
+                    TODO
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>

@@ -1,7 +1,13 @@
-﻿(function () { 
+﻿(function () {
     $("#imprimirEtiquetaConferencia").click(function () {
         $("#modalEtiquetaConferencia").load("BORecebimentoNota/DetalhesEtiquetaConferencia", function () {
             $("#modalEtiquetaConferencia").modal();
+        });
+    });
+
+    $("#detalhesEntradaConferencia").click(function () {
+        $("#modalDetalhesEntradaConferencia").load("BORecebimentoNota/DetalhesEntradaConferencia/26", function () {
+            $("#modalDetalhesEntradaConferencia").modal();
         });
     });
 
@@ -69,7 +75,7 @@
         return [
             {
                 action: 'details',
-                href: view.detailsUrl + '?id=' + full.Id,
+                href: view.detalhesEntradaConferencia + '/' + full.Id,
                 visible: view.detailsVisible
             },
             {
@@ -78,10 +84,16 @@
                 visible: view.editVisible
             },
             {
+                text: "Registrar Recebimento",
+                attrs: { 'data-id': full.IdNotaFiscal },
+                icon: 'fa fa-exclamation-circle',
+                visible: view.registrarRecebimento
+            },
+            {
                 action: 'delete',
                 attrs: { 'data-delete-url': view.deleteUrl + '?id=' + full.Id },
                 visible: view.deleteVisible
-            },
+            }
         ];
     });
 
@@ -134,6 +146,11 @@
         },
         initComplete: function (settings, json) {
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
+            CarregarBotoesRegistrar();
+
+            $("#dataTable").on("draw.dt", function () {
+                CarregarBotoesRegistrar();
+            });
         },
         stateSaveParams: function (settings, data) {
             dart.dataTables.saveFilterToData(data);
@@ -178,5 +195,53 @@ function Imprimir() {
         success: function () {
             $("#btnFechar").click();
         }
+    });
+}
+
+function CarregarBotoesRegistrar() {
+    $(".fa-exclamation-circle ").click(function () {
+        $("#modalRegistroRecebimento").load("BORecebimentoNota/ExibirModalRegistroRecebimento/" + $(this).parent().data("id"), function () {
+            $("#modalRegistroRecebimento").modal();
+
+            $('#ChaveAcesso').keypress(function (event) {
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if (keycode === 13) {
+                    var chave = $('#ChaveAcesso').val();
+
+                    if (chave === "" || chave === undefined || chave === null) {
+                        return;
+                    }
+
+                    var idNotaFiscal = $("#IdNotaFiscal").val();
+
+                    $("#RegistroRecebimentoDetalhes").load("BORecebimentoNota/CarregarDadosNotaFiscalRegistro?chaveAcesso=" + chave + "&idNotaFiscal=" + idNotaFiscal, function () {
+                    });
+                }
+            });
+        });
+
+        $("#RegistrarRecebimentoNota").click(function () {
+            console.log($("#IdNotaFiscal").val());
+            console.log($("#ValorFrete").val());
+            console.log($("#NumeroConhecimento").val());
+            console.log($("#TransportadoraNome").val());
+            console.log($("#Peso").val());
+            console.log($("#QtdVolumes").val());
+            /*$.ajax({
+                url: HOST_URL + "BORecebimentoNota/RegistrarRecebimentoNota/",
+                method: "POST",
+                data: {                    
+                    idNotaFiscal: $("#IdNotaFiscal").val(),
+                    valorFrete: $("#ValorFrete").val(),
+                    nroConhecimento: $("#NumeroConhecimento").val(),
+                    idTransportadora: $("#TransportadoraNome").val(),
+                    peso: $("#Peso").val(),
+                    volumes: $("#QtdVolumes").val(),
+                },
+                success: function () {
+                    $("#btnFechar").click();
+                }
+            });*/
+        });
     });
 }

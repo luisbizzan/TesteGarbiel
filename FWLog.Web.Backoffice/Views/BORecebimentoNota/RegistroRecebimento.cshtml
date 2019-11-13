@@ -22,6 +22,7 @@
                                 @Html.Label("Chave de Acesso")
                                 @Html.TextBoxFor(m => m.ChaveAcesso, new { @class = "form-control" })       
                                 @Html.ValidationMessageFor(m => m.ChaveAcesso)
+                                @Html.HiddenFor(m => m.IdNotaFiscal)
                             </div>
                         </div>
                         <div id="RegistroRecebimentoDetalhes">

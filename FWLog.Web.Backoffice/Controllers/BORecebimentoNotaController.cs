@@ -13,6 +13,7 @@ using System.Web.Mvc;
 using FWLog.Data.Models;
 using System.Net.Sockets;
 using System.Net;
+using System.Globalization;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -20,10 +21,12 @@ namespace FWLog.Web.Backoffice.Controllers
     {
 
         private readonly RelatorioService _relatorioService;
+        private readonly LoteService _LoteService;
         private readonly UnitOfWork _uow;
 
-        public BORecebimentoNotaController(UnitOfWork uow, RelatorioService relatorioService)
+        public BORecebimentoNotaController(UnitOfWork uow, RelatorioService relatorioService, LoteService loteService)
         {
+            _LoteService = loteService;
             _relatorioService = relatorioService;
             _uow = uow;
         }
@@ -102,7 +105,8 @@ namespace FWLog.Web.Backoffice.Controllers
                         QuantidadeVolume = item.QuantidadeVolume == 0 ? (long?)null : item.QuantidadeVolume,
                         Status = item.LoteStatus.Descricao,
                         Prazo = item.NotaFiscal.DataEmissao.ToString(),
-                        Atraso = atraso
+                        Atraso = atraso,
+                        IdNotaFiscal = item.NotaFiscal.IdNotaFiscal
                     });
                 }
             }
@@ -156,45 +160,59 @@ namespace FWLog.Web.Backoffice.Controllers
             return File(relatorio, "application/pdf", "Relatório Recebimento Notas.pdf");
         }
 
-        public ActionResult ExibirModalRegistroRecebimento()
+        public ActionResult ExibirModalRegistroRecebimento(long id)
         {
             var modal = new BORegistroRecebimentoViewModel();
+
+            modal.IdNotaFiscal = id;
 
             return PartialView("RegistroRecebimento", modal);
 
         }
 
-        public ActionResult CarregarDadosNotaFiscalRegistro(string chaveAcesso, long idLote)
+        public ActionResult CarregarDadosNotaFiscalRegistro(string chaveAcesso, string idNotaFiscal)
         {
             var model = new BORegistroRecebimentoViewModel();
+             
+            var notafiscal = _uow.NotaFiscalRepository.GetById(Convert.ToInt64(idNotaFiscal));
 
-            var lote = _uow.LoteRepository.GetById(idLote);
-
-            if (lote.NotaFiscal.Chave != chaveAcesso)
+            if (notafiscal.Chave != chaveAcesso)
             {
                 ModelState.AddModelError(nameof(model.ChaveAcesso), "A Chave de Acesso não condiz com a chave cadastrada na nota fiscal do Lote selecionado.");
+                //TODO Ajustar
                 return PartialView("RegistroRecebimentoDetalhes", model);
             }
 
             var dataAtual = DateTime.UtcNow;
-
-            model.ChaveAcesso = lote.NotaFiscal.Chave;
+                       
+            model.ChaveAcesso = notafiscal.Chave;
             model.DataRecebimento = dataAtual.ToString("dd/MM/yyyy");
             model.HoraRecebimento = dataAtual.ToString("HH:mm:ss");
-            model.FornecedorNome = lote.NotaFiscal.Fornecedor.RazaoSocial;
-            model.NumeroSerieNotaFiscal = string.Format("{0}-{1}", lote.NotaFiscal.Numero, lote.NotaFiscal.Serie);
-            model.ValorTotal = lote.NotaFiscal.ValorTotal;
-            model.ValorFrete = lote.NotaFiscal.ValorFrete;
-            model.NumeroConhecimento = lote.NotaFiscal.NumeroConhecimento;
-            model.QtdVolumes = lote.NotaFiscal.Quantidade;
-            model.TransportadoraNome = lote.NotaFiscal.Transportadora.RazaoSocial;
-            model.Peso = lote.NotaFiscal.PesoBruto;
+            model.FornecedorNome = notafiscal.Fornecedor.RazaoSocial;
+            model.NumeroSerieNotaFiscal = string.Format("{0}-{1}", notafiscal.Numero, notafiscal.Serie);
+            model.ValorTotal = notafiscal.ValorTotal;
 
+            if (notafiscal.FreteTipo.Sigla == "F")
+            {
+                model.ValorFrete = notafiscal.ValorFrete;
+                model.NumeroConhecimento = notafiscal.NumeroConhecimento;               
+                model.TransportadoraNome = notafiscal.Transportadora.RazaoSocial;
+                model.Peso = notafiscal.PesoBruto;
+                model.ExibeCamposFrete = false;
+            }
+            else
+            {
+                model.ExibeCamposFrete = true;
+            }
+         
             return PartialView("RegistroRecebimentoDetalhes", model);
         }
 
-        public ActionResult RegistrarRecebimentoNota(long idLote)
+        public ActionResult RegistrarRecebimentoNota(long idNotaFiscal, Decimal ValorFrete, string nroConhecimento, int idTransportadora, Decimal peso, int volumes, DateTime dataRecebimento)
         {
+            var userInfo = new BackOfficeUserInfo();
+            _LoteService.RegistrarRecebimentoNotaFiscal(idNotaFiscal, userInfo.UserId.ToString(), dataRecebimento);
+
             var modal = new BORegistroRecebimentoViewModel();
             return PartialView("RegistroRecebimento", modal);
         }
@@ -255,6 +273,16 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Ocorreu um erro na impressão."
                 }, JsonRequestBehavior.DenyGet);
             }
+        }
+
+        [HttpGet]
+        public ActionResult DetalhesEntradaConferencia(long id)
+        {
+            NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+
+            var model = new BODetalhesEntradaConferenciaViewModel();
+
+            return View(model);
         }
     }
 }
