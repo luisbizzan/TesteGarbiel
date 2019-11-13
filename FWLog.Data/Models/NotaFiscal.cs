@@ -13,6 +13,7 @@ namespace FWLog.Data.Models
         public string DANFE { get; set; }
         public long IdFornecedor { get; set; }
         public DateTime DataEmissao { get; set; }
+        public DateTime PrazoEntregaFornecedor { get; set; }
         public decimal ValorTotal { get; set; }
         public long IdTransportadora { get; set; }
         public long IdFreteTipo { get; set; }
@@ -24,6 +25,7 @@ namespace FWLog.Data.Models
         public string Status { get; set; }
         public string Chave { get; set; }
         public long CodigoNotaFiscal { get; set; }
+        public long CompanyId { get; set; }
 
         [ForeignKey(nameof(IdFornecedor))]
         public virtual Fornecedor Fornecedor { get; set; }

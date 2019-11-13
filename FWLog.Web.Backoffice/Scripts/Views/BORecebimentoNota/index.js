@@ -146,6 +146,7 @@
             { data: 'Nota' },
             { data: 'QuantidadePeca' },
             { data: 'QuantidadeVolume' },
+            { data: 'RecebidoEm' },
             { data: 'Atraso' },
             { data: 'Prazo' },
             { data: 'Fornecedor' },
@@ -153,7 +154,55 @@
             actionsColumn
         ]
     });
+
+    $('#dataTable').DataTable.ext.errMode = function (settings, helpPage, message) {
+        let jqXHR = settings.jqXHR;
+        if (jqXHR) {
+            let responseJSON = jqXHR.responseJSON;
+            if (responseJSON) {
+                if (responseJSON.showAsToast)
+                    PNotify.error({ text: responseJSON.error });
+                return;
+            }
+        }
+        alert(message);
+    };
+
     dart.dataTables.loadFormFilterEvents();
+
+    $("#pesquisarFornecedor").click(function () {
+        $("#modalFornecedor").load(HOST_URL + "BOFornecedor/SearchModal", function () {
+            $("#modalFornecedor").modal();
+        });
+    });
+
+    function limparFornecedor() {
+        let razao = $("#Filter_RazaoSocialFornecedor");
+        let fornecedor = $("#Filter_IdFornecedor");
+        razao.val("");
+        fornecedor.val("");
+    }
+
+    $("#limparFornecedor").click(function () {
+        limparFornecedor();
+    });
+
+    $("#pesquisarUsuarioRecebimento").click(function () {
+        $("#modalUsuarioRecebimento").load(HOST_URL + "BOAccount/SearchModal", function () {
+            $("#modalUsuarioRecebimento").modal();
+        });
+    });
+
+    function limparUsuarioRecebimento() {
+        let userName = $("#Filter_UserNameRecebimento");
+        let usuarioId = $("#Filter_IdUsuarioRecebimento");
+        userName.val("");
+        usuarioId.val("");
+    }
+
+    $("#limparUsuarioRecebimento").click(function () {
+        limparUsuarioRecebimento();
+    });
 })();
 
 function Imprimir() {
@@ -179,4 +228,22 @@ function Imprimir() {
             $("#btnFechar").click();
         }
     });
+}
+
+function setFornecedor(idFornecedor, razaoSocial) {
+    let razao = $("#Filter_RazaoSocialFornecedor");
+    let fornecedor = $("#Filter_IdFornecedor");
+    razao.val(razaoSocial);
+    fornecedor.val(idFornecedor);
+    $("#modalFornecedor").modal("hide");
+    $("#modalFornecedor").empty();
+}
+
+function setUsuarioRecebimento(idUsuario, nomeUsuario) {
+    let userName = $("#Filter_UserNameRecebimento");
+    let usuarioId = $("#Filter_IdUsuarioRecebimento");
+    userName.val(nomeUsuario);
+    usuarioId.val(idUsuario);
+    $("#modalUsuarioRecebimento").modal("hide");
+    $("#modalUsuarioRecebimento").empty();
 }

@@ -27,12 +27,15 @@
             });
         };
 
-        var loadFormFilterEvents = function () {
+        var loadFormFilterEvents = function ($form, validate) {
 
-            var $form = $('[data-filter="form"]');
+            if ($form == null) {
+                $form = $('[data-filter="form"]');
+            }
             var $clear = $form.find('[data-filter="clear"]');
-            var $search = $('[data-filter="search"]');
+            var $search = $form.find('[data-filter="search"]');
             var $dataTable = $('#' + $form.attr('data-filter-for'));
+
 
             $clear.on('click', function () {
                 $form[0].reset();
@@ -118,11 +121,13 @@
             }
         };
 
-        var saveFilterToData = function (data) {
+        var saveFilterToData = function (data, $form) {
 
             data.CustomFilter = {};
 
-            var $form = $('[data-filter="form"]');
+            if ($form == null) {
+                $form = $('[data-filter="form"]');
+            }
             $form.find('[data-field]').each(function () {
                 var field = $(this).attr('data-field');
                 data.CustomFilter[field] = $(this).val();
@@ -170,6 +175,7 @@
             { name: 'details', element: 'a', icon: 'fa fa-eye', text: resources.get("ViewAction") },
             { name: 'edit', element: 'a', icon: 'fa fa-edit', text: resources.get("EditAction") },
             { name: 'delete', element: 'button', icon: 'fa fa-trash-o', text: resources.get("DeleteAction") },
+            { name: 'select', element: 'button', icon: 'fa fa-check-circle', text: "Selecionar" },
         ];
 
         var getPresetActionFor = function (action) {
