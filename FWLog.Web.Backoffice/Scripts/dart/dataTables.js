@@ -151,7 +151,7 @@
 
     dart.dataTables.renderActionsColumn = function (actionFn) {
 
-        var minActionsForDropdown = 4;
+        var minActionsForDropdown = 8;
 
         var isDropdownMode = function (actions) {
 
@@ -192,6 +192,10 @@
                 action.attrs.href = action.href;
                 element = 'a';
             }
+            else {
+                action.attrs.href = action.href;
+                element = 'p';
+            }
 
             action.attrs.html = $('<i/>', { 'class': action.icon })[0].outerHTML;
             return $('<' + element + '/>', action.attrs);
@@ -201,9 +205,7 @@
 
             if (action.hasOwnProperty('href')) {
                 action.attrs.href = action.href;
-            } else {
-                action.attrs.href = 'javascript:void(0);'
-            }
+            } 
 
             action.attrs.text = ' ' + action.text;
 

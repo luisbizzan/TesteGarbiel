@@ -92,7 +92,8 @@ namespace FWLog.Services.Services
                 nota.Status = notaInt.STATUSNOTA == null ? "0" : notaInt.STATUSNOTA;
                 nota.Chave = notaInt.CHAVENFE == null ? "0" : notaInt.CHAVENFE;
                 nota.IdTransportadora = 41;//TODO Fazer integração de Transportadora e ajustar vinculo - notaInt.CODPARCTRANSPFINAL;
-
+                //TODO baixar campo de emissão
+                //TODO prazo do fornecedor
                 if (notaNova)
                 {
                     _uow.NotaFiscalRepository.Add(nota);

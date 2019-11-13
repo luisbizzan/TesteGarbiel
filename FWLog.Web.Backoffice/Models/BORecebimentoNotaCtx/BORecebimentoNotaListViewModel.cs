@@ -37,6 +37,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public string Fornecedor { get; set; }
 
         public string Status { get; set; }
+
+        public long IdNotaFiscal { get; set; }
     }
 
     public class BORecebimentoNotaFilterViewModel

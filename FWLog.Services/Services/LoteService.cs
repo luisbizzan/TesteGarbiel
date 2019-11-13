@@ -1,5 +1,6 @@
 ﻿using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
+using FWLog.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,14 +18,21 @@ namespace FWLog.Services.Services
             _uow = uow;
         }
 
-        public void RegistrarRecebimentoNotaFiscal(long idLote, string userId)
+        public void RegistrarRecebimentoNotaFiscal(long idNotaFiscal, string userId, DateTime dataRecebimento)
         {
-            var lote = _uow.LoteRepository.GetById(idLote);
+            Lote lote = _uow.LoteRepository.GetById(idNotaFiscal);
+
+            if (lote != null)
+            {
+                return;
+            }
+
+            lote = new Lote();
 
             lote.IdLoteStatus = LoteStatusEnum.Recebido.GetHashCode();
-
-            _uow.SaveChanges();
-
+            lote.IdNotaFiscal = idNotaFiscal;
+            lote.DataRecebimento = dataRecebimento;
+            lote.IdUsuarioRecebimento = userId;
 
             //TODO Chamar Sankhya
         }
