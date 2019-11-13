@@ -24,3 +24,17 @@ $(document).ajaxStart(function () {
 $(document).ajaxStop(function () {
     waitingDialog.hide();
 });
+
+$(document).ajaxError(function (event, jqxhr, settings, thrownError) {
+    new PNotify({
+        title: 'Erro',
+        text: 'Chamada Ajax com problema',
+        type: 'error'
+    });
+    let http = new HttpService();
+    let urlLog = HOST_URL + "ApplicationLog/LogBadAjaxCall";
+    let data = { url: settings.url };
+    http.post(urlLog, data, false)
+        .then(dados => console.log("Criado log de erro para chamada ajax!"))
+        .catch(err => console.log("Erro ao tentar gerar log de erros! "));
+});

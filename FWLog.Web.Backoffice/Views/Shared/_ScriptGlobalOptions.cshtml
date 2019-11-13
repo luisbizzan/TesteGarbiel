@@ -60,6 +60,7 @@
             $('.integer').mask("#0", { reverse: true });
             $('.alpha-only').mask('Z', { translation: { 'Z': { pattern: /[a-zA-ZÀ-ÿ ]/, recursive: true } } });
             $('.dateMask').mask('00/00/0000');
+            $('.money').mask("#.##0,00", { reverse: true });
         }
 
         var createPhoneMask = function (value, alreadyMask) {

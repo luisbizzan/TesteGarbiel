@@ -1,15 +1,16 @@
 ﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.BORegistroRecebimentoViewModel
 @{
-Layout = null;
+    Layout = null;
 
-@BundleHelper.RenderViewScriptModal()
+    @BundleHelper.RenderViewScriptModal()
 }
-                        
+
 <div class="col-sm-12 col-sm-6">
     <div class="form-group">
         @Html.Label("Entrada")
         @Html.TextBoxFor(m => m.DataRecebimento, new { @class = "form-control", @readonly = "readonly" })
         @Html.HiddenFor(m => m.DataAtual)
+        @Html.HiddenFor(m => m.NotaFiscalPesquisada)        
     </div>
 </div>
 <div class="col-sm-12 col-sm-6">
@@ -33,34 +34,19 @@ Layout = null;
 <div class="col-sm-12 col-sm-6">
     <div class="form-group">
         @Html.Label("Valor Total")
-        @Html.TextBoxFor(m => m.ValorTotal, new { @class = "form-control decimal", @readonly = "readonly" })
+        @Html.TextBoxFor(m => m.ValorTotal, new { @class = "form-control money", @readonly = "readonly" })
     </div>
 </div>
 <div class="col-sm-12 col-sm-6">
     <div class="form-group">
         @Html.Label("Valor Frete")
-
-        @if (Model.ExibeCamposFrete)
-        {
-            @Html.TextBoxFor(m => m.ValorFrete, new { @class = "form-control decimal" })
-        }
-        else
-        {
-            @Html.TextBoxFor(m => m.ValorFrete, new { @class = "form-control", @readonly = "readonly" })
-        }
+        @Html.TextBoxFor(m => m.ValorFrete, new { @class = "form-control", @readonly = "readonly" })
     </div>
 </div>
 <div class="col-sm-12 col-sm-6">
     <div class="form-group">
         @Html.Label("Nro Conhecimento")
-        @if (Model.ExibeCamposFrete)
-        {
-            @Html.TextBoxFor(m => m.NumeroConhecimento, new { @class = "form-control decimal" })
-        }
-        else
-        {
-            @Html.TextBoxFor(m => m.NumeroConhecimento, new { @class = "form-control", @readonly = "readonly" })
-        }
+        @Html.TextBoxFor(m => m.NumeroConhecimento, new { @class = "form-control", @readonly = "readonly" })
     </div>
 </div>
 <div class="col-sm-12 col-sm-6">
@@ -72,27 +58,12 @@ Layout = null;
 <div class="col-sm-12 col-sm-6">
     <div class="form-group">
         @Html.Label("Transportadora")
-        @if (Model.ExibeCamposFrete)
-        {
-            @Html.TextBoxFor(m => m.TransportadoraNome, new { @class = "form-control"})
-        }
-        else
-        {
-            @Html.TextBoxFor(m => m.TransportadoraNome, new { @class = "form-control", @readonly = "readonly" })
-        }
+        @Html.TextBoxFor(m => m.TransportadoraNome, new { @class = "form-control", @readonly = "readonly" })
     </div>
 </div>
 <div class="col-sm-12 col-sm-6">
     <div class="form-group">
         @Html.Label("Peso Conhecimento")
-        @if (Model.ExibeCamposFrete)
-        {
-            @Html.TextBoxFor(m => m.Peso, new { @class = "form-control" })
-        }
-        else
-        {
-            @Html.TextBoxFor(m => m.Peso, new { @class = "form-control", @readonly = "readonly" })
-        }
-
+        @Html.TextBoxFor(m => m.Peso, new { @class = "form-control", @readonly = "readonly" })
     </div>
 </div>

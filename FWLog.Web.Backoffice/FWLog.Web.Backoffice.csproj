@@ -413,6 +413,7 @@
     </Compile>
     <Compile Include="Models\CommonCtx\FileUploadResponseModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Scripts\dart\HttpService.js" />
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
     <Content Include="Scripts\Views\BOFornecedor\searchModal.js" />
