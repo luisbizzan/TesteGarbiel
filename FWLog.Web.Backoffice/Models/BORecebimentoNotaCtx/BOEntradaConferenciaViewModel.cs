@@ -1,6 +1,6 @@
 ﻿namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 {
-    public class BODetalhesEtiquetaConferenciaViewModel
+    public class BOEntradaConferenciaViewModel
     {
         public string NomeFornecedor { get; set; }
         public string NumeroNotaFiscal { get; set; }
