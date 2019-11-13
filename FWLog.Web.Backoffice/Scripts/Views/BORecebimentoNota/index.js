@@ -222,6 +222,7 @@
     $("#limparUsuarioRecebimento").click(function () {
         limparUsuarioRecebimento();
     });
+
     adicionaEventos();
 })();
 
