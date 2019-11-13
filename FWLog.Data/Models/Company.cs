@@ -14,7 +14,7 @@ namespace FWLog.Data
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
         [Display(Name = nameof(ResEnt.IdCompany), ResourceType = typeof(ResEnt))]
         [Log(DisplayName = nameof(ResEnt.IdCompany), ResourceType = typeof(ResEnt))]
-        public long CompanyId { get; set; }//TODO COLOCAR NOME DO PADRÂO
+        public long CompanyId { get; set; }
 
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
         [StringLength(500, ErrorMessageResourceName = "InvalidMaxLenght", ErrorMessageResourceType = typeof(ResGen))]

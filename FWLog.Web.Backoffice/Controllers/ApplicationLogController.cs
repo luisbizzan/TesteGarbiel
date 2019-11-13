@@ -9,6 +9,7 @@ using FWLog.Web.Backoffice.EnumsAndConsts;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.ApplicationLogCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -20,9 +21,12 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         UnitOfWork _uow;
 
-        public ApplicationLogController(UnitOfWork uow)
+        ApplicationLogService _applicationLogService;
+
+        public ApplicationLogController(UnitOfWork uow, ApplicationLogService applicationLogService)
         {
             _uow = uow;
+            _applicationLogService = applicationLogService;
         }
 
         [ApplicationAuthorize(Permissions = Permissions.ApplicationLog.List)]
@@ -78,6 +82,35 @@ namespace FWLog.Web.Backoffice.Controllers
             );
 
         }
-    }
 
+        [HttpPost]
+        public ActionResult LogBadAjaxCall(string url)
+        {
+            try
+            {
+                _applicationLogService.Add(new ApplicationLog
+                {
+                    Created = DateTime.UtcNow,
+                    Level = "ERROR",
+                    Message = "Erro ao fazer chamada ajax para a URL: " + url,
+                    Exception = "",
+                    IdApplication = ApplicationEnum.BackOffice.GetHashCode()
+                });
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Criado log de erro com sucesso"
+                }, JsonRequestBehavior.DenyGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não foi possível criar log de erro para "
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
+    }
 }
