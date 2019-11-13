@@ -14394,8 +14394,8 @@
 		"sPageButtonDisabled": "disabled",
 	
 		/* Striping classes */
-		"sStripeOdd": "odd",
-		"sStripeEven": "even",
+		"sStripeOdd": "odd trRow",
+        "sStripeEven": "even trRow",
 	
 		/* Empty row */
 		"sRowEmpty": "dataTables_empty",

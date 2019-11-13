@@ -2,7 +2,6 @@
 using FWLog.Data.Models;
 using FWLog.Data.Repository.CommonCtx;
 using Oracle.ManagedDataAccess.Client;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,7 +19,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.Lote.FirstOrDefault(f => f.IdNotaFiscal == idNotaFiscal);
         }
 
-        public IEnumerable<Lote> ObterLote()
+        public IEnumerable<Lote> Obter(int CompanyId)
         {
             IEnumerable<Lote> lote = null;
 
@@ -34,7 +33,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                         "SELECT " +
                             "A.\"IdLote\", " +
                             "A.\"DataRecebimento\", " +
-                            "A.\"QuantidadePeca\", " +
                             "A.\"QuantidadeVolume\", " +
                             "B.\"IdNotaFiscal\", " +
                             "B.\"Numero\", " +
@@ -43,14 +41,15 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "B.\"ValorTotal\", " +
                             "B.\"ValorFrete\", " +
                             "B.\"NumeroConhecimento\", " +
-                            "B.\"PesoBruto\", " +
-                            "B.\"PesoLiquido\", " +
+                            "B.\"PesoBruto\", " +         
                             "B.\"Especie\", " +
                             "B.\"Quantidade\", " +
                             "B.\"Status\", " +
                             "B.\"Chave\", " +
                             "B.\"CodigoNotaFiscal\", " +
                             "B.\"DataEmissao\", " +
+                            "B.\"PrazoEntregaFornecedor\", " +
+                            "B.\"CompanyId\", " +
                             "C.*, " +
                             "D.\"IdFreteTipo\", " +
                             "D.\"Sigla\", " +
@@ -62,7 +61,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "INNER JOIN \"Fornecedor\" C ON C.\"IdFornecedor\" = B.\"IdFornecedor\" " +
                             "INNER JOIN \"FreteTipo\" D ON D.\"IdFreteTipo\" = B.\"IdFreteTipo\" " +
                             "LEFT JOIN \"LoteStatus\" E ON (E.\"IdLoteStatus\" = CASE WHEN A.\"IdLoteStatus\" IS NULL THEN 1 ELSE A.\"IdLoteStatus\" END) " +
-                            "LEFT JOIN \"AspNetUsers\" F ON F.\"Id\" = A.\"IdUsuarioRecebimento\" ",
+                            "LEFT JOIN \"AspNetUsers\" F ON F.\"Id\" = A.\"IdUsuarioRecebimento\" " +
+                          "WHERE B.\"CompanyId\" =  " + CompanyId,
                         map: (l, nf, f, ft, ls, u) =>
                         {
                             l.NotaFiscal = nf;

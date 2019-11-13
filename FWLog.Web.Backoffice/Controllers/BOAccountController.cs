@@ -200,7 +200,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 IP = userInfo.IP,
                 UserId = userInfo.UserId,
                 EntityName = nameof(AspNetUsers),
-                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, model.PerfilUsuario, empresasGruposNew.ToString())//TODO Verificar Log
+                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, model.PerfilUsuario, empresasGruposNew.ToString())
             });
 
             Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
@@ -580,6 +580,56 @@ namespace FWLog.Web.Backoffice.Controllers
 
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("LogOn", "BOAccountBase");
+        }
+
+        //[ApplicationAuthorize]
+        public ActionResult SearchModal()
+        {
+            var model = new BOPerfilUsuarioSearchModalViewModel();
+            return View(model);
+        }
+
+        //[ApplicationAuthorize]
+        public ActionResult SearchModalPageData(DataTableFilter<BOPerfilUsuarioSearchModalFilterViewModel> model)
+        {
+            List<BOPerfilUsuarioSearchModalItemViewModel> boPerfilUsuarioSearchModalFilterViewModel = new List<BOPerfilUsuarioSearchModalItemViewModel>();
+            int totalRecords = 0;
+            int totalRecordsFiltered = 0;
+
+            var query = _uow.PerfilUsuarioRepository.GetAll().AsQueryable();
+
+            totalRecords = query.Count();
+
+            if (!String.IsNullOrEmpty(model.CustomFilter.UsuarioId))
+                query = query.Where(x => x.UsuarioId.Contains(model.CustomFilter.UsuarioId));
+
+            if (!string.IsNullOrEmpty(model.CustomFilter.UserName))
+                query = query.Where(x => x.Usuario.UserName.Contains(model.CustomFilter.UserName));
+
+            if (!string.IsNullOrEmpty(model.CustomFilter.Departamento))
+                query = query.Where(x => x.Departamento.Contains(model.CustomFilter.Departamento));
+
+            if (!string.IsNullOrEmpty(model.CustomFilter.Cargo))
+                query = query.Where(x => x.Cargo.Contains(model.CustomFilter.Cargo));
+
+            foreach (var item in query)
+            {
+                boPerfilUsuarioSearchModalFilterViewModel.Add(new BOPerfilUsuarioSearchModalItemViewModel()
+                {
+                    UsuarioId = item.UsuarioId,
+                    UserName = item.Usuario.UserName,
+                    Cargo = item.Cargo,
+                    Departamento = item.Departamento
+                });
+            }
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = totalRecordsFiltered,
+                Data = boPerfilUsuarioSearchModalFilterViewModel
+            });
         }
     }
 }

@@ -14,6 +14,7 @@ using FWLog.Data.Models;
 using System.Net.Sockets;
 using System.Net;
 using System.Globalization;
+using Newtonsoft.Json;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -42,7 +43,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     _uow.LoteStatusRepository.GetAll().Select(x => new SelectListItem
                     {
                         Value = x.IdLoteStatus.ToString(),
-                        Text = x.Descricao
+                        Text = x.Descricao,
                     }), "Value", "Text"
                 )
             };
@@ -56,44 +57,81 @@ namespace FWLog.Web.Backoffice.Controllers
             int totalRecords = 0;
             int totalRecordsFiltered = 0;
 
-            var query = _uow.LoteRepository.ObterLote().AsQueryable();
+            var query = _uow.LoteRepository.Obter(CompanyId).AsQueryable();
 
             totalRecords = query.Count();
 
             if (!string.IsNullOrEmpty(model.CustomFilter.DANFE))
                 query = query.Where(x => x.NotaFiscal.DANFE == model.CustomFilter.DANFE);
 
-            if (model.CustomFilter.Lote != null && model.CustomFilter.Lote != 0)
+            if (model.CustomFilter.Lote.HasValue)
                 query = query.Where(x => x.IdLote == Convert.ToInt32(model.CustomFilter.Lote));
 
-            if (model.CustomFilter.Nota != null && model.CustomFilter.Nota != 0)
+            if (model.CustomFilter.Nota.HasValue)
                 query = query.Where(x => x.NotaFiscal.Numero == model.CustomFilter.Nota);
 
-            if (model.CustomFilter.IdFornecedor != null && model.CustomFilter.IdFornecedor != 0)
+            if (model.CustomFilter.IdFornecedor.HasValue)
                 query = query.Where(x => x.NotaFiscal.Fornecedor.IdFornecedor == model.CustomFilter.IdFornecedor);
 
-            if (model.CustomFilter.QuantidadePeca != null && model.CustomFilter.QuantidadePeca != 0)
-                query = query.Where(x => x.QuantidadePeca == model.CustomFilter.QuantidadePeca);
+            if (model.CustomFilter.QuantidadePeca.HasValue)
+                query = query.Where(x => x.NotaFiscal.Quantidade == model.CustomFilter.QuantidadePeca);
 
-            if (model.CustomFilter.QuantidadeVolume != null && model.CustomFilter.QuantidadeVolume != 0)
+            if (model.CustomFilter.QuantidadeVolume.HasValue)
                 query = query.Where(x => x.QuantidadeVolume == model.CustomFilter.QuantidadeVolume);
 
-            if (model.CustomFilter.IdStatus != null && model.CustomFilter.IdStatus != 0)
+            if (model.CustomFilter.IdStatus.HasValue)
                 query = query.Where(x => x.LoteStatus.IdLoteStatus == model.CustomFilter.IdStatus);
 
-            if (model.CustomFilter.Prazo != null && model.CustomFilter.Prazo != 0)
-                query = query.Where(x => x.DataRecebimento == DateTime.Now.AddDays(Convert.ToDouble(model.CustomFilter.Prazo)));
+            if (model.CustomFilter.DataInicial.HasValue)
+            {
+                DateTime dataInicial = new DateTime(model.CustomFilter.DataInicial.Value.Year, model.CustomFilter.DataInicial.Value.Month, model.CustomFilter.DataInicial.Value.Day,
+                    00, 00, 00);
+                query = query.Where(x => x.DataRecebimento >= dataInicial);
+            }
+
+            if (model.CustomFilter.DataFinal.HasValue)
+            {
+                DateTime dataFinal = new DateTime(model.CustomFilter.DataFinal.Value.Year, model.CustomFilter.DataFinal.Value.Month, model.CustomFilter.DataFinal.Value.Day,
+                    23, 59, 59);
+                query = query.Where(x => x.DataRecebimento <= dataFinal);
+            }
+
+            if (model.CustomFilter.PrazoInicial.HasValue)
+            {
+                DateTime prazoInicial = new DateTime(model.CustomFilter.PrazoInicial.Value.Year, model.CustomFilter.PrazoInicial.Value.Month, model.CustomFilter.PrazoInicial.Value.Day,
+                    00, 00, 00);
+                query = query.Where(x => x.NotaFiscal.PrazoEntregaFornecedor >= prazoInicial);
+            }
+
+            if (model.CustomFilter.PrazoFinal.HasValue)
+            {
+                DateTime prazoFinal = new DateTime(model.CustomFilter.PrazoFinal.Value.Year, model.CustomFilter.PrazoFinal.Value.Month, model.CustomFilter.PrazoFinal.Value.Day,
+                    23, 59, 59);
+                query = query.Where(x => x.NotaFiscal.PrazoEntregaFornecedor <= prazoFinal);
+            }
 
             if (query.Count() > 0)
             {
                 foreach (var item in query)
                 {
-                    long? atraso = null;
+                    //Atribui 0 para dias em atraso.
+                    long? atraso = 0;
 
-                    if (item.NotaFiscal.DataEmissao != null)
+                    //Se a mercadoria for igual a null, o atraso já será considerado 0. Caso contrário, entra no IF para outras validações.
+                    if (item.NotaFiscal.PrazoEntregaFornecedor != null)
                     {
-                        TimeSpan? data = DateTime.Now - item.NotaFiscal.DataEmissao;
-                        atraso = data.Value.Days;
+                        //Atribui o prazo de entrega da nota fiscal.
+                        DateTime prazoEntrega = item.NotaFiscal.PrazoEntregaFornecedor;
+
+                        //Se a data de recebimento for nula, compara a data atual com o prazo de entrega para calcular os dias em atraso.
+                        if (!item.DataRecebimento.HasValue)
+                            if (DateTime.Now > prazoEntrega)
+                                atraso = (DateTime.Now - prazoEntrega).Days;
+                            else //Se a data de recebimento NÃO for nula, compara a data do recebimento com o prazo de entrega para calcular os dias em atraso.
+                            {
+                                if (item.DataRecebimento > prazoEntrega)
+                                atraso = (item.DataRecebimento - prazoEntrega).Value.Days;
+                            }
                     }
 
                     boRecebimentoNotaListItemViewModel.Add(new BORecebimentoNotaListItemViewModel()
@@ -101,15 +139,25 @@ namespace FWLog.Web.Backoffice.Controllers
                         Lote = item.IdLote == 0 ? (long?)null : item.IdLote,
                         Nota = item.NotaFiscal.Numero == 0 ? (long?)null : item.NotaFiscal.Numero,
                         Fornecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
-                        QuantidadePeca = item.QuantidadePeca == 0 ? (long?)null : item.QuantidadePeca,
+                        QuantidadePeca = item.NotaFiscal.Quantidade == 0 ? (long?)null : item.NotaFiscal.Quantidade,
                         QuantidadeVolume = item.QuantidadeVolume == 0 ? (long?)null : item.QuantidadeVolume,
+                        RecebidoEm = item.DataRecebimento.ToString(),
                         Status = item.LoteStatus.Descricao,
-                        Prazo = item.NotaFiscal.DataEmissao.ToString(),
+                        IdNotaFiscal = item.NotaFiscal.IdNotaFiscal,
+                        Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
                         Atraso = atraso,
-                        IdNotaFiscal = item.NotaFiscal.IdNotaFiscal
+                        IdUsuarioRecebimento = item.UsuarioRecebimento == null ? "" : item.UsuarioRecebimento.Id
                     });
                 }
             }
+
+            if (model.CustomFilter.Atraso.HasValue)
+            {
+                boRecebimentoNotaListItemViewModel = boRecebimentoNotaListItemViewModel.Where(x => x.Atraso == model.CustomFilter.Atraso).ToList();                
+            }
+
+            if (!String.IsNullOrEmpty(model.CustomFilter.IdUsuarioRecebimento))
+                boRecebimentoNotaListItemViewModel = boRecebimentoNotaListItemViewModel.Where(x => x.IdUsuarioRecebimento == model.CustomFilter.IdUsuarioRecebimento).ToList();
 
             return DataTableResult.FromModel(new DataTableResponseModel()
             {
@@ -185,7 +233,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         }
 
-        public ActionResult CarregarDadosNotaFiscalRegistro(string chaveAcesso, string idNotaFiscal)
+        public JsonResult ValidarNotaFiscalRegistro(string chaveAcesso, long idNotaFiscal)
         {
             var model = new BORegistroRecebimentoViewModel();
 
@@ -193,9 +241,11 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (notafiscal.Chave != chaveAcesso)
             {
-                ModelState.AddModelError(nameof(model.ChaveAcesso), "A Chave de Acesso não condiz com a chave cadastrada na nota fiscal do Lote selecionado.");
-                //TODO Ajustar
-                return PartialView("RegistroRecebimentoDetalhes", model);
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "A Chave de Acesso não condiz com a chave cadastrada na nota fiscal do Lote selecionado.",
+                });
             }
 
             var dataAtual = DateTime.UtcNow;
@@ -205,7 +255,13 @@ namespace FWLog.Web.Backoffice.Controllers
             model.HoraRecebimento = dataAtual.ToString("HH:mm:ss");
             model.FornecedorNome = notafiscal.Fornecedor.RazaoSocial;
             model.NumeroSerieNotaFiscal = string.Format("{0}-{1}", notafiscal.Numero, notafiscal.Serie);
-            model.ValorTotal = notafiscal.ValorTotal;
+            model.ValorTotal = notafiscal.ValorTotal.ToString("n2");
+            model.DataAtual = dataAtual;
+            model.ValorFrete = notafiscal.ValorFrete.ToString("n2");
+            model.NumeroConhecimento = notafiscal.NumeroConhecimento;
+            model.TransportadoraNome = notafiscal.Transportadora.RazaoSocial;
+            model.Peso = notafiscal.PesoBruto.ToString("n2");
+            model.NotaFiscalPesquisada = true;
 
             if (notafiscal.FreteTipo.Sigla == "F")
             {
@@ -223,13 +279,25 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("RegistroRecebimentoDetalhes", model);
         }
 
-        public ActionResult RegistrarRecebimentoNota(long idNotaFiscal, Decimal ValorFrete, string nroConhecimento, int idTransportadora, Decimal peso, int volumes, DateTime dataRecebimento)
+        public JsonResult RegistrarRecebimentoNota(long idNotaFiscal, DateTime dataRecebimento, int qtdVolumes)
         {
-            var userInfo = new BackOfficeUserInfo();
-            _LoteService.RegistrarRecebimentoNotaFiscal(idNotaFiscal, userInfo.UserId.ToString(), dataRecebimento);
+            if (!(idNotaFiscal > 0) || !(qtdVolumes > 0))
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Selecione a nota fiscal e insira a quantidade de volumes para confirmar o recebimento."
+                });
+            }
 
-            var modal = new BORegistroRecebimentoViewModel();
-            return PartialView("RegistroRecebimento", modal);
+            var userInfo = new BackOfficeUserInfo();
+            _LoteService.RegistrarRecebimentoNotaFiscal(idNotaFiscal, userInfo.UserId.ToString(), dataRecebimento, qtdVolumes);
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = "Recebimento da nota fiscal registrado com sucesso. Lote gerado"
+            });
         }
 
         [HttpPost]
