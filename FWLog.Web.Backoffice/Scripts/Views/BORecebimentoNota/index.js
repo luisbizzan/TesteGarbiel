@@ -293,6 +293,7 @@ function CarregarBotoesRegistrar() {
             });*/
         });
     });
+}
 
 function setFornecedor(idFornecedor, razaoSocial) {
     let razao = $("#Filter_RazaoSocialFornecedor");

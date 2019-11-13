@@ -142,7 +142,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         QuantidadeVolume = item.QuantidadeVolume == 0 ? (long?)null : item.QuantidadeVolume,
                         RecebidoEm = item.DataRecebimento.ToString(),
                         Status = item.LoteStatus.Descricao,
-                        IdNotaFiscal = item.NotaFiscal.IdNotaFiscal
+                        IdNotaFiscal = item.NotaFiscal.IdNotaFiscal,
                         Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
                         Atraso = atraso,
                         IdUsuarioRecebimento = item.UsuarioRecebimento == null ? "" : item.UsuarioRecebimento.Id

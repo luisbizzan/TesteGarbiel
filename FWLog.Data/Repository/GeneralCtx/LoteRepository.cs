@@ -3,6 +3,7 @@ using FWLog.Data.Models;
 using FWLog.Data.Repository.CommonCtx;
 using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx
 {
