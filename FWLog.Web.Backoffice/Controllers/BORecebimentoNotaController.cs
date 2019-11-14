@@ -134,7 +134,7 @@ namespace FWLog.Web.Backoffice.Controllers
                             else //Se a data de recebimento NÃO for nula, compara a data do recebimento com o prazo de entrega para calcular os dias em atraso.
                             {
                                 if (item.DataRecebimento > prazoEntrega)
-                                atraso = (item.DataRecebimento - prazoEntrega).Value.Days;
+                                    atraso = (item.DataRecebimento - prazoEntrega).Value.Days;
                             }
                     }
 

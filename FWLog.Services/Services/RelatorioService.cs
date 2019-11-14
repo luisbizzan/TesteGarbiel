@@ -31,7 +31,7 @@ namespace FWLog.Services.Services
                     Lote = notaFiscal.IdNotaFiscal.ToString(),
                     Fornecedor = notaFiscal.IdFornecedor.ToString(),
                     Nota = notaFiscal.Numero.ToString(),
-                    Status = notaFiscal.Status,
+                    Status = notaFiscal.StatusIntegracao,
                     QauntidadeVolumes = notaFiscal.Quantidade,
                     QuantidadePeças = notaFiscal.Quantidade,
                     Atraso = "-",
