@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 using FWLog.Data.EnumsAndConsts;
 using System.Threading.Tasks;
 using FWLog.AspNet.Identity;
->>>>>>> 41f3a1fcf2c6286edf44d5046e042e766e2cd141
+
 
 namespace FWLog.Web.Backoffice.Controllers
 {
