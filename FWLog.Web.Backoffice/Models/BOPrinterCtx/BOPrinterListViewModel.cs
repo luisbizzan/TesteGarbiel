@@ -28,11 +28,23 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
 
         [Display(Name = nameof(Res.CompanyLabel), ResourceType = typeof(Res))]
         public string Company { get; set; }
+
+        [Display(Name = "Ativa")]
+        public string Ativa { get; set; }
     }
 
     public class BOPrinterFilterViewModel
     {
         [Display(Name = nameof(Res.NameLabel), ResourceType = typeof(Res))]
         public string Name { get; set; }
+
+        [Display(Name = nameof(Res.CompanyLabel), ResourceType = typeof(Res))]
+        public long? CompanyId { get; set; }
+
+        [Display(Name = nameof(Res.PrinterTypeLabel), ResourceType = typeof(Res))]
+        public int? PrinterTypeId { get; set; }
+
+        [Display(Name = "Ativa")]
+        public int? Ativa { get; set; }
     }
 }

@@ -2,9 +2,11 @@
 using ExtensionMethods;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
+using FWLog.Web.Backoffice.EnumsAndConsts;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BOPrinterCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
@@ -59,10 +61,25 @@ namespace FWLog.Web.Backoffice.Controllers
         }
         private SelectList companies;
 
+        private SelectList Status
+        {
+            get
+            {
+                if (status == null)
+                {
+                    status = new SelectList(new NaoSimLOV().Items, "Value", "Text");
+                }
+
+                return status;
+            }
+        }
+        private SelectList status;
+
         private void setViewBags()
         {
             ViewBag.PrinterTypes = PrinterTypes;
             ViewBag.Companies = Companies;
+            ViewBag.Status = Status;
         }
 
         public BOPrinterController(UnitOfWork uow, BOLogSystemService boLogSystemService)
@@ -74,6 +91,8 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Role.List)]
         public ActionResult Index()
         {
+            setViewBags();
+
             return View(new BOPrinterListViewModel());
         }
 
@@ -82,12 +101,15 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             IQueryable<Printer> all = _uow.BOPrinterRepository.All();
 
-            IEnumerable<Printer> query = all.WhereIf(!string.IsNullOrEmpty(model.CustomFilter.Name), x => x.Name.Contains(model.CustomFilter.Name));
+            IQueryable<Printer> query = all.WhereIf(!string.IsNullOrEmpty(model.CustomFilter.Name), x => x.Name.Contains(model.CustomFilter.Name));
+            query = query.WhereIf(model.CustomFilter.CompanyId.HasValue, x => x.CompanyId == model.CustomFilter.CompanyId);
+            query = query.WhereIf(model.CustomFilter.PrinterTypeId.HasValue, x => x.PrinterTypeId == model.CustomFilter.PrinterTypeId);
+            query = query.WhereIf(model.CustomFilter.Ativa.HasValue, x => x.Ativa == model.CustomFilter.Ativa);
 
             int totalRecords = all.Count();
             int recordsFiltered = query.Count();
 
-            IList<Printer> result = query.PaginationResult(model);
+            List<Printer> result = query.PaginationResult(model);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
@@ -119,7 +141,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             try
             {
-                var entity = new Printer() { Name = model.Name, IP = model.IP, CompanyId = model.CompanyId, PrinterTypeId = model.PrinterTypeId };
+                var entity = new Printer() { Name = model.Name, IP = model.IP, CompanyId = model.CompanyId, PrinterTypeId = model.PrinterTypeId, Ativa = model.Ativa };
 
                 _uow.BOPrinterRepository.Add(entity);
 
@@ -129,16 +151,6 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 throw ex;
             }
-
-            //var userInfo = new BackOfficeUserInfo();
-            //_boLogSystemService.Add(new BOLogSystemCreation
-            //{
-            //    ActionType = ActionTypeNames.Add,
-            //    IP = userInfo.IP,
-            //    UserId = userInfo.UserId,
-            //    EntityName = nameof(Printer),
-            //    NewEntity = new AspNetRolesLogSerializeModel(model.Name)
-            //});
 
             Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
             return RedirectToAction("Index");
@@ -159,7 +171,14 @@ namespace FWLog.Web.Backoffice.Controllers
                 throw new HttpException(404, "Not found");
             }
 
-            var model = new BOPrinterDetailsViewModel() { Name = entity.Name, Company = entity.Company.CompanyName, PrinterType = entity.PrinterType.Name, IP = entity.IP };
+            var model = new BOPrinterDetailsViewModel()
+            {
+                Name = entity.Name,
+                Company = entity.Company.CompanyName,
+                PrinterType = entity.PrinterType.Name,
+                IP = entity.IP,
+                _Status = (NaoSimEnum)entity.Ativa
+            };
 
             return View(model);
         }
@@ -179,7 +198,15 @@ namespace FWLog.Web.Backoffice.Controllers
                 throw new HttpException(404, "Not found");
             }
 
-            var model = new BOPrinterCreateViewModel() { Name = entity.Name, CompanyId = entity.CompanyId, IP = entity.IP, PrinterTypeId = entity.PrinterTypeId };
+            var model = new BOPrinterCreateViewModel()
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                CompanyId = entity.CompanyId,
+                IP = entity.IP,
+                PrinterTypeId = entity.PrinterTypeId,
+                Ativa = (int)entity.Ativa
+            };
 
             setViewBags();
 
@@ -210,6 +237,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 entity.PrinterTypeId = model.PrinterTypeId;
                 entity.CompanyId = model.CompanyId;
                 entity.IP = model.IP;
+                entity.Ativa = model.Ativa;
 
                 _uow.BOPrinterRepository.Update(entity);
 
@@ -217,20 +245,8 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception)
             {
-
                 throw;
             }
-
-            //var userInfo = new BackOfficeUserInfo();
-            //_boLogSystemService.Add(new BOLogSystemCreation
-            //{
-            //    ActionType = ActionTypeNames.Edit,
-            //    IP = userInfo.IP,
-            //    UserId = userInfo.UserId,
-            //    EntityName = nameof(Printer),
-            //    OldEntity = entity,
-            //    //NewEntity = new AspNetRolesLogSerializeModel(role.Name)
-            //});
 
             Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
             return RedirectToAction("Index");
@@ -239,7 +255,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpGet]
         public ActionResult Selecionar()
         {
-            List<Printer> impressoras = _uow.BOPrinterRepository.GetAll().Where(w => w.CompanyId == CompanyId && w.PrinterTypeId == 2).ToList();
+            List<Printer> impressoras = _uow.BOPrinterRepository.All().Where(w => w.CompanyId == CompanyId && w.Ativa == (int)NaoSimEnum.Sim && w.PrinterTypeId == 2).ToList();
             var listaImpressoras = new List<BOPrinterSelecionarImpressoraViewModel>();
 
             foreach (Printer impressora in impressoras)

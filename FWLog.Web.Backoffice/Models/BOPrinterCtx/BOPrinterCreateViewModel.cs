@@ -22,5 +22,9 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         [Required(ErrorMessage = "O campo Endereço IP é obrigatório.")]
         [Display(Name = nameof(Res.IPLabel), ResourceType = typeof(Res))]
         public string IP { get; set; }
+
+        [Required(ErrorMessage = "O campo Ativa é obrigatório.")]
+        [Display(Name = "Ativa")]
+        public int Ativa { get; set; }
     }
 }

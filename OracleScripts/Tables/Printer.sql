@@ -5,6 +5,7 @@ CREATE TABLE "Printer"
      "PrinterTypeId" INTEGER NOT NULL,
      "CompanyId"     NUMBER(22) NOT NULL,
      "IP"            VARCHAR2(50) NOT NULL,
+     "Ativa"		 NUMBER(1) NOT NULL,
      CONSTRAINT printer_pk PRIMARY KEY ("Id"),
      CONSTRAINT printer_company_fk FOREIGN KEY ("CompanyId") REFERENCES
      "Company" ("CompanyId"),

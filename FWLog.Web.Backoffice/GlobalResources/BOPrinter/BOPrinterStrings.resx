@@ -126,6 +126,9 @@
   <data name="DetailsPageTitle" xml:space="preserve">
     <value>Visualização de Impressoras</value>
   </data>
+  <data name="EditPageTitle" xml:space="preserve">
+    <value>Edição de Impressora</value>
+  </data>
   <data name="IndexPageTitle" xml:space="preserve">
     <value>Impressoras</value>
   </data>

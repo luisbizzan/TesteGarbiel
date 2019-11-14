@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ExtensionMethods;
+using FWLog.Data.EnumsAndConsts;
+using System.ComponentModel.DataAnnotations;
 using Res = Resources.BOPrinterStrings;
 
 namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
@@ -16,5 +18,16 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
 
         [Display(Name = "IP")]
         public string IP { get; set; }
+
+        [Display(Name = "Ativa")]
+        public string Ativa
+        {
+            get
+            {
+                return _Status.GetDisplayName();
+            }
+        }
+
+        public NaoSimEnum _Status { get; set; }
     }
 }
