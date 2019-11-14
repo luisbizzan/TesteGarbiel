@@ -1,5 +1,6 @@
 ﻿using FWLog.Data.Models;
 using FWLog.Data.Repository.CommonCtx;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx
@@ -14,6 +15,11 @@ namespace FWLog.Data.Repository.GeneralCtx
         public NotaFiscalItem PegarNotaFiscal(long codigoNotaFiscal, long idProduto)
         {
             return Entities.NotaFiscalItem.FirstOrDefault(f => f.CodigoNotaFiscal == codigoNotaFiscal && f.IdProduto == idProduto);
+        }
+
+        public List<NotaFiscalItem> PegarItens(long idNotaFiscal)
+        {
+            return Entities.NotaFiscalItem.Where(w => w.IdNotaFiscal == idNotaFiscal).ToList();
         }
     }
 }
