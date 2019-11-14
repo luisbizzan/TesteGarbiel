@@ -413,7 +413,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 NumeroLote = "-",
                 NumeroNotaFiscal = notaFiscal.Numero.ToString(),
                 DataChegada = "",
-                StatusNotaFiscal = notaFiscal.Status,
+                StatusNotaFiscal = notaFiscal.StatusIntegracao,
                 Fornecedor = string.Concat(notaFiscal.Fornecedor.Codigo, " - ", notaFiscal.Fornecedor.RazaoSocial),
                 Quantidade = notaFiscal.Quantidade.ToString(),
                 DiasAtraso = "-",
