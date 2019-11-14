@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using FWLog.Data;
 using System.Transactions;
+using System.Xml.Linq;
 
 namespace FWLog.Services.Services
 {
@@ -76,7 +77,7 @@ namespace FWLog.Services.Services
                     nota = new NotaFiscal();
                     nota.Numero = notaInt.NUMNOTA == null ? 0 : Convert.ToInt32(notaInt.NUMNOTA);
                     nota.Serie = notaInt.SERIENOTA == null ? 0 : Convert.ToInt32(notaInt.SERIENOTA);
-                    nota.CodigoNotaFiscal = codNota;
+                    nota.CodigoIntegracao = codNota;
 
                     nota.IdFornecedor = 41;//TODO Fazer integração de Fornecedor e ajustar vinculo notaInt.CODEMP;
                 }
@@ -107,15 +108,15 @@ namespace FWLog.Services.Services
             //TODO atualizar status de notas consultadas.
         }
 
-        private async Task ConsultaNotaFiscalItemCompra(long codigoNotaFiscal)
+        private async Task ConsultaNotaFiscalItemCompra(long codigoIntegracao)
         {
-            var where = string.Format(" WHERE NUNOTA = {0}", codigoNotaFiscal.ToString());
+            var where = string.Format(" WHERE NUNOTA = {0}", codigoIntegracao.ToString());
             List<NotaFiscalItemIntegracao> itensIntegracao = await IntegracaoSankhya.Instance.PreExecuteQuery<NotaFiscalItemIntegracao>(where);
             List<NotaFiscalItem> itemsNotaFsical = new List<NotaFiscalItem>();
 
             var unidades = _uow.UnidadeMedidaRepository.GetAll();
 
-            var idNotaFiscal = _uow.NotaFiscalRepository.PegarNotaFiscal(codigoNotaFiscal).IdNotaFiscal;
+            var idNotaFiscal = _uow.NotaFiscalRepository.PegarNotaFiscal(codigoIntegracao).IdNotaFiscal;
 
             foreach (var itemInt in itensIntegracao)
             {
@@ -155,6 +156,31 @@ namespace FWLog.Services.Services
             _uow.NotaFiscalItemRepository.AddRange(itemsNotaFsical);
 
             await _uow.SaveChangesAsync();
+        }
+
+        public async Task AtualizarStatusNota(long idNotaFiscal, int status)
+        {
+            var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
+            
+            XElement dataRow = new XElement("dataRow", new XElement("localFields", new XElement("STATUSNOTA", status)));
+            dataRow.Add(new XElement("key", new XElement("NUNOTA", notafiscal.CodigoIntegracao)));
+
+            XAttribute[] attArray = {
+                new XAttribute("rootEntity", "CabecalhoNota"),
+                new XAttribute("includePresentationFields", "S"),
+            };
+
+            var entity = new XElement("entity", new XAttribute("path", ""));
+            entity.Add(new XElement("fieldset", new XAttribute("list", "*")));
+
+            XElement datset = new XElement("dataSet", attArray);
+            datset.Add(entity);
+            datset.Add(dataRow);
+
+            XElement serviceRequest = new XElement("serviceRequest", new XAttribute("serviceName", "CRUDServiceProvider.saveRecord"));
+            serviceRequest.Add(new XElement("requestBody", datset));
+
+            await IntegracaoSankhya.Instance.ExecutarSaveRecord(serviceRequest);
         }
     }
 }

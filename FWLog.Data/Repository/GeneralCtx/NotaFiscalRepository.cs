@@ -8,9 +8,9 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public NotaFiscalRepository(Entities entities) : base(entities) { }
                
-        public NotaFiscal PegarNotaFiscal(long codigoNotaFiscal)
+        public NotaFiscal PegarNotaFiscal(long codigoIntegracao)
         {
-            return Entities.NotaFiscal.FirstOrDefault(f => f.CodigoNotaFiscal == codigoNotaFiscal);
+            return Entities.NotaFiscal.FirstOrDefault(f => f.CodigoIntegracao == codigoIntegracao);
         }
               
         public NotaFiscal PegarNotaFiscalPorChave(string chaveAcesso)

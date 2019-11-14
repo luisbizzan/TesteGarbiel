@@ -15,6 +15,8 @@ using System.Net.Sockets;
 using System.Net;
 using System.Globalization;
 using Newtonsoft.Json;
+using FWLog.Data.EnumsAndConsts;
+using System.Threading.Tasks;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -22,13 +24,15 @@ namespace FWLog.Web.Backoffice.Controllers
     {
 
         private readonly RelatorioService _relatorioService;
-        private readonly LoteService _LoteService;
+        private readonly LoteService _loteService;
+        private readonly ApplicationLogService _applicationLogService;
         private readonly UnitOfWork _uow;
 
-        public BORecebimentoNotaController(UnitOfWork uow, RelatorioService relatorioService, LoteService loteService)
+        public BORecebimentoNotaController(UnitOfWork uow, RelatorioService relatorioService, LoteService loteService, ApplicationLogService applicationLogService)
         {
-            _LoteService = loteService;
+            _loteService = loteService;
             _relatorioService = relatorioService;
+            _applicationLogService = applicationLogService;
             _uow = uow;
         }
 
@@ -273,9 +277,9 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("RegistroRecebimentoDetalhes", model);
         }
 
-        public JsonResult RegistrarRecebimentoNota(long idNotaFiscal, DateTime dataRecebimento, int qtdVolumes)
+        public async Task<JsonResult> RegistrarRecebimentoNota(long idNotaFiscal, DateTime dataRecebimento, int qtdVolumes)
         {
-            if (!(idNotaFiscal > 0) || !(qtdVolumes > 0))
+            if (!(idNotaFiscal > 0) || !(qtdVolumes > 0))//TODO Arrumar aqui
             {
                 return Json(new AjaxGenericResultModel
                 {
@@ -284,8 +288,21 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            var userInfo = new BackOfficeUserInfo();
-            _LoteService.RegistrarRecebimentoNotaFiscal(idNotaFiscal, userInfo.UserId.ToString(), dataRecebimento, qtdVolumes);
+            try
+            {
+                var userInfo = new BackOfficeUserInfo();
+                await _loteService.RegistrarRecebimentoNotaFiscal(idNotaFiscal, userInfo.UserId.ToString(), dataRecebimento, qtdVolumes);
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu uma instabilidade com a Integração do Sankhya, não foi possível registrar o recebimento da nota fiscal. Tente novamente."
+                });
+            }
 
             return Json(new AjaxGenericResultModel
             {

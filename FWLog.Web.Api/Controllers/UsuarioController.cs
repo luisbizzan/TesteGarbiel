@@ -24,7 +24,7 @@ namespace FWLog.Web.Api.Controllers
             _unitOfWork = unitOfWork;
             _accountService = accountService;
         }
-                
+
         [AllowAnonymous]
         [HttpPost]
         [Route("api/v1/usuario/login")]

@@ -2,6 +2,8 @@
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using System;
+using System.Threading.Tasks;
+using System.Transactions;
 
 namespace FWLog.Services.Services
 {
@@ -14,8 +16,8 @@ namespace FWLog.Services.Services
             _uow = uow;
         }
 
-        public void RegistrarRecebimentoNotaFiscal(long idNotaFiscal, string userId, DateTime dataRecebimento, int qtdVolumes)
-        {            
+        public async Task RegistrarRecebimentoNotaFiscal(long idNotaFiscal, string userId, DateTime dataRecebimento, int qtdVolumes)
+        {
             Lote lote = _uow.LoteRepository.GetById(idNotaFiscal);
 
             if (lote != null)
@@ -34,7 +36,19 @@ namespace FWLog.Services.Services
             _uow.LoteRepository.Add(lote);
             _uow.SaveChanges();
 
-            //TODO Chamar Sankhya
+            var notaService = new NotaFiscalService(_uow);
+
+            //try
+            //{
+            //    await notaService.AtualizarStatusNota(idNotaFiscal, LoteStatusEnum.Recebido.GetHashCode());
+            //}
+            //catch (Exception e)
+            //{
+            //    _uow.LoteRepository.Delete(lote);
+            //    _uow.SaveChanges();
+
+            //    throw e;
+            //}
         }
     }
 }

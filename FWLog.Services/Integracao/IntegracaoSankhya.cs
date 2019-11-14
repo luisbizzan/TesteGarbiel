@@ -129,6 +129,39 @@ namespace FWLog.Services.Integracao
             return Token;
         }
 
+        public async Task ExecutarSaveRecord(XElement xml)
+        {
+            StringContent contentString = new StringContent(xml.ToString(), Encoding.UTF8, "text/xml");
+
+            contentString.Headers.Add("Cookie", string.Format("JSESSIONID={0}", Instance.GetToken()));
+
+            var uri = string.Format("{0}serviceName=CRUDServiceProvider.saveRecord", BaseURL);
+
+            HttpResponseMessage httpResponse = await HttpService.Instance.PostAsync(uri, contentString);
+
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                throw new Exception(string.Format("O sistema obteve o status {0} na resposta do serviço 'CRUDServiceProvider.saveRecord' Integração Sankhya", httpResponse.StatusCode));
+            }
+
+            string result = httpResponse.Content.ReadAsStringAsync().Result;
+
+            XDocument doc = XDocument.Parse(result);
+            XElement root = doc.Root;
+
+            string status = root.Attribute("status")?.Value;
+            if (status != "1")
+            {
+                throw new Exception("O sistema não obteve o status 1 no retorno da atualização da nota fiscal no Integração Sankhya.");
+            }
+
+            string nunota = root.Element("responseBody").Element("entities").Element("entity").Element("NUNOTA")?.Value;
+            if (nunota == null)
+            {
+                throw new Exception("O sistema não obteve o NUNOTA no retorno da atualização da nota fiscal no Integração Sankhya.");
+            }
+        }
+
         public async Task<string> ExecuteQuery(string query)
         {
             var queryJson = new
