@@ -3,7 +3,7 @@ using FWLog.Data.EnumsAndConsts;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
-namespace FWLog.Web.Backoffice.EnumsAndConsts
+namespace FWLog.Web.Backoffice.EnumsAndConsts.LOVs
 {
     public class NaoSimLOV
     {

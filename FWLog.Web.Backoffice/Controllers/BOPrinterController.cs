@@ -6,7 +6,7 @@ using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
-using FWLog.Web.Backoffice.EnumsAndConsts;
+using FWLog.Web.Backoffice.EnumsAndConsts.LOVs;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BOPrinterCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
@@ -88,6 +88,7 @@ namespace FWLog.Web.Backoffice.Controllers
             _boLogSystemService = boLogSystemService;
         }
 
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Role.List)]
         public ActionResult Index()
         {
@@ -96,6 +97,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(new BOPrinterListViewModel());
         }
 
+        [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Role.List)]
         public ActionResult PageData(DataTableFilter<BOPrinterFilterViewModel> model)
         {
@@ -120,6 +122,7 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Role.Create)]
         public ActionResult Create()
         {
@@ -156,6 +159,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Role.List)]
         public ActionResult Details(long? id)
         {
@@ -183,6 +187,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(model);
         }
 
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Role.Edit)]
         public ActionResult Edit(long? id)
         {
