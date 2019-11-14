@@ -8,9 +8,9 @@
     menu.SetItems(
         new MenuItem { Text = Res.HomeMenuItem, Icon = "fa fa-home", Url = Url.Action("Index", "BOHome") },
         new MenuGroup(text: Res.MenuRecebimento, icon: "fa fa-truck").SetItems(
-            new MenuItem { Text = Res.MenuRecebimentoNotas, Url = Url.Action("Index", "BORecebimentoNota"), RequirePermission = Permissions.BOAccount.List },
+            new MenuItem { Text = Res.MenuRecebimentoNotas, Url = Url.Action("Index", "BORecebimentoNota"), RequirePermission = Permissions.Recebimento.List },
             new MenuItem { Text = Res.MenuRecebimentoeEtiquetas, Url = Url.Action("", ""), RequirePermission = Permissions.Role.List },
-            new MenuItem { Text = Res.MenuRecebimentoQuarentena, Url = Url.Action("", ""), RequirePermission = Permissions.ApplicationLog.List },
+            new MenuItem { Text = Res.MenuRecebimentoQuarentena, Url = Url.Action("Index", "BOQuarentena"), RequirePermission = Permissions.ApplicationLog.List },
             new MenuItem { Text = Res.MenuRecebimentoRelatorios, Url = Url.Action("", ""), RequirePermission = Permissions.BOLogSystem.List }
         ),
         new MenuGroup(text: Res.UserMenuGroup, icon: "fa fa-user").SetItems(

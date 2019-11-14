@@ -47,12 +47,12 @@
                     @Html.TextBoxFor(m => m.Filter.Nota, new { @class = "form-control", data_field = "Nota" })
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
-                    @Html.LabelFor(m => m.Filter.DANFE)
-                    @Html.TextBoxFor(m => m.Filter.DANFE, new { @class = "form-control", data_field = "DANFE" })
+                    @Html.LabelFor(m => m.Filter.Chave)
+                    @Html.TextBoxFor(m => m.Filter.Chave, new { @class = "form-control", data_field = "DANFE" })
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.IdStatus)
-                    @Html.DropDownListFor(m => m.Filter.ListaStatus, Model.Filter.ListaStatus, "Selecione...", new { @class = "form-control", data_field = "IdStatus"})
+                    @Html.DropDownListFor(m => m.Filter.IdStatus, Model.Filter.ListaStatus, "Selecione...", new { @class = "form-control", data_field = "IdStatus"})
                 </div>
             </div>
             <div class="row">
@@ -167,8 +167,8 @@
                 <h2>Notas</h2>
                 <div class="nav navbar-right">
                     <div class="col-xs-12">
-                        <a id="downloadRelatorio" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
-                        <a id="imprimirRelatorio" class="btn btn-default"><i class="fa fa-fw fa-print"></i></a>
+                        <a id="downloadRelatorio" data-toggle="tooltip" title="Download Relatório" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
+                        <a id="imprimirRelatorio" data-toggle="tooltip" title="Imprimir Relatório" class="btn btn-default"><i class="fa fa-fw fa-print"></i></a>
                     </div>
                 </div>
                 <div class="clearfix"></div>

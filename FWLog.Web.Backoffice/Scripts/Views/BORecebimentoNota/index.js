@@ -86,7 +86,6 @@
     var $PrazoFinal = $('#Filter_PrazoFinal').closest('.date');
 
     var createLinkedPickers = function () {
-
         var dataInicial = $DataInicial.datetimepicker({
             locale: moment.locale(),
             format: 'L',
@@ -100,9 +99,12 @@
             allowInputToggle: true
         });
 
+        new dart.DateTimePickerLink(dataInicial, dataFinal, { ignoreTime: true });
+    };
+
+    var createLinkedPickes2 = function () {
         var prazoInicial = $PrazoInicial.datetimepicker({
             locale: moment.locale(),
-            useCurrent: false,
             format: 'L',
             allowInputToggle: true
         });
@@ -114,10 +116,26 @@
             allowInputToggle: true
         });
 
-        new dart.DateTimePickerLink(dataInicial, dataFinal, prazoInicial, prazoFinal, { ignoreTime: true });
-    };
+        new dart.DateTimePickerLink(prazoInicial, prazoFinal, { ignoreTime: true });
+    }
 
     createLinkedPickers();
+    createLinkedPickes2();
+
+    var iconeStatus = function (data, type, row) {
+        if (type === 'display') {
+            if (row.Atraso == 0)
+                return row.Lote != null ? '<i class="fa fa-circle icone-status-verde"></i>' + row.Lote : '<i class="fa fa-circle icone-status-verde"></i>';
+
+            if (row.Atraso > 0 && row.Atraso <= 2)
+                return row.Lote != null ? '<i class="fa fa-circle icone-status-amarelo"></i>' + row.Lote : '<i class="fa fa-circle icone-status-amarelo"></i>';
+
+            if (row.Atraso > 2)
+                return row.Lote != null ? '<i class="fa fa-circle icone-status-vermelho"></i>' + row.Lote : '<i class="fa fa-circle icone-status-vermelho"></i>';
+        }
+
+        return data;
+    };
 
     $('#dataTable').DataTable({
         ajax: {
@@ -125,6 +143,12 @@
             "type": "POST",
             "data": function (data) {
                 dart.dataTables.saveFilterToData(data);
+            },
+            "error": function (data) {
+                if (data.statusText != "") {
+                    PNotify.error({ text: data.statusText });
+                    NProgress.done();
+                }
             }
         },
         initComplete: function (settings, json) {
@@ -143,14 +167,14 @@
                 });
             });
         },
-        stateSaveParams: function (settings, data) {
-            dart.dataTables.saveFilterToData(data);
-        },
-        stateLoadParams: function (settings, data) {
-            dart.dataTables.loadFilterFromData(data);
-        },
+        //stateSaveParams: function (settings, data) {
+        //    dart.dataTables.saveFilterToData(data);
+        //},
+        //stateLoadParams: function (settings, data) {
+        //    dart.dataTables.loadFilterFromData(data);
+        //},
         columns: [
-            { data: 'Lote' },
+            { data: 'Lote', render: iconeStatus },
             { data: 'Nota' },
             { data: 'QuantidadePeca' },
             { data: 'QuantidadeVolume' },

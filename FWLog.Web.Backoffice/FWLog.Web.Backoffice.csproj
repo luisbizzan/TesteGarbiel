@@ -227,6 +227,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
     <Compile Include="Controllers\BOPrinterController.cs" />
+    <Compile Include="Controllers\BOQuarentenaController.cs" />
     <Compile Include="Controllers\BORecebimentoNotaController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
     <Compile Include="Controllers\FileController.cs" />
@@ -267,6 +268,7 @@
     <Compile Include="Models\BOPrinterCtx\BOPrinterListViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterCreateViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterSelecionarViewModel.cs" />
+    <Compile Include="Models\BOQuarentenaCtx\BOQuarentenaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODetalhesEntradaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODetalhesEtiquetaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODownloadRelatorioNotasViewModel.cs" />
@@ -419,6 +421,7 @@
     <Content Include="Scripts\Views\BOFornecedor\searchModal.js" />
     <Content Include="Scripts\Views\BOPrinter\selecionar.js" />
     <Content Include="Scripts\Views\BOPrinter\index.js" />
+    <Content Include="Scripts\Views\BOQuarentena\index.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\detalhesEntradaConferencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\index.js" />
     <Content Include="Scripts\Views\PrinterType\index.js" />
@@ -442,6 +445,7 @@
     <Content Include="Views\BORecebimentoNota\DetalhesEntradaConferencia.cshtml" />
     <Content Include="Views\BOFornecedor\SearchModal.cshtml" />
     <Content Include="Views\BOAccount\SearchModal.cshtml" />
+    <Content Include="Views\BOQuarentena\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

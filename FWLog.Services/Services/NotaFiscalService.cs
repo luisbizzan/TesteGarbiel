@@ -76,7 +76,7 @@ namespace FWLog.Services.Services
                     nota = new NotaFiscal();
                     nota.Numero = notaInt.NUMNOTA == null ? 0 : Convert.ToInt32(notaInt.NUMNOTA);
                     nota.Serie = notaInt.SERIENOTA == null ? 0 : Convert.ToInt32(notaInt.SERIENOTA);
-                    nota.CodigoNotaFiscal = codNota;
+                    nota.CodigoIntegracao = codNota;
 
                     nota.IdFornecedor = 41;//TODO Fazer integração de Fornecedor e ajustar vinculo notaInt.CODEMP;
                 }

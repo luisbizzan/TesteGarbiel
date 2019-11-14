@@ -24,7 +24,7 @@ namespace FWLog.Data.Models
         public int Quantidade { get; set; }
         public string Status { get; set; }
         public string Chave { get; set; }
-        public long CodigoNotaFiscal { get; set; }
+        public long CodigoIntegracao { get; set; }
         public long CompanyId { get; set; }
 
         [ForeignKey(nameof(IdFornecedor))]

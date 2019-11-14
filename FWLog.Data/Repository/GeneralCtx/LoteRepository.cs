@@ -46,7 +46,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "B.\"Quantidade\", " +
                             "B.\"Status\", " +
                             "B.\"Chave\", " +
-                            "B.\"CodigoNotaFiscal\", " +
+                            "B.\"CodigoIntegracao\", " +
                             "B.\"DataEmissao\", " +
                             "B.\"PrazoEntregaFornecedor\", " +
                             "B.\"CompanyId\", " +

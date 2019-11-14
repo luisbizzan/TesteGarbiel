@@ -35,9 +35,6 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
 
     public class BOPerfilUsuarioSearchModalFilterViewModel
     {
-        [Display(Name = "Código")]
-        public string UsuarioId { get; set; }
-
         [Display(Name = "Usuário")]
         public string UserName { get; set; }
 

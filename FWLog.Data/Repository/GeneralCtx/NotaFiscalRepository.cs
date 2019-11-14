@@ -10,7 +10,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                
         public NotaFiscal PegarNotaFiscal(long codigoNotaFiscal)
         {
-            return Entities.NotaFiscal.FirstOrDefault(f => f.CodigoNotaFiscal == codigoNotaFiscal);
+            return Entities.NotaFiscal.FirstOrDefault(f => f.CodigoIntegracao == codigoNotaFiscal);
         }
               
         public NotaFiscal PegarNotaFiscalPorChave(string chaveAcesso)

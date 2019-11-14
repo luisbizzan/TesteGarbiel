@@ -116,6 +116,8 @@
     <Compile Include="Models\PrinterType.cs" />
     <Compile Include="Models\Produto.cs" />
     <Compile Include="Models\NotaFiscalItem.cs" />
+    <Compile Include="Models\Quarentena.cs" />
+    <Compile Include="Models\QuarentenaStatus.cs" />
     <Compile Include="Models\Transportadora.cs" />
     <Compile Include="Models\UnidadeMedida.cs" />
     <Compile Include="Models\UserCompany.cs" />
@@ -152,6 +154,8 @@
     <Compile Include="Repository\GeneralCtx\NotaFiscalItemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TransportadoraRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UnidadeMedidaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UserCompanyRepository.cs" />

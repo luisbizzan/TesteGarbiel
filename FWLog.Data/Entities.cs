@@ -39,6 +39,8 @@ namespace FWLog.Data
         public virtual DbSet<Produto> Produto { get; set; }
         public virtual DbSet<Transportadora> Transportadora { get; set; }
         public virtual DbSet<UnidadeMedida> UnidadeMedida { get; set; }
+        public virtual DbSet<Quarentena> Quarentena { get; set; }
+        public virtual DbSet<QuarentenaStatus> QuarentenaStatus { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 

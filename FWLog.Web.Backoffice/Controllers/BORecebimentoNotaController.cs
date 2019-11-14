@@ -1,20 +1,18 @@
-﻿using FWLog.Services.Model.Relatorios;
-using FWLog.Services.Services;
-using FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx;
-using AutoMapper;
-using FWLog.Data;
+﻿using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Model.Relatorios;
+using FWLog.Services.Services;
+using FWLog.Web.Backoffice.EnumsAndConsts;
 using FWLog.Web.Backoffice.Helpers;
+using FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Mvc;
-using FWLog.Data.Models;
-using System.Net.Sockets;
 using System.Net;
-using System.Globalization;
-using Newtonsoft.Json;
+using System.Net.Sockets;
+using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -48,11 +46,19 @@ namespace FWLog.Web.Backoffice.Controllers
                 )
             };
 
+            model.Filter.IdStatus = StatusNotaRecebimento.AguardandoRecebimento.GetHashCode();
+            model.Filter.PrazoInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
+            model.Filter.PrazoFinal = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
+
             return View(model);
         }
 
         public ActionResult PageData(DataTableFilter<BORecebimentoNotaFilterViewModel> model)
         {
+            if (!(model.CustomFilter.PrazoInicial.HasValue || model.CustomFilter.PrazoFinal.HasValue))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Os campos prazo inicial e prazo final obrigatoriamente deverão ser preenchidos.");
+
+
             List<BORecebimentoNotaListItemViewModel> boRecebimentoNotaListItemViewModel = new List<BORecebimentoNotaListItemViewModel>();
             int totalRecords = 0;
             int totalRecordsFiltered = 0;
@@ -61,8 +67,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
             totalRecords = query.Count();
 
-            if (!string.IsNullOrEmpty(model.CustomFilter.DANFE))
-                query = query.Where(x => x.NotaFiscal.DANFE == model.CustomFilter.DANFE);
+            if (!string.IsNullOrEmpty(model.CustomFilter.Chave))
+                query = query.Where(x => !String.IsNullOrEmpty(x.NotaFiscal.Chave) && x.NotaFiscal.DANFE.Contains(model.CustomFilter.Chave));
 
             if (model.CustomFilter.Lote.HasValue)
                 query = query.Where(x => x.IdLote == Convert.ToInt32(model.CustomFilter.Lote));
@@ -117,21 +123,23 @@ namespace FWLog.Web.Backoffice.Controllers
                     //Atribui 0 para dias em atraso.
                     long? atraso = 0;
 
-                    //Se a mercadoria for igual a null, o atraso já será considerado 0. Caso contrário, entra no IF para outras validações.
+                    //Se o prazo de entrega do fornecedor for igual a null, o atraso já será considerado 0. Caso contrário, entra no IF para outras validações.
                     if (item.NotaFiscal.PrazoEntregaFornecedor != null)
                     {
                         //Atribui o prazo de entrega da nota fiscal.
                         DateTime prazoEntrega = item.NotaFiscal.PrazoEntregaFornecedor;
 
-                        //Se a data de recebimento for nula, compara a data atual com o prazo de entrega para calcular os dias em atraso.
+                        //Se a data de recebimento for nula, captura a quantidade de dias entre o prazo de entrega e a data atual.
                         if (!item.DataRecebimento.HasValue)
+                        {
                             if (DateTime.Now > prazoEntrega)
                                 atraso = (DateTime.Now - prazoEntrega).Days;
-                            else //Se a data de recebimento NÃO for nula, compara a data do recebimento com o prazo de entrega para calcular os dias em atraso.
-                            {
-                                if (item.DataRecebimento > prazoEntrega)
+                        }
+                        else //Se a data de recebimento NÃO for nula, captura a quantidade de dias entre o prazo de entrega e a data de recebimento.
+                        {
+                            if (item.DataRecebimento > prazoEntrega)
                                 atraso = (item.DataRecebimento - prazoEntrega).Value.Days;
-                            }
+                        }
                     }
 
                     boRecebimentoNotaListItemViewModel.Add(new BORecebimentoNotaListItemViewModel()
@@ -159,12 +167,19 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!String.IsNullOrEmpty(model.CustomFilter.IdUsuarioRecebimento))
                 boRecebimentoNotaListItemViewModel = boRecebimentoNotaListItemViewModel.Where(x => x.IdUsuarioRecebimento == model.CustomFilter.IdUsuarioRecebimento).ToList();
 
+            totalRecordsFiltered = boRecebimentoNotaListItemViewModel.Count();
+
+            var result = boRecebimentoNotaListItemViewModel
+                .OrderBy(model.OrderByColumn, model.OrderByDirection)
+                .Skip(model.Start)
+                .Take(model.Length);
+
             return DataTableResult.FromModel(new DataTableResponseModel()
             {
                 Draw = model.Draw,
                 RecordsTotal = totalRecords,
                 RecordsFiltered = totalRecordsFiltered,
-                Data = boRecebimentoNotaListItemViewModel
+                Data = result
             });
         }
 
