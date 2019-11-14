@@ -8,6 +8,7 @@ using System.Linq;
 using FWLog.Data;
 using System.Transactions;
 using System.Xml.Linq;
+using FWLog.Data.EnumsAndConsts;
 
 namespace FWLog.Services.Services
 {
@@ -24,77 +25,49 @@ namespace FWLog.Services.Services
 
         public async Task ConsultaNotaFiscalCompra()
         {
-            List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecuteQuery<NotaFiscalIntegracao>();
+            var where = "TGFCAB.TIPMOV = 'C' AND TGFCAB.STATUSNOTA <> 'L' AND TGFCAB.AD_STATUSREC <> 0";
+            List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecuteQuery<NotaFiscalIntegracao>(where);
 
             var tiposFrete = _uow.FreteTipoRepository.GetAll();
 
             foreach (var notaInt in notasIntegracao)
             {
-                if (notaInt.NUMNOTA == null)
-                {
-                    //throw new NullReferenceException("NUMNOTA");
-                }
+                ValidarNotaFiscalIntegracao(notaInt);
 
-                if (notaInt.SERIENOTA == null)
-                {
-                    //throw new NullReferenceException("SERIENOTA");
-                }
-
-                if (notaInt.VLRNOTA == null)
-                {
-                    //throw new NullReferenceException("VLRNOTA");
-                }
-
-                if (notaInt.VLRFRETE == null)
-                {
-                    // throw new NullReferenceException("VLRFRETE");
-                }
-
-                if (notaInt.NUMCF == null)
-                {
-                    //throw new NullReferenceException("NUMCF");
-                }
-
-                if (notaInt.PESOBRUTO == null)
-                {
-                    //throw new NullReferenceException("PESOBRUTO");
-                }
-
-                if (notaInt.QTDVOL == null)
-                {
-                    //throw new NullReferenceException("QTDVOL");
-                }
-
-                bool notaNova = false;
+                bool notaNova = true;
                 var codNota = notaInt.NUNOTA == null ? 0 : Convert.ToInt64(notaInt.NUNOTA);
 
                 NotaFiscal nota = _uow.NotaFiscalRepository.PegarNotaFiscal(codNota);
 
-                if (nota == null)
+                if (nota != null)
                 {
-                    notaNova = true;
+                    notaNova = false;
+                    nota.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode();
 
-                    nota = new NotaFiscal();
+                    //TODO verificar lote aberto
+                }
+                else
+                {
                     nota.Numero = notaInt.NUMNOTA == null ? 0 : Convert.ToInt32(notaInt.NUMNOTA);
                     nota.Serie = notaInt.SERIENOTA == null ? 0 : Convert.ToInt32(notaInt.SERIENOTA);
-                    nota.CodigoIntegracao = codNota;
-
-                    nota.IdFornecedor = 41;//TODO Fazer integração de Fornecedor e ajustar vinculo notaInt.CODEMP;
+                    nota.CodigoIntegracao = codNota;                    
+                    nota.DANFE = notaInt.DANFE;
+                    nota.ValorTotal = notaInt.VLRNOTA == null ? 0 : Convert.ToDecimal(notaInt.VLRNOTA);
+                    nota.ValorFrete = notaInt.VLRFRETE == null ? 0 : Convert.ToDecimal(notaInt.VLRFRETE);
+                    nota.NumeroConhecimento = notaInt.NUMCF == null ? 0 : Convert.ToInt64(notaInt.NUMCF);
+                    nota.PesoBruto = notaInt.PESOBRUTO == null ? 0 : Convert.ToDecimal(notaInt.PESOBRUTO);
+                    nota.Quantidade = notaInt.QTDVOL == null ? 0 : Convert.ToInt32(notaInt.QTDVOL);
+                    nota.IdFreteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notaInt.CIF_FOB).IdFreteTipo;
+                    nota.Especie = notaInt.VOLUME;
+                    nota.StatusIntegracao = notaInt.STATUSNOTA == null ? "0" : notaInt.STATUSNOTA;
+                    nota.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode();
+                    nota.Chave = notaInt.CHAVENFE == null ? "0" : notaInt.CHAVENFE;
+                    nota.IdTransportadora = 41;//TODO Fazer integração de Transportadora e ajustar vinculo - notaInt.CODPARCTRANSP;
+                    nota.IdFornecedor = 41;//TODO Fazer integração de Fornecedor e ajustar vinculo notaInt.CODPARC;
+                    nota.CompanyId = 1;//TODO Fazer integração de Empresa e ajustar vinculo notaInt.CODEMP;
+                    nota.DataEmissao = notaInt.DHEMISSEPEC == null ? DateTime.Now : Convert.ToDateTime(notaInt.DHEMISSEPEC); //TODO validar campo geovane;
                 }
 
-                nota.DANFE = notaInt.DANFE;
-                nota.ValorTotal = notaInt.VLRNOTA == null ? 0 : Convert.ToDecimal(notaInt.VLRNOTA);
-                nota.ValorFrete = notaInt.VLRFRETE == null ? 0 : Convert.ToDecimal(notaInt.VLRFRETE);
-                nota.NumeroConhecimento = notaInt.NUMCF == null ? 0 : Convert.ToInt64(notaInt.NUMCF);
-                nota.PesoBruto = notaInt.PESOBRUTO == null ? 0 : Convert.ToDecimal(notaInt.PESOBRUTO);
-                nota.Quantidade = notaInt.QTDVOL == null ? 0 : Convert.ToInt32(notaInt.QTDVOL);
-                nota.IdFreteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notaInt.CIF_FOB).IdFreteTipo;
-                nota.Especie = "Volumes";//TODO Não desconhecido
-                nota.Status = notaInt.STATUSNOTA == null ? "0" : notaInt.STATUSNOTA;
-                nota.Chave = notaInt.CHAVENFE == null ? "0" : notaInt.CHAVENFE;
-                nota.IdTransportadora = 41;//TODO Fazer integração de Transportadora e ajustar vinculo - notaInt.CODPARCTRANSPFINAL;
-                //TODO baixar campo de emissão
-                //TODO prazo do fornecedor
                 if (notaNova)
                 {
                     _uow.NotaFiscalRepository.Add(nota);
@@ -103,9 +76,9 @@ namespace FWLog.Services.Services
                 await _uow.SaveChangesAsync();
 
                 await ConsultaNotaFiscalItemCompra(codNota);
-            }
 
-            //TODO atualizar status de notas consultadas.
+                //await AtualizarStatusNota(nota);
+            }
         }
 
         private async Task ConsultaNotaFiscalItemCompra(long codigoIntegracao)
@@ -120,11 +93,8 @@ namespace FWLog.Services.Services
 
             foreach (var itemInt in itensIntegracao)
             {
-                if (itemInt.NUNOTA == null)
-                {
-                    //throw new NullReferenceException("NUMNOTA");
-                }
-
+                ValidarNotaFiscalItemIntegracao(itemInt);
+                
                 bool itemNovo = false;
                 var codNota = Convert.ToInt64(itemInt.NUNOTA);
                 var codProduto = itemInt.CODPROD == null ? 0 : Convert.ToInt64(itemInt.CODPROD);
@@ -158,12 +128,10 @@ namespace FWLog.Services.Services
             await _uow.SaveChangesAsync();
         }
 
-        public async Task AtualizarStatusNota(long idNotaFiscal, int status)
+        public async Task AtualizarStatusNota(NotaFiscal notaFiscal)
         {
-            var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
-            
-            XElement dataRow = new XElement("dataRow", new XElement("localFields", new XElement("STATUSNOTA", status)));
-            dataRow.Add(new XElement("key", new XElement("NUNOTA", notafiscal.CodigoIntegracao)));
+            XElement dataRow = new XElement("dataRow", new XElement("localFields", new XElement("STATUSNOTA", notaFiscal.IdNotaFiscalStatus)));
+            dataRow.Add(new XElement("key", new XElement("NUNOTA", notaFiscal.CodigoIntegracao)));
 
             XAttribute[] attArray = {
                 new XAttribute("rootEntity", "CabecalhoNota"),
@@ -181,6 +149,42 @@ namespace FWLog.Services.Services
             serviceRequest.Add(new XElement("requestBody", datset));
 
             await IntegracaoSankhya.Instance.ExecutarSaveRecord(serviceRequest);
+        }
+
+        public void ValidarNotaFiscalItemIntegracao(NotaFiscalItemIntegracao itemInt)
+        {
+            ValidarCampo(itemInt.NUNOTA);
+            ValidarCampo(itemInt.CODVOL);
+            ValidarCampo(itemInt.QTDNEG);
+            ValidarCampo(itemInt.VLRUNIT);
+            ValidarCampo(itemInt.VLRTOT);
+            ValidarCampo(itemInt.CODPROD);
+        }
+
+        public void ValidarNotaFiscalIntegracao(NotaFiscalIntegracao notafiscal)
+        {
+            ValidarCampo(notafiscal.NUNOTA);
+            ValidarCampo(notafiscal.NUMNOTA);
+            ValidarCampo(notafiscal.SERIENOTA);
+            ValidarCampo(notafiscal.CODEMP);
+            ValidarCampo(notafiscal.DANFE);
+            ValidarCampo(notafiscal.CHAVENFE);
+            ValidarCampo(notafiscal.VLRNOTA);
+            ValidarCampo(notafiscal.CIF_FOB);
+            ValidarCampo(notafiscal.CODPARC);
+            ValidarCampo(notafiscal.STATUSNOTA);
+            ValidarCampo(notafiscal.CODPARCTRANSP);
+            ValidarCampo(notafiscal.VLRFRETE);
+            ValidarCampo(notafiscal.NUMCF);
+            ValidarCampo(notafiscal.PESOBRUTO);
+            ValidarCampo(notafiscal.VOLUME);
+            ValidarCampo(notafiscal.QTDVOL);
+            ValidarCampo(notafiscal.DHEMISSEPEC);          
+        }
+
+        public void ValidarCampo(string campo)
+        {
+            throw new NullReferenceException(campo);
         }
     }
 }

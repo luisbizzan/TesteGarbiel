@@ -6,20 +6,23 @@ namespace FWLog.Services.Model
     [TabelaIntegracao(DisplayName = "TGFCAB")]
     public class NotaFiscalIntegracao
     {
-        public string NUNOTA { get; set; }
-        public string NUMNOTA { get; set; }
-        public string SERIENOTA { get; set; }
-        public string CODPARCTRANSP { get; set; }
-        public string CHAVENFE { get; set; }
-        public string DANFE { get; set; }
-        public string VLRNOTA { get; set; }
-        public string CIF_FOB { get; set; }
-        public string CODEMP { get; set; }
-        public string STATUSNOTA { get; set; }
-        public string VLRFRETE { get; set; }
-        public string PESOBRUTO { get; set; }
-        public string QTDVOL { get; set; }
-        public string NUMCF { get; set; }
+        public string NUNOTA { get; set; } //CodigoIntegracao
+        public string NUMNOTA { get; set; } //Numero
+        public string SERIENOTA { get; set; } //Serie
+        public string CODEMP { get; set; } //CompanyId
+        public string DANFE { get; set; } //DANFE
+        public string CHAVENFE { get; set; } //Chave
+        public string VLRNOTA { get; set; } //ValorTotal
+        public string CIF_FOB { get; set; } //IdFreteTipo
+        public string CODPARC { get; set; } //IdFornecedor
+        public string STATUSNOTA { get; set; } //StatusIntegracao
+        public string CODPARCTRANSP { get; set; } //IdTransportadora       
+        public string VLRFRETE { get; set; } //ValorFrete
+        public string NUMCF { get; set; } //NumeroConhecimento
+        public string PESOBRUTO { get; set; } //PesoBruto
+        public string VOLUME { get; set; } //Especie
+        public string QTDVOL { get; set; } //Quantidade
+        public string DHEMISSEPEC { get; set; } //DataEmissao
     }
 }
 

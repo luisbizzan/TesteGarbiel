@@ -13,7 +13,7 @@ namespace FWLog.Data.Models
         public string DANFE { get; set; }
         public long IdFornecedor { get; set; }
         public DateTime DataEmissao { get; set; }
-        public DateTime PrazoEntregaFornecedor { get; set; }
+        public DateTime PrazoEntregaFornecedor { get; set; } //TODO Aguardando resposta do Geovane para verificar se este campo deve ficar nesta classe
         public decimal ValorTotal { get; set; }
         public long IdTransportadora { get; set; }
         public long IdFreteTipo { get; set; }
@@ -22,7 +22,8 @@ namespace FWLog.Data.Models
         public decimal PesoBruto { get; set; }        
         public string Especie { get; set; }
         public int Quantidade { get; set; }
-        public string Status { get; set; }
+        public string StatusIntegracao { get; set; }
+        public long IdNotaFiscalStatus { get; set; }
         public string Chave { get; set; }
         public long CodigoIntegracao { get; set; }
         public long CompanyId { get; set; }
@@ -35,5 +36,8 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdFreteTipo))]
         public virtual FreteTipo FreteTipo { get; set; }
+
+        [ForeignKey(nameof(CompanyId))]
+        public virtual Company Company { get; set; }
     }
 }
