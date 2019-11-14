@@ -66,9 +66,9 @@
                 visible: view.registrarRecebimento
             },
             {
-                text: "Registrar Conferência",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
-                icon: 'fa fa-check-square',
+                text: "Conferir Nota",
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'conferirNota' },
+                icon: 'fa fa-check-square-o',
                 visible: view.registrarRecebimento
             },
             {
@@ -76,17 +76,6 @@
                 attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
                 icon: 'fa fa-warning',
                 visible: view.registrarRecebimento
-            },
-            {
-                text: "Conferir Nota",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'conferirNota' },
-                icon: 'fa fa-check-square-o',
-                visible: view.registrarRecebimento
-            },
-            {
-                action: 'delete',
-                attrs: { 'data-delete-url': view.deleteUrl + '?id=' + full.Id },
-                visible: view.deleteVisible
             }
         ];
     });

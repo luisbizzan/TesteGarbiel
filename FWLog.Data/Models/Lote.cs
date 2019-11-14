@@ -28,7 +28,7 @@ namespace FWLog.Data.Models
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
         [Display(Name = "Data de Recebimento")]
         [Log(DisplayName = "Data de Recebimento")]
-        public DateTime? DataRecebimento { get; set; }
+        public DateTime DataRecebimento { get; set; }
 
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
         [Display(Name = "Quantidade de Volumes")]

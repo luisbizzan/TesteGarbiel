@@ -12,10 +12,6 @@
 			{
 				detalhesEntradaConferencia = Url.Action("DetalhesEntradaConferencia"),
 				detailsVisible = User.HasPermission(Permissions.Recebimento.List),
-				editUrl = Url.Action("Edit"),
-				editVisible = User.HasPermission(Permissions.Recebimento.Edit),
-				deleteUrl = Url.Action("AjaxDelete"),
-				deleteVisible = User.HasPermission(Permissions.Recebimento.List),
 				pageDataUrl = Url.Action("PageData"),
 				registrarRecebimento = User.HasPermission(Permissions.Recebimento.RegistrarRecebimento),
 				registrarRecebimentoUrl = Url.Action("ExibirModalRegistroRecebimento"),

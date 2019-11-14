@@ -111,6 +111,7 @@
     <Compile Include="Models\FreteTipo.cs" />
     <Compile Include="Models\Lote.cs" />
     <Compile Include="Models\LoteStatus.cs" />
+    <Compile Include="Models\NotaFiscalStatus.cs" />
     <Compile Include="Models\PerfilUsuario.cs" />
     <Compile Include="Models\GeneralCtx\CompanySelectedItem.cs" />
     <Compile Include="Models\Printer.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="Repository\GeneralCtx\LoteStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalItemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\NotaFiscalStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />

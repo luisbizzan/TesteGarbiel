@@ -35,6 +35,12 @@ namespace FWLog.Data
         private NotaFiscalItemRepository _notaFiscalItemRepository;
         private QuarentenaRepository _quarentenaRepository;
         private QuarentenaStatusRepository _quarentenaStatusRepository;
+        private NotaFiscalStatusRepository _notaFiscalStatusRepository;
+
+        public NotaFiscalStatusRepository NotaFiscalStatusRepository
+        {
+            get => _notaFiscalStatusRepository ?? (_notaFiscalStatusRepository = new NotaFiscalStatusRepository(_context));
+        }
 
         public QuarentenaStatusRepository QuarentenaStatusRepository
         {

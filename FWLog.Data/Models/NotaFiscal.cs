@@ -39,5 +39,8 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(CompanyId))]
         public virtual Company Company { get; set; }
+
+        [ForeignKey(nameof(IdNotaFiscalStatus))]
+        public virtual NotaFiscalStatus NotaFiscalStatus { get; set; }
     }
 }
