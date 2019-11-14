@@ -55,7 +55,7 @@ namespace ExtensionMethods
         /// <param name="source">Fonte de dados.</param>
         /// <param name="pageConfiguration">Configuração da página requerente.</param>
         /// <returns></returns>
-        public static IList<TSource> PaginationResult<TSource>(this IEnumerable<TSource> source, DataTableFilter pageConfiguration)
+        public static List<TSource> PaginationResult<TSource>(this IEnumerable<TSource> source, DataTableFilter pageConfiguration)
         {
             return source
                     .OrderBy(pageConfiguration.OrderByColumn, pageConfiguration.OrderByDirection)
