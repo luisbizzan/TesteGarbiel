@@ -270,6 +270,7 @@
     <Compile Include="Models\BOPrinterCtx\BOPrinterSelecionarViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOQuarentenaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODetalhesEntradaConferenciaViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\BOEntradaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODetalhesEtiquetaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODownloadRelatorioNotasViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirRelatorioNotasViewModel.cs" />
@@ -295,6 +296,7 @@
       <LastGenOutput>PrinterTypeStrings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources</CustomToolNamespace>
     </EmbeddedResource>
+    <Content Include="favicon.ico" />
     <Content Include="Scripts\dart\autoComplete.js" />
     <Content Include="Scripts\dart\company.js" />
     <Content Include="Scripts\dart\documentReady.js" />
@@ -446,6 +448,7 @@
     <Content Include="Views\BOFornecedor\SearchModal.cshtml" />
     <Content Include="Views\BOAccount\SearchModal.cshtml" />
     <Content Include="Views\BOQuarentena\Index.cshtml" />
+    <Content Include="Views\BORecebimentoNota\EntradaConferencia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

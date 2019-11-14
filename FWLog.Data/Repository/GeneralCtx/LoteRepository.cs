@@ -80,5 +80,10 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return lote;
         }
+
+        public Lote ObterLoteNota(long idNotaFiscal)
+        {
+            return Entities.Lote.Where(w => w.IdNotaFiscal == idNotaFiscal).FirstOrDefault();
+        }
     }
 }

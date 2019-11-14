@@ -13,6 +13,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Web.Mvc;
+using System.Globalization;
+using Newtonsoft.Json;
+using FWLog.Data.EnumsAndConsts;
+using System.Threading.Tasks;
+using FWLog.AspNet.Identity;
+>>>>>>> 41f3a1fcf2c6286edf44d5046e042e766e2cd141
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -20,13 +26,15 @@ namespace FWLog.Web.Backoffice.Controllers
     {
 
         private readonly RelatorioService _relatorioService;
-        private readonly LoteService _LoteService;
+        private readonly LoteService _loteService;
+        private readonly ApplicationLogService _applicationLogService;
         private readonly UnitOfWork _uow;
 
-        public BORecebimentoNotaController(UnitOfWork uow, RelatorioService relatorioService, LoteService loteService)
+        public BORecebimentoNotaController(UnitOfWork uow, RelatorioService relatorioService, LoteService loteService, ApplicationLogService applicationLogService)
         {
-            _LoteService = loteService;
+            _loteService = loteService;
             _relatorioService = relatorioService;
+            _applicationLogService = applicationLogService;
             _uow = uow;
         }
 
@@ -36,8 +44,8 @@ namespace FWLog.Web.Backoffice.Controllers
             var model = new BORecebimentoNotaListViewModel();
 
             model.Filter = new BORecebimentoNotaFilterViewModel()
-            {
-                ListaStatus = new SelectList(
+                {
+                    ListaStatus = new SelectList(
                     _uow.LoteStatusRepository.GetAll().Select(x => new SelectListItem
                     {
                         Value = x.IdLoteStatus.ToString(),
@@ -134,6 +142,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         {
                             if (DateTime.Now > prazoEntrega)
                                 atraso = (DateTime.Now - prazoEntrega).Days;
+
                         }
                         else //Se a data de recebimento NÃO for nula, captura a quantidade de dias entre o prazo de entrega e a data de recebimento.
                         {
@@ -197,6 +206,21 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(viewModel);
         }
 
+
+        [HttpGet]
+        public ActionResult EntradaConferencia()
+        {
+            var viewModel = new BODetalhesEtiquetaConferenciaViewModel
+            {
+                NumeroNotaFiscal = "42-10/04-84.684.182/0001-57-55-001-000.000.002-010.804.210-8",
+                DataHoraRecebimento = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+                NomeFornecedor = "Nome do Fornecedor Nota Fiscal",
+                QuantidadeVolumes = "05"
+            };
+
+            return View(viewModel);
+        }
+
         [HttpPost]
         public ActionResult DownloadRelatorioNotas(BODownloadRelatorioNotasViewModel viewModel)
         {
@@ -223,6 +247,25 @@ namespace FWLog.Web.Backoffice.Controllers
             return File(relatorio, "application/pdf", "Relatório Recebimento Notas.pdf");
         }
 
+        public JsonResult ValidarModalRegistroRecebimento(long id)
+        {
+            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+
+            if (lote != null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Recebimento da mecadoria já efetivado no sistema.",
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+        }
+
         public ActionResult ExibirModalRegistroRecebimento(long id)
         {
             var modal = new BORegistroRecebimentoViewModel();
@@ -230,14 +273,13 @@ namespace FWLog.Web.Backoffice.Controllers
             modal.IdNotaFiscal = id;
 
             return PartialView("RegistroRecebimento", modal);
-
         }
 
         public JsonResult ValidarNotaFiscalRegistro(string chaveAcesso, long idNotaFiscal)
         {
             var model = new BORegistroRecebimentoViewModel();
 
-            var notafiscal = _uow.NotaFiscalRepository.GetById(Convert.ToInt64(idNotaFiscal));
+            var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
 
             if (notafiscal.Chave != chaveAcesso)
             {
@@ -255,7 +297,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Já existe um lote aberto para esta nota fiscal",
+                    Message = "Recebimento da mecadoria já efetivado no sistema.",
                 });
             }
 
@@ -288,9 +330,9 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("RegistroRecebimentoDetalhes", model);
         }
 
-        public JsonResult RegistrarRecebimentoNota(long idNotaFiscal, DateTime dataRecebimento, int qtdVolumes)
+        public async Task<JsonResult> RegistrarRecebimentoNota(long idNotaFiscal, DateTime dataRecebimento, int qtdVolumes, bool notaFiscalPesquisada)
         {
-            if (!(idNotaFiscal > 0) || !(qtdVolumes > 0))
+            if (!(idNotaFiscal > 0) || !(qtdVolumes > 0) || !notaFiscalPesquisada)
             {
                 return Json(new AjaxGenericResultModel
                 {
@@ -299,8 +341,21 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            var userInfo = new BackOfficeUserInfo();
-            _LoteService.RegistrarRecebimentoNotaFiscal(idNotaFiscal, userInfo.UserId.ToString(), dataRecebimento, qtdVolumes);
+            try
+            {
+                var userInfo = new BackOfficeUserInfo();
+                await _loteService.RegistrarRecebimentoNotaFiscal(idNotaFiscal, userInfo.UserId.ToString(), dataRecebimento, qtdVolumes);
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu uma instabilidade com a Integração do Sankhya, não foi possível registrar o recebimento da nota fiscal. Tente novamente."
+                });
+            }
 
             return Json(new AjaxGenericResultModel
             {
@@ -371,8 +426,63 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult DetalhesEntradaConferencia(long id)
         {
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+            
+            var model = new BODetalhesEntradaConferenciaViewModel
+            {
+                DANFE = notaFiscal.DANFE,
+                NumeroNotaFiscal = notaFiscal.Numero.ToString(),
+                StatusNotaFiscal = notaFiscal.StatusIntegracao,
+                Fornecedor = string.Concat(notaFiscal.Fornecedor.Codigo, " - ", notaFiscal.Fornecedor.RazaoSocial),
+                Quantidade = notaFiscal.Quantidade.ToString(),
+                DataCompra = notaFiscal.DataEmissao.ToString("dd/MM/yyyy"),
+                PrazoRecebimento = notaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
+                FornecedorCNPJ = notaFiscal.Fornecedor.CNPJ,
+                ValorTotal = notaFiscal.ValorTotal.ToString("C"),
+                ValorFrete = notaFiscal.ValorFrete.ToString("C"),
+                NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
+                PesoConhecimento = notaFiscal.PesoBruto.ToString(),
+                TransportadoraNome = notaFiscal.Transportadora.RazaoSocial,
+                DiasAtraso = "0"
+            };
 
-            var model = new BODetalhesEntradaConferenciaViewModel();
+            Lote lote = _uow.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
+
+            if(lote != null)
+            {
+                model.IsNotaRecebida = true;
+                model.NumeroLote = lote.IdLote.ToString();
+                model.DataChegada = lote.DataRecebimento.Value.ToString("dd/MM/yyyy");
+                model.UsuarioRecebimento = lote.UsuarioRecebimento.UserName;
+                model.Volumes = lote.QuantidadeVolume.ToString();
+
+                if (lote.DataRecebimento.Value > notaFiscal.PrazoEntregaFornecedor)
+                {
+                    TimeSpan atraso = notaFiscal.PrazoEntregaFornecedor.Subtract(lote.DataRecebimento.Value);
+                    model.DiasAtraso = atraso.Days.ToString();
+                }
+            }
+
+            model.Items = new List<BODetalhesEntradaConferenciaItem>();
+
+            List<NotaFiscalItem> listaItensNotaFiscal = _uow.NotaFiscalItemRepository.ObterItens(notaFiscal.IdNotaFiscal);
+
+            if (model.IsNotaRecebida == false)
+            {
+                foreach (NotaFiscalItem notaFiscalItem in listaItensNotaFiscal)
+                {
+                    var entradaConferenciaItem = new BODetalhesEntradaConferenciaItem
+                    {
+                        Referencia = notaFiscalItem.Produto.Referencia,
+                        Quantidade = notaFiscalItem.Quantidade.ToString(),
+                        UsuarioConferencia = "Não Conferido",
+                        DataInicioConferencia = "Não Conferido",
+                        DataFimConferencia = "Não Conferido",
+                        TempoTotalConferencia = "Não Conferido"
+                    };
+
+                    model.Items.Add(entradaConferenciaItem);
+                }
+            }
 
             return View(model);
         }
