@@ -17,6 +17,7 @@ using System.Globalization;
 using Newtonsoft.Json;
 using FWLog.Data.EnumsAndConsts;
 using System.Threading.Tasks;
+using FWLog.AspNet.Identity;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -388,54 +389,62 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult DetalhesEntradaConferencia(long id)
         {
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
-
+            
             var model = new BODetalhesEntradaConferenciaViewModel
             {
                 DANFE = notaFiscal.DANFE,
-                NumeroLote = "-",
                 NumeroNotaFiscal = notaFiscal.Numero.ToString(),
-                DataChegada = "",
                 StatusNotaFiscal = notaFiscal.Status,
                 Fornecedor = string.Concat(notaFiscal.Fornecedor.Codigo, " - ", notaFiscal.Fornecedor.RazaoSocial),
                 Quantidade = notaFiscal.Quantidade.ToString(),
-                DiasAtraso = "-",
                 DataCompra = notaFiscal.DataEmissao.ToString("dd/MM/yyyy"),
-                Volumes = "-",
-                PrazoRecebimento = "-",
+                PrazoRecebimento = notaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
                 FornecedorCNPJ = notaFiscal.Fornecedor.CNPJ,
-                UsuarioRecebimento = "-",
-                ValorTotal = notaFiscal.ValorTotal.ToString(),
-                ValorFrete = notaFiscal.ValorFrete.ToString(),
+                ValorTotal = notaFiscal.ValorTotal.ToString("C"),
+                ValorFrete = notaFiscal.ValorFrete.ToString("C"),
                 NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
-                PesoConhecimento = "-",
+                PesoConhecimento = notaFiscal.PesoBruto.ToString(),
                 TransportadoraNome = notaFiscal.Transportadora.RazaoSocial,
-                ConferenciaTipo = "-",
-                UsuarioConferencia = "-",
-                DataInicioConferencia = "-",
-                DataFimConferencia = "-",
-                TempoTotalConferencia = "-",
-                IsNotaRecebida = true,
-                IsNotaConferida = true,
-                IsNotaDivergente = true
+                DiasAtraso = "0"
             };
+
+            Lote lote = _uow.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
+
+            if(lote != null)
+            {
+                model.IsNotaRecebida = true;
+                model.NumeroLote = lote.IdLote.ToString();
+                model.DataChegada = lote.DataRecebimento.Value.ToString("dd/MM/yyyy");
+                model.UsuarioRecebimento = lote.UsuarioRecebimento.UserName;
+                model.Volumes = lote.QuantidadeVolume.ToString();
+
+                if (lote.DataRecebimento.Value > notaFiscal.PrazoEntregaFornecedor)
+                {
+                    TimeSpan atraso = notaFiscal.PrazoEntregaFornecedor.Subtract(lote.DataRecebimento.Value);
+                    model.DiasAtraso = atraso.Days.ToString();
+                }
+            }
 
             model.Items = new List<BODetalhesEntradaConferenciaItem>();
 
-            List<NotaFiscalItem> listaItensNotaFiscal = _uow.NotaFiscalItemRepository.PegarItens(notaFiscal.IdNotaFiscal);
+            List<NotaFiscalItem> listaItensNotaFiscal = _uow.NotaFiscalItemRepository.ObterItens(notaFiscal.IdNotaFiscal);
 
-            foreach(NotaFiscalItem notaFiscalItem in listaItensNotaFiscal)
+            if (model.IsNotaRecebida == false)
             {
-                var entradaConferenciaItem = new BODetalhesEntradaConferenciaItem
+                foreach (NotaFiscalItem notaFiscalItem in listaItensNotaFiscal)
                 {
-                    Referencia = "-",
-                    Quantidade = notaFiscalItem.Quantidade.ToString(),
-                    UsuarioConferencia = "-",
-                    DataInicioConferencia = "-",
-                    DataFimConferencia = "-",
-                    TempoTotalConferencia = "-"
-                };
+                    var entradaConferenciaItem = new BODetalhesEntradaConferenciaItem
+                    {
+                        Referencia = notaFiscalItem.Produto.Referencia,
+                        Quantidade = notaFiscalItem.Quantidade.ToString(),
+                        UsuarioConferencia = "Não Conferido",
+                        DataInicioConferencia = "Não Conferido",
+                        DataFimConferencia = "Não Conferido",
+                        TempoTotalConferencia = "Não Conferido"
+                    };
 
-                model.Items.Add(entradaConferenciaItem);
+                    model.Items.Add(entradaConferenciaItem);
+                }
             }
 
             return View(model);
