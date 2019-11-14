@@ -600,9 +600,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
             totalRecords = query.Count();
 
-            if (!String.IsNullOrEmpty(model.CustomFilter.UsuarioId))
-                query = query.Where(x => x.UsuarioId.Contains(model.CustomFilter.UsuarioId));
-
             if (!string.IsNullOrEmpty(model.CustomFilter.UserName))
                 query = query.Where(x => x.Usuario.UserName.Contains(model.CustomFilter.UserName));
 
@@ -623,12 +620,19 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
+            totalRecordsFiltered = boPerfilUsuarioSearchModalFilterViewModel.Count();
+
+            var result = boPerfilUsuarioSearchModalFilterViewModel
+                .OrderBy(model.OrderByColumn, model.OrderByDirection)
+                .Skip(model.Start)
+                .Take(model.Length);
+
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
                 RecordsTotal = totalRecords,
                 RecordsFiltered = totalRecordsFiltered,
-                Data = boPerfilUsuarioSearchModalFilterViewModel
+                Data = result
             });
         }
     }

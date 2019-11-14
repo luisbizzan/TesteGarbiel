@@ -115,6 +115,21 @@ footer {
     font-size: 12px !important;
 }
 
+.icone-status-amarelo {
+    padding-right: 10px;
+    color: gold;
+}
+
+.icone-status-vermelho {
+    padding-right: 10px;
+    color: red;
+}
+
+.icone-status-verde {
+    padding-right: 10px;
+    color: green;
+}
+
 @media (max-width: 667px) {
     .nav > li > a {
         padding: 5px 15px 5px !important;        

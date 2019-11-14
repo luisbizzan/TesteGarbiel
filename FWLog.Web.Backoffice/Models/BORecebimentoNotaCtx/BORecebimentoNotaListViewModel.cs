@@ -49,7 +49,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
     public class BORecebimentoNotaFilterViewModel
     {
-        public string DANFE { get; set; }
+        [Display(Name = "DANFE")]
+        public string Chave { get; set; }
 
         public long? Lote { get; set; }
 
@@ -101,7 +102,6 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public TimeSpan? TempoFinal { get; set; }
 
         public SelectList ListaStatus { get; set; }
-
     }
 
 }

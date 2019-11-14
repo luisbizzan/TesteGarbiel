@@ -3,7 +3,6 @@ using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using System;
 using System.Threading.Tasks;
-using System.Transactions;
 
 namespace FWLog.Services.Services
 {
@@ -34,17 +33,21 @@ namespace FWLog.Services.Services
             lote.QuantidadeVolume = qtdVolumes;
 
             _uow.LoteRepository.Add(lote);
-            _uow.SaveChanges();
 
-            var notaService = new NotaFiscalService(_uow);
+            var nota = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
+            nota.IdNotaFiscalStatus = NotaFiscalStatusEnum.Recebida.GetHashCode();
+
+            _uow.SaveChanges();
 
             //try
             //{
-            //    await notaService.AtualizarStatusNota(idNotaFiscal, LoteStatusEnum.Recebido.GetHashCode());
+            //    var notaService = new NotaFiscalService(_uow);
+            //    await notaService.AtualizarStatusNota(nota);
             //}
             //catch (Exception e)
             //{
             //    _uow.LoteRepository.Delete(lote);
+            //    nota.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode();
             //    _uow.SaveChanges();
 
             //    throw e;

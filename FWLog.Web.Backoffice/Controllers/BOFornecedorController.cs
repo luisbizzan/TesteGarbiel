@@ -45,8 +45,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
             totalRecords = query.Count();
 
-            if (model.CustomFilter.IdFornecedor.HasValue)
-                query = query.Where(x => x.IdFornecedor == model.CustomFilter.IdFornecedor);
+            if (!String.IsNullOrEmpty(model.CustomFilter.Codigo))
+                query = query.Where(x => !String.IsNullOrEmpty(x.Codigo) && x.Codigo.Contains(model.CustomFilter.Codigo));
 
             if (!string.IsNullOrEmpty(model.CustomFilter.RazaoSocial))
                 query = query.Where(x => x.RazaoSocial.Contains(model.CustomFilter.RazaoSocial));
@@ -62,18 +62,26 @@ namespace FWLog.Web.Backoffice.Controllers
                 boFornecedorSearchModalItemViewModel.Add(new BOFornecedorSearchModalItemViewModel()
                 {
                     IdFornecedor = item.IdFornecedor,
+                    Codigo = item.Codigo,
                     RazaoSocial = item.RazaoSocial,
                     NomeFantasia = item.NomeFantasia,
                     CNPJ = item.CNPJ.Substring(0, 2) + "." + item.CNPJ.Substring(2, 3) + "." + item.CNPJ.Substring(5, 3) + "/" + item.CNPJ.Substring(8, 4) + "-" + item.CNPJ.Substring(12, 2)
                 });
             }
 
+            totalRecordsFiltered = boFornecedorSearchModalItemViewModel.Count();
+
+            var result = boFornecedorSearchModalItemViewModel
+                .OrderBy(model.OrderByColumn, model.OrderByDirection)
+                .Skip(model.Start)
+                .Take(model.Length);
+
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
                 RecordsTotal = totalRecords,
                 RecordsFiltered = totalRecordsFiltered,
-                Data = boFornecedorSearchModalItemViewModel
+                Data = result
             });
         }
     }

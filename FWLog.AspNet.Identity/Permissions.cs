@@ -106,5 +106,15 @@ namespace FWLog.AspNet.Identity
                 Register(RegistrarRecebimento, "Registrar Recebimento");
             }
         }
+
+        public class Quarentena : PermissionGroupBuildItem
+        {
+            public const string List = "QuarentenaList";
+
+            public Quarentena() : base(Display.FromResource(nameof(Res.PrinterType)))
+            {
+                Register(List, Display.FromResource(nameof(Res.List)));
+            }
+        }
     }
 }
