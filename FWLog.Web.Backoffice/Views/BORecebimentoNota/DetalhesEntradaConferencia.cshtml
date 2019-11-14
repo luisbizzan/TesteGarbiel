@@ -1,7 +1,6 @@
 ﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.BODetalhesEntradaConferenciaViewModel
 @{
     Layout = null;
-
     @BundleHelper.RenderViewScriptModal()
 }
 
@@ -15,7 +14,7 @@
         <div class="modal-body">
             <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
                 <li class="nav-item active">
-                    <a class="nav-link" id="entradaConferenciaTab" data-toggle="tab" href="#entradaConferencia" role="tab" aria-controls="entradaConferencia" aria-selected="true">Entrada\Conferência</a>
+                    <a class="nav-link" id="entradaConferenciaTab" data-toggle="tab" href="#entradaConferencia" role="tab" aria-controls="entradaConferencia" aria-selected="true">Entrada/Conferência</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="divergenciasTab" data-toggle="tab" href="#divergencias" role="tab" aria-controls="divergencias" aria-selected="false">Divergências</a>
@@ -31,68 +30,68 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-lg-12">
-                            @Html.Label("DANFE"): 12345678945654551200221001020210
+                            @Html.Label("DANFE"): @Model.DANFE
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Lote"): 1234
+                            @Html.Label("Lote"): @Model.NumeroLote
                         </div>
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Nota"): 45
+                            @Html.Label("Nota"): @Model.NumeroNotaFiscal
                         </div>
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Chegada"): 12/11/2019
+                            @Html.Label("Chegada"): @Model.DataChegada
                         </div>
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Status"): Aguardando Recebimento
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Fornecedor"): 4587 - VTO AEDCSER
-                        </div>
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Quantidade"): 200
-                        </div>
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Atraso"): 1
-                        </div>
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Compras"): 10/11/2019
+                            @Html.Label("Status"): @Model.StatusNotaFiscal
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Volumes"): 4
+                            @Html.Label("Fornecedor"): @Model.Fornecedor
                         </div>
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Prazo"): 10
+                            @Html.Label("Quantidade"): @Model.Quantidade
                         </div>
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("CNPJ"): 123456125478/0001-85
+                            @Html.Label("Atraso"): @Model.DiasAtraso
                         </div>
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Recebido por"): Suporte Dart
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Valor Total"): R$ 45.000,00
-                        </div>
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Frete"): R$ 300,00
-                        </div>
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Nro. Conhecimento"): 45645
+                            @Html.Label("Compras"): @Model.DataCompra
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Peso Conhecimento"): 100
+                            @Html.Label("Volumes"): @Model.Volumes
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Prazo"): @Model.PrazoRecebimento
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("CNPJ"): @Model.FornecedorCNPJ
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Recebido por"): @Model.UsuarioRecebimento
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Valor Total"): @Model.ValorTotal
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Frete"): @Model.ValorFrete
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Nro. Conhecimento"): @Model.NumeroConhecimento
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.Label("Peso Conhecimento"): @Model.PesoConhecimento
                         </div>
                         <div class="col-sm-12 col-lg-4">
-                            @Html.Label("Transportadora"): Nome Transportadora
+                            @Html.Label("Transportadora"): @Model.TransportadoraNome
                         </div>
                     </div>
                     <div class="row">
@@ -103,21 +102,21 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-lg-4">
-                            @Html.Label("Tipo de Conferência"): Quantidade
+                            @Html.Label("Tipo de Conferência"): @Model.ConferenciaTipo
                         </div>
                         <div class="col-sm-12 col-lg-4">
-                            @Html.Label("Conferido por"): Suporte Dart
+                            @Html.Label("Conferido por"): @Model.UsuarioConferencia
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-lg-4">
-                            @Html.Label("Início"): 12/11/2019 10:25:01
+                            @Html.Label("Início"): @Model.DataInicioConferencia
                         </div>
                         <div class="col-sm-12 col-lg-4">
-                            @Html.Label("Fim"): 12/11/2019 11:00:45
+                            @Html.Label("Fim"): @Model.DataFimConferencia
                         </div>
                         <div class="col-sm-12 col-lg-4">
-                            @Html.Label("Tempo Total"): 25 minutos
+                            @Html.Label("Tempo Total"): @Model.TempoTotalConferencia
                         </div>
                     </div>
                     <div class="row" style="margin-top: 20px; overflow-y: auto; height: 300px">
@@ -134,198 +133,26 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="even">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="odd">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="even">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="odd">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="even">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="odd">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="even">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="odd">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="even">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="odd">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="even">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="odd">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="even">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="odd">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="even">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="odd">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="even">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="odd">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="even">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="odd">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="even">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="odd">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="even">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
-                                    <tr class="odd">
-                                        <td>121000040</td>
-                                        <td>20</td>
-                                        <td>10/11/2019 10:50:22</td>
-                                        <td>10/11/2019 10:55:33</td>
-                                        <td>Suporte Dart</td>
-                                        <td>5 minutos</td>
-                                    </tr>
+                                    @if (Model.Items.Count > 0)
+                                    {
+                                        foreach (FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.BODetalhesEntradaConferenciaItem item in Model.Items)
+                                        {
+                                            <tr>
+                                                <td>@item.Referencia</td>
+                                                <td>@item.Quantidade</td>
+                                                <td>@item.DataInicioConferencia</td>
+                                                <td>@item.DataFimConferencia</td>
+                                                <td>@item.UsuarioConferencia</td>
+                                                <td>@item.TempoTotalConferencia</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr class="even">
+                                            <td colspan="6">Nenhum item informado na nota fiscal</td>
+                                        </tr>
+                                    }
                                 </tbody>
                             </table>
                         </div>

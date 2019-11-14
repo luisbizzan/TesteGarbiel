@@ -407,7 +407,54 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
 
-            var model = new BODetalhesEntradaConferenciaViewModel();
+            var model = new BODetalhesEntradaConferenciaViewModel
+            {
+                DANFE = notaFiscal.DANFE,
+                NumeroLote = "-",
+                NumeroNotaFiscal = notaFiscal.Numero.ToString(),
+                DataChegada = "",
+                StatusNotaFiscal = notaFiscal.Status,
+                Fornecedor = string.Concat(notaFiscal.Fornecedor.Codigo, " - ", notaFiscal.Fornecedor.RazaoSocial),
+                Quantidade = notaFiscal.Quantidade.ToString(),
+                DiasAtraso = "-",
+                DataCompra = notaFiscal.DataEmissao.ToString("dd/MM/yyyy"),
+                Volumes = "-",
+                PrazoRecebimento = "-",
+                FornecedorCNPJ = notaFiscal.Fornecedor.CNPJ,
+                UsuarioRecebimento = "-",
+                ValorTotal = notaFiscal.ValorTotal.ToString(),
+                ValorFrete = notaFiscal.ValorFrete.ToString(),
+                NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
+                PesoConhecimento = "-",
+                TransportadoraNome = notaFiscal.Transportadora.RazaoSocial,
+                ConferenciaTipo = "-",
+                UsuarioConferencia = "-",
+                DataInicioConferencia = "-",
+                DataFimConferencia = "-",
+                TempoTotalConferencia = "-",
+                IsNotaRecebida = true,
+                IsNotaConferida = true,
+                IsNotaDivergente = true
+            };
+
+            model.Items = new List<BODetalhesEntradaConferenciaItem>();
+
+            List<NotaFiscalItem> listaItensNotaFiscal = _uow.NotaFiscalItemRepository.PegarItens(notaFiscal.IdNotaFiscal);
+
+            foreach(NotaFiscalItem notaFiscalItem in listaItensNotaFiscal)
+            {
+                var entradaConferenciaItem = new BODetalhesEntradaConferenciaItem
+                {
+                    Referencia = "-",
+                    Quantidade = notaFiscalItem.Quantidade.ToString(),
+                    UsuarioConferencia = "-",
+                    DataInicioConferencia = "-",
+                    DataFimConferencia = "-",
+                    TempoTotalConferencia = "-"
+                };
+
+                model.Items.Add(entradaConferenciaItem);
+            }
 
             return View(model);
         }
