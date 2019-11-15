@@ -5,12 +5,6 @@
         });
     });
 
-    $("#detalhesEntradaConferencia").click(function () {
-        $("#modalDetalhesEntradaConferencia").load("BORecebimentoNota/DetalhesEntradaConferencia/26", function () {
-            $("#modalDetalhesEntradaConferencia").modal();
-        });
-    });
-
     $("#imprimirRelatorio").click(function () {
         $("#modalImpressoras").load("BOPrinter/Selecionar", function () {
             $("#modalImpressoras").modal();
@@ -55,7 +49,7 @@
         return [
             {
                 text: "Detalhes da Nota",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'detalhesNota' },
                 icon: 'fa fa-eye',
                 visible: view.registrarRecebimento
             },
@@ -234,6 +228,12 @@
 
     $("#limparUsuarioRecebimento").click(function () {
         limparUsuarioRecebimento();
+    });
+
+    $(document).on('click', '[action="detalhesNota"]', function () {
+        $("#modalDetalhesEntradaConferencia").load("BORecebimentoNota/DetalhesEntradaConferencia/" + $(this).data("id"), function () {
+            $("#modalDetalhesEntradaConferencia").modal();
+        });
     });
 
     adicionaEventos();
