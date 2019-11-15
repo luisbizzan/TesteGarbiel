@@ -39,9 +39,21 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="col-xs-12 form-group">
+                <div class="form-group col-sm-3 col-xs-12">
                     @Html.LabelFor(m => m.Filter.Name)
                     @Html.TextBoxFor(m => m.Filter.Name, new { @class = "form-control", data_field = "Name" })
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.Filter.PrinterTypeId)
+                    @Html.DropDownListFor(m => m.Filter.PrinterTypeId, (IEnumerable<SelectListItem>)ViewBag.PrinterTypes, "Selecione...", new { @class = "form-control", data_field = "PrinterTypeId"  })
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.Filter.Ativa)
+                    @Html.DropDownListFor(m => m.Filter.Ativa, (IEnumerable<SelectListItem>)ViewBag.Status, "Selecione...", new { @class = "form-control", data_field = "Ativa" })
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.Filter.CompanyId)
+                    @Html.DropDownListFor(m => m.Filter.CompanyId, (IEnumerable<SelectListItem>)ViewBag.Companies, "Selecione...", new { @class = "form-control", data_field = "CompanyId" })
                 </div>
             </div>
             <div class="row">
@@ -77,6 +89,7 @@
                         <tr>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Name)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.PrinterType)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Ativa)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Company)</th>
                             <th>@Resources.CommonStrings.ActionsLabel</th>
                         </tr>
