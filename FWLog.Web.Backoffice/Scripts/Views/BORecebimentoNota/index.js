@@ -22,7 +22,7 @@
                 Lote: $("#Filter_Lote").val(),
                 Nota: $("#Filter_Nota").val(),
                 DANFE: $("#Filter_DANFE").val(),
-                IdStatus: $("#Filter_ListaStatus").val(),
+                IdStatus: $("#Filter_IdStatus").val(),
                 DataInicial: $("#Filter_DataInicial").val(),
                 DataFinal: $("#Filter_DataFinal").val(),
                 PrazoInicial: $("#Filter_PrazoInicial").val(),
@@ -30,7 +30,9 @@
                 IdFornecedor: $("#Filter_IdFornecedor").val(),
                 Atraso: $("#Filter_Atraso").val(),
                 QuantidadePeca: $("#Filter_QuantidadePeca").val(),
-                Volume: $("#Filter_Volume").val()
+                QuantidadeVolume: $("#Filter_QuantidadeVolume").val(),
+                IdUsuarioRecebimento: $("#Filter_IdUsuarioRecebimento").val(),
+                IdUsuarioConferencia: $("#Filter_IdUsuarioConferencia").val()
             },
             success: function (data) {
                 var a = document.createElement('a');

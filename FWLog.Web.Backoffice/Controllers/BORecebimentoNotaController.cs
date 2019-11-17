@@ -1,4 +1,5 @@
-﻿using FWLog.Data;
+﻿using AutoMapper;
+using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
@@ -56,6 +57,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(model);
         }
 
+        [HttpPost]
         public ActionResult PageData(DataTableFilter<BORecebimentoNotaFilterViewModel> model)
         {
             ValidateModel(model);
@@ -126,7 +128,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.NotaFiscal.PrazoEntregaFornecedor <= prazoFinal);
             }
 
-            if (query.Count() > 0)
+            if (query.Any())
             {
                 foreach (var item in query)
                 {
@@ -180,9 +182,11 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             if (!string.IsNullOrEmpty(model.CustomFilter.IdUsuarioRecebimento))
+            {
                 boRecebimentoNotaListItemViewModel = boRecebimentoNotaListItemViewModel.Where(x => x.IdUsuarioRecebimento == model.CustomFilter.IdUsuarioRecebimento).ToList();
+            }
 
-            totalRecordsFiltered = boRecebimentoNotaListItemViewModel.Count();
+            totalRecordsFiltered = boRecebimentoNotaListItemViewModel.Count;
 
             var result = boRecebimentoNotaListItemViewModel
                 .OrderBy(model.OrderByColumn, model.OrderByDirection)
@@ -212,7 +216,6 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(viewModel);
         }
 
-
         [HttpGet]
         public ActionResult EntradaConferencia()
         {
@@ -232,22 +235,9 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             ValidateModel(viewModel);
 
-            var relatorioRequest = new RelatorioRecebimentoNotasRequest
-            {
-                Lote = viewModel.Lote,
-                Nota = viewModel.Nota,
-                DANFE = viewModel.DANFE,
-                IdStatus = viewModel.IdStatus,
-                DataInicial = viewModel.DataInicial,
-                DataFinal = viewModel.DataFinal,
-                PrazoInicial = viewModel.PrazoInicial,
-                PrazoFinal = viewModel.PrazoFinal,
-                IdFornecedor = viewModel.IdFornecedor,
-                Atraso = viewModel.Atraso,
-                QuantidadePeca = viewModel.QuantidadePeca,
-                Volume = viewModel.Volume
-            };
-
+            var relatorioRequest = Mapper.Map<RelatorioRecebimentoNotasRequest>(viewModel);
+            relatorioRequest.IdEmpresa = CompanyId;
+            relatorioRequest.NomeUsuario = User.Identity.Name;
             byte[] relatorio = _relatorioService.GerarRelatorioRecebimentoNotas(relatorioRequest);
 
             return File(relatorio, "application/pdf", "Relatório Recebimento Notas.pdf");
@@ -391,7 +381,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     IdFornecedor = viewModel.IdFornecedor,
                     Atraso = viewModel.Atraso,
                     QuantidadePeca = viewModel.QuantidadePeca,
-                    Volume = viewModel.Volume
+                    QuantidadeVolume = viewModel.Volume
                 };
 
                 byte[] relatorio = _relatorioService.GerarRelatorioRecebimentoNotas(relatorioRequest);

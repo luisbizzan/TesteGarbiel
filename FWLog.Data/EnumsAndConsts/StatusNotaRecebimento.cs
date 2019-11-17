@@ -1,4 +1,4 @@
-﻿namespace FWLog.Web.Backoffice.EnumsAndConsts
+﻿namespace FWLog.Data.EnumsAndConsts
 {
     public enum StatusNotaRecebimento
     {

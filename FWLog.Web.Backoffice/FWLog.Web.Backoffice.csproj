@@ -242,7 +242,6 @@
     <Compile Include="Controllers\PrinterTypeController.cs" />
     <Compile Include="EnumsAndConsts\CompanyCookie.cs" />
     <Compile Include="EnumsAndConsts\LOVs\NaoSimLOV.cs" />
-    <Compile Include="EnumsAndConsts\StatusNotaRecebimento.cs" />
     <Compile Include="GlobalResources\BOPrinter\BOPrinterStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
