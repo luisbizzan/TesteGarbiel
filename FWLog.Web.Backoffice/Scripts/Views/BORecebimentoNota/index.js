@@ -1,5 +1,8 @@
 ﻿(function () {
+    $.validator.setDefaults({ ignore: null });
+
     $('.onlyNumber').mask('0#');
+    $("dateFormat").mask("99/99/9999");
 
     $("#imprimirEtiquetaConferencia").click(function () {
         $("#modalEtiquetaConferencia").load("BORecebimentoNota/DetalhesEtiquetaConferencia", function () {
@@ -232,6 +235,23 @@
 
     $("#limparUsuarioRecebimento").click(function () {
         limparUsuarioRecebimento();
+    });
+
+    $("#pesquisarUsuarioConferencia").click(function () {
+        $("#modalUsuarioConferencia").load(HOST_URL + "BOAccount/SearchModal", function () {
+            $("#modalUsuarioConferencia").modal();
+        });
+    });
+
+    function limparUsuarioConferencia() {
+        let userName = $("#Filter_UserNameConferencia");
+        let usuarioId = $("#Filter_IdUsuarioConferencia");
+        userName.val("");
+        usuarioId.val("");
+    }
+
+    $("#limparUsuarioConferencia").click(function () {
+        limparUsuarioConferencia();
     });
 
     $(document).on('click', '[action="detalhesNota"]', function () {
