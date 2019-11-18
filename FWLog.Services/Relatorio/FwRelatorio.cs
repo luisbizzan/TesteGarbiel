@@ -15,38 +15,25 @@ namespace FWLog.Services.Relatorio
 
         public byte[] Gerar(FwRelatorioDados data)
         {
-            _dataSource = data;
-
-            _document.Info.Title = data.Titulo;
-            _document.Info.Author = "FwLog Web";
-
-            Section section = _document.AddSection();
-            section.PageSetup.Orientation = _dataSource.Orientacao;
-            section.PageSetup.PageFormat = PageFormat.A4;
-            section.PageSetup.HeaderDistance = new Unit(10, UnitType.Point);
-            section.PageSetup.FooterDistance = new Unit(10, UnitType.Point);
-            section.PageSetup.LeftMargin = new Unit(40, UnitType.Point);
-            section.PageSetup.RightMargin = new Unit(40, UnitType.Point);
-            section.PageSetup.TopMargin = new Unit(90, UnitType.Point);
-
+            Configurar(data);
             CriarCabecalho();
-
             CriarTabela();
+            CriarRodape();
+            return Renderizar();
+        }
 
+        public Document Customizar(FwRelatorioDados data)
+        {
+            Configurar(data);
+            CriarCabecalho();
             CriarRodape();
 
-            var pdfRenderer = new PdfDocumentRenderer(false)
-            {
-                Document = _document
-            };
+            return _document;
+        }
 
-            pdfRenderer.RenderDocument();
-
-            using (var stream = new MemoryStream())
-            {
-                pdfRenderer.PdfDocument.Save(stream, false);
-                return stream.ToArray();
-            }
+        public byte[] GerarCustomizado()
+        {
+            return Renderizar();
         }
 
         private void CriarTabela()
@@ -174,6 +161,38 @@ namespace FWLog.Services.Relatorio
             rodapeHr.AddPageField();
             rodapeHr.AddText(" de ");
             rodapeHr.AddNumPagesField();
+        }
+
+        private void Configurar(FwRelatorioDados data)
+        {
+            _dataSource = data;
+            _document.Info.Title = data.Titulo;
+            _document.Info.Author = "FwLog Web";
+
+            Section section = _document.AddSection();
+            section.PageSetup.Orientation = _dataSource.Orientacao;
+            section.PageSetup.PageFormat = PageFormat.A4;
+            section.PageSetup.HeaderDistance = new Unit(10, UnitType.Point);
+            section.PageSetup.FooterDistance = new Unit(10, UnitType.Point);
+            section.PageSetup.LeftMargin = new Unit(40, UnitType.Point);
+            section.PageSetup.RightMargin = new Unit(40, UnitType.Point);
+            section.PageSetup.TopMargin = new Unit(90, UnitType.Point);
+        }
+
+        private byte[] Renderizar()
+        {
+            var pdfRenderer = new PdfDocumentRenderer(false)
+            {
+                Document = _document
+            };
+
+            pdfRenderer.RenderDocument();
+
+            using (var stream = new MemoryStream())
+            {
+                pdfRenderer.PdfDocument.Save(stream, false);
+                return stream.ToArray();
+            }
         }
     }
 }

@@ -76,6 +76,7 @@
     <Compile Include="EnumsAndConsts\NotaFiscalStatusEnum.cs" />
     <Compile Include="EnumsAndConsts\LoteStatusEnum.cs" />
     <Compile Include="EnumsAndConsts\NaoSimEnum.cs" />
+    <Compile Include="EnumsAndConsts\StatusNotaRecebimento.cs" />
     <Compile Include="ExtensionMethods\EnumExtensions.cs" />
     <Compile Include="ExtensionMethods\LinqExtension.cs" />
     <Compile Include="ExtensionMethods\StringExtension.cs" />
