@@ -5,8 +5,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 {
     public class BOImprimirRelatorioNotasViewModel
     {
-        public string Lote { get; set; }
-        public string Nota { get; set; }
+        public long? Lote { get; set; }
+        public int? Nota { get; set; }
         public string Prazo { get; set; }
         public string DANFE { get; set; }
         public int? IdStatus { get; set; }

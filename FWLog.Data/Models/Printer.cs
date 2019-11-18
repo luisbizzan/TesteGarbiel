@@ -22,6 +22,9 @@ namespace FWLog.Data.Models
         [StringLength(50)]
         public string IP { get; set; }
 
+        [Required]
+        public int? Ativa { get; set; }
+
         #region ForeignKey
 
         [ForeignKey(nameof(CompanyId))]

@@ -7,12 +7,6 @@
         });
     });
 
-    $("#detalhesEntradaConferencia").click(function () {
-        $("#modalDetalhesEntradaConferencia").load("BORecebimentoNota/DetalhesEntradaConferencia/26", function () {
-            $("#modalDetalhesEntradaConferencia").modal();
-        });
-    });
-
     $("#imprimirRelatorio").click(function () {
         $("#modalImpressoras").load("BOPrinter/Selecionar", function () {
             $("#modalImpressoras").modal();
@@ -30,7 +24,7 @@
                 Lote: $("#Filter_Lote").val(),
                 Nota: $("#Filter_Nota").val(),
                 DANFE: $("#Filter_DANFE").val(),
-                IdStatus: $("#Filter_ListaStatus").val(),
+                IdStatus: $("#Filter_IdStatus").val(),
                 DataInicial: $("#Filter_DataInicial").val(),
                 DataFinal: $("#Filter_DataFinal").val(),
                 PrazoInicial: $("#Filter_PrazoInicial").val(),
@@ -38,7 +32,9 @@
                 IdFornecedor: $("#Filter_IdFornecedor").val(),
                 Atraso: $("#Filter_Atraso").val(),
                 QuantidadePeca: $("#Filter_QuantidadePeca").val(),
-                Volume: $("#Filter_Volume").val()
+                QuantidadeVolume: $("#Filter_QuantidadeVolume").val(),
+                IdUsuarioRecebimento: $("#Filter_IdUsuarioRecebimento").val(),
+                IdUsuarioConferencia: $("#Filter_IdUsuarioConferencia").val()
             },
             success: function (data) {
                 var a = document.createElement('a');
@@ -57,7 +53,7 @@
         return [
             {
                 text: "Detalhes da Nota",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'detalhesNota' },
                 icon: 'fa fa-eye',
                 visible: view.registrarRecebimento
             },
@@ -238,6 +234,12 @@
         limparUsuarioRecebimento();
     });
 
+    $(document).on('click', '[action="detalhesNota"]', function () {
+        $("#modalDetalhesEntradaConferencia").load("BORecebimentoNota/DetalhesEntradaConferencia/" + $(this).data("id"), function () {
+            $("#modalDetalhesEntradaConferencia").modal();
+        });
+    });
+
     adicionaEventos();
 })();
 
@@ -276,7 +278,7 @@ function CarregarBotoesRegistrar() {
         var id = $(this).data("id");
         $.ajax({
             url: HOST_URL + "BORecebimentoNota/ValidarModalRegistroRecebimento/" + id,
-            method: "POST",            
+            method: "POST",
             success: function (result) {
                 if (result.Success) {
                     $("#modalRegistroRecebimento").load(HOST_URL + "BORecebimentoNota/ExibirModalRegistroRecebimento/" + id, function () {
@@ -326,8 +328,10 @@ function BuscarNotaFiscal() {
                         $('.integer').mask("#0", { reverse: true });
                         $('.money').mask("#.##0,00", { reverse: true });
                         $('#ChaveAcesso').attr("disabled", true);
+                        $("#QtdVolumes").focus();
                     });
                 } else {
+                    $('#ChaveAcesso').val("");
                     $(".validacaoChaveAcesso").text(result.Message);
                 }
             }
@@ -384,5 +388,32 @@ function setUsuarioRecebimento(idUsuario, nomeUsuario) {
 }
 
 function conferirNota() {
-    debugger
+    let id = $(this).data("id");
+    let $modal = $("#modalConferencia");
+
+    $.ajax({
+        url: HOST_URL + "BORecebimentoNota/ValidarModalRegistroConferencia/" + id,
+        cache: false,
+        method: "POST",
+        success: function (result) {
+            if (result.Success) {
+                $modal.load(HOST_URL + "BORecebimentoNota/ExibirModalRegistroConferencia/" + id, function () {
+                    $modal.modal();
+
+                    //$("#ChaveAcesso").focus();
+
+                    //$('#ChaveAcesso').keypress(function (event) {
+                    //    BuscarNotaFiscal();
+                    //});
+
+                    //RegistrarNotaFiscal();
+
+                    //$('.integer').mask("#0", { reverse: true });
+                    //$('.money').mask("#.##0,00", { reverse: true });
+                });
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+        }
+    });
 }
