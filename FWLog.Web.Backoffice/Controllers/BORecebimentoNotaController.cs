@@ -60,11 +60,24 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpPost]
         public ActionResult PageData(DataTableFilter<BORecebimentoNotaFilterViewModel> model)
         {
-            ValidateModel(model);
-
             List<BORecebimentoNotaListItemViewModel> boRecebimentoNotaListItemViewModel = new List<BORecebimentoNotaListItemViewModel>();
             int totalRecords = 0;
             int totalRecordsFiltered = 0;
+
+            //if (!(model.CustomFilter.PrazoInicial.HasValue || model.CustomFilter.PrazoFinal.HasValue))
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Os campos prazo inicial e prazo final obrigatoriamente deverão ser preenchidos.");
+
+            if (!ModelState.IsValid)
+            {
+                return DataTableResult.FromModel(new DataTableResponseModel()
+                {
+                    Draw = model.Draw,
+                    RecordsTotal = totalRecords,
+                    RecordsFiltered = totalRecordsFiltered,
+                    Data = boRecebimentoNotaListItemViewModel
+                });
+            }
+
             var query = _uow.LoteRepository.Obter(CompanyId).AsQueryable();
 
             totalRecords = query.Count();
@@ -116,15 +129,17 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.DataRecebimento <= dataFinal);
             }
 
-            if (model.CustomFilter.PrazoInicial.HasValue)
+            if (model.CustomFilter.PrazoInicial != null)
             {
-                DateTime prazoInicial = new DateTime(model.CustomFilter.PrazoInicial.Value.Year, model.CustomFilter.PrazoInicial.Value.Month, model.CustomFilter.PrazoInicial.Value.Day, 00, 00, 00);
+                DateTime prazoInicial = new DateTime(model.CustomFilter.PrazoInicial.Year, model.CustomFilter.PrazoInicial.Month, model.CustomFilter.PrazoInicial.Day,
+                    00, 00, 00);
                 query = query.Where(x => x.NotaFiscal.PrazoEntregaFornecedor >= prazoInicial);
             }
 
-            if (model.CustomFilter.PrazoFinal.HasValue)
+            if (model.CustomFilter.PrazoFinal != null)
             {
-                DateTime prazoFinal = new DateTime(model.CustomFilter.PrazoFinal.Value.Year, model.CustomFilter.PrazoFinal.Value.Month, model.CustomFilter.PrazoFinal.Value.Day, 23, 59, 59);
+                DateTime prazoFinal = new DateTime(model.CustomFilter.PrazoFinal.Year, model.CustomFilter.PrazoFinal.Month, model.CustomFilter.PrazoFinal.Day,
+                    23, 59, 59);
                 query = query.Where(x => x.NotaFiscal.PrazoEntregaFornecedor <= prazoFinal);
             }
 

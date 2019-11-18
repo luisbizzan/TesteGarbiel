@@ -1,4 +1,6 @@
 ﻿(function () {
+    $('.onlyNumber').mask('0#');
+
     $("#imprimirEtiquetaConferencia").click(function () {
         $("#modalEtiquetaConferencia").load("BORecebimentoNota/DetalhesEtiquetaConferencia", function () {
             $("#modalEtiquetaConferencia").modal();
