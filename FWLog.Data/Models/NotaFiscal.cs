@@ -9,7 +9,7 @@ namespace FWLog.Data.Models
         [Key]
         public long IdNotaFiscal { get; set; }
         public int Numero { get; set; }
-        public int Serie { get; set; }
+        public int? Serie { get; set; }
         public string DANFE { get; set; }
         public long IdFornecedor { get; set; }
         public DateTime DataEmissao { get; set; }
@@ -18,8 +18,8 @@ namespace FWLog.Data.Models
         public long IdTransportadora { get; set; }
         public long IdFreteTipo { get; set; }
         public decimal ValorFrete { get; set; }
-        public long NumeroConhecimento { get; set; }
-        public decimal PesoBruto { get; set; }        
+        public long? NumeroConhecimento { get; set; }
+        public decimal? PesoBruto { get; set; }        
         public string Especie { get; set; }
         public int Quantidade { get; set; }
         public string StatusIntegracao { get; set; }
