@@ -1,7 +1,10 @@
 ﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.BODetalhesEntradaConferenciaViewModel
 @{
     Layout = null;
-    @BundleHelper.RenderViewScriptModal()
+    @BundleHelper.RenderViewScriptModal(new
+    {
+        idNotaFiscal = Model.IdNotaFiscal
+    })
 }
 
 <div class="modal-dialog modal-lg">
@@ -23,103 +26,114 @@
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade active in" id="entradaConferencia" role="tabpanel" aria-labelledby="entradaConferenciaTab">
                     <div class="row">
-                        <div class="col-sm-12 col-lg-12">
+                        <div class="col-sm-6 col-lg-6">
                             <h3 style="margin-bottom: 0px;">Entrada</h3>
-                            <div class="ln_solid" style="margin-bottom: 10px; margin-top: 0px;"></div>
+                        </div>
+                        <div class="col-sm-6 col-lg-6">
+                            <div class="nav navbar-right">
+                                <a id="downloadDetalhesNotaEntradaConferencia" data-toggle="tooltip" title="Download Detalhes Nota Fiscal" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
+                                <a id="imprimirDetalhesNotaEntradaConferencia" data-toggle="tooltip" title="Imprimir Detalhes Nota Fiscal" class="btn btn-default"><i class="fa fa-fw fa-print"></i></a>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-12 col-lg-12">
-                            @Html.Label("DANFE"): @Model.DANFE
+                        <div class="ln_solid" style="margin-bottom: 15px; margin-top: 0px;"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-lg-6">
+                            @Html.LabelFor(m => m.DANFE): @Model.DANFE
+                        </div>
+                        <div class="col-sm-6 col-lg-6">
+                            @Html.LabelFor(m => m.StatusNotaFiscal): @Model.StatusNotaFiscal
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Lote"): @Model.NumeroLote
+                        <div class="col-sm-6 col-lg-6">
+                            @Html.LabelFor(m => m.Fornecedor): @Model.Fornecedor
                         </div>
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Nota"): @Model.NumeroNotaFiscal
-                        </div>
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Chegada"): @Model.DataChegada
-                        </div>
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Status"): @Model.StatusNotaFiscal
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Fornecedor"): @Model.Fornecedor
-                        </div>
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Quantidade"): @Model.Quantidade
-                        </div>
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Atraso"): @Model.DiasAtraso
-                        </div>
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Compras"): @Model.DataCompra
+                        <div class="col-sm-6 col-lg-6">
+                            @Html.LabelFor(m => m.TransportadoraNome): @Model.TransportadoraNome
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Volumes"): @Model.Volumes
+                            @Html.LabelFor(m => m.NumeroLote): @Model.NumeroLote
                         </div>
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Prazo"): @Model.PrazoRecebimento
+                            @Html.LabelFor(m => m.NumeroNotaFiscal): @Model.NumeroNotaFiscal
                         </div>
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("CNPJ"): @Model.FornecedorCNPJ
-                        </div>
-                        <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Recebido por"): @Model.UsuarioRecebimento
+                        <div class="col-sm-12 col-lg-6">
+                            @Html.LabelFor(m => m.FornecedorCNPJ): @Model.FornecedorCNPJ
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Valor Total"): @Model.ValorTotal
+                            @Html.LabelFor(m => m.Quantidade): @Model.Quantidade
                         </div>
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Frete"): @Model.ValorFrete
+                            @Html.LabelFor(m => m.PrazoRecebimento): @Model.PrazoRecebimento
                         </div>
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Nro. Conhecimento"): @Model.NumeroConhecimento
+                            @Html.LabelFor(m => m.DataCompra): @Model.DataCompra
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.LabelFor(m => m.DataChegada): @Model.DataChegada
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-lg-3">
-                            @Html.Label("Peso Conhecimento"): @Model.PesoConhecimento
+                            @Html.LabelFor(m => m.Volumes): @Model.Volumes
                         </div>
-                        <div class="col-sm-12 col-lg-4">
-                            @Html.Label("Transportadora"): @Model.TransportadoraNome
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.LabelFor(m => m.DiasAtraso): @Model.DiasAtraso
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12 col-lg-12">
-                            <h3 style="margin-bottom: 0px;">Conferência</h3>
-                            <div class="ln_solid" style="margin-bottom: 10px; margin-top: 0px;"></div>
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.LabelFor(m => m.PesoConhecimento): @Model.PesoConhecimento
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12 col-lg-4">
-                            @Html.Label("Tipo de Conferência"): @Model.ConferenciaTipo
-                        </div>
-                        <div class="col-sm-12 col-lg-4">
-                            @Html.Label("Conferido por"): @Model.UsuarioConferencia
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.LabelFor(m => m.NumeroConhecimento): @Model.NumeroConhecimento
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-12 col-lg-4">
-                            @Html.Label("Início"): @Model.DataInicioConferencia
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.LabelFor(m => m.ValorTotal): @Model.ValorTotal
                         </div>
-                        <div class="col-sm-12 col-lg-4">
-                            @Html.Label("Fim"): @Model.DataFimConferencia
+                        <div class="col-sm-12 col-lg-3">
+                            @Html.LabelFor(m => m.ValorFrete): @Model.ValorFrete
                         </div>
-                        <div class="col-sm-12 col-lg-4">
-                            @Html.Label("Tempo Total"): @Model.TempoTotalConferencia
+                        <div class="col-sm-6 col-lg-6">
+                            @Html.LabelFor(m => m.UsuarioRecebimento): @Model.UsuarioRecebimento
                         </div>
                     </div>
-                    <div class="row" style="margin-top: 20px; overflow-y: auto; height: 300px">
+                    @if (Model.IsNotaConferida)
+                    {
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-12">
+                                <h3 style="margin-bottom: 0px;">Conferência</h3>
+                                <div class="ln_solid" style="margin-bottom: 15px; margin-top: 0px;"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.ConferenciaTipo): @Model.ConferenciaTipo
+                            </div>
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.UsuarioConferencia): @Model.UsuarioConferencia
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.DataInicioConferencia): @Model.DataInicioConferencia
+                            </div>
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.DataFimConferencia): @Model.DataFimConferencia
+                            </div>
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.TempoTotalConferencia): @Model.TempoTotalConferencia
+                            </div>
+                        </div>
+                    }
+                    <div class="row" style="margin-top: 25px; overflow-y: auto; height: 300px">
                         <div class="col-sm-12 col-lg-12">
                             <table class="table table-bordered">
                                 <thead>

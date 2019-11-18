@@ -29,7 +29,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                 if (conn.State == System.Data.ConnectionState.Open)
                 {
-                    lote = conn.Query<Lote, NotaFiscal, Fornecedor, FreteTipo, LoteStatus, AspNetUsers, Lote>(
+                    lote = conn.Query<Lote, NotaFiscal, Fornecedor, FreteTipo, LoteStatus, AspNetUsers, NotaFiscalStatus, Lote>(
                         "SELECT " +
                             "A.\"IdLote\", " +
                             "A.\"DataRecebimento\", " +
@@ -44,7 +44,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "B.\"PesoBruto\", " +         
                             "B.\"Especie\", " +
                             "B.\"Quantidade\", " +
-                            "B.\"Status\", " +
                             "B.\"Chave\", " +
                             "B.\"CodigoIntegracao\", " +
                             "B.\"DataEmissao\", " +
@@ -54,7 +53,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "D.\"IdFreteTipo\", " +
                             "D.\"Sigla\", " +
                             "E.*, " +
-                            "F.* " +
+                            "F.*, " +
+                            "G.* " +
                          "FROM " +
                             "\"Lote\" A " +
                             "RIGHT JOIN \"NotaFiscal\" B ON B.\"IdNotaFiscal\" = A.\"IdNotaFiscal\" " +
@@ -62,23 +62,30 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "INNER JOIN \"FreteTipo\" D ON D.\"IdFreteTipo\" = B.\"IdFreteTipo\" " +
                             "LEFT JOIN \"LoteStatus\" E ON (E.\"IdLoteStatus\" = CASE WHEN A.\"IdLoteStatus\" IS NULL THEN 1 ELSE A.\"IdLoteStatus\" END) " +
                             "LEFT JOIN \"AspNetUsers\" F ON F.\"Id\" = A.\"IdUsuarioRecebimento\" " +
+                            "INNER JOIN \"NotaFiscalStatus\" G ON G.\"IdNotaFiscalStatus\" = B.\"IdNotaFiscalStatus\" " +
                           "WHERE B.\"CompanyId\" =  " + CompanyId,
-                        map: (l, nf, f, ft, ls, u) =>
+                        map: (l, nf, f, ft, ls, u, nfs) =>
                         {
                             l.NotaFiscal = nf;
                             l.NotaFiscal.Fornecedor = f;
                             l.NotaFiscal.FreteTipo = ft;
                             l.LoteStatus = ls;
                             l.UsuarioRecebimento = u;
+                            l.NotaFiscal.NotaFiscalStatus = nfs;
                            
                             return l;
                         },
-                        splitOn: "IdLote, IdNotaFiscal, IdFornecedor, IdFreteTipo, IdLoteStatus, Id"
+                        splitOn: "IdLote, IdNotaFiscal, IdFornecedor, IdFreteTipo, IdLoteStatus, Id, IdNotaFiscalStatus"
                         );
                 }
             }
 
             return lote;
+        }
+
+        public Lote ObterLoteNota(long idNotaFiscal)
+        {
+            return Entities.Lote.Where(w => w.IdNotaFiscal == idNotaFiscal).FirstOrDefault();
         }
     }
 }

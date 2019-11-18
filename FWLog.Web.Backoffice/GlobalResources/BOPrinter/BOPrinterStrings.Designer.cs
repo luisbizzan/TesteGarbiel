@@ -88,6 +88,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edição de Impressora.
+        /// </summary>
+        public static string EditPageTitle {
+            get {
+                return ResourceManager.GetString("EditPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Impressoras.
         /// </summary>
         public static string IndexPageTitle {

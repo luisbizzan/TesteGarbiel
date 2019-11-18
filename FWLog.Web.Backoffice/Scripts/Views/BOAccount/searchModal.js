@@ -23,7 +23,6 @@
 
         },
         columns: [
-            { data: 'UsuarioId' },
             { data: 'UserName' },
             { data: 'Departamento' },
             { data: 'Cargo' },

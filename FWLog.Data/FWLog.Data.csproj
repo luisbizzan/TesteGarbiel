@@ -75,7 +75,11 @@
     <Compile Include="EnumsAndConsts\GetObjectFromLogEnum.cs" />
     <Compile Include="EnumsAndConsts\NotaFiscalStatusEnum.cs" />
     <Compile Include="EnumsAndConsts\LoteStatusEnum.cs" />
+    <Compile Include="EnumsAndConsts\NaoSimEnum.cs" />
+    <Compile Include="EnumsAndConsts\StatusNotaRecebimento.cs" />
+    <Compile Include="ExtensionMethods\EnumExtensions.cs" />
     <Compile Include="ExtensionMethods\LinqExtension.cs" />
+    <Compile Include="ExtensionMethods\StringExtension.cs" />
     <Compile Include="GlobalResources\Entity\EntityStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -111,12 +115,15 @@
     <Compile Include="Models\FreteTipo.cs" />
     <Compile Include="Models\Lote.cs" />
     <Compile Include="Models\LoteStatus.cs" />
+    <Compile Include="Models\NotaFiscalStatus.cs" />
     <Compile Include="Models\PerfilUsuario.cs" />
     <Compile Include="Models\GeneralCtx\CompanySelectedItem.cs" />
     <Compile Include="Models\Printer.cs" />
     <Compile Include="Models\PrinterType.cs" />
     <Compile Include="Models\Produto.cs" />
     <Compile Include="Models\NotaFiscalItem.cs" />
+    <Compile Include="Models\Quarentena.cs" />
+    <Compile Include="Models\QuarentenaStatus.cs" />
     <Compile Include="Models\Transportadora.cs" />
     <Compile Include="Models\UnidadeMedida.cs" />
     <Compile Include="Models\UserCompany.cs" />
@@ -152,7 +159,10 @@
     <Compile Include="Repository\GeneralCtx\LoteStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalItemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\NotaFiscalStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TransportadoraRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UnidadeMedidaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UserCompanyRepository.cs" />
