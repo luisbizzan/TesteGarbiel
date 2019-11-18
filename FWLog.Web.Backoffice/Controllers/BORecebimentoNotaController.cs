@@ -243,6 +243,20 @@ namespace FWLog.Web.Backoffice.Controllers
             return File(relatorio, "application/pdf", "Relatório Recebimento Notas.pdf");
         }
 
+        [HttpGet]
+        public ActionResult DownloadDetalhesNotaEntradaConferencia(int id)
+        {
+            var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
+            {
+                IdEmpresa = CompanyId,
+                NomeUsuario = User.Identity.Name
+            };
+
+            byte[] relatorio = _relatorioService.GerarDetalhesNotaEntradaConferencia(relatorioRequest);
+
+            return File(relatorio, "application/pdf", "Detalhes Nota Fiscal Entrada Conferencia.pdf");
+        }
+
         public JsonResult ValidarModalRegistroRecebimento(long id)
         {
             var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
@@ -426,6 +440,7 @@ namespace FWLog.Web.Backoffice.Controllers
             
             var model = new BODetalhesEntradaConferenciaViewModel
             {
+                IdNotaFiscal = notaFiscal.IdNotaFiscal,
                 DANFE = notaFiscal.DANFE,
                 NumeroNotaFiscal = notaFiscal.Numero.ToString(),
                 StatusNotaFiscal = notaFiscal.StatusIntegracao,

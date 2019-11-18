@@ -5,6 +5,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 {
     public class BODetalhesEntradaConferenciaViewModel
     {
+        public long IdNotaFiscal { get; set; }
         public bool IsNotaRecebida { get; set; }
         public bool IsNotaConferida { get; set; }
         public bool IsNotaDivergente { get; set; }

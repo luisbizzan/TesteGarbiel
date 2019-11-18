@@ -145,5 +145,26 @@ namespace FWLog.Services.Services
 
             return fwRelatorio.Gerar(fwRelatorioDados);
         }
+
+        public byte[] GerarDetalhesNotaEntradaConferencia(DetalhesNotaEntradaConferenciaRequest request)
+        {
+            Company empresa = _unitiOfWork.CompanyRepository.GetById(request.IdEmpresa);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.CompanyName,
+                NomeUsuario = request.NomeUsuario,
+                Orientacao = Orientation.Portrait,
+                Titulo = "Detalhes Nota Fiscal Entrada/Conferencia",
+                Filtros = string.Empty
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            Document document = fwRelatorio.Customizar(fwRelatorioDados);
+
+            return fwRelatorio.GerarCustomizado();
+        }
     }
 }

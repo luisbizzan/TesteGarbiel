@@ -106,6 +106,7 @@
     <Compile Include="Integracao\Helpers\QueryPropertyAttribute.cs" />
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
+    <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioRecebimentoNotasRequest.cs" />
     <Compile Include="Model\IntegracaoSankhya\ExecuteQueryFieldsMetadata.cs" />
     <Compile Include="Model\IntegracaoSankhya\ExecuteQueryResponseBody.cs" />
