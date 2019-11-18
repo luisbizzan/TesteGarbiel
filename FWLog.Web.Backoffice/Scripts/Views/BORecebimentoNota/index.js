@@ -274,7 +274,7 @@ function CarregarBotoesRegistrar() {
         var id = $(this).data("id");
         $.ajax({
             url: HOST_URL + "BORecebimentoNota/ValidarModalRegistroRecebimento/" + id,
-            method: "POST",            
+            method: "POST",
             success: function (result) {
                 if (result.Success) {
                     $("#modalRegistroRecebimento").load(HOST_URL + "BORecebimentoNota/ExibirModalRegistroRecebimento/" + id, function () {
@@ -382,5 +382,32 @@ function setUsuarioRecebimento(idUsuario, nomeUsuario) {
 }
 
 function conferirNota() {
-    debugger
+    let id = $(this).data("id");
+    let $modal = $("#modalConferencia");
+
+    $.ajax({
+        url: HOST_URL + "BORecebimentoNota/ValidarModalRegistroConferencia/" + id,
+        cache: false,
+        method: "POST",
+        success: function (result) {
+            if (result.Success) {
+                $modal.load(HOST_URL + "BORecebimentoNota/ExibirModalRegistroConferencia/" + id, function () {
+                    $modal.modal();
+
+                    //$("#ChaveAcesso").focus();
+
+                    //$('#ChaveAcesso').keypress(function (event) {
+                    //    BuscarNotaFiscal();
+                    //});
+
+                    //RegistrarNotaFiscal();
+
+                    //$('.integer').mask("#0", { reverse: true });
+                    //$('.money').mask("#.##0,00", { reverse: true });
+                });
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+        }
+    });
 }

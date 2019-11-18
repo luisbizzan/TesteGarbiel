@@ -483,5 +483,33 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return View(model);
         }
+
+        public JsonResult ValidarModalRegistroConferencia(long id)
+        {
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+
+            //var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+
+            //if (lote != null)
+            //{
+            //    return Json(new AjaxGenericResultModel
+            //    {
+            //        Success = false,
+            //        Message = "Recebimento da mecadoria já efetivado no sistema.",
+            //    });
+            //}            
+        }
+
+        public ActionResult ExibirModalRegistroConferencia(long id)
+        {
+            var modal = new BORegistroRecebimentoViewModel();
+
+            modal.IdNotaFiscal = id;
+
+            return PartialView("EntradaConferencia");
+        }
     }
 }
