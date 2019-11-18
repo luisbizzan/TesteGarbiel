@@ -349,6 +349,7 @@ namespace FWLog.Web.Backoffice.Controllers
             model.NumeroConhecimento = notafiscal.NumeroConhecimento;
             model.TransportadoraNome = notafiscal.Transportadora.RazaoSocial;
             model.Peso = notafiscal.PesoBruto.HasValue ? null : notafiscal.PesoBruto.Value.ToString("n2");
+            model.QtdVolumes = notafiscal.Quantidade == 0 ? (int?)null : notafiscal.Quantidade;
             model.NotaFiscalPesquisada = true;
 
             return PartialView("RegistroRecebimentoDetalhes", model);

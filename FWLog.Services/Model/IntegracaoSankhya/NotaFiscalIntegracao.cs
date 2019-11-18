@@ -51,7 +51,7 @@ namespace FWLog.Services.Model
         [TabelaIntegracao(DisplayName = "TGFCAB.VOLUME")]
         public string VOLUME { get; set; } //Especie
 
-        [TabelaIntegracao(DisplayName = "TGFCAB.QTDVOL")]
+        [TabelaIntegracao(DisplayName = "TGFCAB.QTDVOL")] //TODO ALTERAR NOME
         public string QTDVOL { get; set; } //Quantidade
 
         [TabelaIntegracao(DisplayName = "TGFCAB.DHEMISSEPEC")]
