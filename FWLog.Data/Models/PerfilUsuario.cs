@@ -39,6 +39,12 @@ namespace FWLog.Data
         [Display(Name = nameof(ResEnt.DataNascimento), ResourceType = typeof(ResEnt))]
         [Log(DisplayName = nameof(ResEnt.DataNascimento), ResourceType = typeof(ResEnt))]
         public DateTime DataNascimento { get; set; }
+        
+        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
+        [Display(Name = nameof(ResEnt.Name), ResourceType = typeof(ResEnt))]
+        [Log(DisplayName = nameof(ResEnt.Name), ResourceType = typeof(ResEnt))]
+        [StringLength(200, ErrorMessageResourceName = "InvalidMaxLenght", ErrorMessageResourceType = typeof(ResGen))]
+        public string Nome { get; set; }
 
         [ForeignKey("UsuarioId")]
         public virtual AspNetUsers Usuario { get; set; }

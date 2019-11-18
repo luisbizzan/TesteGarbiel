@@ -172,7 +172,7 @@
     <value>Usuário</value>
   </data>
   <data name="UserNameLabel" xml:space="preserve">
-    <value>Nome de Usuário</value>
+    <value>Usuário</value>
   </data>
   <data name="DeleteModalMessage" xml:space="preserve">
     <value>Deseja realmente excluir esse registro?</value>
@@ -281,5 +281,8 @@
   </data>
   <data name="RequiredOnlyGroup" xml:space="preserve">
     <value>Relacione pelo menos um grupo à empresa adicionada ao usuário.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nome do Usuário</value>
   </data>
 </root>
