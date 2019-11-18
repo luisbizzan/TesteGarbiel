@@ -322,6 +322,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var notafiscal = _uow.NotaFiscalRepository.GetById(Convert.ToInt64(id));
             var dataAtual = DateTime.UtcNow;
 
+            var model = new BORegistroRecebimentoViewModel();
             model.ChaveAcesso = notafiscal.Chave;
             model.DataRecebimento = dataAtual.ToString("dd/MM/yyyy");
             model.HoraRecebimento = dataAtual.ToString("HH:mm:ss");
@@ -434,7 +435,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult DetalhesEntradaConferencia(long id)
         {
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
-            
+
             var model = new BODetalhesEntradaConferenciaViewModel
             {
                 IdNotaFiscal = notaFiscal.IdNotaFiscal,
@@ -449,7 +450,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ValorTotal = notaFiscal.ValorTotal.ToString("C"),
                 ValorFrete = notaFiscal.ValorFrete.ToString("C"),
                 NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
-                PesoConhecimento = notaFiscal.PesoBruto.ToString("F"),
+                PesoConhecimento = notaFiscal.PesoBruto.HasValue ? null : notaFiscal.PesoBruto.Value.ToString("F"),
                 TransportadoraNome = notaFiscal.Transportadora.RazaoSocial,
                 DiasAtraso = "0"
             };

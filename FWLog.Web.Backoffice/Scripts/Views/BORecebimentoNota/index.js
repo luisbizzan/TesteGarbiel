@@ -326,8 +326,10 @@ function BuscarNotaFiscal() {
                         $('.integer').mask("#0", { reverse: true });
                         $('.money').mask("#.##0,00", { reverse: true });
                         $('#ChaveAcesso').attr("disabled", true);
+                        $("#QtdVolumes").focus();
                     });
                 } else {
+                    $('#ChaveAcesso').val("");
                     $(".validacaoChaveAcesso").text(result.Message);
                 }
             }
