@@ -9,6 +9,7 @@ using FWLog.Data;
 using System.Transactions;
 using System.Xml.Linq;
 using FWLog.Data.EnumsAndConsts;
+using System.Configuration;
 
 namespace FWLog.Services.Services
 {
@@ -25,6 +26,11 @@ namespace FWLog.Services.Services
 
         public async Task ConsultaNotaFiscalCompra()
         {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
             var where = " WHERE TGFCAB.TIPMOV = 'C' AND TGFCAB.STATUSNOTA <> 'L' AND (TGFCAB.AD_STATUSREC = 0 OR TGFCAB.AD_STATUSREC IS NULL)";
             var inner = "INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
             List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<NotaFiscalIntegracao>(where, inner);
@@ -50,14 +56,14 @@ namespace FWLog.Services.Services
                     if (lote != null)
                     {
                         throw new Exception("Já existe um lote aberto para esta nota fiscal, portanto não é possível integra-la novamente");
-                    }                    
+                    }
                 }
                 else
                 {
                     nota = new NotaFiscal();
                     nota.Numero = notaInt.NUMNOTA == null ? 0 : Convert.ToInt32(notaInt.NUMNOTA);
                     nota.Serie = notaInt.SERIENOTA == null ? (int?)null : Convert.ToInt32(notaInt.SERIENOTA);
-                    nota.CodigoIntegracao = codNota;                    
+                    nota.CodigoIntegracao = codNota;
                     nota.DANFE = notaInt.DANFE;
                     nota.ValorTotal = notaInt.VLRNOTA == null ? 0 : Convert.ToDecimal(notaInt.VLRNOTA);
                     nota.ValorFrete = notaInt.VLRFRETE == null ? 0 : Convert.ToDecimal(notaInt.VLRFRETE);
@@ -90,6 +96,11 @@ namespace FWLog.Services.Services
 
         private async Task ConsultaNotaFiscalItemCompra(long codigoIntegracao)
         {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
             var where = string.Format(" WHERE NUNOTA = {0}", codigoIntegracao.ToString());
             List<NotaFiscalItemIntegracao> itensIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryGenerico<NotaFiscalItemIntegracao>(where);
             List<NotaFiscalItem> itemsNotaFsical = new List<NotaFiscalItem>();
@@ -101,7 +112,7 @@ namespace FWLog.Services.Services
             foreach (var itemInt in itensIntegracao)
             {
                 ValidarNotaFiscalItemIntegracao(itemInt);
-                
+
                 bool itemNovo = false;
                 var codNota = Convert.ToInt64(itemInt.NUNOTA);
                 var codProduto = itemInt.CODPROD == null ? 0 : Convert.ToInt64(itemInt.CODPROD);
@@ -137,6 +148,11 @@ namespace FWLog.Services.Services
 
         public async Task AtualizarStatusNota(NotaFiscal notaFiscal)
         {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
             XElement dataRow = new XElement("dataRow", new XElement("localFields", new XElement("STATUSNOTA", notaFiscal.IdNotaFiscalStatus)));
             dataRow.Add(new XElement("key", new XElement("NUNOTA", notaFiscal.CodigoIntegracao)));
 

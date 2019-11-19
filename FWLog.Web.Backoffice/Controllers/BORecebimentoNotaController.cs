@@ -399,7 +399,7 @@ namespace FWLog.Web.Backoffice.Controllers
             model.ValorFrete = notafiscal.ValorFrete.ToString("n2");
             model.NumeroConhecimento = notafiscal.NumeroConhecimento;
             model.TransportadoraNome = notafiscal.Transportadora.RazaoSocial;
-            model.Peso = notafiscal.PesoBruto.HasValue ? null : notafiscal.PesoBruto.Value.ToString("n2");
+            model.Peso = notafiscal.PesoBruto.HasValue ? notafiscal.PesoBruto.Value.ToString("n2") : null;
             model.QtdVolumes = notafiscal.Quantidade == 0 ? (int?)null : notafiscal.Quantidade;
             model.NotaFiscalPesquisada = true;
 
@@ -517,7 +517,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ValorTotal = notaFiscal.ValorTotal.ToString("C"),
                 ValorFrete = notaFiscal.ValorFrete.ToString("C"),
                 NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
-                PesoConhecimento = notaFiscal.PesoBruto.HasValue ? null : notaFiscal.PesoBruto.Value.ToString("F"),
+                PesoConhecimento = notaFiscal.PesoBruto.HasValue ? notaFiscal.PesoBruto.Value.ToString("F") : null,
                 TransportadoraNome = notaFiscal.Transportadora.RazaoSocial,
                 DiasAtraso = "0"
             };
