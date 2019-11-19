@@ -25,6 +25,7 @@ namespace FWLog.Data.Models.GeneralCtx
         public string Cargo { get; set; }
         public string DataNascimento { get; set; }
         public string Empresa { get; set; }
+        public string Nome { get; set; }
 
         public AspNetUsersLogSerializeModel(string userName, PerfilUsuario perfil, string grupoEmpresas)
         {
@@ -36,6 +37,7 @@ namespace FWLog.Data.Models.GeneralCtx
                 Departamento = perfil.Departamento;
                 Cargo = perfil.Cargo;
                 DataNascimento = perfil.DataNascimento.ToString("dd/MM/yyyy");
+                Nome = perfil.Nome;
             }
 
             if (!grupoEmpresas.NullOrEmpty())

@@ -258,9 +258,9 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult Selecionar()
+        public ActionResult Selecionar(int id)
         {
-            List<Printer> impressoras = _uow.BOPrinterRepository.All().Where(w => w.CompanyId == CompanyId && w.Ativa == (int)NaoSimEnum.Sim && w.PrinterTypeId == 2).ToList();
+            List<Printer> impressoras = _uow.BOPrinterRepository.All().Where(w => w.CompanyId == CompanyId && w.Ativa == (int)NaoSimEnum.Sim && w.PrinterTypeId == id).ToList();
             var listaImpressoras = new List<BOPrinterSelecionarImpressoraViewModel>();
 
             foreach (Printer impressora in impressoras)

@@ -158,7 +158,7 @@ namespace FWLog.Services.Integracao
             string nunota = root.Element("responseBody").Element("entities").Element("entity").Element("NUNOTA")?.Value;
             if (nunota == null)
             {
-                throw new Exception("O sistema não obteve o NUNOTA no retorno da atualização da nota fiscal no Integração Sankhya.");
+                throw new Exception("O sistema não obteve o campo NUNOTA no retorno da atualização da nota fiscal no Integração Sankhya.");
             }
         }
 
@@ -191,7 +191,7 @@ namespace FWLog.Services.Integracao
             return result;
         }
 
-        public async Task<List<TClass>> PreExecuteQuery<TClass>(string where = null) where TClass : class, new()
+        public async Task<List<TClass>> PreExecutarQueryGenerico<TClass>(string where = null) where TClass : class, new()
         {
             Type typeClass = typeof(TClass);
             List<TClass> resultList = null;
@@ -212,8 +212,8 @@ namespace FWLog.Services.Integracao
             }
 
             var sqlColunas = string.Join(",", listColumns.ToArray());
-            
-            string sql = string.Format("SELECT {0} FROM {1} {2}", sqlColunas, classAttr.DisplayName, where);
+
+            var sql = string.Format("SELECT {0} FROM {1} {2}", sqlColunas, classAttr.DisplayName, where);
 
             var resultJson = await Instance.ExecuteQuery(sql);
             if (resultJson == null)
@@ -238,5 +238,72 @@ namespace FWLog.Services.Integracao
 
             return resultList;
         }
+
+        public async Task<List<TClass>> PreExecutarQueryComplexa<TClass>(string where, string inner) where TClass : class, new()
+        {
+            Type typeClass = typeof(TClass);
+            List<TClass> resultList = null;
+
+            TabelaIntegracaoAttribute classAttr = (TabelaIntegracaoAttribute)typeClass.GetCustomAttributes(typeof(TabelaIntegracaoAttribute), false).FirstOrDefault();
+
+            if (classAttr == null)
+            {
+                return resultList;
+            }
+
+            var listColumns = new List<ColunasConsulta>();
+
+            PropertyInfo[] properties = typeClass.GetProperties();
+            foreach (var propertyInfo in properties)
+            {
+                TabelaIntegracaoAttribute queryProperty = (TabelaIntegracaoAttribute)propertyInfo.GetCustomAttributes(typeof(TabelaIntegracaoAttribute), false).FirstOrDefault();
+
+                if (queryProperty == null)
+                {
+                    continue;
+                }
+
+                listColumns.Add(new ColunasConsulta(queryProperty.DisplayName, propertyInfo.Name));
+            }
+
+            var sqlColunas = string.Join(",", listColumns.Select(s => s.Coluna).ToArray());
+
+            var sql = string.Format("SELECT {0} FROM {1} {2} {3}", sqlColunas, classAttr.DisplayName, inner, where);
+
+            var resultJson = await Instance.ExecuteQuery(sql);
+            if (resultJson == null)
+            {
+                return resultList;
+            }
+
+            ExecuteQueryResponse resultObj = JsonConvert.DeserializeObject<ExecuteQueryResponse>(resultJson);
+
+            resultList = new List<TClass>();
+            foreach (var row in resultObj.responseBody.rows)
+            {
+                var newClass = new TClass();
+                for (var i = 0; i <= listColumns.Count() - 1; i++)
+                {
+                    PropertyInfo propertySet = typeClass.GetProperty(listColumns[i].Nome);
+                    propertySet.SetValue(newClass, row[i].ToString(), null);
+                }
+
+                resultList.Add(newClass);
+            }
+
+            return resultList;
+        }
+    }
+}
+
+public class ColunasConsulta
+{
+    public string Coluna { get; set; }
+    public string Nome { get; set; }
+
+    public ColunasConsulta(string coluna, string nome)
+    {
+        Coluna = coluna;
+        Nome = nome;
     }
 }

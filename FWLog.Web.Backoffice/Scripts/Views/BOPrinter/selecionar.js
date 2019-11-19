@@ -1,9 +1,5 @@
 ﻿(function () {
     $("#btnImprimir").click(function () {
-        imprimirRelatorio();
+        imprimir();
     });
 })();
-
-function imprimirRelatorio() {
-    Imprimir();
-}

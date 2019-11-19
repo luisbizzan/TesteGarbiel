@@ -61,11 +61,24 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpPost]
         public ActionResult PageData(DataTableFilter<BORecebimentoNotaFilterViewModel> model)
         {
-            ValidateModel(model);
-
             List<BORecebimentoNotaListItemViewModel> boRecebimentoNotaListItemViewModel = new List<BORecebimentoNotaListItemViewModel>();
             int totalRecords = 0;
             int totalRecordsFiltered = 0;
+
+            //if (!(model.CustomFilter.PrazoInicial.HasValue || model.CustomFilter.PrazoFinal.HasValue))
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Os campos prazo inicial e prazo final obrigatoriamente deverão ser preenchidos.");
+
+            if (!ModelState.IsValid)
+            {
+                return DataTableResult.FromModel(new DataTableResponseModel()
+                {
+                    Draw = model.Draw,
+                    RecordsTotal = totalRecords,
+                    RecordsFiltered = totalRecordsFiltered,
+                    Data = boRecebimentoNotaListItemViewModel
+                });
+            }
+
             var query = _uow.LoteRepository.Obter(CompanyId).AsQueryable();
 
             totalRecords = query.Count();
@@ -117,15 +130,17 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.DataRecebimento <= dataFinal);
             }
 
-            if (model.CustomFilter.PrazoInicial.HasValue)
+            if (model.CustomFilter.PrazoInicial != null)
             {
-                DateTime prazoInicial = new DateTime(model.CustomFilter.PrazoInicial.Value.Year, model.CustomFilter.PrazoInicial.Value.Month, model.CustomFilter.PrazoInicial.Value.Day, 00, 00, 00);
+                DateTime prazoInicial = new DateTime(model.CustomFilter.PrazoInicial.Year, model.CustomFilter.PrazoInicial.Month, model.CustomFilter.PrazoInicial.Day,
+                    00, 00, 00);
                 query = query.Where(x => x.NotaFiscal.PrazoEntregaFornecedor >= prazoInicial);
             }
 
-            if (model.CustomFilter.PrazoFinal.HasValue)
+            if (model.CustomFilter.PrazoFinal != null)
             {
-                DateTime prazoFinal = new DateTime(model.CustomFilter.PrazoFinal.Value.Year, model.CustomFilter.PrazoFinal.Value.Month, model.CustomFilter.PrazoFinal.Value.Day, 23, 59, 59);
+                DateTime prazoFinal = new DateTime(model.CustomFilter.PrazoFinal.Year, model.CustomFilter.PrazoFinal.Month, model.CustomFilter.PrazoFinal.Day,
+                    23, 59, 59);
                 query = query.Where(x => x.NotaFiscal.PrazoEntregaFornecedor <= prazoFinal);
             }
 
@@ -250,12 +265,63 @@ namespace FWLog.Web.Backoffice.Controllers
             var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
             {
                 IdEmpresa = CompanyId,
-                NomeUsuario = User.Identity.Name
+                NomeUsuario = User.Identity.Name,
+                IdNotaFiscal = id
             };
 
             byte[] relatorio = _relatorioService.GerarDetalhesNotaEntradaConferencia(relatorioRequest);
 
             return File(relatorio, "application/pdf", "Detalhes Nota Fiscal Entrada Conferencia.pdf");
+        }
+
+        [HttpPost]
+        public JsonResult ImprimirDetalhesEntradaConferencia(BOImprimirDetalhesEntradaConferenciaViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
+                {
+                    IdEmpresa = CompanyId,
+                    NomeUsuario = User.Identity.Name,
+                    IdNotaFiscal = viewModel.IdNotaFiscal
+                };
+
+                byte[] relatorio = _relatorioService.GerarDetalhesNotaEntradaConferencia(relatorioRequest);
+
+                Printer impressora = _uow.BOPrinterRepository.GetById(viewModel.IdImpressora);
+                var ipPorta = impressora.IP.Split(':');
+
+                Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                {
+                    NoDelay = true
+                };
+
+                IPAddress ip = IPAddress.Parse(ipPorta[0]);
+                IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
+                clientSocket.Connect(ipep);
+
+                NetworkStream ns = new NetworkStream(clientSocket);
+                ns.Write(relatorio, 0, relatorio.Length);
+                ns.Close();
+                clientSocket.Close();
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.DenyGet);
+
+            }
+            catch
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.DenyGet);
+            }
         }
 
         public JsonResult ValidarModalRegistroRecebimento(long id)
@@ -323,21 +389,20 @@ namespace FWLog.Web.Backoffice.Controllers
             var notafiscal = _uow.NotaFiscalRepository.GetById(Convert.ToInt64(id));
             var dataAtual = DateTime.UtcNow;
 
-            var model = new BORegistroRecebimentoViewModel
-            {
-                ChaveAcesso = notafiscal.Chave,
-                DataRecebimento = dataAtual.ToString("dd/MM/yyyy"),
-                HoraRecebimento = dataAtual.ToString("HH:mm:ss"),
-                FornecedorNome = notafiscal.Fornecedor.RazaoSocial,
-                NumeroSerieNotaFiscal = string.Format("{0}-{1}", notafiscal.Numero, notafiscal.Serie),
-                ValorTotal = notafiscal.ValorTotal.ToString("n2"),
-                DataAtual = dataAtual,
-                ValorFrete = notafiscal.ValorFrete.ToString("n2"),
-                NumeroConhecimento = notafiscal.NumeroConhecimento,
-                TransportadoraNome = notafiscal.Transportadora.RazaoSocial,
-                Peso = notafiscal.PesoBruto.ToString("n2"),
-                NotaFiscalPesquisada = true
-            };
+            var model = new BORegistroRecebimentoViewModel();
+            model.ChaveAcesso = notafiscal.Chave;
+            model.DataRecebimento = dataAtual.ToString("dd/MM/yyyy");
+            model.HoraRecebimento = dataAtual.ToString("HH:mm:ss");
+            model.FornecedorNome = notafiscal.Fornecedor.RazaoSocial;
+            model.NumeroSerieNotaFiscal = string.Format("{0}-{1}", notafiscal.Numero, notafiscal.Serie);
+            model.ValorTotal = notafiscal.ValorTotal.ToString("n2");
+            model.DataAtual = dataAtual;
+            model.ValorFrete = notafiscal.ValorFrete.ToString("n2");
+            model.NumeroConhecimento = notafiscal.NumeroConhecimento;
+            model.TransportadoraNome = notafiscal.Transportadora.RazaoSocial;
+            model.Peso = notafiscal.PesoBruto.HasValue ? notafiscal.PesoBruto.Value.ToString("n2") : null;
+            model.QtdVolumes = notafiscal.Quantidade == 0 ? (int?)null : notafiscal.Quantidade;
+            model.NotaFiscalPesquisada = true;
 
             return PartialView("RegistroRecebimentoDetalhes", model);
         }
@@ -453,7 +518,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ValorTotal = notaFiscal.ValorTotal.ToString("C"),
                 ValorFrete = notaFiscal.ValorFrete.ToString("C"),
                 NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
-                PesoConhecimento = notaFiscal.PesoBruto.ToString("F"),
+                PesoConhecimento = notaFiscal.PesoBruto.HasValue ? notaFiscal.PesoBruto.Value.ToString("F") : null,
                 TransportadoraNome = notaFiscal.Transportadora.RazaoSocial,
                 DiasAtraso = "0"
             };

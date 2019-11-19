@@ -29,6 +29,9 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
         [Display(Name = nameof(Res.EmailLabel), ResourceType = typeof(Res))]
         public string Email { get; set; }
 
+        [Display(Name = nameof(Res.Name), ResourceType = typeof(Res))]
+        public string Nome { get; set; }
+
         [Display(Name = nameof(Res.CreationDateLabel), ResourceType = typeof(Res))]
         public DateTime CreationDate { get; set; }
     }
@@ -40,5 +43,8 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
 
         [Display(Name = nameof(Res.EmailLabel), ResourceType = typeof(Res))]
         public string Email { get; set; }
+
+        [Display(Name = nameof(Res.Name), ResourceType = typeof(Res))]
+        public string Nome { get; set; }
     }
 }
