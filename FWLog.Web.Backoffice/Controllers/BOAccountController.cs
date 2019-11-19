@@ -45,12 +45,15 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.List)]
         public ActionResult PageData(DataTableFilter<BOAccountFilterViewModel> model)
         {
-            int totalRecords = UserManager.Users.Count();
+            var users = _uow.PerfilUsuarioRepository.GetAll();
 
-            IEnumerable<BOAccountListItemViewModel> query = UserManager.Users.Select(x => new BOAccountListItemViewModel
+            int totalRecords = users.Count();
+
+            IEnumerable<BOAccountListItemViewModel> query = users.Select(x => new BOAccountListItemViewModel
             {
-                UserName = x.UserName,
-                Email = x.Email
+                UserName = x.Usuario.UserName,
+                Email = x.Usuario.Email,
+                Nome = x.Nome
             });
 
             if (!String.IsNullOrEmpty(model.CustomFilter.UserName))
@@ -61,6 +64,11 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!String.IsNullOrEmpty(model.CustomFilter.Email))
             {
                 query = query.Where(x => x.Email.Contains(model.CustomFilter.Email));
+            }
+
+            if (!String.IsNullOrEmpty(model.CustomFilter.Nome))
+            {
+                query = query.Where(x => x.Nome.Contains(model.CustomFilter.Nome));
             }
 
             int recordsFiltered = query.Count();

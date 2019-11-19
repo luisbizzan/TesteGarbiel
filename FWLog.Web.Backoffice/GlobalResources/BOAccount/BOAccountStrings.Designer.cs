@@ -322,6 +322,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Nome do Usuário.
+        /// </summary>
+        public static string Name {
+            get {
+                return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Nova Senha.
         /// </summary>
         public static string NewPasswordLabel {
@@ -511,7 +520,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Nome de Usuário.
+        ///   Looks up a localized string similar to Usuário.
         /// </summary>
         public static string UserNameLabel {
             get {

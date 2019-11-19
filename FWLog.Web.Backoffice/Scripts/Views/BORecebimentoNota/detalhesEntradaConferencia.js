@@ -19,4 +19,13 @@
             }
         });
     });
+
+    $("#imprimirDetalhesNotaEntradaConferencia").click(function () {
+        $("#modalImpressoras").load("BOPrinter/Selecionar/2", function () {
+            $("#idNotaFiscalImprimir").val(view_modal.idNotaFiscal);
+            $("#relatorioImprimir").val("Detalhes");
+            $("#btnFecharModal").click();
+            $("#modalImpressoras").modal();
+        });
+    });
 })();

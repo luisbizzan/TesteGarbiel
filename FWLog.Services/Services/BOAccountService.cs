@@ -56,6 +56,7 @@ namespace FWLog.Services.Services
             perfil.Cargo = perfilModel.Cargo;
             perfil.DataNascimento = perfilModel.DataNascimento;
             perfil.EmpresaId = perfilModel.EmpresaId;
+            perfil.Nome = perfilModel.Nome;
 
             _uow.SaveChanges();
         }

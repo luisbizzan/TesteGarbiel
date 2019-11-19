@@ -158,7 +158,7 @@ namespace FWLog.Services.Integracao
             string nunota = root.Element("responseBody").Element("entities").Element("entity").Element("NUNOTA")?.Value;
             if (nunota == null)
             {
-                throw new Exception("O sistema não obteve o NUNOTA no retorno da atualização da nota fiscal no Integração Sankhya.");
+                throw new Exception("O sistema não obteve o campo NUNOTA no retorno da atualização da nota fiscal no Integração Sankhya.");
             }
         }
 

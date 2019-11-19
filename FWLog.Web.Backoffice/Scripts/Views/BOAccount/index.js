@@ -64,6 +64,7 @@
             dart.dataTables.loadFilterFromData(data);
         },
         columns: [
+            { data: 'Nome' },
             { data: 'UserName', width: 100 },
             { data: 'Email' },
             actionsColumn
