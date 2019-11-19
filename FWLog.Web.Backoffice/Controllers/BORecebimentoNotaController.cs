@@ -47,7 +47,8 @@ namespace FWLog.Web.Backoffice.Controllers
                         Value = x.IdLoteStatus.ToString(),
                         Text = x.Descricao,
                     }), "Value", "Text"
-                )}
+                )
+                }
             };
 
             model.Filter.IdStatus = StatusNotaRecebimento.AguardandoRecebimento.GetHashCode();
@@ -623,30 +624,41 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public JsonResult ValidarModalRegistroConferencia(long id)
         {
+            NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+
+            if (notaFiscal == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não foi possível buscar Nota Fiscal."
+                });
+            }
+
             return Json(new AjaxGenericResultModel
             {
                 Success = true
             });
-
-            //var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
-
-            //if (lote != null)
-            //{
-            //    return Json(new AjaxGenericResultModel
-            //    {
-            //        Success = false,
-            //        Message = "Recebimento da mecadoria já efetivado no sistema.",
-            //    });
-            //}            
         }
 
         public ActionResult ExibirModalRegistroConferencia(long id)
         {
-            var modal = new BORegistroRecebimentoViewModel();
+            NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
 
-            modal.IdNotaFiscal = id;
+            var userInfo = new BackOfficeUserInfo();
 
-            return PartialView("EntradaConferencia");
+            AspNet.Identity.ApplicationUser a = UserManager.Users.FirstOrDefault(x => x.Id == (string)userInfo.UserId);
+
+            var model = new BOEntradaConferenciaViewModel
+            {
+                IdNotaFiscal = id,
+                NumeroNotaFiscal = notaFiscal.Numero.ToString(),
+                NomeFornecedor = notaFiscal.Fornecedor.NomeFantasia,
+                QuantidadeVolumes = notaFiscal.Quantidade,
+                NomeConferente = a.UserName,
+            };
+
+            return PartialView("EntradaConferencia", model);
         }
     }
 }

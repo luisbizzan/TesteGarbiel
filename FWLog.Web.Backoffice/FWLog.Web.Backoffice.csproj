@@ -307,6 +307,7 @@
     <Content Include="Scripts\dart\company.js" />
     <Content Include="Scripts\dart\documentReady.js" />
     <Content Include="Scripts\dart\dropzoneImageCropper.js" />
+    <Content Include=".editorconfig" />
     <None Include="Content\dart\dart-template.scss" />
     <Compile Include="Controllers\ApplicationLogController.cs" />
     <Compile Include="Controllers\BOAccountBaseController.cs" />
