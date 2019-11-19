@@ -249,12 +249,63 @@ namespace FWLog.Web.Backoffice.Controllers
             var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
             {
                 IdEmpresa = CompanyId,
-                NomeUsuario = User.Identity.Name
+                NomeUsuario = User.Identity.Name,
+                IdNotaFiscal = id
             };
 
             byte[] relatorio = _relatorioService.GerarDetalhesNotaEntradaConferencia(relatorioRequest);
 
             return File(relatorio, "application/pdf", "Detalhes Nota Fiscal Entrada Conferencia.pdf");
+        }
+
+        [HttpPost]
+        public JsonResult ImprimirDetalhesEntradaConferencia(BOImprimirDetalhesEntradaConferenciaViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
+                {
+                    IdEmpresa = CompanyId,
+                    NomeUsuario = User.Identity.Name,
+                    IdNotaFiscal = viewModel.IdNotaFiscal
+                };
+
+                byte[] relatorio = _relatorioService.GerarDetalhesNotaEntradaConferencia(relatorioRequest);
+
+                Printer impressora = _uow.BOPrinterRepository.GetById(viewModel.IdImpressora);
+                var ipPorta = impressora.IP.Split(':');
+
+                Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                {
+                    NoDelay = true
+                };
+
+                IPAddress ip = IPAddress.Parse(ipPorta[0]);
+                IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
+                clientSocket.Connect(ipep);
+
+                NetworkStream ns = new NetworkStream(clientSocket);
+                ns.Write(relatorio, 0, relatorio.Length);
+                ns.Close();
+                clientSocket.Close();
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.DenyGet);
+
+            }
+            catch
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.DenyGet);
+            }
         }
 
         public JsonResult ValidarModalRegistroRecebimento(long id)

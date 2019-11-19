@@ -6,7 +6,8 @@
     });
 
     $("#imprimirRelatorio").click(function () {
-        $("#modalImpressoras").load("BOPrinter/Selecionar", function () {
+        $("#modalImpressoras").load("BOPrinter/Selecionar/2", function () {
+            $("#relatorioImprimir").val("Notas");
             $("#modalImpressoras").modal();
         });
     });
@@ -245,29 +246,43 @@ function adicionaEventos() {
     $(document.body).on('click', "[action='conferirNota']", conferirNota);
 }
 
-function Imprimir() {
-    $.ajax({
-        url: "/BORecebimentoNota/ImprimirRelatorioNotas",
-        method: "POST",
-        data: {
-            IdImpressora: $("#IdImpressora").val(),
-            Lote: $("#Filter_Lote").val(),
-            Nota: $("#Filter_Nota").val(),
-            DANFE: $("#Filter_DANFE").val(),
-            IdStatus: $("#Filter_ListaStatus").val(),
-            DataInicial: $("#Filter_DataInicial").val(),
-            DataFinal: $("#Filter_DataFinal").val(),
-            PrazoInicial: $("#Filter_PrazoInicial").val(),
-            PrazoFinal: $("#Filter_PrazoFinal").val(),
-            IdFornecedor: $("#Filter_IdFornecedor").val(),
-            Atraso: $("#Filter_Atraso").val(),
-            QuantidadePeca: $("#Filter_QuantidadePeca").val(),
-            Volume: $("#Filter_Volume").val()
-        },
-        success: function () {
-            $("#btnFechar").click();
-        }
-    });
+function imprimir() {
+    if ($("#relatorioImprimir").val() === 'Notas') {
+        $.ajax({
+            url: "/BORecebimentoNota/ImprimirRelatorioNotas",
+            method: "POST",
+            data: {
+                IdImpressora: $("#IdImpressora").val(),
+                Lote: $("#Filter_Lote").val(),
+                Nota: $("#Filter_Nota").val(),
+                DANFE: $("#Filter_DANFE").val(),
+                IdStatus: $("#Filter_ListaStatus").val(),
+                DataInicial: $("#Filter_DataInicial").val(),
+                DataFinal: $("#Filter_DataFinal").val(),
+                PrazoInicial: $("#Filter_PrazoInicial").val(),
+                PrazoFinal: $("#Filter_PrazoFinal").val(),
+                IdFornecedor: $("#Filter_IdFornecedor").val(),
+                Atraso: $("#Filter_Atraso").val(),
+                QuantidadePeca: $("#Filter_QuantidadePeca").val(),
+                Volume: $("#Filter_Volume").val()
+            },
+            success: function () {
+                $("#btnFechar").click();
+            }
+        });
+    } else {
+        $.ajax({
+            url: "/BORecebimentoNota/ImprimirDetalhesEntradaConferencia",
+            method: "POST",
+            data: {
+                IdImpressora: $("#IdImpressora").val(),
+                IdNotaFiscal: $("#idNotaFiscalImprimir").val()
+            },
+            success: function () {
+                $("#btnFechar").click();
+            }
+        });
+    }
 }
 
 function CarregarBotoesRegistrar() {

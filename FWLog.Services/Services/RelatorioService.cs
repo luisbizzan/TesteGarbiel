@@ -5,6 +5,7 @@ using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Relatorio;
 using FWLog.Services.Relatorio.Model;
 using MigraDoc.DocumentObjectModel;
+using MigraDoc.DocumentObjectModel.Tables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -149,6 +150,7 @@ namespace FWLog.Services.Services
         public byte[] GerarDetalhesNotaEntradaConferencia(DetalhesNotaEntradaConferenciaRequest request)
         {
             Company empresa = _unitiOfWork.CompanyRepository.GetById(request.IdEmpresa);
+            NotaFiscal notaFiscal = _unitiOfWork.NotaFiscalRepository.GetById(request.IdNotaFiscal);
 
             var fwRelatorioDados = new FwRelatorioDados
             {
@@ -163,6 +165,238 @@ namespace FWLog.Services.Services
             var fwRelatorio = new FwRelatorio();
 
             Document document = fwRelatorio.Customizar(fwRelatorioDados);
+
+            Paragraph paragraph = document.Sections[0].AddParagraph();
+            paragraph.Format.SpaceAfter = 20;
+            paragraph.Format.Font = new Font("Verdana", new Unit(12))
+            {
+                Bold = true
+            };
+            paragraph.AddText("Entrada");
+
+            Table tabela = document.Sections[0].AddTable();
+            tabela.Format.Font = new Font("Verdana", new Unit(9));
+            tabela.Rows.HeightRule = RowHeightRule.Exactly;
+            tabela.Rows.Height = 20;
+
+            tabela.AddColumn(new Unit(132));
+            tabela.AddColumn(new Unit(132));
+            tabela.AddColumn(new Unit(132));
+            tabela.AddColumn(new Unit(132));
+
+            Row row = tabela.AddRow();
+            row.Cells[0].MergeRight = 2;
+            paragraph = row.Cells[0].AddParagraph();
+            paragraph.AddFormattedText("DANFE: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.DANFE);
+
+            paragraph = row.Cells[3].AddParagraph();
+            paragraph.AddFormattedText("Status: ", TextFormat.Bold);
+
+            switch (notaFiscal.IdNotaFiscalStatus)
+            {
+                case (int)NotaFiscalStatusEnum.Recebida:
+                    paragraph.AddText("Recebido");
+                    break;
+                case (int)NotaFiscalStatusEnum.Conferida:
+                    paragraph.AddText("Conferido");
+                    break;
+                case (int)NotaFiscalStatusEnum.ConferidaDivergencia:
+                    paragraph.AddText("Divergência");
+                    break;
+                default:
+                    paragraph.AddText("Status Não Cadastrado");
+                    break;
+            }
+
+            row = tabela.AddRow();
+            row.Cells[0].MergeRight = 1;
+            paragraph = row.Cells[0].AddParagraph();
+            paragraph.AddFormattedText("Fornecedor: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.Fornecedor.RazaoSocial);
+            row.Cells[2].MergeRight = 1;
+            paragraph = row.Cells[2].AddParagraph();
+            paragraph.AddFormattedText("Transportadora: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.Transportadora.RazaoSocial);
+
+            Lote lote = _unitiOfWork.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
+            bool IsNotaRecebida = lote != null;
+
+            row = tabela.AddRow();
+            paragraph = row.Cells[0].AddParagraph();
+            paragraph.AddFormattedText("Lote: ", TextFormat.Bold);
+
+            if (IsNotaRecebida)
+            {
+                paragraph.AddText(lote.IdLote.ToString());
+            }
+
+            paragraph = row.Cells[1].AddParagraph();
+            paragraph.AddFormattedText("Nota: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.IdNotaFiscal.ToString());
+            row.Cells[2].MergeRight = 1;
+            paragraph = row.Cells[2].AddParagraph();
+            paragraph.AddFormattedText("CNPJ: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.Fornecedor.CNPJ);
+
+            row = tabela.AddRow();
+            paragraph = row.Cells[0].AddParagraph();
+            paragraph.AddFormattedText("Quantidade: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.Quantidade.ToString());
+            paragraph = row.Cells[1].AddParagraph();
+            paragraph.AddFormattedText("Prazo: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"));
+            paragraph = row.Cells[2].AddParagraph();
+            paragraph.AddFormattedText("Compras: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.DataEmissao.ToString("dd/MM/yyyy"));
+
+            paragraph = row.Cells[3].AddParagraph();
+            paragraph.AddFormattedText("Chegada: ", TextFormat.Bold);
+
+            if (IsNotaRecebida)
+            {
+                paragraph.AddText(lote.DataRecebimento.ToString("dd/MM/yyyy"));
+            }
+
+            row = tabela.AddRow();
+            paragraph = row.Cells[0].AddParagraph();
+            paragraph.AddFormattedText("Volumes: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.Quantidade.ToString());
+
+            paragraph = row.Cells[1].AddParagraph();
+            paragraph.AddFormattedText("Volumes: ", TextFormat.Bold);
+
+            if (IsNotaRecebida)
+            {
+                if (lote.DataRecebimento > notaFiscal.PrazoEntregaFornecedor)
+                {
+                    TimeSpan atraso = DateTime.Now.Subtract(notaFiscal.PrazoEntregaFornecedor);
+                    paragraph.AddText(atraso.Days.ToString());
+                }
+                else
+                {
+                    paragraph.AddText("0");
+                }
+            }
+            else
+            {
+                if (DateTime.Now > notaFiscal.PrazoEntregaFornecedor)
+                {
+                    TimeSpan atraso = DateTime.Now.Subtract(notaFiscal.PrazoEntregaFornecedor);
+                    paragraph.AddText(atraso.Days.ToString());
+                }
+            }
+
+            paragraph = row.Cells[2].AddParagraph();
+            paragraph.AddFormattedText("Peso: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.PesoBruto.ToString("F"));
+            paragraph = row.Cells[3].AddParagraph();
+            paragraph.AddFormattedText("Nro. Conhecimento: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.NumeroConhecimento.ToString());
+
+            row = tabela.AddRow();
+            paragraph = row.Cells[0].AddParagraph();
+            paragraph.AddFormattedText("Total: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.ValorTotal.ToString("C"));
+            paragraph = row.Cells[1].AddParagraph();
+            paragraph.AddFormattedText("Frete: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.ValorFrete.ToString("C"));
+            paragraph = row.Cells[2].AddParagraph();
+            paragraph.AddFormattedText("Recebido por: ", TextFormat.Bold);
+            paragraph.AddText(lote.UsuarioRecebimento.UserName);
+            row.Cells[2].MergeRight = 1;
+
+            if (IsNotaRecebida)
+            {
+                if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia.GetHashCode())
+                {
+                    paragraph = document.Sections[0].AddParagraph();
+                    paragraph.Format.SpaceAfter = 20;
+                    paragraph.Format.Font = new Font("Verdana", new Unit(12))
+                    {
+                        Bold = true
+                    };
+                    paragraph.AddText("Conferência");
+
+                    tabela = document.Sections[0].AddTable();
+                    tabela.Format.Font = new Font("Verdana", new Unit(9));
+                    tabela.Rows.HeightRule = RowHeightRule.Exactly;
+                    tabela.Rows.Height = 20;
+
+                    tabela.AddColumn(new Unit(132));
+                    tabela.AddColumn(new Unit(132));
+                    tabela.AddColumn(new Unit(132));
+                    tabela.AddColumn(new Unit(132));
+
+                    row = tabela.AddRow();
+                    paragraph = row.Cells[0].AddParagraph();
+                    row.Cells[0].MergeRight = 1;
+                    paragraph.AddFormattedText("Tipo Conferência: ", TextFormat.Bold);
+                    paragraph = row.Cells[2].AddParagraph();
+                    row.Cells[2].MergeRight = 1;
+                    paragraph.AddFormattedText("Conferido por: ", TextFormat.Bold);
+
+                    row = tabela.AddRow();
+                    paragraph = row.Cells[0].AddParagraph();
+                    paragraph.AddFormattedText("Início: ", TextFormat.Bold);
+                    paragraph = row.Cells[1].AddParagraph();
+                    paragraph.AddFormattedText("Fim: ", TextFormat.Bold);
+                    paragraph = row.Cells[2].AddParagraph();
+                    row.Cells[2].MergeRight = 1;
+                    paragraph.AddFormattedText("Tempo Total: ", TextFormat.Bold);
+                }
+            }
+
+            paragraph = document.Sections[0].AddParagraph();
+            paragraph.Format.SpaceAfter = 20;
+            paragraph.Format.Font = new Font("Verdana", new Unit(12))
+            {
+                Bold = true
+            };
+
+            List<NotaFiscalItem> notaFiscalItems = _unitiOfWork.NotaFiscalItemRepository.ObterItens(notaFiscal.IdNotaFiscal);
+
+            tabela = document.Sections[0].AddTable();
+            tabela.Format.Font = new Font("Verdana", new Unit(9));
+
+            tabela.AddColumn(new Unit(88));
+            tabela.AddColumn(new Unit(88));
+            tabela.AddColumn(new Unit(88));
+            tabela.AddColumn(new Unit(88));
+            tabela.AddColumn(new Unit(88));
+            tabela.AddColumn(new Unit(88));
+
+            row = tabela.AddRow();
+            row.Format.Font = new Font("Verdana", new Unit(9));
+            row.HeadingFormat = true;
+            row.Format.Font.Bold = true;
+
+            row.Cells[0].AddParagraph("Referência");
+            row.Cells[1].AddParagraph("Quantidade");
+            row.Cells[2].AddParagraph("Início");
+            row.Cells[3].AddParagraph("Termino");
+            row.Cells[4].AddParagraph("Conferido por");
+            row.Cells[5].AddParagraph("Tempo");
+
+            if (notaFiscalItems.Count > 0)
+            {
+                foreach(NotaFiscalItem notaFiscalItem in notaFiscalItems)
+                {
+                    row = tabela.AddRow();
+                    paragraph = row.Cells[0].AddParagraph();
+                    paragraph.AddText(notaFiscalItem.Produto.Referencia);
+                    paragraph = row.Cells[1].AddParagraph();
+                    paragraph.AddText(notaFiscalItem.Quantidade.ToString());
+                    paragraph = row.Cells[2].AddParagraph();
+                    paragraph.AddText("Não Conferido");
+                    paragraph = row.Cells[3].AddParagraph();
+                    paragraph.AddText("Não Conferido");
+                    paragraph = row.Cells[4].AddParagraph();
+                    paragraph.AddText("Não Conferido");
+                    paragraph = row.Cells[5].AddParagraph();
+                    paragraph.AddText("Não Conferido");
+                }
+            }
 
             return fwRelatorio.GerarCustomizado();
         }

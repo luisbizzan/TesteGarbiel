@@ -10,5 +10,6 @@ namespace FWLog.Services.Model.Relatorios
     {
         public int IdEmpresa { get; set; }
         public string NomeUsuario { get; set; }
+        public long IdNotaFiscal { get; set; }
     }
 }
