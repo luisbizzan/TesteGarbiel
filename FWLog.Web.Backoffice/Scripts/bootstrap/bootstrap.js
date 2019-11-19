@@ -1172,14 +1172,14 @@ if (typeof jQuery === 'undefined') {
     })
   }
 
-  Modal.prototype.checkScrollbar = function () {
+    Modal.prototype.checkScrollbar = function () {
     var fullWindowWidth = window.innerWidth
     if (!fullWindowWidth) { // workaround for missing window.innerWidth in IE8
       var documentElementRect = document.documentElement.getBoundingClientRect()
       fullWindowWidth = documentElementRect.right - Math.abs(documentElementRect.left)
     }
-    this.bodyIsOverflowing = document.body.clientWidth < fullWindowWidth
     this.scrollbarWidth = this.measureScrollbar()
+    this.bodyIsOverflowing = (document.body.clientWidth + this.scrollbarWidth) > fullWindowWidth
   }
 
   Modal.prototype.setScrollbar = function () {

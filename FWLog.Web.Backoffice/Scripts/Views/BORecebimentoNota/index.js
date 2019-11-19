@@ -440,7 +440,7 @@ function conferirNota() {
         cache: false,
         method: "POST",
         success: function (result) {
-            if (result.Success) {
+            if (!!result.Success) {
                 $modal.load(HOST_URL + "BORecebimentoNota/ExibirModalRegistroConferencia/" + id, function () {
                     $modal.modal();
 
