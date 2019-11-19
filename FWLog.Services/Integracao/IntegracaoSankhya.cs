@@ -285,7 +285,7 @@ namespace FWLog.Services.Integracao
                 for (var i = 0; i <= listColumns.Count() - 1; i++)
                 {
                     PropertyInfo propertySet = typeClass.GetProperty(listColumns[i].Nome);
-                    propertySet.SetValue(newClass, row[i].ToString(), null);
+                    propertySet.SetValue(newClass, row[i], null);
                 }
 
                 resultList.Add(newClass);
