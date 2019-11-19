@@ -47,6 +47,7 @@
 body {
     color: #333333db !important;
     background: #155831 !important;
+    padding-right: 0 !important;
 }
 
 .toggle a i {
@@ -139,3 +140,4 @@ footer {
         line-height: 20px !important;
     }
 }
+
