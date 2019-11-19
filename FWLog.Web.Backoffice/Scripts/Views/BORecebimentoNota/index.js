@@ -1,4 +1,9 @@
 ﻿(function () {
+    $.validator.setDefaults({ ignore: null });
+
+    $('.onlyNumber').mask('0#');
+    $("dateFormat").mask("99/99/9999");
+
     $("#imprimirEtiquetaConferencia").click(function () {
         $("#modalEtiquetaConferencia").load("BORecebimentoNota/DetalhesEtiquetaConferencia", function () {
             $("#modalEtiquetaConferencia").modal();
@@ -233,6 +238,23 @@
         limparUsuarioRecebimento();
     });
 
+    $("#pesquisarUsuarioConferencia").click(function () {
+        $("#modalUsuarioConferencia").load(HOST_URL + "BOAccount/SearchModal", function () {
+            $("#modalUsuarioConferencia").modal();
+        });
+    });
+
+    function limparUsuarioConferencia() {
+        let userName = $("#Filter_UserNameConferencia");
+        let usuarioId = $("#Filter_IdUsuarioConferencia");
+        userName.val("");
+        usuarioId.val("");
+    }
+
+    $("#limparUsuarioConferencia").click(function () {
+        limparUsuarioConferencia();
+    });
+
     $(document).on('click', '[action="detalhesNota"]', function () {
         $("#modalDetalhesEntradaConferencia").load("BORecebimentoNota/DetalhesEntradaConferencia/" + $(this).data("id"), function () {
             $("#modalDetalhesEntradaConferencia").modal();
@@ -291,7 +313,7 @@ function CarregarBotoesRegistrar() {
         var id = $(this).data("id");
         $.ajax({
             url: HOST_URL + "BORecebimentoNota/ValidarModalRegistroRecebimento/" + id,
-            method: "POST",            
+            method: "POST",
             success: function (result) {
                 if (result.Success) {
                     $("#modalRegistroRecebimento").load(HOST_URL + "BORecebimentoNota/ExibirModalRegistroRecebimento/" + id, function () {
@@ -303,13 +325,15 @@ function CarregarBotoesRegistrar() {
                             BuscarNotaFiscal();
                         });
 
-                        RegistrarNotaFiscal();
-
+                        $("#RegistrarRecebimentoNota").click(function () {
+                            RegistrarNotaFiscal();  
+                        });
+                                              
                         $('.integer').mask("#0", { reverse: true });
                         $('.money').mask("#.##0,00", { reverse: true });
                     });
                 } else {
-                    PNotify.error({ text: result.Message });
+                    PNotify.info({ text: result.Message });
                 }
             }
         });
@@ -327,22 +351,33 @@ function BuscarNotaFiscal() {
         if (chave === "" || chave === undefined || chave === null) {
             return;
         }
-
+        
         $.ajax({
             url: HOST_URL + "BORecebimentoNota/ValidarNotaFiscalRegistro",
             method: "POST",
             data: {
                 idNotaFiscal: $("#IdNotaFiscal").val(),
                 chaveAcesso: chave
-            },
+            },    
             success: function (result) {
                 if (result.Success) {
-                    $("#RegistroRecebimentoDetalhes").load("BORecebimentoNota/CarregarDadosNotaFiscalRegistro/" + $("#IdNotaFiscal").val(), function () {
+                    $("#RegistroRecebimentoDetalhes").load("BORecebimentoNota/CarregarDadosNotaFiscalRegistro/" + $("#IdNotaFiscal").val(), function () {                                                
                         $('.integer').mask("#0", { reverse: true });
                         $('.money').mask("#.##0,00", { reverse: true });
                         $('#ChaveAcesso').attr("disabled", true);
+                        
+                        $('#QtdVolumes').keypress(function (event) {
+                            var keycode = (event.keyCode ? event.keyCode : event.which);
+                            if (keycode === 13) {
+                                RegistrarNotaFiscal();
+                            }
+                        });
+
+                        waitingDialog.hide();
+                        $("#QtdVolumes").focus();
                     });
                 } else {
+                    $('#ChaveAcesso').val("");
                     $(".validacaoChaveAcesso").text(result.Message);
                 }
             }
@@ -351,32 +386,30 @@ function BuscarNotaFiscal() {
 }
 
 function RegistrarNotaFiscal() {
-    $("#RegistrarRecebimentoNota").click(function () {
-        $(".validacaoConfirmar").text("");
-        if ($("#QtdVolumes").val() === "" || $("#NotaFiscalPesquisada").val() === "False" || $("#IdNotaFiscal").val() <= 0) {
-            $(".validacaoConfirmar").text("Selecione a nota fiscal e insira a quantidade de volumes para confirmar o recebimento.");
-            return;
-        }
+    $(".validacaoConfirmar").text("");
+    if ($("#QtdVolumes").val() === "" || $("#NotaFiscalPesquisada").val() === "False" || $("#IdNotaFiscal").val() <= 0) {
+        $(".validacaoConfirmar").text("Selecione a nota fiscal e insira a quantidade de volumes para confirmar o recebimento.");
+        return;
+    }
 
-        $.ajax({
-            url: HOST_URL + "BORecebimentoNota/RegistrarRecebimentoNota/",
-            method: "POST",
-            data: {
-                idNotaFiscal: $("#IdNotaFiscal").val(),
-                dataRecebimento: $("#DataAtual").val(),
-                qtdVolumes: $("#QtdVolumes").val(),
-                notaFiscalPesquisada: $("#NotaFiscalPesquisada").val() == "True" ? true : false
-            },
-            success: function (result) {
-                if (result.Success) {
-                    $(".close").click();
-                    $("#dataTable").DataTable().ajax.reload();
-                    PNotify.success({ text: result.Message });
-                } else {
-                    $(".validacaoConfirmar").text(result.Message);
-                }
+    $.ajax({
+        url: HOST_URL + "BORecebimentoNota/RegistrarRecebimentoNota/",
+        method: "POST",
+        data: {
+            idNotaFiscal: $("#IdNotaFiscal").val(),
+            dataRecebimento: $("#DataAtual").val(),
+            qtdVolumes: $("#QtdVolumes").val(),
+            notaFiscalPesquisada: $("#NotaFiscalPesquisada").val() == "True" ? true : false
+        },
+        success: function (result) {
+            if (result.Success) {
+                $(".close").click();
+                $("#dataTable").DataTable().ajax.reload();
+                PNotify.success({ text: result.Message });
+            } else {
+                $(".validacaoConfirmar").text(result.Message);
             }
-        });
+        }
     });
 }
 
@@ -399,5 +432,32 @@ function setUsuarioRecebimento(idUsuario, nomeUsuario) {
 }
 
 function conferirNota() {
-    debugger
+    let id = $(this).data("id");
+    let $modal = $("#modalConferencia");
+
+    $.ajax({
+        url: HOST_URL + "BORecebimentoNota/ValidarModalRegistroConferencia/" + id,
+        cache: false,
+        method: "POST",
+        success: function (result) {
+            if (result.Success) {
+                $modal.load(HOST_URL + "BORecebimentoNota/ExibirModalRegistroConferencia/" + id, function () {
+                    $modal.modal();
+
+                    //$("#ChaveAcesso").focus();
+
+                    //$('#ChaveAcesso').keypress(function (event) {
+                    //    BuscarNotaFiscal();
+                    //});
+
+                    //RegistrarNotaFiscal();
+
+                    //$('.integer').mask("#0", { reverse: true });
+                    //$('.money').mask("#.##0,00", { reverse: true });
+                });
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+        }
+    });
 }

@@ -60,11 +60,24 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpPost]
         public ActionResult PageData(DataTableFilter<BORecebimentoNotaFilterViewModel> model)
         {
-            ValidateModel(model);
-
             List<BORecebimentoNotaListItemViewModel> boRecebimentoNotaListItemViewModel = new List<BORecebimentoNotaListItemViewModel>();
             int totalRecords = 0;
             int totalRecordsFiltered = 0;
+
+            //if (!(model.CustomFilter.PrazoInicial.HasValue || model.CustomFilter.PrazoFinal.HasValue))
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Os campos prazo inicial e prazo final obrigatoriamente deverão ser preenchidos.");
+
+            if (!ModelState.IsValid)
+            {
+                return DataTableResult.FromModel(new DataTableResponseModel()
+                {
+                    Draw = model.Draw,
+                    RecordsTotal = totalRecords,
+                    RecordsFiltered = totalRecordsFiltered,
+                    Data = boRecebimentoNotaListItemViewModel
+                });
+            }
+
             var query = _uow.LoteRepository.Obter(CompanyId).AsQueryable();
 
             totalRecords = query.Count();
@@ -116,15 +129,17 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.DataRecebimento <= dataFinal);
             }
 
-            if (model.CustomFilter.PrazoInicial.HasValue)
+            if (model.CustomFilter.PrazoInicial != null)
             {
-                DateTime prazoInicial = new DateTime(model.CustomFilter.PrazoInicial.Value.Year, model.CustomFilter.PrazoInicial.Value.Month, model.CustomFilter.PrazoInicial.Value.Day, 00, 00, 00);
+                DateTime prazoInicial = new DateTime(model.CustomFilter.PrazoInicial.Year, model.CustomFilter.PrazoInicial.Month, model.CustomFilter.PrazoInicial.Day,
+                    00, 00, 00);
                 query = query.Where(x => x.NotaFiscal.PrazoEntregaFornecedor >= prazoInicial);
             }
 
-            if (model.CustomFilter.PrazoFinal.HasValue)
+            if (model.CustomFilter.PrazoFinal != null)
             {
-                DateTime prazoFinal = new DateTime(model.CustomFilter.PrazoFinal.Value.Year, model.CustomFilter.PrazoFinal.Value.Month, model.CustomFilter.PrazoFinal.Value.Day, 23, 59, 59);
+                DateTime prazoFinal = new DateTime(model.CustomFilter.PrazoFinal.Year, model.CustomFilter.PrazoFinal.Month, model.CustomFilter.PrazoFinal.Day,
+                    23, 59, 59);
                 query = query.Where(x => x.NotaFiscal.PrazoEntregaFornecedor <= prazoFinal);
             }
 
@@ -373,21 +388,20 @@ namespace FWLog.Web.Backoffice.Controllers
             var notafiscal = _uow.NotaFiscalRepository.GetById(Convert.ToInt64(id));
             var dataAtual = DateTime.UtcNow;
 
-            var model = new BORegistroRecebimentoViewModel
-            {
-                ChaveAcesso = notafiscal.Chave,
-                DataRecebimento = dataAtual.ToString("dd/MM/yyyy"),
-                HoraRecebimento = dataAtual.ToString("HH:mm:ss"),
-                FornecedorNome = notafiscal.Fornecedor.RazaoSocial,
-                NumeroSerieNotaFiscal = string.Format("{0}-{1}", notafiscal.Numero, notafiscal.Serie),
-                ValorTotal = notafiscal.ValorTotal.ToString("n2"),
-                DataAtual = dataAtual,
-                ValorFrete = notafiscal.ValorFrete.ToString("n2"),
-                NumeroConhecimento = notafiscal.NumeroConhecimento,
-                TransportadoraNome = notafiscal.Transportadora.RazaoSocial,
-                Peso = notafiscal.PesoBruto.ToString("n2"),
-                NotaFiscalPesquisada = true
-            };
+            var model = new BORegistroRecebimentoViewModel();
+            model.ChaveAcesso = notafiscal.Chave;
+            model.DataRecebimento = dataAtual.ToString("dd/MM/yyyy");
+            model.HoraRecebimento = dataAtual.ToString("HH:mm:ss");
+            model.FornecedorNome = notafiscal.Fornecedor.RazaoSocial;
+            model.NumeroSerieNotaFiscal = string.Format("{0}-{1}", notafiscal.Numero, notafiscal.Serie);
+            model.ValorTotal = notafiscal.ValorTotal.ToString("n2");
+            model.DataAtual = dataAtual;
+            model.ValorFrete = notafiscal.ValorFrete.ToString("n2");
+            model.NumeroConhecimento = notafiscal.NumeroConhecimento;
+            model.TransportadoraNome = notafiscal.Transportadora.RazaoSocial;
+            model.Peso = notafiscal.PesoBruto.HasValue ? null : notafiscal.PesoBruto.Value.ToString("n2");
+            model.QtdVolumes = notafiscal.Quantidade == 0 ? (int?)null : notafiscal.Quantidade;
+            model.NotaFiscalPesquisada = true;
 
             return PartialView("RegistroRecebimentoDetalhes", model);
         }
@@ -488,7 +502,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult DetalhesEntradaConferencia(long id)
         {
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
-            
+
             var model = new BODetalhesEntradaConferenciaViewModel
             {
                 IdNotaFiscal = notaFiscal.IdNotaFiscal,
@@ -503,7 +517,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ValorTotal = notaFiscal.ValorTotal.ToString("C"),
                 ValorFrete = notaFiscal.ValorFrete.ToString("C"),
                 NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
-                PesoConhecimento = notaFiscal.PesoBruto.ToString("F"),
+                PesoConhecimento = notaFiscal.PesoBruto.HasValue ? null : notaFiscal.PesoBruto.Value.ToString("F"),
                 TransportadoraNome = notaFiscal.Transportadora.RazaoSocial,
                 DiasAtraso = "0"
             };
@@ -605,6 +619,34 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             return View(model);
+        }
+
+        public JsonResult ValidarModalRegistroConferencia(long id)
+        {
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+
+            //var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+
+            //if (lote != null)
+            //{
+            //    return Json(new AjaxGenericResultModel
+            //    {
+            //        Success = false,
+            //        Message = "Recebimento da mecadoria já efetivado no sistema.",
+            //    });
+            //}            
+        }
+
+        public ActionResult ExibirModalRegistroConferencia(long id)
+        {
+            var modal = new BORegistroRecebimentoViewModel();
+
+            modal.IdNotaFiscal = id;
+
+            return PartialView("EntradaConferencia");
         }
     }
 }

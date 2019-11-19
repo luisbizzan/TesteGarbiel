@@ -601,6 +601,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Nome do Usuário.
+        /// </summary>
+        public static string Name {
+            get {
+                return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Código do Perfil do Usuário.
         /// </summary>
         public static string PerfilUsuarioId {
@@ -736,7 +745,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Nome do Usuário.
+        ///   Looks up a localized string similar to Usuário.
         /// </summary>
         public static string UserName {
             get {

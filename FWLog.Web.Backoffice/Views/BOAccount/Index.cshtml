@@ -50,13 +50,17 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="col-xs-12 col-sm-6 form-group">
+                <div class="col-xs-12 col-sm-4 form-group">
                     @Html.LabelFor(m => m.Filter.UserName)
                     @Html.TextBoxFor(m => m.Filter.UserName, new { @class = "form-control", data_field = "UserName" })
                 </div>
-                <div class="col-xs-12 col-sm-6 form-group">
+                <div class="col-xs-12 col-sm-4 form-group">
                     @Html.LabelFor(m => m.Filter.Email)
                     @Html.TextBoxFor(m => m.Filter.Email, new { @class = "form-control", data_field = "Email" })
+                </div>
+                <div class="col-xs-12 col-sm-4 form-group">
+                    @Html.LabelFor(m => m.Filter.Nome)
+                    @Html.TextBoxFor(m => m.Filter.Nome, new { @class = "form-control", data_field = "Nome" })
                 </div>
             </div>
             <div class="row">
@@ -88,6 +92,7 @@
         <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
             <thead>
                 <tr>
+                    <th>@Html.DisplayNameFor(m => m.EmptyItem.Nome)</th>
                     <th>@Html.DisplayNameFor(m => m.EmptyItem.UserName)</th>
                     <th>@Html.DisplayNameFor(m => m.EmptyItem.Email)</th>
                     <th>@Resources.CommonStrings.ActionsLabel</th>
