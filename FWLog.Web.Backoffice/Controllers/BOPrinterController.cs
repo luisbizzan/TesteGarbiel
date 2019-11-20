@@ -48,12 +48,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 if (companies == null)
                 {
-                    companies = new SelectList(
-                        _uow.CompanyRepository.GetAll().Select(x => new SelectListItem
-                        {
-                            Value = x.CompanyId.ToString(),
-                            Text = x.CompanyName,
-                        }).ToList(), "Value", "Text");
+                    companies = new SelectList(Companies, "CompanyId", "Name");
                 }
 
                 return companies;

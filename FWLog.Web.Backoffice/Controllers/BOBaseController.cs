@@ -1,23 +1,19 @@
-﻿using FWLog.AspNet.Identity;
-using FWLog.Web.Backoffice.App_Start;
-using FWLog.Web.Backoffice.Helpers;
-using DartDigital.Library.Web.Globalization;
+﻿using DartDigital.Library.Web.Globalization;
 using DartDigital.Library.Web.IO;
-using DartDigital.Library.Web.Security.Backoffice;
+using FWLog.AspNet.Identity;
+using FWLog.Data;
+using FWLog.Data.Models.GeneralCtx;
+using FWLog.Web.Backoffice.App_Start;
+using FWLog.Web.Backoffice.EnumsAndConsts;
+using FWLog.Web.Backoffice.Helpers;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
-using FWLog.Web.Backoffice.EnumsAndConsts;
-using System.Collections.Generic;
-using FWLog.Data.Models;
-using System.Linq;
-using FWLog.Data.Models.GeneralCtx;
-using FWLog.Data;
-using Newtonsoft.Json;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -116,8 +112,8 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 HttpCookie cookie = Request.Cookies[CompanyCookie.CookieName];
 
-                if (cookie != null && cookie[CompanyCookie.CompanyId] != null && cookie[CompanyCookie.CompanyId] != string.Empty)
-                {   
+                if (cookie != null && cookie[CompanyCookie.CompanyId] != null && !string.IsNullOrEmpty(cookie[CompanyCookie.CompanyId]))
+                {
                     return Convert.ToInt32(cookie[CompanyCookie.CompanyId].ToString());
                 }
                 else
@@ -133,7 +129,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 HttpCookie cookie = Request.Cookies[CompanyCookie.CookieName];
 
-                if (cookie != null && cookie[CompanyCookie.ListCompanies] != null && cookie[CompanyCookie.ListCompanies] != string.Empty)
+                if (cookie != null && cookie[CompanyCookie.ListCompanies] != null && !string.IsNullOrEmpty(cookie[CompanyCookie.ListCompanies]))
                 {
                     var jsonCompanies = Server.UrlDecode(cookie[CompanyCookie.ListCompanies].ToString());
                     var companies = JsonConvert.DeserializeObject<IEnumerable<CompanySelectedItem>>(jsonCompanies);
