@@ -169,12 +169,12 @@
                 });
             });
         },
-        //stateSaveParams: function (settings, data) {
-        //    dart.dataTables.saveFilterToData(data);
-        //},
-        //stateLoadParams: function (settings, data) {
-        //    dart.dataTables.loadFilterFromData(data);
-        //},
+        stateSaveParams: function (settings, data) {
+            dart.dataTables.saveFilterToData(data);
+        },
+        stateLoadParams: function (settings, data) {
+            dart.dataTables.loadFilterFromData(data);
+        },
         columns: [
             { data: 'Lote', render: iconeStatus },
             { data: 'Nota' },
@@ -189,17 +189,8 @@
         ]
     });
 
-    $('#dataTable').DataTable.ext.errMode = function (settings, helpPage, message) {
-        let jqXHR = settings.jqXHR;
-        if (jqXHR) {
-            let responseJSON = jqXHR.responseJSON;
-            if (responseJSON) {
-                if (responseJSON.showAsToast)
-                    PNotify.error({ text: responseJSON.error });
-                return;
-            }
-        }
-        alert(message);
+    $('#dataTable').dataTable.error = function (settings, helpPage, message) {
+        console.log(message)
     };
 
     dart.dataTables.loadFormFilterEvents();
