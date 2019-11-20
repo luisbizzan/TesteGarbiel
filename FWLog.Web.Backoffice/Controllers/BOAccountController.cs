@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using ExtensionMethods;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Models.GeneralCtx;
 using FWLog.Services.Services;
+using FWLog.Web.Backoffice.EnumsAndConsts.LOVs;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BOAccountCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
@@ -13,20 +15,54 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Res = Resources.BOAccountStrings;
-using System.Text;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
     public class BOAccountController : BOBaseController
     {
-        UnitOfWork _uow;
-        BOAccountService _boService;
-        BOLogSystemService _boLogSystemService;
-        PasswordService _passwordService;
+        private UnitOfWork _uow;
+        private BOAccountService _boService;
+        private BOLogSystemService _boLogSystemService;
+        private PasswordService _passwordService;
+
+        private SelectList _Companies
+        {
+            get
+            {
+                if (companies == null)
+                {
+                    companies = new SelectList(Companies, "CompanyId", "Name");
+                }
+
+                return companies;
+            }
+        }
+        private SelectList companies;
+
+        private SelectList Status
+        {
+            get
+            {
+                if (status == null)
+                {
+                    status = new SelectList(new NaoSimLOV().Items, "Value", "Text");
+                }
+
+                return status;
+            }
+        }
+        private SelectList status;
+
+        private void setViewBags()
+        {
+            ViewBag.Companies = _Companies;
+            ViewBag.Status = Status;
+        }
 
         public BOAccountController(UnitOfWork uow, BOAccountService boService, BOLogSystemService boLogSystemService, PasswordService passwordService)
         {
@@ -39,51 +75,40 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.List)]
         public ActionResult Index()
         {
+            setViewBags();
+
             return View(new BOAccountListViewModel());
         }
 
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.List)]
-        public ActionResult PageData(DataTableFilter<BOAccountFilterViewModel> model)
+        public ActionResult PageData(DataTableFilter<BOAccountFilterViewModel> filter)
         {
-            var users = _uow.PerfilUsuarioRepository.GetAll();
+            IQueryable<PerfilUsuario> allusers = _uow.PerfilUsuarioRepository.All();
 
-            int totalRecords = users.Count();
+            int totalRecords = allusers.Count();
 
-            IEnumerable<BOAccountListItemViewModel> query = users.Select(x => new BOAccountListItemViewModel
+            IQueryable<PerfilUsuario> query = allusers.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.UserName), x => x.Usuario.UserName.Contains(filter.CustomFilter.UserName));
+            query = query.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.Email), x => x.Usuario.Email.Contains(filter.CustomFilter.Email));
+            query = query.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.Nome), x => x.Nome.Contains(filter.CustomFilter.Nome));
+            query = query.WhereIf(filter.CustomFilter.CompanyId.HasValue, x => x.EmpresaId == filter.CustomFilter.CompanyId);
+            query = query.WhereIf(filter.CustomFilter.Ativo.HasValue, x => x.Ativo == filter.CustomFilter.Ativo);
+
+            IQueryable<BOAccountListItemViewModel> select = query.Select(x => new BOAccountListItemViewModel
             {
                 UserName = x.Usuario.UserName,
                 Email = x.Usuario.Email,
-                Nome = x.Nome
+                Nome = x.Nome,
+                _Ativo = x.Ativo
             });
 
-            if (!String.IsNullOrEmpty(model.CustomFilter.UserName))
-            {
-                query = query.Where(x => x.UserName.Contains(model.CustomFilter.UserName));
-            }
-
-            if (!String.IsNullOrEmpty(model.CustomFilter.Email))
-            {
-                query = query.Where(x => x.Email.Contains(model.CustomFilter.Email));
-            }
-
-            if (!String.IsNullOrEmpty(model.CustomFilter.Nome))
-            {
-                query = query.Where(x => x.Nome.Contains(model.CustomFilter.Nome));
-            }
-
-            int recordsFiltered = query.Count();
-
-            query = query
-                .OrderBy(model.OrderByColumn, model.OrderByDirection)
-                .Skip(model.Start)
-                .Take(model.Length);
+            List<BOAccountListItemViewModel> list = select.ToList();
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
-                Draw = model.Draw,
+                Draw = filter.Draw,
                 RecordsTotal = totalRecords,
-                RecordsFiltered = recordsFiltered,
-                Data = query.ToList()
+                RecordsFiltered = list.Count,
+                Data = list.PaginationResult(filter)
             });
         }
 
@@ -92,24 +117,21 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             ViewData["Companies"] = new SelectList(Companies, "CompanyId", "Name");
 
-            var model = new BOAccountCreateViewModel();
-
-            return View(model);
+            return View(new BOAccountCreateViewModel());
         }
 
         public ActionResult AdicionarEmpresa(long companyId)
         {
             List<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name).ToList();
 
-            var model = new BOAccountCreateViewModel();
-            var empGrupos = new EmpresaGrupoViewModel();
+            var empresasGrupos = new EmpresaGrupoViewModel
+            {
+                CompanyId = companyId,
+                Name = Companies.First(f => f.CompanyId == companyId).Name,
+                Grupos = Mapper.Map<List<GroupItemViewModel>>(groups)
+            };
 
-            empGrupos.CompanyId = companyId;
-            empGrupos.Name = Companies.First(f => f.CompanyId == companyId).Name;
-            empGrupos.Grupos = Mapper.Map<List<GroupItemViewModel>>(groups);
-            model.EmpresasGrupos.Add(empGrupos);
-
-            return PartialView("_EmpresaGrupo", model.EmpresasGrupos);
+            return PartialView("_EmpresaGrupo", empresasGrupos);
         }
 
         [HttpPost]
@@ -220,14 +242,14 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             ViewData["Companies"] = new SelectList(Companies, "CompanyId", "Name");
 
-            ApplicationUser user = await UserManager.FindByNameAsync(id);
+            ApplicationUser user = await UserManager.FindByNameAsync(id).ConfigureAwait(false);
 
             if (user == null)
             {
                 throw new HttpException(404, "Not found");
             }
 
-            var companies = _uow.UserCompanyRepository.GetAllCompaniesByUserId(user.Id.ToString());
+            var companies = _uow.UserCompanyRepository.GetAllCompaniesByUserId(user.Id);
 
             companies = Companies.Where(w => companies.Contains(w.CompanyId)).Select(s => s.CompanyId).ToList();
 
@@ -236,24 +258,22 @@ namespace FWLog.Web.Backoffice.Controllers
             var model = Mapper.Map<BOAccountEditViewModel>(user);
             model.PerfilUsuario = perfil;
 
-            foreach (var company in companies)
+            IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);
+
+            foreach (long company in companies)
             {
-                IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);
-
-                var empGrupos = new EmpresaGrupoViewModel();
-
-                empGrupos.CompanyId = company;
-                empGrupos.Name = Companies.First(f => f.CompanyId == company).Name;
-                empGrupos.Grupos = Mapper.Map<List<GroupItemViewModel>>(groups);
-
-                IList<string> selectedRoles = await UserManager.GetUserRolesByCompanyId(user.Id, company);
-
-                foreach (GroupItemViewModel group in empGrupos.Grupos)
+                var empGrupos = new EmpresaGrupoViewModel
                 {
-                    if (selectedRoles.Contains(group.Name))
-                    {
-                        group.IsSelected = true;
-                    }
+                    CompanyId = company,
+                    Name = Companies.First(f => f.CompanyId == company).Name,
+                    Grupos = Mapper.Map<List<GroupItemViewModel>>(groups)
+                };
+
+                IList<string> selectedRoles = await UserManager.GetUserRolesByCompanyId(user.Id, company).ConfigureAwait(false);
+
+                foreach (GroupItemViewModel group in empGrupos.Grupos.Where(x => selectedRoles.Contains(x.Name)))
+                {
+                    group.IsSelected = true;
                 }
 
                 model.EmpresasGrupos.Add(empGrupos);
@@ -278,14 +298,14 @@ namespace FWLog.Web.Backoffice.Controllers
                 return errorView();
             }
 
-            ApplicationUser user = await UserManager.FindByNameAsync(model.UserName);
+            ApplicationUser user = await UserManager.FindByNameAsync(model.UserName).ConfigureAwait(false);
 
             if (user == null)
             {
                 throw new HttpException(404, "Not found");
             }
 
-            var existingUserByEmail = await UserManager.FindByEmailAsync(model.Email);
+            var existingUserByEmail = await UserManager.FindByEmailAsync(model.Email).ConfigureAwait(false);
 
             if (existingUserByEmail != null && existingUserByEmail.Id != user.Id)
             {
@@ -299,7 +319,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return errorView();
             }
 
-            if (model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Count() == 0)
+            if (!model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Any())
             {
                 ModelState.AddModelError(nameof(model.EmpresasGrupos), Res.RequiredOnlyGroup);
                 return errorView();
@@ -314,11 +334,11 @@ namespace FWLog.Web.Backoffice.Controllers
             var companiesUser = _uow.UserCompanyRepository.GetAllCompaniesByUserId(user.Id.ToString());
             var companies = Companies.Where(w => companiesUser.Contains(w.CompanyId)).ToList();
 
+            IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);
+
             foreach (var company in companies)
             {
-                IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);
-
-                IList<string> selectedRoles = await UserManager.GetUserRolesByCompanyId(user.Id, company.CompanyId);
+                IList<string> selectedRoles = await UserManager.GetUserRolesByCompanyId(user.Id, company.CompanyId).ConfigureAwait(false);
 
                 if (selectedRoles.Any())
                 {
@@ -336,7 +356,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Name, string.Join(", ", selectedRoles.ToArray())));
                     empresasGruposNew.AppendLine(" || ");
 
-                    IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, item.CompanyId);
+                    IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, item.CompanyId).ConfigureAwait(false);
 
                     if (!result.Succeeded)
                     {
@@ -371,7 +391,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Edit)]
         public async Task<ActionResult> Details(string id)
         {
-            ApplicationUser user = await UserManager.FindByNameAsync(id);
+            ApplicationUser user = await UserManager.FindByNameAsync(id).ConfigureAwait(false);
 
             if (user == null)
             {
@@ -384,12 +404,11 @@ namespace FWLog.Web.Backoffice.Controllers
 
             model.Groups = Mapper.Map<List<GroupItemViewModel>>(groups);
 
-            IEnumerable<string> selectedRoles = await UserManager.GetRolesAsync(user.Id);
+            IEnumerable<string> selectedRoles = await UserManager.GetRolesAsync(user.Id).ConfigureAwait(false);
 
-            foreach (GroupItemViewModel group in model.Groups)
+            foreach (GroupItemViewModel group in model.Groups.Where(x => selectedRoles.Contains(x.Name)))
             {
-                if (selectedRoles.Contains(group.Name))
-                    group.IsSelected = true;
+                group.IsSelected = true;
             }
 
             return View(model);
@@ -401,14 +420,14 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                ApplicationUser user = await UserManager.FindByNameAsync(id);
+                ApplicationUser user = await UserManager.FindByNameAsync(id).ConfigureAwait(false);
 
                 if (user == null)
                 {
                     throw new HttpException(404, "Not found");
                 }
 
-                IdentityResult result = await UserManager.DeleteAsync(user);
+                IdentityResult result = await UserManager.DeleteAsync(user).ConfigureAwait(false);
 
                 if (!result.Succeeded)
                 {
@@ -447,7 +466,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                ApplicationUser user = await UserManager.FindByNameAsync(id);
+                ApplicationUser user = await UserManager.FindByNameAsync(id).ConfigureAwait(false);
 
                 if (user == null)
                 {
@@ -456,8 +475,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 ApplicationUser oldUser = Mapper.Map<ApplicationUser>(user);
                 string randomPassword = _passwordService.GenerateRandomPassword();
-                string resetToken = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                IdentityResult result = await UserManager.ResetPasswordAsync(user.Id, resetToken, randomPassword);
+                string resetToken = await UserManager.GeneratePasswordResetTokenAsync(user.Id).ConfigureAwait(false);
+                IdentityResult result = await UserManager.ResetPasswordAsync(user.Id, resetToken, randomPassword).ConfigureAwait(false);
 
                 if (!result.Succeeded)
                 {
@@ -478,7 +497,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,
-                    Message = String.Format(Res.UserPasswordResetSuccessMessage, user.UserName, randomPassword)
+                    Message = string.Format(Res.UserPasswordResetSuccessMessage, user.UserName, randomPassword)
                 }, JsonRequestBehavior.DenyGet);
             }
             catch
@@ -504,14 +523,14 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 foreach (string userName in userNameList)
                 {
-                    ApplicationUser user = await UserManager.FindByNameAsync(userName);
+                    ApplicationUser user = await UserManager.FindByNameAsync(userName).ConfigureAwait(false);
 
                     if (user == null)
                     {
                         throw new Exception();
                     }
 
-                    IdentityResult result = await UserManager.DeleteAsync(user);
+                    IdentityResult result = await UserManager.DeleteAsync(user).ConfigureAwait(false);
 
                     if (!result.Succeeded)
                     {
@@ -550,8 +569,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 return View(model);
             }
 
-            ApplicationUser user = await UserManager.FindByNameAsync(User.Identity.Name);
-            IdentityResult result = await UserManager.ChangePasswordAsync(user.Id, model.OldPassword, model.NewPassword);
+            ApplicationUser user = await UserManager.FindByNameAsync(User.Identity.Name).ConfigureAwait(false);
+            IdentityResult result = await UserManager.ChangePasswordAsync(user.Id, model.OldPassword, model.NewPassword).ConfigureAwait(false);
 
             if (!result.Succeeded)
             {
@@ -593,53 +612,41 @@ namespace FWLog.Web.Backoffice.Controllers
         //[ApplicationAuthorize]
         public ActionResult SearchModal()
         {
-            var model = new BOPerfilUsuarioSearchModalViewModel();
-            return View(model);
+            return View(new BOPerfilUsuarioSearchModalViewModel());
         }
 
         //[ApplicationAuthorize]
-        public ActionResult SearchModalPageData(DataTableFilter<BOPerfilUsuarioSearchModalFilterViewModel> model)
+        public ActionResult SearchModalPageData(DataTableFilter<BOPerfilUsuarioSearchModalFilterViewModel> filter)
         {
-            List<BOPerfilUsuarioSearchModalItemViewModel> boPerfilUsuarioSearchModalFilterViewModel = new List<BOPerfilUsuarioSearchModalItemViewModel>();
-            int totalRecords = 0;
-            int totalRecordsFiltered = 0;
+            var query = _uow.PerfilUsuarioRepository.All();
 
-            var query = _uow.PerfilUsuarioRepository.GetAll().AsQueryable();
+            int totalRecords = query.Count();
 
-            totalRecords = query.Count();
+            if (!string.IsNullOrEmpty(filter.CustomFilter.UserName))
+                query = query.Where(x => x.Usuario.UserName.Contains(filter.CustomFilter.UserName));
 
-            if (!string.IsNullOrEmpty(model.CustomFilter.UserName))
-                query = query.Where(x => x.Usuario.UserName.Contains(model.CustomFilter.UserName));
+            if (!string.IsNullOrEmpty(filter.CustomFilter.Departamento))
+                query = query.Where(x => x.Departamento.Contains(filter.CustomFilter.Departamento));
 
-            if (!string.IsNullOrEmpty(model.CustomFilter.Departamento))
-                query = query.Where(x => x.Departamento.Contains(model.CustomFilter.Departamento));
+            if (!string.IsNullOrEmpty(filter.CustomFilter.Cargo))
+                query = query.Where(x => x.Cargo.Contains(filter.CustomFilter.Cargo));
 
-            if (!string.IsNullOrEmpty(model.CustomFilter.Cargo))
-                query = query.Where(x => x.Cargo.Contains(model.CustomFilter.Cargo));
-
-            foreach (var item in query)
-            {
-                boPerfilUsuarioSearchModalFilterViewModel.Add(new BOPerfilUsuarioSearchModalItemViewModel()
+            List<BOPerfilUsuarioSearchModalItemViewModel> boPerfilUsuarioSearchModalFilterViewModel =
+                query.Select(x => new BOPerfilUsuarioSearchModalItemViewModel()
                 {
-                    UsuarioId = item.UsuarioId,
-                    UserName = item.Usuario.UserName,
-                    Cargo = item.Cargo,
-                    Departamento = item.Departamento
-                });
-            }
+                    UsuarioId = x.UsuarioId,
+                    UserName = x.Usuario.UserName,
+                    Cargo = x.Cargo,
+                    Departamento = x.Departamento
+                }).ToList();
 
-            totalRecordsFiltered = boPerfilUsuarioSearchModalFilterViewModel.Count();
-
-            var result = boPerfilUsuarioSearchModalFilterViewModel
-                .OrderBy(model.OrderByColumn, model.OrderByDirection)
-                .Skip(model.Start)
-                .Take(model.Length);
+            var result = boPerfilUsuarioSearchModalFilterViewModel.PaginationResult(filter);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
-                Draw = model.Draw,
+                Draw = filter.Draw,
                 RecordsTotal = totalRecords,
-                RecordsFiltered = totalRecordsFiltered,
+                RecordsFiltered = boPerfilUsuarioSearchModalFilterViewModel.Count,
                 Data = result
             });
         }

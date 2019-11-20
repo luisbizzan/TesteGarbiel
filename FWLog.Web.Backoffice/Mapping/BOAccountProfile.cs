@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
-using FWLog.Data;
-using FWLog.Data.Models.GeneralCtx;
 using FWLog.Web.Backoffice.Models.BOAccountCtx;
-using System.Web.Security;
 
 namespace FWLog.Web.Backoffice.Mapping
 {
@@ -16,7 +13,7 @@ namespace FWLog.Web.Backoffice.Mapping
 
             CreateMap<ApplicationUser, ApplicationUser>();
 
-            CreateMap<ApplicationUser, BOAccountCreateViewModel>(); 
+            CreateMap<ApplicationUser, BOAccountCreateViewModel>();
 
             CreateMap<ApplicationUser, BOAccountEditViewModel>();
 

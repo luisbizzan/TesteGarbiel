@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ExtensionMethods;
+using FWLog.Data.EnumsAndConsts;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -34,6 +36,16 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
 
         [Display(Name = nameof(Res.CreationDateLabel), ResourceType = typeof(Res))]
         public DateTime CreationDate { get; set; }
+
+        public string Ativo
+        {
+            get
+            {
+                return ((NaoSimEnum)_Ativo).GetDisplayName();
+            }
+        }
+
+        public int _Ativo { get; set; }
     }
 
     public class BOAccountFilterViewModel
@@ -46,5 +58,10 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
 
         [Display(Name = nameof(Res.Name), ResourceType = typeof(Res))]
         public string Nome { get; set; }
+
+        public int? Ativo { get; set; }
+
+        [Display(Name = "Empresa")]
+        public long? CompanyId { get; set; }
     }
 }

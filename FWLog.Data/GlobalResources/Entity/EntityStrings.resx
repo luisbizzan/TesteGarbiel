@@ -348,4 +348,7 @@
   <data name="Name" xml:space="preserve">
     <value>Nome do Usuário</value>
   </data>
+  <data name="Ativo" xml:space="preserve">
+    <value>Ativo</value>
+  </data>
 </root>

@@ -62,6 +62,14 @@
                     @Html.LabelFor(m => m.Filter.Nome)
                     @Html.TextBoxFor(m => m.Filter.Nome, new { @class = "form-control", data_field = "Nome" })
                 </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.Filter.Ativo)
+                    @Html.DropDownListFor(m => m.Filter.Ativo, (IEnumerable<SelectListItem>)ViewBag.Status, "Selecione...", new { @class = "form-control", data_field = "Ativo" })
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.Filter.CompanyId)
+                    @Html.DropDownListFor(m => m.Filter.CompanyId, (IEnumerable<SelectListItem>)ViewBag.Companies, "Selecione...", new { @class = "form-control", data_field = "CompanyId" })
+                </div>
             </div>
             <div class="row">
                 <div class="col-xs-12 form-buttons">
@@ -95,6 +103,7 @@
                     <th>@Html.DisplayNameFor(m => m.EmptyItem.Nome)</th>
                     <th>@Html.DisplayNameFor(m => m.EmptyItem.UserName)</th>
                     <th>@Html.DisplayNameFor(m => m.EmptyItem.Email)</th>
+                    <th>@Html.DisplayNameFor(m => m.EmptyItem.Ativo)</th>
                     <th>@Resources.CommonStrings.ActionsLabel</th>
                 </tr>
             </thead>
