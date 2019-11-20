@@ -49,6 +49,9 @@
             });
 
             $search.on('click', function () {
+                if (!$form.valid())
+                    return;
+
                 $dataTable.DataTable().search('').draw();
                 NProgress.start();
             });
