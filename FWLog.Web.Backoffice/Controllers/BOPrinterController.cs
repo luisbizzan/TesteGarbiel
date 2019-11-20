@@ -42,7 +42,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
         private SelectList printertypes;
 
-        private SelectList Companies
+        private SelectList _Companies
         {
             get
             {
@@ -78,7 +78,7 @@ namespace FWLog.Web.Backoffice.Controllers
         private void setViewBags()
         {
             ViewBag.PrinterTypes = PrinterTypes;
-            ViewBag.Companies = Companies;
+            ViewBag.Companies = _Companies;
             ViewBag.Status = Status;
         }
 
