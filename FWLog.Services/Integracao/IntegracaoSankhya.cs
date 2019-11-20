@@ -152,7 +152,7 @@ namespace FWLog.Services.Integracao
             string status = root.Attribute("status")?.Value;
             if (status != "1")
             {
-                throw new Exception("O sistema não obteve o status 1 no retorno da atualização da nota fiscal no Integração Sankhya.");
+                throw new Exception(string.Format("O sistema não obteve o status 1 no retorno da atualização da nota fiscal no Integração Sankhya. Mensagem {0}", root.Element("statusMessage")?.Value));
             }
 
             string nunota = root.Element("responseBody").Element("entities").Element("entity").Element("NUNOTA")?.Value;

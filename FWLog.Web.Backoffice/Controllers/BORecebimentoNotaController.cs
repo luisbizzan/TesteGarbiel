@@ -430,7 +430,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Ocorreu uma instabilidade com a Integração do Sankhya, não foi possível registrar o recebimento da nota fiscal. Tente novamente."
+                    Message = "Não foi possível atualizar o status da Nota Fiscal no Sankhya. Tente novamente."
                 });
             }
 

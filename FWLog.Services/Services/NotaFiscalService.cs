@@ -94,7 +94,7 @@ namespace FWLog.Services.Services
 
                 await ConsultaNotaFiscalItemCompra(codNota);
 
-                await AtualizarStatusNota(notafiscal);
+                await AtualizarStatusNota(notafiscal, NotaFiscalStatusEnum.AguardandoRecebimento);
             }
         }
 
@@ -150,14 +150,14 @@ namespace FWLog.Services.Services
             await _uow.SaveChangesAsync();
         }
 
-        public async Task AtualizarStatusNota(NotaFiscal notaFiscal)
+        public async Task<bool> AtualizarStatusNota(NotaFiscal notaFiscal, NotaFiscalStatusEnum status)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
-                return;
+                return false;
             }
 
-            XElement dataRow = new XElement("dataRow", new XElement("localFields", new XElement("STATUSNOTA", notaFiscal.IdNotaFiscalStatus)));
+            XElement dataRow = new XElement("dataRow", new XElement("localFields", new XElement("STATUSNOTA", status.GetHashCode())));
             dataRow.Add(new XElement("key", new XElement("NUNOTA", notaFiscal.CodigoIntegracao)));
 
             XAttribute[] attArray = {
@@ -176,6 +176,8 @@ namespace FWLog.Services.Services
             serviceRequest.Add(new XElement("requestBody", datset));
 
             await IntegracaoSankhya.Instance.ExecutarSaveRecord(serviceRequest);
+
+            return true;
         }
 
         public void ValidarNotaFiscalIntegracao(NotaFiscalIntegracao notafiscal)
