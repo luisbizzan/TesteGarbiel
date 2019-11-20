@@ -65,11 +65,11 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Data de Recebimento Final")]
         public DateTime? DataFinal { get; set; }
 
-        [Required(ErrorMessage = "Campo obrigatório")]
+        [Required(ErrorMessage = "Campo obrigatório.")]
         [Display(Name = "Prazo de Entrega Inicial")]
         public DateTime PrazoInicial { get; set; }
 
-        [Required(ErrorMessage = "Campo obrigatório")]
+        [Required(ErrorMessage = "Campo obrigatório.")]
         [Display(Name = "Prazo de Entrega Final")]
         public DateTime PrazoFinal { get; set; }
 

@@ -65,9 +65,6 @@ namespace FWLog.Web.Backoffice.Controllers
             int totalRecords = 0;
             int totalRecordsFiltered = 0;
 
-            //if (!(model.CustomFilter.PrazoInicial.HasValue || model.CustomFilter.PrazoFinal.HasValue))
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Os campos prazo inicial e prazo final obrigatoriamente deverão ser preenchidos.");
-
             if (!ModelState.IsValid)
             {
                 return DataTableResult.FromModel(new DataTableResponseModel()
