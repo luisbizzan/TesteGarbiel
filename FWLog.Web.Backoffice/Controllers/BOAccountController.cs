@@ -115,6 +115,8 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
         public ActionResult Create()
         {
+            setViewBags();
+
             ViewData["Companies"] = new SelectList(Companies, "CompanyId", "Name");
 
             return View(new BOAccountCreateViewModel());

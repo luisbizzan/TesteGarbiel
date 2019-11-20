@@ -172,7 +172,7 @@
     <value>Usuário</value>
   </data>
   <data name="UserNameLabel" xml:space="preserve">
-    <value>Usuário</value>
+    <value>Código do Usuário</value>
   </data>
   <data name="DeleteModalMessage" xml:space="preserve">
     <value>Deseja realmente excluir esse registro?</value>
