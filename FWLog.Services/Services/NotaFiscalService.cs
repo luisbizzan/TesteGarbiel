@@ -75,6 +75,7 @@ namespace FWLog.Services.Services
                     notafiscal.PesoBruto = notafiscalIntegracao.PESOBRUTO == null ? (decimal?)null : Convert.ToDecimal(notafiscalIntegracao.PESOBRUTO);
                     notafiscal.Quantidade = notafiscalIntegracao.QTDVOL == null ? 0 : Convert.ToInt32(notafiscalIntegracao.QTDVOL);
                     notafiscal.IdFreteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notafiscalIntegracao.CIF_FOB).IdFreteTipo;
+                    //TODO criar campo para gravar CIF_FOB
                     notafiscal.Especie = notafiscalIntegracao.VOLUME;
                     notafiscal.StatusIntegracao = notafiscalIntegracao.STATUSNOTA;
                     notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode();

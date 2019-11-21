@@ -10,7 +10,7 @@ namespace FWLog.Data.Models
         public string Descricao { get; set; }
         public string Referencia { get; set; }
         public long IdUnidadeMedida { get; set; }
-        public decimal Peso { get; set; }
+        public decimal PesoBruto { get; set; }
 
         [ForeignKey(nameof(IdUnidadeMedida))]
         public UnidadeMedida UnidadeMedida { get; set; }
