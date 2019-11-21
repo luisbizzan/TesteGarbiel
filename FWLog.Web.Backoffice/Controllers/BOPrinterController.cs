@@ -42,18 +42,13 @@ namespace FWLog.Web.Backoffice.Controllers
         }
         private SelectList printertypes;
 
-        private SelectList Companies
+        private SelectList _Companies
         {
             get
             {
                 if (companies == null)
                 {
-                    companies = new SelectList(
-                        _uow.CompanyRepository.GetAll().Select(x => new SelectListItem
-                        {
-                            Value = x.CompanyId.ToString(),
-                            Text = x.CompanyName,
-                        }).ToList(), "Value", "Text");
+                    companies = new SelectList(Companies, "CompanyId", "Name");
                 }
 
                 return companies;
@@ -78,7 +73,7 @@ namespace FWLog.Web.Backoffice.Controllers
         private void setViewBags()
         {
             ViewBag.PrinterTypes = PrinterTypes;
-            ViewBag.Companies = Companies;
+            ViewBag.Companies = _Companies;
             ViewBag.Status = Status;
         }
 

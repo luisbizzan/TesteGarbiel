@@ -11,6 +11,8 @@ html {
 }
 body {
   margin: 0;
+  overflow: hidden;
+  max-height: 100vh;
 }
 article,
 aside,
@@ -5863,9 +5865,9 @@ button.close {
   background: transparent;
   border: 0;
 }
-.modal-open {
+/*.modal-open {
   overflow: hidden;
-}
+}*/
 .modal {
   position: fixed;
   top: 0;
