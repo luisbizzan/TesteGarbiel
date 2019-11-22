@@ -55,7 +55,7 @@ namespace FWLog.Data
         public virtual AspNetUsers Usuario { get; set; }
 
         [ForeignKey("EmpresaId")]
-        public virtual Company Company { get; set; }
+        public virtual Empresa Empresa { get; set; }
     }
 }
 

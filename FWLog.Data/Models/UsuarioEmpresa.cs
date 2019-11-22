@@ -4,25 +4,27 @@ using ResGen = Resources.GeneralStrings;
 
 namespace FWLog.Data
 {
-    public class UserCompany
+    [Table("UserCompany")]
+    public class UsuarioEmpresa
     {
         [Key, Column(Order = 0)]
-        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
+        [Required()]
         public string UserId { get; set; }
 
         [Key, Column(Order = 1)]
-        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
+        [Required()]
         public long CompanyId { get; set; }
 
-        public Company Company { get; set; }
+        [ForeignKey("CompanyId")]
+        public Empresa Empresa { get; set; }
 
-        public UserCompany(string userId, long companyId)
+        public UsuarioEmpresa(string userId, long idEmpresa)
         {
             UserId = userId;
-            CompanyId = companyId;
+            CompanyId = idEmpresa;
         }
 
-        public UserCompany()
+        public UsuarioEmpresa()
         {
 
         }

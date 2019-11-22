@@ -58,17 +58,17 @@ namespace FWLog.Services.Services
             _uow.SaveChanges();
         }
 
-        public void EditUsuarioEmpresas(IEnumerable<CompanySelectedItem> empresasUserOn, List<long> empresasUserEdit, string userId)
+        public void EditUsuarioEmpresas(IEnumerable<EmpresaSelectedItem> empresasUserOn, List<long> empresasUserEdit, string userId)
         {
-            var empOld = _uow.UserCompanyRepository.GetAllCompaniesByUserId(userId);
+            var empOld = _uow.UsuarioEmpresaRepository.GetAllEmpresasByUserId(userId);
 
-            empOld = empresasUserOn.Where(w => empOld.Contains(w.CompanyId)).Select(s => s.CompanyId).ToList();
+            empOld = empresasUserOn.Where(w => empOld.Contains(w.IdEmpresa)).Select(s => s.IdEmpresa).ToList();
 
             List<long> empAdd = empresasUserEdit.Where(x => !empOld.Any(y => y == x)).ToList();
             List<long> empRem = empOld.Where(x => !empresasUserEdit.Any(y => y == x)).ToList();
 
-            empAdd.ForEach(x => _uow.UserCompanyRepository.Add(new UserCompany(userId, x)));
-            empRem.ForEach(x => _uow.UserCompanyRepository.DeleteByUserId(userId, x));
+            empAdd.ForEach(x => _uow.UsuarioEmpresaRepository.Add(new UsuarioEmpresa(userId, x)));
+            empRem.ForEach(x => _uow.UsuarioEmpresaRepository.DeleteByUserId(userId, x));
 
             _uow.SaveChanges();
         }

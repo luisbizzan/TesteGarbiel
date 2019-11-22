@@ -61,22 +61,22 @@ namespace FWLog.Web.Backoffice.Controllers
             return base.BeginExecuteCore(callback, state);
         }
 
-        public void CookieSaveCompany(long companyId, string userId, bool logoff = false)
+        public void CookieSalvarEmpresa(long idEmpresa, string userId, bool logoff = false)
         {
-            HttpCookie cookie = Request.Cookies[CompanyCookie.CookieName];
+            HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName];
 
-            if (companyId == 0)
+            if (idEmpresa == 0)
             {
                 if (cookie == null)
                 {
                     return;
                 }
 
-                cookie[CompanyCookie.CompanyId] = string.Empty;
+                cookie[EmpresaCookie.IdEmpresa] = string.Empty;
 
                 if (logoff)
                 {
-                    cookie[CompanyCookie.ListCompanies] = string.Empty;
+                    cookie[EmpresaCookie.ListEmpresas] = string.Empty;
                 }
 
                 Response.Cookies.Add(cookie);
@@ -86,35 +86,35 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
 
-            var companies = uow.CompanyRepository.GetAllByUserId(userId);
-            var jsonCompanies = JsonConvert.SerializeObject(companies);
+            var empresas = uow.EmpresaRepository.GetAllByUserId(userId);
+            var jsonEmpresas = JsonConvert.SerializeObject(empresas);
 
             if (cookie == null)
             {
-                var newCookie = new HttpCookie(CompanyCookie.CookieName);
-                newCookie.Values[CompanyCookie.CompanyId] = companyId.ToString();
-                newCookie.Values[CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
+                var newCookie = new HttpCookie(EmpresaCookie.CookieName);
+                newCookie.Values[EmpresaCookie.IdEmpresa] = idEmpresa.ToString();
+                newCookie.Values[EmpresaCookie.ListEmpresas] = Server.UrlEncode(jsonEmpresas);
                 newCookie.Expires = DateTime.MaxValue;
                 Response.Cookies.Add(newCookie);
             }
             else
             {
-                cookie.Values[CompanyCookie.CompanyId] = companyId.ToString();
-                cookie.Values[CompanyCookie.ListCompanies] = Server.UrlEncode(jsonCompanies);
+                cookie.Values[EmpresaCookie.IdEmpresa] = idEmpresa.ToString();
+                cookie.Values[EmpresaCookie.ListEmpresas] = Server.UrlEncode(jsonEmpresas);
                 cookie.Expires = DateTime.MaxValue;
                 Response.Cookies.Add(cookie);
             }
         }
 
-        public int CompanyId
+        public int IdEmpresa
         {
             get
             {
-                HttpCookie cookie = Request.Cookies[CompanyCookie.CookieName];
+                HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName];
 
-                if (cookie != null && cookie[CompanyCookie.CompanyId] != null && !string.IsNullOrEmpty(cookie[CompanyCookie.CompanyId]))
+                if (cookie != null && cookie[EmpresaCookie.IdEmpresa] != null && !string.IsNullOrEmpty(cookie[EmpresaCookie.IdEmpresa]))
                 {
-                    return Convert.ToInt32(cookie[CompanyCookie.CompanyId].ToString());
+                    return Convert.ToInt32(cookie[EmpresaCookie.IdEmpresa].ToString());
                 }
                 else
                 {
@@ -123,24 +123,24 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-        public IEnumerable<CompanySelectedItem> Companies
+        public IEnumerable<EmpresaSelectedItem> Empresas
         {
             get
             {
-                HttpCookie cookie = Request.Cookies[CompanyCookie.CookieName];
+                HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName];
 
-                if (cookie != null && cookie[CompanyCookie.ListCompanies] != null && !string.IsNullOrEmpty(cookie[CompanyCookie.ListCompanies]))
+                if (cookie != null && cookie[EmpresaCookie.ListEmpresas] != null && !string.IsNullOrEmpty(cookie[EmpresaCookie.ListEmpresas]))
                 {
-                    var jsonCompanies = Server.UrlDecode(cookie[CompanyCookie.ListCompanies].ToString());
-                    var companies = JsonConvert.DeserializeObject<IEnumerable<CompanySelectedItem>>(jsonCompanies);
+                    var jsonEmpresas = Server.UrlDecode(cookie[EmpresaCookie.ListEmpresas].ToString());
+                    var empresas = JsonConvert.DeserializeObject<IEnumerable<EmpresaSelectedItem>>(jsonEmpresas);
 
-                    return companies;
+                    return empresas;
                 }
                 else
                 {
                     var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
                     var userInfo = new BackOfficeUserInfo();
-                    return uow.CompanyRepository.GetAllByUserId(userInfo.UserId.ToString());
+                    return uow.EmpresaRepository.GetAllByUserId(userInfo.UserId.ToString());
                 }
             }
         }

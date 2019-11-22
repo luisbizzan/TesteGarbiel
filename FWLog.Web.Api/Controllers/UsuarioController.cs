@@ -78,7 +78,7 @@ namespace FWLog.Web.Api.Controllers
 
         [HttpGet]
         [Route("api/v1/account/permissions")]
-        public async Task<IHttpActionResult> UserPermissions(int companyId)
+        public async Task<IHttpActionResult> UserPermissions(int idEmpresa)
         {
             IList<string> permissions = await UserManager.GetPermissionsAsync(User.Identity.GetUserId());
 

@@ -41,7 +41,7 @@
             { data: 'Name' },
             { data: 'PrinterType' },
             { data: 'Ativa' },
-            { data: 'Company' },
+            { data: 'Empresa' },
             actionsColumn
         ]
     };

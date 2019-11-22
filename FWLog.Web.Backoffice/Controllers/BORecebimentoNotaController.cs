@@ -76,7 +76,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            var query = _uow.LoteRepository.Obter(CompanyId).AsQueryable();
+            var query = _uow.LoteRepository.Obter(IdEmpresa).AsQueryable();
 
             totalRecords = query.Count();
 
@@ -249,7 +249,7 @@ namespace FWLog.Web.Backoffice.Controllers
             ValidateModel(viewModel);
 
             var relatorioRequest = Mapper.Map<RelatorioRecebimentoNotasRequest>(viewModel);
-            relatorioRequest.IdEmpresa = CompanyId;
+            relatorioRequest.IdEmpresa = IdEmpresa;
             relatorioRequest.NomeUsuario = User.Identity.Name;
             byte[] relatorio = _relatorioService.GerarRelatorioRecebimentoNotas(relatorioRequest);
 
@@ -261,7 +261,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
             {
-                IdEmpresa = CompanyId,
+                IdEmpresa = IdEmpresa,
                 NomeUsuario = User.Identity.Name,
                 IdNotaFiscal = id
             };
@@ -280,7 +280,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
                 {
-                    IdEmpresa = CompanyId,
+                    IdEmpresa = IdEmpresa,
                     NomeUsuario = User.Identity.Name,
                     IdNotaFiscal = viewModel.IdNotaFiscal
                 };

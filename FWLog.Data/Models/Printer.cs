@@ -27,8 +27,8 @@ namespace FWLog.Data.Models
 
         #region ForeignKey
 
-        [ForeignKey(nameof(CompanyId))]
-        public Company Company { get; set; }
+        [ForeignKey("CompanyId")]
+        public Empresa Empresa { get; set; }
 
         [ForeignKey(nameof(PrinterTypeId))]
         public PrinterType PrinterType { get; set; }

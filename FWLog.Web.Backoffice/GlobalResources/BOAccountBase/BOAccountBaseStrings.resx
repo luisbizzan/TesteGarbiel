@@ -195,7 +195,7 @@
   <data name="SignInRequiresVerificationMessage" xml:space="preserve">
     <value>Seu e-mail ainda não foi confirmado. Por favor verifique sua caixa de entrada.</value>
   </data>
-  <data name="UserCompanyError" xml:space="preserve">
+  <data name="UserEmpresaError" xml:space="preserve">
     <value>O usuário não possui empresas vinculadas.</value>
   </data>
 </root>

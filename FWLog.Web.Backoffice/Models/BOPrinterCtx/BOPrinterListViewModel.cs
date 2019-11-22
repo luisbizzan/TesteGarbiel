@@ -27,7 +27,7 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         public string PrinterType { get; set; }
 
         [Display(Name = nameof(Res.CompanyLabel), ResourceType = typeof(Res))]
-        public string Company { get; set; }
+        public string Empresa { get; set; }
 
         [Display(Name = "Ativa")]
         public string Ativa { get; set; }
@@ -39,7 +39,7 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         public string Name { get; set; }
 
         [Display(Name = nameof(Res.CompanyLabel), ResourceType = typeof(Res))]
-        public long? CompanyId { get; set; }
+        public long? IdEmpresa { get; set; }
 
         [Display(Name = nameof(Res.PrinterTypeLabel), ResourceType = typeof(Res))]
         public int? PrinterTypeId { get; set; }

@@ -30,19 +30,19 @@ namespace FWLog.Web.Backoffice.Controllers
         private BOLogSystemService _boLogSystemService;
         private PasswordService _passwordService;
 
-        private SelectList _Companies
+        private SelectList _Empresas
         {
             get
             {
-                if (companies == null)
+                if (empresas == null)
                 {
-                    companies = new SelectList(Companies, "CompanyId", "Name");
+                    empresas = new SelectList(Empresas, "IdEmpresa", "Nome");
                 }
 
-                return companies;
+                return empresas;
             }
         }
-        private SelectList companies;
+        private SelectList empresas;
 
         private SelectList Status
         {
@@ -60,7 +60,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         private void setViewBags()
         {
-            ViewBag.Companies = _Companies;
+            ViewBag.Empresas = _Empresas;
             ViewBag.Status = Status;
         }
 
@@ -90,7 +90,7 @@ namespace FWLog.Web.Backoffice.Controllers
             IQueryable<PerfilUsuario> query = allusers.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.UserName), x => x.Usuario.UserName.Contains(filter.CustomFilter.UserName));
             query = query.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.Email), x => x.Usuario.Email.Contains(filter.CustomFilter.Email));
             query = query.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.Nome), x => x.Nome.Contains(filter.CustomFilter.Nome));
-            query = query.WhereIf(filter.CustomFilter.CompanyId.HasValue, x => x.EmpresaId == filter.CustomFilter.CompanyId);
+            query = query.WhereIf(filter.CustomFilter.IdEmpresa.HasValue, x => x.EmpresaId == filter.CustomFilter.IdEmpresa);
             query = query.WhereIf(filter.CustomFilter.Ativo.HasValue, x => x.Ativo == filter.CustomFilter.Ativo);
 
             IQueryable<BOAccountListItemViewModel> select = query.Select(x => new BOAccountListItemViewModel
@@ -120,18 +120,21 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(new BOAccountCreateViewModel());
         }
 
-        public ActionResult AdicionarEmpresa(long companyId)
+        public ActionResult AdicionarEmpresa(long idEmpresa)
         {
             List<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name).ToList();
 
+            var model = new BOAccountCreateViewModel();
             var empresasGrupos = new EmpresaGrupoViewModel
             {
-                CompanyId = companyId,
-                Name = Companies.First(f => f.CompanyId == companyId).Name,
+                IdEmpresa = idEmpresa,
+                Nome = Empresas.First(f => f.IdEmpresa == idEmpresa).Nome,
                 Grupos = Mapper.Map<List<GroupItemViewModel>>(groups)
             };
 
-            return PartialView("_EmpresaGrupo", empresasGrupos);
+            model.EmpresasGrupos.Add(empresasGrupos);
+
+            return PartialView("_EmpresaGrupo", model.EmpresasGrupos);
         }
 
         [HttpPost]
@@ -198,7 +201,7 @@ namespace FWLog.Web.Backoffice.Controllers
             _uow.PerfilUsuarioRepository.Add(model.PerfilUsuario);
             _uow.SaveChanges();
 
-            model.EmpresasGrupos.ForEach(f => _uow.UserCompanyRepository.Add(new UserCompany(user.Id, f.CompanyId)));
+            model.EmpresasGrupos.ForEach(f => _uow.UsuarioEmpresaRepository.Add(new UsuarioEmpresa(user.Id, f.IdEmpresa)));
             _uow.SaveChanges();
 
             var empresasGruposNew = new StringBuilder();
@@ -246,9 +249,9 @@ namespace FWLog.Web.Backoffice.Controllers
                 throw new HttpException(404, "Not found");
             }
 
-            var companies = _uow.UserCompanyRepository.GetAllCompaniesByUserId(user.Id);
+            var empresas = _uow.UsuarioEmpresaRepository.GetAllEmpresasByUserId(user.Id);
 
-            companies = Companies.Where(w => companies.Contains(w.CompanyId)).Select(s => s.CompanyId).ToList();
+            empresas = Empresas.Where(w => empresas.Contains(w.IdEmpresa)).Select(s => s.IdEmpresa).ToList();
 
             var perfil = _uow.PerfilUsuarioRepository.GetByUserId(user.Id.ToString());
 
@@ -257,16 +260,16 @@ namespace FWLog.Web.Backoffice.Controllers
 
             IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);
 
-            foreach (long company in companies)
+            foreach (long empresa in empresas)
             {
                 var empGrupos = new EmpresaGrupoViewModel
                 {
-                    CompanyId = company,
-                    Name = Companies.First(f => f.CompanyId == company).Name,
+                    IdEmpresa = empresa,
+                    Nome = Empresas.First(f => f.IdEmpresa == empresa).Nome,
                     Grupos = Mapper.Map<List<GroupItemViewModel>>(groups)
                 };
 
-                IList<string> selectedRoles = await UserManager.GetUserRolesByCompanyId(user.Id, company).ConfigureAwait(false);
+                IList<string> selectedRoles = await UserManager.GetUserRolesByIdEmpresa(user.Id, empresa).ConfigureAwait(false);
 
                 foreach (GroupItemViewModel group in empGrupos.Grupos.Where(x => selectedRoles.Contains(x.Name)))
                 {
@@ -333,11 +336,11 @@ namespace FWLog.Web.Backoffice.Controllers
 
             foreach (var company in companies)
             {
-                IList<string> selectedRoles = await UserManager.GetUserRolesByCompanyId(user.Id, company.CompanyId).ConfigureAwait(false);
+                IList<string> selectedRoles = await UserManager.GetUserRolesByIdEmpresa(user.Id, empresa.IdEmpresa).ConfigureAwait(false);
 
                 if (selectedRoles.Any())
                 {
-                    empresasGruposOld.AppendLine(string.Format("{0}: {1}", company.Name, string.Join(", ", selectedRoles.ToArray())));
+                    empresasGruposOld.AppendLine(string.Format("{0}: {1}", empresa.Nome, string.Join(", ", selectedRoles.ToArray())));
                     empresasGruposOld.AppendLine(" || ");
                 }
             }
@@ -362,8 +365,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
             _boService.EditPerfilUsuario(model.PerfilUsuario);
 
-            var empresas = model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Select(s => s.CompanyId).ToList();
-            _boService.EditUsuarioEmpresas(Companies, empresas, user.Id);
+            var empresasGrupos = model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Select(s => s.IdEmpresa).ToList();
+            _boService.EditUsuarioEmpresas(Empresas, empresasGrupos, user.Id.ToString());
 
             var userInfo = new BackOfficeUserInfo();
             _boLogSystemService.Add(new BOLogSystemCreation
@@ -595,7 +598,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             }
 
-            CookieSaveCompany(0, applicationUser.Id, true);
+            CookieSalvarEmpresa(0, applicationUser.Id, true);
 
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("LogOn", "BOAccountBase");

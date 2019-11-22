@@ -11,7 +11,7 @@ namespace FWLog.Web.Backoffice.Mapping
         public BOPrinterProfile()
         {
             CreateMap<Printer, BOPrinterListItemViewModel>()
-                .ForMember(x => x.Company, op => op.MapFrom(x => x.Company.CompanyName))
+                .ForMember(x => x.Empresa, op => op.MapFrom(x => x.Empresa.RazaoSocial))
                 .ForMember(x => x.Ativa, op => op.MapFrom(x => ((NaoSimEnum)x.Ativa).GetDisplayName()))
                 .ForMember(x => x.PrinterType, op => op.MapFrom(x => x.PrinterType.Name));
         }

@@ -10,6 +10,7 @@ using System.Transactions;
 using System.Xml.Linq;
 using FWLog.Data.EnumsAndConsts;
 using System.Configuration;
+using FWLog.Services.Model.IntegracaoSankhya;
 
 namespace FWLog.Services.Services
 {

@@ -19,7 +19,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public override IQueryable<Printer> All()
         {
-            return _dbSet.Include(x => x.Company).Include(x => x.PrinterType);
+            return _dbSet.Include(x => x.Empresa).Include(x => x.PrinterType);
         }
     }
 }
