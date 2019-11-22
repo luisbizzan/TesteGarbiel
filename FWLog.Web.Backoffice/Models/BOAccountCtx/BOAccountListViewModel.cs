@@ -58,6 +58,6 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
         public int? Ativo { get; set; }
 
         [Display(Name = "Empresa")]
-        public long? CompanyId { get; set; }
+        public long? IdEmpresa { get; set; }
     }
 }

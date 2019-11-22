@@ -67,8 +67,8 @@
                     @Html.DropDownListFor(m => m.Filter.Ativo, (IEnumerable<SelectListItem>)ViewBag.Status, "Selecione...", new { @class = "form-control", data_field = "Ativo" })
                 </div>
                 <div class="form-group col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.Filter.CompanyId)
-                    @Html.DropDownListFor(m => m.Filter.CompanyId, (IEnumerable<SelectListItem>)ViewBag.Companies, "Selecione...", new { @class = "form-control", data_field = "CompanyId" })
+                    @Html.LabelFor(m => m.Filter.IdEmpresa)
+                    @Html.DropDownListFor(m => m.Filter.IdEmpresa, (IEnumerable<SelectListItem>)ViewBag.Empresas, "Selecione...", new { @class = "form-control", data_field = "IdEmpresa" })
                 </div>
             </div>
             <div class="row">

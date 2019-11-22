@@ -22,11 +22,11 @@ namespace FWLog.Data
         [Log(DisplayName = nameof(ResEnt.RoleName), ResourceType = typeof(ResEnt))]
         public string Name { get; set; }
 
-        [Display(Name = nameof(ResEnt.Company), ResourceType = typeof(ResEnt))]
-        [Log(DisplayName = nameof(ResEnt.Company), ResourceType = typeof(ResEnt))]
+        [Display(Name = nameof(ResEnt.ApplicationId), ResourceType = typeof(ResEnt))]
+        [Log(DisplayName = nameof(ResEnt.ApplicationId), ResourceType = typeof(ResEnt))]
         public int ApplicationId { get; set; }
 
-        public Application Application { get; set; }
-        public ICollection<AspNetUsers> AspNetUsers { get; set; }
+        public virtual Application Application { get; set; }
+        public virtual ICollection<AspNetUsers> AspNetUsers { get; set; }
     }
 }

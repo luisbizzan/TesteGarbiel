@@ -13,7 +13,7 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
 
         [Required(ErrorMessage = "O campo Empresa é obrigatório.")]
         [Display(Name = nameof(Res.CompanyLabel), ResourceType = typeof(Res))]
-        public long? CompanyId { get; set; }
+        public long? IdEmpresa { get; set; }
 
         [Required(ErrorMessage = "O campo Tipo é obrigatório.")]
         [Display(Name = nameof(Res.PrinterTypeLabel), ResourceType = typeof(Res))]

@@ -19,11 +19,11 @@ namespace FWLog.Data
         private ApplicationLanguageRepository _applicationLanguageRepository;
         private ApplicationLogRepository _applicationLogRepository;
         private ApplicationSessionRepository _applicationSessionRepository;
-        private CompanyRepository _companyRepository;
+        private EmpresaRepository _empresaRepository;
         private BOPrinterRepository _boPrinterRepository;
         private BOPrinterTypeRepository _boPrinterTypeRepository;
         private PerfilUsuarioRepository _perfilUsuarioRepository;
-        private UserCompanyRepository _userCompanyRepository;
+        private UsuarioEmpresaRepository _usuarioEmpresaRepository;
         private FornecedorRepository _fornecedorRepository;
         private FreteTipoRepository _freteTipoRepository;
         private LoteRepository _loteRepository;
@@ -97,14 +97,14 @@ namespace FWLog.Data
             get => _fornecedorRepository ?? (_fornecedorRepository = new FornecedorRepository(_context));
         }
 
-        public UserCompanyRepository UserCompanyRepository
+        public UsuarioEmpresaRepository UsuarioEmpresaRepository
         {
-            get => _userCompanyRepository ?? (_userCompanyRepository = new UserCompanyRepository(_context));
+            get => _usuarioEmpresaRepository ?? (_usuarioEmpresaRepository = new UsuarioEmpresaRepository(_context));
         }
 
-        public CompanyRepository CompanyRepository
+        public EmpresaRepository EmpresaRepository
         {
-            get => _companyRepository ?? (_companyRepository = new CompanyRepository(_context));
+            get => _empresaRepository ?? (_empresaRepository = new EmpresaRepository(_context));
         }
 
         public BOLogSystemRepository BOLogSystemRepository

@@ -61,20 +61,20 @@ namespace FWLog.Web.Api.GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to O código da empresa do usuário deve ser informado..
-        /// </summary>
-        internal static string CompanyIdRequired {
-            get {
-                return ResourceManager.GetString("CompanyIdRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to O e-mail do usuário deve ser informado para recuperação da senha..
         /// </summary>
         internal static string EmailRequired {
             get {
                 return ResourceManager.GetString("EmailRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to O código da empresa do usuário deve ser informado..
+        /// </summary>
+        internal static string IdEmpresaRequired {
+            get {
+                return ResourceManager.GetString("IdEmpresaRequired", resourceCulture);
             }
         }
         

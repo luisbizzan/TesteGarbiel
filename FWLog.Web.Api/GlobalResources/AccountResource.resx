@@ -117,11 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CompanyIdRequired" xml:space="preserve">
-    <value>O código da empresa do usuário deve ser informado.</value>
-  </data>
   <data name="EmailRequired" xml:space="preserve">
     <value>O e-mail do usuário deve ser informado para recuperação da senha.</value>
+  </data>
+  <data name="IdEmpresaRequired" xml:space="preserve">
+    <value>O código da empresa do usuário deve ser informado.</value>
   </data>
   <data name="InvalidUserOrPassword" xml:space="preserve">
     <value>Usuário ou senha inválidos.</value>
