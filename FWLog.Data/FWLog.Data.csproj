@@ -109,7 +109,8 @@
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
     <Compile Include="Models\DataTablesCtx\PrinterTypeTableRow.cs" />
-    <Compile Include="Models\EmpresaConfiguracao.cs" />
+    <Compile Include="Models\EmpresaConfig.cs" />
+    <Compile Include="Models\EmpresaTipo.cs" />
     <Compile Include="Models\FilterCtx\PrinterTypeFilter.cs" />
     <Compile Include="Models\NotaFiscal.cs" />
     <Compile Include="Models\Fornecedor.cs" />
