@@ -117,8 +117,6 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             setViewBags();
 
-            ViewData["Empresas"] = new SelectList(Empresas, "IdEmpresa", "Nome");
-
             return View(new BOAccountCreateViewModel());
         }
 
@@ -126,7 +124,6 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             List<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name).ToList();
 
-            var model = new BOAccountCreateViewModel();
             var empresasGrupos = new EmpresaGrupoViewModel
             {
                 IdEmpresa = idEmpresa,
@@ -134,16 +131,19 @@ namespace FWLog.Web.Backoffice.Controllers
                 Grupos = Mapper.Map<List<GroupItemViewModel>>(groups)
             };
 
-            model.EmpresasGrupos.Add(empresasGrupos);
+            var list = new List<EmpresaGrupoViewModel>
+            {
+                empresasGrupos
+            };
 
-            return PartialView("_EmpresaGrupo", model.EmpresasGrupos);
+            return PartialView("_EmpresaGrupo", list);
         }
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
         public async Task<ActionResult> Create(BOAccountCreateViewModel model)
         {
-            ViewData["Empresas"] = new SelectList(Empresas, "IdEmpresa", "Nome");
+            setViewBags();
 
             Func<string, ViewResult> errorView = (error) =>
             {
@@ -159,14 +159,14 @@ namespace FWLog.Web.Backoffice.Controllers
                 return errorView(null);
             }
 
-            var existingUserByName = await UserManager.FindByNameAsync(model.UserName);
+            var existingUserByName = await UserManager.FindByNameAsync(model.UserName).ConfigureAwait(false);
 
             if (existingUserByName != null)
             {
                 ModelState.AddModelError(nameof(model.UserName), Res.UserNameAlreadyExistsMessage);
             }
 
-            var existsUserByEmail = await UserManager.FindByEmailAsync(model.Email);
+            var existsUserByEmail = await UserManager.FindByEmailAsync(model.Email).ConfigureAwait(false);
 
             if (existsUserByEmail != null)
             {
@@ -179,7 +179,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return errorView(null);
             }
 
-            if (model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Count() == 0)
+            if (!model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Any())
             {
                 ModelState.AddModelError(nameof(model.EmpresasGrupos), Res.RequiredOnlyGroup);
                 return errorView(null);
@@ -192,7 +192,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
             user.Id = Guid.NewGuid().ToString();
-            var result = await UserManager.CreateAsync(user, model.Password);
+            var result = await UserManager.CreateAsync(user, model.Password).ConfigureAwait(false);
 
             if (!result.Succeeded)
             {
@@ -208,23 +208,20 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var empresasGruposNew = new StringBuilder();
 
-            foreach (var item in model.EmpresasGrupos)
+            foreach (var item in model.EmpresasGrupos.Where(x => x.Grupos.Any(y => y.IsSelected)))
             {
-                IEnumerable<string> selectedRoles = item.Grupos.Where(x => x.IsSelected).Select(x => x.Name);
+                IEnumerable<string> selectedRoles = item.Grupos.Select(x => x.Name);
 
-                if (selectedRoles.Any())
+                empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Nome, string.Join(", ", selectedRoles.ToArray())));
+                empresasGruposNew.AppendLine(" || ");
+
+                result = UserManager.AddToRolesByEmpresa(user, selectedRoles.ToArray(), item.IdEmpresa);
+
+                if (!result.Succeeded)
                 {
-                    empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Nome, string.Join(", ", selectedRoles.ToArray())));
-                    empresasGruposNew.AppendLine(" || ");
+                    Notify.Error(Resources.CommonStrings.RequestUnexpectedErrorMessage);
 
-                    result = UserManager.AddToRolesByEmpresa(user, selectedRoles.ToArray(), item.IdEmpresa);
-
-                    if (!result.Succeeded)
-                    {
-                        Notify.Error(Resources.CommonStrings.RequestUnexpectedErrorMessage);
-
-                        return View(model);
-                    }
+                    return View(model);
                 }
             }
 
@@ -245,7 +242,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Edit)]
         public async Task<ActionResult> Edit(string id)
         {
-            ViewData["Empresas"] = new SelectList(Empresas, "IdEmpresa", "Nome");
+            setViewBags();
 
             ApplicationUser user = await UserManager.FindByNameAsync(id).ConfigureAwait(false);
 
@@ -291,7 +288,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Edit)]
         public async Task<ActionResult> Edit(BOAccountEditViewModel model)
         {
-            ViewData["Empresas"] = new SelectList(Empresas, "IdEmpresa", "Nome");
+            setViewBags();
 
             Func<ViewResult> errorView = () =>
             {
@@ -336,10 +333,8 @@ namespace FWLog.Web.Backoffice.Controllers
             var empresasGruposNew = new StringBuilder();
             var empresasGruposOld = new StringBuilder();
 
-            var empresasUsuario = _uow.UsuarioEmpresaRepository.GetAllEmpresasByUserId(user.Id.ToString());
-            var empresas = Empresas.Where(w => empresasUsuario.Contains(w.IdEmpresa)).ToList();
-
-            IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);
+            var companiesUser = _uow.UsuarioEmpresaRepository.GetAllEmpresasByUserId(user.Id);
+            var empresas = Empresas.Where(w => companiesUser.Contains(w.IdEmpresa)).ToList();
 
             foreach (var empresa in empresas)
             {
@@ -352,21 +347,18 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             }
 
-            foreach (var item in model.EmpresasGrupos)
+            foreach (var item in model.EmpresasGrupos.Where(x => x.Grupos.Any(y => y.IsSelected)))
             {
-                IEnumerable<string> selectedRoles = item.Grupos.Where(x => x.IsSelected).Select(x => x.Name);
+                IEnumerable<string> selectedRoles = item.Grupos.Select(x => x.Name);
 
-                if (selectedRoles.Any())
+                empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Nome, string.Join(", ", selectedRoles.ToArray())));
+                empresasGruposNew.AppendLine(" || ");
+
+                IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, item.IdEmpresa).ConfigureAwait(false);
+
+                if (!result.Succeeded)
                 {
-                    empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Nome, string.Join(", ", selectedRoles.ToArray())));
-                    empresasGruposNew.AppendLine(" || ");
-
-                    IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, item.IdEmpresa).ConfigureAwait(false);
-
-                    if (!result.Succeeded)
-                    {
-                        throw new InvalidOperationException(Resources.CommonStrings.RequestUnexpectedErrorMessage);
-                    }
+                    throw new InvalidOperationException(Resources.CommonStrings.RequestUnexpectedErrorMessage);
                 }
             }
 
