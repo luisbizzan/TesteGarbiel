@@ -1,16 +1,12 @@
-﻿using FWLog.Data;
-using FWLog.Data.Repository.BackofficeCtx;
+﻿using DartDigital.Library.Mail;
+using FWLog.Data;
+using FWLog.Data.Models.GeneralCtx;
 using FWLog.Services.Interfaces;
 using FWLog.Services.Templates;
-using DartDigital.Library.Exceptions;
-using DartDigital.Library.Mail;
-using System;
 using System.Collections.Generic;
-using System.Text;
-
-using Res = FWLog.Services.GlobalResources.General.GeneralStrings;
 using System.Linq;
-using FWLog.Data.Models.GeneralCtx;
+using System.Text;
+using Res = FWLog.Services.GlobalResources.General.GeneralStrings;
 
 namespace FWLog.Services.Services
 {
@@ -57,6 +53,7 @@ namespace FWLog.Services.Services
             perfil.DataNascimento = perfilModel.DataNascimento;
             perfil.EmpresaId = perfilModel.EmpresaId;
             perfil.Nome = perfilModel.Nome;
+            perfil.Ativo = perfilModel.Ativo;
 
             _uow.SaveChanges();
         }
