@@ -124,7 +124,6 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             List<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name).ToList();
 
-            var model = new BOAccountCreateViewModel();
             var empresasGrupos = new EmpresaGrupoViewModel
             {
                 IdEmpresa = idEmpresa,
@@ -132,9 +131,12 @@ namespace FWLog.Web.Backoffice.Controllers
                 Grupos = Mapper.Map<List<GroupItemViewModel>>(groups)
             };
 
-            model.EmpresasGrupos.Add(empresasGrupos);
+            var list = new List<EmpresaGrupoViewModel>
+            {
+                empresasGrupos
+            };
 
-            return PartialView("_EmpresaGrupo", model.EmpresasGrupos);
+            return PartialView("_EmpresaGrupo", list);
         }
 
         [HttpPost]
@@ -210,10 +212,10 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 IEnumerable<string> selectedRoles = item.Grupos.Select(x => x.Name);
 
-                empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Name, string.Join(", ", selectedRoles.ToArray())));
+                empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Nome, string.Join(", ", selectedRoles.ToArray())));
                 empresasGruposNew.AppendLine(" || ");
 
-                result = UserManager.AddToRolesByCompany(user, selectedRoles.ToArray(), item.CompanyId);
+                result = UserManager.AddToRolesByEmpresa(user, selectedRoles.ToArray(), item.IdEmpresa);
 
                 if (!result.Succeeded)
                 {
@@ -331,10 +333,10 @@ namespace FWLog.Web.Backoffice.Controllers
             var empresasGruposNew = new StringBuilder();
             var empresasGruposOld = new StringBuilder();
 
-            var companiesUser = _uow.UserCompanyRepository.GetAllCompaniesByUserId(user.Id);
-            var companies = Companies.Where(w => companiesUser.Contains(w.CompanyId)).ToList();
+            var companiesUser = _uow.UsuarioEmpresaRepository.GetAllEmpresasByUserId(user.Id);
+            var empresas = Empresas.Where(w => companiesUser.Contains(w.IdEmpresa)).ToList();
 
-            foreach (var company in companies)
+            foreach (var empresa in empresas)
             {
                 IList<string> selectedRoles = await UserManager.GetUserRolesByIdEmpresa(user.Id, empresa.IdEmpresa).ConfigureAwait(false);
 
@@ -349,10 +351,10 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 IEnumerable<string> selectedRoles = item.Grupos.Select(x => x.Name);
 
-                empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Name, string.Join(", ", selectedRoles.ToArray())));
+                empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Nome, string.Join(", ", selectedRoles.ToArray())));
                 empresasGruposNew.AppendLine(" || ");
 
-                IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, item.CompanyId).ConfigureAwait(false);
+                IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, item.IdEmpresa).ConfigureAwait(false);
 
                 if (!result.Succeeded)
                 {

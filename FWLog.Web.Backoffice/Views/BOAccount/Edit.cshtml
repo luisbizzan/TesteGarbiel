@@ -60,7 +60,7 @@
                     </div>
                     <div class="form-group col-sm-2 col-xs-12">
                         @Html.LabelFor(m => m.PerfilUsuario.EmpresaId, new { @class = "control-label" })
-                        @Html.DropDownListFor(m => m.PerfilUsuario.EmpresaId, (IEnumerable<SelectListItem>)ViewBag.Companies, @Resources.CommonStrings.Select, new { @class = "form-control" })
+                        @Html.DropDownListFor(m => m.PerfilUsuario.EmpresaId, (IEnumerable<SelectListItem>)ViewBag.Empresas, @Resources.CommonStrings.Select, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.PerfilUsuario.EmpresaId)
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                 </div>
                 <div style="padding-top: 7px">
                     <div class="form-group col-sm-12 col-md-6 col-lg-3 col-xl-3">
-                        @Html.DropDownList("ddlEmpresas", (IEnumerable<SelectListItem>)ViewBag.Companies, "Selecione a empresa", new { @class = "form-control" })
+                        @Html.DropDownList("ddlEmpresas", (IEnumerable<SelectListItem>)ViewBag.Empresas, "Selecione a empresa", new { @class = "form-control" })
                     </div>
                     <div>
                         <button type="button" id="btnAddEmpresa" class="btn btn-primary btn-dt-action m-r-sm">
