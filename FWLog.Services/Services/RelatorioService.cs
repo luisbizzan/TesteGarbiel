@@ -289,7 +289,12 @@ namespace FWLog.Services.Services
 
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Peso: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.PesoBruto.ToString("F"));
+
+            if (notaFiscal.PesoBruto.HasValue)
+            {
+                paragraph.AddText(notaFiscal.PesoBruto.Value.ToString("F"));
+            }
+
             paragraph = row.Cells[3].AddParagraph();
             paragraph.AddFormattedText("Nro. Conhecimento: ", TextFormat.Bold);
             paragraph.AddText(notaFiscal.NumeroConhecimento.ToString());
