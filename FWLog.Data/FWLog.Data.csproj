@@ -111,6 +111,7 @@
     <Compile Include="Models\DataTablesCtx\PrinterTypeTableRow.cs" />
     <Compile Include="Models\EmpresaConfiguracao.cs" />
     <Compile Include="Models\FilterCtx\PrinterTypeFilter.cs" />
+    <Compile Include="Models\NivelArmazenagem.cs" />
     <Compile Include="Models\NotaFiscal.cs" />
     <Compile Include="Models\Fornecedor.cs" />
     <Compile Include="Models\FreteTipo.cs" />
