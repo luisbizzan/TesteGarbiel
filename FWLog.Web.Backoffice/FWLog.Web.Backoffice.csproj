@@ -231,6 +231,7 @@
     <Compile Include="App_Start\NinjectModules\GeneralModule.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
+    <Compile Include="Controllers\BOPontoArmazenagemController.cs" />
     <Compile Include="Controllers\BOPrinterController.cs" />
     <Compile Include="Controllers\BOQuarentenaController.cs" />
     <Compile Include="Controllers\BORecebimentoNotaController.cs" />

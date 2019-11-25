@@ -29,6 +29,8 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
+        [ForeignKey(nameof(IdNivelArmazenagem))]
+        public virtual NivelArmazenagem NivelArmazenagem { get; set; }
         [ForeignKey(nameof(IdTipoArmazenagem))]
         public virtual TipoArmazenagem TipoArmazenagem { get; set; }
         [ForeignKey(nameof(IdTipoMovimentacao))]

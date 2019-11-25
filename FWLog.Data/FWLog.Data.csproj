@@ -167,6 +167,7 @@
     <Compile Include="Repository\GeneralCtx\NotaFiscalItemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalStatusRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PontoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />
