@@ -210,7 +210,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             foreach (var item in model.EmpresasGrupos.Where(x => x.Grupos.Any(y => y.IsSelected)))
             {
-                IEnumerable<string> selectedRoles = item.Grupos.Select(x => x.Name);
+                IEnumerable<string> selectedRoles = item.Grupos.Where(x => x.IsSelected).Select(x => x.Name);
 
                 empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Nome, string.Join(", ", selectedRoles.ToArray())));
                 empresasGruposNew.AppendLine(" || ");
@@ -349,7 +349,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             foreach (var item in model.EmpresasGrupos.Where(x => x.Grupos.Any(y => y.IsSelected)))
             {
-                IEnumerable<string> selectedRoles = item.Grupos.Select(x => x.Name);
+                IEnumerable<string> selectedRoles = item.Grupos.Where(x => x.IsSelected).Select(x => x.Name);
 
                 empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Nome, string.Join(", ", selectedRoles.ToArray())));
                 empresasGruposNew.AppendLine(" || ");
