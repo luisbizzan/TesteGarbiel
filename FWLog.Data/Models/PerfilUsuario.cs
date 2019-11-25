@@ -13,12 +13,12 @@ namespace FWLog.Data
         [Display(Name = nameof(ResEnt.PerfilUsuarioId), ResourceType = typeof(ResEnt))]
         [Log(DisplayName = nameof(ResEnt.PerfilUsuarioId), ResourceType = typeof(ResEnt))]
         public long PerfilUsuarioId { get; set; }
-                
+
         [Display(Name = nameof(ResEnt.UserName), ResourceType = typeof(ResEnt))]
         [Log(DisplayName = nameof(ResEnt.UserId), ResourceType = typeof(ResEnt))]
         public string UsuarioId { get; set; }
 
-        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]        
+        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
         [Display(Name = nameof(ResEnt.EmpresaPrincipal), ResourceType = typeof(ResEnt))]
         [Log(DisplayName = nameof(ResEnt.EmpresaPrincipal), ResourceType = typeof(ResEnt))]
         public long EmpresaId { get; set; }
@@ -39,18 +39,23 @@ namespace FWLog.Data
         [Display(Name = nameof(ResEnt.DataNascimento), ResourceType = typeof(ResEnt))]
         [Log(DisplayName = nameof(ResEnt.DataNascimento), ResourceType = typeof(ResEnt))]
         public DateTime DataNascimento { get; set; }
-        
+
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
         [Display(Name = nameof(ResEnt.Name), ResourceType = typeof(ResEnt))]
         [Log(DisplayName = nameof(ResEnt.Name), ResourceType = typeof(ResEnt))]
         [StringLength(200, ErrorMessageResourceName = "InvalidMaxLenght", ErrorMessageResourceType = typeof(ResGen))]
         public string Nome { get; set; }
 
+        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
+        [Display(Name = nameof(ResEnt.Ativo), ResourceType = typeof(ResEnt))]
+        [Log(DisplayName = nameof(ResEnt.Ativo), ResourceType = typeof(ResEnt))]
+        public int Ativo { get; set; }
+
         [ForeignKey("UsuarioId")]
         public virtual AspNetUsers Usuario { get; set; }
 
         [ForeignKey("EmpresaId")]
-        public virtual Company Company { get; set; }
+        public virtual Empresa Empresa { get; set; }
     }
 }
 

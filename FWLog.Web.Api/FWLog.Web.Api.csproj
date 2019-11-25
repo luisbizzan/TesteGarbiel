@@ -220,7 +220,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GeneralStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="Mapping\TestProfile.cs" />
+    <Compile Include="Mapping\LoginModelResponseProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\HandleExceptionApiAttribute.cs" />
     <Compile Include="Startup.cs" />

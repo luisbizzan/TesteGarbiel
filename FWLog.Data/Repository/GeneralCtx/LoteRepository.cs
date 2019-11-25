@@ -19,7 +19,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.Lote.FirstOrDefault(f => f.IdNotaFiscal == idNotaFiscal);
         }
 
-        public IEnumerable<Lote> Obter(int CompanyId)
+        public IEnumerable<Lote> Obter(int idEmpresa)
         {
             IEnumerable<Lote> lote = null;
 
@@ -63,7 +63,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "LEFT JOIN \"LoteStatus\" E ON (E.\"IdLoteStatus\" = CASE WHEN A.\"IdLoteStatus\" IS NULL THEN 1 ELSE A.\"IdLoteStatus\" END) " +
                             "LEFT JOIN \"AspNetUsers\" F ON F.\"Id\" = A.\"IdUsuarioRecebimento\" " +
                             "INNER JOIN \"NotaFiscalStatus\" G ON G.\"IdNotaFiscalStatus\" = B.\"IdNotaFiscalStatus\" " +
-                          "WHERE B.\"CompanyId\" =  " + CompanyId,
+                          "WHERE B.\"CompanyId\" =  " + idEmpresa,
                         map: (l, nf, f, ft, ls, u, nfs) =>
                         {
                             l.NotaFiscal = nf;

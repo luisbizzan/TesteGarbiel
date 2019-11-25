@@ -14,7 +14,7 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         public string PrinterType { get; set; }
 
         [Display(Name = "Empresa")]
-        public string Company { get; set; }
+        public string Empresa { get; set; }
 
         [Display(Name = "IP")]
         public string IP { get; set; }

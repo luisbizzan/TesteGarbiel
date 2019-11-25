@@ -152,13 +152,13 @@ namespace FWLog.Services.Integracao
             string status = root.Attribute("status")?.Value;
             if (status != "1")
             {
-                throw new Exception("O sistema não obteve o status 1 no retorno da atualização da nota fiscal no Integração Sankhya.");
+                throw new Exception(string.Format("O sistema não obteve o status 1 no retorno da atualização da nota fiscal no Integração Sankhya. Mensagem {0}", root.Element("statusMessage")?.Value));
             }
 
             string nunota = root.Element("responseBody").Element("entities").Element("entity").Element("NUNOTA")?.Value;
             if (nunota == null)
             {
-                throw new Exception("O sistema não obteve o NUNOTA no retorno da atualização da nota fiscal no Integração Sankhya.");
+                throw new Exception("O sistema não obteve o campo NUNOTA no retorno da atualização da nota fiscal no Integração Sankhya.");
             }
         }
 
@@ -285,7 +285,7 @@ namespace FWLog.Services.Integracao
                 for (var i = 0; i <= listColumns.Count() - 1; i++)
                 {
                     PropertyInfo propertySet = typeClass.GetProperty(listColumns[i].Nome);
-                    propertySet.SetValue(newClass, row[i].ToString(), null);
+                    propertySet.SetValue(newClass, row[i], null);
                 }
 
                 resultList.Add(newClass);

@@ -76,7 +76,7 @@
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.PrazoInicial)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.PrazoInicial, new { @class = "form-control dateFormat EmailValido", data_field = "PrazoInicial", @required = "required" })
+                        @Html.TextBoxFor(m => m.Filter.PrazoInicial, new { @class = "form-control dateFormat", data_field = "PrazoInicial", @required = "required" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -199,7 +199,6 @@
 <div class="modal" id="modalRegistroRecebimento" data-backdrop="static"></div>
 <div class="modal" id="modalDetalhesEntradaConferencia"></div>
 <div class="modal" id="modalFornecedor"></div>
+<div class="modal" id="modalConferencia" data-backdrop="static"></div>
 <div class="modal" id="modalUsuarioRecebimento" data-toggle="modal" data-myvalue="1"></div>
 <div class="modal" id="modalUsuarioConferencia" data-toggle="modal" data-myvalue="2"></div>
-<div class="modal" id="modalConferencia"></div>
-

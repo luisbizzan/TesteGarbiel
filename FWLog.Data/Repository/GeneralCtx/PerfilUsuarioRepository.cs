@@ -7,7 +7,6 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public PerfilUsuarioRepository(Entities entities) : base(entities)
         {
-
         }
 
         public PerfilUsuario GetByUserId(string userId)

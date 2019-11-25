@@ -1,4 +1,14 @@
-﻿.left_col, .main_container {
+﻿.body{
+    overflow: initial;
+    max-height: 100vh;
+}
+
+.modal-body {
+    overflow: auto;
+    max-height: calc(90vh - 40px);
+}
+
+.left_col, .main_container {
     background: #155831 !important;
 }
 

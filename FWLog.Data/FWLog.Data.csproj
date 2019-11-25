@@ -109,6 +109,7 @@
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
     <Compile Include="Models\DataTablesCtx\PrinterTypeTableRow.cs" />
+    <Compile Include="Models\EmpresaConfiguracao.cs" />
     <Compile Include="Models\FilterCtx\PrinterTypeFilter.cs" />
     <Compile Include="Models\NotaFiscal.cs" />
     <Compile Include="Models\Fornecedor.cs" />
@@ -126,8 +127,8 @@
     <Compile Include="Models\QuarentenaStatus.cs" />
     <Compile Include="Models\Transportadora.cs" />
     <Compile Include="Models\UnidadeMedida.cs" />
-    <Compile Include="Models\UserCompany.cs" />
-    <Compile Include="Models\Company.cs" />
+    <Compile Include="Models\UsuarioEmpresa.cs" />
+    <Compile Include="Models\Empresa.cs" />
     <Compile Include="Models\FilterCtx\ApplicationLogFilter.cs" />
     <Compile Include="Models\FilterCtx\BOLogSystemFilter.cs" />
     <Compile Include="Models\FilterCtx\DataTableFilter.cs" />
@@ -196,6 +197,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>EntityStrings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GlobalResources\General\GeneralStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

@@ -279,9 +279,9 @@ namespace Resources {
         /// <summary>
         ///   Looks up a localized string similar to O usuário não possui empresas vinculadas..
         /// </summary>
-        public static string UserCompanyError {
+        public static string UserEmpresaError {
             get {
-                return ResourceManager.GetString("UserCompanyError", resourceCulture);
+                return ResourceManager.GetString("UserEmpresaError", resourceCulture);
             }
         }
         

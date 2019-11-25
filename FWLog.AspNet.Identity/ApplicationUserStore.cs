@@ -443,14 +443,14 @@ namespace FWLog.AspNet.Identity
 
         // Custom implementation
 
-        public Task<IList<string>> GetUserRolesByCompanyId(ApplicationUser user, long companyId)
+        public Task<IList<string>> GetUserRolesByIdEmpresa(ApplicationUser user, long idEmpresa)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            IList<string> roles = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == companyId).Select(s => s.RoleId).ToList();
+            IList<string> roles = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == idEmpresa).Select(s => s.RoleId).ToList();
 
             IList<string> rolesName = db.Roles.Where(w => roles.Contains(w.Id)).Select(s => s.Name).ToList();
 
@@ -478,14 +478,14 @@ namespace FWLog.AspNet.Identity
             return Task.FromResult(permissions);
         }
 
-        public Task<IList<string>> GetPermissionsByCompanyIdAsync(ApplicationUser user, long companyId)
+        public Task<IList<string>> GetPermissionsByIdEmpresaAsync(ApplicationUser user, long idEmpresa)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            IList<string> roleIds = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == companyId).Select(s => s.RoleId).ToList();
+            IList<string> roleIds = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == idEmpresa).Select(s => s.RoleId).ToList();
             IList<string> permissions = db.Users
                 .Where(x => x.Id == user.Id && x.ApplicationId == this.appId)
                 .SelectMany(x => x.Permissions.Select(y => y.Permission.Name))
@@ -499,7 +499,7 @@ namespace FWLog.AspNet.Identity
             return Task.FromResult(permissions);
         }
 
-        public Task UpdateAsync(ApplicationUser user, IEnumerable<string> roles, long companyId)
+        public Task UpdateAsync(ApplicationUser user, IEnumerable<string> roles, long idEmpresa)
         {
             ValidateRoles(roles);
 
@@ -508,10 +508,10 @@ namespace FWLog.AspNet.Identity
             IList<UserRole> userRoles = this.db.Roles
                 .Where(x => x.ApplicationId == this.appId && roles.Contains(x.Name))
                 .ToList()
-                .Select(x => new UserRole { RoleId = x.Id, UserId = user.Id, CompanyId = companyId })
+                .Select(x => new UserRole { RoleId = x.Id, UserId = user.Id, CompanyId = idEmpresa })
                 .ToList();
 
-            var dbEntity = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == companyId).ToList();
+            var dbEntity = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == idEmpresa).ToList();
 
             List<UserRole> userRolesToAdd = userRoles.Where(x => !dbEntity.Any(y => y.RoleId == x.RoleId)).ToList();
             List<UserRole> userRolesToRemove = dbEntity.Where(x => !userRoles.Any(y => y.RoleId == x.RoleId)).ToList();
@@ -551,14 +551,14 @@ namespace FWLog.AspNet.Identity
             return this.db.SaveChangesAsync();
         }
 
-        public Task AddToRolesByCompany(ApplicationUser user, IEnumerable<string> roles, long companyId)
+        public Task AddToRolesByEmpresa(ApplicationUser user, IEnumerable<string> roles, long idEmpresa)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            IList<UserRole> userRoles = this.db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == companyId).ToList();
+            IList<UserRole> userRoles = this.db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == idEmpresa).ToList();
 
             IList<ApplicationRole> appRoles = this.db.Roles.Where(x => x.ApplicationId == this.appId).ToList();
 
@@ -573,7 +573,7 @@ namespace FWLog.AspNet.Identity
 
                 if (!userRoles.Any(x => x.RoleId == found.Id))
                 {
-                    this.db.UserRoles.Add(new UserRole { RoleId = found.Id, UserId = user.Id, CompanyId = companyId });
+                    this.db.UserRoles.Add(new UserRole { RoleId = found.Id, UserId = user.Id, CompanyId = idEmpresa });
                 }
             }
 

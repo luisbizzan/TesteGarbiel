@@ -6,25 +6,25 @@ using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx
 {
-    public class UserCompanyRepository : GenericRepository<UserCompany>
+    public class UsuarioEmpresaRepository : GenericRepository<UsuarioEmpresa>
     {
-        public UserCompanyRepository(Entities entities) : base(entities)
+        public UsuarioEmpresaRepository(Entities entities) : base(entities)
         {
 
         }
 
-        public List<long> GetAllCompaniesByUserId(string userId)
+        public List<long> GetAllEmpresasByUserId(string userId)
         {
-            return Entities.UserCompany.Where(w => w.UserId == userId).Select(s => s.CompanyId).ToList();
+            return Entities.UsuarioEmpresa.Where(w => w.UserId == userId).Select(s => s.CompanyId).ToList();
         }
 
-        public void DeleteByUserId(string userId, long companyId)
+        public void DeleteByUserId(string userId, long idEmpresa)
         {
-            var rel = Entities.UserCompany.Where(w => w.UserId == userId && w.CompanyId == companyId).FirstOrDefault();
+            var rel = Entities.UsuarioEmpresa.Where(w => w.UserId == userId && w.CompanyId == idEmpresa).FirstOrDefault();
 
             if (rel != null)
             {
-                Entities.UserCompany.Remove(rel);
+                Entities.UsuarioEmpresa.Remove(rel);
             }
         }
     }

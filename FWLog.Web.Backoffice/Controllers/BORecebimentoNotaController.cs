@@ -47,7 +47,8 @@ namespace FWLog.Web.Backoffice.Controllers
                         Value = x.IdLoteStatus.ToString(),
                         Text = x.Descricao,
                     }), "Value", "Text"
-                )}
+                )
+                }
             };
 
             model.Filter.IdStatus = StatusNotaRecebimento.AguardandoRecebimento.GetHashCode();
@@ -64,9 +65,6 @@ namespace FWLog.Web.Backoffice.Controllers
             int totalRecords = 0;
             int totalRecordsFiltered = 0;
 
-            //if (!(model.CustomFilter.PrazoInicial.HasValue || model.CustomFilter.PrazoFinal.HasValue))
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Os campos prazo inicial e prazo final obrigatoriamente deverão ser preenchidos.");
-
             if (!ModelState.IsValid)
             {
                 return DataTableResult.FromModel(new DataTableResponseModel()
@@ -78,7 +76,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            var query = _uow.LoteRepository.Obter(CompanyId).AsQueryable();
+            var query = _uow.LoteRepository.Obter(IdEmpresa).AsQueryable();
 
             totalRecords = query.Count();
 
@@ -251,7 +249,7 @@ namespace FWLog.Web.Backoffice.Controllers
             ValidateModel(viewModel);
 
             var relatorioRequest = Mapper.Map<RelatorioRecebimentoNotasRequest>(viewModel);
-            relatorioRequest.IdEmpresa = CompanyId;
+            relatorioRequest.IdEmpresa = IdEmpresa;
             relatorioRequest.NomeUsuario = User.Identity.Name;
             byte[] relatorio = _relatorioService.GerarRelatorioRecebimentoNotas(relatorioRequest);
 
@@ -263,7 +261,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
             {
-                IdEmpresa = CompanyId,
+                IdEmpresa = IdEmpresa,
                 NomeUsuario = User.Identity.Name,
                 IdNotaFiscal = id
             };
@@ -282,7 +280,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
                 {
-                    IdEmpresa = CompanyId,
+                    IdEmpresa = IdEmpresa,
                     NomeUsuario = User.Identity.Name,
                     IdNotaFiscal = viewModel.IdNotaFiscal
                 };
@@ -399,7 +397,7 @@ namespace FWLog.Web.Backoffice.Controllers
             model.ValorFrete = notafiscal.ValorFrete.ToString("n2");
             model.NumeroConhecimento = notafiscal.NumeroConhecimento;
             model.TransportadoraNome = notafiscal.Transportadora.RazaoSocial;
-            model.Peso = notafiscal.PesoBruto.HasValue ? null : notafiscal.PesoBruto.Value.ToString("n2");
+            model.Peso = notafiscal.PesoBruto.HasValue ? notafiscal.PesoBruto.Value.ToString("n2") : null;
             model.QtdVolumes = notafiscal.Quantidade == 0 ? (int?)null : notafiscal.Quantidade;
             model.NotaFiscalPesquisada = true;
 
@@ -429,7 +427,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Ocorreu uma instabilidade com a Integração do Sankhya, não foi possível registrar o recebimento da nota fiscal. Tente novamente."
+                    Message = "Não foi possível atualizar o status da Nota Fiscal no Sankhya. Tente novamente."
                 });
             }
 
@@ -517,7 +515,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ValorTotal = notaFiscal.ValorTotal.ToString("C"),
                 ValorFrete = notaFiscal.ValorFrete.ToString("C"),
                 NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
-                PesoConhecimento = notaFiscal.PesoBruto.HasValue ? null : notaFiscal.PesoBruto.Value.ToString("F"),
+                PesoConhecimento = notaFiscal.PesoBruto.HasValue ? notaFiscal.PesoBruto.Value.ToString("F") : null,
                 TransportadoraNome = notaFiscal.Transportadora.RazaoSocial,
                 DiasAtraso = "0"
             };
@@ -623,30 +621,41 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public JsonResult ValidarModalRegistroConferencia(long id)
         {
+            NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+
+            if (notaFiscal == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não foi possível buscar Nota Fiscal."
+                });
+            }
+
             return Json(new AjaxGenericResultModel
             {
                 Success = true
             });
-
-            //var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
-
-            //if (lote != null)
-            //{
-            //    return Json(new AjaxGenericResultModel
-            //    {
-            //        Success = false,
-            //        Message = "Recebimento da mecadoria já efetivado no sistema.",
-            //    });
-            //}            
         }
 
         public ActionResult ExibirModalRegistroConferencia(long id)
         {
-            var modal = new BORegistroRecebimentoViewModel();
+            NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
 
-            modal.IdNotaFiscal = id;
+            var userInfo = new BackOfficeUserInfo();
 
-            return PartialView("EntradaConferencia");
+            AspNet.Identity.ApplicationUser a = UserManager.Users.FirstOrDefault(x => x.Id == (string)userInfo.UserId);
+
+            var model = new BOEntradaConferenciaViewModel
+            {
+                IdNotaFiscal = id,
+                NumeroNotaFiscal = notaFiscal.Numero.ToString(),
+                NomeFornecedor = notaFiscal.Fornecedor.NomeFantasia,
+                QuantidadeVolumes = notaFiscal.Quantidade,
+                NomeConferente = a.UserName,
+            };
+
+            return PartialView("EntradaConferencia", model);
         }
     }
 }

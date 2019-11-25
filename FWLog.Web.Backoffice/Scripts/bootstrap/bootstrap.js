@@ -974,12 +974,12 @@ if (typeof jQuery === 'undefined') {
 
     this.isShown = true
 
-    this.checkScrollbar()
-    this.setScrollbar()
-    this.$body.addClass('modal-open')
+    //this.checkScrollbar()
+    //this.setScrollbar()
+    //this.$body.addClass('modal-open')
 
-    this.escape()
-    this.resize()
+    //this.escape()
+    //this.resize()
 
     this.$element.on('click.dismiss.bs.modal', '[data-dismiss="modal"]', $.proxy(this.hide, this))
 
@@ -1033,8 +1033,8 @@ if (typeof jQuery === 'undefined') {
 
     this.isShown = false
 
-    this.escape()
-    this.resize()
+    //this.escape()
+    //this.resize()
 
     $(document).off('focusin.bs.modal')
 
@@ -1086,9 +1086,9 @@ if (typeof jQuery === 'undefined') {
     var that = this
     this.$element.hide()
     this.backdrop(function () {
-      that.$body.removeClass('modal-open')
-      that.resetAdjustments()
-      that.resetScrollbar()
+      //that.$body.removeClass('modal-open')
+      //that.resetAdjustments()
+      //that.resetScrollbar()
       that.$element.trigger('hidden.bs.modal')
     })
   }
@@ -1172,14 +1172,14 @@ if (typeof jQuery === 'undefined') {
     })
   }
 
-  Modal.prototype.checkScrollbar = function () {
+    Modal.prototype.checkScrollbar = function () {
     var fullWindowWidth = window.innerWidth
     if (!fullWindowWidth) { // workaround for missing window.innerWidth in IE8
       var documentElementRect = document.documentElement.getBoundingClientRect()
       fullWindowWidth = documentElementRect.right - Math.abs(documentElementRect.left)
     }
-    this.bodyIsOverflowing = document.body.clientWidth < fullWindowWidth
     this.scrollbarWidth = this.measureScrollbar()
+    this.bodyIsOverflowing = (document.body.clientWidth + this.scrollbarWidth) > fullWindowWidth
   }
 
   Modal.prototype.setScrollbar = function () {

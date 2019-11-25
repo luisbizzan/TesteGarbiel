@@ -79,7 +79,7 @@ namespace FWLog.Web.Api.Helpers
             NameValueCollection parameters = HttpUtility.ParseQueryString(actionContext.Request.RequestUri.Query);
 
             var userManager = actionContext.Request.GetOwinContext().GetUserManager<WebApiUserManager>();
-            IList<string> permissions = userManager.GetPermissions(userId, Convert.ToInt32(parameters["IdCompany"]));
+            IList<string> permissions = userManager.GetPermissions(userId, Convert.ToInt32(parameters["IdEmpresa"]));
 
             var customUser = new ApplicationClaimsPrincipal((ClaimsPrincipal)user, permissions);
 

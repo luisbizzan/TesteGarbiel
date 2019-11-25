@@ -1,7 +1,6 @@
 ﻿using FWLog.Services.Integracao.Helpers;
-using System;
 
-namespace FWLog.Services.Model
+namespace FWLog.Services.Model.IntegracaoSankhya
 {
     [TabelaIntegracao(DisplayName = "TGFCAB")]
     public class NotaFiscalIntegracao

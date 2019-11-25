@@ -234,13 +234,13 @@
     <Compile Include="Controllers\BOPrinterController.cs" />
     <Compile Include="Controllers\BOQuarentenaController.cs" />
     <Compile Include="Controllers\BORecebimentoNotaController.cs" />
-    <Compile Include="Controllers\CompanyController.cs" />
+    <Compile Include="Controllers\BOEmpresaController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BOFornecedorController.cs" />
     <Compile Include="Controllers\PrinterTypeController.cs" />
-    <Compile Include="EnumsAndConsts\CompanyCookie.cs" />
+    <Compile Include="EnumsAndConsts\EmpresaCookie.cs" />
     <Compile Include="EnumsAndConsts\LOVs\NaoSimLOV.cs" />
     <Compile Include="GlobalResources\BOPrinter\BOPrinterStrings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -304,9 +304,10 @@
     </EmbeddedResource>
     <Content Include="favicon.ico" />
     <Content Include="Scripts\dart\autoComplete.js" />
-    <Content Include="Scripts\dart\company.js" />
+    <Content Include="Scripts\dart\empresa.js" />
     <Content Include="Scripts\dart\documentReady.js" />
     <Content Include="Scripts\dart\dropzoneImageCropper.js" />
+    <Content Include=".editorconfig" />
     <None Include="Content\dart\dart-template.scss" />
     <Compile Include="Controllers\ApplicationLogController.cs" />
     <Compile Include="Controllers\BOAccountBaseController.cs" />
@@ -435,7 +436,7 @@
     <Content Include="Scripts\Views\PrinterType\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
-    <Content Include="Views\Shared\_ChangeCompany.cshtml" />
+    <Content Include="Views\Shared\_MudarEmpresa.cshtml" />
     <Content Include="Views\BORecebimentoNota\Index.cshtml" />
     <Content Include="Views\BOPrinter\Index.cshtml" />
     <Content Include="Views\BOPrinter\Create.cshtml" />

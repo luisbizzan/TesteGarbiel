@@ -42,24 +42,19 @@ namespace FWLog.Web.Backoffice.Controllers
         }
         private SelectList printertypes;
 
-        private SelectList Companies
+        private SelectList _Empresas
         {
             get
             {
-                if (companies == null)
+                if (Empresas == null)
                 {
-                    companies = new SelectList(
-                        _uow.CompanyRepository.GetAll().Select(x => new SelectListItem
-                        {
-                            Value = x.CompanyId.ToString(),
-                            Text = x.CompanyName,
-                        }).ToList(), "Value", "Text");
+                    Empresas = new SelectList(base.Empresas, "IdEmpresa", "Nome");                    
                 }
 
-                return companies;
+                return Empresas;
             }
         }
-        private SelectList companies;
+        private SelectList Empresas;
 
         private SelectList Status
         {
@@ -78,7 +73,7 @@ namespace FWLog.Web.Backoffice.Controllers
         private void setViewBags()
         {
             ViewBag.PrinterTypes = PrinterTypes;
-            ViewBag.Companies = Companies;
+            ViewBag.Empresas = _Empresas;
             ViewBag.Status = Status;
         }
 
@@ -104,7 +99,7 @@ namespace FWLog.Web.Backoffice.Controllers
             IQueryable<Printer> all = _uow.BOPrinterRepository.All();
 
             IQueryable<Printer> query = all.WhereIf(!string.IsNullOrEmpty(model.CustomFilter.Name), x => x.Name.Contains(model.CustomFilter.Name));
-            query = query.WhereIf(model.CustomFilter.CompanyId.HasValue, x => x.CompanyId == model.CustomFilter.CompanyId);
+            query = query.WhereIf(model.CustomFilter.IdEmpresa.HasValue, x => x.CompanyId == model.CustomFilter.IdEmpresa);
             query = query.WhereIf(model.CustomFilter.PrinterTypeId.HasValue, x => x.PrinterTypeId == model.CustomFilter.PrinterTypeId);
             query = query.WhereIf(model.CustomFilter.Ativa.HasValue, x => x.Ativa == model.CustomFilter.Ativa);
 
@@ -144,7 +139,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             try
             {
-                var entity = new Printer() { Name = model.Name, IP = model.IP, CompanyId = model.CompanyId, PrinterTypeId = model.PrinterTypeId, Ativa = model.Ativa };
+                var entity = new Printer() { Name = model.Name, IP = model.IP, CompanyId = model.IdEmpresa, PrinterTypeId = model.PrinterTypeId, Ativa = model.Ativa };
 
                 _uow.BOPrinterRepository.Add(entity);
 
@@ -178,7 +173,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var model = new BOPrinterDetailsViewModel()
             {
                 Name = entity.Name,
-                Company = entity.Company.CompanyName,
+                Empresa = entity.Empresa.RazaoSocial,
                 PrinterType = entity.PrinterType.Name,
                 IP = entity.IP,
                 _Status = (NaoSimEnum)entity.Ativa
@@ -207,7 +202,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 Id = entity.Id,
                 Name = entity.Name,
-                CompanyId = entity.CompanyId,
+                IdEmpresa = entity.CompanyId,
                 IP = entity.IP,
                 PrinterTypeId = entity.PrinterTypeId,
                 Ativa = (int)entity.Ativa
@@ -240,7 +235,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 entity.Name = model.Name;
                 entity.PrinterTypeId = model.PrinterTypeId;
-                entity.CompanyId = model.CompanyId;
+                entity.CompanyId = model.IdEmpresa;
                 entity.IP = model.IP;
                 entity.Ativa = model.Ativa;
 
@@ -260,7 +255,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpGet]
         public ActionResult Selecionar(int id)
         {
-            List<Printer> impressoras = _uow.BOPrinterRepository.All().Where(w => w.CompanyId == CompanyId && w.Ativa == (int)NaoSimEnum.Sim && w.PrinterTypeId == id).ToList();
+            List<Printer> impressoras = _uow.BOPrinterRepository.All().Where(w => w.CompanyId == IdEmpresa && w.Ativa == (int)NaoSimEnum.Sim && w.PrinterTypeId == id).ToList();
             var listaImpressoras = new List<BOPrinterSelecionarImpressoraViewModel>();
 
             foreach (Printer impressora in impressoras)

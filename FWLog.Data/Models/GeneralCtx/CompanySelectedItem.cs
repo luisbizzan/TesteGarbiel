@@ -1,8 +1,8 @@
 ﻿namespace FWLog.Data.Models.GeneralCtx
 {
-    public class CompanySelectedItem
+    public class EmpresaSelectedItem
     {
-        public long CompanyId { get; set; }
-        public string Name { get; set; }
+        public long IdEmpresa { get; set; }
+        public string Nome { get; set; }
     }
 }
