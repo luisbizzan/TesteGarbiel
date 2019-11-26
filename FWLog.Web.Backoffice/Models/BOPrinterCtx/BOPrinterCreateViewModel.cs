@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FWLog.Data.EnumsAndConsts;
+using System.ComponentModel.DataAnnotations;
 using Res = Resources.BOPrinterStrings;
 
 namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
@@ -24,7 +25,6 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         public string IP { get; set; }
 
         [Required(ErrorMessage = "O campo Ativa é obrigatório.")]
-        [Display(Name = "Ativa")]
-        public int Ativa { get; set; }
+        public NaoSimEnum Ativa { get; set; }
     }
 }

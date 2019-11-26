@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FWLog.Data.EnumsAndConsts;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
@@ -16,7 +17,7 @@ namespace FWLog.Data.Models
         public string Descricao { get; set; }
 
         [Required]
-        public int Ativo { get; set; }
+        public NaoSimEnum Ativo { get; set; }
 
         #region ForeignKey
 

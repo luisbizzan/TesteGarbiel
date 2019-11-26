@@ -48,7 +48,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 if (Empresas == null)
                 {
-                    Empresas = new SelectList(base.Empresas, "IdEmpresa", "Nome");                    
+                    Empresas = new SelectList(base.Empresas, "IdEmpresa", "Nome");
                 }
 
                 return Empresas;
@@ -176,7 +176,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Empresa = entity.Empresa.RazaoSocial,
                 PrinterType = entity.PrinterType.Name,
                 IP = entity.IP,
-                _Status = (NaoSimEnum)entity.Ativa
+                Ativa = entity.Ativa.GetDisplayName()
             };
 
             return View(model);
@@ -205,7 +205,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 IdEmpresa = entity.CompanyId,
                 IP = entity.IP,
                 PrinterTypeId = entity.PrinterTypeId,
-                Ativa = (int)entity.Ativa
+                Ativa = entity.Ativa
             };
 
             setViewBags();
@@ -255,7 +255,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpGet]
         public ActionResult Selecionar(int id)
         {
-            List<Printer> impressoras = _uow.BOPrinterRepository.All().Where(w => w.CompanyId == IdEmpresa && w.Ativa == (int)NaoSimEnum.Sim && w.PrinterTypeId == id).ToList();
+            List<Printer> impressoras = _uow.BOPrinterRepository.All().Where(w => w.CompanyId == IdEmpresa && w.Ativa == NaoSimEnum.Sim && w.PrinterTypeId == id).ToList();
             var listaImpressoras = new List<BOPrinterSelecionarImpressoraViewModel>();
 
             foreach (Printer impressora in impressoras)

@@ -13,13 +13,13 @@ namespace FWLog.Web.Backoffice.EnumsAndConsts.LOVs
             {
                 yield return new SelectListItem
                 {
-                    Value = ((int)NaoSimEnum.Nao).ToString(),
+                    Value = NaoSimEnum.Nao.ToString(),
                     Text = NaoSimEnum.Nao.GetDisplayName(),
                 };
 
                 yield return new SelectListItem
                 {
-                    Value = ((int)NaoSimEnum.Sim).ToString(),
+                    Value = NaoSimEnum.Sim.ToString(),
                     Text = NaoSimEnum.Sim.GetDisplayName(),
                 };
             }
