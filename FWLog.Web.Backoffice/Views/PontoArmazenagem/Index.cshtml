@@ -3,7 +3,6 @@
 @using Res = Resources.BOPrinterStrings
 
 @{
-    ViewBag.Title = Res.IndexPageTitle;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -23,7 +22,7 @@
 
 <div class="page-title">
     <div class="title">
-        <h3>@ViewBag.Title</h3>
+        <h3>Pontos de Armazenagem</h3>
     </div>
 </div>
 <form data-filter="form" data-filter-for="dataTable" class="form-filter">
@@ -46,11 +45,11 @@
                 </div>
                 <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.Filtros.IdTipoArmazenagem)
-                    @Html.DropDownListFor(m => m.Filtros.IdTipoArmazenagem, Model.TiposArmazenagem, new { @class = "form-control", data_field = "IdTipoArmazenagem" })
+                    @Html.DropDownListFor(m => m.Filtros.IdTipoArmazenagem, Model.TiposArmazenagem, "Todos", new { @class = "form-control", data_field = "IdTipoArmazenagem" })
                 </div>
                 <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.Filtros.IdTipoMovimentacao)
-                    @Html.DropDownListFor(m => m.Filtros.IdTipoMovimentacao, Model.TiposMovimentacao, new { @class = "form-control", data_field = "IdTipoMovimentacao" })
+                    @Html.DropDownListFor(m => m.Filtros.IdTipoMovimentacao, Model.TiposMovimentacao, "Todos", new { @class = "form-control", data_field = "IdTipoMovimentacao" })
                 </div>
                 <div class="form-group col-sm-3 col-xs-12">
                     @Html.LabelFor(m => m.Filtros.Status)
@@ -70,7 +69,6 @@
     <div class="col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>@Res.ListHeader</h2>
                 <div class="nav navbar-right panel_toolbox">
                     @if (User.HasPermission(Permissions.PontoArmazenagem.Cadastrar))
                     {

@@ -10,16 +10,16 @@ namespace FWLog.Data.Models
         public int IdPontoArmazenagem { get; set; }
         [Required]
         [Index]
-        public int IdEmpresa { get; set; }
+        public long IdEmpresa { get; set; }
         [Required]
         [Index]
-        public int IdNivelArmazenagem { get; set; }
+        public long IdNivelArmazenagem { get; set; }
         [Required]
         [Index]
-        public int IdTipoArmazenagem { get; set; }
+        public TipoArmazenagemEnum IdTipoArmazenagem { get; set; }
         [Required]
         [Index]
-        public int IdTipoMovimentacao { get; set; }
+        public TipoMovimentacaoEnum IdTipoMovimentacao { get; set; }
         [Required]
         [StringLength(200)]
         public string Descricao { get; set; }

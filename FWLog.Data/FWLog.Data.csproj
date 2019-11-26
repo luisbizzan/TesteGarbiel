@@ -77,8 +77,6 @@
     <Compile Include="EnumsAndConsts\LoteStatusEnum.cs" />
     <Compile Include="EnumsAndConsts\NaoSimEnum.cs" />
     <Compile Include="EnumsAndConsts\StatusNotaRecebimento.cs" />
-    <Compile Include="EnumsAndConsts\TipoArmazenagemEnum.cs" />
-    <Compile Include="EnumsAndConsts\TipoMovimentacaoEnum.cs" />
     <Compile Include="ExtensionMethods\EnumExtensions.cs" />
     <Compile Include="ExtensionMethods\LinqExtension.cs" />
     <Compile Include="ExtensionMethods\StringExtension.cs" />
@@ -171,6 +169,8 @@
     <Compile Include="Repository\GeneralCtx\ProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\TipoArmazenagemRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\TipoMovimentacaoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TransportadoraRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UnidadeMedidaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UserCompanyRepository.cs" />
