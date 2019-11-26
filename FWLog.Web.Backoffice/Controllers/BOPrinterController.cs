@@ -30,7 +30,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 if (printertypes == null)
                 {
                     printertypes = new SelectList(
-                        _uow.BOPrinterTypeRepository.GetAll().Select(x => new SelectListItem
+                        _uow.BOPrinterTypeRepository.Todos().Select(x => new SelectListItem
                         {
                             Value = x.Id.ToString(),
                             Text = x.Name,

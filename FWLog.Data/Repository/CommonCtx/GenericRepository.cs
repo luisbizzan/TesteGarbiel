@@ -18,16 +18,6 @@ namespace FWLog.Data.Repository.CommonCtx
             return _dbSet.Find(id);
         }
 
-        public virtual IEnumerable<TEntity> GetAll()
-        {
-            return _dbSet.ToList();
-        }
-
-        public virtual IQueryable<TEntity> All()
-        {
-            return _dbSet;
-        }
-
         public virtual void Add(TEntity entity)
         {
             _dbSet.Add(entity);

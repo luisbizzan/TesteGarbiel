@@ -41,7 +41,7 @@
                 </div>
                 <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.Filtros.IdNivelArmazenagem)
-                    @Html.DropDownListFor(m => m.Filtros.IdNivelArmazenagem, Model.NiveisArmazenagem, new { @class = "form-control", data_field = "IdNivelArmazenagem" })
+                    @Html.DropDownListFor(m => m.Filtros.IdNivelArmazenagem, Model.NiveisArmazenagem, "Todos", new { @class = "form-control", data_field = "IdNivelArmazenagem" })
                 </div>
                 <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.Filtros.IdTipoArmazenagem)

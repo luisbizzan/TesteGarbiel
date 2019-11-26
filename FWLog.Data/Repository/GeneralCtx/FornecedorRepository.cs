@@ -1,5 +1,6 @@
 ﻿using FWLog.Data.Models;
 using FWLog.Data.Repository.CommonCtx;
+using System.Collections.Generic;
 
 namespace FWLog.Data.Repository.GeneralCtx
 {
@@ -8,6 +9,11 @@ namespace FWLog.Data.Repository.GeneralCtx
         public FornecedorRepository(Entities entities) : base(entities)
         {
 
+        }
+
+        public IEnumerable<Fornecedor> Todos()
+        {
+            return Entities.Fornecedor;
         }
     }
 }

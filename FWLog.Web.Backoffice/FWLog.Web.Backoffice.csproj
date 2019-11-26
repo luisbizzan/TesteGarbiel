@@ -441,6 +441,7 @@
     <Content Include="Scripts\Views\BORecebimentoNota\detalhesEntradaConferencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
+    <Content Include="Scripts\Views\PontoArmazenagem\index.js" />
     <Content Include="Scripts\Views\PrinterType\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />

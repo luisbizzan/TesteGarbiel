@@ -41,7 +41,7 @@ namespace FWLog.Web.Backoffice.Controllers
             int totalRecords = 0;
             int totalRecordsFiltered = 0;
 
-            var query = _uow.FornecedorRepository.GetAll().AsQueryable();
+            var query = _uow.FornecedorRepository.Todos();
 
             totalRecords = query.Count();
 

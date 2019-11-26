@@ -13,6 +13,11 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
         }
 
+        public List<NivelArmazenagem> RetornarAtivos()
+        {
+            return Entities.NivelArmazenagem.Where(w => w.Ativo).ToList();
+        }
+
         public IList<NivelArmazenagemTableRow> SearchForDataTable(DataTableFilter<NivelArmazenagemFilter> filter, out int totalRecordsFiltered, out int totalRecords)
         {
             totalRecords = Entities.NivelArmazenagem.Count();

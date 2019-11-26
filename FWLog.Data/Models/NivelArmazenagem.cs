@@ -17,7 +17,7 @@ namespace FWLog.Data.Models
         public string Descricao { get; set; }
 
         [Required]
-        public NaoSimEnum Ativo { get; set; }
+        public bool Ativo { get; set; }
 
         #region ForeignKey
 

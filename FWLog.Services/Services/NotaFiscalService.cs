@@ -36,7 +36,7 @@ namespace FWLog.Services.Services
             var inner = "INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
             List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<NotaFiscalIntegracao>(where, inner);
 
-            var tiposFrete = _uow.FreteTipoRepository.GetAll();
+            var tiposFrete = _uow.FreteTipoRepository.RetornarTodos();
 
             Dictionary<string, List<NotaFiscalIntegracao>> notasIntegracaoGrp = notasIntegracao.GroupBy(g => g.NUNOTA).ToDictionary(d => d.Key, d => d.ToList());
 
@@ -111,7 +111,7 @@ namespace FWLog.Services.Services
             List<NotaFiscalItemIntegracao> itensIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryGenerico<NotaFiscalItemIntegracao>(where);
             List<NotaFiscalItem> itemsNotaFsical = new List<NotaFiscalItem>();
 
-            var unidades = _uow.UnidadeMedidaRepository.GetAll();
+            var unidades = _uow.UnidadeMedidaRepository.RetornarTodos();
 
             var idNotaFiscal = _uow.NotaFiscalRepository.PegarNotaFiscal(codigoIntegracao).IdNotaFiscal;
 
