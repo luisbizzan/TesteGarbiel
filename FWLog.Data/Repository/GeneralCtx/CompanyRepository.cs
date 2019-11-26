@@ -6,38 +6,38 @@ using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx
 {
-    public class CompanyRepository : GenericRepository<Company>
+    public class EmpresaRepository : GenericRepository<Empresa>
     {
-        public CompanyRepository(Entities entities) : base(entities)
+        public EmpresaRepository(Entities entities) : base(entities)
         {
 
         }
 
-        public long FirstCompany(string userId)
+        public long PegarPrimeiraEmpresa(string userId)
         {
-            var company = Entities.UserCompany.Where(w => w.UserId == userId).OrderBy(o => o.Company.CompanyName).FirstOrDefault();
-            if (company != null)
+            var empresa = Entities.UsuarioEmpresa.Where(w => w.UserId == userId).OrderBy(o => o.Empresa.RazaoSocial).FirstOrDefault();
+            if (empresa != null)
             {
-                return company.CompanyId;
+                return empresa.CompanyId;
             }
 
             return 0;
         }
 
-        public IEnumerable<CompanySelectedItem> GetAllByUserId(string userId)
+        public IEnumerable<EmpresaSelectedItem> GetAllByUserId(string userId)
         {
-            var companies = Entities.UserCompany.Where(w => w.UserId == userId).OrderBy(o => o.Company.CompanyName)
+            var empresas = Entities.UsuarioEmpresa.Where(w => w.UserId == userId).OrderBy(o => o.Empresa.RazaoSocial)
                 .Select(s => new { 
-                    s.Company.Initials,
-                    s.Company.TradingName,
-                    s.Company.CompanyId
+                    s.Empresa.Sigla,
+                    s.Empresa.NomeFantasia,
+                    s.Empresa.IdEmpresa
                     }
                 ).ToList();
 
-            return companies.Select(s => new CompanySelectedItem
+            return empresas.Select(s => new EmpresaSelectedItem
             {
-                Name = string.Format("{0} - {1}", s.Initials, s.TradingName),
-                CompanyId = s.CompanyId
+                Nome = string.Format("{0} - {1}", s.Sigla, s.NomeFantasia),
+                IdEmpresa = s.IdEmpresa
             }).ToList();
         }
 

@@ -37,8 +37,8 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
 
     public class EmpresaGrupoViewModel
     {
-        public long CompanyId { get; set; }
-        public string Name { get; set; }
+        public long IdEmpresa { get; set; }
+        public string Nome { get; set; }
 
         public List<GroupItemViewModel> Grupos { get; set; } = new List<GroupItemViewModel>();
     }

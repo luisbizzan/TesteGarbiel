@@ -67,6 +67,7 @@
             { data: 'Nome' },
             { data: 'UserName', width: 100 },
             { data: 'Email' },
+            { data: 'Ativo' },
             actionsColumn
         ]
     });

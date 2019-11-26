@@ -89,11 +89,6 @@ namespace FWLog.Data.Repository.BackofficeCtx
 
             Type entity = GetTypeForEntity(log.Entity);
 
-            if (entity == null)
-            {
-                return null;
-            }
-
             var details = new BOLogSystemDetails
             {
                 IdBOLogSystem = log.IdBOLogSystem,
@@ -186,8 +181,13 @@ namespace FWLog.Data.Repository.BackofficeCtx
 
             foreach (BOLogSystemTableRow item in result)
             {
-                Type entity = GetTypeForEntity(item.Entity);
                 item.ActionType = ActionTypeNames.GetAll().First(x => x.Value == item.ActionType).DisplayName;
+
+                Type entity = GetTypeForEntity(item.Entity);
+                if (entity == null)
+                {
+                    continue;
+                }
                 item.Entity = GetTranslationForEntity(entity);
             }
 
@@ -299,8 +299,8 @@ namespace FWLog.Data.Repository.BackofficeCtx
                         Double value = Double.Parse(entityDic[property], System.Globalization.NumberStyles.AllowDecimalPoint, new CultureInfo("en-US"));
                         entityDic[property] = value.ToString("N2");
                     }
-                }              
-            }           
+                }
+            }
 
             return entityDic;
         }
@@ -334,7 +334,7 @@ namespace FWLog.Data.Repository.BackofficeCtx
         {
             if (entity == null)
             {
-                return entity.Name;
+                return string.Empty;
             }
 
             LogAttribute logAttr = (LogAttribute)entity.GetCustomAttributes(typeof(LogAttribute), false).FirstOrDefault();

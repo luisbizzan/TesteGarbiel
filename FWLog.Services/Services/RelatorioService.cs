@@ -129,12 +129,12 @@ namespace FWLog.Services.Services
                 }
             }
 
-            Company empresa = _unitiOfWork.CompanyRepository.GetById(request.IdEmpresa);
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
 
             var fwRelatorioDados = new FwRelatorioDados
             {
                 DataCriacao = DateTime.Now,
-                NomeEmpresa = empresa.CompanyName,
+                NomeEmpresa = empresa.RazaoSocial,
                 NomeUsuario = request.NomeUsuario,
                 Orientacao = Orientation.Portrait,
                 Titulo = "Relatório Notas Fiscais Recebimento",
@@ -149,13 +149,13 @@ namespace FWLog.Services.Services
 
         public byte[] GerarDetalhesNotaEntradaConferencia(DetalhesNotaEntradaConferenciaRequest request)
         {
-            Company empresa = _unitiOfWork.CompanyRepository.GetById(request.IdEmpresa);
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
             NotaFiscal notaFiscal = _unitiOfWork.NotaFiscalRepository.GetById(request.IdNotaFiscal);
 
             var fwRelatorioDados = new FwRelatorioDados
             {
                 DataCriacao = DateTime.Now,
-                NomeEmpresa = empresa.CompanyName,
+                NomeEmpresa = empresa.RazaoSocial,
                 NomeUsuario = request.NomeUsuario,
                 Orientacao = Orientation.Portrait,
                 Titulo = "Detalhes Nota Fiscal Entrada/Conferencia",
@@ -289,7 +289,12 @@ namespace FWLog.Services.Services
 
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Peso: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.PesoBruto.HasValue ? notaFiscal.PesoBruto.Value.ToString("F") : string.Empty);
+
+            if (notaFiscal.PesoBruto.HasValue)
+            {
+                paragraph.AddText(notaFiscal.PesoBruto.Value.ToString("F"));
+            }
+
             paragraph = row.Cells[3].AddParagraph();
             paragraph.AddFormattedText("Nro. Conhecimento: ", TextFormat.Bold);
             paragraph.AddText(notaFiscal.NumeroConhecimento.ToString());

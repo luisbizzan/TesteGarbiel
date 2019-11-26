@@ -25,8 +25,8 @@ namespace FWLog.Data
         public virtual DbSet<BOLogSystem> BOLogSystem { get; set; }
         public virtual DbSet<ApplicationSession> ApplicationSession { get; set; }
         public virtual DbSet<ApplicationLog> ApplicationLog { get; set; }
-        public virtual DbSet<Company> Company { get; set; }
-        public virtual DbSet<UserCompany> UserCompany { get; set; }
+        public virtual DbSet<Empresa> Empresa { get; set; }
+        public virtual DbSet<UsuarioEmpresa> UsuarioEmpresa { get; set; }
         public virtual DbSet<Printer> Printer { get; set; }
         public virtual DbSet<PrinterType> PrinterType { get; set; }
         public virtual DbSet<PerfilUsuario> PerfilUsuario { get; set; }
@@ -42,6 +42,8 @@ namespace FWLog.Data
         public virtual DbSet<Quarentena> Quarentena { get; set; }
         public virtual DbSet<QuarentenaStatus> QuarentenaStatus { get; set; }
         public virtual DbSet<NotaFiscalStatus> NotaFiscalStatus { get; set; }
+        public virtual DbSet<NivelArmazenagem> NivelArmazenagem { get; set; }
+        public virtual DbSet<PontoArmazenagem> PontoArmazenagem { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 

@@ -2,6 +2,7 @@
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using System;
+using System.Configuration;
 using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
@@ -24,6 +25,19 @@ namespace FWLog.Services.Services
                 return;
             }
 
+            var nota = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
+
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                var notaService = new NotaFiscalService(_uow);
+                var atualizacaoOK = await notaService.AtualizarStatusNota(nota, NotaFiscalStatusEnum.Recebida);
+
+                if (!atualizacaoOK)
+                {
+                    throw new Exception("A atualização de nota fiscal no Sankhya não terminou com sucesso.");
+                }
+            }
+                        
             lote = new Lote();
 
             lote.IdLoteStatus = LoteStatusEnum.Recebido.GetHashCode();
@@ -34,24 +48,9 @@ namespace FWLog.Services.Services
 
             _uow.LoteRepository.Add(lote);
 
-            var nota = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
             nota.IdNotaFiscalStatus = NotaFiscalStatusEnum.Recebida.GetHashCode();
 
             _uow.SaveChanges();
-
-            //try
-            //{
-            //    var notaService = new NotaFiscalService(_uow);
-            //    await notaService.AtualizarStatusNota(nota);
-            //}
-            //catch (Exception e)
-            //{
-            //    _uow.LoteRepository.Delete(lote);
-            //    nota.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode();
-            //    _uow.SaveChanges();
-
-            //    throw e;
-            //}
         }
     }
 }

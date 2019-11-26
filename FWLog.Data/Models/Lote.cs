@@ -10,33 +10,27 @@ namespace FWLog.Data.Models
     public class Lote
     {
         [Key]
-        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
-        [Display(Name = "Código do Lote")]
+        [Required]
         [Log(DisplayName = "Código do Lote")]
         public long IdLote { get; set; }
 
-        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
-        [Display(Name = "Status do Lote")]
+        [Required]
         [Log(DisplayName = "Status do Lote")]
         public long IdLoteStatus { get; set; }
 
-        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
-        [Display(Name = "Código da Nota Fiscal")]
+        [Required]
         [Log(DisplayName = "Código da Nota Fiscal")]
         public long IdNotaFiscal { get; set; }
 
-        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
-        [Display(Name = "Data de Recebimento")]
+        [Required]
         [Log(DisplayName = "Data de Recebimento")]
         public DateTime DataRecebimento { get; set; }
 
-        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
-        [Display(Name = "Quantidade de Volumes")]
+        [Required]
         [Log(DisplayName = "Quantidade de Volumes")]
         public long QuantidadeVolume { get; set; }
 
-        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
-        [Display(Name = "Código do Usuário Recebimento")]
+        [Required]
         [Log(DisplayName = "Código do Usuário Recebimento")]
         public string IdUsuarioRecebimento { get; set; }
 

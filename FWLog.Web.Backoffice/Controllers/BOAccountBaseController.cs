@@ -69,14 +69,14 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 case SignInStatus.Success:
                     ApplicationUser applicationUser = await UserManager.FindByNameAsync(model.UserName);
-                    if (_uow.CompanyRepository.FirstCompany(applicationUser.Id) > 0)
+                    if (_uow.EmpresaRepository.PegarPrimeiraEmpresa(applicationUser.Id) > 0)
                     {
                         await CreateApplicationSession(model.UserName);
                         return RedirectToLocal(returnUrl);
                     }
                     else
                     {
-                        model.ErrorMessage = Res.UserCompanyError;
+                        model.ErrorMessage = Res.UserEmpresaError;
                     }
                     break;
                 case SignInStatus.LockedOut:
@@ -223,7 +223,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return;
             }
 
-            long companyId = _uow.CompanyRepository.FirstCompany(applicationUser.Id);
+            long idEmpresa = _uow.EmpresaRepository.PegarPrimeiraEmpresa(applicationUser.Id);
 
             try
             {
@@ -233,7 +233,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     IdApplication = applicationUser.ApplicationId,
                     DataLogin = DateTime.Now,
                     DataUltimaAcao = DateTime.Now,
-                    CompanyId = companyId
+                    IdEmpresa = idEmpresa
                 };
 
                 _uow.ApplicationSessionRepository.Add(applicationSession);
@@ -241,7 +241,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 applicationUser.IdApplicationSession = applicationSession.IdApplicationSession;
                 
-                CookieSaveCompany(companyId, applicationUser.Id);
+                CookieSalvarEmpresa(idEmpresa, applicationUser.Id);
 
                 UserManager.Update(applicationUser);
             }

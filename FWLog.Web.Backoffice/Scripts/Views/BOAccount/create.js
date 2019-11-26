@@ -16,7 +16,7 @@
 
         var bok = false;
 
-        $(".companyId").each(function (i, e) {
+        $(".idEmpresa").each(function (i, e) {
             if (id === $(this).val()) {
                 $(".validationEmpresa").text("A empresa escolhida já foi adicionada ao usuário.");
                 bok = true;
@@ -28,7 +28,7 @@
             return;
         }
 
-        $.post(HOST_URL + "BOAccount/AdicionarEmpresa?companyId=" + id, function (result) {
+        $.post(HOST_URL + "BOAccount/AdicionarEmpresa?idEmpresa=" + id, function (result) {
             $("#EmpresasSelecionadas").append(result);
 
             loadButtons();
@@ -37,11 +37,11 @@
 
     $('.btnSalvar').on('click', function () {        
         $("#EmpresasSelecionadas").find(".panelEmpresa").each(function (i, e) {
-            $(this).find(".companyId").attr('id', `EmpresasGrupos_${i}__CompanyId`);
-            $(this).find(".companyId").attr('name', `EmpresasGrupos[${i}].CompanyId`);
+            $(this).find(".idEmpresa").attr('id', `EmpresasGrupos_${i}__IdEmpresa`);
+            $(this).find(".idEmpresa").attr('name', `EmpresasGrupos[${i}].IdEmpresa`);
 
-            $(this).find(".companyName").attr('id', `EmpresasGrupos_Name_${i}`);
-            $(this).find(".companyName").attr('name', `EmpresasGrupos[${i}].Name`);
+            $(this).find(".empresaNome").attr('id', `EmpresasGrupos_Name_${i}`);
+            $(this).find(".empresaNome").attr('name', `EmpresasGrupos[${i}].Name`);
 
             $(this).find("[data-group]").each(function (ii, ee) {
                 $(this).attr('id', `EmpresasGrupos_${i}__Grupos_${ii}__IsSelected`);

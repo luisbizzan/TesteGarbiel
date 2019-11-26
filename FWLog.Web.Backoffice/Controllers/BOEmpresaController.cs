@@ -6,11 +6,11 @@ using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
-    public class CompanyController : BOBaseController
+    public class BOEmpresaController : BOBaseController
     {
         UnitOfWork _uow;
 
-        public CompanyController(UnitOfWork uow)
+        public BOEmpresaController(UnitOfWork uow)
         {
             _uow = uow;
         }
@@ -20,16 +20,16 @@ namespace FWLog.Web.Backoffice.Controllers
             return View();
         }
 
-        public ActionResult GetCompanies()
+        public ActionResult BuscarEmpresas()
         {
-            ViewData["Companies"] = new SelectList(Companies, "CompanyId", "Name");
-            return PartialView("_ChangeCompany");
+            ViewData["Empresas"] = new SelectList(Empresas, "IdEmpresa", "Nome");
+            return PartialView("_MudarEmpresa");
         }
 
-        public JsonResult ChangeCompany(int companyId)
+        public JsonResult MudarEmpresa(int idEmpresa)
         {
             var userInfo = new BackOfficeUserInfo();
-            CookieSaveCompany(companyId, userInfo.UserId.ToString());
+            CookieSalvarEmpresa(idEmpresa, userInfo.UserId.ToString());
 
             return Json(new AjaxGenericResultModel
             {
@@ -38,9 +38,9 @@ namespace FWLog.Web.Backoffice.Controllers
             }, JsonRequestBehavior.DenyGet);
         }
 
-        public int GetCompanyId()
+        public int BuscarIdEmpresa()
         {
-            return CompanyId;
+            return IdEmpresa;
         }
     }
 }

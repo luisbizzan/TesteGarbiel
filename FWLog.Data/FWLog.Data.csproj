@@ -77,6 +77,8 @@
     <Compile Include="EnumsAndConsts\LoteStatusEnum.cs" />
     <Compile Include="EnumsAndConsts\NaoSimEnum.cs" />
     <Compile Include="EnumsAndConsts\StatusNotaRecebimento.cs" />
+    <Compile Include="EnumsAndConsts\TipoArmazenagemEnum.cs" />
+    <Compile Include="EnumsAndConsts\TipoMovimentacaoEnum.cs" />
     <Compile Include="ExtensionMethods\EnumExtensions.cs" />
     <Compile Include="ExtensionMethods\LinqExtension.cs" />
     <Compile Include="ExtensionMethods\StringExtension.cs" />
@@ -109,7 +111,9 @@
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
     <Compile Include="Models\DataTablesCtx\PrinterTypeTableRow.cs" />
+    <Compile Include="Models\EmpresaConfiguracao.cs" />
     <Compile Include="Models\FilterCtx\PrinterTypeFilter.cs" />
+    <Compile Include="Models\NivelArmazenagem.cs" />
     <Compile Include="Models\NotaFiscal.cs" />
     <Compile Include="Models\Fornecedor.cs" />
     <Compile Include="Models\FreteTipo.cs" />
@@ -118,16 +122,19 @@
     <Compile Include="Models\NotaFiscalStatus.cs" />
     <Compile Include="Models\PerfilUsuario.cs" />
     <Compile Include="Models\GeneralCtx\CompanySelectedItem.cs" />
+    <Compile Include="Models\PontoArmazenagem.cs" />
     <Compile Include="Models\Printer.cs" />
     <Compile Include="Models\PrinterType.cs" />
     <Compile Include="Models\Produto.cs" />
     <Compile Include="Models\NotaFiscalItem.cs" />
     <Compile Include="Models\Quarentena.cs" />
     <Compile Include="Models\QuarentenaStatus.cs" />
+    <Compile Include="Models\TipoArmazenagem.cs" />
+    <Compile Include="Models\TipoMovimentacao.cs" />
     <Compile Include="Models\Transportadora.cs" />
     <Compile Include="Models\UnidadeMedida.cs" />
-    <Compile Include="Models\UserCompany.cs" />
-    <Compile Include="Models\Company.cs" />
+    <Compile Include="Models\UsuarioEmpresa.cs" />
+    <Compile Include="Models\Empresa.cs" />
     <Compile Include="Models\FilterCtx\ApplicationLogFilter.cs" />
     <Compile Include="Models\FilterCtx\BOLogSystemFilter.cs" />
     <Compile Include="Models\FilterCtx\DataTableFilter.cs" />
@@ -160,6 +167,7 @@
     <Compile Include="Repository\GeneralCtx\NotaFiscalItemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalStatusRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PontoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />
@@ -196,6 +204,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>EntityStrings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GlobalResources\General\GeneralStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

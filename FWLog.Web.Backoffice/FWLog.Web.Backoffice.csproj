@@ -231,16 +231,17 @@
     <Compile Include="App_Start\NinjectModules\GeneralModule.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
+    <Compile Include="Controllers\PontoArmazenagemController.cs" />
     <Compile Include="Controllers\BOPrinterController.cs" />
     <Compile Include="Controllers\BOQuarentenaController.cs" />
     <Compile Include="Controllers\BORecebimentoNotaController.cs" />
-    <Compile Include="Controllers\CompanyController.cs" />
+    <Compile Include="Controllers\BOEmpresaController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BOFornecedorController.cs" />
     <Compile Include="Controllers\PrinterTypeController.cs" />
-    <Compile Include="EnumsAndConsts\CompanyCookie.cs" />
+    <Compile Include="EnumsAndConsts\EmpresaCookie.cs" />
     <Compile Include="EnumsAndConsts\LOVs\NaoSimLOV.cs" />
     <Compile Include="GlobalResources\BOPrinter\BOPrinterStrings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -282,6 +283,7 @@
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirRelatorioNotasViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORegistroRecebimentoViewModel.cs" />
+    <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeCreateViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeDetailsViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeListViewModel.cs" />
@@ -304,7 +306,7 @@
     </EmbeddedResource>
     <Content Include="favicon.ico" />
     <Content Include="Scripts\dart\autoComplete.js" />
-    <Content Include="Scripts\dart\company.js" />
+    <Content Include="Scripts\dart\empresa.js" />
     <Content Include="Scripts\dart\documentReady.js" />
     <Content Include="Scripts\dart\dropzoneImageCropper.js" />
     <Content Include=".editorconfig" />
@@ -436,7 +438,7 @@
     <Content Include="Scripts\Views\PrinterType\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
-    <Content Include="Views\Shared\_ChangeCompany.cshtml" />
+    <Content Include="Views\Shared\_MudarEmpresa.cshtml" />
     <Content Include="Views\BORecebimentoNota\Index.cshtml" />
     <Content Include="Views\BOPrinter\Index.cshtml" />
     <Content Include="Views\BOPrinter\Create.cshtml" />
@@ -456,6 +458,7 @@
     <Content Include="Views\BOAccount\SearchModal.cshtml" />
     <Content Include="Views\BOQuarentena\Index.cshtml" />
     <Content Include="Views\BORecebimentoNota\EntradaConferencia.cshtml" />
+    <Content Include="Views\PontoArmazenagem\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
