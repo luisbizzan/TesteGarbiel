@@ -4,6 +4,8 @@ using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.PontoArmazenagemCtx;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Linq;
+using FWLog.Data.Models;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -26,14 +28,16 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     new SelectListItem { Text = "Todos", Value = ""}
                 }, "Value", "Text"),
-                TiposArmazenagem = new SelectList(new List<SelectListItem>
+                TiposArmazenagem = new SelectList(_unitOfWork.TipoArmazenagemRepository.GetAll().Select(x => new SelectListItem
                 {
-                    new SelectListItem { Text = "Todos", Value = ""}
-                }, "Value", "Text"),
-                TiposMovimentacao = new SelectList(new List<SelectListItem>
+                    Value = (x.IdTipoArmazenagem.GetHashCode()).ToString(),
+                    Text = x.Descricao,
+                }), "Value", "Text"),
+                TiposMovimentacao = new SelectList(_unitOfWork.TipoMovimentacaoRepository.GetAll().Select(x => new SelectListItem
                 {
-                    new SelectListItem { Text = "Todos", Value = ""}
-                }, "Value", "Text"),
+                    Value = (x.IdTipoMovimentacao.GetHashCode()).ToString(),
+                    Text = x.Descricao,
+                }), "Value", "Text"),
                 Status = new SelectList(new List<SelectListItem>
                 {
                     new SelectListItem { Text = "Todos", Value = ""},

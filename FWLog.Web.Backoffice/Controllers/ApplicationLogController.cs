@@ -5,7 +5,6 @@ using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
-using FWLog.Web.Backoffice.EnumsAndConsts;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.ApplicationLogCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;

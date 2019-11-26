@@ -116,7 +116,7 @@ namespace FWLog.AspNet.Identity
 
             public PontoArmazenagem() : base(Display.FromString("Pontos de Armazenagem"))
             {
-                Register(Listar, Display.FromString("Lista de Pontos de Armazenagem"));
+                Register(Listar, Display.FromString("Listar Pontos de Armazenagem"));
                 Register(Cadastrar, Display.FromString("Cadastrar Ponto de Armazenagem"));
                 Register(Editar, Display.FromString("Editar Ponto de Armazenagem"));
                 Register(Excluir, Display.FromString("Excluir Ponto de Armazenagem"));

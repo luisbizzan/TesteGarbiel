@@ -14,8 +14,8 @@
             new MenuItem { Text = Res.MenuRecebimentoRelatorios, Url = Url.Action("", ""), RequirePermission = Permissions.BOLogSystem.List }
         ),
         new MenuGroup("Armazenagem", "fa fa-cubes").SetItems(
-            new MenuItem { Text = "Ponto de Armazenagem", Url = Url.Action("Index", "PontoArmazenagem"), RequirePermission = Permissions.PontoArmazenagem.Listar },
-            new MenuItem { Text = "Nível Armazenagem", Url = Url.Action("Index", "NivelArmazenagem"), RequirePermission = Permissions.PontoArmazenagem.Listar }
+			new MenuItem { Text = "Nível Armazenagem", Url = Url.Action("Index", "NivelArmazenagem"), RequirePermission = Permissions.PontoArmazenagem.Listar },
+            new MenuItem { Text = "Pontos de Armazenagem", Url = Url.Action("Index", "PontoArmazenagem"), RequirePermission = Permissions.PontoArmazenagem.Listar }            
         ),
         new MenuGroup(text: Res.UserMenuGroup, icon: "fa fa-user").SetItems(
             new MenuItem { Text = Res.BOAccountMenuItem, Url = Url.Action("Index", "BOAccount"), RequirePermission = Permissions.BOAccount.List },
