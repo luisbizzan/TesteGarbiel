@@ -5,9 +5,11 @@ namespace FWLog.Data.Models
 {
     public class TipoArmazenagem
     {
+        [Key]
         [Index(IsUnique = true)]
         [Required]
         public int IdTipoArmazenagem { get; set; }
+
         [Index(IsUnique = true)]
         [Required]
         [StringLength(200)]

@@ -132,5 +132,22 @@ namespace FWLog.AspNet.Identity
                 Register(List, Display.FromResource(nameof(Res.List)));
             }
         }
+
+        public class NivelArmazenagem : PermissionGroupBuildItem
+        {
+            // TODO: Remover as que não existirem.
+            public const string List = "NivelArmazenagemList";
+            public const string Create = "NivelArmazenagemCreate";
+            public const string Edit = "NivelArmazenagemEdit";
+            public const string Delete = "NivelArmazenagemDelete";
+
+            public NivelArmazenagem() : base(Display.FromResource(nameof(Res.NivelArmazenagem)))
+            {
+                Register(List, Display.FromResource(nameof(Res.List)));
+                Register(Create, Display.FromResource(nameof(Res.Create)));
+                Register(Edit, Display.FromResource(nameof(Res.Edit)));
+                Register(Delete, Display.FromResource(nameof(Res.Delete)));
+            }
+        }
     }
 }

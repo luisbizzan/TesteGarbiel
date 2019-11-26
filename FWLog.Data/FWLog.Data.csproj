@@ -110,8 +110,10 @@
     <Compile Include="Models\AspNetPermissions.cs" />
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
+    <Compile Include="Models\DataTablesCtx\NivelArmazenagemTableRow.cs" />
     <Compile Include="Models\DataTablesCtx\PrinterTypeTableRow.cs" />
     <Compile Include="Models\EmpresaConfiguracao.cs" />
+    <Compile Include="Models\FilterCtx\NivelArmazenagemFilter.cs" />
     <Compile Include="Models\FilterCtx\PrinterTypeFilter.cs" />
     <Compile Include="Models\NivelArmazenagem.cs" />
     <Compile Include="Models\NotaFiscal.cs" />
@@ -164,6 +166,7 @@
     <Compile Include="Repository\GeneralCtx\FornecedorRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteStatusRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\NivelArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalItemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalStatusRepository.cs" />
