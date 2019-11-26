@@ -26,7 +26,7 @@ namespace FWLog.Data.Models
         public decimal? LimitePesoVertical { get; set; }
         [Required]
         public bool Ativo { get; set; }
-
+		
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
         [ForeignKey(nameof(IdNivelArmazenagem))]

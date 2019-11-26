@@ -125,6 +125,7 @@
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ApplicationLogService.cs" />
     <Compile Include="Services\LoteService.cs" />
+    <Compile Include="Services\NivelArmazenagemService.cs" />
     <Compile Include="Services\NotaFiscalService.cs" />
     <Compile Include="Services\PasswordService.cs" />
     <Compile Include="Services\BOAccountService.cs" />

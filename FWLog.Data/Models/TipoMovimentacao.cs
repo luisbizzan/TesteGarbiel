@@ -14,6 +14,7 @@ namespace FWLog.Data.Models
     {
         [Key]
         [Index(IsUnique = true)]
+		[Required]
         public TipoMovimentacaoEnum IdTipoMovimentacao { get; set; }
         [Index(IsUnique = true)]
         [Required]
