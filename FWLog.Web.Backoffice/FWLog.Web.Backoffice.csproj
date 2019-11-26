@@ -458,6 +458,7 @@
     <Content Include="Views\BOAccount\SearchModal.cshtml" />
     <Content Include="Views\BOQuarentena\Index.cshtml" />
     <Content Include="Views\BORecebimentoNota\EntradaConferencia.cshtml" />
+    <Content Include="Views\PontoArmazenagem\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

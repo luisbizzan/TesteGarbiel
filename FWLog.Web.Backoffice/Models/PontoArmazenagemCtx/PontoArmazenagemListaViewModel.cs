@@ -14,9 +14,10 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
         public PontoArmazenagemListaItemViewModel Itens { get; set; }
         public PontoArmazenagemListaFilterViewModel Filtros { get; set; }
 
-        public SelectList Status { get; set; }
-        public SelectList TiposArmazenamento { get; set; }
+        public SelectList NiveisArmazenagem { get; set; }
+        public SelectList TiposArmazenagem { get; set; }
         public SelectList TiposMovimentacao { get; set; }
+        public SelectList Status { get; set; }
     }
 
     public class PontoArmazenagemListaItemViewModel
