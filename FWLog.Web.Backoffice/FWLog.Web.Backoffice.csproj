@@ -296,6 +296,7 @@
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemListViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemCadastroViewModel.cs" />
+    <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemDetalhesViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemEditarViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeCreateViewModel.cs" />
@@ -490,6 +491,7 @@
     <Content Include="Views\PontoArmazenagem\Cadastrar.cshtml" />
     <Content Include="Views\PontoArmazenagem\Editar.cshtml" />
     <Content Include="Views\NivelArmazenagem\PesquisaModal.cshtml" />
+    <Content Include="Views\PontoArmazenagem\Detalhes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

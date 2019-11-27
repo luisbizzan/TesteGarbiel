@@ -167,24 +167,12 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        [ApplicationAuthorize(Permissions = Permissions.PontoArmazenagem.Editar)]
-        [Route("{idPontoArmazenagem: long}")]
-        public ActionResult Detalhes(long idPontoArmazenagem)
+        [ApplicationAuthorize(Permissions = Permissions.PontoArmazenagem.Listar)]
+        public ActionResult Detalhes(long id)
         {
-            PontoArmazenagem pontoArmazenagem = _unitOfWork.PontoArmazenagemRepository.GetById(idPontoArmazenagem);
+            PontoArmazenagem pontoArmazenagem = _unitOfWork.PontoArmazenagemRepository.GetById(id);
 
-            var viewModel = Mapper.Map<PontoArmazenagemEditarViewModel>(pontoArmazenagem);
-
-            viewModel.TiposArmazenagem = new SelectList(_unitOfWork.TipoArmazenagemRepository.RetornarTodos().Select(x => new SelectListItem
-            {
-                Value = x.IdTipoArmazenagem.GetHashCode().ToString(),
-                Text = x.Descricao,
-            }), "Value", "Text");
-            viewModel.TiposMovimentacao = new SelectList(_unitOfWork.TipoMovimentacaoRepository.RetornarTodos().Select(x => new SelectListItem
-            {
-                Value = x.IdTipoMovimentacao.GetHashCode().ToString(),
-                Text = x.Descricao,
-            }), "Value", "Text");
+            var viewModel = Mapper.Map<PontoArmazenagemDetalhesViewModel>(pontoArmazenagem);
 
             return View(viewModel);
         }
