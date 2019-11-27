@@ -9,11 +9,11 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
         [Required]
         public long IdPontoArmazenagem { get; set; }
         [Required]
-        [Display(Name = "Nível Armazenagem")]
+        [Display(Name = "Nível de Armazenagem")]
         public long IdNivelArmazenagem { get; set; }
         [Required]
         [StringLength(200)]
-        [Display(Name = "Descrição")]
+        [Display(Name = "Ponto de Armazenagem")]
         public string Descricao { get; set; }
         [Required]
         [Display(Name = "Tipo de Armazenagem")]
@@ -21,12 +21,13 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
         [Required]
         [Display(Name = "Tipo de Movimentação")]
         public TipoMovimentacaoEnum IdTipoMovimentacao { get; set; }
-        [Display(Name = "Limite de Peso Vertical")]
+        [Display(Name = "Limite de Peso Vertical - Kg")]
         public decimal? LimitePesoVertical { get; set; }
         [Required]
-        [Display(Name = "Ativo")]
+        [Display(Name = "Status")]
         public bool Ativo { get; set; }
 
+        public string DescricaoNivelArmazenagem { get; set; }
         public SelectList TiposArmazenagem { get; set; }
         public SelectList TiposMovimentacao { get; set; }
     }
