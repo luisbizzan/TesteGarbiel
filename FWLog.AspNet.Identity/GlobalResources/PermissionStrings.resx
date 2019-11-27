@@ -156,6 +156,9 @@
   <data name="List" xml:space="preserve">
     <value>Listagem</value>
   </data>
+  <data name="NivelArmazenagem" xml:space="preserve">
+    <value>Nível Armazenagem</value>
+  </data>
   <data name="PrinterType" xml:space="preserve">
     <value>Tipo de Impressora</value>
   </data>

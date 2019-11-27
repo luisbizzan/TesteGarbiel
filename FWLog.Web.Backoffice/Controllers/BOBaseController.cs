@@ -106,7 +106,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-        public int IdEmpresa
+        public long IdEmpresa
         {
             get
             {
@@ -114,7 +114,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 if (cookie != null && cookie[EmpresaCookie.IdEmpresa] != null && !string.IsNullOrEmpty(cookie[EmpresaCookie.IdEmpresa]))
                 {
-                    return Convert.ToInt32(cookie[EmpresaCookie.IdEmpresa].ToString());
+                    return Convert.ToInt64(cookie[EmpresaCookie.IdEmpresa].ToString());
                 }
                 else
                 {

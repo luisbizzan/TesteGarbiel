@@ -19,7 +19,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.Lote.FirstOrDefault(f => f.IdNotaFiscal == idNotaFiscal);
         }
 
-        public IEnumerable<Lote> Obter(int idEmpresa)
+        public IEnumerable<Lote> Obter(long idEmpresa)
         {
             IEnumerable<Lote> lote = null;
 

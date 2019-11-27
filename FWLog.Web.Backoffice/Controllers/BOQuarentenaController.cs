@@ -27,7 +27,7 @@ namespace FWLog.Web.Backoffice.Controllers
             model.Filter = new BOQuarentenaFilterViewModel()
             {
                 ListaQuarentenaStatus = new SelectList(
-                    _uow.QuarentenaStatusRepository.GetAll().Select(x => new SelectListItem
+                    _uow.QuarentenaStatusRepository.Todos().Select(x => new SelectListItem
                     {
                         Value = x.IdQuarentenaStatus.ToString(),
                         Text = x.Descricao,

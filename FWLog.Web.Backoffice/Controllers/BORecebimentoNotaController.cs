@@ -5,7 +5,6 @@ using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
-using FWLog.Web.Backoffice.EnumsAndConsts;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
@@ -42,7 +41,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Filter = new BORecebimentoNotaFilterViewModel()
                 {
                     ListaStatus = new SelectList(
-                    _uow.LoteStatusRepository.GetAll().Select(x => new SelectListItem
+                    _uow.LoteStatusRepository.Todos().Select(x => new SelectListItem
                     {
                         Value = x.IdLoteStatus.ToString(),
                         Text = x.Descricao,

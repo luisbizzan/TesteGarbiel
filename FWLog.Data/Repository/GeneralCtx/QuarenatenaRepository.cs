@@ -12,7 +12,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         }
 
-        public override IQueryable<Quarentena> All()
+        public IQueryable<Quarentena> All()
         {
             return _dbSet.Include(x => x.Lote).Include(x => x.QuarentenaStatus);
         }

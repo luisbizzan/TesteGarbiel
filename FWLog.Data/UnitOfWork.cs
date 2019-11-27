@@ -12,6 +12,7 @@ namespace FWLog.Data
 {
     public class UnitOfWork : IDisposable
     {
+
         private bool _disposed = false;
         private readonly Entities _context;
 
@@ -36,11 +37,35 @@ namespace FWLog.Data
         private QuarentenaRepository _quarentenaRepository;
         private QuarentenaStatusRepository _quarentenaStatusRepository;
         private NotaFiscalStatusRepository _notaFiscalStatusRepository;
+		private NivelArmazenagemRepository _nivelArmazenagemRepository;
+        private PontoArmazenagemRepository _pontoArmazenagemRepository;
+        private TipoMovimentacaoRepository _tipoMovimentacaoRepository;
+        private TipoArmazenagemRepository _tipoArmazenagemRepository;
         private EmpresaTipoRepository _empresaTipoRepository;
 
         public EmpresaTipoRepository EmpresaTipoRepository
         {
             get => _empresaTipoRepository ?? (_empresaTipoRepository = new EmpresaTipoRepository(_context));
+        }
+
+        public TipoArmazenagemRepository TipoArmazenagemRepository
+        {
+            get => _tipoArmazenagemRepository ?? (_tipoArmazenagemRepository = new TipoArmazenagemRepository(_context));
+        }
+
+        public TipoMovimentacaoRepository TipoMovimentacaoRepository
+        {
+            get => _tipoMovimentacaoRepository ?? (_tipoMovimentacaoRepository = new TipoMovimentacaoRepository(_context));
+		}
+
+        public NivelArmazenagemRepository NivelArmazenagemRepository
+        {
+            get => _nivelArmazenagemRepository ?? (_nivelArmazenagemRepository = new NivelArmazenagemRepository(_context));
+        }
+
+        public PontoArmazenagemRepository PontoArmazenagemRepository
+        {
+            get => _pontoArmazenagemRepository ?? (_pontoArmazenagemRepository = new PontoArmazenagemRepository(_context));
         }
 
         public NotaFiscalStatusRepository NotaFiscalStatusRepository

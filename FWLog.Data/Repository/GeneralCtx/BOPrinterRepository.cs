@@ -12,12 +12,12 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
         }
 
-        public override IEnumerable<Printer> GetAll()
+        public IEnumerable<Printer> GetAll()
         {
             return All().ToList();
         }
 
-        public override IQueryable<Printer> All()
+        public IQueryable<Printer> All()
         {
             return _dbSet.Include(x => x.Empresa).Include(x => x.PrinterType);
         }

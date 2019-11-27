@@ -178,6 +178,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Nível Armazenagem.
+        /// </summary>
+        public static string NivelArmazenagem {
+            get {
+                return ResourceManager.GetString("NivelArmazenagem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tipo de Impressora.
         /// </summary>
         public static string PrinterType {

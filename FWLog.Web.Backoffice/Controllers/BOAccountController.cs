@@ -84,7 +84,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.List)]
         public ActionResult PageData(DataTableFilter<BOAccountFilterViewModel> filter)
         {
-            IQueryable<PerfilUsuario> allusers = _uow.PerfilUsuarioRepository.All();
+            IQueryable<PerfilUsuario> allusers = _uow.PerfilUsuarioRepository.Todos();
 
             int totalRecords = allusers.Count();
 
@@ -211,7 +211,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             foreach (var item in model.EmpresasGrupos.Where(x => x.Grupos.Any(y => y.IsSelected)))
             {
-                IEnumerable<string> selectedRoles = item.Grupos.Select(x => x.Name);
+                IEnumerable<string> selectedRoles = item.Grupos.Where(x => x.IsSelected).Select(x => x.Name);
 
                 empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Nome, string.Join(", ", selectedRoles.ToArray())));
                 empresasGruposNew.AppendLine(" || ");
@@ -350,7 +350,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             foreach (var item in model.EmpresasGrupos.Where(x => x.Grupos.Any(y => y.IsSelected)))
             {
-                IEnumerable<string> selectedRoles = item.Grupos.Select(x => x.Name);
+                IEnumerable<string> selectedRoles = item.Grupos.Where(x => x.IsSelected).Select(x => x.Name);
 
                 empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Nome, string.Join(", ", selectedRoles.ToArray())));
                 empresasGruposNew.AppendLine(" || ");
@@ -616,7 +616,7 @@ namespace FWLog.Web.Backoffice.Controllers
         //[ApplicationAuthorize]
         public ActionResult SearchModalPageData(DataTableFilter<BOPerfilUsuarioSearchModalFilterViewModel> filter)
         {
-            var query = _uow.PerfilUsuarioRepository.All();
+            var query = _uow.PerfilUsuarioRepository.Todos();
 
             int totalRecords = query.Count();
 

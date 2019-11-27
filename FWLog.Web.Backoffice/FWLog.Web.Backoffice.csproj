@@ -231,6 +231,8 @@
     <Compile Include="App_Start\NinjectModules\GeneralModule.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
+    <Compile Include="Controllers\NivelArmazenagemController.cs" />
+    <Compile Include="Controllers\PontoArmazenagemController.cs" />
     <Compile Include="Controllers\BOPrinterController.cs" />
     <Compile Include="Controllers\BOQuarentenaController.cs" />
     <Compile Include="Controllers\BORecebimentoNotaController.cs" />
@@ -266,6 +268,7 @@
     <Compile Include="Helpers\HtmlRequestHelper.cs" />
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
+    <Compile Include="Mapping\NivelArmazenagemProfile.cs" />
     <Compile Include="Mapping\PrinterTypeProfile.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
     <Compile Include="Models\BOFornecedorCtx\BOFornecedorSearchModalViewModel.cs" />
@@ -282,6 +285,12 @@
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirRelatorioNotasViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORegistroRecebimentoViewModel.cs" />
+    <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemCreateViewModel.cs" />
+    <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemDetailsViewModel.cs" />
+    <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemListViewModel.cs" />
+    <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemCadastroViewModel.cs" />
+    <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemEditarViewModel.cs" />
+    <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeCreateViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeDetailsViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeListViewModel.cs" />
@@ -433,6 +442,8 @@
     <Content Include="Scripts\Views\BOQuarentena\index.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\detalhesEntradaConferencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\index.js" />
+    <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
+    <Content Include="Scripts\Views\PontoArmazenagem\index.js" />
     <Content Include="Scripts\Views\PrinterType\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
@@ -456,6 +467,14 @@
     <Content Include="Views\BOAccount\SearchModal.cshtml" />
     <Content Include="Views\BOQuarentena\Index.cshtml" />
     <Content Include="Views\BORecebimentoNota\EntradaConferencia.cshtml" />
+    <Content Include="Views\PontoArmazenagem\Index.cshtml" />
+    <Content Include="Views\NivelArmazenagem\Create.cshtml" />
+    <Content Include="Views\NivelArmazenagem\Delete.cshtml" />
+    <Content Include="Views\NivelArmazenagem\Details.cshtml" />
+    <Content Include="Views\NivelArmazenagem\Edit.cshtml" />
+    <Content Include="Views\NivelArmazenagem\Index.cshtml" />
+    <Content Include="Views\PontoArmazenagem\Cadastrar.cshtml" />
+    <Content Include="Views\PontoArmazenagem\Editar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
@@ -791,7 +810,7 @@
       <Name>FWLog.AspNet.Identity</Name>
     </ProjectReference>
     <ProjectReference Include="..\FWLog.Data\FWLog.Data.csproj">
-      <Project>{CB5B241F-4BF3-439A-8995-4A05D9C3367E}</Project>
+      <Project>{cb5b241f-4bf3-439a-8995-4a05d9c3367e}</Project>
       <Name>FWLog.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\FWLog.Services\FWLog.Services.csproj">

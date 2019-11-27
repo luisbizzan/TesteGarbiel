@@ -42,6 +42,10 @@ namespace FWLog.Data
         public virtual DbSet<Quarentena> Quarentena { get; set; }
         public virtual DbSet<QuarentenaStatus> QuarentenaStatus { get; set; }
         public virtual DbSet<NotaFiscalStatus> NotaFiscalStatus { get; set; }
+        public virtual DbSet<NivelArmazenagem> NivelArmazenagem { get; set; }
+        public virtual DbSet<PontoArmazenagem> PontoArmazenagem { get; set; }
+        public virtual DbSet<TipoMovimentacao> TipoMovimentacao { get; set; }
+        public virtual DbSet<TipoArmazenagem> TipoArmazenagem { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 

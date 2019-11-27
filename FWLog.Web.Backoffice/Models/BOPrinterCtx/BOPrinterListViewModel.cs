@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FWLog.Data.EnumsAndConsts;
+using System.ComponentModel.DataAnnotations;
 using Res = Resources.BOPrinterStrings;
 
 namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
@@ -29,7 +30,6 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         [Display(Name = nameof(Res.CompanyLabel), ResourceType = typeof(Res))]
         public string Empresa { get; set; }
 
-        [Display(Name = "Ativa")]
         public string Ativa { get; set; }
     }
 
@@ -44,7 +44,6 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         [Display(Name = nameof(Res.PrinterTypeLabel), ResourceType = typeof(Res))]
         public int? PrinterTypeId { get; set; }
 
-        [Display(Name = "Ativa")]
-        public int? Ativa { get; set; }
+        public NaoSimEnum? Ativa { get; set; }
     }
 }

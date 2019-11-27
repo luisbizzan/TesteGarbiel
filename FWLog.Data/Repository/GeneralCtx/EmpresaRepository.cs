@@ -13,6 +13,11 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         }
 
+        public IQueryable<Empresa> Todos()
+        {
+            return Entities.Empresa;
+        }
+
         public long PegarPrimeiraEmpresa(string userId)
         {
             var empresa = Entities.UsuarioEmpresa.Where(w => w.Empresa.Ativo && w.UserId == userId).OrderBy(o => o.Empresa.RazaoSocial).FirstOrDefault();

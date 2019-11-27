@@ -33,5 +33,10 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return query.PaginationResult(filter);
         }
+
+        public IEnumerable<PrinterType> Todos()
+        {
+            return Entities.PrinterType;
+        }
     }
 }

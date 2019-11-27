@@ -107,6 +107,22 @@ namespace FWLog.AspNet.Identity
             }
         }
 
+        public class PontoArmazenagem : PermissionGroupBuildItem
+        {
+            public const string Listar = "PontoArmazanagemListar";
+            public const string Cadastrar = "PontoArmazanagemCadastrar";
+            public const string Editar = "PontoArmazanagemEditar";
+            public const string Excluir = "PontoArmazanagemExcluir";
+
+            public PontoArmazenagem() : base(Display.FromString("Pontos de Armazenagem"))
+            {
+                Register(Listar, Display.FromString("Listar Pontos de Armazenagem"));
+                Register(Cadastrar, Display.FromString("Cadastrar Ponto de Armazenagem"));
+                Register(Editar, Display.FromString("Editar Ponto de Armazenagem"));
+                Register(Excluir, Display.FromString("Excluir Ponto de Armazenagem"));
+            }
+        }
+
         public class Quarentena : PermissionGroupBuildItem
         {
             public const string List = "QuarentenaList";
@@ -114,6 +130,23 @@ namespace FWLog.AspNet.Identity
             public Quarentena() : base(Display.FromResource(nameof(Res.PrinterType)))
             {
                 Register(List, Display.FromResource(nameof(Res.List)));
+            }
+        }
+
+        public class NivelArmazenagem : PermissionGroupBuildItem
+        {
+            // TODO: Remover as que não existirem.
+            public const string List = "NivelArmazenagemList";
+            public const string Create = "NivelArmazenagemCreate";
+            public const string Edit = "NivelArmazenagemEdit";
+            public const string Delete = "NivelArmazenagemDelete";
+
+            public NivelArmazenagem() : base(Display.FromResource(nameof(Res.NivelArmazenagem)))
+            {
+                Register(List, Display.FromResource(nameof(Res.List)));
+                Register(Create, Display.FromResource(nameof(Res.Create)));
+                Register(Edit, Display.FromResource(nameof(Res.Edit)));
+                Register(Delete, Display.FromResource(nameof(Res.Delete)));
             }
         }
     }

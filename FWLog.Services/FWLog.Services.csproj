@@ -129,11 +129,13 @@
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\EmpresaService.cs" />
     <Compile Include="Services\LoteService.cs" />
+    <Compile Include="Services\NivelArmazenagemService.cs" />
     <Compile Include="Services\NotaFiscalService.cs" />
     <Compile Include="Services\PasswordService.cs" />
     <Compile Include="Services\BOAccountService.cs" />
     <Compile Include="Services\BOLogSystemService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\PontoArmazenagemService.cs" />
     <Compile Include="Services\PrinterTypeService.cs" />
     <Compile Include="Services\ProdutoService.cs" />
     <Compile Include="Services\RelatorioService.cs" />
@@ -148,12 +150,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FWLog.Data\FWLog.Data.csproj">
-      <Project>{CB5B241F-4BF3-439A-8995-4A05D9C3367E}</Project>
-      <Name>FWLog.Data</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="GlobalResources\General\GeneralStrings.en.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>GeneralStrings.en.Designer.cs</LastGenOutput>
@@ -163,6 +159,11 @@
       <LastGenOutput>GeneralStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\FWLog.Data\FWLog.Data.csproj">
+      <Project>{cb5b241f-4bf3-439a-8995-4a05d9c3367e}</Project>
+      <Name>FWLog.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

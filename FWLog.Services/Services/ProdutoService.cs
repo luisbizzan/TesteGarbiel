@@ -36,7 +36,7 @@ namespace FWLog.Services.Services
 
             List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryGenerico<ProdutoIntegracao>(where: where.ToString());
 
-            var unidadesMedida = _uow.UnidadeMedidaRepository.GetAll();
+            var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
 
             foreach (var produtoInt in produtosIntegracao)
             {

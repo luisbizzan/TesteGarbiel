@@ -77,7 +77,7 @@ namespace FWLog.Services.Services
 
                 if (!string.IsNullOrEmpty(empInt.CODEMPMATRIZ))
                 {
-                    var empMatriz = _uow.EmpresaRepository.GetAll().FirstOrDefault(f => f.CodigoIntegracao.ToString() == empInt.CODEMPMATRIZ);
+                    var empMatriz = _uow.EmpresaRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao.ToString() == empInt.CODEMPMATRIZ);
 
                     if (empMatriz != null)
                     {
