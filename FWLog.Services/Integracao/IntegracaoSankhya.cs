@@ -293,6 +293,36 @@ namespace FWLog.Services.Integracao
 
             return resultList;
         }
+
+        public async Task<bool> AtualizarInformacaoIntegracao(string entidade, string campoPKIntegracao, long valorPKIntegracao, string campoStatus, object valorStatus)
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return false;
+            }
+
+            XElement dataRow = new XElement("dataRow", new XElement("localFields", new XElement(campoStatus, valorStatus)));
+            dataRow.Add(new XElement("key", new XElement(campoPKIntegracao, valorPKIntegracao)));
+
+            XAttribute[] attArray = {
+                new XAttribute("rootEntity", entidade),
+                new XAttribute("includePresentationFields", "S"),
+            };
+
+            var entity = new XElement("entity", new XAttribute("path", ""));
+            entity.Add(new XElement("fieldset", new XAttribute("list", "*")));
+
+            XElement datset = new XElement("dataSet", attArray);
+            datset.Add(entity);
+            datset.Add(dataRow);
+
+            XElement serviceRequest = new XElement("serviceRequest", new XAttribute("serviceName", "CRUDServiceProvider.saveRecord"));
+            serviceRequest.Add(new XElement("requestBody", datset));
+
+            await Instance.ExecutarSaveRecord(serviceRequest);
+
+            return true;
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
 {
@@ -14,13 +15,15 @@ namespace FWLog.Data.Models
 
         [Required]
         [StringLength(75)]
+        [Index]
         public string RazaoSocial { get; set; }
 
         [Required]
         [StringLength(14)]
+        [Index]
         public string CNPJ { get; set; }
 
-        [Required]
+        [Required]        
         public long CodigoIntegracao { get; set; }
 
         [Required]

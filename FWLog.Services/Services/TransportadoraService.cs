@@ -1,4 +1,5 @@
 ﻿using FWLog.Data;
+using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
@@ -56,12 +57,29 @@ namespace FWLog.Services.Services
                 transportadora.NomeFantasia = transpInt.RAZAOSOCIAL;
                 transportadora.RazaoSocial = transpInt.NOMEPARC;
 
-                if (transportadoraNova)
+                try
                 {
-                    _uow.TransportadoraRepository.Add(transportadora);
-                }
+                    if (transportadoraNova)
+                    {
+                        _uow.TransportadoraRepository.Add(transportadora);
+                    }
 
-                await _uow.SaveChangesAsync();
+                    await _uow.SaveChangesAsync();
+
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", transportadora.CodigoIntegracao, "DTALTER", DateTime.UtcNow);
+
+                    if (!atualizacaoOK)
+                    {
+                        throw new Exception("A atualização de Transportadora no Sankhya não terminou com sucesso.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var applicationLogService = new ApplicationLogService(_uow);
+                    applicationLogService.Error(ApplicationEnum.Api, ex);
+
+                    continue;
+                }
             }
         }
 

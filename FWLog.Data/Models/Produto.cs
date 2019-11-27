@@ -1,26 +1,30 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
 {
     public class Produto
     {
         [Key]
-        [Required]
+        [Required]        
         public long IdProduto { get; set; }
 
         [Required]
         public long SaldoArmazenagem { get; set; }
 
         [Required]
+        [Index]
         public long CodigoIntegracao { get; set; }
 
         public long? CodigoFabricante { get; set; }
 
         [Required]
         [StringLength(40)]
+        [Index]
         public string Descricao { get; set; }
 
         [StringLength(50)]
+        [Index]
         public string Referencia { get; set; }
 
         [StringLength(80)]
