@@ -7,7 +7,7 @@
         public string Descricao { get; set; }
         public string TipoArmazenagem { get; set; }
         public string TipoMovimentacao { get; set; }
-        public decimal LimitePesoVertical { get; set; }
+        public decimal? LimitePesoVertical { get; set; }
         public string Status { get; set; }
     }
 }

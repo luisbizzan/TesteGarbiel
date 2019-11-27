@@ -46,9 +46,8 @@ namespace FWLog.Web.Backoffice.Controllers
                                     }), "Value", "Text"),
                 Status = new SelectList(new List<SelectListItem>
                         {
-                            new SelectListItem { Text = "Todos", Value = ""},
                             new SelectListItem { Text = "Ativo", Value = "1"},
-                            new SelectListItem { Text = "Inativo", Value = "2"}
+                            new SelectListItem { Text = "Inativo", Value = "0"}
                         }, "Value", "Text")
             };
 
@@ -59,8 +58,6 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.PontoArmazenagem.Listar)]
         public ActionResult DadosLista(DataTableFilter<PontoArmazenagemListaFilterViewModel> model)
         {
-            ValidateModel(model);
-
             var filtro = Mapper.Map<DataTableFilter<PontoArmazenagemListaFiltro>>(model);
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
 
@@ -120,7 +117,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var pontoArmazenagem = new PontoArmazenagem
             {
                 IdEmpresa = IdEmpresa,
-                IdNivelArmazenagem = viewModel.IdNivelArmazenagem,
+                IdNivelArmazenagem = viewModel.IdNivelArmazenagem.Value,
                 Descricao = viewModel.Descricao,
                 IdTipoArmazenagem = viewModel.IdTipoArmazenagem,
                 IdTipoMovimentacao = viewModel.IdTipoMovimentacao,
