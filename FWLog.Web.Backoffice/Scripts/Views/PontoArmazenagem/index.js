@@ -51,4 +51,23 @@
 
     $('#dataTable').DataTable(options);
     dart.dataTables.loadFormFilterEvents();
+
+    $("#pesquisarNivelArmazenagem").click(function () {
+        $("#modalPesquisaNivelArmazenagem").load("NivelArmazenagem/PesquisaModal", function () {
+            $("#modalPesquisaNivelArmazenagem").modal();
+        });
+    });
+
+    $("#limparNivelArmazenagem").click(function () {
+        $("#Filtros_DescricaoNivelArmazenagem").val("");
+        $("#Filtros_IdNivelArmazenagem").val("");
+    });
 })();
+
+function selecionarNivelArmazenagem(idNivelArmazenagem, descricao) {
+    $("#Filtros_DescricaoNivelArmazenagem").val(descricao);
+    $("#Filtros_IdNivelArmazenagem").val(idNivelArmazenagem);
+    $("#modalPesquisaNivelArmazenagem").modal("hide");
+    $("#modalPesquisaNivelArmazenagem").empty();
+
+}

@@ -17,27 +17,31 @@ namespace FWLog.Web.Backoffice.Controllers
 {
     public class NivelArmazenagemController : BOBaseController
     {
-        private readonly UnitOfWork _uow;
+        private readonly UnitOfWork _unitOfWork;
         private NivelArmazenagemService _nivelArmazenagemService;
 
-        public NivelArmazenagemController(UnitOfWork uow, NivelArmazenagemService nivelArmazenagemService)
+        public NivelArmazenagemController(
+            UnitOfWork unitOfWork, 
+            NivelArmazenagemService nivelArmazenagemService)
         {
-            _uow = uow;
+            _unitOfWork = unitOfWork;
             _nivelArmazenagemService = nivelArmazenagemService;
         }
 
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.List)]
         public ActionResult Index()
         {
             return View(new NivelArmazenagemListViewModel());
         }
 
+        [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.List)]
         public ActionResult PageData(DataTableFilter<NivelArmazenagemFilterViewModel> model)
         {
             int recordsFiltered, totalRecords;
             var filter = Mapper.Map<DataTableFilter<NivelArmazenagemFilter>>(model);
-            IEnumerable<NivelArmazenagemTableRow> result = _uow.NivelArmazenagemRepository.SearchForDataTable(filter, out recordsFiltered, out totalRecords);
+            IEnumerable<NivelArmazenagemTableRow> result = _unitOfWork.NivelArmazenagemRepository.SearchForDataTable(filter, out recordsFiltered, out totalRecords);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
@@ -48,6 +52,7 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Create)]
         public ActionResult Create()
         {
@@ -71,10 +76,11 @@ namespace FWLog.Web.Backoffice.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Edit)]
         public ActionResult Edit(int id)
         {
-            NivelArmazenagem nivelArmazenagem = _uow.NivelArmazenagemRepository.GetById(id);
+            NivelArmazenagem nivelArmazenagem = _unitOfWork.NivelArmazenagemRepository.GetById(id);
 
             if (nivelArmazenagem == null)
             {
@@ -103,10 +109,11 @@ namespace FWLog.Web.Backoffice.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.List)]
         public ActionResult Details(int id)
         {
-            NivelArmazenagem nivelArmazenagem = _uow.NivelArmazenagemRepository.GetById(id);
+            NivelArmazenagem nivelArmazenagem = _unitOfWork.NivelArmazenagemRepository.GetById(id);
 
             if (nivelArmazenagem == null)
             {
@@ -124,7 +131,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                _nivelArmazenagemService.Delete(_uow.NivelArmazenagemRepository.GetById(id));
+                _nivelArmazenagemService.Delete(_unitOfWork.NivelArmazenagemRepository.GetById(id));
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -142,5 +149,39 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
+        [HttpGet]
+        [ApplicationAuthorize]
+        public ActionResult PesquisaModal()
+        {
+            var viewModel = new NivelArmazenagemPesquisaModalViewModel
+            {
+                Status = new SelectList(new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Todos", Value = ""},
+                    new SelectListItem { Text = "Ativo", Value = "1"},
+                    new SelectListItem { Text = "Inativo", Value = "2"}
+                }, "Value", "Text")
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize]
+        public ActionResult PesquisaModalDadosLista(DataTableFilter<NivelArmazenagemPesquisaModalFiltroViewModel> model)
+        {
+            var filtros = Mapper.Map<DataTableFilter<NivelArmazenagemPesquisaModalFiltro>>(model);
+            filtros.CustomFilter.IdEmpresa = IdEmpresa;
+
+            IEnumerable<NivelArmazenagemPesquisaModalListaLinhaTabela> result = _unitOfWork.NivelArmazenagemRepository.BuscarListaModal(filtros, out int registrosFiltrados, out int totalRegistros);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
+                Data = Mapper.Map<IEnumerable<NivelArmazenagemPesquisaModalItemViewModel>>(result)
+            });
+        }
     }
 }
