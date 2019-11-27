@@ -4,7 +4,8 @@ namespace FWLog.Data.EnumsAndConsts
 {
     public enum NotaFiscalStatusEnum
     {
-        Desconhecido = 0,
+        [Display(Name = "Processando Integracao")]
+        ProcessandoIntegracao = 0,
 
         [Display(Name = "Aguardando recebimento")]
         AguardandoRecebimento = 1,

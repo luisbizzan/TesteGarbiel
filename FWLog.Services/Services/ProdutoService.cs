@@ -71,12 +71,29 @@ namespace FWLog.Services.Services
                 produto.ReferenciaFornecedor = produtoInt.REFFORN;
                 //produto.SKU
 
-                if (produtoNovo)
-                {
-                    _uow.ProdutoRepository.Add(produto);
-                }
+                try
+                { 
+                    if (produtoNovo)
+                    {
+                        _uow.ProdutoRepository.Add(produto);
+                    }
 
-                await _uow.SaveChangesAsync();
+                    await _uow.SaveChangesAsync();
+
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", "CODPROD", produto.CodigoIntegracao, "DTALTER", DateTime.UtcNow.ToString("ddMMyyyy hh:mm:ss"));
+
+                    if (!atualizacaoOK)
+                    {
+                        throw new Exception("A atualização de Produto no Sankhya não terminou com sucesso.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var applicationLogService = new ApplicationLogService(_uow);
+                    applicationLogService.Error(ApplicationEnum.Api, ex);
+
+                    continue;
+                }
             }
         }
 

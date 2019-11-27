@@ -172,7 +172,6 @@ div.dataTables_wrapper div.dataTables_info {
   width: 100%; }
 
 .btn.btn-dt-action {
-  width: 80px;
   padding: 5px 10px;
   font-size: 12px;
   line-height: 1.5; }
@@ -200,4 +199,3 @@ div.dataTables_wrapper div.dataTables_info {
 /*Correção do tamano minimo das opções do panel*/
 .panel_toolbox {
   min-width: 0px; }
-

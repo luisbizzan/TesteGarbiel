@@ -45,10 +45,9 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRegistros = Entities.NivelArmazenagem.Count(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa);
 
             var query = Entities.NivelArmazenagem
-                .Where(w =>
-                w.IdEmpresa == filtros.CustomFilter.IdEmpresa &&
-                //(filtros.CustomFilter.Descricao.Equals(string.Empty) || w.Descricao.Contains(filtros.CustomFilter.Descricao)) &&
-                (!filtros.CustomFilter.Ativo.HasValue || w.Ativo == filtros.CustomFilter.Ativo.Value))
+                .Where(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa && 
+                (filtros.CustomFilter.Descricao.Equals(string.Empty) || w.Descricao.Contains(filtros.CustomFilter.Descricao)) &&
+                (filtros.CustomFilter.Ativo.HasValue == false || w.Ativo == filtros.CustomFilter.Ativo.Value))
                 .Select(s => new NivelArmazenagemPesquisaModalListaLinhaTabela
                 {
                     IdNivelArmazenagem = s.IdNivelArmazenagem,

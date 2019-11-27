@@ -59,7 +59,7 @@
                 </div>
                 <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.Filtros.Status)
-                    @Html.DropDownListFor(m => m.Filtros.Status, Model.Status, new { @class = "form-control", data_field = "Status" })
+                    @Html.DropDownListFor(m => m.Filtros.Status, Model.Status, "Todos", new { @class = "form-control", data_field = "Status" })
                 </div>
             </div>
             <div class="row">
@@ -87,7 +87,7 @@
                 <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
                     <thead>
                         <tr>
-                            <th>@Html.DisplayNameFor(m => m.Itens.IdTipoArmazenagem)</th>
+                            <th>@Html.DisplayNameFor(m => m.Itens.IdPontoArmazenagem)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.NivelArmazenagem)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Descricao)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.TipoArmazenagem)</th>

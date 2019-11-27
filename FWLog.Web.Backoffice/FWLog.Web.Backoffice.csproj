@@ -274,6 +274,7 @@
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
     <Compile Include="Mapping\NivelArmazenagemProfile.cs" />
+    <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
     <Compile Include="Mapping\PrinterTypeProfile.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
     <Compile Include="Models\BOFornecedorCtx\BOFornecedorSearchModalViewModel.cs" />
@@ -455,6 +456,8 @@
     <Content Include="Scripts\Views\BORecebimentoNota\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\pesquisaModal.js" />
+    <Content Include="Scripts\Views\PontoArmazenagem\editar.js" />
+    <Content Include="Scripts\Views\PontoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\index.js" />
     <Content Include="Scripts\Views\PrinterType\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />

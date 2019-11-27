@@ -68,23 +68,40 @@ namespace FWLog.Services.Services
                 empresa.Telefone = empInt.TELEFONE;
                 empresa.IdEmpresaTipo = empInt.CODEMPMATRIZ == empInt.CODEMP ? EmpresaTipoEnum.Matriz.GetHashCode() : EmpresaTipoEnum.Filial.GetHashCode();
 
-                if (empresaNova)
+                try
                 {
-                    _uow.EmpresaRepository.Add(empresa);
-                }
-
-                await _uow.SaveChangesAsync();
-
-                if (!string.IsNullOrEmpty(empInt.CODEMPMATRIZ))
-                {
-                    var empMatriz = _uow.EmpresaRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao.ToString() == empInt.CODEMPMATRIZ);
-
-                    if (empMatriz != null)
+                    if (empresaNova)
                     {
-                        empresa.IdEmpresaMatriz = empMatriz.IdEmpresa;
-
-                        await _uow.SaveChangesAsync();
+                        _uow.EmpresaRepository.Add(empresa);
                     }
+
+                    await _uow.SaveChangesAsync();
+
+                    if (!string.IsNullOrEmpty(empInt.CODEMPMATRIZ))
+                    {
+                        var empMatriz = _uow.EmpresaRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao.ToString() == empInt.CODEMPMATRIZ);
+
+                        if (empMatriz != null)
+                        {
+                            empresa.IdEmpresaMatriz = empMatriz.IdEmpresa;
+
+                            await _uow.SaveChangesAsync();
+                        }
+                    }
+
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", "CODEMP", empresa.CodigoIntegracao, "DTALTER", DateTime.UtcNow);
+
+                    if (!atualizacaoOK)
+                    {
+                        throw new Exception("A atualização de Empresa no Sankhya não terminou com sucesso.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var applicationLogService = new ApplicationLogService(_uow);
+                    applicationLogService.Error(ApplicationEnum.Api, ex);
+
+                    continue;
                 }
             }
         }
