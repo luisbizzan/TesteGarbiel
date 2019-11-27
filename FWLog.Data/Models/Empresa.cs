@@ -1,5 +1,4 @@
-﻿using FWLog.Data.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,6 +15,7 @@ namespace FWLog.Data.Models
         [Required]
         [StringLength(40)]
         [Column("CompanyName")]
+        [Index]
         public string RazaoSocial { get; set; }
 
         [Required]
@@ -25,10 +25,12 @@ namespace FWLog.Data.Models
 
         [Column("TradingName")]
         [StringLength(40)]
+        [Index]
         public string NomeFantasia { get; set; }
 
         [Column("CNPJ")]
         [StringLength(14)]
+        [Index]
         public string CNPJ { get; set; }
 
         [Column("AddressZipCode")]
@@ -66,6 +68,7 @@ namespace FWLog.Data.Models
         public bool Ativo { get; set; }
 
         [Required]
+        [Index]
         public int CodigoIntegracao { get; set; }
 
         [Required]
@@ -74,8 +77,10 @@ namespace FWLog.Data.Models
         [Required]
         public bool EmpresaFazGarantia { get; set; }
 
+        [Index]
         public long? IdEmpresaMatriz { get; set; }
-                
+
+        [Index]
         public long? IdEmpresaGarantia { get; set; }
 
         [ForeignKey(nameof(IdEmpresaMatriz))]

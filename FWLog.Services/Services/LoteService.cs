@@ -1,6 +1,7 @@
 ﻿using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
+using FWLog.Services.Integracao;
 using System;
 using System.Configuration;
 using System.Threading.Tasks;
@@ -29,8 +30,7 @@ namespace FWLog.Services.Services
 
             if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
-                var notaService = new NotaFiscalService(_uow);
-                var atualizacaoOK = await notaService.AtualizarStatusNota(nota, NotaFiscalStatusEnum.Recebida);
+                var atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", "NUNOTA", nota.CodigoIntegracao, "STATUSNOTA", NotaFiscalStatusEnum.Recebida.GetHashCode());
 
                 if (!atualizacaoOK)
                 {

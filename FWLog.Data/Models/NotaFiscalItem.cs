@@ -6,13 +6,32 @@ namespace FWLog.Data.Models
     public class NotaFiscalItem
     {
         [Key]
+        [Required]
         public long IdNotaFiscalItem { get; set; }
+
+        [Required]
+        [Index]
         public long IdNotaFiscal { get; set; }
+
+        [Required]
+        [Index]
         public long IdProduto { get; set; }
+
+        [Required]
+        [Index]
         public long IdUnidadeMedida { get; set; }
+
+        [Required]
         public int Quantidade { get; set; }
+
+        [Required]
         public decimal ValorUnitario { get; set; }
+
+        [Required]
         public decimal ValorTotal { get; set; }
+
+        [Required]
+        [Index]
         public long CodigoNotaFiscal { get; set; }
 
         [ForeignKey(nameof(IdNotaFiscal))]

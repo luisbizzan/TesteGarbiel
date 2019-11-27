@@ -15,5 +15,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.Produto.FirstOrDefault(f => f.CodigoIntegracao == codigoIntegracao);
         }
+
+        public IQueryable<Produto> Todos()
+        {
+            return Entities.Produto;
+        }
     }
 }
