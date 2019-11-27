@@ -1,4 +1,4 @@
-﻿@model FWLog.Web.Backoffice.Models.PontoArmazenagemCtx.PontoArmazenagemCadastroViewModel
+﻿@model FWLog.Web.Backoffice.Models.PontoArmazenagemCtx.PontoArmazenagemEditarViewModel
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -10,11 +10,13 @@
 
 <div class="page-title">
     <div class="title">
-        <h3 class="title-sml">Cadastrar Ponto de Armazenagem</h3>
+        <h3 class="title-sml">Editar Ponto de Armazenagem</h3>
     </div>
 </div>
-@using (Html.BeginForm("Cadastrar"))
+
+@using (Html.BeginForm("Editar"))
 {
+    @Html.HiddenFor(x => x.IdPontoArmazenagem)
     <div class="x_panel">
         <div class="x_content">
             <div class="row">
@@ -30,12 +32,12 @@
                     </div>
                     <div class="form-group col-sm-2 col-xs-12">
                         @Html.LabelFor(m => m.IdTipoArmazenagem, new { @class = "control-label" })
-                        @Html.DropDownListFor(m => m.IdTipoArmazenagem, Model.TiposArmazenagem, "Selecione...", new { @class = "form-control" })
+                        @Html.DropDownListFor(m => m.IdTipoArmazenagem, Model.TiposArmazenagem, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.IdTipoArmazenagem)
                     </div>
                     <div class="form-group col-sm-2 col-xs-12">
                         @Html.LabelFor(m => m.TiposMovimentacao, new { @class = "control-label" })
-                        @Html.DropDownListFor(m => m.TiposMovimentacao, Model.TiposMovimentacao, "Selecione...", new { @class = "form-control" })
+                        @Html.DropDownListFor(m => m.TiposMovimentacao, Model.TiposMovimentacao, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.TiposMovimentacao)
                     </div>
                     <div class="form-group col-sm-3 col-xs-12">
@@ -53,10 +55,8 @@
             <div class="ln_solid"></div>
             <div class="row col-xs-12 form-buttons">
                 <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
-                <button type="submit" class="btn btn-primary">Cadastrar</button>
+                <button type="submit" class="btn btn-primary">Confirmar</button>
             </div>
         </div>
     </div>
-
-
 }

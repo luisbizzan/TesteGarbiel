@@ -10,6 +10,7 @@ using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.PontoArmazenagemCtx;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -134,6 +135,47 @@ namespace FWLog.Web.Backoffice.Controllers
             _pontoArmazenagemService.Cadastrar(pontoArmazenagem);
 
             Notify.Success("Ponto de Armazenagem cadastrado com sucesso.");
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.PontoArmazenagem.Editar)]
+        [Route("{idPontoArmazenagem: long}")]
+        public ActionResult Editar(long idPontoArmazenagem)
+        {
+            PontoArmazenagem pontoArmazenagem = _unitOfWork.PontoArmazenagemRepository.GetById(idPontoArmazenagem);
+
+            if (pontoArmazenagem.IdEmpresa != IdEmpresa)
+            {
+                throw new HttpException(404, "Not found");
+            }
+
+            var viewModel = Mapper.Map<PontoArmazenagemEditarViewModel>(pontoArmazenagem);
+
+            viewModel.TiposArmazenagem = new SelectList(_unitOfWork.TipoArmazenagemRepository.RetornarTodos().Select(x => new SelectListItem
+            {
+                Value = x.IdTipoArmazenagem.GetHashCode().ToString(),
+                Text = x.Descricao,
+            }), "Value", "Text");
+            viewModel.TiposMovimentacao = new SelectList(_unitOfWork.TipoMovimentacaoRepository.RetornarTodos().Select(x => new SelectListItem
+            {
+                Value = x.IdTipoMovimentacao.GetHashCode().ToString(),
+                Text = x.Descricao,
+            }), "Value", "Text");
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.PontoArmazenagem.Editar)]
+        public ActionResult Editar(PontoArmazenagemEditarViewModel viewModel)
+        {
+            var pontoArmazenagem = Mapper.Map<PontoArmazenagem>(viewModel);
+            pontoArmazenagem.IdEmpresa = IdEmpresa;
+
+            _pontoArmazenagemService.Editar(pontoArmazenagem);
+
+            Notify.Success("Ponto de Armazenagem editado com sucesso.");
             return RedirectToAction("Index");
         }
     }

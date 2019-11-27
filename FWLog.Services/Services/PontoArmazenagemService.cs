@@ -15,6 +15,15 @@ namespace FWLog.Services.Services
         public PontoArmazenagem Cadastrar(PontoArmazenagem pontoArmazenagem)
         {
             _unitOfWork.PontoArmazenagemRepository.Add(pontoArmazenagem);
+            _unitOfWork.SaveChanges();
+
+            return pontoArmazenagem;
+        }
+
+        public PontoArmazenagem Editar(PontoArmazenagem pontoArmazenagem)
+        {
+            _unitOfWork.PontoArmazenagemRepository.Update(pontoArmazenagem);
+            _unitOfWork.SaveChanges();
 
             return pontoArmazenagem;
         }
