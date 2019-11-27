@@ -16,7 +16,7 @@ namespace FWLog.Services.Services
 {
     //TODO Integração de Notas e Itens estão com comentários devido a falta de dados consistentes no Sankhya
     //TODO Integração de Notas e Itens estão com validações duplicadas devido a falta de dados consistentes no Sankhya
-    public class NotaFiscalService
+    public class NotaFiscalService : BaseService
     {
         private UnitOfWork _uow;
 
@@ -201,12 +201,6 @@ namespace FWLog.Services.Services
             //ValidarCampo(itemInt.CODPROD, nameof(itemInt.CODPROD));
         }
 
-        public void ValidarCampo(string campo, string nome)
-        {
-            if (campo == null)
-            {
-                throw new NullReferenceException(nome);
-            }
-        }
+       
     }
 }

@@ -3,7 +3,7 @@
 namespace FWLog.Services.Model.IntegracaoSankhya
 {
     [TabelaIntegracao(DisplayName = "TSIEMP")]
-    class EmpresaIntegracao
+    public class EmpresaIntegracao
     {
         [TabelaIntegracao(DisplayName = "TSIEMP.CODEMP ")]
         public string CODEMP { get; set; }
@@ -48,6 +48,6 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string AD_UNIDABREV { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIUFS.DESCRICAO")]
-        public string DESCRICAO { get; set; }
+        public string ESTADO { get; set; }
     }
 }

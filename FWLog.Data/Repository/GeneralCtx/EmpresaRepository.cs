@@ -15,7 +15,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public long PegarPrimeiraEmpresa(string userId)
         {
-            var empresa = Entities.UsuarioEmpresa.Where(w => w.UserId == userId).OrderBy(o => o.Empresa.RazaoSocial).FirstOrDefault();
+            var empresa = Entities.UsuarioEmpresa.Where(w => w.Empresa.Ativo && w.UserId == userId).OrderBy(o => o.Empresa.RazaoSocial).FirstOrDefault();
             if (empresa != null)
             {
                 return empresa.CompanyId;
@@ -26,7 +26,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public IEnumerable<EmpresaSelectedItem> GetAllByUserId(string userId)
         {
-            var empresas = Entities.UsuarioEmpresa.Where(w => w.UserId == userId).OrderBy(o => o.Empresa.RazaoSocial)
+            var empresas = Entities.UsuarioEmpresa.Where(w => w.Empresa.Ativo && w.UserId == userId).OrderBy(o => o.Empresa.RazaoSocial)
                 .Select(s => new { 
                     s.Empresa.Sigla,
                     s.Empresa.NomeFantasia,
@@ -41,5 +41,9 @@ namespace FWLog.Data.Repository.GeneralCtx
             }).ToList();
         }
 
+        public Empresa ConsultaPorCodigoIntegracao(int codigoIntegracao)
+        {
+            return Entities.Empresa.FirstOrDefault(f => f.CodigoIntegracao == codigoIntegracao);
+        }
     }
 }

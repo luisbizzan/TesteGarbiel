@@ -72,6 +72,7 @@
     <Compile Include="EnumsAndConsts\ActionTypeNames.cs" />
     <Compile Include="EnumsAndConsts\ApplicationEnum.cs" />
     <Compile Include="EnumsAndConsts\ApplicationLogLevel.cs" />
+    <Compile Include="EnumsAndConsts\EmpresaTipoEnum.cs" />
     <Compile Include="EnumsAndConsts\GetObjectFromLogEnum.cs" />
     <Compile Include="EnumsAndConsts\NotaFiscalStatusEnum.cs" />
     <Compile Include="EnumsAndConsts\LoteStatusEnum.cs" />
@@ -109,7 +110,6 @@
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
     <Compile Include="Models\DataTablesCtx\PrinterTypeTableRow.cs" />
-    <Compile Include="Models\EmpresaConfig.cs" />
     <Compile Include="Models\EmpresaTipo.cs" />
     <Compile Include="Models\FilterCtx\PrinterTypeFilter.cs" />
     <Compile Include="Models\NotaFiscal.cs" />
@@ -155,6 +155,7 @@
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\EmpresaTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\FreteTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\FornecedorRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteRepository.cs" />
@@ -169,7 +170,7 @@
     <Compile Include="Repository\GeneralCtx\UnidadeMedidaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UserCompanyRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PerfilUsuarioRepository.cs" />
-    <Compile Include="Repository\GeneralCtx\CompanyRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\EmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ApplicationSessionRepository.cs" />
     <Compile Include="Resources\Mail\MailResource.Designer.cs">
       <AutoGen>True</AutoGen>

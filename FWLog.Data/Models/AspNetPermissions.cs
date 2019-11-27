@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FWLog.Data
+namespace FWLog.Data.Models
 {
     public class AspNetPermissions
     {

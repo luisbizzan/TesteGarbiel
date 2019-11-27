@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ResGen = Resources.GeneralStrings;
 
-namespace FWLog.Data
+namespace FWLog.Data.Models
 {
     [Table("UserCompany")]
     public class UsuarioEmpresa
@@ -16,7 +15,7 @@ namespace FWLog.Data
         public long CompanyId { get; set; }
 
         [ForeignKey("CompanyId")]
-        public Empresa Empresa { get; set; }
+        public virtual Empresa Empresa { get; set; }
 
         public UsuarioEmpresa(string userId, long idEmpresa)
         {

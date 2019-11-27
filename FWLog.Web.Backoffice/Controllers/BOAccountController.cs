@@ -3,6 +3,7 @@ using ExtensionMethods;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
+using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Models.GeneralCtx;
 using FWLog.Services.Services;

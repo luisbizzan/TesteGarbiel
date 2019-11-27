@@ -4,12 +4,9 @@ using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Models.GeneralCtx;
 using FWLog.Data.Repository.CommonCtx;
-using DartDigital.Library.Attributes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
@@ -17,6 +14,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Res = Resources.GeneralStrings;
+using FWLog.Data.Models;
 
 namespace FWLog.Data.Repository.BackofficeCtx
 {

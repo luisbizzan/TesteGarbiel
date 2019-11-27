@@ -191,6 +191,9 @@
     <Compile Include="App_Start\NinjectDependencyResolver.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\ApiBaseController.cs" />
+    <Compile Include="Controllers\ProdutoController.cs" />
+    <Compile Include="Controllers\EmpresaController.cs" />
+    <Compile Include="Controllers\TransportadoraController.cs" />
     <Compile Include="Controllers\NotaFiscalController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="EnumsAndConsts\App.cs" />

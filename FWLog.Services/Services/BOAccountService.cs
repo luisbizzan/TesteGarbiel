@@ -1,5 +1,6 @@
 ﻿using DartDigital.Library.Mail;
 using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Data.Models.GeneralCtx;
 using FWLog.Services.Interfaces;
 using FWLog.Services.Templates;
