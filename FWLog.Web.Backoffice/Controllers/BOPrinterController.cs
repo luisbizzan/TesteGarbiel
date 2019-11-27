@@ -46,15 +46,15 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             get
             {
-                if (Empresas == null)
+                if (empresas == null)
                 {
-                    Empresas = new SelectList(base.Empresas, "IdEmpresa", "Nome");
+                    empresas = new SelectList(Empresas, "IdEmpresa", "Nome");
                 }
 
-                return Empresas;
+                return empresas;
             }
         }
-        private SelectList Empresas;
+        private SelectList empresas;
 
         private SelectList Status
         {
