@@ -1,0 +1,62 @@
+﻿@model FWLog.Web.Backoffice.Models.PontoArmazenagemCtx.PontoArmazenagemCadastroViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript()
+}
+
+<div class="page-title">
+    <div class="title">
+        <h3 class="title-sml">Cadastro de Ponto de Armazenagem</h3>
+    </div>
+</div>
+@using (Html.BeginForm("Cadastrar"))
+{
+    <div class="x_panel">
+        <div class="x_content">
+            <div class="row">
+                <div class="col-sm-12 col-xs-12">
+                    <div class="form-group col-sm-2 col-xs-12">
+                        @Html.LabelFor(m => m.IdNivelArmazenagem, new { @class = "control-label" })
+                        @Html.ValidationMessageFor(m => m.IdNivelArmazenagem)
+                    </div>
+                    <div class="form-group col-sm-3 col-xs-12">
+                        @Html.LabelFor(m => m.Descricao, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.Descricao, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Descricao)
+                    </div>
+                    <div class="form-group col-sm-2 col-xs-12">
+                        @Html.LabelFor(m => m.IdTipoArmazenagem, new { @class = "control-label" })
+                        @Html.DropDownListFor(m => m.IdTipoArmazenagem, Model.TiposArmazenagem, "Selecione...", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.IdTipoArmazenagem)
+                    </div>
+                    <div class="form-group col-sm-2 col-xs-12">
+                        @Html.LabelFor(m => m.TiposMovimentacao, new { @class = "control-label" })
+                        @Html.DropDownListFor(m => m.TiposMovimentacao, Model.TiposMovimentacao, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.TiposMovimentacao)
+                    </div>
+                    <div class="form-group col-sm-3 col-xs-12">
+                        @Html.LabelFor(m => m.LimitePesoVertical, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.LimitePesoVertical, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.LimitePesoVertical)
+                    </div>
+                    <div class="form-group col-sm-3 col-xs-12">
+                        @Html.LabelFor(m => m.Ativo, new { @class = "control-label" })
+                        @Html.CheckBoxFor(m => m.Ativo)
+                        @Html.ValidationMessageFor(m => m.Ativo)
+                    </div>
+                </div>
+            </div>
+            <div class="ln_solid"></div>
+            <div class="row col-xs-12 form-buttons">
+                <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </div>
+        </div>
+    </div>
+
+
+}

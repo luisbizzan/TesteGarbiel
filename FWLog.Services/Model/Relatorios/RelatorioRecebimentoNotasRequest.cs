@@ -4,7 +4,7 @@ namespace FWLog.Services.Model.Relatorios
 {
     public class RelatorioRecebimentoNotasRequest
     {
-        public int IdEmpresa { get; set; }
+        public long IdEmpresa { get; set; }
         public string NomeUsuario { get; set; }
         public long? Lote { get; set; }
         public int? Nota { get; set; }

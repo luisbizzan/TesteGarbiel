@@ -38,7 +38,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }, JsonRequestBehavior.DenyGet);
         }
 
-        public int BuscarIdEmpresa()
+        public long BuscarIdEmpresa()
         {
             return IdEmpresa;
         }

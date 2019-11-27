@@ -1,6 +1,5 @@
 ﻿@model FWLog.Web.Backoffice.Models.PontoArmazenagemCtx.PontoArmazenagemListaViewModel
 @using FWLog.AspNet.Identity
-@using Res = Resources.BOPrinterStrings
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -10,13 +9,13 @@
     @BundleHelper.RenderViewScript(
         new
         {
-            detailsUrl = Url.Action("Details"),
-            detailsVisible = User.HasPermission(Permissions.PontoArmazenagem.Listar),
-            editUrl = Url.Action("Edit"),
-            editVisible = User.HasPermission(Permissions.PontoArmazenagem.Editar),
-            deleteUrl = Url.Action("AjaxDelete"),
-            deleteVisible = User.HasPermission(Permissions.PontoArmazenagem.Excluir),
-            pageDataUrl = Url.Action("PageData")
+            urlDetalhes = Url.Action("Detalhes"),
+            destalhesVisivel = User.HasPermission(Permissions.PontoArmazenagem.Listar),
+            urlEditar = Url.Action("Editar"),
+            editarVisivel = User.HasPermission(Permissions.PontoArmazenagem.Editar),
+            urlExcluir = Url.Action("ExcluirAjax"),
+            excluirVisivel = User.HasPermission(Permissions.PontoArmazenagem.Excluir),
+            urlDadosLista = Url.Action("DadosLista")
         })
 }
 
@@ -29,7 +28,7 @@
     <div class="x_panel">
         <div class="x_title">
             <h2 class="collapse-link">
-                <i class="fa fa-chevron-down fa-fw"></i> @Resources.CommonStrings.FilterHeader
+                <i class="fa fa-chevron-down fa-fw"></i> Filtros
             </h2>
             <div class="clearfix"></div>
         </div>
@@ -72,7 +71,7 @@
                 <div class="nav navbar-right panel_toolbox">
                     @if (User.HasPermission(Permissions.PontoArmazenagem.Cadastrar))
                     {
-                        <a class="btn btn-primary btn-dt-action" href="@Url.Action("Cadastrar")"><i class="fa fa-fw fa-plus"></i> @Resources.CommonStrings.CreateAction</a>
+                        <a class="btn btn-primary btn-dt-action" href="@Url.Action("Cadastrar")"><i class="fa fa-fw fa-plus"></i> Cadastrar</a>
                     }
                 </div>
                 <div class="clearfix"></div>

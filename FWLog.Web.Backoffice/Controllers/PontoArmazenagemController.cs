@@ -1,25 +1,30 @@
-﻿using FWLog.AspNet.Identity;
+﻿using AutoMapper;
+using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
+using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
+using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.PontoArmazenagemCtx;
 using System.Collections.Generic;
-using System.Web.Mvc;
 using System.Linq;
-using FWLog.Data.Models;
-using FWLog.Data.Models.FilterCtx;
-using AutoMapper;
-using FWLog.Web.Backoffice.Models.CommonCtx;
-using FWLog.Data.Models.DataTablesCtx;
+using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
     public class PontoArmazenagemController : BOBaseController
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly PontoArmazenagemService _pontoArmazenagemService;
 
-        public PontoArmazenagemController(UnitOfWork unitOfWork)
+        public PontoArmazenagemController (
+            UnitOfWork unitOfWork,
+            PontoArmazenagemService pontoArmazenagemService)
         {
             _unitOfWork = unitOfWork;
+            _pontoArmazenagemService = pontoArmazenagemService;
         }
 
         [HttpGet]
@@ -35,12 +40,12 @@ namespace FWLog.Web.Backoffice.Controllers
                 }), "Value", "Text"),
                 TiposArmazenagem = new SelectList(_unitOfWork.TipoArmazenagemRepository.RetornarTodos().Select(x => new SelectListItem
                 {
-                    Value = (x.IdTipoArmazenagem.GetHashCode()).ToString(),
+                    Value = x.IdTipoArmazenagem.GetHashCode().ToString(),
                     Text = x.Descricao,
                 }), "Value", "Text"),
                 TiposMovimentacao = new SelectList(_unitOfWork.TipoMovimentacaoRepository.RetornarTodos().Select(x => new SelectListItem
                 {
-                    Value = (x.IdTipoMovimentacao.GetHashCode()).ToString(),
+                    Value = x.IdTipoMovimentacao.GetHashCode().ToString(),
                     Text = x.Descricao,
                 }), "Value", "Text"),
                 Status = new SelectList(new List<SelectListItem>
@@ -56,20 +61,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.PontoArmazenagem.Listar)]
-        public ActionResult PageData(DataTableFilter<PontoArmazenagemListaFilterViewModel> model)
+        public ActionResult DadosLista(DataTableFilter<PontoArmazenagemListaFilterViewModel> model)
         {
-            //var filtro = new DataTableFilter<PontoArmazenagemListaFiltro>
-            //{
-            //    CustomFilter = new PontoArmazenagemListaFiltro
-            //    {
-            //        Descricao = model.CustomFilter.Descricao,
-            //        IdEmpresa = IdEmpresa,
-            //        IdNivelArmazenagem = model.CustomFilter.IdNivelArmazenagem,
-            //        IdTipoArmazenagem = (TipoArmazenagemEnum?)model.CustomFilter.IdTipoArmazenagem,
-            //        IdTipoMovimentacao = (TipoMovimentacaoEnum?)model.CustomFilter.IdTipoMovimentacao,
-            //        Status = model.CustomFilter.Status
-            //    }
-            //};
+            ValidateModel(model);
 
             var filtro = Mapper.Map<DataTableFilter<PontoArmazenagemListaFiltro>>(model);
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
@@ -83,6 +77,64 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsFiltered = registrosFiltrados,
                 Data = Mapper.Map<IEnumerable<PontoArmazenagemListaItemViewModel>>(result)
             });
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.PontoArmazenagem.Cadastrar)]
+        public ActionResult Cadastrar()
+        {
+            var viewModel = new PontoArmazenagemCadastroViewModel
+            {
+                TiposArmazenagem = new SelectList(_unitOfWork.TipoArmazenagemRepository.RetornarTodos().Select(x => new SelectListItem
+                {
+                    Value = x.IdTipoArmazenagem.GetHashCode().ToString(),
+                    Text = x.Descricao,
+                }), "Value", "Text"),
+                TiposMovimentacao = new SelectList(_unitOfWork.TipoMovimentacaoRepository.RetornarTodos().Select(x => new SelectListItem
+                {
+                    Value = x.IdTipoMovimentacao.GetHashCode().ToString(),
+                    Text = x.Descricao,
+                }), "Value", "Text")
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.PontoArmazenagem.Cadastrar)]
+        public ActionResult Cadastrar(PontoArmazenagemCadastroViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                viewModel.TiposArmazenagem = new SelectList(_unitOfWork.TipoArmazenagemRepository.RetornarTodos().Select(x => new SelectListItem
+                {
+                    Value = x.IdTipoArmazenagem.GetHashCode().ToString(),
+                    Text = x.Descricao,
+                }), "Value", "Text");
+                viewModel.TiposMovimentacao = new SelectList(_unitOfWork.TipoMovimentacaoRepository.RetornarTodos().Select(x => new SelectListItem
+                {
+                    Value = x.IdTipoMovimentacao.GetHashCode().ToString(),
+                    Text = x.Descricao,
+                }), "Value", "Text");
+
+                return View(viewModel);
+            }
+
+            var pontoArmazenagem = new PontoArmazenagem
+            {
+                IdEmpresa = IdEmpresa,
+                IdNivelArmazenagem = viewModel.IdNivelArmazenagem,
+                Descricao = viewModel.Descricao,
+                IdTipoArmazenagem = viewModel.IdTipoArmazenagem,
+                IdTipoMovimentacao = viewModel.IdTipoMovimentacao,
+                LimitePesoVertical = viewModel.LimitePesoVertical,
+                Ativo = viewModel.Ativo
+            };
+
+            _pontoArmazenagemService.Cadastrar(pontoArmazenagem);
+
+            Notify.Success("Ponto de Armazenagem cadastrado com sucesso.");
+            return RedirectToAction("Index");
         }
     }
 }
