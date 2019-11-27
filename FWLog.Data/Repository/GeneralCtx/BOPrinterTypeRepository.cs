@@ -1,4 +1,4 @@
-﻿using ExtensionMethods;
+﻿using ExtensionMethods.List;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ExtensionMethods;
+using ExtensionMethods.String;
 using FWLog.Data.Models;
 using FWLog.Web.Backoffice.Models.BOPrinterCtx;
 
@@ -11,7 +11,7 @@ namespace FWLog.Web.Backoffice.Mapping
         {
             CreateMap<Printer, BOPrinterListItemViewModel>()
                 .ForMember(x => x.Empresa, op => op.MapFrom(x => x.Empresa.RazaoSocial))
-                .ForMember(x => x.Ativa, op => op.MapFrom(x => x.Ativa.GetDisplayName()))
+                .ForMember(x => x.Ativa, op => op.MapFrom(x => x.Ativa.BooleanResource()))
                 .ForMember(x => x.PrinterType, op => op.MapFrom(x => x.PrinterType.Name));
         }
     }

@@ -49,7 +49,7 @@ namespace FWLog.Data.Models
         [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
         [Display(Name = nameof(ResEnt.Ativo), ResourceType = typeof(ResEnt))]
         [Log(DisplayName = nameof(ResEnt.Ativo), ResourceType = typeof(ResEnt))]
-        public int Ativo { get; set; }
+        public bool Ativo { get; set; }
 
         [ForeignKey("UsuarioId")]
         public virtual AspNetUsers Usuario { get; set; }

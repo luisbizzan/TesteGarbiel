@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using ExtensionMethods;
+using ExtensionMethods.List;
+using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
@@ -94,15 +95,21 @@ namespace FWLog.Web.Backoffice.Controllers
             query = query.WhereIf(filter.CustomFilter.IdEmpresa.HasValue, x => x.EmpresaId == filter.CustomFilter.IdEmpresa);
             query = query.WhereIf(filter.CustomFilter.Ativo.HasValue, x => x.Ativo == filter.CustomFilter.Ativo);
 
-            IQueryable<BOAccountListItemViewModel> select = query.Select(x => new BOAccountListItemViewModel
+            var select = query.Select(x => new
             {
                 UserName = x.Usuario.UserName,
                 Email = x.Usuario.Email,
                 Nome = x.Nome,
-                _Ativo = x.Ativo
-            });
+                Ativo = x.Ativo
+            }).ToList();
 
-            List<BOAccountListItemViewModel> list = select.ToList();
+            List<BOAccountListItemViewModel> list = select.Select(x => new BOAccountListItemViewModel
+            {
+                UserName = x.UserName,
+                Email = x.Email,
+                Nome = x.Nome,
+                Ativo = x.Ativo.BooleanResource()
+            }).ToList();
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {

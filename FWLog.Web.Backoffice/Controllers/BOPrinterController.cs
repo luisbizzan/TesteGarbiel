@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using ExtensionMethods;
+using ExtensionMethods.List;
+using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
@@ -176,7 +177,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Empresa = entity.Empresa.RazaoSocial,
                 PrinterType = entity.PrinterType.Name,
                 IP = entity.IP,
-                Ativa = entity.Ativa.GetDisplayName()
+                Ativa = entity.Ativa.BooleanResource()
             };
 
             return View(model);
@@ -255,7 +256,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpGet]
         public ActionResult Selecionar(int id)
         {
-            List<Printer> impressoras = _uow.BOPrinterRepository.All().Where(w => w.CompanyId == IdEmpresa && w.Ativa == NaoSimEnum.Sim && w.PrinterTypeId == id).ToList();
+            List<Printer> impressoras = _uow.BOPrinterRepository.All().Where(w => w.CompanyId == IdEmpresa && w.Ativa == true && w.PrinterTypeId == id).ToList();
             var listaImpressoras = new List<BOPrinterSelecionarImpressoraViewModel>();
 
             foreach (Printer impressora in impressoras)
