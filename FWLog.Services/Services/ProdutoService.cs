@@ -1,4 +1,5 @@
 ﻿using FWLog.Data;
+using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
@@ -22,10 +23,10 @@ namespace FWLog.Services.Services
 
         public async Task ConsultarProdutoIntegracao()
         {
-            //if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            //{
-            //    return;
-            //}
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
 
             StringBuilder where = new StringBuilder();
 
@@ -35,8 +36,6 @@ namespace FWLog.Services.Services
             where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
 
             List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryGenerico<ProdutoIntegracao>(where: where.ToString());
-
-            var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
 
             foreach (var produtoInt in produtosIntegracao)
             {
