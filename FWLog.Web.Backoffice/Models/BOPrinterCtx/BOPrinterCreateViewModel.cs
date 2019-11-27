@@ -25,6 +25,6 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         public string IP { get; set; }
 
         [Required(ErrorMessage = "O campo Ativa é obrigatório.")]
-        public NaoSimEnum Ativa { get; set; }
+        public bool Ativa { get; set; }
     }
 }

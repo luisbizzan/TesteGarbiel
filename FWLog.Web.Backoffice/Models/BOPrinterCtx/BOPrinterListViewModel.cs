@@ -44,6 +44,6 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         [Display(Name = nameof(Res.PrinterTypeLabel), ResourceType = typeof(Res))]
         public int? PrinterTypeId { get; set; }
 
-        public NaoSimEnum? Ativa { get; set; }
+        public bool? Ativa { get; set; }
     }
 }

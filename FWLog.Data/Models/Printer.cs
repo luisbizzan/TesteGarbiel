@@ -24,7 +24,7 @@ namespace FWLog.Data.Models
         public string IP { get; set; }
 
         [Required]
-        public NaoSimEnum Ativa { get; set; }
+        public bool Ativa { get; set; }
 
         #region ForeignKey
 
