@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FWLog.Data
+namespace FWLog.Data.Models
 {
     public class ApplicationSession
     {

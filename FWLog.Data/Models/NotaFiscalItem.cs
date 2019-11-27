@@ -16,12 +16,12 @@ namespace FWLog.Data.Models
         public long CodigoNotaFiscal { get; set; }
 
         [ForeignKey(nameof(IdNotaFiscal))]
-        public NotaFiscal NotaFiscal { get; set; }
+        public virtual NotaFiscal NotaFiscal { get; set; }
 
         [ForeignKey(nameof(IdProduto))]
-        public Produto Produto { get; set; }
+        public virtual Produto Produto { get; set; }
 
         [ForeignKey(nameof(IdUnidadeMedida))]
-        public UnidadeMedida UnidadeMedida { get; set; }
+        public virtual UnidadeMedida UnidadeMedida { get; set; }
     }
 }

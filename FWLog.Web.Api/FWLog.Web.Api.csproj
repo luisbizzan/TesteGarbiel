@@ -191,6 +191,9 @@
     <Compile Include="App_Start\NinjectDependencyResolver.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\ApiBaseController.cs" />
+    <Compile Include="Controllers\ProdutoController.cs" />
+    <Compile Include="Controllers\EmpresaController.cs" />
+    <Compile Include="Controllers\TransportadoraController.cs" />
     <Compile Include="Controllers\NotaFiscalController.cs" />
     <Compile Include="Controllers\UsuarioController.cs" />
     <Compile Include="EnumsAndConsts\App.cs" />
@@ -258,7 +261,7 @@
       <Name>FWLog.AspNet.Identity</Name>
     </ProjectReference>
     <ProjectReference Include="..\FWLog.Data\FWLog.Data.csproj">
-      <Project>{CB5B241F-4BF3-439A-8995-4A05D9C3367E}</Project>
+      <Project>{cb5b241f-4bf3-439a-8995-4a05d9c3367e}</Project>
       <Name>FWLog.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\FWLog.Services\FWLog.Services.csproj">

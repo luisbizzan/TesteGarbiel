@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using FWLog.Data;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Web.Backoffice.Models.ApplicationLogCtx;
 using System;
 using DartDigital.Library.Web.Globalization;
 using FWLog.Data.EnumsAndConsts;
+using FWLog.Data.Models;
 
 namespace FWLog.Web.Backoffice.Mapping
 {

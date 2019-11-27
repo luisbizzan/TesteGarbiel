@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using ResEnt = Resources.EntityStrings;
 using ResGen = Resources.GeneralStrings;
 
-namespace FWLog.Data
+namespace FWLog.Data.Models
 {
     public class PerfilUsuario
     {

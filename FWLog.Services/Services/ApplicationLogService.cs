@@ -1,5 +1,6 @@
 ﻿using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
+using FWLog.Data.Models;
 using System;
 using System.Transactions;
 

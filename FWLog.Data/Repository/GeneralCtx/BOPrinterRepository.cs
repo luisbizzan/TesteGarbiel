@@ -1,5 +1,6 @@
 ﻿using FWLog.Data.Models;
 using FWLog.Data.Repository.CommonCtx;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 
@@ -9,6 +10,11 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public BOPrinterRepository(Entities entities) : base(entities)
         {
+        }
+
+        public IEnumerable<Printer> GetAll()
+        {
+            return All().ToList();
         }
 
         public IQueryable<Printer> All()

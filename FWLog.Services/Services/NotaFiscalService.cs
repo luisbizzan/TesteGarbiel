@@ -16,7 +16,7 @@ namespace FWLog.Services.Services
 {
     //TODO Integração de Notas e Itens estão com comentários devido a falta de dados consistentes no Sankhya
     //TODO Integração de Notas e Itens estão com validações duplicadas devido a falta de dados consistentes no Sankhya
-    public class NotaFiscalService
+    public class NotaFiscalService : BaseService
     {
         private UnitOfWork _uow;
 
@@ -27,7 +27,7 @@ namespace FWLog.Services.Services
 
         public async Task ConsultaNotaFiscalCompra()
         {
-            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
                 return;
             }
@@ -36,7 +36,8 @@ namespace FWLog.Services.Services
             var inner = "INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
             List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<NotaFiscalIntegracao>(where, inner);
 
-            var tiposFrete = _uow.FreteTipoRepository.RetornarTodos();
+            List<FreteTipo> tiposFrete = _uow.FreteTipoRepository.RetornarTodos();
+            IQueryable<Empresa> empresas = _uow.EmpresaRepository.Todos();
 
             Dictionary<string, List<NotaFiscalIntegracao>> notasIntegracaoGrp = notasIntegracao.GroupBy(g => g.NUNOTA).ToDictionary(d => d.Key, d => d.ToList());
 
@@ -75,28 +76,75 @@ namespace FWLog.Services.Services
                     notafiscal.NumeroConhecimento = notafiscalIntegracao.NUMCF == null ? (long?)null : Convert.ToInt64(notafiscalIntegracao.NUMCF);
                     notafiscal.PesoBruto = notafiscalIntegracao.PESOBRUTO == null ? (decimal?)null : Convert.ToDecimal(notafiscalIntegracao.PESOBRUTO);
                     notafiscal.Quantidade = notafiscalIntegracao.QTDVOL == null ? 0 : Convert.ToInt32(notafiscalIntegracao.QTDVOL);
-                    notafiscal.IdFreteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notafiscalIntegracao.CIF_FOB).IdFreteTipo;
-                    //TODO criar campo para gravar CIF_FOB
                     notafiscal.Especie = notafiscalIntegracao.VOLUME;
                     notafiscal.StatusIntegracao = notafiscalIntegracao.STATUSNOTA;
                     notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode();
                     notafiscal.Chave = notafiscalIntegracao.CHAVENFE;
-                    notafiscal.IdTransportadora = 41;//TODO Fazer integração de Transportadora e ajustar vinculo - notaInt.CODPARCTRANSP;
                     notafiscal.IdFornecedor = 41;//TODO Fazer integração de Fornecedor e ajustar vinculo notaInt.CODPARC;
-                    notafiscal.CompanyId = 41;//TODO Fazer integração de Empresa e ajustar vinculo notaInt.CODEMP;
                     notafiscal.DataEmissao = notafiscalIntegracao.DHEMISSEPEC == null ? DateTime.Now : Convert.ToDateTime(notafiscalIntegracao.DHEMISSEPEC); //TODO validar campo geovane;
+
+                    FreteTipo freteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notafiscalIntegracao.CIF_FOB);
+                    if (freteTipo == null)
+                    {
+                        throw new Exception("Tipo de frete (CIF_FOB) inválido.");
+                    }
+                    else
+                    {
+                        notafiscal.IdFreteTipo = freteTipo.IdFreteTipo;
+                    }
+
+                    Empresa empresa = empresas.FirstOrDefault(f => f.CodigoIntegracao.ToString() == notafiscalIntegracao.CODEMP);
+                    if (empresa == null)
+                    {
+                        throw new Exception("Código da Empresa (CODEMP) inválido");
+                    }
+                    else
+                    {
+                        notafiscal.CompanyId = empresa.IdEmpresa;
+                    }
+
+                    Transportadora transportadora = _uow.TransportadoraRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao.ToString() == notafiscalIntegracao.CODPARCTRANSP);
+                    if (empresa == null)
+                    {
+                        throw new Exception("Código da Transportadora (CODPARCTRANSP) inválido");
+                    }
+                    else
+                    {
+                        notafiscal.IdTransportadora = transportadora.IdTransportadora;
+                    }
+
+                    //Fornecedor fornecedor = _uow.FornecedorRepository.Todos().FirstOrDefault(f => f.Codigo.ToString() == notafiscalIntegracao.CODPARC);
+                    //if (empresa == null)
+                    //{
+                    //    throw new Exception("Código da Transportadora (CODPARC) inválido");
+                    //}
+                    //else
+                    //{
+                    //    notafiscal.IdFornecedor = fornecedor.IdFornecedor;
+                    //}
                 }
 
-                if (notaNova)
+                try
                 {
-                    _uow.NotaFiscalRepository.Add(notafiscal);
+                    await AtualizarStatusNota(notafiscal, NotaFiscalStatusEnum.AguardandoRecebimento);
+
+                    if (notaNova)
+                    {
+                        _uow.NotaFiscalRepository.Add(notafiscal);
+                    }
+
+                    await _uow.SaveChangesAsync();
+
+                }
+                catch (Exception ex)
+                {
+                    var applicationLogService = new ApplicationLogService(_uow);
+                    applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+
+                    continue;
                 }
 
-                await _uow.SaveChangesAsync();
-
-                await ConsultaNotaFiscalItemCompra(codNota);
-
-                await AtualizarStatusNota(notafiscal, NotaFiscalStatusEnum.AguardandoRecebimento);
+               // await ConsultaNotaFiscalItemCompra(codNota);
             }
         }
 
@@ -201,12 +249,6 @@ namespace FWLog.Services.Services
             //ValidarCampo(itemInt.CODPROD, nameof(itemInt.CODPROD));
         }
 
-        public void ValidarCampo(string campo, string nome)
-        {
-            if (campo == null)
-            {
-                throw new NullReferenceException(nome);
-            }
-        }
+       
     }
 }

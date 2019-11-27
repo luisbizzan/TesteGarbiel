@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ResGen = Resources.GeneralStrings;
 
-namespace FWLog.Data
+namespace FWLog.Data.Models
 {
     [Table("Company")]
     public class Empresa
@@ -33,7 +32,7 @@ namespace FWLog.Data
         public string CNPJ { get; set; }
 
         [Column("AddressZipCode")]
-        public int CEP { get; set; }
+        public int? CEP { get; set; }
 
         [Column("Address")]
         [StringLength(76)]
@@ -52,7 +51,7 @@ namespace FWLog.Data
         public string Bairro { get; set; }
 
         [Column("AddressState")]
-        [StringLength(10)]
+        [StringLength(40)]
         public string Estado { get; set; }
 
         [Column("AddressCity")]
@@ -66,6 +65,32 @@ namespace FWLog.Data
         [Column("Disabled")]
         public bool Ativo { get; set; }
 
+        [Required]
         public int CodigoIntegracao { get; set; }
+
+        [Required]
+        public long IdEmpresaTipo { get; set; }
+
+        [Required]
+        public bool EmpresaFazGarantia { get; set; }
+
+        public long? IdEmpresaMatriz { get; set; }
+                
+        public long? IdEmpresaGarantia { get; set; }
+
+        [ForeignKey(nameof(IdEmpresaMatriz))]
+        public virtual Empresa EmpresaMatriz { get; set; }
+
+        [ForeignKey(nameof(IdEmpresaGarantia))]
+        public virtual Empresa EmpresaGarantia { get; set; }
+
+        [InverseProperty("EmpresaMatriz")]
+        public virtual ICollection<Empresa> EmpresasFiliais { get; set; }
+
+        [InverseProperty("EmpresaGarantia")]
+        public virtual ICollection<Empresa> EmpresasGarantia { get; set; }
+
+        [ForeignKey(nameof(IdEmpresaTipo))]
+        public virtual EmpresaTipo EmpresaTipo { get; set; }
     }
 }

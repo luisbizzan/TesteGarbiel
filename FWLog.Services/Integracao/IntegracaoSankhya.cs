@@ -239,7 +239,7 @@ namespace FWLog.Services.Integracao
             return resultList;
         }
 
-        public async Task<List<TClass>> PreExecutarQueryComplexa<TClass>(string where, string inner) where TClass : class, new()
+        public async Task<List<TClass>> PreExecutarQueryComplexa<TClass>(string where = "", string inner = "") where TClass : class, new()
         {
             Type typeClass = typeof(TClass);
             List<TClass> resultList = null;

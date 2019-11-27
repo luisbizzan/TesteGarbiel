@@ -1,14 +1,8 @@
 ﻿using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
-using FWLog.Data.Models.DataTablesCtx;
-using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Models.GeneralCtx;
-using FWLog.Data.Repository.BackofficeCtx;
 using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
-using System.Linq;
-using FWLog.Data.Logging;
+using FWLog.Data.Models;
 
 namespace FWLog.Services.Services
 {

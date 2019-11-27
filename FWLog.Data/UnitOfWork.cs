@@ -12,6 +12,7 @@ namespace FWLog.Data
 {
     public class UnitOfWork : IDisposable
     {
+
         private bool _disposed = false;
         private readonly Entities _context;
 
@@ -40,6 +41,12 @@ namespace FWLog.Data
         private PontoArmazenagemRepository _pontoArmazenagemRepository;
         private TipoMovimentacaoRepository _tipoMovimentacaoRepository;
         private TipoArmazenagemRepository _tipoArmazenagemRepository;
+        private EmpresaTipoRepository _empresaTipoRepository;
+
+        public EmpresaTipoRepository EmpresaTipoRepository
+        {
+            get => _empresaTipoRepository ?? (_empresaTipoRepository = new EmpresaTipoRepository(_context));
+        }
 
         public TipoArmazenagemRepository TipoArmazenagemRepository
         {

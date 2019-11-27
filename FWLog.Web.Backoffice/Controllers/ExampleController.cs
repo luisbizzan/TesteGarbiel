@@ -1,4 +1,5 @@
 ﻿using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Web.Backoffice.EnumsAndConsts;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;

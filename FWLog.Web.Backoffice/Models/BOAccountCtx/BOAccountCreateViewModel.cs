@@ -1,6 +1,5 @@
 ﻿using DartDigital.Library.Web.ModelValidation;
-using FWLog.Data;
-using System;
+using FWLog.Data.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Res = Resources.BOAccountStrings;
