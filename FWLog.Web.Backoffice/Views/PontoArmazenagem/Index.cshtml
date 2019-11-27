@@ -38,9 +38,16 @@
                     @Html.LabelFor(m => m.Filtros.Descricao)
                     @Html.TextBoxFor(m => m.Filtros.Descricao, new { @class = "form-control", data_field = "Descricao" })
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-3 col-xs-12">
                     @Html.LabelFor(m => m.Filtros.IdNivelArmazenagem)
-                    @Html.DropDownListFor(m => m.Filtros.IdNivelArmazenagem, Model.NiveisArmazenagem, "Todos", new { @class = "form-control", data_field = "IdNivelArmazenagem" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filtros.DescricaoNivelArmazenagem, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filtros.IdNivelArmazenagem, new { data_field = "IdNivelArmazenagem" })
                 </div>
                 <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.Filtros.IdTipoArmazenagem)
@@ -50,7 +57,7 @@
                     @Html.LabelFor(m => m.Filtros.IdTipoMovimentacao)
                     @Html.DropDownListFor(m => m.Filtros.IdTipoMovimentacao, Model.TiposMovimentacao, "Todos", new { @class = "form-control", data_field = "IdTipoMovimentacao" })
                 </div>
-                <div class="form-group col-sm-3 col-xs-12">
+                <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.Filtros.Status)
                     @Html.DropDownListFor(m => m.Filtros.Status, Model.Status, new { @class = "form-control", data_field = "Status" })
                 </div>
@@ -95,3 +102,4 @@
         </div>
     </div>
 </div>
+<div class="modal" id="modalPesquisaNivelArmazenagem"></div>

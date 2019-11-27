@@ -34,27 +34,22 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var viewModel = new PontoArmazenagemListaViewModel
             {
-                NiveisArmazenagem = new SelectList(_unitOfWork.NivelArmazenagemRepository.RetornarAtivos().Select(x => new SelectListItem
-                {
-                    Value = x.IdNivelArmazenagem.ToString(),
-                    Text = x.Descricao,
-                }), "Value", "Text"),
                 TiposArmazenagem = new SelectList(_unitOfWork.TipoArmazenagemRepository.RetornarTodos().Select(x => new SelectListItem
-                {
-                    Value = x.IdTipoArmazenagem.GetHashCode().ToString(),
-                    Text = x.Descricao,
-                }), "Value", "Text"),
+                                    {
+                                        Value = x.IdTipoArmazenagem.GetHashCode().ToString(),
+                                        Text = x.Descricao,
+                                    }), "Value", "Text"),
                 TiposMovimentacao = new SelectList(_unitOfWork.TipoMovimentacaoRepository.RetornarTodos().Select(x => new SelectListItem
-                {
-                    Value = x.IdTipoMovimentacao.GetHashCode().ToString(),
-                    Text = x.Descricao,
-                }), "Value", "Text"),
+                                    {
+                                        Value = x.IdTipoMovimentacao.GetHashCode().ToString(),
+                                        Text = x.Descricao,
+                                    }), "Value", "Text"),
                 Status = new SelectList(new List<SelectListItem>
-                {
-                    new SelectListItem { Text = "Todos", Value = ""},
-                    new SelectListItem { Text = "Ativo", Value = "1"},
-                    new SelectListItem { Text = "Inativo", Value = "2"}
-                }, "Value", "Text")
+                        {
+                            new SelectListItem { Text = "Todos", Value = ""},
+                            new SelectListItem { Text = "Ativo", Value = "1"},
+                            new SelectListItem { Text = "Inativo", Value = "2"}
+                        }, "Value", "Text")
             };
 
             return View(viewModel);
@@ -95,7 +90,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Value = x.IdTipoMovimentacao.GetHashCode().ToString(),
                     Text = x.Descricao,
-                }), "Value", "Text")
+                }), "Value", "Text"),
+                Ativo = true
             };
 
             return View(viewModel);

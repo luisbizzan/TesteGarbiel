@@ -14,7 +14,6 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
         public PontoArmazenagemListaItemViewModel Itens { get; set; }
         public PontoArmazenagemListaFilterViewModel Filtros { get; set; }
 
-        public SelectList NiveisArmazenagem { get; set; }
         public SelectList TiposArmazenagem { get; set; }
         public SelectList TiposMovimentacao { get; set; }
         public SelectList Status { get; set; }
@@ -50,5 +49,7 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
         public bool? Status { get; set; }
         [Display(Name = "Ponto Armazenagem")]
         public string Descricao { get; set; }
+
+        public string DescricaoNivelArmazenagem { get; set; }
     }
 }
