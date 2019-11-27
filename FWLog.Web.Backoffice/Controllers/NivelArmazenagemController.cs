@@ -5,6 +5,7 @@ using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
+using FWLog.Web.Backoffice.EnumsAndConsts.LOVs;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.NivelArmazenagemCtx;
@@ -18,10 +19,30 @@ namespace FWLog.Web.Backoffice.Controllers
     public class NivelArmazenagemController : BOBaseController
     {
         private readonly UnitOfWork _unitOfWork;
-        private NivelArmazenagemService _nivelArmazenagemService;
+        private readonly NivelArmazenagemService _nivelArmazenagemService;
+
+        private SelectList Status
+        {
+            get
+            {
+                if (status == null)
+                {
+                    status = new SelectList(new NaoSimLOV().Items, "Value", "Text");
+                }
+
+                return status;
+            }
+        }
+        private SelectList status;
+
+
+        private void setViewBags()
+        {
+            ViewBag.Status = Status;
+        }
 
         public NivelArmazenagemController(
-            UnitOfWork unitOfWork, 
+            UnitOfWork unitOfWork,
             NivelArmazenagemService nivelArmazenagemService)
         {
             _unitOfWork = unitOfWork;
@@ -32,6 +53,8 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.List)]
         public ActionResult Index()
         {
+            setViewBags();
+
             return View(new NivelArmazenagemListViewModel());
         }
 
@@ -39,9 +62,9 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.List)]
         public ActionResult PageData(DataTableFilter<NivelArmazenagemFilterViewModel> model)
         {
-            int recordsFiltered, totalRecords;
             var filter = Mapper.Map<DataTableFilter<NivelArmazenagemFilter>>(model);
-            IEnumerable<NivelArmazenagemTableRow> result = _unitOfWork.NivelArmazenagemRepository.SearchForDataTable(filter, out recordsFiltered, out totalRecords);
+
+            IEnumerable<NivelArmazenagemTableRow> result = _unitOfWork.NivelArmazenagemRepository.SearchForDataTable(filter, out int recordsFiltered, out int totalRecords);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
@@ -56,6 +79,8 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Create)]
         public ActionResult Create()
         {
+            setViewBags();
+
             return View();
         }
 
@@ -65,12 +90,14 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             if (!ModelState.IsValid)
             {
+                setViewBags();
+
                 return View(model);
             }
 
-            var nivelArmazenagem = Mapper.Map<NivelArmazenagem>(model);
+            var entity = new NivelArmazenagem { Ativo = model.Ativo, Descricao = model.Descricao, IdEmpresa = IdEmpresa };
 
-            _nivelArmazenagemService.Add(nivelArmazenagem);
+            _nivelArmazenagemService.Add(entity);
 
             Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
             return RedirectToAction("Index");
@@ -80,6 +107,8 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Edit)]
         public ActionResult Edit(int id)
         {
+            setViewBags();
+
             NivelArmazenagem nivelArmazenagem = _unitOfWork.NivelArmazenagemRepository.GetById(id);
 
             if (nivelArmazenagem == null)
@@ -98,31 +127,17 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             if (!ModelState.IsValid)
             {
+                setViewBags();
+
                 return View(model);
             }
 
-            NivelArmazenagem nivelArmazenagem = Mapper.Map<NivelArmazenagem>(model);
+            var entity = new NivelArmazenagem { IdNivelArmazenagem = model.IdNivelArmazenagem, Ativo = model.Ativo, Descricao = model.Descricao, IdEmpresa = model.IdEmpresa };
 
-            _nivelArmazenagemService.Edit(nivelArmazenagem);
+            _nivelArmazenagemService.Edit(entity);
 
             Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
             return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.List)]
-        public ActionResult Details(int id)
-        {
-            NivelArmazenagem nivelArmazenagem = _unitOfWork.NivelArmazenagemRepository.GetById(id);
-
-            if (nivelArmazenagem == null)
-            {
-                throw new HttpException(404, "Not found");
-            }
-
-            var model = Mapper.Map<NivelArmazenagemDetailsViewModel>(nivelArmazenagem);
-
-            return View(model);
         }
 
         [HttpPost]

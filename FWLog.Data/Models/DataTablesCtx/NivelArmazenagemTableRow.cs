@@ -3,6 +3,9 @@
     public class NivelArmazenagemTableRow
     {
         public long IdNivelArmazenagem { get; set; }
-        // TODO: Criar colunas do DataTable, deve conter as mesmas propriedades da classe NivelArmazenagemListItemViewModel
+
+        public string Descricao { get; set; }
+
+        public bool Ativo { get; set; }
     }
 }

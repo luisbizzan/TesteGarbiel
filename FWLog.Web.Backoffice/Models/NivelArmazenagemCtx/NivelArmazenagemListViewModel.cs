@@ -1,4 +1,6 @@
-﻿namespace FWLog.Web.Backoffice.Models.NivelArmazenagemCtx
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FWLog.Web.Backoffice.Models.NivelArmazenagemCtx
 {
     public class NivelArmazenagemListViewModel
     {
@@ -15,13 +17,19 @@
 
     public class NivelArmazenagemListItemViewModel
     {
+        [Display(Name = "Cód")]
         public long IdNivelArmazenagem { get; set; }
 
-        // TODO: Criar colunas do DataTable, deve conter as mesmas propriedades da classe NivelArmazenagemTableRow
+        [Display(Name = "Descrição")]
+        public string Descricao { get; set; }
+
+        public string Ativo { get; set; }
     }
 
     public class NivelArmazenagemFilterViewModel
     {
-        // TODO: Criar propriedades de filtro, deve conter os mesmos campos da classe NivelArmazenagemFilter
+        public string Descricao { get; set; }
+
+        public string Ativo { get; set; }
     }
 }

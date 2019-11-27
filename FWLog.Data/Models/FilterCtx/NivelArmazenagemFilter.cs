@@ -2,7 +2,8 @@
 {
     public class NivelArmazenagemFilter
     {
-        // TODO: Criar propriedades de filtro, deve conter os mesmos campos da classe NivelArmazenagemFilterViewModel
+        public string Descricao { get; set; }
 
+        public bool? Ativo { get; set; }
     }
 }

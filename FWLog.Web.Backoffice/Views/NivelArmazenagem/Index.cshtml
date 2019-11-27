@@ -2,7 +2,7 @@
 @using FWLog.AspNet.Identity
 
 @{
-    ViewBag.Title = "Lista de NivelArmazenagem";
+    ViewBag.Title = "Lista de Nível Armazenagem";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -25,7 +25,7 @@
 <div class="page-title">
     <div class="title">
         <h3 class="title-sml">@ViewBag.Title</h3>
-    </div>    
+    </div>
 </div>
 <!-- /title -->
 <!-- filter -->
@@ -40,7 +40,14 @@
         <div class="x_content" style="display: block;">
             <div class="row">
                 <div class="col-xs-12 col-sm-12 form-group">
-                    @* Coloque aqui seus campos de filtro *@
+                    <div class="form-group col-sm-3 col-xs-12">
+                        @Html.LabelFor(m => m.Filter.Descricao)
+                        @Html.TextBoxFor(m => m.Filter.Descricao, new { @class = "form-control", data_field = "Descricao" })
+                    </div>
+                    <div class="form-group col-sm-2 col-xs-12">
+                        @Html.LabelFor(m => m.Filter.Ativo)
+                        @Html.DropDownListFor(m => m.Filter.Ativo, (IEnumerable<SelectListItem>)ViewBag.Status, "Selecione...", new { @class = "form-control", data_field = "Ativo" })
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -60,7 +67,7 @@
             <!-- panel-title -->
             <div class="x_title">
                 <h2>Lista</h2>
-                @if (User.HasPermission(Permissions.NivelArmazenagem.Create)) 
+                @if (User.HasPermission(Permissions.NivelArmazenagem.Create))
                 {
                     <div class="nav navbar-right panel_toolbox">
                         <a class="btn btn-primary btn-dt-action" href="@Url.Action("Create")"><i class="fa fa-fw fa-plus"></i> @Resources.CommonStrings.CreateAction </a>
@@ -75,7 +82,8 @@
                     <thead>
                         <tr>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.IdNivelArmazenagem)</th>
-                            @* TODO: Todas as propriedades da classe NivelArmazenagemListItemViewModel devem estar aqui *@
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Descricao)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Ativo)</th>
                             <th>@Resources.CommonStrings.ActionsLabel</th>
                         </tr>
                     </thead>
@@ -86,4 +94,3 @@
     </div>
 </div>
 <!-- /table -->
-

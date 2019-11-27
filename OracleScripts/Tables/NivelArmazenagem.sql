@@ -8,13 +8,13 @@ CREATE TABLE "NivelArmazenagem"
 	CONSTRAINT "NivelArmazenagem_FK1" FOREIGN KEY ("IdEmpresa") REFERENCES "Company" ("CompanyId")
 );
 
-CREATE SEQUENCE "NivelArmazenagem_S";
+CREATE SEQUENCE "NivelArmazenagem_SEQ";
 
-CREATE OR replace TRIGGER "NivelArmazenagem_on_insert_tr"
+CREATE OR replace TRIGGER "NivelArmazenagem_SEQ_TR"
   BEFORE INSERT ON "NivelArmazenagem"
   FOR EACH ROW
 BEGIN
-    SELECT "NivelArmazenagem_S".nextval
+    SELECT "NivelArmazenagem_SEQ".nextval
     INTO   :new."IdNivelArmazenagem"
     FROM   DUAL;
 END;

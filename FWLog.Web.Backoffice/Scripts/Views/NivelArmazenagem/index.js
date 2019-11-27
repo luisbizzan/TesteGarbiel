@@ -3,11 +3,6 @@
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
             {
-                action: 'details',
-                href: view.detailsUrl + '?id=' + full.IdNivelArmazenagem,
-                visible: view.detailsVisible
-            },
-            {
                 action: 'edit',
                 href: view.editUrl + '?id=' + full.IdNivelArmazenagem,
                 visible: view.editVisible
@@ -37,9 +32,11 @@
         stateLoadParams: function (settings, data) {
             dart.dataTables.loadFilterFromData(data);
         },
+        order: [[1, "desc"]],
         columns: [
-            // TODO: Todas as proriedades da classe NivelArmazenagemListItemViewModel devem estar listadas aqui 
-            { data: 'IdNivelArmazenagem' },
+            { data: 'IdNivelArmazenagem', width: 100 },
+            { data: 'Descricao' },
+            { data: 'Ativo', width: 100  },
             actionsColumn
         ]
     });

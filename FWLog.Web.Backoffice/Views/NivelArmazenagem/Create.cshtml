@@ -1,7 +1,7 @@
 ﻿@model FWLog.Web.Backoffice.Models.NivelArmazenagemCtx.NivelArmazenagemCreateViewModel
 
 @{
-    ViewBag.Title = "Criação de NivelArmazenagem"; // TODO: Traduzir nome da entidade
+    ViewBag.Title = "Criação de Nível Armazenagem";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -21,22 +21,22 @@
 {
     <div class="x_panel">
         <div class="x_title">
-            <h2>NivelArmazenagem</h2> @* TODO: Traduzir nome da entidade *@
+            <h2>Nível Armazenagem</h2>
             <div class="clearfix"></div>
 
         </div>
         <div class="x_content">
             <!-- fields -->
             <div class="row">
-                <div class="col-xs-12 col-lg-6">
-                    <div class="form-group">
+                <div class="col-xs-12 col-lg-12">
+                    <div class="form-group col-sm-6 col-xs-12">
                         @Html.LabelFor(m => m.Descricao, new { @class = "control-label" })
                         @Html.TextBoxFor(m => m.Descricao, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.Descricao)
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-sm-2 col-xs-12">
                         @Html.LabelFor(m => m.Ativo, new { @class = "control-label" })
-                        @Html.TextBoxFor(m => m.Ativo, new { @class = "form-control" })
+                        @Html.DropDownListFor(m => m.Ativo, (IEnumerable<SelectListItem>)ViewBag.Status, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.Ativo)
                     </div>
                 </div>

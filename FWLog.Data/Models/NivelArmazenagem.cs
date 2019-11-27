@@ -1,5 +1,4 @@
-﻿using FWLog.Data.EnumsAndConsts;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models

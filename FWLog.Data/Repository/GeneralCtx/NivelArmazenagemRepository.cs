@@ -1,4 +1,5 @@
-﻿using FWLog.Data.Models;
+﻿using ExtensionMethods.List;
+using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
@@ -25,34 +26,27 @@ namespace FWLog.Data.Repository.GeneralCtx
             IQueryable<NivelArmazenagemTableRow> query = Entities.NivelArmazenagem.AsNoTracking()
                 .Select(e => new NivelArmazenagemTableRow
                 {
-                    IdNivelArmazenagem = e.IdNivelArmazenagem
-                    // TODO: Todas as propriedades da classe NivelArmazenagemTableRow devem ser setadas aqui
+                    IdNivelArmazenagem = e.IdNivelArmazenagem,
+                    Ativo = e.Ativo,
+                    Descricao = e.Descricao
                 });
 
-            // TODO: Todas as propriedades existentes na class NivelArmazenagemFilter deve conter um where aqui, considere o código a seguir como exemplo
-            //if (!string.IsNullOrEmpty(filter.CustomFilter.Name))
-            //{
-            //query = query.Where(x => x.Name.Contains(filter.CustomFilter.Name));
-            //}
+            query = query.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.Descricao), x => x.Descricao.Contains(filter.CustomFilter.Descricao));
+            query = query.WhereIf(filter.CustomFilter.Ativo.HasValue, x => x.Ativo == filter.CustomFilter.Ativo);
 
             // Quantidade total de registros com filtros aplicados, sem Skip() e Take().
             totalRecordsFiltered = query.Count();
 
-            query = query
-                .OrderBy(filter.OrderByColumn, filter.OrderByDirection)
-                .Skip(filter.Start)
-                .Take(filter.Length);
-
-            return query.ToList();
+            return query.PaginationResult(filter);
         }
 
         public IList<NivelArmazenagemPesquisaModalListaLinhaTabela> BuscarListaModal(DataTableFilter<NivelArmazenagemPesquisaModalFiltro> filtros, out int registrosFiltrados, out int totalRegistros)
         {
-            totalRegistros = Entities.NivelArmazenagem.Where(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa).Count();
+            totalRegistros = Entities.NivelArmazenagem.Count(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa);
 
             var query = Entities.NivelArmazenagem
-                .Where(w => 
-                w.IdEmpresa == filtros.CustomFilter.IdEmpresa && 
+                .Where(w =>
+                w.IdEmpresa == filtros.CustomFilter.IdEmpresa &&
                 //(filtros.CustomFilter.Descricao.Equals(string.Empty) || w.Descricao.Contains(filtros.CustomFilter.Descricao)) &&
                 (!filtros.CustomFilter.Ativo.HasValue || w.Ativo == filtros.CustomFilter.Ativo.Value))
                 .Select(s => new NivelArmazenagemPesquisaModalListaLinhaTabela

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ExtensionMethods.String;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Web.Backoffice.Models.NivelArmazenagemCtx;
@@ -10,7 +11,8 @@ namespace FWLog.Web.Backoffice.Mapping
     {
         public NivelArmazenagemProfile()
         {
-            CreateMap<NivelArmazenagemTableRow, NivelArmazenagemListItemViewModel>();
+            CreateMap<NivelArmazenagemTableRow, NivelArmazenagemListItemViewModel>()
+                .ForMember(x => x.Ativo, op => op.MapFrom(x => x.Ativo.BooleanResource()));
 
             CreateMap<NivelArmazenagem, NivelArmazenagemCreateViewModel>().ReverseMap();
 

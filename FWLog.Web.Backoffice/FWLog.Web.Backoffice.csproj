@@ -254,6 +254,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>BORecebimentoNotaStrings.resx</DependentUpon>
     </Compile>
+    <Compile Include="GlobalResources\NivelArmazenagem\NivelArmazenagemStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>NivelArmazenagemStrings.resx</DependentUpon>
+    </Compile>
     <Compile Include="GlobalResources\PrinterType\PrinterTypeStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -313,6 +318,11 @@
       <CustomToolNamespace>Resources</CustomToolNamespace>
     </EmbeddedResource>
     <Content Include="favicon.ico" />
+    <EmbeddedResource Include="GlobalResources\NivelArmazenagem\NivelArmazenagemStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>NivelArmazenagemStrings.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Resources</CustomToolNamespace>
+    </EmbeddedResource>
     <Content Include="Scripts\dart\autoComplete.js" />
     <Content Include="Scripts\dart\empresa.js" />
     <Content Include="Scripts\dart\documentReady.js" />
@@ -472,7 +482,6 @@
     <Content Include="Views\PontoArmazenagem\Index.cshtml" />
     <Content Include="Views\NivelArmazenagem\Create.cshtml" />
     <Content Include="Views\NivelArmazenagem\Delete.cshtml" />
-    <Content Include="Views\NivelArmazenagem\Details.cshtml" />
     <Content Include="Views\NivelArmazenagem\Edit.cshtml" />
     <Content Include="Views\NivelArmazenagem\Index.cshtml" />
     <Content Include="Views\PontoArmazenagem\Cadastrar.cshtml" />

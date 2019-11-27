@@ -8,7 +8,7 @@
 
         public string Descricao { get; set; }
 
-        public int Ativo { get; set; }
+        public bool Ativo { get; set; }
 
     }
 }
