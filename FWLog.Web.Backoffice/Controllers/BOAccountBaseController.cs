@@ -1,10 +1,10 @@
-﻿using FWLog.AspNet.Identity;
+﻿using DartDigital.Library.Web.ActionFilters;
+using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BOAccountBaseCtx;
-using DartDigital.Library.Exceptions;
-using DartDigital.Library.Web.ActionFilters;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
@@ -13,20 +13,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using System.Web.Security;
 using Res = Resources.BOAccountBaseStrings;
-using FWLog.Data.Models;
-using FWLog.Web.Backoffice.EnumsAndConsts;
-using System.Collections.Generic;
-using FWLog.Data.Models.GeneralCtx;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
     [AllowAnonymous]
     public class BOAccountBaseController : BOBaseController
     {
-        UnitOfWork _uow;
-        BOAccountService _boAccountService;
+        private UnitOfWork _uow;
+        private BOAccountService _boAccountService;
 
         public BOAccountBaseController(UnitOfWork uow, BOAccountService boAccountService)
         {
@@ -37,7 +32,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [AnonymousOnly]
         public ActionResult LogOn(string l = null)
         {
-            if (!String.IsNullOrEmpty(l))
+            if (!string.IsNullOrEmpty(l))
             {
                 CultureManager.SetCulture(Thread.CurrentThread, HttpContext, l);
             }
@@ -209,7 +204,7 @@ namespace FWLog.Web.Backoffice.Controllers
             int totalMinutes = (int)timeLeft.TotalMinutes;
 
             int displayMinutes = isExactMinute ? totalMinutes : (totalMinutes + 1);
-            string message = String.Format(Res.SignInLockedOutMessage, displayMinutes);
+            string message = string.Format(Res.SignInLockedOutMessage, displayMinutes);
             return message;
 
         }
@@ -240,12 +235,12 @@ namespace FWLog.Web.Backoffice.Controllers
                 _uow.SaveChanges();
 
                 applicationUser.IdApplicationSession = applicationSession.IdApplicationSession;
-                
+
                 CookieSalvarEmpresa(idEmpresa, applicationUser.Id);
 
                 UserManager.Update(applicationUser);
             }
-            catch (Exception e) { }
+            catch (Exception) { }
         }
     }
 }
