@@ -302,6 +302,7 @@
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemDetalhesViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemEditarViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemListaViewModel.cs" />
+    <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeCreateViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeDetailsViewModel.cs" />
     <Compile Include="Models\PrinterTypeCtx\PrinterTypeListViewModel.cs" />
@@ -458,6 +459,7 @@
     <Content Include="Scripts\Views\PontoArmazenagem\editar.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\index.js" />
+    <Content Include="Scripts\Views\PontoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\PrinterType\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
@@ -491,6 +493,7 @@
     <Content Include="Views\NivelArmazenagem\PesquisaModal.cshtml" />
     <Content Include="Views\PontoArmazenagem\Detalhes.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\Index.cshtml" />
+    <Content Include="Views\PontoArmazenagem\PesquisaModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

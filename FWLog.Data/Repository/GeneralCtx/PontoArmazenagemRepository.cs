@@ -42,5 +42,31 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return query.ToList();
         }
+
+        public IList<PontoArmazenagemPesquisaModalListaLinhaTabela> BuscarListaModal(DataTableFilter<PontoArmazenagemPesquisaModalFiltro> filtros, out int registrosFiltrados, out int totalRegistros)
+        {
+            totalRegistros = Entities.PontoArmazenagem.Count(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa);
+
+            var query = Entities.PontoArmazenagem
+                .Where(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa &&
+                (filtros.CustomFilter.Descricao.Equals(string.Empty) || w.Descricao.Contains(filtros.CustomFilter.Descricao)) &&
+                (filtros.CustomFilter.Status.HasValue == false || w.Ativo == filtros.CustomFilter.Status.Value))
+                .Select(s => new PontoArmazenagemPesquisaModalListaLinhaTabela
+                {
+                    IdPontoArmazenagem = s.IdPontoArmazenagem,
+                    PontoArmazenagem = s.Descricao,
+                    NivelArmazenagem = s.NivelArmazenagem.Descricao,
+                    Status = s.Ativo ? "Ativo" : "Inativo"
+                });
+
+            registrosFiltrados = query.Count();
+
+            query = query
+                .OrderBy(filtros.OrderByColumn, filtros.OrderByDirection)
+                .Skip(filtros.Start)
+                .Take(filtros.Length);
+
+            return query.ToList();
+        }
     }
 }

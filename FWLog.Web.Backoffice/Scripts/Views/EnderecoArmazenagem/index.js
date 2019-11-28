@@ -76,6 +76,17 @@
         $("#Filtros_DescricaoNivelArmazenagem").val("");
         $("#Filtros_IdNivelArmazenagem").val("");
     });
+
+    $("#pesquisarPontoArmazenagem").click(function () {
+        $("#modalPesquisaPontoArmazenagem").load("PontoArmazenagem/PesquisaModal", function () {
+            $("#modalPesquisaPontoArmazenagem").modal();
+        });
+    });
+
+    $("#limparPontoArmazenagem").click(function () {
+        $("#Filtros_DescricaoPontoArmazenagem").val("");
+        $("#Filtros_IdPontoArmazenagem").val("");
+    });
 })();
 
 function selecionarNivelArmazenagem(idNivelArmazenagem, descricao) {
@@ -83,4 +94,11 @@ function selecionarNivelArmazenagem(idNivelArmazenagem, descricao) {
     $("#Filtros_IdNivelArmazenagem").val(idNivelArmazenagem);
     $("#modalPesquisaNivelArmazenagem").modal("hide");
     $("#modalPesquisaNivelArmazenagem").empty();
+}
+
+function selecionarPontoArmazenagem(idPontoArmazenagem, descricao) {
+    $("#Filtros_DescricaoPontoArmazenagem").val(descricao);
+    $("#Filtros_IdPontoArmazenagem").val(idPontoArmazenagem);
+    $("#modalPesquisaPontoArmazenagem").modal("hide");
+    $("#modalPesquisaPontoArmazenagem").empty();
 }
