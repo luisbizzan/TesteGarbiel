@@ -23,7 +23,7 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             totalRecords = Entities.NivelArmazenagem.Count();
 
-            IQueryable<NivelArmazenagemTableRow> query = Entities.NivelArmazenagem.AsNoTracking()
+            IQueryable<NivelArmazenagemTableRow> query = Entities.NivelArmazenagem.AsNoTracking().Where(x => x.IdEmpresa == filter.CustomFilter.IdEmpresa)
                 .Select(e => new NivelArmazenagemTableRow
                 {
                     IdNivelArmazenagem = e.IdNivelArmazenagem,
@@ -45,7 +45,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRegistros = Entities.NivelArmazenagem.Count(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa);
 
             var query = Entities.NivelArmazenagem
-                .Where(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa && 
+                .Where(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa &&
                 (filtros.CustomFilter.Descricao.Equals(string.Empty) || w.Descricao.Contains(filtros.CustomFilter.Descricao)) &&
                 (filtros.CustomFilter.Status.HasValue == false || w.Ativo == filtros.CustomFilter.Status.Value))
                 .Select(s => new NivelArmazenagemPesquisaModalListaLinhaTabela

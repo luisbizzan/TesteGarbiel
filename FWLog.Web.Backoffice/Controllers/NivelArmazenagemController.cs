@@ -64,6 +64,8 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var filter = Mapper.Map<DataTableFilter<NivelArmazenagemFilter>>(model);
 
+            filter.CustomFilter.IdEmpresa = IdEmpresa;
+
             IEnumerable<NivelArmazenagemTableRow> result = _unitOfWork.NivelArmazenagemRepository.SearchForDataTable(filter, out int recordsFiltered, out int totalRecords);
 
             return DataTableResult.FromModel(new DataTableResponseModel

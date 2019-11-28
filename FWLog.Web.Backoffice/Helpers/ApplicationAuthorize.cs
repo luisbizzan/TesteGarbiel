@@ -4,7 +4,7 @@ using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Helpers
 {
-    public class ApplicationAuthorize : AuthorizeAttribute
+    public sealed class ApplicationAuthorize : AuthorizeAttribute
     {
         public string Permissions { get; set; }
 

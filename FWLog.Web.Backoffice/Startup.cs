@@ -1,15 +1,11 @@
 ﻿using FWLog.AspNet.Identity;
 using FWLog.Web.Backoffice.App_Start;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
-using Owin;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Web;
-using System.Linq;
 using FWLog.Web.Backoffice.EnumsAndConsts;
+using Microsoft.AspNet.Identity;
+using Owin;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Identity
 {
@@ -25,7 +21,7 @@ namespace Identity
             ConfigureAuth(app);
         }
 
-        static void InitializePermissionManager()
+        private static void InitializePermissionManager()
         {
             BackofficeUserManager userManager;
             ApplicationRoleManager roleManager;
@@ -37,13 +33,13 @@ namespace Identity
             }
         }
 
-        static void CreatePermissions(ApplicationRoleManager roleManager)
+        private static void CreatePermissions(ApplicationRoleManager roleManager)
         {
             Permissions permissions = new Permissions();
             PermissionManager.CreatePermissionsIfNotExists(builder: permissions, roleManager: roleManager);
         }
 
-        static void CreateAdminUser(BackofficeUserManager userManager)
+        private static void CreateAdminUser(BackofficeUserManager userManager)
         {
             string email = App.UserName;
 
