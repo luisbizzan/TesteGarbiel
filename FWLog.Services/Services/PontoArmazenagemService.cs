@@ -27,5 +27,13 @@ namespace FWLog.Services.Services
 
             return pontoArmazenagem;
         }
+
+        public void Excluir(long idPontoArmazenagem)
+        {
+            PontoArmazenagem pontoArmazenagem = _unitOfWork.PontoArmazenagemRepository.GetById(idPontoArmazenagem);
+
+            _unitOfWork.PontoArmazenagemRepository.Delete(pontoArmazenagem);
+            _unitOfWork.SaveChanges();
+        }
     }
 }

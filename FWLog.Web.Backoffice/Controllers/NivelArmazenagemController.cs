@@ -172,9 +172,8 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 Status = new SelectList(new List<SelectListItem>
                 {
-                    new SelectListItem { Text = "Todos", Value = ""},
                     new SelectListItem { Text = "Ativo", Value = "1"},
-                    new SelectListItem { Text = "Inativo", Value = "2"}
+                    new SelectListItem { Text = "Inativo", Value = "0"}
                 }, "Value", "Text")
             };
 

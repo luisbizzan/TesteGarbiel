@@ -52,6 +52,19 @@
     $('#dataTable').DataTable(options);
     dart.dataTables.loadFormFilterEvents();
 
+    $('#dataTable').on('click', '[data-delete-url]', function () {
+        var table = $(this).closest('table');
+
+        dart.modalAjaxDelete.open({
+            title: 'Excluir Ponto de Armazenagem',
+            message: 'Somente Pontos de Armazenagem não utilizados podem ser excluídos. Deseja continuar?',
+            deleteUrl: $(this).attr('data-delete-url'),
+            onConfirm: function () {
+                table.DataTable().ajax.reload(null, false);
+            }
+        });
+    });
+
     $("#pesquisarNivelArmazenagem").click(function () {
         $("#modalPesquisaNivelArmazenagem").load("NivelArmazenagem/PesquisaModal", function () {
             $("#modalPesquisaNivelArmazenagem").modal();
@@ -69,5 +82,4 @@ function selecionarNivelArmazenagem(idNivelArmazenagem, descricao) {
     $("#Filtros_IdNivelArmazenagem").val(idNivelArmazenagem);
     $("#modalPesquisaNivelArmazenagem").modal("hide");
     $("#modalPesquisaNivelArmazenagem").empty();
-
 }

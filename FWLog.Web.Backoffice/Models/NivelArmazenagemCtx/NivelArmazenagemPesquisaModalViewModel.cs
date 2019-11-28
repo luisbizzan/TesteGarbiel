@@ -32,6 +32,6 @@ namespace FWLog.Web.Backoffice.Models.NivelArmazenagemCtx
         [Display(Name = "Descrição")]
         public string Descricao { get; set; }
         [Display(Name = "Status")]
-        public bool? Status { get; set; }
+        public int? Status { get; set; }
     }
 }

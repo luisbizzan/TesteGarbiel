@@ -176,5 +176,29 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return View(viewModel);
         }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.PontoArmazenagem.Excluir)]
+        public JsonResult ExcluirAjax(int id)
+        {
+            try
+            {
+                _pontoArmazenagemService.Excluir(id);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
+                }, JsonRequestBehavior.DenyGet);
+            }
+            catch
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = Resources.CommonStrings.RegisterHasRelationshipsErrorMessage
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
     }
 }
