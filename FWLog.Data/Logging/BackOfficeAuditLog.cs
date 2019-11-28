@@ -1,23 +1,22 @@
-﻿using FWLog.Data.EnumsAndConsts;
-using DartDigital.Library.Helpers;
+﻿using DartDigital.Library.Helpers;
+using FWLog.Data.EnumsAndConsts;
+using FWLog.Data.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
-using FWLog.Data.Models;
 
 namespace FWLog.Data.Logging
 {
     public class BackOfficeAuditLog : IAuditLog
     {
         public Guid ScopeIdentifier { get; private set; }
-        IBackOfficeUserInfo _userInfo;
+
+        private IBackOfficeUserInfo _userInfo;
 
         public BackOfficeAuditLog(IBackOfficeUserInfo userInfo)
         {
@@ -109,7 +108,7 @@ namespace FWLog.Data.Logging
 
             var oldEntity = Activator.CreateInstance(entityTrueType);
             var entityName = entityTrueType.Name;
-           
+
             var logAttr = entityTrueType.GetCustomAttributes(typeof(LogAttribute), false).FirstOrDefault();
 
             if (logAttr == null)
@@ -135,7 +134,7 @@ namespace FWLog.Data.Logging
                 foreach (var property in entry.CurrentValues.PropertyNames)
                 {
                     var propertyInfo = entityTrueType.GetProperty(property);
-                    
+
                     LogAttribute propLogAttr = (LogAttribute)propertyInfo.GetCustomAttributes(typeof(LogAttribute), false).FirstOrDefault();
 
                     if (propLogAttr == null)
@@ -177,7 +176,7 @@ namespace FWLog.Data.Logging
                         continue;
                     }
 
-                    Object valueProperty = null;
+                    object valueProperty = null;
 
                     if (actionType == ActionTypeNames.Delete.Value)
                     {
@@ -226,11 +225,11 @@ namespace FWLog.Data.Logging
             return boLogSystem;
         }
 
-        public Object FormatValueForJson(PropertyInfo propertyInfo, Object currentValueProperty)
+        public object FormatValueForJson(PropertyInfo propertyInfo, object currentValueProperty)
         {
-            Object value = currentValueProperty;
+            object value = currentValueProperty;
 
-            if (propertyInfo.PropertyType == typeof(string) || propertyInfo.PropertyType == typeof(String) || propertyInfo.PropertyType == typeof(TimeSpan)
+            if (propertyInfo.PropertyType == typeof(string) || propertyInfo.PropertyType == typeof(string) || propertyInfo.PropertyType == typeof(TimeSpan)
                 || propertyInfo.PropertyType == typeof(TimeSpan?) || propertyInfo.PropertyType == typeof(Guid) || propertyInfo.PropertyType == typeof(Guid?))
             {
                 value = currentValueProperty == null ? "\"\"" : "\"" + currentValueProperty + "\"";
@@ -247,7 +246,7 @@ namespace FWLog.Data.Logging
                     value = currentValueProperty == null ? "\"\"" : "\"" + currentValueProperty + "\"";
                 }
             }
-            else if (propertyInfo.PropertyType == typeof(Boolean) || propertyInfo.PropertyType == typeof(Boolean?) ||
+            else if (propertyInfo.PropertyType == typeof(bool) || propertyInfo.PropertyType == typeof(bool?) ||
                 propertyInfo.PropertyType == typeof(bool) || propertyInfo.PropertyType == typeof(bool?))
             {
                 if (currentValueProperty != null)
@@ -270,7 +269,7 @@ namespace FWLog.Data.Logging
             return value;
         }
 
-        public string PreparePropertyValue(Object propertyValue)
+        public string PreparePropertyValue(object propertyValue)
         {
             string preparedValue = "(Vazio)";
 

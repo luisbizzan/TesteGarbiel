@@ -340,6 +340,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Não foi possível criar este registro..
+        /// </summary>
+        public static string RegisterCreatedErrorMessage {
+            get {
+                return ResourceManager.GetString("RegisterCreatedErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Registro criado com sucesso..
         /// </summary>
         public static string RegisterCreatedSuccessMessage {
@@ -354,6 +363,15 @@ namespace Resources {
         public static string RegisterDeletedSuccessMessage {
             get {
                 return ResourceManager.GetString("RegisterDeletedSuccessMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Não foi possível editar o registro..
+        /// </summary>
+        public static string RegisterEditedErrorMessage {
+            get {
+                return ResourceManager.GetString("RegisterEditedErrorMessage", resourceCulture);
             }
         }
         
