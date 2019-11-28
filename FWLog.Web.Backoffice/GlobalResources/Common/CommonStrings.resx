@@ -249,4 +249,10 @@
   <data name="PrinterTypeMenuItem" xml:space="preserve">
     <value>Tipos de impressora</value>
   </data>
+  <data name="RegisterEditedErrorMessage" xml:space="preserve">
+    <value>Não foi possível editar o registro.</value>
+  </data>
+  <data name="RegisterCreatedErrorMessage" xml:space="preserve">
+    <value>Não foi possível criar este registro.</value>
+  </data>
 </root>

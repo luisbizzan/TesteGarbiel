@@ -21,8 +21,6 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public IList<NivelArmazenagemTableRow> SearchForDataTable(DataTableFilter<NivelArmazenagemFilter> filter, out int totalRecordsFiltered, out int totalRecords)
         {
-            totalRecords = Entities.NivelArmazenagem.Count();
-
             IQueryable<NivelArmazenagemTableRow> query = Entities.NivelArmazenagem.AsNoTracking().Where(x => x.IdEmpresa == filter.CustomFilter.IdEmpresa)
                 .Select(e => new NivelArmazenagemTableRow
                 {
@@ -30,6 +28,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                     Ativo = e.Ativo,
                     Descricao = e.Descricao
                 });
+
+            totalRecords = query.Count();
 
             query = query.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.Descricao), x => x.Descricao.Contains(filter.CustomFilter.Descricao));
             query = query.WhereIf(filter.CustomFilter.Ativo.HasValue, x => x.Ativo == filter.CustomFilter.Ativo);
