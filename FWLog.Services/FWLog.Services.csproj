@@ -128,6 +128,7 @@
     <Compile Include="Services\ApplicationLogService.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\EmpresaService.cs" />
+    <Compile Include="Services\EnderecoArmazenagemService.cs" />
     <Compile Include="Services\LoteService.cs" />
     <Compile Include="Services\NivelArmazenagemService.cs" />
     <Compile Include="Services\NotaFiscalService.cs" />

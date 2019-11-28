@@ -109,11 +109,14 @@
     <Compile Include="Models\AspNetPermissions.cs" />
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
+    <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\NivelArmazenagemPesquisaModalListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\NivelArmazenagemTableRow.cs" />
     <Compile Include="Models\DataTablesCtx\PontoArmazenagemListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\PrinterTypeTableRow.cs" />
     <Compile Include="Models\EmpresaTipo.cs" />
+    <Compile Include="Models\EnderecoArmazenagem.cs" />
+    <Compile Include="Models\FilterCtx\EnderecoArmazenagemListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\NivelArmazenagemFilter.cs" />
     <Compile Include="Models\FilterCtx\NivelArmazenagemPesquisaModalFiltro.cs" />
     <Compile Include="Models\FilterCtx\PontoArmazenagemListaFiltro.cs" />
@@ -166,6 +169,7 @@
     <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />
     <Compile Include="Repository\GeneralCtx\EmpresaTipoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\EnderecoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\FreteTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\FornecedorRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteRepository.cs" />

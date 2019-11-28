@@ -231,6 +231,7 @@
     <Compile Include="App_Start\NinjectModules\GeneralModule.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
+    <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\NivelArmazenagemController.cs" />
     <Compile Include="Controllers\PontoArmazenagemController.cs" />
     <Compile Include="Controllers\BOPrinterController.cs" />
@@ -273,6 +274,7 @@
     <Compile Include="Helpers\HtmlRequestHelper.cs" />
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
+    <Compile Include="Mapping\EnderecoArmazenagemProfile.cs" />
     <Compile Include="Mapping\NivelArmazenagemProfile.cs" />
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
     <Compile Include="Mapping\PrinterTypeProfile.cs" />
@@ -291,6 +293,7 @@
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirRelatorioNotasViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORegistroRecebimentoViewModel.cs" />
+    <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemCreateViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemDetailsViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemListViewModel.cs" />
@@ -339,7 +342,6 @@
     <Compile Include="Controllers\BOLogSystemController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\BOGroupController.cs" />
-    <Compile Include="Controllers\ExampleController.cs" />
     <Compile Include="EnumsAndConsts\FileUploadDefinitions.cs" />
     <Compile Include="EnumsAndConsts\App.cs" />
     <Compile Include="GlobalResources\ApplicationLog\ApplicationLogStrings.Designer.cs">
@@ -436,11 +438,6 @@
     <Compile Include="Models\BOGroupCtx\BOGroupCreateViewModel.cs" />
     <Compile Include="Models\BOGroupCtx\BOGroupDetailsViewModel.cs" />
     <Compile Include="Models\BOGroupCtx\BOGroupListViewModel.cs" />
-    <Compile Include="Models\ExampleCtx\AutoCompleteViewModel.cs" />
-    <Compile Include="Models\ExampleCtx\ImageCropUpload.cs" />
-    <Compile Include="Models\ExampleCtx\MultiSelectModel.cs" />
-    <Compile Include="Models\ExampleCtx\TesteValidacaoViewModel.cs" />
-    <Compile Include="Models\ExampleCtx\UploadModel.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -455,6 +452,7 @@
     <Content Include="Scripts\Views\BOQuarentena\index.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\detalhesEntradaConferencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\index.js" />
+    <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\editar.js" />
@@ -492,6 +490,7 @@
     <Content Include="Views\PontoArmazenagem\Editar.cshtml" />
     <Content Include="Views\NivelArmazenagem\PesquisaModal.cshtml" />
     <Content Include="Views\PontoArmazenagem\Detalhes.cshtml" />
+    <Content Include="Views\EnderecoArmazenagem\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

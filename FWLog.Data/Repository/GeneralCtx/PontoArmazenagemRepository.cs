@@ -33,11 +33,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                     TipoMovimentacao = s.TipoMovimentacao.Descricao
                 });
 
-            if (!string.IsNullOrEmpty(model.CustomFilter.Descricao))
-            {
-                query = query.Where(x => x.Descricao.Contains(model.CustomFilter.Descricao));
-            }
-
             totalRecordsFiltered = query.Count();
 
             query = query
