@@ -10,7 +10,6 @@ using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.PontoArmazenagemCtx;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -199,6 +198,40 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = Resources.CommonStrings.RegisterHasRelationshipsErrorMessage
                 }, JsonRequestBehavior.DenyGet);
             }
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize]
+        public ActionResult PesquisaModal()
+        {
+            var viewModel = new PontoArmazenagemPesquisaModalViewModel
+            {
+                Status = new SelectList(new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Ativo", Value = "1"},
+                    new SelectListItem { Text = "Inativo", Value = "0"}
+                }, "Value", "Text")
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize]
+        public ActionResult PesquisaModalDadosLista(DataTableFilter<PontoArmazenagemPesquisaModalFiltroViewModel> model)
+        {
+            var filtros = Mapper.Map<DataTableFilter<PontoArmazenagemPesquisaModalFiltro>>(model);
+            filtros.CustomFilter.IdEmpresa = IdEmpresa;
+
+            IEnumerable<PontoArmazenagemPesquisaModalListaLinhaTabela> result = _unitOfWork.PontoArmazenagemRepository.BuscarListaModal(filtros, out int registrosFiltrados, out int totalRegistros);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
+                Data = Mapper.Map<IEnumerable<PontoArmazenagemPesquisaModalItemViewModel>>(result)
+            });
         }
     }
 }

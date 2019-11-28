@@ -116,6 +116,7 @@
     <Compile Include="Models\DataTablesCtx\NivelArmazenagemPesquisaModalListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\NivelArmazenagemTableRow.cs" />
     <Compile Include="Models\DataTablesCtx\PontoArmazenagemListaLinhaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\PontoArmazenagemPesquisaModalListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\PrinterTypeTableRow.cs" />
     <Compile Include="Models\EmpresaTipo.cs" />
     <Compile Include="Models\EnderecoArmazenagem.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="Models\FilterCtx\NivelArmazenagemFilter.cs" />
     <Compile Include="Models\FilterCtx\NivelArmazenagemPesquisaModalFiltro.cs" />
     <Compile Include="Models\FilterCtx\PontoArmazenagemListaFiltro.cs" />
+    <Compile Include="Models\FilterCtx\PontoArmazenagemPesquisaModalFiltro.cs" />
     <Compile Include="Models\FilterCtx\PrinterTypeFilter.cs" />
     <Compile Include="Models\NivelArmazenagem.cs" />
     <Compile Include="Models\NotaFiscal.cs" />
