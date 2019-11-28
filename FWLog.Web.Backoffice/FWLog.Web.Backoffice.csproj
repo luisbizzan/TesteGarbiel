@@ -293,6 +293,7 @@
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirRelatorioNotasViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORegistroRecebimentoViewModel.cs" />
+    <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemCadastroViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemCreateViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemDetailsViewModel.cs" />
@@ -453,6 +454,7 @@
     <Content Include="Scripts\Views\BOQuarentena\index.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\detalhesEntradaConferencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\index.js" />
+    <Content Include="Scripts\Views\EnderecoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\pesquisaModal.js" />
@@ -494,6 +496,7 @@
     <Content Include="Views\PontoArmazenagem\Detalhes.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\Index.cshtml" />
     <Content Include="Views\PontoArmazenagem\PesquisaModal.cshtml" />
+    <Content Include="Views\EnderecoArmazenagem\Cadastrar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

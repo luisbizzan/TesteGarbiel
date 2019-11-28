@@ -61,5 +61,17 @@ namespace FWLog.Web.Backoffice.Controllers
                 Data = Mapper.Map<IEnumerable<EnderecoArmazenagemListaItemViewModel>>(result)
             });
         }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.EnderecoArmazenagem.Cadastrar)]
+        public ActionResult Cadastrar()
+        {
+            var viewModel = new EnderecoArmazenagemCadastroViewModel
+            {
+
+            };
+
+            return View(viewModel);
+        }
     }
 }
