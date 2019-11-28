@@ -4,17 +4,14 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace FWLog.Web.Backoffice.App_Start
 {
     public class BackofficeUserManager : ApplicationUserManager
     {
-        private ApplicationUserStore _appUserStore;
+        private readonly ApplicationUserStore _appUserStore;
 
         public BackofficeUserManager(ApplicationUserStore store)
             : base(store)

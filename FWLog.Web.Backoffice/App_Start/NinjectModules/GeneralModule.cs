@@ -4,11 +4,6 @@ using FWLog.Services.Interfaces;
 using FWLog.Web.Backoffice.Helpers;
 using log4net;
 using Ninject.Modules;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Web;
 using Ninject.Web.Common;
 
 namespace FWLog.Web.Backoffice.App_Start.NinjectModules
