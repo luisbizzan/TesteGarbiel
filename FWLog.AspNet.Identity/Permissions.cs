@@ -116,10 +116,10 @@ namespace FWLog.AspNet.Identity
 
             public PontoArmazenagem() : base(Display.FromString("Pontos de Armazenagem"))
             {
-                Register(Listar, Display.FromString("Listar Pontos de Armazenagem"));
-                Register(Cadastrar, Display.FromString("Cadastrar Ponto de Armazenagem"));
-                Register(Editar, Display.FromString("Editar Ponto de Armazenagem"));
-                Register(Excluir, Display.FromString("Excluir Ponto de Armazenagem"));
+                Register(Listar, Display.FromString("Listar Pontos"));
+                Register(Cadastrar, Display.FromString("Cadastrar Ponto"));
+                Register(Editar, Display.FromString("Editar Ponto"));
+                Register(Excluir, Display.FromString("Excluir Ponto"));
             }
         }
 
@@ -147,6 +147,24 @@ namespace FWLog.AspNet.Identity
                 Register(Create, Display.FromResource(nameof(Res.Create)));
                 Register(Edit, Display.FromResource(nameof(Res.Edit)));
                 Register(Delete, Display.FromResource(nameof(Res.Delete)));
+            }
+        }
+
+        public class EnderecoArmazenagem : PermissionGroupBuildItem
+        {
+            public const string Listar = "EnderecoArmazenagemListar";
+            public const string Cadastrar = "EnderecoArmazenagemCadastrar";
+            public const string Editar = "EnderecoArmazenagemEditar";
+            public const string Excluir = "EnderecoArmazenagemExcluir";
+            public const string Visualizar = "EnderecoArmazenagemVisualizar";
+
+            public EnderecoArmazenagem() : base(Display.FromString("Endereços de Armazenagem"))
+            {
+                Register(Listar, Display.FromString("Listar Endereços"));
+                Register(Cadastrar, Display.FromString("Cadastrar Endereços"));
+                Register(Editar, Display.FromString("Editar Endereços"));
+                Register(Excluir, Display.FromString("Excluir Endereços"));
+                Register(Visualizar, Display.FromString("Visualizar Endereços"));
             }
         }
     }
