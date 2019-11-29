@@ -49,6 +49,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             var query = Entities.PontoArmazenagem
                 .Where(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa &&
+                (filtros.CustomFilter.IdNivelArmazenagem.HasValue == false || w.IdNivelArmazenagem == filtros.CustomFilter.IdNivelArmazenagem.Value) &&
                 (filtros.CustomFilter.Descricao.Equals(string.Empty) || w.Descricao.Contains(filtros.CustomFilter.Descricao)) &&
                 (filtros.CustomFilter.Status.HasValue == false || w.Ativo == filtros.CustomFilter.Status.Value))
                 .Select(s => new PontoArmazenagemPesquisaModalListaLinhaTabela

@@ -20,7 +20,7 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
     public class PontoArmazenagemPesquisaModalItemViewModel
     {
         [Display(Name = "Código")]
-        public int IdPontoArmazenagem { get; set; }
+        public long IdPontoArmazenagem { get; set; }
         [Display(Name = "Nível")]
         public string NivelArmazenagem { get; set; }
         [Display(Name = "Ponto")]
@@ -31,6 +31,7 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
 
     public class PontoArmazenagemPesquisaModalFiltroViewModel
     {
+        public long? IdNivelArmazenagem { get; set; }
         [Display(Name = "Ponto de Armazenagem")]
         public string Descricao { get; set; }
         [Display(Name = "Status")]

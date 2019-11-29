@@ -19,6 +19,8 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly UnitOfWork _unitOfWork;
         private readonly PontoArmazenagemService _pontoArmazenagemService;
 
+        public object Filtros { get; private set; }
+
         public PontoArmazenagemController (
             UnitOfWork unitOfWork,
             PontoArmazenagemService pontoArmazenagemService)
@@ -202,7 +204,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpGet]
         [ApplicationAuthorize]
-        public ActionResult PesquisaModal()
+        public ActionResult PesquisaModal(long? id)
         {
             var viewModel = new PontoArmazenagemPesquisaModalViewModel
             {
@@ -210,8 +212,11 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     new SelectListItem { Text = "Ativo", Value = "1"},
                     new SelectListItem { Text = "Inativo", Value = "0"}
-                }, "Value", "Text")
+                }, "Value", "Text"),
+                
             };
+
+            viewModel.Filtros.IdNivelArmazenagem = id;
 
             return View(viewModel);
         }

@@ -1,6 +1,8 @@
 ﻿(function () {
     $.validator.setDefaults({ ignore: [] });
 
+    $("#Codigo").mask("#0.S.#0.#0", { reverse: false });
+
     $("#pesquisarNivelArmazenagem").click(function () {
         $("#modalPesquisaNivelArmazenagem").load("/NivelArmazenagem/PesquisaModal", function () {
             $("#modalPesquisaNivelArmazenagem").modal();
@@ -11,6 +13,12 @@
         $("#DescricaoNivelArmazenagem").val("");
         $("#IdNivelArmazenagem").val("");
         $("#IdNivelArmazenagem").valid();
+
+        if ($("#IdPontoArmazenagem").val() !== "") {
+            $("#DescricaoPontoArmazenagem").val("");
+            $("#IdPontoArmazenagem").val("");
+            $("#IdPontoArmazenagem").valid();
+        }
     });
 
     $("#pesquisarPontoArmazenagem").click(function () {
@@ -19,9 +27,15 @@
             return;
         }
 
-        $("#modalPesquisaNivelArmazenagem").load("/NivelArmazenagem/PesquisaModal", function () {
-            $("#modalPesquisaNivelArmazenagem").modal();
+        $("#modalPesquisaPontoArmazenagem").load("/PontoArmazenagem/PesquisaModal/" + $("#IdNivelArmazenagem").val(), function () {
+            $("#modalPesquisaPontoArmazenagem").modal();
         });
+    });
+
+    $("#limparPontoArmazenagem").click(function () {
+        $("#DescricaoPontoArmazenagem").val("");
+        $("#IdPontoArmazenagem").val("");
+        $("#IdPontoArmazenagem").valid();
     });
 })();
 
@@ -31,4 +45,12 @@ function selecionarNivelArmazenagem(idNivelArmazenagem, descricao) {
     $("#IdNivelArmazenagem").valid();
     $("#modalPesquisaNivelArmazenagem").modal("hide");
     $("#modalPesquisaNivelArmazenagem").empty();
+}
+
+function selecionarPontoArmazenagem(idPontoArmazenagem, descricao) {
+    $("#DescricaoPontoArmazenagem").val(descricao);
+    $("#IdPontoArmazenagem").val(idPontoArmazenagem);
+    $("#IdPontoArmazenagem").valid();
+    $("#modalPesquisaPontoArmazenagem").modal("hide");
+    $("#modalPesquisaPontoArmazenagem").empty();
 }

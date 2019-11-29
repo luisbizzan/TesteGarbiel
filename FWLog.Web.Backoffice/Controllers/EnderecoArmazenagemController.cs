@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
@@ -68,10 +69,28 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var viewModel = new EnderecoArmazenagemCadastroViewModel
             {
-
+                Ativo = true
             };
 
             return View(viewModel);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.EnderecoArmazenagem.Cadastrar)]
+        public ActionResult Cadastrar(EnderecoArmazenagemCadastroViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
+            var enderecoArmazenagem = Mapper.Map<EnderecoArmazenagem>(viewModel);
+            enderecoArmazenagem.IdEmpresa = IdEmpresa;
+
+            _enderecoArmazenagemService.Cadastrar(enderecoArmazenagem);
+
+            Notify.Success("Endereço de Armazenagem cadastrado com sucesso.");
+            return RedirectToAction("Index");
         }
     }
 }

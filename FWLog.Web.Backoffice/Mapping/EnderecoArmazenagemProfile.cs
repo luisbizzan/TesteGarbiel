@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx;
@@ -11,6 +12,7 @@ namespace FWLog.Web.Backoffice.Mapping
         {
             CreateMap<EnderecoArmazenagemListaFilterViewModel, EnderecoArmazenagemListaFiltro>();
             CreateMap<EnderecoArmazenagemListaLinhaTabela, EnderecoArmazenagemListaItemViewModel>();
+            CreateMap<EnderecoArmazenagemCadastroViewModel, EnderecoArmazenagem>();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         [Display(Name = "Estoque Máximo")]
         public int? EstoqueMaximo { get; set; }
         [Required]
-        [Display(Name = "Status")]
+        [Display(Name = "Ativo?")]
         public bool Ativo { get; set; }
 
         public string DescricaoNivelArmazenagem { get; set; }

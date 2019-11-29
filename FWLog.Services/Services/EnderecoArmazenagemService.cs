@@ -1,4 +1,5 @@
 ﻿using FWLog.Data;
+using FWLog.Data.Models;
 
 namespace FWLog.Services.Services
 {
@@ -9,6 +10,22 @@ namespace FWLog.Services.Services
         public EnderecoArmazenagemService(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+        }
+
+        public EnderecoArmazenagem Cadastrar(EnderecoArmazenagem enderecoArmazenagem)
+        {
+            enderecoArmazenagem.Codigo = enderecoArmazenagem.Codigo.ToUpper();
+
+            string[] endereco = enderecoArmazenagem.Codigo.Split('.');
+            enderecoArmazenagem.Corredor = int.Parse(endereco[0]);
+            enderecoArmazenagem.Horizontal = endereco[1];
+            enderecoArmazenagem.Vertical = int.Parse(endereco[2]);
+            enderecoArmazenagem.Divisao = int.Parse(endereco[3]);
+
+            _unitOfWork.EnderecoArmazenagemRepository.Add(enderecoArmazenagem);
+            _unitOfWork.SaveChanges();
+
+            return enderecoArmazenagem;
         }
     }
 }

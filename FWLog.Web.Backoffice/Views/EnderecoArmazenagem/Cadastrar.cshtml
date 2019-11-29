@@ -46,18 +46,44 @@
         <div class="row">
             <div class="form-group col-sm-2 col-xs-12">
                 @Html.LabelFor(m => m.Codigo, new { @class = "control-label" })
-                @Html.TextBoxFor(m => m.Codigo, new { @class = "form-control" })
+                @Html.TextBoxFor(m => m.Codigo, new { @class = "form-control text-uppercase", @placeholder = "00.X.00.00" })
                 @Html.ValidationMessageFor(m => m.Codigo)
+            </div>
+            <div class="form-group col-sm-2 col-xs-12">
+                @Html.LabelFor(m => m.EstoqueMinimo, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.EstoqueMinimo, new { @class = "form-control", })
+                @Html.ValidationMessageFor(m => m.EstoqueMinimo)
+            </div>
+            <div class="form-group col-sm-2 col-xs-12">
+                @Html.LabelFor(m => m.EstoqueMaximo, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.EstoqueMaximo, new { @class = "form-control", })
+                @Html.ValidationMessageFor(m => m.EstoqueMaximo)
+            </div>
+            <div class="form-group col-sm-2 col-xs-12">
+                @Html.LabelFor(m => m.LimitePeso, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.LimitePeso, new { @class = "form-control", })
+                @Html.ValidationMessageFor(m => m.LimitePeso)
             </div>
         </div>
         <div class="row">
             <div class="form-group col-sm-2 col-xs-12">
+                @Html.LabelFor(m => m.IsFifo, new { @class = "control-label" })
+                <div class="checkbox">
+                    @Html.CheckBoxFor(m => m.IsFifo, new { @class = "flat" })
+                </div>
+                @Html.ValidationMessageFor(m => m.IsFifo)
+            </div>
+            <div class="form-group col-sm-2 col-xs-12">
+                @Html.LabelFor(m => m.IsPontoSeparacao, new { @class = "control-label" })
+                <div class="checkbox">
+                    @Html.CheckBoxFor(m => m.IsPontoSeparacao, new { @class = "flat" })
+                </div>
+                @Html.ValidationMessageFor(m => m.IsPontoSeparacao)
+            </div>
+            <div class="form-group col-sm-2 col-xs-12">
                 @Html.LabelFor(m => m.Ativo, new { @class = "control-label" })
                 <div class="checkbox">
-                    <label>
-                        @Html.CheckBoxFor(m => m.Ativo, new { @class = "flat", @style = "position: absolute; opacity: 0;" })
-                        Ativo
-                    </label>
+                    @Html.CheckBoxFor(m => m.Ativo, new { @class = "flat" })
                 </div>
                 @Html.ValidationMessageFor(m => m.Ativo)
             </div>
