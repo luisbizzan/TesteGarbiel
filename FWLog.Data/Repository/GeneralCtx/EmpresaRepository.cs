@@ -32,11 +32,12 @@ namespace FWLog.Data.Repository.GeneralCtx
         public IEnumerable<EmpresaSelectedItem> GetAllByUserId(string userId)
         {
             var empresas = Entities.UsuarioEmpresa.Where(w => w.Empresa.Ativo && w.UserId == userId).OrderBy(o => o.Empresa.RazaoSocial)
-                .Select(s => new { 
+                .Select(s => new
+                {
                     s.Empresa.Sigla,
                     s.Empresa.NomeFantasia,
                     s.Empresa.IdEmpresa
-                    }
+                }
                 ).ToList();
 
             return empresas.Select(s => new EmpresaSelectedItem

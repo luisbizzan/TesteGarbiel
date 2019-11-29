@@ -24,7 +24,7 @@ namespace FWLog.AspNet.Identity
             return _appUserStore.GetPermissionsByIdEmpresaAsync(new ApplicationUser { Id = userId }, idEmpresa);
         }
 
-        public IList<string> GetPermissions(string userId, int idEmpresa)
+        public IList<string> GetPermissions(string userId)
         {
             return _appUserStore.GetPermissionsAsync(new ApplicationUser { Id = userId }).Result;
         }

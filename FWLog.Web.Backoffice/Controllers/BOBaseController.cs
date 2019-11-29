@@ -87,23 +87,14 @@ namespace FWLog.Web.Backoffice.Controllers
             var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
 
             var empresas = uow.EmpresaRepository.GetAllByUserId(userId);
-            var jsonEmpresas = JsonConvert.SerializeObject(empresas);
+            string jsonEmpresas = JsonConvert.SerializeObject(empresas);
 
-            if (cookie == null)
-            {
-                var newCookie = new HttpCookie(EmpresaCookie.CookieName);
-                newCookie.Values[EmpresaCookie.IdEmpresa] = idEmpresa.ToString();
-                newCookie.Values[EmpresaCookie.ListEmpresas] = Server.UrlEncode(jsonEmpresas);
-                newCookie.Expires = DateTime.MaxValue;
-                Response.Cookies.Add(newCookie);
-            }
-            else
-            {
-                cookie.Values[EmpresaCookie.IdEmpresa] = idEmpresa.ToString();
-                cookie.Values[EmpresaCookie.ListEmpresas] = Server.UrlEncode(jsonEmpresas);
-                cookie.Expires = DateTime.MaxValue;
-                Response.Cookies.Add(cookie);
-            }
+            cookie = cookie ?? new HttpCookie(EmpresaCookie.CookieName);
+
+            cookie.Values[EmpresaCookie.IdEmpresa] = idEmpresa.ToString();
+            cookie.Values[EmpresaCookie.ListEmpresas] = Server.UrlEncode(jsonEmpresas);
+            cookie.Expires = DateTime.MaxValue;
+            Response.Cookies.Add(cookie);
         }
 
         public long IdEmpresa
@@ -129,9 +120,9 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName];
 
-                if (cookie != null && cookie[EmpresaCookie.ListEmpresas] != null && !string.IsNullOrEmpty(cookie[EmpresaCookie.ListEmpresas]))
+                if (cookie != null && !string.IsNullOrEmpty(cookie[EmpresaCookie.ListEmpresas]))
                 {
-                    var jsonEmpresas = Server.UrlDecode(cookie[EmpresaCookie.ListEmpresas].ToString());
+                    string jsonEmpresas = Server.UrlDecode(cookie[EmpresaCookie.ListEmpresas]);
                     var empresas = JsonConvert.DeserializeObject<IEnumerable<EmpresaSelectedItem>>(jsonEmpresas);
 
                     return empresas;
