@@ -92,5 +92,64 @@ namespace FWLog.Web.Backoffice.Controllers
             Notify.Success("Endereço de Armazenagem cadastrado com sucesso.");
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.EnderecoArmazenagem.Excluir)]
+        public JsonResult ExcluirAjax(int id)
+        {
+            try
+            {
+                _enderecoArmazenagemService.Excluir(id);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
+                }, JsonRequestBehavior.DenyGet);
+            }
+            catch
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = Resources.CommonStrings.RegisterHasRelationshipsErrorMessage
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.EnderecoArmazenagem.Editar)]
+        public ActionResult Editar(long id)
+        {
+            EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(id);
+
+            var viewModel = Mapper.Map<EnderecoArmazenagemEditarViewModel>(enderecoArmazenagem);
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.EnderecoArmazenagem.Editar)]
+        public ActionResult Editar(EnderecoArmazenagemEditarViewModel viewModel)
+        {
+            var enderecoArmazenagem = Mapper.Map<EnderecoArmazenagem>(viewModel);
+            enderecoArmazenagem.IdEmpresa = IdEmpresa;
+
+            _enderecoArmazenagemService.Editar(enderecoArmazenagem);
+
+            Notify.Success("Endereço de Armazenagem editado com sucesso.");
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.EnderecoArmazenagem.Visualizar)]
+        public ActionResult Detalhes(long id)
+        {
+            EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(id);
+
+            var viewModel = Mapper.Map<EnderecoArmazenagemDetalhesViewModel>(enderecoArmazenagem);
+
+            return View(viewModel);
+        }
     }
 }

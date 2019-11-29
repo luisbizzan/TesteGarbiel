@@ -293,6 +293,8 @@
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORegistroRecebimentoViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemCadastroViewModel.cs" />
+    <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemDetalhesViewModel.cs" />
+    <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemEditarViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemCreateViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemDetailsViewModel.cs" />
@@ -453,6 +455,7 @@
     <Content Include="Scripts\Views\BOQuarentena\index.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\detalhesEntradaConferencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\index.js" />
+    <Content Include="Scripts\Views\EnderecoArmazenagem\editar.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
@@ -496,6 +499,8 @@
     <Content Include="Views\EnderecoArmazenagem\Index.cshtml" />
     <Content Include="Views\PontoArmazenagem\PesquisaModal.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\Cadastrar.cshtml" />
+    <Content Include="Views\EnderecoArmazenagem\Editar.cshtml" />
+    <Content Include="Views\EnderecoArmazenagem\Detalhes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
@@ -695,9 +700,6 @@
     <Content Include="Scripts\Views\BOGroup\create.js" />
     <Content Include="Scripts\Views\BOGroup\edit.js" />
     <Content Include="Scripts\Views\BOGroup\index.js" />
-    <Content Include="Scripts\Views\Example\autoComplete.js" />
-    <Content Include="Scripts\Views\Example\imageUpload.js" />
-    <Content Include="Scripts\Views\Example\testeValidacao.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
