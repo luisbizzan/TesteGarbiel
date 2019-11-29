@@ -38,27 +38,27 @@ namespace FWLog.Services.Services
 
             foreach (var transpInt in transportadorasIntegracao)
             {
-                ValidarTransportadoraIntegracao(transpInt);
-
-                bool transportadoraNova = false;
-
-                var codParc = Convert.ToInt64(transpInt.CODPARC);
-                Transportadora transportadora = _uow.TransportadoraRepository.ConsultarPorCodigoIntegracao(codParc);
-
-                if (transportadora == null)
-                {
-                    transportadoraNova = true;
-                    transportadora = new Transportadora();
-                }
-
-                transportadora.CodigoIntegracao = codParc;
-                transportadora.Ativo = transpInt.ATIVO == "S" ? true : false;
-                transportadora.CNPJ = transpInt.CGC_CPF;
-                transportadora.NomeFantasia = transpInt.RAZAOSOCIAL;
-                transportadora.RazaoSocial = transpInt.NOMEPARC;
-
                 try
                 {
+                    ValidarTransportadoraIntegracao(transpInt);
+
+                    bool transportadoraNova = false;
+
+                    var codParc = Convert.ToInt64(transpInt.CODPARC);
+                    Transportadora transportadora = _uow.TransportadoraRepository.ConsultarPorCodigoIntegracao(codParc);
+
+                    if (transportadora == null)
+                    {
+                        transportadoraNova = true;
+                        transportadora = new Transportadora();
+                    }
+
+                    transportadora.CodigoIntegracao = codParc;
+                    transportadora.Ativo = transpInt.ATIVO == "S" ? true : false;
+                    transportadora.CNPJ = transpInt.CGC_CPF;
+                    transportadora.NomeFantasia = transpInt.RAZAOSOCIAL;
+                    transportadora.RazaoSocial = transpInt.NOMEPARC;
+
                     if (transportadoraNova)
                     {
                         _uow.TransportadoraRepository.Add(transportadora);
@@ -67,7 +67,6 @@ namespace FWLog.Services.Services
                     await _uow.SaveChangesAsync();
 
                     bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", transportadora.CodigoIntegracao, "DTALTER", DateTime.UtcNow);
-
                     if (!atualizacaoOK)
                     {
                         throw new Exception("A atualização de Transportadora no Sankhya não terminou com sucesso.");
@@ -76,7 +75,7 @@ namespace FWLog.Services.Services
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex);
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da seguinte Transportadora: {0}.", transpInt.CODPARC));
 
                     continue;
                 }

@@ -63,7 +63,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "LEFT JOIN \"LoteStatus\" E ON (E.\"IdLoteStatus\" = CASE WHEN A.\"IdLoteStatus\" IS NULL THEN 1 ELSE A.\"IdLoteStatus\" END) " +
                             "LEFT JOIN \"AspNetUsers\" F ON F.\"Id\" = A.\"IdUsuarioRecebimento\" " +
                             "INNER JOIN \"NotaFiscalStatus\" G ON G.\"IdNotaFiscalStatus\" = B.\"IdNotaFiscalStatus\" " +
-                          "WHERE B.\"CompanyId\" =  " + idEmpresa,
+                          "WHERE (B.\"IdNotaFiscalStatus\" <> 0 AND B.\"IdNotaFiscalStatus\" IS NOT NULL) AND B.\"CompanyId\" =  " + idEmpresa,
                         map: (l, nf, f, ft, ls, u, nfs) =>
                         {
                             l.NotaFiscal = nf;
