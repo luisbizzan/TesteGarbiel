@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Web;
 
 namespace FWLog.Web.Backoffice.Helpers.Globalization
@@ -26,13 +23,13 @@ namespace FWLog.Web.Backoffice.Helpers.Globalization
         public override HtmlString RenderBootstrapSelectScript()
         {
             // Para inglês não é necessário carregar um script.
-            return new HtmlString(String.Empty);
+            return new HtmlString(string.Empty);
         }
 
         public override HtmlString RenderMomentLocaleScript()
         {
             // Para inglês não é necessário carregar um script.
-            return new HtmlString(String.Empty);
+            return new HtmlString(string.Empty);
         }
     }
 }

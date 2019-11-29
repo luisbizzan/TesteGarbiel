@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,9 +8,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace FWLog.AspNet.Identity
 {
@@ -60,7 +57,7 @@ namespace FWLog.AspNet.Identity
     }
 
     [Table("AspNetUsers", Schema = "DART")]
-    public class ApplicationUser: IdentityUser<string, IdentityUserLogin, UserRole, IdentityUserClaim>, IUser, IUser<string>
+    public class ApplicationUser : IdentityUser<string, IdentityUserLogin, UserRole, IdentityUserClaim>, IUser, IUser<string>
     {
         public int ApplicationId { get; set; }
         public long? IdApplicationSession { get; set; }
@@ -94,7 +91,7 @@ namespace FWLog.AspNet.Identity
             this.Name = name;
         }
     }
-       
+
     [Table("AspNetUserRoles", Schema = "DART")]
     public class UserRole : IdentityUserRole
     {
@@ -115,7 +112,7 @@ namespace FWLog.AspNet.Identity
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("DART");
-            
+
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<UserRole>().HasKey(k => new { k.UserId, k.RoleId, k.CompanyId });

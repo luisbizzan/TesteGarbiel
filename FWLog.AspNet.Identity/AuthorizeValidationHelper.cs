@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http.Controllers;
 
@@ -24,14 +20,12 @@ namespace FWLog.AspNet.Identity
 
         private static bool UserHasPermission(IPrincipal user, string permissions)
         {
-            if (String.IsNullOrWhiteSpace(permissions))
+            if (string.IsNullOrWhiteSpace(permissions))
             {
                 return true;
             }
 
-            ApplicationClaimsPrincipal appUser;
-
-            if (!TryGetClaimsPrincipal(user, out appUser))
+            if (!TryGetClaimsPrincipal(user, out ApplicationClaimsPrincipal appUser))
             {
                 return false;
             }
@@ -48,14 +42,14 @@ namespace FWLog.AspNet.Identity
 
         private static string[] SplitString(string original)
         {
-            if (String.IsNullOrEmpty(original))
+            if (string.IsNullOrEmpty(original))
             {
-                return new string[0];
+                return System.Array.Empty<string>();
             }
 
             var split = from piece in original.Split(',')
                         let trimmed = piece.Trim()
-                        where !String.IsNullOrEmpty(trimmed)
+                        where !string.IsNullOrEmpty(trimmed)
                         select trimmed;
 
             return split.ToArray();

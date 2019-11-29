@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Threading;
-using System.Globalization;
-using DartDigital.Library.Helpers;
-using System.Reflection;
+﻿using DartDigital.Library.Helpers;
 using DartDigital.Library.Web.Globalization;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Web;
 
 namespace FWLog.Web.Backoffice.Helpers.Globalization
 {
@@ -77,12 +77,12 @@ namespace FWLog.Web.Backoffice.Helpers.Globalization
 
                 if (defaultResolver == null)
                 {
-                    throw new Exception(String.Format("The ViewGlobalizationResolver for the default culture {0} needs to be implemented.", defaultCulture.Name));
+                    throw new Exception(string.Format("The ViewGlobalizationResolver for the default culture {0} needs to be implemented.", defaultCulture.Name));
                 }
             }
         }
 
-        static IEnumerable<ViewGlobalizationResolver> LoadGlobalizationResolversFromAssembly()
+        private static IEnumerable<ViewGlobalizationResolver> LoadGlobalizationResolversFromAssembly()
         {
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.IsClass && x.IsSubclassOf(typeof(ViewGlobalizationResolver)));
 

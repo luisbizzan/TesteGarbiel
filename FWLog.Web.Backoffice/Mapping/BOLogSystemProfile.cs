@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
-using FWLog.Data;
+using DartDigital.Library.Web.Globalization;
+using FWLog.Data.EnumsAndConsts;
+using FWLog.Data.Models.DataTablesCtx;
+using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Models.GeneralCtx;
 using FWLog.Web.Backoffice.Models.BOLogSystemCtx;
 using System.Collections.Generic;
-using System.Web.Mvc;
 using System.Linq;
-using FWLog.Data.EnumsAndConsts;
-using DartDigital.Library.Web.Globalization;
-using FWLog.Data.Models.DataTablesCtx;
-using FWLog.Data.Models.FilterCtx;
+using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Mapping
 {

@@ -9,8 +9,10 @@ using FWLog.Web.Backoffice.EnumsAndConsts.LOVs;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.NivelArmazenagemCtx;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Web;
 using System.Web.Mvc;
 
@@ -64,6 +66,8 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var filter = Mapper.Map<DataTableFilter<NivelArmazenagemFilter>>(model);
 
+            filter.CustomFilter.IdEmpresa = IdEmpresa;
+
             IEnumerable<NivelArmazenagemTableRow> result = _unitOfWork.NivelArmazenagemRepository.SearchForDataTable(filter, out int recordsFiltered, out int totalRecords);
 
             return DataTableResult.FromModel(new DataTableResponseModel
@@ -88,19 +92,39 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Create)]
         public ActionResult Create(NivelArmazenagemCreateViewModel model)
         {
-            if (!ModelState.IsValid)
+            Func<ViewResult> errorView = () =>
             {
                 setViewBags();
 
                 return View(model);
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return errorView();
             }
 
             var entity = new NivelArmazenagem { Ativo = model.Ativo, Descricao = model.Descricao, IdEmpresa = IdEmpresa };
+            try
+            {
+                _nivelArmazenagemService.Add(entity);
 
-            _nivelArmazenagemService.Add(entity);
+                Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
+                return RedirectToAction("Index");
+            }
+            catch (DbUpdateException e)
+            when (e.InnerException?.InnerException is OracleException sqlEx && sqlEx.Number == 1)
+            {
+                Notify.Error("Já existe um Nível com este nome nessa empresa.");
 
-            Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
-            return RedirectToAction("Index");
+                return errorView();
+            }
+            catch (Exception)
+            {
+                Notify.Error(Resources.CommonStrings.RegisterCreatedErrorMessage);
+
+                return errorView();
+            }
         }
 
         [HttpGet]
@@ -125,19 +149,40 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Edit)]
         public ActionResult Edit(NivelArmazenagemCreateViewModel model)
         {
-            if (!ModelState.IsValid)
+            Func<ViewResult> errorView = () =>
             {
                 setViewBags();
 
                 return View(model);
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return errorView();
             }
 
             var entity = new NivelArmazenagem { IdNivelArmazenagem = model.IdNivelArmazenagem, Ativo = model.Ativo, Descricao = model.Descricao, IdEmpresa = model.IdEmpresa };
 
-            _nivelArmazenagemService.Edit(entity);
+            try
+            {
+                _nivelArmazenagemService.Edit(entity);
 
-            Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
-            return RedirectToAction("Index");
+                Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
+                return RedirectToAction("Index");
+            }
+            catch (DbUpdateException e)
+            when (e.InnerException?.InnerException is OracleException sqlEx && sqlEx.Number == 1)
+            {
+                Notify.Error("Já existe um Nível com este nome nessa empresa.");
+
+                return errorView();
+            }
+            catch (Exception)
+            {
+                Notify.Error(Resources.CommonStrings.RegisterEditedErrorMessage);
+
+                return errorView();
+            }
         }
 
         [HttpPost]

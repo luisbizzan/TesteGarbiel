@@ -21,15 +21,15 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public IList<NivelArmazenagemTableRow> SearchForDataTable(DataTableFilter<NivelArmazenagemFilter> filter, out int totalRecordsFiltered, out int totalRecords)
         {
-            totalRecords = Entities.NivelArmazenagem.Count();
-
-            IQueryable<NivelArmazenagemTableRow> query = Entities.NivelArmazenagem.AsNoTracking()
+            IQueryable<NivelArmazenagemTableRow> query = Entities.NivelArmazenagem.AsNoTracking().Where(x => x.IdEmpresa == filter.CustomFilter.IdEmpresa)
                 .Select(e => new NivelArmazenagemTableRow
                 {
                     IdNivelArmazenagem = e.IdNivelArmazenagem,
                     Ativo = e.Ativo,
                     Descricao = e.Descricao
                 });
+
+            totalRecords = query.Count();
 
             query = query.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.Descricao), x => x.Descricao.Contains(filter.CustomFilter.Descricao));
             query = query.WhereIf(filter.CustomFilter.Ativo.HasValue, x => x.Ativo == filter.CustomFilter.Ativo);
@@ -45,7 +45,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRegistros = Entities.NivelArmazenagem.Count(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa);
 
             var query = Entities.NivelArmazenagem
-                .Where(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa && 
+                .Where(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa &&
                 (filtros.CustomFilter.Descricao.Equals(string.Empty) || w.Descricao.Contains(filtros.CustomFilter.Descricao)) &&
                 (filtros.CustomFilter.Status.HasValue == false || w.Ativo == filtros.CustomFilter.Status.Value))
                 .Select(s => new NivelArmazenagemPesquisaModalListaLinhaTabela

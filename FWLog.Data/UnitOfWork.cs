@@ -42,6 +42,12 @@ namespace FWLog.Data
         private TipoMovimentacaoRepository _tipoMovimentacaoRepository;
         private TipoArmazenagemRepository _tipoArmazenagemRepository;
         private EmpresaTipoRepository _empresaTipoRepository;
+        private EnderecoArmazenagemRepository _enderecoArmazenagemRepository;
+
+        public EnderecoArmazenagemRepository EnderecoArmazenagemRepository
+        {
+            get => _enderecoArmazenagemRepository ?? (_enderecoArmazenagemRepository = new EnderecoArmazenagemRepository(_context));
+        }
 
         public EmpresaTipoRepository EmpresaTipoRepository
         {

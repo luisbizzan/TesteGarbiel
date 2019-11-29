@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using FWLog.AspNet.Identity;
+using FWLog.Web.Backoffice.App_Start;
+using FWLog.Web.Backoffice.EnumsAndConsts;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
 using System;
-using FWLog.AspNet.Identity;
-using FWLog.Web.Backoffice.App_Start;
-using FWLog.Web.Backoffice.EnumsAndConsts;
-using System.Web;
 
 namespace Identity
 {
@@ -51,19 +50,19 @@ namespace Identity
 
         }
 
-        static BackofficeUserManager CreateUserManagerOwin(IdentityFactoryOptions<BackofficeUserManager> options,
+        private static BackofficeUserManager CreateUserManagerOwin(IdentityFactoryOptions<BackofficeUserManager> options,
             IOwinContext context)
         {
             return BackofficeUserManager.Create(options, context, App.Id);
         }
 
-        static ApplicationRoleManager CreateRoleManagerOwin(IdentityFactoryOptions<ApplicationRoleManager> options,
+        private static ApplicationRoleManager CreateRoleManagerOwin(IdentityFactoryOptions<ApplicationRoleManager> options,
             IOwinContext context)
         {
             return ApplicationRoleManager.Create(options, context, App.Id);
         }
 
-        static ApplicationDbContext CreateManagers(out BackofficeUserManager userManager, out ApplicationRoleManager roleManager)
+        private static ApplicationDbContext CreateManagers(out BackofficeUserManager userManager, out ApplicationRoleManager roleManager)
         {
             var context = ApplicationDbContext.Create();
             var userStore = new ApplicationUserStore(context, App.Id);

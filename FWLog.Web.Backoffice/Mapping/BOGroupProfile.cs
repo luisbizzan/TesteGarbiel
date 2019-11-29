@@ -1,15 +1,9 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
 using FWLog.AspNet.Identity.Building;
-using FWLog.Data;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Web.Backoffice.Models.BOGroupCtx;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Security;
 
 namespace FWLog.Web.Backoffice.Mapping
 {

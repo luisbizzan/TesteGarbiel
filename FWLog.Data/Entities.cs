@@ -7,10 +7,7 @@ namespace FWLog.Data
 {
     public class Entities : DbContext
     {
-        public Entities()
-            : base("name=Entities")
-        {
-        }
+        public Entities() : base("name=Entities") { }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -46,6 +43,7 @@ namespace FWLog.Data
         public virtual DbSet<PontoArmazenagem> PontoArmazenagem { get; set; }
         public virtual DbSet<TipoMovimentacao> TipoMovimentacao { get; set; }
         public virtual DbSet<TipoArmazenagem> TipoArmazenagem { get; set; }
+        public virtual DbSet<EnderecoArmazenagem> EnderecoArmazenagem { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 
@@ -65,6 +63,5 @@ namespace FWLog.Data
         {
             return base.SaveChanges();
         }
-
     }
 }

@@ -1,17 +1,15 @@
-﻿using System;
+﻿using FWLog.AspNet.Identity.Extensions;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.Net;
 using System.Security.Principal;
 using System.Text;
-using System.Net;
-using FWLog.AspNet.Identity.Extensions;
+using System.Web;
 
 namespace FWLog.Web.Backoffice.Helpers
 {
     public class SidebarMenu
     {
-        IPrincipal _user;
+        private IPrincipal _user;
 
         public List<IMenuItem> Items { get; set; }
 
@@ -67,13 +65,13 @@ namespace FWLog.Web.Backoffice.Helpers
 
             }
 
-            if (String.IsNullOrEmpty(Icon))
+            if (string.IsNullOrEmpty(Icon))
             {
-                builder.Append(String.Format(@"<li><a href=""{0}"">{1}</a></li>", Url, Text));
+                builder.Append(string.Format(@"<li><a href=""{0}"">{1}</a></li>", Url, Text));
             }
             else
             {
-                builder.Append(String.Format(@"<li><a href=""{0}""><i class=""{1}""></i> {2}</a></li>", Url, Icon, Text));
+                builder.Append(string.Format(@"<li><a href=""{0}""><i class=""{1}""></i> {2}</a></li>", Url, Icon, Text));
             }
         }
 
@@ -122,7 +120,7 @@ namespace FWLog.Web.Backoffice.Helpers
             }
 
             builder
-                .Append(String.Format(@"<li><a><i class=""{0}""></i> {1} <span class=""fa fa-chevron-down""></span></a>", Icon, Text))
+                .Append(string.Format(@"<li><a><i class=""{0}""></i> {1} <span class=""fa fa-chevron-down""></span></a>", Icon, Text))
                 .Append(@"<ul class=""nav child_menu"">");
 
             foreach (IMenuItem subItem in Submenus)
