@@ -109,6 +109,7 @@
     <Compile Include="Integracao\Helpers\QueryPropertyAttribute.cs" />
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
+    <Compile Include="Model\IntegracaoSankhya\FornecedorIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\TransportadoraIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\EmpresaIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoIntegracao.cs" />
@@ -143,6 +144,7 @@
     <Compile Include="Services\PrinterTypeService.cs" />
     <Compile Include="Services\ProdutoService.cs" />
     <Compile Include="Services\RelatorioService.cs" />
+    <Compile Include="Services\FornecedorService.cs" />
     <Compile Include="Services\TransportadoraService.cs" />
     <Compile Include="Templates\MailTemplate.cs" />
     <Compile Include="Templates\RecoverPasswordMailTemplate.cs" />

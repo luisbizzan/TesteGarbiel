@@ -62,11 +62,12 @@ namespace FWLog.Services.Services
                         throw new Exception("Código da Transportadora (CODPARCTRANSP) inválido");
                     }
 
-                    //Fornecedor fornecedor = _uow.FornecedorRepository.Todos().FirstOrDefault(f => f.Codigo.ToString() == notafiscalIntegracao.CODPARC);
-                    //if (fornecedor == null)
-                    //{
-                    //    throw new Exception("Código da Transportadora (CODPARC) inválido");
-                    //}
+                    var codParc = Convert.ToInt64(notafiscalIntegracao.CODPARC);
+                    Fornecedor fornecedor = _uow.FornecedorRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codParc);
+                    if (fornecedor == null)
+                    {
+                        throw new Exception("Código da Fornecedor (CODPARC) inválido");
+                    }
 
                     bool notaNova = true;
 
@@ -103,7 +104,7 @@ namespace FWLog.Services.Services
                     notafiscal.StatusIntegracao = notafiscalIntegracao.STATUSNOTA;
                     notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.ProcessandoIntegracao.GetHashCode();
                     notafiscal.Chave = notafiscalIntegracao.CHAVENFE;
-                    notafiscal.IdFornecedor = 41;//TODO Fazer integração de Fornecedor e ajustar vinculo notaInt.CODPARC; -- fornecedor.IdFornecedor;
+                    notafiscal.IdFornecedor = fornecedor.IdFornecedor;
                     notafiscal.DataEmissao = notafiscalIntegracao.DHEMISSEPEC == null ? DateTime.Now : Convert.ToDateTime(notafiscalIntegracao.DHEMISSEPEC); //TODO validar campo geovane;
                     notafiscal.CompanyId = empresa.IdEmpresa;
                     notafiscal.IdTransportadora = transportadora.IdTransportadora;
@@ -125,7 +126,7 @@ namespace FWLog.Services.Services
                         Produto produto = _uow.ProdutoRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codProduto);
                         if (produto == null)
                         {
-                            throw new Exception("Código da Transportadora (CODPROD) inválido");
+                            throw new Exception("Código da Produto (CODPROD) inválido");
                         }
 
                         var unidade = unidadesMedida.FirstOrDefault(f => f.Descricao == item.CODVOL);
