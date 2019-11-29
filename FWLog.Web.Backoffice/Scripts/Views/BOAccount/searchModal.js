@@ -31,7 +31,6 @@
         "bInfo": false
     });
 
-    debugger;
     $('#dataTableModal').on('click', '[data-select]', function () {
         setUsuarioRecebimento($(this).attr('data-select'), $(this).attr("name-select"));
     });

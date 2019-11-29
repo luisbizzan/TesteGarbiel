@@ -51,7 +51,7 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!string.IsNullOrEmpty(model.CustomFilter.RazaoSocial))
                 query = query.Where(x => x.RazaoSocial.Contains(model.CustomFilter.RazaoSocial));
 
-            if(!string.IsNullOrEmpty(model.CustomFilter.NomeFantasia))
+            if (!string.IsNullOrEmpty(model.CustomFilter.NomeFantasia))
                 query = query.Where(x => x.NomeFantasia.Contains(model.CustomFilter.NomeFantasia));
 
             if (!string.IsNullOrEmpty(model.CustomFilter.CNPJ))
@@ -65,7 +65,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     CodigoIntegracao = item.CodigoIntegracao,
                     RazaoSocial = item.RazaoSocial,
                     NomeFantasia = item.NomeFantasia,
-                    CNPJ = item.CNPJ.Substring(0, 2) + "." + item.CNPJ.Substring(2, 3) + "." + item.CNPJ.Substring(5, 3) + "/" + item.CNPJ.Substring(8, 4) + "-" + item.CNPJ.Substring(12, 2)
+                    CNPJ = item.CNPJ.Length == 14 ? item.CNPJ.Substring(0, 2) + "." + item.CNPJ.Substring(2, 3) + "." + item.CNPJ.Substring(5, 3) + "/" + item.CNPJ.Substring(8, 4) + "-" + item.CNPJ.Substring(12, 2) : item.CNPJ
                 });
             }
 

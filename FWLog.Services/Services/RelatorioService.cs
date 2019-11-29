@@ -195,13 +195,13 @@ namespace FWLog.Services.Services
 
             switch (notaFiscal.IdNotaFiscalStatus)
             {
-                case (int)NotaFiscalStatusEnum.Recebida:
+                case NotaFiscalStatusEnum.Recebida:
                     paragraph.AddText("Recebido");
                     break;
-                case (int)NotaFiscalStatusEnum.Conferida:
+                case NotaFiscalStatusEnum.Conferida:
                     paragraph.AddText("Conferido");
                     break;
-                case (int)NotaFiscalStatusEnum.ConferidaDivergencia:
+                case NotaFiscalStatusEnum.ConferidaDivergencia:
                     paragraph.AddText("Divergência");
                     break;
                 default:

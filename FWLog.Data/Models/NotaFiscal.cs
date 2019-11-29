@@ -18,7 +18,7 @@ namespace FWLog.Data.Models
 
         [Index]
         [Required]
-        public long CompanyId { get; set; }
+        public long IdEmpresa { get; set; }
 
         [Index]
         public long IdFornecedor { get; set; }
@@ -32,7 +32,7 @@ namespace FWLog.Data.Models
 
         [Index]
         [Required]
-        public long IdNotaFiscalStatus { get; set; }
+        public NotaFiscalStatusEnum IdNotaFiscalStatus { get; set; }
 
         [Index]
         [Required]
@@ -83,7 +83,7 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdFreteTipo))]
         public virtual FreteTipo FreteTipo { get; set; }
 
-        [ForeignKey("CompanyId")]
+        [ForeignKey(nameof(IdEmpresa))] 
         public virtual Empresa Empresa { get; set; }
 
         [ForeignKey(nameof(IdNotaFiscalStatus))]

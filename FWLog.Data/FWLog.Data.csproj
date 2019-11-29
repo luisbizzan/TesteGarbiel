@@ -75,9 +75,7 @@
     <Compile Include="EnumsAndConsts\ActionTypeNames.cs" />
     <Compile Include="EnumsAndConsts\ApplicationEnum.cs" />
     <Compile Include="EnumsAndConsts\ApplicationLogLevel.cs" />
-    <Compile Include="EnumsAndConsts\EmpresaTipoEnum.cs" />
     <Compile Include="EnumsAndConsts\GetObjectFromLogEnum.cs" />
-    <Compile Include="EnumsAndConsts\NotaFiscalStatusEnum.cs" />
     <Compile Include="EnumsAndConsts\LoteStatusEnum.cs" />
     <Compile Include="EnumsAndConsts\NaoSimEnum.cs" />
     <Compile Include="EnumsAndConsts\StatusNotaRecebimento.cs" />
@@ -118,6 +116,7 @@
     <Compile Include="Models\DataTablesCtx\PontoArmazenagemListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\PontoArmazenagemPesquisaModalListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\PrinterTypeTableRow.cs" />
+    <Compile Include="Models\EmpresaConfig.cs" />
     <Compile Include="Models\EmpresaTipo.cs" />
     <Compile Include="Models\EnderecoArmazenagem.cs" />
     <Compile Include="Models\FilterCtx\EnderecoArmazenagemListaFiltro.cs" />
@@ -173,6 +172,7 @@
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\EmpresaConfigRepository.cs" />
     <Compile Include="Repository\GeneralCtx\EmpresaTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\EnderecoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\FreteTipoRepository.cs" />

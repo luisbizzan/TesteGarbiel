@@ -44,6 +44,7 @@ namespace FWLog.Data
         public virtual DbSet<TipoMovimentacao> TipoMovimentacao { get; set; }
         public virtual DbSet<TipoArmazenagem> TipoArmazenagem { get; set; }
         public virtual DbSet<EnderecoArmazenagem> EnderecoArmazenagem { get; set; }
+        public virtual DbSet<EmpresaConfig> EmpresaConfig { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 

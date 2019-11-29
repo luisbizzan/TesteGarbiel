@@ -48,7 +48,7 @@ namespace FWLog.Services.Services
 
             _uow.LoteRepository.Add(lote);
 
-            nota.IdNotaFiscalStatus = NotaFiscalStatusEnum.Recebida.GetHashCode();
+            nota.IdNotaFiscalStatus = NotaFiscalStatusEnum.Recebida;
 
             _uow.SaveChanges();
         }

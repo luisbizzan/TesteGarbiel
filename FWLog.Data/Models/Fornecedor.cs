@@ -5,7 +5,7 @@ namespace FWLog.Data.Models
 {
     public class Fornecedor
     {
-        [Key]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
         public long IdFornecedor { get; set; }
 

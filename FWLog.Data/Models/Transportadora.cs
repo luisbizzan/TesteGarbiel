@@ -5,7 +5,7 @@ namespace FWLog.Data.Models
 {
     public class Transportadora
     {
-        [Key]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
         public long IdTransportadora { get; set; }
 

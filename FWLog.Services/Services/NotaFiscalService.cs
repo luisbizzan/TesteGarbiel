@@ -77,7 +77,7 @@ namespace FWLog.Services.Services
                     if (notafiscal != null)
                     {
                         notaNova = false;
-                        notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.ProcessandoIntegracao.GetHashCode();
+                        notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.ProcessandoIntegracao;
 
                         var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(notafiscal.IdNotaFiscal);
 
@@ -102,11 +102,11 @@ namespace FWLog.Services.Services
                     notafiscal.Quantidade = Convert.ToInt32(notafiscalIntegracao.QTDVOL);
                     notafiscal.Especie = notafiscalIntegracao.VOLUME;
                     notafiscal.StatusIntegracao = notafiscalIntegracao.STATUSNOTA;
-                    notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.ProcessandoIntegracao.GetHashCode();
+                    notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.ProcessandoIntegracao;
                     notafiscal.Chave = notafiscalIntegracao.CHAVENFE;
                     notafiscal.IdFornecedor = fornecedor.IdFornecedor;
                     notafiscal.DataEmissao = notafiscalIntegracao.DHEMISSEPEC == null ? DateTime.Now : Convert.ToDateTime(notafiscalIntegracao.DHEMISSEPEC); //TODO validar campo geovane;
-                    notafiscal.CompanyId = empresa.IdEmpresa;
+                    notafiscal.IdEmpresa = empresa.IdEmpresa;
                     notafiscal.IdTransportadora = transportadora.IdTransportadora;
 
                     FreteTipo freteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notafiscalIntegracao.CIF_FOB);
@@ -177,7 +177,7 @@ namespace FWLog.Services.Services
                         throw new Exception("A atualização de nota fiscal no Sankhya não terminou com sucesso.");
                     }
 
-                    notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode();
+                    notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento;
 
                     await _uow.SaveChangesAsync();
 

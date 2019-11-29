@@ -53,7 +53,6 @@ namespace FWLog.Services.Services
                         empresaNova = true;
                         empresa = new Empresa();
                     }
-
                     empresa.CodigoIntegracao = codEmp;
                     empresa.CEP = string.IsNullOrEmpty(empInt.CEP) ? (int?)null : Convert.ToInt32(empInt.CEP);
                     empresa.Ativo = empInt.AD_ATIVOSAV == "S" ? true : false;
@@ -68,7 +67,7 @@ namespace FWLog.Services.Services
                     empresa.RazaoSocial = empInt.RAZAOSOCIAL;
                     empresa.Sigla = empInt.AD_UNIDABREV == null ? empInt.NOMEFANTASIA.Substring(0, 3) : empInt.AD_UNIDABREV;//TODO temporário
                     empresa.Telefone = empInt.TELEFONE;
-                    empresa.IdEmpresaTipo = empInt.CODEMPMATRIZ == empInt.CODEMP ? EmpresaTipoEnum.Matriz.GetHashCode() : EmpresaTipoEnum.Filial.GetHashCode();
+                    //empresa.EmpresaConfig.IdEmpresaTipo = empInt.CODEMPMATRIZ == empInt.CODEMP ? EmpresaTipoEnum.Matriz : EmpresaTipoEnum.Filial;
 
 
                     if (empresaNova)
@@ -85,7 +84,7 @@ namespace FWLog.Services.Services
 
                         if (empMatriz != null)
                         {
-                            empresa.IdEmpresaMatriz = empMatriz.IdEmpresa;
+                            //empresa.EmpresaConfig.IdEmpresaMatriz = empMatriz.IdEmpresa;
 
                             await _uow.SaveChangesAsync();
                         }

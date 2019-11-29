@@ -5,7 +5,7 @@ namespace FWLog.Data.Models
 {
     public class Produto
     {
-        [Key]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]        
         public long IdProduto { get; set; }
 

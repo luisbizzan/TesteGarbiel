@@ -519,7 +519,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 DiasAtraso = "0"
             };
 
-            if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode() || notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ProcessandoIntegracao.GetHashCode())
+            if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.AguardandoRecebimento || notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ProcessandoIntegracao)
             {
                 model.StatusNotaFiscal = "Aguardando Recebimento";
                 model.UsuarioRecebimento = "-";
@@ -545,13 +545,13 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 switch (notaFiscal.IdNotaFiscalStatus)
                 {
-                    case (int)NotaFiscalStatusEnum.Recebida:
+                    case NotaFiscalStatusEnum.Recebida:
                         model.StatusNotaFiscal = "Recebida";
                         break;
-                    case (int)NotaFiscalStatusEnum.Conferida:
+                    case NotaFiscalStatusEnum.Conferida:
                         model.StatusNotaFiscal = "Conferida";
                         break;
-                    case (int)NotaFiscalStatusEnum.ConferidaDivergencia:
+                    case NotaFiscalStatusEnum.ConferidaDivergencia:
                         model.StatusNotaFiscal = "Conferida com Divergência";
                         break;
                     default:
@@ -565,11 +565,11 @@ namespace FWLog.Web.Backoffice.Controllers
                     model.DiasAtraso = atraso.Days.ToString();
                 }
 
-                if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida.GetHashCode() ||
-                    notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ConferidaDivergencia.GetHashCode())
+                if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida||
+                    notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ConferidaDivergencia)
                 {
-                    model.IsNotaConferida = notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida.GetHashCode();
-                    model.IsNotaDivergente = notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ConferidaDivergencia.GetHashCode();
+                    model.IsNotaConferida = notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida;
+                    model.IsNotaDivergente = notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ConferidaDivergencia;
                     model.UsuarioConferencia = "TODO";
                     model.DataInicioConferencia = "TODO";
                     model.DataFimConferencia = "TODO";
@@ -596,8 +596,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     Quantidade = notaFiscalItem.Quantidade.ToString()
                 };
 
-                if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida.GetHashCode() ||
-                    notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ConferidaDivergencia.GetHashCode())
+                if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida ||
+                    notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ConferidaDivergencia)
                 {
                     entradaConferenciaItem.UsuarioConferencia = "TODO";
                     entradaConferenciaItem.DataInicioConferencia = "TODO";
