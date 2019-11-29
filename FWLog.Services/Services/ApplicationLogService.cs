@@ -40,6 +40,20 @@ namespace FWLog.Services.Services
             Add(applicationLog);
         }
 
+        public void Error(ApplicationEnum application, Exception ex, string message)
+        {
+            var applicationLog = new ApplicationLog
+            {
+                Created = DateTime.Now,
+                IdApplication = application.GetHashCode(),
+                Level = ApplicationLogLevel.Error.Value,
+                Exception = string.Format("{0} - {1} ", ex.Message, ex.StackTrace),
+                Message = string.Format("{0} - {1} ", message, ex.Message)
+            };
+
+            Add(applicationLog);
+        }
+
         public void Warn(ApplicationEnum application, Exception ex)
         {
             var applicationLog = new ApplicationLog

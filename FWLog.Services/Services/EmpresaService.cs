@@ -39,37 +39,38 @@ namespace FWLog.Services.Services
 
             foreach (var empInt in empresasIntegracao)
             {
-                ValidarEmpresaIntegracao(empInt);
-
-                bool empresaNova = false;
-
-                var codEmp = Convert.ToInt32(empInt.CODEMP);
-                Empresa empresa = _uow.EmpresaRepository.ConsultaPorCodigoIntegracao(codEmp);
-
-                if (empresa == null)
-                {
-                    empresaNova = true;
-                    empresa = new Empresa();
-                }
-
-                empresa.CodigoIntegracao = codEmp;
-                empresa.CEP = string.IsNullOrEmpty(empInt.CEP) ? (int?)null : Convert.ToInt32(empInt.CEP);
-                empresa.Ativo = empInt.AD_ATIVOSAV == "S" ? true : false;
-                empresa.Bairro = empInt.NOMEBAI;
-                empresa.Cidade = empInt.NOMECID;
-                empresa.CNPJ = empInt.CGC;
-                empresa.Complemento = empInt.COMPLEMENTO;
-                empresa.Endereco = empInt.NOMEEND;
-                empresa.Estado = empInt.ESTADO;
-                empresa.NomeFantasia = empInt.NOMEFANTASIA;
-                empresa.Numero = empInt.NUMEND;
-                empresa.RazaoSocial = empInt.RAZAOSOCIAL;
-                empresa.Sigla = empInt.AD_UNIDABREV == null ? empInt.NOMEFANTASIA.Substring(0, 3) : empInt.AD_UNIDABREV;//TODO temporário
-                empresa.Telefone = empInt.TELEFONE;
-                empresa.IdEmpresaTipo = empInt.CODEMPMATRIZ == empInt.CODEMP ? EmpresaTipoEnum.Matriz.GetHashCode() : EmpresaTipoEnum.Filial.GetHashCode();
-
                 try
                 {
+                    ValidarEmpresaIntegracao(empInt);
+
+                    bool empresaNova = false;
+
+                    var codEmp = Convert.ToInt32(empInt.CODEMP);
+                    Empresa empresa = _uow.EmpresaRepository.ConsultaPorCodigoIntegracao(codEmp);
+
+                    if (empresa == null)
+                    {
+                        empresaNova = true;
+                        empresa = new Empresa();
+                    }
+
+                    empresa.CodigoIntegracao = codEmp;
+                    empresa.CEP = string.IsNullOrEmpty(empInt.CEP) ? (int?)null : Convert.ToInt32(empInt.CEP);
+                    empresa.Ativo = empInt.AD_ATIVOSAV == "S" ? true : false;
+                    empresa.Bairro = empInt.NOMEBAI;
+                    empresa.Cidade = empInt.NOMECID;
+                    empresa.CNPJ = empInt.CGC;
+                    empresa.Complemento = empInt.COMPLEMENTO;
+                    empresa.Endereco = empInt.NOMEEND;
+                    empresa.Estado = empInt.ESTADO;
+                    empresa.NomeFantasia = empInt.NOMEFANTASIA;
+                    empresa.Numero = empInt.NUMEND;
+                    empresa.RazaoSocial = empInt.RAZAOSOCIAL;
+                    empresa.Sigla = empInt.AD_UNIDABREV == null ? empInt.NOMEFANTASIA.Substring(0, 3) : empInt.AD_UNIDABREV;//TODO temporário
+                    empresa.Telefone = empInt.TELEFONE;
+                    empresa.IdEmpresaTipo = empInt.CODEMPMATRIZ == empInt.CODEMP ? EmpresaTipoEnum.Matriz.GetHashCode() : EmpresaTipoEnum.Filial.GetHashCode();
+
+
                     if (empresaNova)
                     {
                         _uow.EmpresaRepository.Add(empresa);
@@ -79,7 +80,8 @@ namespace FWLog.Services.Services
 
                     if (!string.IsNullOrEmpty(empInt.CODEMPMATRIZ))
                     {
-                        var empMatriz = _uow.EmpresaRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao.ToString() == empInt.CODEMPMATRIZ);
+                        var codEmpMatriz = Convert.ToInt32(empInt.CODEMPMATRIZ);
+                        var empMatriz = _uow.EmpresaRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codEmpMatriz);
 
                         if (empMatriz != null)
                         {
@@ -99,7 +101,7 @@ namespace FWLog.Services.Services
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex);
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da seguinte Empresa: {0}.", empInt.CODEMP));
 
                     continue;
                 }

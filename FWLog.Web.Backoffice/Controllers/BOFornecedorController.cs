@@ -45,8 +45,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
             totalRecords = query.Count();
 
-            if (!String.IsNullOrEmpty(model.CustomFilter.Codigo))
-                query = query.Where(x => !String.IsNullOrEmpty(x.Codigo) && x.Codigo.Contains(model.CustomFilter.Codigo));
+            if (model.CustomFilter.CodigoIntegracao.HasValue)
+                query = query.Where(x => x.CodigoIntegracao == model.CustomFilter.CodigoIntegracao.Value);
 
             if (!string.IsNullOrEmpty(model.CustomFilter.RazaoSocial))
                 query = query.Where(x => x.RazaoSocial.Contains(model.CustomFilter.RazaoSocial));
@@ -62,7 +62,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 boFornecedorSearchModalItemViewModel.Add(new BOFornecedorSearchModalItemViewModel()
                 {
                     IdFornecedor = item.IdFornecedor,
-                    Codigo = item.Codigo,
+                    CodigoIntegracao = item.CodigoIntegracao,
                     RazaoSocial = item.RazaoSocial,
                     NomeFantasia = item.NomeFantasia,
                     CNPJ = item.CNPJ.Substring(0, 2) + "." + item.CNPJ.Substring(2, 3) + "." + item.CNPJ.Substring(5, 3) + "/" + item.CNPJ.Substring(8, 4) + "-" + item.CNPJ.Substring(12, 2)

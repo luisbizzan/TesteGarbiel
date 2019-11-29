@@ -503,10 +503,10 @@ namespace FWLog.Web.Backoffice.Controllers
             var model = new BODetalhesEntradaConferenciaViewModel
             {
                 IdNotaFiscal = notaFiscal.IdNotaFiscal,
-                DANFE = notaFiscal.DANFE,
+                DANFE = notaFiscal.Chave,
                 NumeroNotaFiscal = notaFiscal.Numero.ToString(),
                 StatusNotaFiscal = notaFiscal.StatusIntegracao,
-                Fornecedor = string.Concat(notaFiscal.Fornecedor.Codigo, " - ", notaFiscal.Fornecedor.RazaoSocial),
+                Fornecedor = string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.RazaoSocial),
                 Quantidade = notaFiscal.Quantidade.ToString(),
                 DataCompra = notaFiscal.DataEmissao.ToString("dd/MM/yyyy"),
                 PrazoRecebimento = notaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
@@ -519,7 +519,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 DiasAtraso = "0"
             };
 
-            if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode())
+            if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode() || notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ProcessandoIntegracao.GetHashCode())
             {
                 model.StatusNotaFiscal = "Aguardando Recebimento";
                 model.UsuarioRecebimento = "-";
