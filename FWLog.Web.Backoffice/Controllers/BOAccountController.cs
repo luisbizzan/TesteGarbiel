@@ -32,40 +32,6 @@ namespace FWLog.Web.Backoffice.Controllers
         private BOLogSystemService _boLogSystemService;
         private PasswordService _passwordService;
 
-        private SelectList _Empresas
-        {
-            get
-            {
-                if (empresas == null)
-                {
-                    empresas = new SelectList(Empresas, "IdEmpresa", "Nome");
-                }
-
-                return empresas;
-            }
-        }
-        private SelectList empresas;
-
-        private SelectList Status
-        {
-            get
-            {
-                if (status == null)
-                {
-                    status = new SelectList(new NaoSimLOV().Items, "Value", "Text");
-                }
-
-                return status;
-            }
-        }
-        private SelectList status;
-
-        private void setViewBags()
-        {
-            ViewBag.Empresas = _Empresas;
-            ViewBag.Status = Status;
-        }
-
         public BOAccountController(UnitOfWork uow, BOAccountService boService, BOLogSystemService boLogSystemService, PasswordService passwordService)
         {
             _uow = uow;
@@ -77,7 +43,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.List)]
         public ActionResult Index()
         {
-            setViewBags();
+            SetViewBags();
 
             return View(new BOAccountListViewModel());
         }
@@ -95,20 +61,13 @@ namespace FWLog.Web.Backoffice.Controllers
             query = query.WhereIf(filter.CustomFilter.IdEmpresa.HasValue, x => x.EmpresaId == filter.CustomFilter.IdEmpresa);
             query = query.WhereIf(filter.CustomFilter.Ativo.HasValue, x => x.Ativo == filter.CustomFilter.Ativo);
 
-            var select = query.Select(x => new
+            List<BOAccountListItemViewModel> list = query.Select(x => new BOAccountListItemViewModel
             {
+                NomeEmpresa = x.Empresa.NomeFantasia,
                 UserName = x.Usuario.UserName,
                 Email = x.Usuario.Email,
                 Nome = x.Nome,
-                Ativo = x.Ativo
-            }).ToList();
-
-            List<BOAccountListItemViewModel> list = select.Select(x => new BOAccountListItemViewModel
-            {
-                UserName = x.UserName,
-                Email = x.Email,
-                Nome = x.Nome,
-                Ativo = x.Ativo.BooleanResource()
+                Ativo = x.Ativo ? "Ativo" : "Inativo"
             }).ToList();
 
             return DataTableResult.FromModel(new DataTableResponseModel
@@ -123,7 +82,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
         public ActionResult Create()
         {
-            setViewBags();
+            SetViewBags();
 
             return View(new BOAccountCreateViewModel());
         }
@@ -151,7 +110,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
         public async Task<ActionResult> Create(BOAccountCreateViewModel model)
         {
-            setViewBags();
+            SetViewBags();
 
             Func<string, ViewResult> errorView = (error) =>
             {
@@ -250,7 +209,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Edit)]
         public async Task<ActionResult> Edit(string id)
         {
-            setViewBags();
+            SetViewBags();
 
             ApplicationUser user = await UserManager.FindByNameAsync(id).ConfigureAwait(false);
 
@@ -296,7 +255,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Edit)]
         public async Task<ActionResult> Edit(BOAccountEditViewModel model)
         {
-            setViewBags();
+            SetViewBags();
 
             Func<ViewResult> errorView = () =>
             {
@@ -654,6 +613,42 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsFiltered = boPerfilUsuarioSearchModalFilterViewModel.Count,
                 Data = result
             });
+        }
+
+        private SelectList _Empresas
+        {
+            get
+            {
+                if (empresas == null)
+                {
+                    empresas = new SelectList(Empresas, "IdEmpresa", "Nome");
+                }
+
+                return empresas;
+            }
+        }
+
+        private SelectList empresas;
+
+        private SelectList Status
+        {
+            get
+            {
+                if (status == null)
+                {
+                    status = new SelectList(new NaoSimLOV().Items, "Value", "Text");
+                }
+
+                return status;
+            }
+        }
+
+        private SelectList status;
+
+        private void SetViewBags()
+        {
+            ViewBag.Empresas = _Empresas;
+            ViewBag.Status = Status;
         }
     }
 }
