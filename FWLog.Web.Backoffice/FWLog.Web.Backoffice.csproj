@@ -283,6 +283,7 @@
     <Compile Include="Models\BOPrinterCtx\BOPrinterListViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterCreateViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterSelecionarViewModel.cs" />
+    <Compile Include="Models\BOQuarentenaCtx\BODetalhesEtiquetaConferenciaViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOQuarentenaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODetalhesEntradaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BOEntradaConferenciaViewModel.cs" />
@@ -501,6 +502,7 @@
     <Content Include="Views\EnderecoArmazenagem\Cadastrar.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\Editar.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\Detalhes.cshtml" />
+    <Content Include="Views\BOQuarentena\DetalhesQuarentena.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

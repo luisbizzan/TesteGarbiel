@@ -93,6 +93,7 @@ namespace FWLog.Web.Backoffice.Controllers
             IEnumerable<BOQuarentenaListItemViewModel> list = query.ToList()
                 .Select(x => new BOQuarentenaListItemViewModel
                 {
+                    IdQuarentena = x.IdQuarentena,
                     Lote = x.IdLote,
                     Nota = x.Lote.NotaFiscal.Numero,
                     Fornecedor = x.Lote.NotaFiscal.Fornecedor.NomeFantasia,
@@ -120,6 +121,42 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsFiltered = totalRecordsFiltered,
                 Data = result
             });
+        }
+
+        public JsonResult ValidarModalDetalhesQuarentena(long id)
+        {
+            bool existe = _uow.QuarentenaRepository.Any(x => x.IdQuarentena == id);
+
+            if (!existe)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não foi possível buscar Nota Fiscal."
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+        }
+
+        public ActionResult ExibirModalDetalhesQuarentena(long id)
+        {
+            var entidade = _uow.QuarentenaRepository.All().FirstOrDefault(x => x.IdQuarentena == id);
+
+            var model = new DetalhesQuarentenaViewModel
+            {
+                IdQuarentena = entidade.IdQuarentena,
+                IdStatus = entidade.QuarentenaStatus.IdQuarentenaStatus,
+                DataAbertura = entidade.DataAbertura.ToString("dd/MM/yyyy"),
+                DataEncerramento = entidade.DataEncerramento.HasValue ? entidade.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
+                Observacao = entidade.Observacao
+            };
+
+            return PartialView("DetalhesQuarentena", model);
+            //DetalhesQuarentenaViewModel
         }
     }
 }

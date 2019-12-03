@@ -7,7 +7,7 @@
         return [
             {
                 text: "Atualizar Quarentena",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'alterarStatus' },
+                attrs: { 'data-id': full.IdQuarentena, 'action': 'alterarStatus' },
                 icon: 'fa fa-pencil-square',
                 visible: view.registrarRecebimento
             },
@@ -96,8 +96,8 @@
             { data: 'Lote' },
             { data: 'Nota' },
             { data: 'Fornecedor' },
-            { data: 'DataAbertura' },
-            { data: 'DataEncerramento' },
+            { data: 'DataAbertura', width: 100 },
+            { data: 'DataEncerramento', width: 100 },
             { data: 'Atraso' },
             { data: 'Fornecedor' },
             { data: 'Status' },
@@ -141,7 +141,27 @@
 
     function alterarStatus() {
         let id = $(this).data("id");
-        let $modal = $("#alterarStatus");
+        let $modal = $("#modalAlterarStatus");
+
+        var a = CONTROLLER_PATH;
+
+        debugger
+
+        $.ajax({
+            url: HOST_URL + CONTROLLER_PATH + "ValidarModalDetalhesQuarentena/" + id,
+            cache: false,
+            method: "POST",
+            success: function (result) {
+                if (!!result.Success) {
+                    $modal.load(HOST_URL + CONTROLLER_PATH + "ExibirModalDetalhesQuarentena/" + id, function () {
+                        $modal.modal();
+
+                    });
+                } else {
+                    PNotify.error({ text: result.Message });
+                }
+            }
+        });
     }
 
 })();
