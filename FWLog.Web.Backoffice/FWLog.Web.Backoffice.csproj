@@ -230,6 +230,7 @@
     <Compile Include="App_Start\NinjectModules\GeneralModule.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
+    <Compile Include="Controllers\BOEmpresaConfigController.cs" />
     <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\NivelArmazenagemController.cs" />
     <Compile Include="Controllers\PontoArmazenagemController.cs" />
@@ -273,11 +274,13 @@
     <Compile Include="Helpers\HtmlRequestHelper.cs" />
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
+    <Compile Include="Mapping\EmpresaConfigProfile.cs" />
     <Compile Include="Mapping\EnderecoArmazenagemProfile.cs" />
     <Compile Include="Mapping\NivelArmazenagemProfile.cs" />
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
     <Compile Include="Mapping\PrinterTypeProfile.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
+    <Compile Include="Models\BOEmpresaCtx\BOEmpresaSearchModalViewModel.cs" />
     <Compile Include="Models\BOFornecedorCtx\BOFornecedorSearchModalViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterListViewModel.cs" />
@@ -292,6 +295,7 @@
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirRelatorioNotasViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORegistroRecebimentoViewModel.cs" />
+    <Compile Include="Models\BOEmpresaCtx\EmpresaConfigEditViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemCadastroViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemDetalhesViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemEditarViewModel.cs" />
@@ -449,6 +453,8 @@
     <Content Include="Scripts\dart\HttpService.js" />
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
+    <Content Include="Scripts\Views\BOEmpresaConfig\edit.js" />
+    <Content Include="Scripts\Views\BOEmpresa\searchModal.js" />
     <Content Include="Scripts\Views\BOFornecedor\searchModal.js" />
     <Content Include="Scripts\Views\BOPrinter\selecionar.js" />
     <Content Include="Scripts\Views\BOPrinter\index.js" />
@@ -501,6 +507,8 @@
     <Content Include="Views\EnderecoArmazenagem\Cadastrar.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\Editar.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\Detalhes.cshtml" />
+    <Content Include="Views\BOEmpresaConfig\Edit.cshtml" />
+    <Content Include="Views\BOEmpresa\SearchModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
@@ -748,8 +756,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
-    <Folder Include="Models\CompanyCtx\" />
-    <Folder Include="Views\Company\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
