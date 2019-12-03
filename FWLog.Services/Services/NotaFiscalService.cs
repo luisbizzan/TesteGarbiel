@@ -138,16 +138,14 @@ namespace FWLog.Services.Services
                         bool itemNovo = false;
                         NotaFiscalItem notaFiscalItem;
 
-                        if (notaNova)
+                        notaFiscalItem = notafiscal.NotaFiscalItens.FirstOrDefault(f => f.IdProduto == produto.IdProduto && f.Quantidade == qtdNeg);
+
+                        if (notaFiscalItem == null)
                         {
                             notaFiscalItem = new NotaFiscalItem();
                             itemNovo = true;
                         }
-                        else
-                        {
-                            notaFiscalItem = notafiscal.NotaFiscalItens.FirstOrDefault(f => f.IdProduto == produto.IdProduto && f.Quantidade == qtdNeg);
-                        }
-
+                     
                         notaFiscalItem.IdUnidadeMedida = unidade.IdUnidadeMedida;
                         notaFiscalItem.IdProduto = produto.IdProduto;
                         notaFiscalItem.Quantidade = qtdNeg;

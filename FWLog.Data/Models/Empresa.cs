@@ -27,7 +27,8 @@ namespace FWLog.Data.Models
         [Index]
         public string CNPJ { get; set; }
 
-        public int? CEP { get; set; }
+        [StringLength(8)]
+        public string CEP { get; set; }
 
         [StringLength(76)]
         public string Endereco { get; set; }
@@ -51,10 +52,8 @@ namespace FWLog.Data.Models
         public string Telefone { get; set; }
 
         public bool Ativo { get; set; }
-
         [Required]
         [Index]
         public int CodigoIntegracao { get; set; }
-
     }
 }
