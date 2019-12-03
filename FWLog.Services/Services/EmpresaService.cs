@@ -80,7 +80,7 @@ namespace FWLog.Services.Services
                     if (!string.IsNullOrEmpty(empInt.CODEMPMATRIZ))
                     {
                         var codEmpMatriz = Convert.ToInt32(empInt.CODEMPMATRIZ);
-                        var empMatriz = _uow.EmpresaRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codEmpMatriz);
+                        var empMatriz = _uow.EmpresaRepository.Tabela().FirstOrDefault(f => f.CodigoIntegracao == codEmpMatriz);
 
                         if (empMatriz != null)
                         {

@@ -58,24 +58,34 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             DateTime loginAttempUtc = DateTime.UtcNow;
-            var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, false, shouldLockout: true);
+            var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, false, shouldLockout: true).ConfigureAwait(false);
 
             switch (result)
             {
                 case SignInStatus.Success:
-                    ApplicationUser applicationUser = await UserManager.FindByNameAsync(model.UserName);
-                    if (_uow.EmpresaRepository.PegarPrimeiraEmpresa(applicationUser.Id) > 0)
+                    ApplicationUser applicationUser = await UserManager.FindByNameAsync(model.UserName).ConfigureAwait(false);
+                    PerfilUsuario perfilUsuario = _uow.PerfilUsuarioRepository.GetByUserId(applicationUser.Id);
+
+                    if (perfilUsuario.Ativo)
                     {
-                        await CreateApplicationSession(model.UserName);
-                        return RedirectToLocal(returnUrl);
+                        if (_uow.EmpresaRepository.RetornarEmpresaPrincipal(applicationUser.Id) > 0)
+                        {
+                            await CreateApplicationSession(model.UserName).ConfigureAwait(false);
+                            return RedirectToLocal(returnUrl);
+                        }
+                        else
+                        {
+                            model.ErrorMessage = Res.UserEmpresaError;
+                        }
                     }
                     else
                     {
-                        model.ErrorMessage = Res.UserEmpresaError;
+                        model.ErrorMessage = "O usuário informado não está ativo no sistema.";
                     }
+                    
                     break;
                 case SignInStatus.LockedOut:
-                    model.ErrorMessage = await GetLogOnLockoutMessageAsync(loginAttempUtc, model.UserName);
+                    model.ErrorMessage = await GetLogOnLockoutMessageAsync(loginAttempUtc, model.UserName).ConfigureAwait(false);
                     break;
                 case SignInStatus.RequiresVerification:
                     model.ErrorMessage = Res.SignInRequiresVerificationMessage;
@@ -88,6 +98,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
             model.LanguageSelectList = GetLanguageSelectList();
             model.CurrentLanguage = CultureManager.GetCulture(Thread.CurrentThread).Name;
+            model.Password = string.Empty;
+
             return View(model);
         }
 
@@ -218,7 +230,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return;
             }
 
-            long idEmpresa = _uow.EmpresaRepository.PegarPrimeiraEmpresa(applicationUser.Id);
+            long idEmpresa = _uow.EmpresaRepository.RetornarEmpresaPrincipal(applicationUser.Id);
 
             try
             {
