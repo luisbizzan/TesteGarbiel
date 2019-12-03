@@ -2,31 +2,33 @@
     $('.onlyNumber').mask('0#');
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
+        debugger
+
         return [
             {
-                text: "Detalhes da Nota",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
-                icon: 'fa fa-eye',
-                visible: view.registrarRecebimento
-            },
-            {
-                text: "Registrar Recebimento",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+                text: "Atualizar Quarentena",
+                attrs: { 'data-id': full.IdQuarentena, 'action': 'alterarStatus' },
                 icon: 'fa fa-pencil-square',
                 visible: view.registrarRecebimento
             },
-            {
-                text: "Registrar Conferência",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
-                icon: 'fa fa-check-square',
-                visible: view.registrarRecebimento
-            },
-            {
-                text: "Tratar Divergência",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
-                icon: 'fa fa-warning',
-                visible: view.registrarRecebimento
-            }
+            //{
+            //    text: "Registrar Recebimento",
+            //    attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+            //    icon: 'fa fa-pencil-square',
+            //    visible: view.registrarRecebimento
+            //},
+            //{
+            //    text: "Registrar Conferência",
+            //    attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+            //    icon: 'fa fa-check-square',
+            //    visible: view.registrarRecebimento
+            //},
+            //{
+            //    text: "Tratar Divergência",
+            //    attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+            //    icon: 'fa fa-warning',
+            //    visible: view.registrarRecebimento
+            //}
         ];
     });
 
@@ -94,8 +96,8 @@
             { data: 'Lote' },
             { data: 'Nota' },
             { data: 'Fornecedor' },
-            { data: 'DataAbertura' },
-            { data: 'DataEncerramento' },
+            { data: 'DataAbertura', width: 100 },
+            { data: 'DataEncerramento', width: 100 },
             { data: 'Atraso' },
             { data: 'Fornecedor' },
             { data: 'Status' },
@@ -134,6 +136,34 @@
     $("#limparFornecedor").click(function () {
         limparFornecedor();
     });
+
+    $(document.body).on('click', "[action='alterarStatus']", alterarStatus);
+
+    function alterarStatus() {
+        let id = $(this).data("id");
+        let $modal = $("#modalAlterarStatus");
+
+        var a = CONTROLLER_PATH;
+
+        debugger
+
+        $.ajax({
+            url: HOST_URL + CONTROLLER_PATH + "ValidarModalDetalhesQuarentena/" + id,
+            cache: false,
+            method: "POST",
+            success: function (result) {
+                if (!!result.Success) {
+                    $modal.load(HOST_URL + CONTROLLER_PATH + "ExibirModalDetalhesQuarentena/" + id, function () {
+                        $modal.modal();
+
+                    });
+                } else {
+                    PNotify.error({ text: result.Message });
+                }
+            }
+        });
+    }
+
 })();
 
 function setFornecedor(idFornecedor, razaoSocial) {

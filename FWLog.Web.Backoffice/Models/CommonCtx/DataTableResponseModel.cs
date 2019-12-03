@@ -1,8 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using System.Collections;
 
 namespace FWLog.Web.Backoffice.Models.CommonCtx
 {
@@ -18,6 +15,6 @@ namespace FWLog.Web.Backoffice.Models.CommonCtx
         public int RecordsFiltered { get; set; }
 
         [JsonProperty("data")]
-        public IEnumerable<object> Data { get; set; }
+        public IEnumerable Data { get; set; }
     }
 }

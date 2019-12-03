@@ -19,6 +19,8 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
 
     public class BOQuarentenaListItemViewModel
     {
+        public long IdQuarentena { get; set; }
+
         public long Lote { get; set; }
 
         public long Nota { get; set; }
@@ -33,7 +35,7 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
         [Display(Name = "Data Encerramento")]
         public string DataEncerramento { get; set; }
 
-        public string Status { get; set; }        
+        public string Status { get; set; }
     }
 
     public class BOQuarentenaFilterViewModel
@@ -60,7 +62,7 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
         public DateTime? DataEncerramentoFinal { get; set; }
 
         [Display(Name = "Dias em Quarentena")]
-        public int? Atraso { get; set; }
+        public long? Atraso { get; set; }
 
         [Display(Name = "Fornecedor")]
         public long? IdFornecedor { get; set; }

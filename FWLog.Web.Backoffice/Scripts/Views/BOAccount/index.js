@@ -1,7 +1,7 @@
 ﻿(function () {
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        return [           
+        return [
             {
                 action: 'edit',
                 href: view.editUrl + '?id=' + full.UserName,
@@ -64,8 +64,9 @@
             dart.dataTables.loadFilterFromData(data);
         },
         columns: [
+            { data: 'NomeEmpresa' },
             { data: 'Nome' },
-            { data: 'UserName', width: 100 },
+            { data: 'UserName' },
             { data: 'Email' },
             { data: 'Ativo' },
             actionsColumn
@@ -107,6 +108,4 @@
         });
 
     });
-
-
 })();

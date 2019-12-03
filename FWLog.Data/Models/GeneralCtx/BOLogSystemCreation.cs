@@ -36,7 +36,7 @@ namespace FWLog.Data.Models.GeneralCtx
                 EmpresaId = perfil.EmpresaId.ToString();
                 Departamento = perfil.Departamento;
                 Cargo = perfil.Cargo;
-                DataNascimento = perfil.DataNascimento.ToString("dd/MM/yyyy");
+                DataNascimento = perfil.DataNascimento.HasValue ? perfil.DataNascimento.Value.ToString("dd/MM/yyyy") : null;
                 Nome = perfil.Nome;
             }
 
