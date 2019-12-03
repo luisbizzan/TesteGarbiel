@@ -19,6 +19,9 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
 
     public class BOAccountListItemViewModel
     {
+        [Display(Name = "Empresa")]
+        public string NomeEmpresa { get; set; }
+
         [Display(Name = nameof(Res.UserNameLabel), ResourceType = typeof(Res))]
         public string UserName { get; set; }
 
@@ -31,6 +34,7 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
         [Display(Name = nameof(Res.CreationDateLabel), ResourceType = typeof(Res))]
         public DateTime CreationDate { get; set; }
 
+        [Display(Name = "Status")]
         public string Ativo { get; set; }
     }
 
@@ -45,6 +49,7 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
         [Display(Name = nameof(Res.Name), ResourceType = typeof(Res))]
         public string Nome { get; set; }
 
+        [Display(Name = "Status")]
         public bool? Ativo { get; set; }
 
         [Display(Name = "Empresa")]

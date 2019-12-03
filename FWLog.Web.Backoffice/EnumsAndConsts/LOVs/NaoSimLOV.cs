@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
-using Res = Resources.GeneralStrings;
 
 namespace FWLog.Web.Backoffice.EnumsAndConsts.LOVs
 {
@@ -13,13 +12,13 @@ namespace FWLog.Web.Backoffice.EnumsAndConsts.LOVs
                 yield return new SelectListItem
                 {
                     Value = false.ToString(),
-                    Text = Res.No
+                    Text = "Inativo"
                 };
 
                 yield return new SelectListItem
                 {
                     Value = true.ToString(),
-                    Text = Res.Yes,
+                    Text = "Ativo"
                 };
             }
         }
