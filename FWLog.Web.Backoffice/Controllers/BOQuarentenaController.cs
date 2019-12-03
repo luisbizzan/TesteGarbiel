@@ -22,17 +22,18 @@ namespace FWLog.Web.Backoffice.Controllers
         // GET: BOQuarentena
         public ActionResult Index()
         {
-            var model = new BOQuarentenaListViewModel();
-
-            model.Filter = new BOQuarentenaFilterViewModel()
+            var model = new BOQuarentenaListViewModel
             {
-                ListaQuarentenaStatus = new SelectList(
+                Filter = new BOQuarentenaFilterViewModel()
+                {
+                    ListaQuarentenaStatus = new SelectList(
                     _uow.QuarentenaStatusRepository.Todos().Select(x => new SelectListItem
                     {
                         Value = x.IdQuarentenaStatus.ToString(),
                         Text = x.Descricao,
                     }), "Value", "Text"
                 )
+                }
             };
 
             return View(model);
@@ -91,7 +92,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.DataEncerramento <= prazoEncerramentoFinal);
             }
 
-            if (query.Count() > 0)
+            if (query.Any())
             {
                 foreach (var item in query)
                 {
@@ -105,8 +106,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     }
                     else //Se a data de encerramento for nula, ccaptura a quantidade de dias entre a data atual e a data de dencerramento
                     {
-                        if(DateTime.Now > item.DataAbertura)
-                                atraso = (DateTime.Now - item.DataAbertura).Days;
+                        if (DateTime.Now > item.DataAbertura)
+                            atraso = (DateTime.Now - item.DataAbertura).Days;
                     }
 
                     boQuarentenaListItemViewModel.Add(new BOQuarentenaListItemViewModel()
@@ -116,7 +117,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         Fornecedor = item.Lote.NotaFiscal.Fornecedor.NomeFantasia,
                         Atraso = atraso,
                         DataAbertura = item.DataAbertura.ToString("dd/MM/yyyy"),
-                        DataEncerramento = item.DataEncerramento.HasValue ? item.DataEncerramento.Value.ToString("dd/MM/yyyy") : ""
+                        DataEncerramento = item.DataEncerramento.HasValue ? item.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty
                     });
                 }
             }
@@ -126,7 +127,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 boQuarentenaListItemViewModel = boQuarentenaListItemViewModel.Where(x => x.Atraso == model.CustomFilter.Atraso).ToList();
             }
 
-            totalRecordsFiltered = boQuarentenaListItemViewModel.Count();
+            totalRecordsFiltered = boQuarentenaListItemViewModel.Count;
 
             var result = boQuarentenaListItemViewModel
                 .OrderBy(model.OrderByColumn, model.OrderByDirection)

@@ -60,7 +60,7 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
         public DateTime? DataEncerramentoFinal { get; set; }
 
         [Display(Name = "Dias em Quarentena")]
-        public int? Atraso { get; set; }
+        public long? Atraso { get; set; }
 
         [Display(Name = "Fornecedor")]
         public long? IdFornecedor { get; set; }

@@ -107,13 +107,14 @@
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.Atraso)
-                    @Html.TextBoxFor(m => m.Filter.Atraso, new { @class = "form-control", data_field = "Atraso" })
+                    @Html.TextBoxFor(m => m.Filter.Atraso, new { @class = "form-control", data_field = "Atraso", type = "number", min = "0", step = "1" })
+                    @Html.ValidationMessageFor(m => m.Filter.Atraso)
                 </div>
-            </div>          
+            </div>
             <div class="row">
                 <div class="col-xs-12 form-buttons">
                     <button type="button" class="btn btn-default" data-filter="clear" id="limpaPesquisaRecebimentoNota">@Resources.CommonStrings.ClearAction</button>
-                    <button type="button" class="btn btn-primary" data-filter="search" id="pesquisaPacienteElemento">@Resources.CommonStrings.SearchAction</button>                    
+                    <button type="button" class="btn btn-primary" data-filter="search" id="pesquisaPacienteElemento">@Resources.CommonStrings.SearchAction</button>
                 </div>
             </div>
         </div>
