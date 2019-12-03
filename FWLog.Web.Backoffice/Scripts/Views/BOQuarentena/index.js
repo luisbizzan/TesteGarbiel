@@ -2,31 +2,33 @@
     $('.onlyNumber').mask('0#');
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
+        debugger
+
         return [
             {
-                text: "Detalhes da Nota",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
-                icon: 'fa fa-eye',
-                visible: view.registrarRecebimento
-            },
-            {
-                text: "Registrar Recebimento",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+                text: "Atualizar Quarentena",
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'alterarStatus' },
                 icon: 'fa fa-pencil-square',
                 visible: view.registrarRecebimento
             },
-            {
-                text: "Registrar Conferência",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
-                icon: 'fa fa-check-square',
-                visible: view.registrarRecebimento
-            },
-            {
-                text: "Tratar Divergência",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
-                icon: 'fa fa-warning',
-                visible: view.registrarRecebimento
-            }
+            //{
+            //    text: "Registrar Recebimento",
+            //    attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+            //    icon: 'fa fa-pencil-square',
+            //    visible: view.registrarRecebimento
+            //},
+            //{
+            //    text: "Registrar Conferência",
+            //    attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+            //    icon: 'fa fa-check-square',
+            //    visible: view.registrarRecebimento
+            //},
+            //{
+            //    text: "Tratar Divergência",
+            //    attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+            //    icon: 'fa fa-warning',
+            //    visible: view.registrarRecebimento
+            //}
         ];
     });
 
@@ -134,6 +136,14 @@
     $("#limparFornecedor").click(function () {
         limparFornecedor();
     });
+
+    $(document.body).on('click', "[action='alterarStatus']", alterarStatus);
+
+    function alterarStatus() {
+        let id = $(this).data("id");
+        let $modal = $("#alterarStatus");
+    }
+
 })();
 
 function setFornecedor(idFornecedor, razaoSocial) {
