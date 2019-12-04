@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ExtensionMethods.List;
-using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
