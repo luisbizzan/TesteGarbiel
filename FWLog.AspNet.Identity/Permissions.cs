@@ -89,6 +89,22 @@ namespace FWLog.AspNet.Identity
             }
         }
 
+        public class Printer : PermissionGroupBuildItem
+        {
+            public const string List = "PrinterTypeList";
+            public const string Create = "PrinterTypeCreate";
+            public const string Edit = "PrinterTypeEdit";
+            public const string Delete = "PrinterTypeDelete";
+
+            public Printer() : base(Display.FromResource(nameof(Res.PrinterType)))
+            {
+                Register(List, Display.FromResource(nameof(Res.List)));
+                Register(Create, Display.FromResource(nameof(Res.Create)));
+                Register(Edit, Display.FromResource(nameof(Res.Edit)));
+                Register(Delete, Display.FromResource(nameof(Res.Delete)));
+            }
+        }
+
         public class Recebimento : PermissionGroupBuildItem
         {
             public const string List = "RecebimentoList";
@@ -165,6 +181,18 @@ namespace FWLog.AspNet.Identity
                 Register(Editar, Display.FromString("Editar Endereços"));
                 Register(Excluir, Display.FromString("Excluir Endereços"));
                 Register(Visualizar, Display.FromString("Visualizar Endereços"));
+            }
+        }
+
+        public class EmpresaConfig : PermissionGroupBuildItem
+        {
+            public const string List = "EmpresaConfigList";
+            public const string Edit = "EmpresaConfigEdit";
+
+            public EmpresaConfig() : base(Display.FromResource(nameof(Res.PrinterType)))
+            {
+                Register(List, Display.FromResource(nameof(Res.List)));
+                Register(Edit, Display.FromResource(nameof(Res.Edit)));
             }
         }
     }

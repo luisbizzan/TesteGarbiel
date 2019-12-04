@@ -117,6 +117,7 @@
     <Compile Include="Models\DataTablesCtx\PontoArmazenagemPesquisaModalListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\PrinterTypeTableRow.cs" />
     <Compile Include="Models\EmpresaConfig.cs" />
+    <Compile Include="Models\TipoConferencia.cs" />
     <Compile Include="Models\EmpresaTipo.cs" />
     <Compile Include="Models\EnderecoArmazenagem.cs" />
     <Compile Include="Models\FilterCtx\EnderecoArmazenagemListaFiltro.cs" />

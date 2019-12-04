@@ -54,7 +54,7 @@ namespace FWLog.Services.Services
                         empresa = new Empresa();
                     }
                     empresa.CodigoIntegracao = codEmp;
-                    empresa.CEP = string.IsNullOrEmpty(empInt.CEP) ? (int?)null : Convert.ToInt32(empInt.CEP);
+                    empresa.CEP = empInt.CEP;
                     empresa.Ativo = empInt.AD_ATIVOSAV == "S" ? true : false;
                     empresa.Bairro = empInt.NOMEBAI;
                     empresa.Cidade = empInt.NOMECID;
@@ -67,9 +67,8 @@ namespace FWLog.Services.Services
                     empresa.RazaoSocial = empInt.RAZAOSOCIAL;
                     empresa.Sigla = empInt.AD_UNIDABREV == null ? empInt.NOMEFANTASIA.Substring(0, 3) : empInt.AD_UNIDABREV;//TODO temporário
                     empresa.Telefone = empInt.TELEFONE;
-                    //empresa.EmpresaConfig.IdEmpresaTipo = empInt.CODEMPMATRIZ == empInt.CODEMP ? EmpresaTipoEnum.Matriz : EmpresaTipoEnum.Filial;
-
-
+                   //TODO empresa.EmpresaConfig.IdEmpresaTipo = empInt.CODEMPMATRIZ == empInt.CODEMP ? EmpresaTipoEnum.Matriz : EmpresaTipoEnum.Filial;
+                    
                     if (empresaNova)
                     {
                         _uow.EmpresaRepository.Add(empresa);
@@ -80,11 +79,11 @@ namespace FWLog.Services.Services
                     if (!string.IsNullOrEmpty(empInt.CODEMPMATRIZ))
                     {
                         var codEmpMatriz = Convert.ToInt32(empInt.CODEMPMATRIZ);
-                        var empMatriz = _uow.EmpresaRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codEmpMatriz);
+                        var empMatriz = _uow.EmpresaRepository.Tabela().FirstOrDefault(f => f.CodigoIntegracao == codEmpMatriz);
 
                         if (empMatriz != null)
                         {
-                            //empresa.EmpresaConfig.IdEmpresaMatriz = empMatriz.IdEmpresa;
+                           // empresa.EmpresaConfig.IdEmpresaMatriz = empMatriz.IdEmpresa;
 
                             await _uow.SaveChangesAsync();
                         }

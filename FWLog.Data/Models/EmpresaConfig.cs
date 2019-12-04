@@ -24,6 +24,8 @@ namespace FWLog.Data.Models
         [Required]
         public bool EmpresaFazGarantia { get; set; }
 
+        public EmpresaTipoEnum? IdTipoConferencia { get; set; }
+
         [ForeignKey(nameof(IdEmpresaTipo))]
         public virtual EmpresaTipo EmpresaTipo { get; set; }
 

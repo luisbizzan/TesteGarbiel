@@ -12,11 +12,11 @@
         new
         {
             detailsUrl = Url.Action("Details"),
-            detailsVisible = User.HasPermission(Permissions.Role.List),
+            detailsVisible = User.HasPermission(Permissions.Printer.List),
             editUrl = Url.Action("Edit"),
-            editVisible = User.HasPermission(Permissions.Role.Edit),
+            editVisible = User.HasPermission(Permissions.Printer.Edit),
             deleteUrl = Url.Action("AjaxDelete"),
-            deleteVisible = User.HasPermission(Permissions.Role.List),
+            deleteVisible = User.HasPermission(Permissions.Printer.List),
             pageDataUrl = Url.Action("PageData")
         })
 }
@@ -74,7 +74,7 @@
             <div class="x_title">
                 <h2>@Res.ListHeader</h2>
                 <div class="nav navbar-right panel_toolbox">
-                    @if (User.HasPermission(Permissions.Role.Create))
+                    @if (User.HasPermission(Permissions.Printer.Create))
                     {
                         <a class="btn btn-primary btn-dt-action" href="@Url.Action("Create")"><i class="fa fa-fw fa-plus"></i> @Resources.CommonStrings.CreateAction</a>
                     }
