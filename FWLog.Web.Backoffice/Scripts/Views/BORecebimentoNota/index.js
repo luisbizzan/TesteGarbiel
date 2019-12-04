@@ -128,14 +128,19 @@
 
     var iconeStatus = function (data, type, row) {
         if (type === 'display') {
-            if (row.Atraso == 0)
-                return row.Lote != null ? '<i class="fa fa-circle icone-status-verde"></i>' + row.Lote : '<i class="fa fa-circle icone-status-verde"></i>';
+            var nomeCor,
+                lote = row.Lote || '';
 
-            if (row.Atraso > 0 && row.Atraso <= 2)
-                return row.Lote != null ? '<i class="fa fa-circle icone-status-amarelo"></i>' + row.Lote : '<i class="fa fa-circle icone-status-amarelo"></i>';
+            if (row.Atraso == 0)
+                nomeCor = 'verde';
 
             if (row.Atraso > 2)
-                return row.Lote != null ? '<i class="fa fa-circle icone-status-vermelho"></i>' + row.Lote : '<i class="fa fa-circle icone-status-vermelho"></i>';
+                nomeCor = 'vermelho';
+
+            if (row.Atraso > 0)
+                nomeCor = 'amarelo';
+
+            return `<i class="fa fa-circle icone-status-${nomeCor}">${lote}</i>`;
         }
 
         return data;
@@ -191,10 +196,8 @@
     });
 
     function limparFornecedor() {
-        let razao = $("#Filter_RazaoSocialFornecedor");
-        let fornecedor = $("#Filter_IdFornecedor");
-        razao.val("");
-        fornecedor.val("");
+        $("#Filter_RazaoSocialFornecedor").val("");
+        $("#Filter_IdFornecedor").val("");
     }
 
     $("#limparFornecedor").click(function () {
@@ -208,10 +211,8 @@
     });
 
     function limparUsuarioRecebimento() {
-        let userName = $("#Filter_UserNameRecebimento");
-        let usuarioId = $("#Filter_IdUsuarioRecebimento");
-        userName.val("");
-        usuarioId.val("");
+        $("#Filter_UserNameRecebimento").val("");
+        $("#Filter_IdUsuarioRecebimento").val("");
     }
 
     $("#limparUsuarioRecebimento").click(function () {
@@ -225,10 +226,8 @@
     });
 
     function limparUsuarioConferencia() {
-        let userName = $("#Filter_UserNameConferencia");
-        let usuarioId = $("#Filter_IdUsuarioConferencia");
-        userName.val("");
-        usuarioId.val("");
+        $("#Filter_UserNameConferencia").val("");
+        $("#Filter_IdUsuarioConferencia").val("");
     }
 
     $("#limparUsuarioConferencia").click(function () {
@@ -356,7 +355,8 @@ function BuscarNotaFiscal() {
                         $('#ChaveAcesso').attr("disabled", true);
 
                         $('#QtdVolumes').keypress(function (event) {
-                            var keycode = (event.keyCode ? event.keyCode : event.which);
+                            var keycode = (event.keyCode || event.which);
+
                             if (keycode === 13) {
                                 RegistrarNotaFiscal();
                             }
@@ -404,19 +404,17 @@ function RegistrarNotaFiscal() {
 }
 
 function setFornecedor(idFornecedor, razaoSocial) {
-    let razao = $("#Filter_RazaoSocialFornecedor");
-    let fornecedor = $("#Filter_IdFornecedor");
-    razao.val(razaoSocial);
-    fornecedor.val(idFornecedor);
+    $("#Filter_RazaoSocialFornecedor").val(razaoSocial);
+    $("#Filter_IdFornecedor").val(idFornecedor);
+
     $("#modalFornecedor").modal("hide");
     $("#modalFornecedor").empty();
 }
 
 function setUsuarioRecebimento(idUsuario, nomeUsuario) {
-    let userName = $("#Filter_UserNameRecebimento");
-    let usuarioId = $("#Filter_IdUsuarioRecebimento");
-    userName.val(nomeUsuario);
-    usuarioId.val(idUsuario);
+    $("#Filter_UserNameRecebimento").val(nomeUsuario);
+    $("#Filter_IdUsuarioRecebimento").val(idUsuario);
+
     $("#modalUsuarioRecebimento").modal("hide");
     $("#modalUsuarioRecebimento").empty();
 }
