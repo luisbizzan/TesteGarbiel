@@ -53,11 +53,11 @@
                                     @Html.LabelFor(f => f.Observacao)
                                     @if (Model.PermiteEdicao)
                                     {
-                                        @Html.TextAreaFor(m => m.Observacao, new { @class = "form-control", @rows = 10, @style = "height:100px;" })
+                                        @Html.TextAreaFor(m => m.Observacao, new { @class = "form-control", @rows = 10, @style = "height:100px !important;" })
                                     }
                                     else
                                     {
-                                        @Html.TextAreaFor(m => m.Observacao, new { @class = "form-control", @rows = 10, @style = "height:100px;", @readonly = "readonly" })
+                                        @Html.TextAreaFor(m => m.Observacao, new { @class = "form-control", @rows = 10, @style = "height:100px !important;", @readonly = "readonly" })
                                     }
                                 </div>
                             </div>

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FWLog.Data;
+﻿using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
@@ -129,7 +128,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     Fornecedor = x.Lote.NotaFiscal.Fornecedor.NomeFantasia,
                     DataAbertura = x.DataAbertura.ToString("dd/MM/yyyy"),
                     DataEncerramento = x.DataEncerramento.HasValue ? x.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
-                    Atraso = x.DataAbertura.Subtract(x.DataEncerramento ?? DateTime.Now).Days
+                    Atraso = x.DataAbertura.Subtract(x.DataEncerramento ?? DateTime.Now).Days,
+                    Status = x.QuarentenaStatus.Descricao
                 });
 
             if (model.CustomFilter.Atraso.HasValue)
@@ -206,8 +206,6 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 Quarentena entidade = _uow.QuarentenaRepository.GetById(model.IdQuarentena);
 
-                Quarentena olda = Mapper.Map<Quarentena>(entidade);
-
                 Quarentena old = new Quarentena
                 {
                     DataAbertura = entidade.DataAbertura,
@@ -220,6 +218,11 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 entidade.IdQuarentenaStatus = model.IdStatus;
                 entidade.Observacao = model.Observacao;
+
+                if (!model.PermiteEdicao)
+                {
+                    entidade.DataEncerramento = DateTime.Now;
+                }
 
                 _uow.QuarentenaRepository.Update(entidade);
 
@@ -234,14 +237,14 @@ namespace FWLog.Web.Backoffice.Controllers
                     NewEntity = entidade
                 });
 
-                Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
+                Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
                 return RedirectToAction("Index");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 setViewBags();
 
-                Notify.Error(Resources.CommonStrings.RegisterCreatedSuccessMessage);
+                Notify.Error(Resources.CommonStrings.RegisterEditedErrorMessage);
                 return PartialView("DetalhesQuarentena", model);
             }
         }
