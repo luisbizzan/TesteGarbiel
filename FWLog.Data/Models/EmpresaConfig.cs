@@ -9,6 +9,7 @@ namespace FWLog.Data.Models
         [Required]
         public long IdEmpresaConfig { get; set; }
 
+        [Index]
         [Required]
         public long IdEmpresa { get; set; }
 

@@ -50,6 +50,8 @@
                             @Html.HiddenFor(m => m.IdEmpresaGarantia, new { @class = "idempresa" })
                             @Html.ValidationMessageFor(m => m.IdEmpresaGarantia)
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="form-group col-xs-12 col-md-3">
                             @Html.LabelFor(m => m.IdEmpresaTipo)
                             @Html.DropDownListFor(m => m.IdEmpresaTipo, Model.TiposEmpresa, new { @class = "form-control" })
@@ -57,7 +59,7 @@
                         </div>
                         <div class="form-group col-xs-12 col-md-3">
                             @Html.LabelFor(m => m.IdTipoConferencia)
-                            @Html.DropDownListFor(m => m.IdTipoConferencia, Model.TiposConferencia, new { @class = "form-control" })
+                            @Html.DropDownListFor(m => m.IdTipoConferencia, Model.TiposConferencia, "Selecione...", new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.IdTipoConferencia)
                         </div>
                     </div>
@@ -70,100 +72,80 @@
                             @Html.ValidationMessageFor(m => m.EmpresaFazGarantia)
                         </div>
                     </div>
-
                     <div class="ln_solid"></div>
                     <div class="row col-xs-12 form-buttons">
-                        <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.CancelAction</a>
-                        <button type="submit" class="btn btn-primary">@Resources.CommonStrings.ConfirmAction</button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
                     </div>
                 </div>
-
                 <div class="tab-pane fade" id="empresa" role="tabpanel" aria-labelledby="EmpresaTab">
                     <div class="row">
                         @Html.HiddenFor(m => m.Empresa.IdEmpresa)
                         <div class="form-group col-xs-12 col-md-6 col-lg-2">
                             @Html.LabelFor(m => m.Empresa.CodigoIntegracao, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Empresa.CodigoIntegracao, new { @class = "form-control", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(m => m.Empresa.CodigoIntegracao)
                         </div>
                         <div class="form-group col-xs-12 col-md-6 col-lg-5">
                             @Html.LabelFor(m => m.Empresa.RazaoSocial, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Empresa.RazaoSocial, new { @class = "form-control", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(m => m.Empresa.RazaoSocial)
                         </div>
                         <div class="form-group col-xs-12 col-md-6 col-lg-5">
                             @Html.LabelFor(m => m.Empresa.NomeFantasia, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Empresa.NomeFantasia, new { @class = "form-control", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(m => m.Empresa.NomeFantasia)
                         </div>
                         <div class="form-group col-xs-12 col-md-6 col-lg-1">
                             @Html.LabelFor(m => m.Empresa.Sigla, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Empresa.Sigla, new { @class = "form-control", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(m => m.Empresa.Sigla)
                         </div>
                         <div class="form-group col-xs-12 col-md-6 col-lg-2">
                             @Html.LabelFor(m => m.Empresa.CNPJ, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Empresa.CNPJ, new { @class = "form-control", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(m => m.Empresa.CNPJ)
                         </div>
                         <div class="form-group col-xs-12 col-md-6 col-lg-3">
                             @Html.LabelFor(m => m.Empresa.Endereco, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Empresa.Endereco, new { @class = "form-control", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(m => m.Empresa.Endereco)
                         </div>
                         <div class="form-group col-xs-12 col-md-6 col-lg-1">
                             @Html.LabelFor(m => m.Empresa.Numero, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Empresa.Numero, new { @class = "form-control", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(m => m.Empresa.Numero)
                         </div>
                         <div class="form-group col-xs-12 col-md-6 col-lg-2">
                             @Html.LabelFor(m => m.Empresa.Complemento, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Empresa.Complemento, new { @class = "form-control", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(m => m.Empresa.Complemento)
                         </div>
                         <div class="form-group col-xs-12 col-md-6 col-lg-3">
                             @Html.LabelFor(m => m.Empresa.Bairro, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Empresa.Bairro, new { @class = "form-control", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(m => m.Empresa.Bairro)
                         </div>
                         <div class="form-group col-xs-12 col-md-6 col-lg-3">
                             @Html.LabelFor(m => m.Empresa.Cidade, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Empresa.Cidade, new { @class = "form-control", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(m => m.Empresa.Cidade)
                         </div>
                         <div class="form-group col-xs-12 col-md-6 col-lg-3">
                             @Html.LabelFor(m => m.Empresa.Estado, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Empresa.Estado, new { @class = "form-control", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(m => m.Empresa.Estado)
                         </div>
 
                         <div class="form-group col-xs-12 col-md-6 col-lg-3">
                             @Html.LabelFor(m => m.Empresa.CEP, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Empresa.CEP, new { @class = "form-control", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(m => m.Empresa.CEP)
                         </div>
                         <div class="form-group col-xs-12 col-md-6 col-lg-3">
                             @Html.LabelFor(m => m.Empresa.Telefone, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Empresa.Telefone, new { @class = "form-control", @readonly = "readonly" })
-                            @Html.ValidationMessageFor(m => m.Empresa.Telefone)
                         </div>
-
                     </div>
                     <div class="row">
-                        <div class="checkbox col-xs-12 col-md-6 col-lg-3" style="pointer-events: none">
-                            <label>
-                                @Html.CheckBoxFor(m => m.Empresa.Ativo)
-                                @Html.DisplayNameFor(m => m.Empresa.Ativo)
-                            </label>
+                        <div class="col-xs-12 col-md-6 col-lg-3">
+                            @Html.LabelFor(m => m.Empresa.Ativo)
+                            <div class="checkbox">
+                                @Html.CheckBoxFor(m => m.Empresa.Ativo, new { @class = "flat", @disabled = true})
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="modal" id="modalEmpresaGarantia" data-toggle="modal" data-myvalue="1"></div>
-    <div class="modal" id="modalEmpresaMatriz" data-toggle="modal" data-myvalue="2"></div>
 }
-
-
+<div class="modal" id="modalEmpresaGarantia" data-toggle="modal" data-myvalue="1"></div>
+<div class="modal" id="modalEmpresaMatriz" data-toggle="modal" data-myvalue="2"></div>

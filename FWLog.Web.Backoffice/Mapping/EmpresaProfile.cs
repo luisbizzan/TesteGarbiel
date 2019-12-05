@@ -13,7 +13,8 @@ namespace FWLog.Web.Backoffice.Mapping
              .ForMember(d => d.RazaoSocialEmpresaGarantia, opt => opt.MapFrom(s => s.EmpresaGarantia.RazaoSocial))
              .ForMember(d => d.RazaoSocialEmpresaMatriz, opt => opt.MapFrom(s => s.EmpresaMatriz.RazaoSocial));
 
-            CreateMap<Empresa, EmpresaDetalhesViewModel>();
+            CreateMap<Empresa, EmpresaDetalhesViewModel>()
+                .ForMember(dest => dest.CNPJ, opt => opt.MapFrom(src => src.CNPJ.Substring(0, 2) + "." + src.CNPJ.Substring(2, 3) + "." + src.CNPJ.Substring(5, 3) + "/" + src.CNPJ.Substring(8, 4) + "-" + src.CNPJ.Substring(12, 2)));
 
             CreateMap<EmpresaConfigEditarViewModel, EmpresaConfig>()
                 .ForMember(d => d.Empresa, opt => opt.Ignore())

@@ -167,6 +167,18 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (!ModelState.IsValid)
             {
+                model.TiposConferencia = new SelectList(_unitOfWork.TipoConferenciaRepository.RetornarTodos().Select(x => new SelectListItem
+                {
+                    Value = x.IdTipoConferencia.GetHashCode().ToString(),
+                    Text = x.Descricao,
+                }), "Value", "Text");
+
+                model.TiposEmpresa = new SelectList(_unitOfWork.EmpresaTipoRepository.RetornarTodos().Select(x => new SelectListItem
+                {
+                    Value = x.IdEmpresaTipo.GetHashCode().ToString(),
+                    Text = x.Descricao,
+                }), "Value", "Text");
+
                 return View(model);
             }
 
@@ -175,7 +187,7 @@ namespace FWLog.Web.Backoffice.Controllers
             _empresaService.Editar(empresaConfig);
 
             Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
-            return RedirectToAction("Index");
+            return RedirectToAction("Editar");
         }
     }
 }

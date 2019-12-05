@@ -12,7 +12,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public EmpresaConfig ConsultarPorIdEmpresa(long idEmpresa)
         {
-            return Entities.EmpresaConfig.Where(w => w.IdEmpresa == idEmpresa).FirstOrDefault();
+            return Entities.EmpresaConfig.AsNoTracking().Where(w => w.IdEmpresa == idEmpresa).FirstOrDefault();
         }
 
         public IQueryable<EmpresaConfig> Todos()
