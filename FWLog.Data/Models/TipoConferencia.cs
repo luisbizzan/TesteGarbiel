@@ -5,11 +5,8 @@ namespace FWLog.Data.Models
 {
     public enum TipoConferenciaEnum
     {
-        [Display(Name = "Por Quantidade")]
         PorQuantidade = 1,
-
-        [Display(Name = "Conferência 100%")]
-        ConferenciaCemPorcento = 2       
+        ConferenciaCemPorcento = 2
     }
 
     public class TipoConferencia

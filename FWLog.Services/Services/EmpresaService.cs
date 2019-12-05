@@ -112,10 +112,9 @@ namespace FWLog.Services.Services
             ValidarCampo(empresaIntegracao.CODEMP, nameof(empresaIntegracao.ATIVO));
         }
 
-        public void Save(EmpresaConfig empresaConfig)
+        public void Editar(EmpresaConfig empresaConfig)
         {
             _unitOfWork.EmpresaConfigRepository.Update(empresaConfig);
-
             _unitOfWork.SaveChanges();
         }
     }

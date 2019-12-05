@@ -26,11 +26,6 @@ namespace FWLog.Web.Backoffice.Controllers
             _empresaService = empresaService;
         }
 
-        public ActionResult Index()
-        {
-            return View();
-        }
-
         public ActionResult BuscarEmpresas()
         {
             ViewData["Empresas"] = new SelectList(Empresas, "IdEmpresa", "Nome");
@@ -140,6 +135,18 @@ namespace FWLog.Web.Backoffice.Controllers
             EmpresaConfig empresaConfig = _unitOfWork.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
             var model = Mapper.Map<EmpresaConfigEditarViewModel>(empresaConfig);
 
+            model.TiposConferencia = new SelectList(_unitOfWork.TipoConferenciaRepository.RetornarTodos().Select(x => new SelectListItem
+            {
+                Value = x.IdTipoConferencia.GetHashCode().ToString(),
+                Text = x.Descricao,
+            }), "Value", "Text");
+
+            model.TiposEmpresa = new SelectList(_unitOfWork.EmpresaTipoRepository.RetornarTodos().Select(x => new SelectListItem
+            {
+                Value = x.IdEmpresaTipo.GetHashCode().ToString(),
+                Text = x.Descricao,
+            }), "Value", "Text");
+
             return View(model);
         }
 
@@ -165,7 +172,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             EmpresaConfig empresaConfig = Mapper.Map<EmpresaConfig>(model);
 
-            _empresaService.Save(empresaConfig);
+            _empresaService.Editar(empresaConfig);
 
             Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
             return RedirectToAction("Index");

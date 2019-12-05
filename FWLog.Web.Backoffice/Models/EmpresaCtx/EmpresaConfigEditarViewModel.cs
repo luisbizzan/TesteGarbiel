@@ -1,5 +1,6 @@
 ﻿using FWLog.Data.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Models.EmpresaCtx
 {
@@ -7,36 +8,32 @@ namespace FWLog.Web.Backoffice.Models.EmpresaCtx
     {
         [Required]
         public long IdEmpresa { get; set; }
-
+        [Required]
         public long IdEmpresaConfig { get; set; }
-
         [Required]
         [Display(Name = "Empresa Garantia")]
         public long IdEmpresaGarantia { get; set; }
-
         [Required]
         [Display(Name = "Empresa Matriz")]
         public long IdEmpresaMatriz { get; set; }
-
         [Required]
         [Display(Name = "Tipo da Empresa")]
         public EmpresaTipoEnum IdEmpresaTipo { get; set; }
-
         [Required]
         [Display(Name = "Tipo da Conferência")]
-        public EmpresaTipoEnum IdTipoConferencia { get; set; }
-
-        public string RazaoSocialEmpresaMatriz { get; set; }
-
-        public string RazaoSocialEmpresaGarantia { get; set; }
-
+        public TipoConferenciaEnum IdTipoConferencia { get; set; }
         [Display(Name = "Empresa Faz Garantia?")]
         public bool EmpresaFazGarantia { get; set; }
 
-        public EmpresaDetailsViewModel Empresa { get; set; }
+        public EmpresaDetalhesViewModel Empresa { get; set; }
+
+        public string RazaoSocialEmpresaMatriz { get; set; }
+        public string RazaoSocialEmpresaGarantia { get; set; }
+        public SelectList TiposEmpresa { get; set; }
+        public SelectList TiposConferencia { get; set; }
     }
 
-    public class EmpresaDetailsViewModel
+    public class EmpresaDetalhesViewModel
     {
         public long IdEmpresa { get; set; }
 

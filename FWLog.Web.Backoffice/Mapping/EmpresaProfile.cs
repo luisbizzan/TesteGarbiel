@@ -13,7 +13,7 @@ namespace FWLog.Web.Backoffice.Mapping
              .ForMember(d => d.RazaoSocialEmpresaGarantia, opt => opt.MapFrom(s => s.EmpresaGarantia.RazaoSocial))
              .ForMember(d => d.RazaoSocialEmpresaMatriz, opt => opt.MapFrom(s => s.EmpresaMatriz.RazaoSocial));
 
-            CreateMap<Empresa, EmpresaDetailsViewModel>();
+            CreateMap<Empresa, EmpresaDetalhesViewModel>();
 
             CreateMap<EmpresaConfigEditarViewModel, EmpresaConfig>()
                 .ForMember(d => d.Empresa, opt => opt.Ignore())

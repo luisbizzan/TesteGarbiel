@@ -1,4 +1,6 @@
 ﻿(function () {
+    $.validator.setDefaults({ ignore: [] });
+
     $("#pesquisarEmpresaMatriz").click(function () {
         $("#modalEmpresaMatriz").load(HOST_URL + "Empresa/SearchModal?CampoSelecionado=EmpresaMatriz", function () {
             $("#modalEmpresaMatriz").modal();
