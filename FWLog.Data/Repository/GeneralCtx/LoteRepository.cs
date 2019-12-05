@@ -9,10 +9,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 {
     public class LoteRepository : GenericRepository<Lote>
     {
-        public LoteRepository(Entities entities) : base(entities)
-        {
-
-        }
+        public LoteRepository(Entities entities) : base(entities) { }
 
         public Lote PesquisarLotePorNotaFiscal(long idNotaFiscal)
         {
@@ -41,7 +38,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "B.\"ValorTotal\", " +
                             "B.\"ValorFrete\", " +
                             "B.\"NumeroConhecimento\", " +
-                            "B.\"PesoBruto\", " +         
+                            "B.\"PesoBruto\", " +
                             "B.\"Especie\", " +
                             "B.\"Quantidade\", " +
                             "B.\"Chave\", " +

@@ -35,7 +35,7 @@ namespace FWLog.Services.Services
             List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<NotaFiscalIntegracao>(where, inner);
 
             List<FreteTipo> tiposFrete = _uow.FreteTipoRepository.RetornarTodos();
-            IQueryable<Empresa> empresas = _uow.EmpresaRepository.Todos();
+            IQueryable<Empresa> empresas = _uow.EmpresaRepository.Tabela();
             var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
 
             Dictionary<string, List<NotaFiscalIntegracao>> notasIntegracaoGrp = notasIntegracao.GroupBy(g => g.NUNOTA).ToDictionary(d => d.Key, d => d.ToList());

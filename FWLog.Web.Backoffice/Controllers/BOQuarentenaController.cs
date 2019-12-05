@@ -1,5 +1,9 @@
 ﻿using FWLog.Data;
+using FWLog.Data.EnumsAndConsts;
+using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Data.Models.GeneralCtx;
+using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BOQuarentenaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
@@ -13,10 +17,35 @@ namespace FWLog.Web.Backoffice.Controllers
     public class BOQuarentenaController : BOBaseController
     {
         private readonly UnitOfWork _uow;
+        private readonly BOLogSystemService _boLogSystemService;
 
-        public BOQuarentenaController(UnitOfWork uow)
+        public BOQuarentenaController(UnitOfWork uow, BOLogSystemService boLogSystemService)
         {
             _uow = uow;
+            _boLogSystemService = boLogSystemService;
+        }
+
+        private SelectList Status
+        {
+            get
+            {
+                if (status == null)
+                {
+                    status = new SelectList(_uow.QuarentenaStatusRepository.Todos().Select(x => new SelectListItem
+                    {
+                        Value = x.IdQuarentenaStatus.ToString(),
+                        Text = x.Descricao
+                    }), "Value", "Text");
+                }
+
+                return status;
+            }
+        }
+        private SelectList status;
+
+        private void setViewBags()
+        {
+            ViewBag.Status = Status;
         }
 
         // GET: BOQuarentena
@@ -99,7 +128,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     Fornecedor = x.Lote.NotaFiscal.Fornecedor.NomeFantasia,
                     DataAbertura = x.DataAbertura.ToString("dd/MM/yyyy"),
                     DataEncerramento = x.DataEncerramento.HasValue ? x.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
-                    Atraso = x.DataAbertura.Subtract(x.DataEncerramento ?? DateTime.Now).Days
+                    Atraso = x.DataAbertura.Subtract(x.DataEncerramento ?? DateTime.Now).Days,
+                    Status = x.QuarentenaStatus.Descricao
                 });
 
             if (model.CustomFilter.Atraso.HasValue)
@@ -142,9 +172,12 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [HttpGet]
         public ActionResult ExibirModalDetalhesQuarentena(long id)
         {
-            var entidade = _uow.QuarentenaRepository.All().FirstOrDefault(x => x.IdQuarentena == id);
+            setViewBags();
+
+            var entidade = _uow.QuarentenaRepository.GetById(id);
 
             var model = new DetalhesQuarentenaViewModel
             {
@@ -155,8 +188,65 @@ namespace FWLog.Web.Backoffice.Controllers
                 Observacao = entidade.Observacao
             };
 
+
             return PartialView("DetalhesQuarentena", model);
-            //DetalhesQuarentenaViewModel
+        }
+
+        [HttpPost]
+        public ActionResult ExibirModalDetalhesQuarentena(DetalhesQuarentenaViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                setViewBags();
+
+                return PartialView("DetalhesQuarentena", model);
+            }
+
+            try
+            {
+                Quarentena entidade = _uow.QuarentenaRepository.GetById(model.IdQuarentena);
+
+                Quarentena old = new Quarentena
+                {
+                    DataAbertura = entidade.DataAbertura,
+                    DataEncerramento = entidade.DataEncerramento,
+                    IdLote = entidade.IdLote,
+                    IdQuarentena = entidade.IdQuarentena,
+                    IdQuarentenaStatus = entidade.IdQuarentenaStatus,
+                    Observacao = entidade.Observacao
+                };
+
+                entidade.IdQuarentenaStatus = model.IdStatus;
+                entidade.Observacao = model.Observacao;
+
+                if (!model.PermiteEdicao)
+                {
+                    entidade.DataEncerramento = DateTime.Now;
+                }
+
+                _uow.QuarentenaRepository.Update(entidade);
+
+                var userInfo = new BackOfficeUserInfo();
+                _boLogSystemService.Add(new BOLogSystemCreation
+                {
+                    ActionType = ActionTypeNames.Edit,
+                    IP = userInfo.IP,
+                    UserId = userInfo.UserId,
+                    EntityName = nameof(Quarentena),
+                    OldEntity = old,
+                    NewEntity = entidade
+                });
+
+                Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                setViewBags();
+
+                Notify.Error(Resources.CommonStrings.RegisterEditedErrorMessage);
+                return PartialView("DetalhesQuarentena", model);
+            }
         }
     }
 }

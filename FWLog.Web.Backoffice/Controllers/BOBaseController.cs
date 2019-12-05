@@ -73,12 +73,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 cookie[EmpresaCookie.IdEmpresa] = string.Empty;
-
-                if (logoff)
-                {
-                    cookie[EmpresaCookie.ListEmpresas] = string.Empty;
-                }
-
                 Response.Cookies.Add(cookie);
 
                 return;
@@ -86,13 +80,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
 
-            var empresas = uow.EmpresaRepository.GetAllByUserId(userId);
-            string jsonEmpresas = JsonConvert.SerializeObject(empresas);
-
             cookie = cookie ?? new HttpCookie(EmpresaCookie.CookieName);
 
             cookie.Values[EmpresaCookie.IdEmpresa] = idEmpresa.ToString();
-            cookie.Values[EmpresaCookie.ListEmpresas] = Server.UrlEncode(jsonEmpresas);
             cookie.Expires = DateTime.MaxValue;
             Response.Cookies.Add(cookie);
         }
@@ -118,21 +108,9 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             get
             {
-                HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName];
-
-                if (cookie != null && !string.IsNullOrEmpty(cookie[EmpresaCookie.ListEmpresas]))
-                {
-                    string jsonEmpresas = Server.UrlDecode(cookie[EmpresaCookie.ListEmpresas]);
-                    var empresas = JsonConvert.DeserializeObject<IEnumerable<EmpresaSelectedItem>>(jsonEmpresas);
-
-                    return empresas;
-                }
-                else
-                {
-                    var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
-                    var userInfo = new BackOfficeUserInfo();
-                    return uow.EmpresaRepository.GetAllByUserId(userInfo.UserId.ToString());
-                }
+                var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
+                var userInfo = new BackOfficeUserInfo();
+                return uow.EmpresaRepository.GetAllByUserId(userInfo.UserId.ToString());
             }
         }
     }
