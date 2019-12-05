@@ -1,7 +1,7 @@
-﻿@model FWLog.Web.Backoffice.Models.BOEmpresaCtx.EmpresaConfigEditViewModel
+﻿@model FWLog.Web.Backoffice.Models.EmpresaCtx.EmpresaConfigEditarViewModel
 
 @{
-    ViewBag.Title = "Edição de Configuração da Empresa";
+    ViewBag.Title = "Editar Configuração da Empresa";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -52,21 +52,22 @@
                         </div>
                         <div class="form-group col-xs-12 col-md-3">
                             @Html.LabelFor(m => m.IdEmpresaTipo)
-                            @Html.TextBox("IdEmpresaTipo", Model.IdEmpresaTipo.GetDisplayName(), new { @class = "form-control", @readonly = "true" })
+                            @Html.DropDownListFor(m => m.IdEmpresaTipo, Model.TiposEmpresa, new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.IdEmpresaTipo)
                         </div>
                         <div class="form-group col-xs-12 col-md-3">
                             @Html.LabelFor(m => m.IdTipoConferencia)
-                            @Html.DropDownListFor(m => m.IdTipoConferencia, EnumHelper.GetSelectList(typeof(FWLog.Data.Models.TipoConferenciaEnum)), "Selecione...", new { @class = "form-control" })
+                            @Html.DropDownListFor(m => m.IdTipoConferencia, Model.TiposConferencia, new { @class = "form-control" })
                             @Html.ValidationMessageFor(m => m.IdTipoConferencia)
                         </div>
                     </div>
                     <div class="row">
-                        <div class="checkbox col-xs-12 col-md-6 col-lg-3">
-                            <label>
-                                @Html.CheckBoxFor(m => m.EmpresaFazGarantia)
-                                @Html.DisplayNameFor(m => m.EmpresaFazGarantia)
-                            </label>
+                        <div class="form-group col-xs-12 col-md-6 col-lg-3">
+                            @Html.LabelFor(m => m.EmpresaFazGarantia)
+                            <div class="checkbox">
+                                @Html.CheckBoxFor(m => m.EmpresaFazGarantia, new { @class = "flat" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.EmpresaFazGarantia)
                         </div>
                     </div>
 

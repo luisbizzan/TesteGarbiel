@@ -1,22 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FWLog.Web.Backoffice.Models.BOEmpresaCtx
+namespace FWLog.Web.Backoffice.Models.EmpresaCtx
 {
-    public class BOEmpresaSearchModalViewModel
+    public class EmpresaSearchModalViewModel
     {
-        public BOEmpresaSearchModalItemViewModel EmptyItem { get; set; }
-        public BOEmpresaSearchModalFilterViewModel Filter { get; set; }
+        public EmpresaSearchModalItemViewModel EmptyItem { get; set; }
+        public EmpresaSearchModalFilterViewModel Filter { get; set; }
         public string CampoSelecionado { get; set; }
 
-        public BOEmpresaSearchModalViewModel(string campoSelecionado)
+        public EmpresaSearchModalViewModel(string campoSelecionado)
         {
-            EmptyItem = new BOEmpresaSearchModalItemViewModel();
-            Filter = new BOEmpresaSearchModalFilterViewModel(campoSelecionado);
+            EmptyItem = new EmpresaSearchModalItemViewModel();
+            Filter = new EmpresaSearchModalFilterViewModel(campoSelecionado);
             CampoSelecionado = campoSelecionado;
         }
     }
 
-    public class BOEmpresaSearchModalItemViewModel
+    public class EmpresaSearchModalItemViewModel
     {
         public long IdEmpresa { get; set; }
 
@@ -36,14 +36,14 @@ namespace FWLog.Web.Backoffice.Models.BOEmpresaCtx
         public string Sigla { get; set; }
     }
 
-    public class BOEmpresaSearchModalFilterViewModel
+    public class EmpresaSearchModalFilterViewModel
     {
-        public BOEmpresaSearchModalFilterViewModel()
+        public EmpresaSearchModalFilterViewModel()
         {
 
         }
 
-        public BOEmpresaSearchModalFilterViewModel(string campoSelecionado)
+        public EmpresaSearchModalFilterViewModel(string campoSelecionado)
         {
             CampoSelecionado = campoSelecionado;
         }

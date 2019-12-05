@@ -192,6 +192,7 @@
     <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoArmazenagemRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\TipoConferenciaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoMovimentacaoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TransportadoraRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UnidadeMedidaRepository.cs" />

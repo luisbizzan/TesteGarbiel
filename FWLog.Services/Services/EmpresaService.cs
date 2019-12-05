@@ -14,11 +14,11 @@ namespace FWLog.Services.Services
 {
     public class EmpresaService : BaseService
     {
-        private UnitOfWork _uow;
+        private UnitOfWork _unitOfWork;
 
         public EmpresaService(UnitOfWork uow)
         {
-            _uow = uow;
+            _unitOfWork = uow;
         }
 
         public async Task ConsultarEmpresaIntegracao()
@@ -49,7 +49,7 @@ namespace FWLog.Services.Services
                     bool empresaNova = false;
 
                     var codEmp = Convert.ToInt32(empInt.CODEMP);
-                    Empresa empresa = _uow.EmpresaRepository.ConsultaPorCodigoIntegracao(codEmp);
+                    Empresa empresa = _unitOfWork.EmpresaRepository.ConsultaPorCodigoIntegracao(codEmp);
 
                     if (empresa == null)
                     {
@@ -74,21 +74,21 @@ namespace FWLog.Services.Services
                     
                     if (empresaNova)
                     {
-                        _uow.EmpresaRepository.Add(empresa);
+                        _unitOfWork.EmpresaRepository.Add(empresa);
                     }
 
-                    await _uow.SaveChangesAsync();
+                    await _unitOfWork.SaveChangesAsync();
 
                     if (!string.IsNullOrEmpty(empInt.CODEMPMATRIZ))
                     {
                         var codEmpMatriz = Convert.ToInt32(empInt.CODEMPMATRIZ);
-                        var empMatriz = _uow.EmpresaRepository.Tabela().FirstOrDefault(f => f.CodigoIntegracao == codEmpMatriz);
+                        var empMatriz = _unitOfWork.EmpresaRepository.Tabela().FirstOrDefault(f => f.CodigoIntegracao == codEmpMatriz);
 
                         if (empMatriz != null)
                         {
                            // empresa.EmpresaConfig.IdEmpresaMatriz = empMatriz.IdEmpresa;
 
-                            await _uow.SaveChangesAsync();
+                            await _unitOfWork.SaveChangesAsync();
                         }
                     }
 
@@ -101,7 +101,7 @@ namespace FWLog.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_uow);
+                    var applicationLogService = new ApplicationLogService(_unitOfWork);
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da seguinte Empresa: {0}.", empInt.CODEMP));
 
                     continue;
@@ -112,6 +112,12 @@ namespace FWLog.Services.Services
         public void ValidarEmpresaIntegracao(EmpresaIntegracao empresaIntegracao)
         {
             ValidarCampo(empresaIntegracao.CODEMP, nameof(empresaIntegracao.ATIVO));
+        }
+
+        public void Editar(EmpresaConfig empresaConfig)
+        {
+            _unitOfWork.EmpresaConfigRepository.Update(empresaConfig);
+            _unitOfWork.SaveChanges();
         }
     }
 }

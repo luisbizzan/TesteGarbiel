@@ -1,12 +1,14 @@
 ﻿(function () {
+    $.validator.setDefaults({ ignore: [] });
+
     $("#pesquisarEmpresaMatriz").click(function () {
-        $("#modalEmpresaMatriz").load(HOST_URL + "BOEmpresa/SearchModal?CampoSelecionado=EmpresaMatriz", function () {
+        $("#modalEmpresaMatriz").load(HOST_URL + "Empresa/SearchModal?CampoSelecionado=EmpresaMatriz", function () {
             $("#modalEmpresaMatriz").modal();
         });
     });
 
     $("#pesquisarEmpresaGarantia").click(function () {
-        $("#modalEmpresaGarantia").load(HOST_URL + "BOEmpresa/SearchModal?CampoSelecionado=EmpresaGarantia", function () {
+        $("#modalEmpresaGarantia").load(HOST_URL + "Empresa/SearchModal?CampoSelecionado=EmpresaGarantia", function () {
             $("#modalEmpresaGarantia").modal();
         });
     });

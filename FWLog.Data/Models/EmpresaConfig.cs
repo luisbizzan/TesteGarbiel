@@ -12,6 +12,7 @@ namespace FWLog.Data.Models
         [Required]
         public long IdEmpresa { get; set; }
 
+        [Index]
         [Required]
         public EmpresaTipoEnum IdEmpresaTipo { get; set; }
 
@@ -24,7 +25,8 @@ namespace FWLog.Data.Models
         [Required]
         public bool EmpresaFazGarantia { get; set; }
 
-        public EmpresaTipoEnum? IdTipoConferencia { get; set; }
+        [Index]
+        public TipoConferenciaEnum? IdTipoConferencia { get; set; }
 
         [ForeignKey(nameof(IdEmpresaTipo))]
         public virtual EmpresaTipo EmpresaTipo { get; set; }
@@ -37,5 +39,8 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
+
+        [ForeignKey(nameof(IdTipoConferencia))]
+        public virtual TipoConferencia TipoConferencia { get; set; }
     }
 }

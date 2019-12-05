@@ -184,15 +184,13 @@ namespace FWLog.AspNet.Identity
             }
         }
 
-        public class EmpresaConfig : PermissionGroupBuildItem
+        public class Empresa : PermissionGroupBuildItem
         {
-            public const string List = "EmpresaConfigList";
-            public const string Edit = "EmpresaConfigEdit";
+            public const string EditarConfiguracao = "EmpresaConfiguracaoEditar";
 
-            public EmpresaConfig() : base(Display.FromResource(nameof(Res.PrinterType)))
+            public Empresa() : base(Display.FromString("Empresas"))
             {
-                Register(List, Display.FromResource(nameof(Res.List)));
-                Register(Edit, Display.FromResource(nameof(Res.Edit)));
+                Register(EditarConfiguracao, Display.FromString("Editar Configurações"));
             }
         }
     }

@@ -57,10 +57,8 @@
             <div class="form-group col-sm-2 col-xs-12">
                 @Html.LabelFor(m => m.Ativo, new { @class = "control-label" })
                 <div class="checkbox">
-                    <label>
-                        @Html.CheckBoxFor(m => m.Ativo, new { @class = "flat", @style = "position: absolute; opacity: 0;" })
-                        Ativo
-                    </label>
+                    @Html.CheckBoxFor(m => m.Ativo, new { @class = "flat" })
+                    Ativo
                 </div>
                 @Html.ValidationMessageFor(m => m.Ativo)
             </div>
