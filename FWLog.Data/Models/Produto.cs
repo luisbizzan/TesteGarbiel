@@ -29,10 +29,7 @@ namespace FWLog.Data.Models
 
         [StringLength(80)]
         public string NomeFabricante { get; set; }
-
-        [StringLength(40)]
-        public string DescricaoNFE { get; set; }
-
+     
         [StringLength(200)]
         public string EnderecoImagem { get; set; }
 
@@ -42,7 +39,7 @@ namespace FWLog.Data.Models
         public string EnderecoSeparacao { get; set; }
 
         [StringLength(50)]
-        public string SKU { get; set; }
+        public string CodigoBarras { get; set; }
 
         [Required]
         public int CodigoProdutoNFE { get; set; }
@@ -61,7 +58,7 @@ namespace FWLog.Data.Models
 
         public decimal? MetroCubico { get; set; }
 
-        public decimal? MultiploVenda { get; set; }
+        public decimal MultiploVenda { get; set; }
 
         [Required]
         public bool Ativo { get; set; }

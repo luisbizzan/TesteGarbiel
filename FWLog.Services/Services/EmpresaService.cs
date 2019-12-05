@@ -36,6 +36,8 @@ namespace FWLog.Services.Services
             inner.Append("LEFT JOIN TSICID ON TSIEMP.CODCID = TSICID.CODCID ");
             inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF");
 
+            //var where = "WHERE INTEGRARFWLOG = 1"; Esperando criação do campo no Sankhya
+
             List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<EmpresaIntegracao>(inner: inner.ToString());
 
             foreach (var empInt in empresasIntegracao)
