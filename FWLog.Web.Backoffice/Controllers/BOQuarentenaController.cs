@@ -76,8 +76,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
             totalRecords = query.Count();
 
-            if (!string.IsNullOrEmpty(model.CustomFilter.DANFE))
-                query = query.Where(x => x.Lote.NotaFiscal.DANFE.Contains(model.CustomFilter.DANFE));
+            if (!string.IsNullOrEmpty(model.CustomFilter.ChaveAcesso))
+                query = query.Where(x => x.Lote.NotaFiscal.ChaveAcesso.Contains(model.CustomFilter.ChaveAcesso));
 
             if (model.CustomFilter.Lote.HasValue)
                 query = query.Where(x => x.IdLote == Convert.ToInt32(model.CustomFilter.Lote));

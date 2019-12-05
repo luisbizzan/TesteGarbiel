@@ -79,9 +79,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
             totalRecords = query.Count();
 
-            if (!string.IsNullOrEmpty(model.CustomFilter.Chave))
+            if (!string.IsNullOrEmpty(model.CustomFilter.ChaveAcesso))
             {
-                query = query.Where(x => !string.IsNullOrEmpty(x.NotaFiscal.Chave) && x.NotaFiscal.DANFE.Contains(model.CustomFilter.Chave));
+                query = query.Where(x => !string.IsNullOrEmpty(x.NotaFiscal.ChaveAcesso) && x.NotaFiscal.ChaveAcesso.Contains(model.CustomFilter.ChaveAcesso));
             }
 
             if (model.CustomFilter.Lote.HasValue)
@@ -354,7 +354,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
 
-            if (notafiscal.Chave != chaveAcesso)
+            if (notafiscal.ChaveAcesso != chaveAcesso)
             {
                 return Json(new AjaxGenericResultModel
                 {
@@ -386,7 +386,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var dataAtual = DateTime.UtcNow;
 
             var model = new BORegistroRecebimentoViewModel();
-            model.ChaveAcesso = notafiscal.Chave;
+            model.ChaveAcesso = notafiscal.ChaveAcesso;
             model.DataRecebimento = dataAtual.ToString("dd/MM/yyyy");
             model.HoraRecebimento = dataAtual.ToString("HH:mm:ss");
             model.FornecedorNome = notafiscal.Fornecedor.RazaoSocial;
@@ -448,7 +448,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Lote = viewModel.Lote,
                     Nota = viewModel.Nota,
-                    DANFE = viewModel.DANFE,
+                    ChaveAcesso = viewModel.ChaveAcesso,
                     IdStatus = viewModel.IdStatus,
                     DataInicial = viewModel.DataInicial,
                     DataFinal = viewModel.DataFinal,
@@ -503,7 +503,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var model = new BODetalhesEntradaConferenciaViewModel
             {
                 IdNotaFiscal = notaFiscal.IdNotaFiscal,
-                DANFE = notaFiscal.Chave,
+                ChaveAcesso = notaFiscal.ChaveAcesso,
                 NumeroNotaFiscal = notaFiscal.Numero.ToString(),
                 StatusNotaFiscal = notaFiscal.StatusIntegracao,
                 Fornecedor = string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.RazaoSocial),

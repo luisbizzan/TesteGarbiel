@@ -7,7 +7,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public string Lote { get; set; }
         public string Nota { get; set; }
         public string Prazo { get; set; }
-        public string DANFE { get; set; }
+        public string ChaveAcesso { get; set; }
         public int? IdStatus { get; set; }
         public DateTime? DataInicial { get; set; }
         public DateTime? DataFinal { get; set; }

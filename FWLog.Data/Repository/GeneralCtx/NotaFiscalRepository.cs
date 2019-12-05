@@ -15,7 +15,7 @@ namespace FWLog.Data.Repository.GeneralCtx
               
         public NotaFiscal PegarNotaFiscalPorChave(string chaveAcesso)
         {
-            return Entities.NotaFiscal.FirstOrDefault(f => f.Chave == chaveAcesso);
+            return Entities.NotaFiscal.FirstOrDefault(f => f.ChaveAcesso == chaveAcesso);
         }
     }
 }

@@ -25,9 +25,9 @@ namespace FWLog.Services.Services
         {
             IQueryable<Lote> query = _unitiOfWork.LoteRepository.Obter(request.IdEmpresa).AsQueryable();
 
-            if (!string.IsNullOrEmpty(request.DANFE))
+            if (!string.IsNullOrEmpty(request.ChaveAcesso))
             {
-                query = query.Where(x => !string.IsNullOrEmpty(x.NotaFiscal.Chave) && x.NotaFiscal.DANFE.Contains(request.DANFE));
+                query = query.Where(x => !string.IsNullOrEmpty(x.NotaFiscal.ChaveAcesso) && x.NotaFiscal.ChaveAcesso.Contains(request.ChaveAcesso));
             }
 
             if (request.Lote.HasValue)
@@ -187,8 +187,8 @@ namespace FWLog.Services.Services
             Row row = tabela.AddRow();
             row.Cells[0].MergeRight = 2;
             paragraph = row.Cells[0].AddParagraph();
-            paragraph.AddFormattedText("DANFE: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.DANFE);
+            paragraph.AddFormattedText("Chave Acesso: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.ChaveAcesso);
 
             paragraph = row.Cells[3].AddParagraph();
             paragraph.AddFormattedText("Status: ", TextFormat.Bold);
@@ -203,6 +203,12 @@ namespace FWLog.Services.Services
                     break;
                 case NotaFiscalStatusEnum.ConferidaDivergencia:
                     paragraph.AddText("Divergência");
+                    break;
+                case NotaFiscalStatusEnum.AguardandoRecebimento:
+                    paragraph.AddText("Aguardando recebimento");
+                    break;
+                case NotaFiscalStatusEnum.ProcessandoIntegracao:
+                    paragraph.AddText("Processando Integração");
                     break;
                 default:
                     paragraph.AddText("Status Não Cadastrado");
@@ -308,7 +314,16 @@ namespace FWLog.Services.Services
             paragraph.AddText(notaFiscal.ValorFrete.ToString("C"));
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Recebido por: ", TextFormat.Bold);
-            paragraph.AddText(lote.UsuarioRecebimento.UserName);
+            if (IsNotaRecebida)
+            {
+                paragraph.AddText(lote.UsuarioRecebimento.UserName);
+            }
+            else
+            {
+                paragraph.AddText("Não recebido");
+            }
+
+            
             row.Cells[2].MergeRight = 1;
 
             if (IsNotaRecebida)
@@ -389,7 +404,7 @@ namespace FWLog.Services.Services
                 {
                     row = tabela.AddRow();
                     paragraph = row.Cells[0].AddParagraph();
-                    paragraph.AddText(notaFiscalItem.Produto.Referencia);
+                    paragraph.AddText(string.IsNullOrEmpty(notaFiscalItem.Produto.Referencia) ? string.Empty : notaFiscalItem.Produto.Referencia);//TODO Verificar
                     paragraph = row.Cells[1].AddParagraph();
                     paragraph.AddText(notaFiscalItem.Quantidade.ToString());
                     paragraph = row.Cells[2].AddParagraph();

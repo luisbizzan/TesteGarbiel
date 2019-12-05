@@ -94,7 +94,6 @@ namespace FWLog.Services.Services
                     notafiscal.Numero = Convert.ToInt32(notafiscalIntegracao.NUMNOTA);
                     notafiscal.Serie = notafiscalIntegracao.SERIENOTA;
                     notafiscal.CodigoIntegracao = codNota;
-                    notafiscal.DANFE = notafiscalIntegracao.DANFE;
                     notafiscal.ValorTotal = Convert.ToDecimal(notafiscalIntegracao.VLRNOTA.Replace(".", ","));
                     notafiscal.ValorFrete = Convert.ToDecimal(notafiscalIntegracao.VLRFRETE.Replace(".", ","));
                     notafiscal.NumeroConhecimento = notafiscalIntegracao.NUMCF == null ? (long?)null : Convert.ToInt64(notafiscalIntegracao.NUMCF);
@@ -103,7 +102,7 @@ namespace FWLog.Services.Services
                     notafiscal.Especie = notafiscalIntegracao.VOLUME;
                     notafiscal.StatusIntegracao = notafiscalIntegracao.STATUSNOTA;
                     notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.ProcessandoIntegracao;
-                    notafiscal.Chave = notafiscalIntegracao.CHAVENFE;
+                    notafiscal.ChaveAcesso = notafiscalIntegracao.CHAVENFE;
                     notafiscal.IdFornecedor = fornecedor.IdFornecedor;
                     notafiscal.DataEmissao = notafiscalIntegracao.DHEMISSEPEC == null ? DateTime.Now : Convert.ToDateTime(notafiscalIntegracao.DHEMISSEPEC); //TODO validar campo geovane;
                     notafiscal.IdEmpresa = empresa.IdEmpresa;

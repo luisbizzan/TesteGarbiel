@@ -40,7 +40,7 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
 
     public class BOQuarentenaFilterViewModel
     {
-        public string DANFE { get; set; }
+        public string ChaveAcesso { get; set; }
 
         public long? Lote { get; set; }
 

@@ -9,7 +9,7 @@ namespace FWLog.Services.Model.Relatorios
         public long? Lote { get; set; }
         public int? Nota { get; set; }
         public string Prazo { get; set; }
-        public string DANFE { get; set; }
+        public string ChaveAcesso { get; set; }
         public int? IdStatus { get; set; }
         public DateTime? DataInicial { get; set; }
         public DateTime? DataFinal { get; set; }

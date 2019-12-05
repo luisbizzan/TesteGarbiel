@@ -33,15 +33,14 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "A.\"QuantidadeVolume\", " +
                             "B.\"IdNotaFiscal\", " +
                             "B.\"Numero\", " +
-                            "B.\"Serie\", " +
-                            "B.\"DANFE\", " +
+                            "B.\"Serie\", " +                            
                             "B.\"ValorTotal\", " +
                             "B.\"ValorFrete\", " +
                             "B.\"NumeroConhecimento\", " +
                             "B.\"PesoBruto\", " +
                             "B.\"Especie\", " +
                             "B.\"Quantidade\", " +
-                            "B.\"Chave\", " +
+                            "B.\"ChaveAcesso\", " +
                             "B.\"CodigoIntegracao\", " +
                             "B.\"DataEmissao\", " +
                             "B.\"PrazoEntregaFornecedor\", " +

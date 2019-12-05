@@ -28,7 +28,7 @@
             data: {
                 Lote: $("#Filter_Lote").val(),
                 Nota: $("#Filter_Nota").val(),
-                DANFE: $("#Filter_DANFE").val(),
+                ChaveAcesso: $("#Filter_ChaveAcesso").val(),
                 IdStatus: $("#Filter_IdStatus").val(),
                 DataInicial: $("#Filter_DataInicial").val(),
                 DataFinal: $("#Filter_DataFinal").val(),
@@ -252,7 +252,7 @@ function imprimir() {
                 IdImpressora: $("#IdImpressora").val(),
                 Lote: $("#Filter_Lote").val(),
                 Nota: $("#Filter_Nota").val(),
-                DANFE: $("#Filter_DANFE").val(),
+                ChaveAcesso: $("#Filter_ChaveAcesso").val(),
                 IdStatus: $("#Filter_ListaStatus").val(),
                 DataInicial: $("#Filter_DataInicial").val(),
                 DataFinal: $("#Filter_DataFinal").val(),

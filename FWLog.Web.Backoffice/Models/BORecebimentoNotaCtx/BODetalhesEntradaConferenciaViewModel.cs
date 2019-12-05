@@ -9,8 +9,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public bool IsNotaRecebida { get; set; }
         public bool IsNotaConferida { get; set; }
         public bool IsNotaDivergente { get; set; }
-        [Display(Name = "DANFE")]
-        public string DANFE { get; set; }
+        [Display(Name = "Chave Acesso")]
+        public string ChaveAcesso { get; set; }
         [Display(Name = "Lote")]
         public string NumeroLote { get; set; }
         [Display(Name = "Nota")]

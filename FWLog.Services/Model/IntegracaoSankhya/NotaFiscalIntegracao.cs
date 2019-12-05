@@ -17,9 +17,6 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TGFCAB.CODEMP")]
         public string CODEMP { get; set; } //CompanyId
 
-        [TabelaIntegracao(DisplayName = "TGFCAB.DANFE")]
-        public string DANFE { get; set; } //DANFE
-
         [TabelaIntegracao(DisplayName = "TGFCAB.CHAVENFE")]
         public string CHAVENFE { get; set; } //Chave
 
