@@ -1,9 +1,11 @@
-﻿using FWLog.Data;
+﻿using AutoMapper;
+using FWLog.AspNet.Identity;
+using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
-using FWLog.Web.Backoffice.Models.BOEmpresaCtx;
+using FWLog.Web.Backoffice.Models.EmpresaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +13,17 @@ using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
-    public class BOEmpresaController : BOBaseController
+    public class EmpresaController : BOBaseController
     {
-        private readonly UnitOfWork _uow;
+        private readonly UnitOfWork _unitOfWork;
+        private readonly EmpresaService _empresaService;
 
-        public BOEmpresaController(UnitOfWork uow)
+        public EmpresaController(
+            UnitOfWork unitOfWork,
+            EmpresaService empresaService)
         {
-            _uow = uow;
+            _unitOfWork = unitOfWork;
+            _empresaService = empresaService;
         }
 
         public ActionResult Index()
@@ -31,10 +37,10 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_MudarEmpresa");
         }
 
-        public JsonResult MudarEmpresa(int idEmpresa)
+        public JsonResult MudarEmpresa(int id)
         {
             var userInfo = new BackOfficeUserInfo();
-            CookieSalvarEmpresa(idEmpresa, userInfo.UserId.ToString());
+            CookieSalvarEmpresa(id, userInfo.UserId.ToString());
 
             return Json(new AjaxGenericResultModel
             {
@@ -48,19 +54,23 @@ namespace FWLog.Web.Backoffice.Controllers
             return IdEmpresa;
         }
 
+        [HttpGet]
+        [ApplicationAuthorize]
         public ActionResult SearchModal(string campoSelecionado)
         {
-            var model = new BOEmpresaSearchModalViewModel(campoSelecionado);
+            var model = new EmpresaSearchModalViewModel(campoSelecionado);
             return View(model);
         }
 
-        public ActionResult SearchModalPageData(DataTableFilter<BOEmpresaSearchModalFilterViewModel> model)
+        [HttpPost]
+        [ApplicationAuthorize]
+        public ActionResult SearchModalPageData(DataTableFilter<EmpresaSearchModalFilterViewModel> model)
         {
-            List<BOEmpresaSearchModalItemViewModel> boEmpresaSearchModalItemViewModel = new List<BOEmpresaSearchModalItemViewModel>();
+            List<EmpresaSearchModalItemViewModel> empresaSearchModalItemViewModel = new List<EmpresaSearchModalItemViewModel>();
             int totalRecords = 0;
             int totalRecordsFiltered = 0;
 
-            var query = _uow.EmpresaConfigRepository.Todos();
+            var query = _unitOfWork.EmpresaConfigRepository.Todos();
 
             totalRecords = query.Count();
 
@@ -96,7 +106,7 @@ namespace FWLog.Web.Backoffice.Controllers
                                    
             foreach (var item in query)
             {
-                boEmpresaSearchModalItemViewModel.Add(new BOEmpresaSearchModalItemViewModel()
+                empresaSearchModalItemViewModel.Add(new EmpresaSearchModalItemViewModel()
                 {
                     IdEmpresa = item.IdEmpresa,
                     CodigoIntegracao = item.Empresa.CodigoIntegracao,
@@ -107,9 +117,9 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            totalRecordsFiltered = boEmpresaSearchModalItemViewModel.Count();
+            totalRecordsFiltered = empresaSearchModalItemViewModel.Count();
 
-            var result = boEmpresaSearchModalItemViewModel
+            var result = empresaSearchModalItemViewModel
                 .OrderBy(model.OrderByColumn, model.OrderByDirection)
                 .Skip(model.Start)
                 .Take(model.Length);
@@ -121,6 +131,44 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsFiltered = totalRecordsFiltered,
                 Data = result
             });
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Empresa.EditarConfiguracao)]
+        public ActionResult Editar()
+        {
+            EmpresaConfig empresaConfig = _unitOfWork.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+            var model = Mapper.Map<EmpresaConfigEditarViewModel>(empresaConfig);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Empresa.EditarConfiguracao)]
+        public ActionResult Editar(EmpresaConfigEditarViewModel model)
+        {
+            if (model.IdEmpresa == model.IdEmpresaGarantia && !model.EmpresaFazGarantia)
+            {
+                ModelState.AddModelError(nameof(model.EmpresaFazGarantia), string.Format("A empresa editada não pode ser selecionada para Garantia, se não estiver marcada para fazer garantia.", model.RazaoSocialEmpresaGarantia));
+            }
+
+            var empresaConfigGarantia = _unitOfWork.EmpresaConfigRepository.ConsultarPorIdEmpresa(model.IdEmpresaGarantia);
+            if (!empresaConfigGarantia.EmpresaFazGarantia)
+            {
+                ModelState.AddModelError(nameof(model.IdEmpresaGarantia), string.Format("A Empresa '{0}' não pode ser selecionada para Garantia, se não estiver marcada para fazer garantia.", model.RazaoSocialEmpresaGarantia));
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            EmpresaConfig empresaConfig = Mapper.Map<EmpresaConfig>(model);
+
+            _empresaService.Save(empresaConfig);
+
+            Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
+            return RedirectToAction("Index");
         }
     }
 }

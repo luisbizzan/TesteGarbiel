@@ -1,9 +1,9 @@
 ﻿using FWLog.Data.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace FWLog.Web.Backoffice.Models.BOEmpresaCtx
+namespace FWLog.Web.Backoffice.Models.EmpresaCtx
 {
-    public class EmpresaConfigEditViewModel
+    public class EmpresaConfigEditarViewModel
     {
         [Required]
         public long IdEmpresa { get; set; }

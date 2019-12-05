@@ -23,7 +23,7 @@
             new MenuItem { Text = Res.GroupMenuItem, Url = Url.Action("Index", "BOGroup"), RequirePermission = Permissions.Role.List }
         ),
         new MenuGroup(text: Res.ConfigurationMenuGroup, icon: "fa fa-cog").SetItems(
-            new MenuItem { Text = Res.EmpresaMenuItem, Url = Url.Action("Edit", "BOEmpresaConfig"), RequirePermission = Permissions.EmpresaConfig.List },
+            new MenuItem { Text = "Empresa", Url = Url.Action("Editar", "Empresa"), RequirePermission = Permissions.Empresa.EditarConfiguracao },
             new MenuItem { Text = Res.PrinterMenuItem, Url = Url.Action("Index", "BOPrinter"), RequirePermission = Permissions.Printer.List },
             new MenuItem { Text = Res.PrinterTypeMenuItem, Url = Url.Action("Index", "PrinterType"), RequirePermission = Permissions.PrinterType.List }
         ),
