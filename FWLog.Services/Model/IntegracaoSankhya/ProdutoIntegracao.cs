@@ -7,8 +7,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     {
         public string CODPROD { get; set; }
         public string DESCRPROD { get; set; } 
-        public string CODFAB { get; set; } 
-        public string DESCRPRODNFE { get; set; } 
+        public string CODFAB { get; set; }         
         public string FABRICANTE { get; set; } 
         public string LARGURA { get; set; } 
         public string ALTURA { get; set; } 
@@ -18,7 +17,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string ESPESSURA { get; set; } 
         public string PRODUTONFE { get; set; } 
         public string M3 { get; set; } 
-        public string MULTIPVENDA { get; set; } 
+        public string AGRUPCOMPMINIMO { get; set; } 
         public string PESOBRUTO { get; set; } 
         public string PESOLIQ { get; set; } 
         public string REFERENCIA { get; set; } 

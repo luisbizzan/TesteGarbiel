@@ -32,7 +32,7 @@ namespace FWLog.Services.Services
             where.Append("CGC_CPF IS NOT NULL ");
             where.Append("AND RAZAOSOCIAL IS NOT NULL ");
             where.Append("AND FORNECEDOR = 'S' ");
-            where.Append(string.Format("AND DTALTER > to_date('{0}', 'dd-mm-yyyy hh24:mi:ss')", DateTime.UtcNow.ToString("dd-MM-yyyy hh:mm:ss")));//Data do Log de sincronização
+            //where.Append("AND INTEGRARFWLOG = 1 "); Esperando criação do campo no Sankhya
 
             List<FornecedorIntegracao> fornecedoresIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryGenerico<FornecedorIntegracao>(where: where.ToString());
 
