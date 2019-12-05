@@ -7,7 +7,6 @@ namespace FWLog.AspNet.Identity
     {
         public Permissions() : base(Res.ResourceManager) { }
 
-        // AplicationLog
         public class ApplicationLog : PermissionGroupBuildItem
         {
             public const string List = "ApplicationLogList";
@@ -18,7 +17,6 @@ namespace FWLog.AspNet.Identity
             }
         }
 
-        // Role
         public class Role : PermissionGroupBuildItem
         {
             public const string List = "RoleList";
@@ -26,7 +24,7 @@ namespace FWLog.AspNet.Identity
             public const string Edit = "RoleEdit";
             public const string Delete = "RoleDelete";
 
-            public Role() : base(Display.FromResource(nameof(Res.Role)))
+            public Role() : base(Display.FromString("Grupos de Usuários"))
             {
                 Register(List, Display.FromResource(nameof(Res.RoleList)));
                 Register(Create, Display.FromResource(nameof(Res.RoleCreate)));
@@ -35,7 +33,6 @@ namespace FWLog.AspNet.Identity
             }
         }
 
-        // BOLogSystem
         public class BOLogSystem : PermissionGroupBuildItem
         {
             public const string List = "BOLogSystemList";
@@ -46,7 +43,6 @@ namespace FWLog.AspNet.Identity
             }
         }
 
-        // BOAccount
         public class BOAccount : PermissionGroupBuildItem
         {
             public const string List = "BOAccountList";
@@ -54,38 +50,12 @@ namespace FWLog.AspNet.Identity
             public const string Edit = "BOAccountEdit";
             public const string Delete = "BOAccountDelete";
 
-            public BOAccount() : base(Display.FromResource(nameof(Res.BOAccount)))
+            public BOAccount() : base(Display.FromString("Gerenciar Usuários"))
             {
                 Register(List, Display.FromResource(nameof(Res.BOAccountList)));
                 Register(Create, Display.FromResource(nameof(Res.BOAccountCreate)));
                 Register(Edit, Display.FromResource(nameof(Res.BOAccountEdit)));
                 Register(Delete, Display.FromResource(nameof(Res.BOAccountDelete)));
-            }
-        }
-
-        public class UserApp : PermissionGroupBuildItem
-        {
-            public const string UserAppLogin = "UserAppLogin";
-
-            public UserApp() : base(Display.FromResource(nameof(Res.UserApp)))
-            {
-                Register(UserAppLogin, Display.FromResource(nameof(Res.UserAppLogin)));
-            }
-        }
-
-        public class PrinterType : PermissionGroupBuildItem
-        {
-            public const string List = "PrinterTypeList";
-            public const string Create = "PrinterTypeCreate";
-            public const string Edit = "PrinterTypeEdit";
-            public const string Delete = "PrinterTypeDelete";
-
-            public PrinterType() : base(Display.FromResource(nameof(Res.PrinterType)))
-            {
-                Register(List, Display.FromResource(nameof(Res.List)));
-                Register(Create, Display.FromResource(nameof(Res.Create)));
-                Register(Edit, Display.FromResource(nameof(Res.Edit)));
-                Register(Delete, Display.FromResource(nameof(Res.Delete)));
             }
         }
 
@@ -96,7 +66,7 @@ namespace FWLog.AspNet.Identity
             public const string Edit = "PrinterTypeEdit";
             public const string Delete = "PrinterTypeDelete";
 
-            public Printer() : base(Display.FromResource(nameof(Res.PrinterType)))
+            public Printer() : base(Display.FromString("Impressoras"))
             {
                 Register(List, Display.FromResource(nameof(Res.List)));
                 Register(Create, Display.FromResource(nameof(Res.Create)));
@@ -108,18 +78,12 @@ namespace FWLog.AspNet.Identity
         public class Recebimento : PermissionGroupBuildItem
         {
             public const string List = "RecebimentoList";
-            public const string Create = "RecebimentoCreate";
-            public const string Edit = "RecebimentoEdit";
-            public const string Delete = "RecebimentoDelete";
-            public const string RegistrarRecebimento = "RegistrarRecebimento";
+            public const string RegistrarRecebimento = "RecebimentoRegistrar";
 
-            public Recebimento() : base(Display.FromResource(nameof(Res.PrinterType)))
+            public Recebimento() : base(Display.FromString("Recebimento de Notas Fiscais"))
             {
                 Register(List, Display.FromResource(nameof(Res.List)));
-                Register(Create, Display.FromResource(nameof(Res.Create)));
-                Register(Edit, Display.FromResource(nameof(Res.Edit)));
-                Register(Delete, Display.FromResource(nameof(Res.Delete)));
-                Register(RegistrarRecebimento, "Registrar Recebimento");
+                Register(RegistrarRecebimento, Display.FromString("Registrar Recebimento"));
             }
         }
 
@@ -139,11 +103,11 @@ namespace FWLog.AspNet.Identity
             }
         }
 
-        public class Quarentena : PermissionGroupBuildItem
+        public class RecebimentoQuarentena : PermissionGroupBuildItem
         {
             public const string List = "QuarentenaList";
 
-            public Quarentena() : base(Display.FromResource(nameof(Res.PrinterType)))
+            public RecebimentoQuarentena() : base(Display.FromString("Quarentena Recebimento"))
             {
                 Register(List, Display.FromResource(nameof(Res.List)));
             }
@@ -151,13 +115,12 @@ namespace FWLog.AspNet.Identity
 
         public class NivelArmazenagem : PermissionGroupBuildItem
         {
-            // TODO: Remover as que não existirem.
             public const string List = "NivelArmazenagemList";
             public const string Create = "NivelArmazenagemCreate";
             public const string Edit = "NivelArmazenagemEdit";
             public const string Delete = "NivelArmazenagemDelete";
 
-            public NivelArmazenagem() : base(Display.FromResource(nameof(Res.NivelArmazenagem)))
+            public NivelArmazenagem() : base(Display.FromString("Níveis de Armazenagem"))
             {
                 Register(List, Display.FromResource(nameof(Res.List)));
                 Register(Create, Display.FromResource(nameof(Res.Create)));
