@@ -168,7 +168,7 @@ namespace FWLog.Services.Services
 
                     await _uow.SaveChangesAsync();
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", "NUNOTA", notafiscal.CodigoIntegracao, "STATUSNOTA", NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode());
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", "NUNOTA", notafiscal.CodigoIntegracao, "AD_STATUSREC", NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode());
 
                     if (!atualizacaoOK)
                     {

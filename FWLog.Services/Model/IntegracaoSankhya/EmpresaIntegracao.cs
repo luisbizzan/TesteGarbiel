@@ -38,8 +38,8 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TSIEMP.TELEFONE")]
         public string TELEFONE { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TSIEMP.AD_ATIVOSAV")]
-        public string AD_ATIVOSAV { get; set; }
+        [TabelaIntegracao(DisplayName = "TGFEMP.ATIVO")]
+        public string ATIVO { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIEMP.CODEMPMATRIZ")]
         public string CODEMPMATRIZ { get; set; }

@@ -30,6 +30,7 @@ namespace FWLog.Services.Services
 
             StringBuilder inner = new StringBuilder();
 
+            inner.Append("INNER JOIN TGFEMP ON TSIEMP.CODEMP = TGFEMP.CODEMP");
             inner.Append("LEFT JOIN TSIEND ON TSIEMP.CODEND = TSIEND.CODEND ");
             inner.Append("LEFT JOIN TSIBAI ON TSIEMP.CODBAI = TSIBAI.CODBAI ");
             inner.Append("LEFT JOIN TSICID ON TSIEMP.CODCID = TSICID.CODCID ");
@@ -55,7 +56,7 @@ namespace FWLog.Services.Services
                     }
                     empresa.CodigoIntegracao = codEmp;
                     empresa.CEP = empInt.CEP;
-                    empresa.Ativo = empInt.AD_ATIVOSAV == "S" ? true : false;
+                    empresa.Ativo = empInt.ATIVO == "S" ? true : false;
                     empresa.Bairro = empInt.NOMEBAI;
                     empresa.Cidade = empInt.NOMECID;
                     empresa.CNPJ = empInt.CGC;
@@ -108,7 +109,7 @@ namespace FWLog.Services.Services
 
         public void ValidarEmpresaIntegracao(EmpresaIntegracao empresaIntegracao)
         {
-            ValidarCampo(empresaIntegracao.CODEMP, nameof(empresaIntegracao.AD_ATIVOSAV));
+            ValidarCampo(empresaIntegracao.CODEMP, nameof(empresaIntegracao.ATIVO));
         }
     }
 }
