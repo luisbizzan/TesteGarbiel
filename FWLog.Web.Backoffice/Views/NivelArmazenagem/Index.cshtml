@@ -11,11 +11,11 @@
         new
         {
             detailsUrl = Url.Action("Details"),
-            detailsVisible = User.HasPermission(Permissions.NivelArmazenagem.List),
+            detailsVisible = User.HasPermission(Permissions.NivelArmazenagem.Listar),
             editUrl = Url.Action("Edit"),
-            editVisible = User.HasPermission(Permissions.NivelArmazenagem.Edit),
+            editVisible = User.HasPermission(Permissions.NivelArmazenagem.Editar),
             deleteUrl = Url.Action("AjaxDelete"),
-            deleteVisible = User.HasPermission(Permissions.NivelArmazenagem.Delete),
+            deleteVisible = User.HasPermission(Permissions.NivelArmazenagem.Excluir),
             pageDataUrl = Url.Action("PageData")
         }
     )
@@ -67,7 +67,7 @@
             <!-- panel-title -->
             <div class="x_title">
                 <h2>Lista</h2>
-                @if (User.HasPermission(Permissions.NivelArmazenagem.Create))
+                @if (User.HasPermission(Permissions.NivelArmazenagem.Cadastrar))
                 {
                     <div class="nav navbar-right panel_toolbox">
                         <a class="btn btn-primary btn-dt-action" href="@Url.Action("Create")"><i class="fa fa-fw fa-plus"></i> @Resources.CommonStrings.CreateAction </a>

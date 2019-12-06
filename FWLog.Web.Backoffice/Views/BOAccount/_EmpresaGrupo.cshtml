@@ -22,7 +22,7 @@
         <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
             @for (int grupo = 0; grupo < Model[i].Grupos.Count(); grupo++)
             {
-                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
                     <div class="checkbox">
                         <label>
                             @Html.Hidden(string.Format("EmpresasGrupos[{0}].Grupos[{1}].Name", i, grupo), Model[i].Grupos[grupo].Name, new { @class = "NomeGrupo" })

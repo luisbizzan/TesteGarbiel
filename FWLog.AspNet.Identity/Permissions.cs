@@ -13,7 +13,7 @@ namespace FWLog.AspNet.Identity
 
             public ApplicationLog() : base(Display.FromResource(nameof(Res.ApplicationLog)))
             {
-                Register(List, Display.FromResource(nameof(Res.ApplicationLogList)));
+                Register(List, Display.FromString("Relatório de Erros"));
             }
         }
 
@@ -26,10 +26,10 @@ namespace FWLog.AspNet.Identity
 
             public Role() : base(Display.FromString("Grupos de Usuários"))
             {
-                Register(List, Display.FromResource(nameof(Res.RoleList)));
-                Register(Create, Display.FromResource(nameof(Res.RoleCreate)));
-                Register(Edit, Display.FromResource(nameof(Res.RoleEdit)));
-                Register(Delete, Display.FromResource(nameof(Res.RoleDelete)));
+                Register(List, Display.FromString("Listar Grupos"));
+                Register(Create, Display.FromString("Cadastrar Grupo"));
+                Register(Edit, Display.FromString("Editar Grupo"));
+                Register(Delete, Display.FromString("Excluir Grupo"));
             }
         }
 
@@ -39,7 +39,7 @@ namespace FWLog.AspNet.Identity
 
             public BOLogSystem() : base(Display.FromResource(nameof(Res.BOLogSystem)))
             {
-                Register(List, Display.FromResource(nameof(Res.BOLogSystemList)));
+                Register(List, Display.FromString("Relatório de Auditoria"));
             }
         }
 
@@ -52,10 +52,10 @@ namespace FWLog.AspNet.Identity
 
             public BOAccount() : base(Display.FromString("Gerenciar Usuários"))
             {
-                Register(List, Display.FromResource(nameof(Res.BOAccountList)));
-                Register(Create, Display.FromResource(nameof(Res.BOAccountCreate)));
-                Register(Edit, Display.FromResource(nameof(Res.BOAccountEdit)));
-                Register(Delete, Display.FromResource(nameof(Res.BOAccountDelete)));
+                Register(List, Display.FromString("Listar Usuários"));
+                Register(Create, Display.FromString("Cadastrar Usuário"));
+                Register(Edit, Display.FromString("Editar Usuário"));
+                Register(Delete, Display.FromString("Excluir Usuário"));
             }
         }
 
@@ -68,10 +68,10 @@ namespace FWLog.AspNet.Identity
 
             public Printer() : base(Display.FromString("Impressoras"))
             {
-                Register(List, Display.FromResource(nameof(Res.List)));
-                Register(Create, Display.FromResource(nameof(Res.Create)));
-                Register(Edit, Display.FromResource(nameof(Res.Edit)));
-                Register(Delete, Display.FromResource(nameof(Res.Delete)));
+                Register(List, Display.FromString("Listar Impressoras"));
+                Register(Create, Display.FromString("Cadastrar Impressora"));
+                Register(Edit, Display.FromString("Editar Impressora"));
+                Register(Delete, Display.FromString("Excluir Impressora"));
             }
         }
 
@@ -82,8 +82,18 @@ namespace FWLog.AspNet.Identity
 
             public Recebimento() : base(Display.FromString("Recebimento de Notas Fiscais"))
             {
-                Register(List, Display.FromResource(nameof(Res.List)));
+                Register(List, Display.FromString("Listar Notas Fiscais"));
                 Register(RegistrarRecebimento, Display.FromString("Registrar Recebimento"));
+            }
+        }
+
+        public class RecebimentoQuarentena : PermissionGroupBuildItem
+        {
+            public const string List = "QuarentenaList";
+
+            public RecebimentoQuarentena() : base(Display.FromString("Quarentena Recebimento"))
+            {
+                Register(List, Display.FromString("Listar Quarentena"));
             }
         }
 
@@ -103,29 +113,19 @@ namespace FWLog.AspNet.Identity
             }
         }
 
-        public class RecebimentoQuarentena : PermissionGroupBuildItem
-        {
-            public const string List = "QuarentenaList";
-
-            public RecebimentoQuarentena() : base(Display.FromString("Quarentena Recebimento"))
-            {
-                Register(List, Display.FromResource(nameof(Res.List)));
-            }
-        }
-
         public class NivelArmazenagem : PermissionGroupBuildItem
         {
-            public const string List = "NivelArmazenagemList";
-            public const string Create = "NivelArmazenagemCreate";
-            public const string Edit = "NivelArmazenagemEdit";
-            public const string Delete = "NivelArmazenagemDelete";
+            public const string Listar = "NivelArmazenagemList";
+            public const string Cadastrar = "NivelArmazenagemCreate";
+            public const string Editar = "NivelArmazenagemEdit";
+            public const string Excluir = "NivelArmazenagemDelete";
 
             public NivelArmazenagem() : base(Display.FromString("Níveis de Armazenagem"))
             {
-                Register(List, Display.FromResource(nameof(Res.List)));
-                Register(Create, Display.FromResource(nameof(Res.Create)));
-                Register(Edit, Display.FromResource(nameof(Res.Edit)));
-                Register(Delete, Display.FromResource(nameof(Res.Delete)));
+                Register(Listar, Display.FromString("Listar Níveis"));
+                Register(Cadastrar, Display.FromString("Cadastrar Nível"));
+                Register(Editar, Display.FromString("Editar Nível"));
+                Register(Excluir, Display.FromString("Excluir Nível"));
             }
         }
 
@@ -140,10 +140,10 @@ namespace FWLog.AspNet.Identity
             public EnderecoArmazenagem() : base(Display.FromString("Endereços de Armazenagem"))
             {
                 Register(Listar, Display.FromString("Listar Endereços"));
-                Register(Cadastrar, Display.FromString("Cadastrar Endereços"));
-                Register(Editar, Display.FromString("Editar Endereços"));
-                Register(Excluir, Display.FromString("Excluir Endereços"));
-                Register(Visualizar, Display.FromString("Visualizar Endereços"));
+                Register(Cadastrar, Display.FromString("Cadastrar Endereço"));
+                Register(Editar, Display.FromString("Editar Endereço"));
+                Register(Excluir, Display.FromString("Excluir Endereço"));
+                Register(Visualizar, Display.FromString("Visualizar Endereço"));
             }
         }
 

@@ -52,7 +52,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.List)]
+        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Listar)]
         public ActionResult Index()
         {
             setViewBags();
@@ -61,7 +61,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.List)]
+        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Listar)]
         public ActionResult PageData(DataTableFilter<NivelArmazenagemFilterViewModel> model)
         {
             var filter = Mapper.Map<DataTableFilter<NivelArmazenagemFilter>>(model);
@@ -80,7 +80,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Create)]
+        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Cadastrar)]
         public ActionResult Create()
         {
             setViewBags();
@@ -89,7 +89,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Create)]
+        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Cadastrar)]
         public ActionResult Create(NivelArmazenagemCreateViewModel model)
         {
             Func<ViewResult> errorView = () =>
@@ -128,7 +128,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Edit)]
+        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Editar)]
         public ActionResult Edit(int id)
         {
             setViewBags();
@@ -146,7 +146,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Edit)]
+        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Editar)]
         public ActionResult Edit(NivelArmazenagemCreateViewModel model)
         {
             Func<ViewResult> errorView = () =>
@@ -186,7 +186,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Delete)]
+        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Excluir)]
         public JsonResult AjaxDelete(int id)
         {
             try

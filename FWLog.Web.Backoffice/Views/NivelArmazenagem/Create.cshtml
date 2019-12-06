@@ -1,7 +1,7 @@
 ﻿@model FWLog.Web.Backoffice.Models.NivelArmazenagemCtx.NivelArmazenagemCreateViewModel
 
 @{
-    ViewBag.Title = "Criação de Nível Armazenagem";
+    ViewBag.Title = "Cadastrar Nível de Armazenagem";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -9,48 +9,39 @@
     @BundleHelper.RenderViewScript()
 }
 
-<!-- title -->
 <div class="page-title">
     <div class="title">
         <h3 class="title-sml">@ViewBag.Title</h3>
     </div>
 </div>
-<!-- /title -->
 
 @using (Html.BeginForm())
 {
-    <div class="x_panel">
-        <div class="x_title">
-            <h2>Nível Armazenagem</h2>
-            <div class="clearfix"></div>
-
-        </div>
-        <div class="x_content">
-            <!-- fields -->
-            <div class="row">
-                <div class="col-xs-12 col-lg-12">
-                    <div class="form-group col-sm-6 col-xs-12">
-                        @Html.LabelFor(m => m.Descricao, new { @class = "control-label" })
-                        @Html.TextBoxFor(m => m.Descricao, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Descricao)
-                    </div>
-                    <div class="form-group col-sm-2 col-xs-12">
-                        @Html.LabelFor(m => m.Ativo, new { @class = "control-label" })
-                        @Html.DropDownListFor(m => m.Ativo, (IEnumerable<SelectListItem>)ViewBag.Status, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Ativo)
-                    </div>
-                </div>
+<div class="x_panel">
+    <div class="x_title">
+        <h2>Nível Armazenagem</h2>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+        <div class="col-xs-12 col-lg-12">
+            <div class="form-group col-sm-6 col-xs-12">
+                @Html.LabelFor(m => m.Descricao, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.Descricao, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Descricao)
             </div>
-            <!-- /fields -->
-            <!-- footer -->
-            <div class="ln_solid"></div>
-            <div class="row col-xs-12 form-buttons">
-                <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.CancelAction</a>
-                <button type="submit" class="btn btn-primary">@Resources.CommonStrings.ConfirmAction</button>
+            <div class="form-group col-sm-2 col-xs-12">
+                @Html.LabelFor(m => m.Ativo, new { @class = "control-label" })
+                @Html.DropDownListFor(m => m.Ativo, (IEnumerable<SelectListItem>)ViewBag.Status, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Ativo)
             </div>
-            <!-- /footer -->
         </div>
     </div>
+    <div class="ln_solid"></div>
+    <div class="row col-xs-12 form-buttons">
+        <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </div>
+</div>
 }
 
 

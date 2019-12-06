@@ -2,7 +2,7 @@
 @using Res = Resources.BOAccountStrings
 
 @{
-    ViewBag.Title = Res.CreatePageTitle;
+    ViewBag.Title = "Cadastrar Usuário";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -14,11 +14,10 @@
 {
     <div class="x_panel">
         <div class="x_title">
-            <h2>@Res.CreatePageTitle</h2>
+            <h2>Cadastrar Usuário</h2>
             <div class="clearfix"></div>
         </div>
         <div class="x_content">
-            <!-- fields -->
             <div class="row">
                 <div class="form-group col-sm-3 col-xs-12">
                     @Html.LabelFor(m => m.PerfilUsuario.Nome, new { @class = "control-label" })
@@ -30,12 +29,12 @@
                     @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.UserName)
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-3 col-xs-12">
                     @Html.LabelFor(m => m.Email, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.Email)
                 </div>
-                <div class="form-group col-sm-3 col-xs-12">
+                <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.PerfilUsuario.EmpresaId, new { @class = "control-label" })
                     @Html.DropDownListFor(m => m.PerfilUsuario.EmpresaId, (IEnumerable<SelectListItem>)ViewBag.Empresas, @Resources.CommonStrings.Select, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.PerfilUsuario.EmpresaId)
@@ -73,7 +72,7 @@
             </div>
             <div class="row">
                 <div class="x_title">
-                    <h2>Relacionamento de Empresas</h2>
+                    <h2>Empresas do Usuário</h2>
                     <div class="clearfix"></div>
                 </div>
                 <div style="padding-top: 7px">
@@ -91,14 +90,11 @@
                 @Html.Partial("_EmpresaGrupo", Model.EmpresasGrupos)
             </div>
             <span class="text-danger validationEmpresa">@Html.ValidationMessageFor(m => m.EmpresasGrupos)</span>
-            <!-- /fields -->
-            <!-- footer -->
             <div class="ln_solid"></div>
             <div class="row col-xs-12 form-buttons">
-                <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.CancelAction</a>
-                <button type="submit" class="btn btn-primary btnSalvar">@Resources.CommonStrings.ConfirmAction</button>
+                <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                <button type="submit" class="btn btn-primary btnSalvar">Salvar</button>
             </div>
-            <!-- /footer -->
         </div>
     </div>
 
