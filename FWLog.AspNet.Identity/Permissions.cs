@@ -79,11 +79,13 @@ namespace FWLog.AspNet.Identity
         {
             public const string List = "RecebimentoList";
             public const string RegistrarRecebimento = "RecebimentoRegistrar";
+            public const string TratarDivergencia = "RecebimentoTratarDivergencia";
 
             public Recebimento() : base(Display.FromString("Recebimento de Notas Fiscais"))
             {
                 Register(List, Display.FromString("Listar Notas Fiscais"));
                 Register(RegistrarRecebimento, Display.FromString("Registrar Recebimento"));
+                Register(TratarDivergencia, Display.FromString("Tratar Divergência"));
             }
         }
 

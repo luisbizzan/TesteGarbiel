@@ -272,6 +272,7 @@
     <Compile Include="Mapping\NivelArmazenagemProfile.cs" />
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\TratarDivergenciaRecebimentoViewModel.cs" />
     <Compile Include="Models\EmpresaCtx\EmpresaSearchModalViewModel.cs" />
     <Compile Include="Models\BOFornecedorCtx\BOFornecedorSearchModalViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
@@ -490,6 +491,7 @@
     <Content Include="Views\BOQuarentena\DetalhesQuarentena.cshtml" />
     <Content Include="Views\Empresa\Editar.cshtml" />
     <Content Include="Views\Empresa\SearchModal.cshtml" />
+    <Content Include="Views\BORecebimentoNota\TratarDivergencia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

@@ -1,0 +1,29 @@
+﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.RecebimentoTratarDivergenciaViewModel
+@{
+    Layout = null;
+
+    @BundleHelper.RenderViewScriptModal()
+}
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">×</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Registro de Nota Fiscal</h4>
+        </div>
+        <div class="modal-body">
+            <div class="x_panel">
+                <div class="x_content">
+                    <div class="row navbar-right">
+                        <div class="col-sm-12 col-lg-12">
+                            <span class="text-danger validacaoConfirmar"></span>
+                            <button type="button" id="RegistrarRecebimentoNota" class="btn btn-primary"><i class="fa fa-fw fa-floppy-o"></i> Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

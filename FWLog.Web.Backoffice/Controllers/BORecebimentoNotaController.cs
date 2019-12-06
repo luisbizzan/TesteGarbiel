@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
@@ -655,6 +656,43 @@ namespace FWLog.Web.Backoffice.Controllers
             };
 
             return PartialView("EntradaConferencia", model);
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
+        public ActionResult TratarDivergencia(long id)
+        {
+            NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+
+            var divergenciaViewModel = new RecebimentoTratarDivergenciaViewModel
+            {
+                ConferidoPor = "Usuário conferência",
+                InicioConferencia = DateTime.Now,
+                FimConferencia = DateTime.Now,
+                NotaFiscal = notaFiscal.Numero.ToString(),
+                IdNotaFiscal = notaFiscal.IdNotaFiscal,
+                StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao,
+            };
+
+            List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(id);
+
+            foreach (LoteDivergencia divergencia in loteDivergencias)
+            {
+                var divergenciaItem = new RecebimentoTratarDivergenciaItemViewModel
+                {
+                    IdLoteDivergencia = divergencia.IdLoteDivergencia,
+                    Referencia = divergencia.Produto.Referencia,
+                    QuantidadeConferencia = divergencia.QuantidadeConferencia,
+                    QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
+                    QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
+                    QuantidadeNotaFiscal = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).First().Quantidade,
+                    QuantidadePedido = 0
+                };
+
+                divergenciaViewModel.Divergencias.Add(divergenciaItem);
+            }
+
+            return View();
         }
     }
 }

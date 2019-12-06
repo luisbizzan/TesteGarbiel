@@ -77,9 +77,9 @@
             },
             {
                 text: "Tratar Divergência",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'tratarDivergencias' },
                 icon: 'fa fa-warning',
-                visible: view.registrarRecebimento
+                visible: view.tratarDivergencias
             }
         ];
     });
@@ -241,6 +241,7 @@ function adicionaEventos() {
     $(document.body).on('click', "[action='conferirNota']", conferirNota);
     $(document.body).on('click', "[action='registrarRecebimento']", registrarRecebimento);
     $(document.body).on('click', "[action='detalhesNota']", detalhesNota);
+    $(document.body).on('click', "[action='tratarDivergencias']", tratarDivergencias);
 }
 
 function imprimir() {
@@ -436,5 +437,14 @@ function conferirNota() {
                 PNotify.error({ text: result.Message });
             }
         }
+    });
+}
+
+function tratarDivergencias() {
+    let id = $(this).data("id");
+    let $modal = $("#modalTratarDivergencia");
+
+    $modal.load(HOST_URL + CONTROLLER_PATH + "TratarDivergencia/" + id, function () {
+        $modal.modal();
     });
 }
