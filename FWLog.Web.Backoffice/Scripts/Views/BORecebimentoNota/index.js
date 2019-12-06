@@ -134,11 +134,13 @@
             if (row.Atraso == 0)
                 nomeCor = 'verde';
 
-            if (row.Atraso > 2)
-                nomeCor = 'vermelho';
-
-            if (row.Atraso > 0)
-                nomeCor = 'amarelo';
+            if (row.Atraso > 0) {
+                if (row.Atraso > 2) {
+                    nomeCor = 'vermelho';
+                } else {
+                    nomeCor = 'amarelo';
+                }
+            }
 
             return `<i class="fa fa-circle icone-status-${nomeCor}">${lote}</i>`;
         }
