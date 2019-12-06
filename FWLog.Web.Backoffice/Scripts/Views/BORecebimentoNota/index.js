@@ -299,7 +299,7 @@ function registrarRecebimento() {
         method: "POST",
         cache: false,
         success: function (result) {
-            var $modalRegistroRecebimento = $("#modalRegistroRecebimento"),
+            let $modalRegistroRecebimento = $("#modalRegistroRecebimento");
 
             if (result.Success) {
                 $modalRegistroRecebimento.load(HOST_URL + CONTROLLER_PATH + "ExibirModalRegistroRecebimento/" + id, function () {
