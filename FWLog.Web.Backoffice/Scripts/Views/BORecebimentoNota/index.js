@@ -142,7 +142,7 @@
                 }
             }
 
-            return `<i class="fa fa-circle icone-status-${nomeCor}">${lote}</i>`;
+            return `<i class="fa fa-circle icone-status-${nomeCor}"></i>${lote}`;
         }
 
         return data;
