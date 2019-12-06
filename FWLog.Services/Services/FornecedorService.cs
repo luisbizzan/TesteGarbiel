@@ -66,11 +66,11 @@ namespace FWLog.Services.Services
 
                     await _uow.SaveChangesAsync();
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", fornecedor.CodigoIntegracao, "DTALTER", DateTime.UtcNow);
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização de Fornecedor no Sankhya não terminou com sucesso.");
-                    }
+                    //bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", fornecedor.CodigoIntegracao, "DTALTER", DateTime.UtcNow);
+                    //if (!atualizacaoOK)
+                    //{
+                    //    throw new Exception("A atualização de Fornecedor no Sankhya não terminou com sucesso.");
+                    //}
                 }
                 catch (Exception ex)
                 {

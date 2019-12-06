@@ -30,7 +30,7 @@ namespace FWLog.Services.Services
 
             StringBuilder inner = new StringBuilder();
 
-            inner.Append("INNER JOIN TGFEMP ON TSIEMP.CODEMP = TGFEMP.CODEMP");
+            inner.Append("INNER JOIN TGFEMP ON TSIEMP.CODEMP = TGFEMP.CODEMP ");
             inner.Append("LEFT JOIN TSIEND ON TSIEMP.CODEND = TSIEND.CODEND ");
             inner.Append("LEFT JOIN TSIBAI ON TSIEMP.CODBAI = TSIBAI.CODBAI ");
             inner.Append("LEFT JOIN TSICID ON TSIEMP.CODCID = TSICID.CODCID ");
@@ -49,32 +49,34 @@ namespace FWLog.Services.Services
                     bool empresaNova = false;
 
                     var codEmp = Convert.ToInt32(empInt.CODEMP);
-                    Empresa empresa = _unitOfWork.EmpresaRepository.ConsultaPorCodigoIntegracao(codEmp);
+                    EmpresaConfig empresaConfig = _unitOfWork.EmpresaConfigRepository.ConsultaPorCodigoIntegracao(codEmp);
 
-                    if (empresa == null)
+                    if (empresaConfig == null)
                     {
                         empresaNova = true;
-                        empresa = new Empresa();
+                        empresaConfig = new EmpresaConfig();
+                        empresaConfig.Empresa = new Empresa();
                     }
-                    empresa.CodigoIntegracao = codEmp;
-                    empresa.CEP = empInt.CEP;
-                    empresa.Ativo = empInt.ATIVO == "S" ? true : false;
-                    empresa.Bairro = empInt.NOMEBAI;
-                    empresa.Cidade = empInt.NOMECID;
-                    empresa.CNPJ = empInt.CGC;
-                    empresa.Complemento = empInt.COMPLEMENTO;
-                    empresa.Endereco = empInt.NOMEEND;
-                    empresa.Estado = empInt.ESTADO;
-                    empresa.NomeFantasia = empInt.NOMEFANTASIA;
-                    empresa.Numero = empInt.NUMEND;
-                    empresa.RazaoSocial = empInt.RAZAOSOCIAL;
-                    empresa.Sigla = empInt.AD_UNIDABREV == null ? empInt.NOMEFANTASIA.Substring(0, 3) : empInt.AD_UNIDABREV;//TODO temporário
-                    empresa.Telefone = empInt.TELEFONE;
-                   //TODO empresa.EmpresaConfig.IdEmpresaTipo = empInt.CODEMPMATRIZ == empInt.CODEMP ? EmpresaTipoEnum.Matriz : EmpresaTipoEnum.Filial;
-                    
+
+                    empresaConfig.Empresa.CodigoIntegracao = codEmp;
+                    empresaConfig.Empresa.CEP = empInt.CEP;
+                    empresaConfig.Empresa.Ativo = empInt.ATIVO == "S" ? true : false;
+                    empresaConfig.Empresa.Bairro = empInt.NOMEBAI;
+                    empresaConfig.Empresa.Cidade = empInt.NOMECID;
+                    empresaConfig.Empresa.CNPJ = empInt.CGC;
+                    empresaConfig.Empresa.Complemento = empInt.COMPLEMENTO;
+                    empresaConfig.Empresa.Endereco = empInt.NOMEEND;
+                    empresaConfig.Empresa.Estado = empInt.ESTADO;
+                    empresaConfig.Empresa.NomeFantasia = empInt.NOMEFANTASIA;
+                    empresaConfig.Empresa.Numero = empInt.NUMEND;
+                    empresaConfig.Empresa.RazaoSocial = empInt.RAZAOSOCIAL;
+                    empresaConfig.Empresa.Sigla = empInt.AD_UNIDABREV == null ? empInt.NOMEFANTASIA.Substring(0, 3) : empInt.AD_UNIDABREV;//TODO temporário
+                    empresaConfig.Empresa.Telefone = empInt.TELEFONE;
+                    empresaConfig.IdEmpresaTipo = empInt.CODEMPMATRIZ == empInt.CODEMP ? EmpresaTipoEnum.Matriz : EmpresaTipoEnum.Filial;
+                  
                     if (empresaNova)
                     {
-                        _unitOfWork.EmpresaRepository.Add(empresa);
+                        _unitOfWork.EmpresaConfigRepository.Add(empresaConfig);
                     }
 
                     await _unitOfWork.SaveChangesAsync();
@@ -86,18 +88,18 @@ namespace FWLog.Services.Services
 
                         if (empMatriz != null)
                         {
-                           // empresa.EmpresaConfig.IdEmpresaMatriz = empMatriz.IdEmpresa;
+                            empresaConfig.IdEmpresaMatriz = empMatriz.IdEmpresa;
 
                             await _unitOfWork.SaveChangesAsync();
                         }
                     }
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", "CODEMP", empresa.CodigoIntegracao, "DTALTER", DateTime.UtcNow);
+                    //bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", "CODEMP", empresa.CodigoIntegracao, "DTALTER", DateTime.UtcNow);
 
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização de Empresa no Sankhya não terminou com sucesso.");
-                    }
+                    //if (!atualizacaoOK)
+                    //{
+                    //    throw new Exception("A atualização de Empresa no Sankhya não terminou com sucesso.");
+                    //}
                 }
                 catch (Exception ex)
                 {

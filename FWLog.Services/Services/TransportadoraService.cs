@@ -64,13 +64,13 @@ namespace FWLog.Services.Services
                         _uow.TransportadoraRepository.Add(transportadora);
                     }
 
-                    await _uow.SaveChangesAsync();
+                    //await _uow.SaveChangesAsync();
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", transportadora.CodigoIntegracao, "DTALTER", DateTime.UtcNow);
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização de Transportadora no Sankhya não terminou com sucesso.");
-                    }
+                    //bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", transportadora.CodigoIntegracao, "DTALTER", DateTime.UtcNow);
+                    //if (!atualizacaoOK)
+                    //{
+                    //    throw new Exception("A atualização de Transportadora no Sankhya não terminou com sucesso.");
+                    //}
                 }
                 catch (Exception ex)
                 {

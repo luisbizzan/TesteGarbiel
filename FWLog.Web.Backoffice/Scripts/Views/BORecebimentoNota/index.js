@@ -134,11 +134,13 @@
             if (row.Atraso == 0)
                 nomeCor = 'verde';
 
-            if (row.Atraso > 2)
-                nomeCor = 'vermelho';
-
-            if (row.Atraso > 0)
-                nomeCor = 'amarelo';
+            if (row.Atraso > 0) {
+                if (row.Atraso > 2) {
+                    nomeCor = 'vermelho';
+                } else {
+                    nomeCor = 'amarelo';
+                }
+            }
 
             return `<i class="fa fa-circle icone-status-${nomeCor}">${lote}</i>`;
         }
@@ -300,16 +302,15 @@ function registrarRecebimento() {
         method: "POST",
         cache: false,
         success: function (result) {
-            var $modalRegistroRecebimento = $("#modalRegistroRecebimento"),
-                $chaveAcesso = $("#ChaveAcesso");
+            let $modalRegistroRecebimento = $("#modalRegistroRecebimento");
 
             if (result.Success) {
                 $modalRegistroRecebimento.load(HOST_URL + CONTROLLER_PATH + "ExibirModalRegistroRecebimento/" + id, function () {
                     $modalRegistroRecebimento.modal();
 
-                    $chaveAcesso.focus();
+                    $("#ChaveAcesso").focus();
 
-                    $chaveAcesso.keypress(function (event) {
+                    $('#ChaveAcesso').keypress(function (event) {
                         BuscarNotaFiscal();
                     });
 

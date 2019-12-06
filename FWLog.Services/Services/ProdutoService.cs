@@ -53,20 +53,20 @@ namespace FWLog.Services.Services
                         produto = new Produto();
                     }
 
-                    produto.Altura = produtoInt.ALTURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.ALTURA);
+                    produto.Altura = produtoInt.ALTURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.ALTURA.Replace(".", ","));
                     produto.Ativo = produtoInt.ATIVO == "S" ? true : false;
                     produto.CodigoFabricante = produtoInt.CODFAB == null ? (long?)null : Convert.ToInt64(produtoInt.CODFAB);
                     produto.CodigoIntegracao = codProd;
                     produto.CodigoProdutoNFE = Convert.ToInt32(produtoInt.PRODUTONFE);
-                    produto.Comprimento = produtoInt.ESPESSURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.ESPESSURA);
+                    produto.Comprimento = produtoInt.ESPESSURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.ESPESSURA.Replace(".", ","));
                     produto.Descricao = produtoInt.DESCRPROD;
                     produto.EnderecoImagem = produtoInt.ENDIMAGEM;
-                    produto.Largura = produtoInt.LARGURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.LARGURA);
-                    produto.MetroCubico = produtoInt.M3 == null ? (decimal?)null : Convert.ToDecimal(produtoInt.M3);
-                    produto.MultiploVenda = Convert.ToDecimal(produtoInt.AGRUPCOMPMINIMO);
+                    produto.Largura = produtoInt.LARGURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.LARGURA.Replace(".", ","));
+                    produto.MetroCubico = produtoInt.M3 == null ? (decimal?)null : Convert.ToDecimal(produtoInt.M3.Replace(".", ","));
+                    produto.MultiploVenda = Convert.ToDecimal(produtoInt.AGRUPCOMPMINIMO.Replace(".", ","));
                     produto.NomeFabricante = produtoInt.FABRICANTE;
-                    produto.PesoBruto = Convert.ToDecimal(produtoInt.PESOBRUTO);
-                    produto.PesoLiquido = Convert.ToDecimal(produtoInt.PESOLIQ);
+                    produto.PesoBruto = Convert.ToDecimal(produtoInt.PESOBRUTO.Replace(".", ","));
+                    produto.PesoLiquido = Convert.ToDecimal(produtoInt.PESOLIQ.Replace(".", ","));
                     produto.Referencia = produtoInt.AD_REFX;
                     produto.ReferenciaFornecedor = produtoInt.REFFORN;
                     produto.CodigoBarras = produtoInt.REFERENCIA;
@@ -78,12 +78,13 @@ namespace FWLog.Services.Services
 
                     await _uow.SaveChangesAsync();
 
+                    /*//TODO Comentado aguardando a criação dos campos no Sankhya.
                     bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", "CODPROD", produto.CodigoIntegracao, "DTALTER", DateTime.UtcNow.ToString("ddMMyyyy hh:mm:ss"));
 
                     if (!atualizacaoOK)
                     {
                         throw new Exception("A atualização de Produto no Sankhya não terminou com sucesso.");
-                    }
+                    }*/
                 }
                 catch (Exception ex)
                 {

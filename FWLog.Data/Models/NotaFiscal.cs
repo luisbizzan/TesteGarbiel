@@ -28,7 +28,7 @@ namespace FWLog.Data.Models
         public int Numero { get; set; }
 
         [Index]
-        public long IdFreteTipo { get; set; }
+        public long? IdFreteTipo { get; set; }
 
         [Index]
         [Required]
