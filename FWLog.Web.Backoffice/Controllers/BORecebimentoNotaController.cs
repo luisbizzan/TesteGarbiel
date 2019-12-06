@@ -667,8 +667,8 @@ namespace FWLog.Web.Backoffice.Controllers
             var divergenciaViewModel = new RecebimentoTratarDivergenciaViewModel
             {
                 ConferidoPor = "Usuário conferência",
-                InicioConferencia = DateTime.Now,
-                FimConferencia = DateTime.Now,
+                InicioConferencia = DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                FimConferencia = DateTime.Now.ToString("dd/MM/yyyy  hh:mm:ss"),
                 NotaFiscal = notaFiscal.Numero.ToString(),
                 IdNotaFiscal = notaFiscal.IdNotaFiscal,
                 StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao,
@@ -692,7 +692,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 divergenciaViewModel.Divergencias.Add(divergenciaItem);
             }
 
-            return View();
+            return View(divergenciaViewModel);
         }
     }
 }

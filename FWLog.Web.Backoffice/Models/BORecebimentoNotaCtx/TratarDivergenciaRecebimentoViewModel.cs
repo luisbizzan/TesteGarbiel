@@ -19,9 +19,9 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Conferido por")]
         public string ConferidoPor { get; set; }
         [Display(Name = "Início da Conferência")]
-        public DateTime InicioConferencia { get; set; }
+        public string InicioConferencia { get; set; }
         [Display(Name = "Fim da Conferência")]
-        public DateTime FimConferencia { get; set; }
+        public string FimConferencia { get; set; }
 
         public List<RecebimentoTratarDivergenciaItemViewModel> Divergencias { get; set; }
     }
