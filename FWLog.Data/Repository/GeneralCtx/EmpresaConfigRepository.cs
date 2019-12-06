@@ -15,6 +15,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.EmpresaConfig.AsNoTracking().Where(w => w.IdEmpresa == idEmpresa).FirstOrDefault();
         }
 
+        public EmpresaConfig ConsultaPorCodigoIntegracao(long codigoIntegracao)
+        {
+            return Entities.EmpresaConfig.AsNoTracking().Where(w => w.Empresa.CodigoIntegracao == codigoIntegracao).FirstOrDefault();
+        }
+
         public IQueryable<EmpresaConfig> Todos()
         {
             return Entities.EmpresaConfig;

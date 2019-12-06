@@ -300,15 +300,14 @@ function registrarRecebimento() {
         cache: false,
         success: function (result) {
             var $modalRegistroRecebimento = $("#modalRegistroRecebimento"),
-                $chaveAcesso = $("#ChaveAcesso");
 
             if (result.Success) {
                 $modalRegistroRecebimento.load(HOST_URL + CONTROLLER_PATH + "ExibirModalRegistroRecebimento/" + id, function () {
                     $modalRegistroRecebimento.modal();
 
-                    $chaveAcesso.focus();
+                    $("#ChaveAcesso").focus();
 
-                    $chaveAcesso.keypress(function (event) {
+                    $('#ChaveAcesso').keypress(function (event) {
                         BuscarNotaFiscal();
                     });
 
