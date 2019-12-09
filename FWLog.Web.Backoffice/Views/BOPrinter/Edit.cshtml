@@ -10,21 +10,13 @@
     @BundleHelper.RenderViewScript()
 }
 
-<!-- title -->
-<div class="page-title">
-    <div class="title">
-        <h3 class="title-sml">@Res.EditPageTitle</h3>
-    </div>
-</div>
-<!-- /title -->
-
 @using (Html.BeginForm("Edit"))
 {
     @Html.HiddenFor(x => x.Id)
 
     <div class="x_panel">
         <div class="x_title">
-            <h2>@Res.PrinterHeader</h2>
+            <h2>Editar Impressora</h2>
             <div class="clearfix"></div>
         </div>
         <div class="x_content">

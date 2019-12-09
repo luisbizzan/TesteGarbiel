@@ -21,13 +21,6 @@
     )
 }
 
-<!-- title -->
-<div class="page-title">
-    <div class="title">
-        <h3 class="title-sml">@ViewBag.Title</h3>
-    </div>
-</div>
-<!-- /title -->
 <!-- filter -->
 <form data-filter="form" data-filter-for="dataTable" class="form-filter">
     <div class="x_panel">
@@ -39,15 +32,13 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="col-xs-12 col-sm-12 form-group">
-                    <div class="form-group col-sm-3 col-xs-12">
-                        @Html.LabelFor(m => m.Filter.Descricao)
-                        @Html.TextBoxFor(m => m.Filter.Descricao, new { @class = "form-control", data_field = "Descricao" })
-                    </div>
-                    <div class="form-group col-sm-2 col-xs-12">
-                        @Html.LabelFor(m => m.Filter.Ativo)
-                        @Html.DropDownListFor(m => m.Filter.Ativo, (IEnumerable<SelectListItem>)ViewBag.Status, "Selecione...", new { @class = "form-control", data_field = "Ativo" })
-                    </div>
+                <div class="form-group col-sm-6 col-xs-12">
+                    @Html.LabelFor(m => m.Filter.Descricao)
+                    @Html.TextBoxFor(m => m.Filter.Descricao, new { @class = "form-control", data_field = "Descricao" })
+                </div>
+                <div class="form-group col-sm-6 col-xs-12">
+                    @Html.LabelFor(m => m.Filter.Ativo)
+                    @Html.DropDownListFor(m => m.Filter.Ativo, (IEnumerable<SelectListItem>)ViewBag.Status, "Selecione...", new { @class = "form-control", data_field = "Ativo" })
                 </div>
             </div>
             <div class="row">
@@ -66,7 +57,7 @@
         <div class="x_panel">
             <!-- panel-title -->
             <div class="x_title">
-                <h2>Lista</h2>
+                <h2>Lista de Níveis de Armazenagem</h2>
                 @if (User.HasPermission(Permissions.NivelArmazenagem.Cadastrar))
                 {
                     <div class="nav navbar-right panel_toolbox">

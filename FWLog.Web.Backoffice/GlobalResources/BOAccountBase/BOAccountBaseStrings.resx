@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="UserLabel" xml:space="preserve">
-    <value>Usuário</value>
+    <value>Código do Usuário</value>
   </data>
   <data name="PasswordLabel" xml:space="preserve">
     <value>Senha</value>
@@ -175,7 +175,7 @@
     <value>Digite sua senha</value>
   </data>
   <data name="UserNamePlaceholder" xml:space="preserve">
-    <value>Digite seu usuário</value>
+    <value>Digite seu código de usuário</value>
   </data>
   <data name="SuccessTitle" xml:space="preserve">
     <value>Sucesso</value>
