@@ -34,7 +34,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 return 0;
             }
 
-            return usuarioEmpresa.CompanyId;
+            return usuarioEmpresa.IdEmpresa;
         }
 
         public IEnumerable<EmpresaSelectedItem> GetAllByUserId(string userId)

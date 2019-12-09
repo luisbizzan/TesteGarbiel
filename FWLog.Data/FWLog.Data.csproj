@@ -194,7 +194,7 @@
     <Compile Include="Repository\GeneralCtx\TipoMovimentacaoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TransportadoraRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UnidadeMedidaRepository.cs" />
-    <Compile Include="Repository\GeneralCtx\UserCompanyRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\UsuarioEmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PerfilUsuarioRepository.cs" />
     <Compile Include="Repository\GeneralCtx\EmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ApplicationSessionRepository.cs" />
