@@ -255,4 +255,10 @@
   <data name="RegisterCreatedErrorMessage" xml:space="preserve">
     <value>Não foi possível criar este registro.</value>
   </data>
+  <data name="EmpresaMenuItem" xml:space="preserve">
+    <value>Empresa</value>
+  </data>
+  <data name="RelatoriosMenuItem" xml:space="preserve">
+    <value>Relatórios</value>
+  </data>
 </root>

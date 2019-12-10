@@ -18,6 +18,7 @@ namespace FWLog.Data.Models
         [Log(DisplayName = nameof(ResEnt.UserId), ResourceType = typeof(ResEnt))]
         public string UsuarioId { get; set; }
 
+        [Required(ErrorMessageResourceName = "Required", ErrorMessageResourceType = typeof(ResGen))]
         [Display(Name = nameof(ResEnt.EmpresaPrincipal), ResourceType = typeof(ResEnt))]
         [Log(DisplayName = nameof(ResEnt.EmpresaPrincipal), ResourceType = typeof(ResEnt))]
         public long? EmpresaId { get; set; }

@@ -115,8 +115,10 @@
     <Compile Include="Models\DataTablesCtx\NivelArmazenagemTableRow.cs" />
     <Compile Include="Models\DataTablesCtx\PontoArmazenagemListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\PontoArmazenagemPesquisaModalListaLinhaTabela.cs" />
-    <Compile Include="Models\DataTablesCtx\PrinterTypeTableRow.cs" />
     <Compile Include="Models\EmpresaConfig.cs" />
+    <Compile Include="Models\LoteDivergencia.cs" />
+    <Compile Include="Models\LoteDivergenciaStatus.cs" />
+    <Compile Include="Models\TipoConferencia.cs" />
     <Compile Include="Models\EmpresaTipo.cs" />
     <Compile Include="Models\EnderecoArmazenagem.cs" />
     <Compile Include="Models\FilterCtx\EnderecoArmazenagemListaFiltro.cs" />
@@ -124,7 +126,6 @@
     <Compile Include="Models\FilterCtx\NivelArmazenagemPesquisaModalFiltro.cs" />
     <Compile Include="Models\FilterCtx\PontoArmazenagemListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\PontoArmazenagemPesquisaModalFiltro.cs" />
-    <Compile Include="Models\FilterCtx\PrinterTypeFilter.cs" />
     <Compile Include="Models\NivelArmazenagem.cs" />
     <Compile Include="Models\NotaFiscal.cs" />
     <Compile Include="Models\Fornecedor.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Repository\GeneralCtx\EnderecoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\FreteTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\FornecedorRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\LoteDivergenciaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NivelArmazenagemRepository.cs" />
@@ -188,10 +190,11 @@
     <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoArmazenagemRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\TipoConferenciaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoMovimentacaoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TransportadoraRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UnidadeMedidaRepository.cs" />
-    <Compile Include="Repository\GeneralCtx\UserCompanyRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\UsuarioEmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PerfilUsuarioRepository.cs" />
     <Compile Include="Repository\GeneralCtx\EmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ApplicationSessionRepository.cs" />

@@ -49,8 +49,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
     public class BORecebimentoNotaFilterViewModel
     {
-        [Display(Name = "DANFE")]
-        public string Chave { get; set; }
+        [Display(Name = "Chave Acesso")]
+        public string ChaveAcesso { get; set; }
 
         public long? Lote { get; set; }
 

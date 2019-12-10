@@ -28,7 +28,7 @@ namespace FWLog.Data.Models
         public int Numero { get; set; }
 
         [Index]
-        public long IdFreteTipo { get; set; }
+        public long? IdFreteTipo { get; set; }
 
         [Index]
         [Required]
@@ -52,9 +52,7 @@ namespace FWLog.Data.Models
         public string Serie { get; set; }
 
         [Index]
-        public string Chave { get; set; }
-
-        public string DANFE { get; set; }
+        public string ChaveAcesso { get; set; }
 
         [Required]
         [StringLength(1)]

@@ -2,28 +2,24 @@
 @using FWLog.AspNet.Identity
 
 @{
-    ViewBag.Title = "Notas";
+    ViewBag.Title = "Recebimento de Notas Fiscais";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Scripts {
     @FWLog.Web.Backoffice.Helpers.Bundling.BundleHelper.RenderViewScript(
-			new
-			{
-				detalhesEntradaConferencia = Url.Action("DetalhesEntradaConferencia"),
-				detailsVisible = User.HasPermission(Permissions.Recebimento.List),
-				pageDataUrl = Url.Action("PageData"),
-				registrarRecebimento = User.HasPermission(Permissions.Recebimento.RegistrarRecebimento),
-				registrarRecebimentoUrl = Url.Action("ExibirModalRegistroRecebimento"),
-			}
-		)
+            new
+            {
+                detalhesEntradaConferencia = Url.Action("DetalhesEntradaConferencia"),
+                detailsVisible = User.HasPermission(Permissions.Recebimento.List),
+                pageDataUrl = Url.Action("PageData"),
+                registrarRecebimento = User.HasPermission(Permissions.Recebimento.RegistrarRecebimento),
+                registrarRecebimentoUrl = Url.Action("ExibirModalRegistroRecebimento"),
+                tratarDivergencias = User.HasPermission(Permissions.Recebimento.TratarDivergencia)
+            }
+        )
 }
 
-<div class="page-title">
-    <div class="title">
-        <h3>@ViewBag.Title</h3>
-    </div>
-</div>
 <form data-filter="form" data-filter-for="dataTable" class="form-filter" id="formRecebimentoNota">
     <input type="hidden" id="tipoImpressora" />
     <input type="hidden" id="relatorioImprimir" />
@@ -39,19 +35,19 @@
             <div class="row">
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.Lote)
-                    @Html.TextBoxFor(m => m.Filter.Lote, new { @class = "form-control onlyNumber", data_field = "Lote"})                    
+                    @Html.TextBoxFor(m => m.Filter.Lote, new { @class = "form-control onlyNumber", data_field = "Lote" })
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.Nota)
                     @Html.TextBoxFor(m => m.Filter.Nota, new { @class = "form-control onlyNumber", data_field = "Nota" })
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
-                    @Html.LabelFor(m => m.Filter.Chave)
-                    @Html.TextBoxFor(m => m.Filter.Chave, new { @class = "form-control onlyNumber", data_field = "DANFE" })
+                    @Html.LabelFor(m => m.Filter.ChaveAcesso)
+                    @Html.TextBoxFor(m => m.Filter.ChaveAcesso, new { @class = "form-control onlyNumber", data_field = "ChaveAcesso" })
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.IdStatus)
-                    @Html.DropDownListFor(m => m.Filter.IdStatus, Model.Filter.ListaStatus, "Selecione...", new { @class = "form-control", data_field = "IdStatus"})
+                    @Html.DropDownListFor(m => m.Filter.IdStatus, Model.Filter.ListaStatus, "Selecione...", new { @class = "form-control", data_field = "IdStatus" })
                 </div>
             </div>
             <div class="row">
@@ -117,7 +113,7 @@
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.QuantidadeVolume)
                     @Html.TextBoxFor(m => m.Filter.QuantidadeVolume, new { @class = "form-control onlyNumber", data_field = "QuantidadeVolume" })
-                </div>                
+                </div>
             </div>
             <div class="row">
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
@@ -164,7 +160,7 @@
     <div class="col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Notas</h2>
+                <h2>Notas Fiscais para Recebimento</h2>
                 <div class="nav navbar-right">
                     <div class="col-xs-12">
                         <a id="downloadRelatorio" data-toggle="tooltip" title="Download Relatório" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
@@ -202,3 +198,4 @@
 <div class="modal" id="modalConferencia" data-backdrop="static"></div>
 <div class="modal" id="modalUsuarioRecebimento" data-toggle="modal" data-myvalue="1"></div>
 <div class="modal" id="modalUsuarioConferencia" data-toggle="modal" data-myvalue="2"></div>
+<div class="modal" id="modalTratarDivergencia" data-backdrop="static"></div>

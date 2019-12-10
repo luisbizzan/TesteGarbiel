@@ -13,20 +13,28 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         }
 
-        public IQueryable<Empresa> Todos()
+        public IQueryable<Empresa> Tabela()
         {
             return Entities.Empresa;
         }
 
-        public long PegarPrimeiraEmpresa(string userId)
+        public long RetornarEmpresaPrincipal(string userId)
         {
-            var empresa = Entities.UsuarioEmpresa.Where(w => w.Empresa.Ativo && w.UserId == userId).OrderBy(o => o.Empresa.RazaoSocial).FirstOrDefault();
-            if (empresa != null)
+            PerfilUsuario perfilUsuario = Entities.PerfilUsuario.Where(w => w.UsuarioId == userId).FirstOrDefault();
+
+            if (perfilUsuario.EmpresaId.HasValue)
             {
-                return empresa.CompanyId;
+                return perfilUsuario.EmpresaId.Value;
             }
 
-            return 0;
+            UsuarioEmpresa usuarioEmpresa = Entities.UsuarioEmpresa.Where(w => w.UserId.Equals(userId)).FirstOrDefault();
+
+            if(usuarioEmpresa == null)
+            {
+                return 0;
+            }
+
+            return usuarioEmpresa.IdEmpresa;
         }
 
         public IEnumerable<EmpresaSelectedItem> GetAllByUserId(string userId)
@@ -44,7 +52,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             {
                 Nome = string.Format("{0} - {1}", s.Sigla, s.NomeFantasia),
                 IdEmpresa = s.IdEmpresa
-            }).ToList();
+            });
         }
 
         public Empresa ConsultaPorCodigoIntegracao(int codigoIntegracao)

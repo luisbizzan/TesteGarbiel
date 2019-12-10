@@ -35,7 +35,7 @@ namespace FWLog.Services.Services
             List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<NotaFiscalIntegracao>(where, inner);
 
             List<FreteTipo> tiposFrete = _uow.FreteTipoRepository.RetornarTodos();
-            IQueryable<Empresa> empresas = _uow.EmpresaRepository.Todos();
+            IQueryable<Empresa> empresas = _uow.EmpresaRepository.Tabela();
             var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
 
             Dictionary<string, List<NotaFiscalIntegracao>> notasIntegracaoGrp = notasIntegracao.GroupBy(g => g.NUNOTA).ToDictionary(d => d.Key, d => d.ToList());
@@ -94,7 +94,6 @@ namespace FWLog.Services.Services
                     notafiscal.Numero = Convert.ToInt32(notafiscalIntegracao.NUMNOTA);
                     notafiscal.Serie = notafiscalIntegracao.SERIENOTA;
                     notafiscal.CodigoIntegracao = codNota;
-                    notafiscal.DANFE = notafiscalIntegracao.DANFE;
                     notafiscal.ValorTotal = Convert.ToDecimal(notafiscalIntegracao.VLRNOTA.Replace(".", ","));
                     notafiscal.ValorFrete = Convert.ToDecimal(notafiscalIntegracao.VLRFRETE.Replace(".", ","));
                     notafiscal.NumeroConhecimento = notafiscalIntegracao.NUMCF == null ? (long?)null : Convert.ToInt64(notafiscalIntegracao.NUMCF);
@@ -103,7 +102,7 @@ namespace FWLog.Services.Services
                     notafiscal.Especie = notafiscalIntegracao.VOLUME;
                     notafiscal.StatusIntegracao = notafiscalIntegracao.STATUSNOTA;
                     notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.ProcessandoIntegracao;
-                    notafiscal.Chave = notafiscalIntegracao.CHAVENFE;
+                    notafiscal.ChaveAcesso = notafiscalIntegracao.CHAVENFE;
                     notafiscal.IdFornecedor = fornecedor.IdFornecedor;
                     notafiscal.DataEmissao = notafiscalIntegracao.DHEMISSEPEC == null ? DateTime.Now : Convert.ToDateTime(notafiscalIntegracao.DHEMISSEPEC); //TODO validar campo geovane;
                     notafiscal.IdEmpresa = empresa.IdEmpresa;
@@ -138,16 +137,14 @@ namespace FWLog.Services.Services
                         bool itemNovo = false;
                         NotaFiscalItem notaFiscalItem;
 
-                        if (notaNova)
+                        notaFiscalItem = notafiscal.NotaFiscalItens.FirstOrDefault(f => f.IdProduto == produto.IdProduto && f.Quantidade == qtdNeg);
+
+                        if (notaFiscalItem == null)
                         {
                             notaFiscalItem = new NotaFiscalItem();
                             itemNovo = true;
                         }
-                        else
-                        {
-                            notaFiscalItem = notafiscal.NotaFiscalItens.FirstOrDefault(f => f.IdProduto == produto.IdProduto && f.Quantidade == qtdNeg);
-                        }
-
+                     
                         notaFiscalItem.IdUnidadeMedida = unidade.IdUnidadeMedida;
                         notaFiscalItem.IdProduto = produto.IdProduto;
                         notaFiscalItem.Quantidade = qtdNeg;
@@ -170,7 +167,7 @@ namespace FWLog.Services.Services
 
                     await _uow.SaveChangesAsync();
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", "NUNOTA", notafiscal.CodigoIntegracao, "STATUSNOTA", NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode());
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", "NUNOTA", notafiscal.CodigoIntegracao, "AD_STATUSREC", NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode());
 
                     if (!atualizacaoOK)
                     {

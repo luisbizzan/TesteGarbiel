@@ -1,7 +1,7 @@
 ﻿@model FWLog.Web.Backoffice.Models.NivelArmazenagemCtx.NivelArmazenagemCreateViewModel
 
 @{
-    ViewBag.Title = "Criação de Nível Armazenagem";
+    ViewBag.Title = "Cadastrar Nível de Armazenagem";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -9,24 +9,14 @@
     @BundleHelper.RenderViewScript()
 }
 
-<!-- title -->
-<div class="page-title">
-    <div class="title">
-        <h3 class="title-sml">@ViewBag.Title</h3>
-    </div>
-</div>
-<!-- /title -->
-
 @using (Html.BeginForm())
 {
     <div class="x_panel">
         <div class="x_title">
-            <h2>Nível Armazenagem</h2>
+            <h2>Cadastrar Nível de Armazenagem</h2>
             <div class="clearfix"></div>
-
         </div>
         <div class="x_content">
-            <!-- fields -->
             <div class="row">
                 <div class="col-xs-12 col-lg-12">
                     <div class="form-group col-sm-6 col-xs-12">
@@ -41,14 +31,11 @@
                     </div>
                 </div>
             </div>
-            <!-- /fields -->
-            <!-- footer -->
             <div class="ln_solid"></div>
             <div class="row col-xs-12 form-buttons">
-                <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.CancelAction</a>
-                <button type="submit" class="btn btn-primary">@Resources.CommonStrings.ConfirmAction</button>
+                <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                <button type="submit" class="btn btn-primary">Salvar</button>
             </div>
-            <!-- /footer -->
         </div>
     </div>
 }

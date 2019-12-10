@@ -44,6 +44,18 @@ namespace FWLog.Data
         private EmpresaTipoRepository _empresaTipoRepository;
         private EnderecoArmazenagemRepository _enderecoArmazenagemRepository;
         private EmpresaConfigRepository _empresaConfigRepository;
+        private LoteDivergenciaRepository _loteDivergenciaRepository;
+        private TipoConferenciaRepository _tipoConferenciaRepository;
+
+        public TipoConferenciaRepository TipoConferenciaRepository
+        {
+            get => _tipoConferenciaRepository ?? (_tipoConferenciaRepository = new TipoConferenciaRepository(_context));
+        }
+
+        public LoteDivergenciaRepository LoteDivergenciaRepository
+        {
+            get => _loteDivergenciaRepository ?? (_loteDivergenciaRepository = new LoteDivergenciaRepository(_context));
+        }
 
         public EmpresaConfigRepository EmpresaConfigRepository
         {

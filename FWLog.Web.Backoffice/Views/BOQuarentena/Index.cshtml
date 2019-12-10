@@ -13,7 +13,7 @@
                 detalhesEntradaConferencia = Url.Action("DetalhesEntradaConferencia"),
                 detailsVisible = User.HasPermission(Permissions.Recebimento.List),
                 editUrl = Url.Action("Edit"),
-                editVisible = User.HasPermission(Permissions.Recebimento.Edit),
+                editVisible = User.HasPermission(Permissions.Recebimento.List),
                 deleteUrl = Url.Action("AjaxDelete"),
                 deleteVisible = User.HasPermission(Permissions.Recebimento.List),
                 pageDataUrl = Url.Action("PageData"),
@@ -23,11 +23,6 @@
         )
 }
 
-<div class="page-title">
-    <div class="title">
-        <h3>@ViewBag.Title</h3>
-    </div>
-</div>
 <form data-filter="form" data-filter-for="dataTable" class="form-filter" id="formQuarentena">
     <div class="x_panel">
         <div class="x_title">
@@ -47,8 +42,8 @@
                     @Html.TextBoxFor(m => m.Filter.Nota, new { @class = "form-control onlyNumber", data_field = "Nota" })
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
-                    @Html.LabelFor(m => m.Filter.DANFE)
-                    @Html.TextBoxFor(m => m.Filter.DANFE, new { @class = "form-control onlyNumber", data_field = "DANFE" })
+                    @Html.LabelFor(m => m.Filter.ChaveAcesso)
+                    @Html.TextBoxFor(m => m.Filter.ChaveAcesso, new { @class = "form-control onlyNumber", data_field = "ChaveAcesso" })
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.IdQuarentenaStatus)
@@ -107,13 +102,14 @@
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.Atraso)
-                    @Html.TextBoxFor(m => m.Filter.Atraso, new { @class = "form-control", data_field = "Atraso" })
+                    @Html.TextBoxFor(m => m.Filter.Atraso, new { @class = "form-control", data_field = "Atraso", type = "number", min = "0", step = "1" })
+                    @Html.ValidationMessageFor(m => m.Filter.Atraso)
                 </div>
-            </div>          
+            </div>
             <div class="row">
                 <div class="col-xs-12 form-buttons">
                     <button type="button" class="btn btn-default" data-filter="clear" id="limpaPesquisaRecebimentoNota">@Resources.CommonStrings.ClearAction</button>
-                    <button type="button" class="btn btn-primary" data-filter="search" id="pesquisaPacienteElemento">@Resources.CommonStrings.SearchAction</button>                    
+                    <button type="button" class="btn btn-primary" data-filter="search" id="pesquisaPacienteElemento">@Resources.CommonStrings.SearchAction</button>
                 </div>
             </div>
         </div>
@@ -123,7 +119,7 @@
     <div class="col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Notas</h2>
+                <h2>Notas Fiscais em Quarentena</h2>
                 <div class="nav navbar-right">
                     <div class="col-xs-12">
                         <a id="downloadRelatorio" data-toggle="tooltip" title="Download Relatório" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
@@ -142,7 +138,6 @@
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.DataAbertura)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.DataEncerramento)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Atraso)</th>
-                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Fornecedor)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Status)</th>
                             <th>@Resources.CommonStrings.ActionsLabel</th>
                         </tr>
@@ -153,5 +148,6 @@
     </div>
 </div>
 <div class="modal" id="modalFornecedor"></div>
+<div class="modal" id="modalAlterarStatus"></div>
 
 

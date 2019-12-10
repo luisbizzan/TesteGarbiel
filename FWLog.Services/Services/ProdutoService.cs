@@ -29,12 +29,12 @@ namespace FWLog.Services.Services
             }
 
             StringBuilder where = new StringBuilder();
-
-            //where.Append(string.Format(" WHERE DTALTER > to_date('{0}', 'dd-mm-yyyy hh24:mi:ss')", DateTime.UtcNow.ToString("dd-MM-yyyy hh:mm:ss")));
+            
             where.Append("WHERE DESCRPROD IS NOT NULL ");
             where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
+            //where.Append("AND INTEGRARFWLOG = 1 "); Esperando criação do campo no Sankhya
 
-            List <ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryGenerico<ProdutoIntegracao>(where: where.ToString());
+            List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryGenerico<ProdutoIntegracao>(where: where.ToString());
 
             foreach (var produtoInt in produtosIntegracao)
             {
@@ -53,24 +53,23 @@ namespace FWLog.Services.Services
                         produto = new Produto();
                     }
 
-                    produto.Altura = produtoInt.ALTURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.ALTURA);
+                    produto.Altura = produtoInt.ALTURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.ALTURA.Replace(".", ","));
                     produto.Ativo = produtoInt.ATIVO == "S" ? true : false;
                     produto.CodigoFabricante = produtoInt.CODFAB == null ? (long?)null : Convert.ToInt64(produtoInt.CODFAB);
                     produto.CodigoIntegracao = codProd;
                     produto.CodigoProdutoNFE = Convert.ToInt32(produtoInt.PRODUTONFE);
-                    produto.Comprimento = produtoInt.ESPESSURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.ESPESSURA);
+                    produto.Comprimento = produtoInt.ESPESSURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.ESPESSURA.Replace(".", ","));
                     produto.Descricao = produtoInt.DESCRPROD;
-                    produto.DescricaoNFE = produtoInt.DESCRPRODNFE;
                     produto.EnderecoImagem = produtoInt.ENDIMAGEM;
-                    produto.Largura = produtoInt.LARGURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.LARGURA);
-                    produto.MetroCubico = produtoInt.M3 == null ? (decimal?)null : Convert.ToDecimal(produtoInt.M3);
-                    produto.MultiploVenda = produtoInt.MULTIPVENDA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.MULTIPVENDA);
+                    produto.Largura = produtoInt.LARGURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.LARGURA.Replace(".", ","));
+                    produto.MetroCubico = produtoInt.M3 == null ? (decimal?)null : Convert.ToDecimal(produtoInt.M3.Replace(".", ","));
+                    produto.MultiploVenda = Convert.ToDecimal(produtoInt.AGRUPCOMPMINIMO.Replace(".", ","));
                     produto.NomeFabricante = produtoInt.FABRICANTE;
-                    produto.PesoBruto = Convert.ToDecimal(produtoInt.PESOBRUTO);
-                    produto.PesoLiquido = Convert.ToDecimal(produtoInt.PESOLIQ);
-                    produto.Referencia = produtoInt.REFERENCIA;
+                    produto.PesoBruto = Convert.ToDecimal(produtoInt.PESOBRUTO.Replace(".", ","));
+                    produto.PesoLiquido = Convert.ToDecimal(produtoInt.PESOLIQ.Replace(".", ","));
+                    produto.Referencia = produtoInt.AD_REFX;
                     produto.ReferenciaFornecedor = produtoInt.REFFORN;
-                    //produto.SKU
+                    produto.CodigoBarras = produtoInt.REFERENCIA;
 
                     if (produtoNovo)
                     {
@@ -79,12 +78,13 @@ namespace FWLog.Services.Services
 
                     await _uow.SaveChangesAsync();
 
+                    /*//TODO Comentado aguardando a criação dos campos no Sankhya.
                     bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", "CODPROD", produto.CodigoIntegracao, "DTALTER", DateTime.UtcNow.ToString("ddMMyyyy hh:mm:ss"));
 
                     if (!atualizacaoOK)
                     {
                         throw new Exception("A atualização de Produto no Sankhya não terminou com sucesso.");
-                    }
+                    }*/
                 }
                 catch (Exception ex)
                 {
@@ -104,6 +104,7 @@ namespace FWLog.Services.Services
             ValidarCampo(produtoIntegracao.PESOLIQ, nameof(produtoIntegracao.PESOLIQ));
             ValidarCampo(produtoIntegracao.DESCRPROD, nameof(produtoIntegracao.DESCRPROD));
             ValidarCampo(produtoIntegracao.ATIVO, nameof(produtoIntegracao.ATIVO));
+            ValidarCampo(produtoIntegracao.AGRUPCOMPMINIMO, nameof(produtoIntegracao.AGRUPCOMPMINIMO));
         }
     }
 }

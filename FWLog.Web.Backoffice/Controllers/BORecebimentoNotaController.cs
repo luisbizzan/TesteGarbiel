@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
@@ -79,9 +80,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
             totalRecords = query.Count();
 
-            if (!string.IsNullOrEmpty(model.CustomFilter.Chave))
+            if (!string.IsNullOrEmpty(model.CustomFilter.ChaveAcesso))
             {
-                query = query.Where(x => !string.IsNullOrEmpty(x.NotaFiscal.Chave) && x.NotaFiscal.DANFE.Contains(model.CustomFilter.Chave));
+                query = query.Where(x => !string.IsNullOrEmpty(x.NotaFiscal.ChaveAcesso) && x.NotaFiscal.ChaveAcesso.Contains(model.CustomFilter.ChaveAcesso));
             }
 
             if (model.CustomFilter.Lote.HasValue)
@@ -354,7 +355,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
 
-            if (notafiscal.Chave != chaveAcesso)
+            if (notafiscal.ChaveAcesso != chaveAcesso)
             {
                 return Json(new AjaxGenericResultModel
                 {
@@ -386,7 +387,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var dataAtual = DateTime.UtcNow;
 
             var model = new BORegistroRecebimentoViewModel();
-            model.ChaveAcesso = notafiscal.Chave;
+            model.ChaveAcesso = notafiscal.ChaveAcesso;
             model.DataRecebimento = dataAtual.ToString("dd/MM/yyyy");
             model.HoraRecebimento = dataAtual.ToString("HH:mm:ss");
             model.FornecedorNome = notafiscal.Fornecedor.RazaoSocial;
@@ -448,7 +449,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Lote = viewModel.Lote,
                     Nota = viewModel.Nota,
-                    DANFE = viewModel.DANFE,
+                    ChaveAcesso = viewModel.ChaveAcesso,
                     IdStatus = viewModel.IdStatus,
                     DataInicial = viewModel.DataInicial,
                     DataFinal = viewModel.DataFinal,
@@ -503,7 +504,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var model = new BODetalhesEntradaConferenciaViewModel
             {
                 IdNotaFiscal = notaFiscal.IdNotaFiscal,
-                DANFE = notaFiscal.Chave,
+                ChaveAcesso = notaFiscal.ChaveAcesso,
                 NumeroNotaFiscal = notaFiscal.Numero.ToString(),
                 StatusNotaFiscal = notaFiscal.StatusIntegracao,
                 Fornecedor = string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.RazaoSocial),
@@ -655,6 +656,43 @@ namespace FWLog.Web.Backoffice.Controllers
             };
 
             return PartialView("EntradaConferencia", model);
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
+        public ActionResult TratarDivergencia(long id)
+        {
+            NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+
+            var divergenciaViewModel = new RecebimentoTratarDivergenciaViewModel
+            {
+                ConferidoPor = "Usuário conferência",
+                InicioConferencia = DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
+                FimConferencia = DateTime.Now.ToString("dd/MM/yyyy  hh:mm:ss"),
+                NotaFiscal = notaFiscal.Numero.ToString(),
+                IdNotaFiscal = notaFiscal.IdNotaFiscal,
+                StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao,
+            };
+
+            List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(id);
+
+            foreach (LoteDivergencia divergencia in loteDivergencias)
+            {
+                var divergenciaItem = new RecebimentoTratarDivergenciaItemViewModel
+                {
+                    IdLoteDivergencia = divergencia.IdLoteDivergencia,
+                    Referencia = divergencia.Produto.Referencia,
+                    QuantidadeConferencia = divergencia.QuantidadeConferencia,
+                    QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
+                    QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
+                    QuantidadeNotaFiscal = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).First().Quantidade,
+                    QuantidadePedido = 0
+                };
+
+                divergenciaViewModel.Divergencias.Add(divergenciaItem);
+            }
+
+            return View(divergenciaViewModel);
         }
     }
 }

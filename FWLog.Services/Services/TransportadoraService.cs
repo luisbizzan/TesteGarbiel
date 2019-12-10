@@ -32,7 +32,7 @@ namespace FWLog.Services.Services
             where.Append("CGC_CPF IS NOT NULL ");
             where.Append("AND RAZAOSOCIAL IS NOT NULL ");
             where.Append("AND TRANSPORTADORA = 'S' ");
-            where.Append(string.Format("AND DTALTER > to_date('{0}', 'dd-mm-yyyy hh24:mi:ss')", DateTime.UtcNow.ToString("dd-MM-yyyy hh:mm:ss")));//Data do Log de sincronização
+            //where.Append("AND INTEGRARFWLOG = 1 "); Esperando criação do campo no Sankhya
 
             List<TransportadoraIntegracao> transportadorasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryGenerico<TransportadoraIntegracao>(where: where.ToString());
 
@@ -66,11 +66,11 @@ namespace FWLog.Services.Services
 
                     await _uow.SaveChangesAsync();
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", transportadora.CodigoIntegracao, "DTALTER", DateTime.UtcNow);
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização de Transportadora no Sankhya não terminou com sucesso.");
-                    }
+                    //bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", transportadora.CodigoIntegracao, "DTALTER", DateTime.UtcNow);
+                    //if (!atualizacaoOK)
+                    //{
+                    //    throw new Exception("A atualização de Transportadora no Sankhya não terminou com sucesso.");
+                    //}
                 }
                 catch (Exception ex)
                 {

@@ -30,7 +30,7 @@ namespace FWLog.Services.Services
 
             if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
-                var atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", "NUNOTA", nota.CodigoIntegracao, "STATUSNOTA", NotaFiscalStatusEnum.Recebida.GetHashCode());
+                var atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", "NUNOTA", nota.CodigoIntegracao, "AD_STATUSREC", NotaFiscalStatusEnum.Recebida.GetHashCode());
 
                 if (!atualizacaoOK)
                 {

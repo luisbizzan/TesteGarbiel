@@ -5,7 +5,7 @@ namespace FWLog.Data.Models
 {
     public enum NotaFiscalStatusEnum
     {
-        [Display(Name = "Processando Integracao")]
+        [Display(Name = "Processando Integração")]
         ProcessandoIntegracao = 0,
 
         [Display(Name = "Aguardando recebimento")]

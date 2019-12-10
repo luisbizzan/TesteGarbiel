@@ -128,11 +128,6 @@ namespace FWLog.Web.Backoffice
                 }
             }
 
-            if (Request.IsLocal)
-            {
-                return;
-            }
-
             Response.TrySkipIisCustomErrors = true;
 
             var contexWrapper = new HttpContextWrapper(Context);

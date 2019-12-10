@@ -1,0 +1,151 @@
+﻿@model FWLog.Web.Backoffice.Models.EmpresaCtx.EmpresaConfigEditarViewModel
+
+@{
+    ViewBag.Title = "Editar Configuração da Empresa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript()
+}
+
+@using (Html.BeginForm())
+{
+    <div class="x_panel">
+        <div class="modal-body">
+            <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
+                <li class="nav-item active">
+                    <a class="nav-link" id="EmpresaConfigTab" data-toggle="tab" href="#empresaconfig" role="tab" aria-controls="empresaconfig" aria-selected="true">Configuração</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="EmpresaTab" data-toggle="tab" href="#empresa" role="tab" aria-controls="empresa" aria-selected="false">Empresa</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade active in" id="empresaconfig" role="tabpanel" aria-labelledby="EmpresaConfigTab">
+                    <div class="row">
+                        @Html.HiddenFor(m => m.IdEmpresa)
+                        @Html.HiddenFor(m => m.IdEmpresaConfig)
+                        <div id="EmpresaMatriz" class="col-xs-12 col-md-3 form-group">
+                            @Html.LabelFor(m => m.IdEmpresaMatriz, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.RazaoSocialEmpresaMatriz, null, new { @class = "form-control razaoSocial", @readonly = "true" })
+                                <span class="input-group-btn">
+                                    <a id="pesquisarEmpresaMatriz" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                                    <a id="limparEmpresaMatriz" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                                </span>
+                            </div>
+                            @Html.HiddenFor(m => m.IdEmpresaMatriz, new { @class = "idempresa" })
+                            @Html.ValidationMessageFor(m => m.IdEmpresaMatriz)
+                        </div>
+                        <div id="EmpresaGarantia" class="col-xs-12 col-md-3 form-group">
+                            @Html.LabelFor(m => m.IdEmpresaGarantia, htmlAttributes: new { @class = "control-label" })
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.RazaoSocialEmpresaGarantia, null, new { @class = "form-control razaoSocial", @readonly = "true" })
+                                <span class="input-group-btn">
+                                    <a id="pesquisarEmpresaGarantia" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                                    <a id="limparEmpresaGarantia" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                                </span>
+                            </div>
+                            @Html.HiddenFor(m => m.IdEmpresaGarantia, new { @class = "idempresa" })
+                            @Html.ValidationMessageFor(m => m.IdEmpresaGarantia)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-xs-12 col-md-3">
+                            @Html.LabelFor(m => m.IdEmpresaTipo)
+                            @Html.DropDownListFor(m => m.IdEmpresaTipo, Model.TiposEmpresa, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.IdEmpresaTipo)
+                        </div>
+                        <div class="form-group col-xs-12 col-md-3">
+                            @Html.LabelFor(m => m.IdTipoConferencia)
+                            @Html.DropDownListFor(m => m.IdTipoConferencia, Model.TiposConferencia, "Selecione...", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.IdTipoConferencia)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-xs-12 col-md-6 col-lg-3">
+                            @Html.LabelFor(m => m.EmpresaFazGarantia)
+                            <div class="checkbox">
+                                @Html.CheckBoxFor(m => m.EmpresaFazGarantia, new { @class = "flat" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.EmpresaFazGarantia)
+                        </div>
+                    </div>
+                    <div class="ln_solid"></div>
+                    <div class="row col-xs-12 form-buttons">
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="empresa" role="tabpanel" aria-labelledby="EmpresaTab">
+                    <div class="row">
+                        @Html.HiddenFor(m => m.Empresa.IdEmpresa)
+                        <div class="form-group col-xs-12 col-md-6 col-lg-2">
+                            @Html.LabelFor(m => m.Empresa.CodigoIntegracao, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.Empresa.CodigoIntegracao, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group col-xs-12 col-md-6 col-lg-5">
+                            @Html.LabelFor(m => m.Empresa.RazaoSocial, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.Empresa.RazaoSocial, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group col-xs-12 col-md-6 col-lg-5">
+                            @Html.LabelFor(m => m.Empresa.NomeFantasia, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.Empresa.NomeFantasia, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group col-xs-12 col-md-6 col-lg-1">
+                            @Html.LabelFor(m => m.Empresa.Sigla, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.Empresa.Sigla, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group col-xs-12 col-md-6 col-lg-2">
+                            @Html.LabelFor(m => m.Empresa.CNPJ, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.Empresa.CNPJ, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group col-xs-12 col-md-6 col-lg-3">
+                            @Html.LabelFor(m => m.Empresa.Endereco, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.Empresa.Endereco, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group col-xs-12 col-md-6 col-lg-1">
+                            @Html.LabelFor(m => m.Empresa.Numero, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.Empresa.Numero, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group col-xs-12 col-md-6 col-lg-2">
+                            @Html.LabelFor(m => m.Empresa.Complemento, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.Empresa.Complemento, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group col-xs-12 col-md-6 col-lg-3">
+                            @Html.LabelFor(m => m.Empresa.Bairro, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.Empresa.Bairro, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group col-xs-12 col-md-6 col-lg-3">
+                            @Html.LabelFor(m => m.Empresa.Cidade, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.Empresa.Cidade, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group col-xs-12 col-md-6 col-lg-3">
+                            @Html.LabelFor(m => m.Empresa.Estado, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.Empresa.Estado, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+
+                        <div class="form-group col-xs-12 col-md-6 col-lg-3">
+                            @Html.LabelFor(m => m.Empresa.CEP, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.Empresa.CEP, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group col-xs-12 col-md-6 col-lg-3">
+                            @Html.LabelFor(m => m.Empresa.Telefone, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.Empresa.Telefone, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 col-lg-3">
+                            @Html.LabelFor(m => m.Empresa.Ativo)
+                            <div class="checkbox">
+                                @Html.CheckBoxFor(m => m.Empresa.Ativo, new { @class = "flat", @disabled = true})
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div class="modal" id="modalEmpresaGarantia" data-toggle="modal" data-myvalue="1"></div>
+<div class="modal" id="modalEmpresaMatriz" data-toggle="modal" data-myvalue="2"></div>

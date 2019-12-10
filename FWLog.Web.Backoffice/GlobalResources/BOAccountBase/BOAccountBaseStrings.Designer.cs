@@ -286,7 +286,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Usuário.
+        ///   Looks up a localized string similar to Código do Usuário.
         /// </summary>
         public static string UserLabel {
             get {
@@ -295,7 +295,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Digite seu usuário.
+        ///   Looks up a localized string similar to Digite seu código de usuário.
         /// </summary>
         public static string UserNamePlaceholder {
             get {

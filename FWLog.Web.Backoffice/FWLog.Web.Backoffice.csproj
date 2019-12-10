@@ -236,12 +236,11 @@
     <Compile Include="Controllers\BOPrinterController.cs" />
     <Compile Include="Controllers\BOQuarentenaController.cs" />
     <Compile Include="Controllers\BORecebimentoNotaController.cs" />
-    <Compile Include="Controllers\BOEmpresaController.cs" />
+    <Compile Include="Controllers\EmpresaController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BOFornecedorController.cs" />
-    <Compile Include="Controllers\PrinterTypeController.cs" />
     <Compile Include="EnumsAndConsts\EmpresaCookie.cs" />
     <Compile Include="EnumsAndConsts\LOVs\NaoSimLOV.cs" />
     <Compile Include="GlobalResources\BOPrinter\BOPrinterStrings.Designer.cs">
@@ -259,11 +258,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>NivelArmazenagemStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="GlobalResources\PrinterType\PrinterTypeStrings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PrinterTypeStrings.resx</DependentUpon>
-    </Compile>
     <Compile Include="GlobalResources\SpecialFolders\Permission\PermissionStrings.Designer.cs">
       <DependentUpon>PermissionStrings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -273,16 +267,19 @@
     <Compile Include="Helpers\HtmlRequestHelper.cs" />
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
+    <Compile Include="Mapping\EmpresaProfile.cs" />
     <Compile Include="Mapping\EnderecoArmazenagemProfile.cs" />
     <Compile Include="Mapping\NivelArmazenagemProfile.cs" />
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
-    <Compile Include="Mapping\PrinterTypeProfile.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\TratarDivergenciaRecebimentoViewModel.cs" />
+    <Compile Include="Models\EmpresaCtx\EmpresaSearchModalViewModel.cs" />
     <Compile Include="Models\BOFornecedorCtx\BOFornecedorSearchModalViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterListViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterCreateViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterSelecionarViewModel.cs" />
+    <Compile Include="Models\BOQuarentenaCtx\BODetalhesEtiquetaConferenciaViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOQuarentenaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODetalhesEntradaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BOEntradaConferenciaViewModel.cs" />
@@ -292,6 +289,7 @@
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirRelatorioNotasViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORegistroRecebimentoViewModel.cs" />
+    <Compile Include="Models\EmpresaCtx\EmpresaConfigEditarViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemCadastroViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemDetalhesViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemEditarViewModel.cs" />
@@ -305,9 +303,6 @@
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemEditarViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemPesquisaModalViewModel.cs" />
-    <Compile Include="Models\PrinterTypeCtx\PrinterTypeCreateViewModel.cs" />
-    <Compile Include="Models\PrinterTypeCtx\PrinterTypeDetailsViewModel.cs" />
-    <Compile Include="Models\PrinterTypeCtx\PrinterTypeListViewModel.cs" />
     <Compile Include="Startup.cs" />
     <Content Include="Content\dart\dart-template.css">
       <DependentUpon>dart-template.scss</DependentUpon>
@@ -318,11 +313,6 @@
     <EmbeddedResource Include="GlobalResources\BOPrinter\BOPrinterStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>BOPrinterStrings.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Resources</CustomToolNamespace>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GlobalResources\PrinterType\PrinterTypeStrings.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>PrinterTypeStrings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources</CustomToolNamespace>
     </EmbeddedResource>
     <Content Include="favicon.ico" />
@@ -449,6 +439,8 @@
     <Content Include="Scripts\dart\HttpService.js" />
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
+    <Content Include="Scripts\Views\Empresa\editar.js" />
+    <Content Include="Scripts\Views\Empresa\searchModal.js" />
     <Content Include="Scripts\Views\BOFornecedor\searchModal.js" />
     <Content Include="Scripts\Views\BOPrinter\selecionar.js" />
     <Content Include="Scripts\Views\BOPrinter\index.js" />
@@ -464,7 +456,6 @@
     <Content Include="Scripts\Views\PontoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\index.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\pesquisaModal.js" />
-    <Content Include="Scripts\Views\PrinterType\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
     <Content Include="Views\Shared\_MudarEmpresa.cshtml" />
@@ -476,10 +467,6 @@
     <Content Include="Views\BOAccount\_EmpresaGrupo.cshtml" />
     <Content Include="Views\BORecebimentoNota\DetalhesEtiquetaConferencia.cshtml" />
     <Content Include="Views\BOPrinter\Selecionar.cshtml" />
-    <Content Include="Views\PrinterType\Create.cshtml" />
-    <Content Include="Views\PrinterType\Details.cshtml" />
-    <Content Include="Views\PrinterType\Edit.cshtml" />
-    <Content Include="Views\PrinterType\Index.cshtml" />
     <Content Include="Views\BORecebimentoNota\RegistroRecebimento.cshtml" />
     <Content Include="Views\BORecebimentoNota\RegistroRecebimentoDetalhes.cshtml" />
     <Content Include="Views\BORecebimentoNota\DetalhesEntradaConferencia.cshtml" />
@@ -501,6 +488,10 @@
     <Content Include="Views\EnderecoArmazenagem\Cadastrar.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\Editar.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\Detalhes.cshtml" />
+    <Content Include="Views\BOQuarentena\DetalhesQuarentena.cshtml" />
+    <Content Include="Views\Empresa\Editar.cshtml" />
+    <Content Include="Views\Empresa\SearchModal.cshtml" />
+    <Content Include="Views\BORecebimentoNota\TratarDivergencia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
@@ -748,8 +739,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
-    <Folder Include="Models\CompanyCtx\" />
-    <Folder Include="Views\Company\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

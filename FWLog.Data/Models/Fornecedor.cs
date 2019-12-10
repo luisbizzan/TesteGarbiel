@@ -28,5 +28,8 @@ namespace FWLog.Data.Models
 
         [Required]
         public bool Ativo { get; set; }
+
+        //TODO criar configuração de não paga garantia e transportadora padrão
+        
     }
 }

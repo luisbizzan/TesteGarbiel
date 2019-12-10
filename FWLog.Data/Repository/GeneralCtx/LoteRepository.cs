@@ -9,10 +9,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 {
     public class LoteRepository : GenericRepository<Lote>
     {
-        public LoteRepository(Entities entities) : base(entities)
-        {
-
-        }
+        public LoteRepository(Entities entities) : base(entities) { }
 
         public Lote PesquisarLotePorNotaFiscal(long idNotaFiscal)
         {
@@ -36,19 +33,18 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "A.\"QuantidadeVolume\", " +
                             "B.\"IdNotaFiscal\", " +
                             "B.\"Numero\", " +
-                            "B.\"Serie\", " +
-                            "B.\"DANFE\", " +
+                            "B.\"Serie\", " +                            
                             "B.\"ValorTotal\", " +
                             "B.\"ValorFrete\", " +
                             "B.\"NumeroConhecimento\", " +
-                            "B.\"PesoBruto\", " +         
+                            "B.\"PesoBruto\", " +
                             "B.\"Especie\", " +
                             "B.\"Quantidade\", " +
-                            "B.\"Chave\", " +
+                            "B.\"ChaveAcesso\", " +
                             "B.\"CodigoIntegracao\", " +
                             "B.\"DataEmissao\", " +
                             "B.\"PrazoEntregaFornecedor\", " +
-                            "B.\"CompanyId\", " +
+                            "B.\"IdEmpresa\", " +
                             "C.*, " +
                             "D.\"IdFreteTipo\", " +
                             "D.\"Sigla\", " +
@@ -63,7 +59,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "LEFT JOIN \"LoteStatus\" E ON (E.\"IdLoteStatus\" = CASE WHEN A.\"IdLoteStatus\" IS NULL THEN 1 ELSE A.\"IdLoteStatus\" END) " +
                             "LEFT JOIN \"AspNetUsers\" F ON F.\"Id\" = A.\"IdUsuarioRecebimento\" " +
                             "INNER JOIN \"NotaFiscalStatus\" G ON G.\"IdNotaFiscalStatus\" = B.\"IdNotaFiscalStatus\" " +
-                          "WHERE (B.\"IdNotaFiscalStatus\" <> 0 AND B.\"IdNotaFiscalStatus\" IS NOT NULL) AND B.\"CompanyId\" =  " + idEmpresa,
+                          "WHERE (B.\"IdNotaFiscalStatus\" <> 0 AND B.\"IdNotaFiscalStatus\" IS NOT NULL) AND B.\"IdEmpresa\" =  " + idEmpresa,
                         map: (l, nf, f, ft, ls, u, nfs) =>
                         {
                             l.NotaFiscal = nf;

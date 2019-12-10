@@ -2,7 +2,7 @@
 @using Res = Resources.BOGroupStrings
 
 @{
-    ViewBag.Title = Res.CreatePageTitle;
+    ViewBag.Title = "Cadastrar Grupo de Usuários";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -16,7 +16,7 @@
     @Html.HiddenFor(m => m.Id)
     <div class="x_panel" id="pageGroupCreate">
         <div class="x_title">
-            <h2>@Res.CreatePageTitle</h2>
+            <h2>Cadastrar Grupo de Usuários</h2>
             <div class="clearfix"></div>
         </div>
         <div class="x_content">
@@ -58,11 +58,11 @@
                                     <div class="panel-body" id="panelPermission">
                                         @for (int j = 0; j < Model.PermissionGroups[i].Permissions.Count; j++)
                                         {
-                                            <div class="col-xs-12">
+                                            <div class="form-group col-xs-12">
                                                 <div class="checkbox">
                                                     <label>
                                                         @Html.HiddenFor(m => m.PermissionGroups[i].Permissions[j].Name)
-                                                        @Html.CheckBoxFor(m => m.PermissionGroups[i].Permissions[j].IsSelected, new { data_role = "" })
+                                                        @Html.CheckBoxFor(m => m.PermissionGroups[i].Permissions[j].IsSelected, new { @class = "flat", data_role = "" })
                                                         @Html.DisplayFor(m => m.PermissionGroups[i].Permissions[j].DisplayName)
                                                     </label>
                                                 </div>
@@ -75,17 +75,11 @@
                     </div>
                 </div>
             </div>
-
-            <!-- /fields -->
-            <!-- footer -->
             <div class="ln_solid"></div>
             <div class="row col-xs-12 form-buttons">
-                <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.CancelAction</a>
-                <button type="submit" class="btn btn-primary">@Resources.CommonStrings.ConfirmAction</button>
+                <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                <button type="submit" class="btn btn-primary">Salvar</button>
             </div>
-            <!-- /footer -->
         </div>
     </div>
-
-
 }

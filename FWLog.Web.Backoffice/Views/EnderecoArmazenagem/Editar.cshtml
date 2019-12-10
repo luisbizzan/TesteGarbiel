@@ -8,15 +8,14 @@
     @BundleHelper.RenderViewScript()
 }
 
-<div class="page-title">
-    <div class="title">
-        <h3 class="title-sml">Editar Endereço de Armazenagem</h3>
-    </div>
-</div>
 @using (Html.BeginForm("Editar"))
 {
 @Html.HiddenFor(x => x.IdEnderecoArmazenagem)
 <div class="x_panel">
+    <div class="x_title">
+        <h2>Editar Endereço de Armazenagem</h2>
+        <div class="clearfix"></div>
+    </div>
     <div class="x_content">
         <div class="row">
             <div class="form-group col-sm-4 col-xs-12">
@@ -52,17 +51,17 @@
             </div>
             <div class="form-group col-sm-2 col-xs-12">
                 @Html.LabelFor(m => m.EstoqueMinimo, new { @class = "control-label" })
-                @Html.TextBoxFor(m => m.EstoqueMinimo, new { @class = "form-control", })
+                @Html.TextBoxFor(m => m.EstoqueMinimo, new { @class = "form-control integer", })
                 @Html.ValidationMessageFor(m => m.EstoqueMinimo)
             </div>
             <div class="form-group col-sm-2 col-xs-12">
                 @Html.LabelFor(m => m.EstoqueMaximo, new { @class = "control-label" })
-                @Html.TextBoxFor(m => m.EstoqueMaximo, new { @class = "form-control", })
+                @Html.TextBoxFor(m => m.EstoqueMaximo, new { @class = "form-control integer", })
                 @Html.ValidationMessageFor(m => m.EstoqueMaximo)
             </div>
             <div class="form-group col-sm-2 col-xs-12">
                 @Html.LabelFor(m => m.LimitePeso, new { @class = "control-label" })
-                @Html.TextBoxFor(m => m.LimitePeso, new { @class = "form-control", })
+                @Html.TextBoxFor(m => m.LimitePeso, new { @class = "form-control integer", })
                 @Html.ValidationMessageFor(m => m.LimitePeso)
             </div>
         </div>

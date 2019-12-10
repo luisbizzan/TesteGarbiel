@@ -1987,7 +1987,7 @@ legend {
   padding-right: 45px; }
 
 .form-group {
-  margin-bottom: 10px; }
+  margin-bottom: 5px; }
 
 .validate {
   margin-top: 10px; }
@@ -4021,4 +4021,3 @@ ul.notifications {
   height: unset; }
 
 /** /Dropzone.js **/
-

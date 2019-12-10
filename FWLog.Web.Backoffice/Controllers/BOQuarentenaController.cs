@@ -1,5 +1,9 @@
 ﻿using FWLog.Data;
+using FWLog.Data.EnumsAndConsts;
+using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Data.Models.GeneralCtx;
+using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BOQuarentenaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
@@ -13,26 +17,51 @@ namespace FWLog.Web.Backoffice.Controllers
     public class BOQuarentenaController : BOBaseController
     {
         private readonly UnitOfWork _uow;
+        private readonly BOLogSystemService _boLogSystemService;
 
-        public BOQuarentenaController(UnitOfWork uow)
+        public BOQuarentenaController(UnitOfWork uow, BOLogSystemService boLogSystemService)
         {
             _uow = uow;
+            _boLogSystemService = boLogSystemService;
+        }
+
+        private SelectList Status
+        {
+            get
+            {
+                if (status == null)
+                {
+                    status = new SelectList(_uow.QuarentenaStatusRepository.Todos().Select(x => new SelectListItem
+                    {
+                        Value = x.IdQuarentenaStatus.ToString(),
+                        Text = x.Descricao
+                    }), "Value", "Text");
+                }
+
+                return status;
+            }
+        }
+        private SelectList status;
+
+        private void setViewBags()
+        {
+            ViewBag.Status = Status;
         }
 
         // GET: BOQuarentena
         public ActionResult Index()
         {
-            var model = new BOQuarentenaListViewModel();
-
-            model.Filter = new BOQuarentenaFilterViewModel()
+            var model = new BOQuarentenaListViewModel
             {
-                ListaQuarentenaStatus = new SelectList(
+                Filter = new BOQuarentenaFilterViewModel()
+                {
+                    ListaQuarentenaStatus = new SelectList(
                     _uow.QuarentenaStatusRepository.Todos().Select(x => new SelectListItem
                     {
                         Value = x.IdQuarentenaStatus.ToString(),
-                        Text = x.Descricao,
-                    }), "Value", "Text"
-                )
+                        Text = x.Descricao
+                    }), "Value", "Text")
+                }
             };
 
             return View(model);
@@ -40,7 +69,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult PageData(DataTableFilter<BOQuarentenaFilterViewModel> model)
         {
-            List<BOQuarentenaListItemViewModel> boQuarentenaListItemViewModel = new List<BOQuarentenaListItemViewModel>();
             int totalRecords = 0;
             int totalRecordsFiltered = 0;
 
@@ -48,8 +76,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
             totalRecords = query.Count();
 
-            if (!string.IsNullOrEmpty(model.CustomFilter.DANFE))
-                query = query.Where(x => x.Lote.NotaFiscal.DANFE.Contains(model.CustomFilter.DANFE));
+            if (!string.IsNullOrEmpty(model.CustomFilter.ChaveAcesso))
+                query = query.Where(x => x.Lote.NotaFiscal.ChaveAcesso.Contains(model.CustomFilter.ChaveAcesso));
 
             if (model.CustomFilter.Lote.HasValue)
                 query = query.Where(x => x.IdLote == Convert.ToInt32(model.CustomFilter.Lote));
@@ -91,44 +119,27 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.DataEncerramento <= prazoEncerramentoFinal);
             }
 
-            if (query.Count() > 0)
-            {
-                foreach (var item in query)
+            IEnumerable<BOQuarentenaListItemViewModel> list = query.ToList()
+                .Select(x => new BOQuarentenaListItemViewModel
                 {
-                    //Atribui 0 para dias em atraso.
-                    long? atraso = 0;
-
-                    //Se a data de encerramento NÃO for nula, captura a quantidae de dias entre a data do encerramento e a data de abertura.
-                    if (item.DataEncerramento.HasValue)
-                    {
-                        atraso = (item.DataEncerramento - item.DataAbertura).Value.Days;
-                    }
-                    else //Se a data de encerramento for nula, ccaptura a quantidade de dias entre a data atual e a data de dencerramento
-                    {
-                        if(DateTime.Now > item.DataAbertura)
-                                atraso = (DateTime.Now - item.DataAbertura).Days;
-                    }
-
-                    boQuarentenaListItemViewModel.Add(new BOQuarentenaListItemViewModel()
-                    {
-                        Lote = item.IdLote,
-                        Nota = item.Lote.NotaFiscal.Numero,
-                        Fornecedor = item.Lote.NotaFiscal.Fornecedor.NomeFantasia,
-                        Atraso = atraso,
-                        DataAbertura = item.DataAbertura.ToString("dd/MM/yyyy"),
-                        DataEncerramento = item.DataEncerramento.HasValue ? item.DataEncerramento.Value.ToString("dd/MM/yyyy") : ""
-                    });
-                }
-            }
+                    IdQuarentena = x.IdQuarentena,
+                    Lote = x.IdLote,
+                    Nota = x.Lote.NotaFiscal.Numero,
+                    Fornecedor = x.Lote.NotaFiscal.Fornecedor.NomeFantasia,
+                    DataAbertura = x.DataAbertura.ToString("dd/MM/yyyy"),
+                    DataEncerramento = x.DataEncerramento.HasValue ? x.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
+                    Atraso = x.DataAbertura.Subtract(x.DataEncerramento ?? DateTime.Now).Days,
+                    Status = x.QuarentenaStatus.Descricao
+                });
 
             if (model.CustomFilter.Atraso.HasValue)
             {
-                boQuarentenaListItemViewModel = boQuarentenaListItemViewModel.Where(x => x.Atraso == model.CustomFilter.Atraso).ToList();
+                list = list.Where(x => x.Atraso == model.CustomFilter.Atraso);
             }
 
-            totalRecordsFiltered = boQuarentenaListItemViewModel.Count();
+            totalRecordsFiltered = list.Count();
 
-            var result = boQuarentenaListItemViewModel
+            var result = list
                 .OrderBy(model.OrderByColumn, model.OrderByDirection)
                 .Skip(model.Start)
                 .Take(model.Length);
@@ -140,6 +151,102 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsFiltered = totalRecordsFiltered,
                 Data = result
             });
+        }
+
+        public JsonResult ValidarModalDetalhesQuarentena(long id)
+        {
+            bool existe = _uow.QuarentenaRepository.Any(x => x.IdQuarentena == id);
+
+            if (!existe)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não foi possível buscar Nota Fiscal."
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+        }
+
+        [HttpGet]
+        public ActionResult ExibirModalDetalhesQuarentena(long id)
+        {
+            setViewBags();
+
+            var entidade = _uow.QuarentenaRepository.GetById(id);
+
+            var model = new DetalhesQuarentenaViewModel
+            {
+                IdQuarentena = entidade.IdQuarentena,
+                IdStatus = entidade.QuarentenaStatus.IdQuarentenaStatus,
+                DataAbertura = entidade.DataAbertura.ToString("dd/MM/yyyy"),
+                DataEncerramento = entidade.DataEncerramento.HasValue ? entidade.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
+                Observacao = entidade.Observacao
+            };
+
+
+            return PartialView("DetalhesQuarentena", model);
+        }
+
+        [HttpPost]
+        public ActionResult ExibirModalDetalhesQuarentena(DetalhesQuarentenaViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                setViewBags();
+
+                return PartialView("DetalhesQuarentena", model);
+            }
+
+            try
+            {
+                Quarentena entidade = _uow.QuarentenaRepository.GetById(model.IdQuarentena);
+
+                Quarentena old = new Quarentena
+                {
+                    DataAbertura = entidade.DataAbertura,
+                    DataEncerramento = entidade.DataEncerramento,
+                    IdLote = entidade.IdLote,
+                    IdQuarentena = entidade.IdQuarentena,
+                    IdQuarentenaStatus = entidade.IdQuarentenaStatus,
+                    Observacao = entidade.Observacao
+                };
+
+                entidade.IdQuarentenaStatus = model.IdStatus;
+                entidade.Observacao = model.Observacao;
+
+                if (!model.PermiteEdicao)
+                {
+                    entidade.DataEncerramento = DateTime.Now;
+                }
+
+                _uow.QuarentenaRepository.Update(entidade);
+
+                var userInfo = new BackOfficeUserInfo();
+                _boLogSystemService.Add(new BOLogSystemCreation
+                {
+                    ActionType = ActionTypeNames.Edit,
+                    IP = userInfo.IP,
+                    UserId = userInfo.UserId,
+                    EntityName = nameof(Quarentena),
+                    OldEntity = old,
+                    NewEntity = entidade
+                });
+
+                Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                setViewBags();
+
+                Notify.Error(Resources.CommonStrings.RegisterEditedErrorMessage);
+                return PartialView("DetalhesQuarentena", model);
+            }
         }
     }
 }

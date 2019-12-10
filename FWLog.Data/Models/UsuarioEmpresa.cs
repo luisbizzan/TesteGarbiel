@@ -2,8 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
-{
-    [Table("UserCompany")]
+{   
     public class UsuarioEmpresa
     {
         [Key, Column(Order = 0)]
@@ -12,15 +11,15 @@ namespace FWLog.Data.Models
 
         [Key, Column(Order = 1)]
         [Required()]
-        public long CompanyId { get; set; }
+        public long IdEmpresa { get; set; }
 
-        [ForeignKey("CompanyId")]
+        [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
 
         public UsuarioEmpresa(string userId, long idEmpresa)
         {
             UserId = userId;
-            CompanyId = idEmpresa;
+            IdEmpresa = idEmpresa;
         }
 
         public UsuarioEmpresa()

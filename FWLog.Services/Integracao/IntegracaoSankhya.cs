@@ -155,6 +155,8 @@ namespace FWLog.Services.Integracao
                 throw new Exception(string.Format("O sistema não obteve o status 1 no retorno da atualização da nota fiscal no Integração Sankhya. Mensagem {0}", root.Element("statusMessage")?.Value));
             }
 
+            //TODO olhar status 3 - não autorizado
+
             string nunota = root.Element("responseBody").Element("entities").Element("entity").Element("NUNOTA")?.Value;
             if (nunota == null)
             {

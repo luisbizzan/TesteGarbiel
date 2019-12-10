@@ -12,22 +12,15 @@
         new
         {
             detailsUrl = Url.Action("Details"),
-            detailsVisible = User.HasPermission(Permissions.Role.List),
+            detailsVisible = User.HasPermission(Permissions.Printer.List),
             editUrl = Url.Action("Edit"),
-            editVisible = User.HasPermission(Permissions.Role.Edit),
+            editVisible = User.HasPermission(Permissions.Printer.Edit),
             deleteUrl = Url.Action("AjaxDelete"),
-            deleteVisible = User.HasPermission(Permissions.Role.List),
+            deleteVisible = User.HasPermission(Permissions.Printer.List),
             pageDataUrl = Url.Action("PageData")
         })
 }
 
-<!-- title -->
-<div class="page-title">
-    <div class="title">
-        <h3>@ViewBag.Title</h3>
-    </div>
-</div>
-<!-- /title -->
 <!-- filter -->
 <form data-filter="form" data-filter-for="dataTable" class="form-filter">
     <div class="x_panel">
@@ -72,9 +65,9 @@
         <div class="x_panel">
             <!-- panel-title -->
             <div class="x_title">
-                <h2>@Res.ListHeader</h2>
+                <h2>Lista de Impressoras</h2>
                 <div class="nav navbar-right panel_toolbox">
-                    @if (User.HasPermission(Permissions.Role.Create))
+                    @if (User.HasPermission(Permissions.Printer.Create))
                     {
                         <a class="btn btn-primary btn-dt-action" href="@Url.Action("Create")"><i class="fa fa-fw fa-plus"></i> @Resources.CommonStrings.CreateAction</a>
                     }
