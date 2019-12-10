@@ -110,6 +110,7 @@
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
     <Compile Include="Model\IntegracaoSankhya\FornecedorIntegracao.cs" />
+    <Compile Include="Model\IntegracaoSankhya\FreteTipoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\TransportadoraIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\EmpresaIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoIntegracao.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\EmpresaService.cs" />
     <Compile Include="Services\EnderecoArmazenagemService.cs" />
+    <Compile Include="Services\FreteTipoService.cs" />
     <Compile Include="Services\LoteService.cs" />
     <Compile Include="Services\NivelArmazenagemService.cs" />
     <Compile Include="Services\NotaFiscalService.cs" />
