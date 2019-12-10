@@ -23,13 +23,13 @@ namespace FWLog.Web.Backoffice.Models.NivelArmazenagemCtx
         [Display(Name = "Descrição")]
         public string Descricao { get; set; }
 
-        public string Ativo { get; set; }
+        public string Status { get; set; }
     }
 
     public class NivelArmazenagemFilterViewModel
     {
         public string Descricao { get; set; }
 
-        public string Ativo { get; set; }
+        public string Status { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace FWLog.Web.Backoffice.Models.NivelArmazenagemCtx
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FWLog.Web.Backoffice.Models.NivelArmazenagemCtx
 {
     public class NivelArmazenagemCreateViewModel
     {
@@ -8,7 +10,7 @@
 
         public string Descricao { get; set; }
 
+        [Display(Name = "Ativo?")]
         public bool Ativo { get; set; }
-
     }
 }
