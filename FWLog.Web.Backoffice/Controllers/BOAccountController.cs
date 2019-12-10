@@ -26,10 +26,10 @@ namespace FWLog.Web.Backoffice.Controllers
 {
     public class BOAccountController : BOBaseController
     {
-        private UnitOfWork _uow;
-        private BOAccountService _boService;
-        private BOLogSystemService _boLogSystemService;
-        private PasswordService _passwordService;
+        private readonly UnitOfWork _uow;
+        private readonly BOAccountService _boService;
+        private readonly BOLogSystemService _boLogSystemService;
+        private readonly PasswordService _passwordService;
 
         public BOAccountController(UnitOfWork uow, BOAccountService boService, BOLogSystemService boLogSystemService, PasswordService passwordService)
         {
@@ -81,7 +81,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
         public ActionResult Create()
         {
-            SetViewBags();
+            ViewBag.Empresas = _Empresas;
 
             return View(new BOAccountCreateViewModel());
         }
@@ -109,7 +109,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
         public async Task<ActionResult> Create(BOAccountCreateViewModel model)
         {
-            SetViewBags();
+            ViewBag.Empresas = _Empresas;
 
             Func<string, ViewResult> errorView = (error) =>
             {
@@ -208,7 +208,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Edit)]
         public async Task<ActionResult> Edit(string id)
         {
-            SetViewBags();
+            ViewBag.Empresas = _Empresas;
 
             ApplicationUser user = await UserManager.FindByNameAsync(id).ConfigureAwait(false);
 
@@ -254,7 +254,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Edit)]
         public async Task<ActionResult> Edit(BOAccountEditViewModel model)
         {
-            SetViewBags();
+            ViewBag.Empresas = _Empresas;
 
             Func<ViewResult> errorView = () =>
             {

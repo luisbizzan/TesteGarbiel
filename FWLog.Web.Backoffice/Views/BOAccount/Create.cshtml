@@ -55,11 +55,6 @@
                     @Html.ValidationMessageFor(m => m.PerfilUsuario.DataNascimento)
                 </div>
                 <div class="form-group col-sm-2 col-xs-12">
-                    @Html.LabelFor(m => m.PerfilUsuario.Ativo)
-                    @Html.DropDownListFor(m => m.PerfilUsuario.Ativo, (IEnumerable<SelectListItem>)ViewBag.Status, "Selecione...", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(m => m.PerfilUsuario.Ativo)
-                </div>
-                <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.Password, new { @class = "control-label" })
                     @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.Password)
@@ -68,6 +63,15 @@
                     @Html.LabelFor(m => m.ConfirmPassword, new { @class = "control-label" })
                     @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.ConfirmPassword)
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-xs-12 col-md-6 col-lg-3">
+                    @Html.Label("Ativo?")
+                    <div class="checkbox">
+                        @Html.CheckBoxFor(m => m.PerfilUsuario.Ativo, new { @class = "flat" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.PerfilUsuario.Ativo)
                 </div>
             </div>
             <div class="row">
