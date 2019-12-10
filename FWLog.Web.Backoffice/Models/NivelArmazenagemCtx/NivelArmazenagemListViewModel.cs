@@ -30,6 +30,6 @@ namespace FWLog.Web.Backoffice.Models.NivelArmazenagemCtx
     {
         public string Descricao { get; set; }
 
-        public string Status { get; set; }
+        public bool? Status { get; set; }
     }
 }

@@ -63,13 +63,11 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Listar)]
-        public ActionResult PageData(DataTableFilter<NivelArmazenagemFilterViewModel> model)
+        public ActionResult PageData(DataTableFilter<NivelArmazenagemFilter> model)
         {
-            var filter = Mapper.Map<DataTableFilter<NivelArmazenagemFilter>>(model);
+            model.CustomFilter.IdEmpresa = IdEmpresa;
 
-            filter.CustomFilter.IdEmpresa = IdEmpresa;
-
-            IEnumerable<NivelArmazenagemTableRow> result = _unitOfWork.NivelArmazenagemRepository.SearchForDataTable(filter, out int recordsFiltered, out int totalRecords);
+            IEnumerable<NivelArmazenagemTableRow> result = _unitOfWork.NivelArmazenagemRepository.SearchForDataTable(model, out int recordsFiltered, out int totalRecords);
 
             var list = result.Select(x => new NivelArmazenagemListItemViewModel
             {

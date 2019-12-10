@@ -4,7 +4,7 @@
     {
         public string Descricao { get; set; }
 
-        public bool? Ativo { get; set; }
+        public bool? Status { get; set; }
 
         public long IdEmpresa { get; set; }
     }
