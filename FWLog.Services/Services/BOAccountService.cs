@@ -33,10 +33,10 @@ namespace FWLog.Services.Services
 
             var mailParams = new SendMailParams
             {
-                Subject = Res.RecoverPasswordEmailSubject,
+                Subject = "Recuperação de Senha",
                 Body = template.GetHtml(),
                 IsBodyHtml = true,
-                EmailFrom = emailFrom,
+                EmailFrom = "FwLog Sistema <"+ emailFrom +">",
                 EmailsTo = emailTo,
                 Attachments = null,
                 BodyEncoding = Encoding.Default
