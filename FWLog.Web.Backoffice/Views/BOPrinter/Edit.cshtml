@@ -22,27 +22,25 @@
         <div class="x_content">
             <!-- fields -->
             <div class="row">
-                <div class="col-sm-12 col-xs-12">
-                    <div class="form-group col-sm-2 col-xs-12">
-                        @Html.LabelFor(m => m.Name, new { @class = "control-label" })
-                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Name)
-                    </div>
-                    <div class="form-group col-sm-3 col-xs-12">
-                        @Html.LabelFor(m => m.IP, new { @class = "control-label" })
-                        @Html.TextBoxFor(m => m.IP, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.IP)
-                    </div>
-                    <div class="form-group col-sm-2 col-xs-12">
-                        @Html.LabelFor(m => m.PrinterTypeId, new { @class = "control-label" })
-                        @Html.DropDownListFor(m => m.PrinterTypeId, (IEnumerable<SelectListItem>)ViewBag.PrinterTypes, "Selecione...", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.PrinterTypeId)
-                    </div>
-                    <div class="form-group col-sm-3 col-xs-12">
-                        @Html.LabelFor(m => m.IdEmpresa, new { @class = "control-label" })
-                        @Html.DropDownListFor(m => m.IdEmpresa, (IEnumerable<SelectListItem>)ViewBag.Empresas, "Selecione...", new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.IdEmpresa)
-                    </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.Name, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Name)
+                </div>
+                <div class="form-group col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.IP, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.IP, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.IP)
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.PrinterTypeId, new { @class = "control-label" })
+                    @Html.DropDownListFor(m => m.PrinterTypeId, (IEnumerable<SelectListItem>)ViewBag.PrinterTypes, "Selecione...", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.PrinterTypeId)
+                </div>
+                <div class="form-group col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.IdEmpresa, new { @class = "control-label" })
+                    @Html.DropDownListFor(m => m.IdEmpresa, (IEnumerable<SelectListItem>)ViewBag.Empresas, "Selecione...", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.IdEmpresa)
                 </div>
             </div>
             <div class="row">

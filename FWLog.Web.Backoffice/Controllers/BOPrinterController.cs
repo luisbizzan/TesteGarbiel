@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ExtensionMethods.List;
-using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models;
@@ -101,19 +100,28 @@ namespace FWLog.Web.Backoffice.Controllers
             IQueryable<Printer> query = all.WhereIf(!string.IsNullOrEmpty(model.CustomFilter.Name), x => x.Name.Contains(model.CustomFilter.Name));
             query = query.WhereIf(model.CustomFilter.IdEmpresa.HasValue, x => x.CompanyId == model.CustomFilter.IdEmpresa);
             query = query.WhereIf(model.CustomFilter.PrinterTypeId.HasValue, x => x.PrinterTypeId == model.CustomFilter.PrinterTypeId);
-            query = query.WhereIf(model.CustomFilter.Ativa.HasValue, x => x.Ativa == model.CustomFilter.Ativa);
+            query = query.WhereIf(model.CustomFilter.Status.HasValue, x => x.Ativa == model.CustomFilter.Status);
 
             int totalRecords = all.Count();
             int recordsFiltered = query.Count();
 
-            List<Printer> result = query.PaginationResult(model);
+            var list = query.Select(x => new BOPrinterListItemViewModel
+            {
+                Id = x.Id,
+                Empresa = x.Empresa.NomeFantasia,
+                Name = x.Name,
+                PrinterType = x.PrinterType.Name,
+                Status = x.Ativa ? "Ativa" : "Inativa"
+            });
+
+            IList<BOPrinterListItemViewModel> result = list.PaginationResult(model);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
                 RecordsTotal = totalRecords,
                 RecordsFiltered = recordsFiltered,
-                Data = Mapper.Map<IEnumerable<BOPrinterListItemViewModel>>(result)
+                Data = result
             });
         }
 

@@ -40,7 +40,7 @@
         columns: [
             { data: 'Name' },
             { data: 'PrinterType' },
-            { data: 'Ativa', width: 100  },
+            { data: 'Status', width: 100  },
             { data: 'Empresa' },
             actionsColumn
         ]
