@@ -29,6 +29,7 @@ namespace FWLog.Web.Backoffice.Controllers
             _boAccountService = boAccountService;
         }
 
+        [HttpGet]
         [AnonymousOnly]
         public ActionResult LogOn(string l = null)
         {
@@ -103,6 +104,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(model);
         }
 
+        [HttpGet]
         [AnonymousOnly]
         public ActionResult RecoverPassword()
         {
@@ -136,6 +138,8 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        [AnonymousOnly]
         public async Task<ActionResult> RedefinePassword(string userId, string token)
         {
             bool valid = await UserManager.VerifyUserTokenAsync(userId, "ResetPassword", token);
@@ -157,6 +161,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [AnonymousOnly]
         public async Task<ActionResult> RedefinePassword(RedefinePasswordViewModel model)
         {
             if (!ModelState.IsValid)

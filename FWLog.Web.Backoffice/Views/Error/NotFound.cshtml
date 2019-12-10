@@ -14,16 +14,12 @@
     ViewBag.Title = Res.NotFoundPageTitle;
 }
 
-<div class="col-middle getpoints">
-    <div class="text-center error-page">
-        <div class="error-number">404</div>
-        <div class="error-title">@Res.NotFoundPageHeader</div>
-        <div class="error-description">
-            <p>
-                @Res.NotFoundPageDescription
-            </p>
-        </div>
-        <div class="error-footer">
+<div class="col-middle">
+    <div class="text-center">
+        <h1 class="error-number" style="color: #ffffff">404</h1>
+        <h2 style="color: #ffffff">@Res.NotFoundPageHeader</h2>
+        <p style="color: #ffffff">A página requisitada não foi encontrada no sistema.</p>
+        <div class="mid_center">
             <a href="@Url.Action("Index", "BOHome")" class="btn btn-primary">@Res.BackToHomeAction</a>
         </div>
     </div>
