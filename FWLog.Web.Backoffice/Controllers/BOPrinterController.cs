@@ -213,7 +213,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 IdEmpresa = entity.CompanyId,
                 IP = entity.IP,
                 PrinterTypeId = entity.PrinterTypeId,
-                Ativa = entity.Ativa
+                Ativa = entity.Ativa,
+                RazaoEmpresa = entity.Empresa.RazaoSocial
             };
 
             setViewBags();

@@ -221,10 +221,11 @@ namespace FWLog.Web.Backoffice.Controllers
 
             empresas = Empresas.Where(w => empresas.Contains(w.IdEmpresa)).Select(s => s.IdEmpresa).ToList();
 
-            var perfil = _uow.PerfilUsuarioRepository.GetByUserId(user.Id.ToString());
+            var perfil = _uow.PerfilUsuarioRepository.GetByUserId(user.Id);
 
             var model = Mapper.Map<BOAccountEditViewModel>(user);
             model.PerfilUsuario = perfil;
+            model.PerfilUsuario.RazaoSocialEmpresaPrincipal = model.PerfilUsuario.Empresa.RazaoSocial;
 
             IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);
 

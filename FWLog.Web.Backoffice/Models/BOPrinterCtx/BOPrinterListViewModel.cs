@@ -44,5 +44,7 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         public int? PrinterTypeId { get; set; }
 
         public bool? Status { get; set; }
+
+        public string RazaoEmpresa { get; set; }
     }
 }
