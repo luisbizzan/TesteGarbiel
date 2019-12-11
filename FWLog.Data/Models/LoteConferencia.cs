@@ -16,7 +16,7 @@ namespace FWLog.Data.Models
 
         public long IdLote { get; set; }
 
-        public long IdTipoConferencia { get; set; }
+        public TipoConferenciaEnum IdTipoConferencia { get; set; }
 
         public long IdProduto { get; set; }
 
