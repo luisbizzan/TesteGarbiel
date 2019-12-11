@@ -48,6 +48,9 @@ namespace FWLog.Data.Models
         [Log(DisplayName = nameof(ResEnt.Ativo), ResourceType = typeof(ResEnt))]
         public bool Ativo { get; set; }
 
+        [NotMapped]
+        public string RazaoSocialEmpresaPrincipal { get; set; }
+
         [ForeignKey("UsuarioId")]
         public virtual AspNetUsers Usuario { get; set; }
 

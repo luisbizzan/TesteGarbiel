@@ -8,9 +8,9 @@ using FWLog.Web.Backoffice.EnumsAndConsts;
 using FWLog.Web.Backoffice.Helpers;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
@@ -113,5 +113,23 @@ namespace FWLog.Web.Backoffice.Controllers
                 return uow.EmpresaRepository.GetAllByUserId(userInfo.UserId.ToString());
             }
         }
+
+        protected ReadOnlyCollection<long> IdEmpresasPorUsuario
+        {
+            get
+            {
+                if (idEmpresasPorUsuario == null)
+                {
+                    var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
+                    var userInfo = new BackOfficeUserInfo();
+
+                    idEmpresasPorUsuario = uow.EmpresaRepository.IdEmpresasPorUsuario(userInfo.UserId.ToString());
+                }
+
+                return idEmpresasPorUsuario;
+            }
+        }
+        private ReadOnlyCollection<long> idEmpresasPorUsuario;
+
     }
 }

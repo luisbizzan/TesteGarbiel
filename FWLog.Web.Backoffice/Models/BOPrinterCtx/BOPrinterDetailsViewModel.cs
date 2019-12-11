@@ -18,6 +18,6 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         public string IP { get; set; }
 
         [Display(Name = "Ativa")]
-        public string Ativa { get; set; }
+        public bool Ativa { get; set; }
     }
 }

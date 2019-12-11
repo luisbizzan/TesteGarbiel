@@ -32,7 +32,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRecords = query.Count();
 
             query = query.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.Descricao), x => x.Descricao.Contains(filter.CustomFilter.Descricao));
-            query = query.WhereIf(filter.CustomFilter.Ativo.HasValue, x => x.Ativo == filter.CustomFilter.Ativo);
+            query = query.WhereIf(filter.CustomFilter.Status.HasValue, x => x.Ativo == filter.CustomFilter.Status);
 
             // Quantidade total de registros com filtros aplicados, sem Skip() e Take().
             totalRecordsFiltered = query.Count();

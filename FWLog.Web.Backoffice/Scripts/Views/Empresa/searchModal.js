@@ -34,7 +34,8 @@
         ],
         "bInfo": false
     });
-    $('#dataTableModal').on('click', '[data-select]', function () {   
+
+    $('#dataTableModal').on('click', '[data-select]', function () {
         let campo = $("#CampoSelecionado").val();
         setEmpresa($(this).attr('data-select'), $(this).attr("name-select"), campo);
     });

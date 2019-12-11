@@ -13,6 +13,7 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
@@ -62,20 +63,25 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Listar)]
-        public ActionResult PageData(DataTableFilter<NivelArmazenagemFilterViewModel> model)
+        public ActionResult PageData(DataTableFilter<NivelArmazenagemFilter> model)
         {
-            var filter = Mapper.Map<DataTableFilter<NivelArmazenagemFilter>>(model);
+            model.CustomFilter.IdEmpresa = IdEmpresa;
 
-            filter.CustomFilter.IdEmpresa = IdEmpresa;
+            IEnumerable<NivelArmazenagemTableRow> result = _unitOfWork.NivelArmazenagemRepository.SearchForDataTable(model, out int recordsFiltered, out int totalRecords);
 
-            IEnumerable<NivelArmazenagemTableRow> result = _unitOfWork.NivelArmazenagemRepository.SearchForDataTable(filter, out int recordsFiltered, out int totalRecords);
+            var list = result.Select(x => new NivelArmazenagemListItemViewModel
+            {
+                Descricao = x.Descricao,
+                IdNivelArmazenagem = x.IdNivelArmazenagem,
+                Status = x.Ativo ? "Ativo" : "Inativo"
+            });
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
                 RecordsTotal = totalRecords,
                 RecordsFiltered = recordsFiltered,
-                Data = Mapper.Map<IEnumerable<NivelArmazenagemListItemViewModel>>(result)
+                Data = list
             });
         }
 
@@ -83,8 +89,6 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Cadastrar)]
         public ActionResult Create()
         {
-            setViewBags();
-
             return View();
         }
 
@@ -94,8 +98,6 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             Func<ViewResult> errorView = () =>
             {
-                setViewBags();
-
                 return View(model);
             };
 
@@ -131,8 +133,6 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Editar)]
         public ActionResult Edit(int id)
         {
-            setViewBags();
-
             NivelArmazenagem nivelArmazenagem = _unitOfWork.NivelArmazenagemRepository.GetById(id);
 
             if (nivelArmazenagem == null)
@@ -151,8 +151,6 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             Func<ViewResult> errorView = () =>
             {
-                setViewBags();
-
                 return View(model);
             };
 
