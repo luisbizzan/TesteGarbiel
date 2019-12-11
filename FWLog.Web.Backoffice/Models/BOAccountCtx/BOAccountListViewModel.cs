@@ -54,5 +54,6 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
 
         [Display(Name = "Empresa")]
         public long? IdEmpresa { get; set; }
+        public string RazaoEmpresa { get; set; }
     }
 }

@@ -22,10 +22,10 @@ namespace FWLog.Services.Services
 
         public async Task ConsultarFreteTipo()
         {
-            //if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            //{
-            //    return;
-            //}
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
 
             StringBuilder where = new StringBuilder();
             where.Append("WHERE NUCAMPO IN (SELECT NUCAMPO FROM TDDCAM WHERE NOMETAB = 'TGFCAB' AND NOMECAMPO = 'CIF_FOB')");            

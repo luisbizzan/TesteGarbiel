@@ -24,7 +24,10 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         [Display(Name = nameof(Res.IPLabel), ResourceType = typeof(Res))]
         public string IP { get; set; }
 
+        [Display(Name = "Ativa?")]
         [Required(ErrorMessage = "O campo Ativa é obrigatório.")]
         public bool Ativa { get; set; }
+
+        public string RazaoEmpresa { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using FWLog.Data.Models.GeneralCtx;
 using FWLog.Data.Repository.CommonCtx;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx
@@ -29,7 +30,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             UsuarioEmpresa usuarioEmpresa = Entities.UsuarioEmpresa.Where(w => w.UserId.Equals(userId)).FirstOrDefault();
 
-            if(usuarioEmpresa == null)
+            if (usuarioEmpresa == null)
             {
                 return 0;
             }
@@ -53,6 +54,12 @@ namespace FWLog.Data.Repository.GeneralCtx
                 Nome = string.Format("{0} - {1}", s.Sigla, s.NomeFantasia),
                 IdEmpresa = s.IdEmpresa
             });
+        }
+
+        public ReadOnlyCollection<long> IdEmpresasPorUsuario(string idUsuario)
+        {
+            return Entities.UsuarioEmpresa.AsNoTracking().Where(w => w.Empresa.Ativo && w.UserId == idUsuario)
+                .Select(s => s.Empresa.IdEmpresa).Distinct().ToList().AsReadOnly();
         }
 
         public Empresa ConsultaPorCodigoIntegracao(int codigoIntegracao)

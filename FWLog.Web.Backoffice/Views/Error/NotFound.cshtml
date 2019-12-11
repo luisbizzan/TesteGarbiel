@@ -1,6 +1,5 @@
 ﻿@using Res = Resources.ErrorStrings
 
-
 @{
     if (Request.IsAuthenticated)
     {
@@ -14,12 +13,20 @@
     ViewBag.Title = Res.NotFoundPageTitle;
 }
 
+<style>
+    @@media (min-width: 768px) {
+        .centro {
+            margin-left: 25%;
+        }
+    }
+</style>
+
 <div class="col-middle">
-    <div class="text-center">
+    <div class="text-center col-sm-6 col-xs-12 centro" style="border-radius: 15px; background-color: #155831;">
         <h1 class="error-number" style="color: #ffffff">404</h1>
         <h2 style="color: #ffffff">@Res.NotFoundPageHeader</h2>
         <p style="color: #ffffff">A página requisitada não foi encontrada no sistema.</p>
-        <div class="mid_center">
+        <div style="padding: 10px 20px;">
             <a href="@Url.Action("Index", "BOHome")" class="btn btn-primary">@Res.BackToHomeAction</a>
         </div>
     </div>

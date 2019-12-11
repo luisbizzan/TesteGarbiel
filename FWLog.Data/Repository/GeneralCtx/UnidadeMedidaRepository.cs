@@ -16,5 +16,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.UnidadeMedida.ToList();
         }
+
+        public UnidadeMedida ConsultaPorSigla(string sigla)
+        {
+            return Entities.UnidadeMedida.FirstOrDefault(f => f.Sigla == sigla);
+        }
     }
 }
