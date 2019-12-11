@@ -571,10 +571,13 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     model.IsNotaConferida = notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida;
                     model.IsNotaDivergente = notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ConferidaDivergencia;
-                    model.UsuarioConferencia = "TODO";
-                    model.DataInicioConferencia = "TODO";
-                    model.DataFimConferencia = "TODO";
-                    model.TempoTotalConferencia = "TODO";
+
+                    var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
+
+                    model.UsuarioConferencia = loteConferencia.UsuarioConferente.UserName;
+                    model.DataInicioConferencia = loteConferencia.DataHoraInicio.ToString("dd/MM/YYY HH:mm");
+                    model.DataFimConferencia = loteConferencia.DataHoraFim.ToString("dd/MM/YYY HH:mm");
+                    model.TempoTotalConferencia = loteConferencia.Tempo.ToString("HH:mm");
                 }
                 else
                 {
@@ -600,10 +603,14 @@ namespace FWLog.Web.Backoffice.Controllers
                 if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida ||
                     notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ConferidaDivergencia)
                 {
-                    entradaConferenciaItem.UsuarioConferencia = "TODO";
-                    entradaConferenciaItem.DataInicioConferencia = "TODO";
-                    entradaConferenciaItem.DataFimConferencia = "TODO";
-                    entradaConferenciaItem.TempoTotalConferencia = "TODO";
+                    Lote lote = _uow.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
+
+                    var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
+
+                    entradaConferenciaItem.UsuarioConferencia = loteConferencia.UsuarioConferente.UserName;
+                    entradaConferenciaItem.DataInicioConferencia = loteConferencia.DataHoraInicio.ToString("dd/MM/YYY HH:mm");
+                    entradaConferenciaItem.DataFimConferencia = loteConferencia.DataHoraFim.ToString("dd/MM/YYY HH:mm");
+                    entradaConferenciaItem.TempoTotalConferencia = loteConferencia.Tempo.ToString("HH:mm");
                 }
                 else
                 {
@@ -628,31 +635,73 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Não foi possível buscar Nota Fiscal."
+                    Message = "Não foi possível buscar a Nota Fiscal. Por favor, tente novamente!"
                 });
             }
 
-            return Json(new AjaxGenericResultModel
+            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+
+            if (lote == null)
             {
-                Success = true
-            });
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "O Lote ainda não foi recebido."
+                });
+            }
+            else
+            {
+                if (lote.IdLoteStatus == (int)LoteStatusEnum.ConferidoDivergencia)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "O Lote já foi conferido."
+                    });
+                }
+                else if (
+                    lote.IdLoteStatus == (int)LoteStatusEnum.Finalizado ||
+                    lote.IdLoteStatus == (int)LoteStatusEnum.FinalizadoDivergenciaInvertida ||
+                    lote.IdLoteStatus == (int)LoteStatusEnum.FinalizadoDivergenciaNegativa ||
+                    lote.IdLoteStatus == (int)LoteStatusEnum.FinalizadoDivergenciaPositiva ||
+                    lote.IdLoteStatus == (int)LoteStatusEnum.FinalizadoDivergenciaTodas
+
+                    )
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "O Lote já foi conferido e finalizado."
+                    });
+                }
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true
+                });
+            }
         }
 
         public ActionResult ExibirModalRegistroConferencia(long id)
         {
-            NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
 
-            var userInfo = new BackOfficeUserInfo();
+            //if (lote == null)
 
-            AspNet.Identity.ApplicationUser a = UserManager.Users.FirstOrDefault(x => x.Id == (string)userInfo.UserId);
+            var usuarioLogado = new BackOfficeUserInfo();
+
+            ApplicationUser applicationUser = UserManager.Users.FirstOrDefault(x => x.Id == (string)usuarioLogado.UserId);
 
             var model = new BOEntradaConferenciaViewModel
             {
-                IdNotaFiscal = id,
-                NumeroNotaFiscal = notaFiscal.Numero.ToString(),
-                NomeFornecedor = notaFiscal.Fornecedor.NomeFantasia,
-                QuantidadeVolumes = notaFiscal.Quantidade,
-                NomeConferente = a.UserName,
+                IdNotaFiscal = lote.NotaFiscal.IdNotaFiscal,
+                IdLote = lote.IdLote,
+                NumeroNotaFiscal = lote.NotaFiscal.Numero + lote.NotaFiscal.Serie,
+                IdUuarioConferente = applicationUser.Id,
+                NomeConferente = applicationUser.UserName,
+                DataHoraRecebimento = lote.DataRecebimento.ToString("dd/MM/yyyy HH:mm"),
+                NomeFornecedor = lote.NotaFiscal.Fornecedor.NomeFantasia,
+                QuantidadeVolume = lote.QuantidadeVolume
             };
 
             return PartialView("EntradaConferencia", model);

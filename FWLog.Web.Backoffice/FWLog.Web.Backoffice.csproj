@@ -439,6 +439,7 @@
     <Content Include="Scripts\dart\HttpService.js" />
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\entradaConferencia.js" />
     <Content Include="Scripts\Views\Empresa\editar.js" />
     <Content Include="Scripts\Views\Empresa\searchModal.js" />
     <Content Include="Scripts\Views\BOFornecedor\searchModal.js" />
