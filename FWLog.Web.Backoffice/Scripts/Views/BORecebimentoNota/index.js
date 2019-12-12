@@ -432,10 +432,14 @@ function conferirNota() {
         success: function (result) {
             if (!!result.Success) {
                 $modal.load(HOST_URL + CONTROLLER_PATH + "ExibirModalRegistroConferencia/" + id, function () {
-                    $modal.modal();
+                    $modal.on('shown.bs.modal', function () {
+                        $('#Referencia').focus();
+                    });
+
+                    $modal.modal('show');
                 });
             } else {
-                PNotify.error({ text: result.Message });
+                PNotify.info({ text: result.Message });
             }
         }
     });

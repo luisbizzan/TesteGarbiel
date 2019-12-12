@@ -1,6 +1,6 @@
 ﻿@using Res = Resources.ErrorStrings
 
-@{ 
+@{
     if (Request.IsAuthenticated)
     {
         Layout = "~/Views/Shared/_Layout.cshtml";
@@ -18,7 +18,7 @@
         <h1 class="error-number" style="color: #ffffff">403</h1>
         <h2 style="color: #ffffff">@Res.ForbiddenPageHeader</h2>
         <p style="color: #ffffff">Você não tem permissão para acessar a página do sistema requisitada.</p>
-        <div class="mid_center">
+        <div style="padding: 10px 20px;">
             <a href="@Url.Action("Index", "BOHome")" class="btn btn-primary">@Res.BackToHomeAction</a>
         </div>
     </div>

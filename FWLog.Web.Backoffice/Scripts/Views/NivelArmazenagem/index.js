@@ -36,7 +36,7 @@
         columns: [
             { data: 'IdNivelArmazenagem', width: 100 },
             { data: 'Descricao' },
-            { data: 'Ativo', width: 100  },
+            { data: 'Status', width: 100  },
             actionsColumn
         ]
     });

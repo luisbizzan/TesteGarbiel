@@ -16,5 +16,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.FreteTipo.ToList();
         }
+
+        public FreteTipo ConsultarPorSigla(string sigla)
+        {
+            return Entities.FreteTipo.FirstOrDefault(f => f.Sigla == sigla);
+        }
     }
 }

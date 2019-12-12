@@ -1,6 +1,5 @@
 ﻿@using Res = Resources.ErrorStrings
 
-
 @{
     if (Request.IsAuthenticated)
     {
@@ -19,7 +18,7 @@
         <h1 class="error-number" style="color: #ffffff">404</h1>
         <h2 style="color: #ffffff">@Res.NotFoundPageHeader</h2>
         <p style="color: #ffffff">A página requisitada não foi encontrada no sistema.</p>
-        <div class="mid_center">
+        <div style="padding: 10px 20px;">
             <a href="@Url.Action("Index", "BOHome")" class="btn btn-primary">@Res.BackToHomeAction</a>
         </div>
     </div>

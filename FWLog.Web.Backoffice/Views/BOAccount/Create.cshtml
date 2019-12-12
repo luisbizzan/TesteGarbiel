@@ -70,6 +70,15 @@
                 </div>
             </div>
             <div class="row">
+                <div class="form-group col-xs-12 col-md-6 col-lg-3">
+                    @Html.Label("Ativo?")
+                    <div class="checkbox">
+                        @Html.CheckBoxFor(m => m.PerfilUsuario.Ativo, new { @class = "flat" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.PerfilUsuario.Ativo)
+                </div>
+            </div>
+            <div class="row">
                 <div class="x_title">
                     <h2>Empresas do Usuário</h2>
                     <div class="clearfix"></div>
@@ -96,6 +105,5 @@
             </div>
         </div>
     </div>
-
-
 }
+<div class="modal" id="modalEmpresaPrincipal" data-toggle="modal"></div>

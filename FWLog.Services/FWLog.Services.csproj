@@ -110,15 +110,16 @@
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
     <Compile Include="Model\IntegracaoSankhya\FornecedorIntegracao.cs" />
+    <Compile Include="Model\IntegracaoSankhya\FreteTipoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\TransportadoraIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\EmpresaIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoIntegracao.cs" />
+    <Compile Include="Model\IntegracaoSankhya\UnidadeMedidaIntegracao.cs" />
     <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioRecebimentoNotasRequest.cs" />
     <Compile Include="Model\IntegracaoSankhya\ExecuteQuery\ExecuteQueryFieldsMetadata.cs" />
     <Compile Include="Model\IntegracaoSankhya\ExecuteQuery\ExecuteQueryResponseBody.cs" />
     <Compile Include="Model\IntegracaoSankhya\ExecuteQuery\ExecuteQueryResponse.cs" />
-    <Compile Include="Model\IntegracaoSankhya\NotaFiscalItemIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\NotaFiscalIntegracao.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\EmpresaService.cs" />
     <Compile Include="Services\EnderecoArmazenagemService.cs" />
+    <Compile Include="Services\FreteTipoService.cs" />
     <Compile Include="Services\LoteService.cs" />
     <Compile Include="Services\NivelArmazenagemService.cs" />
     <Compile Include="Services\NotaFiscalService.cs" />
@@ -144,6 +146,7 @@
     <Compile Include="Services\ProdutoService.cs" />
     <Compile Include="Services\RelatorioService.cs" />
     <Compile Include="Services\FornecedorService.cs" />
+    <Compile Include="Services\UnidadeMedidaService.cs" />
     <Compile Include="Services\TransportadoraService.cs" />
     <Compile Include="Templates\MailTemplate.cs" />
     <Compile Include="Templates\RecoverPasswordMailTemplate.cs" />
