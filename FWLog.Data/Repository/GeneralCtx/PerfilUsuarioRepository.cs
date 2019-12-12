@@ -16,7 +16,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.PerfilUsuario.FirstOrDefault(f => f.UsuarioId == userId);
         }
 
-        public IQueryable<PerfilUsuario> Todos()
+        public IQueryable<PerfilUsuario> Tabela()
         {
             return Entities.PerfilUsuario;
         }
