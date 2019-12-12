@@ -1,5 +1,6 @@
 ﻿using FWLog.Data.Logging;
 using FWLog.Data.Models;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 

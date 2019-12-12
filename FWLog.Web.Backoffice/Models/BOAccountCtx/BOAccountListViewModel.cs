@@ -1,19 +1,21 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 using Res = Resources.BOAccountStrings;
 
 namespace FWLog.Web.Backoffice.Models.BOAccountCtx
 {
     public class BOAccountListViewModel
     {
-        public BOAccountListItemViewModel EmptyItem { get; private set; }
-        public BOAccountFilterViewModel Filter { get; set; }
-
         public BOAccountListViewModel()
         {
             EmptyItem = new BOAccountListItemViewModel();
             Filter = new BOAccountFilterViewModel();
         }
+
+        public BOAccountListItemViewModel EmptyItem { get; private set; }
+        public BOAccountFilterViewModel Filter { get; set; }
+        public SelectList Status { get; set; }
     }
 
     public class BOAccountListItemViewModel

@@ -62,7 +62,7 @@
                 </div>
                 <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.Filter.Ativo)
-                    
+                    @Html.DropDownListFor(m => m.Filter.Ativo, Model.Status, "Todos", new { @class = "form-control", data_field = "Ativo" })
                 </div>
             </div>
             <div class="row">
