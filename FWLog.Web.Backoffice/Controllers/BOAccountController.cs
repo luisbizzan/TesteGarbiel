@@ -4,6 +4,7 @@ using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Models.GeneralCtx;
 using FWLog.Services.Services;
@@ -53,34 +54,21 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.List)]
-        public ActionResult PageData(DataTableFilter<BOAccountFilterViewModel> filter)
+        public ActionResult PageData(DataTableFilter<BOAccountFilterViewModel> model)
         {
-            IQueryable<PerfilUsuario> allusers = _unitOfWork.PerfilUsuarioRepository.Tabela();
+            var filtro = Mapper.Map<DataTableFilter<UsuarioListaFiltro>>(model);
+            filtro.CustomFilter.IdEmpresa = IdEmpresa;
 
-            int totalRecords = allusers.Count();
-
-            IQueryable<PerfilUsuario> query = allusers.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.UserName), x => x.Usuario.UserName.Contains(filter.CustomFilter.UserName));
-            query = query.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.Email), x => x.Usuario.Email.Contains(filter.CustomFilter.Email));
-            query = query.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.Nome), x => x.Nome.Contains(filter.CustomFilter.Nome));
-            query = query.WhereIf(filter.CustomFilter.IdEmpresa.HasValue, x => x.EmpresaId == filter.CustomFilter.IdEmpresa);
-            query = query.WhereIf(filter.CustomFilter.Ativo.HasValue, x => x.Ativo == filter.CustomFilter.Ativo);
-
-            List<BOAccountListItemViewModel> list = query.Select(x => new BOAccountListItemViewModel
-            {
-                NomeEmpresa = x.EmpresaPrincipal.NomeFantasia,
-                UserName = x.Usuario.UserName,
-                Email = x.Usuario.Email,
-                Nome = x.Nome,
-                Ativo = x.Ativo ? "Ativo" : "Inativo"
-            }).ToList();
+            IEnumerable<UsuarioListaLinhaTabela> result = _unitOfWork.UsuarioEmpresaRepository.PesquisarLista(filtro, out int registrosFiltrados, out int totalRegistros);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
-                Draw = filter.Draw,
-                RecordsTotal = totalRecords,
-                RecordsFiltered = list.Count,
-                Data = list.PaginationResult(filter)
+                Draw = model.Draw,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
+                Data = Mapper.Map<IEnumerable<BOAccountListItemViewModel>>(result)
             });
+            
         }
 
         [HttpGet]

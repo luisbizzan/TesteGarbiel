@@ -115,7 +115,9 @@
     <Compile Include="Models\DataTablesCtx\NivelArmazenagemTableRow.cs" />
     <Compile Include="Models\DataTablesCtx\PontoArmazenagemListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\PontoArmazenagemPesquisaModalListaLinhaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\UsuarioListaLinhaTabela.cs" />
     <Compile Include="Models\EmpresaConfig.cs" />
+    <Compile Include="Models\FilterCtx\UsuarioListaFiltro.cs" />
     <Compile Include="Models\LoteConferencia.cs" />
     <Compile Include="Models\LoteDivergencia.cs" />
     <Compile Include="Models\LoteDivergenciaStatus.cs" />

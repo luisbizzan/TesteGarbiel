@@ -64,11 +64,10 @@
             dart.dataTables.loadFilterFromData(data);
         },
         columns: [
-            { data: 'NomeEmpresa' },
             { data: 'Nome' },
             { data: 'UserName' },
             { data: 'Email' },
-            { data: 'Ativo' },
+            { data: 'Status' },
             actionsColumn
         ]
     });

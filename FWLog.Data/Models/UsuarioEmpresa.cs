@@ -15,6 +15,8 @@ namespace FWLog.Data.Models
         [Index]
         public long IdPerfilUsuario { get; set; }
 
+        [ForeignKey(nameof(UserId))]
+        public virtual AspNetUsers Usuario { get; set; }
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
         [ForeignKey(nameof(IdPerfilUsuario))]
