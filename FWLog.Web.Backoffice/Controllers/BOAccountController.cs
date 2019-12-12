@@ -78,22 +78,30 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
         public ActionResult Create()
         {
             SetViewBags();
 
-            return View(new BOAccountCreateViewModel());
+            var viewModel = new BOAccountCreateViewModel
+            {
+                Ativo = true
+            };
+
+            return View(viewModel);
         }
 
-        public ActionResult AdicionarEmpresa(long idEmpresa)
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
+        public ActionResult AdicionarEmpresa(long id)
         {
             List<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name).ToList();
 
             var empresasGrupos = new EmpresaGrupoViewModel
             {
-                IdEmpresa = idEmpresa,
-                Nome = Empresas.First(f => f.IdEmpresa == idEmpresa).Nome,
+                IdEmpresa = id,
+                Nome = Empresas.First(f => f.IdEmpresa == id).Nome,
                 Grupos = Mapper.Map<List<GroupItemViewModel>>(groups)
             };
 
@@ -129,14 +137,14 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (existingUserByName != null)
             {
-                ModelState.AddModelError(nameof(model.UserName), Res.UserNameAlreadyExistsMessage);
+                ModelState.AddModelError(nameof(model.UserName), "O código de usuário informado já existe");
             }
 
             var existsUserByEmail = await UserManager.FindByEmailAsync(model.Email).ConfigureAwait(false);
 
             if (existsUserByEmail != null)
             {
-                ModelState.AddModelError(nameof(model.Email), Res.UserEmailAlreadyExistsMessage);
+                ModelState.AddModelError(nameof(model.Email), "E-mail informado já utilizado por outro usuário");
             }
 
             if (model.EmpresasGrupos.NullOrEmpty())
@@ -148,6 +156,12 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Any())
             {
                 ModelState.AddModelError(nameof(model.EmpresasGrupos), Res.RequiredOnlyGroup);
+                return errorView(null);
+            }
+
+            if(!model.EmpresasGrupos.Where(w => w.IsEmpresaPrincipal).Any())
+            {
+                ModelState.AddModelError(nameof(model.EmpresasGrupos), "Selecione a empresa principal do usuário");
                 return errorView(null);
             }
 
@@ -165,8 +179,18 @@ namespace FWLog.Web.Backoffice.Controllers
                 throw new InvalidOperationException(Resources.CommonStrings.RequestUnexpectedErrorMessage);
             }
 
-            model.PerfilUsuario.UsuarioId = user.Id;
-            _uow.PerfilUsuarioRepository.Add(model.PerfilUsuario);
+            var perfilUsuario = new PerfilUsuario
+            {
+                Ativo = model.Ativo,
+                Cargo = model.Cargo,
+                DataNascimento = model.DataNascimento,
+                Departamento = model.Departamento,
+                Nome = model.Nome,
+                UsuarioId = user.Id,
+                EmpresaId = model.EmpresasGrupos.Where(w => w.IsEmpresaPrincipal).First().IdEmpresa
+            };
+
+            _uow.PerfilUsuarioRepository.Add(perfilUsuario);
             _uow.SaveChanges();
 
             model.EmpresasGrupos.ForEach(f => _uow.UsuarioEmpresaRepository.Add(new UsuarioEmpresa(user.Id, f.IdEmpresa)));
@@ -198,7 +222,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 IP = userInfo.IP,
                 UserId = userInfo.UserId,
                 EntityName = nameof(AspNetUsers),
-                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, model.PerfilUsuario, empresasGruposNew.ToString())
+                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, perfilUsuario, empresasGruposNew.ToString())
             });
 
             Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
@@ -629,25 +653,11 @@ namespace FWLog.Web.Backoffice.Controllers
 
         private SelectList empresas;
 
-        private SelectList Status
-        {
-            get
-            {
-                if (status == null)
-                {
-                    status = new SelectList(new NaoSimLOV().Items, "Value", "Text");
-                }
-
-                return status;
-            }
-        }
-
         private SelectList status;
 
         private void SetViewBags()
         {
             ViewBag.Empresas = _Empresas;
-            ViewBag.Status = Status;
         }
     }
 }
