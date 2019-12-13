@@ -109,6 +109,7 @@
     <Compile Include="Integracao\Helpers\QueryPropertyAttribute.cs" />
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
+    <Compile Include="Model\IntegracaoSankhya\XMLConfirmarNotaFiscal.cs" />
     <Compile Include="Model\IntegracaoSankhya\FornecedorIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\FreteTipoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\TransportadoraIntegracao.cs" />

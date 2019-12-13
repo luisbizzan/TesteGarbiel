@@ -1,5 +1,6 @@
 ﻿using FWLog.Services.Integracao.Helpers;
 using FWLog.Services.Model;
+using FWLog.Services.Model.IntegracaoSankhya;
 using FWLog.Services.Services;
 using Newtonsoft.Json;
 using System;
@@ -10,7 +11,9 @@ using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace FWLog.Services.Integracao
 {
@@ -129,13 +132,13 @@ namespace FWLog.Services.Integracao
             return Token;
         }
 
-        public async Task ExecutarSaveRecord(XElement xml)
+        public async Task ExecutarServicoSankhya(string xml, string serviceName)
         {
             StringContent contentString = new StringContent(xml.ToString(), Encoding.UTF8, "text/xml");
 
             contentString.Headers.Add("Cookie", string.Format("JSESSIONID={0}", Instance.GetToken()));
 
-            var uri = string.Format("{0}serviceName=CRUDServiceProvider.saveRecord", BaseURL);
+            var uri = string.Format("{0}serviceName={1}", BaseURL, serviceName);
 
             HttpResponseMessage httpResponse = await HttpService.Instance.PostAsync(uri, contentString);
 
@@ -321,12 +324,42 @@ namespace FWLog.Services.Integracao
             XElement serviceRequest = new XElement("serviceRequest", new XAttribute("serviceName", "CRUDServiceProvider.saveRecord"));
             serviceRequest.Add(new XElement("requestBody", datset));
 
-            await Instance.ExecutarSaveRecord(serviceRequest);
+            await Instance.ExecutarServicoSankhya(serviceRequest.ToString(), "CRUDServiceProvider.saveRecord");
+
+            return true;
+        }
+
+        public async Task<bool> ConfirmarNotaFiscal(string entidade, string campoPKIntegracao, long valorPKIntegracao, string campoStatus, object valorStatus)
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return false;
+            }
+
+            var root = new TemplateXMLConfirmarNotaFiscal("16389");
+            var emptyNs = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
+
+            XmlSerializer x = new XmlSerializer(root.GetType());
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Indent = true,
+                OmitXmlDeclaration = true
+            };
+
+            string confirmarNotaXML = string.Empty;
+            using (XmlWriter xmlWriter = XmlWriter.Create(confirmarNotaXML, settings))
+            {
+                x.Serialize(xmlWriter, root, emptyNs);
+            }
+
+            await Instance.ExecutarServicoSankhya(confirmarNotaXML, "CACSP.confirmarNota");
 
             return true;
         }
     }
 }
+
+
 
 public class ColunasConsulta
 {
