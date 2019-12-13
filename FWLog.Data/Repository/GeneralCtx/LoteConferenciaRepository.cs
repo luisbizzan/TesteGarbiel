@@ -28,7 +28,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                          join l in Entities.Lote on lc.IdLote equals l.IdLote
                          join n in Entities.NotaFiscal on l.IdNotaFiscal equals n.IdNotaFiscal
                          join p in Entities.Produto on lc.IdProduto equals p.IdProduto
-                         where n.IdEmpresa == filter.IdEmpresa && l.IdLoteStatus > 3
+                         where n.IdEmpresa == filter.IdEmpresa && l.IdLoteStatus > 3 // Este valor fixo de status pode ser alterado
                          select new RelatorioRastreioPecaListaLinhaTabela
                          {
                              IdLote = l.IdLote,
