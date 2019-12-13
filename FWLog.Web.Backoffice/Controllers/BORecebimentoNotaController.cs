@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using ExtensionMethods.List;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
@@ -342,9 +344,10 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult ExibirModalRegistroRecebimento(long id)
         {
-            var modal = new BORegistroRecebimentoViewModel();
-
-            modal.IdNotaFiscal = id;
+            var modal = new BORegistroRecebimentoViewModel
+            {
+                IdNotaFiscal = id
+            };
 
             return PartialView("RegistroRecebimento", modal);
         }
@@ -386,20 +389,22 @@ namespace FWLog.Web.Backoffice.Controllers
             var notafiscal = _uow.NotaFiscalRepository.GetById(Convert.ToInt64(id));
             var dataAtual = DateTime.UtcNow;
 
-            var model = new BORegistroRecebimentoViewModel();
-            model.ChaveAcesso = notafiscal.ChaveAcesso;
-            model.DataRecebimento = dataAtual.ToString("dd/MM/yyyy");
-            model.HoraRecebimento = dataAtual.ToString("HH:mm:ss");
-            model.FornecedorNome = notafiscal.Fornecedor.RazaoSocial;
-            model.NumeroSerieNotaFiscal = string.Format("{0}-{1}", notafiscal.Numero, notafiscal.Serie);
-            model.ValorTotal = notafiscal.ValorTotal.ToString("n2");
-            model.DataAtual = dataAtual;
-            model.ValorFrete = notafiscal.ValorFrete.ToString("n2");
-            model.NumeroConhecimento = notafiscal.NumeroConhecimento;
-            model.TransportadoraNome = notafiscal.Transportadora.RazaoSocial;
-            model.Peso = notafiscal.PesoBruto.HasValue ? notafiscal.PesoBruto.Value.ToString("n2") : null;
-            model.QtdVolumes = notafiscal.Quantidade == 0 ? (int?)null : notafiscal.Quantidade;
-            model.NotaFiscalPesquisada = true;
+            var model = new BORegistroRecebimentoViewModel
+            {
+                ChaveAcesso = notafiscal.ChaveAcesso,
+                DataRecebimento = dataAtual.ToString("dd/MM/yyyy"),
+                HoraRecebimento = dataAtual.ToString("HH:mm:ss"),
+                FornecedorNome = notafiscal.Fornecedor.RazaoSocial,
+                NumeroSerieNotaFiscal = string.Format("{0}-{1}", notafiscal.Numero, notafiscal.Serie),
+                ValorTotal = notafiscal.ValorTotal.ToString("n2"),
+                DataAtual = dataAtual,
+                ValorFrete = notafiscal.ValorFrete.ToString("n2"),
+                NumeroConhecimento = notafiscal.NumeroConhecimento,
+                TransportadoraNome = notafiscal.Transportadora.RazaoSocial,
+                Peso = notafiscal.PesoBruto.HasValue ? notafiscal.PesoBruto.Value.ToString("n2") : null,
+                QtdVolumes = notafiscal.Quantidade == 0 ? (int?)null : notafiscal.Quantidade,
+                NotaFiscalPesquisada = true
+            };
 
             return PartialView("RegistroRecebimentoDetalhes", model);
         }
@@ -566,7 +571,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     model.DiasAtraso = atraso.Days.ToString();
                 }
 
-                if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida||
+                if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida ||
                     notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ConferidaDivergencia)
                 {
                     model.IsNotaConferida = notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida;
@@ -742,6 +747,32 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             return View(divergenciaViewModel);
+        }
+
+        [HttpGet]
+        public ActionResult RelatorioRastreioPeca()
+        {
+            return View(new RelatorioRastreioPecaViewModel());
+        }
+
+        [HttpPost]
+        public ActionResult RelatorioRastreioPecaPageData(DataTableFilter<RelatorioRastreioPecaFilterViewModel> model)
+        {
+            model.CustomFilter.IdEmpresa = IdEmpresa;
+
+            var list = _uow.LoteConferenciaRepository.RastreioPeca(model.CustomFilter);
+
+            int total = list.Count();
+
+            var result = list.PaginationResult(model);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = total,
+                RecordsFiltered = total,
+                Data = result
+            });
         }
     }
 }
