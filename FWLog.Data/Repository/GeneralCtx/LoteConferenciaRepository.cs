@@ -42,17 +42,21 @@ namespace FWLog.Data.Repository.GeneralCtx
                              QtdRecebida = lc.Quantidade
                          });
 
-            query = query.WhereIf(!string.IsNullOrEmpty(filter.ReferenciaPronduto), x => x.ReferenciaPronduto.Contains(filter.ReferenciaPronduto));
+            query = query.WhereIf(!string.IsNullOrEmpty(filter.ReferenciaPronduto), x => x.ReferenciaPronduto.ToUpper().Contains(filter.ReferenciaPronduto.ToUpper()));
             query = query.WhereIf(filter.IdLote.HasValue, x => x.IdLote == filter.IdLote);
             query = query.WhereIf(filter.NroNota.HasValue, x => x.NroNota == filter.NroNota);
+
             query = query.WhereIf(filter.DataCompraMinima.HasValue, x => x.DataCompra >= filter.DataCompraMinima);
             query = query.WhereIf(filter.DataCompraMaxima.HasValue, x => x.DataCompra <= filter.DataCompraMaxima);
+
             query = query.WhereIf(filter.DataRecebimentoMinima.HasValue, x => x.DataRecebimento >= filter.DataRecebimentoMinima);
             query = query.WhereIf(filter.DataRecebimentoMaxima.HasValue, x => x.DataRecebimento <= filter.DataCompraMaxima);
+
             query = query.WhereIf(filter.QtdCompraMinima.HasValue, x => x.QtdCompra >= filter.QtdCompraMinima);
-            query = query.WhereIf(filter.QtdCompraMaxima.HasValue, x => x.QtdCompra >= filter.QtdCompraMaxima);
+            query = query.WhereIf(filter.QtdCompraMaxima.HasValue, x => x.QtdCompra <= filter.QtdCompraMaxima);
+
             query = query.WhereIf(filter.QtdRecebidaMinima.HasValue, x => x.QtdRecebida >= filter.QtdRecebidaMinima);
-            query = query.WhereIf(filter.QtdRecebidaMaxima.HasValue, x => x.QtdRecebida >= filter.QtdRecebidaMaxima);
+            query = query.WhereIf(filter.QtdRecebidaMaxima.HasValue, x => x.QtdRecebida <= filter.QtdRecebidaMaxima);
 
             return query;
         }
