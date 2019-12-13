@@ -1,35 +1,47 @@
 ﻿(function () {
+    dart.dataTables.loadFormFilterEvents();
 
-    var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        return [
-            {
-                text: "Detalhes da Nota",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'detalhesNota' },
-                icon: 'fa fa-eye',
-                visible: view.registrarRecebimento
-            },
-            {
-                text: "Registrar Recebimento",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'registrarRecebimento' },
-                icon: 'fa fa-pencil-square',
-                visible: view.registrarRecebimento
-            },
-            {
-                text: "Conferir Nota",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'conferirNota' },
-                icon: 'fa fa-check-square-o',
-                visible: view.registrarRecebimento
-            },
-            {
-                text: "Tratar Divergência",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'tratarDivergencias' },
-                icon: 'fa fa-warning',
-                visible: view.tratarDivergencias
-            }
-        ];
-    });
+    var $CompraInicial = $('#Filter_DataCompraMinima').closest('.date');
+    var $CompraFinal = $('#Filter_DataCompraMaxima').closest('.date');
+    var $RecebidoInicial = $('#Filter_DataRecebimentoMinima').closest('.date');
+    var $RecebidoFinal = $('#Filter_DataRecebimentoMaxima').closest('.date');
 
-    //dart.dataTables.loadFormFilterEvents();
+    var createLinkedPickersCompra = function () {
+        var dataInicial = $CompraInicial.datetimepicker({
+            locale: moment.locale(),
+            format: 'L',
+            allowInputToggle: true
+        });
+
+        var dataFinal = $CompraFinal.datetimepicker({
+            locale: moment.locale(),
+            useCurrent: false,
+            format: 'L',
+            allowInputToggle: true
+        });
+
+        new dart.DateTimePickerLink(dataInicial, dataFinal, { ignoreTime: true });
+    };
+
+    var createLinkedPickesRecebido = function () {
+        var dataInicial = $RecebidoInicial.datetimepicker({
+            locale: moment.locale(),
+            format: 'L',
+            allowInputToggle: true
+        });
+
+        var dataFinal = $RecebidoFinal.datetimepicker({
+            locale: moment.locale(),
+            useCurrent: false,
+            format: 'L',
+            allowInputToggle: true,
+        });
+
+        new dart.DateTimePickerLink(dataInicial, dataFinal, { ignoreTime: true });
+    }
+
+    createLinkedPickersCompra();
+    createLinkedPickesRecebido();
 
     $('#dataTable').DataTable({
         ajax: {

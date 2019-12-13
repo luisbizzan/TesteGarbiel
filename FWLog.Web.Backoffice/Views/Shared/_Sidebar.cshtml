@@ -11,7 +11,7 @@
             new MenuItem { Text = Res.MenuRecebimentoNotas, Url = Url.Action("Index", "BORecebimentoNota"), RequirePermission = Permissions.Recebimento.List },
             new MenuItem { Text = Res.MenuRecebimentoeEtiquetas, Url = Url.Action("", ""), RequirePermission = Permissions.Role.List },
             new MenuItem { Text = Res.MenuRecebimentoQuarentena, Url = Url.Action("Index", "BOQuarentena"), RequirePermission = Permissions.RecebimentoQuarentena.List },
-            new MenuItem { Text = Res.MenuRecebimentoRelatorios, Url = Url.Action("RelatorioRastreioPeca", "BORecebimentoNota"), RequirePermission = Permissions.BOLogSystem.List }
+            new MenuItem { Text = "Relatório Rastreio de Peça", Url = Url.Action("RelatorioRastreioPeca", "BORecebimentoNota"), RequirePermission = Permissions.BOLogSystem.List }
         ),
         new MenuGroup("Armazenagem", "fa fa-cubes").SetItems(
             new MenuItem { Text = "Níveis de Armazenagem", Url = Url.Action("Index", "NivelArmazenagem"), RequirePermission = Permissions.NivelArmazenagem.Listar },

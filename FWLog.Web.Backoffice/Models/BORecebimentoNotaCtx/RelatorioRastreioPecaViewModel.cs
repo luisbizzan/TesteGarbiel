@@ -19,44 +19,66 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
     public class RelatorioRastreioPecaListItemViewModel
     {
-        [Display(Name = "Nro. Empresa")]
+        [Display(Name = "Número Empresa")]
         public long IdEmpresa { get; set; }
 
         [Display(Name = "Empresa")]
         public string Empresa { get; set; }
 
-        [Display(Name = "Nro. Lote")]
+        [Display(Name = "Número Lote")]
         public long IdLote { get; set; }
 
-        [Display(Name = "Nro. Nota")]
+        [Display(Name = "Número Nota")]
         public int NroNota { get; set; }
 
         [Display(Name = "Referência do Pronduto")]
         public string ReferenciaPronduto { get; set; }
 
         [Display(Name = "Recebimento")]
-        public DateTime DataRecebimento { get; set; }
+        public string DataRecebimento { get; set; }
 
-        [Display(Name = "Qtd. Compra")]
+        [Display(Name = "Quantidade Compra")]
         public long? QtdCompra { get; set; }
 
-        [Display(Name = "Qtd. Recebida")]
+        [Display(Name = "Quantidade Recebida")]
         public long? QtdRecebida { get; set; }
     }
 
     public class RelatorioRastreioPecaFilterViewModel : IRelatorioRastreioPecaListaFiltro
     {
         public long IdEmpresa { get; set; }
+
+        [Display(Name = "Número Lote")]
         public long? IdLote { get; set; }
+
+        [Display(Name = "Número Nota")]
         public int? NroNota { get; set; }
+
+        [Display(Name = "Referência do Pronduto")]
         public string ReferenciaPronduto { get; set; }
+
+        [Display(Name = "Data")]
         public DateTime? DataCompraMinima { get; set; }
+
+        [Display(Name = "Data")]
         public DateTime? DataCompraMaxima { get; set; }
+
+        [Display(Name = "Data")]
         public DateTime? DataRecebimentoMinima { get; set; }
+
+        [Display(Name = "Data")]
         public DateTime? DataRecebimentoMaxima { get; set; }
+
+        [Display(Name = "Quantidade")]
         public long? QtdCompraMinima { get; set; }
+
+        [Display(Name = "Quantidade")]
         public long? QtdCompraMaxima { get; set; }
+
+        [Display(Name = "Quantidade")]
         public long? QtdRecebidaMinima { get; set; }
+
+        [Display(Name = "Quantidade")]
         public long? QtdRecebidaMaxima { get; set; }
     }
 }

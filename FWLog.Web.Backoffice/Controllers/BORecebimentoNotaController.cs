@@ -4,7 +4,6 @@ using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
-using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
@@ -756,6 +755,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
         public ActionResult RelatorioRastreioPecaPageData(DataTableFilter<RelatorioRastreioPecaFilterViewModel> model)
         {
             model.CustomFilter.IdEmpresa = IdEmpresa;
@@ -764,7 +764,17 @@ namespace FWLog.Web.Backoffice.Controllers
 
             int total = list.Count();
 
-            var result = list.PaginationResult(model);
+            var result = list.PaginationResult(model).Select(x => new RelatorioRastreioPecaListItemViewModel
+            {
+                DataRecebimento = x.DataRecebimento.ToString("dd/MM/yyyy"),
+                Empresa = x.Empresa,
+                IdEmpresa = x.IdEmpresa,
+                IdLote = x.IdLote,
+                NroNota = x.NroNota,
+                QtdCompra = x.QtdCompra,
+                QtdRecebida = x.QtdRecebida,
+                ReferenciaPronduto = x.ReferenciaPronduto
+            });
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
