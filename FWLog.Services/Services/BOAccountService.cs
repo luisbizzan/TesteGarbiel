@@ -59,7 +59,7 @@ namespace FWLog.Services.Services
             _uow.SaveChanges();
         }
 
-        public void EditUsuarioEmpresas(IEnumerable<EmpresaSelectedItem> empresasUserOn, List<long> empresasUserEdit, string userId)
+        public void EditUsuarioEmpresas(IEnumerable<EmpresaSelectedItem> empresasUserOn, List<long> empresasUserEdit, string userId, long perfilUsuarioId)
         {
             var empOld = _uow.UsuarioEmpresaRepository.GetAllEmpresasByUserId(userId);
 
@@ -68,7 +68,7 @@ namespace FWLog.Services.Services
             List<long> empAdd = empresasUserEdit.Where(x => !empOld.Any(y => y == x)).ToList();
             List<long> empRem = empOld.Where(x => !empresasUserEdit.Any(y => y == x)).ToList();
 
-            empAdd.ForEach(x => _uow.UsuarioEmpresaRepository.Add(new UsuarioEmpresa(userId, x)));
+            empAdd.ForEach(x => _uow.UsuarioEmpresaRepository.Add(new UsuarioEmpresa { UserId = userId, IdEmpresa = x, PerfilUsuarioId = perfilUsuarioId }));
             empRem.ForEach(x => _uow.UsuarioEmpresaRepository.DeleteByUserId(userId, x));
 
             _uow.SaveChanges();
