@@ -58,6 +58,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, "Value", "Text")
             };
 
+            viewModel.Filter.Ativo = true;
+
             return View(viewModel);
         }
 
