@@ -13,11 +13,13 @@ namespace FWLog.Data.Models
         public long IdEmpresa { get; set; }
         [Required]
         [Index]
-        public long IdPerfilUsuario { get; set; }
+        public long PerfilUsuarioId { get; set; }
 
+        [ForeignKey(nameof(UserId))]
+        public virtual AspNetUsers Usuario { get; set; }
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
-        [ForeignKey(nameof(IdPerfilUsuario))]
+        [ForeignKey(nameof(PerfilUsuarioId))]
         public virtual PerfilUsuario PerfilUsuario { get; set; }
     }
 }

@@ -1,16 +1,13 @@
-﻿using System.Threading.Tasks;
-using FWLog.Services.Integracao;
-using FWLog.Services.Model;
-using System.Collections.Generic;
-using FWLog.Data.Models;
-using System;
-using System.Linq;
-using FWLog.Data;
-using System.Transactions;
-using System.Xml.Linq;
+﻿using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
-using System.Configuration;
+using FWLog.Data.Models;
+using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
 {
@@ -104,7 +101,7 @@ namespace FWLog.Services.Services
                     notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.ProcessandoIntegracao;
                     notafiscal.ChaveAcesso = notafiscalIntegracao.CHAVENFE;
                     notafiscal.IdFornecedor = fornecedor.IdFornecedor;
-                    notafiscal.DataEmissao = notafiscalIntegracao.DHEMISSEPEC == null ? DateTime.Now : Convert.ToDateTime(notafiscalIntegracao.DHEMISSEPEC); //TODO validar campo geovane;
+                    notafiscal.DataEmissao = notafiscalIntegracao.DTNEG == null ? DateTime.Now : Convert.ToDateTime(notafiscalIntegracao.DTNEG);
                     notafiscal.IdEmpresa = empresa.IdEmpresa;
                     notafiscal.IdTransportadora = transportadora.IdTransportadora;
 
@@ -144,7 +141,7 @@ namespace FWLog.Services.Services
                             notaFiscalItem = new NotaFiscalItem();
                             itemNovo = true;
                         }
-                     
+
                         notaFiscalItem.IdUnidadeMedida = unidade.IdUnidadeMedida;
                         notaFiscalItem.IdProduto = produto.IdProduto;
                         notaFiscalItem.Quantidade = qtdNeg;
@@ -200,8 +197,7 @@ namespace FWLog.Services.Services
             ValidarCampo(notafiscal.CODPARCTRANSP, nameof(notafiscal.CODPARCTRANSP));
             ValidarCampo(notafiscal.VLRFRETE, nameof(notafiscal.VLRFRETE));
             ValidarCampo(notafiscal.QTDVOL, nameof(notafiscal.QTDVOL));
-            ValidarCampo(notafiscal.STATUSNOTA, nameof(notafiscal.STATUSNOTA));
-            //ValidarCampo(notafiscal.DHEMISSEPEC, nameof(notafiscal.DHEMISSEPEC));
+            ValidarCampo(notafiscal.STATUSNOTA, nameof(notafiscal.STATUSNOTA));          
             ValidarCampo(notafiscal.NUNOTA, nameof(notafiscal.NUNOTA));
             ValidarCampo(notafiscal.CODVOL, nameof(notafiscal.CODVOL));
             ValidarCampo(notafiscal.QTDNEG, nameof(notafiscal.QTDNEG));

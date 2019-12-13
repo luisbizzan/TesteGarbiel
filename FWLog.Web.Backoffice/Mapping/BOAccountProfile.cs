@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Web.Backoffice.Models.BOAccountCtx;
 
 namespace FWLog.Web.Backoffice.Mapping
@@ -12,12 +13,10 @@ namespace FWLog.Web.Backoffice.Mapping
                 .ForMember(x => x.Name, op => op.MapFrom(x => x.Name));
 
             CreateMap<ApplicationUser, ApplicationUser>();
-
             CreateMap<ApplicationUser, BOAccountCreateViewModel>();
-
             CreateMap<ApplicationUser, BOAccountEditViewModel>();
-
             CreateMap<ApplicationUser, BOAccountDetailsViewModel>();
+            CreateMap<UsuarioListaLinhaTabela, BOAccountListItemViewModel>();
         }
     }
 }
