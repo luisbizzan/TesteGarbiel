@@ -1,6 +1,41 @@
 ﻿(function () {
     dart.dataTables.loadFormFilterEvents();
 
+    $("#downloadRelatorio").click(function () {
+        $.ajax({
+            url: `/${CONTROLLER_PATH}/DownloadRelatorioRastreioPeca`,
+            method: "POST",
+            cache: false,
+            xhrFields: {
+                responseType: 'blob'
+            },
+            data: {
+                IdLote: $("#Filter_IdLote").val(),
+                NroNota: $("#Filter_NroNota").val(),
+                ReferenciaPronduto: $("#Filter_ReferenciaPronduto").val(),
+                DataCompraMinima: $("#Filter_DataCompraMinima").val(),
+                DataCompraMaxima: $("#Filter_DataCompraMaxima").val(),
+                DataRecebimentoMinima: $("#Filter_DataRecebimentoMinima").val(),
+                DataRecebimentoMaxima: $("#Filter_QtdRecebidaMaxima").val(),
+                QtdCompraMinima: $("#Filter_DataRecebimentoMaxima").val(),
+                QtdCompraMaxima: $("#Filter_QtdCompraMinima").val(),
+                QtdRecebidaMinima: $("#Filter_QtdCompraMaxima").val(),
+                QtdRecebidaMaxima: $("#Filter_QtdRecebidaMinima").val()
+            },
+            success: function (data) {
+                var a = document.createElement('a');
+                var url = window.URL.createObjectURL(data);
+
+                a.href = url;
+                a.download = 'Relatório Rastreio de Peça.pdf';
+                document.body.append(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            }
+        });
+    });
+
     var $CompraInicial = $('#Filter_DataCompraMinima').closest('.date');
     var $CompraFinal = $('#Filter_DataCompraMaxima').closest('.date');
     var $RecebidoInicial = $('#Filter_DataRecebimentoMinima').closest('.date');
@@ -70,9 +105,9 @@
             { data: 'IdLote' },
             { data: 'NroNota' },
             { data: 'ReferenciaPronduto' },
-            { data: 'DataRecebimento' },
-            { data: 'QtdCompra' },
-            { data: 'QtdRecebida' }
+            { data: 'DataRecebimento', width: 100 },
+            { data: 'QtdCompra', width: 100 },
+            { data: 'QtdRecebida', width: 100 }
         ]
     });
 

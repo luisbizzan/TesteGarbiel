@@ -784,5 +784,18 @@ namespace FWLog.Web.Backoffice.Controllers
                 Data = result
             });
         }
+
+        [HttpPost]
+        public ActionResult DownloadRelatorioRastreioPeca(RelatorioRastreioPecaRequest viewModel)
+        {
+            ValidateModel(viewModel);
+
+            viewModel.IdEmpresa = IdEmpresa;
+            viewModel.NomeUsuario = User.Identity.Name;
+
+            byte[] relatorio = _relatorioService.GerarRelatorioRastreioPeca(viewModel);
+
+            return File(relatorio, "application/pdf", "Relatório Rastreio de Peça.pdf");
+        }
     }
 }
