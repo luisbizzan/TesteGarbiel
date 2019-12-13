@@ -67,16 +67,14 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.List)]
         public ActionResult PageData(DataTableFilter<BOAccountFilterViewModel> model)
         {
-            var filtro = Mapper.Map<DataTableFilter<UsuarioListaFiltro>>(model);
-            filtro.CustomFilter.IdEmpresa = IdEmpresa;
+            var filtros = Mapper.Map<DataTableFilter<UsuarioListaFiltro>>(model);
+            filtros.CustomFilter.IdEmpresa = IdEmpresa;
 
-            IEnumerable<UsuarioListaLinhaTabela> result = _unitOfWork.PerfilUsuarioRepository.PesquisarLista(filtro, out int registrosFiltrados, out int totalRegistros);
+            List<UsuarioListaLinhaTabela> result = _unitOfWork.PerfilUsuarioRepository.PesquisarLista(filtros);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
-                RecordsTotal = totalRegistros,
-                RecordsFiltered = registrosFiltrados,
                 Data = Mapper.Map<IEnumerable<BOAccountListItemViewModel>>(result)
             });
         }
@@ -97,16 +95,26 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
-        public ActionResult AdicionarEmpresa(long id)
+        public async Task<ActionResult> AdicionarEmpresa(long id)
         {
-            List<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name).ToList();
-
+            List<string> gruposPermissoesUsuario = (await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), id).ConfigureAwait(false)).OrderBy(x => x).ToList();
+            
             var empresasGrupos = new EmpresaGrupoViewModel
             {
                 IdEmpresa = id,
-                Nome = Empresas.First(f => f.IdEmpresa == id).Nome,
-                Grupos = Mapper.Map<List<GroupItemViewModel>>(groups)
+                Nome = Empresas.First(f => f.IdEmpresa == id).Nome
             };
+
+            foreach (string nomeGrupoPermissao in gruposPermissoesUsuario)
+            {
+                var groupItemViewModel = new GroupItemViewModel
+                {
+                    IsSelected = false,
+                    Name = nomeGrupoPermissao
+                };
+
+                empresasGrupos.Grupos.Add(groupItemViewModel);
+            }
 
             var list = new List<EmpresaGrupoViewModel>
             {
@@ -465,7 +473,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = Resources.CommonStrings.RegisterHasRelationshipsErrorMessage
+                    Message = "O usuário já realizou ações no sistema e não pode ser excluído. Utilize a opção \"Inativar\" na tela de edição."
                 }, JsonRequestBehavior.DenyGet);
             }
         }

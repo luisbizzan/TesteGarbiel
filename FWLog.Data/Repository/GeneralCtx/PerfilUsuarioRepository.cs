@@ -23,10 +23,8 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.PerfilUsuario;
         }
 
-        public List<UsuarioListaLinhaTabela> PesquisarLista(DataTableFilter<UsuarioListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
+        public List<UsuarioListaLinhaTabela> PesquisarLista(DataTableFilter<UsuarioListaFiltro> model)
         {
-            totalRecords = Entities.PerfilUsuario.Where(w => w.UsuarioEmpresas.Any(c => c.IdEmpresa == model.CustomFilter.IdEmpresa)).Count();
-
             IQueryable<UsuarioListaLinhaTabela> query =
                 Entities.PerfilUsuario.AsNoTracking().Where(w => w.UsuarioEmpresas.Any(c => c.IdEmpresa == model.CustomFilter.IdEmpresa) &&
                     (model.CustomFilter.UserName.Equals(string.Empty) || w.Usuario.UserName.Contains(model.CustomFilter.UserName)) &&
@@ -39,11 +37,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     Email = s.Usuario.Email,
                     Nome = s.Nome,
                     Status = s.Ativo ? "Ativo" : "Inativo"
-                });
-
-            totalRecordsFiltered = query.Count();
-
-            query = query
+                })
                 .OrderBy(model.OrderByColumn, model.OrderByDirection)
                 .Skip(model.Start)
                 .Take(model.Length);
