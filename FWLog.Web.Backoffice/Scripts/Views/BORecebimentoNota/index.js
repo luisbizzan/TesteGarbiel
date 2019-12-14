@@ -117,7 +117,7 @@
             locale: moment.locale(),
             useCurrent: false,
             format: 'L',
-            allowInputToggle: true
+            allowInputToggle: true,
         });
 
         new dart.DateTimePickerLink(prazoInicial, prazoFinal, { ignoreTime: true });

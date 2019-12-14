@@ -323,7 +323,7 @@ namespace FWLog.Services.Services
                 paragraph.AddText("Não recebido");
             }
 
-            
+
             row.Cells[2].MergeRight = 1;
 
             if (IsNotaRecebida)
@@ -400,7 +400,7 @@ namespace FWLog.Services.Services
 
             if (notaFiscalItems.Count > 0)
             {
-                foreach(NotaFiscalItem notaFiscalItem in notaFiscalItems)
+                foreach (NotaFiscalItem notaFiscalItem in notaFiscalItems)
                 {
                     row = tabela.AddRow();
                     paragraph = row.Cells[0].AddParagraph();
@@ -419,6 +419,40 @@ namespace FWLog.Services.Services
             }
 
             return fwRelatorio.GerarCustomizado();
+        }
+
+        public byte[] GerarRelatorioRastreioPeca(RelatorioRastreioPecaRequest request)
+        {
+            var list = _unitiOfWork.LoteConferenciaRepository.RastreioPeca(request).Select(x => new RastreioPeca
+            {
+                DataRecebimento = x.DataRecebimento,
+                Empresa = x.Empresa,
+                IdLote = x.IdLote,
+                NroNota = x.NroNota,
+                QtdCompra = x.QtdCompra,
+                QtdRecebida = x.QtdRecebida,
+                ReferenciaPronduto = x.ReferenciaPronduto
+            }).ToList();
+
+            var dados = new List<IFwRelatorioDados>();
+            dados.AddRange(list);
+
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = request.NomeUsuario,
+                Orientacao = Orientation.Portrait,
+                Titulo = "Relatório Notas Fiscais Recebimento",
+                Filtros = string.Empty,
+                Dados = dados
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            return fwRelatorio.Gerar(fwRelatorioDados);
         }
     }
 }

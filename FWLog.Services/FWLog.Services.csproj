@@ -109,6 +109,7 @@
     <Compile Include="Integracao\Helpers\QueryPropertyAttribute.cs" />
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
+    <Compile Include="Model\IntegracaoSankhya\XMLConfirmarNotaFiscal.cs" />
     <Compile Include="Model\IntegracaoSankhya\FornecedorIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\FreteTipoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\TransportadoraIntegracao.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="Model\IntegracaoSankhya\ProdutoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\UnidadeMedidaIntegracao.cs" />
     <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />
+    <Compile Include="Model\Relatorios\RelatorioRastreioPecaRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioRecebimentoNotasRequest.cs" />
     <Compile Include="Model\IntegracaoSankhya\ExecuteQuery\ExecuteQueryFieldsMetadata.cs" />
     <Compile Include="Model\IntegracaoSankhya\ExecuteQuery\ExecuteQueryResponseBody.cs" />
@@ -128,6 +130,7 @@
     <Compile Include="Relatorio\FwRelatorio.cs" />
     <Compile Include="Relatorio\FwRelatorioDados.cs" />
     <Compile Include="Relatorio\IFwRelatorioDados.cs" />
+    <Compile Include="Relatorio\Model\RastreioPeca.cs" />
     <Compile Include="Relatorio\Model\RecebimentoNotas.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ApplicationLogService.cs" />

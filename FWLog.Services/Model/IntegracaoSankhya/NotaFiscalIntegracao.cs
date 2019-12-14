@@ -50,8 +50,8 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TGFCAB.QTDVOL")] //TODO ALTERAR NOME
         public string QTDVOL { get; set; } //Quantidade
 
-        [TabelaIntegracao(DisplayName = "TGFCAB.DHEMISSEPEC")]
-        public string DHEMISSEPEC { get; set; } //DataEmissao
+        [TabelaIntegracao(DisplayName = "TGFCAB.DTNEG")]
+        public string DTNEG { get; set; } //DataEmissao
 
         [TabelaIntegracao(DisplayName = "TGFITE.CODPROD")]
         public string CODPROD { get; set; }

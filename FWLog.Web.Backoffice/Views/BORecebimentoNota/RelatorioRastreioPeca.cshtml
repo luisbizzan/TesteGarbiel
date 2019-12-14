@@ -1,0 +1,204 @@
+﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.RelatorioRastreioPecaViewModel
+@using FWLog.AspNet.Identity
+@{
+    ViewBag.Title = "RelatorioRastreioPeca";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+            detailsVisible = User.HasPermission(Permissions.NivelArmazenagem.Listar),
+            pageDataUrl = Url.Action("RelatorioRastreioPecaPageData")
+        })
+}
+
+<!-- filter -->
+<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2 class="collapse-link">
+                <i class="fa fa-chevron-down fa-fw"></i> @Resources.CommonStrings.FilterHeader
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content" style="display: block;">
+            <div class="row" style="margin-bottom: 20px;">
+                <div class="col-sm-12 col-xs-12">
+                    <div class="form-group col-sm-4 col-xs-12">
+                        @Html.LabelFor(m => m.Filter.IdLote)
+                        @Html.TextBoxFor(m => m.Filter.IdLote, new { @class = "form-control", data_field = "IdLote" })
+                    </div>
+                    <div class="form-group col-sm-4 col-xs-12">
+                        @Html.LabelFor(m => m.Filter.NroNota)
+                        @Html.TextBoxFor(m => m.Filter.NroNota, new { @class = "form-control", data_field = "NroNota" })
+                    </div>
+                    <div class="form-group col-sm-4 col-xs-12">
+                        @Html.LabelFor(m => m.Filter.ReferenciaPronduto)
+                        @Html.TextBoxFor(m => m.Filter.ReferenciaPronduto, new { @class = "form-control", data_field = "ReferenciaPronduto" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <label style="font-weight:800;">
+                            Compra
+                        </label>
+                    </div>
+                    <div class="x_content" style="display: block;">
+                        <div class="row">
+                            <div class="form-group col-sm-6 col-xs-12">
+                                @Html.LabelFor(m => m.Filter.DataCompraMinima)
+                                <div class='input-group date'>
+                                    <span class="input-group-addon">
+                                        <span>De</span>
+                                    </span>
+                                    @Html.TextBoxFor(m => m.Filter.DataCompraMinima, new { @class = "form-control dateFormat ", data_field = "DataCompraMinima" })
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6 col-xs-12">
+                                @Html.LabelFor(m => m.Filter.DataCompraMaxima)
+                                <div class='input-group date'>
+                                    <span class="input-group-addon">
+                                        <span>Até</span>
+                                    </span>
+                                    @Html.TextBoxFor(m => m.Filter.DataCompraMaxima, new { @class = "form-control dateFormat ", data_field = "DataCompraMaxima" })
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-6 col-xs-12">
+                                @Html.LabelFor(m => m.Filter.QtdCompraMinima)
+                                <div class='input-group'>
+                                    <span class="input-group-addon">
+                                        <span>Min.</span>
+                                    </span>
+                                    @Html.TextBoxFor(m => m.Filter.QtdCompraMinima, new { @class = "form-control", data_field = "QtdCompraMinima", type = "number" })
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6 col-xs-12">
+                                @Html.LabelFor(m => m.Filter.QtdCompraMaxima)
+                                <div class='input-group'>
+                                    <span class="input-group-addon">
+                                        <span>Máx.</span>
+                                    </span>
+                                    @Html.TextBoxFor(m => m.Filter.QtdCompraMaxima, new { @class = "form-control", data_field = "QtdCompraMaxima", type = "number" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <label style="font-weight:800;">
+                            Recebimento
+                        </label>
+                    </div>
+                    <div class="x_content" style="display: block;">
+                        <div class="row">
+                            <div class="form-group col-sm-6 col-xs-12">
+                                @Html.LabelFor(m => m.Filter.DataRecebimentoMinima)
+                                <div class='input-group date'>
+                                    <span class="input-group-addon">
+                                        <span>De</span>
+                                    </span>
+                                    @Html.TextBoxFor(m => m.Filter.DataRecebimentoMinima, new { @class = "form-control dateFormat ", data_field = "DataRecebimentoMinima" })
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6 col-xs-12">
+                                @Html.LabelFor(m => m.Filter.DataRecebimentoMaxima)
+                                <div class='input-group date'>
+                                    <span class="input-group-addon">
+                                        <span>Até</span>
+                                    </span>
+                                    @Html.TextBoxFor(m => m.Filter.DataRecebimentoMaxima, new { @class = "form-control dateFormat ", data_field = "DataRecebimentoMaxima" })
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-6 col-xs-12">
+                                @Html.LabelFor(m => m.Filter.QtdRecebidaMinima)
+                                <div class='input-group'>
+                                    <span class="input-group-addon">
+                                        <span>Min.</span>
+                                    </span>
+                                    @Html.TextBoxFor(m => m.Filter.QtdRecebidaMinima, new { @class = "form-control", data_field = "QtdRecebidaMinima", type = "number" })
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6 col-xs-12">
+                                @Html.LabelFor(m => m.Filter.QtdRecebidaMaxima)
+                                <div class='input-group'>
+                                    <span class="input-group-addon">
+                                        <span>Máx.</span>
+                                    </span>
+                                    @Html.TextBoxFor(m => m.Filter.QtdRecebidaMaxima, new { @class = "form-control", data_field = "QtdRecebidaMaxima", type = "number" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12 form-buttons">
+                    <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
+                    <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- /filter -->
+<!-- table -->
+<div class="row">
+    <div class="col-xs-12">
+        <div class="x_panel">
+            <!-- panel-title -->
+            <div class="x_title">
+                <h2>Lista de Peças</h2>
+                <div class="nav navbar-right">
+                    <div class="col-xs-12">
+                        <a id="downloadRelatorio" data-toggle="tooltip" title="Download Relatório" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <!-- /panel-title -->
+            <!-- panel-content -->
+            <div class="x_content">
+                <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.IdLote)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.NroNota)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.ReferenciaPronduto)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataRecebimento)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.QtdCompra)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.QtdRecebida)</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <!-- /panel-content -->
+        </div>
+    </div>
+</div>
+<!-- /table -->
