@@ -279,9 +279,21 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     IdEmpresa = empresa,
                     Nome = Empresas.First(f => f.IdEmpresa == empresa).Nome,
-                    IsEmpresaPrincipal = perfil.EmpresaId == empresa ? true : false,
-                    Grupos = Mapper.Map<List<GroupItemViewModel>>(groups)
+                    IsEmpresaPrincipal = perfil.EmpresaId == empresa ? true : false
                 };
+
+                List<string> gruposPermissoesUsuario = (await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), empresa).ConfigureAwait(false)).OrderBy(x => x).ToList();
+
+                foreach (string nomeGrupoPermissao in gruposPermissoesUsuario)
+                {
+                    var groupItemViewModel = new GroupItemViewModel
+                    {
+                        IsSelected = false,
+                        Name = nomeGrupoPermissao
+                    };
+
+                    empGrupos.Grupos.Add(groupItemViewModel);
+                }
 
                 IList<string> selectedRoles = await UserManager.GetUserRolesByIdEmpresa(user.Id, empresa).ConfigureAwait(false);
 
@@ -302,10 +314,10 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             ViewBag.Empresas = _Empresas;
 
-            Func<ViewResult> errorView = () =>
+            ViewResult errorView()
             {
                 return View(model);
-            };
+            }
 
             if (!ModelState.IsValid)
             {
@@ -362,11 +374,15 @@ namespace FWLog.Web.Backoffice.Controllers
             foreach (var item in model.EmpresasGrupos.Where(x => x.Grupos.Any(y => y.IsSelected)))
             {
                 IEnumerable<string> selectedRoles = item.Grupos.Where(x => x.IsSelected).Select(x => x.Name);
+                IList<string> rolesUsuarioEdicao = await UserManager.GetUserRolesByIdEmpresa(user.Id, item.IdEmpresa).ConfigureAwait(false);
+                IList<string> rolesUsuarioLogado = await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), item.IdEmpresa).ConfigureAwait(false);
+                IEnumerable<string> rolesIgnorar = rolesUsuarioEdicao.Where(x => !rolesUsuarioLogado.Any(y => y == x));
+
 
                 empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Nome, string.Join(", ", selectedRoles.ToArray())));
                 empresasGruposNew.AppendLine(" || ");
 
-                IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, item.IdEmpresa).ConfigureAwait(false);
+                IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, rolesIgnorar, item.IdEmpresa).ConfigureAwait(false);
 
                 if (!result.Succeeded)
                 {
@@ -388,7 +404,7 @@ namespace FWLog.Web.Backoffice.Controllers
             _boService.EditPerfilUsuario(perfilUsuario);
 
             var empresasGrupos = model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Select(s => s.IdEmpresa).ToList();
-            _boService.EditUsuarioEmpresas(Empresas, empresasGrupos, user.Id.ToString(), perfilUsuario.PerfilUsuarioId);
+            _boService.EditUsuarioEmpresas(Empresas, empresasGrupos, user.Id, perfilUsuario.PerfilUsuarioId);
 
             var userInfo = new BackOfficeUserInfo();
             _boLogSystemService.Add(new BOLogSystemCreation
