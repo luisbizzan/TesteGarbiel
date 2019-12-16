@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ExtensionMethods.List;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
@@ -342,9 +343,10 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult ExibirModalRegistroRecebimento(long id)
         {
-            var modal = new BORegistroRecebimentoViewModel();
-
-            modal.IdNotaFiscal = id;
+            var modal = new BORegistroRecebimentoViewModel
+            {
+                IdNotaFiscal = id
+            };
 
             return PartialView("RegistroRecebimento", modal);
         }
@@ -386,20 +388,22 @@ namespace FWLog.Web.Backoffice.Controllers
             var notafiscal = _uow.NotaFiscalRepository.GetById(Convert.ToInt64(id));
             var dataAtual = DateTime.UtcNow;
 
-            var model = new BORegistroRecebimentoViewModel();
-            model.ChaveAcesso = notafiscal.ChaveAcesso;
-            model.DataRecebimento = dataAtual.ToString("dd/MM/yyyy");
-            model.HoraRecebimento = dataAtual.ToString("HH:mm:ss");
-            model.FornecedorNome = notafiscal.Fornecedor.RazaoSocial;
-            model.NumeroSerieNotaFiscal = string.Format("{0}-{1}", notafiscal.Numero, notafiscal.Serie);
-            model.ValorTotal = notafiscal.ValorTotal.ToString("n2");
-            model.DataAtual = dataAtual;
-            model.ValorFrete = notafiscal.ValorFrete.ToString("n2");
-            model.NumeroConhecimento = notafiscal.NumeroConhecimento;
-            model.TransportadoraNome = notafiscal.Transportadora.RazaoSocial;
-            model.Peso = notafiscal.PesoBruto.HasValue ? notafiscal.PesoBruto.Value.ToString("n2") : null;
-            model.QtdVolumes = notafiscal.Quantidade == 0 ? (int?)null : notafiscal.Quantidade;
-            model.NotaFiscalPesquisada = true;
+            var model = new BORegistroRecebimentoViewModel
+            {
+                ChaveAcesso = notafiscal.ChaveAcesso,
+                DataRecebimento = dataAtual.ToString("dd/MM/yyyy"),
+                HoraRecebimento = dataAtual.ToString("HH:mm:ss"),
+                FornecedorNome = notafiscal.Fornecedor.RazaoSocial,
+                NumeroSerieNotaFiscal = string.Format("{0}-{1}", notafiscal.Numero, notafiscal.Serie),
+                ValorTotal = notafiscal.ValorTotal.ToString("n2"),
+                DataAtual = dataAtual,
+                ValorFrete = notafiscal.ValorFrete.ToString("n2"),
+                NumeroConhecimento = notafiscal.NumeroConhecimento,
+                TransportadoraNome = notafiscal.Transportadora.RazaoSocial,
+                Peso = notafiscal.PesoBruto.HasValue ? notafiscal.PesoBruto.Value.ToString("n2") : null,
+                QtdVolumes = notafiscal.Quantidade == 0 ? (int?)null : notafiscal.Quantidade,
+                NotaFiscalPesquisada = true
+            };
 
             return PartialView("RegistroRecebimentoDetalhes", model);
         }
@@ -566,7 +570,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     model.DiasAtraso = atraso.Days.ToString();
                 }
 
-                if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida||
+                if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida ||
                     notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ConferidaDivergencia)
                 {
                     model.IsNotaConferida = notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida;
@@ -682,15 +686,21 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
+
         public ActionResult ExibirModalRegistroConferencia(long id)
         {
             var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
 
-            //if (lote == null)
+            //if (lote == null) Tratar o lote nulo
 
             var usuarioLogado = new BackOfficeUserInfo();
 
             ApplicationUser applicationUser = UserManager.Users.FirstOrDefault(x => x.Id == (string)usuarioLogado.UserId);
+
+            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+
+            //if (empresaConfig == null)
+
 
             var model = new BOEntradaConferenciaViewModel
             {
@@ -701,7 +711,69 @@ namespace FWLog.Web.Backoffice.Controllers
                 NomeConferente = applicationUser.UserName,
                 DataHoraRecebimento = lote.DataRecebimento.ToString("dd/MM/yyyy HH:mm"),
                 NomeFornecedor = lote.NotaFiscal.Fornecedor.NomeFantasia,
-                QuantidadeVolume = lote.QuantidadeVolume
+                QuantidadeVolume = lote.QuantidadeVolume,
+                TipoConferencia = empresaConfig.TipoConferencia.Descricao,
+                IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode()
+            };
+
+            return PartialView("EntradaConferencia", model);
+        }
+
+        //public ActionResult ValidarReferenciaConferencia(string referencia)
+        //{
+            
+        //}
+
+        [HttpPost]
+        public ActionResult CarregarDadosReferenciaConferencia(string codigoBarrasReferencia, long idLote)
+        {
+            if (String.IsNullOrEmpty(codigoBarrasReferencia))
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Referência inválida. Por favor, tente novamente!"
+                });
+            }
+
+            var produto = _uow.ProdutoRepository.ConsultarPorCodigoBarras(codigoBarrasReferencia);
+
+            if (produto == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Referência não cadastrada. Por favor, tente novamente!"
+                });
+            }
+
+            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(idLote);
+
+            //if (lote == null) Tratar o lote nulo
+
+            var usuarioLogado = new BackOfficeUserInfo();
+
+            ApplicationUser applicationUser = UserManager.Users.FirstOrDefault(x => x.Id == (string)usuarioLogado.UserId);
+
+            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+
+            //if (empresaConfig == null)
+
+            var model = new BOEntradaConferenciaViewModel
+            {
+                IdNotaFiscal = lote.NotaFiscal.IdNotaFiscal,
+                IdLote = lote.IdLote,
+                NumeroNotaFiscal = lote.NotaFiscal.Numero + lote.NotaFiscal.Serie,
+                IdUuarioConferente = applicationUser.Id,
+                NomeConferente = applicationUser.UserName,
+                DataHoraRecebimento = lote.DataRecebimento.ToString("dd/MM/yyyy HH:mm"),
+                NomeFornecedor = lote.NotaFiscal.Fornecedor.NomeFantasia,
+                QuantidadeVolume = lote.QuantidadeVolume,
+                TipoConferencia = empresaConfig.TipoConferencia.Descricao,
+                IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode(),
+                Referencia = produto.CodigoBarras,
+                Multiplo = produto.MultiploVenda
+                
             };
 
             return PartialView("EntradaConferencia", model);
@@ -742,6 +814,56 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             return View(divergenciaViewModel);
+        }
+
+        [HttpGet]
+        public ActionResult RelatorioRastreioPeca()
+        {
+            return View(new RelatorioRastreioPecaViewModel());
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
+        public ActionResult RelatorioRastreioPecaPageData(DataTableFilter<RelatorioRastreioPecaFilterViewModel> model)
+        {
+            model.CustomFilter.IdEmpresa = IdEmpresa;
+
+            var list = _uow.LoteConferenciaRepository.RastreioPeca(model.CustomFilter);
+
+            int total = list.Count();
+
+            var result = list.PaginationResult(model).Select(x => new RelatorioRastreioPecaListItemViewModel
+            {
+                DataRecebimento = x.DataRecebimento.ToString("dd/MM/yyyy"),
+                Empresa = x.Empresa,
+                IdEmpresa = x.IdEmpresa,
+                IdLote = x.IdLote,
+                NroNota = x.NroNota,
+                QtdCompra = x.QtdCompra,
+                QtdRecebida = x.QtdRecebida,
+                ReferenciaPronduto = x.ReferenciaPronduto
+            });
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = total,
+                RecordsFiltered = total,
+                Data = result
+            });
+        }
+
+        [HttpPost]
+        public ActionResult DownloadRelatorioRastreioPeca(RelatorioRastreioPecaRequest viewModel)
+        {
+            ValidateModel(viewModel);
+
+            viewModel.IdEmpresa = IdEmpresa;
+            viewModel.NomeUsuario = User.Identity.Name;
+
+            byte[] relatorio = _relatorioService.GerarRelatorioRastreioPeca(viewModel);
+
+            return File(relatorio, "application/pdf", "Relatório Rastreio de Peça.pdf");
         }
     }
 }

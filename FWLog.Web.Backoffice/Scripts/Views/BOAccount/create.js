@@ -1,18 +1,5 @@
 ﻿(function () {
-    loadButtons();
-
-    $(".isEmpresaPrincial").off();
-    $('.isEmpresaPrincial').on('click', function () {
-        if ($(this).is(":checked")) {
-            $("#EmpresasSelecionadas").find(".panelEmpresa").each(function (i, e) {
-                $(this).find(".isEmpresaPrincial").prop('checked', false);
-            });
-
-            $(this).prop('checked', true);
-        } else {
-            $(this).prop('checked', true);
-        }
-    });
+    loadButtonsEvents();
 
     $('#ddlEmpresas').on('change', function () {
         $(".validationEmpresa").text("");
@@ -43,19 +30,7 @@
 
         $.post(HOST_URL + "BOAccount/AdicionarEmpresa/" + id, function (result) {
             $("#EmpresasSelecionadas").append(result);
-            $(".isEmpresaPrincial").off();
-            loadButtons();
-            $('.isEmpresaPrincial').on('click', function () {
-                if ($(this).is(":checked")) {
-                    $("#EmpresasSelecionadas").find(".panelEmpresa").each(function (i, e) {
-                        $(this).find(".isEmpresaPrincial").prop('checked', false);
-                    });
-
-                    $(this).prop('checked', true);
-                } else {
-                    $(this).prop('checked', true);
-                }
-            });
+            loadButtonsEvents();
         });
     });
 
@@ -86,18 +61,40 @@
     });
 })();
 
-function loadButtons() {
+function loadButtonsEvents() {
+    $(".btn-danger").off();
     $(".btn-danger").on('click', function () {
         $(this).parents(".panelEmpresa").remove();
     });
 
+    $(".checkAllGroups").off();
     $('.checkAllGroups').on('click', function () {
         $(this).parents(".panelEmpresa").find("[data-group]").prop('checked', true);
     });
 
+    $(".uncheckAllGroups").off();
     $('.uncheckAllGroups').on('click', function () {
         $(this).parents(".panelEmpresa").find("[data-group]").prop('checked', false);
     });
 
+    $("[data-group]").off();
     $("[data-group]").on('click', function () { $(".validationEmpresa").text(""); });
+
+    $(".isEmpresaPrincial").off();
+
+    if ($('.isEmpresaPrincial').length === 1) {
+        $('.isEmpresaPrincial').prop('checked', true);
+    }
+
+    $('.isEmpresaPrincial').on('click', function () {
+        if ($(this).is(":checked")) {
+            $("#EmpresasSelecionadas").find(".panelEmpresa").each(function (i, e) {
+                $(this).find(".isEmpresaPrincial").prop('checked', false);
+            });
+
+            $(this).prop('checked', true);
+        } else {
+            $(this).prop('checked', true);
+        }
+    });
 }

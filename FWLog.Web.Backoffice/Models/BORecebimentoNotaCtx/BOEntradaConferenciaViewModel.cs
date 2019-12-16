@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FWLog.Data.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
@@ -25,7 +26,12 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Qtde. Volumes")]
         public long QuantidadeVolume { get; set; }
 
+        [Display(Name = "Tipo de Conferência")]
+        public string TipoConferencia { get; set; }
+        public int IdTipoConferencia { get; set; }
+
         [Display(Name = "Referência")]
+        [Required]
         public string Referencia { get; set; }
 
         [Display(Name = "Embalagem")]
@@ -35,7 +41,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public string Unidade { get; set; }
 
         [Display(Name = "Múltiplo")]
-        public string Multiplo { get; set; }
+        public decimal Multiplo { get; set; }
 
         [Display(Name = "Qtde. por Caixa")]
         public int? QuantidadePorCaixa { get; set; }

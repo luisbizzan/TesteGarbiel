@@ -124,6 +124,7 @@
     <Compile Include="Model\IntegracaoSankhya\ProdutoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\UnidadeMedidaIntegracao.cs" />
     <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />
+    <Compile Include="Model\Relatorios\RelatorioRastreioPecaRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioRecebimentoNotasRequest.cs" />
     <Compile Include="Model\IntegracaoSankhya\ExecuteQueryResponse.cs" />
     <Compile Include="Model\IntegracaoSankhya\NotaFiscalIntegracao.cs" />
@@ -134,6 +135,7 @@
     <Compile Include="Relatorio\FwRelatorio.cs" />
     <Compile Include="Relatorio\FwRelatorioDados.cs" />
     <Compile Include="Relatorio\IFwRelatorioDados.cs" />
+    <Compile Include="Relatorio\Model\RastreioPeca.cs" />
     <Compile Include="Relatorio\Model\RecebimentoNotas.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ApplicationLogService.cs" />
