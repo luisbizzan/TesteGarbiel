@@ -117,7 +117,7 @@
             locale: moment.locale(),
             useCurrent: false,
             format: 'L',
-            allowInputToggle: true,
+            allowInputToggle: true
         });
 
         new dart.DateTimePickerLink(prazoInicial, prazoFinal, { ignoreTime: true });
@@ -236,15 +236,11 @@
         limparUsuarioConferencia();
     });
 
-    adicionaEventos();
+    $("#dataTable").on('click', "[action='conferirNota']", conferirNota);
+    $("#dataTable").on('click', "[action='registrarRecebimento']", registrarRecebimento);
+    $("#dataTable").on('click', "[action='detalhesNota']", detalhesNota);
+    $("#dataTable").on('click', "[action='tratarDivergencias']", tratarDivergencias);
 })();
-
-function adicionaEventos() {
-    $(document.body).on('click', "[action='conferirNota']", conferirNota);
-    $(document.body).on('click', "[action='registrarRecebimento']", registrarRecebimento);
-    $(document.body).on('click', "[action='detalhesNota']", detalhesNota);
-    $(document.body).on('click', "[action='tratarDivergencias']", tratarDivergencias);
-}
 
 function imprimir() {
     if ($("#relatorioImprimir").val() === 'Notas') {
@@ -303,7 +299,6 @@ function registrarRecebimento() {
         cache: false,
         success: function (result) {
             let $modalRegistroRecebimento = $("#modalRegistroRecebimento");
-
             if (result.Success) {
                 $modalRegistroRecebimento.load(HOST_URL + CONTROLLER_PATH + "ExibirModalRegistroRecebimento/" + id, function () {
                     $modalRegistroRecebimento.modal();
@@ -393,7 +388,10 @@ function RegistrarNotaFiscal() {
             if (result.Success) {
                 $(".close").click();
                 $("#dataTable").DataTable().ajax.reload();
-                PNotify.success({ text: result.Message });
+                $("#modalImpressoras").load("BOPrinter/Selecionar/1", function () {
+                    $("#modalImpressoras").modal();
+                });
+                //PNotify.success({ text: result.Message });
             } else {
                 $(".validacaoConfirmar").text(result.Message);
             }

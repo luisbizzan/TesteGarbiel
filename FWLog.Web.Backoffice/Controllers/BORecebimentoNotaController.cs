@@ -341,6 +341,7 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [HttpGet]
         public ActionResult ExibirModalRegistroRecebimento(long id)
         {
             var modal = new BORegistroRecebimentoViewModel
@@ -351,10 +352,9 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("RegistroRecebimento", modal);
         }
 
+        [HttpPost]
         public JsonResult ValidarNotaFiscalRegistro(string chaveAcesso, long idNotaFiscal)
         {
-            var model = new BORegistroRecebimentoViewModel();
-
             var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
 
             if (notafiscal.ChaveAcesso != chaveAcesso)
@@ -386,7 +386,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult CarregarDadosNotaFiscalRegistro(string id)
         {
             var notafiscal = _uow.NotaFiscalRepository.GetById(Convert.ToInt64(id));
-            var dataAtual = DateTime.UtcNow;
+            var dataAtual = DateTime.Now;
 
             var model = new BORegistroRecebimentoViewModel
             {
@@ -408,6 +408,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("RegistroRecebimentoDetalhes", model);
         }
 
+        [HttpPost]
         public async Task<JsonResult> RegistrarRecebimentoNota(long idNotaFiscal, DateTime dataRecebimento, int qtdVolumes, bool notaFiscalPesquisada)
         {
             if (!(idNotaFiscal > 0) || !(qtdVolumes > 0) || !notaFiscalPesquisada)
