@@ -121,7 +121,7 @@
         });
 
         new dart.DateTimePickerLink(prazoInicial, prazoFinal, { ignoreTime: true });
-    }
+    };
 
     createLinkedPickers();
     createLinkedPickes2();
@@ -186,7 +186,7 @@
     });
 
     $('#dataTable').dataTable.error = function (settings, helpPage, message) {
-        console.log(message)
+        console.log(message);
     };
 
     dart.dataTables.loadFormFilterEvents();
@@ -207,7 +207,7 @@
     });
 
     $("#pesquisarUsuarioRecebimento").click(function () {
-        $("#modalUsuarioRecebimento").load(HOST_URL + "BOAccount/SearchModal", function () {
+        $("#modalUsuarioRecebimento").load(HOST_URL + "BOAccount/SearchModal/Recebimento", function () {
             $("#modalUsuarioRecebimento").modal();
         });
     });
@@ -222,7 +222,7 @@
     });
 
     $("#pesquisarUsuarioConferencia").click(function () {
-        $("#modalUsuarioConferencia").load(HOST_URL + "BOAccount/SearchModal", function () {
+        $("#modalUsuarioConferencia").load(HOST_URL + "BOAccount/SearchModal/Conferencia", function () {
             $("#modalUsuarioConferencia").modal();
         });
     });
@@ -307,17 +307,13 @@ function registrarRecebimento() {
             if (result.Success) {
                 $modalRegistroRecebimento.load(HOST_URL + CONTROLLER_PATH + "ExibirModalRegistroRecebimento/" + id, function () {
                     $modalRegistroRecebimento.modal();
-
                     $("#ChaveAcesso").focus();
-
                     $('#ChaveAcesso').keypress(function (event) {
                         BuscarNotaFiscal();
                     });
-
                     $("#RegistrarRecebimentoNota").click(function () {
                         RegistrarNotaFiscal();
                     });
-
                     $('.integer').mask("#0", { reverse: true });
                     $('.money').mask("#.##0,00", { reverse: true });
                 });
@@ -408,17 +404,22 @@ function RegistrarNotaFiscal() {
 function setFornecedor(idFornecedor, razaoSocial) {
     $("#Filter_RazaoSocialFornecedor").val(razaoSocial);
     $("#Filter_IdFornecedor").val(idFornecedor);
-
     $("#modalFornecedor").modal("hide");
     $("#modalFornecedor").empty();
 }
 
-function setUsuarioRecebimento(idUsuario, nomeUsuario) {
-    $("#Filter_UserNameRecebimento").val(nomeUsuario);
-    $("#Filter_IdUsuarioRecebimento").val(idUsuario);
-
-    $("#modalUsuarioRecebimento").modal("hide");
-    $("#modalUsuarioRecebimento").empty();
+function setUsuario(idUsuario, nomeUsuario, origem) {
+    if (origem === "Recebimento") {
+        $("#Filter_UserNameRecebimento").val(nomeUsuario);
+        $("#Filter_IdUsuarioRecebimento").val(idUsuario);
+        $("#modalUsuarioRecebimento").modal("hide");
+        $("#modalUsuarioRecebimento").empty();
+    } else {
+        $("#Filter_UserNameConferencia").val(nomeUsuario);
+        $("#Filter_IdUsuarioConferencia").val(idUsuario);
+        $("#modalUsuarioConferencia").modal("hide");
+        $("#modalUsuarioConferencia").empty();
+    }
 }
 
 function conferirNota() {

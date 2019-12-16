@@ -644,13 +644,20 @@ namespace FWLog.Web.Backoffice.Controllers
             return RedirectToAction("LogOn", "BOAccountBase");
         }
 
-        //[ApplicationAuthorize]
-        public ActionResult SearchModal()
+        [HttpGet]
+        [ApplicationAuthorize]
+        public ActionResult SearchModal(string id)
         {
-            return View(new BOPerfilUsuarioSearchModalViewModel());
+            var viewModel = new BOPerfilUsuarioSearchModalViewModel
+            {
+                Origem = id
+            };
+
+            return View(viewModel);
         }
 
-        //[ApplicationAuthorize]
+        [HttpPost]
+        [ApplicationAuthorize]
         public ActionResult SearchModalPageData(DataTableFilter<BOPerfilUsuarioSearchModalFilterViewModel> filter)
         {
             var query = _unitOfWork.PerfilUsuarioRepository.Tabela();
