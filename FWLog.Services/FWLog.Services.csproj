@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=9.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.9.0.0\lib\net461\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Dart-Library.CORE, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dart-Library.CORE.2.0.0\lib\net461\Dart-Library.CORE.dll</HintPath>
     </Reference>
@@ -109,9 +112,13 @@
     <Compile Include="Integracao\Helpers\QueryPropertyAttribute.cs" />
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
-    <Compile Include="Model\IntegracaoSankhya\XMLConfirmarNotaFiscal.cs" />
+    <Compile Include="Model\IntegracaoSankhya\IncluirNotaFiscalXML.cs" />
+    <Compile Include="Model\IntegracaoSankhya\IntegracaoErroResposta.cs" />
+    <Compile Include="Model\IntegracaoSankhya\IncluirNotaFiscalResposta.cs" />
+    <Compile Include="Model\IntegracaoSankhya\ConfirmarNotaFiscalXML.cs" />
     <Compile Include="Model\IntegracaoSankhya\FornecedorIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\FreteTipoIntegracao.cs" />
+    <Compile Include="Model\IntegracaoSankhya\LoginReposta.cs" />
     <Compile Include="Model\IntegracaoSankhya\TransportadoraIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\EmpresaIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoIntegracao.cs" />
@@ -119,9 +126,7 @@
     <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioRastreioPecaRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioRecebimentoNotasRequest.cs" />
-    <Compile Include="Model\IntegracaoSankhya\ExecuteQuery\ExecuteQueryFieldsMetadata.cs" />
-    <Compile Include="Model\IntegracaoSankhya\ExecuteQuery\ExecuteQueryResponseBody.cs" />
-    <Compile Include="Model\IntegracaoSankhya\ExecuteQuery\ExecuteQueryResponse.cs" />
+    <Compile Include="Model\IntegracaoSankhya\ExecuteQueryResponse.cs" />
     <Compile Include="Model\IntegracaoSankhya\NotaFiscalIntegracao.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
@@ -176,6 +181,7 @@
       <Name>FWLog.Data</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

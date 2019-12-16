@@ -125,7 +125,7 @@ namespace FWLog.Services.Services
                             throw new Exception("Código da Produto (CODPROD) inválido");
                         }
 
-                        var unidade = unidadesMedida.FirstOrDefault(f => f.Descricao == item.CODVOL);
+                        var unidade = unidadesMedida.FirstOrDefault(f => f.Sigla == item.CODVOL);
                         if (unidade == null)
                         {
                             throw new Exception("Código da Unidade de Medida (CODVOL) inválido");

@@ -53,6 +53,12 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TGFCAB.DTNEG")]
         public string DTNEG { get; set; } //DataEmissao
 
+        [TabelaIntegracao(DisplayName = "TGFCAB.AD_NUMFICTSAV")]
+        public string NumeroNFSAV { get; set; } 
+
+        [TabelaIntegracao(DisplayName = "TGFCAB.CODVEND")]
+        public string CodigoIntegracaoVendedor { get; set; }
+
         [TabelaIntegracao(DisplayName = "TGFITE.CODPROD")]
         public string CODPROD { get; set; }
 
