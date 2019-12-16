@@ -1,4 +1,6 @@
 ﻿using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
+using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +27,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             {
                 Entities.UsuarioEmpresa.Remove(rel);
             }
+        }
+
+        public IQueryable<UsuarioEmpresa> Tabela()
+        {
+            return Entities.UsuarioEmpresa;
         }
     }
 }

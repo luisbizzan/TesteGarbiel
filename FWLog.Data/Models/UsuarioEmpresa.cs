@@ -8,24 +8,19 @@ namespace FWLog.Data.Models
         [Key, Column(Order = 0)]
         [Required()]
         public string UserId { get; set; }
-
         [Key, Column(Order = 1)]
         [Required()]
         public long IdEmpresa { get; set; }
+        [Required]
+        [Index]
+        public long PerfilUsuarioId { get; set; }
 
+        [ForeignKey(nameof(UserId))]
+        public virtual AspNetUsers Usuario { get; set; }
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
-
-        public UsuarioEmpresa(string userId, long idEmpresa)
-        {
-            UserId = userId;
-            IdEmpresa = idEmpresa;
-        }
-
-        public UsuarioEmpresa()
-        {
-
-        }
+        [ForeignKey(nameof(PerfilUsuarioId))]
+        public virtual PerfilUsuario PerfilUsuario { get; set; }
     }
 }
 
