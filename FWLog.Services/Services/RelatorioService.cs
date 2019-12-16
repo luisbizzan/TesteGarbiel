@@ -444,8 +444,8 @@ namespace FWLog.Services.Services
                 DataCriacao = DateTime.Now,
                 NomeEmpresa = empresa.RazaoSocial,
                 NomeUsuario = request.NomeUsuario,
-                Orientacao = Orientation.Portrait,
-                Titulo = "Relatório Notas Fiscais Recebimento",
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório Rastreio de Peças",
                 Filtros = string.Empty,
                 Dados = dados
             };
