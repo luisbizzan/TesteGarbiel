@@ -3,10 +3,10 @@
 namespace FWLog.Services.Model.IntegracaoSankhya
 {
     [XmlRoot("serviceRequest")]
-    public class TemplateXMLConfirmarNotaFiscal
+    public class ConfirmarNotaFiscalXML
     {
-        public TemplateXMLConfirmarNotaFiscal() { }
-        public TemplateXMLConfirmarNotaFiscal(string codigoIntegracao)
+        public ConfirmarNotaFiscalXML() { }
+        public ConfirmarNotaFiscalXML(string codigoIntegracao)
         {
             Nome = "CACSP.confirmarNota";
             ElementoCorpo = new ElementoCorpo(codigoIntegracao);

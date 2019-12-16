@@ -26,17 +26,17 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            List<UnidadeMedidaIntegracao> unidadesMedidaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryGenerico<UnidadeMedidaIntegracao>();
+            List<UnidadeMedidaIntegracao> unidadesMedidaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<UnidadeMedidaIntegracao>();
 
             foreach (var unidadeInt in unidadesMedidaIntegracao)
             {
                 try
                 {
-                    ValidarUnidadeMedidaIntegracao(unidadeInt);
+                    ValidarDadosIntegração(unidadeInt);
 
                     bool unidadeNova = false;
 
-                    UnidadeMedida unidadeMedida = _uow.UnidadeMedidaRepository.ConsultaPorSigla(unidadeInt.CODVOL);
+                    UnidadeMedida unidadeMedida = _uow.UnidadeMedidaRepository.ConsultaPorSigla(unidadeInt.Sigla);
 
                     if (unidadeMedida == null)
                     {
@@ -44,8 +44,8 @@ namespace FWLog.Services.Services
                         unidadeMedida = new UnidadeMedida();
                     }
 
-                    unidadeMedida.Sigla = unidadeInt.CODVOL;
-                    unidadeMedida.Descricao = unidadeInt.DESCRVOL;
+                    unidadeMedida.Sigla = unidadeInt.Sigla;
+                    unidadeMedida.Descricao = unidadeInt.Descricao;
 
                     if (unidadeNova)
                     {
@@ -57,17 +57,11 @@ namespace FWLog.Services.Services
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da seguinte unidade de medida: {0}.", unidadeInt.CODVOL));
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da seguinte unidade de medida: {0}.", unidadeInt.Sigla));
 
                     continue;
                 }
             }
-        }
-
-        public void ValidarUnidadeMedidaIntegracao(UnidadeMedidaIntegracao unidadeMedidaIntegracao)
-        {
-            ValidarCampo(unidadeMedidaIntegracao.CODVOL, nameof(unidadeMedidaIntegracao.CODVOL));
-            ValidarCampo(unidadeMedidaIntegracao.DESCRVOL, nameof(unidadeMedidaIntegracao.DESCRVOL));
         }
     }
 }

@@ -1,11 +1,10 @@
 ﻿using FWLog.Services.Integracao.Helpers;
-using FWLog.Services.Model;
 using FWLog.Services.Model.IntegracaoSankhya;
-using FWLog.Services.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -80,7 +79,7 @@ namespace FWLog.Services.Integracao
 
         private string Login()
         {
-            var contentLogin = new StringContent(string.Format(xmlLogin, Usuario, Senha), Encoding.UTF8, "text/xml");
+            var contentLogin = new StringContent(string.Format(xmlLogin, Usuario + 1, Senha), Encoding.UTF8, "text/xml");
 
             string uriLogin = string.Concat(BaseURL, "serviceName=MobileLoginSP.login");
 
@@ -93,24 +92,18 @@ namespace FWLog.Services.Integracao
 
             string responseContent = login.Content.ReadAsStringAsync().Result;
 
-            XDocument doc = XDocument.Parse(responseContent);
-            XElement root = doc.Root;
+            LoginReposta resposta = DeserializarXML<LoginReposta>(responseContent);
 
-            string status = root.Attribute("status")?.Value;
-            if (status != "1")
+            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.Token == null)
             {
-                throw new Exception("O sistema não obteve o status 1 na autorização da Integração Sankhya.");
-            }
+                var erro = DeserializarXML<IntegracaoErroResposta>(responseContent);
 
-            string jsessionid = root.Element("responseBody").Element("jsessionid")?.Value;
-            if (jsessionid == null)
-            {
-                throw new Exception("O sistema não obteve o jsessionid na autorização da Integração Sankhya.");
+                throw new Exception(string.Format("O sistema não obteve o jsessionid na autorização da Integração Sankhya. Mensagem de Erro {0}", erro.Mensagem));
             }
 
             UltimaAutenticacao = DateTime.UtcNow;
 
-            return jsessionid;
+            return resposta.CorpoResposta.Token;
         }
 
         public string GetToken()
@@ -132,13 +125,46 @@ namespace FWLog.Services.Integracao
             return Token;
         }
 
-        public async Task ExecutarServicoSankhya(string xml, string serviceName)
+        public TClass DeserializarXML<TClass>(string xml) where TClass : class, new()
         {
-            StringContent contentString = new StringContent(xml.ToString(), Encoding.UTF8, "text/xml");
+            TClass resposta = null;
+
+            XmlSerializer serializer = new XmlSerializer(typeof(TClass));
+            using (TextReader reader = new StringReader(xml))
+            {
+                resposta = (TClass)serializer.Deserialize(reader);
+            }
+
+            return resposta;
+        }
+
+        private string SerializarXML<TClass>(TClass root)
+        {
+            var emptyNs = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
+
+            XmlSerializer x = new XmlSerializer(root.GetType());
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Indent = true,
+                OmitXmlDeclaration = true
+            };
+
+            string confirmarNotaXML = string.Empty;
+            using (XmlWriter xmlWriter = XmlWriter.Create(confirmarNotaXML, settings))
+            {
+                x.Serialize(xmlWriter, root, emptyNs);
+            }
+
+            return confirmarNotaXML;
+        }
+
+        public async Task<string> ExecutarServicoSankhya(string xml, string serviceName, string service)
+        {
+            StringContent contentString = new StringContent(xml, Encoding.UTF8, "text/xml");
 
             contentString.Headers.Add("Cookie", string.Format("JSESSIONID={0}", Instance.GetToken()));
 
-            var uri = string.Format("{0}serviceName={1}", BaseURL, serviceName);
+            var uri = string.Format("{0}{1}/service.sbr?serviceName={1}", BaseURL, service, serviceName);
 
             HttpResponseMessage httpResponse = await HttpService.Instance.PostAsync(uri, contentString);
 
@@ -147,24 +173,7 @@ namespace FWLog.Services.Integracao
                 throw new Exception(string.Format("O sistema obteve o status {0} na resposta do serviço 'CRUDServiceProvider.saveRecord' Integração Sankhya", httpResponse.StatusCode));
             }
 
-            string result = httpResponse.Content.ReadAsStringAsync().Result;
-
-            XDocument doc = XDocument.Parse(result);
-            XElement root = doc.Root;
-
-            string status = root.Attribute("status")?.Value;
-            if (status != "1")
-            {
-                throw new Exception(string.Format("O sistema não obteve o status 1 no retorno da atualização da nota fiscal no Integração Sankhya. Mensagem {0}", root.Element("statusMessage")?.Value));
-            }
-
-            //TODO olhar status 3 - não autorizado
-
-            string nunota = root.Element("responseBody").Element("entities").Element("entity").Element("NUNOTA")?.Value;
-            if (nunota == null)
-            {
-                throw new Exception("O sistema não obteve o campo NUNOTA no retorno da atualização da nota fiscal no Integração Sankhya.");
-            }
+            return httpResponse.Content.ReadAsStringAsync().Result;
         }
 
         public async Task<string> ExecuteQuery(string query)
@@ -305,7 +314,7 @@ namespace FWLog.Services.Integracao
             {
                 return false;
             }
-
+            //TODO ARRUMAR
             XElement dataRow = new XElement("dataRow", new XElement("localFields", new XElement(campoStatus, valorStatus)));
             dataRow.Add(new XElement("key", new XElement(campoPKIntegracao, valorPKIntegracao)));
 
@@ -324,42 +333,67 @@ namespace FWLog.Services.Integracao
             XElement serviceRequest = new XElement("serviceRequest", new XAttribute("serviceName", "CRUDServiceProvider.saveRecord"));
             serviceRequest.Add(new XElement("requestBody", datset));
 
-            await Instance.ExecutarServicoSankhya(serviceRequest.ToString(), "CRUDServiceProvider.saveRecord");
+            string responseContent = await Instance.ExecutarServicoSankhya(serviceRequest.ToString(), "CRUDServiceProvider.saveRecord", "mge");
+
+            XDocument doc = XDocument.Parse(responseContent);
+            XElement root = doc.Root;
+
+            string nunota = root.Element("responseBody").Element("entities").Element("entity").Element("NUNOTA")?.Value;
+            if (nunota == null)
+            {
+                throw new Exception("O sistema não obteve o campo NUNOTA no retorno da atualização da nota fiscal no Integração Sankhya.");
+            }
 
             return true;
         }
 
-        public async Task<bool> ConfirmarNotaFiscal(string entidade, string campoPKIntegracao, long valorPKIntegracao, string campoStatus, object valorStatus)
+        public async Task<bool> ConfirmarNotaFiscal(string condigoIntegracao)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
                 return false;
             }
 
-            var root = new TemplateXMLConfirmarNotaFiscal("16389");
-            var emptyNs = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
+            string confirmarNotaXML = SerializarXML(new ConfirmarNotaFiscalXML(condigoIntegracao));
 
-            XmlSerializer x = new XmlSerializer(root.GetType());
-            XmlWriterSettings settings = new XmlWriterSettings
-            {
-                Indent = true,
-                OmitXmlDeclaration = true
-            };
+            string rootXML = await Instance.ExecutarServicoSankhya(confirmarNotaXML, "CACSP.confirmarNota", "mgecom");
 
-            string confirmarNotaXML = string.Empty;
-            using (XmlWriter xmlWriter = XmlWriter.Create(confirmarNotaXML, settings))
+            IncluirNotaFiscalResposta resposta = DeserializarXML<IncluirNotaFiscalResposta>(rootXML);//TODO pegar retorno de exemplo
+
+            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria == null || resposta.CorpoResposta.ChavePrimaria.CodigoIntegracao == null)
             {
-                x.Serialize(xmlWriter, root, emptyNs);
+                var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
+
+                throw new Exception(string.Format("Ocorreu um erro na confirmação da nota fiscal número único {0}. Mensagem de Erro {1}", condigoIntegracao, erro.Mensagem));
             }
 
-            await Instance.ExecutarServicoSankhya(confirmarNotaXML, "CACSP.confirmarNota");
+            return true;
+        }
+
+        public async Task<bool> IncluirNotaFiscal()
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return false;
+            }
+
+            string incluirNotaXML = SerializarXML(new IncluirNotaFiscalXML());
+
+            string rootXML = await Instance.ExecutarServicoSankhya(incluirNotaXML, "CACSP.incluirNota", "mgecom");
+
+            IncluirNotaFiscalResposta resposta = DeserializarXML<IncluirNotaFiscalResposta>(rootXML);
+
+            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria == null || resposta.CorpoResposta.ChavePrimaria.CodigoIntegracao == null)
+            {
+                var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
+
+                throw new Exception(string.Format("Ocorreu um erro na inclusão de uma nova nota fiscal da nota fiscal. Mensagem de Erro {0}", erro.Mensagem));
+            }
 
             return true;
         }
     }
 }
-
-
 
 public class ColunasConsulta
 {

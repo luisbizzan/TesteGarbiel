@@ -6,7 +6,6 @@ using FWLog.Services.Model.IntegracaoSankhya;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
@@ -27,20 +26,20 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            StringBuilder where = new StringBuilder();
-            where.Append("WHERE NUCAMPO IN (SELECT NUCAMPO FROM TDDCAM WHERE NOMETAB = 'TGFCAB' AND NOMECAMPO = 'CIF_FOB')");            
+            string where = "WHERE NUCAMPO IN (SELECT NUCAMPO FROM TDDCAM WHERE NOMETAB = 'TGFCAB' AND NOMECAMPO = 'CIF_FOB')";
 
-            List<FreteTipoIntegracao> freteTiposIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryGenerico<FreteTipoIntegracao>(where: where.ToString());
+
+            List<FreteTipoIntegracao> freteTiposIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<FreteTipoIntegracao>(where: where);
 
             foreach (var freteTipoInt in freteTiposIntegracao)
             {
                 try
                 {
-                    ValidarFreteTipoIntegracao(freteTipoInt);
+                    ValidarDadosIntegração(freteTipoInt);
 
                     bool freteTipoNovo = false;
-                                        
-                    FreteTipo freteTipo = _uow.FreteTipoRepository.ConsultarPorSigla(freteTipoInt.VALOR);
+
+                    FreteTipo freteTipo = _uow.FreteTipoRepository.ConsultarPorSigla(freteTipoInt.Sigla);
 
                     if (freteTipo == null)
                     {
@@ -48,8 +47,8 @@ namespace FWLog.Services.Services
                         freteTipo = new FreteTipo();
                     }
 
-                    freteTipo.Descricao = freteTipoInt.OPCAO;
-                    freteTipo.Sigla = freteTipoInt.VALOR;
+                    freteTipo.Descricao = freteTipoInt.Descricao;
+                    freteTipo.Sigla = freteTipoInt.Sigla;
 
                     if (freteTipoNovo)
                     {
@@ -61,17 +60,11 @@ namespace FWLog.Services.Services
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração do seguinte tipo de frete: {0}.", freteTipoInt.VALOR));
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração do seguinte tipo de frete: {0}.", freteTipoInt.Sigla));
 
                     continue;
                 }
             }
-        }
-
-        public void ValidarFreteTipoIntegracao(FreteTipoIntegracao freteTipoIntegracao)
-        {
-            ValidarCampo(freteTipoIntegracao.OPCAO, nameof(freteTipoIntegracao.OPCAO));
-            ValidarCampo(freteTipoIntegracao.VALOR, nameof(freteTipoIntegracao.VALOR));
         }
     }
 }
