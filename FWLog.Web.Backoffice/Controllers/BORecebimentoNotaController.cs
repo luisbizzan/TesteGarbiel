@@ -682,15 +682,21 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
+
         public ActionResult ExibirModalRegistroConferencia(long id)
         {
             var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
 
-            //if (lote == null)
+            //if (lote == null) Tratar o lote nulo
 
             var usuarioLogado = new BackOfficeUserInfo();
 
             ApplicationUser applicationUser = UserManager.Users.FirstOrDefault(x => x.Id == (string)usuarioLogado.UserId);
+
+            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+
+            //if (empresaConfig == null)
+
 
             var model = new BOEntradaConferenciaViewModel
             {
@@ -701,7 +707,69 @@ namespace FWLog.Web.Backoffice.Controllers
                 NomeConferente = applicationUser.UserName,
                 DataHoraRecebimento = lote.DataRecebimento.ToString("dd/MM/yyyy HH:mm"),
                 NomeFornecedor = lote.NotaFiscal.Fornecedor.NomeFantasia,
-                QuantidadeVolume = lote.QuantidadeVolume
+                QuantidadeVolume = lote.QuantidadeVolume,
+                TipoConferencia = empresaConfig.TipoConferencia.Descricao,
+                IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode()
+            };
+
+            return PartialView("EntradaConferencia", model);
+        }
+
+        //public ActionResult ValidarReferenciaConferencia(string referencia)
+        //{
+            
+        //}
+
+        [HttpPost]
+        public ActionResult CarregarDadosReferenciaConferencia(string codigoBarrasReferencia, long idLote)
+        {
+            if (String.IsNullOrEmpty(codigoBarrasReferencia))
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Referência inválida. Por favor, tente novamente!"
+                });
+            }
+
+            var produto = _uow.ProdutoRepository.ConsultarPorCodigoBarras(codigoBarrasReferencia);
+
+            if (produto == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Referência não cadastrada. Por favor, tente novamente!"
+                });
+            }
+
+            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(idLote);
+
+            //if (lote == null) Tratar o lote nulo
+
+            var usuarioLogado = new BackOfficeUserInfo();
+
+            ApplicationUser applicationUser = UserManager.Users.FirstOrDefault(x => x.Id == (string)usuarioLogado.UserId);
+
+            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+
+            //if (empresaConfig == null)
+
+            var model = new BOEntradaConferenciaViewModel
+            {
+                IdNotaFiscal = lote.NotaFiscal.IdNotaFiscal,
+                IdLote = lote.IdLote,
+                NumeroNotaFiscal = lote.NotaFiscal.Numero + lote.NotaFiscal.Serie,
+                IdUuarioConferente = applicationUser.Id,
+                NomeConferente = applicationUser.UserName,
+                DataHoraRecebimento = lote.DataRecebimento.ToString("dd/MM/yyyy HH:mm"),
+                NomeFornecedor = lote.NotaFiscal.Fornecedor.NomeFantasia,
+                QuantidadeVolume = lote.QuantidadeVolume,
+                TipoConferencia = empresaConfig.TipoConferencia.Descricao,
+                IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode(),
+                Referencia = produto.CodigoBarras,
+                Multiplo = produto.MultiploVenda
+                
             };
 
             return PartialView("EntradaConferencia", model);
