@@ -1,6 +1,5 @@
 ﻿(function () {
     $.validator.setDefaults({ ignore: null });
-
     $('.onlyNumber').mask('0#');
     $("dateFormat").mask("99/99/9999");
 
@@ -11,8 +10,7 @@
     });
 
     $("#imprimirRelatorio").click(function () {
-        $("#modalImpressoras").load("BOPrinter/Selecionar/2", function () {
-            $("#relatorioImprimir").val("Notas");
+        $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=laser&acao=notas", function () {
             $("#modalImpressoras").modal();
         });
     });
@@ -131,7 +129,7 @@
             var nomeCor,
                 lote = row.Lote || '';
 
-            if (row.Atraso == 0)
+            if (row.Atraso === 0)
                 nomeCor = 'verde';
 
             if (row.Atraso > 0) {
@@ -156,7 +154,7 @@
                 dart.dataTables.saveFilterToData(data);
             },
             "error": function (data) {
-                if (!!(data.statusText)) {
+                if (!data.statusText) {
                     PNotify.error({ text: data.statusText });
                     NProgress.done();
                 }
@@ -242,42 +240,48 @@
     $("#dataTable").on('click', "[action='tratarDivergencias']", tratarDivergencias);
 })();
 
-function imprimir() {
-    if ($("#relatorioImprimir").val() === 'Notas') {
-        $.ajax({
-            url: "/BORecebimentoNota/ImprimirRelatorioNotas",
-            method: "POST",
-            data: {
-                IdImpressora: $("#IdImpressora").val(),
-                Lote: $("#Filter_Lote").val(),
-                Nota: $("#Filter_Nota").val(),
-                ChaveAcesso: $("#Filter_ChaveAcesso").val(),
-                IdStatus: $("#Filter_ListaStatus").val(),
-                DataInicial: $("#Filter_DataInicial").val(),
-                DataFinal: $("#Filter_DataFinal").val(),
-                PrazoInicial: $("#Filter_PrazoInicial").val(),
-                PrazoFinal: $("#Filter_PrazoFinal").val(),
-                IdFornecedor: $("#Filter_IdFornecedor").val(),
-                Atraso: $("#Filter_Atraso").val(),
-                QuantidadePeca: $("#Filter_QuantidadePeca").val(),
-                Volume: $("#Filter_Volume").val()
-            },
-            success: function () {
-                $("#btnFechar").click();
-            }
-        });
-    } else {
-        $.ajax({
-            url: "/BORecebimentoNota/ImprimirDetalhesEntradaConferencia",
-            method: "POST",
-            data: {
-                IdImpressora: $("#IdImpressora").val(),
-                IdNotaFiscal: $("#idNotaFiscalImprimir").val()
-            },
-            success: function () {
-                $("#btnFechar").click();
-            }
-        });
+function imprimir(acao) {
+    switch (acao) {
+        case 'notas':
+            $.ajax({
+                url: "/BORecebimentoNota/ImprimirRelatorioNotas",
+                method: "POST",
+                data: {
+                    IdImpressora: $("#IdImpressora").val(),
+                    Lote: $("#Filter_Lote").val(),
+                    Nota: $("#Filter_Nota").val(),
+                    ChaveAcesso: $("#Filter_ChaveAcesso").val(),
+                    IdStatus: $("#Filter_ListaStatus").val(),
+                    DataInicial: $("#Filter_DataInicial").val(),
+                    DataFinal: $("#Filter_DataFinal").val(),
+                    PrazoInicial: $("#Filter_PrazoInicial").val(),
+                    PrazoFinal: $("#Filter_PrazoFinal").val(),
+                    IdFornecedor: $("#Filter_IdFornecedor").val(),
+                    Atraso: $("#Filter_Atraso").val(),
+                    QuantidadePeca: $("#Filter_QuantidadePeca").val(),
+                    Volume: $("#Filter_Volume").val()
+                },
+                success: function () {
+                    $("#btnFechar").click();
+                }
+            });
+            break;
+        case 'conferencia':
+            $.ajax({
+                url: "/BORecebimentoNota/ImprimirDetalhesEntradaConferencia",
+                method: "POST",
+                data: {
+                    IdImpressora: $("#IdImpressora").val(),
+                    IdNotaFiscal: $("#idNotaFiscalImprimir").val()
+                },
+                success: function () {
+                    $("#btnFechar").click();
+                }
+            });
+            break;
+        case 'etqrecebimento':
+
+            break;
     }
 }
 
@@ -348,7 +352,7 @@ function BuscarNotaFiscal() {
                         $('#ChaveAcesso').attr("disabled", true);
 
                         $('#QtdVolumes').keypress(function (event) {
-                            var keycode = (event.keyCode || event.which);
+                            var keycode = event.keyCode || event.which;
 
                             if (keycode === 13) {
                                 RegistrarNotaFiscal();
@@ -382,16 +386,16 @@ function RegistrarNotaFiscal() {
             idNotaFiscal: $("#IdNotaFiscal").val(),
             dataRecebimento: $("#DataAtual").val(),
             qtdVolumes: $("#QtdVolumes").val(),
-            notaFiscalPesquisada: $("#NotaFiscalPesquisada").val() == "True" ? true : false
+            notaFiscalPesquisada: $("#NotaFiscalPesquisada").val() === "True" ? true : false
         },
         success: function (result) {
             if (result.Success) {
+                PNotify.success({ text: result.Message });
                 $(".close").click();
-                $("#dataTable").DataTable().ajax.reload();
-                $("#modalImpressoras").load("BOPrinter/Selecionar/1", function () {
+                $("#modalImpressoras").load("BOPrinter/Selecionar/Zebra", function () {
                     $("#modalImpressoras").modal();
                 });
-                //PNotify.success({ text: result.Message });
+                $("#dataTable").DataTable().ajax.reload();
             } else {
                 $(".validacaoConfirmar").text(result.Message);
             }
@@ -429,7 +433,7 @@ function conferirNota() {
         cache: false,
         method: "POST",
         success: function (result) {
-            if (!!result.Success) {
+            if (!result.Success) {
                 $modal.load(HOST_URL + CONTROLLER_PATH + "ExibirModalRegistroConferencia/" + id, function () {
                     $modal.on('shown.bs.modal', function () {
                         $('#Referencia').focus();

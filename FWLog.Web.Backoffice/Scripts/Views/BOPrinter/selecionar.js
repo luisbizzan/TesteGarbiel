@@ -1,5 +1,6 @@
 ﻿(function () {
     $("#btnImprimir").click(function () {
-        imprimir();
+        var acao = $("#acao");
+        imprimir(acao);
     });
 })();

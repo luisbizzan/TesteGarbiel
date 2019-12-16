@@ -262,9 +262,15 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult Selecionar(int id)
+        public ActionResult Selecionar(string tipo, string acao)
         {
-            List<Printer> impressoras = _uow.BOPrinterRepository.All(IdEmpresasPorUsuario).Where(w => w.CompanyId == IdEmpresa && w.Ativa == true && w.PrinterTypeId == id).ToList();
+            int idTipoImpressora = tipo.Equals("zebra", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
+
+            List<Printer> impressoras = _uow.BOPrinterRepository.All(IdEmpresasPorUsuario).Where(
+                w => w.CompanyId == IdEmpresa && 
+                w.Ativa == true && 
+                w.PrinterTypeId == idTipoImpressora).ToList();
+
             var listaImpressoras = new List<BOPrinterSelecionarImpressoraViewModel>();
 
             foreach (Printer impressora in impressoras)
@@ -278,6 +284,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return View(new BOPrinterSelecionarViewModel
             {
+                Acao = acao,
                 Impressoras = listaImpressoras
             });
         }
