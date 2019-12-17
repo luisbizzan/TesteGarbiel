@@ -43,7 +43,7 @@ namespace FWLog.Services.Services
                 {
                     var notafiscalIntegracao = notasInt.Value.First();
 
-                    ValidarNotaFiscalIntegracao(notafiscalIntegracao);
+                    ValidarDadosIntegração(notafiscalIntegracao);
 
                     var codEmp = Convert.ToInt64(notafiscalIntegracao.CODEMP);
                     Empresa empresa = empresas.FirstOrDefault(f => f.CodigoIntegracao == codEmp);
@@ -186,25 +186,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void ValidarNotaFiscalIntegracao(NotaFiscalIntegracao notafiscal)
-        {
-            ValidarCampo(notafiscal.NUNOTA, nameof(notafiscal.NUNOTA));
-            ValidarCampo(notafiscal.NUMNOTA, nameof(notafiscal.NUMNOTA));
-            ValidarCampo(notafiscal.CODEMP, nameof(notafiscal.CODEMP));
-            ValidarCampo(notafiscal.VLRNOTA, nameof(notafiscal.VLRNOTA));
-            ValidarCampo(notafiscal.CIF_FOB, nameof(notafiscal.CIF_FOB));
-            ValidarCampo(notafiscal.CODPARC, nameof(notafiscal.CODPARC));
-            ValidarCampo(notafiscal.CODPARCTRANSP, nameof(notafiscal.CODPARCTRANSP));
-            ValidarCampo(notafiscal.VLRFRETE, nameof(notafiscal.VLRFRETE));
-            ValidarCampo(notafiscal.QTDVOL, nameof(notafiscal.QTDVOL));
-            ValidarCampo(notafiscal.STATUSNOTA, nameof(notafiscal.STATUSNOTA));          
-            ValidarCampo(notafiscal.NUNOTA, nameof(notafiscal.NUNOTA));
-            ValidarCampo(notafiscal.CODVOL, nameof(notafiscal.CODVOL));
-            ValidarCampo(notafiscal.QTDNEG, nameof(notafiscal.QTDNEG));
-            ValidarCampo(notafiscal.VLRUNIT, nameof(notafiscal.VLRUNIT));
-            ValidarCampo(notafiscal.VLRTOT, nameof(notafiscal.VLRTOT));
-            ValidarCampo(notafiscal.CODPROD, nameof(notafiscal.CODPROD));
-        }
+        
     }
 }
 

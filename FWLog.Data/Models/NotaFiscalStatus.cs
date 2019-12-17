@@ -18,7 +18,10 @@ namespace FWLog.Data.Models
         Conferida = 3,
 
         [Display(Name = "Conferida com divergência")]
-        ConferidaDivergencia = 4
+        ConferidaDivergencia = 4,
+
+        [Display(Name = "Confirmada Sankhya")]
+        Confirmada = 5,
     }
 
     public class NotaFiscalStatus

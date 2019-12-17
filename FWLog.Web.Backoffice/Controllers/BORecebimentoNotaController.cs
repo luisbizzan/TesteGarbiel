@@ -721,7 +721,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         //public ActionResult ValidarReferenciaConferencia(string referencia)
         //{
-            
+
         //}
 
         [HttpPost]
@@ -773,7 +773,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode(),
                 Referencia = produto.CodigoBarras,
                 Multiplo = produto.MultiploVenda
-                
+
             };
 
             return PartialView("EntradaConferencia", model);
@@ -799,6 +799,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
             foreach (LoteDivergencia divergencia in loteDivergencias)
             {
+                NotaFiscalItem nfItem = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).FirstOrDefault();
+
                 var divergenciaItem = new RecebimentoTratarDivergenciaItemViewModel
                 {
                     IdLoteDivergencia = divergencia.IdLoteDivergencia,
@@ -806,7 +808,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     QuantidadeConferencia = divergencia.QuantidadeConferencia,
                     QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
-                    QuantidadeNotaFiscal = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).First().Quantidade,
+                    QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Quantidade,
                     QuantidadePedido = 0
                 };
 
