@@ -21,9 +21,7 @@
     });
 
     $("#imprimirDetalhesNotaEntradaConferencia").click(function () {
-        $("#modalImpressoras").load("BOPrinter/Selecionar/2", function () {
-            $("#idNotaFiscalImprimir").val(view_modal.idNotaFiscal);
-            $("#relatorioImprimir").val("Detalhes");
+        $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=laser&acao=entconf&id=" + view_modal.idNotaFiscal, function () {
             $("#btnFecharModal").click();
             $("#modalImpressoras").modal();
         });
