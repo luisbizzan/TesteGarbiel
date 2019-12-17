@@ -52,7 +52,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             };
 
-            model.Filter.IdStatus = StatusNotaRecebimento.AguardandoRecebimento.GetHashCode();
+            model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
             model.Filter.PrazoInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
             model.Filter.PrazoFinal = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
 
@@ -113,7 +113,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (model.CustomFilter.IdStatus.HasValue)
             {
-                query = query.Where(x => x.LoteStatus.IdLoteStatus == model.CustomFilter.IdStatus);
+                query = query.Where(x => (int)x.LoteStatus.IdLoteStatus == model.CustomFilter.IdStatus);
             }
 
             if (model.CustomFilter.DataInicial.HasValue)
@@ -156,7 +156,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         DateTime prazoEntrega = item.NotaFiscal.PrazoEntregaFornecedor;
 
                         //Se a data de recebimento for nula, captura a quantidade de dias entre o prazo de entrega e a data atual.
-                        if (item.LoteStatus.IdLoteStatus == StatusNotaRecebimento.AguardandoRecebimento.GetHashCode())
+                        if (item.LoteStatus.IdLoteStatus == LoteStatusEnum.AguardandoRecebimento)
                         {
                             if (DateTime.Now > prazoEntrega)
                             {
@@ -180,7 +180,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         Fornecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
                         QuantidadePeca = item.NotaFiscal.Quantidade == 0 ? (long?)null : item.NotaFiscal.Quantidade,
                         QuantidadeVolume = item.QuantidadeVolume == 0 ? (long?)null : item.QuantidadeVolume,
-                        RecebidoEm = item.LoteStatus.IdLoteStatus != StatusNotaRecebimento.AguardandoRecebimento.GetHashCode() ? item.DataRecebimento.ToString() : "-",
+                        RecebidoEm = item.LoteStatus.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento ? item.DataRecebimento.ToString() : "-",
                         Status = item.LoteStatus.Descricao,
                         IdNotaFiscal = item.NotaFiscal.IdNotaFiscal,
                         Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
@@ -579,8 +579,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
 
                     model.UsuarioConferencia = loteConferencia.UsuarioConferente.UserName;
-                    model.DataInicioConferencia = loteConferencia.DataHoraInicio.ToString("dd/MM/YYY HH:mm");
-                    model.DataFimConferencia = loteConferencia.DataHoraFim.ToString("dd/MM/YYY HH:mm");
+                    model.DataInicioConferencia = loteConferencia.DataHoraInicio.ToString("dd/MM/yyyy HH:mm");
+                    model.DataFimConferencia = loteConferencia.DataHoraFim.ToString("dd/MM/yyyy HH:mm");
                     model.TempoTotalConferencia = loteConferencia.Tempo.ToString("HH:mm");
                 }
                 else
@@ -612,8 +612,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
 
                     entradaConferenciaItem.UsuarioConferencia = loteConferencia.UsuarioConferente.UserName;
-                    entradaConferenciaItem.DataInicioConferencia = loteConferencia.DataHoraInicio.ToString("dd/MM/YYY HH:mm");
-                    entradaConferenciaItem.DataFimConferencia = loteConferencia.DataHoraFim.ToString("dd/MM/YYY HH:mm");
+                    entradaConferenciaItem.DataInicioConferencia = loteConferencia.DataHoraInicio.ToString("dd/MM/yyyy HH:mm");
+                    entradaConferenciaItem.DataFimConferencia = loteConferencia.DataHoraFim.ToString("dd/MM/yyyy HH:mm");
                     entradaConferenciaItem.TempoTotalConferencia = loteConferencia.Tempo.ToString("HH:mm");
                 }
                 else
@@ -655,7 +655,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             else
             {
-                if (lote.IdLoteStatus == (int)LoteStatusEnum.ConferidoDivergencia)
+                if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia)
                 {
                     return Json(new AjaxGenericResultModel
                     {
@@ -664,12 +664,10 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
                 else if (
-                    lote.IdLoteStatus == (int)LoteStatusEnum.Finalizado ||
-                    lote.IdLoteStatus == (int)LoteStatusEnum.FinalizadoDivergenciaInvertida ||
-                    lote.IdLoteStatus == (int)LoteStatusEnum.FinalizadoDivergenciaNegativa ||
-                    lote.IdLoteStatus == (int)LoteStatusEnum.FinalizadoDivergenciaPositiva ||
-                    lote.IdLoteStatus == (int)LoteStatusEnum.FinalizadoDivergenciaTodas
-
+                    lote.IdLoteStatus == LoteStatusEnum.Finalizado ||
+                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
+                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
+                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas
                     )
                 {
                     return Json(new AjaxGenericResultModel

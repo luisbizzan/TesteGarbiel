@@ -57,7 +57,7 @@ namespace FWLog.Services.Services
 
             if (request.IdStatus.HasValue)
             {
-                query = query.Where(x => x.LoteStatus.IdLoteStatus == request.IdStatus);
+                query = query.Where(x => (int)x.LoteStatus.IdLoteStatus == request.IdStatus);
             }
 
             if (request.DataInicial.HasValue)
@@ -96,7 +96,7 @@ namespace FWLog.Services.Services
                     {
                         DateTime prazoEntrega = item.NotaFiscal.PrazoEntregaFornecedor;
 
-                        if (item.LoteStatus.IdLoteStatus == StatusNotaRecebimento.AguardandoRecebimento.GetHashCode())
+                        if (item.LoteStatus.IdLoteStatus == LoteStatusEnum.AguardandoRecebimento)
                         {
                             if (DateTime.Now > prazoEntrega)
                             {
@@ -307,7 +307,7 @@ namespace FWLog.Services.Services
 
             if (IsNotaRecebida)
             {
-                if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia.GetHashCode())
+                if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia)
                 {
                     paragraph = document.Sections[0].AddParagraph();
                     paragraph.Format.SpaceAfter = 20;

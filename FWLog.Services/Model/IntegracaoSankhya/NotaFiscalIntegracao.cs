@@ -91,6 +91,13 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string VLRTOT { get; set; }
     }
 
+    [TabelaIntegracao(DisplayName = "TGFCAN")]
+    public class NotaFiscalCanceladaIntegracao
+    {
+        [TabelaIntegracao(DisplayName = "NUNOTA")]
+        public string NUNOTA { get; set; }
+    }
+
 }
 
 
