@@ -513,16 +513,23 @@ namespace FWLog.Web.Backoffice.Controllers
                 Lote lote = _uow.LoteRepository.ObterLoteNota(viewModel.IdNotaFiscal);
 
                 var etiquetaImprimir = new StringBuilder();
-                etiquetaImprimir.Append("^XA");
-                etiquetaImprimir.Append("^FO16,20^GB710,880^FS");
-                etiquetaImprimir.Append("^FO60,90^FB470,3,0,C,0^A0B,230,65^FD");
-                etiquetaImprimir.Append(string.Concat("FOR.", notaFiscal.Fornecedor.IdFornecedor));
-                etiquetaImprimir.Append(@"\&");
-                etiquetaImprimir.Append(string.Concat("NF.", notaFiscal.Numero));
-                etiquetaImprimir.Append(@"\&");
-                etiquetaImprimir.Append(string.Concat("VOL.", lote.QuantidadeVolume));
-                etiquetaImprimir.Append("^FS");
-                etiquetaImprimir.Append("^XZ");
+
+                for (int i = 1; i <= lote.QuantidadeVolume; i++)
+                {
+                    string barcode = string.Format("{0}-{1}-{2}", viewModel.IdNotaFiscal, lote.IdLote, i.ToString().PadLeft(3, '0'));
+
+                    etiquetaImprimir.Append("^XA");
+                    etiquetaImprimir.Append("^FWB");
+                    etiquetaImprimir.Append("^FO16,20^GB710,880^FS");
+                    etiquetaImprimir.Append("^BY3,8,120");
+                    etiquetaImprimir.Append(string.Concat("^FO280,90^BC^FD", barcode, "^FS"));
+                    etiquetaImprimir.Append("^FO50,90^FB470,3,0,C,0^A0,230,100^FD");
+                    etiquetaImprimir.Append(string.Concat("FOR.", notaFiscal.Fornecedor.IdFornecedor));
+                    etiquetaImprimir.Append(@"\&\&");
+                    etiquetaImprimir.Append(string.Concat("NF.", notaFiscal.Numero));
+                    etiquetaImprimir.Append("^FS");
+                    etiquetaImprimir.Append("^XZ");
+                }
 
                 byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaImprimir.ToString());
 
