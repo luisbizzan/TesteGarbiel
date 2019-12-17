@@ -865,7 +865,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             byte[] relatorio = _relatorioService.GerarRelatorioRastreioPeca(viewModel);
 
-            return File(relatorio, "application/pdf", "Relatório Rastreio de Peça.pdf");
+            return File(relatorio, "application/pdf", "Relatório Rastreio de Peças.pdf");
         }
     }
 }

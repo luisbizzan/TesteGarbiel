@@ -1,6 +1,10 @@
 ﻿(function () {
     dart.dataTables.loadFormFilterEvents();
 
+    $(document.body).on('click', "#pesquisar", function () {
+        $("#tabela").show();
+    });
+
     $("#downloadRelatorio").click(function () {
         $.ajax({
             url: `/${CONTROLLER_PATH}/DownloadRelatorioRastreioPeca`,
@@ -92,6 +96,7 @@
                 }
             }
         },
+        deferLoading: 0,
         initComplete: function (settings, json) {
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
         },
