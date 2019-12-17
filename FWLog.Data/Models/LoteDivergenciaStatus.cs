@@ -6,8 +6,8 @@ namespace FWLog.Data.Models
     public enum LoteDivergenciaStatusEnum
     {
         Desconhecido = 0,
-        Volume = 1,
-        Item = 2
+        AguardandoTratativa = 1,
+        DivergenciaTratada = 2
     }
 
     public class LoteDivergenciaStatus

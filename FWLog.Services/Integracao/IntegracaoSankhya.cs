@@ -79,9 +79,9 @@ namespace FWLog.Services.Integracao
 
         private string Login()
         {
-            var contentLogin = new StringContent(string.Format(xmlLogin, Usuario + 1, Senha), Encoding.UTF8, "text/xml");
+            var contentLogin = new StringContent(string.Format(xmlLogin, Usuario, Senha), Encoding.UTF8, "text/xml");
 
-            string uriLogin = string.Concat(BaseURL, "serviceName=MobileLoginSP.login");
+            string uriLogin = string.Concat(BaseURL, "mge/service.sbr?serviceName=MobileLoginSP.login");
 
             HttpResponseMessage login = HttpService.Instance.PostAsync(uriLogin, contentLogin).Result;
 
@@ -164,7 +164,7 @@ namespace FWLog.Services.Integracao
 
             contentString.Headers.Add("Cookie", string.Format("JSESSIONID={0}", Instance.GetToken()));
 
-            var uri = string.Format("{0}{1}/service.sbr?serviceName={1}", BaseURL, service, serviceName);
+            var uri = string.Format("{0}{1}/service.sbr?serviceName={2}", BaseURL, service, serviceName);
 
             HttpResponseMessage httpResponse = await HttpService.Instance.PostAsync(uri, contentString);
 
@@ -347,20 +347,20 @@ namespace FWLog.Services.Integracao
             return true;
         }
 
-        public async Task<bool> ConfirmarNotaFiscal(string condigoIntegracao)
+        public async Task<bool> ConfirmarNotaFiscal(long condigoIntegracao)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
                 return false;
             }
 
-            string confirmarNotaXML = SerializarXML(new ConfirmarNotaFiscalXML(condigoIntegracao));
+            string confirmarNotaXML = SerializarXML(new ConfirmarNotaFiscalXML(condigoIntegracao.ToString()));
 
             string rootXML = await Instance.ExecutarServicoSankhya(confirmarNotaXML, "CACSP.confirmarNota", "mgecom");
 
             IncluirNotaFiscalResposta resposta = DeserializarXML<IncluirNotaFiscalResposta>(rootXML);//TODO pegar retorno de exemplo
 
-            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria == null || resposta.CorpoResposta.ChavePrimaria.CodigoIntegracao == null)
+            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria?.CodigoIntegracao == null)
             {
                 var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
 
@@ -383,7 +383,7 @@ namespace FWLog.Services.Integracao
 
             IncluirNotaFiscalResposta resposta = DeserializarXML<IncluirNotaFiscalResposta>(rootXML);
 
-            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria == null || resposta.CorpoResposta.ChavePrimaria.CodigoIntegracao == null)
+            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria?.CodigoIntegracao == null)
             {
                 var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
 

@@ -192,28 +192,7 @@ namespace FWLog.Services.Services
 
             paragraph = row.Cells[3].AddParagraph();
             paragraph.AddFormattedText("Status: ", TextFormat.Bold);
-
-            switch (notaFiscal.IdNotaFiscalStatus)
-            {
-                case NotaFiscalStatusEnum.Recebida:
-                    paragraph.AddText("Recebido");
-                    break;
-                case NotaFiscalStatusEnum.Conferida:
-                    paragraph.AddText("Conferido");
-                    break;
-                case NotaFiscalStatusEnum.ConferidaDivergencia:
-                    paragraph.AddText("Divergência");
-                    break;
-                case NotaFiscalStatusEnum.AguardandoRecebimento:
-                    paragraph.AddText("Aguardando recebimento");
-                    break;
-                case NotaFiscalStatusEnum.ProcessandoIntegracao:
-                    paragraph.AddText("Processando Integração");
-                    break;
-                default:
-                    paragraph.AddText("Status Não Cadastrado");
-                    break;
-            }
+            paragraph.AddText(notaFiscal.IdNotaFiscalStatus.GetDisplayName());
 
             row = tabela.AddRow();
             row.Cells[0].MergeRight = 1;

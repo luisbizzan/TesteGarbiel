@@ -18,5 +18,14 @@ namespace FWLog.Data.Repository.GeneralCtx
                 .Include("LoteDivergenciaStatus")
                 .Where(w => w.IdNotaFiscal == idNotaFiscal).ToList();
         }
+
+        public void DeletePorId(long idLote)
+        {
+            var divergencias = Entities.LoteDivergencia.Where(w => w.IdLote == idLote).ToList();
+            if (divergencias != null)
+            {
+                Entities.LoteDivergencia.RemoveRange(divergencias);
+            }
+        }
     }
 }

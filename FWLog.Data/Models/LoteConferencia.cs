@@ -20,7 +20,7 @@ namespace FWLog.Data.Models
 
         public long IdProduto { get; set; }
 
-        public long Quantidade { get; set; }
+        public int Quantidade { get; set; }
 
         public DateTime DataHoraInicio { get; set; }
 
