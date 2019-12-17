@@ -240,7 +240,7 @@
     $("#dataTable").on('click', "[action='tratarDivergencias']", tratarDivergencias);
 })();
 
-function imprimir(acao) {
+function imprimir(acao, id) {
     switch (acao) {
         case 'notas':
             $.ajax({
@@ -266,13 +266,13 @@ function imprimir(acao) {
                 }
             });
             break;
-        case 'conferencia':
+        case 'entconf':
             $.ajax({
                 url: "/BORecebimentoNota/ImprimirDetalhesEntradaConferencia",
                 method: "POST",
                 data: {
                     IdImpressora: $("#IdImpressora").val(),
-                    IdNotaFiscal: $("#idNotaFiscalImprimir").val()
+                    IdNotaFiscal: id
                 },
                 success: function () {
                     $("#btnFechar").click();
@@ -280,7 +280,17 @@ function imprimir(acao) {
             });
             break;
         case 'etqrecebimento':
-
+            $.ajax({
+                url: "/BORecebimentoNota/ImprimirEtiquetaRecebimento",
+                method: "POST",
+                data: {
+                    IdImpressora: $("input[name='IdImpressora']:checked").val(),
+                    IdNotaFiscal: id
+                },
+                success: function () {
+                    $("#btnFechar").click();
+                }
+            });
             break;
     }
 }
@@ -392,7 +402,7 @@ function RegistrarNotaFiscal() {
             if (result.Success) {
                 PNotify.success({ text: result.Message });
                 $(".close").click();
-                $("#modalImpressoras").load("BOPrinter/Selecionar/Zebra", function () {
+                $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=zebra&acao=etqrecebimento&id=" + $("#IdNotaFiscal").val(), function () {
                     $("#modalImpressoras").modal();
                 });
                 $("#dataTable").DataTable().ajax.reload();

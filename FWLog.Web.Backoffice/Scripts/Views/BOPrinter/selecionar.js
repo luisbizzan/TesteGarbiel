@@ -1,6 +1,7 @@
 ﻿(function () {
     $("#btnImprimir").click(function () {
-        var acao = $("#acao");
-        imprimir(acao);
+        var acao = $("#Acao").val();
+        var id = $("#Id").val();
+        imprimir(acao, id);
     });
 })();

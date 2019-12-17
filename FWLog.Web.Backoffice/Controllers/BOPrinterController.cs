@@ -262,7 +262,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult Selecionar(string tipo, string acao)
+        public ActionResult Selecionar(string tipo, string acao, string id)
         {
             int idTipoImpressora = tipo.Equals("zebra", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
 
@@ -277,7 +277,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 listaImpressoras.Add(new BOPrinterSelecionarImpressoraViewModel
                 {
-                    Id = impressora.Id,
+                    IdImpressora = impressora.Id,
                     Nome = impressora.Name
                 });
             }
@@ -285,6 +285,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(new BOPrinterSelecionarViewModel
             {
                 Acao = acao,
+                Id = id,
                 Impressoras = listaImpressoras
             });
         }

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -492,6 +493,66 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.DenyGet);
             }
             catch (Exception)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult ImprimirEtiquetaRecebimento(BOImprimirEtiquetaRecebimentoViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(viewModel.IdNotaFiscal);
+                Lote lote = _uow.LoteRepository.ObterLoteNota(viewModel.IdNotaFiscal);
+
+                var etiquetaImprimir = new StringBuilder();
+                etiquetaImprimir.Append("^XA");
+                etiquetaImprimir.Append("^FO16,20^GB710,880^FS");
+                etiquetaImprimir.Append("^FO60,90^FB470,3,0,C,0^A0B,230,65^FD");
+                etiquetaImprimir.Append(string.Concat("FOR.", notaFiscal.Fornecedor.IdFornecedor));
+                etiquetaImprimir.Append(@"\&");
+                etiquetaImprimir.Append(string.Concat("NF.", notaFiscal.Numero));
+                etiquetaImprimir.Append(@"\&");
+                etiquetaImprimir.Append(string.Concat("VOL.", lote.QuantidadeVolume));
+                etiquetaImprimir.Append("^FS");
+                etiquetaImprimir.Append("^XZ");
+
+                byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaImprimir.ToString());
+
+                Printer impressora = _uow.BOPrinterRepository.GetById(viewModel.IdImpressora);
+                var ipPorta = impressora.IP.Split(':');
+
+                Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                {
+                    NoDelay = true
+                };
+
+                IPAddress ip = IPAddress.Parse(ipPorta[0]);
+                IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
+                clientSocket.Connect(ipep);
+
+                using (NetworkStream ns = new NetworkStream(clientSocket))
+                {
+                    ns.Write(etiqueta, 0, etiqueta.Length);
+                    ns.Close();
+                    clientSocket.Close();
+                }
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão realizada com sucesso."
+                }, JsonRequestBehavior.DenyGet);
+
+            }
+            catch
             {
                 return Json(new AjaxGenericResultModel
                 {

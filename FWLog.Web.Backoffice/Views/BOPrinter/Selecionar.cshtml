@@ -23,19 +23,19 @@
                             {
                                 <div class="col-sm-12 col-lg-12">
                                     <h2>A impressão será enviada para <b>@Model.Impressoras.First().Nome</b></h2>
-                                    @Html.Hidden("IdImpressora", Model.Impressoras.First().Id)
+                                    @Html.Hidden("IdImpressora", Model.Impressoras.First().IdImpressora)
                                 </div>
                             }
                             else
                             {
                                 foreach (var impressora in Model.Impressoras)
                                 {
-                                <div class="col-sm-12 col-lg-12">
-                                    <div class="form-group">
-                                        @Html.RadioButton("IdImpressora", impressora.Id, new { Id = "IdImpressora" + impressora.Id })
-                                        <label for="IdImpressora@(impressora.Id)">@impressora.Nome</label>
+                                    <div class="col-sm-12 col-lg-12">
+                                        <div class="form-group">
+                                            @Html.RadioButton("IdImpressora", impressora.IdImpressora, new { Id = "IdImpressora" + impressora.IdImpressora })
+                                            <label for="IdImpressora@(impressora.IdImpressora)">@impressora.Nome</label>
+                                        </div>
                                     </div>
-                                </div>
                                 }
                             }
                         }
@@ -45,6 +45,8 @@
                                 Nenhuma impressora configurada.
                             </div>
                         }
+                        @Html.Hidden("Acao", Model.Acao)
+                        @Html.Hidden("Id", Model.Id)
                     </div>
                     <div class="row navbar-right">
                         <div class="col-sm-12 col-lg-12">
