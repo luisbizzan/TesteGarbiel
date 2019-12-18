@@ -78,10 +78,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            var query = _uow.LoteRepository.Obter(IdEmpresa).AsQueryable();
+            var query = _uow.LoteRepository.Obter(IdEmpresa, NotaFiscalTipoEnum.Compra).AsQueryable();
 
             totalRecords = query.Count();
-
+            
             if (!string.IsNullOrEmpty(model.CustomFilter.ChaveAcesso))
             {
                 query = query.Where(x => !string.IsNullOrEmpty(x.NotaFiscal.ChaveAcesso) && x.NotaFiscal.ChaveAcesso.Contains(model.CustomFilter.ChaveAcesso));
@@ -616,23 +616,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 model.DataChegada = lote.DataRecebimento.ToString("dd/MM/yyyy");
                 model.UsuarioRecebimento = lote.UsuarioRecebimento.UserName;
                 model.Volumes = lote.QuantidadeVolume.ToString();
-
-                switch (notaFiscal.IdNotaFiscalStatus)
-                {
-                    case NotaFiscalStatusEnum.Recebida:
-                        model.StatusNotaFiscal = "Recebida";
-                        break;
-                    case NotaFiscalStatusEnum.Conferida:
-                        model.StatusNotaFiscal = "Conferida";
-                        break;
-                    case NotaFiscalStatusEnum.ConferidaDivergencia:
-                        model.StatusNotaFiscal = "Conferida com Divergência";
-                        break;
-                    default:
-                        model.StatusNotaFiscal = "Status não cadastrado";
-                        break;
-                }
-
+                model.StatusNotaFiscal = notaFiscal.NotaFiscalStatus.Descricao;
+               
                 if (lote.DataRecebimento > notaFiscal.PrazoEntregaFornecedor)
                 {
                     TimeSpan atraso = lote.DataRecebimento.Subtract(notaFiscal.PrazoEntregaFornecedor);

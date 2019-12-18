@@ -5,23 +5,14 @@ namespace FWLog.Data.Models
 {
     public enum NotaFiscalStatusEnum
     {
-        [Display(Name = "Processando Integração")]
         ProcessandoIntegracao = 0,
-
-        [Display(Name = "Aguardando recebimento")]
         AguardandoRecebimento = 1,
-
-        [Display(Name = "Recebida")]
         Recebida = 2,
-
-        [Display(Name = "Conferida com sucesso")]
         Conferida = 3,
-
-        [Display(Name = "Conferida com divergência")]
         ConferidaDivergencia = 4,
-
-        [Display(Name = "Confirmada Sankhya")]
         Confirmada = 5,
+        NotaDevolucaoCriada = 6,
+        NotaDevolucaoAutorizada = 7,
     }
 
     public class NotaFiscalStatus
