@@ -439,21 +439,21 @@ function conferirNota() {
     let $modal = $("#modalConferencia");
 
     $.ajax({
-        url: HOST_URL + "BORecebimentoNota/ValidarModalRegistroConferencia/" + id,
+        url: HOST_URL + CONTROLLER_PATH + "ValidarInicioConferencia/" + id,
         cache: false,
         method: "POST",
         success: function (result) {
-            if (!result.Success) {
-                $modal.load(HOST_URL + CONTROLLER_PATH + "ExibirModalRegistroConferencia/" + id, function () {
-                    $modal.on('shown.bs.modal', function () {
-                        $('#Referencia').focus();
-                    });
-
-                    $modal.modal('show');
+            if (result.Success) {
+                $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
+                    $modal.modal();
+                    $("#Referencia").focus();
                 });
             } else {
                 PNotify.info({ text: result.Message });
             }
+        },
+        error: function (request, status, error) {
+            PNotify.info({ text: request.responseText });
         }
     });
 }

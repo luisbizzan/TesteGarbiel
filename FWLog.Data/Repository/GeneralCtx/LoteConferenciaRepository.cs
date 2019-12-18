@@ -22,6 +22,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.LoteConferencia.Where(w => w.IdLote == idLote).FirstOrDefault();
         }
 
+        public List<LoteConferencia> ObterPorProduto(long idLote, long idProduto)
+        {
+            return Entities.LoteConferencia.Where(w => w.IdLote == idLote && w.IdProduto == idProduto).ToList();
+        }
+
         public IQueryable<RelatorioRastreioPecaListaLinhaTabela> RastreioPeca(IRelatorioRastreioPecaListaFiltro filter)
         {
             var query = (from lc in Entities.LoteConferencia
