@@ -72,6 +72,9 @@ namespace FWLog.Data.Models
        
         public decimal? PesoBruto { get; set; }
 
+        [Required]
+        public long CodigoIntegracaoVendedor { get; set; }
+
         [ForeignKey(nameof(IdFornecedor))]
         public virtual Fornecedor Fornecedor { get; set; }
 

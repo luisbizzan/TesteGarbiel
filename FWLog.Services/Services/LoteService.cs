@@ -60,32 +60,35 @@ namespace FWLog.Services.Services
             List<LoteConferencia> loteConferencia = _uow.LoteConferenciaRepository.Obter(lote.IdLote);
             List<LoteDivergencia> loteDivergencia = new List<LoteDivergencia>();
 
-            foreach (var nfItem in notafiscal.NotaFiscalItens)
+            var nfItensAgrupado = notafiscal.NotaFiscalItens.GroupBy(g => g.IdProduto).ToDictionary(g => g.Key, g => g.ToList());
+
+            foreach (var nfItem in nfItensAgrupado)
             {
                 LoteDivergencia divergencia = null;
 
-                var conferencia = loteConferencia.Where(x => x.IdProduto == nfItem.IdProduto).ToList();
+                var qtdOriginal = nfItem.Value.Sum(s => s.Quantidade);
+                var conferencia = loteConferencia.Where(x => x.IdProduto == nfItem.Key).ToList();
 
                 if (conferencia.NullOrEmpty())
                 {
                     divergencia = new LoteDivergencia();
-                    divergencia.QuantidadeConferenciaMenos = nfItem.Quantidade;
+                    divergencia.QuantidadeConferenciaMenos = qtdOriginal;
                     divergencia.QuantidadeConferencia = 0;
                     divergencia.QuantidadeConferenciaMais = 0;
                 }
                 else
                 {
-                    var qtdConferida = loteConferencia.Sum(s => s.Quantidade);
+                    var qtdConferida = conferencia.Sum(s => s.Quantidade);
 
-                    if (qtdConferida == nfItem.Quantidade)
+                    if (qtdConferida == qtdOriginal)
                     {
                         continue;
                     }
 
                     divergencia = new LoteDivergencia();
                     divergencia.QuantidadeConferencia = qtdConferida;
-                    divergencia.QuantidadeConferenciaMais = qtdConferida > nfItem.Quantidade ? qtdConferida - nfItem.Quantidade : 0;
-                    divergencia.QuantidadeConferenciaMenos = qtdConferida < nfItem.Quantidade ? nfItem.Quantidade - qtdConferida : 0;
+                    divergencia.QuantidadeConferenciaMais = qtdConferida > qtdOriginal ? qtdConferida - qtdOriginal : 0;
+                    divergencia.QuantidadeConferenciaMenos = qtdConferida < qtdOriginal ? qtdOriginal - qtdConferida : 0;
                 }
 
                 if (divergencia == null)
@@ -93,7 +96,7 @@ namespace FWLog.Services.Services
                     continue;
                 }
 
-                divergencia.IdProduto = nfItem.IdProduto;
+                divergencia.IdProduto = nfItem.Key;
                 divergencia.IdLote = lote.IdLote;
                 divergencia.IdNotaFiscal = lote.IdNotaFiscal;
                 divergencia.IdLoteDivergenciaStatus = LoteDivergenciaStatusEnum.AguardandoTratativa;
@@ -101,7 +104,7 @@ namespace FWLog.Services.Services
                 loteDivergencia.Add(divergencia);
             };
 
-            var conferenciaMais = loteConferencia.Where(s => !notafiscal.NotaFiscalItens.Any(w => w.IdProduto == s.IdProduto)).GroupBy(g => g.IdProduto).ToDictionary(g => g.Key, g => g.ToList());
+            var conferenciaMais = loteConferencia.Where(s => !nfItensAgrupado.Any(w => w.Key == s.IdProduto)).GroupBy(g => g.IdProduto).ToDictionary(g => g.Key, g => g.ToList());
 
             foreach (var item in conferenciaMais)
             {

@@ -104,6 +104,7 @@ namespace FWLog.Services.Services
                     notafiscal.DataEmissao = notafiscalIntegracao.DTNEG == null ? DateTime.Now : Convert.ToDateTime(notafiscalIntegracao.DTNEG);
                     notafiscal.IdEmpresa = empresa.IdEmpresa;
                     notafiscal.IdTransportadora = transportadora.IdTransportadora;
+                    notafiscal.CodigoIntegracaoVendedor = Convert.ToInt64(notafiscalIntegracao.CodigoIntegracaoVendedor);
 
                     FreteTipo freteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notafiscalIntegracao.CIF_FOB);
                     if (freteTipo != null)
