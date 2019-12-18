@@ -707,7 +707,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        public ActionResult ObterDadosReferenciaConferencia(string codigoBarrasReferencia, long idLote)
+        public ActionResult ObterDadosReferenciaConferencia(string codigoBarrasOuReferencia, long idLote)
         {
             //Valida se o código de barras ou referência é vazio ou nulo.
             if (String.IsNullOrEmpty(codigoBarrasOuReferencia))
@@ -899,7 +899,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 //Decidi não verificar o status do lote, sendo assim, sempre atualizado para Em Conferência.
                 //Validações anteriores garantem que o status não será atualizado se diferente de Recebido.
-                lote.IdLoteStatus = LoteStatusEnum.Conferencia.GetHashCode();
+                lote.IdLoteStatus = LoteStatusEnum.Conferencia;
                 _uow.LoteRepository.Update(lote);
 
                 LoteConferencia loteConferencia = new LoteConferencia()
