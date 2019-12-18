@@ -130,8 +130,8 @@ namespace FWLog.Services.Services
                 loteStatus = LoteStatusEnum.Finalizado;
                 notaStatus = NotaFiscalStatusEnum.Confirmada;
 
-                await ConfirmarNotaFiscalIntegracao(notafiscal, lote);
                 await AtualizarNotaFiscalIntegracao(notafiscal, loteStatus);
+                await ConfirmarNotaFiscalIntegracao(notafiscal, lote);
             }
             else
             {
@@ -220,6 +220,12 @@ namespace FWLog.Services.Services
                 else
                 {
                     notafiscalDevolucao = _uow.NotaFiscalRepository.ObterPorCodigoIntegracao(notafiscal.CodigoIntegracaoNFDevolucao.Value);
+
+                }
+
+                if (notafiscalDevolucao == null)
+                {
+                    throw new Exception();//verificar
                 }
 
                 if (notafiscalDevolucao.IdNotaFiscalStatus == NotaFiscalStatusEnum.NotaDevolucaoCriada)
