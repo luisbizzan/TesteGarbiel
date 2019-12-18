@@ -764,15 +764,19 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult TratarDivergencia(long id)
         {
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+            Lote lote = _uow.LoteRepository.ObterLoteNota(id);
+            List<LoteConferencia> loteConferencia = _uow.LoteConferenciaRepository.Obter(lote.IdLote);
+
+            PerfilUsuario perfilUsuario = _uow.PerfilUsuarioRepository.GetByUserId(loteConferencia.First().IdUsuarioConferente);
 
             var divergenciaViewModel = new RecebimentoTratarDivergenciaViewModel
             {
-                ConferidoPor = "Usuário conferência",
+                ConferidoPor = perfilUsuario.Nome,
                 InicioConferencia = DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
                 FimConferencia = DateTime.Now.ToString("dd/MM/yyyy  hh:mm:ss"),
                 NotaFiscal = notaFiscal.Numero.ToString(),
                 IdNotaFiscal = notaFiscal.IdNotaFiscal,
-                StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao,
+                StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao
             };
 
             List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(id);
@@ -789,13 +793,38 @@ namespace FWLog.Web.Backoffice.Controllers
                     QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
                     QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Quantidade,
-                    QuantidadePedido = 0
+                    QuantidadeDevolucao = divergencia.QuantidadeConferenciaMais ?? 0
                 };
 
                 divergenciaViewModel.Divergencias.Add(divergenciaItem);
             }
 
             return View(divergenciaViewModel);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
+        public JsonResult TratarDivergencia(RecebimentoTratarDivergenciaViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Tratamento de divergências finalizado."
+                }, JsonRequestBehavior.DenyGet);
+
+            }
+            catch
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro. Tente novamente."
+                }, JsonRequestBehavior.DenyGet);
+            }
         }
 
         [HttpGet]

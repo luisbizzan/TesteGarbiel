@@ -11,7 +11,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public List<LoteDivergencia> RetornarPorNotaFiscal(long idNotaFiscal)
         {
-            return Entities.LoteDivergencia.AsNoTracking()
+            return Entities.LoteDivergencia
                 .Include("Lote")
                 .Include("NotaFiscal")
                 .Include("Produto")
