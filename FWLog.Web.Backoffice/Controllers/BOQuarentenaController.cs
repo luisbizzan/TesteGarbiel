@@ -18,11 +18,13 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly UnitOfWork _uow;
         private readonly BOLogSystemService _boLogSystemService;
+        private readonly QuarentenaService _quarentenaService;
 
-        public BOQuarentenaController(UnitOfWork uow, BOLogSystemService boLogSystemService)
+        public BOQuarentenaController(UnitOfWork uow, BOLogSystemService boLogSystemService, QuarentenaService quarentenaService)
         {
             _uow = uow;
             _boLogSystemService = boLogSystemService;
+            _quarentenaService = quarentenaService;
         }
 
         private SelectList Status
@@ -63,6 +65,12 @@ namespace FWLog.Web.Backoffice.Controllers
                     }), "Value", "Text")
                 }
             };
+
+
+
+            //byte[] relatorio = _quarentenaService.TermoResponsabilidade();
+
+            //return File(relatorio, "application/pdf", "TermoResponsabilidade.pdf");
 
             return View(model);
         }
