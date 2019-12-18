@@ -5,6 +5,7 @@ using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
@@ -26,14 +27,21 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly RelatorioService _relatorioService;
         private readonly LoteService _loteService;
         private readonly ApplicationLogService _applicationLogService;
+        private readonly EtiquetaService _etiquetaService;
         private readonly UnitOfWork _uow;
 
-        public BORecebimentoNotaController(UnitOfWork uow, RelatorioService relatorioService, LoteService loteService, ApplicationLogService applicationLogService)
+        public BORecebimentoNotaController(
+            UnitOfWork uow,
+            RelatorioService relatorioService,
+            LoteService loteService,
+            ApplicationLogService applicationLogService,
+            EtiquetaService etiquetaService)
         {
             _loteService = loteService;
             _relatorioService = relatorioService;
             _applicationLogService = applicationLogService;
             _uow = uow;
+            _etiquetaService = etiquetaService;
         }
 
         [HttpGet]
@@ -280,31 +288,14 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ValidateModel(viewModel);
 
-                var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
+                var relatorioRequest = new ImprimirDetalhesNotaEntradaConferenciaRequest
                 {
                     IdEmpresa = IdEmpresa,
                     NomeUsuario = User.Identity.Name,
                     IdNotaFiscal = viewModel.IdNotaFiscal
                 };
 
-                byte[] relatorio = _relatorioService.GerarDetalhesNotaEntradaConferencia(relatorioRequest);
-
-                Printer impressora = _uow.BOPrinterRepository.GetById(viewModel.IdImpressora);
-                var ipPorta = impressora.IP.Split(':');
-
-                Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-                {
-                    NoDelay = true
-                };
-
-                IPAddress ip = IPAddress.Parse(ipPorta[0]);
-                IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
-                clientSocket.Connect(ipep);
-
-                NetworkStream ns = new NetworkStream(clientSocket);
-                ns.Write(relatorio, 0, relatorio.Length);
-                ns.Close();
-                clientSocket.Close();
+               _relatorioService.ImprimirDetalhesNotaEntradaConferencia(relatorioRequest);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -451,40 +442,8 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ValidateModel(viewModel);
 
-                var relatorioRequest = new RelatorioRecebimentoNotasRequest
-                {
-                    Lote = viewModel.Lote,
-                    Nota = viewModel.Nota,
-                    ChaveAcesso = viewModel.ChaveAcesso,
-                    IdStatus = viewModel.IdStatus,
-                    DataInicial = viewModel.DataInicial,
-                    DataFinal = viewModel.DataFinal,
-                    PrazoInicial = viewModel.PrazoInicial,
-                    PrazoFinal = viewModel.PrazoFinal,
-                    IdFornecedor = viewModel.IdFornecedor,
-                    Atraso = viewModel.Atraso,
-                    QuantidadePeca = viewModel.QuantidadePeca,
-                    QuantidadeVolume = viewModel.Volume
-                };
-
-                byte[] relatorio = _relatorioService.GerarRelatorioRecebimentoNotas(relatorioRequest);
-
-                Printer impressora = _uow.BOPrinterRepository.GetById(viewModel.IdImpressora);
-                var ipPorta = impressora.IP.Split(':');
-
-                Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-                {
-                    NoDelay = true
-                };
-
-                IPAddress ip = IPAddress.Parse(ipPorta[0]);
-                IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
-                clientSocket.Connect(ipep);
-
-                NetworkStream ns = new NetworkStream(clientSocket);
-                ns.Write(relatorio, 0, relatorio.Length);
-                ns.Close();
-                clientSocket.Close();
+                var request = Mapper.Map<ImprimirRelatorioRecebimentoNotasRequest>(viewModel);
+                _relatorioService.ImprimirRelatorioRecebimentoNotas(request);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -509,48 +468,8 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ValidateModel(viewModel);
 
-                NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(viewModel.IdNotaFiscal);
-                Lote lote = _uow.LoteRepository.ObterLoteNota(viewModel.IdNotaFiscal);
-
-                var etiquetaImprimir = new StringBuilder();
-
-                for (int i = 1; i <= lote.QuantidadeVolume; i++)
-                {
-                    string barcode = string.Format("{0}-{1}-{2}", viewModel.IdNotaFiscal, lote.IdLote, i.ToString().PadLeft(3, '0'));
-
-                    etiquetaImprimir.Append("^XA");
-                    etiquetaImprimir.Append("^FWB");
-                    etiquetaImprimir.Append("^FO16,20^GB710,880^FS");
-                    etiquetaImprimir.Append("^BY3,8,120");
-                    etiquetaImprimir.Append(string.Concat("^FO280,90^BC^FD", barcode, "^FS"));
-                    etiquetaImprimir.Append("^FO50,90^FB470,3,0,C,0^A0,230,100^FD");
-                    etiquetaImprimir.Append(string.Concat("FOR.", notaFiscal.Fornecedor.IdFornecedor));
-                    etiquetaImprimir.Append(@"\&\&");
-                    etiquetaImprimir.Append(string.Concat("NF.", notaFiscal.Numero));
-                    etiquetaImprimir.Append("^FS");
-                    etiquetaImprimir.Append("^XZ");
-                }
-
-                byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaImprimir.ToString());
-
-                Printer impressora = _uow.BOPrinterRepository.GetById(viewModel.IdImpressora);
-                var ipPorta = impressora.IP.Split(':');
-
-                Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-                {
-                    NoDelay = true
-                };
-
-                IPAddress ip = IPAddress.Parse(ipPorta[0]);
-                IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
-                clientSocket.Connect(ipep);
-
-                using (NetworkStream ns = new NetworkStream(clientSocket))
-                {
-                    ns.Write(etiqueta, 0, etiqueta.Length);
-                    ns.Close();
-                    clientSocket.Close();
-                }
+                var request = Mapper.Map<ImprimirEtiquetaVolumeRecebimento>(viewModel);
+                _etiquetaService.ImprimirEtiquetaVolumeRecebimento(request);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -753,7 +672,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-
         public ActionResult ExibirModalRegistroConferencia(long id)
         {
             var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
@@ -785,11 +703,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return PartialView("EntradaConferencia", model);
         }
-
-        //public ActionResult ValidarReferenciaConferencia(string referencia)
-        //{
-
-        //}
 
         [HttpPost]
         public ActionResult CarregarDadosReferenciaConferencia(string codigoBarrasReferencia, long idLote)
