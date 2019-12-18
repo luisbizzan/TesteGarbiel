@@ -6,89 +6,91 @@
 }
 
 <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">
-                <span aria-hidden="true">×</span>
-            </button>
-            <h4 class="modal-title" id="myModalLabel">Divergências</h4>
-        </div>
-        <div class="modal-body">
-            <div class="x_panel">
-                <div class="x_content">
-                    <div class="row">
-                        <div class="col-sm-12 col-lg-4">
-                            @Html.LabelFor(m => m.NotaFiscal): @Html.DisplayTextFor(m => m.NotaFiscal)
+    <form name="divergencias" id="divergencias">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Divergências</h4>
+            </div>
+            <div class="modal-body">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.NotaFiscal): @Html.DisplayTextFor(m => m.NotaFiscal)
+                                @Html.HiddenFor(m => m.IdNotaFiscal)
+                            </div>
+                            <div class="col-sm-12 col-lg-6">
+                                @Html.LabelFor(m => m.StatusNotasFiscal): @Html.DisplayTextFor(m => m.StatusNotasFiscal)
+                            </div>
                         </div>
-                        <div class="col-sm-12 col-lg-6">
-                            @Html.LabelFor(m => m.StatusNotasFiscal): @Html.DisplayTextFor(m => m.StatusNotasFiscal)
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.ConferidoPor): @Html.DisplayTextFor(m => m.ConferidoPor)
+                            </div>
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.InicioConferencia): @Html.DisplayTextFor(m => m.InicioConferencia)
+                            </div>
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.FimConferencia): @Html.DisplayTextFor(m => m.FimConferencia)
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12 col-lg-4">
-                            @Html.LabelFor(m => m.ConferidoPor): @Html.DisplayTextFor(m => m.ConferidoPor)
-                        </div>
-                        <div class="col-sm-12 col-lg-4">
-                            @Html.LabelFor(m => m.InicioConferencia): @Html.DisplayTextFor(m => m.InicioConferencia)
-                        </div>
-                        <div class="col-sm-12 col-lg-4">
-                            @Html.LabelFor(m => m.FimConferencia): @Html.DisplayTextFor(m => m.FimConferencia)
-                        </div>
-                    </div>
-                    <div class="row" style="margin-top: 25px; overflow-y: auto; height: 300px">
-                        <div class="col-sm-12 col-lg-12">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Referência</th>
-                                        <th>Pedido</th>
-                                        <th>Nota</th>
-                                        <th>Conferência</th>
-                                        <th>A+</th>
-                                        <th>Devolução</th>
-                                        <th>A-</th>
-                                        <th>Qtd. A+</th>
-                                        <th>Qtd. A-</th>
-                                        <th>Qtd. Invertida</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (Model.Divergencias.Count > 0)
-                                    {
-                                        foreach (FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.RecebimentoTratarDivergenciaItemViewModel item in Model.Divergencias)
-                                        {
-                                    <tr>
-                                        <td>@item.Referencia</td>
-                                        <td>@item.QuantidadePedido</td>
-                                        <td>@item.QuantidadeNotaFiscal</td>
-                                        <td>@item.QuantidadeConferencia</td>
-                                        <td>@item.QuantidadeMais</td>
-                                        <td>@item.QuantidadeDevolucao</td>
-                                        <td>@item.QuantidadeMenos</td>
-                                        <td>@Html.TextBox("QuantidadeMaisTratado", item.QuantidadeMaisTratado, new { @class = "form-control" })</td>
-                                        <td>@Html.TextBox("QuantidadeMenosTratado", item.QuantidadeMenosTratado, new { @class = "form-control" })</td>
-                                        <td>@Html.TextBox("QuantidadeDivergenteTratado", item.QuantidadeDivergenteTratado, new { @class = "form-control" })</td>
-                                    </tr>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <tr class="even">
-                                            <td colspan="10">Nenhuma divergencia encontrada na conferência da nota fiscal</td>
+                        <div class="row" style="margin-top: 25px;">
+                            <div class="col-sm-12 col-lg-12">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Referência</th>
+                                            <th>Nota</th>
+                                            <th>Conferência</th>
+                                            <th>A+</th>
+                                            <th>Devolução</th>
+                                            <th>A-</th>
+                                            <th>Qtd. A+</th>
+                                            <th>Qtd. A-</th>
                                         </tr>
-                                    }
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody style="overflow-y: auto;">
+                                        @if (Model.Divergencias.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.Divergencias.Count(); i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @Model.Divergencias[i].Referencia
+                                                        @Html.Hidden(string.Format("Divergencias[{0}].IdLoteDivergencia", i), Model.Divergencias[i].IdLoteDivergencia);
+                                                    </td>
+                                                    <td>@Model.Divergencias[i].QuantidadeNotaFiscal</td>
+                                                    <td>@Model.Divergencias[i].QuantidadeConferencia</td>
+                                                    <td>@Model.Divergencias[i].QuantidadeMais</td>
+                                                    <td>@Model.Divergencias[i].QuantidadeDevolucao</td>
+                                                    <td>@Model.Divergencias[i].QuantidadeMenos</td>
+                                                    <td>@Html.TextBox(string.Format("Divergencias[{0}].QuantidadeMaisTratado", i), Model.Divergencias[i].QuantidadeMaisTratado, new { @class = "form-control" })</td>
+                                                    <td>@Html.TextBox(string.Format("Divergencias[{0}].QuantidadeMenosTratado", i), Model.Divergencias[i].QuantidadeMenosTratado, new { @class = "form-control" })</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr class="even">
+                                                <td colspan="8">Nenhuma divergencia encontrada na conferência da nota fiscal</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row navbar-right">
-                        <div class="col-sm-12 col-lg-12">
-                            <span class="text-danger validacaoConfirmar"></span>
-                            <button type="button" id="tratarDivergenciasRecebimento" class="btn btn-primary"><i class="fa fa-fw fa-floppy-o"></i>Finalizar</button>
+                        <div class="row navbar-right">
+                            <div class="col-sm-12 col-lg-12">
+                                <span class="text-danger validacaoConfirmar"></span>
+                                <button type="button" id="tratarDivergenciasRecebimento" class="btn btn-primary"><i class="fa fa-fw fa-floppy-o"></i>Finalizar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
