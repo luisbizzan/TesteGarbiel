@@ -16,9 +16,9 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.Produto.FirstOrDefault(f => f.CodigoIntegracao == codigoIntegracao);
         }
 
-        public Produto ConsultarPorCodigoBarras(string codigoBarras)
+        public Produto ConsultarPorCodigoBarrasOuReferencia(string codigoBarrasOuReferencia)
         {
-            return Entities.Produto.FirstOrDefault(f => f.CodigoBarras == codigoBarras);
+            return Entities.Produto.FirstOrDefault(f => f.CodigoBarras == codigoBarrasOuReferencia || f.Referencia == codigoBarrasOuReferencia);
         }
 
         public IQueryable<Produto> Todos()

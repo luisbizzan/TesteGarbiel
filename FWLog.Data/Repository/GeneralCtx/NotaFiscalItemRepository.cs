@@ -21,5 +21,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.NotaFiscalItem.Include("Produto").Where(w => w.IdNotaFiscal == idNotaFiscal).ToList();
         }
+
+        public List<NotaFiscalItem> ObterPorItem(long idNotaFiscal, long idProduto)
+        {
+            return Entities.NotaFiscalItem.Where(w => w.IdNotaFiscal == idNotaFiscal && w.IdProduto == idProduto).ToList();
+        }
     }
 }
