@@ -5,6 +5,7 @@ using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
@@ -27,14 +28,21 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly RelatorioService _relatorioService;
         private readonly LoteService _loteService;
         private readonly ApplicationLogService _applicationLogService;
+        private readonly EtiquetaService _etiquetaService;
         private readonly UnitOfWork _uow;
 
-        public BORecebimentoNotaController(UnitOfWork uow, RelatorioService relatorioService, LoteService loteService, ApplicationLogService applicationLogService)
+        public BORecebimentoNotaController(
+            UnitOfWork uow,
+            RelatorioService relatorioService,
+            LoteService loteService,
+            ApplicationLogService applicationLogService,
+            EtiquetaService etiquetaService)
         {
             _loteService = loteService;
             _relatorioService = relatorioService;
             _applicationLogService = applicationLogService;
             _uow = uow;
+            _etiquetaService = etiquetaService;
         }
 
         [HttpGet]
@@ -54,7 +62,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             };
 
-            model.Filter.IdStatus = StatusNotaRecebimento.AguardandoRecebimento.GetHashCode();
+            model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
             model.Filter.PrazoInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
             model.Filter.PrazoFinal = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
 
@@ -115,7 +123,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (model.CustomFilter.IdStatus.HasValue)
             {
-                query = query.Where(x => x.LoteStatus.IdLoteStatus == model.CustomFilter.IdStatus);
+                query = query.Where(x => (int)x.LoteStatus.IdLoteStatus == model.CustomFilter.IdStatus);
             }
 
             if (model.CustomFilter.DataInicial.HasValue)
@@ -158,7 +166,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         DateTime prazoEntrega = item.NotaFiscal.PrazoEntregaFornecedor;
 
                         //Se a data de recebimento for nula, captura a quantidade de dias entre o prazo de entrega e a data atual.
-                        if (item.LoteStatus.IdLoteStatus == StatusNotaRecebimento.AguardandoRecebimento.GetHashCode())
+                        if (item.LoteStatus.IdLoteStatus == LoteStatusEnum.AguardandoRecebimento)
                         {
                             if (DateTime.Now > prazoEntrega)
                             {
@@ -182,7 +190,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         Fornecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
                         QuantidadePeca = item.NotaFiscal.Quantidade == 0 ? (long?)null : item.NotaFiscal.Quantidade,
                         QuantidadeVolume = item.QuantidadeVolume == 0 ? (long?)null : item.QuantidadeVolume,
-                        RecebidoEm = item.LoteStatus.IdLoteStatus != StatusNotaRecebimento.AguardandoRecebimento.GetHashCode() ? item.DataRecebimento.ToString() : "-",
+                        RecebidoEm = item.LoteStatus.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento ? item.DataRecebimento.ToString() : "-",
                         Status = item.LoteStatus.Descricao,
                         IdNotaFiscal = item.NotaFiscal.IdNotaFiscal,
                         Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
@@ -267,31 +275,14 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ValidateModel(viewModel);
 
-                var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
+                var relatorioRequest = new ImprimirDetalhesNotaEntradaConferenciaRequest
                 {
                     IdEmpresa = IdEmpresa,
                     NomeUsuario = User.Identity.Name,
                     IdNotaFiscal = viewModel.IdNotaFiscal
                 };
 
-                byte[] relatorio = _relatorioService.GerarDetalhesNotaEntradaConferencia(relatorioRequest);
-
-                Printer impressora = _uow.BOPrinterRepository.GetById(viewModel.IdImpressora);
-                var ipPorta = impressora.IP.Split(':');
-
-                Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-                {
-                    NoDelay = true
-                };
-
-                IPAddress ip = IPAddress.Parse(ipPorta[0]);
-                IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
-                clientSocket.Connect(ipep);
-
-                NetworkStream ns = new NetworkStream(clientSocket);
-                ns.Write(relatorio, 0, relatorio.Length);
-                ns.Close();
-                clientSocket.Close();
+               _relatorioService.ImprimirDetalhesNotaEntradaConferencia(relatorioRequest);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -438,40 +429,8 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ValidateModel(viewModel);
 
-                var relatorioRequest = new RelatorioRecebimentoNotasRequest
-                {
-                    Lote = viewModel.Lote,
-                    Nota = viewModel.Nota,
-                    ChaveAcesso = viewModel.ChaveAcesso,
-                    IdStatus = viewModel.IdStatus,
-                    DataInicial = viewModel.DataInicial,
-                    DataFinal = viewModel.DataFinal,
-                    PrazoInicial = viewModel.PrazoInicial,
-                    PrazoFinal = viewModel.PrazoFinal,
-                    IdFornecedor = viewModel.IdFornecedor,
-                    Atraso = viewModel.Atraso,
-                    QuantidadePeca = viewModel.QuantidadePeca,
-                    QuantidadeVolume = viewModel.Volume
-                };
-
-                byte[] relatorio = _relatorioService.GerarRelatorioRecebimentoNotas(relatorioRequest);
-
-                Printer impressora = _uow.BOPrinterRepository.GetById(viewModel.IdImpressora);
-                var ipPorta = impressora.IP.Split(':');
-
-                Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-                {
-                    NoDelay = true
-                };
-
-                IPAddress ip = IPAddress.Parse(ipPorta[0]);
-                IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
-                clientSocket.Connect(ipep);
-
-                NetworkStream ns = new NetworkStream(clientSocket);
-                ns.Write(relatorio, 0, relatorio.Length);
-                ns.Close();
-                clientSocket.Close();
+                var request = Mapper.Map<ImprimirRelatorioRecebimentoNotasRequest>(viewModel);
+                _relatorioService.ImprimirRelatorioRecebimentoNotas(request);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -496,41 +455,8 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ValidateModel(viewModel);
 
-                NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(viewModel.IdNotaFiscal);
-                Lote lote = _uow.LoteRepository.ObterLoteNota(viewModel.IdNotaFiscal);
-
-                var etiquetaImprimir = new StringBuilder();
-                etiquetaImprimir.Append("^XA");
-                etiquetaImprimir.Append("^FO16,20^GB710,880^FS");
-                etiquetaImprimir.Append("^FO60,90^FB470,3,0,C,0^A0B,230,65^FD");
-                etiquetaImprimir.Append(string.Concat("FOR.", notaFiscal.Fornecedor.IdFornecedor));
-                etiquetaImprimir.Append(@"\&");
-                etiquetaImprimir.Append(string.Concat("NF.", notaFiscal.Numero));
-                etiquetaImprimir.Append(@"\&");
-                etiquetaImprimir.Append(string.Concat("VOL.", lote.QuantidadeVolume));
-                etiquetaImprimir.Append("^FS");
-                etiquetaImprimir.Append("^XZ");
-
-                byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaImprimir.ToString());
-
-                Printer impressora = _uow.BOPrinterRepository.GetById(viewModel.IdImpressora);
-                var ipPorta = impressora.IP.Split(':');
-
-                Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-                {
-                    NoDelay = true
-                };
-
-                IPAddress ip = IPAddress.Parse(ipPorta[0]);
-                IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
-                clientSocket.Connect(ipep);
-
-                using (NetworkStream ns = new NetworkStream(clientSocket))
-                {
-                    ns.Write(etiqueta, 0, etiqueta.Length);
-                    ns.Close();
-                    clientSocket.Close();
-                }
+                var request = Mapper.Map<ImprimirEtiquetaVolumeRecebimento>(viewModel);
+                _etiquetaService.ImprimirEtiquetaVolumeRecebimento(request);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -628,8 +554,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
 
                     model.UsuarioConferencia = loteConferencia.UsuarioConferente.UserName;
-                    model.DataInicioConferencia = loteConferencia.DataHoraInicio.ToString("dd/MM/YYY HH:mm");
-                    model.DataFimConferencia = loteConferencia.DataHoraFim.ToString("dd/MM/YYY HH:mm");
+                    model.DataInicioConferencia = loteConferencia.DataHoraInicio.ToString("dd/MM/yyyy HH:mm");
+                    model.DataFimConferencia = loteConferencia.DataHoraFim.ToString("dd/MM/yyyy HH:mm");
                     model.TempoTotalConferencia = loteConferencia.Tempo.ToString("HH:mm");
                 }
                 else
@@ -661,8 +587,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
 
                     entradaConferenciaItem.UsuarioConferencia = loteConferencia.UsuarioConferente.UserName;
-                    entradaConferenciaItem.DataInicioConferencia = loteConferencia.DataHoraInicio.ToString("dd/MM/YYY HH:mm");
-                    entradaConferenciaItem.DataFimConferencia = loteConferencia.DataHoraFim.ToString("dd/MM/YYY HH:mm");
+                    entradaConferenciaItem.DataInicioConferencia = loteConferencia.DataHoraInicio.ToString("dd/MM/yyyy HH:mm");
+                    entradaConferenciaItem.DataFimConferencia = loteConferencia.DataHoraFim.ToString("dd/MM/yyyy HH:mm");
                     entradaConferenciaItem.TempoTotalConferencia = loteConferencia.Tempo.ToString("HH:mm");
                 }
                 else
@@ -706,7 +632,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             else
             {
-                if (lote.IdLoteStatus == (int)LoteStatusEnum.ConferidoDivergencia)
+                if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia)
                 {
                     return Json(new AjaxGenericResultModel
                     {
@@ -715,12 +641,10 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
                 else if (
-                    lote.IdLoteStatus == (int)LoteStatusEnum.Finalizado ||
-                    lote.IdLoteStatus == (int)LoteStatusEnum.FinalizadoDivergenciaInvertida ||
-                    lote.IdLoteStatus == (int)LoteStatusEnum.FinalizadoDivergenciaNegativa ||
-                    lote.IdLoteStatus == (int)LoteStatusEnum.FinalizadoDivergenciaPositiva ||
-                    lote.IdLoteStatus == (int)LoteStatusEnum.FinalizadoDivergenciaTodas
-
+                    lote.IdLoteStatus == LoteStatusEnum.Finalizado ||
+                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
+                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
+                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas
                     )
                 {
                     return Json(new AjaxGenericResultModel
@@ -736,6 +660,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
         }
+
 
         [HttpGet]
         public ActionResult EntradaConferencia(long id)
@@ -781,7 +706,8 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(model);
         }
 
-        public JsonResult ObterDadosReferenciaConferencia(string codigoBarrasOuReferencia, long idLote)
+        [HttpPost]
+        public ActionResult ObterDadosReferenciaConferencia(string codigoBarrasReferencia, long idLote)
         {
             //Valida se o código de barras ou referência é vazio ou nulo.
             if (String.IsNullOrEmpty(codigoBarrasOuReferencia))

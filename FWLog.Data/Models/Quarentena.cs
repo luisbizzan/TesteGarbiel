@@ -17,7 +17,7 @@ namespace FWLog.Data.Models
 
         public string Observacao { get; set; }
 
-        public long IdQuarentenaStatus { get; set; }
+        public QuarentenaStatusEnum IdQuarentenaStatus { get; set; }
 
         [ForeignKey(nameof(IdLote))]
         public virtual Lote Lote { get; set; }

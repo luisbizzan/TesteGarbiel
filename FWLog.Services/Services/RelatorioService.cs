@@ -15,10 +15,38 @@ namespace FWLog.Services.Services
     public class RelatorioService
     {
         private readonly UnitOfWork _unitiOfWork;
+        private readonly ImpressoraService _impressoraService;
 
-        public RelatorioService(UnitOfWork unitiOfWork)
+        public RelatorioService(
+            UnitOfWork unitiOfWork,
+            ImpressoraService impressoraService
+            )
         {
             _unitiOfWork = unitiOfWork;
+            _impressoraService = impressoraService;
+        }
+
+        public void ImprimirRelatorioRecebimentoNotas(ImprimirRelatorioRecebimentoNotasRequest request)
+        {
+            var relatorioRequest = new RelatorioRecebimentoNotasRequest
+            {
+                Lote = request.Lote,
+                Nota = request.Nota,
+                ChaveAcesso = request.ChaveAcesso,
+                IdStatus = request.IdStatus,
+                DataInicial = request.DataInicial,
+                DataFinal = request.DataFinal,
+                PrazoInicial = request.PrazoInicial,
+                PrazoFinal = request.PrazoFinal,
+                IdFornecedor = request.IdFornecedor,
+                Atraso = request.Atraso,
+                QuantidadePeca = request.QuantidadePeca,
+                Volume = request.Volume
+            };
+
+            byte[] relatorio = GerarRelatorioRecebimentoNotas(relatorioRequest);
+
+            _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
 
         public byte[] GerarRelatorioRecebimentoNotas(RelatorioRecebimentoNotasRequest request)
@@ -50,14 +78,14 @@ namespace FWLog.Services.Services
                 query = query.Where(x => x.NotaFiscal.Quantidade == request.QuantidadePeca);
             }
 
-            if (request.QuantidadeVolume.HasValue)
+            if (request.Volume.HasValue)
             {
-                query = query.Where(x => x.QuantidadeVolume == request.QuantidadeVolume);
+                query = query.Where(x => x.QuantidadeVolume == request.Volume);
             }
 
             if (request.IdStatus.HasValue)
             {
-                query = query.Where(x => x.LoteStatus.IdLoteStatus == request.IdStatus);
+                query = query.Where(x => (int)x.LoteStatus.IdLoteStatus == request.IdStatus);
             }
 
             if (request.DataInicial.HasValue)
@@ -96,7 +124,7 @@ namespace FWLog.Services.Services
                     {
                         DateTime prazoEntrega = item.NotaFiscal.PrazoEntregaFornecedor;
 
-                        if (item.LoteStatus.IdLoteStatus == StatusNotaRecebimento.AguardandoRecebimento.GetHashCode())
+                        if (item.LoteStatus.IdLoteStatus == LoteStatusEnum.AguardandoRecebimento)
                         {
                             if (DateTime.Now > prazoEntrega)
                             {
@@ -145,6 +173,20 @@ namespace FWLog.Services.Services
             var fwRelatorio = new FwRelatorio();
 
             return fwRelatorio.Gerar(fwRelatorioDados);
+        }
+
+        public void ImprimirDetalhesNotaEntradaConferencia(ImprimirDetalhesNotaEntradaConferenciaRequest request)
+        {
+            var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
+            {
+                IdEmpresa = request.IdEmpresa,
+                IdNotaFiscal = request.IdNotaFiscal,
+                NomeUsuario = request.NomeUsuario
+            };
+
+            byte[] relatorio = GerarDetalhesNotaEntradaConferencia(relatorioRequest);
+
+            _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
 
         public byte[] GerarDetalhesNotaEntradaConferencia(DetalhesNotaEntradaConferenciaRequest request)
@@ -307,7 +349,7 @@ namespace FWLog.Services.Services
 
             if (IsNotaRecebida)
             {
-                if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia.GetHashCode())
+                if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia)
                 {
                     paragraph = document.Sections[0].AddParagraph();
                     paragraph.Format.SpaceAfter = 20;

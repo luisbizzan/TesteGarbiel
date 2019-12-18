@@ -89,7 +89,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.Lote.NotaFiscal.Fornecedor.IdFornecedor == model.CustomFilter.IdFornecedor);
 
             if (model.CustomFilter.IdQuarentenaStatus.HasValue)
-                query = query.Where(x => x.QuarentenaStatus.IdQuarentenaStatus == model.CustomFilter.IdQuarentenaStatus);
+                query = query.Where(x => (int)x.QuarentenaStatus.IdQuarentenaStatus == model.CustomFilter.IdQuarentenaStatus);
 
             if (model.CustomFilter.DataAberturaInicial.HasValue)
             {

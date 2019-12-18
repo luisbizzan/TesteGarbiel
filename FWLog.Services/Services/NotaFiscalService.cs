@@ -104,6 +104,7 @@ namespace FWLog.Services.Services
                     notafiscal.DataEmissao = notafiscalIntegracao.DTNEG == null ? DateTime.Now : Convert.ToDateTime(notafiscalIntegracao.DTNEG);
                     notafiscal.IdEmpresa = empresa.IdEmpresa;
                     notafiscal.IdTransportadora = transportadora.IdTransportadora;
+                    notafiscal.CodigoIntegracaoVendedor = Convert.ToInt64(notafiscalIntegracao.CodigoIntegracaoVendedor);
 
                     FreteTipo freteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notafiscalIntegracao.CIF_FOB);
                     if (freteTipo != null)
@@ -186,7 +187,19 @@ namespace FWLog.Services.Services
             }
         }
 
-        
+        public async Task<bool> VerificarNotaFiscalCancelada(long codigoIntegracao)
+        {
+            string union = string.Format("WHERE NUNOTA = {0} ", codigoIntegracao);
+            string inner = string.Format("UNION SELECT NUNOTA FROM TGFCAB_EXC WHERE NUNOTA = {0}", codigoIntegracao);
+            List<NotaFiscalCanceladaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<NotaFiscalCanceladaIntegracao>(union, inner);
+
+            if (!notasIntegracao.NullOrEmpty())
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
 

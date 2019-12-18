@@ -64,10 +64,11 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TGFCAB.DTNEG")]
         public string DTNEG { get; set; } //DataEmissao
 
-        [TabelaIntegracao(DisplayName = "TGFCAB.AD_NUMFICTSAV")]
-        public string NumeroNFSAV { get; set; } 
+        //[TabelaIntegracao(DisplayName = "TGFCAB.AD_NUMFICTSAV")] //Campo não criado no Sankhya
+        //public string NumeroNFSAV { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.CODVEND")]
+        [Required]
         public string CodigoIntegracaoVendedor { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFITE.CODPROD")]
@@ -89,6 +90,13 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TGFITE.VLRTOT")]
         [Required]
         public string VLRTOT { get; set; }
+    }
+
+    [TabelaIntegracao(DisplayName = "TGFCAN")]
+    public class NotaFiscalCanceladaIntegracao
+    {
+        [TabelaIntegracao(DisplayName = "NUNOTA")]
+        public string NUNOTA { get; set; }
     }
 
 }
