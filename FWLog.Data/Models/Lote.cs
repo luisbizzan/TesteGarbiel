@@ -33,6 +33,10 @@ namespace FWLog.Data.Models
         [Log(DisplayName = "Código do Usuário Recebimento")]
         public string IdUsuarioRecebimento { get; set; }
 
+        //[Required]
+        //[Log(DisplayName = "Ganho de Estoque movimentado")]
+        //public bool GanhoEstoqueEfetuado { get; set; }
+
         [ForeignKey(nameof(IdLoteStatus))]
         public virtual LoteStatus LoteStatus { get; set; }
 

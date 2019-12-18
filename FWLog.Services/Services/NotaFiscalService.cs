@@ -69,7 +69,7 @@ namespace FWLog.Services.Services
                     bool notaNova = true;
 
                     var codNota = Convert.ToInt64(notafiscalIntegracao.NUNOTA);
-                    NotaFiscal notafiscal = _uow.NotaFiscalRepository.PegarNotaFiscal(codNota);
+                    NotaFiscal notafiscal = _uow.NotaFiscalRepository.ObterPorCodigoIntegracao(codNota);
 
                     if (notafiscal != null)
                     {
@@ -104,7 +104,8 @@ namespace FWLog.Services.Services
                     notafiscal.DataEmissao = notafiscalIntegracao.DTNEG == null ? DateTime.Now : Convert.ToDateTime(notafiscalIntegracao.DTNEG);
                     notafiscal.IdEmpresa = empresa.IdEmpresa;
                     notafiscal.IdTransportadora = transportadora.IdTransportadora;
-                    notafiscal.CodigoIntegracaoVendedor = Convert.ToInt64(notafiscalIntegracao.CodigoIntegracaoVendedor);
+                    notafiscal.CodigoIntegracaoVendedor = Convert.ToInt32(notafiscalIntegracao.CodigoIntegracaoVendedor);
+                    notafiscal.IdNotaFiscalTipo = NotaFiscalTipoEnum.Compra;
 
                     FreteTipo freteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notafiscalIntegracao.CIF_FOB);
                     if (freteTipo != null)
@@ -189,9 +190,9 @@ namespace FWLog.Services.Services
 
         public async Task<bool> VerificarNotaFiscalCancelada(long codigoIntegracao)
         {
-            string union = string.Format("WHERE NUNOTA = {0} ", codigoIntegracao);
-            string inner = string.Format("UNION SELECT NUNOTA FROM TGFCAB_EXC WHERE NUNOTA = {0}", codigoIntegracao);
-            List<NotaFiscalCanceladaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<NotaFiscalCanceladaIntegracao>(union, inner);
+            string where = string.Format("WHERE NUNOTA = {0} ", codigoIntegracao);
+            string union = string.Format("UNION SELECT NUNOTA FROM TGFCAB_EXC WHERE NUNOTA = {0}", codigoIntegracao);
+            List<NotaFiscalCanceladaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<NotaFiscalCanceladaIntegracao>(where, union);
 
             if (!notasIntegracao.NullOrEmpty())
             {
@@ -199,6 +200,19 @@ namespace FWLog.Services.Services
             }
 
             return false;
+        }
+
+        public async Task<bool> VerificarNotaFiscalAutorizada(long codigoIntegracao)
+        {
+            string where = string.Format("WHERE NUNOTA = {0} ", codigoIntegracao);
+            List<NotaFiscalAutorizadaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<NotaFiscalAutorizadaIntegracao>(where);
+
+            if (notasIntegracao == null || notasIntegracao.First().StatusNFE != "A")
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

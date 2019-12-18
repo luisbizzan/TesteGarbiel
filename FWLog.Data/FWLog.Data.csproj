@@ -167,6 +167,7 @@
     <Compile Include="Models\GeneralCtx\BOLogSystemCreation.cs" />
     <Compile Include="Models\GeneralCtx\LogEntity.cs" />
     <Compile Include="Models\ApplicationLanguage.cs" />
+    <Compile Include="NotaFiscalTipo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\GeneralCtx\ApplicationLanguageRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ApplicationLogRepository.cs" />
