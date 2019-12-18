@@ -11,7 +11,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public List<LoteDivergencia> RetornarPorNotaFiscal(long idNotaFiscal)
         {
-            return Entities.LoteDivergencia.AsNoTracking()
+            return Entities.LoteDivergencia
                 .Include("Lote")
                 .Include("NotaFiscal")
                 .Include("Produto")
@@ -19,7 +19,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 .Where(w => w.IdNotaFiscal == idNotaFiscal).ToList();
         }
 
-        public void DeletePorId(long idLote)
+        public void DeletaPorId(long idLote)
         {
             var divergencias = Entities.LoteDivergencia.Where(w => w.IdLote == idLote).ToList();
             if (divergencias != null)

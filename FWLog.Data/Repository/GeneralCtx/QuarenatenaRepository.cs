@@ -18,6 +18,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return _dbSet.Include(x => x.Lote).Include(x => x.QuarentenaStatus);
         }
 
+        public bool ExisteQuarentena(long idLote)
+        {
+            return Entities.Quarentena.Any(f => f.IdLote == idLote);
+        }
+
         public bool Any(Expression<Func<Quarentena, bool>> predicate)
         {
             return _dbSet.Any(predicate);

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
@@ -28,11 +27,10 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
     public class RecebimentoTratarDivergenciaItemViewModel
     {
+        [Required]
         public long IdLoteDivergencia { get; set; }
         [Display(Name = "Referência")]
         public string Referencia { get; set; }
-        [Display(Name = "Qtd. Pedido")]
-        public int QuantidadePedido { get; set; }
         [Display(Name = "Qtd. Nota Fiscal")]
         public int QuantidadeNotaFiscal { get; set; }
         [Display(Name = "Qtd. Conferência")]
@@ -47,7 +45,5 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public int? QuantidadeMaisTratado { get; set; }
         [Display(Name = "Qtd. A-")]
         public int? QuantidadeMenosTratado { get; set; }
-        [Display(Name = "Qtd. Invertida")]
-        public int? QuantidadeDivergenteTratado { get; set; }
     }
 }

@@ -11,6 +11,7 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,10 +87,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            var query = _uow.LoteRepository.Obter(IdEmpresa).AsQueryable();
+            var query = _uow.LoteRepository.Obter(IdEmpresa, NotaFiscalTipoEnum.Compra).AsQueryable();
 
             totalRecords = query.Count();
-
+            
             if (!string.IsNullOrEmpty(model.CustomFilter.ChaveAcesso))
             {
                 query = query.Where(x => !string.IsNullOrEmpty(x.NotaFiscal.ChaveAcesso) && x.NotaFiscal.ChaveAcesso.Contains(model.CustomFilter.ChaveAcesso));
@@ -227,20 +228,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpGet]
         public ActionResult DetalhesEtiquetaConferencia()
-        {
-            var viewModel = new BODetalhesEtiquetaConferenciaViewModel
-            {
-                NumeroNotaFiscal = "42-10/04-84.684.182/0001-57-55-001-000.000.002-010.804.210-8",
-                DataHoraRecebimento = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
-                NomeFornecedor = "Nome do Fornecedor Nota Fiscal",
-                QuantidadeVolumes = "05"
-            };
-
-            return View(viewModel);
-        }
-
-        [HttpGet]
-        public ActionResult EntradaConferencia()
         {
             var viewModel = new BODetalhesEtiquetaConferenciaViewModel
             {
@@ -535,23 +522,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 model.DataChegada = lote.DataRecebimento.ToString("dd/MM/yyyy");
                 model.UsuarioRecebimento = lote.UsuarioRecebimento.UserName;
                 model.Volumes = lote.QuantidadeVolume.ToString();
-
-                switch (notaFiscal.IdNotaFiscalStatus)
-                {
-                    case NotaFiscalStatusEnum.Recebida:
-                        model.StatusNotaFiscal = "Recebida";
-                        break;
-                    case NotaFiscalStatusEnum.Conferida:
-                        model.StatusNotaFiscal = "Conferida";
-                        break;
-                    case NotaFiscalStatusEnum.ConferidaDivergencia:
-                        model.StatusNotaFiscal = "Conferida com Divergência";
-                        break;
-                    default:
-                        model.StatusNotaFiscal = "Status não cadastrado";
-                        break;
-                }
-
+                model.StatusNotaFiscal = notaFiscal.NotaFiscalStatus.Descricao;
+               
                 if (lote.DataRecebimento > notaFiscal.PrazoEntregaFornecedor)
                 {
                     TimeSpan atraso = lote.DataRecebimento.Subtract(notaFiscal.PrazoEntregaFornecedor);
@@ -618,10 +590,11 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(model);
         }
 
-        public JsonResult ValidarModalRegistroConferencia(long id)
+        public JsonResult ValidarInicioConferencia(long id)
         {
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
 
+            //Valida a Nota Fiscal.
             if (notaFiscal == null)
             {
                 return Json(new AjaxGenericResultModel
@@ -633,6 +606,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
 
+            //Valida o Lote.
             if (lote == null)
             {
                 return Json(new AjaxGenericResultModel
@@ -672,20 +646,25 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-        public ActionResult ExibirModalRegistroConferencia(long id)
+
+        [HttpGet]
+        public ActionResult EntradaConferencia(long id)
         {
             var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
 
-            //if (lote == null) Tratar o lote nulo
+            //Valida o Lote.
+            if (lote == null)
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Lote não encontrado. Por favor, tente novamente!");
 
             var usuarioLogado = new BackOfficeUserInfo();
 
+            //Captura o Usuário que está iniciando a conferência.
             ApplicationUser applicationUser = UserManager.Users.FirstOrDefault(x => x.Id == (string)usuarioLogado.UserId);
 
             var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
 
-            //if (empresaConfig == null)
-
+            if (empresaConfig == null)
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "As configurações da empresa não foi encontrada. Por favor, tente novamente!");
 
             var model = new BOEntradaConferenciaViewModel
             {
@@ -701,13 +680,22 @@ namespace FWLog.Web.Backoffice.Controllers
                 IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode()
             };
 
-            return PartialView("EntradaConferencia", model);
+            //Se o tipo da conferência for, o usuário não poderá informar a quantidade por caixa e quantidade de caixa.
+            //Sabendo disso, atribui 1 para os campos.
+            if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento)
+            {
+                model.QuantidadePorCaixa = 1;
+                model.QuantidadeCaixa = 1;
+            }
+
+            return View(model);
         }
 
         [HttpPost]
-        public ActionResult CarregarDadosReferenciaConferencia(string codigoBarrasReferencia, long idLote)
+        public ActionResult ObterDadosReferenciaConferencia(string codigoBarrasOuReferencia, long idLote)
         {
-            if (String.IsNullOrEmpty(codigoBarrasReferencia))
+            //Valida se o código de barras ou referência é vazio ou nulo.
+            if (String.IsNullOrEmpty(codigoBarrasOuReferencia))
             {
                 return Json(new AjaxGenericResultModel
                 {
@@ -716,8 +704,9 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            var produto = _uow.ProdutoRepository.ConsultarPorCodigoBarras(codigoBarrasReferencia);
+            var produto = _uow.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(codigoBarrasOuReferencia);
 
+            //Valida se foi encontrado um produto através do código de barras ou da referência.
             if (produto == null)
             {
                 return Json(new AjaxGenericResultModel
@@ -727,17 +716,52 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(idLote);
+            //Captura o lote novamente.
+            var lote = _uow.LoteRepository.GetById(idLote);
 
-            //if (lote == null) Tratar o lote nulo
+            if (lote == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Lote não encontrado. Por favor, tente novamente!"
+                });
+            }
 
             var usuarioLogado = new BackOfficeUserInfo();
 
+            //Captura o Usuário que está iniciando a conferência novamente.
             ApplicationUser applicationUser = UserManager.Users.FirstOrDefault(x => x.Id == (string)usuarioLogado.UserId);
 
             var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
 
-            //if (empresaConfig == null)
+            if (empresaConfig == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "As configurações da empresa não foi encontrada. Por favor, tente novamente!"
+                });
+            }
+
+            //Captura a quantidade do item (peça) da nota e da conferência.
+            var referenciaNota = _uow.NotaFiscalItemRepository.ObterPorItem(lote.IdNotaFiscal, produto.IdProduto);
+            var referenciaConferencia = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, produto.IdProduto);
+
+            int quantidadeNota = 0;
+            int quantidadeConferida = 0;
+            int quantidadeNaoConferida = 0;
+
+            //Caso o item exista na nota, captura a quantidade.
+            if (referenciaNota.Count > 0)
+                quantidadeNota = referenciaNota.Sum(x => x.Quantidade);
+
+            //Caso exista o item já tenha sido conferido, captura a quantidade.
+            if (referenciaConferencia.Count > 0)
+                quantidadeConferida = referenciaConferencia.Sum(x => x.Quantidade);
+
+            if (quantidadeNota > quantidadeConferida)
+                quantidadeNaoConferida = quantidadeNota - quantidadeConferida;
 
             var model = new BOEntradaConferenciaViewModel
             {
@@ -751,12 +775,150 @@ namespace FWLog.Web.Backoffice.Controllers
                 QuantidadeVolume = lote.QuantidadeVolume,
                 TipoConferencia = empresaConfig.TipoConferencia.Descricao,
                 IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode(),
-                Referencia = produto.CodigoBarras,
-                Multiplo = produto.MultiploVenda
-
+                Referencia = produto.Referencia,
+                Embalagem = "",
+                Unidade = "",
+                Multiplo = produto.MultiploVenda,
+                QuantidadeEstoque = produto.SaldoArmazenagem,
+                Localizacao = produto.EnderecoSeparacao,
+                QuantidadeNaoConferida = quantidadeNaoConferida,
+                QuantidadeConferida = quantidadeConferida,
+                EnviarPicking = produto.SaldoArmazenagem == 0 ? true : false
             };
 
-            return PartialView("EntradaConferencia", model);
+            string json = JsonConvert.SerializeObject(model);
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = "",
+                Data = json
+            });
+        }
+
+        public JsonResult RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa)
+        {
+            try
+            {
+                //Valida novamente se a referência é valida.
+                if (String.IsNullOrEmpty(codigoBarrasOuReferencia))
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Referência inválida. Por favor, tente novamente!"
+                    });
+                }
+
+                var produto = _uow.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(codigoBarrasOuReferencia);
+
+                //Valida se o produto (peça) foi encontrado.
+                if (produto == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Referência não cadastrada. Por favor, tente novamente!"
+                    });
+                }
+
+                var lote = _uow.LoteRepository.GetById(idLote);
+
+                //Valida o lote.
+                if (lote == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Lote não encontrado. Por favor, tente novamente!"
+                    });
+                }
+
+                var usuarioLogado = new BackOfficeUserInfo();
+
+                //Captura o usuário novamente.
+                ApplicationUser applicationUser = UserManager.Users.FirstOrDefault(x => x.Id == (string)usuarioLogado.UserId);
+
+                var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+
+                //Valida as configurações da empresa.
+                if (empresaConfig == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "As configurações da empresa não foi encontrada. Por favor, tente novamente!"
+                    });
+                }
+
+                //Valida se os campos quantidade por caixa e quantidade de caixa são iguais a 1 quando o tipo da conferência é 100%.
+                //Isso é feito porque na conferência 100% a quantidade por caixa e quantidade de caixa não podem ser maior que 1.
+                if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento
+                    && quantidadePorCaixa != 1 && quantidadeCaixa != 1)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Neste tipo de conferência, não é permitido um valor diferente de 1 nos campos quantidade por caixa e quantidade de caixa. Por favor, tente novamente!"
+                    });
+                }
+
+                //Valida se a quantidade por caixa e quantidade de caixa é igual a 0.
+                if (quantidadePorCaixa == 0 || (quantidadePorCaixa > 0 &&quantidadeCaixa == 0))
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Os campos quantidade por caixa e quantidade de caixa não podem ser 0. Por favor, tente novamente!"
+                    });
+                }
+
+                if (quantidadeCaixa > quantidadePorCaixa && quantidadeCaixa > 0)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "A quantidade de caixa não pode ser maior que a quantidade por caixa. Por favor, tente novamente!"
+                    });
+                }
+
+                //Decidi não verificar o status do lote, sendo assim, sempre atualizado para Em Conferência.
+                //Validações anteriores garantem que o status não será atualizado se diferente de Recebido.
+                lote.IdLoteStatus = LoteStatusEnum.Conferencia;
+                _uow.LoteRepository.Update(lote);
+
+                LoteConferencia loteConferencia = new LoteConferencia()
+                {
+                    IdLote = lote.IdLote,
+                    IdTipoConferencia = empresaConfig.IdTipoConferencia.Value,
+                    IdProduto = produto.IdProduto,
+                    Quantidade = quantidadePorCaixa > 0 ? quantidadePorCaixa * quantidadeCaixa : quantidadePorCaixa,
+                    DataHoraInicio = DateTime.Now,
+                    DataHoraFim = DateTime.Now,
+                    Tempo = DateTime.Now,
+                    IdUsuarioConferente = applicationUser.Id
+                };
+
+                _uow.LoteConferenciaRepository.Add(loteConferencia);
+
+                _uow.SaveChanges();
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Conferência registrada com sucesso!"
+                });
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não foi possível registrar a conferência. Por favor, tente novamente!"
+                });
+            }
         }
 
         [HttpGet]
@@ -764,15 +926,19 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult TratarDivergencia(long id)
         {
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+            Lote lote = _uow.LoteRepository.ObterLoteNota(id);
+            List<LoteConferencia> loteConferencia = _uow.LoteConferenciaRepository.Obter(lote.IdLote);
+
+            PerfilUsuario perfilUsuario = _uow.PerfilUsuarioRepository.GetByUserId(loteConferencia.First().IdUsuarioConferente);
 
             var divergenciaViewModel = new RecebimentoTratarDivergenciaViewModel
             {
-                ConferidoPor = "Usuário conferência",
+                ConferidoPor = perfilUsuario.Nome,
                 InicioConferencia = DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"),
                 FimConferencia = DateTime.Now.ToString("dd/MM/yyyy  hh:mm:ss"),
                 NotaFiscal = notaFiscal.Numero.ToString(),
                 IdNotaFiscal = notaFiscal.IdNotaFiscal,
-                StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao,
+                StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao
             };
 
             List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(id);
@@ -789,13 +955,38 @@ namespace FWLog.Web.Backoffice.Controllers
                     QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
                     QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Quantidade,
-                    QuantidadePedido = 0
+                    QuantidadeDevolucao = divergencia.QuantidadeConferenciaMais ?? 0
                 };
 
                 divergenciaViewModel.Divergencias.Add(divergenciaItem);
             }
 
             return View(divergenciaViewModel);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
+        public JsonResult TratarDivergencia(RecebimentoTratarDivergenciaViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Tratamento de divergências finalizado."
+                }, JsonRequestBehavior.DenyGet);
+
+            }
+            catch
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro. Tente novamente."
+                }, JsonRequestBehavior.DenyGet);
+            }
         }
 
         [HttpGet]
