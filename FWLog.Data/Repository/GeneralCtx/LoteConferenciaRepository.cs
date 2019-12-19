@@ -17,9 +17,9 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.LoteConferencia.Where(w => w.IdLote == idLote).ToList();
         }
 
-        public LoteConferencia ObterPorId(long idLote)
+        public List<LoteConferencia> ObterPorId(long idLote)
         {
-            return Entities.LoteConferencia.Where(w => w.IdLote == idLote).FirstOrDefault();
+            return Entities.LoteConferencia.Where(w => w.IdLote == idLote).ToList();
         }
 
         public List<LoteConferencia> ObterPorProduto(long idLote, long idProduto)

@@ -105,7 +105,7 @@
                             @Html.LabelFor(m => m.UsuarioRecebimento): @Model.UsuarioRecebimento
                         </div>
                     </div>
-                    @if (Model.IsNotaConferida)
+                    @if (Model.EmConferenciaOuConferido)
                     {
                         <div class="row">
                             <div class="col-sm-12 col-lg-12">
@@ -133,6 +133,14 @@
                             </div>
                         </div>
                     }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-4">
+                                <label>Lote não conferido.</label>
+                            </div>
+                        </div>
+                    }
                     <div class="row" style="margin-top: 25px; overflow-y: auto; height: 300px">
                         <div class="col-sm-12 col-lg-12">
                             <table class="table table-bordered">
@@ -149,7 +157,7 @@
                                 <tbody>
                                     @if (Model.Items.Count > 0)
                                     {
-                                        foreach (FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.BODetalhesEntradaConferenciaItem item in Model.Items)
+                                        foreach (var item in Model.Items)
                                         {
                                             <tr>
                                                 <td>@item.Referencia</td>
@@ -157,14 +165,14 @@
                                                 <td>@item.DataInicioConferencia</td>
                                                 <td>@item.DataFimConferencia</td>
                                                 <td>@item.UsuarioConferencia</td>
-                                                <td>@item.TempoTotalConferencia</td>
+                                                <td>@item.TempoConferencia</td>
                                             </tr>
                                         }
                                     }
                                     else
                                     {
                                         <tr class="even">
-                                            <td colspan="6">Nenhum item informado na nota fiscal</td>
+                                            <td colspan="6" class="text-center">Nenhum registro.</td>
                                         </tr>
                                     }
                                 </tbody>

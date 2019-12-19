@@ -34,6 +34,9 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Required]
         public string Referencia { get; set; }
 
+        [Display(Name = "Descrição")]
+        public string DescricaoReferencia { get; set; }
+
         [Display(Name = "Embalagem")]
         public string Embalagem { get; set; }
 
@@ -44,9 +47,11 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public decimal? Multiplo { get; set; }
 
         [Display(Name = "Qtde. por Caixa")]
+        [Required]
         public int? QuantidadePorCaixa { get; set; }
 
         [Display(Name = "Qtde. de Caixas")]
+        [Required]
         public int? QuantidadeCaixa { get; set; }
 
         [Display(Name = "Total de Itens")]
@@ -71,6 +76,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public int? QuantidadeReservada { get; set; }
 
         public bool EnviarPicking { get; set; }
+
+        public string InicioConferencia { get; set; }
 
     }
 }

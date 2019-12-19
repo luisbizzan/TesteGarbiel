@@ -487,7 +487,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 IdNotaFiscal = notaFiscal.IdNotaFiscal,
                 ChaveAcesso = notaFiscal.ChaveAcesso,
                 NumeroNotaFiscal = notaFiscal.Numero.ToString(),
-                StatusNotaFiscal = notaFiscal.StatusIntegracao,
+                StatusNotaFiscal = notaFiscal.NotaFiscalStatus.ToString(),
                 Fornecedor = string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.RazaoSocial),
                 Quantidade = notaFiscal.Quantidade.ToString(),
                 DataCompra = notaFiscal.DataEmissao.ToString("dd/MM/yyyy"),
@@ -500,6 +500,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 TransportadoraNome = notaFiscal.Transportadora.RazaoSocial,
                 DiasAtraso = "0"
             };
+
+            model.EmConferenciaOuConferido = false;
 
             if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.AguardandoRecebimento || notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ProcessandoIntegracao)
             {
@@ -519,7 +521,6 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 Lote lote = _uow.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
 
-                model.IsNotaRecebida = true;
                 model.NumeroLote = lote.IdLote.ToString();
                 model.DataChegada = lote.DataRecebimento.ToString("dd/MM/yyyy");
                 model.UsuarioRecebimento = lote.UsuarioRecebimento.UserName;
@@ -532,61 +533,68 @@ namespace FWLog.Web.Backoffice.Controllers
                     model.DiasAtraso = atraso.Days.ToString();
                 }
 
-                if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida ||
-                    notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ConferidaDivergencia)
+                #region CONFERENCIA
+                //Verifica se o lote está em conferência ou já foi conferido.
+                if (lote.IdLoteStatus == LoteStatusEnum.Conferencia ||
+                    lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia ||
+                    lote.IdLoteStatus == LoteStatusEnum.Finalizado ||
+                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
+                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
+                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
                 {
-                    model.IsNotaConferida = notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida;
-                    model.IsNotaDivergente = notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ConferidaDivergencia;
 
+                    model.EmConferenciaOuConferido = true;
+
+                    //Captura as conferências do lote.
                     var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
 
-                    model.UsuarioConferencia = loteConferencia.UsuarioConferente.UserName;
-                    model.DataInicioConferencia = loteConferencia.DataHoraInicio.ToString("dd/MM/yyyy HH:mm");
-                    model.DataFimConferencia = loteConferencia.DataHoraFim.ToString("dd/MM/yyyy HH:mm");
-                    model.TempoTotalConferencia = loteConferencia.Tempo.ToString("HH:mm");
+                    if (loteConferencia.Count > 0)
+                    {
+                        model.ConferenciaTipo = loteConferencia.FirstOrDefault().TipoConferencia.Descricao;
+                        
+                        //Captura o primeiro conferente.
+                        model.UsuarioConferencia = loteConferencia.FirstOrDefault().UsuarioConferente.UserName;
+
+                        //Captura a menor data de início da conferência.
+                        model.DataInicioConferencia = loteConferencia.Min(x => x.DataHoraInicio).ToString("dd/MM/yyyy HH:mm");
+
+                        //Captura a maior data fim de conferência.
+                        if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia ||
+                            lote.IdLoteStatus == LoteStatusEnum.Finalizado ||
+                            lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
+                            lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
+                            lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
+                            model.DataFimConferencia = loteConferencia.Max(x => x.DataHoraFim).ToString("dd/MM/yyyy HH:mm:ss");
+
+                        var tempo = new TimeSpan(0, 0, 0);
+
+                        //Calcula o tempo total.
+                        foreach (var item in loteConferencia)
+                        {
+                            tempo.Add(new TimeSpan(item.Tempo.Hour, item.Tempo.Minute, item.Tempo.Second));
+
+                            var entradaConferenciaItem = new BODetalhesEntradaConferenciaItem
+                            {
+                                Referencia = item.Produto.Referencia,
+                                Quantidade = item.Quantidade,
+                                DataInicioConferencia = item.DataHoraInicio.ToString("dd/MM/yyyy HH:mm:ss"),
+                                DataFimConferencia = item.DataHoraFim.ToString("dd/MM/yyyy HH:mm:ss"),
+                                TempoConferencia = item.Tempo.ToString("HH:mm:ss"),
+                                UsuarioConferencia = item.UsuarioConferente.UserName
+                            };
+
+                            model.Items.Add(entradaConferenciaItem);
+                        }
+
+                        if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia ||
+                            lote.IdLoteStatus == LoteStatusEnum.Finalizado ||
+                            lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
+                            lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
+                            lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
+                            model.TempoTotalConferencia = tempo.ToString("h'h 'm'm 's's'");
+                    }
                 }
-                else
-                {
-                    model.UsuarioConferencia = "Não Conferido";
-                    model.DataInicioConferencia = "Não Conferido";
-                    model.DataFimConferencia = "Não Conferido";
-                    model.TempoTotalConferencia = "Não Conferido";
-                }
-            }
-
-            List<NotaFiscalItem> listaItensNotaFiscal = _uow.NotaFiscalItemRepository.ObterItens(notaFiscal.IdNotaFiscal);
-
-            model.Items = new List<BODetalhesEntradaConferenciaItem>();
-
-            foreach (NotaFiscalItem notaFiscalItem in listaItensNotaFiscal)
-            {
-                var entradaConferenciaItem = new BODetalhesEntradaConferenciaItem
-                {
-                    Referencia = notaFiscalItem.Produto.Referencia,
-                    Quantidade = notaFiscalItem.Quantidade.ToString()
-                };
-
-                if (notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Conferida ||
-                    notaFiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.ConferidaDivergencia)
-                {
-                    Lote lote = _uow.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
-
-                    var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
-
-                    entradaConferenciaItem.UsuarioConferencia = loteConferencia.UsuarioConferente.UserName;
-                    entradaConferenciaItem.DataInicioConferencia = loteConferencia.DataHoraInicio.ToString("dd/MM/yyyy HH:mm");
-                    entradaConferenciaItem.DataFimConferencia = loteConferencia.DataHoraFim.ToString("dd/MM/yyyy HH:mm");
-                    entradaConferenciaItem.TempoTotalConferencia = loteConferencia.Tempo.ToString("HH:mm");
-                }
-                else
-                {
-                    entradaConferenciaItem.UsuarioConferencia = "Não Conferido";
-                    entradaConferenciaItem.DataInicioConferencia = "Não Conferido";
-                    entradaConferenciaItem.DataFimConferencia = "Não Conferido";
-                    entradaConferenciaItem.TempoTotalConferencia = "Não Conferido";
-                }
-
-                model.Items.Add(entradaConferenciaItem);
+                #endregion
             }
 
             return View(model);
@@ -778,6 +786,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 TipoConferencia = empresaConfig.TipoConferencia.Descricao,
                 IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode(),
                 Referencia = produto.Referencia,
+                DescricaoReferencia = produto.Descricao,
                 Embalagem = "",
                 Unidade = "",
                 Multiplo = produto.MultiploVenda,
@@ -785,7 +794,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 Localizacao = produto.EnderecoSeparacao,
                 QuantidadeNaoConferida = quantidadeNaoConferida,
                 QuantidadeConferida = quantidadeConferida,
-                EnviarPicking = produto.SaldoArmazenagem == 0 ? true : false
+                EnviarPicking = produto.SaldoArmazenagem == 0 ? true : false,
+                InicioConferencia = DateTime.Now.ToString()
             };
 
             string json = JsonConvert.SerializeObject(model);
@@ -798,7 +808,7 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-        public JsonResult RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa)
+        public JsonResult RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia)
         {
             try
             {
@@ -874,20 +884,18 @@ namespace FWLog.Web.Backoffice.Controllers
                         Message = "Os campos quantidade por caixa e quantidade de caixa não podem ser 0. Por favor, tente novamente!"
                     });
                 }
-
-                if (quantidadeCaixa > quantidadePorCaixa && quantidadeCaixa > 0)
-                {
-                    return Json(new AjaxGenericResultModel
-                    {
-                        Success = false,
-                        Message = "A quantidade de caixa não pode ser maior que a quantidade por caixa. Por favor, tente novamente!"
-                    });
-                }
-
+                
                 //Decidi não verificar o status do lote, sendo assim, sempre atualizado para Em Conferência.
                 //Validações anteriores garantem que o status não será atualizado se diferente de Recebido.
                 lote.IdLoteStatus = LoteStatusEnum.Conferencia;
                 _uow.LoteRepository.Update(lote);
+
+                DateTime dataHoraInicio = !String.IsNullOrEmpty(inicioConferencia) ? Convert.ToDateTime(inicioConferencia) : DateTime.Now;
+                DateTime dataHoraFim = DateTime.Now;
+
+                TimeSpan diferenca = dataHoraFim - dataHoraInicio;
+
+                DateTime tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, diferenca.Hours, diferenca.Minutes, diferenca.Seconds);
 
                 LoteConferencia loteConferencia = new LoteConferencia()
                 {
@@ -895,9 +903,9 @@ namespace FWLog.Web.Backoffice.Controllers
                     IdTipoConferencia = empresaConfig.IdTipoConferencia.Value,
                     IdProduto = produto.IdProduto,
                     Quantidade = quantidadePorCaixa > 0 ? quantidadePorCaixa * quantidadeCaixa : quantidadePorCaixa,
-                    DataHoraInicio = DateTime.Now,
-                    DataHoraFim = DateTime.Now,
-                    Tempo = DateTime.Now,
+                    DataHoraInicio = dataHoraInicio,
+                    DataHoraFim = dataHoraFim,
+                    Tempo = tempo,
                     IdUsuarioConferente = applicationUser.Id
                 };
 
