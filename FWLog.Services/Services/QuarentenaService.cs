@@ -24,12 +24,14 @@ namespace FWLog.Services.Services
     public class TermoResponsabilidadeRequest
     {
         public string NomeUsuario { get; set; }
+        public int IdImpressora { get; set; }
         public long IdQuarentena { get; set; }
     }
 
     public class QuarentenaService : BaseService
     {
         private readonly UnitOfWork _uow;
+        private readonly ImpressoraService _impressoraService;
 
         private Document _document;
 
@@ -37,12 +39,20 @@ namespace FWLog.Services.Services
 
         private Quarentena _Quarentena;
 
-        public QuarentenaService(UnitOfWork uow)
+        public QuarentenaService(UnitOfWork uow, ImpressoraService impressoraService)
         {
             _uow = uow;
+            _impressoraService = impressoraService;
         }
 
-        public byte[] TermoResponsabilidade(TermoResponsabilidadeRequest request)
+        public void ImprimirTermoResponsabilidade(TermoResponsabilidadeRequest request)
+        {
+            byte[] termo = GerarTermoResponsabilidade(request);
+
+            _impressoraService.Imprimir(termo, request.IdImpressora);
+        }
+
+        public byte[] GerarTermoResponsabilidade(TermoResponsabilidadeRequest request)
         {
             _document = new Document();
             _request = request;

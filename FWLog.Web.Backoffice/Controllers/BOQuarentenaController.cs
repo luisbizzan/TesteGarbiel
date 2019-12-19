@@ -251,17 +251,36 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-        public ActionResult TermoResponsabilidade(long idQuarentena)
+        [HttpPost]
+        public JsonResult TermoResponsabilidade(BOImprimirTermoResponsabilidadeViewModel viewModel)
         {
-            var request = new TermoResponsabilidadeRequest
+            try
             {
-                IdQuarentena = idQuarentena,
-                NomeUsuario = User.Identity.Name
-            };
+                ValidateModel(viewModel);
 
-            byte[] relatorio = _quarentenaService.TermoResponsabilidade(request);
+                var request = new TermoResponsabilidadeRequest
+                {
+                    IdQuarentena = viewModel.IdQuarentena,
+                    IdImpressora = viewModel.IdImpressora,
+                    NomeUsuario = User.Identity.Name
+                };
 
-            return File(relatorio, "application/pdf", "TermoResponsabilidade.pdf");
+                _quarentenaService.ImprimirTermoResponsabilidade(request);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }
