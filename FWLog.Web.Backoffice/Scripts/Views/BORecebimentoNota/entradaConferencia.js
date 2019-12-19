@@ -1,12 +1,20 @@
 ﻿(function () {
-    $('#modalConferencia').keypress(function (e) {
+    $('.onlyNumber').mask('0#');
+
+    $('#modalRegistroConferencia').keypress(function (e) {
         if (e.keyCode == '13') {
             registrarConferencia();
         }
     });
 
     $("#Referencia").blur(function () {
-        carregarDadosReferenciaConferencia();
+        if ($(this).val() == '') {
+            waitingDialog.hide();
+            $("#Referencia").focus();
+        }
+        else {
+            carregarDadosReferenciaConferencia();
+        }
     });
 
     $("#confirmarConferencia").click(function () {
@@ -33,6 +41,7 @@ function carregarDadosReferenciaConferencia() {
             if (result.Success) {
                 var model = JSON.parse(result.Data);
 
+                $("#DescricaoReferencia").val(model.DescricaoReferencia);
                 $("#Embalagem").val(model.Embalagem);
                 $("#Unidade").val(model.Unidade);
                 $("#Multiplo").val(model.Multiplo);
@@ -40,6 +49,7 @@ function carregarDadosReferenciaConferencia() {
                 $("#Localizacao").val(model.Localizacao);
                 $("#QuantidadeNaoConferida").val(model.QuantidadeNaoConferida);
                 $("#QuantidadeConferida").val(model.QuantidadeConferida);
+                $("#InicioConferencia").val(model.InicioConferencia);
 
                 if (model.EnviarPicking) {
                     $("#msgEnviarPicking").removeClass("hidden");
@@ -62,6 +72,7 @@ function registrarConferencia() {
     let referencia = $("#Referencia").val();
     let quantidadePorCaixa = $("#QuantidadePorCaixa").val();
     let quantidadeCaixa = $("#QuantidadeCaixa").val();
+    let inicioConferencia = $("#InicioConferencia").val();
 
     if (quantidadePorCaixa === '')
         quantidadePorCaixa = 0;
@@ -77,7 +88,8 @@ function registrarConferencia() {
             idLote: view_modal.idLote,
             codigoBarrasOuReferencia: referencia,
             quantidadePorCaixa: quantidadePorCaixa,
-            quantidadeCaixa: quantidadeCaixa
+            quantidadeCaixa: quantidadeCaixa,
+            inicioConferencia: inicioConferencia
         },
         success: function (result) {
             if (result.Success) {

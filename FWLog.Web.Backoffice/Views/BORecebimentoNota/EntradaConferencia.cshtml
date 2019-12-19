@@ -8,7 +8,7 @@
      })
 }
 
-<div class="modal-dialog modal-lg">
+<div class="modal-dialog modal-lg" id="modalRegistroConferencia">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">
@@ -21,6 +21,7 @@
                 <div class="x_panel">
                     <div class="x_content">
                         <div class="row">
+                            @Html.HiddenFor(m => m.InicioConferencia)
                             <div class="col-xs-6 col-sm-6 col-lg-2">
                                 <div class="form-group">
                                     @Html.LabelFor(f => f.IdLote)
@@ -80,16 +81,10 @@
                                     @Html.TextBoxFor(m => m.Referencia, new { @class = "form-control", tabindex = 0 })
                                 </div>
                             </div>
-                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                            <div class="col-xs-12 col-sm-8 col-lg-6">
                                 <div class="form-group">
-                                    @Html.LabelFor(f => f.Embalagem)
-                                    @Html.TextBoxFor(m => m.Embalagem, new { @class = "form-control", @readonly = "readonly" })
-                                </div>
-                            </div>
-                            <div class="col-xs-6 col-sm-4 col-lg-3">
-                                <div class="form-group">
-                                    @Html.LabelFor(f => f.Unidade)
-                                    @Html.TextBoxFor(m => m.Unidade, new { @class = "form-control", @readonly = "readonly" })
+                                    @Html.LabelFor(f => f.DescricaoReferencia)
+                                    @Html.TextBoxFor(m => m.DescricaoReferencia, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
                             </div>
                             <div class="col-xs-6 col-sm-4 col-lg-3">
@@ -103,7 +98,7 @@
                                 <div class="col-xs-6 col-sm-4 col-lg-3">
                                     <div class="form-group">
                                         @Html.LabelFor(f => f.QuantidadePorCaixa)
-                                        @Html.TextBoxFor(m => m.QuantidadePorCaixa, new { @class = "form-control", tabindex = 1, @readonly = "readonly" })
+                                        @Html.TextBoxFor(m => m.QuantidadePorCaixa, new { @class = "form-control", tabindex = 1, @readonly = "readonly", maxlength = 5 })
                                     </div>
                                 </div>
                             }
@@ -112,7 +107,7 @@
                                 <div class="col-xs-6 col-sm-4 col-lg-3">
                                     <div class="form-group">
                                         @Html.LabelFor(f => f.QuantidadePorCaixa)
-                                        @Html.TextBoxFor(m => m.QuantidadePorCaixa, new { @class = "form-control", tabindex = 1 })
+                                        @Html.TextBoxFor(m => m.QuantidadePorCaixa, new { @class = "form-control onlyNumber", tabindex = 1, maxlength = 5 })
                                     </div>
                                 </div>
                             }
@@ -121,7 +116,7 @@
                                 <div class="col-xs-6 col-sm-4 col-lg-3">
                                     <div class="form-group">
                                         @Html.LabelFor(f => f.QuantidadeCaixa)
-                                        @Html.TextBoxFor(m => m.QuantidadeCaixa, new { @class = "form-control", tabindex = 2, @readonly = "readonly" })
+                                        @Html.TextBoxFor(m => m.QuantidadeCaixa, new { @class = "form-control", tabindex = 2, @readonly = "readonly", maxlength = 5 })
                                     </div>
                                 </div>
                             }
@@ -130,11 +125,22 @@
                                 <div class="col-xs-6 col-sm-4 col-lg-3">
                                     <div class="form-group">
                                         @Html.LabelFor(f => f.QuantidadeCaixa)
-                                        @Html.TextBoxFor(m => m.QuantidadeCaixa, new { @class = "form-control", tabindex = 2 })
+                                        @Html.TextBoxFor(m => m.QuantidadeCaixa, new { @class = "form-control onlyNumber", tabindex = 2, @maxlength = 5 })
                                     </div>
                                 </div>
                             }
-
+                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.Embalagem)
+                                    @Html.TextBoxFor(m => m.Embalagem, new { @class = "form-control", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.Unidade)
+                                    @Html.TextBoxFor(m => m.Unidade, new { @class = "form-control", @readonly = "readonly" })
+                                </div>
+                            </div>
                             <div class="col-xs-6 col-sm-4 col-lg-3">
                                 <div class="form-group">
                                     @Html.LabelFor(f => f.TotalItens)
@@ -197,7 +203,8 @@
                     <div class="col-sm-12 col-lg-12">
                         <button type="button" id="finalizarConferencia" class="btn btn-primary">Finalizar</button>
                         <button type="button" class="btn btn-default">Divergência</button>
-                        <button type="button" id="confirmarConferencia" class="btn btn-info">Confirmar</button>
+                        @*<button type="button" id="confirmarConferencia" class="btn btn-info">Confirmar</button>*@
+                        <a id="confirmarConferencia" data-toggle="tooltip" title="Confirmar" class="btn btn-info">Confirmar</a>
                     </div>
                 </div>
             </div>
