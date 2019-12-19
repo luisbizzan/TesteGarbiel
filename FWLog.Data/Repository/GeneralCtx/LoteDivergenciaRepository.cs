@@ -27,5 +27,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                 Entities.LoteDivergencia.RemoveRange(divergencias);
             }
         }
+
+        public bool ExisteDivergencia(long idLote)
+        {
+            return Entities.LoteDivergencia.Any(a => a.IdLote == idLote);
+        }
     }
 }

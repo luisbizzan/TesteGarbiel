@@ -123,6 +123,7 @@
     });
 
     $(document.body).on('click', "[action='alterarStatus']", alterarStatus);
+    $(document.body).on('click', "[action='termoResponsabilidade']", termoResponsabilidade);
 
     function alterarStatus() {
         let id = $(this).data("id");
@@ -145,6 +146,32 @@
         });
     }
 
+    function termoResponsabilidade() {
+        var id = $(this).data("id");
+
+        $.ajax({
+            url: CONTROLLER_PATH + "TermoResponsabilidade",
+            method: "POST",
+            cache: false,
+            xhrFields: {
+                responseType: 'blob'
+            },
+            data: {
+                idQuarentena: id
+            },
+            success: function (data) {
+                var a = document.createElement('a');
+                var url = window.URL.createObjectURL(data);
+
+                a.href = url;
+                a.download = 'TESTE.pdf';
+                document.body.append(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            }
+        });
+    }
 })();
 
 function setFornecedor(idFornecedor, razaoSocial) {
