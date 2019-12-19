@@ -1,6 +1,6 @@
 ﻿(function () {
     $('#modalConferencia').keypress(function (e) {
-        if (e.keyCode === '13') {
+        if (e.keyCode == '13') {
             registrarConferencia();
         }
     });
@@ -20,11 +20,7 @@
 
 function carregarDadosReferenciaConferencia() {
     let referencia = $("#Referencia").val();
-
-    if (!referencia) {
-        return;
-    }
-
+   
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ObterDadosReferenciaConferencia",
         cache: false,
@@ -72,10 +68,6 @@ function registrarConferencia() {
 
     if (quantidadeCaixa === '')
         quantidadeCaixa = 0;
-
-    if (!referencia) {
-        return;
-    }
 
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "RegistrarConferencia",

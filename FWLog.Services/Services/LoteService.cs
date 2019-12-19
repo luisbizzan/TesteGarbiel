@@ -228,40 +228,43 @@ namespace FWLog.Services.Services
                 GravarQuaretena(loteDivergencias, lote);
             }
 
-            if (lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas || lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa)
+            if (!(Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"])))//TODO Temporário
             {
-                NotaFiscal notafiscalDevolucao = null;
-
-                if (notafiscal.CodigoIntegracaoNFDevolucao == null)
+                if (lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas || lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa)
                 {
-                    notafiscalDevolucao = await CriarNotaDevolucao();
-                    notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.NotaDevolucaoCriada;
-                    notafiscal.CodigoIntegracaoNFDevolucao = notafiscalDevolucao.CodigoIntegracao;
-                    _uow.SaveChanges();
-                }
-                else
-                {
-                    notafiscalDevolucao = _uow.NotaFiscalRepository.ObterPorCodigoIntegracao(notafiscal.CodigoIntegracaoNFDevolucao.Value);
+                    NotaFiscal notafiscalDevolucao = null;
 
-                }
+                    if (notafiscal.CodigoIntegracaoNFDevolucao == null)
+                    {
+                        notafiscalDevolucao = await CriarNotaDevolucao();
+                        notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.NotaDevolucaoCriada;
+                        notafiscal.CodigoIntegracaoNFDevolucao = notafiscalDevolucao.CodigoIntegracao;
+                        _uow.SaveChanges();
+                    }
+                    else
+                    {
+                        notafiscalDevolucao = _uow.NotaFiscalRepository.ObterPorCodigoIntegracao(notafiscal.CodigoIntegracaoNFDevolucao.Value);
 
-                if (notafiscalDevolucao == null)
-                {
-                    throw new Exception();//verificar
-                }
+                    }
 
-                if (notafiscalDevolucao.IdNotaFiscalStatus == NotaFiscalStatusEnum.NotaDevolucaoCriada)
-                {
-                    await ConfirmarNotaFiscalIntegracao(notafiscalDevolucao, null);
-                    notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.Confirmada;
-                    _uow.SaveChanges();
-                }
+                    if (notafiscalDevolucao == null)
+                    {
+                        throw new Exception();//verificar
+                    }
 
-                if (notafiscalDevolucao.IdNotaFiscalStatus == NotaFiscalStatusEnum.Confirmada && notafiscalDevolucao.IdNotaFiscalStatus != NotaFiscalStatusEnum.NotaDevolucaoAutorizada)
-                {
-                    await VerificarNotaFiscalAutorizada(notafiscalDevolucao);
-                    notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.NotaDevolucaoAutorizada;
-                    _uow.SaveChanges();
+                    if (notafiscalDevolucao.IdNotaFiscalStatus == NotaFiscalStatusEnum.NotaDevolucaoCriada)
+                    {
+                        await ConfirmarNotaFiscalIntegracao(notafiscalDevolucao, null);
+                        notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.Confirmada;
+                        _uow.SaveChanges();
+                    }
+
+                    if (notafiscalDevolucao.IdNotaFiscalStatus == NotaFiscalStatusEnum.Confirmada && notafiscalDevolucao.IdNotaFiscalStatus != NotaFiscalStatusEnum.NotaDevolucaoAutorizada)
+                    {
+                        await VerificarNotaFiscalAutorizada(notafiscalDevolucao);
+                        notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.NotaDevolucaoAutorizada;
+                        _uow.SaveChanges();
+                    }
                 }
             }
         }
