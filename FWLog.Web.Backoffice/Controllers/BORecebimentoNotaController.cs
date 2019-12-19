@@ -197,7 +197,8 @@ namespace FWLog.Web.Backoffice.Controllers
                         IdNotaFiscal = item.NotaFiscal.IdNotaFiscal,
                         Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
                         Atraso = atraso,
-                        IdUsuarioRecebimento = item.UsuarioRecebimento == null ? "" : item.UsuarioRecebimento.Id
+                        IdUsuarioRecebimento = item.UsuarioRecebimento == null ? "" : item.UsuarioRecebimento.Id,
+                        IdLoteStatus = (int)item.LoteStatus.IdLoteStatus
                     });
                 }
             }
