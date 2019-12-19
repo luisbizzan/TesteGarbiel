@@ -1,6 +1,6 @@
 ﻿(function () {
     $('#modalConferencia').keypress(function (e) {
-        if (e.keyCode == '13') {
+        if (e.keyCode === '13') {
             registrarConferencia();
         }
     });
@@ -12,10 +12,18 @@
     $("#confirmarConferencia").click(function () {
         registrarConferencia();
     });
+
+    $("#finalizarConferencia").click(function () {
+        confirmarfinalizarConferencia();
+    });
 })();
 
 function carregarDadosReferenciaConferencia() {
     let referencia = $("#Referencia").val();
+
+    if (!referencia) {
+        return;
+    }
 
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ObterDadosReferenciaConferencia",
@@ -59,12 +67,15 @@ function registrarConferencia() {
     let quantidadePorCaixa = $("#QuantidadePorCaixa").val();
     let quantidadeCaixa = $("#QuantidadeCaixa").val();
 
-    if (quantidadePorCaixa == '')
+    if (quantidadePorCaixa === '')
         quantidadePorCaixa = 0;
 
-    if (quantidadeCaixa == '')
+    if (quantidadeCaixa === '')
         quantidadeCaixa = 0;
 
+    if (!referencia) {
+        return;
+    }
 
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "RegistrarConferencia",
@@ -86,7 +97,7 @@ function registrarConferencia() {
                 if (!$('#msgEnviarPicking').hasClass('hidden')) {
                     $("#msgEnviarPicking").addClass("hidden");
                 }
-                
+
                 waitingDialog.hide();
                 $("#Referencia").focus();
 
@@ -95,6 +106,22 @@ function registrarConferencia() {
             }
         }
     });
+}
+
+function confirmarfinalizarConferencia() {
+
+    dart.modalAjaxConfirm.open({
+        title: 'Lote',
+        message: "Deseja realmente finalizar a conferência do lote?",  
+        url: HOST_URL + CONTROLLER_PATH + "FinalizarConferencia/" + view_modal.idLote,
+        onConfirm: finalizarConferencia
+    });   
+}
+
+function finalizarConferencia() {
+    $(".close").click();
+    waitingDialog.hide();
+    $("#dataTable").DataTable().ajax.reload();
 }
 
 function resetarCamposConferencia() {

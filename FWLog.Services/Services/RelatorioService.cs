@@ -234,13 +234,13 @@ namespace FWLog.Services.Services
 
             paragraph = row.Cells[3].AddParagraph();
             paragraph.AddFormattedText("Status: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.IdNotaFiscalStatus.GetDisplayName());
+            paragraph.AddText(notaFiscal.NotaFiscalStatus.Descricao);
 
             row = tabela.AddRow();
             row.Cells[0].MergeRight = 1;
             paragraph = row.Cells[0].AddParagraph();
             paragraph.AddFormattedText("Fornecedor: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.Fornecedor.RazaoSocial);
+            paragraph.AddText(string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.RazaoSocial));
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Transportadora: ", TextFormat.Bold);
@@ -264,7 +264,7 @@ namespace FWLog.Services.Services
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("CNPJ: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.Fornecedor.CNPJ);
+            paragraph.AddText(notaFiscal.Fornecedor.CNPJ.Substring(0, 2) + "." + notaFiscal.Fornecedor.CNPJ.Substring(2, 3) + "." + notaFiscal.Fornecedor.CNPJ.Substring(5, 3) + "/" + notaFiscal.Fornecedor.CNPJ.Substring(8, 4) + "-" + notaFiscal.Fornecedor.CNPJ.Substring(12, 2));
 
             row = tabela.AddRow();
             paragraph = row.Cells[0].AddParagraph();
