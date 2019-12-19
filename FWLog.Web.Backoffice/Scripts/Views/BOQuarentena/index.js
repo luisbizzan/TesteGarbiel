@@ -149,27 +149,8 @@
     function termoResponsabilidade() {
         var id = $(this).data("id");
 
-        $.ajax({
-            url: CONTROLLER_PATH + "TermoResponsabilidade",
-            method: "POST",
-            cache: false,
-            xhrFields: {
-                responseType: 'blob'
-            },
-            data: {
-                idQuarentena: id
-            },
-            success: function (data) {
-                var a = document.createElement('a');
-                var url = window.URL.createObjectURL(data);
-
-                a.href = url;
-                a.download = 'TESTE.pdf';
-                document.body.append(a);
-                a.click();
-                a.remove();
-                window.URL.revokeObjectURL(url);
-            }
+        $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=laser&acao=" + id, function () {
+            $("#modalImpressoras").modal();
         });
     }
 })();
@@ -181,4 +162,29 @@ function setFornecedor(idFornecedor, razaoSocial) {
     fornecedor.val(idFornecedor);
     $("#modalFornecedor").modal("hide");
     $("#modalFornecedor").empty();
+}
+
+//Recebendo o id da quarentena no parâmetro 'acao'.
+function imprimir(acao, id) {
+    var idImpressora = $("input[name='IdImpressora']:checked").val();
+
+    $.ajax({
+        url: CONTROLLER_PATH + "TermoResponsabilidade",
+        method: "POST",
+        cache: false,
+        xhrFields: {
+            responseType: 'blob'
+        },
+        data: {
+            idQuarentena: acao,
+            IdImpressora: idImpressora
+        },
+        success: function () {
+            $("#btnFechar").click();
+        },
+        error: function (data) {
+            PNotify.error({ text: "Não Ocorreu um erro na impressão." });
+            NProgress.done();
+        }
+    });
 }
