@@ -6,11 +6,13 @@ using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Etiquetas;
+using FWLog.Services.Model.Lote;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -966,11 +968,16 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
-        public JsonResult TratarDivergencia(RecebimentoTratarDivergenciaViewModel viewModel)
+        public async Task<JsonResult> TratarDivergencia(RecebimentoTratarDivergenciaViewModel viewModel)
         {
             try
             {
                 ValidateModel(viewModel);
+                var request = Mapper.Map<TratarDivergenciaRequest>(viewModel);
+                request.IdUsuario = User.Identity.GetUserId();
+                request.IdEmpresa = IdEmpresa;
+
+                await _loteService.TratarDivergencia(request).ConfigureAwait(false);
 
                 return Json(new AjaxGenericResultModel
                 {

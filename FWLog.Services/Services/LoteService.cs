@@ -2,6 +2,7 @@
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
+using FWLog.Services.Model.Lote;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -160,9 +161,12 @@ namespace FWLog.Services.Services
             //TODO verificar qual metodo vai chamar a finalização para tratar a exception como no RegistrarRecebimentoNotaFiscal
         }
 
-        public async Task FinalizarTratativaDivergencia(Lote lote)
+        public async Task TratarDivergencia(TratarDivergenciaRequest request)
         {
-            NotaFiscal notafiscal = _uow.NotaFiscalRepository.GetById(lote.IdNotaFiscal);
+            GravarTratamentoDivergencia(request);
+
+            NotaFiscal notafiscal = _uow.NotaFiscalRepository.GetById(request.IdNotaFiscal);
+            Lote lote = _uow.LoteRepository.ObterLoteNota(request.IdNotaFiscal);
 
             List<LoteDivergencia> loteDivergencias = null;
 
@@ -241,6 +245,23 @@ namespace FWLog.Services.Services
                     notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.NotaDevolucaoAutorizada;
                     _uow.SaveChanges();
                 }
+            }
+        }
+
+        private void GravarTratamentoDivergencia(TratarDivergenciaRequest request)
+        {
+            foreach (TratarDivergenciaItemRequest divergencia in request.Divergencias)
+            {
+                LoteDivergencia loteDivergencia = _uow.LoteDivergenciaRepository.GetById(divergencia.IdLoteDivergencia);
+
+                loteDivergencia.QuantidadeDivergenciaMais = divergencia.QuantidadeMaisTratado ?? 0;
+                loteDivergencia.QuantidadeDivergenciaMenos = divergencia.QuantidadeMenosTratado ?? 0;
+                loteDivergencia.IdUsuarioDivergencia = request.IdUsuario;
+                loteDivergencia.IdLoteDivergenciaStatus = LoteDivergenciaStatusEnum.DivergenciaTratada;
+                loteDivergencia.DataTratamentoDivergencia = DateTime.Now;
+
+                _uow.LoteDivergenciaRepository.Update(loteDivergencia);
+                _uow.SaveChanges();
             }
         }
 
