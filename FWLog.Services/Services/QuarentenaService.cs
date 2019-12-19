@@ -1,4 +1,5 @@
 ﻿using FWLog.Data;
+using FWLog.Data.Models;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
@@ -23,20 +24,18 @@ namespace FWLog.Services.Services
     public class TermoResponsabilidadeRequest
     {
         public string NomeUsuario { get; set; }
-        public long IdNota { get; set; }
-        public long IdEmpresa { get; set; }
+        public long IdQuarentena { get; set; }
     }
 
     public class QuarentenaService : BaseService
     {
-        private UnitOfWork _uow;
+        private readonly UnitOfWork _uow;
 
-        private readonly Document _document = new Document();
+        private Document _document;
 
         private TermoResponsabilidadeRequest _request;
 
-        private string Empresa;
-        private string Codigo;
+        private Quarentena _Quarentena;
 
         public QuarentenaService(UnitOfWork uow)
         {
@@ -45,17 +44,20 @@ namespace FWLog.Services.Services
 
         public byte[] TermoResponsabilidade(TermoResponsabilidadeRequest request)
         {
+            _document = new Document();
             _request = request;
 
-            int tamanhoCodigo = new Random().Next(5, 10);
+            _Quarentena = _uow.QuarentenaRepository.All().First(x => x.IdQuarentena == request.IdQuarentena);
 
-            Empresa = _uow.EmpresaRepository.GetById(_request.IdEmpresa).RazaoSocial;
-            Codigo = Guid.NewGuid().ToString("n").Substring(0, tamanhoCodigo).ToUpper();
+            GeraCodConfirmacao();
 
             DefineStyles();
             IniciaDoc();
+            CriaLabelPaginacao();
             CriaIdentificacao();
             CriarConteudo();
+
+            AtualizaCodConfirmacaoQuarentena();
 
             return Renderizar();
         }
@@ -76,6 +78,19 @@ namespace FWLog.Services.Services
             }
         }
 
+        private void GeraCodConfirmacao()
+        {
+            int tamanhoCodigo = 6;
+
+            _Quarentena.CodigoConfirmacao = new Random().Next(1, int.MaxValue).ToString().PadRight(tamanhoCodigo, '0').Substring(0, tamanhoCodigo);
+        }
+
+        private void AtualizaCodConfirmacaoQuarentena()
+        {
+            _uow.QuarentenaRepository.Update(_Quarentena);
+            _uow.SaveChanges();
+        }
+
         private void DefineStyles()
         {
             Style style = _document.Styles[StyleNames.Normal];
@@ -87,9 +102,15 @@ namespace FWLog.Services.Services
             style = _document.Styles[StyleNames.Heading1];
             style.Font.Size = 15;
             style.Font.Bold = true;
-            style.ParagraphFormat.PageBreakBefore = true;
             style.ParagraphFormat.SpaceBefore = new Unit(1, UnitType.Centimeter);
-            style.ParagraphFormat.SpaceAfter = new Unit(1.5, UnitType.Centimeter);
+            style.ParagraphFormat.SpaceAfter = 0;
+            style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
+
+            style = _document.Styles[StyleNames.Heading2];
+            style.Font.Size = 14;
+            style.Font.Bold = true;
+            style.ParagraphFormat.SpaceBefore = 0;
+            style.ParagraphFormat.SpaceAfter = new Unit(1, UnitType.Centimeter);
             style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
 
             style = _document.Styles[StyleNames.Footer];
@@ -100,7 +121,7 @@ namespace FWLog.Services.Services
             style.Font.Size = 10;
 
             style = _document.Styles.AddStyle(CustomStyleNames.LinhaAssinatura, StyleNames.Normal);
-            style.ParagraphFormat.SpaceBefore = new Unit(1.7, UnitType.Centimeter);
+            style.ParagraphFormat.SpaceBefore = new Unit(14, UnitType.Point);
             style.ParagraphFormat.SpaceAfter = new Unit(1, UnitType.Point);
 
             style = _document.Styles.AddStyle(CustomStyleNames.TextoAssinatura, StyleNames.Normal);
@@ -114,28 +135,36 @@ namespace FWLog.Services.Services
             _document.Info.Author = "FwLog Web";
 
             _document.AddSection();
+
+            _document.LastSection.PageSetup.StartingNumber = 1;
+        }
+
+        private void CriaLabelPaginacao()
+        {
+            var paragraph = _document.LastSection.Footers.Primary.AddParagraph();
+            paragraph.AddText("Página ");
+            paragraph.AddPageField();
+            paragraph.AddText(" de ");
+            paragraph.AddNumPagesField();
         }
 
         private void CriaIdentificacao()
         {
-            //HeaderFooter footers = _document.LastSection.Footers.Primary;
-            //footers.AddParagraph("FW - FW DISTRIBUIDORA LTDA | FWD-000002");
-            //footers.AddParagraph("José de Campos | ENT05");
-            //footers.AddParagraph(DateTime.Now.ToString("dd/MM/yyyy"));
-
             HeaderFooter headers = _document.LastSection.Headers.Primary;
-            headers.AddParagraph($"Empresa: ${Empresa} | FWD-${Codigo}");
-            headers.AddParagraph($"Usuário: ${_request.NomeUsuario}");
-            headers.AddParagraph($"Data: ${DateTime.Now.ToString("dd/MM/yyyy")}");
+            headers.AddParagraph($"Empresa: {_Quarentena.Lote.NotaFiscal.Empresa.RazaoSocial} | {_Quarentena.Lote.NotaFiscal.Empresa.Sigla}");
+            headers.AddParagraph($"Usuário: {_request.NomeUsuario}");
+            headers.AddParagraph($"Data: {DateTime.Now.ToString("dd/MM/yyyy HH:mm")}");
+            headers.AddParagraph($"COD: {_Quarentena.CodigoConfirmacao}");
         }
 
         private void CriarConteudo()
         {
             _document.LastSection.AddParagraph("TERMO DE RESPONSABILIDADE", StyleNames.Heading1);
+            _document.LastSection.AddParagraph($"COD: {_Quarentena.CodigoConfirmacao}", StyleNames.Heading2);
 
             Paragraph paragraph = _document.LastSection.AddParagraph();
             paragraph.AddText("Declaro ter recebido da empresa ");
-            paragraph.AddFormattedText(Empresa, TextFormat.Bold);
+            paragraph.AddFormattedText(_Quarentena.Lote.NotaFiscal.Empresa.RazaoSocial, TextFormat.Bold);
             paragraph.AddText(" a(s) peça(s) relacionada(s) abaixo:");
 
             CriaListaPecas();
@@ -147,12 +176,13 @@ namespace FWLog.Services.Services
             CriaLinhaAssinatura("R.G.");
             CriaLinhaAssinatura("Data");
             CriaLinhaAssinatura("Transportadora");
-            CriaLinhaAssinatura("Assinatura", true);
+            CriaLinhaAssinatura("Assinatura", centralizado: true);
         }
 
         private void CriaListaPecas()
         {
             Table table = new Table();
+            table.Format.LeftIndent = Unit.FromCentimeter(1.5);
 
             Column column = table.AddColumn(Unit.FromCentimeter(5));
             column.Format.Alignment = ParagraphAlignment.Left;
@@ -168,10 +198,7 @@ namespace FWLog.Services.Services
             cell = row.Cells[1];
             cell.AddParagraph("Quantidade");
 
-            //var list = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(_request.IdNota)
-            //    .GroupBy(x => x.Produto.Referencia, (referencia, produtos) => new Peca { Referencia = referencia, Quantidade = produtos.Count() });
-
-            var list = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(_request.IdNota)
+            var list = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(_Quarentena.Lote.NotaFiscal.IdNotaFiscal).Where(x => x.QuantidadeDivergenciaMais > 0)
                 .Select(x => new Peca { Referencia = x.Produto.Referencia, Quantidade = x.QuantidadeDivergenciaMais.GetValueOrDefault() });
 
             foreach (var item in list)
@@ -196,6 +223,7 @@ namespace FWLog.Services.Services
             {
                 Paragraph paragraph = _document.LastSection.AddParagraph(linha, CustomStyleNames.LinhaAssinatura);
                 paragraph.Format.Alignment = ParagraphAlignment.Center;
+
                 paragraph = _document.LastSection.AddParagraph(texto, CustomStyleNames.TextoAssinatura);
                 paragraph.Format.Alignment = ParagraphAlignment.Center;
                 paragraph.Format.LeftIndent = 0;
@@ -203,6 +231,7 @@ namespace FWLog.Services.Services
             else
             {
                 _document.LastSection.AddParagraph(linha, CustomStyleNames.LinhaAssinatura);
+
                 _document.LastSection.AddParagraph(texto, CustomStyleNames.TextoAssinatura);
             }
         }

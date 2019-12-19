@@ -66,12 +66,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             };
 
-
-
-            //byte[] relatorio = _quarentenaService.TermoResponsabilidade();
-
-            //return File(relatorio, "application/pdf", "TermoResponsabilidade.pdf");
-
             return View(model);
         }
 
@@ -255,6 +249,19 @@ namespace FWLog.Web.Backoffice.Controllers
                 Notify.Error(Resources.CommonStrings.RegisterEditedErrorMessage);
                 return PartialView("DetalhesQuarentena", model);
             }
+        }
+
+        public ActionResult TermoResponsabilidade(long idQuarentena)
+        {
+            var request = new TermoResponsabilidadeRequest
+            {
+                IdQuarentena = idQuarentena,
+                NomeUsuario = User.Identity.Name
+            };
+
+            byte[] relatorio = _quarentenaService.TermoResponsabilidade(request);
+
+            return File(relatorio, "application/pdf", "TermoResponsabilidade.pdf");
         }
     }
 }
