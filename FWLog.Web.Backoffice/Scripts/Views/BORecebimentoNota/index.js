@@ -77,7 +77,7 @@
                 text: "Tratar Divergência",
                 attrs: { 'data-id': full.IdNotaFiscal, 'action': 'tratarDivergencias' },
                 icon: 'fa fa-warning',
-                visible: view.tratarDivergencias
+                visible: full.IdLoteStatus === 5 || full.IdLoteStatus === 6 || full.IdLoteStatus === 7 || full.IdLoteStatus === 8 ? true : false
             }
         ];
     });
