@@ -1,22 +1,34 @@
 ﻿(function () {
-    $('#modalConferencia').keypress(function (e) {
+    $('.onlyNumber').mask('0#');
+
+    $('#modalRegistroConferencia').keypress(function (e) {
         if (e.keyCode == '13') {
             registrarConferencia();
         }
     });
 
     $("#Referencia").blur(function () {
-        carregarDadosReferenciaConferencia();
+        if ($(this).val() == '') {
+            waitingDialog.hide();
+            $("#Referencia").focus();
+        }
+        else {
+            carregarDadosReferenciaConferencia();
+        }
     });
 
     $("#confirmarConferencia").click(function () {
         registrarConferencia();
     });
+
+    $("#finalizarConferencia").click(function () {
+        confirmarfinalizarConferencia();
+    });
 })();
 
 function carregarDadosReferenciaConferencia() {
     let referencia = $("#Referencia").val();
-
+   
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ObterDadosReferenciaConferencia",
         cache: false,
@@ -29,6 +41,7 @@ function carregarDadosReferenciaConferencia() {
             if (result.Success) {
                 var model = JSON.parse(result.Data);
 
+                $("#DescricaoReferencia").val(model.DescricaoReferencia);
                 $("#Embalagem").val(model.Embalagem);
                 $("#Unidade").val(model.Unidade);
                 $("#Multiplo").val(model.Multiplo);
@@ -36,6 +49,7 @@ function carregarDadosReferenciaConferencia() {
                 $("#Localizacao").val(model.Localizacao);
                 $("#QuantidadeNaoConferida").val(model.QuantidadeNaoConferida);
                 $("#QuantidadeConferida").val(model.QuantidadeConferida);
+                $("#InicioConferencia").val(model.InicioConferencia);
 
                 if (model.EnviarPicking) {
                     $("#msgEnviarPicking").removeClass("hidden");
@@ -58,13 +72,13 @@ function registrarConferencia() {
     let referencia = $("#Referencia").val();
     let quantidadePorCaixa = $("#QuantidadePorCaixa").val();
     let quantidadeCaixa = $("#QuantidadeCaixa").val();
+    let inicioConferencia = $("#InicioConferencia").val();
 
-    if (quantidadePorCaixa == '')
+    if (quantidadePorCaixa === '')
         quantidadePorCaixa = 0;
 
-    if (quantidadeCaixa == '')
+    if (quantidadeCaixa === '')
         quantidadeCaixa = 0;
-
 
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "RegistrarConferencia",
@@ -74,7 +88,8 @@ function registrarConferencia() {
             idLote: view_modal.idLote,
             codigoBarrasOuReferencia: referencia,
             quantidadePorCaixa: quantidadePorCaixa,
-            quantidadeCaixa: quantidadeCaixa
+            quantidadeCaixa: quantidadeCaixa,
+            inicioConferencia: inicioConferencia
         },
         success: function (result) {
             if (result.Success) {
@@ -86,7 +101,7 @@ function registrarConferencia() {
                 if (!$('#msgEnviarPicking').hasClass('hidden')) {
                     $("#msgEnviarPicking").addClass("hidden");
                 }
-                
+
                 waitingDialog.hide();
                 $("#Referencia").focus();
 
@@ -95,6 +110,22 @@ function registrarConferencia() {
             }
         }
     });
+}
+
+function confirmarfinalizarConferencia() {
+
+    dart.modalAjaxConfirm.open({
+        title: 'Lote',
+        message: "Deseja realmente finalizar a conferência do lote?",  
+        url: HOST_URL + CONTROLLER_PATH + "FinalizarConferencia/" + view_modal.idLote,
+        onConfirm: finalizarConferencia
+    });   
+}
+
+function finalizarConferencia() {
+    $(".close").click();
+    waitingDialog.hide();
+    $("#dataTable").DataTable().ajax.reload();
 }
 
 function resetarCamposConferencia() {

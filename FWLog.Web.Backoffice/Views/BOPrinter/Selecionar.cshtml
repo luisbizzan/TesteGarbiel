@@ -28,12 +28,12 @@
                             }
                             else
                             {
-                                foreach (var impressora in Model.Impressoras)
+                                for (var i = 0; i < Model.Impressoras.Count(); i++)
                                 {
                                     <div class="col-sm-12 col-lg-12">
                                         <div class="form-group">
-                                            @Html.RadioButton("IdImpressora", impressora.IdImpressora, new { Id = "IdImpressora" + impressora.IdImpressora })
-                                            <label for="IdImpressora@(impressora.IdImpressora)">@impressora.Nome</label>
+                                            @Html.RadioButton("IdImpressora", Model.Impressoras[i].IdImpressora, i == 0 ? true : false, new { Id = "IdImpressora" + Model.Impressoras[i].IdImpressora })
+                                            <label for="IdImpressora@(Model.Impressoras[i].IdImpressora)">@Model.Impressoras[i].Nome</label>
                                         </div>
                                     </div>
                                 }
@@ -51,7 +51,10 @@
                     <div class="row navbar-right">
                         <div class="col-sm-12 col-lg-12">
                             <button type="button" id="btnFechar" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                            <button type="button" id="btnImprimir" class="btn btn-primary"><i class="fa fa-fw fa-print"></i> Impirmir</button>
+                            @if (!Model.Impressoras.NullOrEmpty())
+                            {
+                                <button type="button" id="btnImprimir" class="btn btn-primary"><i class="fa fa-fw fa-print"></i> Impirmir</button>
+                            }
                         </div>
                     </div>
                 </div>
