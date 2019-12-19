@@ -68,5 +68,10 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return query;
         }
+
+        public bool ExisteConferencia(long idLote)
+        {
+            return Entities.LoteConferencia.Any(a => a.IdLote == idLote);
+        }
     }
 }

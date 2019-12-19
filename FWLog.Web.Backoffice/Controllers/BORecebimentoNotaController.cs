@@ -404,7 +404,7 @@ namespace FWLog.Web.Backoffice.Controllers
             try
             {
                 var userInfo = new BackOfficeUserInfo();
-                await _loteService.RegistrarRecebimentoNotaFiscal(idNotaFiscal, userInfo.UserId.ToString(), dataRecebimento, qtdVolumes);
+                await _loteService.RegistrarRecebimentoNotaFiscal(idNotaFiscal, userInfo.UserId.ToString(), dataRecebimento, qtdVolumes).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -994,8 +994,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.DenyGet);
 
             }
-            catch
+            catch (Exception e)
             {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
@@ -1052,6 +1054,31 @@ namespace FWLog.Web.Backoffice.Controllers
             byte[] relatorio = _relatorioService.GerarRelatorioRastreioPeca(viewModel);
 
             return File(relatorio, "application/pdf", "Relatório Rastreio de Peças.pdf");
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> FinalizarConferencia(long id)
+        {
+            try
+            {
+                await _loteService.FinalizarConferencia(id, User.Identity.GetUserId(), IdEmpresa).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não foi possível comunicar o registro da conferência com o Sankhya."
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = "Finalização da conferência realizado com sucesso. Estoque atualizado."
+            });
         }
     }
 }
