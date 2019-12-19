@@ -247,7 +247,7 @@ function imprimir(acao, id) {
                 url: "/BORecebimentoNota/ImprimirRelatorioNotas",
                 method: "POST",
                 data: {
-                    IdImpressora: $("#IdImpressora").val(),
+                    IdImpressora: $("input[name='IdImpressora']:checked").val(),
                     Lote: $("#Filter_Lote").val(),
                     Nota: $("#Filter_Nota").val(),
                     ChaveAcesso: $("#Filter_ChaveAcesso").val(),
@@ -271,7 +271,7 @@ function imprimir(acao, id) {
                 url: "/BORecebimentoNota/ImprimirDetalhesEntradaConferencia",
                 method: "POST",
                 data: {
-                    IdImpressora: $("#IdImpressora").val(),
+                    IdImpressora: $("input[name='IdImpressora']:checked").val(),
                     IdNotaFiscal: id
                 },
                 success: function () {

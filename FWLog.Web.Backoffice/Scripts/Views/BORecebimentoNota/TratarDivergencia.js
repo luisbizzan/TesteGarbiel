@@ -5,8 +5,12 @@
         var isVAlid = true;
 
         $(".linha-divergencia").each(function () {
+            console.log($($(this).find(".divergenciaMais")).val());
+            console.log($(this).find(".divergenciaMenos").val());
+
             if ($(this).find(".divergenciaMais").val() === "" && $(this).find(".divergenciaMenos").val() === "") {
-                return;
+                isVAlid = false;
+                $(this).css("background-color", "yellow");
             }
         });
 
