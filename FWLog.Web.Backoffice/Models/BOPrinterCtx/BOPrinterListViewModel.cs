@@ -18,7 +18,7 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
 
     public class BOPrinterListItemViewModel
     {
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         [Display(Name = nameof(Res.NameLabel), ResourceType = typeof(Res))]
         public string Name { get; set; }
@@ -29,8 +29,7 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         [Display(Name = nameof(Res.CompanyLabel), ResourceType = typeof(Res))]
         public string Empresa { get; set; }
 
-        [Display(Name = "Ativa")]
-        public string Ativa { get; set; }
+        public string Status { get; set; }
     }
 
     public class BOPrinterFilterViewModel
@@ -44,7 +43,8 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
         [Display(Name = nameof(Res.PrinterTypeLabel), ResourceType = typeof(Res))]
         public int? PrinterTypeId { get; set; }
 
-        [Display(Name = "Ativa")]
-        public int? Ativa { get; set; }
+        public bool? Status { get; set; }
+
+        public string RazaoEmpresa { get; set; }
     }
 }

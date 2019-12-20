@@ -41,17 +41,17 @@ namespace FWLog.Web.Backoffice.Controllers
             int totalRecords = 0;
             int totalRecordsFiltered = 0;
 
-            var query = _uow.FornecedorRepository.GetAll().AsQueryable();
+            var query = _uow.FornecedorRepository.Todos();
 
             totalRecords = query.Count();
 
-            if (!String.IsNullOrEmpty(model.CustomFilter.Codigo))
-                query = query.Where(x => !String.IsNullOrEmpty(x.Codigo) && x.Codigo.Contains(model.CustomFilter.Codigo));
+            if (model.CustomFilter.CodigoIntegracao.HasValue)
+                query = query.Where(x => x.CodigoIntegracao == model.CustomFilter.CodigoIntegracao.Value);
 
             if (!string.IsNullOrEmpty(model.CustomFilter.RazaoSocial))
                 query = query.Where(x => x.RazaoSocial.Contains(model.CustomFilter.RazaoSocial));
 
-            if(!string.IsNullOrEmpty(model.CustomFilter.NomeFantasia))
+            if (!string.IsNullOrEmpty(model.CustomFilter.NomeFantasia))
                 query = query.Where(x => x.NomeFantasia.Contains(model.CustomFilter.NomeFantasia));
 
             if (!string.IsNullOrEmpty(model.CustomFilter.CNPJ))
@@ -62,10 +62,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 boFornecedorSearchModalItemViewModel.Add(new BOFornecedorSearchModalItemViewModel()
                 {
                     IdFornecedor = item.IdFornecedor,
-                    Codigo = item.Codigo,
+                    CodigoIntegracao = item.CodigoIntegracao,
                     RazaoSocial = item.RazaoSocial,
                     NomeFantasia = item.NomeFantasia,
-                    CNPJ = item.CNPJ.Substring(0, 2) + "." + item.CNPJ.Substring(2, 3) + "." + item.CNPJ.Substring(5, 3) + "/" + item.CNPJ.Substring(8, 4) + "-" + item.CNPJ.Substring(12, 2)
+                    CNPJ = item.CNPJ.Length == 14 ? item.CNPJ.Substring(0, 2) + "." + item.CNPJ.Substring(2, 3) + "." + item.CNPJ.Substring(5, 3) + "/" + item.CNPJ.Substring(8, 4) + "-" + item.CNPJ.Substring(12, 2) : item.CNPJ
                 });
             }
 

@@ -1,0 +1,89 @@
+﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.ExibirDivergenciaRecebimentoViewModel
+@{
+    Layout = null;
+
+    @BundleHelper.RenderViewScriptModal()
+}
+
+<div class="modal-dialog modal-lg">
+    <form name="divergencias" id="divergencias">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Divergências de Conferência Tratadas</h4>
+            </div>
+            <div class="modal-body">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.NotaFiscal): @Html.DisplayTextFor(m => m.NotaFiscal)
+                                @Html.HiddenFor(m => m.IdLote)
+                            </div>
+                            <div class="col-sm-12 col-lg-6">
+                                @Html.LabelFor(m => m.StatusNotasFiscal): @Html.DisplayTextFor(m => m.StatusNotasFiscal)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.ConferidoPor): @Html.DisplayTextFor(m => m.ConferidoPor)
+                            </div>
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.InicioConferencia): @Html.DisplayTextFor(m => m.InicioConferencia)
+                            </div>
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.FimConferencia): @Html.DisplayTextFor(m => m.FimConferencia)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.UsuarioTratamento): @Html.DisplayTextFor(m => m.UsuarioTratamento)
+                            </div>
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.DataTratamento): @Html.DisplayTextFor(m => m.DataTratamento)
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 25px; overflow-y: auto;">
+                            <div class="col-sm-12 col-lg-12">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>@Html.LabelFor(m => m.Divergencias[0].Referencia)</th>
+                                            <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeNotaFiscal)</th>
+                                            <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeConferencia)</th>
+                                            <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeMais)</th>
+                                            <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeMenos)</th>
+                                            <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeMaisTratado)</th>
+                                            <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeMenosTratado)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.Divergencias.Count(); i++)
+                                        {
+                                            <tr class="linha-divergencia">
+                                                <td>@Model.Divergencias[i].Referencia</td>
+                                                <td style="text-align:center">@Model.Divergencias[i].QuantidadeNotaFiscal</td>
+                                                <td style="text-align:center">@Model.Divergencias[i].QuantidadeConferencia</td>
+                                                <td style="text-align:center">@Model.Divergencias[i].QuantidadeMais</td>
+                                                <td style="text-align:center">@Model.Divergencias[i].QuantidadeMenos</td>
+                                                <td style="text-align:center">@Model.Divergencias[i].QuantidadeMaisTratado</td>
+                                                <td style="text-align:center">@Model.Divergencias[i].QuantidadeMenosTratado</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row navbar-right">
+                            <div class="col-sm-12 col-lg-12">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

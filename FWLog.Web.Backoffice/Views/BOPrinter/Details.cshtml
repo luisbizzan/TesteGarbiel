@@ -6,42 +6,38 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- title -->
-<div class="page-title">
-    <div class="title">
-        <h3>@Res.DetailsPageTitle</h3>
-    </div>
-</div>
-<!-- /title -->
 <div class="x_panel">
     <div class="x_title">
-        <h2>@Res.PrinterHeader</h2>
+        <h2>Detalhes Impressora</h2>
         <div class="clearfix"></div>
     </div>
     <div class="x_content">
         <!-- fields -->
         <div class="row">
-            <div class="col-sm-12 col-xs-12">
-                <div class="form-group col-sm-2 col-xs-12">
-                    @Html.LabelFor(m => m.Name, new { @class = "control-label" })
-                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @readonly = "readonly" })
+            <div class="form-group col-sm-2 col-xs-12">
+                @Html.LabelFor(m => m.Name, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+            <div class="form-group col-sm-3 col-xs-12">
+                @Html.LabelFor(m => m.IP, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.IP, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+            <div class="form-group col-sm-2 col-xs-12">
+                @Html.LabelFor(m => m.PrinterType, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.PrinterType, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+            <div class="form-group col-sm-3 col-xs-12">
+                @Html.LabelFor(m => m.Empresa, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.Empresa, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-12 col-md-6 col-lg-3">
+                @Html.LabelFor(m => m.Ativa)
+                <div class="checkbox">
+                    @Html.CheckBoxFor(m => m.Ativa, new { @class = "flat", @disabled = "disabled" })
                 </div>
-                <div class="form-group col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.IP, new { @class = "control-label" })
-                    @Html.TextBoxFor(m => m.IP, new { @class = "form-control", @readonly = "readonly" })
-                </div>
-                <div class="form-group col-sm-2 col-xs-12">
-                    @Html.LabelFor(m => m.PrinterType, new { @class = "control-label" })
-                    @Html.TextBoxFor(m => m.PrinterType, new { @class = "form-control", @readonly = "readonly" })
-                </div>
-                <div class="form-group col-sm-2 col-xs-12">
-                    @Html.LabelFor(m => m.Ativa, new { @class = "control-label" })
-                    @Html.TextBoxFor(m => m.Ativa, new { @class = "form-control", @readonly = "readonly" })
-                </div>
-                <div class="form-group col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.Empresa, new { @class = "control-label" })
-                    @Html.TextBoxFor(m => m.Empresa, new { @class = "form-control", @readonly = "readonly" })
-                </div>
+                @Html.ValidationMessageFor(m => m.Ativa)
             </div>
         </div>
         <!-- /fields -->

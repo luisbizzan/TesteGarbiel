@@ -4,27 +4,15 @@
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
             {
-                text: "Detalhes da Nota",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
-                icon: 'fa fa-eye',
-                visible: view.registrarRecebimento
-            },
-            {
-                text: "Registrar Recebimento",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
+                text: "Atualizar Status da Quarentena",
+                attrs: { 'data-id': full.IdQuarentena, 'action': 'alterarStatus' },
                 icon: 'fa fa-pencil-square',
                 visible: view.registrarRecebimento
             },
             {
-                text: "Registrar Conferência",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
-                icon: 'fa fa-check-square',
-                visible: view.registrarRecebimento
-            },
-            {
-                text: "Tratar Divergência",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'click' },
-                icon: 'fa fa-warning',
+                text: "Emitir Termo de Responsabilidade",
+                attrs: { 'data-id': full.IdQuarentena, 'action': 'termoResponsabilidade' },
+                icon: 'fa fa-file-text',
                 visible: view.registrarRecebimento
             }
         ];
@@ -94,10 +82,9 @@
             { data: 'Lote' },
             { data: 'Nota' },
             { data: 'Fornecedor' },
-            { data: 'DataAbertura' },
-            { data: 'DataEncerramento' },
+            { data: 'DataAbertura', width: 100 },
+            { data: 'DataEncerramento', width: 100 },
             { data: 'Atraso' },
-            { data: 'Fornecedor' },
             { data: 'Status' },
             actionsColumn
         ]
@@ -134,6 +121,38 @@
     $("#limparFornecedor").click(function () {
         limparFornecedor();
     });
+
+    $(document.body).on('click', "[action='alterarStatus']", alterarStatus);
+    $(document.body).on('click', "[action='termoResponsabilidade']", termoResponsabilidade);
+
+    function alterarStatus() {
+        let id = $(this).data("id");
+        let $modal = $("#modalAlterarStatus");
+
+        $.ajax({
+            url: HOST_URL + CONTROLLER_PATH + "ValidarModalDetalhesQuarentena/" + id,
+            cache: false,
+            method: "POST",
+            success: function (result) {
+                if (!!result.Success) {
+                    $modal.load(HOST_URL + CONTROLLER_PATH + "ExibirModalDetalhesQuarentena/" + id, function () {
+                        $modal.modal();
+
+                    });
+                } else {
+                    PNotify.error({ text: result.Message });
+                }
+            }
+        });
+    }
+
+    function termoResponsabilidade() {
+        var id = $(this).data("id");
+
+        $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=laser&acao=" + id, function () {
+            $("#modalImpressoras").modal();
+        });
+    }
 })();
 
 function setFornecedor(idFornecedor, razaoSocial) {
@@ -143,4 +162,29 @@ function setFornecedor(idFornecedor, razaoSocial) {
     fornecedor.val(idFornecedor);
     $("#modalFornecedor").modal("hide");
     $("#modalFornecedor").empty();
+}
+
+//Recebendo o id da quarentena no parâmetro 'acao'.
+function imprimir(acao, id) {
+    var idImpressora = $("input[name='IdImpressora']:checked").val();
+
+    $.ajax({
+        url: CONTROLLER_PATH + "TermoResponsabilidade",
+        method: "POST",
+        cache: false,
+        xhrFields: {
+            responseType: 'blob'
+        },
+        data: {
+            idQuarentena: acao,
+            IdImpressora: idImpressora
+        },
+        success: function () {
+            $("#btnFechar").click();
+        },
+        error: function (data) {
+            PNotify.error({ text: "Não Ocorreu um erro na impressão." });
+            NProgress.done();
+        }
+    });
 }

@@ -1,0 +1,80 @@
+﻿@model FWLog.Web.Backoffice.Models.PontoArmazenagemCtx.PontoArmazenagemDetalhesViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript()
+}
+<div class="col-md-6 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Detalhes Ponto de Armazenagem</h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.IdPontoArmazenagem):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.IdPontoArmazenagem
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.PontoArmazenagem):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.PontoArmazenagem
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.NivelArmazenagem):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.NivelArmazenagem
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.TipoArmazenagem):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.TipoArmazenagem
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.TipoMovimentacao):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.TipoMovimentacao
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.LimitePesoVertical):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.LimitePesoVertical
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.Status):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.Status
+                </div>
+            </div>
+            <div class="ln_solid"></div>
+            <div class="row col-xs-12 form-buttons">
+                <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                <a href="@Url.Action("Editar", new { id = Model.IdPontoArmazenagem })" class="btn btn-default">Editar</a>
+            </div>
+        </div>
+    </div>
+</div>

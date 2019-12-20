@@ -125,9 +125,7 @@
         };
 
         var saveFilterToData = function (data, $form) {
-
             data.CustomFilter = {};
-
             if ($form == null) {
                 $form = $('[data-filter="form"]');
             }
@@ -138,7 +136,6 @@
 
             return data;
         };
-
 
         return {
             loadFormFilterEvents: loadFormFilterEvents,

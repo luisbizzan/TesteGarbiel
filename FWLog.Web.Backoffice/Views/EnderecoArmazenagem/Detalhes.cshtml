@@ -1,0 +1,105 @@
+﻿@model FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx.EnderecoArmazenagemDetalhesViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript()
+}
+
+<div class="col-md-6 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Detalhes Endereço de Armazenagem</h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.IdEnderecoArmazenagem):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.IdEnderecoArmazenagem
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.NivelArmazenagem):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.NivelArmazenagem
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.PontoArmazenagem):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.PontoArmazenagem
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.Codigo):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.Codigo
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.EstoqueMinimo):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.EstoqueMinimo
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.EstoqueMaximo):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.EstoqueMaximo
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.LimitePeso):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.LimitePeso
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.Fifo):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.Fifo
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.PontoSeparacao):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.PontoSeparacao
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.Status):
+                </div>
+                <div class="col-sm-4 col-xs-12">
+                    @Model.Status
+                </div>
+            </div>
+            <div class="ln_solid"></div>
+            <div class="row col-xs-12 form-buttons">
+                <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                <a href="@Url.Action("Editar", new { id = Model.IdEnderecoArmazenagem })" class="btn btn-default">Editar</a>
+            </div>
+        </div>
+    </div>
+</div>

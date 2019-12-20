@@ -1,33 +1,26 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ResGen = Resources.GeneralStrings;
 
-namespace FWLog.Data
-{
-    [Table("UserCompany")]
+namespace FWLog.Data.Models
+{   
     public class UsuarioEmpresa
     {
         [Key, Column(Order = 0)]
         [Required()]
         public string UserId { get; set; }
-
         [Key, Column(Order = 1)]
         [Required()]
-        public long CompanyId { get; set; }
+        public long IdEmpresa { get; set; }
+        [Required]
+        [Index]
+        public long PerfilUsuarioId { get; set; }
 
-        [ForeignKey("CompanyId")]
-        public Empresa Empresa { get; set; }
-
-        public UsuarioEmpresa(string userId, long idEmpresa)
-        {
-            UserId = userId;
-            CompanyId = idEmpresa;
-        }
-
-        public UsuarioEmpresa()
-        {
-
-        }
+        [ForeignKey(nameof(UserId))]
+        public virtual AspNetUsers Usuario { get; set; }
+        [ForeignKey(nameof(IdEmpresa))]
+        public virtual Empresa Empresa { get; set; }
+        [ForeignKey(nameof(PerfilUsuarioId))]
+        public virtual PerfilUsuario PerfilUsuario { get; set; }
     }
 }
 

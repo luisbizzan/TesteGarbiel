@@ -1,8 +1,7 @@
-﻿using FWLog.Web.Api.Helpers;
-using FWLog.Web.Api.Models;
-using FWLog.AspNet.Identity;
+﻿using FWLog.AspNet.Identity;
 using FWLog.Web.Api.App_Start;
 using FWLog.Web.Api.GlobalResources.General;
+using FWLog.Web.Api.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Newtonsoft.Json;
@@ -16,8 +15,6 @@ using System.Threading;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
-using System.Collections.Specialized;
-using System;
 
 namespace FWLog.Web.Api.Helpers
 {
@@ -76,10 +73,8 @@ namespace FWLog.Web.Api.Helpers
 
             string userId = user.Identity.GetUserId();
 
-            NameValueCollection parameters = HttpUtility.ParseQueryString(actionContext.Request.RequestUri.Query);
-
             var userManager = actionContext.Request.GetOwinContext().GetUserManager<WebApiUserManager>();
-            IList<string> permissions = userManager.GetPermissions(userId, Convert.ToInt32(parameters["IdEmpresa"]));
+            IList<string> permissions = userManager.GetPermissions(userId);
 
             var customUser = new ApplicationClaimsPrincipal((ClaimsPrincipal)user, permissions);
 

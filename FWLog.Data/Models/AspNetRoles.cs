@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using ResEnt = Resources.EntityStrings;
 
-namespace FWLog.Data
+namespace FWLog.Data.Models
 {
     [Log(DisplayName = nameof(ResEnt.AspNetRoles), ResourceType = typeof(ResEnt))]
     public class AspNetRoles

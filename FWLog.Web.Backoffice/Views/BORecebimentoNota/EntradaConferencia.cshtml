@@ -2,10 +2,13 @@
 @{
     Layout = null;
 
-    @BundleHelper.RenderViewScriptModal()
+    @BundleHelper.RenderViewScriptModal(new
+     {
+         idLote = Model.IdLote
+     })
 }
 
-<div class="modal-dialog modal-lg">
+<div class="modal-dialog modal-lg" id="modalRegistroConferencia">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">
@@ -14,166 +17,194 @@
             <h4 class="modal-title" id="myModalLabel">Conferência de Nota</h4>
         </div>
         <div class="modal-body" style="overflow: auto; max-height: calc(90vh - 40px);">
-            <div class="x_panel">
-                <div class="x_content">
+            <div class="x_content">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <div class="row">
+                            @Html.HiddenFor(m => m.InicioConferencia)
+                            <div class="col-xs-6 col-sm-6 col-lg-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.IdLote)
+                                    @Html.TextBoxFor(m => m.IdLote, new { @class = "form-control", @readonly = "readonly" })
+                                </div>
+                            </div>
 
-                    <div class="x_panel">
-                        <div class="x_content">
-                            <div class="row">
-                                <div class="col-sm-6 col-lg-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.NumeroNotaFiscal)
-                                        @Html.TextBoxFor(m => m.NumeroNotaFiscal, new { @class = "form-control", @readonly = "readonly" })
-                                    </div>
+                            <div class="col-xs-6 col-sm-6 col-lg-2">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.NumeroNotaFiscal)
+                                    @Html.TextBoxFor(m => m.NumeroNotaFiscal, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
-                                <div class="col-sm-12 col-lg-6" style="margin-bottom:10px;">
-                                    @Html.LabelFor(model => model.IdConferente, htmlAttributes: new { @class = "control-label" })
-                                    <div class="input-group">
-                                        @Html.TextBoxFor(m => m.NomeConferente, null, new { @class = "form-control", @readonly = "true" })
-                                        <span class="input-group-btn">
-                                            <a id="pesquisarConferente" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
-                                            <a id="limparConferente" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
-                                        </span>
-                                    </div>
+                            </div>
+                            <div class="col-xs-7 col-sm-6 col-lg-5">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.NomeConferente)
+                                    @Html.TextBoxFor(m => m.NomeConferente, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
-                                <div class="col-sm-6 col-lg-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.DataHoraRecebimento)
-                                        @Html.TextBoxFor(m => m.DataHoraRecebimento, new { @class = "form-control", @readonly = "readonly" })
-                                    </div>
+                            </div>
+                            <div class="col-xs-5 col-sm-6 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.DataHoraRecebimento)
+                                    @Html.TextBoxFor(m => m.DataHoraRecebimento, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
-                                <div class="col-sm-6 col-lg-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.QuantidadeVolumes)
-                                        @Html.TextBoxFor(m => m.QuantidadeVolumes, new { @class = "form-control", @readonly = "readonly" })
-                                    </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-lg-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.NomeFornecedor)
+                                    @Html.TextBoxFor(m => m.NomeFornecedor, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
-                                <div class="col-sm-12 col-lg-12">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.NomeFornecedor)
-                                        @Html.TextBoxFor(m => m.NomeFornecedor, new { @class = "form-control", @readonly = "readonly" })
-                                    </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-6 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.QuantidadeVolume)
+                                    @Html.TextBoxFor(m => m.QuantidadeVolume, new { @class = "form-control", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-6 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.TipoConferencia)
+                                    @Html.TextBoxFor(m => m.TipoConferencia, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="x_panel">
-                        <div class="x_title">
-                            Itens
-                        </div>
-                        <div class="x_content">
-                            <div class="row">
-                                <div class="col-sm-12 col-lg-6">
+                <div class="x_panel">
+                    <div class="x_title">
+                        Itens
+                    </div>
+                    <div class="x_content">
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.Referencia)
+                                    @Html.TextBoxFor(m => m.Referencia, new { @class = "form-control", tabindex = 0 })
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-8 col-lg-6">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.DescricaoReferencia)
+                                    @Html.TextBoxFor(m => m.DescricaoReferencia, new { @class = "form-control", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.Multiplo)
+                                    @Html.TextBoxFor(m => m.Multiplo, new { @class = "form-control", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            @if (Model.IdTipoConferencia == 2)
+                            {
+                                <div class="col-xs-6 col-sm-4 col-lg-3">
                                     <div class="form-group">
-                                        @Html.LabelFor(f => f.Referencia)
-                                        @Html.TextBoxFor(m => m.Referencia, new { @class = "form-control" })
+                                        @Html.LabelFor(f => f.QuantidadePorCaixa)
+                                        @Html.TextBoxFor(m => m.QuantidadePorCaixa, new { @class = "form-control", tabindex = 1, @readonly = "readonly", maxlength = 5 })
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-lg-6">
+                            }
+                            else
+                            {
+                                <div class="col-xs-6 col-sm-4 col-lg-3">
                                     <div class="form-group">
-                                        @Html.LabelFor(f => f.Embalagem)
-                                        @Html.TextBoxFor(m => m.Embalagem, new { @class = "form-control" })
+                                        @Html.LabelFor(f => f.QuantidadePorCaixa)
+                                        @Html.TextBoxFor(m => m.QuantidadePorCaixa, new { @class = "form-control", tabindex = 1, maxlength = 5 })
                                     </div>
                                 </div>
-                                <div class="col-sm-6 col-lg-6">
+                            }
+                            @if (Model.IdTipoConferencia == 2)
+                            {
+                                <div class="col-xs-6 col-sm-4 col-lg-3">
                                     <div class="form-group">
-                                        @Html.LabelFor(f => f.Unidade)
-                                        @Html.TextBoxFor(m => m.Unidade, new { @class = "form-control" })
+                                        @Html.LabelFor(f => f.QuantidadeCaixa)
+                                        @Html.TextBoxFor(m => m.QuantidadeCaixa, new { @class = "form-control onlyNumber", tabindex = 2, @readonly = "readonly", maxlength = 5 })
                                     </div>
                                 </div>
-                                <div class="col-sm-6 col-lg-6">
+                            }
+                            else
+                            {
+                                <div class="col-xs-6 col-sm-4 col-lg-3">
                                     <div class="form-group">
-                                        @Html.LabelFor(f => f.Multiplo)
-                                        @Html.TextBoxFor(m => m.Multiplo, new { @class = "form-control" })
+                                        @Html.LabelFor(f => f.QuantidadeCaixa)
+                                        @Html.TextBoxFor(m => m.QuantidadeCaixa, new { @class = "form-control onlyNumber", tabindex = 2, @maxlength = 5 })
                                     </div>
                                 </div>
-                                <div class="col-sm-6 col-lg-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.QuantidadePorVolumes)
-                                        @Html.TextBoxFor(m => m.QuantidadePorVolumes, new { @class = "form-control" })
-                                    </div>
+                            }
+                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.Embalagem)
+                                    @Html.TextBoxFor(m => m.Embalagem, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
-                                <div class="col-sm-6 col-lg-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.NumerosDeCaixas)
-                                        @Html.TextBoxFor(m => m.NumerosDeCaixas, new { @class = "form-control" })
-                                    </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.Unidade)
+                                    @Html.TextBoxFor(m => m.Unidade, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
-                                <div class="col-sm-6 col-lg-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.TotalItens)
-                                        @Html.TextBoxFor(m => m.TotalItens, new { @class = "form-control" })
-                                    </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.TotalItens)
+                                    @Html.TextBoxFor(m => m.TotalItens, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
-                                <div class="col-sm-6 col-lg-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.MediaVendaMes)
-                                        @Html.TextBoxFor(m => m.MediaVendaMes, new { @class = "form-control" })
-                                    </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.MediaVendaMes)
+                                    @Html.TextBoxFor(m => m.MediaVendaMes, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="x_panel">
-                        <div class="x_title">
-                            Estoque e Vendas
-                        </div>
-                        <div class="x_content">
-                            <div class="row">
-                                <div class="col-sm-12 col-lg-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.Estoque)
-                                        @Html.TextBoxFor(m => m.Estoque, new { @class = "form-control" })
-                                    </div>
+                <div class="x_panel">
+                    <div class="x_title">
+                        Estoque e Vendas
+                    </div>
+                    <div class="x_content">
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.QuantidadeEstoque)
+                                    @Html.TextBoxFor(m => m.QuantidadeEstoque, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
-                                <div class="col-sm-12 col-lg-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.ReservaVendas)
-                                        @Html.TextBoxFor(m => m.ReservaVendas, new { @class = "form-control" })
-                                    </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.QuantidadeReservada)
+                                    @Html.TextBoxFor(m => m.QuantidadeReservada, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
-                                <div class="col-sm-6 col-lg-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.Localizacao)
-                                        @Html.TextBoxFor(m => m.Localizacao, new { @class = "form-control" })
-                                    </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.Localizacao)
+                                    @Html.TextBoxFor(m => m.Localizacao, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
-                                <div class="col-sm-6 col-lg-6">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.Apoio)
-                                        @Html.TextBoxFor(m => m.Apoio, new { @class = "form-control" })
-                                    </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.QuantidadeNaoConferida)
+                                    @Html.TextBoxFor(m => m.QuantidadeNaoConferida, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
-                                <div class="col-sm-6 col-lg-4">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.QuantidadeNaoConferida)
-                                        @Html.TextBoxFor(m => m.QuantidadeNaoConferida, new { @class = "form-control" })
-                                    </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-4 col-lg-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(f => f.QuantidadeConferida)
+                                    @Html.TextBoxFor(m => m.QuantidadeConferida, new { @class = "form-control", @readonly = "readonly" })
                                 </div>
-                                <div class="col-sm-6 col-lg-4">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.QuantidadePortaPalete)
-                                        @Html.TextBoxFor(m => m.QuantidadePortaPalete, new { @class = "form-control" })
-                                    </div>
-                                </div>
-                                <div class="col-sm-6 col-lg-4">
-                                    <div class="form-group">
-                                        @Html.LabelFor(f => f.QuantidadeConferida)
-                                        @Html.TextBoxFor(m => m.QuantidadeConferida, new { @class = "form-control" })
-                                    </div>
-                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <h5 id="msgEnviarPicking" class="text-danger hidden"><strong>Atenção! A mercadoria deve ser enviada para o Picking.</strong></h5>
                             </div>
                         </div>
                     </div>
-
-                    <div class="row navbar-right">
-                        <div class="col-sm-12 col-lg-12">
-                            <button type="button" class="btn btn-default">Divergência</button>
-                            <button type="button" class="btn btn-primary"><i class="fa fa-fw fa-print"></i>Finalizar</button>
-                            <button type="button" class="btn btn-primary"><i class="fa fa-fw fa-print"></i>Confirmar</button>
-                        </div>
+                </div>
+                <div class="row" style="float: right;">
+                    <div class="col-sm-12 col-lg-12">
+                        <button type="button" id="finalizarConferencia" class="btn btn-primary">Finalizar</button>
+                        <button type="button" class="btn btn-default">Divergência</button>
+                        @*<button type="button" id="confirmarConferencia" class="btn btn-info">Confirmar</button>*@
+                        <a id="confirmarConferencia" data-toggle="tooltip" title="Confirmar" class="btn btn-info">Confirmar</a>
                     </div>
                 </div>
             </div>

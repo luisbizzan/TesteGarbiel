@@ -1,7 +1,5 @@
-﻿using FWLog.Data;
-using DartDigital.Library.Helpers;
-using FluentValidation;
-using System;
+﻿using FluentValidation;
+using FWLog.Data.Models;
 
 namespace FWLog.Services.Validators
 {

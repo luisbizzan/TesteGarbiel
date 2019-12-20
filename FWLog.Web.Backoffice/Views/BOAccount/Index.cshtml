@@ -3,7 +3,7 @@
 @using FWLog.AspNet.Identity
 
 @{
-    ViewBag.Title = Res.IndexPageTitle;
+    ViewBag.Title = "Lista de Usuários";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -38,8 +38,6 @@
         }
     )
 }
-
-<!-- filter -->
 <form data-filter="form" data-filter-for="dataTable" class="form-filter">
     <div class="x_panel">
         <div class="x_title">
@@ -58,17 +56,13 @@
                     @Html.LabelFor(m => m.Filter.UserName)
                     @Html.TextBoxFor(m => m.Filter.UserName, new { @class = "form-control", data_field = "UserName" })
                 </div>
-                <div class="col-xs-12 col-sm-2 form-group">
+                <div class="col-xs-12 col-sm-3 form-group">
                     @Html.LabelFor(m => m.Filter.Email)
                     @Html.TextBoxFor(m => m.Filter.Email, new { @class = "form-control", data_field = "Email" })
                 </div>
-                <div class="form-group col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.Filter.IdEmpresa)
-                    @Html.DropDownListFor(m => m.Filter.IdEmpresa, (IEnumerable<SelectListItem>)ViewBag.Empresas, "Selecione...", new { @class = "form-control", data_field = "IdEmpresa" })
-                </div>
                 <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.Filter.Ativo)
-                    @Html.DropDownListFor(m => m.Filter.Ativo, (IEnumerable<SelectListItem>)ViewBag.Status, "Selecione...", new { @class = "form-control", data_field = "Ativo" })
+                    @Html.DropDownListFor(m => m.Filter.Ativo, Model.Status, "Todos", new { @class = "form-control", data_field = "Ativo" })
                 </div>
             </div>
             <div class="row">
@@ -80,35 +74,28 @@
         </div>
     </div>
 </form>
-<!-- /filter -->
-<!-- table -->
 <div class="x_panel">
-    <!-- panel-title -->
     <div class="x_title">
-        <h2>@ViewBag.Title</h2>
+        <h2>Lista de Usuários</h2>
         <div class="nav navbar-right panel_toolbox">
             @if (User.HasPermission(Permissions.BOAccount.Create))
             {
-                <a class="btn btn-primary btn-dt-action" href="@Url.Action("Create")"><i class="fa fa-fw fa-plus"></i> @Resources.CommonStrings.CreateAction</a>
+                <a class="btn btn-primary btn-dt-action" href="@Url.Action("Create")"><i class="fa fa-fw fa-plus"></i> Cadastrar</a>
             }
         </div>
         <div class="clearfix"></div>
     </div>
-    <!-- /panel-title -->
-    <!-- panel-content -->
     <div class="x_content">
-        <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+        <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" data-page-length="25" style="width:100%">
             <thead>
                 <tr>
                     <th>@Html.DisplayNameFor(m => m.EmptyItem.Nome)</th>
                     <th>@Html.DisplayNameFor(m => m.EmptyItem.UserName)</th>
                     <th>@Html.DisplayNameFor(m => m.EmptyItem.Email)</th>
-                    <th>@Html.DisplayNameFor(m => m.EmptyItem.Ativo)</th>
+                    <th>@Html.DisplayNameFor(m => m.EmptyItem.Status)</th>
                     <th>@Resources.CommonStrings.ActionsLabel</th>
                 </tr>
             </thead>
         </table>
     </div>
-    <!-- /panel-content -->
 </div>
-<!-- /table -->

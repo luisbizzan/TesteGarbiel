@@ -3,7 +3,7 @@
 @using Res = Resources.BOGroupStrings
 
 @{
-    ViewBag.Title = Res.IndexPageTitle;
+    ViewBag.Title = "Grupos de Usuários";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -20,8 +20,6 @@
             pageDataUrl = Url.Action("PageData")
         })
 }
-
-<!-- filter -->
 <form data-filter="form" data-filter-for="dataTable" class="form-filter">
     <div class="x_panel">
         <div class="x_title">
@@ -46,24 +44,19 @@
         </div>
     </div>
 </form>
-<!-- /filter -->
-<!-- table -->
 <div class="row">
     <div class="col-xs-12">
         <div class="x_panel">
-            <!-- panel-title -->
             <div class="x_title">
-                <h2>@ViewBag.Title</h2>
+                <h2>Grupos de Usuários</h2>
                 <div class="nav navbar-right panel_toolbox">
                     @if (User.HasPermission(Permissions.Role.Create))
                     {
-                        <a class="btn btn-primary btn-dt-action" href="@Url.Action("Create")"><i class="fa fa-fw fa-plus"></i> @Resources.CommonStrings.CreateAction</a>
+                        <a class="btn btn-primary btn-dt-action" href="@Url.Action("Create")"><i class="fa fa-fw fa-plus"></i> Cadastrar</a>
                     }
                 </div>
                 <div class="clearfix"></div>
             </div>
-            <!-- /panel-title -->
-            <!-- panel-content -->
             <div class="x_content">
                 <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
                     <thead>
@@ -74,8 +67,6 @@
                     </thead>
                 </table>
             </div>
-            <!-- /panel-contet -->
         </div>
     </div>
 </div>
-<!-- /table -->

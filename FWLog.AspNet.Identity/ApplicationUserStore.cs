@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FWLog.AspNet.Identity
@@ -499,14 +498,17 @@ namespace FWLog.AspNet.Identity
             return Task.FromResult(permissions);
         }
 
-        public Task UpdateAsync(ApplicationUser user, IEnumerable<string> roles, long idEmpresa)
+        public Task UpdateAsync(ApplicationUser user, IEnumerable<string> roles, IEnumerable<string> rolesIgnorar, long idEmpresa)
         {
             ValidateRoles(roles);
 
             user.ApplicationId = this.appId;
 
+            var rolesUsuario = roles.ToList();
+            rolesUsuario.AddRange(rolesIgnorar);
+
             IList<UserRole> userRoles = this.db.Roles
-                .Where(x => x.ApplicationId == this.appId && roles.Contains(x.Name))
+                .Where(x => x.ApplicationId == this.appId && rolesUsuario.Contains(x.Name))
                 .ToList()
                 .Select(x => new UserRole { RoleId = x.Id, UserId = user.Id, CompanyId = idEmpresa })
                 .ToList();

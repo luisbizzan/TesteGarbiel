@@ -7,18 +7,16 @@ namespace FWLog.AspNet.Identity
     {
         public Permissions() : base(Res.ResourceManager) { }
 
-        // AplicationLog
         public class ApplicationLog : PermissionGroupBuildItem
         {
             public const string List = "ApplicationLogList";
 
             public ApplicationLog() : base(Display.FromResource(nameof(Res.ApplicationLog)))
             {
-                Register(List, Display.FromResource(nameof(Res.ApplicationLogList)));
+                Register(List, Display.FromString("Relatório de Erros"));
             }
         }
 
-        // Role
         public class Role : PermissionGroupBuildItem
         {
             public const string List = "RoleList";
@@ -26,27 +24,25 @@ namespace FWLog.AspNet.Identity
             public const string Edit = "RoleEdit";
             public const string Delete = "RoleDelete";
 
-            public Role() : base(Display.FromResource(nameof(Res.Role)))
+            public Role() : base(Display.FromString("Grupos de Usuários"))
             {
-                Register(List, Display.FromResource(nameof(Res.RoleList)));
-                Register(Create, Display.FromResource(nameof(Res.RoleCreate)));
-                Register(Edit, Display.FromResource(nameof(Res.RoleEdit)));
-                Register(Delete, Display.FromResource(nameof(Res.RoleDelete)));
+                Register(List, Display.FromString("Listar Grupos"));
+                Register(Create, Display.FromString("Cadastrar Grupo"));
+                Register(Edit, Display.FromString("Editar Grupo"));
+                Register(Delete, Display.FromString("Excluir Grupo"));
             }
         }
 
-        // BOLogSystem
         public class BOLogSystem : PermissionGroupBuildItem
         {
             public const string List = "BOLogSystemList";
 
             public BOLogSystem() : base(Display.FromResource(nameof(Res.BOLogSystem)))
             {
-                Register(List, Display.FromResource(nameof(Res.BOLogSystemList)));
+                Register(List, Display.FromString("Relatório de Auditoria"));
             }
         }
 
-        // BOAccount
         public class BOAccount : PermissionGroupBuildItem
         {
             public const string List = "BOAccountList";
@@ -54,56 +50,54 @@ namespace FWLog.AspNet.Identity
             public const string Edit = "BOAccountEdit";
             public const string Delete = "BOAccountDelete";
 
-            public BOAccount() : base(Display.FromResource(nameof(Res.BOAccount)))
+            public BOAccount() : base(Display.FromString("Gerenciar Usuários"))
             {
-                Register(List, Display.FromResource(nameof(Res.BOAccountList)));
-                Register(Create, Display.FromResource(nameof(Res.BOAccountCreate)));
-                Register(Edit, Display.FromResource(nameof(Res.BOAccountEdit)));
-                Register(Delete, Display.FromResource(nameof(Res.BOAccountDelete)));
+                Register(List, Display.FromString("Listar Usuários"));
+                Register(Create, Display.FromString("Cadastrar Usuário"));
+                Register(Edit, Display.FromString("Editar Usuário"));
+                Register(Delete, Display.FromString("Excluir Usuário"));
             }
         }
 
-        public class UserApp : PermissionGroupBuildItem
-        {
-            public const string UserAppLogin = "UserAppLogin";
-
-            public UserApp() : base(Display.FromResource(nameof(Res.UserApp)))
-            {
-                Register(UserAppLogin, Display.FromResource(nameof(Res.UserAppLogin)));
-            }
-        }
-
-        public class PrinterType : PermissionGroupBuildItem
+        public class Printer : PermissionGroupBuildItem
         {
             public const string List = "PrinterTypeList";
             public const string Create = "PrinterTypeCreate";
             public const string Edit = "PrinterTypeEdit";
             public const string Delete = "PrinterTypeDelete";
 
-            public PrinterType() : base(Display.FromResource(nameof(Res.PrinterType)))
+            public Printer() : base(Display.FromString("Impressoras"))
             {
-                Register(List, Display.FromResource(nameof(Res.List)));
-                Register(Create, Display.FromResource(nameof(Res.Create)));
-                Register(Edit, Display.FromResource(nameof(Res.Edit)));
-                Register(Delete, Display.FromResource(nameof(Res.Delete)));
+                Register(List, Display.FromString("Listar Impressoras"));
+                Register(Create, Display.FromString("Cadastrar Impressora"));
+                Register(Edit, Display.FromString("Editar Impressora"));
+                Register(Delete, Display.FromString("Excluir Impressora"));
             }
         }
 
         public class Recebimento : PermissionGroupBuildItem
         {
             public const string List = "RecebimentoList";
-            public const string Create = "RecebimentoCreate";
-            public const string Edit = "RecebimentoEdit";
-            public const string Delete = "RecebimentoDelete";
-            public const string RegistrarRecebimento = "RegistrarRecebimento";
+            public const string RegistrarRecebimento = "RecebimentoRegistrar";
+            public const string TratarDivergencia = "RecebimentoTratarDivergencia";
+            public const string RelatorioRastreioPeca = "RelatorioRecebimentoRastreioPeca";
 
-            public Recebimento() : base(Display.FromResource(nameof(Res.PrinterType)))
+            public Recebimento() : base(Display.FromString("Recebimento de Notas Fiscais"))
             {
-                Register(List, Display.FromResource(nameof(Res.List)));
-                Register(Create, Display.FromResource(nameof(Res.Create)));
-                Register(Edit, Display.FromResource(nameof(Res.Edit)));
-                Register(Delete, Display.FromResource(nameof(Res.Delete)));
-                Register(RegistrarRecebimento, "Registrar Recebimento");
+                Register(List, Display.FromString("Listar Notas Fiscais"));
+                Register(RegistrarRecebimento, Display.FromString("Registrar Recebimento"));
+                Register(TratarDivergencia, Display.FromString("Tratar Divergência"));
+                Register(RelatorioRastreioPeca, Display.FromString("Relatório Rastreio de Peça"));
+            }
+        }
+
+        public class RecebimentoQuarentena : PermissionGroupBuildItem
+        {
+            public const string List = "QuarentenaList";
+
+            public RecebimentoQuarentena() : base(Display.FromString("Quarentena Recebimento"))
+            {
+                Register(List, Display.FromString("Listar Quarentena"));
             }
         }
 
@@ -116,20 +110,54 @@ namespace FWLog.AspNet.Identity
 
             public PontoArmazenagem() : base(Display.FromString("Pontos de Armazenagem"))
             {
-                Register(Listar, Display.FromString("Lista de Pontos de Armazenagem"));
-                Register(Cadastrar, Display.FromString("Cadastrar Ponto de Armazenagem"));
-                Register(Editar, Display.FromString("Editar Ponto de Armazenagem"));
-                Register(Excluir, Display.FromString("Excluir Ponto de Armazenagem"));
+                Register(Listar, Display.FromString("Listar Pontos"));
+                Register(Cadastrar, Display.FromString("Cadastrar Ponto"));
+                Register(Editar, Display.FromString("Editar Ponto"));
+                Register(Excluir, Display.FromString("Excluir Ponto"));
             }
         }
 
-        public class Quarentena : PermissionGroupBuildItem
+        public class NivelArmazenagem : PermissionGroupBuildItem
         {
-            public const string List = "QuarentenaList";
+            public const string Listar = "NivelArmazenagemList";
+            public const string Cadastrar = "NivelArmazenagemCreate";
+            public const string Editar = "NivelArmazenagemEdit";
+            public const string Excluir = "NivelArmazenagemDelete";
 
-            public Quarentena() : base(Display.FromResource(nameof(Res.PrinterType)))
+            public NivelArmazenagem() : base(Display.FromString("Níveis de Armazenagem"))
             {
-                Register(List, Display.FromResource(nameof(Res.List)));
+                Register(Listar, Display.FromString("Listar Níveis"));
+                Register(Cadastrar, Display.FromString("Cadastrar Nível"));
+                Register(Editar, Display.FromString("Editar Nível"));
+                Register(Excluir, Display.FromString("Excluir Nível"));
+            }
+        }
+
+        public class EnderecoArmazenagem : PermissionGroupBuildItem
+        {
+            public const string Listar = "EnderecoArmazenagemListar";
+            public const string Cadastrar = "EnderecoArmazenagemCadastrar";
+            public const string Editar = "EnderecoArmazenagemEditar";
+            public const string Excluir = "EnderecoArmazenagemExcluir";
+            public const string Visualizar = "EnderecoArmazenagemVisualizar";
+
+            public EnderecoArmazenagem() : base(Display.FromString("Endereços de Armazenagem"))
+            {
+                Register(Listar, Display.FromString("Listar Endereços"));
+                Register(Cadastrar, Display.FromString("Cadastrar Endereço"));
+                Register(Editar, Display.FromString("Editar Endereço"));
+                Register(Excluir, Display.FromString("Excluir Endereço"));
+                Register(Visualizar, Display.FromString("Visualizar Endereço"));
+            }
+        }
+
+        public class Empresa : PermissionGroupBuildItem
+        {
+            public const string EditarConfiguracao = "EmpresaConfiguracaoEditar";
+
+            public Empresa() : base(Display.FromString("Empresas"))
+            {
+                Register(EditarConfiguracao, Display.FromString("Editar Configurações"));
             }
         }
     }

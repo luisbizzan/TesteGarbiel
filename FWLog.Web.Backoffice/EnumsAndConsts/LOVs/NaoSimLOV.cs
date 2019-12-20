@@ -1,6 +1,4 @@
-﻿using ExtensionMethods;
-using FWLog.Data.EnumsAndConsts;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.EnumsAndConsts.LOVs
@@ -13,14 +11,14 @@ namespace FWLog.Web.Backoffice.EnumsAndConsts.LOVs
             {
                 yield return new SelectListItem
                 {
-                    Value = ((int)NaoSimEnum.Nao).ToString(),
-                    Text = NaoSimEnum.Nao.GetDisplayName(),
+                    Value = false.ToString(),
+                    Text = "Inativo"
                 };
 
                 yield return new SelectListItem
                 {
-                    Value = ((int)NaoSimEnum.Sim).ToString(),
-                    Text = NaoSimEnum.Sim.GetDisplayName(),
+                    Value = true.ToString(),
+                    Text = "Ativo"
                 };
             }
         }

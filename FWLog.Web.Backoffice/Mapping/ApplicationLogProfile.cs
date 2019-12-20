@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using FWLog.Data;
-using FWLog.Data.Models.FilterCtx;
-using FWLog.Data.Models.DataTablesCtx;
-using FWLog.Web.Backoffice.Models.ApplicationLogCtx;
-using System;
 using DartDigital.Library.Web.Globalization;
 using FWLog.Data.EnumsAndConsts;
+using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
+using FWLog.Data.Models.FilterCtx;
+using FWLog.Web.Backoffice.Models.ApplicationLogCtx;
+using System;
 
 namespace FWLog.Web.Backoffice.Mapping
 {
@@ -23,7 +23,7 @@ namespace FWLog.Web.Backoffice.Mapping
                 {
                     if (model.Message != null && model.Message.Length > 75)
                     {
-                        model.Message = String.Concat(model.Message.Substring(0, 75), "...");
+                        model.Message = string.Concat(model.Message.Substring(0, 75), "...");
                     }
                 });
 

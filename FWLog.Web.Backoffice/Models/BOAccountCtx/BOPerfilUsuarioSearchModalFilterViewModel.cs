@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Web.Backoffice.Models.BOAccountCtx
 {
@@ -16,6 +12,8 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
             EmptyItem = new BOPerfilUsuarioSearchModalItemViewModel();
             Filter = new BOPerfilUsuarioSearchModalFilterViewModel();
         }
+
+        public string Origem { get; set; }
     }
 
     public class BOPerfilUsuarioSearchModalItemViewModel

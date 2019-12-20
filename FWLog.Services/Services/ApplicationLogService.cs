@@ -1,5 +1,6 @@
 ﻿using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
+using FWLog.Data.Models;
 using System;
 using System.Transactions;
 
@@ -34,6 +35,20 @@ namespace FWLog.Services.Services
                 Level = ApplicationLogLevel.Error.Value,
                 Exception = string.Format("{0} - {1} ", ex.Message, ex.StackTrace),
                 Message = ex.Message
+            };
+
+            Add(applicationLog);
+        }
+
+        public void Error(ApplicationEnum application, Exception ex, string message)
+        {
+            var applicationLog = new ApplicationLog
+            {
+                Created = DateTime.Now,
+                IdApplication = application.GetHashCode(),
+                Level = ApplicationLogLevel.Error.Value,
+                Exception = string.Format("{0} - {1} ", ex.Message, ex.StackTrace),
+                Message = string.Format("{0} - {1} ", message, ex.Message)
             };
 
             Add(applicationLog);

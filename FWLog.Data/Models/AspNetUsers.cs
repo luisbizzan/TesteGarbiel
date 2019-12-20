@@ -2,9 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using ResEnt = Resources.EntityStrings;
 
-namespace FWLog.Data
+namespace FWLog.Data.Models
 {
     [Log(DisplayName = nameof(ResEnt.AspNetUsers), ResourceType = typeof(ResEnt))]
     public class AspNetUsers
@@ -34,6 +35,8 @@ namespace FWLog.Data
         public int AccessFailedCount { get; set; }
         public int ApplicationId { get; set; }
         public int? IdApplicationSession { get; set; }
+
+        //public virtual PerfilUsuario PerfilUsuario { get; set; }
 
         public ICollection<AspNetRoles> AspNetRoles { get; set; }
     }

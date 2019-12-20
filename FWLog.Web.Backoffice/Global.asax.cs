@@ -1,11 +1,11 @@
-﻿using FWLog.AspNet.Identity;
-using FWLog.Data.EnumsAndConsts;
-using FWLog.Web.Backoffice.App_Start;
-using FWLog.Web.Backoffice.EnumsAndConsts;
-using DartDigital.Library.Web.Globalization;
+﻿using DartDigital.Library.Web.Globalization;
 using DartDigital.Library.Web.IO;
 using DartDigital.Library.Web.ModelValidation;
 using DartDigital.Library.Web.ModelValidation.Adapters;
+using FWLog.AspNet.Identity;
+using FWLog.Data.EnumsAndConsts;
+using FWLog.Web.Backoffice.App_Start;
+using FWLog.Web.Backoffice.EnumsAndConsts;
 using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -62,7 +62,7 @@ namespace FWLog.Web.Backoffice
             GlobalContext.Properties["idApplication"] = ApplicationEnum.BackOffice.GetHashCode().ToString();
 
             ClientDataTypeModelValidatorProvider.ResourceClassKey = nameof(Resources.ModelValidationStrings);
-            DefaultModelBinder.ResourceClassKey = nameof(Resources.ModelValidationStrings);            
+            DefaultModelBinder.ResourceClassKey = nameof(Resources.ModelValidationStrings);
         }
 
         private void RegisterLocalizationAdapters()
@@ -82,7 +82,7 @@ namespace FWLog.Web.Backoffice
             DataAnnotationsModelValidatorProvider.RegisterAdapter(typeof(RequiredIfAttribute), typeof(LocalizedRequiredIfAttributeAdapter<Resources.ModelValidationStrings>));
         }
 
-        void Application_Error(object sender, EventArgs e)
+        private void Application_Error(object sender, EventArgs e)
         {
             Exception exception = Server.GetLastError();
 
@@ -164,17 +164,17 @@ namespace FWLog.Web.Backoffice
             var userManager = HttpContext.Current.GetOwinContext().GetUserManager<BackofficeUserManager>();
             var user = (ClaimsPrincipal)User;
 
-            var idEmpresa = 0;
+            int idEmpresa = 0;
             HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName];
 
-            if (cookie != null && cookie[EmpresaCookie.IdEmpresa] != null && cookie[EmpresaCookie.IdEmpresa] != string.Empty)
+            if (cookie != null && !string.IsNullOrEmpty(cookie[EmpresaCookie.IdEmpresa]))
             {
                 idEmpresa = Convert.ToInt32(cookie[EmpresaCookie.IdEmpresa]);
             }
-                        
+
             string userId = user.Identity.GetUserId();
-            IList<string> permissions = await userManager.GetPermissionsByIdEmpresaAsync(userId, idEmpresa);
-            HttpContext.Current.User = new ApplicationClaimsPrincipal(user, permissions); 
+            IList<string> permissions = await userManager.GetPermissionsByIdEmpresaAsync(userId, idEmpresa).ConfigureAwait(false);
+            HttpContext.Current.User = new ApplicationClaimsPrincipal(user, permissions);
         }
     }
 }

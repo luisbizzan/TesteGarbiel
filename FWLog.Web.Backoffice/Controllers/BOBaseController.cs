@@ -8,9 +8,9 @@ using FWLog.Web.Backoffice.EnumsAndConsts;
 using FWLog.Web.Backoffice.Helpers;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
@@ -73,12 +73,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 cookie[EmpresaCookie.IdEmpresa] = string.Empty;
-
-                if (logoff)
-                {
-                    cookie[EmpresaCookie.ListEmpresas] = string.Empty;
-                }
-
                 Response.Cookies.Add(cookie);
 
                 return;
@@ -86,27 +80,14 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
 
-            var empresas = uow.EmpresaRepository.GetAllByUserId(userId);
-            var jsonEmpresas = JsonConvert.SerializeObject(empresas);
+            cookie = cookie ?? new HttpCookie(EmpresaCookie.CookieName);
 
-            if (cookie == null)
-            {
-                var newCookie = new HttpCookie(EmpresaCookie.CookieName);
-                newCookie.Values[EmpresaCookie.IdEmpresa] = idEmpresa.ToString();
-                newCookie.Values[EmpresaCookie.ListEmpresas] = Server.UrlEncode(jsonEmpresas);
-                newCookie.Expires = DateTime.MaxValue;
-                Response.Cookies.Add(newCookie);
-            }
-            else
-            {
-                cookie.Values[EmpresaCookie.IdEmpresa] = idEmpresa.ToString();
-                cookie.Values[EmpresaCookie.ListEmpresas] = Server.UrlEncode(jsonEmpresas);
-                cookie.Expires = DateTime.MaxValue;
-                Response.Cookies.Add(cookie);
-            }
+            cookie.Values[EmpresaCookie.IdEmpresa] = idEmpresa.ToString();
+            cookie.Expires = DateTime.MaxValue;
+            Response.Cookies.Add(cookie);
         }
 
-        public int IdEmpresa
+        public long IdEmpresa
         {
             get
             {
@@ -114,7 +95,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 if (cookie != null && cookie[EmpresaCookie.IdEmpresa] != null && !string.IsNullOrEmpty(cookie[EmpresaCookie.IdEmpresa]))
                 {
-                    return Convert.ToInt32(cookie[EmpresaCookie.IdEmpresa].ToString());
+                    return Convert.ToInt64(cookie[EmpresaCookie.IdEmpresa].ToString());
                 }
                 else
                 {
@@ -127,22 +108,28 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             get
             {
-                HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName];
+                var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
+                var userInfo = new BackOfficeUserInfo();
+                return uow.EmpresaRepository.GetAllByUserId(userInfo.UserId.ToString());
+            }
+        }
 
-                if (cookie != null && cookie[EmpresaCookie.ListEmpresas] != null && !string.IsNullOrEmpty(cookie[EmpresaCookie.ListEmpresas]))
-                {
-                    var jsonEmpresas = Server.UrlDecode(cookie[EmpresaCookie.ListEmpresas].ToString());
-                    var empresas = JsonConvert.DeserializeObject<IEnumerable<EmpresaSelectedItem>>(jsonEmpresas);
-
-                    return empresas;
-                }
-                else
+        protected ReadOnlyCollection<long> IdEmpresasPorUsuario
+        {
+            get
+            {
+                if (idEmpresasPorUsuario == null)
                 {
                     var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
                     var userInfo = new BackOfficeUserInfo();
-                    return uow.EmpresaRepository.GetAllByUserId(userInfo.UserId.ToString());
+
+                    idEmpresasPorUsuario = uow.EmpresaRepository.IdEmpresasPorUsuario(userInfo.UserId.ToString());
                 }
+
+                return idEmpresasPorUsuario;
             }
         }
+        private ReadOnlyCollection<long> idEmpresasPorUsuario;
+
     }
 }

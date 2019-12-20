@@ -4,12 +4,14 @@ namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
 {
     public class BOPrinterSelecionarViewModel
     {
+        public string Acao { get; set; }
+        public string Id { get; set; }
         public List<BOPrinterSelecionarImpressoraViewModel> Impressoras { get; set; }
     }
 
     public class BOPrinterSelecionarImpressoraViewModel
     {
-        public long Id { get; set; }
+        public long IdImpressora { get; set; }
         public string Nome { get; set; }
     }
 }

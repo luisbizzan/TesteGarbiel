@@ -1,7 +1,7 @@
 ﻿(function () {
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        return [           
+        return [
             {
                 action: 'edit',
                 href: view.editUrl + '?id=' + full.UserName,
@@ -21,32 +21,9 @@
         ];
     });
 
-    var multipleActions = [
-        {
-            text: view.deleteAction,
-            icon: 'fa fa-trash-o',
-            visible: view.deleteVisible,
-            onClick: function (itemsChecked) {
-                if (itemsChecked.length > 0) {
-                    var params = itemsChecked.join('&userNameList=');
-
-                    dart.modalAjaxConfirm.open({
-                        title: view.deleteModalTitle,
-                        message: view.deleteMassModalMessage.replace('{0}', itemsChecked.length),
-                        confirmText: view.deleteAction,
-                        url: view.deleteMassUrl + '?userNameList=' + params,
-                        onConfirm: function () {
-                            $('table').DataTable().ajax.reload(null, false);
-                            $('.all-check-dataTable').prop('checked', false);
-                        }
-                    });
-                }
-            }
-        }
-    ];
-
-    // DataTable
-    var options = dart.dataTables.multipleAction('UserName', '#dataTable', multipleActions, {
+    var options = {
+        stateSave: false,
+        info: false,
         ajax: {
             "url": view.pageDataUrl,
             "type": "POST",
@@ -57,26 +34,19 @@
         initComplete: function (settings, json) {
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
         },
-        stateSaveParams: function (settings, data) {
-            dart.dataTables.saveFilterToData(data);
-        },
-        stateLoadParams: function (settings, data) {
-            dart.dataTables.loadFilterFromData(data);
-        },
+        order: [[0, "ASC"]],
         columns: [
             { data: 'Nome' },
-            { data: 'UserName', width: 100 },
+            { data: 'UserName' },
             { data: 'Email' },
-            { data: 'Ativo' },
+            { data: 'Status' },
             actionsColumn
         ]
-    });
+    };
 
     $('#dataTable').dataTable(options);
-
     dart.dataTables.loadFormFilterEvents();
 
-    // Delete
     $('#dataTable').on('click', '[data-delete-url]', function () {
         var deleteUrl = $(this).attr('data-delete-url');
         var $table = $(this).closest('table');
@@ -91,7 +61,6 @@
         });
     });
 
-    // Reset Password
     $('#dataTable').on('click', '[data-reset-url]', function () {
         var resetUrl = $(this).attr('data-reset-url');
         var $table = $(this).closest('table');
@@ -105,8 +74,5 @@
                 $table.DataTable().ajax.reload(null, false);
             }
         });
-
     });
-
-
 })();

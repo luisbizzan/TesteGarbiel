@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FWLog.AspNet.Identity
@@ -27,20 +24,20 @@ namespace FWLog.AspNet.Identity
             return _appUserStore.GetPermissionsByIdEmpresaAsync(new ApplicationUser { Id = userId }, idEmpresa);
         }
 
-        public IList<string> GetPermissions(string userId, int idEmpresa)
+        public IList<string> GetPermissions(string userId)
         {
             return _appUserStore.GetPermissionsAsync(new ApplicationUser { Id = userId }).Result;
         }
 
-        public async Task<IdentityResult> UpdateAsync(ApplicationUser user, IEnumerable<string> roles, long idEmpresa)
+        public async Task<IdentityResult> UpdateAsync(ApplicationUser user, IEnumerable<string> roles, IEnumerable<string> rolesIgnorar, long idEmpresa)
         {
-            await _appUserStore.UpdateAsync(user, roles, idEmpresa);
+            await _appUserStore.UpdateAsync(user, roles, rolesIgnorar, idEmpresa);
             return IdentityResult.Success;
         }
 
         public IdentityResult Update(ApplicationUser user, IEnumerable<string> roles, int idEmpresa)
         {
-            _appUserStore.UpdateAsync(user, roles, idEmpresa).Wait();
+            _appUserStore.UpdateAsync(user, roles, null, idEmpresa).Wait();
             return IdentityResult.Success;
         }
 

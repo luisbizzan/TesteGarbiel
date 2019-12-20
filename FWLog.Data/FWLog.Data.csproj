@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,6 +13,8 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,10 +41,10 @@
       <HintPath>..\packages\Dart-Library.CORE.2.0.0\lib\net461\Dart-Library.CORE.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -73,12 +76,7 @@
     <Compile Include="EnumsAndConsts\ApplicationEnum.cs" />
     <Compile Include="EnumsAndConsts\ApplicationLogLevel.cs" />
     <Compile Include="EnumsAndConsts\GetObjectFromLogEnum.cs" />
-    <Compile Include="EnumsAndConsts\NotaFiscalStatusEnum.cs" />
-    <Compile Include="EnumsAndConsts\LoteStatusEnum.cs" />
     <Compile Include="EnumsAndConsts\NaoSimEnum.cs" />
-    <Compile Include="EnumsAndConsts\StatusNotaRecebimento.cs" />
-    <Compile Include="EnumsAndConsts\TipoArmazenagemEnum.cs" />
-    <Compile Include="EnumsAndConsts\TipoMovimentacaoEnum.cs" />
     <Compile Include="ExtensionMethods\EnumExtensions.cs" />
     <Compile Include="ExtensionMethods\LinqExtension.cs" />
     <Compile Include="ExtensionMethods\StringExtension.cs" />
@@ -110,9 +108,27 @@
     <Compile Include="Models\AspNetPermissions.cs" />
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
-    <Compile Include="Models\DataTablesCtx\PrinterTypeTableRow.cs" />
-    <Compile Include="Models\EmpresaConfiguracao.cs" />
-    <Compile Include="Models\FilterCtx\PrinterTypeFilter.cs" />
+    <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemListaLinhaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\NivelArmazenagemPesquisaModalListaLinhaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\NivelArmazenagemTableRow.cs" />
+    <Compile Include="Models\DataTablesCtx\PontoArmazenagemListaLinhaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\PontoArmazenagemPesquisaModalListaLinhaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\RelatorioRastreioPecaListaLinhaTabela.cs" />
+    <Compile Include="Models\FilterCtx\RelatorioRastreioPecaListaFiltro.cs" />
+    <Compile Include="Models\DataTablesCtx\UsuarioListaLinhaTabela.cs" />
+    <Compile Include="Models\EmpresaConfig.cs" />
+    <Compile Include="Models\FilterCtx\UsuarioListaFiltro.cs" />
+    <Compile Include="Models\LoteConferencia.cs" />
+    <Compile Include="Models\LoteDivergencia.cs" />
+    <Compile Include="Models\LoteDivergenciaStatus.cs" />
+    <Compile Include="Models\TipoConferencia.cs" />
+    <Compile Include="Models\EmpresaTipo.cs" />
+    <Compile Include="Models\EnderecoArmazenagem.cs" />
+    <Compile Include="Models\FilterCtx\EnderecoArmazenagemListaFiltro.cs" />
+    <Compile Include="Models\FilterCtx\NivelArmazenagemFilter.cs" />
+    <Compile Include="Models\FilterCtx\NivelArmazenagemPesquisaModalFiltro.cs" />
+    <Compile Include="Models\FilterCtx\PontoArmazenagemListaFiltro.cs" />
+    <Compile Include="Models\FilterCtx\PontoArmazenagemPesquisaModalFiltro.cs" />
     <Compile Include="Models\NivelArmazenagem.cs" />
     <Compile Include="Models\NotaFiscal.cs" />
     <Compile Include="Models\Fornecedor.cs" />
@@ -151,6 +167,7 @@
     <Compile Include="Models\GeneralCtx\BOLogSystemCreation.cs" />
     <Compile Include="Models\GeneralCtx\LogEntity.cs" />
     <Compile Include="Models\ApplicationLanguage.cs" />
+    <Compile Include="NotaFiscalTipo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\GeneralCtx\ApplicationLanguageRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ApplicationLogRepository.cs" />
@@ -160,10 +177,16 @@
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\EmpresaConfigRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\EmpresaTipoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\EnderecoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\FreteTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\FornecedorRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\LoteConferenciaRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\LoteDivergenciaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteStatusRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\NivelArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalItemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalStatusRepository.cs" />
@@ -171,11 +194,14 @@
     <Compile Include="Repository\GeneralCtx\ProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\TipoArmazenagemRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\TipoConferenciaRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\TipoMovimentacaoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TransportadoraRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UnidadeMedidaRepository.cs" />
-    <Compile Include="Repository\GeneralCtx\UserCompanyRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\UsuarioEmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PerfilUsuarioRepository.cs" />
-    <Compile Include="Repository\GeneralCtx\CompanyRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\EmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ApplicationSessionRepository.cs" />
     <Compile Include="Resources\Mail\MailResource.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -228,4 +254,12 @@
     <Folder Include="Attributes\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" />
 </Project>

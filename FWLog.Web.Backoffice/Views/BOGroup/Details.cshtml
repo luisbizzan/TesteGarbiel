@@ -2,7 +2,7 @@
 @using Res = Resources.BOGroupStrings
 
 @{
-    ViewBag.Title = Res.DetailsPageTitle;
+    ViewBag.Title = "Visualizar Grupo de Usuários";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -12,24 +12,27 @@
 
 <div class="x_panel" id="pageGroupCreate">
     <div class="x_title">
-        <h2>@Res.DetailsPageTitle</h2>
+        <h2>Visualizar Grupo de Usuários</h2>
         <div class="clearfix"></div>
     </div>
     <div class="x_content">
-        <!-- fields -->
         <div class="row">
             <div class="col-xs-12 col-lg-12">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-6 col-lg-6">
+                    <div class="col-xs-12 col-sm-3 col-lg-3">
                         <div class="form-group">
                             @Html.LabelFor(m => m.Name, new { @class = "control-label" })
                             @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @readonly = "readonly" })
                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-lg-12">
                         <div class="form-section-divider">
                             <label class="control-label">@Res.PermissionsHeader</label>
                         </div>
                     </div>
-                </div>                
+                </div>
                 <div class="row">
                     @for (int i = 0; i < Model.RoleGroups.Count; i++)
                     {
@@ -41,13 +44,11 @@
                                 <div class="panel-body" id="panelPermission">
                                     @for (int j = 0; j < Model.RoleGroups[i].Permissions.Count; j++)
                                     {
-                                        <div class="col-xs-12">
-                                            <div class="checkbox disabled">
-                                                <label>
-                                                    @Html.HiddenFor(m => m.RoleGroups[i].Permissions[j].Name)
-                                                    @Html.CheckBoxFor(m => m.RoleGroups[i].Permissions[j].IsSelected, new { disabled = "disabled", data_role = "" })
-                                                    @Html.DisplayFor(m => m.RoleGroups[i].Permissions[j].DisplayName)
-                                                </label>
+                                        <div class="form-group col-xs-12">
+                                            <div class="checkbox">
+                                                @Html.HiddenFor(m => m.RoleGroups[i].Permissions[j].Name)
+                                                @Html.CheckBoxFor(m => m.RoleGroups[i].Permissions[j].IsSelected, new { @class = "flat", disabled = "disabled", data_role = "" })
+                                                @Html.DisplayFor(m => m.RoleGroups[i].Permissions[j].DisplayName)
                                             </div>
                                         </div>
                                     }
@@ -58,14 +59,11 @@
                 </div>
             </div>
         </div>
-        <!-- /fields -->
-        <!-- footer -->
         <div class="ln_solid"></div>
         <div class="row col-xs-12 form-buttons">
             <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.BackAction</a>
             <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-primary">@Resources.CommonStrings.EditAction</a>
         </div>
-        <!-- /footer -->
     </div>
 </div>
 

@@ -31,9 +31,8 @@
         "bInfo": false
     });
 
-    debugger;
     $('#dataTableModal').on('click', '[data-select]', function () {
-        setUsuarioRecebimento($(this).attr('data-select'), $(this).attr("name-select"));
+        setUsuario($(this).attr('data-select'), $(this).attr("name-select"), view_modal.origem);
     });
 
     dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));

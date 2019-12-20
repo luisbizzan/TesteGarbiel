@@ -15,19 +15,47 @@ namespace FWLog.Services.Services
     public class RelatorioService
     {
         private readonly UnitOfWork _unitiOfWork;
+        private readonly ImpressoraService _impressoraService;
 
-        public RelatorioService(UnitOfWork unitiOfWork)
+        public RelatorioService(
+            UnitOfWork unitiOfWork,
+            ImpressoraService impressoraService
+            )
         {
             _unitiOfWork = unitiOfWork;
+            _impressoraService = impressoraService;
+        }
+
+        public void ImprimirRelatorioRecebimentoNotas(ImprimirRelatorioRecebimentoNotasRequest request)
+        {
+            var relatorioRequest = new RelatorioRecebimentoNotasRequest
+            {
+                Lote = request.Lote,
+                Nota = request.Nota,
+                ChaveAcesso = request.ChaveAcesso,
+                IdStatus = request.IdStatus,
+                DataInicial = request.DataInicial,
+                DataFinal = request.DataFinal,
+                PrazoInicial = request.PrazoInicial,
+                PrazoFinal = request.PrazoFinal,
+                IdFornecedor = request.IdFornecedor,
+                Atraso = request.Atraso,
+                QuantidadePeca = request.QuantidadePeca,
+                Volume = request.Volume
+            };
+
+            byte[] relatorio = GerarRelatorioRecebimentoNotas(relatorioRequest);
+
+            _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
 
         public byte[] GerarRelatorioRecebimentoNotas(RelatorioRecebimentoNotasRequest request)
         {
-            IQueryable<Lote> query = _unitiOfWork.LoteRepository.Obter(request.IdEmpresa).AsQueryable();
+            IQueryable<Lote> query = _unitiOfWork.LoteRepository.Obter(request.IdEmpresa, NotaFiscalTipoEnum.Compra).AsQueryable();
 
-            if (!string.IsNullOrEmpty(request.DANFE))
+            if (!string.IsNullOrEmpty(request.ChaveAcesso))
             {
-                query = query.Where(x => !string.IsNullOrEmpty(x.NotaFiscal.Chave) && x.NotaFiscal.DANFE.Contains(request.DANFE));
+                query = query.Where(x => !string.IsNullOrEmpty(x.NotaFiscal.ChaveAcesso) && x.NotaFiscal.ChaveAcesso.Contains(request.ChaveAcesso));
             }
 
             if (request.Lote.HasValue)
@@ -50,14 +78,14 @@ namespace FWLog.Services.Services
                 query = query.Where(x => x.NotaFiscal.Quantidade == request.QuantidadePeca);
             }
 
-            if (request.QuantidadeVolume.HasValue)
+            if (request.Volume.HasValue)
             {
-                query = query.Where(x => x.QuantidadeVolume == request.QuantidadeVolume);
+                query = query.Where(x => x.QuantidadeVolume == request.Volume);
             }
 
             if (request.IdStatus.HasValue)
             {
-                query = query.Where(x => x.LoteStatus.IdLoteStatus == request.IdStatus);
+                query = query.Where(x => (int)x.LoteStatus.IdLoteStatus == request.IdStatus);
             }
 
             if (request.DataInicial.HasValue)
@@ -96,7 +124,7 @@ namespace FWLog.Services.Services
                     {
                         DateTime prazoEntrega = item.NotaFiscal.PrazoEntregaFornecedor;
 
-                        if (item.LoteStatus.IdLoteStatus == StatusNotaRecebimento.AguardandoRecebimento.GetHashCode())
+                        if (item.LoteStatus.IdLoteStatus == LoteStatusEnum.AguardandoRecebimento)
                         {
                             if (DateTime.Now > prazoEntrega)
                             {
@@ -147,6 +175,20 @@ namespace FWLog.Services.Services
             return fwRelatorio.Gerar(fwRelatorioDados);
         }
 
+        public void ImprimirDetalhesNotaEntradaConferencia(ImprimirDetalhesNotaEntradaConferenciaRequest request)
+        {
+            var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
+            {
+                IdEmpresa = request.IdEmpresa,
+                IdNotaFiscal = request.IdNotaFiscal,
+                NomeUsuario = request.NomeUsuario
+            };
+
+            byte[] relatorio = GerarDetalhesNotaEntradaConferencia(relatorioRequest);
+
+            _impressoraService.Imprimir(relatorio, request.IdImpressora);
+        }
+
         public byte[] GerarDetalhesNotaEntradaConferencia(DetalhesNotaEntradaConferenciaRequest request)
         {
             Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
@@ -187,33 +229,18 @@ namespace FWLog.Services.Services
             Row row = tabela.AddRow();
             row.Cells[0].MergeRight = 2;
             paragraph = row.Cells[0].AddParagraph();
-            paragraph.AddFormattedText("DANFE: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.DANFE);
+            paragraph.AddFormattedText("Chave Acesso: ", TextFormat.Bold);
+            paragraph.AddText(notaFiscal.ChaveAcesso);
 
             paragraph = row.Cells[3].AddParagraph();
             paragraph.AddFormattedText("Status: ", TextFormat.Bold);
-
-            switch (notaFiscal.IdNotaFiscalStatus)
-            {
-                case (int)NotaFiscalStatusEnum.Recebida:
-                    paragraph.AddText("Recebido");
-                    break;
-                case (int)NotaFiscalStatusEnum.Conferida:
-                    paragraph.AddText("Conferido");
-                    break;
-                case (int)NotaFiscalStatusEnum.ConferidaDivergencia:
-                    paragraph.AddText("Divergência");
-                    break;
-                default:
-                    paragraph.AddText("Status Não Cadastrado");
-                    break;
-            }
+            paragraph.AddText(notaFiscal.NotaFiscalStatus.Descricao);
 
             row = tabela.AddRow();
             row.Cells[0].MergeRight = 1;
             paragraph = row.Cells[0].AddParagraph();
             paragraph.AddFormattedText("Fornecedor: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.Fornecedor.RazaoSocial);
+            paragraph.AddText(string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.RazaoSocial));
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Transportadora: ", TextFormat.Bold);
@@ -237,7 +264,7 @@ namespace FWLog.Services.Services
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("CNPJ: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.Fornecedor.CNPJ);
+            paragraph.AddText(notaFiscal.Fornecedor.CNPJ.Substring(0, 2) + "." + notaFiscal.Fornecedor.CNPJ.Substring(2, 3) + "." + notaFiscal.Fornecedor.CNPJ.Substring(5, 3) + "/" + notaFiscal.Fornecedor.CNPJ.Substring(8, 4) + "-" + notaFiscal.Fornecedor.CNPJ.Substring(12, 2));
 
             row = tabela.AddRow();
             paragraph = row.Cells[0].AddParagraph();
@@ -308,12 +335,21 @@ namespace FWLog.Services.Services
             paragraph.AddText(notaFiscal.ValorFrete.ToString("C"));
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Recebido por: ", TextFormat.Bold);
-            paragraph.AddText(lote.UsuarioRecebimento.UserName);
+            if (IsNotaRecebida)
+            {
+                paragraph.AddText(lote.UsuarioRecebimento.UserName);
+            }
+            else
+            {
+                paragraph.AddText("Não recebido");
+            }
+
+
             row.Cells[2].MergeRight = 1;
 
             if (IsNotaRecebida)
             {
-                if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia.GetHashCode())
+                if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia)
                 {
                     paragraph = document.Sections[0].AddParagraph();
                     paragraph.Format.SpaceAfter = 20;
@@ -385,11 +421,11 @@ namespace FWLog.Services.Services
 
             if (notaFiscalItems.Count > 0)
             {
-                foreach(NotaFiscalItem notaFiscalItem in notaFiscalItems)
+                foreach (NotaFiscalItem notaFiscalItem in notaFiscalItems)
                 {
                     row = tabela.AddRow();
                     paragraph = row.Cells[0].AddParagraph();
-                    paragraph.AddText(notaFiscalItem.Produto.Referencia);
+                    paragraph.AddText(string.IsNullOrEmpty(notaFiscalItem.Produto.Referencia) ? string.Empty : notaFiscalItem.Produto.Referencia);//TODO Verificar
                     paragraph = row.Cells[1].AddParagraph();
                     paragraph.AddText(notaFiscalItem.Quantidade.ToString());
                     paragraph = row.Cells[2].AddParagraph();
@@ -404,6 +440,40 @@ namespace FWLog.Services.Services
             }
 
             return fwRelatorio.GerarCustomizado();
+        }
+
+        public byte[] GerarRelatorioRastreioPeca(RelatorioRastreioPecaRequest request)
+        {
+            var list = _unitiOfWork.LoteConferenciaRepository.RastreioPeca(request).Select(x => new RastreioPeca
+            {
+                DataRecebimento = x.DataRecebimento,
+                Empresa = x.Empresa,
+                IdLote = x.IdLote,
+                NroNota = x.NroNota,
+                QtdCompra = x.QtdCompra,
+                QtdRecebida = x.QtdRecebida,
+                ReferenciaPronduto = x.ReferenciaPronduto
+            }).ToList();
+
+            var dados = new List<IFwRelatorioDados>();
+            dados.AddRange(list);
+
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = request.NomeUsuario,
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório Rastreio de Peças",
+                Filtros = string.Empty,
+                Dados = dados
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            return fwRelatorio.Gerar(fwRelatorioDados);
         }
     }
 }

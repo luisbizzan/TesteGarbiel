@@ -1,5 +1,6 @@
 ﻿using FWLog.Data.Logging;
 using FWLog.Data.Models;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
@@ -7,10 +8,7 @@ namespace FWLog.Data
 {
     public class Entities : DbContext
     {
-        public Entities()
-            : base("name=Entities")
-        {
-        }
+        public Entities() : base("name=Entities") { }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -44,6 +42,15 @@ namespace FWLog.Data
         public virtual DbSet<NotaFiscalStatus> NotaFiscalStatus { get; set; }
         public virtual DbSet<NivelArmazenagem> NivelArmazenagem { get; set; }
         public virtual DbSet<PontoArmazenagem> PontoArmazenagem { get; set; }
+        public virtual DbSet<TipoMovimentacao> TipoMovimentacao { get; set; }
+        public virtual DbSet<TipoArmazenagem> TipoArmazenagem { get; set; }
+        public virtual DbSet<EnderecoArmazenagem> EnderecoArmazenagem { get; set; }
+        public virtual DbSet<EmpresaConfig> EmpresaConfig { get; set; }
+        public virtual DbSet<TipoConferencia> TipoConferencia { get; set; }
+        public virtual DbSet<EmpresaTipo> EmpresaTipo { get; set; }
+        public virtual DbSet<LoteDivergencia> LoteDivergencia { get; set; }
+        public virtual DbSet<LoteDivergenciaStatus> LoteDivergenciaStatus { get; set; }
+        public virtual DbSet<LoteConferencia> LoteConferencia { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 
@@ -63,6 +70,5 @@ namespace FWLog.Data
         {
             return base.SaveChanges();
         }
-
     }
 }

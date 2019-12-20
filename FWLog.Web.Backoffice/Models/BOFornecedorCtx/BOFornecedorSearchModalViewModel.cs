@@ -19,7 +19,7 @@ namespace FWLog.Web.Backoffice.Models.BOFornecedorCtx
         public long IdFornecedor { get; set; }
 
         [Display(Name = "Código")]
-        public string Codigo { get; set; }
+        public long CodigoIntegracao { get; set; }
 
         [Display(Name = "Razão Social")]
         public string RazaoSocial { get; set; }
@@ -34,7 +34,7 @@ namespace FWLog.Web.Backoffice.Models.BOFornecedorCtx
     public class BOFornecedorSearchModalFilterViewModel
     {
         [Display(Name = "Código")]
-        public string Codigo { get; set; }
+        public long? CodigoIntegracao { get; set; }
 
         [Display(Name = "Razão Social")]
         public string RazaoSocial { get; set; }

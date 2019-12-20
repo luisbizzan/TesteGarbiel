@@ -1,17 +1,12 @@
 ﻿using FWLog.Data.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Web;
-using System.Web.Security;
 using Microsoft.AspNet.Identity;
+using System.Web;
 
 namespace FWLog.Web.Backoffice.Helpers
 {
     public class BackOfficeUserInfo : IBackOfficeUserInfo
     {
-        object _userIdCache = null;
+        private object _userIdCache = null;
 
         public bool IsAuthenticated
         {

@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using ExtensionMethods;
+using ExtensionMethods.List;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
@@ -30,7 +29,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 if (printertypes == null)
                 {
                     printertypes = new SelectList(
-                        _uow.BOPrinterTypeRepository.GetAll().Select(x => new SelectListItem
+                        _uow.BOPrinterTypeRepository.Todos().Select(x => new SelectListItem
                         {
                             Value = x.Id.ToString(),
                             Text = x.Name,
@@ -46,15 +45,15 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             get
             {
-                if (Empresas == null)
+                if (empresas == null)
                 {
-                    Empresas = new SelectList(base.Empresas, "IdEmpresa", "Nome");                    
+                    empresas = new SelectList(Empresas, "IdEmpresa", "Nome");
                 }
 
-                return Empresas;
+                return empresas;
             }
         }
-        private SelectList Empresas;
+        private SelectList empresas;
 
         private SelectList Status
         {
@@ -74,7 +73,6 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             ViewBag.PrinterTypes = PrinterTypes;
             ViewBag.Empresas = _Empresas;
-            ViewBag.Status = Status;
         }
 
         public BOPrinterController(UnitOfWork uow, BOLogSystemService boLogSystemService)
@@ -88,6 +86,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult Index()
         {
             setViewBags();
+            ViewBag.Status = Status;
 
             return View(new BOPrinterListViewModel());
         }
@@ -96,24 +95,33 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Role.List)]
         public ActionResult PageData(DataTableFilter<BOPrinterFilterViewModel> model)
         {
-            IQueryable<Printer> all = _uow.BOPrinterRepository.All();
+            IQueryable<Printer> all = _uow.BOPrinterRepository.All(IdEmpresasPorUsuario);
 
             IQueryable<Printer> query = all.WhereIf(!string.IsNullOrEmpty(model.CustomFilter.Name), x => x.Name.Contains(model.CustomFilter.Name));
             query = query.WhereIf(model.CustomFilter.IdEmpresa.HasValue, x => x.CompanyId == model.CustomFilter.IdEmpresa);
             query = query.WhereIf(model.CustomFilter.PrinterTypeId.HasValue, x => x.PrinterTypeId == model.CustomFilter.PrinterTypeId);
-            query = query.WhereIf(model.CustomFilter.Ativa.HasValue, x => x.Ativa == model.CustomFilter.Ativa);
+            query = query.WhereIf(model.CustomFilter.Status.HasValue, x => x.Ativa == model.CustomFilter.Status);
 
             int totalRecords = all.Count();
             int recordsFiltered = query.Count();
 
-            List<Printer> result = query.PaginationResult(model);
+            var list = query.Select(x => new BOPrinterListItemViewModel
+            {
+                Id = x.Id,
+                Empresa = x.Empresa.NomeFantasia,
+                Name = x.Name,
+                PrinterType = x.PrinterType.Name,
+                Status = x.Ativa ? "Ativa" : "Inativa"
+            });
+
+            IList<BOPrinterListItemViewModel> result = list.PaginationResult(model);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
                 RecordsTotal = totalRecords,
                 RecordsFiltered = recordsFiltered,
-                Data = Mapper.Map<IEnumerable<BOPrinterListItemViewModel>>(result)
+                Data = result
             });
         }
 
@@ -163,7 +171,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return RedirectToAction("Index");
             }
 
-            var entity = _uow.BOPrinterRepository.All().FirstOrDefault(x => x.Id == id);
+            var entity = _uow.BOPrinterRepository.All(IdEmpresasPorUsuario).FirstOrDefault(x => x.Id == id);
 
             if (entity == null)
             {
@@ -176,7 +184,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Empresa = entity.Empresa.RazaoSocial,
                 PrinterType = entity.PrinterType.Name,
                 IP = entity.IP,
-                _Status = (NaoSimEnum)entity.Ativa
+                Ativa = entity.Ativa
             };
 
             return View(model);
@@ -191,7 +199,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return RedirectToAction("Index");
             }
 
-            var entity = _uow.BOPrinterRepository.All().FirstOrDefault(x => x.Id == id);
+            var entity = _uow.BOPrinterRepository.All(IdEmpresasPorUsuario).FirstOrDefault(x => x.Id == id);
 
             if (entity == null)
             {
@@ -205,7 +213,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 IdEmpresa = entity.CompanyId,
                 IP = entity.IP,
                 PrinterTypeId = entity.PrinterTypeId,
-                Ativa = (int)entity.Ativa
+                Ativa = entity.Ativa,
+                RazaoEmpresa = entity.Empresa.RazaoSocial
             };
 
             setViewBags();
@@ -226,7 +235,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             try
             {
-                var entity = _uow.BOPrinterRepository.All().FirstOrDefault(x => x.Id == model.Id);
+                var entity = _uow.BOPrinterRepository.All(IdEmpresasPorUsuario).FirstOrDefault(x => x.Id == model.Id);
 
                 if (entity == null)
                 {
@@ -253,22 +262,30 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult Selecionar(int id)
+        public ActionResult Selecionar(string tipo, string acao, string id)
         {
-            List<Printer> impressoras = _uow.BOPrinterRepository.All().Where(w => w.CompanyId == IdEmpresa && w.Ativa == (int)NaoSimEnum.Sim && w.PrinterTypeId == id).ToList();
+            int idTipoImpressora = tipo.Equals("zebra", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
+
+            List<Printer> impressoras = _uow.BOPrinterRepository.All(IdEmpresasPorUsuario).Where(
+                w => w.CompanyId == IdEmpresa && 
+                w.Ativa == true && 
+                w.PrinterTypeId == idTipoImpressora).ToList();
+
             var listaImpressoras = new List<BOPrinterSelecionarImpressoraViewModel>();
 
             foreach (Printer impressora in impressoras)
             {
                 listaImpressoras.Add(new BOPrinterSelecionarImpressoraViewModel
                 {
-                    Id = impressora.Id,
+                    IdImpressora = impressora.Id,
                     Nome = impressora.Name
                 });
             }
 
             return View(new BOPrinterSelecionarViewModel
             {
+                Acao = acao,
+                Id = id,
                 Impressoras = listaImpressoras
             });
         }
@@ -279,7 +296,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                var entity = _uow.BOPrinterRepository.All().FirstOrDefault(x => x.Id == id);
+                var entity = _uow.BOPrinterRepository.All(IdEmpresasPorUsuario).FirstOrDefault(x => x.Id == id);
 
                 if (entity == null)
                 {

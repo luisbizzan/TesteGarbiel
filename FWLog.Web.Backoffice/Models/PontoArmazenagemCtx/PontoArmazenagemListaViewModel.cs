@@ -14,7 +14,6 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
         public PontoArmazenagemListaItemViewModel Itens { get; set; }
         public PontoArmazenagemListaFilterViewModel Filtros { get; set; }
 
-        public SelectList NiveisArmazenagem { get; set; }
         public SelectList TiposArmazenagem { get; set; }
         public SelectList TiposMovimentacao { get; set; }
         public SelectList Status { get; set; }
@@ -23,7 +22,7 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
     public class PontoArmazenagemListaItemViewModel
     {
         [Display(Name = "ID")]
-        public long IdTipoArmazenagem { get; set; }
+        public long IdPontoArmazenagem { get; set; }
         [Display(Name = "Nível")]
         public string NivelArmazenagem { get; set; }
         [Display(Name = "Ponto")]
@@ -33,7 +32,7 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
         [Display(Name = "Tipo Movimentação")]
         public string TipoMovimentacao { get; set; }
         [Display(Name = "Limite Peso")]
-        public string LimitePesoVertical { get; set; }
+        public decimal? LimitePesoVertical { get; set; }
         [Display(Name = "Status")]
         public string Status { get; set; }
     }
@@ -47,8 +46,10 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
         [Display(Name = "Tipo Movimentação")]
         public int? IdTipoMovimentacao { get; set; }
         [Display(Name = "Status")]
-        public bool? Status { get; set; }
+        public int? Status { get; set; }
         [Display(Name = "Ponto Armazenagem")]
         public string Descricao { get; set; }
+
+        public string DescricaoNivelArmazenagem { get; set; }
     }
 }

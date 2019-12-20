@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace ExtensionMethods
+namespace ExtensionMethods.List
 {
     public static class LinqExtension
     {
@@ -55,7 +55,22 @@ namespace ExtensionMethods
         /// <param name="source">Fonte de dados.</param>
         /// <param name="pageConfiguration">Configuração da página requerente.</param>
         /// <returns></returns>
-        public static List<TSource> PaginationResult<TSource>(this IEnumerable<TSource> source, DataTableFilter pageConfiguration)
+        public static IEnumerable<TSource> PaginationResult<TSource>(this IEnumerable<TSource> source, DataTableFilter pageConfiguration)
+        {
+            return source
+                    .OrderBy(pageConfiguration.OrderByColumn, pageConfiguration.OrderByDirection)
+                    .Skip(pageConfiguration.Start)
+                    .Take(pageConfiguration.Length);
+        }
+
+        /// <summary>
+        /// Monta a lista de dados paginada de acordo com a configuração da página.
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="source">Fonte de dados.</param>
+        /// <param name="pageConfiguration">Configuração da página requerente.</param>
+        /// <returns></returns>
+        public static IList<TSource> PaginationResult<TSource>(this IQueryable<TSource> source, DataTableFilter pageConfiguration)
         {
             return source
                     .OrderBy(pageConfiguration.OrderByColumn, pageConfiguration.OrderByDirection)

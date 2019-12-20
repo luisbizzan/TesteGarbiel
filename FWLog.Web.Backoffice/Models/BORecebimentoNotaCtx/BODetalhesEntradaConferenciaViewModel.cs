@@ -6,11 +6,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
     public class BODetalhesEntradaConferenciaViewModel
     {
         public long IdNotaFiscal { get; set; }
-        public bool IsNotaRecebida { get; set; }
-        public bool IsNotaConferida { get; set; }
-        public bool IsNotaDivergente { get; set; }
-        [Display(Name = "DANFE")]
-        public string DANFE { get; set; }
+        [Display(Name = "Chave Acesso")]
+        public string ChaveAcesso { get; set; }
         [Display(Name = "Lote")]
         public string NumeroLote { get; set; }
         [Display(Name = "Nota")]
@@ -55,17 +52,23 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public string DataFimConferencia { get; set; }
         [Display(Name = "Tempo Total")]
         public string TempoTotalConferencia { get; set; }
+        public bool EmConferenciaOuConferido { get; set; }
 
         public List<BODetalhesEntradaConferenciaItem> Items { get; set; }
+
+        public BODetalhesEntradaConferenciaViewModel()
+        {
+            Items = new List<BODetalhesEntradaConferenciaItem>();
+        }
     }
 
     public class BODetalhesEntradaConferenciaItem
     {
         public string Referencia { get; set; }
-        public string Quantidade { get; set; }
+        public long Quantidade { get; set; }
         public string DataInicioConferencia { get; set; }
         public string DataFimConferencia { get; set; }
         public string UsuarioConferencia { get; set; }
-        public string TempoTotalConferencia { get; set; }
+        public string TempoConferencia { get; set; }
     }
 }

@@ -2,7 +2,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ResGen = Resources.GeneralStrings;
 
 namespace FWLog.Data.Models
 {
@@ -16,7 +15,7 @@ namespace FWLog.Data.Models
 
         [Required]
         [Log(DisplayName = "Status do Lote")]
-        public long IdLoteStatus { get; set; }
+        public LoteStatusEnum IdLoteStatus { get; set; }
 
         [Required]
         [Log(DisplayName = "Código da Nota Fiscal")]
@@ -33,6 +32,10 @@ namespace FWLog.Data.Models
         [Required]
         [Log(DisplayName = "Código do Usuário Recebimento")]
         public string IdUsuarioRecebimento { get; set; }
+
+        //[Required]
+        //[Log(DisplayName = "Ganho de Estoque movimentado")]
+        //public bool GanhoEstoqueEfetuado { get; set; }
 
         [ForeignKey(nameof(IdLoteStatus))]
         public virtual LoteStatus LoteStatus { get; set; }

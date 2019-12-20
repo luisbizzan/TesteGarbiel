@@ -1,0 +1,110 @@
+﻿using FWLog.Data;
+using FWLog.Data.EnumsAndConsts;
+using FWLog.Data.Models;
+using FWLog.Services.Integracao;
+using FWLog.Services.Model.IntegracaoSankhya;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FWLog.Services.Services
+{
+    public class ProdutoService : BaseService
+    {
+        private UnitOfWork _uow;
+
+        public ProdutoService(UnitOfWork uow)
+        {
+            _uow = uow;
+        }
+
+        public async Task ConsultarProdutoIntegracao()
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            StringBuilder where = new StringBuilder();
+            
+            where.Append("WHERE DESCRPROD IS NOT NULL ");
+            where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
+            //where.Append("AND INTEGRARFWLOG = 1 "); Esperando criação do campo no Sankhya
+
+            List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryGenerico<ProdutoIntegracao>(where: where.ToString());
+
+            foreach (var produtoInt in produtosIntegracao)
+            {
+                try
+                {
+                    ValidarProdutoIntegracao(produtoInt);
+
+                    bool produtoNovo = false;
+
+                    var codProd = Convert.ToInt64(produtoInt.CODPROD);
+                    Produto produto = _uow.ProdutoRepository.ConsultarPorCodigoIntegracao(codProd);
+
+                    if (produto == null)
+                    {
+                        produtoNovo = true;
+                        produto = new Produto();
+                    }
+
+                    produto.Altura = produtoInt.ALTURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.ALTURA.Replace(".", ","));
+                    produto.Ativo = produtoInt.ATIVO == "S" ? true : false;
+                    produto.CodigoFabricante = produtoInt.CODFAB == null ? (long?)null : Convert.ToInt64(produtoInt.CODFAB);
+                    produto.CodigoIntegracao = codProd;
+                    produto.CodigoProdutoNFE = Convert.ToInt32(produtoInt.PRODUTONFE);
+                    produto.Comprimento = produtoInt.ESPESSURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.ESPESSURA.Replace(".", ","));
+                    produto.Descricao = produtoInt.DESCRPROD;
+                    produto.EnderecoImagem = produtoInt.ENDIMAGEM;
+                    produto.Largura = produtoInt.LARGURA == null ? (decimal?)null : Convert.ToDecimal(produtoInt.LARGURA.Replace(".", ","));
+                    produto.MetroCubico = produtoInt.M3 == null ? (decimal?)null : Convert.ToDecimal(produtoInt.M3.Replace(".", ","));
+                    produto.MultiploVenda = Convert.ToDecimal(produtoInt.AGRUPCOMPMINIMO.Replace(".", ","));
+                    produto.NomeFabricante = produtoInt.FABRICANTE;
+                    produto.PesoBruto = Convert.ToDecimal(produtoInt.PESOBRUTO.Replace(".", ","));
+                    produto.PesoLiquido = Convert.ToDecimal(produtoInt.PESOLIQ.Replace(".", ","));
+                    produto.Referencia = produtoInt.AD_REFX;
+                    produto.ReferenciaFornecedor = produtoInt.REFFORN;
+                    produto.CodigoBarras = produtoInt.REFERENCIA;
+
+                    if (produtoNovo)
+                    {
+                        _uow.ProdutoRepository.Add(produto);
+                    }
+
+                    await _uow.SaveChangesAsync();
+
+                    /*//TODO Comentado aguardando a criação dos campos no Sankhya.
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", "CODPROD", produto.CodigoIntegracao, "DTALTER", DateTime.UtcNow.ToString("ddMMyyyy hh:mm:ss"));
+
+                    if (!atualizacaoOK)
+                    {
+                        throw new Exception("A atualização de Produto no Sankhya não terminou com sucesso.");
+                    }*/
+                }
+                catch (Exception ex)
+                {
+                    var applicationLogService = new ApplicationLogService(_uow);
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração do seguinte Produto: {0}.", produtoInt.CODPROD));
+
+                    continue;
+                }
+            }
+        }
+
+        public void ValidarProdutoIntegracao(ProdutoIntegracao produtoIntegracao)
+        {
+            ValidarCampo(produtoIntegracao.CODPROD, nameof(produtoIntegracao.CODPROD));
+            ValidarCampo(produtoIntegracao.PRODUTONFE, nameof(produtoIntegracao.PRODUTONFE));
+            ValidarCampo(produtoIntegracao.PESOBRUTO, nameof(produtoIntegracao.PESOBRUTO));
+            ValidarCampo(produtoIntegracao.PESOLIQ, nameof(produtoIntegracao.PESOLIQ));
+            ValidarCampo(produtoIntegracao.DESCRPROD, nameof(produtoIntegracao.DESCRPROD));
+            ValidarCampo(produtoIntegracao.ATIVO, nameof(produtoIntegracao.ATIVO));
+            ValidarCampo(produtoIntegracao.AGRUPCOMPMINIMO, nameof(produtoIntegracao.AGRUPCOMPMINIMO));
+        }
+    }
+}

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Web;
 
 namespace FWLog.Web.Backoffice.Helpers.Globalization
@@ -27,13 +24,13 @@ namespace FWLog.Web.Backoffice.Helpers.Globalization
         public override HtmlString RenderBootstrapSelectScript()
         {
             string path = VirtualPathUtility.ToAbsolute("~/Scripts/vendors/bootstrap-select/i18n/defaults-pt_BR.js");
-            return new HtmlString(String.Format(@"<script src=""{0}""></script>", path));
+            return new HtmlString(string.Format(@"<script src=""{0}""></script>", path));
         }
 
         public override HtmlString RenderMomentLocaleScript()
         {
             string path = VirtualPathUtility.ToAbsolute("~/Scripts/vendors/moment/locale/pt-br.js");
-            return new HtmlString(String.Format(@"<script src=""{0}""></script>", path));
+            return new HtmlString(string.Format(@"<script src=""{0}""></script>", path));
         }
     }
 }

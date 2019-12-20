@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
-using ExtensionMethods;
+using ExtensionMethods.List;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
+using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Models.GeneralCtx;
 using FWLog.Services.Services;
-using FWLog.Web.Backoffice.EnumsAndConsts.LOVs;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BOAccountCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
@@ -25,111 +26,95 @@ namespace FWLog.Web.Backoffice.Controllers
 {
     public class BOAccountController : BOBaseController
     {
-        private UnitOfWork _uow;
-        private BOAccountService _boService;
-        private BOLogSystemService _boLogSystemService;
-        private PasswordService _passwordService;
+        private readonly UnitOfWork _unitOfWork;
+        private readonly BOAccountService _boService;
+        private readonly BOLogSystemService _boLogSystemService;
+        private readonly PasswordService _passwordService;
 
-        private SelectList _Empresas
+        public BOAccountController(
+            UnitOfWork uow, 
+            BOAccountService boService, 
+            BOLogSystemService boLogSystemService, 
+            PasswordService passwordService)
         {
-            get
-            {
-                if (empresas == null)
-                {
-                    empresas = new SelectList(Empresas, "IdEmpresa", "Nome");
-                }
-
-                return empresas;
-            }
-        }
-        private SelectList empresas;
-
-        private SelectList Status
-        {
-            get
-            {
-                if (status == null)
-                {
-                    status = new SelectList(new NaoSimLOV().Items, "Value", "Text");
-                }
-
-                return status;
-            }
-        }
-        private SelectList status;
-
-        private void setViewBags()
-        {
-            ViewBag.Empresas = _Empresas;
-            ViewBag.Status = Status;
-        }
-
-        public BOAccountController(UnitOfWork uow, BOAccountService boService, BOLogSystemService boLogSystemService, PasswordService passwordService)
-        {
-            _uow = uow;
+            _unitOfWork = uow;
             _boService = boService;
             _boLogSystemService = boLogSystemService;
             _passwordService = passwordService;
         }
 
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.List)]
         public ActionResult Index()
         {
-            setViewBags();
+            ViewBag.Empresas = _Empresas;
 
-            return View(new BOAccountListViewModel());
+            var viewModel = new BOAccountListViewModel
+            {
+                Status = new SelectList(new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Ativo", Value = "true" },
+                    new SelectListItem { Text = "Inativo", Value = "false" }
+                }, "Value", "Text")
+            };
+
+            viewModel.Filter.Ativo = true;
+
+            return View(viewModel);
         }
 
+        [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.List)]
-        public ActionResult PageData(DataTableFilter<BOAccountFilterViewModel> filter)
+        public ActionResult PageData(DataTableFilter<BOAccountFilterViewModel> model)
         {
-            IQueryable<PerfilUsuario> allusers = _uow.PerfilUsuarioRepository.All();
+            var filtros = Mapper.Map<DataTableFilter<UsuarioListaFiltro>>(model);
+            filtros.CustomFilter.IdEmpresa = IdEmpresa;
 
-            int totalRecords = allusers.Count();
-
-            IQueryable<PerfilUsuario> query = allusers.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.UserName), x => x.Usuario.UserName.Contains(filter.CustomFilter.UserName));
-            query = query.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.Email), x => x.Usuario.Email.Contains(filter.CustomFilter.Email));
-            query = query.WhereIf(!string.IsNullOrEmpty(filter.CustomFilter.Nome), x => x.Nome.Contains(filter.CustomFilter.Nome));
-            query = query.WhereIf(filter.CustomFilter.IdEmpresa.HasValue, x => x.EmpresaId == filter.CustomFilter.IdEmpresa);
-            query = query.WhereIf(filter.CustomFilter.Ativo.HasValue, x => x.Ativo == filter.CustomFilter.Ativo);
-
-            IQueryable<BOAccountListItemViewModel> select = query.Select(x => new BOAccountListItemViewModel
-            {
-                UserName = x.Usuario.UserName,
-                Email = x.Usuario.Email,
-                Nome = x.Nome,
-                _Ativo = x.Ativo
-            });
-
-            List<BOAccountListItemViewModel> list = select.ToList();
+            List<UsuarioListaLinhaTabela> result = _unitOfWork.PerfilUsuarioRepository.PesquisarLista(filtros);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
-                Draw = filter.Draw,
-                RecordsTotal = totalRecords,
-                RecordsFiltered = list.Count,
-                Data = list.PaginationResult(filter)
+                Draw = model.Draw,
+                Data = Mapper.Map<IEnumerable<BOAccountListItemViewModel>>(result)
             });
         }
 
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
         public ActionResult Create()
         {
-            setViewBags();
+            ViewBag.Empresas = _Empresas;
 
-            return View(new BOAccountCreateViewModel());
+            var viewModel = new BOAccountCreateViewModel
+            {
+                Ativo = true
+            };
+
+            return View(viewModel);
         }
 
-        public ActionResult AdicionarEmpresa(long idEmpresa)
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
+        public async Task<ActionResult> AdicionarEmpresa(long id)
         {
-            List<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name).ToList();
-
+            List<string> gruposPermissoesUsuario = (await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), id).ConfigureAwait(false)).OrderBy(x => x).ToList();
+            
             var empresasGrupos = new EmpresaGrupoViewModel
             {
-                IdEmpresa = idEmpresa,
-                Nome = Empresas.First(f => f.IdEmpresa == idEmpresa).Nome,
-                Grupos = Mapper.Map<List<GroupItemViewModel>>(groups)
+                IdEmpresa = id,
+                Nome = Empresas.First(f => f.IdEmpresa == id).Nome
             };
+
+            foreach (string nomeGrupoPermissao in gruposPermissoesUsuario)
+            {
+                var groupItemViewModel = new GroupItemViewModel
+                {
+                    IsSelected = false,
+                    Name = nomeGrupoPermissao
+                };
+
+                empresasGrupos.Grupos.Add(groupItemViewModel);
+            }
 
             var list = new List<EmpresaGrupoViewModel>
             {
@@ -143,7 +128,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
         public async Task<ActionResult> Create(BOAccountCreateViewModel model)
         {
-            setViewBags();
+            ViewBag.Empresas = _Empresas;
 
             Func<string, ViewResult> errorView = (error) =>
             {
@@ -163,14 +148,14 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (existingUserByName != null)
             {
-                ModelState.AddModelError(nameof(model.UserName), Res.UserNameAlreadyExistsMessage);
+                ModelState.AddModelError(nameof(model.UserName), "O código de usuário informado já existe");
             }
 
             var existsUserByEmail = await UserManager.FindByEmailAsync(model.Email).ConfigureAwait(false);
 
             if (existsUserByEmail != null)
             {
-                ModelState.AddModelError(nameof(model.Email), Res.UserEmailAlreadyExistsMessage);
+                ModelState.AddModelError(nameof(model.Email), "E-mail informado já utilizado por outro usuário");
             }
 
             if (model.EmpresasGrupos.NullOrEmpty())
@@ -182,6 +167,12 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Any())
             {
                 ModelState.AddModelError(nameof(model.EmpresasGrupos), Res.RequiredOnlyGroup);
+                return errorView(null);
+            }
+
+            if(!model.EmpresasGrupos.Where(w => w.IsEmpresaPrincipal).Any())
+            {
+                ModelState.AddModelError(nameof(model.EmpresasGrupos), "Selecione a empresa principal do usuário");
                 return errorView(null);
             }
 
@@ -199,12 +190,22 @@ namespace FWLog.Web.Backoffice.Controllers
                 throw new InvalidOperationException(Resources.CommonStrings.RequestUnexpectedErrorMessage);
             }
 
-            model.PerfilUsuario.UsuarioId = user.Id;
-            _uow.PerfilUsuarioRepository.Add(model.PerfilUsuario);
-            _uow.SaveChanges();
+            var perfilUsuario = new PerfilUsuario
+            {
+                Ativo = model.Ativo,
+                Cargo = model.Cargo,
+                DataNascimento = model.DataNascimento,
+                Departamento = model.Departamento,
+                Nome = model.Nome,
+                UsuarioId = user.Id,
+                EmpresaId = model.EmpresasGrupos.Where(w => w.IsEmpresaPrincipal).First().IdEmpresa
+            };
 
-            model.EmpresasGrupos.ForEach(f => _uow.UsuarioEmpresaRepository.Add(new UsuarioEmpresa(user.Id, f.IdEmpresa)));
-            _uow.SaveChanges();
+            _unitOfWork.PerfilUsuarioRepository.Add(perfilUsuario);
+            _unitOfWork.SaveChanges();
+
+            model.EmpresasGrupos.ForEach(f => _unitOfWork.UsuarioEmpresaRepository.Add(new UsuarioEmpresa { UserId = user.Id, IdEmpresa = f.IdEmpresa, PerfilUsuarioId = perfilUsuario.PerfilUsuarioId }));
+            _unitOfWork.SaveChanges();
 
             var empresasGruposNew = new StringBuilder();
 
@@ -232,17 +233,18 @@ namespace FWLog.Web.Backoffice.Controllers
                 IP = userInfo.IP,
                 UserId = userInfo.UserId,
                 EntityName = nameof(AspNetUsers),
-                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, model.PerfilUsuario, empresasGruposNew.ToString())
+                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, perfilUsuario, empresasGruposNew.ToString())
             });
 
             Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Edit)]
         public async Task<ActionResult> Edit(string id)
         {
-            setViewBags();
+            ViewBag.Empresas = _Empresas;
 
             ApplicationUser user = await UserManager.FindByNameAsync(id).ConfigureAwait(false);
 
@@ -251,14 +253,23 @@ namespace FWLog.Web.Backoffice.Controllers
                 throw new HttpException(404, "Not found");
             }
 
-            var empresas = _uow.UsuarioEmpresaRepository.GetAllEmpresasByUserId(user.Id);
+            var empresas = _unitOfWork.UsuarioEmpresaRepository.GetAllEmpresasByUserId(user.Id);
 
             empresas = Empresas.Where(w => empresas.Contains(w.IdEmpresa)).Select(s => s.IdEmpresa).ToList();
 
-            var perfil = _uow.PerfilUsuarioRepository.GetByUserId(user.Id.ToString());
+            var perfil = _unitOfWork.PerfilUsuarioRepository.GetByUserId(user.Id);
 
-            var model = Mapper.Map<BOAccountEditViewModel>(user);
-            model.PerfilUsuario = perfil;
+            var model = new BOAccountEditViewModel
+            {
+                Ativo = perfil.Ativo,
+                Cargo = perfil.Cargo,
+                DataNascimento = perfil.DataNascimento,
+                Departamento = perfil.Departamento,
+                PerfilUsuarioId = perfil.PerfilUsuarioId,
+                Nome = perfil.Nome,
+                Email = user.Email,
+                UserName = user.UserName
+            };
 
             IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);
 
@@ -268,8 +279,21 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     IdEmpresa = empresa,
                     Nome = Empresas.First(f => f.IdEmpresa == empresa).Nome,
-                    Grupos = Mapper.Map<List<GroupItemViewModel>>(groups)
+                    IsEmpresaPrincipal = perfil.EmpresaId == empresa ? true : false
                 };
+
+                List<string> gruposPermissoesUsuario = (await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), empresa).ConfigureAwait(false)).OrderBy(x => x).ToList();
+
+                foreach (string nomeGrupoPermissao in gruposPermissoesUsuario)
+                {
+                    var groupItemViewModel = new GroupItemViewModel
+                    {
+                        IsSelected = false,
+                        Name = nomeGrupoPermissao
+                    };
+
+                    empGrupos.Grupos.Add(groupItemViewModel);
+                }
 
                 IList<string> selectedRoles = await UserManager.GetUserRolesByIdEmpresa(user.Id, empresa).ConfigureAwait(false);
 
@@ -288,12 +312,12 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Edit)]
         public async Task<ActionResult> Edit(BOAccountEditViewModel model)
         {
-            setViewBags();
+            ViewBag.Empresas = _Empresas;
 
-            Func<ViewResult> errorView = () =>
+            ViewResult errorView()
             {
                 return View(model);
-            };
+            }
 
             if (!ModelState.IsValid)
             {
@@ -333,7 +357,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var empresasGruposNew = new StringBuilder();
             var empresasGruposOld = new StringBuilder();
 
-            var companiesUser = _uow.UsuarioEmpresaRepository.GetAllEmpresasByUserId(user.Id);
+            var companiesUser = _unitOfWork.UsuarioEmpresaRepository.GetAllEmpresasByUserId(user.Id);
             var empresas = Empresas.Where(w => companiesUser.Contains(w.IdEmpresa)).ToList();
 
             foreach (var empresa in empresas)
@@ -350,11 +374,15 @@ namespace FWLog.Web.Backoffice.Controllers
             foreach (var item in model.EmpresasGrupos.Where(x => x.Grupos.Any(y => y.IsSelected)))
             {
                 IEnumerable<string> selectedRoles = item.Grupos.Where(x => x.IsSelected).Select(x => x.Name);
+                IList<string> rolesUsuarioEdicao = await UserManager.GetUserRolesByIdEmpresa(user.Id, item.IdEmpresa).ConfigureAwait(false);
+                IList<string> rolesUsuarioLogado = await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), item.IdEmpresa).ConfigureAwait(false);
+                IEnumerable<string> rolesIgnorar = rolesUsuarioEdicao.Where(x => !rolesUsuarioLogado.Any(y => y == x));
+
 
                 empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Nome, string.Join(", ", selectedRoles.ToArray())));
                 empresasGruposNew.AppendLine(" || ");
 
-                IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, item.IdEmpresa).ConfigureAwait(false);
+                IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, rolesIgnorar, item.IdEmpresa).ConfigureAwait(false);
 
                 if (!result.Succeeded)
                 {
@@ -362,13 +390,21 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             }
 
-            var oldPerfil = _uow.PerfilUsuarioRepository.GetById(model.PerfilUsuario.PerfilUsuarioId);
+            var oldPerfil = _unitOfWork.PerfilUsuarioRepository.GetById(model.PerfilUsuarioId);
             var log = new AspNetUsersLogSerializeModel(oldUser.UserName, oldPerfil, empresasGruposOld.ToString());
 
-            _boService.EditPerfilUsuario(model.PerfilUsuario);
+            var perfilUsuario = _unitOfWork.PerfilUsuarioRepository.GetById(model.PerfilUsuarioId);
+            perfilUsuario.Nome = model.Nome;
+            perfilUsuario.EmpresaId = model.EmpresasGrupos.Where(w => w.IsEmpresaPrincipal).First().IdEmpresa;
+            perfilUsuario.Departamento = model.Departamento;
+            perfilUsuario.DataNascimento = model.DataNascimento;
+            perfilUsuario.Cargo = model.Cargo;
+            perfilUsuario.Ativo = model.Ativo;
+
+            _boService.EditPerfilUsuario(perfilUsuario);
 
             var empresasGrupos = model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Select(s => s.IdEmpresa).ToList();
-            _boService.EditUsuarioEmpresas(Empresas, empresasGrupos, user.Id.ToString());
+            _boService.EditUsuarioEmpresas(Empresas, empresasGrupos, user.Id, perfilUsuario.PerfilUsuarioId);
 
             var userInfo = new BackOfficeUserInfo();
             _boLogSystemService.Add(new BOLogSystemCreation
@@ -378,13 +414,14 @@ namespace FWLog.Web.Backoffice.Controllers
                 UserId = userInfo.UserId,
                 EntityName = nameof(AspNetUsers),
                 OldEntity = log,
-                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, model.PerfilUsuario, empresasGruposNew.ToString())
+                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, perfilUsuario, empresasGruposNew.ToString())
             });
 
             Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Edit)]
         public async Task<ActionResult> Details(string id)
         {
@@ -452,7 +489,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = Resources.CommonStrings.RegisterHasRelationshipsErrorMessage
+                    Message = "O usuário já realizou ações no sistema e não pode ser excluído. Utilize a opção \"Inativar\" na tela de edição."
                 }, JsonRequestBehavior.DenyGet);
             }
         }
@@ -551,6 +588,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
+        [HttpGet]
         [ApplicationAuthorize]
         public ActionResult ChangePassword()
         {
@@ -587,13 +625,13 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 if (applicationUser.IdApplicationSession.HasValue)
                 {
-                    ApplicationSession applicationSession = _uow.ApplicationSessionRepository.GetById(applicationUser.IdApplicationSession.Value);
+                    ApplicationSession applicationSession = _unitOfWork.ApplicationSessionRepository.GetById(applicationUser.IdApplicationSession.Value);
 
                     applicationSession.DataUltimaAcao = DateTime.Now;
                     applicationSession.DataLogout = DateTime.Now;
 
-                    _uow.ApplicationSessionRepository.Update(applicationSession);
-                    _uow.SaveChanges();
+                    _unitOfWork.ApplicationSessionRepository.Update(applicationSession);
+                    _unitOfWork.SaveChanges();
 
                     applicationUser.IdApplicationSession = null;
                     UserManager.Update(applicationUser);
@@ -606,16 +644,23 @@ namespace FWLog.Web.Backoffice.Controllers
             return RedirectToAction("LogOn", "BOAccountBase");
         }
 
-        //[ApplicationAuthorize]
-        public ActionResult SearchModal()
+        [HttpGet]
+        [ApplicationAuthorize]
+        public ActionResult SearchModal(string id)
         {
-            return View(new BOPerfilUsuarioSearchModalViewModel());
+            var viewModel = new BOPerfilUsuarioSearchModalViewModel
+            {
+                Origem = id
+            };
+
+            return View(viewModel);
         }
 
-        //[ApplicationAuthorize]
+        [HttpPost]
+        [ApplicationAuthorize]
         public ActionResult SearchModalPageData(DataTableFilter<BOPerfilUsuarioSearchModalFilterViewModel> filter)
         {
-            var query = _uow.PerfilUsuarioRepository.All();
+            var query = _unitOfWork.PerfilUsuarioRepository.Tabela();
 
             int totalRecords = query.Count();
 
@@ -647,5 +692,20 @@ namespace FWLog.Web.Backoffice.Controllers
                 Data = result
             });
         }
+
+        private SelectList _Empresas
+        {
+            get
+            {
+                if (empresas == null)
+                {
+                    empresas = new SelectList(Empresas, "IdEmpresa", "Nome");
+                }
+
+                return empresas;
+            }
+        }
+
+        private SelectList empresas;
     }
 }

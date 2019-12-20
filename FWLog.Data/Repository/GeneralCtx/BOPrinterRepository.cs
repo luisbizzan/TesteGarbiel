@@ -1,6 +1,6 @@
 ﻿using FWLog.Data.Models;
 using FWLog.Data.Repository.CommonCtx;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 
@@ -12,14 +12,9 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
         }
 
-        public override IEnumerable<Printer> GetAll()
+        public IQueryable<Printer> All(ReadOnlyCollection<long> IdEmpresas)
         {
-            return All().ToList();
-        }
-
-        public override IQueryable<Printer> All()
-        {
-            return _dbSet.Include(x => x.Empresa).Include(x => x.PrinterType);
+            return _dbSet.Include(x => x.Empresa).Include(x => x.PrinterType).Where(x => IdEmpresas.Contains(x.Empresa.IdEmpresa));
         }
     }
 }

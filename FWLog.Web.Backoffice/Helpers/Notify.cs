@@ -1,17 +1,12 @@
 ﻿using FWLog.Web.Backoffice.Models.CommonCtx;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Helpers
 {
     public class Notify
     {
-        TempDataDictionary _tempData;
-        readonly string _tempDataName = "Notify";
+        private TempDataDictionary _tempData;
+        private readonly string _tempDataName = "Notify";
 
         public Notify(TempDataDictionary tempData)
         {
