@@ -123,6 +123,7 @@
     });
 
     $(document.body).on('click', "[action='alterarStatus']", alterarStatus);
+    $(document.body).on('click', "[action='termoResponsabilidade']", termoResponsabilidade);
 
     function alterarStatus() {
         let id = $(this).data("id");
@@ -145,6 +146,13 @@
         });
     }
 
+    function termoResponsabilidade() {
+        var id = $(this).data("id");
+
+        $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=laser&acao=" + id, function () {
+            $("#modalImpressoras").modal();
+        });
+    }
 })();
 
 function setFornecedor(idFornecedor, razaoSocial) {
@@ -154,4 +162,29 @@ function setFornecedor(idFornecedor, razaoSocial) {
     fornecedor.val(idFornecedor);
     $("#modalFornecedor").modal("hide");
     $("#modalFornecedor").empty();
+}
+
+//Recebendo o id da quarentena no parâmetro 'acao'.
+function imprimir(acao, id) {
+    var idImpressora = $("input[name='IdImpressora']:checked").val();
+
+    $.ajax({
+        url: CONTROLLER_PATH + "TermoResponsabilidade",
+        method: "POST",
+        cache: false,
+        xhrFields: {
+            responseType: 'blob'
+        },
+        data: {
+            idQuarentena: acao,
+            IdImpressora: idImpressora
+        },
+        success: function () {
+            $("#btnFechar").click();
+        },
+        error: function (data) {
+            PNotify.error({ text: "Não Ocorreu um erro na impressão." });
+            NProgress.done();
+        }
+    });
 }

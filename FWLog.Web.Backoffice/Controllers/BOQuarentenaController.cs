@@ -18,13 +18,15 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly UnitOfWork _uow;
         private readonly BOLogSystemService _boLogSystemService;
+        private readonly ApplicationLogService _applicationLogService;
         private readonly QuarentenaService _quarentenaService;
 
-        public BOQuarentenaController(UnitOfWork uow, BOLogSystemService boLogSystemService, QuarentenaService quarentenaService)
+        public BOQuarentenaController(UnitOfWork uow, BOLogSystemService boLogSystemService, QuarentenaService quarentenaService, ApplicationLogService applicationLogService)
         {
             _uow = uow;
             _boLogSystemService = boLogSystemService;
             _quarentenaService = quarentenaService;
+            _applicationLogService = applicationLogService;
         }
 
         private SelectList Status
@@ -65,12 +67,6 @@ namespace FWLog.Web.Backoffice.Controllers
                     }), "Value", "Text")
                 }
             };
-
-
-
-            //byte[] relatorio = _quarentenaService.TermoResponsabilidade();
-
-            //return File(relatorio, "application/pdf", "TermoResponsabilidade.pdf");
 
             return View(model);
         }
@@ -248,12 +244,48 @@ namespace FWLog.Web.Backoffice.Controllers
                 Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
                 return RedirectToAction("Index");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+
                 setViewBags();
 
                 Notify.Error(Resources.CommonStrings.RegisterEditedErrorMessage);
                 return PartialView("DetalhesQuarentena", model);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult TermoResponsabilidade(BOImprimirTermoResponsabilidadeViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                var request = new TermoResponsabilidadeRequest
+                {
+                    IdQuarentena = viewModel.IdQuarentena,
+                    IdImpressora = viewModel.IdImpressora,
+                    NomeUsuario = User.Identity.Name
+                };
+
+                _quarentenaService.ImprimirTermoResponsabilidade(request);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.AllowGet);
             }
         }
     }

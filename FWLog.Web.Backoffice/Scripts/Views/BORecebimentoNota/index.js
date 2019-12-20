@@ -53,35 +53,6 @@
         });
     });
 
-    var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        return [
-            {
-                text: "Detalhes da Nota",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'detalhesNota' },
-                icon: 'fa fa-eye',
-                visible: view.registrarRecebimento
-            },
-            {
-                text: "Registrar Recebimento",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'registrarRecebimento' },
-                icon: 'fa fa-pencil-square',
-                visible: view.registrarRecebimento
-            },
-            {
-                text: "Conferir Nota",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'conferirNota' },
-                icon: 'fa fa-check-square-o',
-                visible: view.registrarRecebimento
-            },
-            {
-                text: "Tratar Divergência",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'tratarDivergencias' },
-                icon: 'fa fa-warning',
-                visible: view.tratarDivergencias
-            }
-        ];
-    });
-
     var $DataInicial = $('#Filter_DataInicial').closest('.date');
     var $DataFinal = $('#Filter_DataFinal').closest('.date');
     var $PrazoInicial = $('#Filter_PrazoInicial').closest('.date');
@@ -146,6 +117,39 @@
         return data;
     };
 
+    var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
+        var acaoDivergencia = full.IdLoteStatus === 6 || full.IdLoteStatus === 7 || full.IdLoteStatus === 8 ? "exibirDivergencias" : "tratarDivergencias";
+        var visivelDivergencia = full.IdLoteStatus === 5 || full.IdLoteStatus === 6 || full.IdLoteStatus === 7 || full.IdLoteStatus === 8 ? true : false;
+        var textoDivergencia = full.IdLoteStatus === 5 ? "Tratar Divergências" : "Exibir Divergências";
+
+        return [
+            {
+                text: "Detalhes da Nota",
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'detalhesNota' },
+                icon: 'fa fa-eye',
+                visible: view.registrarRecebimento
+            },
+            {
+                text: "Registrar Recebimento",
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'registrarRecebimento' },
+                icon: 'fa fa-pencil-square',
+                visible: view.registrarRecebimento
+            },
+            {
+                text: "Conferir Nota",
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'conferirNota' },
+                icon: 'fa fa-check-square-o',
+                visible: view.registrarRecebimento
+            },
+            {
+                text: textoDivergencia,
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': acaoDivergencia },
+                icon: 'fa fa-warning',
+                visible: visivelDivergencia
+            }
+        ];
+    });
+
     $('#dataTable').DataTable({
         ajax: {
             "url": view.pageDataUrl,
@@ -186,6 +190,12 @@
     $('#dataTable').dataTable.error = function (settings, helpPage, message) {
         console.log(message);
     };
+
+    $("#dataTable").on('click', "[action='conferirNota']", conferirNota);
+    $("#dataTable").on('click', "[action='registrarRecebimento']", registrarRecebimento);
+    $("#dataTable").on('click', "[action='detalhesNota']", detalhesNota);
+    $("#dataTable").on('click', "[action='tratarDivergencias']", tratarDivergencias);
+    $("#dataTable").on('click', "[action='exibirDivergencias']", exibirDivergencias);
 
     dart.dataTables.loadFormFilterEvents();
 
@@ -233,11 +243,6 @@
     $("#limparUsuarioConferencia").click(function () {
         limparUsuarioConferencia();
     });
-
-    $("#dataTable").on('click', "[action='conferirNota']", conferirNota);
-    $("#dataTable").on('click', "[action='registrarRecebimento']", registrarRecebimento);
-    $("#dataTable").on('click', "[action='detalhesNota']", detalhesNota);
-    $("#dataTable").on('click', "[action='tratarDivergencias']", tratarDivergencias);
 })();
 
 function imprimir(acao, id) {
@@ -247,7 +252,7 @@ function imprimir(acao, id) {
                 url: "/BORecebimentoNota/ImprimirRelatorioNotas",
                 method: "POST",
                 data: {
-                    IdImpressora: $("#IdImpressora").val(),
+                    IdImpressora: $("input[name='IdImpressora']:checked").val(),
                     Lote: $("#Filter_Lote").val(),
                     Nota: $("#Filter_Nota").val(),
                     ChaveAcesso: $("#Filter_ChaveAcesso").val(),
@@ -271,7 +276,7 @@ function imprimir(acao, id) {
                 url: "/BORecebimentoNota/ImprimirDetalhesEntradaConferencia",
                 method: "POST",
                 data: {
-                    IdImpressora: $("#IdImpressora").val(),
+                    IdImpressora: $("input[name='IdImpressora']:checked").val(),
                     IdNotaFiscal: id
                 },
                 success: function () {
@@ -460,9 +465,18 @@ function conferirNota() {
 
 function tratarDivergencias() {
     let id = $(this).data("id");
-    let $modal = $("#modalTratarDivergencia");
+    let $modal = $("#modalDivergencia");
 
     $modal.load(HOST_URL + CONTROLLER_PATH + "TratarDivergencia/" + id, function () {
+        $modal.modal();
+    });
+}
+
+function exibirDivergencias() {
+    let id = $(this).data("id");
+    let $modal = $("#modalDivergencia");
+
+    $modal.load(HOST_URL + CONTROLLER_PATH + "ExibirDivergencia/" + id, function () {
         $modal.modal();
     });
 }

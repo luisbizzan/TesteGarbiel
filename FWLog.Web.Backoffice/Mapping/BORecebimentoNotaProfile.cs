@@ -10,7 +10,7 @@ namespace FWLog.Web.Backoffice.Mapping
         public BORecebimentoNotaProfile()
         {
             CreateMap<BODownloadRelatorioNotasViewModel, RelatorioRecebimentoNotasRequest>();
-            CreateMap<RecebimentoTratarDivergenciaViewModel, TratarDivergenciaRequest>();
+            CreateMap<TratarDivergenciaRecebimentoViewModel, TratarDivergenciaRequest>();
         }
     }
 }

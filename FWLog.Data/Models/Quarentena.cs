@@ -17,6 +17,8 @@ namespace FWLog.Data.Models
 
         public string Observacao { get; set; }
 
+        public string CodigoConfirmacao { get; set; }
+
         public QuarentenaStatusEnum IdQuarentenaStatus { get; set; }
 
         [ForeignKey(nameof(IdLote))]
