@@ -172,14 +172,17 @@ function imprimir(acao, id) {
         url: CONTROLLER_PATH + "TermoResponsabilidade",
         method: "POST",
         cache: false,
-        xhrFields: {
-            responseType: 'blob'
-        },
         data: {
             idQuarentena: acao,
             IdImpressora: idImpressora
         },
-        success: function () {
+        success: function (result) {
+            if (result.Success) {
+                PNotify.success({ text: result.Message });
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+
             $("#btnFechar").click();
         },
         error: function (data) {

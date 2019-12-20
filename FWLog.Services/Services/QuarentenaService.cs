@@ -76,7 +76,7 @@ namespace FWLog.Services.Services
         {
             var pdfRenderer = new PdfDocumentRenderer(false)
             {
-                Document = _document
+                Document = _document.Clone()
             };
 
             pdfRenderer.RenderDocument();
@@ -147,6 +147,14 @@ namespace FWLog.Services.Services
             _document.AddSection();
 
             _document.LastSection.PageSetup.StartingNumber = 1;
+
+            _document.LastSection.PageSetup.PageFormat = PageFormat.A4;
+            _document.LastSection.PageSetup.Orientation = Orientation.Portrait;
+
+            _document.LastSection.PageSetup.LeftMargin = new Unit(3, UnitType.Centimeter);
+            _document.LastSection.PageSetup.TopMargin = new Unit(3, UnitType.Centimeter);
+            _document.LastSection.PageSetup.RightMargin = new Unit(2.5, UnitType.Centimeter);
+            _document.LastSection.PageSetup.BottomMargin = new Unit(2.5, UnitType.Centimeter);
         }
 
         private void CriaLabelPaginacao()

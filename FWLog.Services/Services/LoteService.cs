@@ -228,7 +228,7 @@ namespace FWLog.Services.Services
                 GravarQuaretena(loteDivergencias, lote);
             }
 
-            if (!(Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"])))//TODO Temporário
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
             {
                 if (lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas || lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa)
                 {
