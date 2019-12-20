@@ -17,20 +17,23 @@ namespace FWLog.Services.Services
         public void Imprimir(byte[] dadosImpressao, long idImpressora)
         {
             Printer impressora = _unitOfWork.BOPrinterRepository.GetById(idImpressora);
-            var ipPorta = impressora.IP.Split(':');
+            string[] ipPorta = impressora.IP.Split(':');
 
             using (var clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true })
             {
                 IPAddress ip = IPAddress.Parse(ipPorta[0]);
                 IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
-                clientSocket.Connect(ipep);
 
-                using (var ns = new NetworkStream(clientSocket))
-                {
-                    ns.Write(dadosImpressao, 0, dadosImpressao.Length);
-                    ns.Close();
-                    clientSocket.Close();
-                }
+                clientSocket.Connect(ipep);
+                clientSocket.Send(dadosImpressao, 0, dadosImpressao.Length, SocketFlags.None);
+                clientSocket.Close();
+
+                //using (var ns = new NetworkStream(clientSocket))
+                //{
+                //    ns.Write(dadosImpressao, 0, dadosImpressao.Length);
+                //    ns.Close();
+                //    clientSocket.Close();
+                //}
             }
         }
     }
