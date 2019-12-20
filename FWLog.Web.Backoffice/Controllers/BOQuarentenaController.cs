@@ -1,4 +1,5 @@
-﻿using FWLog.Data;
+﻿using FWLog.AspNet.Identity;
+using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
@@ -7,6 +8,7 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BOQuarentenaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -266,7 +268,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     IdQuarentena = viewModel.IdQuarentena,
                     IdImpressora = viewModel.IdImpressora,
-                    NomeUsuario = User.Identity.Name
+                    NomeUsuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome
                 };
 
                 _quarentenaService.ImprimirTermoResponsabilidade(request);
@@ -277,7 +279,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Impressão enviada com sucesso."
                 }, JsonRequestBehavior.AllowGet);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
 
