@@ -18,13 +18,15 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly UnitOfWork _uow;
         private readonly BOLogSystemService _boLogSystemService;
+        private readonly ApplicationLogService _applicationLogService;
         private readonly QuarentenaService _quarentenaService;
 
-        public BOQuarentenaController(UnitOfWork uow, BOLogSystemService boLogSystemService, QuarentenaService quarentenaService)
+        public BOQuarentenaController(UnitOfWork uow, BOLogSystemService boLogSystemService, QuarentenaService quarentenaService, ApplicationLogService applicationLogService)
         {
             _uow = uow;
             _boLogSystemService = boLogSystemService;
             _quarentenaService = quarentenaService;
+            _applicationLogService = applicationLogService;
         }
 
         private SelectList Status
@@ -242,8 +244,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
                 return RedirectToAction("Index");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+
                 setViewBags();
 
                 Notify.Error(Resources.CommonStrings.RegisterEditedErrorMessage);
@@ -275,6 +279,8 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch(Exception ex)
             {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
