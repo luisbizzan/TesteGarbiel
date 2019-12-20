@@ -439,15 +439,15 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Success = true,
                     Message = "Impressão enviada com sucesso."
-                }, JsonRequestBehavior.DenyGet);
+                }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
                     Message = "Ocorreu um erro na impressão."
-                }, JsonRequestBehavior.DenyGet);
+                }, JsonRequestBehavior.AllowGet);
             }
         }
 
