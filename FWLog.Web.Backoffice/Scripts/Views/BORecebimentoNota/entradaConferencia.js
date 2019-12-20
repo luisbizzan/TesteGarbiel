@@ -139,6 +139,7 @@ function finalizarConferencia() {
 
 function resetarCamposConferencia() {
     $("#Referencia").val('');
+    $("#DescricaoReferencia").val('');
     $("#Embalagem").val('');
     $("#Unidade").val('');
     $("#Multiplo").val('');
