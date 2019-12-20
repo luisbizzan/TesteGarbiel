@@ -3,15 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 {
-    public class TratarDivergenciaRecebimentoViewModel
+    public class ExibirDivergenciaRecebimentoViewModel
     {
-        public TratarDivergenciaRecebimentoViewModel()
+        public ExibirDivergenciaRecebimentoViewModel()
         {
-            Divergencias = new List<TratarDivergenciaRecebimentoItemViewModel>();
+            Divergencias = new List<ExibirDivergenciaRecebimentoItemViewModel>();
         }
 
-        public long IdNotaFiscal { get; set; }
-        [Display(Name = "Nota Fiscal")]
+        public long IdLote { get; set; }
         public string NotaFiscal { get; set; }
         [Display(Name = "Status")]
         public string StatusNotasFiscal { get; set; }
@@ -21,14 +20,16 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public string InicioConferencia { get; set; }
         [Display(Name = "Fim da Conferência")]
         public string FimConferencia { get; set; }
+        [Display(Name = "Tratado por")]
+        public string UsuarioTratamento { get; set; }
+        [Display(Name = "Data Tratamento")]
+        public string DataTratamento { get; set; }
 
-        public List<TratarDivergenciaRecebimentoItemViewModel> Divergencias { get; set; }
+        public List<ExibirDivergenciaRecebimentoItemViewModel> Divergencias { get; set; }
     }
 
-    public class TratarDivergenciaRecebimentoItemViewModel
+    public class ExibirDivergenciaRecebimentoItemViewModel
     {
-        [Required]
-        public long IdLoteDivergencia { get; set; }
         [Display(Name = "Referência")]
         public string Referencia { get; set; }
         [Display(Name = "Qtd. Nota Fiscal")]
@@ -39,9 +40,9 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public int QuantidadeMais { get; set; }
         [Display(Name = "A-")]
         public int QuantidadeMenos { get; set; }
-        [Display(Name = "Qtd. A+")]
+        [Display(Name = "Qtd. Tratado A+")]
         public int? QuantidadeMaisTratado { get; set; }
-        [Display(Name = "Qtd. A-")]
+        [Display(Name = "Qtd. Tratado A-")]
         public int? QuantidadeMenosTratado { get; set; }
     }
 }

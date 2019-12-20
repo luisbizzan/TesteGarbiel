@@ -276,6 +276,7 @@
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirEtiquetaRecebimentoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\RelatorioRastreioPecaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\TratarDivergenciaRecebimentoViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\ExibirDivergenciaRecebimentoViewModel.cs" />
     <Compile Include="Models\EmpresaCtx\EmpresaSearchModalViewModel.cs" />
     <Compile Include="Models\BOFornecedorCtx\BOFornecedorSearchModalViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
@@ -501,6 +502,7 @@
     <Content Include="Views\Empresa\SearchModal.cshtml" />
     <Content Include="Views\BORecebimentoNota\TratarDivergencia.cshtml" />
     <Content Include="Views\BORecebimentoNota\RelatorioRastreioPeca.cshtml" />
+    <Content Include="Views\BORecebimentoNota\ExibirDivergencia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
