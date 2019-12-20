@@ -19,22 +19,18 @@ namespace FWLog.Services.Services
             Printer impressora = _unitOfWork.BOPrinterRepository.GetById(idImpressora);
             string[] ipPorta = impressora.IP.Split(':');
 
-            using (var clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true })
-            {
-                IPAddress ip = IPAddress.Parse(ipPorta[0]);
-                IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
+            IPAddress ip = IPAddress.Parse(ipPorta[0]);
+            IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
 
-                clientSocket.Connect(ipep);
-                clientSocket.Send(dadosImpressao, 0, dadosImpressao.Length, SocketFlags.None);
-                clientSocket.Close();
+            TcpClient client = new TcpClient() { NoDelay = true };
+            client.Connect(ipep);
 
-                //using (var ns = new NetworkStream(clientSocket))
-                //{
-                //    ns.Write(dadosImpressao, 0, dadosImpressao.Length);
-                //    ns.Close();
-                //    clientSocket.Close();
-                //}
-            }
+            NetworkStream stream = client.GetStream();
+            stream.Write(dadosImpressao, 0, dadosImpressao.Length);
+
+            stream.Flush();
+            stream.Close();
+            client.Close();
         }
     }
 }
