@@ -1,6 +1,15 @@
 ﻿(function () {
     $('.onlyNumber').mask('0#');
 
+    $("#QuantidadePorCaixa").mask("S#############", {
+        translation: {
+            'S': {
+                pattern: /-/,
+                optional: true
+            }
+        }
+    });
+
     $('#modalRegistroConferencia').keypress(function (e) {
         if (e.keyCode == '13') {
             registrarConferencia();
