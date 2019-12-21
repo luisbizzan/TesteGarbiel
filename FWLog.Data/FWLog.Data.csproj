@@ -203,6 +203,11 @@
     <Compile Include="Repository\GeneralCtx\PerfilUsuarioRepository.cs" />
     <Compile Include="Repository\GeneralCtx\EmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ApplicationSessionRepository.cs" />
+    <Compile Include="Resources\ImagensResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ImagensResource.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\Mail\MailResource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -245,6 +250,10 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>MailStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ImagensResource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ImagensResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\Mail\MailResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>MailResource.Designer.cs</LastGenOutput>
@@ -252,6 +261,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Attributes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\LogoFuracaoRelatorio.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

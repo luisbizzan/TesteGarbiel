@@ -5,7 +5,6 @@ using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
-using FWLog.Web.Backoffice.EnumsAndConsts.LOVs;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BOPrinterCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
@@ -55,20 +54,6 @@ namespace FWLog.Web.Backoffice.Controllers
         }
         private SelectList empresas;
 
-        private SelectList Status
-        {
-            get
-            {
-                if (status == null)
-                {
-                    status = new SelectList(new NaoSimLOV().Items, "Value", "Text");
-                }
-
-                return status;
-            }
-        }
-        private SelectList status;
-
         private void setViewBags()
         {
             ViewBag.PrinterTypes = PrinterTypes;
@@ -86,7 +71,11 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult Index()
         {
             setViewBags();
-            ViewBag.Status = Status;
+            ViewBag.Status = new SelectList(new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "Ativo", Value = "true"},
+                            new SelectListItem { Text = "Inativo", Value = "false"}
+                        }, "Value", "Text");
 
             return View(new BOPrinterListViewModel());
         }

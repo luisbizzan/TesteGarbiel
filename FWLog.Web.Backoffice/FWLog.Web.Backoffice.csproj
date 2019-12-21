@@ -242,7 +242,6 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BOFornecedorController.cs" />
     <Compile Include="EnumsAndConsts\EmpresaCookie.cs" />
-    <Compile Include="EnumsAndConsts\LOVs\NaoSimLOV.cs" />
     <Compile Include="GlobalResources\BOPrinter\BOPrinterStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -739,13 +738,8 @@
     <Content Include="Scripts\vendors\datatables\languages\datatables-pt-br.json" />
     <Content Include="Views\Shared\_ScriptGlobalOptions.cshtml" />
     <Content Include="Views\BOAccount\Details.cshtml" />
-    <Content Include="Views\Example\Upload.cshtml" />
-    <Content Include="Views\Example\MultiSelect.cshtml" />
     <Content Include="Scripts\vendors\bootstrap-select\bootstrap-select.js.map" />
     <Content Include="Views\Shared\_JavaScriptGlobalResources.cshtml" />
-    <Content Include="Views\Example\ImageUpload.cshtml" />
-    <Content Include="Views\Example\AutoComplete.cshtml" />
-    <Content Include="Views\Example\TesteValidacao.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
