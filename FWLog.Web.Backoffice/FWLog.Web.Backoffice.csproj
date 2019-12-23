@@ -442,6 +442,7 @@
     <Content Include="Scripts\dart\HttpService.js" />
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
+    <Content Include="Scripts\Views\BOQuarentena\detalhesQuarentena.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\tratarDivergencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\entradaConferencia.js" />
     <Content Include="Scripts\Views\BOPrinter\create.js" />

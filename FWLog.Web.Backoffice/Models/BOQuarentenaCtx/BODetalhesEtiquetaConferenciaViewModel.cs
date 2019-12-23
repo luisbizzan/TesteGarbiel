@@ -20,6 +20,9 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
         [Display(Name = "Observação")]
         public string Observacao { get; set; }
 
+        [Display(Name = "Código Termo Responsabilidade")]
+        public string CodigoConfirmacao { get; set; }
+
         public bool PermiteEdicao
         {
             get

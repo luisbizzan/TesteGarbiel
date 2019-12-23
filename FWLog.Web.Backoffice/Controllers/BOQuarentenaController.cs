@@ -39,7 +39,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     status = new SelectList(_uow.QuarentenaStatusRepository.Todos().Select(x => new SelectListItem
                     {
-                        Value = x.IdQuarentenaStatus.ToString(),
+                        Value = x.IdQuarentenaStatus.GetHashCode().ToString(),
                         Text = x.Descricao
                     }), "Value", "Text");
                 }
@@ -179,7 +179,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult ExibirModalDetalhesQuarentena(long id)
+        public ActionResult DetalhesQuarentena(long id)
         {
             setViewBags();
 
@@ -194,18 +194,40 @@ namespace FWLog.Web.Backoffice.Controllers
                 Observacao = entidade.Observacao
             };
 
-
-            return PartialView("DetalhesQuarentena", model);
+            return View(model);
         }
 
         [HttpPost]
-        public ActionResult ExibirModalDetalhesQuarentena(DetalhesQuarentenaViewModel model)
+        public JsonResult DetalhesQuarentena(DetalhesQuarentenaViewModel model)
         {
+            ValidateModel(model);
+
+            string mensagemErro = null;
+
+            if (model.IdStatus == QuarentenaStatusEnum.Finalizado)
+            {
+                if (string.IsNullOrEmpty(model.CodigoConfirmacao))
+                {
+                    ModelState.AddModelError(nameof(model.CodigoConfirmacao), (mensagemErro = "O código é obrigatório para finalizar."));
+                }
+                else
+                {
+                    bool existeCod = _uow.QuarentenaRepository.Any(x => x.IdQuarentena == model.IdQuarentena && x.CodigoConfirmacao == model.CodigoConfirmacao);
+
+                    if (!existeCod)
+                    {
+                        ModelState.AddModelError(nameof(model.CodigoConfirmacao), (mensagemErro = "O código está incorreto!"));
+                    }
+                }
+            }
+
             if (!ModelState.IsValid)
             {
-                setViewBags();
-
-                return PartialView("DetalhesQuarentena", model);
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = mensagemErro ?? Resources.CommonStrings.RegisterEditedErrorMessage
+                });
             }
 
             try
@@ -243,17 +265,21 @@ namespace FWLog.Web.Backoffice.Controllers
                     NewEntity = entidade
                 });
 
-                Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
-                return RedirectToAction("Index");
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterEditedSuccessMessage
+                });
             }
             catch (Exception ex)
             {
                 _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
 
-                setViewBags();
-
-                Notify.Error(Resources.CommonStrings.RegisterEditedErrorMessage);
-                return PartialView("DetalhesQuarentena", model);
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = Resources.CommonStrings.RegisterEditedErrorMessage
+                });
             }
         }
 
