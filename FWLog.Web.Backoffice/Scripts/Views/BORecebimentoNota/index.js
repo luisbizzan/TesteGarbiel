@@ -266,7 +266,8 @@ function imprimir(acao, id) {
                     QuantidadePeca: $("#Filter_QuantidadePeca").val(),
                     Volume: $("#Filter_Volume").val()
                 },
-                success: function () {
+                success: function (result) {
+                    mensagemImpressao(result);
                     $("#btnFechar").click();
                 }
             });
@@ -279,7 +280,8 @@ function imprimir(acao, id) {
                     IdImpressora: $("input[name='IdImpressora']:checked").val(),
                     IdNotaFiscal: id
                 },
-                success: function () {
+                success: function (result) {
+                    mensagemImpressao(result);
                     $("#btnFechar").click();
                 }
             });
@@ -292,11 +294,20 @@ function imprimir(acao, id) {
                     IdImpressora: $("input[name='IdImpressora']:checked").val(),
                     IdNotaFiscal: id
                 },
-                success: function () {
+                success: function (result) {
+                    mensagemImpressao(result);
                     $("#btnFechar").click();
                 }
             });
             break;
+    }
+}
+
+function mensagemImpressao(result) {
+    if (result.Success) {
+        PNotify.success({ text: result.Message });
+    } else {
+        PNotify.error({ text: result.Message });
     }
 }
 

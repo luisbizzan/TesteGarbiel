@@ -2,8 +2,7 @@
 {
     public class EmpresaCookie
     {
-        public const string CookieName = "UserSettings";        
+        public const string CookieName = "UserSettings";
         public const string IdEmpresa = "CompanyId";
-        public const string ListEmpresas = "ListCompanies";
     }
 }
