@@ -55,5 +55,9 @@ namespace FWLog.Data.Models
         [Required]
         [Index]
         public int CodigoIntegracao { get; set; }
+
+        [StringLength(15)]
+        [Required]
+        public string TelefoneSAC { get; set; }
     }
 }
