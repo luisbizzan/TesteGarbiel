@@ -375,13 +375,13 @@ namespace FWLog.Web.Backoffice.Controllers
                 ChaveAcesso = notafiscal.ChaveAcesso,
                 DataRecebimento = dataAtual.ToString("dd/MM/yyyy"),
                 HoraRecebimento = dataAtual.ToString("HH:mm:ss"),
-                FornecedorNome = notafiscal.Fornecedor.RazaoSocial,
+                FornecedorNome = string.Concat(notafiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notafiscal.Fornecedor.RazaoSocial),
                 NumeroSerieNotaFiscal = string.Format("{0}-{1}", notafiscal.Numero, notafiscal.Serie),
                 ValorTotal = notafiscal.ValorTotal.ToString("n2"),
                 DataAtual = dataAtual,
                 ValorFrete = notafiscal.ValorFrete.ToString("n2"),
                 NumeroConhecimento = notafiscal.NumeroConhecimento,
-                TransportadoraNome = notafiscal.Transportadora.RazaoSocial,
+                TransportadoraNome = string.Concat(notafiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notafiscal.Transportadora.RazaoSocial),
                 Peso = notafiscal.PesoBruto.HasValue ? notafiscal.PesoBruto.Value.ToString("n2") : null,
                 QtdVolumes = notafiscal.Quantidade == 0 ? (int?)null : notafiscal.Quantidade,
                 NotaFiscalPesquisada = true
@@ -498,7 +498,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ValorFrete = notaFiscal.ValorFrete.ToString("C"),
                 NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
                 PesoConhecimento = notaFiscal.PesoBruto.HasValue ? notaFiscal.PesoBruto.Value.ToString("F") : null,
-                TransportadoraNome = notaFiscal.Transportadora.RazaoSocial,
+                TransportadoraNome = string.Concat(notaFiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notaFiscal.Transportadora.RazaoSocial),
                 DiasAtraso = "0"
             };
 

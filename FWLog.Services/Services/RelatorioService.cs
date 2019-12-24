@@ -244,7 +244,7 @@ namespace FWLog.Services.Services
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Transportadora: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.Transportadora.RazaoSocial);
+            paragraph.AddText(string.Concat(notaFiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notaFiscal.Transportadora.RazaoSocial));
 
             Lote lote = _unitiOfWork.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
             bool IsNotaRecebida = lote != null;
