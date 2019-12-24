@@ -6,10 +6,10 @@ namespace FWLog.Web.Api.Models.Usuario
     {
         public string AccessToken { get; set; }
         public string TokenType { get; set; }
-        public List<Empresa> Empresas { get; set; }
+        public List<EmpresaModelResponse> Empresas { get; set; }
     }
 
-    public class Empresa
+    public class EmpresaModelResponse
     {
         public int IdEmpresa { get; set; }
         public string Nome { get; set; }
