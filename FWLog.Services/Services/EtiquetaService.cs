@@ -3,6 +3,7 @@ using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Model.Etiquetas;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace FWLog.Services.Services
@@ -49,14 +50,18 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
 
-        public void ImprimirEtiquetaArmazenagemVolume(EtiquetaArmazenagemVolume request)
+        public void ImprimirEtiquetaArmazenagemVolume(EtiquetaArmazenagemVolumeRequest requestView)
         {
+
+            var request = new EtiquetaArmazenagemVolume();
+
+
             var etiquetaImprimir = new StringBuilder();
 
             etiquetaImprimir.Append("^XA");
 
             // Define quantidade de etiquetas a imprimir
-            etiquetaImprimir.Append($"^PQ{request.Quantidade}^FS");
+            etiquetaImprimir.Append($"^PQ{request.QuantidadeEtiquetas}^FS");
 
             // Configuração Padrão do Barcode
             etiquetaImprimir.Append("^BY3,,250");
@@ -83,8 +88,8 @@ namespace FWLog.Services.Services
 
             // Labels e Barcode de "Quantidade" [3 Linha]
             etiquetaImprimir.Append("^FO275,350^A0B,20,20^FDQuantidade^FS");
-            etiquetaImprimir.Append($"^FO280,180^A0B,100,100^FD{request.Quantidade.ToString().PadBoth(6)}^FS");
-            etiquetaImprimir.Append($"^FO380,150^BCR,50,N,N^FD{request.Quantidade.ToString().PadLeft(6, '0')}^FS");
+            etiquetaImprimir.Append($"^FO280,180^A0B,100,100^FD{request.QuantidadePorCaixa.ToString().PadBoth(6)}^FS");
+            etiquetaImprimir.Append($"^FO380,150^BCR,50,N,N^FD{request.QuantidadePorCaixa.ToString().PadLeft(6, '0')}^FS");
 
             // Barcode [4 Linha]
             etiquetaImprimir.Append($"^BEB,104,Y,N^FO450,100^FD{request.CodReferencia}^FS");
@@ -105,11 +110,21 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
 
+        public class EtiquetaArmazenagemVolumeRequest
+        {
+            public long NroLote { get; set; }
+            public int QuantidadeEtiquetas { get; set; }
+            public int QuantidadePorCaixa { get; set; }
+            public string Usuario { get; set; }
+            public int IdImpressora { get; set; }
+        }
+
         public class EtiquetaArmazenagemVolume
         {
             public string Referencia { get; set; }
             public long NroLote { get; set; }
-            public int Quantidade { get; set; }
+            public int QuantidadeEtiquetas { get; set; }
+            public int QuantidadePorCaixa { get; set; }
             public int Multiplo { get; set; }
             public string CodReferencia { get; set; }
             public string Usuario { get; set; }

@@ -1,5 +1,4 @@
-﻿using FWLog.AspNet.Identity;
-using FWLog.Data;
+﻿using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
@@ -290,11 +289,20 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ValidateModel(viewModel);
 
+                var userInfo = new BackOfficeUserInfo();
+
+                var userLog = new UserLog
+                {
+                    IP = userInfo.IP,
+                    UserId = userInfo.UserId
+                };
+
                 var request = new TermoResponsabilidadeRequest
                 {
                     IdQuarentena = viewModel.IdQuarentena,
                     IdImpressora = viewModel.IdImpressora,
-                    NomeUsuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome
+                    NomeUsuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome,
+                    UserLog = userLog
                 };
 
                 _quarentenaService.ImprimirTermoResponsabilidade(request);

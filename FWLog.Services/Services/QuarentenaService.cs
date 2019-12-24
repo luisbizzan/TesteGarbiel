@@ -1,9 +1,12 @@
 ﻿using FWLog.Data;
+using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
+using FWLog.Data.Models.GeneralCtx;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
 using System;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 
@@ -21,28 +24,38 @@ namespace FWLog.Services.Services
         public int Quantidade { get; set; }
     }
 
+    public class UserLog
+    {
+        public string IP { get; set; }
+        public object UserId { get; set; }
+    }
+
     public class TermoResponsabilidadeRequest
     {
         public string NomeUsuario { get; set; }
         public int IdImpressora { get; set; }
         public long IdQuarentena { get; set; }
+        public UserLog UserLog { get; set; }
     }
 
     public class QuarentenaService : BaseService
     {
         private readonly UnitOfWork _uow;
         private readonly ImpressoraService _impressoraService;
+        private readonly BOLogSystemService _boLogSystemService;
 
         private Document _document;
 
         private TermoResponsabilidadeRequest _request;
 
         private Quarentena _Quarentena;
+        private Quarentena _OldQuarentena;
 
-        public QuarentenaService(UnitOfWork uow, ImpressoraService impressoraService)
+        public QuarentenaService(UnitOfWork uow, ImpressoraService impressoraService, BOLogSystemService boLogSystemService)
         {
             _uow = uow;
             _impressoraService = impressoraService;
+            _boLogSystemService = boLogSystemService;
         }
 
         public void ImprimirTermoResponsabilidade(TermoResponsabilidadeRequest request)
@@ -58,6 +71,7 @@ namespace FWLog.Services.Services
             _request = request;
 
             _Quarentena = _uow.QuarentenaRepository.All().First(x => x.IdQuarentena == request.IdQuarentena);
+            _OldQuarentena = _uow.QuarentenaRepository.All().AsNoTracking().First(x => x.IdQuarentena == request.IdQuarentena);
 
             GeraCodConfirmacao();
 
@@ -98,6 +112,17 @@ namespace FWLog.Services.Services
         private void AtualizaCodConfirmacaoQuarentena()
         {
             _uow.QuarentenaRepository.Update(_Quarentena);
+
+            _boLogSystemService.Add(new BOLogSystemCreation
+            {
+                ActionType = ActionTypeNames.Edit,
+                IP = _request.UserLog.IP,
+                UserId = _request.UserLog.UserId,
+                EntityName = nameof(Quarentena),
+                OldEntity = _OldQuarentena,
+                NewEntity = _Quarentena
+            });
+
             _uow.SaveChanges();
         }
 
