@@ -113,7 +113,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (model.CustomFilter.QuantidadePeca.HasValue)
             {
-                query = query.Where(x => x.NotaFiscal.Quantidade == model.CustomFilter.QuantidadePeca);
+                query = query.Where(x => x.QuantidadePeca == model.CustomFilter.QuantidadePeca);
             }
 
             if (model.CustomFilter.QuantidadeVolume.HasValue)
@@ -188,8 +188,8 @@ namespace FWLog.Web.Backoffice.Controllers
                         Lote = item.IdLote == 0 ? (long?)null : item.IdLote,
                         Nota = item.NotaFiscal.Numero == 0 ? (long?)null : item.NotaFiscal.Numero,
                         Fornecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
-                        QuantidadePeca = item.NotaFiscal.Quantidade == 0 ? (long?)null : item.NotaFiscal.Quantidade,
-                        QuantidadeVolume = item.QuantidadeVolume == 0 ? (long?)null : item.QuantidadeVolume,
+                        QuantidadePeca = item.QuantidadePeca == 0 ? (int?)null : item.QuantidadePeca,
+                        QuantidadeVolume = item.QuantidadeVolume == 0 ? (int?)null : item.QuantidadeVolume,
                         RecebidoEm = item.LoteStatus.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento ? item.DataRecebimento.ToString() : "-",
                         Status = item.LoteStatus.Descricao,
                         IdNotaFiscal = item.NotaFiscal.IdNotaFiscal,
@@ -497,8 +497,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ChaveAcesso = notaFiscal.ChaveAcesso,
                 NumeroNotaFiscal = notaFiscal.Numero.ToString(),
                 StatusNotaFiscal = notaFiscal.NotaFiscalStatus.ToString(),
-                Fornecedor = string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.RazaoSocial),
-                Quantidade = notaFiscal.Quantidade.ToString(),
+                Fornecedor = string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.RazaoSocial),                
                 DataCompra = notaFiscal.DataEmissao.ToString("dd/MM/yyyy"),
                 PrazoRecebimento = notaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
                 FornecedorCNPJ = notaFiscal.Fornecedor.CNPJ.Substring(0, 2) + "." + notaFiscal.Fornecedor.CNPJ.Substring(2, 3) + "." + notaFiscal.Fornecedor.CNPJ.Substring(5, 3) + "/" + notaFiscal.Fornecedor.CNPJ.Substring(8, 4) + "-" + notaFiscal.Fornecedor.CNPJ.Substring(12, 2),
@@ -516,7 +515,8 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 model.StatusNotaFiscal = "Aguardando Recebimento";
                 model.UsuarioRecebimento = "-";
-                model.Volumes = "-";
+                model.Volumes = notaFiscal.Quantidade.ToString();
+                model.QuantidadePeca = notaFiscal.NotaFiscalItens.Sum(s => s.Quantidade).ToString();
                 model.DataChegada = "-";
                 model.NumeroLote = "-";
 
@@ -534,6 +534,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 model.DataChegada = lote.DataRecebimento.ToString("dd/MM/yyyy");
                 model.UsuarioRecebimento = _uow.PerfilUsuarioRepository.GetByUserId(lote.UsuarioRecebimento.Id).Nome;
                 model.Volumes = lote.QuantidadeVolume.ToString();
+                model.QuantidadePeca = lote.QuantidadePeca.ToString();
                 model.StatusNotaFiscal = notaFiscal.NotaFiscalStatus.Descricao;
 
                 if (lote.DataRecebimento > notaFiscal.PrazoEntregaFornecedor)
@@ -691,7 +692,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 IdNotaFiscal = lote.NotaFiscal.IdNotaFiscal,
                 IdLote = lote.IdLote,
-                NumeroNotaFiscal = lote.NotaFiscal.Numero + lote.NotaFiscal.Serie,
+                NumeroNotaFiscal = string.Concat(lote.NotaFiscal.Numero, " - ", lote.NotaFiscal.Serie),
                 IdUuarioConferente = usuario.UsuarioId,
                 NomeConferente = usuario.Nome,
                 DataHoraRecebimento = lote.DataRecebimento.ToString("dd/MM/yyyy HH:mm"),

@@ -27,7 +27,11 @@ namespace FWLog.Data.Models
 
         [Required]
         [Log(DisplayName = "Quantidade de Volumes")]
-        public long QuantidadeVolume { get; set; }
+        public int QuantidadeVolume { get; set; }
+
+        [Required]
+        [Log(DisplayName = "Quantidade de Peças")]
+        public int QuantidadePeca { get; set; }
 
         [Required]
         [Log(DisplayName = "Código do Usuário Recebimento")]

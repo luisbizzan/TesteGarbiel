@@ -134,7 +134,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     DataAbertura = x.DataAbertura.ToString("dd/MM/yyyy"),
                     DataEncerramento = x.DataEncerramento.HasValue ? x.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
                     Atraso = x.DataAbertura.Subtract(x.DataEncerramento ?? DateTime.Now).Days,
-                    Status = x.QuarentenaStatus.Descricao
+                    Status = x.QuarentenaStatus.Descricao,
+                    IdQuarentenaStatus = (int)x.IdQuarentenaStatus
                 });
 
             if (model.CustomFilter.Atraso.HasValue)

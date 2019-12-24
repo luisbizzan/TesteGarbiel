@@ -13,7 +13,7 @@
                 text: "Emitir Termo de Responsabilidade",
                 attrs: { 'data-id': full.IdQuarentena, 'action': 'termoResponsabilidade' },
                 icon: 'fa fa-file-text',
-                visible: view.registrarRecebimento
+                visible: full.IdQuarentenaStatus === 1 || full.IdQuarentenaStatus === 2 ? true : false
             }
         ];
     });
