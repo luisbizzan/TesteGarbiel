@@ -109,11 +109,13 @@
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemListaLinhaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\ImpressoraListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\NivelArmazenagemPesquisaModalListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\NivelArmazenagemTableRow.cs" />
     <Compile Include="Models\DataTablesCtx\PontoArmazenagemListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\PontoArmazenagemPesquisaModalListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\RelatorioRastreioPecaListaLinhaTabela.cs" />
+    <Compile Include="Models\FilterCtx\ImpressoraListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\RelatorioRastreioPecaListaFiltro.cs" />
     <Compile Include="Models\DataTablesCtx\UsuarioListaLinhaTabela.cs" />
     <Compile Include="Models\EmpresaConfig.cs" />

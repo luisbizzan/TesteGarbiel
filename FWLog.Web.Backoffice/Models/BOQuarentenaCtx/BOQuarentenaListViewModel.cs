@@ -20,22 +20,16 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
     public class BOQuarentenaListItemViewModel
     {
         public long IdQuarentena { get; set; }
-
         public long Lote { get; set; }
-
         public long Nota { get; set; }
-
         public string Fornecedor { get; set; }
-
         public long? Atraso { get; set; }
-
         [Display(Name = "Data Abertura")]
         public string DataAbertura { get; set; }
-
         [Display(Name = "Data Encerramento")]
         public string DataEncerramento { get; set; }
-
         public string Status { get; set; }
+        public int IdQuarentenaStatus { get; set; }
     }
 
     public class BOQuarentenaFilterViewModel

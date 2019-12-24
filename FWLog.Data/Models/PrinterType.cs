@@ -12,10 +12,6 @@ namespace FWLog.Data.Models
         [StringLength(100)]
         public string Name { get; set; }
 
-        #region Navigations
-
         public ICollection<Printer> Printers { get; set; }
-
-        #endregion
     }
 }
