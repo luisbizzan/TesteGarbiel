@@ -30,7 +30,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                           "SELECT " +
                               "A.\"IdLote\", " +
                               "A.\"DataRecebimento\", " +
-                              "A.\"QuantidadeVolume\", " +
+                              "CASE WHEN A.\"IdLote\" IS NULL THEN B.\"Quantidade\" ELSE A.\"QuantidadeVolume\" END \"QuantidadeVolume\", " +
+                              "CASE WHEN A.\"IdLote\" IS NULL THEN (SELECT SUM(\"Quantidade\") FROM \"NotaFiscalItem\" WHERE \"IdNotaFiscal\" = B.\"IdNotaFiscal\") ELSE A.\"QuantidadePeca\" END \"QuantidadePeca\", " +                              
                               "B.\"IdNotaFiscal\", " +
                               "B.\"Numero\", " +
                               "B.\"Serie\", " +
@@ -59,8 +60,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                               "LEFT JOIN \"LoteStatus\" E ON (E.\"IdLoteStatus\" = CASE WHEN A.\"IdLoteStatus\" IS NULL THEN 1 ELSE A.\"IdLoteStatus\" END) " +
                               "LEFT JOIN \"AspNetUsers\" F ON F.\"Id\" = A.\"IdUsuarioRecebimento\" " +
                               "INNER JOIN \"NotaFiscalStatus\" G ON G.\"IdNotaFiscalStatus\" = B.\"IdNotaFiscalStatus\" " +                             
-                            "WHERE (B.\"IdNotaFiscalStatus\" <> 0 AND B.\"IdNotaFiscalStatus\" IS NOT NULL) AND B.\"IdEmpresa\" =  " + idEmpresa +
-                            "AND B.\"IdNotaFiscalTipo\" = " + idNotafiscalTipo.GetHashCode(),
+                            "WHERE (B.\"IdNotaFiscalStatus\" <> 0 AND B.\"IdNotaFiscalStatus\" IS NOT NULL) AND B.\"IdEmpresa\" = " + idEmpresa +
+                            " AND B.\"IdNotaFiscalTipo\" = " + idNotafiscalTipo.GetHashCode(),
                           map: (l, nf, f, ft, ls, u, nfs) =>
                           {
                               l.NotaFiscal = nf;

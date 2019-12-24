@@ -22,9 +22,9 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public long? Lote { get; set; }
         public long? Nota { get; set; }
         [Display(Name = "Peças")]
-        public long? QuantidadePeca { get; set; }
+        public int? QuantidadePeca { get; set; }
         [Display(Name = "Volumes")]
-        public long? QuantidadeVolume { get; set; }
+        public int? QuantidadeVolume { get; set; }
         [Display(Name = "Recebido")]
         public string RecebidoEm { get; set; }
         public long? Atraso { get; set; }
@@ -58,9 +58,9 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Atraso na Entrega (dias)")]
         public int? Atraso { get; set; }
         [Display(Name = "Quantidade de Peças")]
-        public long? QuantidadePeca { get; set; }
+        public int? QuantidadePeca { get; set; }
         [Display(Name = "Quantidade de Volumes")]
-        public long? QuantidadeVolume { get; set; }
+        public int? QuantidadeVolume { get; set; }
         [Display(Name = "Fornecedor")]
         public long? IdFornecedor { get; set; }
         public string RazaoSocialFornecedor { get; set; }

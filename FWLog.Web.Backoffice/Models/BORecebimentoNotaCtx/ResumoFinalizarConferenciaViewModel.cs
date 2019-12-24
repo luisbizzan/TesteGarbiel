@@ -19,7 +19,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Fornecedor")]
         public string RazaoSocialFornecedor { get; set; }
         [Display(Name = "Qtde. Volumes")]
-        public int QuantidadeVolumes { get; set; }
+        public int QuantidadeVolume { get; set; }
         [Display(Name = "Tipo de Conferência")]
         public string TipoConferencia { get; set; }
         public long IdNotaFiscal { get; set; }

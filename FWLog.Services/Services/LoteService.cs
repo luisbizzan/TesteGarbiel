@@ -46,6 +46,7 @@ namespace FWLog.Services.Services
             lote.DataRecebimento = dataRecebimento;
             lote.IdUsuarioRecebimento = userId;
             lote.QuantidadeVolume = qtdVolumes;
+            lote.QuantidadePeca = nota.NotaFiscalItens.Sum(s => s.Quantidade);
 
             _uow.LoteRepository.Add(lote);
 
@@ -282,7 +283,7 @@ namespace FWLog.Services.Services
                 IdLote = lote.IdLote,
                 IdNotaFiscal = lote.IdNotaFiscal,
                 NumeroNotaFiscal = lote.NotaFiscal.Numero,
-                QuantidadeVolumes = lote.NotaFiscal.Quantidade,
+                QuantidadeVolume = lote.QuantidadeVolume,
                 RazaoSocialFornecedor = lote.NotaFiscal.Fornecedor.RazaoSocial,
                 TipoConferencia = empresaConfig.TipoConferencia.Descricao
             };

@@ -18,7 +18,7 @@ namespace FWLog.Services.Model.Relatorios
         public int? IdFornecedor { get; set; }
         public int? Atraso { get; set; }
         public int? QuantidadePeca { get; set; }
-        public int? Volume { get; set; }
+        public int? QuantidadeVolume { get; set; }
         public int? IdUsuarioRecebimento { get; set; }
         public int? IdUsuarioConferencia { get; set; }
         public TimeSpan? TempoInicial { get; set; }

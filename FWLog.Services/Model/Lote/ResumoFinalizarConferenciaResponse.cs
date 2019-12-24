@@ -18,7 +18,7 @@ namespace FWLog.Services.Model.Lote
         public int NumeroNotaFiscal { get; set; }
         public string DataRecebimento { get; set; }
         public string RazaoSocialFornecedor { get; set; }
-        public int QuantidadeVolumes { get; set; }
+        public int QuantidadeVolume { get; set; }
         public string TipoConferencia { get; set; }
 
         public List<ResumoFinalizarConferenciaItemResponse> Itens { get; set; }
