@@ -160,5 +160,15 @@ namespace FWLog.AspNet.Identity
                 Register(EditarConfiguracao, Display.FromString("Editar Configurações"));
             }
         }
+
+        public class ColetorAcesso: PermissionGroupBuildItem
+        {
+            public const string Login = "RFAcessoLogin";
+
+            public ColetorAcesso() : base(Display.FromString("Acesso - Coletor"))
+            {
+                Register(Login, Display.FromString("Acessar Coletor"));
+            }
+        }
     }
 }
