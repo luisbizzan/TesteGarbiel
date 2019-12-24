@@ -50,11 +50,12 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
 
-        public void ImprimirEtiquetaArmazenagemVolume(EtiquetaArmazenagemVolumeRequest requestView)
+        public void ImprimirEtiquetaArmazenagemVolume(EtiquetaArmazenagemVolumeRequest request)
         {
-
-            var request = new EtiquetaArmazenagemVolume();
-
+            Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
+            decimal multiplo = produto.MultiploVenda;
+            string codReferencia = produto.CodigoBarras;
+            string endereco = produto.EnderecoSeparacao;
 
             var etiquetaImprimir = new StringBuilder();
 
@@ -76,7 +77,7 @@ namespace FWLog.Services.Services
 
             // Fundo e Conteúdo do Título [1 Linha]
             etiquetaImprimir.Append("^FO16,010^GB120,550,120^FS");
-            etiquetaImprimir.Append($"^FO34,05^FB550,1,0,C,0^A0B,130,80^FR^FD{request.Referencia}^FS");
+            etiquetaImprimir.Append($"^FO34,05^FB550,1,0,C,0^A0B,130,80^FR^FD{request.ReferenciaProduto}^FS");
 
             // Label e Barcode Número do Lote [2 Linha]
             etiquetaImprimir.Append("^FO150,400^A0B,20,20^FDNumero do Lote^FS");
@@ -84,7 +85,7 @@ namespace FWLog.Services.Services
 
             // Fundo e Conteúdo de "MULTIPLO"
             etiquetaImprimir.Append("^FO260,480^GB331,80,80,^FS");
-            etiquetaImprimir.Append($"^FO280,480^A0I,60,50^FR^FDMULTIPLO: {request.Multiplo}^FS");
+            etiquetaImprimir.Append($"^FO280,480^A0I,60,50^FR^FDMULTIPLO: {multiplo}^FS");
 
             // Labels e Barcode de "Quantidade" [3 Linha]
             etiquetaImprimir.Append("^FO275,350^A0B,20,20^FDQuantidade^FS");
@@ -92,16 +93,17 @@ namespace FWLog.Services.Services
             etiquetaImprimir.Append($"^FO380,150^BCR,50,N,N^FD{request.QuantidadePorCaixa.ToString().PadLeft(6, '0')}^FS");
 
             // Barcode [4 Linha]
-            etiquetaImprimir.Append($"^BEB,104,Y,N^FO450,100^FD{request.CodReferencia}^FS");
+            etiquetaImprimir.Append($"^BEB,104,Y,N^FO450,100^FD{codReferencia}^FS"); // TODO: onde extrair este dado
 
             // Nome do Colaborador [5 Linha]
-            etiquetaImprimir.Append($"^FO620,270^A0B,60,50^FD{request.Usuario}^FS");
+            string usuario = request.Usuario.Length > 12 ? request.Usuario.Substring(0, 12) : request.Usuario;
+            etiquetaImprimir.Append($"^FO620,270^A0B,60,50^FD{usuario}^FS"); // TODO: é exibido o destino quando o usuário é vázio no script antigo && tamanho máximo
 
             // Endereço Picking [5 Linha]
-            etiquetaImprimir.Append($"^FO610,80^A0B,50,50^FD{request.Endereco}^FS");
+            etiquetaImprimir.Append($"^FO610,80^A0B,50,50^FD{endereco}^FS");
 
             // Data e Hora [5 Linha]
-            etiquetaImprimir.Append($"^FO670,40^A0B,30,30^FD{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}*^FS");
+            etiquetaImprimir.Append($"^FO670,40^A0B,30,30^FD{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}*^FS"); // TODO: Analisar de onde vem o '*' no script antigo
 
             etiquetaImprimir.Append("^XZ");
 
@@ -113,22 +115,10 @@ namespace FWLog.Services.Services
         public class EtiquetaArmazenagemVolumeRequest
         {
             public long NroLote { get; set; }
+            public string ReferenciaProduto { get; set; }
             public int QuantidadeEtiquetas { get; set; }
             public int QuantidadePorCaixa { get; set; }
             public string Usuario { get; set; }
-            public int IdImpressora { get; set; }
-        }
-
-        public class EtiquetaArmazenagemVolume
-        {
-            public string Referencia { get; set; }
-            public long NroLote { get; set; }
-            public int QuantidadeEtiquetas { get; set; }
-            public int QuantidadePorCaixa { get; set; }
-            public int Multiplo { get; set; }
-            public string CodReferencia { get; set; }
-            public string Usuario { get; set; }
-            public string Endereco { get; set; }
             public int IdImpressora { get; set; }
         }
     }

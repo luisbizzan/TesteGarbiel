@@ -2,8 +2,10 @@
 using FWLog.Data.Models;
 using FWLog.Data.Repository.CommonCtx;
 using Oracle.ManagedDataAccess.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace FWLog.Data.Repository.GeneralCtx
 {
@@ -44,13 +46,13 @@ namespace FWLog.Data.Repository.GeneralCtx
                               "B.\"CodigoIntegracao\", " +
                               "B.\"DataEmissao\", " +
                               "B.\"PrazoEntregaFornecedor\", " +
-                              "B.\"IdEmpresa\", " +                              
+                              "B.\"IdEmpresa\", " +
                               "C.*, " +
                               "D.\"IdFreteTipo\", " +
                               "D.\"Sigla\", " +
                               "E.*, " +
                               "F.*, " +
-                              "G.* " +                              
+                              "G.* " +
                            "FROM " +
                               "\"Lote\" A " +
                               "RIGHT JOIN \"NotaFiscal\" B ON B.\"IdNotaFiscal\" = A.\"IdNotaFiscal\" " +
@@ -58,7 +60,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                               "INNER JOIN \"FreteTipo\" D ON D.\"IdFreteTipo\" = B.\"IdFreteTipo\" " +
                               "LEFT JOIN \"LoteStatus\" E ON (E.\"IdLoteStatus\" = CASE WHEN A.\"IdLoteStatus\" IS NULL THEN 1 ELSE A.\"IdLoteStatus\" END) " +
                               "LEFT JOIN \"AspNetUsers\" F ON F.\"Id\" = A.\"IdUsuarioRecebimento\" " +
-                              "INNER JOIN \"NotaFiscalStatus\" G ON G.\"IdNotaFiscalStatus\" = B.\"IdNotaFiscalStatus\" " +                             
+                              "INNER JOIN \"NotaFiscalStatus\" G ON G.\"IdNotaFiscalStatus\" = B.\"IdNotaFiscalStatus\" " +
                             "WHERE (B.\"IdNotaFiscalStatus\" <> 0 AND B.\"IdNotaFiscalStatus\" IS NOT NULL) AND B.\"IdEmpresa\" =  " + idEmpresa +
                             "AND B.\"IdNotaFiscalTipo\" = " + idNotafiscalTipo.GetHashCode(),
                           map: (l, nf, f, ft, ls, u, nfs) =>
@@ -68,7 +70,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                               l.NotaFiscal.FreteTipo = ft;
                               l.LoteStatus = ls;
                               l.UsuarioRecebimento = u;
-                              l.NotaFiscal.NotaFiscalStatus = nfs;                            
+                              l.NotaFiscal.NotaFiscalStatus = nfs;
                               return l;
                           },
                           splitOn: "IdLote, IdNotaFiscal, IdFornecedor, IdFreteTipo, IdLoteStatus, Id, IdNotaFiscalStatus"
@@ -82,6 +84,11 @@ namespace FWLog.Data.Repository.GeneralCtx
         public Lote ObterLoteNota(long idNotaFiscal)
         {
             return Entities.Lote.Where(w => w.IdNotaFiscal == idNotaFiscal).FirstOrDefault();
+        }
+
+        public bool Existe(Expression<Func<Lote, bool>> predicate)
+        {
+            return Entities.Lote.Any(predicate);
         }
     }
 }

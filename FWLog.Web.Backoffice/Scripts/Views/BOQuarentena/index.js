@@ -186,7 +186,7 @@ function imprimir(acao, id) {
             $("#btnFechar").click();
         },
         error: function (data) {
-            PNotify.error({ text: "Não Ocorreu um erro na impressão." });
+            PNotify.error({ text: "Ocorreu um erro na impressão." });
             NProgress.done();
         }
     });

@@ -18,8 +18,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -92,7 +90,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var query = _uow.LoteRepository.Obter(IdEmpresa, NotaFiscalTipoEnum.Compra).AsQueryable();
 
             totalRecords = query.Count();
-            
+
             if (!string.IsNullOrEmpty(model.CustomFilter.ChaveAcesso))
             {
                 query = query.Where(x => !string.IsNullOrEmpty(x.NotaFiscal.ChaveAcesso) && x.NotaFiscal.ChaveAcesso.Contains(model.CustomFilter.ChaveAcesso));
@@ -295,7 +293,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     IdNotaFiscal = viewModel.IdNotaFiscal
                 };
 
-               _relatorioService.ImprimirDetalhesNotaEntradaConferencia(relatorioRequest);
+                _relatorioService.ImprimirDetalhesNotaEntradaConferencia(relatorioRequest);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -451,7 +449,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Impressão enviada com sucesso."
                 }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json(new AjaxGenericResultModel
                 {
@@ -537,7 +535,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 model.UsuarioRecebimento = _uow.PerfilUsuarioRepository.GetByUserId(lote.UsuarioRecebimento.Id).Nome;
                 model.Volumes = lote.QuantidadeVolume.ToString();
                 model.StatusNotaFiscal = notaFiscal.NotaFiscalStatus.Descricao;
-               
+
                 if (lote.DataRecebimento > notaFiscal.PrazoEntregaFornecedor)
                 {
                     TimeSpan atraso = lote.DataRecebimento.Subtract(notaFiscal.PrazoEntregaFornecedor);
@@ -562,7 +560,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     if (loteConferencia.Count > 0)
                     {
                         model.ConferenciaTipo = loteConferencia.FirstOrDefault().TipoConferencia.Descricao;
-                        
+
                         //Captura o primeiro conferente.
                         model.UsuarioConferencia = _uow.PerfilUsuarioRepository.GetByUserId(loteConferencia.FirstOrDefault().UsuarioConferente.Id).Nome;
 
@@ -718,7 +716,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult ObterDadosReferenciaConferencia(string codigoBarrasOuReferencia, long idLote)
         {
             //Valida se o código de barras ou referência é vazio ou nulo.
-            if (String.IsNullOrEmpty(codigoBarrasOuReferencia))
+            if (string.IsNullOrEmpty(codigoBarrasOuReferencia))
             {
                 return Json(new AjaxGenericResultModel
                 {
@@ -826,7 +824,7 @@ namespace FWLog.Web.Backoffice.Controllers
             try
             {
                 //Valida novamente se a referência é valida.
-                if (String.IsNullOrEmpty(codigoBarrasOuReferencia))
+                if (string.IsNullOrEmpty(codigoBarrasOuReferencia))
                 {
                     return Json(new AjaxGenericResultModel
                     {
@@ -889,7 +887,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 //Valida se a quantidade por caixa e quantidade de caixa é igual a 0.
-                if (quantidadePorCaixa == 0 || (quantidadePorCaixa > 0 &&quantidadeCaixa == 0))
+                if (quantidadePorCaixa == 0 || (quantidadePorCaixa > 0 && quantidadeCaixa == 0))
                 {
                     return Json(new AjaxGenericResultModel
                     {
@@ -918,7 +916,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 lote.IdLoteStatus = LoteStatusEnum.Conferencia;
                 _uow.LoteRepository.Update(lote);
 
-                DateTime dataHoraInicio = !String.IsNullOrEmpty(inicioConferencia) ? Convert.ToDateTime(inicioConferencia) : DateTime.Now;
+                DateTime dataHoraInicio = !string.IsNullOrEmpty(inicioConferencia) ? Convert.ToDateTime(inicioConferencia) : DateTime.Now;
                 DateTime dataHoraFim = DateTime.Now;
 
                 TimeSpan diferenca = dataHoraFim - dataHoraInicio;
@@ -979,7 +977,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(id);
 
-            if(loteDivergencias.Count > 0)
+            if (loteDivergencias.Count > 0)
             {
                 divergenciaViewModel.InicioConferencia = loteConferencia.First().DataHoraInicio.ToString("dd/MM/yyyy hh:mm:ss");
                 divergenciaViewModel.FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss");

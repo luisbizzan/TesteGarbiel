@@ -170,5 +170,15 @@ namespace FWLog.AspNet.Identity
                 Register(Login, Display.FromString("Acessar Coletor"));
             }
         }
+
+        public class RecebimentoEtiqueta : PermissionGroupBuildItem
+        {
+            public const string ImprimirEtiquetaLote = "ImprimirEtiquetaLote";
+
+            public RecebimentoEtiqueta() : base(Display.FromString("Etiqueta de Lote"))
+            {
+                Register(ImprimirEtiquetaLote, Display.FromString("Imprimir Etiqueta de Lote"));
+            }
+        }
     }
 }
