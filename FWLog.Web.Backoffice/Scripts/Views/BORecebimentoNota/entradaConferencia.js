@@ -122,13 +122,11 @@ function registrarConferencia() {
 }
 
 function confirmarfinalizarConferencia() {
-
-    dart.modalAjaxConfirm.open({
-        title: 'Lote',
-        message: "Deseja realmente finalizar a conferência do lote?",  
-        url: HOST_URL + CONTROLLER_PATH + "FinalizarConferencia/" + view_modal.idLote,
-        onConfirm: finalizarConferencia
-    });   
+    $(".close").click();
+    var $modal = $("#modalConferencia");
+    $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoFinalizarConferencia/" + view_modal.idLote, function () {
+        $modal.modal();
+    }); 
 }
 
 function finalizarConferencia() {

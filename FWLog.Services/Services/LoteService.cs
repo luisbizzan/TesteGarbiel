@@ -269,6 +269,82 @@ namespace FWLog.Services.Services
             }
         }
 
+        public ResumoFinalizarConferenciaResponse ResumoFinalizarConferencia(long idLote, long idEmpresa)
+        {
+            EmpresaConfig empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(idEmpresa);
+            Lote lote = _uow.LoteRepository.GetById(idLote);
+            var itensNotaFiscal = _uow.NotaFiscalItemRepository.ObterItens(lote.IdNotaFiscal).GroupBy(g => g.IdProduto);
+            List<LoteConferencia> itensConferidos = _uow.LoteConferenciaRepository.ObterPorId(idLote);
+
+            var response = new ResumoFinalizarConferenciaResponse
+            {
+                DataRecebimento = lote.DataRecebimento.ToString("dd/MM/yyyy hh:mm:ss"),
+                IdLote = lote.IdLote,
+                IdNotaFiscal = lote.IdNotaFiscal,
+                NumeroNotaFiscal = lote.NotaFiscal.Numero,
+                QuantidadeVolumes = lote.NotaFiscal.Quantidade,
+                RazaoSocialFornecedor = lote.NotaFiscal.Fornecedor.RazaoSocial,
+                TipoConferencia = empresaConfig.TipoConferencia.Descricao
+            };
+
+            foreach (var itemNota in itensNotaFiscal)
+            {
+                var itensConferencia = itensConferidos.Where(x => x.IdProduto == itemNota.Key);
+                int quantidadeNota = itemNota.Sum(s => s.Quantidade);
+                string referencia = itemNota.First().Produto.Referencia;
+
+                if (itensConferencia.Any())
+                {
+                    int quantidadeConferido = itensConferencia.Sum(s => s.Quantidade);
+                    int diferencaNotaConferido = quantidadeNota - quantidadeConferido;
+
+                    var item = new ResumoFinalizarConferenciaItemResponse
+                    {
+                        Referencia = referencia,
+                        QuantidadeConferido = quantidadeConferido,
+                        QuantidadeNota = quantidadeNota,
+                        DivergenciaMais = diferencaNotaConferido < 0 ? diferencaNotaConferido *-1 : 0,
+                        DivergenciaMenos = diferencaNotaConferido > 0 ? diferencaNotaConferido : 0
+                    };
+
+                    response.Itens.Add(item);
+                }
+                else
+                {
+                    var item = new ResumoFinalizarConferenciaItemResponse
+                    {
+                        Referencia = referencia,
+                        QuantidadeConferido = 0,
+                        QuantidadeNota = quantidadeNota,
+                        DivergenciaMais = 0,
+                        DivergenciaMenos = quantidadeNota
+                    };
+
+                    response.Itens.Add(item);
+                }
+            }
+
+            var itensForaNota = itensConferidos.Where(w => !itensNotaFiscal.Any(x => x.Key == w.IdProduto)).GroupBy(g => g.IdProduto);
+
+            foreach(var itemForaNota in itensForaNota)
+            {
+                int quantidadeConferido = itemForaNota.Sum(s => s.Quantidade);
+
+                var item = new ResumoFinalizarConferenciaItemResponse
+                {
+                    Referencia = itemForaNota.First().Produto.Referencia,
+                    QuantidadeConferido = quantidadeConferido,
+                    QuantidadeNota = 0,
+                    DivergenciaMais = quantidadeConferido,
+                    DivergenciaMenos = 0
+                };
+
+                response.Itens.Add(item);
+            }
+
+            return response;
+        }
+
         private void GravarTratamentoDivergencia(TratarDivergenciaRequest request)
         {
             foreach (TratarDivergenciaItemRequest divergencia in request.Divergencias)

@@ -243,6 +243,16 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        public ActionResult ResumoFinalizarConferencia(long id)
+        {
+            ResumoFinalizarConferenciaResponse response = _loteService.ResumoFinalizarConferencia(id, IdEmpresa);
+
+            var viewModel = Mapper.Map<ResumoFinalizarConferenciaViewModel>(response);
+
+            return View(viewModel);
+        }
+
         [HttpPost]
         public ActionResult DownloadRelatorioNotas(BODownloadRelatorioNotasViewModel viewModel)
         {
