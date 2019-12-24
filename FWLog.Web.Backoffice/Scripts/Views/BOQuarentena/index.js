@@ -135,7 +135,7 @@
             method: "POST",
             success: function (result) {
                 if (!!result.Success) {
-                    $modal.load(HOST_URL + CONTROLLER_PATH + "ExibirModalDetalhesQuarentena/" + id, function () {
+                    $modal.load(HOST_URL + CONTROLLER_PATH + "DetalhesQuarentena/" + id, function () {
                         $modal.modal();
 
                     });
