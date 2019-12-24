@@ -20,6 +20,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using static FWLog.Services.Services.EtiquetaService;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -939,6 +940,22 @@ namespace FWLog.Web.Backoffice.Controllers
                 _uow.LoteConferenciaRepository.Add(loteConferencia);
 
                 _uow.SaveChanges();
+
+                #region AGUARDANDO A DEFINIÇÃO DE IMPRESSORA PADRÃO
+
+                //var request = new EtiquetaArmazenagemVolumeRequest
+                //{
+                //    NroLote = idLote,
+                //    QuantidadeEtiquetas = quantidadeCaixa,
+                //    QuantidadePorCaixa = quantidadePorCaixa,
+                //    ReferenciaProduto = produto.Referencia,
+                //    Usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome,
+                //    IdImpressora = null
+                //};
+
+                //_etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
+
+                #endregion
 
                 return Json(new AjaxGenericResultModel
                 {
