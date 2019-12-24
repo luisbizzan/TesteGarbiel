@@ -53,7 +53,7 @@ namespace FWLog.Web.Api.Controllers
             ApplicationUser applicationUser = await UserManager.FindByNameAsync(loginRequest.Usuario);
             IList<string> userPermissions = await UserManager.GetPermissionsAsync(applicationUser.Id);
 
-            if (userPermissions == null || !userPermissions.Any(w => w.Equals("UserAppLogin", StringComparison.OrdinalIgnoreCase)))
+            if (userPermissions == null || !userPermissions.Any(w => w.Equals("RFAcessoLogin", StringComparison.OrdinalIgnoreCase)))
             {
                 return ApiForbidden(AccountResource.UserPermissionDenied, loginRequest.Usuario);
             }
