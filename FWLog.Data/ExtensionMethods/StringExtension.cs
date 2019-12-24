@@ -22,7 +22,7 @@ namespace ExtensionMethods.String
             }
         }
 
-        public static string PadBoth(this string source, int length, char paddingChar = ' ')
+        public static string PadBoth(this string source, int length, char paddingChar = (char)32)
         {
             int spaces = length - source.Length;
             int padLeft = spaces / 2 + source.Length;
