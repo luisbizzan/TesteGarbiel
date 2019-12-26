@@ -268,7 +268,7 @@ namespace FWLog.Services.Services
 
             row = tabela.AddRow();
             paragraph = row.Cells[0].AddParagraph();
-            paragraph.AddFormattedText("Qtd Peças: ", TextFormat.Bold);
+            paragraph.AddFormattedText("Qtd. Peças: ", TextFormat.Bold);
             paragraph.AddText(IsNotaRecebida ? lote.QuantidadePeca.ToString() : notaFiscal.NotaFiscalItens.Sum(s => s.Quantidade).ToString());
             paragraph = row.Cells[1].AddParagraph();
             paragraph.AddFormattedText("Prazo: ", TextFormat.Bold);

@@ -108,6 +108,7 @@
     <Compile Include="Models\AspNetPermissions.cs" />
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
+    <Compile Include="Models\ProdutoEmpresa.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\ImpressoraListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\NivelArmazenagemPesquisaModalListaLinhaTabela.cs" />
@@ -196,6 +197,7 @@
     <Compile Include="Repository\GeneralCtx\ProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\ProdutoEmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoConferenciaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoMovimentacaoRepository.cs" />
