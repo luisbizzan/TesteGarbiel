@@ -180,5 +180,18 @@ namespace FWLog.AspNet.Identity
                 Register(ImprimirEtiquetaLote, Display.FromString("Imprimir Etiqueta de Lote"));
             }
         }
+
+        public class RecebimentoEtiquetaIndividualEPersonalizada : PermissionGroupBuildItem
+        {
+            public const string Listar = "EtiquetaIndividualEPersonalizadaListar";
+            public const string Imprimir = "EtiquetaIndividualEPersonalizadaImprimir";
+            
+
+            public RecebimentoEtiquetaIndividualEPersonalizada() : base(Display.FromString("Etiqueta Individual e Personalizada"))
+            {
+                Register(Listar, Display.FromString("Listar Etiqueta Individual e Personalizada"));
+                Register(Imprimir, Display.FromString("Imprimir Etiqueta Individual e Personalizada"));
+            }
+        }
     }
 }
