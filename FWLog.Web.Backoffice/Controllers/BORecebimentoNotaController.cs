@@ -1185,11 +1185,11 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
         public ActionResult ResumoProducaoRecebimentoPageData(DataTableFilter<RelatorioResumoProducaoFilterViewModel> model)
         {
-            model.CustomFilter.IdUsuario = "9b94e2d8-cc77-4e0b-abdc-eaff0ae1e5cb";
+            //model.CustomFilter.IdUsuario = "9b94e2d8-cc77-4e0b-abdc-eaff0ae1e5cb";
 
-            model.CustomFilter.DataRecebimentoMinima = DateTime.Now.AddDays(-10);
+            //model.CustomFilter.DataRecebimentoMinima = DateTime.Now.AddDays(-10);
 
-            var e = new RelatorioResumoProducaoRecebimentoRequest
+            var filter = new RelatorioResumoProducaoFilter
             {
                 DateMin = model.CustomFilter.DataRecebimentoMinima,
                 DateMax = model.CustomFilter.DataRecebimentoMaxima,
@@ -1199,13 +1199,13 @@ namespace FWLog.Web.Backoffice.Controllers
 
             int total = _uow.LoteRepository.Todos().Select(x => x.IdUsuarioRecebimento).Distinct().Count();
 
-            var list = _uow.LoteRepository.ResumoProducaoRecebimento(e).Select(x => new RelatorioResumoProducaoRecebimentoListItemViewModel
+            var list = _uow.LoteRepository.ResumoProducaoRecebimento(filter).Select(x => new RelatorioResumoProducaoRecebimentoListItemViewModel
             {
                 NomeUsuario = x.Nome,
                 NotasRecebidas = x.NOTASRECEBIDAS,
                 NotasRecebidasUsuario = x.NOTASRECEBIDASUSUARIO,
-                PecasRecebidas = x.VOLUMESRECEBIDOS,
-                PecasRecebidasUsuario = x.VOLUMESRECEBIDOSUSUARIO,
+                VolumesRecebidos = x.VOLUMESRECEBIDOS,
+                VolumesRecebidosUsuario = x.VOLUMESRECEBIDOSUSUARIO,
                 Percentual = x.PERCENTUAL,
                 Ranking = x.RANKING
             });
@@ -1219,36 +1219,43 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-        //[HttpPost]
-        //[ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
-        //public ActionResult RelatorioResumoProducaoConferenciPageData(DataTableFilter<RelatorioResumoProducaoFilterViewModel> model)
-        //{
-        //    model.CustomFilter.IdEmpresa = IdEmpresa;
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
+        public ActionResult ResumoProducaoConferenciaPageData(DataTableFilter<RelatorioResumoProducaoFilterViewModel> model)
+        {
+            //model.CustomFilter.IdUsuario = "9b94e2d8-cc77-4e0b-abdc-eaff0ae1e5cb";
 
-        //    var list = _uow.LoteConferenciaRepository.RastreioPeca(model.CustomFilter);
+            //model.CustomFilter.DataRecebimentoMinima = DateTime.Now.AddDays(-10);
 
-        //    int total = list.Count();
+            var filter = new RelatorioResumoProducaoFilter
+            {
+                DateMin = model.CustomFilter.DataRecebimentoMinima,
+                DateMax = model.CustomFilter.DataRecebimentoMaxima,
+                UserId = model.CustomFilter.IdUsuario,
+                IdEmpresa = IdEmpresa
+            };
 
-        //    var result = list.PaginationResult(model).Select(x => new RelatorioRastreioPecaListItemViewModel
-        //    {
-        //        DataRecebimento = x.DataRecebimento.ToString("dd/MM/yyyy"),
-        //        Empresa = x.Empresa,
-        //        IdEmpresa = x.IdEmpresa,
-        //        IdLote = x.IdLote,
-        //        NroNota = x.NroNota,
-        //        QtdCompra = x.QtdCompra,
-        //        QtdRecebida = x.QtdRecebida,
-        //        ReferenciaPronduto = x.ReferenciaPronduto
-        //    });
+            int total = _uow.LoteConferenciaRepository.Todos().Select(x => x.IdUsuarioConferente).Distinct().Count();
 
-        //    return DataTableResult.FromModel(new DataTableResponseModel
-        //    {
-        //        Draw = model.Draw,
-        //        RecordsTotal = total,
-        //        RecordsFiltered = total,
-        //        Data = result
-        //    });
-        //}
+            var list = _uow.LoteConferenciaRepository.ResumoProducaoConferencia(filter).Select(x => new RelatorioResumoProducaoConferenciaListItemViewModel
+            {
+                NomeUsuario = x.Nome,
+                LotesRecebidos = x.LOTESRECEBIDOS,
+                LotesRecebidosUsuario = x.LOTESRECEBIDASUSUARIO,
+                PecasRecebidas = x.PECASRECEBIDAS,
+                PecasRecebidasUsuario = x.PECASRECEBIDASUSUARIO,
+                Percentual = x.PERCENTUAL,
+                Ranking = x.RANKING
+            });
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = total,
+                RecordsFiltered = list.Count(),
+                Data = list
+            });
+        }
 
     }
 }

@@ -24,8 +24,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Notas Recebidas")]
         public long NotasRecebidas { get; set; }
 
-        [Display(Name = "Peças Recebidas")]
-        public long PecasRecebidas { get; set; }
+        [Display(Name = "Volumes Recebidos")]
+        public long VolumesRecebidos { get; set; }
 
         [Display(Name = "Ranking ")]
         public long Ranking { get; set; }
@@ -36,8 +36,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Notas Recebidas (Usuario)")]
         public long NotasRecebidasUsuario { get; set; }
 
-        [Display(Name = "Peças Recebidas (Usuario)")]
-        public long PecasRecebidasUsuario { get; set; }
+        [Display(Name = "Volumes Recebidos (Usuario)")]
+        public long VolumesRecebidosUsuario { get; set; }
 
         [Display(Name = "Percentual")]
         public decimal Percentual { get; set; }
@@ -45,8 +45,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
     public class RelatorioResumoProducaoConferenciaListItemViewModel
     {
-        [Display(Name = "Lotes Recebidas")]
-        public long LotesRecebidas { get; set; }
+        [Display(Name = "Lotes Recebidos")]
+        public long LotesRecebidos { get; set; }
 
         [Display(Name = "Peças Recebidas")]
         public long PecasRecebidas { get; set; }
@@ -57,8 +57,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Usuário")]
         public string NomeUsuario { get; set; }
 
-        [Display(Name = "Lotes Recebidas (Usuario)")]
-        public long LotesRecebidasUsuario { get; set; }
+        [Display(Name = "Lotes Recebidos (Usuario)")]
+        public long LotesRecebidosUsuario { get; set; }
 
         [Display(Name = "Peças Recebidas (Usuario)")]
         public long PecasRecebidasUsuario { get; set; }
@@ -76,7 +76,5 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
         [Display(Name = "Data")]
         public DateTime? DataRecebimentoMaxima { get; set; }
-
-
     }
 }

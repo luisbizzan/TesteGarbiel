@@ -2,7 +2,7 @@
 
 @using FWLog.AspNet.Identity
 @{
-    ViewBag.Title = "RelatorioRastreioPeca";
+    ViewBag.Title = "Relatorio Resumo Produção";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -11,7 +11,8 @@
         new
         {
             detailsVisible = User.HasPermission(Permissions.NivelArmazenagem.Listar),
-            RecebimentopageDataUrl = Url.Action("ResumoProducaoRecebimentoPageData")
+            RecebimentopageDataUrl = Url.Action("ResumoProducaoRecebimentoPageData"),
+            ConferenciapageDataUrl = Url.Action("ResumoProducaoConferenciaPageData")
         })
 }
 
@@ -20,7 +21,7 @@
     <div class="x_panel">
         <div class="x_title">
             <h2 class="collapse-link">
-                <i class="fa fa-chevron-down fa-fw"></i> @Resources.CommonStrings.FilterHeader
+                <i class="fa fa-chevron-down fa-fw"></i>@Resources.CommonStrings.FilterHeader
             </h2>
             <div class="clearfix"></div>
         </div>
@@ -39,12 +40,17 @@
                         @Html.LabelFor(m => m.Filter.DataRecebimentoMaxima)
                         @Html.TextBoxFor(m => m.Filter.DataRecebimentoMaxima, new { @class = "form-control", data_field = "DataRecebimentoMaxima" })
                     </div>
+                    <div class="form-group col-sm-4 col-xs-12">
+                        @Html.Label("Conferencia")
+                        @Html.RadioButton("TipoRelatorio", "C")
+                        @Html.Label("Recebimento")
+                        @Html.RadioButton("TipoRelatorio", "R")
+                    </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-xs-12 form-buttons">
-                    <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
-                    <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                    <button id="pesquisar" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
                 </div>
             </div>
         </div>
@@ -52,35 +58,48 @@
 </form>
 <!-- /filter -->
 <!-- table -->
-<div id="tabela" class="row">
+<div id="tabela" class="row" style="display:none;">
     <div class="col-xs-12">
         <div class="x_panel">
             <!-- panel-title -->
             <div class="x_title">
-                <h2>Lista de Peças</h2>
-                <div class="nav navbar-right">
-                    <div class="col-xs-12">
-                        <a id="downloadRelatorio" data-toggle="tooltip" title="Download Relatório" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
-                    </div>
-                </div>
+                <h2>Lista</h2>
                 <div class="clearfix"></div>
             </div>
             <!-- /panel-title -->
             <!-- panel-content -->
             <div class="x_content">
-                <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>@Html.DisplayNameFor(m => m.ListaRecebimento.NomeUsuario)</th>
-                            <th>@Html.DisplayNameFor(m => m.ListaRecebimento.NotasRecebidasUsuario)</th>
-                            <th>@Html.DisplayNameFor(m => m.ListaRecebimento.PecasRecebidasUsuario)</th>
-                            <th>@Html.DisplayNameFor(m => m.ListaRecebimento.NotasRecebidas)</th>
-                            <th>@Html.DisplayNameFor(m => m.ListaRecebimento.PecasRecebidas)</th>
-                            <th>@Html.DisplayNameFor(m => m.ListaRecebimento.Percentual)</th>
-                            <th>@Html.DisplayNameFor(m => m.ListaRecebimento.Ranking)</th>
-                        </tr>
-                    </thead>
-                </table>
+                <div id="dataTableConferencia" style="display:none;">
+                    <table class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.NomeUsuario)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.LotesRecebidosUsuario)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.PecasRecebidasUsuario)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.LotesRecebidos)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.PecasRecebidas)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.Percentual)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.Ranking)</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div id="dataTableRecebimento" style="display:none;">
+                    <table class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.NomeUsuario)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.NotasRecebidasUsuario)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.VolumesRecebidosUsuario)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.NotasRecebidas)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.VolumesRecebidos)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.Percentual)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.Ranking)</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
             </div>
             <!-- /panel-content -->
         </div>
