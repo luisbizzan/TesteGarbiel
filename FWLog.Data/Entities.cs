@@ -1,6 +1,5 @@
 ﻿using FWLog.Data.Logging;
 using FWLog.Data.Models;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
@@ -51,6 +50,7 @@ namespace FWLog.Data
         public virtual DbSet<LoteDivergencia> LoteDivergencia { get; set; }
         public virtual DbSet<LoteDivergenciaStatus> LoteDivergenciaStatus { get; set; }
         public virtual DbSet<LoteConferencia> LoteConferencia { get; set; }
+        public virtual DbSet<Armazenagem> Armazenagem { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 
