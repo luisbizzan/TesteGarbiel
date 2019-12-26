@@ -16,10 +16,12 @@ using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using static FWLog.Data.Repository.GeneralCtx.LoteRepository;
 using static FWLog.Services.Services.EtiquetaService;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -1182,5 +1184,81 @@ namespace FWLog.Web.Backoffice.Controllers
                 Message = "Finalização da conferência realizada com sucesso."
             });
         }
+
+        [HttpGet]
+        public ActionResult RelatorioResumoProducao()
+        {
+            return View(new RelatorioResumoProducaoViewModel());
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
+        public ActionResult ResumoProducaoRecebimentoPageData(DataTableFilter<RelatorioResumoProducaoFilterViewModel> model)
+        {
+            model.CustomFilter.IdUsuario = "9b94e2d8-cc77-4e0b-abdc-eaff0ae1e5cb";
+
+            model.CustomFilter.DataRecebimentoMinima = DateTime.Now.AddDays(-10);
+
+            var e = new RelatorioResumoProducaoRecebimentoRequest
+            {
+                DateMin = model.CustomFilter.DataRecebimentoMinima,
+                DateMax = model.CustomFilter.DataRecebimentoMaxima,
+                UserId = model.CustomFilter.IdUsuario,
+                IdEmpresa = IdEmpresa
+            };
+
+            int total = _uow.LoteRepository.Todos().Select(x => x.IdUsuarioRecebimento).Distinct().Count();
+
+            var list = _uow.LoteRepository.ResumoProducaoRecebimento(e).Select(x => new RelatorioResumoProducaoRecebimentoListItemViewModel
+            {
+                NomeUsuario = x.Nome,
+                NotasRecebidas = x.NOTASRECEBIDAS,
+                NotasRecebidasUsuario = x.NOTASRECEBIDASUSUARIO,
+                PecasRecebidas = x.VOLUMESRECEBIDOS,
+                PecasRecebidasUsuario = x.VOLUMESRECEBIDOSUSUARIO,
+                Percentual = x.PERCENTUAL,
+                Ranking = x.RANKING
+            });
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = total,
+                RecordsFiltered = list.Count(),
+                Data = list
+            });
+        }
+
+        //[HttpPost]
+        //[ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
+        //public ActionResult RelatorioResumoProducaoConferenciPageData(DataTableFilter<RelatorioResumoProducaoFilterViewModel> model)
+        //{
+        //    model.CustomFilter.IdEmpresa = IdEmpresa;
+
+        //    var list = _uow.LoteConferenciaRepository.RastreioPeca(model.CustomFilter);
+
+        //    int total = list.Count();
+
+        //    var result = list.PaginationResult(model).Select(x => new RelatorioRastreioPecaListItemViewModel
+        //    {
+        //        DataRecebimento = x.DataRecebimento.ToString("dd/MM/yyyy"),
+        //        Empresa = x.Empresa,
+        //        IdEmpresa = x.IdEmpresa,
+        //        IdLote = x.IdLote,
+        //        NroNota = x.NroNota,
+        //        QtdCompra = x.QtdCompra,
+        //        QtdRecebida = x.QtdRecebida,
+        //        ReferenciaPronduto = x.ReferenciaPronduto
+        //    });
+
+        //    return DataTableResult.FromModel(new DataTableResponseModel
+        //    {
+        //        Draw = model.Draw,
+        //        RecordsTotal = total,
+        //        RecordsFiltered = total,
+        //        Data = result
+        //    });
+        //}
+
     }
 }
