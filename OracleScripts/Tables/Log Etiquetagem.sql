@@ -1,6 +1,7 @@
 CREATE TABLE "LogEtiquetagem"
 (
     "IdLogEtiquetagem" NUMBER PRIMARY KEY NOT NULL ,
+    "IdEmpresa" NUMBER REFERENCES "Empresa"("IdEmpresa") NOT NULL,
     "IdProduto" NUMBER REFERENCES "Produto"("IdProduto") NOT NULL,
 	"IdTipoEtiquetagem" SMALLINT REFERENCES "TipoEtiquetagem"("IdTipoEtiquetagem") NOT NULL,
 	"Quantidade" NUMBER NOT NULL,
@@ -18,7 +19,3 @@ BEGIN
     INTO :new."IdLogEtiquetagem"
     FROM dual;
 END;
-
-
-
-

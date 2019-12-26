@@ -11,6 +11,9 @@ namespace FWLog.Data.Models
         public long IdLogEtiquetagem { get; set; }
 
         [Required]
+        public long IdEmpresa { get; set; }
+
+        [Required]
         public long IdProduto { get; set; }
 
         [Required]
@@ -25,6 +28,8 @@ namespace FWLog.Data.Models
         [Required]
         public string IdUsuario { get; set; }
 
+        [ForeignKey(nameof(IdEmpresa))]
+        public virtual Empresa Empresa { get; set; }
 
         [ForeignKey(nameof(IdProduto))]
         public virtual Produto Produto { get; set; }
