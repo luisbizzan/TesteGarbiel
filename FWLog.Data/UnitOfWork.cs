@@ -48,10 +48,16 @@ namespace FWLog.Data
         private TipoConferenciaRepository _tipoConferenciaRepository;
         private LoteConferenciaRepository _loteConferenciaRepository;
         private ArmazenagemRepository _armazenagemRepository;
+        private ProdutoEmpresaRepository _produtoEmpresaRepository;
 
         public ArmazenagemRepository ArmazenagemRepository
         {
             get => _armazenagemRepository ?? (_armazenagemRepository = new ArmazenagemRepository(_context));
+        }
+
+        public ProdutoEmpresaRepository ProdutoEmpresaRepository
+        {
+            get => _produtoEmpresaRepository ?? (_produtoEmpresaRepository = new ProdutoEmpresaRepository(_context));
         }
 
         public LoteConferenciaRepository LoteConferenciaRepository

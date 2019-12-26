@@ -1,5 +1,4 @@
 ﻿using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.Lote;
@@ -65,9 +64,9 @@ namespace FWLog.Services.Services
 
             var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(idEmpresa);
 
-            var nfItensAgrupado = notafiscal.NotaFiscalItens.GroupBy(g => g.IdProduto).ToDictionary(g => g.Key, g => g.ToList());
+            var nfItens = notafiscal.NotaFiscalItens.GroupBy(g => g.IdProduto).ToDictionary(g => g.Key, g => g.ToList());
 
-            foreach (var nfItem in nfItensAgrupado)
+            foreach (var nfItem in nfItens)
             {
                 LoteDivergencia divergencia = null;
 
@@ -123,7 +122,7 @@ namespace FWLog.Services.Services
                 loteDivergencias.Add(divergencia);
             };
 
-            var conferenciaMais = loteConferencias.Where(s => !nfItensAgrupado.Any(w => w.Key == s.IdProduto)).GroupBy(g => g.IdProduto).ToDictionary(g => g.Key, g => g.ToList());
+            var conferenciaMais = loteConferencias.Where(s => !nfItens.Any(w => w.Key == s.IdProduto)).GroupBy(g => g.IdProduto).ToDictionary(g => g.Key, g => g.ToList());
 
             foreach (var item in conferenciaMais)
             {
@@ -150,7 +149,7 @@ namespace FWLog.Services.Services
                 notaStatus = NotaFiscalStatusEnum.Confirmada;
 
                 await AtualizarNotaFiscalIntegracao(notafiscal, loteStatus);
-                await ConfirmarNotaFiscalIntegracao(notafiscal, lote);
+                await ConfirmarNotaFiscalIntegracao(notafiscal);
             }
             else
             {
@@ -171,7 +170,7 @@ namespace FWLog.Services.Services
 
                 if (notaStatus == NotaFiscalStatusEnum.Confirmada)
                 {
-                    GravarGanhoEstoque();
+                    AtualizarSaldoProduto(lote);
                 }
 
                 transactionScope.Complete();
@@ -182,53 +181,51 @@ namespace FWLog.Services.Services
 
         public async Task TratarDivergencia(TratarDivergenciaRequest request)
         {
-            GravarTratamentoDivergencia(request);
+            ValidarDadosDivergencia(request);
 
             NotaFiscal notafiscal = _uow.NotaFiscalRepository.GetById(request.IdNotaFiscal);
             Lote lote = _uow.LoteRepository.ObterLoteNota(request.IdNotaFiscal);
 
-            List<LoteDivergencia> loteDivergencias = null;
-
-            if (notafiscal.IdNotaFiscalStatus != NotaFiscalStatusEnum.Confirmada)
+            if (request.Divergencias.Any(a => a.QuantidadeMaisTratado > 0) && request.Divergencias.Any(a => a.QuantidadeMenosTratado > 0))
             {
-                loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(lote.IdNotaFiscal);
+                lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaTodas;
+            }
+            else if (request.Divergencias.Any(a => a.QuantidadeMaisTratado > 0))
+            {
+                lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaPositiva;
+            }
+            else if (request.Divergencias.Any(a => a.QuantidadeMenosTratado > 0))
+            {
+                lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaNegativa;
+            }
+            else
+            {
+                lote.IdLoteStatus = LoteStatusEnum.Finalizado;
+            }
 
-                loteDivergencias.ForEach(f => f.IdLoteDivergenciaStatus = LoteDivergenciaStatusEnum.DivergenciaTratada);
+            await AtualizarNotaFiscalIntegracao(notafiscal, lote.IdLoteStatus);
+            await ConfirmarNotaFiscalIntegracao(notafiscal);
 
-                if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMais > 0) && loteDivergencias.Any(a => a.QuantidadeDivergenciaMenos > 0))
+            notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.Confirmada;
+
+            using (TransactionScope transactionScope = _uow.CreateTransactionScope())
+            {
+                GravarTratamentoDivergencia(request);
+
+                AtualizarSaldoProduto(lote);
+
+                if (lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva)
                 {
-                    lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaTodas;
-                }
-                else if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMais > 0))
-                {
-                    lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaPositiva;
-                }
-                else if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMenos > 0))
-                {
-                    lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaNegativa;
-                }
-                else
-                {
-                    lote.IdLoteStatus = LoteStatusEnum.Finalizado;
+                    GravarQuaretena(lote);
                 }
 
-                await AtualizarNotaFiscalIntegracao(notafiscal, lote.IdLoteStatus);
-                await ConfirmarNotaFiscalIntegracao(notafiscal, lote);
-
-                notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.Confirmada;
                 _uow.SaveChanges();
+
+                transactionScope.Complete();
             }
 
-            // if (!lote.GanhoEstoqueEfetuado)
-            {
-                GravarGanhoEstoque();
-            }
 
-            if (lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva || lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
-            {
-                GravarQuaretena(loteDivergencias, lote);
-            }
-
+            /*
             if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
             {
                 if (lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas || lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa)
@@ -267,6 +264,24 @@ namespace FWLog.Services.Services
                         _uow.SaveChanges();
                     }
                 }
+            }*/
+        }
+
+        public void ValidarDadosDivergencia(TratarDivergenciaRequest request)
+        {
+            NotaFiscal notafiscal = _uow.NotaFiscalRepository.GetById(request.IdNotaFiscal);
+
+            var divergenciasNegativa = request.Divergencias.Where(w => w.QuantidadeMenosTratado > 0).ToList();
+
+            foreach (var divergenciaMenos in divergenciasNegativa)
+            {
+                var divergencia = _uow.LoteDivergenciaRepository.GetById(divergenciaMenos.IdLoteDivergencia);
+                var qtdNF = notafiscal.NotaFiscalItens.Where(w => w.IdProduto == divergencia.IdProduto).Sum(s => s.Quantidade);
+
+                if (qtdNF - divergenciaMenos.QuantidadeMenosTratado < 0)
+                {
+                    throw new BusinessException(string.Format("A quantidade A- não pode ser maior que a quantidade total do item {0} na nota fiscal.", divergencia.Produto.Referencia));
+                }
             }
         }
 
@@ -304,7 +319,7 @@ namespace FWLog.Services.Services
                         Referencia = referencia,
                         QuantidadeConferido = quantidadeConferido,
                         QuantidadeNota = quantidadeNota,
-                        DivergenciaMais = diferencaNotaConferido < 0 ? diferencaNotaConferido *-1 : 0,
+                        DivergenciaMais = diferencaNotaConferido < 0 ? diferencaNotaConferido * -1 : 0,
                         DivergenciaMenos = diferencaNotaConferido > 0 ? diferencaNotaConferido : 0
                     };
 
@@ -327,7 +342,7 @@ namespace FWLog.Services.Services
 
             var itensForaNota = itensConferidos.Where(w => !itensNotaFiscal.Any(x => x.Key == w.IdProduto)).GroupBy(g => g.IdProduto);
 
-            foreach(var itemForaNota in itensForaNota)
+            foreach (var itemForaNota in itensForaNota)
             {
                 int quantidadeConferido = itemForaNota.Sum(s => s.Quantidade);
 
@@ -359,7 +374,6 @@ namespace FWLog.Services.Services
                 loteDivergencia.DataTratamentoDivergencia = DateTime.Now;
 
                 _uow.LoteDivergenciaRepository.Update(loteDivergencia);
-                _uow.SaveChanges();
             }
         }
 
@@ -369,19 +383,48 @@ namespace FWLog.Services.Services
             //TODO ganho de saldo
         }
 
-        private void GravarGanhoEstoque()
+        private void AtualizarSaldoProduto(Lote lote)
         {
-            //TODO ganho de saldo
+            List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(lote.IdNotaFiscal);
+            NotaFiscal notafiscal = _uow.NotaFiscalRepository.GetById(lote.IdNotaFiscal);
+
+            var nfItens = notafiscal.NotaFiscalItens.GroupBy(g => g.IdProduto).ToDictionary(g => g.Key, g => g.ToList());
+
+            foreach (var nfItem in nfItens)
+            {
+                var divergencia = loteDivergencias.FirstOrDefault(w => w.IdProduto == nfItem.Key);
+                var qtdOriginal = nfItem.Value.Sum(s => s.Quantidade);
+
+
+                var produto = _uow.ProdutoRepository.GetById(nfItem.Key);
+
+                //if (divergencia != null && divergencia.QuantidadeDivergenciaMenos > 0)
+                //{
+                //    var qtdSomar = qtdOriginal - divergencia.QuantidadeDivergenciaMenos.Value;
+
+                //    if (qtdSomar < 0)
+                //    {
+                //        throw new BusinessException("ERRO");//TODO Faz sentido?
+                //    }
+
+                //    produto.SaldoArmazenagem = produto.SaldoArmazenagem + qtdSomar;
+                //}
+                //else
+                //{
+                //    produto.SaldoArmazenagem = produto.SaldoArmazenagem + qtdOriginal;
+                //}
+
+            }
         }
 
-        private void GravarQuaretena(List<LoteDivergencia> loteDivergencias, Lote lote)
+        private void GravarQuaretena(Lote lote)
         {
-            if (loteDivergencias.NullOrEmpty() || _uow.QuarentenaRepository.ExisteQuarentena(lote.IdLote))
+            if (_uow.QuarentenaRepository.ExisteQuarentena(lote.IdLote))
             {
                 return;
             }
 
-            loteDivergencias = loteDivergencias.Where(w => w.QuantidadeDivergenciaMais > 0).ToList();
+            List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(lote.IdNotaFiscal).Where(w => w.QuantidadeDivergenciaMais > 0).ToList();
 
             if (loteDivergencias.NullOrEmpty())
             {
@@ -396,17 +439,11 @@ namespace FWLog.Services.Services
             };
 
             _uow.QuarentenaRepository.Add(quarentena);
-            _uow.SaveChanges();
         }
 
-        private async Task ConfirmarNotaFiscalIntegracao(NotaFiscal notafiscal, Lote lote)
+        private async Task ConfirmarNotaFiscalIntegracao(NotaFiscal notafiscal)
         {
             if (!(Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"])))//TODO Temporário
-            {
-                return;
-            }
-
-            if (notafiscal.IdNotaFiscalStatus == NotaFiscalStatusEnum.Confirmada)
             {
                 return;
             }
@@ -415,7 +452,7 @@ namespace FWLog.Services.Services
 
             if (!atualizacaoOK)
             {
-                throw new Exception("A atualização de nota fiscal no Sankhya não terminou com sucesso.");
+                throw new BusinessException("A confirmação da nota fiscal no Sankhya não terminou com sucesso.");
             }
         }
 
@@ -430,7 +467,7 @@ namespace FWLog.Services.Services
 
             if (!atualizacaoOK)
             {
-                throw new Exception("A atualização de nota fiscal no Sankhya não terminou com sucesso.");
+                throw new BusinessException("A atualização da nota fiscal no Sankhya não terminou com sucesso.");
             }
         }
 
@@ -447,7 +484,7 @@ namespace FWLog.Services.Services
 
             if (atualizacaoOK)
             {
-                throw new Exception(string.Format("A nota fiscal {0} foi cancelada no Sankhya.", notafiscal.CodigoIntegracao));
+                throw new BusinessException(string.Format("A nota fiscal {0} está cancelada no Sankhya.", notafiscal.CodigoIntegracao));
             }
         }
 
@@ -464,7 +501,7 @@ namespace FWLog.Services.Services
 
             if (!atualizacaoOK)
             {
-                throw new Exception(string.Format("A nota fiscal {0} não autorizada no Sankhya.", notafiscal.CodigoIntegracao));
+                throw new BusinessException(string.Format("A nota fiscal {0} ainda não está autorizada no Sankhya.", notafiscal.CodigoIntegracao));
             }
         }
     }

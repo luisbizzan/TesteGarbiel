@@ -53,9 +53,12 @@ namespace FWLog.Services.Services
         public void ImprimirEtiquetaArmazenagemVolume(EtiquetaArmazenagemVolumeRequest request)
         {
             Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
+            ProdutoEmpresa empresaProduto = _unitOfWork.ProdutoEmpresaRepository.ObterPorProdutoEmpresa(produto.IdProduto, request.IdEmpresa);
+
             decimal multiplo = produto.MultiploVenda;
             string codReferencia = produto.CodigoBarras;
-            string endereco = produto.EnderecoSeparacao;
+
+            string endereco = (empresaProduto != null && empresaProduto.EnderecoArmazenagem != null) ? empresaProduto.EnderecoArmazenagem.Codigo : string.Empty;
 
             var etiquetaImprimir = new StringBuilder();
 
@@ -120,6 +123,7 @@ namespace FWLog.Services.Services
             public int QuantidadePorCaixa { get; set; }
             public string Usuario { get; set; }
             public int IdImpressora { get; set; }
+            public long IdEmpresa { get; set; }
         }
     }
 }

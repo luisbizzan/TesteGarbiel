@@ -96,6 +96,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\BusinessException.cs" />
     <Compile Include="Exceptions\UnauthorizedException.cs" />
     <Compile Include="Exceptions\ConpanyException.cs" />
     <Compile Include="GlobalResources\General\GeneralStrings.en.Designer.cs">
@@ -113,6 +114,7 @@
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeRecebimento.cs" />
+    <Compile Include="Model\IntegracaoSankhya\ConfirmarNotaFiscalResposta.cs" />
     <Compile Include="Model\IntegracaoSankhya\IncluirNotaFiscalXML.cs" />
     <Compile Include="Model\IntegracaoSankhya\IntegracaoErroResposta.cs" />
     <Compile Include="Model\IntegracaoSankhya\IncluirNotaFiscalResposta.cs" />

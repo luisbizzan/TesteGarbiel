@@ -10,9 +10,6 @@ namespace FWLog.Data.Models
         public long IdProduto { get; set; }
 
         [Required]
-        public long SaldoArmazenagem { get; set; }
-
-        [Required]
         [Index]
         public long CodigoIntegracao { get; set; }
 
@@ -36,7 +33,6 @@ namespace FWLog.Data.Models
         [StringLength(30)]
         public string ReferenciaFornecedor { get; set; }
 
-        public string EnderecoSeparacao { get; set; }
 
         [StringLength(50)]
         public string CodigoBarras { get; set; }
