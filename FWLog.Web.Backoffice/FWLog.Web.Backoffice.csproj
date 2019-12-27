@@ -241,7 +241,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BOFornecedorController.cs" />
+    <Compile Include="Controllers\ProdutoController.cs" />
     <Compile Include="Controllers\RecebimentoEtiquetaController.cs" />
+    <Compile Include="Controllers\RecebimentoEtiquetaIndividualPersonalizadaController.cs" />
     <Compile Include="EnumsAndConsts\EmpresaCookie.cs" />
     <Compile Include="GlobalResources\BOPrinter\BOPrinterStrings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -309,7 +311,9 @@
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemEditarViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemPesquisaModalViewModel.cs" />
+    <Compile Include="Models\ProdutoCtx\ProdutoSearchModalViewModel.cs" />
     <Compile Include="Models\RecebimentoEtiquetaCtx\RecebimentoEtiquetaViewModel.cs" />
+    <Compile Include="Models\RecebimentoEtiquetaIndividualPersonalizadaCtx\RecebimentoEtiquetaIndividualListViewModel.cs" />
     <Compile Include="Startup.cs" />
     <Content Include="Content\dart\dart-template.css">
       <DependentUpon>dart-template.scss</DependentUpon>
@@ -471,6 +475,7 @@
     <Content Include="Scripts\Views\PontoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\index.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\pesquisaModal.js" />
+    <Content Include="Scripts\Views\Produto\searchModal.js" />
     <Content Include="Scripts\Views\RecebimentoEtiqueta\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
@@ -512,6 +517,8 @@
     <Content Include="Views\BORecebimentoNota\ExibirDivergencia.cshtml" />
     <Content Include="Views\BORecebimentoNota\ResumoFinalizarConferencia.cshtml" />
     <Content Include="Views\RecebimentoEtiqueta\Index.cshtml" />
+    <Content Include="Views\Produto\SearchModal.cshtml" />
+    <Content Include="Views\RecebimentoEtiquetaIndividualPersonalizada\Index.cshtml" />
     <Content Include="Views\BORecebimentoNota\ResumoProducaoRecebimento.cshtml" />
     <Content Include="Views\BORecebimentoNota\RelatorioResumoProducao.cshtml" />
   </ItemGroup>
