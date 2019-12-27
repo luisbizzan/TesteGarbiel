@@ -15,7 +15,7 @@ namespace FWLog.Data.Models
         [Key]
         [Index(IsUnique = true)]
         [Required]
-        public NotaFiscalStatusEnum IdTipoEtiquetagem { get; set; }
+        public TipoEtiquetagemEnum IdTipoEtiquetagem { get; set; }
 
         [StringLength(50)]
         [Index(IsUnique = true)]

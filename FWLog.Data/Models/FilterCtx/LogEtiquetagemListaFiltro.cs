@@ -8,7 +8,7 @@ namespace FWLog.Data.Models.FilterCtx
         
         public DateTime? DataFinal { get; set; }
 
-        public int IdLogEtiquetagem { get; set; }
+        public TipoEtiquetagemEnum IdLogEtiquetagem { get; set; }
 
         public string IdUsuarioEtiquetagem { get; set; }        
     }

@@ -17,10 +17,10 @@ namespace FWLog.Data.Models
         public long IdProduto { get; set; }
 
         [Required]
-        public int IdTipoEtiquetagem { get; set; }
+        public TipoEtiquetagemEnum IdTipoEtiquetagem { get; set; }
 
         [Required]
-        public long Quantidade { get; set; }
+        public int Quantidade { get; set; }
 
         [Required]
         public DateTime DataHora { get; set; }
