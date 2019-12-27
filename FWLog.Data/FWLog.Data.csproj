@@ -116,15 +116,20 @@
     <Compile Include="Models\DataTablesCtx\NivelArmazenagemTableRow.cs" />
     <Compile Include="Models\DataTablesCtx\PontoArmazenagemListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\PontoArmazenagemPesquisaModalListaLinhaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\ProdutoPesquisaModalListaLinhaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\LogEtiquetagemListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\RelatorioRastreioPecaListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\RelatorioResumoProducaoConferenciaListRow.cs" />
     <Compile Include="Models\DataTablesCtx\RelatorioResumoProducaoRecebimentoListRow.cs" />
     <Compile Include="Models\FilterCtx\ImpressoraListaFiltro.cs" />
+    <Compile Include="Models\FilterCtx\ProdutoPesquisaModalFiltro.cs" />
+    <Compile Include="Models\FilterCtx\LogEtiquetagemListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\RelatorioRastreioPecaListaFiltro.cs" />
     <Compile Include="Models\DataTablesCtx\UsuarioListaLinhaTabela.cs" />
     <Compile Include="Models\EmpresaConfig.cs" />
     <Compile Include="Models\FilterCtx\RelatorioResumoProducaoFilter.cs" />
     <Compile Include="Models\FilterCtx\UsuarioListaFiltro.cs" />
+    <Compile Include="Models\LogEtiquetagem.cs" />
     <Compile Include="Models\LoteConferencia.cs" />
     <Compile Include="Models\LoteDivergencia.cs" />
     <Compile Include="Models\LoteDivergenciaStatus.cs" />
@@ -154,6 +159,7 @@
     <Compile Include="Models\Quarentena.cs" />
     <Compile Include="Models\QuarentenaStatus.cs" />
     <Compile Include="Models\TipoArmazenagem.cs" />
+    <Compile Include="Models\TipoEtiquetagem.cs" />
     <Compile Include="Models\TipoMovimentacao.cs" />
     <Compile Include="Models\Transportadora.cs" />
     <Compile Include="Models\UnidadeMedida.cs" />
@@ -190,6 +196,7 @@
     <Compile Include="Repository\GeneralCtx\EnderecoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\FreteTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\FornecedorRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\LogEtiquetagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteConferenciaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteDivergenciaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteRepository.cs" />
@@ -205,6 +212,7 @@
     <Compile Include="Repository\GeneralCtx\ProdutoEmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoConferenciaRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\TipoEtiquetagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoMovimentacaoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TransportadoraRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UnidadeMedidaRepository.cs" />

@@ -9,9 +9,12 @@
         new MenuItem { Text = Res.HomeMenuItem, Icon = "fa fa-home", Url = Url.Action("Index", "BOHome") },
         new MenuGroup(Res.MenuRecebimento, "fa fa-truck").SetItems(
             new MenuItem { Text = Res.MenuRecebimentoNotas, Url = Url.Action("Index", "BORecebimentoNota"), RequirePermission = Permissions.Recebimento.List },
-            new MenuItem { Text = Res.MenuRecebimentoeEtiquetas, Url = Url.Action("", ""), RequirePermission = Permissions.Role.List },
-            new MenuItem { Text = "Etiqueta de Lote", Url = Url.Action("Index", "RecebimentoEtiqueta"), RequirePermission = Permissions.RecebimentoEtiqueta.ImprimirEtiquetaLote },
+            //new MenuItem { Text = Res.MenuRecebimentoeEtiquetas, Url = Url.Action("", ""), RequirePermission = Permissions.Role.List },
             new MenuItem { Text = Res.MenuRecebimentoQuarentena, Url = Url.Action("Index", "BOQuarentena"), RequirePermission = Permissions.RecebimentoQuarentena.List },
+            new MenuItem { Text = "Etiqueta - Lote", Url = Url.Action("Index", "RecebimentoEtiqueta"), RequirePermission = Permissions.RecebimentoEtiqueta.ImprimirEtiquetaLote },
+            new MenuItem { Text = "Etiqueta - Individual e Personalizada", Url = Url.Action("", ""), RequirePermission = Permissions.RecebimentoEtiquetaIndividualEPersonalizada.Listar },
+            new MenuItem { Text = "Relatório - Rastreio de Peça", Url = Url.Action("RelatorioRastreioPeca", "BORecebimentoNota"), RequirePermission = Permissions.BOLogSystem.List },
+            new MenuItem { Text = "Relatório - Resumo de Etiquetagem", Url = Url.Action("", ""), RequirePermission = Permissions.BOLogSystem.List },
             new MenuItem { Text = "Relatório - Rastreio de Peça", Url = Url.Action("RelatorioRastreioPeca", "BORecebimentoNota"), RequirePermission = Permissions.BOLogSystem.List },
             new MenuItem { Text = "Relatório - Resumo Produção", Url = Url.Action("RelatorioResumoProducao", "BORecebimentoNota"), RequirePermission = Permissions.Recebimento.ListarResumoProducao }
         ),
