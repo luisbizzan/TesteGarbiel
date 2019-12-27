@@ -56,9 +56,12 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
         public List<BODetalhesEntradaConferenciaItem> Items { get; set; }
 
+        public ExibirDivergenciaRecebimentoViewModel Divergencias { get; set; }
+
         public BODetalhesEntradaConferenciaViewModel()
         {
             Items = new List<BODetalhesEntradaConferenciaItem>();
+            Divergencias = new ExibirDivergenciaRecebimentoViewModel();
         }
     }
 
