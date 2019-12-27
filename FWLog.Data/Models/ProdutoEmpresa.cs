@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FWLog.Data.Models
 {
     public class ProdutoEmpresa
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Required]
         public long IdProdutoEmpresa { get; set; }
 
         [Required]
@@ -21,10 +17,11 @@ namespace FWLog.Data.Models
         [Index]
         public long IdEmpresa { get; set; }
 
+        [Required]
         public int SaldoArmazenagem { get; set; }
 
         [Index]
-        public long IdEnderecoArmazenagem { get; set; }
+        public long? IdEnderecoArmazenagem { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
