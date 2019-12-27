@@ -1192,7 +1192,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ListarResumoProducao)]
         public ActionResult ResumoProducaoRecebimentoPageData(DataTableFilter<RelatorioResumoProducaoFilterViewModel> model)
         {
             //model.CustomFilter.IdUsuario = "9b94e2d8-cc77-4e0b-abdc-eaff0ae1e5cb";
@@ -1230,7 +1230,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ListarResumoProducao)]
         public ActionResult ResumoProducaoConferenciaPageData(DataTableFilter<RelatorioResumoProducaoFilterViewModel> model)
         {
             //model.CustomFilter.IdUsuario = "9b94e2d8-cc77-4e0b-abdc-eaff0ae1e5cb";

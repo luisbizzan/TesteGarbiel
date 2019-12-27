@@ -1,15 +1,42 @@
 ﻿(function () {
+    let $divTables = $('#tabela');
+
     let $tableConferencia = $('#dataTableConferencia > table');
     let $tableRecebimento = $('#dataTableRecebimento > table');
 
     let $divTableConferencia = $('#dataTableConferencia');
     let $divTableRecebimento = $('#dataTableRecebimento');
 
-    let $divTables = $('#tabela');
+    var $dataInicio = $('#Filter_DataRecebimentoMinima').closest('.date');
+    var $dataFim = $('#Filter_DataRecebimentoMaxima').closest('.date');
+
+    var createLinkedPickes = function () {
+        var dataInicial = $dataInicio.datetimepicker({
+            locale: moment.locale(),
+            format: 'L',
+            allowInputToggle: true
+        });
+
+        var dataFinal = $dataFim.datetimepicker({
+            locale: moment.locale(),
+            useCurrent: false,
+            format: 'L',
+            allowInputToggle: true,
+        });
+
+        new dart.DateTimePickerLink(dataInicial, dataFinal, { ignoreTime: true });
+    }
+
+    createLinkedPickes();
+
+    $("#pesquisarUsuario").click(function () {
+        $("#modalUsuario").load(HOST_URL + "BOAccount/SearchModal/Recebimento", function () {
+            $("#modalUsuario").modal();
+        });
+    });
 
     $(document.body).on('click', "#pesquisar", function (e) {
         e.preventDefault();
-        debugger
 
         var tipo = $("input[name='TipoRelatorio']:checked").val();
 
@@ -34,8 +61,9 @@
                 $divTables.hide();
                 $divTableConferencia.hide();
                 $divTableRecebimento.hide();
-        }
 
+                PNotify.warning({ text: "Selecione um tipo de relatório." });
+        }
     });
 
     $tableConferencia.DataTable({
@@ -64,8 +92,8 @@
         },
         columns: [
             { data: 'NomeUsuario' },
-            { data: 'LotesRecebidosUsuario' },
-            { data: 'PecasRecebidasUsuario' },
+            { data: 'LotesRecebidosUsuario', width: 100 },
+            { data: 'PecasRecebidasUsuario', width: 100 },
             { data: 'LotesRecebidos', width: 100 },
             { data: 'PecasRecebidas', width: 100 },
             { data: 'Percentual', width: 100 },
@@ -103,8 +131,8 @@
         },
         columns: [
             { data: 'NomeUsuario' },
-            { data: 'NotasRecebidasUsuario' },
-            { data: 'VolumesRecebidosUsuario' },
+            { data: 'NotasRecebidasUsuario', width: 100 },
+            { data: 'VolumesRecebidosUsuario', width: 100 },
             { data: 'NotasRecebidas', width: 100 },
             { data: 'VolumesRecebidos', width: 100 },
             { data: 'Percentual', width: 100 },
@@ -115,4 +143,16 @@
     $tableRecebimento.dataTable.error = function (settings, helpPage, message) {
         console.log(message)
     };
+
+    $("#limparUsuario").click(function () {
+        $("#Filter_NomeUsuario").val("");
+        $("#Filter_IdUsuario").val("");
+    });
 })();
+
+function setUsuario(idUsuario, nomeUsuario, origem) {
+    $("#Filter_NomeUsuario").val(nomeUsuario);
+    $("#Filter_IdUsuario").val(idUsuario);
+    $("#modalUsuario").modal("hide");
+    $("#modalUsuario").empty();
+}
