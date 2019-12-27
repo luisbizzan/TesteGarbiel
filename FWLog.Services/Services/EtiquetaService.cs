@@ -50,15 +50,15 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
 
-        public void ImprimirEtiquetaArmazenagemVolume(EtiquetaArmazenagemVolumeRequest request)
+        public void ImprimirEtiquetaArmazenagemVolume(ImprimirEtiquetaArmazenagemVolume request)
         {
             Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
             ProdutoEmpresa empresaProduto = _unitOfWork.ProdutoEmpresaRepository.ObterPorProdutoEmpresa(produto.IdProduto, request.IdEmpresa);
 
-            decimal multiplo = produto.MultiploVenda;
+            decimal multiplo = request.Multiplo ?? produto.MultiploVenda;
             string codReferencia = produto.CodigoBarras;
 
-            string endereco = (empresaProduto != null && empresaProduto.EnderecoArmazenagem != null) ? empresaProduto.EnderecoArmazenagem.Codigo : string.Empty;
+            string endereco = empresaProduto?.EnderecoArmazenagem?.Codigo ?? string.Empty;
 
             var etiquetaImprimir = new StringBuilder();
 
@@ -79,12 +79,12 @@ namespace FWLog.Services.Services
             etiquetaImprimir.Append("^FO590,10^GB0,550,4^FS");
 
             // Fundo e Conteúdo do Título [1 Linha]
-            etiquetaImprimir.Append("^FO16,010^GB120,550,120^FS");
-            etiquetaImprimir.Append($"^FO34,05^FB550,1,0,C,0^A0B,130,80^FR^FD{request.ReferenciaProduto}^FS");
+            etiquetaImprimir.Append("^FO16,10^GB120,550,120^FS");
+            etiquetaImprimir.Append($"^FO33^FB550,1,0,C,0^A0B,130,80^FR^FD{produto.Referencia}^FS");
 
             // Label e Barcode Número do Lote [2 Linha]
-            etiquetaImprimir.Append("^FO150,400^A0B,20,20^FDNumero do Lote^FS");
-            etiquetaImprimir.Append($"^FO170,85^BCB,50,Y,N^FD{request.NroLote.ToString().PadLeft(10, '0')}^FS");
+            etiquetaImprimir.Append("^FO145,400^A0B,20,20^FDNumero do Lote^FS");
+            etiquetaImprimir.Append($"^FO170,85^BCB,60,Y,N^FD{request.NroLote.ToString().PadLeft(10, '0')}^FS");
 
             // Fundo e Conteúdo de "MULTIPLO"
             etiquetaImprimir.Append("^FO260,480^GB331,80,80,^FS");
@@ -93,37 +93,27 @@ namespace FWLog.Services.Services
             // Labels e Barcode de "Quantidade" [3 Linha]
             etiquetaImprimir.Append("^FO275,350^A0B,20,20^FDQuantidade^FS");
             etiquetaImprimir.Append($"^FO280,180^A0B,100,100^FD{request.QuantidadePorCaixa.ToString().PadBoth(6)}^FS");
-            etiquetaImprimir.Append($"^FO380,150^BCR,50,N,N^FD{request.QuantidadePorCaixa.ToString().PadLeft(6, '0')}^FS");
+            etiquetaImprimir.Append($"^FO370,100^BCR,50,N,N^FD{request.QuantidadePorCaixa.ToString().PadLeft(6, '0')}^FS");
 
             // Barcode [4 Linha]
-            etiquetaImprimir.Append($"^BEB,104,Y,N^FO450,100^FD{codReferencia}^FS"); // TODO: onde extrair este dado
+            etiquetaImprimir.Append($"^BEB,100,Y,N^FO460,100^FD{codReferencia}^FS"); // TODO: onde extrair este dado
 
             // Nome do Colaborador [5 Linha]
-            string usuario = request.Usuario.Length > 12 ? request.Usuario.Substring(0, 12) : request.Usuario;
-            etiquetaImprimir.Append($"^FO620,270^A0B,60,50^FD{usuario}^FS"); // TODO: é exibido o destino quando o usuário é vázio no script antigo && tamanho máximo
+            //int tamanhoNome = 13;
+            //string usuario = request.Usuario.Length > tamanhoNome ? request.Usuario.Substring(0, tamanhoNome) : request.Usuario;
+            etiquetaImprimir.Append($"^FO610,220^FB330,2,100,C,0^A0B,95,40^FD{request.Usuario}^FS");
 
             // Endereço Picking [5 Linha]
-            etiquetaImprimir.Append($"^FO610,80^A0B,50,50^FD{endereco}^FS");
+            etiquetaImprimir.Append($"^FO610,30^A0B,50,40^FD{endereco}^FS");
 
             // Data e Hora [5 Linha]
-            etiquetaImprimir.Append($"^FO670,40^A0B,30,30^FD{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}*^FS"); // TODO: Analisar de onde vem o '*' no script antigo
+            etiquetaImprimir.Append($"^FO665,30^A0B,40,25^FD{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}*^FS");
 
             etiquetaImprimir.Append("^XZ");
 
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaImprimir.ToString());
 
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
-        }
-
-        public class EtiquetaArmazenagemVolumeRequest
-        {
-            public long NroLote { get; set; }
-            public string ReferenciaProduto { get; set; }
-            public int QuantidadeEtiquetas { get; set; }
-            public int QuantidadePorCaixa { get; set; }
-            public string Usuario { get; set; }
-            public int IdImpressora { get; set; }
-            public long IdEmpresa { get; set; }
         }
     }
 }

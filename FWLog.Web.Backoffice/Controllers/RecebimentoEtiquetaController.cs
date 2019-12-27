@@ -1,5 +1,6 @@
 ﻿using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
+using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.RecebimentoNotaCtx;
@@ -7,7 +8,6 @@ using Microsoft.AspNet.Identity;
 using System;
 using System.Linq;
 using System.Web.Mvc;
-using static FWLog.Services.Services.EtiquetaService;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -44,7 +44,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                var request = new EtiquetaArmazenagemVolumeRequest
+                var request = new ImprimirEtiquetaArmazenagemVolume
                 {
                     NroLote = viewModel.NroLote.GetValueOrDefault(),
                     QuantidadeEtiquetas = viewModel.QtdCaixas.GetValueOrDefault(),
@@ -81,6 +81,24 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
+                if (!(viewModel.QtdPorCaixa > 0))
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Quantidade por Caixas deve ser maior que zero."
+                    });
+                }
+
+                if (!(viewModel.QtdCaixas > 0))
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Quantidade de Caixas deve ser maior que zero."
+                    });
+                }
+
                 if (string.IsNullOrEmpty(viewModel.ReferenciaProduto))
                 {
                     return Json(new AjaxGenericResultModel
