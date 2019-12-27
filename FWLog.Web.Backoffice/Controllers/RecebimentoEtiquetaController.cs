@@ -51,7 +51,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     QuantidadePorCaixa = viewModel.QtdPorCaixa.GetValueOrDefault(),
                     ReferenciaProduto = viewModel.ReferenciaProduto,
                     Usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome,
-                    IdImpressora = viewModel.IdImpressora.GetValueOrDefault()
+                    IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
+                    IdEmpresa = IdEmpresa
                 };
 
                 _etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
