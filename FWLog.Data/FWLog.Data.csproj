@@ -109,6 +109,7 @@
     <Compile Include="Models\AspNetPermissions.cs" />
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
+    <Compile Include="Models\DataTablesCtx\RelatorioDivergenciasListRow.cs" />
     <Compile Include="Models\ProdutoEmpresa.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\ImpressoraListaLinhaTabela.cs" />

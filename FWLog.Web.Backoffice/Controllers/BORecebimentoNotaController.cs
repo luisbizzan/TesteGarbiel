@@ -252,6 +252,25 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        public ActionResult ResumoDivergenciaConferencia(long id)
+        {
+            var model = new ResumoDivergenciaConferenciaViewModel
+            {
+                IdNotaFiscal = _uow.LoteRepository.GetById(id).IdNotaFiscal,
+                Divergencias = _uow.LoteRepository.ObterDivergencias(id).Select(x => new ResumoDivergenciaConferenciaItemViewModel
+                {
+                    Referencia = x.Referencia,
+                    QuantidadeConferencia = x.QuantidadeConferida,
+                    QuantidadeNotaFiscal = x.QuantidadeNota,
+                    QuantidadeMais = x.Mais,
+                    QuantidadeMenos = x.Menos
+                }).ToList()
+            };
+
+            return View(model);
+        }
+
         [HttpPost]
         public ActionResult DownloadRelatorioNotas(BODownloadRelatorioNotasViewModel viewModel)
         {

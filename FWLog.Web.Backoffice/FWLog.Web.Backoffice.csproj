@@ -276,6 +276,7 @@
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirEtiquetaRecebimentoViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\ResumoDivergenciaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\RelatorioResumoProducaoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\RelatorioRastreioPecaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\ResumoFinalizarConferenciaViewModel.cs" />
@@ -451,6 +452,7 @@
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoProducao.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\resumoDivergenciaConferencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\resumoFinalizarConferencia.js" />
     <Content Include="Scripts\Views\BOQuarentena\detalhesQuarentena.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\tratarDivergencia.js" />
@@ -521,6 +523,7 @@
     <Content Include="Views\RecebimentoEtiquetaIndividualPersonalizada\Index.cshtml" />
     <Content Include="Views\BORecebimentoNota\ResumoProducaoRecebimento.cshtml" />
     <Content Include="Views\BORecebimentoNota\RelatorioResumoProducao.cshtml" />
+    <Content Include="Views\BORecebimentoNota\ResumoDivergenciaConferencia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

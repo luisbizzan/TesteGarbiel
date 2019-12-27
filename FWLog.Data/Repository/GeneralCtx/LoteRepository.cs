@@ -115,5 +115,20 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return list;
         }
+
+        public List<RelatorioDivergenciasListRow> ObterDivergencias(long idLote)
+        {
+            string queryString = "SELECT p.\"Referencia\", rel.QuantidadeNota, rel.QuantidadeConferida, NVL(CASE WHEN rel.diferenca > 0 THEN rel.diferenca END, 0) mais, NVL(CASE WHEN rel.diferenca < 0 THEN rel.diferenca*-1 END, 0) menos FROM( SELECT nota.idLote, nota.idProduto, nota.QuantidadeNota, conf.QuantidadeConferida, conf.QuantidadeConferida - nota.QuantidadeNota diferenca FROM ( SELECT l.\"IdLote\" idLote, ni.\"IdProduto\" idProduto, SUM(ni.\"Quantidade\") QuantidadeNota FROM \"NotaFiscalItem\" ni, \"NotaFiscal\" n, \"Lote\" l WHERE n.\"IdNotaFiscal\" = ni.\"IdNotaFiscal\" AND l.\"IdNotaFiscal\" = n.\"IdNotaFiscal\" GROUP BY l.\"IdLote\", ni.\"IdProduto\") nota, ( SELECT lc.\"IdLote\" IdLote, lc.\"IdProduto\" IdProduto, SUM(lc.\"Quantidade\") QuantidadeConferida FROM \"LoteConferencia\" lc GROUP BY lc.\"IdLote\", lc.\"IdProduto\" ) conf WHERE nota.idLote = conf.IdLote AND nota.idProduto = conf.IdProduto AND nota.QuantidadeNota != conf.QuantidadeConferida) rel, \"Produto\" p WHERE rel.IdLote = :ID_LOTE AND p.\"IdProduto\" = rel.idProduto";
+
+            var param = new
+            {
+                ID_LOTE = idLote
+            };
+
+            var list = Entities.Database.Connection.Query<RelatorioDivergenciasListRow>(queryString, param).ToList();
+
+            return list;
+        }
+
     }
 }

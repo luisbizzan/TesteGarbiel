@@ -1,0 +1,67 @@
+﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.ResumoDivergenciaConferenciaViewModel
+@{
+    Layout = null;
+
+    @BundleHelper.RenderViewScriptModal()
+}
+
+<div class="modal-dialog modal-lg">
+    <form name="divergencias" id="divergencias">
+        @Html.HiddenFor(m => m.IdNotaFiscal)
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Tratar Divergências da Conferência</h4>
+            </div>
+            <div class="modal-body">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <div class="row" style="margin-top: 25px; overflow-y: auto;">
+                            <div class="col-sm-12 col-lg-12">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Referência</th>
+                                            <th style="width:100px; text-align:center">Nota</th>
+                                            <th style="width:100px; text-align:center">Conferido</th>
+                                            <th style="width:100px; text-align:center">A+</th>
+                                            <th style="width:100px; text-align:center">A-</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.Divergencias.Count > 0)
+                                        {
+                                            for (int i = 0; i < Model.Divergencias.Count(); i++)
+                                            {
+                                                <tr class="linha-divergencia">
+                                                    <td>@Model.Divergencias[i].Referencia</td>
+                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeNotaFiscal</td>
+                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeConferencia</td>
+                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeMais</td>
+                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeMenos</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr class="even">
+                                                <td colspan="8">Nenhuma divergencia encontrada.</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row navbar-right">
+                            <div class="col-sm-12 col-lg-12">
+                                <button type="button" id="voltar" class="btn btn-default">Voltar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
