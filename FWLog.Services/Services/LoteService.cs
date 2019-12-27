@@ -206,10 +206,11 @@ namespace FWLog.Services.Services
             await AtualizarNotaFiscalIntegracao(notafiscal, lote.IdLoteStatus);
             await ConfirmarNotaFiscalIntegracao(notafiscal);
 
-            notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.Confirmada;
-
             using (TransactionScope transactionScope = _uow.CreateTransactionScope())
             {
+                notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.Confirmada;
+                _uow.SaveChanges();
+
                 GravarTratamentoDivergencia(request);
 
                 AtualizarSaldoProduto(lote);
@@ -218,8 +219,6 @@ namespace FWLog.Services.Services
                 {
                     GravarQuaretena(lote);
                 }
-
-                _uow.SaveChanges();
 
                 transactionScope.Complete();
             }
@@ -375,6 +374,8 @@ namespace FWLog.Services.Services
 
                 _uow.LoteDivergenciaRepository.Update(loteDivergencia);
             }
+
+            _uow.SaveChanges();
         }
 
         private async Task<NotaFiscal> CriarNotaDevolucao()
@@ -392,28 +393,33 @@ namespace FWLog.Services.Services
 
             foreach (var nfItem in nfItens)
             {
-                var divergencia = loteDivergencias.FirstOrDefault(w => w.IdProduto == nfItem.Key);
-                var qtdOriginal = nfItem.Value.Sum(s => s.Quantidade);
+                ProdutoEmpresa produtoEmpresa = _uow.ProdutoEmpresaRepository.ObterPorProdutoEmpresa(nfItem.Key, notafiscal.IdEmpresa);
+                LoteDivergencia divergencia = null;
+                
+                if (loteDivergencias.NullOrEmpty())
+                {
+                    divergencia = loteDivergencias.FirstOrDefault(w => w.IdProduto == nfItem.Key);
+                }
 
+                int qtdOriginal = nfItem.Value.Sum(s => s.Quantidade);
 
-                var produto = _uow.ProdutoRepository.GetById(nfItem.Key);
+                if (divergencia != null && divergencia.QuantidadeDivergenciaMenos > 0)
+                {
+                    var qtdSomar = qtdOriginal - divergencia.QuantidadeDivergenciaMenos.Value;
 
-                //if (divergencia != null && divergencia.QuantidadeDivergenciaMenos > 0)
-                //{
-                //    var qtdSomar = qtdOriginal - divergencia.QuantidadeDivergenciaMenos.Value;
+                    if (qtdSomar < 0)
+                    {
+                        throw new BusinessException("ERRO");//TODO Faz sentido?
+                    }
 
-                //    if (qtdSomar < 0)
-                //    {
-                //        throw new BusinessException("ERRO");//TODO Faz sentido?
-                //    }
+                    produtoEmpresa.SaldoArmazenagem = produtoEmpresa.SaldoArmazenagem + qtdSomar;
+                }
+                else
+                {
+                    produtoEmpresa.SaldoArmazenagem = produtoEmpresa.SaldoArmazenagem + qtdOriginal;
+                }
 
-                //    produto.SaldoArmazenagem = produto.SaldoArmazenagem + qtdSomar;
-                //}
-                //else
-                //{
-                //    produto.SaldoArmazenagem = produto.SaldoArmazenagem + qtdOriginal;
-                //}
-
+                _uow.SaveChanges();
             }
         }
 
@@ -439,6 +445,7 @@ namespace FWLog.Services.Services
             };
 
             _uow.QuarentenaRepository.Add(quarentena);
+            _uow.SaveChanges();
         }
 
         private async Task ConfirmarNotaFiscalIntegracao(NotaFiscal notafiscal)
