@@ -38,32 +38,40 @@
     $(document.body).on('click', "#pesquisar", function (e) {
         e.preventDefault();
 
+        debugger
+
         var tipo = $("input[name='TipoRelatorio']:checked").val();
+        var data = $('#Filter_DataRecebimentoMinima').val()
 
-        switch (tipo) {
-            case "R":
-                $tableRecebimento.DataTable().ajax.reload(null, true);
+        if (!moment(data, "DD/MM/YYYY").isValid()) {
+            PNotify.warning({ text: "Selecione uma data inicial." });
+        } else {
+            switch (tipo) {
+                case "R":
+                    $tableRecebimento.DataTable().ajax.reload(null, true);
 
-                $divTableConferencia.hide();
-                $divTableRecebimento.show();
+                    $divTableConferencia.hide();
+                    $divTableRecebimento.show();
 
-                $divTables.show();
-                break;
-            case "C":
-                $tableConferencia.DataTable().ajax.reload(null, true);
+                    $divTables.show();
+                    break;
+                case "C":
+                    $tableConferencia.DataTable().ajax.reload(null, true);
 
-                $divTableRecebimento.hide();
-                $divTableConferencia.show();
+                    $divTableRecebimento.hide();
+                    $divTableConferencia.show();
 
-                $divTables.show();
-                break;
-            default:
-                $divTables.hide();
-                $divTableConferencia.hide();
-                $divTableRecebimento.hide();
+                    $divTables.show();
+                    break;
+                default:
+                    $divTables.hide();
+                    $divTableConferencia.hide();
+                    $divTableRecebimento.hide();
 
-                PNotify.warning({ text: "Selecione um tipo de relatório." });
+                    PNotify.warning({ text: "Selecione um tipo de relatório." });
+            }
         }
+
     });
 
     $tableConferencia.DataTable({
