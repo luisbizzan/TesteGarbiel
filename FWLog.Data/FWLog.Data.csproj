@@ -49,11 +49,11 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <HintPath>..\packages\Oracle.ManagedDataAccess.12.2.1100\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.19.1, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.19.6.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
     </Reference>
-    <Reference Include="Oracle.ManagedDataAccess.EntityFramework, Version=6.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <HintPath>..\packages\Oracle.ManagedDataAccess.EntityFramework.12.2.1100\lib\net45\Oracle.ManagedDataAccess.EntityFramework.dll</HintPath>
+    <Reference Include="Oracle.ManagedDataAccess.EntityFramework, Version=6.122.19.1, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.EntityFramework.19.3.0\lib\net45\Oracle.ManagedDataAccess.EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -109,6 +109,7 @@
     <Compile Include="Models\AspNetPermissions.cs" />
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
+    <Compile Include="Models\ProdutoEmpresa.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\ImpressoraListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\NivelArmazenagemPesquisaModalListaLinhaTabela.cs" />
@@ -118,12 +119,15 @@
     <Compile Include="Models\DataTablesCtx\ProdutoPesquisaModalListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\LogEtiquetagemListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\RelatorioRastreioPecaListaLinhaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\RelatorioResumoProducaoConferenciaListRow.cs" />
+    <Compile Include="Models\DataTablesCtx\RelatorioResumoProducaoRecebimentoListRow.cs" />
     <Compile Include="Models\FilterCtx\ImpressoraListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\ProdutoPesquisaModalFiltro.cs" />
     <Compile Include="Models\FilterCtx\LogEtiquetagemListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\RelatorioRastreioPecaListaFiltro.cs" />
     <Compile Include="Models\DataTablesCtx\UsuarioListaLinhaTabela.cs" />
     <Compile Include="Models\EmpresaConfig.cs" />
+    <Compile Include="Models\FilterCtx\RelatorioResumoProducaoFilter.cs" />
     <Compile Include="Models\FilterCtx\UsuarioListaFiltro.cs" />
     <Compile Include="Models\LogEtiquetagem.cs" />
     <Compile Include="Models\LoteConferencia.cs" />
@@ -205,6 +209,7 @@
     <Compile Include="Repository\GeneralCtx\ProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\ProdutoEmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoConferenciaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoEtiquetagemRepository.cs" />

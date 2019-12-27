@@ -16,10 +16,12 @@ using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using static FWLog.Data.Repository.GeneralCtx.LoteRepository;
 using static FWLog.Services.Services.EtiquetaService;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -498,7 +500,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ChaveAcesso = notaFiscal.ChaveAcesso,
                 NumeroNotaFiscal = notaFiscal.Numero.ToString(),
                 StatusNotaFiscal = notaFiscal.NotaFiscalStatus.ToString(),
-                Fornecedor = string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.RazaoSocial),                
+                Fornecedor = string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.RazaoSocial),
                 DataCompra = notaFiscal.DataEmissao.ToString("dd/MM/yyyy"),
                 PrazoRecebimento = notaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
                 FornecedorCNPJ = notaFiscal.Fornecedor.CNPJ.Substring(0, 2) + "." + notaFiscal.Fornecedor.CNPJ.Substring(2, 3) + "." + notaFiscal.Fornecedor.CNPJ.Substring(5, 3) + "/" + notaFiscal.Fornecedor.CNPJ.Substring(8, 4) + "-" + notaFiscal.Fornecedor.CNPJ.Substring(12, 2),
@@ -770,6 +772,7 @@ namespace FWLog.Web.Backoffice.Controllers
             //Captura a quantidade do item (peça) da nota e da conferência.
             var referenciaNota = _uow.NotaFiscalItemRepository.ObterPorItem(lote.IdNotaFiscal, produto.IdProduto);
             var referenciaConferencia = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, produto.IdProduto);
+            ProdutoEmpresa empresaProduto = _uow.ProdutoEmpresaRepository.ObterPorProdutoEmpresa(produto.IdProduto, IdEmpresa);
 
             int quantidadeNota = 0;
             int quantidadeConferida = 0;
@@ -803,13 +806,22 @@ namespace FWLog.Web.Backoffice.Controllers
                 Embalagem = "",
                 Unidade = "",
                 Multiplo = produto.MultiploVenda,
-                QuantidadeEstoque = produto.SaldoArmazenagem,
-                Localizacao = produto.EnderecoSeparacao,
+                QuantidadeEstoque = empresaProduto == null ? 0 : empresaProduto.SaldoArmazenagem,
                 QuantidadeNaoConferida = quantidadeNaoConferida,
                 QuantidadeConferida = quantidadeConferida,
-                EnviarPicking = produto.SaldoArmazenagem == 0 ? true : false,
                 InicioConferencia = DateTime.Now.ToString()
             };
+
+            if (empresaProduto == null || (empresaProduto != null && empresaProduto.EnderecoArmazenagem == null))
+            {
+                model.Localizacao = string.Empty;
+                model.EnviarPicking = true;
+            }
+            else
+            {
+                model.Localizacao = empresaProduto.EnderecoArmazenagem.Codigo;
+                model.EnviarPicking = empresaProduto.SaldoArmazenagem == 0 ? true : false;
+            }
 
             string json = JsonConvert.SerializeObject(model);
 
@@ -1048,7 +1060,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Ocorreu um erro. Tente novamente."
+                    Message = e is BusinessException ? e.Message : "Não foi possível comunicar a finalização da tratativa de divergência com o Sankhya."
                 }, JsonRequestBehavior.DenyGet);
             }
         }
@@ -1162,15 +1174,98 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Não foi possível comunicar o registro da conferência com o Sankhya."
+                    Message = e is BusinessException ? e.Message : "Não foi possível comunicar a finalização da conferência com o Sankhya."
                 });
             }
 
             return Json(new AjaxGenericResultModel
             {
                 Success = true,
-                Message = "Finalização da conferência realizado com sucesso. Estoque atualizado."
+                Message = "Finalização da conferência realizada com sucesso."
             });
         }
+
+        [HttpGet]
+        public ActionResult RelatorioResumoProducao()
+        {
+            return View(new RelatorioResumoProducaoViewModel());
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
+        public ActionResult ResumoProducaoRecebimentoPageData(DataTableFilter<RelatorioResumoProducaoFilterViewModel> model)
+        {
+            //model.CustomFilter.IdUsuario = "9b94e2d8-cc77-4e0b-abdc-eaff0ae1e5cb";
+
+            //model.CustomFilter.DataRecebimentoMinima = DateTime.Now.AddDays(-10);
+
+            var filter = new RelatorioResumoProducaoFilter
+            {
+                DateMin = model.CustomFilter.DataRecebimentoMinima,
+                DateMax = model.CustomFilter.DataRecebimentoMaxima,
+                UserId = model.CustomFilter.IdUsuario,
+                IdEmpresa = IdEmpresa
+            };
+
+            int total = _uow.LoteRepository.Todos().Select(x => x.IdUsuarioRecebimento).Distinct().Count();
+
+            var list = _uow.LoteRepository.ResumoProducaoRecebimento(filter).Select(x => new RelatorioResumoProducaoRecebimentoListItemViewModel
+            {
+                NomeUsuario = x.Nome,
+                NotasRecebidas = x.NOTASRECEBIDAS,
+                NotasRecebidasUsuario = x.NOTASRECEBIDASUSUARIO,
+                VolumesRecebidos = x.VOLUMESRECEBIDOS,
+                VolumesRecebidosUsuario = x.VOLUMESRECEBIDOSUSUARIO,
+                Percentual = x.PERCENTUAL,
+                Ranking = x.RANKING
+            });
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = total,
+                RecordsFiltered = list.Count(),
+                Data = list
+            });
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
+        public ActionResult ResumoProducaoConferenciaPageData(DataTableFilter<RelatorioResumoProducaoFilterViewModel> model)
+        {
+            //model.CustomFilter.IdUsuario = "9b94e2d8-cc77-4e0b-abdc-eaff0ae1e5cb";
+
+            //model.CustomFilter.DataRecebimentoMinima = DateTime.Now.AddDays(-10);
+
+            var filter = new RelatorioResumoProducaoFilter
+            {
+                DateMin = model.CustomFilter.DataRecebimentoMinima,
+                DateMax = model.CustomFilter.DataRecebimentoMaxima,
+                UserId = model.CustomFilter.IdUsuario,
+                IdEmpresa = IdEmpresa
+            };
+
+            int total = _uow.LoteConferenciaRepository.Todos().Select(x => x.IdUsuarioConferente).Distinct().Count();
+
+            var list = _uow.LoteConferenciaRepository.ResumoProducaoConferencia(filter).Select(x => new RelatorioResumoProducaoConferenciaListItemViewModel
+            {
+                NomeUsuario = x.Nome,
+                LotesRecebidos = x.LOTESRECEBIDOS,
+                LotesRecebidosUsuario = x.LOTESRECEBIDASUSUARIO,
+                PecasRecebidas = x.PECASRECEBIDAS,
+                PecasRecebidasUsuario = x.PECASRECEBIDASUSUARIO,
+                Percentual = x.PERCENTUAL,
+                Ranking = x.RANKING
+            });
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = total,
+                RecordsFiltered = list.Count(),
+                Data = list
+            });
+        }
+
     }
 }

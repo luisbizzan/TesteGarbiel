@@ -53,6 +53,8 @@ namespace FWLog.Data
         public virtual DbSet<LogEtiquetagem> LogEtiquetagem { get; set; }
         public virtual DbSet<Armazenagem> Armazenagem { get; set; }
 
+        public virtual DbSet<ProdutoEmpresa> ProdutoEmpresa { get; set; }
+
         public IAuditLog AuditLog { get; private set; }
 
         public Entities(IAuditLog auditLog)
