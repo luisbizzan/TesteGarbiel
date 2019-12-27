@@ -21,8 +21,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using static FWLog.Data.Repository.GeneralCtx.LoteRepository;
-using static FWLog.Services.Services.EtiquetaService;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -1192,13 +1190,9 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ListarResumoProducao)]
         public ActionResult ResumoProducaoRecebimentoPageData(DataTableFilter<RelatorioResumoProducaoFilterViewModel> model)
         {
-            //model.CustomFilter.IdUsuario = "9b94e2d8-cc77-4e0b-abdc-eaff0ae1e5cb";
-
-            //model.CustomFilter.DataRecebimentoMinima = DateTime.Now.AddDays(-10);
-
             var filter = new RelatorioResumoProducaoFilter
             {
                 DateMin = model.CustomFilter.DataRecebimentoMinima,
@@ -1230,13 +1224,9 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ListarResumoProducao)]
         public ActionResult ResumoProducaoConferenciaPageData(DataTableFilter<RelatorioResumoProducaoFilterViewModel> model)
         {
-            //model.CustomFilter.IdUsuario = "9b94e2d8-cc77-4e0b-abdc-eaff0ae1e5cb";
-
-            //model.CustomFilter.DataRecebimentoMinima = DateTime.Now.AddDays(-10);
-
             var filter = new RelatorioResumoProducaoFilter
             {
                 DateMin = model.CustomFilter.DataRecebimentoMinima,

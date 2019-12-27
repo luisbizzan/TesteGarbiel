@@ -69,7 +69,9 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
     public class RelatorioResumoProducaoFilterViewModel
     {
+        [Display(Name = "Usuário")]
         public string IdUsuario { get; set; }
+        public string NomeUsuario { get; set; }
 
         [Display(Name = "Data")]
         public DateTime DataRecebimentoMinima { get; set; } = DateTime.Today;
