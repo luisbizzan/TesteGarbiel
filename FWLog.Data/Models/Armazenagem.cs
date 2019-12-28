@@ -29,7 +29,8 @@ namespace FWLog.Data.Models
         [StringLength(128)]
         public string IdUsuario { get; set; }
         public DateTime DataArmazenagem { get; set; }
-        public decimal? Peso { get; set; }
+        public decimal? PesoUnitario { get; set; }
+        public decimal? PesoTotal { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }

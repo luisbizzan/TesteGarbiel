@@ -19,9 +19,9 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public void AtualizarSaldoArmazenagem(long idProduto, long idEmpresa, int saldoArmazenagem)
         {
-            string sql = "UPDATE \"ProdutoEmpresa\" SET \"SaldoArmazenagem\" = \"SaldoArmazenagem\" + :SALDOARMAZENAGEM WHERE \"IdProduto\" = :IDPRODUTO AND \"IdEmpresa\" = :IDEMPRESA ";
+            string sql = "UPDATE \"ProdutoEmpresa\" SET \"Saldo\" = \"Saldo\" + :SALDO WHERE \"IdProduto\" = :IDPRODUTO AND \"IdEmpresa\" = :IDEMPRESA ";
 
-            Entities.Database.ExecuteSqlCommand(sql, new OracleParameter(":SALDOARMAZENAGEM", saldoArmazenagem), new OracleParameter(":IDPRODUTO", idProduto), new OracleParameter(":IDEMPRESA", idEmpresa));
+            Entities.Database.ExecuteSqlCommand(sql, new OracleParameter(":SALDO", saldoArmazenagem), new OracleParameter(":IDPRODUTO", idProduto), new OracleParameter(":IDEMPRESA", idEmpresa));
         }
     }
 }

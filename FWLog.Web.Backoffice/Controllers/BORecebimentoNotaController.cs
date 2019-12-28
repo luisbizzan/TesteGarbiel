@@ -467,8 +467,8 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ValidateModel(viewModel);
 
-                var request = Mapper.Map<ImprimirEtiquetaVolumeRecebimento>(viewModel);
-                _etiquetaService.ImprimirEtiquetaVolumeRecebimento(request);
+                Lote lote = _uow.LoteRepository.ObterLoteNota(viewModel.IdNotaFiscal);
+                _etiquetaService.ImprimirEtiquetaVolumeRecebimento(lote.IdLote, viewModel.IdImpressora);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -842,7 +842,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Embalagem = "",
                 Unidade = "",
                 Multiplo = produto.MultiploVenda,
-                QuantidadeEstoque = empresaProduto == null ? 0 : empresaProduto.SaldoArmazenagem,
+                QuantidadeEstoque = empresaProduto == null ? 0 : empresaProduto.Saldo,
                 QuantidadeNaoConferida = quantidadeNaoConferida,
                 QuantidadeConferida = quantidadeConferida,
                 InicioConferencia = DateTime.Now.ToString()
@@ -856,7 +856,7 @@ namespace FWLog.Web.Backoffice.Controllers
             else
             {
                 model.Localizacao = empresaProduto.EnderecoArmazenagem.Codigo;
-                model.EnviarPicking = empresaProduto.SaldoArmazenagem == 0 ? true : false;
+                model.EnviarPicking = empresaProduto.Saldo == 0 ? true : false;
             }
 
             string json = JsonConvert.SerializeObject(model);

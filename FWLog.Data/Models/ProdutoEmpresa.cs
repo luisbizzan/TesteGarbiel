@@ -18,7 +18,7 @@ namespace FWLog.Data.Models
         public long IdEmpresa { get; set; }
 
         [Required]
-        public int SaldoArmazenagem { get; set; }
+        public int Saldo { get; set; }
 
         [Index]
         public long? IdEnderecoArmazenagem { get; set; }
