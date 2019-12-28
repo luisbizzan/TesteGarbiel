@@ -33,11 +33,16 @@
     $("#finalizarConferencia").click(function () {
         confirmarfinalizarConferencia();
     });
+
+    $("#exibirDivergencia").click(function () {
+        exibirDivergencia();
+    });
+
 })();
 
 function carregarDadosReferenciaConferencia() {
     let referencia = $("#Referencia").val();
-   
+
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ObterDadosReferenciaConferencia",
         cache: false,
@@ -126,7 +131,18 @@ function confirmarfinalizarConferencia() {
     var $modal = $("#modalConferencia");
     $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoFinalizarConferencia/" + view_modal.idLote, function () {
         $modal.modal();
-    }); 
+    });
+}
+
+function exibirDivergencia() {
+    debugger
+    let $modal = $("#modalConferencia");
+
+    $(".close").click();
+
+    $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoDivergenciaConferencia/" + view_modal.idLote, function () {
+        $modal.modal();
+    });
 }
 
 function finalizarConferencia() {
