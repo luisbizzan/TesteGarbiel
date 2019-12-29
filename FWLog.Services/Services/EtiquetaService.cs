@@ -50,7 +50,7 @@ namespace FWLog.Services.Services
         public void ImprimirEtiquetaArmazenagemVolume(ImprimirEtiquetaArmazenagemVolume request)
         {
             Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
-            ProdutoEmpresa empresaProduto = _unitOfWork.ProdutoEmpresaRepository.ObterPorProdutoEmpresa(produto.IdProduto, request.IdEmpresa);
+            ProdutoEstoque empresaProduto = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, request.IdEmpresa);
 
             decimal multiplo = request.Multiplo ?? produto.MultiploVenda;
             string codReferencia = produto.CodigoBarras;

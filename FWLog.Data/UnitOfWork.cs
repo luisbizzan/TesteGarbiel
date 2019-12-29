@@ -49,7 +49,7 @@ namespace FWLog.Data
         private LoteConferenciaRepository _loteConferenciaRepository;
         private LogEtiquetagemRepository _loteEtiquetagemRepository;
         private ArmazenagemRepository _armazenagemRepository;
-        private ProdutoEmpresaRepository _produtoEmpresaRepository;
+        private ProdutoEstoqueRepository _produtoEstoqueRepository;
 
         public ArmazenagemRepository ArmazenagemRepository
         {
@@ -61,9 +61,9 @@ namespace FWLog.Data
             get => _loteEtiquetagemRepository ?? (_loteEtiquetagemRepository = new LogEtiquetagemRepository(_context));
         }
 
-        public ProdutoEmpresaRepository ProdutoEmpresaRepository
+        public ProdutoEstoqueRepository ProdutoEstoqueRepository
         {
-            get => _produtoEmpresaRepository ?? (_produtoEmpresaRepository = new ProdutoEmpresaRepository(_context));
+            get => _produtoEstoqueRepository ?? (_produtoEstoqueRepository = new ProdutoEstoqueRepository(_context));
         }
 
         public LoteConferenciaRepository LoteConferenciaRepository

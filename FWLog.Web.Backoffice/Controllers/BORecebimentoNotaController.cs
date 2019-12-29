@@ -827,7 +827,7 @@ namespace FWLog.Web.Backoffice.Controllers
             //Captura a quantidade do item (peça) da nota e da conferência.
             var referenciaNota = _uow.NotaFiscalItemRepository.ObterPorItem(lote.IdNotaFiscal, produto.IdProduto);
             var referenciaConferencia = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, produto.IdProduto);
-            ProdutoEmpresa empresaProduto = _uow.ProdutoEmpresaRepository.ObterPorProdutoEmpresa(produto.IdProduto, IdEmpresa);
+            ProdutoEstoque empresaProduto = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, IdEmpresa);
 
             int quantidadeNota = 0;
             int quantidadeConferida = 0;

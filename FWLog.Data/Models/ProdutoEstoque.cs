@@ -3,18 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
 {
-    public class ProdutoEmpresa
+    public class ProdutoEstoque
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
         [Required]
-        public long IdProdutoEmpresa { get; set; }
-
-        [Required]
-        [Index]
         public long IdProduto { get; set; }
 
+        [Key]
         [Required]
-        [Index]
         public long IdEmpresa { get; set; }
 
         [Required]
