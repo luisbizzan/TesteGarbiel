@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
 {
-    public class Armazenagem
+    public class ProdutoEndereco
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
-        public long IdArmazenagem { get; set; }
+        public long IdProdutoEndereco { get; set; }
         [Required]
         [Index]
         public long IdEmpresa { get; set; }
@@ -27,8 +27,8 @@ namespace FWLog.Data.Models
         [Required]
         [Index]
         [StringLength(128)]
-        public string IdUsuario { get; set; }
-        public DateTime DataArmazenagem { get; set; }
+        public string IdUsuarioInstalacao { get; set; }
+        public DateTime DataInstalacao { get; set; }
         public decimal? PesoUnitario { get; set; }
         public decimal? PesoTotal { get; set; }
 
@@ -42,7 +42,7 @@ namespace FWLog.Data.Models
         public virtual Lote Produto { get; set; }
         [ForeignKey(nameof(IdTipoArmazenagem))]
         public virtual TipoArmazenagem TipoArmazenagem { get; set; }
-        [ForeignKey(nameof(IdUsuario))]
+        [ForeignKey(nameof(IdUsuarioInstalacao))]
         public virtual AspNetUsers Usuario { get; set; }
     }
 }

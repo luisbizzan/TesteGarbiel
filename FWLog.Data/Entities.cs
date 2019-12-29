@@ -51,7 +51,7 @@ namespace FWLog.Data
         public virtual DbSet<LoteDivergenciaStatus> LoteDivergenciaStatus { get; set; }
         public virtual DbSet<LoteConferencia> LoteConferencia { get; set; }
         public virtual DbSet<LogEtiquetagem> LogEtiquetagem { get; set; }
-        public virtual DbSet<Armazenagem> Armazenagem { get; set; }
+        public virtual DbSet<ProdutoEndereco> ProdutoEndereco { get; set; }
         public virtual DbSet<ProdutoEstoque> ProdutoEstoque { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
