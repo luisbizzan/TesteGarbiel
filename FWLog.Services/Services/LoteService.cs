@@ -412,7 +412,7 @@ namespace FWLog.Services.Services
                     qtdNF = qtdNF - divergencia.QuantidadeDivergenciaMenos.Value;
                 }
 
-                _uow.ProdutoEmpresaRepository.AtualizarSaldoArmazenagem(nfItem.Key, notafiscal.IdEmpresa, qtdNF);
+                _uow.ProdutoEstoqueRepository.AtualizarSaldoArmazenagem(nfItem.Key, notafiscal.IdEmpresa, qtdNF);
             }
         }
 

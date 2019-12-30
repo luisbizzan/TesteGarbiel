@@ -252,6 +252,25 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        public ActionResult ResumoDivergenciaConferencia(long id)
+        {
+            var model = new ResumoDivergenciaConferenciaViewModel
+            {
+                IdNotaFiscal = _uow.LoteRepository.GetById(id).IdNotaFiscal,
+                Divergencias = _uow.LoteRepository.ObterDivergencias(id).Select(x => new ResumoDivergenciaConferenciaItemViewModel
+                {
+                    Referencia = x.Referencia,
+                    QuantidadeConferencia = x.QuantidadeConferida,
+                    QuantidadeNotaFiscal = x.QuantidadeNota,
+                    QuantidadeMais = x.Mais,
+                    QuantidadeMenos = x.Menos
+                }).ToList()
+            };
+
+            return View(model);
+        }
+
         [HttpPost]
         public ActionResult DownloadRelatorioNotas(BODownloadRelatorioNotasViewModel viewModel)
         {
@@ -467,8 +486,8 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ValidateModel(viewModel);
 
-                var request = Mapper.Map<ImprimirEtiquetaVolumeRecebimento>(viewModel);
-                _etiquetaService.ImprimirEtiquetaVolumeRecebimento(request);
+                Lote lote = _uow.LoteRepository.ObterLoteNota(viewModel.IdNotaFiscal);
+                _etiquetaService.ImprimirEtiquetaVolumeRecebimento(lote.IdLote, viewModel.IdImpressora);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -808,7 +827,7 @@ namespace FWLog.Web.Backoffice.Controllers
             //Captura a quantidade do item (peça) da nota e da conferência.
             var referenciaNota = _uow.NotaFiscalItemRepository.ObterPorItem(lote.IdNotaFiscal, produto.IdProduto);
             var referenciaConferencia = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, produto.IdProduto);
-            ProdutoEmpresa empresaProduto = _uow.ProdutoEmpresaRepository.ObterPorProdutoEmpresa(produto.IdProduto, IdEmpresa);
+            ProdutoEstoque empresaProduto = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, IdEmpresa);
 
             int quantidadeNota = 0;
             int quantidadeConferida = 0;
@@ -842,7 +861,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Embalagem = "",
                 Unidade = "",
                 Multiplo = produto.MultiploVenda,
-                QuantidadeEstoque = empresaProduto == null ? 0 : empresaProduto.SaldoArmazenagem,
+                QuantidadeEstoque = empresaProduto == null ? 0 : empresaProduto.Saldo,
                 QuantidadeNaoConferida = quantidadeNaoConferida,
                 QuantidadeConferida = quantidadeConferida,
                 InicioConferencia = DateTime.Now.ToString()
@@ -856,7 +875,7 @@ namespace FWLog.Web.Backoffice.Controllers
             else
             {
                 model.Localizacao = empresaProduto.EnderecoArmazenagem.Codigo;
-                model.EnviarPicking = empresaProduto.SaldoArmazenagem == 0 ? true : false;
+                model.EnviarPicking = empresaProduto.Saldo == 0 ? true : false;
             }
 
             string json = JsonConvert.SerializeObject(model);
