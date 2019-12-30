@@ -135,7 +135,6 @@ function confirmarfinalizarConferencia() {
 }
 
 function exibirDivergencia() {
-    debugger
     let $modal = $("#modalConferencia");
 
     $(".close").click();
