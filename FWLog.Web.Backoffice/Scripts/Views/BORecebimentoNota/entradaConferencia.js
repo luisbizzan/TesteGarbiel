@@ -33,11 +33,16 @@
     $("#finalizarConferencia").click(function () {
         confirmarfinalizarConferencia();
     });
+
+    $("#exibirDivergencia").click(function () {
+        exibirDivergencia();
+    });
+
 })();
 
 function carregarDadosReferenciaConferencia() {
     let referencia = $("#Referencia").val();
-   
+
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ObterDadosReferenciaConferencia",
         cache: false,
@@ -122,13 +127,21 @@ function registrarConferencia() {
 }
 
 function confirmarfinalizarConferencia() {
+    $(".close").click();
+    var $modal = $("#modalConferencia");
+    $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoFinalizarConferencia/" + view_modal.idLote, function () {
+        $modal.modal();
+    });
+}
 
-    dart.modalAjaxConfirm.open({
-        title: 'Lote',
-        message: "Deseja realmente finalizar a conferência do lote?",  
-        url: HOST_URL + CONTROLLER_PATH + "FinalizarConferencia/" + view_modal.idLote,
-        onConfirm: finalizarConferencia
-    });   
+function exibirDivergencia() {
+    let $modal = $("#modalConferencia");
+
+    $(".close").click();
+
+    $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoDivergenciaConferencia/" + view_modal.idLote, function () {
+        $modal.modal();
+    });
 }
 
 function finalizarConferencia() {

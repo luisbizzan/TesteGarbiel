@@ -47,7 +47,6 @@
             $(".validacao-confirmar").text("Existem divergências não tratadas.");
             return;
         }
-
         $.ajax({
             url: HOST_URL + "BORecebimentoNota/TratarDivergencia",
             cache: false,
@@ -55,8 +54,7 @@
             data: $("#divergencias").serialize(),
             success: function (result) {
                 if (!result.Success) {
-                    $(".close").click();
-                    $("#dataTable").DataTable().ajax.reload();
+                    PNotify.error({ text: result.Message });
                 } else {
                     PNotify.success({ text: "Todas as divergências foram tratadas." });
                     $(".close").click();

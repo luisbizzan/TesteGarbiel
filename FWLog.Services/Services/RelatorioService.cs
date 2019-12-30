@@ -41,7 +41,7 @@ namespace FWLog.Services.Services
                 IdFornecedor = request.IdFornecedor,
                 Atraso = request.Atraso,
                 QuantidadePeca = request.QuantidadePeca,
-                Volume = request.Volume
+                QuantidadeVolume = request.Volume
             };
 
             byte[] relatorio = GerarRelatorioRecebimentoNotas(relatorioRequest);
@@ -62,7 +62,7 @@ namespace FWLog.Services.Services
             {
                 query = query.Where(x => x.IdLote == request.Lote);
             }
-
+                       
             if (request.Nota.HasValue)
             {
                 query = query.Where(x => x.NotaFiscal.Numero == request.Nota);
@@ -75,12 +75,12 @@ namespace FWLog.Services.Services
 
             if (request.QuantidadePeca.HasValue)
             {
-                query = query.Where(x => x.NotaFiscal.Quantidade == request.QuantidadePeca);
+                query = query.Where(x => x.QuantidadePeca == request.QuantidadePeca);
             }
 
-            if (request.Volume.HasValue)
+            if (request.QuantidadeVolume.HasValue)
             {
-                query = query.Where(x => x.QuantidadeVolume == request.Volume);
+                query = query.Where(x => x.QuantidadeVolume == request.QuantidadeVolume);
             }
 
             if (request.IdStatus.HasValue)
@@ -148,7 +148,7 @@ namespace FWLog.Services.Services
                         Fornecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
                         Status = item.LoteStatus.Descricao,
                         QauntidadeVolumes = item.QuantidadeVolume,
-                        QuantidadePeças = item.NotaFiscal.Quantidade,
+                        QuantidadePeca = item.QuantidadePeca,
                         Atraso = atraso.ToString(),
                         Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy")
                     };
@@ -244,7 +244,7 @@ namespace FWLog.Services.Services
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Transportadora: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.Transportadora.RazaoSocial);
+            paragraph.AddText(string.Concat(notaFiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notaFiscal.Transportadora.RazaoSocial));
 
             Lote lote = _unitiOfWork.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
             bool IsNotaRecebida = lote != null;
@@ -268,8 +268,8 @@ namespace FWLog.Services.Services
 
             row = tabela.AddRow();
             paragraph = row.Cells[0].AddParagraph();
-            paragraph.AddFormattedText("Quantidade: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.Quantidade.ToString());
+            paragraph.AddFormattedText("Qtd. Peças: ", TextFormat.Bold);
+            paragraph.AddText(IsNotaRecebida ? lote.QuantidadePeca.ToString() : notaFiscal.NotaFiscalItens.Sum(s => s.Quantidade).ToString());
             paragraph = row.Cells[1].AddParagraph();
             paragraph.AddFormattedText("Prazo: ", TextFormat.Bold);
             paragraph.AddText(notaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"));
@@ -288,7 +288,7 @@ namespace FWLog.Services.Services
             row = tabela.AddRow();
             paragraph = row.Cells[0].AddParagraph();
             paragraph.AddFormattedText("Volumes: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.Quantidade.ToString());
+            paragraph.AddText(IsNotaRecebida ? lote.QuantidadeVolume.ToString() : notaFiscal.Quantidade.ToString());
 
             paragraph = row.Cells[1].AddParagraph();
             paragraph.AddFormattedText("Volumes: ", TextFormat.Bold);

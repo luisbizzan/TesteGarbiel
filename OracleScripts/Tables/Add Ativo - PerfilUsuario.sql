@@ -1,1 +1,0 @@
-ALTER TABLE "PerfilUsuario" ADD "Ativo" INTEGER DEFAULT 1 NOT NULL;

@@ -81,6 +81,7 @@ namespace FWLog.AspNet.Identity
             public const string RegistrarRecebimento = "RecebimentoRegistrar";
             public const string TratarDivergencia = "RecebimentoTratarDivergencia";
             public const string RelatorioRastreioPeca = "RelatorioRecebimentoRastreioPeca";
+            public const string ListarResumoProducao = "ListarResumoProducao";
 
             public Recebimento() : base(Display.FromString("Recebimento de Notas Fiscais"))
             {
@@ -88,6 +89,7 @@ namespace FWLog.AspNet.Identity
                 Register(RegistrarRecebimento, Display.FromString("Registrar Recebimento"));
                 Register(TratarDivergencia, Display.FromString("Tratar Divergência"));
                 Register(RelatorioRastreioPeca, Display.FromString("Relatório Rastreio de Peça"));
+                Register(ListarResumoProducao, Display.FromString("Listar Resumo Produção"));
             }
         }
 
@@ -158,6 +160,39 @@ namespace FWLog.AspNet.Identity
             public Empresa() : base(Display.FromString("Empresas"))
             {
                 Register(EditarConfiguracao, Display.FromString("Editar Configurações"));
+            }
+        }
+
+        public class ColetorAcesso: PermissionGroupBuildItem
+        {
+            public const string Login = "RFAcessoLogin";
+
+            public ColetorAcesso() : base(Display.FromString("Acesso - Coletor"))
+            {
+                Register(Login, Display.FromString("Acessar Coletor"));
+            }
+        }
+
+        public class RecebimentoEtiqueta : PermissionGroupBuildItem
+        {
+            public const string ImprimirEtiquetaLote = "ImprimirEtiquetaLote";
+
+            public RecebimentoEtiqueta() : base(Display.FromString("Etiqueta de Lote"))
+            {
+                Register(ImprimirEtiquetaLote, Display.FromString("Imprimir Etiqueta de Lote"));
+            }
+        }
+
+        public class RecebimentoEtiquetaIndividualEPersonalizada : PermissionGroupBuildItem
+        {
+            public const string Listar = "EtiquetaIndividualEPersonalizadaListar";
+            public const string Imprimir = "EtiquetaIndividualEPersonalizadaImprimir";
+            
+
+            public RecebimentoEtiquetaIndividualEPersonalizada() : base(Display.FromString("Etiqueta Individual e Personalizada"))
+            {
+                Register(Listar, Display.FromString("Listar Etiqueta Individual e Personalizada"));
+                Register(Imprimir, Display.FromString("Imprimir Etiqueta Individual e Personalizada"));
             }
         }
     }

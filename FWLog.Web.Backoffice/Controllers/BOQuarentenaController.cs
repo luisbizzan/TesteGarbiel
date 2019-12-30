@@ -1,5 +1,4 @@
-﻿using FWLog.AspNet.Identity;
-using FWLog.Data;
+﻿using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
@@ -39,7 +38,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     status = new SelectList(_uow.QuarentenaStatusRepository.Todos().Select(x => new SelectListItem
                     {
-                        Value = x.IdQuarentenaStatus.ToString(),
+                        Value = x.IdQuarentenaStatus.GetHashCode().ToString(),
                         Text = x.Descricao
                     }), "Value", "Text");
                 }
@@ -135,7 +134,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     DataAbertura = x.DataAbertura.ToString("dd/MM/yyyy"),
                     DataEncerramento = x.DataEncerramento.HasValue ? x.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
                     Atraso = x.DataAbertura.Subtract(x.DataEncerramento ?? DateTime.Now).Days,
-                    Status = x.QuarentenaStatus.Descricao
+                    Status = x.QuarentenaStatus.Descricao,
+                    IdQuarentenaStatus = (int)x.IdQuarentenaStatus
                 });
 
             if (model.CustomFilter.Atraso.HasValue)
@@ -179,10 +179,9 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult ExibirModalDetalhesQuarentena(long id)
+        public ActionResult DetalhesQuarentena(long id)
         {
             setViewBags();
-
             var entidade = _uow.QuarentenaRepository.GetById(id);
 
             var model = new DetalhesQuarentenaViewModel
@@ -194,18 +193,60 @@ namespace FWLog.Web.Backoffice.Controllers
                 Observacao = entidade.Observacao
             };
 
+            List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.Todos().Where(x => x.IdLote == entidade.IdLote).ToList();
 
-            return PartialView("DetalhesQuarentena", model);
+            foreach (LoteDivergencia divergencia in loteDivergencias)
+            {
+                NotaFiscalItem nfItem = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).FirstOrDefault();
+
+                var divergenciaItem = new DivergenciaItemViewModel
+                {
+                    Referencia = divergencia.Produto.Referencia,
+                    QuantidadeConferencia = divergencia.QuantidadeConferencia,
+                    QuantidadeMais = divergencia.QuantidadeConferenciaMais.GetValueOrDefault(),
+                    QuantidadeMenos = divergencia.QuantidadeConferenciaMenos.GetValueOrDefault(),
+                    QuantidadeNotaFiscal = nfItem?.Quantidade ?? 0,
+                    QuantidadeMaisTratado = divergencia.QuantidadeDivergenciaMais.GetValueOrDefault(),
+                    QuantidadeMenosTratado = divergencia.QuantidadeDivergenciaMenos.GetValueOrDefault()
+                };
+
+                model.Divergencias.Add(divergenciaItem);
+            }
+
+            return View(model);
         }
 
         [HttpPost]
-        public ActionResult ExibirModalDetalhesQuarentena(DetalhesQuarentenaViewModel model)
+        public JsonResult DetalhesQuarentena(DetalhesQuarentenaViewModel model)
         {
+            ValidateModel(model);
+
+            string mensagemErro = null;
+
+            if (model.IdStatus == QuarentenaStatusEnum.Finalizado)
+            {
+                if (string.IsNullOrEmpty(model.CodigoConfirmacao))
+                {
+                    ModelState.AddModelError(nameof(model.CodigoConfirmacao), (mensagemErro = "O código é obrigatório para finalizar."));
+                }
+                else
+                {
+                    bool existeCod = _uow.QuarentenaRepository.Any(x => x.IdQuarentena == model.IdQuarentena && x.CodigoConfirmacao == model.CodigoConfirmacao);
+
+                    if (!existeCod)
+                    {
+                        ModelState.AddModelError(nameof(model.CodigoConfirmacao), (mensagemErro = "O código está incorreto!"));
+                    }
+                }
+            }
+
             if (!ModelState.IsValid)
             {
-                setViewBags();
-
-                return PartialView("DetalhesQuarentena", model);
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = mensagemErro ?? Resources.CommonStrings.RegisterEditedErrorMessage
+                });
             }
 
             try
@@ -243,17 +284,21 @@ namespace FWLog.Web.Backoffice.Controllers
                     NewEntity = entidade
                 });
 
-                Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
-                return RedirectToAction("Index");
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterEditedSuccessMessage
+                });
             }
             catch (Exception ex)
             {
                 _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
 
-                setViewBags();
-
-                Notify.Error(Resources.CommonStrings.RegisterEditedErrorMessage);
-                return PartialView("DetalhesQuarentena", model);
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = Resources.CommonStrings.RegisterEditedErrorMessage
+                });
             }
         }
 
@@ -264,11 +309,20 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ValidateModel(viewModel);
 
+                var userInfo = new BackOfficeUserInfo();
+
+                var userLog = new UserLog
+                {
+                    IP = userInfo.IP,
+                    UserId = userInfo.UserId
+                };
+
                 var request = new TermoResponsabilidadeRequest
                 {
                     IdQuarentena = viewModel.IdQuarentena,
                     IdImpressora = viewModel.IdImpressora,
-                    NomeUsuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome
+                    NomeUsuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome,
+                    UserLog = userLog
                 };
 
                 _quarentenaService.ImprimirTermoResponsabilidade(request);

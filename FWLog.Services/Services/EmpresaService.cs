@@ -72,6 +72,7 @@ namespace FWLog.Services.Services
                     empresaConfig.Empresa.RazaoSocial = empInt.RAZAOSOCIAL;
                     empresaConfig.Empresa.Sigla = empInt.AD_UNIDABREV == null ? empInt.NOMEFANTASIA.Substring(0, 3) : empInt.AD_UNIDABREV;//TODO temporário
                     empresaConfig.Empresa.Telefone = empInt.TELEFONE;
+                    empresaConfig.Empresa.TelefoneSAC = empInt.TELEFONE; //TODO Aguardando campo correto Sankhya.
                     empresaConfig.IdEmpresaTipo = empInt.CODEMPMATRIZ == empInt.CODEMP ? EmpresaTipoEnum.Matriz : EmpresaTipoEnum.Filial;
                   
                     if (empresaNova)

@@ -1,0 +1,1 @@
+ALTER TABLE "NivelArmazenagem" ADD CONSTRAINT "NivelArmazenagem_UN" UNIQUE ("IdEmpresa","Descricao");

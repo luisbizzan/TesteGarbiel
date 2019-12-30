@@ -21,5 +21,13 @@ namespace ExtensionMethods.String
                 return Res.No;
             }
         }
+
+        public static string PadBoth(this string source, int length, char paddingChar = (char)32)
+        {
+            int spaces = length - source.Length;
+            int padLeft = spaces / 2 + source.Length;
+
+            return source.PadLeft(padLeft, paddingChar).PadRight(length, paddingChar);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using ExtensionMethods.List;
+﻿using Dapper;
+using ExtensionMethods.List;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
@@ -33,7 +34,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                          join l in Entities.Lote on lc.IdLote equals l.IdLote
                          join n in Entities.NotaFiscal on l.IdNotaFiscal equals n.IdNotaFiscal
                          join p in Entities.Produto on lc.IdProduto equals p.IdProduto
-                         where n.IdEmpresa == filter.IdEmpresa 
+                         where n.IdEmpresa == filter.IdEmpresa
                          && l.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento
                          && l.IdLoteStatus != LoteStatusEnum.Recebido
                          && l.IdLoteStatus != LoteStatusEnum.Conferencia
@@ -72,6 +73,28 @@ namespace FWLog.Data.Repository.GeneralCtx
         public bool ExisteConferencia(long idLote)
         {
             return Entities.LoteConferencia.Any(a => a.IdLote == idLote);
+        }
+
+        public IQueryable<LoteConferencia> Todos()
+        {
+            return Entities.LoteConferencia;
+        }
+
+        public List<RelatorioResumoProducaoConferenciaListRow> ResumoProducaoConferencia(RelatorioResumoProducaoFilter request)
+        {
+            string stringQuery = "SELECT rel.*, ROWNUM Ranking FROM( SELECT perfilUsu.\"Nome\", metricasUsu.LotesRecebidasUsuario, metricasUsu.PecasRecebidasUsuario, totalLote.LotesRecebidos, totalLote.PecasRecebidas, TRUNC((metricasUsu.PecasRecebidasUsuario / totalLote.PecasRecebidas) * 100, 3) Percentual FROM ( SELECT lc.\"IdUsuarioConferente\" UsuarioId, COUNT(DISTINCT(lc.\"IdLote\")) LotesRecebidasUsuario, SUM(lc.\"Quantidade\") PecasRecebidasUsuario FROM \"LoteConferencia\" lc, \"Lote\" l, \"NotaFiscal\" n WHERE lc.\"IdLote\" = l.\"IdLote\" AND l.\"IdNotaFiscal\" = n.\"IdNotaFiscal\" AND n.\"IdEmpresa\" = :ID_EMP AND lc.\"DataHoraInicio\" >= :DATA_MIN AND (:DATA_MAX IS NULL OR lc.\"DataHoraInicio\" <= :DATA_MAX) AND (:ID_USU IS NULL OR lc.\"IdUsuarioConferente\" = :ID_USU) GROUP BY lc.\"IdUsuarioConferente\") metricasUsu, ( SELECT COUNT(DISTINCT(lc.\"IdLote\")) LotesRecebidos, SUM(lc.\"Quantidade\") PecasRecebidas FROM \"LoteConferencia\" lc, \"Lote\" l, \"NotaFiscal\" n WHERE lc.\"IdLote\" = l.\"IdLote\" AND l.\"IdNotaFiscal\" = n.\"IdNotaFiscal\" AND n.\"IdEmpresa\" = :ID_EMP AND lc.\"DataHoraInicio\" >= :DATA_MIN AND (:DATA_MAX IS NULL OR lc.\"DataHoraInicio\" <= :DATA_MAX)) totalLote, \"PerfilUsuario\" perfilUsu WHERE perfilUsu.\"UsuarioId\" = metricasUsu.UsuarioId ORDER BY Percentual DESC) rel";
+
+            var param = new
+            {
+                ID_USU = request.UserId,
+                DATA_MIN = request.DateMin,
+                DATA_MAX = request.DateMax,
+                ID_EMP = request.IdEmpresa
+            };
+
+            var list = Entities.Database.Connection.Query<RelatorioResumoProducaoConferenciaListRow>(stringQuery, param).ToList();
+
+            return list;
         }
     }
 }

@@ -142,20 +142,20 @@ namespace FWLog.Services.Integracao
         {
             var emptyNs = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
 
-            XmlSerializer x = new XmlSerializer(root.GetType());
+            XmlSerializer serializer = new XmlSerializer(root.GetType());
             XmlWriterSettings settings = new XmlWriterSettings
             {
                 Indent = true,
                 OmitXmlDeclaration = true
             };
 
-            string confirmarNotaXML = string.Empty;
-            using (XmlWriter xmlWriter = XmlWriter.Create(confirmarNotaXML, settings))
+            StringBuilder stringXML = new StringBuilder();
+            using (XmlWriter xmlWriter = XmlWriter.Create(stringXML, settings))
             {
-                x.Serialize(xmlWriter, root, emptyNs);
+                serializer.Serialize(xmlWriter, root, emptyNs);
             }
 
-            return confirmarNotaXML;
+            return stringXML.ToString();
         }
 
         public async Task<string> ExecutarServicoSankhya(string xml, string serviceName, string service)
@@ -164,7 +164,7 @@ namespace FWLog.Services.Integracao
 
             contentString.Headers.Add("Cookie", string.Format("JSESSIONID={0}", Instance.GetToken()));
 
-            var uri = string.Format("{0}{1}/service.sbr?serviceName={2}", BaseURL, service, serviceName);
+            var uri = string.Format("{0}{1}/service.sbr?serviceName={2}&mgeSession={3}", BaseURL, service, serviceName, Instance.GetToken());
 
             HttpResponseMessage httpResponse = await HttpService.Instance.PostAsync(uri, contentString);
 
@@ -191,7 +191,7 @@ namespace FWLog.Services.Integracao
 
             StringContent contentString = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-            var uri = string.Format("{0}serviceName=DbExplorerSP.executeQuery&mgeSession={1}", BaseURL, Instance.GetToken());
+            var uri = string.Format("{0}mge/service.sbr?serviceName=DbExplorerSP.executeQuery&mgeSession={1}", BaseURL, Instance.GetToken());
 
             HttpResponseMessage httpResponse = await HttpService.Instance.PostAsync(uri, contentString);
 
@@ -358,7 +358,7 @@ namespace FWLog.Services.Integracao
 
             string rootXML = await Instance.ExecutarServicoSankhya(confirmarNotaXML, "CACSP.confirmarNota", "mgecom");
 
-            IncluirNotaFiscalResposta resposta = DeserializarXML<IncluirNotaFiscalResposta>(rootXML);//TODO pegar retorno de exemplo
+            ConfirmarNotaFiscalResposta resposta = DeserializarXML<ConfirmarNotaFiscalResposta>(rootXML);
 
             if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria?.CodigoIntegracao == null)
             {
