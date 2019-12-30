@@ -19,6 +19,7 @@ namespace FWLog.Web.Backoffice.Models.RecebimentoEtiquetaIndividualPersonalizada
 
     public class RecebimentoEtiquetaIndividualPersonalizadaListItemViewModel
     {
+        [Display(Name = "Id")]
         public long IdLogEtiquetagem { get; set; }
 
         [Display(Name = "Referência")]
