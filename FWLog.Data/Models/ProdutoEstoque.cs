@@ -5,11 +5,11 @@ namespace FWLog.Data.Models
 {
     public class ProdutoEstoque
     {
-        [Key]
+        [Key, Column(Order = 0)]
         [Required]
         public long IdProduto { get; set; }
 
-        [Key]
+        [Key, Column(Order = 1)]
         [Required]
         public long IdEmpresa { get; set; }
 
