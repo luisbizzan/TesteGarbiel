@@ -191,7 +191,7 @@ namespace FWLog.Services.Integracao
 
             StringContent contentString = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-            var uri = string.Format("{0}serviceName=DbExplorerSP.executeQuery&mgeSession={1}", BaseURL, Instance.GetToken());
+            var uri = string.Format("{0}mge/service.sbr?serviceName=DbExplorerSP.executeQuery&mgeSession={1}", BaseURL, Instance.GetToken());
 
             HttpResponseMessage httpResponse = await HttpService.Instance.PostAsync(uri, contentString);
 
