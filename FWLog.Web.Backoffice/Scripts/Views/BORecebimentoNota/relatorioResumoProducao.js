@@ -38,8 +38,6 @@
     $(document.body).on('click', "#pesquisar", function (e) {
         e.preventDefault();
 
-        debugger
-
         var tipo = $("input[name='TipoRelatorio']:checked").val();
         var data = $('#Filter_DataRecebimentoMinima').val()
 
