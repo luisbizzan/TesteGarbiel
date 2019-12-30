@@ -182,7 +182,6 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult DetalhesQuarentena(long id)
         {
             setViewBags();
-
             var entidade = _uow.QuarentenaRepository.GetById(id);
 
             var model = new DetalhesQuarentenaViewModel
@@ -193,6 +192,26 @@ namespace FWLog.Web.Backoffice.Controllers
                 DataEncerramento = entidade.DataEncerramento.HasValue ? entidade.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
                 Observacao = entidade.Observacao
             };
+
+            List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.Todos().Where(x => x.IdLote == entidade.IdLote).ToList();
+
+            foreach (LoteDivergencia divergencia in loteDivergencias)
+            {
+                NotaFiscalItem nfItem = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).FirstOrDefault();
+
+                var divergenciaItem = new DivergenciaItemViewModel
+                {
+                    Referencia = divergencia.Produto.Referencia,
+                    QuantidadeConferencia = divergencia.QuantidadeConferencia,
+                    QuantidadeMais = divergencia.QuantidadeConferenciaMais.GetValueOrDefault(),
+                    QuantidadeMenos = divergencia.QuantidadeConferenciaMenos.GetValueOrDefault(),
+                    QuantidadeNotaFiscal = nfItem?.Quantidade ?? 0,
+                    QuantidadeMaisTratado = divergencia.QuantidadeDivergenciaMais.GetValueOrDefault(),
+                    QuantidadeMenosTratado = divergencia.QuantidadeDivergenciaMenos.GetValueOrDefault()
+                };
+
+                model.Divergencias.Add(divergenciaItem);
+            }
 
             return View(model);
         }
