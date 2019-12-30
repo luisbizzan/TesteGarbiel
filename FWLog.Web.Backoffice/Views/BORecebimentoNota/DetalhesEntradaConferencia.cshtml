@@ -14,7 +14,7 @@
                 <span aria-hidden="true">×</span>
             </button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" style="overflow: auto; max-height: calc(100vh - 150px);">
             <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
                 <li class="nav-item active">
                     <a class="nav-link" id="entradaConferenciaTab" data-toggle="tab" href="#entradaConferencia" role="tab" aria-controls="entradaConferencia" aria-selected="true">Entrada/Conferência</a>
@@ -181,7 +181,69 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="divergencias" role="tabpanel" aria-labelledby="divergenciasTab">
-                    TODO
+                    @if (Model.Divergencias.Divergencias.Any())
+                    {
+                        <div class="x_content">
+                            <div class="row">
+                                <div class="col-sm-12 col-lg-4">
+                                    @Html.LabelFor(m => m.Divergencias.NotaFiscal): @Html.DisplayTextFor(m => m.Divergencias.NotaFiscal)
+                                </div>
+                                <div class="col-sm-12 col-lg-6">
+                                    @Html.LabelFor(m => m.Divergencias.StatusNotasFiscal): @Html.DisplayTextFor(m => m.Divergencias.StatusNotasFiscal)
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 col-lg-4">
+                                    @Html.LabelFor(m => m.Divergencias.ConferidoPor): @Html.DisplayTextFor(m => m.Divergencias.ConferidoPor)
+                                </div>
+                                <div class="col-sm-12 col-lg-4">
+                                    @Html.LabelFor(m => m.Divergencias.InicioConferencia): @Html.DisplayTextFor(m => m.Divergencias.InicioConferencia)
+                                </div>
+                                <div class="col-sm-12 col-lg-4">
+                                    @Html.LabelFor(m => m.Divergencias.FimConferencia): @Html.DisplayTextFor(m => m.Divergencias.FimConferencia)
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 25px; overflow-y: auto;">
+                                <div class="col-sm-12 col-lg-12">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>@Html.LabelFor(m => m.Divergencias.Divergencias[0].Referencia)</th>
+                                                <th style="text-align:center">@Html.LabelFor(m => m.Divergencias.Divergencias[0].QuantidadeNotaFiscal)</th>
+                                                <th style="text-align:center">@Html.LabelFor(m => m.Divergencias.Divergencias[0].QuantidadeConferencia)</th>
+                                                <th style="text-align:center">@Html.LabelFor(m => m.Divergencias.Divergencias[0].QuantidadeMais)</th>
+                                                <th style="text-align:center">@Html.LabelFor(m => m.Divergencias.Divergencias[0].QuantidadeMenos)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.Divergencias.Divergencias.Count(); i++)
+                                            {
+                                                <tr class="linha-divergencia">
+                                                    <td>@Model.Divergencias.Divergencias[i].Referencia</td>
+                                                    <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeNotaFiscal</td>
+                                                    <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeConferencia</td>
+                                                    <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeMais</td>
+                                                    <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeMenos</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.Finalizado)
+                    {
+                        <p>
+                            Nenhuma divergência encontrada.
+                        </p>
+                    }
+                    else
+                    {
+                        <p>
+                            A conferência do Lote não foi finalizada.
+                        </p>
+                    }
                 </div>
             </div>
         </div>

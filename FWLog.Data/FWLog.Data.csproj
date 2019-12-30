@@ -103,13 +103,14 @@
     <Compile Include="Logging\LogAttribute.cs" />
     <Compile Include="Models\Application.cs" />
     <Compile Include="Models\ApplicationSession.cs" />
-    <Compile Include="Models\Armazenagem.cs" />
+    <Compile Include="Models\ProdutoEndereco.cs" />
     <Compile Include="Models\BOLogSystem.cs" />
     <Compile Include="Models\AspNetUsers.cs" />
     <Compile Include="Models\AspNetPermissions.cs" />
     <Compile Include="Models\ApplicationLog.cs" />
     <Compile Include="Models\AspNetRoles.cs" />
-    <Compile Include="Models\ProdutoEmpresa.cs" />
+    <Compile Include="Models\DataTablesCtx\RelatorioDivergenciasListRow.cs" />
+    <Compile Include="Models\ProdutoEstoque.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\ImpressoraListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\NivelArmazenagemPesquisaModalListaLinhaTabela.cs" />
@@ -188,7 +189,7 @@
     <Compile Include="Repository\CommonCtx\BaseRepository.cs" />
     <Compile Include="Repository\CommonCtx\CacheRepository.cs" />
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
-    <Compile Include="Repository\GeneralCtx\ArmazenagemRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\ProdutoEnderecoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />
     <Compile Include="Repository\GeneralCtx\EmpresaConfigRepository.cs" />
@@ -209,7 +210,7 @@
     <Compile Include="Repository\GeneralCtx\ProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />
-    <Compile Include="Repository\GeneralCtx\ProdutoEmpresaRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\ProdutoEstoqueRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoConferenciaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoEtiquetagemRepository.cs" />

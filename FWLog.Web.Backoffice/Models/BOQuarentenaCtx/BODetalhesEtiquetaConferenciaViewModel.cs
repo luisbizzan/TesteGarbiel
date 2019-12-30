@@ -1,5 +1,6 @@
 ﻿using FWLog.Data.Models;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
@@ -32,5 +33,31 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
                 return !Array.Exists(statusNaoPermite, x => x == IdStatus);
             }
         }
+
+        public List<DivergenciaItemViewModel> Divergencias { get; set; } = new List<DivergenciaItemViewModel>();
+    }
+
+    public class DivergenciaItemViewModel
+    {
+        [Display(Name = "Referência")]
+        public string Referencia { get; set; }
+
+        [Display(Name = "Qtd. Nota Fiscal")]
+        public int QuantidadeNotaFiscal { get; set; }
+
+        [Display(Name = "Qtd. Conferência")]
+        public int QuantidadeConferencia { get; set; }
+
+        [Display(Name = "A+")]
+        public int QuantidadeMais { get; set; }
+
+        [Display(Name = "A-")]
+        public int QuantidadeMenos { get; set; }
+
+        [Display(Name = "Qtd. Tratado A+")]
+        public int? QuantidadeMaisTratado { get; set; }
+
+        [Display(Name = "Qtd. Tratado A-")]
+        public int? QuantidadeMenosTratado { get; set; }
     }
 }

@@ -5,7 +5,6 @@ using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
-using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Model.Lote;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
@@ -252,6 +251,25 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        public ActionResult ResumoDivergenciaConferencia(long id)
+        {
+            var model = new ResumoDivergenciaConferenciaViewModel
+            {
+                IdNotaFiscal = _uow.LoteRepository.GetById(id).IdNotaFiscal,
+                Divergencias = _loteService.ResumoFinalizarConferencia(id, IdEmpresa).Itens.Where(x => x.DivergenciaMais > 0 || x.DivergenciaMenos > 0).Select(x => new ResumoDivergenciaConferenciaItemViewModel
+                {
+                    Referencia = x.Referencia,
+                    QuantidadeConferencia = x.QuantidadeConferido,
+                    QuantidadeNotaFiscal = x.QuantidadeNota,
+                    QuantidadeMais = x.DivergenciaMais,
+                    QuantidadeMenos = x.DivergenciaMenos
+                }).ToList()
+            };
+
+            return View(model);
+        }
+
         [HttpPost]
         public ActionResult DownloadRelatorioNotas(BODownloadRelatorioNotasViewModel viewModel)
         {
@@ -467,8 +485,8 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ValidateModel(viewModel);
 
-                var request = Mapper.Map<ImprimirEtiquetaVolumeRecebimento>(viewModel);
-                _etiquetaService.ImprimirEtiquetaVolumeRecebimento(request);
+                Lote lote = _uow.LoteRepository.ObterLoteNota(viewModel.IdNotaFiscal);
+                _etiquetaService.ImprimirEtiquetaVolumeRecebimento(lote.IdLote, viewModel.IdImpressora);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -553,7 +571,6 @@ namespace FWLog.Web.Backoffice.Controllers
                     lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
                     lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
                 {
-
                     model.EmConferenciaOuConferido = true;
 
                     //Captura as conferências do lote.
@@ -593,7 +610,7 @@ namespace FWLog.Web.Backoffice.Controllers
                                 DataInicioConferencia = item.DataHoraInicio.ToString("dd/MM/yyyy HH:mm:ss"),
                                 DataFimConferencia = item.DataHoraFim.ToString("dd/MM/yyyy HH:mm:ss"),
                                 TempoConferencia = item.Tempo.ToString("HH:mm:ss"),
-                                UsuarioConferencia = usuarios.Where(x => x.UserId.Equals(item.UsuarioConferente.Id)).FirstOrDefault().PerfilUsuario.Nome
+                                UsuarioConferencia = usuarios.Where(x => x.UserId.Equals(item.UsuarioConferente.Id)).FirstOrDefault()?.PerfilUsuario.Nome
                             };
 
                             model.Items.Add(entradaConferenciaItem);
@@ -605,6 +622,51 @@ namespace FWLog.Web.Backoffice.Controllers
                             lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
                             lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
                             model.TempoTotalConferencia = tempo.ToString("h'h 'm'm 's's'");
+                    }
+
+                    var _emConferencia = new[] { LoteStatusEnum.Conferencia, LoteStatusEnum.ConferidoDivergencia };
+                    if (!Array.Exists(_emConferencia, x => x == lote.IdLoteStatus))
+                    {
+                        model.Finalizado = true;
+
+                        List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(notaFiscal.IdNotaFiscal);
+
+                        if (loteDivergencias.Any())
+                        {
+                            PerfilUsuario perfilUsuario = _uow.PerfilUsuarioRepository.GetByUserId(loteConferencia.First().IdUsuarioConferente);
+
+                            var divergenciaViewModel = new ExibirDivergenciaRecebimentoViewModel
+                            {
+                                ConferidoPor = perfilUsuario.Nome,
+                                InicioConferencia = loteConferencia.First().DataHoraInicio.ToString("dd/MM/yyyy hh:mm:ss"),
+                                FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss"),
+                                NotaFiscal = notaFiscal.Numero.ToString(),
+                                IdLote = lote.IdLote,
+                                StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao,
+                                UsuarioTratamento = _uow.PerfilUsuarioRepository.GetByUserId(loteDivergencias.First().IdUsuarioDivergencia).Nome,
+                                DataTratamento = loteDivergencias.First().DataTratamentoDivergencia.Value.ToString("dd/MM/yyyy hh:mm:ss")
+                            };
+
+                            foreach (LoteDivergencia divergencia in loteDivergencias)
+                            {
+                                NotaFiscalItem nfItem = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).FirstOrDefault();
+
+                                var divergenciaItem = new ExibirDivergenciaRecebimentoItemViewModel
+                                {
+                                    Referencia = divergencia.Produto.Referencia,
+                                    QuantidadeConferencia = divergencia.QuantidadeConferencia,
+                                    QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
+                                    QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
+                                    QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Quantidade,
+                                    QuantidadeMaisTratado = divergencia.QuantidadeDivergenciaMais ?? 0,
+                                    QuantidadeMenosTratado = divergencia.QuantidadeDivergenciaMenos ?? 0
+                                };
+
+                                divergenciaViewModel.Divergencias.Add(divergenciaItem);
+                            }
+
+                            model.Divergencias = divergenciaViewModel;
+                        }
                     }
                 }
                 #endregion
@@ -770,7 +832,7 @@ namespace FWLog.Web.Backoffice.Controllers
             //Captura a quantidade do item (peça) da nota e da conferência.
             var referenciaNota = _uow.NotaFiscalItemRepository.ObterPorItem(lote.IdNotaFiscal, produto.IdProduto);
             var referenciaConferencia = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, produto.IdProduto);
-            ProdutoEmpresa empresaProduto = _uow.ProdutoEmpresaRepository.ObterPorProdutoEmpresa(produto.IdProduto, IdEmpresa);
+            ProdutoEstoque empresaProduto = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, IdEmpresa);
 
             int quantidadeNota = 0;
             int quantidadeConferida = 0;
@@ -804,7 +866,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Embalagem = "",
                 Unidade = "",
                 Multiplo = produto.MultiploVenda,
-                QuantidadeEstoque = empresaProduto == null ? 0 : empresaProduto.SaldoArmazenagem,
+                QuantidadeEstoque = empresaProduto == null ? 0 : empresaProduto.Saldo,
                 QuantidadeNaoConferida = quantidadeNaoConferida,
                 QuantidadeConferida = quantidadeConferida,
                 InicioConferencia = DateTime.Now.ToString()
@@ -818,7 +880,7 @@ namespace FWLog.Web.Backoffice.Controllers
             else
             {
                 model.Localizacao = empresaProduto.EnderecoArmazenagem.Codigo;
-                model.EnviarPicking = empresaProduto.SaldoArmazenagem == 0 ? true : false;
+                model.EnviarPicking = empresaProduto.Saldo == 0 ? true : false;
             }
 
             string json = JsonConvert.SerializeObject(model);
