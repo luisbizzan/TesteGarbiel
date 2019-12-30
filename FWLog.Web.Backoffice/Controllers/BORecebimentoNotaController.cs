@@ -258,7 +258,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var model = new ResumoDivergenciaConferenciaViewModel
             {
                 IdNotaFiscal = _uow.LoteRepository.GetById(id).IdNotaFiscal,
-                Divergencias = _loteService.ResumoFinalizarConferencia(id, IdEmpresa).Itens.Select(x => new ResumoDivergenciaConferenciaItemViewModel
+                Divergencias = _loteService.ResumoFinalizarConferencia(id, IdEmpresa).Itens.Where(x => x.DivergenciaMais > 0 || x.DivergenciaMenos > 0).Select(x => new ResumoDivergenciaConferenciaItemViewModel
                 {
                     Referencia = x.Referencia,
                     QuantidadeConferencia = x.QuantidadeConferido,
