@@ -1237,6 +1237,19 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [HttpPost]
+        public ActionResult DownloadRelatorioResumoEtiquetagem(RelatorioResumoEtiquetagemRequest viewModel)
+        {
+            ValidateModel(viewModel);
+
+            viewModel.IdEmpresa = IdEmpresa;
+            viewModel.NomeUsuario = User.Identity.Name;
+
+            byte[] relatorio = _relatorioService.GerarRelatorioResumoEtiquetagem(viewModel);
+
+            return File(relatorio, "application/pdf", "Relatório Resumo Etiquetagem.pdf");
+        }
+
         [HttpGet]
         public ActionResult RelatorioRastreioPeca()
         {

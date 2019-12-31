@@ -12,6 +12,21 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public LogEtiquetagemRepository(Entities entities) : base(entities) { }
 
+        public List<LogEtiquetagem> Relatorio(LogEtiquetagemListaFiltro filtro, long idEmpresa)
+        {
+            var query =
+                Entities.LogEtiquetagem.Where(w =>
+                (w.IdEmpresa == idEmpresa) &&
+                (filtro.IdProduto.HasValue == false || w.IdProduto == filtro.IdProduto.Value) &&
+                (filtro.QuantidadeInicial.HasValue == false || w.Quantidade >= filtro.QuantidadeInicial.Value) &&
+                (filtro.QuantidadeFinal.HasValue == false || w.Quantidade <= filtro.QuantidadeFinal.Value) &&
+                (string.IsNullOrEmpty(filtro.IdUsuarioEtiquetagem) || w.IdUsuario.Contains(filtro.IdUsuarioEtiquetagem)) &&
+                (filtro.DataInicial.HasValue == false || w.DataHora >= filtro.DataInicial.Value) &&
+                (filtro.DataFinal.HasValue == false || w.DataHora <= filtro.DataFinal.Value));
+
+            return query.ToList();
+        }
+
         public List<LogEtiquetagemListaLinhaTabela> BuscarLista(DataTableFilter<LogEtiquetagemListaFiltro> model, out int totalRecordsFiltered, out int totalRecords, long idEmpresa)
         {
             totalRecords = Entities.LogEtiquetagem.Count(x=> x.IdEmpresa == idEmpresa);

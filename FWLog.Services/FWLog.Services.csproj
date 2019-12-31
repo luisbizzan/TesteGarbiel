@@ -139,6 +139,7 @@
     <Compile Include="Model\Relatorios\RelatorioRecebimentoNotasRequest.cs" />
     <Compile Include="Model\IntegracaoSankhya\ExecuteQueryResponse.cs" />
     <Compile Include="Model\IntegracaoSankhya\NotaFiscalIntegracao.cs" />
+    <Compile Include="Model\Relatorios\RelatorioResumoEtiquetagemRequest.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
     <Compile Include="Model\TokenResponse.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="Relatorio\IFwRelatorioDados.cs" />
     <Compile Include="Relatorio\Model\RastreioPeca.cs" />
     <Compile Include="Relatorio\Model\RecebimentoNotas.cs" />
+    <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ApplicationLogService.cs" />
     <Compile Include="Services\BaseService.cs" />
