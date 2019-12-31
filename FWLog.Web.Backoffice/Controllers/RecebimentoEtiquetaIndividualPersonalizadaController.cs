@@ -70,7 +70,18 @@ namespace FWLog.Web.Backoffice.Controllers
                 };
 
                 if (viewModel.TipoEtiquetagem == Data.Models.TipoEtiquetagemEnum.Individual.GetHashCode())
+                {
                     _etiquetaService.ImprimirEtiquetaPeca(request);
+
+                    var requestAvulso = new ImprimirEtiquetaAvulsoRequest
+                    {
+                        IdEmpresa = IdEmpresa,
+                        IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
+                        QuantidadeEtiquetas = viewModel.Quantidade.Value
+                    };
+
+                    _etiquetaService.ImprimirEtiquetaAvulso(requestAvulso);
+                }
                 else if (viewModel.TipoEtiquetagem == Data.Models.TipoEtiquetagemEnum.Personalizada.GetHashCode())
                     _etiquetaService.ImprimirEtiquetaPersonalizada(request);
 
