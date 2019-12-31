@@ -71,9 +71,9 @@ namespace FWLog.Web.Backoffice.Controllers
             model.Filter.PrazoInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
             model.Filter.PrazoFinal = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
 
-            //var a = new ImprimirEtiquetaProdutoBase { IdEmpresa = IdEmpresa, IdImpressora = 121, QuantidadeEtiquetas = 5, ReferenciaProduto = "CTX721" };
+            //var a = new ImprimirEtiquetaAvulsoRequest { IdEmpresa = IdEmpresa, IdImpressora = 121, QuantidadeEtiquetas = 5 };
 
-            //_etiquetaService.ImprimirEtiquetaPersonalizada(a);
+            //_etiquetaService.ImprimirEtiquetaAvulso(a);
 
             return View(model);
         }

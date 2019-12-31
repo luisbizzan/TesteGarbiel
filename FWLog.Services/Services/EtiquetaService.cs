@@ -238,6 +238,61 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
 
+        public void ImprimirEtiquetaAvulso(ImprimirEtiquetaAvulsoRequest request)
+        {
+            var celulasConfEtiqueta = new List<CelulaEtiqueta> { new CelulaEtiqueta(0), new CelulaEtiqueta(272), new CelulaEtiqueta(545) };
+
+            var empresa = _unitOfWork.EmpresaRepository.GetById(request.IdEmpresa);
+
+            string sac = empresa.TelefoneSAC;
+            string razaoSocial = empresa.RazaoSocial;
+            string cnpj = empresa.CNPJ;
+
+            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / 3);
+            int etiquetasRestantes = request.QuantidadeEtiquetas;
+
+            var etiquetaZpl = new StringBuilder();
+
+            for (int l = 0; l < linhas; l++)
+            {
+                var colunasImpressao = new List<CelulaEtiqueta>();
+
+                for (int c = 0; c <= etiquetasRestantes && c < 3; c++)
+                {
+                    colunasImpressao.Add(celulasConfEtiqueta.ElementAt(c));
+
+                    etiquetasRestantes--;
+                }
+
+                etiquetaZpl.Append("^XA");
+
+                // Velocidade de impressão
+                etiquetaZpl.Append("^PRA^FS");
+
+                foreach (CelulaEtiqueta celula in colunasImpressao)
+                {
+                    // Posição inicial de desenho da etiqueta
+                    etiquetaZpl.Append($"^LH{celula.X},0");
+
+                    etiquetaZpl.Append("^FO12,40^FB260,1,,C,0^A0N,30,20^FDDISTRIBUIDO POR:^FS");
+                    etiquetaZpl.Append($"^FO12,70^FB260,1,,C,0^A0N,30,20^FD{razaoSocial}^FS");
+
+                    etiquetaZpl.Append($"^FO12,100^FB260,1,,C,0^A0N,30,20^FDCNPJ:{cnpj}^FS");
+
+                    etiquetaZpl.Append($"^FO12,130^FB260,1,,C,0^A0N,30,20^FDSAC.:{sac}^FS");
+                }
+
+                // Redefinir posição inicial de desenho
+                etiquetaZpl.Append("^LH0,0");
+
+                etiquetaZpl.Append("^XZ");
+            }
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+        }
+
         private class CelulaEtiqueta
         {
             internal CelulaEtiqueta(int x, int y = 0)
