@@ -1,6 +1,7 @@
 ﻿using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
+using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Model.LogEtiquetagem;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
@@ -49,20 +50,26 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                
+                var produto = _unitOfWork.ProdutoRepository.GetById(viewModel.IdProduto.Value);
 
-                //var request = new ImprimirEtiquetaArmazenagemVolume
-                //{
-                //    NroLote = viewModel.NroLote.GetValueOrDefault(),
-                //    QuantidadeEtiquetas = viewModel.QtdCaixas.GetValueOrDefault(),
-                //    QuantidadePorCaixa = viewModel.QtdPorCaixa.GetValueOrDefault(),
-                //    ReferenciaProduto = viewModel.ReferenciaProduto,
-                //    Usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome,
-                //    IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
-                //    IdEmpresa = IdEmpresa
-                //};
+                if (produto == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Rerência não encontrada. Por favor, tente novamente!"
+                    });
+                }
 
-                //_etiquetaService.
+                var request = new ImprimirEtiquetaPecaRequest
+                {
+                    IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
+                    IdEmpresa = IdEmpresa,
+                    QuantidadeEtiquetas = viewModel.Quantidade.Value,
+                    ReferenciaProduto = produto.Referencia
+                };
+
+                _etiquetaService.ImprimirEtiquetaPeca(request);
 
                 var logEtiquetagem = new LogEtiquetagem
                 {

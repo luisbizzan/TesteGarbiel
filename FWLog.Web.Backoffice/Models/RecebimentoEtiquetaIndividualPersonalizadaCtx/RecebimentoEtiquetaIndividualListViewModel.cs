@@ -4,6 +4,8 @@ namespace FWLog.Web.Backoffice.Models.RecebimentoEtiquetaIndividualPersonalizada
 {
     public class RecebimentoEtiquetaIndividualPersonalizadaViewModel
     {
+        public int? IdImpressora { get; set; }
+
         [Display(Name = "Tipo Etiqueta")]
         public int TipoEtiquetagem { get; set; }
 
