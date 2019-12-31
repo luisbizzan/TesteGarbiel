@@ -69,7 +69,10 @@ namespace FWLog.Web.Backoffice.Controllers
                     ReferenciaProduto = produto.Referencia
                 };
 
-                _etiquetaService.ImprimirEtiquetaPeca(request);
+                if (viewModel.TipoEtiquetagem == Data.Models.TipoEtiquetagemEnum.Individual.GetHashCode())
+                    _etiquetaService.ImprimirEtiquetaPeca(request);
+                else if (viewModel.TipoEtiquetagem == Data.Models.TipoEtiquetagemEnum.Personalizada.GetHashCode())
+                    _etiquetaService.ImprimirEtiquetaPersonalizada(request);
 
                 var logEtiquetagem = new LogEtiquetagem
                 {
