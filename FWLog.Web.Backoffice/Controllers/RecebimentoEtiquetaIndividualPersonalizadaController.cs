@@ -61,7 +61,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                var request = new ImprimirEtiquetaPecaRequest
+                var request = new ImprimirEtiquetaProdutoBase
                 {
                     IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
                     IdEmpresa = IdEmpresa,
