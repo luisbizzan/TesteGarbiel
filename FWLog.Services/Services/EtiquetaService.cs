@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace FWLog.Services.Services
 {
@@ -161,7 +162,7 @@ namespace FWLog.Services.Services
                     etiquetaZpl.Append($"^FO145,16^FB120,1,,R,0^A0N,30,20^FD{endereco}^FS");
 
                     // Label descrição do produto
-                    etiquetaZpl.Append($"^FO12,44^FB260,1,,L,0^A0N,16,16^FD{produto.Descricao}^FS");
+                    etiquetaZpl.Append($"^FO12,44^FB260,1,,L,0^A0N,16,16^FD{produto.Descricao.Normalizar()}^FS");
 
                     // Código de barras do produto
                     etiquetaZpl.Append($"^FO42,62^BEN,74,Y,N^FD{produto.CodigoBarras}^FS");
@@ -221,7 +222,7 @@ namespace FWLog.Services.Services
                     etiquetaZpl.Append($"^FO14,16^A0N,30,35^FR^FD{produto.Referencia}^FS");
 
                     // Label descrição do produto
-                    etiquetaZpl.Append($"^FO12,44^FB260,1,,L,0^A0N,16,16^FD{produto.Descricao}^FS");
+                    etiquetaZpl.Append($"^FO12,44^FB260,1,,L,0^A0N,16,16^FD{produto.Descricao.Normalizar()}^FS");
 
                     // Código de barras do produto
                     etiquetaZpl.Append($"^FO42,62^BEN,75,Y,N^FD{produto.CodigoBarras}^FS");
@@ -244,9 +245,9 @@ namespace FWLog.Services.Services
 
             var empresa = _unitOfWork.EmpresaRepository.GetById(request.IdEmpresa);
 
-            string sac = empresa.TelefoneSAC;
-            string razaoSocial = empresa.RazaoSocial;
-            string cnpj = empresa.CNPJ;
+            string sac = empresa.TelefoneSAC.Telefone();
+            string razaoSocial = empresa.RazaoSocial.Normalizar();
+            string cnpj = empresa.CNPJ.CNPJ();
 
             int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / 3);
             int etiquetasRestantes = request.QuantidadeEtiquetas;
