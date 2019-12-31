@@ -30,6 +30,7 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly LoteService _loteService;
         private readonly ApplicationLogService _applicationLogService;
         private readonly EtiquetaService _etiquetaService;
+        private readonly LogEtiquetagemService _logEtiquetagemService;
         private readonly UnitOfWork _uow;
 
         public BORecebimentoNotaController(
@@ -37,13 +38,15 @@ namespace FWLog.Web.Backoffice.Controllers
             RelatorioService relatorioService,
             LoteService loteService,
             ApplicationLogService applicationLogService,
-            EtiquetaService etiquetaService)
+            EtiquetaService etiquetaService,
+            LogEtiquetagemService logEtiquetagemService)
         {
             _loteService = loteService;
             _relatorioService = relatorioService;
             _applicationLogService = applicationLogService;
             _uow = uow;
             _etiquetaService = etiquetaService;
+            _logEtiquetagemService = logEtiquetagemService;
         }
 
         [HttpGet]
@@ -1028,6 +1031,18 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 //_etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
 
+                //Registra a impressão da etiqueta
+                var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem
+                {
+                    IdTipoEtiquetagem = TipoEtiquetagemEnum.Conferencia.GetHashCode(),
+                    IdEmpresa = IdEmpresa,
+                    IdProduto = produto.IdProduto,
+                    Quantidade = quantidadeCaixa,
+                    IdUsuario = User.Identity.GetUserId()
+                };
+
+                _logEtiquetagemService.Registrar(logEtiquetagem);
+
                 #endregion
 
                 return Json(new AjaxGenericResultModel
@@ -1190,16 +1205,30 @@ namespace FWLog.Web.Backoffice.Controllers
 
             IEnumerable<LogEtiquetagemListaLinhaTabela> result = _uow.LogEtiquetagemRepository.BuscarLista(filtros, out int registrosFiltrados, out int totalRegistros, IdEmpresa);
 
+            var relatorioResumoEtiquetagemListItemViewModel = new List<RelatorioResumoEtiquetagemListItemViewModel>();
+
             List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
 
-            //Implementar nome usuário perfil. Verificar essa questão pois está sendo usando em vários lugares.
+            foreach (var item in result)
+            {
+                relatorioResumoEtiquetagemListItemViewModel.Add(new RelatorioResumoEtiquetagemListItemViewModel()
+                {
+                    IdLogEtiquetagem = item.IdLogEtiquetagem,
+                    Referencia = item.Referencia,
+                    Descricao = item.Descricao,
+                    TipoEtiquetagem = item.TipoEtiquetagem,
+                    Quantidade = item.Quantidade,
+                    DataHora = item.DataHora.ToString("dd/MM/yyyy HH:mm:ss"),
+                    Usuario = usuarios.Where(x => x.UserId.Equals(item.Usuario)).FirstOrDefault()?.PerfilUsuario.Nome
+                });
+            } 
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
                 RecordsTotal = totalRegistros,
                 RecordsFiltered = registrosFiltrados,
-                Data = Mapper.Map<IEnumerable<RelatorioResumoEtiquetagemListItemViewModel>>(result)
+                Data = relatorioResumoEtiquetagemListItemViewModel
             });
         }
 

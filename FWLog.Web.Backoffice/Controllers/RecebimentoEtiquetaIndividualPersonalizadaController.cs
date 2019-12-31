@@ -49,6 +49,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
+                
+
                 //var request = new ImprimirEtiquetaArmazenagemVolume
                 //{
                 //    NroLote = viewModel.NroLote.GetValueOrDefault(),
@@ -60,7 +62,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 //    IdEmpresa = IdEmpresa
                 //};
 
-                //_etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
+                //_etiquetaService.
 
                 var logEtiquetagem = new LogEtiquetagem
                 {

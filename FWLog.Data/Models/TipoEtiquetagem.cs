@@ -7,7 +7,7 @@ namespace FWLog.Data.Models
     {
         Individual = 1,
         Personalizada = 2,
-        SAC = 3
+        Conferencia = 3
     }
 
     public class TipoEtiquetagem
