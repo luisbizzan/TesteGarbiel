@@ -32,5 +32,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.LoteDivergencia.Any(a => a.IdLote == idLote);
         }
+
+        public IQueryable<LoteDivergencia> Todos()
+        {
+            return Entities.LoteDivergencia;
+        }
     }
 }

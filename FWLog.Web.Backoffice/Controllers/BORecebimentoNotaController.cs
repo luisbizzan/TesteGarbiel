@@ -5,7 +5,6 @@ using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
-using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Model.Lote;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
@@ -258,13 +257,13 @@ namespace FWLog.Web.Backoffice.Controllers
             var model = new ResumoDivergenciaConferenciaViewModel
             {
                 IdNotaFiscal = _uow.LoteRepository.GetById(id).IdNotaFiscal,
-                Divergencias = _uow.LoteRepository.ObterDivergencias(id).Select(x => new ResumoDivergenciaConferenciaItemViewModel
+                Divergencias = _loteService.ResumoFinalizarConferencia(id, IdEmpresa).Itens.Where(x => x.DivergenciaMais > 0 || x.DivergenciaMenos > 0).Select(x => new ResumoDivergenciaConferenciaItemViewModel
                 {
                     Referencia = x.Referencia,
-                    QuantidadeConferencia = x.QuantidadeConferida,
+                    QuantidadeConferencia = x.QuantidadeConferido,
                     QuantidadeNotaFiscal = x.QuantidadeNota,
-                    QuantidadeMais = x.Mais,
-                    QuantidadeMenos = x.Menos
+                    QuantidadeMais = x.DivergenciaMais,
+                    QuantidadeMenos = x.DivergenciaMenos
                 }).ToList()
             };
 
@@ -628,20 +627,25 @@ namespace FWLog.Web.Backoffice.Controllers
                     var _emConferencia = new[] { LoteStatusEnum.Conferencia, LoteStatusEnum.ConferidoDivergencia };
                     if (!Array.Exists(_emConferencia, x => x == lote.IdLoteStatus))
                     {
-                        List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(notaFiscal.IdNotaFiscal);
-                        PerfilUsuario perfilUsuario = _uow.PerfilUsuarioRepository.GetByUserId(loteConferencia.First().IdUsuarioConferente);
+                        model.Finalizado = true;
 
-                        var divergenciaViewModel = new ExibirDivergenciaRecebimentoViewModel
+                        List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(notaFiscal.IdNotaFiscal);
+
+                        if (loteDivergencias.Any())
                         {
-                            ConferidoPor = perfilUsuario.Nome,
-                            InicioConferencia = loteConferencia.First().DataHoraInicio.ToString("dd/MM/yyyy hh:mm:ss"),
-                            FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss"),
-                            NotaFiscal = notaFiscal.Numero.ToString(),
-                            IdLote = lote.IdLote,
-                            StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao,
-                            UsuarioTratamento = _uow.PerfilUsuarioRepository.GetByUserId(loteDivergencias.First().IdUsuarioDivergencia).Nome,
-                            DataTratamento = loteDivergencias.First().DataTratamentoDivergencia.Value.ToString("dd/MM/yyyy hh:mm:ss")
-                        };
+                            PerfilUsuario perfilUsuario = _uow.PerfilUsuarioRepository.GetByUserId(loteConferencia.First().IdUsuarioConferente);
+
+                            var divergenciaViewModel = new ExibirDivergenciaRecebimentoViewModel
+                            {
+                                ConferidoPor = perfilUsuario.Nome,
+                                InicioConferencia = loteConferencia.First().DataHoraInicio.ToString("dd/MM/yyyy hh:mm:ss"),
+                                FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss"),
+                                NotaFiscal = notaFiscal.Numero.ToString(),
+                                IdLote = lote.IdLote,
+                                StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao,
+                                UsuarioTratamento = _uow.PerfilUsuarioRepository.GetByUserId(loteDivergencias.First().IdUsuarioDivergencia).Nome,
+                                DataTratamento = loteDivergencias.First().DataTratamentoDivergencia.Value.ToString("dd/MM/yyyy hh:mm:ss")
+                            };
 
                         foreach (LoteDivergencia divergencia in loteDivergencias)
                         {
@@ -658,10 +662,11 @@ namespace FWLog.Web.Backoffice.Controllers
                                 QuantidadeMenosTratado = divergencia.QuantidadeDivergenciaMenos ?? 0
                             };
 
-                            divergenciaViewModel.Divergencias.Add(divergenciaItem);
-                        }
+                                divergenciaViewModel.Divergencias.Add(divergenciaItem);
+                            }
 
-                        model.Divergencias = divergenciaViewModel;
+                            model.Divergencias = divergenciaViewModel;
+                        }
                     }
                 }
                 #endregion
