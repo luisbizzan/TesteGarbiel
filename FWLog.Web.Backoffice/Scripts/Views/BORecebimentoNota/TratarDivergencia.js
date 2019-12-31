@@ -56,11 +56,42 @@
                 if (!result.Success) {
                     PNotify.error({ text: result.Message });
                 } else {
-                    PNotify.success({ text: "Todas as divergências foram tratadas." });
-                    $(".close").click();
-                    $("#dataTable").DataTable().ajax.reload();
+                    PNotify.success({ text: result.Message });
+                    VerificarStatusLote($("#IdNotaFiscal").val());
+
                 }
             }
         });
     });
 })();
+
+function VerificarStatusLote(id) {
+    $.ajax({
+        url: HOST_URL + "BORecebimentoNota/ContinuarProcessamentoLote/" + id,
+        cache: false,
+        method: "POST",
+        success: function (result) {
+            if (!result.Success) {
+                PNotify.error({ text: result.Message });
+            } else {                
+                $(".close").click();
+                $("#dataTable").DataTable().ajax.reload();
+
+                if (result.Data !== "True") {
+                    return;
+                }
+
+                PNotify.info({ text: "Continuando processo de finalização da tratativa de divergência..." });
+                
+                let $modal = $("#modalProcessamentoTratativaDivergencia");
+
+                $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoProcessamentoDivergencia/" + id, function () {
+                    $modal.modal();
+                    $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
+
+                    FinalizarTratativa();
+                });
+            }
+        }    
+    });
+}

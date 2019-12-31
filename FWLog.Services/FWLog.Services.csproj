@@ -128,6 +128,7 @@
     <Compile Include="Model\IntegracaoSankhya\ProdutoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\UnidadeMedidaIntegracao.cs" />
     <Compile Include="Model\LogEtiquetagem\LogEtiquetagem.cs" />
+    <Compile Include="Model\Lote\ProcessamentoTratativaDivergencia.cs" />
     <Compile Include="Model\Lote\ResumoFinalizarConferenciaResponse.cs" />
     <Compile Include="Model\Lote\TratarDivergenciaRequest.cs" />
     <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />

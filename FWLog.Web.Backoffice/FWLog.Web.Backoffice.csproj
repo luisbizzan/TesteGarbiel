@@ -457,6 +457,7 @@
     <Content Include="Scripts\Views\BORecebimentoNota\resumoDivergenciaConferencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\resumoFinalizarConferencia.js" />
     <Content Include="Scripts\Views\BOQuarentena\detalhesQuarentena.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\resumoProcessamentoDivergencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\tratarDivergencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\entradaConferencia.js" />
     <Content Include="Scripts\Views\BOPrinter\create.js" />
@@ -528,6 +529,7 @@
     <Content Include="Views\BORecebimentoNota\RelatorioResumoProducao.cshtml" />
     <Content Include="Views\BORecebimentoNota\ResumoDivergenciaConferencia.cshtml" />
     <Content Include="Views\BORecebimentoNota\RelatorioResumoEtiquetagem.cshtml" />
+    <Content Include="Views\BORecebimentoNota\ResumoProcessamentoDivergencia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

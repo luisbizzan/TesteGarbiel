@@ -121,6 +121,7 @@
         var acaoDivergencia = full.IdLoteStatus === 6 || full.IdLoteStatus === 7 || full.IdLoteStatus === 8 ? "exibirDivergencias" : "tratarDivergencias";
         var visivelDivergencia = full.IdLoteStatus === 5 || full.IdLoteStatus === 6 || full.IdLoteStatus === 7 || full.IdLoteStatus === 8 ? true : false;
         var textoDivergencia = full.IdLoteStatus === 5 ? "Tratar Divergências" : "Exibir Divergências";
+        var visivelProcessamento = full.IdLoteStatus === 9 || full.IdLoteStatus === 10 || full.IdLoteStatus === 11 ? true : false;
 
         return [
             {
@@ -146,6 +147,12 @@
                 attrs: { 'data-id': full.IdNotaFiscal, 'action': acaoDivergencia },
                 icon: 'fa fa-warning',
                 visible: visivelDivergencia
+            },
+            {
+                text: "Sincronizar Integração Sankhya",
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'exibirProcessamento' },
+                icon: 'fa fa-gears',
+                visible: visivelProcessamento
             }
         ];
     });
@@ -196,6 +203,7 @@
     $("#dataTable").on('click', "[action='detalhesNota']", detalhesNota);
     $("#dataTable").on('click', "[action='tratarDivergencias']", tratarDivergencias);
     $("#dataTable").on('click', "[action='exibirDivergencias']", exibirDivergencias);
+    $("#dataTable").on('click', "[action='exibirProcessamento']", exibirProcessamento);
 
     dart.dataTables.loadFormFilterEvents();
 
@@ -491,3 +499,16 @@ function exibirDivergencias() {
         $modal.modal();
     });
 }
+
+function exibirProcessamento() {
+    let id = $(this).data("id");
+
+    let $modal = $("#modalProcessamentoTratativaDivergencia");
+
+    $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoProcessamentoDivergencia/" + id, function () {
+        $modal.modal();
+        $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
+    });
+}
+
+
