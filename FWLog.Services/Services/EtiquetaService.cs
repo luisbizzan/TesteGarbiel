@@ -3,6 +3,7 @@ using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Model.Etiquetas;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -96,9 +97,9 @@ namespace FWLog.Services.Services
             etiquetaImprimir.Append($"^BEB,100,Y,N^FO460,100^FD{codReferencia}^FS"); // TODO: onde extrair este dado
 
             // Nome do Colaborador [5 Linha]
-            //int tamanhoNome = 13;
-            //string usuario = request.Usuario.Length > tamanhoNome ? request.Usuario.Substring(0, tamanhoNome) : request.Usuario;
-            etiquetaImprimir.Append($"^FO610,220^FB330,2,100,C,0^A0B,95,40^FD{request.Usuario}^FS");
+            int tamanhoNome = 13;
+            string usuario = request.Usuario.Length > tamanhoNome ? request.Usuario.Substring(0, tamanhoNome) : request.Usuario;
+            etiquetaImprimir.Append($"^FO610,220^FB330,2,100,C,0^A0B,95,40^FD{usuario}^FS");
 
             // Endereço Picking [5 Linha]
             etiquetaImprimir.Append($"^FO610,30^A0B,50,40^FD{endereco}^FS");
@@ -112,5 +113,73 @@ namespace FWLog.Services.Services
 
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
+
+        public void ImprimirEtiquetaPeca(ImprimirEtiquetaPecaRequest request)
+        {
+            Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
+            ProdutoEstoque empresaProduto = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, request.IdEmpresa);
+
+            string endereco = empresaProduto?.EnderecoArmazenagem?.Codigo ?? string.Empty;
+            string unidade = "PC"; // TODO: Unidade de medida
+
+            var celulas = new List<CelulaEtiqueta> { new CelulaEtiqueta(0), new CelulaEtiqueta(275), new CelulaEtiqueta(550) };
+
+            var etiquetaZpl = new StringBuilder();
+
+            etiquetaZpl.Append("^XA");
+
+            // Velocidade de impressão
+            etiquetaZpl.Append("^PRA^FS");
+
+            // Configuração padrão dos códigos de barras
+            etiquetaZpl.Append("^BY2,,164");
+
+            // Quantidade de etiquetas(linhas) a imprimir
+            etiquetaZpl.Append($"^PQ{request.QuantidadeEtiquetas}^FS");
+
+            foreach (CelulaEtiqueta celula in celulas)
+            {
+                // Posição inicial de desenho da etiqueta
+                etiquetaZpl.Append($"^LH{celula.X},0");
+
+                // Label referência do produto
+                etiquetaZpl.Append("^FO12,12^GB140,26,30^FS");
+                etiquetaZpl.Append($"^FO14,16^A0N,30,25^FR^FD{produto.Referencia}^FS");
+
+                // Label endereço do produto
+                etiquetaZpl.Append($"^FO155,16^FB120,1,,R,0^A0N,30,20^FD{empresaProduto.EnderecoArmazenagem}^FS");
+
+                // Label descrição do produto
+                etiquetaZpl.Append($"^FO12,44^FB260,1,,L,0^A0N,16,16^FD{produto.Descricao}^FS");
+
+                // Código de barras do produto
+                etiquetaZpl.Append($"^FO42,62^BEN,74,Y,N^FD{produto.CodigoBarras}^FS");
+
+                // Label quantidade por embalagem
+                etiquetaZpl.Append($"^FO20,162^A0N,8,24^FDQuant.p/emb.: {produto.MultiploVenda.ToString().PadLeft(3, '0')} {unidade}^FS");
+            }
+
+            // Redefinir posição inicial de desenho
+            etiquetaZpl.Append("^LH0,0");
+
+            etiquetaZpl.Append("^XZ");
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+        }
+
+        private class CelulaEtiqueta
+        {
+            internal CelulaEtiqueta(int x, int y = 0)
+            {
+                X = x;
+                Y = y;
+            }
+
+            public int X { get; private set; }
+            public int Y { get; private set; }
+        }
+
     }
 }
