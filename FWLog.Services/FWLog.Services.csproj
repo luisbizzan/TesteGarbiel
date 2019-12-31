@@ -128,6 +128,8 @@
     <Compile Include="Model\IntegracaoSankhya\EmpresaIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\UnidadeMedidaIntegracao.cs" />
+    <Compile Include="Model\LogEtiquetagem\LogEtiquetagem.cs" />
+    <Compile Include="Model\Lote\ProcessamentoTratativaDivergencia.cs" />
     <Compile Include="Model\Lote\ResumoFinalizarConferenciaResponse.cs" />
     <Compile Include="Model\Lote\TratarDivergenciaRequest.cs" />
     <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />
@@ -154,6 +156,7 @@
     <Compile Include="Services\EtiquetaService.cs" />
     <Compile Include="Services\FreteTipoService.cs" />
     <Compile Include="Services\ImpressoraService.cs" />
+    <Compile Include="Services\LogEtiquetagemService.cs" />
     <Compile Include="Services\LoteService.cs" />
     <Compile Include="Services\NivelArmazenagemService.cs" />
     <Compile Include="Services\NotaFiscalService.cs" />

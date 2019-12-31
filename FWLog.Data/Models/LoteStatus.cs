@@ -13,6 +13,9 @@ namespace FWLog.Data.Models
         FinalizadoDivergenciaPositiva = 6,
         FinalizadoDivergenciaNegativa = 7,
         FinalizadoDivergenciaTodas = 8,
+        AguardandoCriacaoNFDevolucao = 9,
+        AguardandoConfirmacaoNFDevolucao = 10,
+        AguardandoAutorizacaoSefaz = 11
     }
 
     public class LoteStatus

@@ -1,0 +1,98 @@
+﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.ExibirDivergenciaRecebimentoViewModel
+@{
+    Layout = null;
+
+    @BundleHelper.RenderViewScriptModal()
+}
+
+<div class="modal-dialog modal-lg">    
+    <form name="divergencias" id="modalProcessamentoTratativaDivergencias">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Finalização da Tratativa de Divergência</h4>
+            </div>
+            <div class="modal-body">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.NotaFiscal): @Html.DisplayTextFor(m => m.NotaFiscal)
+                                @Html.HiddenFor(m => m.IdLote)
+                            </div>
+                            <div class="col-sm-12 col-lg-6">
+                                @Html.LabelFor(m => m.StatusNotasFiscal): @Html.DisplayTextFor(m => m.StatusNotasFiscal)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.ConferidoPor): @Html.DisplayTextFor(m => m.ConferidoPor)
+                            </div>
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.InicioConferencia): @Html.DisplayTextFor(m => m.InicioConferencia)
+                            </div>
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.FimConferencia): @Html.DisplayTextFor(m => m.FimConferencia)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="ln_solid" style="margin-bottom: 15px; margin-top: 0px;"></div>
+                        </div>
+                        <div class="row">
+                            <div class="checkbox" style="padding-bottom:10px; pointer-events: none;">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.Processamento.AtualizacaoNFCompra, new { @class = "flat" })
+                                    @Html.DisplayNameFor(m => m.Processamento.AtualizacaoNFCompra)
+                                </label>
+                            </div>
+                            <div class="checkbox" style="padding-bottom:10px; pointer-events: none;">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.Processamento.ConfirmacaoNFCompra, new { @class = "flat" })
+                                    @Html.DisplayNameFor(m => m.Processamento.ConfirmacaoNFCompra)
+                                </label>
+                            </div>
+                            <div class="checkbox" style="padding-bottom:10px; pointer-events: none;">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.Processamento.AtualizacaoEstoque, new { @class = "flat" })
+                                    @Html.DisplayNameFor(m => m.Processamento.AtualizacaoEstoque)
+                                </label>
+                            </div>
+                            <div class="checkbox" style="padding-bottom:10px; pointer-events: none;">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.Processamento.CriacaoNFDevolucao, new { @class = "flat" })
+                                    @Html.DisplayNameFor(m => m.Processamento.CriacaoNFDevolucao)
+                                </label>
+                            </div>
+                            <div class="checkbox" style="padding-bottom:10px; pointer-events: none;">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.Processamento.ConfirmacaoNFDevolucao, new { @class = "flat" })
+                                    @Html.DisplayNameFor(m => m.Processamento.ConfirmacaoNFDevolucao)
+                                </label>
+                            </div>
+                            <div class="checkbox" style="padding-bottom:10px; pointer-events: none;">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.Processamento.AutorizacaoNFDevolucaoSefaz, new { @class = "flat" })
+                                    @Html.DisplayNameFor(m => m.Processamento.AutorizacaoNFDevolucaoSefaz)
+                                </label>
+                            </div>
+                            <div class="checkbox" style="padding-bottom:10px; pointer-events: none;">
+                                <label>
+                                    @Html.CheckBoxFor(m => m.Processamento.CriacaoQuarentena, new { @class = "flat" })
+                                    @Html.DisplayNameFor(m => m.Processamento.CriacaoQuarentena)
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row navbar-right">
+                    <div class="col-sm-12 col-lg-12">
+                        <button type="button" id="FinalizarTratativaDivergencia" class="btn btn-primary"><i class="fa fa-fw fa-floppy-o"></i>Finalizar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

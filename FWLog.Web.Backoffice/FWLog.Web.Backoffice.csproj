@@ -276,6 +276,7 @@
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirEtiquetaRecebimentoViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\RelatorioResumoEtiquetagemViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\ResumoDivergenciaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\RelatorioResumoProducaoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\RelatorioRastreioPecaViewModel.cs" />
@@ -451,10 +452,12 @@
     <Content Include="Scripts\dart\HttpService.js" />
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoEtiquetagem.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoProducao.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\resumoDivergenciaConferencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\resumoFinalizarConferencia.js" />
     <Content Include="Scripts\Views\BOQuarentena\detalhesQuarentena.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\resumoProcessamentoDivergencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\tratarDivergencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\entradaConferencia.js" />
     <Content Include="Scripts\Views\BOPrinter\create.js" />
@@ -478,6 +481,7 @@
     <Content Include="Scripts\Views\PontoArmazenagem\index.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Produto\searchModal.js" />
+    <Content Include="Scripts\Views\RecebimentoEtiquetaIndividualPersonalizada\index.js" />
     <Content Include="Scripts\Views\RecebimentoEtiqueta\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
@@ -524,6 +528,8 @@
     <Content Include="Views\BORecebimentoNota\ResumoProducaoRecebimento.cshtml" />
     <Content Include="Views\BORecebimentoNota\RelatorioResumoProducao.cshtml" />
     <Content Include="Views\BORecebimentoNota\ResumoDivergenciaConferencia.cshtml" />
+    <Content Include="Views\BORecebimentoNota\RelatorioResumoEtiquetagem.cshtml" />
+    <Content Include="Views\BORecebimentoNota\ResumoProcessamentoDivergencia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
