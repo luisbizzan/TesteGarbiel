@@ -116,53 +116,65 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaPeca(ImprimirEtiquetaPecaRequest request)
         {
+            var celulasConfEtiqueta = new List<CelulaEtiqueta> { new CelulaEtiqueta(0), new CelulaEtiqueta(272), new CelulaEtiqueta(545) };
+
             Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
             ProdutoEstoque empresaProduto = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, request.IdEmpresa);
 
             string endereco = empresaProduto?.EnderecoArmazenagem?.Codigo ?? string.Empty;
             string unidade = "PC"; // TODO: Unidade de medida
 
-            var celulas = new List<CelulaEtiqueta> { new CelulaEtiqueta(0), new CelulaEtiqueta(275), new CelulaEtiqueta(550) };
+            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / 3);
+            int etiquetasRestantes = request.QuantidadeEtiquetas;
 
             var etiquetaZpl = new StringBuilder();
 
-            etiquetaZpl.Append("^XA");
-
-            // Velocidade de impressão
-            etiquetaZpl.Append("^PRA^FS");
-
-            // Configuração padrão dos códigos de barras
-            etiquetaZpl.Append("^BY2,,164");
-
-            // Quantidade de etiquetas(linhas) a imprimir
-            etiquetaZpl.Append($"^PQ{request.QuantidadeEtiquetas}^FS");
-
-            foreach (CelulaEtiqueta celula in celulas)
+            for (int l = 0; l < linhas; l++)
             {
-                // Posição inicial de desenho da etiqueta
-                etiquetaZpl.Append($"^LH{celula.X},0");
+                var colunasImpressao = new List<CelulaEtiqueta>();
 
-                // Label referência do produto
-                etiquetaZpl.Append("^FO12,12^GB140,26,30^FS");
-                etiquetaZpl.Append($"^FO14,16^A0N,30,25^FR^FD{produto.Referencia}^FS");
+                for (int c = 0; c <= etiquetasRestantes && c < 3; c++)
+                {
+                    colunasImpressao.Add(celulasConfEtiqueta.ElementAt(c));
 
-                // Label endereço do produto
-                etiquetaZpl.Append($"^FO155,16^FB120,1,,R,0^A0N,30,20^FD{empresaProduto.EnderecoArmazenagem}^FS");
+                    etiquetasRestantes--;
+                }
 
-                // Label descrição do produto
-                etiquetaZpl.Append($"^FO12,44^FB260,1,,L,0^A0N,16,16^FD{produto.Descricao}^FS");
+                etiquetaZpl.Append("^XA");
 
-                // Código de barras do produto
-                etiquetaZpl.Append($"^FO42,62^BEN,74,Y,N^FD{produto.CodigoBarras}^FS");
+                // Velocidade de impressão
+                etiquetaZpl.Append("^PRA^FS");
 
-                // Label quantidade por embalagem
-                etiquetaZpl.Append($"^FO20,162^A0N,8,24^FDQuant.p/emb.: {produto.MultiploVenda.ToString().PadLeft(3, '0')} {unidade}^FS");
+                // Configuração padrão dos códigos de barras
+                etiquetaZpl.Append("^BY2,,164");
+
+                foreach (CelulaEtiqueta celula in colunasImpressao)
+                {
+                    // Posição inicial de desenho da etiqueta
+                    etiquetaZpl.Append($"^LH{celula.X},0");
+
+                    // Label referência do produto
+                    etiquetaZpl.Append("^FO12,12^GB140,26,30^FS");
+                    etiquetaZpl.Append($"^FO14,16^A0N,30,25^FR^FD{produto.Referencia}^FS");
+
+                    // Label endereço do produto
+                    etiquetaZpl.Append($"^FO145,16^FB120,1,,R,0^A0N,30,20^FD{endereco}^FS");
+
+                    // Label descrição do produto
+                    etiquetaZpl.Append($"^FO12,44^FB260,1,,L,0^A0N,16,16^FD{produto.Descricao}^FS");
+
+                    // Código de barras do produto
+                    etiquetaZpl.Append($"^FO42,62^BEN,74,Y,N^FD{produto.CodigoBarras}^FS");
+
+                    // Label quantidade por embalagem
+                    etiquetaZpl.Append($"^FO20,162^A0N,8,24^FDQuant.p/emb.: {produto.MultiploVenda.ToString().PadLeft(3, '0')} {unidade}^FS");
+                }
+
+                // Redefinir posição inicial de desenho
+                etiquetaZpl.Append("^LH0,0");
+
+                etiquetaZpl.Append("^XZ");
             }
-
-            // Redefinir posição inicial de desenho
-            etiquetaZpl.Append("^LH0,0");
-
-            etiquetaZpl.Append("^XZ");
 
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
 
