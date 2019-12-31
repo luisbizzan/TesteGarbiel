@@ -6,6 +6,7 @@ using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Model.Lote;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
@@ -69,6 +70,10 @@ namespace FWLog.Web.Backoffice.Controllers
             model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
             model.Filter.PrazoInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
             model.Filter.PrazoFinal = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
+
+            //var a = new ImprimirEtiquetaPecaRequest { IdEmpresa = IdEmpresa, IdImpressora = 121, QuantidadeEtiquetas = 1, ReferenciaProduto = "CTX721" };
+
+            //_etiquetaService.ImprimirEtiquetaPeca(a);
 
             return View(model);
         }
