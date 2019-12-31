@@ -71,9 +71,9 @@ namespace FWLog.Web.Backoffice.Controllers
             model.Filter.PrazoInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
             model.Filter.PrazoFinal = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
 
-            //var a = new ImprimirEtiquetaPecaRequest { IdEmpresa = IdEmpresa, IdImpressora = 121, QuantidadeEtiquetas = 1, ReferenciaProduto = "CTX721" };
+            //var a = new ImprimirEtiquetaProdutoBase { IdEmpresa = IdEmpresa, IdImpressora = 121, QuantidadeEtiquetas = 5, ReferenciaProduto = "CTX721" };
 
-            //_etiquetaService.ImprimirEtiquetaPeca(a);
+            //_etiquetaService.ImprimirEtiquetaPersonalizada(a);
 
             return View(model);
         }
@@ -656,20 +656,20 @@ namespace FWLog.Web.Backoffice.Controllers
                                 DataTratamento = loteDivergencias.First().DataTratamentoDivergencia.Value.ToString("dd/MM/yyyy hh:mm:ss")
                             };
 
-                        foreach (LoteDivergencia divergencia in loteDivergencias)
-                        {
-                            List<NotaFiscalItem> nfItem = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).ToList();
-
-                            var divergenciaItem = new ExibirDivergenciaRecebimentoItemViewModel
+                            foreach (LoteDivergencia divergencia in loteDivergencias)
                             {
-                                Referencia = divergencia.Produto.Referencia,
-                                QuantidadeConferencia = divergencia.QuantidadeConferencia,
-                                QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
-                                QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
-                                QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Sum(s => s.Quantidade),
-                                QuantidadeMaisTratado = divergencia.QuantidadeDivergenciaMais ?? 0,
-                                QuantidadeMenosTratado = divergencia.QuantidadeDivergenciaMenos ?? 0
-                            };
+                                List<NotaFiscalItem> nfItem = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).ToList();
+
+                                var divergenciaItem = new ExibirDivergenciaRecebimentoItemViewModel
+                                {
+                                    Referencia = divergencia.Produto.Referencia,
+                                    QuantidadeConferencia = divergencia.QuantidadeConferencia,
+                                    QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
+                                    QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
+                                    QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Sum(s => s.Quantidade),
+                                    QuantidadeMaisTratado = divergencia.QuantidadeDivergenciaMais ?? 0,
+                                    QuantidadeMenosTratado = divergencia.QuantidadeDivergenciaMenos ?? 0
+                                };
 
                                 divergenciaViewModel.Divergencias.Add(divergenciaItem);
                             }
@@ -1226,7 +1226,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     DataHora = item.DataHora.ToString("dd/MM/yyyy HH:mm:ss"),
                     Usuario = usuarios.Where(x => x.UserId.Equals(item.Usuario)).FirstOrDefault()?.PerfilUsuario.Nome
                 });
-            } 
+            }
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {

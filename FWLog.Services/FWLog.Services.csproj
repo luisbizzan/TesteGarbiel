@@ -114,7 +114,7 @@
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaArmazenagemVolume.cs" />
-    <Compile Include="Model\Etiquetas\ImprimirEtiquetaPecaRequest.cs" />
+    <Compile Include="Model\Etiquetas\ImprimirEtiquetaProdutoBase.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeRecebimento.cs" />
     <Compile Include="Model\IntegracaoSankhya\ConfirmarNotaFiscalResposta.cs" />
     <Compile Include="Model\IntegracaoSankhya\IncluirNotaFiscalXML.cs" />
