@@ -11,24 +11,28 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public LogEtiquetagemRepository(Entities entities) : base(entities) { }
 
-        public List<LogEtiquetagemListaLinhaTabela> BuscarLista(DataTableFilter<LogEtiquetagemListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
+        public List<LogEtiquetagemListaLinhaTabela> BuscarLista(DataTableFilter<LogEtiquetagemListaFiltro> model, out int totalRecordsFiltered, out int totalRecords, long idEmpresa)
         {
-            totalRecords = Entities.LogEtiquetagem.Where(w => w.IdTipoEtiquetagem == model.CustomFilter.IdLogEtiquetagem).Count();
+            totalRecords = Entities.LogEtiquetagem.Count(x=> x.IdEmpresa == idEmpresa);
 
-            IQueryable<LogEtiquetagemListaLinhaTabela> query =
-                Entities.LogEtiquetagem.AsNoTracking().Where(w => 
-                    (model.CustomFilter.IdUsuarioEtiquetagem.Equals(string.Empty) || w.IdUsuario.Contains(model.CustomFilter.IdUsuarioEtiquetagem)) &&
-                    (model.CustomFilter.DataInicial.HasValue == false || w.DataHora >= model.CustomFilter.DataInicial.Value) &&
-                    (model.CustomFilter.DataFinal.HasValue == false || w.DataHora <= model.CustomFilter.DataFinal.Value))
+            var query =
+                Entities.LogEtiquetagem.Where(w =>
+                (w.IdEmpresa == idEmpresa) &&
+                (model.CustomFilter.IdProduto.HasValue == false || w.IdProduto == model.CustomFilter.IdProduto.Value) &&
+                (model.CustomFilter.QuantidadeInicial.HasValue == false || w.Quantidade >= model.CustomFilter.QuantidadeInicial.Value) &&
+                (model.CustomFilter.QuantidadeFinal.HasValue == false || w.Quantidade >= model.CustomFilter.QuantidadeFinal.Value) &&
+                (string.IsNullOrEmpty(model.CustomFilter.IdUsuarioEtiquetagem) || w.IdUsuario.Contains(model.CustomFilter.IdUsuarioEtiquetagem)) &&
+                (model.CustomFilter.DataInicial.HasValue == false || w.DataHora >= model.CustomFilter.DataInicial.Value) &&
+                (model.CustomFilter.DataFinal.HasValue == false || w.DataHora <= model.CustomFilter.DataFinal.Value))
                 .Select(s => new LogEtiquetagemListaLinhaTabela
                 {
                     IdLogEtiquetagem = s.IdLogEtiquetagem,
-                    IdProduto = s.IdProduto,
+                    Referencia = s.IdProduto,
+                    Descricao = s.Produto.Descricao,
                     TipoEtiquetagem = s.TipoEtiquetagem.Descricao,
-                    DescricaoProduto = s.Produto.Descricao,
                     Quantidade = s.Quantidade,
-                    DataHora = s.DataHora.ToString("dd/MM/yyy hh:mm:ss"),
-                    Usuario = s.UsuarioEtiquetagem.Id
+                    DataHora = s.DataHora.ToString(),
+                    Usuario = s.UsuarioEtiquetagem.UserName
                 });
 
             totalRecordsFiltered = query.Count();

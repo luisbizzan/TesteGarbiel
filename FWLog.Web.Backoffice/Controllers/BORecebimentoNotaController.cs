@@ -4,6 +4,7 @@ using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Lote;
 using FWLog.Services.Model.Relatorios;
@@ -1168,6 +1169,38 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             return View(divergenciaViewModel);
+        }
+
+        [HttpGet]
+        public ActionResult RelatorioResumoEtiquetagem()
+        {
+            var model = new RelatorioResumoEtiquetagemViewModel
+            {
+                Filter = new RelatorioResumoEtiquetagemFilterViewModel() { }
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioResumoEtiquetagem)]
+        public ActionResult RelatorioResumoEtiquetagemPageData(DataTableFilter<RelatorioResumoEtiquetagemFilterViewModel> model)
+        {
+            var filtros = Mapper.Map<DataTableFilter<LogEtiquetagemListaFiltro>>(model);
+
+            IEnumerable<LogEtiquetagemListaLinhaTabela> result = _uow.LogEtiquetagemRepository.BuscarLista(filtros, out int registrosFiltrados, out int totalRegistros, IdEmpresa);
+
+            List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
+
+            //Implementar nome usuário perfil. Verificar essa questão pois está sendo usando em vários lugares.
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
+                Data = Mapper.Map<IEnumerable<RelatorioResumoEtiquetagemListItemViewModel>>(result)
+            });
         }
 
         [HttpGet]
