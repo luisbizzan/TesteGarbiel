@@ -12,5 +12,7 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.QuarentenaHistorico;
         }
+
+
     }
 }

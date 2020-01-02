@@ -32,18 +32,18 @@
                                 <thead>
                                     <tr>
                                         <th>@Html.LabelFor(m => m.Itens[0].Data)</th>
-                                        <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].Descricao)</th>
                                         <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].Usuario)</th>
+                                        <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].Descricao)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @for (int i = 0; i < Model.Itens.Count(); i++)
                                     {
-                                        <tr class="linha-divergencia">
-                                            <td>@Model.Itens[i].Data</td>
-                                            <td style="text-align:center">@Model.Itens[i].Descricao</td>
-                                            <td style="text-align:center">@Model.Itens[i].Usuario</td>
-                                        </tr>
+                                    <tr class="linha-divergencia">
+                                        <td>@Model.Itens[i].Data</td>
+                                        <td style="text-align:center">@Model.Itens[i].Usuario</td>
+                                        <td style="text-align:center">@Model.Itens[i].Descricao</td>
+                                    </tr>
                                     }
                                 </tbody>
                             </table>

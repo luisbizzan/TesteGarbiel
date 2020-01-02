@@ -352,7 +352,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Itens = _uow.QuarentenaHistoricoRepository.Table().Where(x => x.IdQuarentena == id).ToList().Select(x => new HistoricoQuarentenaItemViewModel
                 {
                     Data = x.Data.ToString("dd/MM/yyyy"),
-                    Usuario = x.Usuario?.UserName,
+                    Usuario = !string.IsNullOrWhiteSpace(x.IdUsuario) ? _uow.PerfilUsuarioRepository.GetByUserId(x.IdUsuario).Nome : string.Empty, 
                     Descricao = x.Descricao
                 }).ToList()
             };
