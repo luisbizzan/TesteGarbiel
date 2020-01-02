@@ -50,6 +50,12 @@ namespace FWLog.Data
         private LogEtiquetagemRepository _loteEtiquetagemRepository;
         private ProdutoEnderecoRepository _produtoEnderecoRepository;
         private ProdutoEstoqueRepository _produtoEstoqueRepository;
+        private QuarentenaHistoricoRepository _quarentenaHistoricoRepository;
+
+        public QuarentenaHistoricoRepository QuarentenaHistoricoRepository
+        {
+            get => _quarentenaHistoricoRepository ?? (_quarentenaHistoricoRepository = new QuarentenaHistoricoRepository(_context));
+        }
 
         public ProdutoEnderecoRepository ProdutoEnderecoRepository
         {
