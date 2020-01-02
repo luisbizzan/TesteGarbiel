@@ -296,6 +296,32 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
 
+        public void ImprimirEtiquetaDevolucao(ImprimirEtiquetaDevolucaoRequest request)
+        {
+            string linha1 = request.Linha1?.Normalizar();
+            string linha2 = request.Linha2?.Normalizar();
+            string linha3 = request.Linha3?.Normalizar();
+
+            var etiquetaZpl = new StringBuilder();
+
+            etiquetaZpl.Append("^XA");
+
+            // Define quantidade de etiquetas a imprimir
+            etiquetaZpl.Append($"^PQ{request.QuantidadeEtiquetas}^FS");
+
+            // Fundo Etiqueta
+            etiquetaZpl.Append("^FO10,10^GB700,540,270^FS");
+
+            // Texto da etiqueta
+            etiquetaZpl.Append($@"^FO50,15^FB530,3,0,C,0^A0B,230,65^FR^FD{linha1}\&{linha2}\&{linha3}^FS");
+
+            etiquetaZpl.Append("^XZ");
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+        }
+
         private class CelulaEtiqueta
         {
             internal CelulaEtiqueta(int x, int y = 0)
