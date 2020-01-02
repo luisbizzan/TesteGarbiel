@@ -15,7 +15,7 @@ namespace FWLog.Services.Services
             }
         }
        
-        public void ValidarDadosIntegração<T>(T objtIntegracao)
+        public void ValidarDadosIntegracao<T>(T objtIntegracao)
         {
             var context = new ValidationContext(objtIntegracao, null, null);
             var results = new List<ValidationResult>();

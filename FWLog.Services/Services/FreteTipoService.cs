@@ -35,7 +35,7 @@ namespace FWLog.Services.Services
             {
                 try
                 {
-                    ValidarDadosIntegração(freteTipoInt);
+                    ValidarDadosIntegracao(freteTipoInt);
 
                     bool freteTipoNovo = false;
 

@@ -43,7 +43,7 @@ namespace FWLog.Services.Services
                 {
                     var notafiscalIntegracao = notasInt.Value.First();
 
-                    ValidarDadosIntegração(notafiscalIntegracao);
+                    ValidarDadosIntegracao(notafiscalIntegracao);
 
                     var codEmp = Convert.ToInt64(notafiscalIntegracao.CODEMP);
                     Empresa empresa = empresas.FirstOrDefault(f => f.CodigoIntegracao == codEmp);

@@ -32,7 +32,7 @@ namespace FWLog.Services.Services
             {
                 try
                 {
-                    ValidarDadosIntegração(unidadeInt);
+                    ValidarDadosIntegracao(unidadeInt);
 
                     bool unidadeNova = false;
 

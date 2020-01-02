@@ -284,13 +284,24 @@ namespace FWLog.Services.Integracao
 
             var sql = string.Format("SELECT {0} FROM {1} {2} {3}", sqlColunas, classAttr.DisplayName, inner, where);
 
-            var resultJson = await Instance.ExecuteQuery(sql);
-            if (resultJson == null)
+            string resultado = await Instance.ExecuteQuery(sql);
+            if (resultado == null)
             {
                 return resultList;
             }
 
-            ExecuteQueryResponse resultObj = JsonConvert.DeserializeObject<ExecuteQueryResponse>(resultJson);
+            ExecuteQueryResponse resultObj = null;
+
+            try
+            {
+                resultObj = JsonConvert.DeserializeObject<ExecuteQueryResponse>(resultado);
+            }
+            catch (Exception e)
+            {
+                var erro = DeserializarXML<IntegracaoErroResposta>(resultado);
+
+                throw new BusinessException(string.Format("Ocorreu um erro na consulta da tabela {0}. Mensagem de Erro {1}", classAttr.DisplayName, erro.Mensagem));
+            }
 
             resultList = new List<TClass>();
             foreach (var row in resultObj.responseBody.rows)
@@ -308,14 +319,14 @@ namespace FWLog.Services.Integracao
             return resultList;
         }
 
-        public async Task<bool> AtualizarInformacaoIntegracao(string entidade, string campoPKIntegracao, long valorPKIntegracao, string campoStatus, object valorStatus)
+        public async Task<bool> AtualizarInformacaoIntegracao(string entidade, string campoPKIntegracao, long valorPKIntegracao, string campo, object valor)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
                 return false;
             }
-            //TODO ARRUMAR
-            XElement dataRow = new XElement("dataRow", new XElement("localFields", new XElement(campoStatus, valorStatus)));
+
+            XElement dataRow = new XElement("dataRow", new XElement("localFields", new XElement(campo, valor)));
             dataRow.Add(new XElement("key", new XElement(campoPKIntegracao, valorPKIntegracao)));
 
             XAttribute[] attArray = {
@@ -338,10 +349,19 @@ namespace FWLog.Services.Integracao
             XDocument doc = XDocument.Parse(responseContent);
             XElement root = doc.Root;
 
-            string nunota = root.Element("responseBody").Element("entities").Element("entity").Element("NUNOTA")?.Value;
-            if (nunota == null)
+            try
             {
-                throw new Exception("O sistema não obteve o campo NUNOTA no retorno da atualização da nota fiscal no Integração Sankhya.");
+                string status = root.Element("responseBody").Attribute("status")?.Value;
+                if (status == null || status != "1")
+                {
+                    throw new BusinessException("O sistema não obteve sucesso na atualização da entidade {0}.");
+                }
+            }
+            catch (Exception)
+            {
+                var erro = DeserializarXML<IntegracaoErroResposta>(root.ToString());
+
+                throw new BusinessException(string.Format("O sistema não obteve sucesso na atualização da entidade {0}. Mensagem de Erro {1}", entidade, erro.Mensagem));
             }
 
             return true;
@@ -364,7 +384,7 @@ namespace FWLog.Services.Integracao
             {
                 var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
 
-                throw new Exception(string.Format("Ocorreu um erro na confirmação da nota fiscal número único {0}. Mensagem de Erro {1}", condigoIntegracao, erro.Mensagem));
+                throw new BusinessException(string.Format("Ocorreu um erro na confirmação da nota fiscal número único {0}. Mensagem de Erro {1}", condigoIntegracao, erro.Mensagem));
             }
 
             return true;
