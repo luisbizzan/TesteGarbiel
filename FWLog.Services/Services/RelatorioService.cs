@@ -250,6 +250,10 @@ namespace FWLog.Services.Services
             Lote lote = _unitiOfWork.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
             bool IsNotaRecebida = lote != null;
 
+            LoteStatusEnum[] loteNaoConferido = new LoteStatusEnum[] { LoteStatusEnum.AguardandoRecebimento, LoteStatusEnum.Desconhecido, LoteStatusEnum.Recebido };
+
+            bool LoteNaoConferido = lote == null || Array.Exists(loteNaoConferido, x => x == lote.IdLoteStatus);
+
             row = tabela.AddRow();
             paragraph = row.Cells[0].AddParagraph();
             paragraph.AddFormattedText("Lote: ", TextFormat.Bold);
@@ -396,47 +400,48 @@ namespace FWLog.Services.Services
                 Bold = true
             };
 
-            List<NotaFiscalItem> notaFiscalItems = _unitiOfWork.NotaFiscalItemRepository.ObterItens(notaFiscal.IdNotaFiscal);
-
-            tabela = document.Sections[0].AddTable();
-            tabela.Format.Font = new Font("Verdana", new Unit(9));
-
-            tabela.AddColumn(new Unit(88));
-            tabela.AddColumn(new Unit(88));
-            tabela.AddColumn(new Unit(88));
-            tabela.AddColumn(new Unit(88));
-            tabela.AddColumn(new Unit(88));
-            tabela.AddColumn(new Unit(88));
-
-            row = tabela.AddRow();
-            row.Format.Font = new Font("Verdana", new Unit(9));
-            row.HeadingFormat = true;
-            row.Format.Font.Bold = true;
-
-            row.Cells[0].AddParagraph("Referência");
-            row.Cells[1].AddParagraph("Quantidade");
-            row.Cells[2].AddParagraph("Início");
-            row.Cells[3].AddParagraph("Termino");
-            row.Cells[4].AddParagraph("Conferido por");
-            row.Cells[5].AddParagraph("Tempo");
-
-            if (notaFiscalItems.Count > 0)
+            if (!LoteNaoConferido)
             {
-                foreach (NotaFiscalItem notaFiscalItem in notaFiscalItems)
+                var loteConferencia = _unitiOfWork.LoteConferenciaRepository.ObterPorId(lote.IdLote);
+                List<UsuarioEmpresa> usuarios = _unitiOfWork.UsuarioEmpresaRepository.ObterPorEmpresa(lote.NotaFiscal.IdEmpresa);
+
+                tabela = document.Sections[0].AddTable();
+                tabela.Format.Font = new Font("Verdana", new Unit(9));
+
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+
+                row = tabela.AddRow();
+                row.Format.Font = new Font("Verdana", new Unit(9));
+                row.HeadingFormat = true;
+                row.Format.Font.Bold = true;
+
+                row.Cells[0].AddParagraph("Referência");
+                row.Cells[1].AddParagraph("Quantidade");
+                row.Cells[2].AddParagraph("Início");
+                row.Cells[3].AddParagraph("Termino");
+                row.Cells[4].AddParagraph("Conferido por");
+                row.Cells[5].AddParagraph("Tempo");
+
+                foreach (var item in loteConferencia)
                 {
                     row = tabela.AddRow();
                     paragraph = row.Cells[0].AddParagraph();
-                    paragraph.AddText(string.IsNullOrEmpty(notaFiscalItem.Produto.Referencia) ? string.Empty : notaFiscalItem.Produto.Referencia);//TODO Verificar
+                    paragraph.AddText(item.Produto.Referencia);
                     paragraph = row.Cells[1].AddParagraph();
-                    paragraph.AddText(notaFiscalItem.Quantidade.ToString());
+                    paragraph.AddText(item.Quantidade.ToString());
                     paragraph = row.Cells[2].AddParagraph();
-                    paragraph.AddText("Não Conferido");
+                    paragraph.AddText(item.DataHoraInicio.ToString("dd/MM/yyyy HH:mm:ss"));
                     paragraph = row.Cells[3].AddParagraph();
-                    paragraph.AddText("Não Conferido");
+                    paragraph.AddText(item.DataHoraFim.ToString("dd/MM/yyyy HH:mm:ss"));
                     paragraph = row.Cells[4].AddParagraph();
-                    paragraph.AddText("Não Conferido");
+                    paragraph.AddText(usuarios.Where(x => x.UserId.Equals(item.UsuarioConferente.Id)).FirstOrDefault()?.PerfilUsuario.Nome);
                     paragraph = row.Cells[5].AddParagraph();
-                    paragraph.AddText("Não Conferido");
+                    paragraph.AddText(item.Tempo.ToString("HH:mm:ss"));
                 }
             }
 
