@@ -1,0 +1,61 @@
+﻿@model FWLog.Web.Backoffice.Models.BOQuarentenaCtx.HistoricoQuarentenaViewModel
+@{
+    Layout = null;
+
+    @BundleHelper.RenderViewScriptModal()
+}
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">×</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Histórico da Quarentena</h4>
+        </div>
+        <div class="modal-body">
+            <div class="x_panel">
+                <div class="x_content">
+                    @*<div class="row">
+                            <div class="col-sm-12 col-lg-4">
+                                @Html.LabelFor(m => m.NotaFiscal): @Html.DisplayTextFor(m => m.NotaFiscal)
+                                @Html.HiddenFor(m => m.IdLote)
+                            </div>
+                            <div class="col-sm-12 col-lg-6">
+                                @Html.LabelFor(m => m.StatusNotasFiscal): @Html.DisplayTextFor(m => m.StatusNotasFiscal)
+                            </div>
+                        </div>*@
+
+                    <div class="row" style="margin-top: 25px; overflow-y: auto;">
+                        <div class="col-sm-12 col-lg-12">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>@Html.LabelFor(m => m.Itens[0].Data)</th>
+                                        <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].Descricao)</th>
+                                        <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].Usuario)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Model.Itens.Count(); i++)
+                                    {
+                                        <tr class="linha-divergencia">
+                                            <td>@Model.Itens[i].Data</td>
+                                            <td style="text-align:center">@Model.Itens[i].Descricao</td>
+                                            <td style="text-align:center">@Model.Itens[i].Usuario</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row navbar-right">
+                        <div class="col-sm-12 col-lg-12">
+                            <button class="btn btn-default" data-dismiss="modal">Fechar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
