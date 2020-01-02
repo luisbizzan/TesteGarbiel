@@ -135,6 +135,7 @@
     <Compile Include="Models\LoteDivergencia.cs" />
     <Compile Include="Models\LoteDivergenciaStatus.cs" />
     <Compile Include="Models\NotaFiscalTipo.cs" />
+    <Compile Include="Models\QuarentenaHistorico.cs" />
     <Compile Include="Models\TipoConferencia.cs" />
     <Compile Include="Models\EmpresaTipo.cs" />
     <Compile Include="Models\EnderecoArmazenagem.cs" />
@@ -209,6 +210,7 @@
     <Compile Include="Repository\GeneralCtx\PontoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\QuarentenaHistoricoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoEstoqueRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoArmazenagemRepository.cs" />

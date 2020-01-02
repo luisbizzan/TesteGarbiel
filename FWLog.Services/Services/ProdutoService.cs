@@ -34,7 +34,7 @@ namespace FWLog.Services.Services
             where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
             where.Append("AND AD_INTEGRARFWLOG = '1'"); 
 
-            List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<ProdutoIntegracao>(where: where.ToString());
+            List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoIntegracao>(where: where.ToString());
 
             var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
 

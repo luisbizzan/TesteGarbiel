@@ -32,19 +32,19 @@ namespace FWLog.Services.Services
             where.Append("CGC_CPF IS NOT NULL ");
             where.Append("AND RAZAOSOCIAL IS NOT NULL ");
             where.Append("AND FORNECEDOR = 'S' ");
-            //where.Append("AND INTEGRARFWLOG = 1 "); Esperando criação do campo no Sankhya
+            where.Append("AND AD_INTEGRARFWLOG = '1' ");
 
-            List<FornecedorIntegracao> fornecedoresIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryGenerico<FornecedorIntegracao>(where: where.ToString());
+            List<FornecedorIntegracao> fornecedoresIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<FornecedorIntegracao>(where: where.ToString());
 
             foreach (var fornecInt in fornecedoresIntegracao)
             {
                 try
                 {
-                    ValidarFornecedorIntegracao(fornecInt);
+                    ValidarDadosIntegracao(fornecInt);
 
                     bool fornecedorNovo = false;
 
-                    var codParc = Convert.ToInt64(fornecInt.CODPARC);
+                    var codParc = Convert.ToInt64(fornecInt.CodigoIntegracao);
                     Fornecedor fornecedor = _uow.FornecedorRepository.ConsultarPorCodigoIntegracao(codParc);
 
                     if (fornecedor == null)
@@ -54,10 +54,10 @@ namespace FWLog.Services.Services
                     }
 
                     fornecedor.CodigoIntegracao = codParc;
-                    fornecedor.Ativo = fornecInt.ATIVO == "S" ? true : false;
-                    fornecedor.CNPJ = fornecInt.CGC_CPF;
-                    fornecedor.NomeFantasia = fornecInt.RAZAOSOCIAL;
-                    fornecedor.RazaoSocial = fornecInt.NOMEPARC;
+                    fornecedor.Ativo = fornecInt.Ativo == "S" ? true : false;
+                    fornecedor.CNPJ = fornecInt.CNPJ;
+                    fornecedor.RazaoSocial = fornecInt.RazaoSocial;
+                    fornecedor.NomeFantasia = fornecInt.NomeFantasia;
 
                     if (fornecedorNovo)
                     {
@@ -66,29 +66,20 @@ namespace FWLog.Services.Services
 
                     await _uow.SaveChangesAsync();
 
-                    //bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", fornecedor.CodigoIntegracao, "DTALTER", DateTime.UtcNow);
-                    //if (!atualizacaoOK)
-                    //{
-                    //    throw new Exception("A atualização de Fornecedor no Sankhya não terminou com sucesso.");
-                    //}
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", fornecedor.CodigoIntegracao, "AD_INTEGRARFWLOG", '0');
+                    if (!atualizacaoOK)
+                    {
+                        throw new Exception("A atualização de Fornecedor no Sankhya não terminou com sucesso.");
+                    }
                 }
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração do seguinte Fornecedor: {0}.", fornecInt.CODPARC));
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração do seguinte Fornecedor: {0}.", fornecInt.CodigoIntegracao));
 
                     continue;
                 }
             }
-        }
-
-        public void ValidarFornecedorIntegracao(FornecedorIntegracao fornecedorIntegracao)
-        {
-            ValidarCampo(fornecedorIntegracao.CODPARC, nameof(fornecedorIntegracao.CODPARC));
-            ValidarCampo(fornecedorIntegracao.ATIVO, nameof(fornecedorIntegracao.ATIVO));
-            ValidarCampo(fornecedorIntegracao.CGC_CPF, nameof(fornecedorIntegracao.CGC_CPF));
-            ValidarCampo(fornecedorIntegracao.NOMEPARC, nameof(fornecedorIntegracao.NOMEPARC));
-            ValidarCampo(fornecedorIntegracao.RAZAOSOCIAL, nameof(fornecedorIntegracao.RAZAOSOCIAL));
         }
     }
 }
