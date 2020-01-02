@@ -349,10 +349,10 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var model = new HistoricoQuarentenaViewModel
             {
-                Itens = _uow.QuarentenaHistoricoRepository.Table().Where(x => x.IdQuarentena == id).ToList().Select(x => new HistoricoQuarentenaItemViewModel
+                Itens = _uow.QuarentenaHistoricoRepository.QuarentenaHistoricos().Where(x => x.IdQuarentena == id).ToList().Select(x => new HistoricoQuarentenaItemViewModel
                 {
                     Data = x.Data.ToString("dd/MM/yyyy"),
-                    Usuario = !string.IsNullOrWhiteSpace(x.IdUsuario) ? _uow.PerfilUsuarioRepository.GetByUserId(x.IdUsuario).Nome : string.Empty, 
+                    Usuario = x.NomeUsuario, 
                     Descricao = x.Descricao
                 }).ToList()
             };
