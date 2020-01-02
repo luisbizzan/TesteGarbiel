@@ -9,9 +9,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 {
     public class QuarentenaRepository : GenericRepository<Quarentena>
     {
-        public QuarentenaRepository(Entities entities) : base(entities)
-        {
-        }
+        public QuarentenaRepository(Entities entities) : base(entities) { }
 
         public IQueryable<Quarentena> All()
         {

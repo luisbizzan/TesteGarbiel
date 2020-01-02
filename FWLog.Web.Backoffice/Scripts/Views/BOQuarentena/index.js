@@ -14,6 +14,12 @@
                 attrs: { 'data-id': full.IdQuarentena, 'action': 'termoResponsabilidade' },
                 icon: 'fa fa-file-text',
                 visible: full.IdQuarentenaStatus === 1 || full.IdQuarentenaStatus === 2 ? true : false
+            },
+            {
+                text: "Histórico da Quarentena",
+                attrs: { 'data-id': full.IdQuarentena, 'action': 'historicoQuarentena' },
+                icon: 'fa fa-history',
+                visible: view.registrarRecebimento
             }
         ];
     });
@@ -55,7 +61,7 @@
         });
 
         new dart.DateTimePickerLink(dataEncerramentoInicial, dataEncerramentoFinal, { ignoreTime: true });
-    }
+    };
 
     createLinkedPickers();
     createLinkedPickes2();
@@ -124,6 +130,9 @@
 
     $(document.body).on('click', "[action='alterarStatus']", alterarStatus);
     $(document.body).on('click', "[action='termoResponsabilidade']", termoResponsabilidade);
+    $(document.body).on('click', "[action='historicoQuarentena']", historicoQuarentena);
+
+
 
     function alterarStatus() {
         let id = $(this).data("id");
@@ -151,6 +160,14 @@
 
         $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=laser&acao=" + id, function () {
             $("#modalImpressoras").modal();
+        });
+    }
+
+    function historicoQuarentena() {
+        var id = $(this).data("id");
+
+        $("#modalHistoricoQuarentena").load(CONTROLLER_PATH + "Historico/" + id, function () {
+            $("#modalHistoricoQuarentena").modal();
         });
     }
 })();

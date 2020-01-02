@@ -275,6 +275,7 @@
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
+    <Compile Include="Models\BOQuarentenaCtx\HistoricoQuarentenaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirEtiquetaRecebimentoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\RelatorioResumoEtiquetagemViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\ResumoDivergenciaConferenciaViewModel.cs" />
@@ -530,6 +531,7 @@
     <Content Include="Views\BORecebimentoNota\ResumoDivergenciaConferencia.cshtml" />
     <Content Include="Views\BORecebimentoNota\RelatorioResumoEtiquetagem.cshtml" />
     <Content Include="Views\BORecebimentoNota\ResumoProcessamentoDivergencia.cshtml" />
+    <Content Include="Views\BOQuarentena\Historico.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

@@ -126,7 +126,7 @@ namespace FWLog.Services.Services
             ProdutoEstoque empresaProduto = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, request.IdEmpresa);
 
             string endereco = empresaProduto?.EnderecoArmazenagem?.Codigo ?? string.Empty;
-            string unidade = "PC"; // TODO: Unidade de medida
+            string unidade = produto.UnidadeMedida?.Sigla ?? string.Empty;
 
             int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / CelulasEtiqueta_102x22.Count);
             int etiquetasRestantes = request.QuantidadeEtiquetas;

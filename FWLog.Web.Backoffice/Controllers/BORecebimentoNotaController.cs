@@ -1036,6 +1036,16 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 //_etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
 
+                //var requestPecasMais = new ImprimirEtiquetaDevolucaoRequest
+                //{
+                //    Linha1 = lote.IdLote.ToString().PadLeft(10, '0'),
+                //    Linha2 = produto.Referencia,
+                //    Linha3 = "PC.A+",
+                //    IdImpressora = null
+                //};
+
+                //_etiquetaService.ImprimirEtiquetaDevolucao(requestPecasMais);
+
                 //Registra a impressão da etiqueta
                 var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem
                 {
