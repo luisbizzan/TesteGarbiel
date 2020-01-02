@@ -1,4 +1,5 @@
 ﻿using FWLog.Services.Integracao.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Services.Model.IntegracaoSankhya
 {
@@ -6,48 +7,52 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     public class EmpresaIntegracao
     {
         [TabelaIntegracao(DisplayName = "TSIEMP.CODEMP ")]
-        public string CODEMP { get; set; }
+        [Required]
+        public string CodigoIntegracao { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIEMP.RAZAOSOCIAL")]
-        public string RAZAOSOCIAL { get; set; }
+        public string RazaoSocial { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TSIEMP.NOMEFANTASIA")]
-        public string NOMEFANTASIA { get; set; }
+        [TabelaIntegracao(DisplayName = "TSIEMP.AD_NOMEFILIAL")]
+        public string NomeFantasia { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIEMP.CGC")]
-        public string CGC { get; set; }
+        public string CNPJ { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIEMP.CEP")]
         public string CEP { get; set; }
 
         [TabelaIntegracao(DisplayName = "CONCAT(CONCAT(TSIEND.TIPO, ' '), TSIEND.NOMEEND)")]
-        public string NOMEEND { get; set; }
+        public string Endereco { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIEMP.NUMEND")]
-        public string NUMEND { get; set; }
+        public string Numero { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIEMP.COMPLEMENTO")]
-        public string COMPLEMENTO { get; set; }
+        public string Complemento { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIBAI.NOMEBAI")]
-        public string NOMEBAI { get; set; }
+        public string Bairro { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSICID.NOMECID")]
-        public string NOMECID { get; set; }
+        public string Cidade { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIEMP.TELEFONE")]
-        public string TELEFONE { get; set; }
+        public string Telefone { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFEMP.ATIVO")]
-        public string ATIVO { get; set; }
+        public string Ativo { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIEMP.CODEMPMATRIZ")]
-        public string CODEMPMATRIZ { get; set; }
+        public string EmpresaMatriz { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TSIEMP.AD_UNIDABREV")]
-        public string AD_UNIDABREV { get; set; }
+        [TabelaIntegracao(DisplayName = "TSIEMP.AD_FILIAL")]
+        public string Sigla { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIUFS.DESCRICAO")]
-        public string ESTADO { get; set; }
+        public string Estadp { get; set; }
+
+        [TabelaIntegracao(DisplayName = "TGFEMP.AD_FONE_SAC")]
+        public string TelefoneSAC { get; set; }
     }
 }
