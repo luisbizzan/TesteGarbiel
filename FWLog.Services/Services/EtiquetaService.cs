@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace FWLog.Services.Services
 {
@@ -125,7 +124,7 @@ namespace FWLog.Services.Services
             string endereco = empresaProduto?.EnderecoArmazenagem?.Codigo ?? string.Empty;
             string unidade = "PC"; // TODO: Unidade de medida
 
-            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / 3);
+            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / celulasConfEtiqueta.Count);
             int etiquetasRestantes = request.QuantidadeEtiquetas;
 
             var etiquetaZpl = new StringBuilder();
@@ -134,7 +133,7 @@ namespace FWLog.Services.Services
             {
                 var colunasImpressao = new List<CelulaEtiqueta>();
 
-                for (int c = 0; c <= etiquetasRestantes && c < 3; c++)
+                for (int c = 0; c <= etiquetasRestantes && c < celulasConfEtiqueta.Count; c++)
                 {
                     colunasImpressao.Add(celulasConfEtiqueta.ElementAt(c));
 
@@ -188,7 +187,7 @@ namespace FWLog.Services.Services
 
             Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
 
-            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / 3);
+            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / celulasConfEtiqueta.Count);
             int etiquetasRestantes = request.QuantidadeEtiquetas;
 
             var etiquetaZpl = new StringBuilder();
@@ -197,7 +196,7 @@ namespace FWLog.Services.Services
             {
                 var colunasImpressao = new List<CelulaEtiqueta>();
 
-                for (int c = 0; c <= etiquetasRestantes && c < 3; c++)
+                for (int c = 0; c <= etiquetasRestantes && c < celulasConfEtiqueta.Count; c++)
                 {
                     colunasImpressao.Add(celulasConfEtiqueta.ElementAt(c));
 
@@ -245,11 +244,11 @@ namespace FWLog.Services.Services
 
             var empresa = _unitOfWork.EmpresaRepository.GetById(request.IdEmpresa);
 
-            string sac = empresa.TelefoneSAC.Telefone();
+            string sac = empresa.TelefoneSAC.MascaraTelefone();
             string razaoSocial = empresa.RazaoSocial.Normalizar();
-            string cnpj = empresa.CNPJ.CNPJ();
+            string cnpj = empresa.CNPJ.MascaraCNPJ();
 
-            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / 3);
+            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / celulasConfEtiqueta.Count);
             int etiquetasRestantes = request.QuantidadeEtiquetas;
 
             var etiquetaZpl = new StringBuilder();
@@ -258,7 +257,7 @@ namespace FWLog.Services.Services
             {
                 var colunasImpressao = new List<CelulaEtiqueta>();
 
-                for (int c = 0; c <= etiquetasRestantes && c < 3; c++)
+                for (int c = 0; c <= etiquetasRestantes && c < celulasConfEtiqueta.Count; c++)
                 {
                     colunasImpressao.Add(celulasConfEtiqueta.ElementAt(c));
 
