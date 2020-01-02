@@ -4,6 +4,7 @@ using FWLog.Data.Models;
 using FWLog.Services.Model.Etiquetas;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
@@ -21,6 +22,11 @@ namespace FWLog.Services.Services
             _unitOfWork = unitOfWork;
             _impressoraService = impressoraService;
         }
+
+        /// <summary>
+        /// Pontos iniciais de cada coluna da etiqueta 102mm por 22mm com 3 colunas.
+        /// </summary>
+        private ReadOnlyCollection<CelulaEtiqueta> CelulasEtiqueta_102x22 { get; } = new List<CelulaEtiqueta> { new CelulaEtiqueta(0), new CelulaEtiqueta(272), new CelulaEtiqueta(545) }.AsReadOnly();
 
         public void ImprimirEtiquetaVolumeRecebimento(long idLote, long idImpressora)
         {
@@ -116,15 +122,13 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaPeca(ImprimirEtiquetaProdutoBase request)
         {
-            var celulasConfEtiqueta = new List<CelulaEtiqueta> { new CelulaEtiqueta(0), new CelulaEtiqueta(272), new CelulaEtiqueta(545) };
-
             Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
             ProdutoEstoque empresaProduto = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, request.IdEmpresa);
 
             string endereco = empresaProduto?.EnderecoArmazenagem?.Codigo ?? string.Empty;
             string unidade = "PC"; // TODO: Unidade de medida
 
-            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / celulasConfEtiqueta.Count);
+            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / CelulasEtiqueta_102x22.Count);
             int etiquetasRestantes = request.QuantidadeEtiquetas;
 
             var etiquetaZpl = new StringBuilder();
@@ -133,9 +137,9 @@ namespace FWLog.Services.Services
             {
                 var colunasImpressao = new List<CelulaEtiqueta>();
 
-                for (int c = 0; c <= etiquetasRestantes && c < celulasConfEtiqueta.Count; c++)
+                for (int c = 0; c <= etiquetasRestantes && c < CelulasEtiqueta_102x22.Count; c++)
                 {
-                    colunasImpressao.Add(celulasConfEtiqueta.ElementAt(c));
+                    colunasImpressao.Add(CelulasEtiqueta_102x22.ElementAt(c));
 
                     etiquetasRestantes--;
                 }
@@ -183,11 +187,9 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaPersonalizada(ImprimirEtiquetaProdutoBase request)
         {
-            var celulasConfEtiqueta = new List<CelulaEtiqueta> { new CelulaEtiqueta(0), new CelulaEtiqueta(272), new CelulaEtiqueta(545) };
-
             Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
 
-            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / celulasConfEtiqueta.Count);
+            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / CelulasEtiqueta_102x22.Count);
             int etiquetasRestantes = request.QuantidadeEtiquetas;
 
             var etiquetaZpl = new StringBuilder();
@@ -196,9 +198,9 @@ namespace FWLog.Services.Services
             {
                 var colunasImpressao = new List<CelulaEtiqueta>();
 
-                for (int c = 0; c <= etiquetasRestantes && c < celulasConfEtiqueta.Count; c++)
+                for (int c = 0; c <= etiquetasRestantes && c < CelulasEtiqueta_102x22.Count; c++)
                 {
-                    colunasImpressao.Add(celulasConfEtiqueta.ElementAt(c));
+                    colunasImpressao.Add(CelulasEtiqueta_102x22.ElementAt(c));
 
                     etiquetasRestantes--;
                 }
@@ -240,15 +242,13 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaAvulso(ImprimirEtiquetaAvulsoRequest request)
         {
-            var celulasConfEtiqueta = new List<CelulaEtiqueta> { new CelulaEtiqueta(0), new CelulaEtiqueta(272), new CelulaEtiqueta(545) };
-
             var empresa = _unitOfWork.EmpresaRepository.GetById(request.IdEmpresa);
 
             string sac = empresa.TelefoneSAC.MascaraTelefone();
             string razaoSocial = empresa.RazaoSocial.Normalizar();
             string cnpj = empresa.CNPJ.MascaraCNPJ();
 
-            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / celulasConfEtiqueta.Count);
+            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / CelulasEtiqueta_102x22.Count);
             int etiquetasRestantes = request.QuantidadeEtiquetas;
 
             var etiquetaZpl = new StringBuilder();
@@ -257,9 +257,9 @@ namespace FWLog.Services.Services
             {
                 var colunasImpressao = new List<CelulaEtiqueta>();
 
-                for (int c = 0; c <= etiquetasRestantes && c < celulasConfEtiqueta.Count; c++)
+                for (int c = 0; c <= etiquetasRestantes && c < CelulasEtiqueta_102x22.Count; c++)
                 {
-                    colunasImpressao.Add(celulasConfEtiqueta.ElementAt(c));
+                    colunasImpressao.Add(CelulasEtiqueta_102x22.ElementAt(c));
 
                     etiquetasRestantes--;
                 }
@@ -274,11 +274,14 @@ namespace FWLog.Services.Services
                     // Posição inicial de desenho da etiqueta
                     etiquetaZpl.Append($"^LH{celula.X},0");
 
+                    // Label Distribuido por
                     etiquetaZpl.Append("^FO12,40^FB260,1,,C,0^A0N,30,20^FDDISTRIBUIDO POR:^FS");
                     etiquetaZpl.Append($"^FO12,70^FB260,1,,C,0^A0N,30,20^FD{razaoSocial}^FS");
 
+                    // Label CNPJ
                     etiquetaZpl.Append($"^FO12,100^FB260,1,,C,0^A0N,30,20^FDCNPJ:{cnpj}^FS");
 
+                    // Label Telefone SAC
                     etiquetaZpl.Append($"^FO12,130^FB260,1,,C,0^A0N,30,20^FDSAC.:{sac}^FS");
                 }
 
