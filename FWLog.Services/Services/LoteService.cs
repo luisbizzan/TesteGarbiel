@@ -87,9 +87,9 @@ namespace FWLog.Services.Services
                         IdTipoConferencia = empresaConfig.IdTipoConferencia.Value,
                         IdProduto = nfItem.Key,
                         Quantidade = 0,
-                        DataHoraInicio = DateTime.Now,//TODO VErificar
+                        DataHoraInicio = DateTime.Now,
                         DataHoraFim = DateTime.Now,
-                        Tempo = DateTime.Now,
+                        Tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0),
                         IdUsuarioConferente = userId
                     };
 
