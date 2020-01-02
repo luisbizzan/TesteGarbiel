@@ -1,0 +1,4 @@
+BEGIN	
+	ALTER TABLE DART."NotaFiscal" ADD "NumeroFicticioNF" VARCHAR2(20);
+COMMIT;
+END;

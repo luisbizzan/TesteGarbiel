@@ -8,64 +8,64 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     {
         [TabelaIntegracao(DisplayName = "TGFCAB.NUNOTA")]
         [Required]
-        public string NUNOTA { get; set; } //CodigoIntegracao
+        public string CodigoIntegracao { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFCAB.NUMNOTA")]
         [Required]
-        public string NUMNOTA { get; set; } //Numero
+        public string Numero { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.SERIENOTA")]
-        public string SERIENOTA { get; set; } //Serie
+        public string Serie { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.CODEMP")]
         [Required]
-        public string CODEMP { get; set; } //CompanyId
+        public string CodigoIntegracaoEmpresa { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.CHAVENFE")]
-        public string CHAVENFE { get; set; } //Chave
+        public string ChaveAcesso { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.VLRNOTA")]
         [Required]
-        public string VLRNOTA { get; set; } //ValorTotal
+        public string ValorTotal { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.CIF_FOB")]
         [Required]
-        public string CIF_FOB { get; set; } //IdFreteTipo
+        public string FreteTipo { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.CODPARC")]
         [Required]
-        public string CODPARC { get; set; } //IdFornecedor
+        public string CodigoIntegracaoFornecedor{ get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.STATUSNOTA")]
         [Required]
-        public string STATUSNOTA { get; set; } //StatusIntegracao
+        public string StatusIntegracao { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.CODPARCTRANSP")]
         [Required]
-        public string CODPARCTRANSP { get; set; } //IdTransportadora       
+        public string CodigoIntegracaoTransportadora { get; set; }      
 
         [TabelaIntegracao(DisplayName = "TGFCAB.VLRFRETE")]
         [Required]
-        public string VLRFRETE { get; set; } //ValorFrete
+        public string ValorFrete { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.NUMCF")]
-        public string NUMCF { get; set; } //NumeroConhecimento
+        public string NumeroConhecimento { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.PESOBRUTO")]
-        public string PESOBRUTO { get; set; } //PesoBruto
+        public string PesoBruto { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.VOLUME")]
-        public string VOLUME { get; set; } //Especie
+        public string Especie { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TGFCAB.QTDVOL")] //TODO ALTERAR NOME
+        [TabelaIntegracao(DisplayName = "TGFCAB.QTDVOL")] 
         [Required]
-        public string QTDVOL { get; set; } //Quantidade
+        public string QuantidadeVolume { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.DTNEG")]
-        public string DTNEG { get; set; } //DataEmissao
+        public string DataEmissao { get; set; } 
 
-        //[TabelaIntegracao(DisplayName = "TGFCAB.AD_NUMFICTSAV")] //Campo não criado no Sankhya
-        //public string NumeroNFSAV { get; set; } 
+        [TabelaIntegracao(DisplayName = "TGFCAB.AD_NUMFICTSAV")] 
+        public string NumeroFicticioNF { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.CODVEND")]
         [Required]
@@ -73,23 +73,23 @@ namespace FWLog.Services.Model.IntegracaoSankhya
 
         [TabelaIntegracao(DisplayName = "TGFITE.CODPROD")]
         [Required]
-        public string CODPROD { get; set; }
+        public string CodigoIntegracaoProduto { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFITE.CODVOL")]
         [Required]
-        public string CODVOL { get; set; }
+        public string UnidadeMedida { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFITE.QTDNEG")]
         [Required]
-        public string QTDNEG { get; set; }
+        public string Quantidade { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFITE.VLRUNIT")]
         [Required]
-        public string VLRUNIT { get; set; }
+        public string ValorUnitarioItem { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFITE.VLRTOT")]
         [Required]
-        public string VLRTOT { get; set; }
+        public string ValorTotalItem { get; set; }
     }
 
     [TabelaIntegracao(DisplayName = "TGFCAN")]

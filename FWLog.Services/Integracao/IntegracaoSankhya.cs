@@ -205,55 +205,7 @@ namespace FWLog.Services.Integracao
             return result;
         }
 
-        public async Task<List<TClass>> PreExecutarQueryGenerico<TClass>(string where = null) where TClass : class, new()
-        {
-            Type typeClass = typeof(TClass);
-            List<TClass> resultList = null;
-
-            TabelaIntegracaoAttribute classAttr = (TabelaIntegracaoAttribute)typeClass.GetCustomAttributes(typeof(TabelaIntegracaoAttribute), false).FirstOrDefault();
-
-            if (classAttr == null)
-            {
-                return resultList;
-            }
-
-            var listColumns = new List<string>();
-
-            PropertyInfo[] properties = typeClass.GetProperties();
-            foreach (var propertyInfo in properties)
-            {
-                listColumns.Add(propertyInfo.Name);
-            }
-
-            var sqlColunas = string.Join(",", listColumns.ToArray());
-
-            var sql = string.Format("SELECT {0} FROM {1} {2}", sqlColunas, classAttr.DisplayName, where);
-
-            var resultJson = await Instance.ExecuteQuery(sql);
-            if (resultJson == null)
-            {
-                return resultList;
-            }
-
-            ExecuteQueryResponse resultObj = JsonConvert.DeserializeObject<ExecuteQueryResponse>(resultJson);
-
-            resultList = new List<TClass>();
-            foreach (var row in resultObj.responseBody.rows)
-            {
-                var newClass = new TClass();
-                for (var i = 0; i <= listColumns.Count() - 1; i++)
-                {
-                    PropertyInfo propertySet = typeClass.GetProperty(listColumns[i]);
-                    propertySet.SetValue(newClass, row[i], null);
-                }
-
-                resultList.Add(newClass);
-            }
-
-            return resultList;
-        }
-
-        public async Task<List<TClass>> PreExecutarQueryComplexa<TClass>(string where = "", string inner = "") where TClass : class, new()
+        public async Task<List<TClass>> PreExecutarQuery<TClass>(string where = "", string inner = "") where TClass : class, new()
         {
             Type typeClass = typeof(TClass);
             List<TClass> resultList = null;
@@ -351,7 +303,7 @@ namespace FWLog.Services.Integracao
 
             try
             {
-                string status = root.Element("responseBody").Attribute("status")?.Value;
+                string status = root.Attribute("status")?.Value;
                 if (status == null || status != "1")
                 {
                     throw new BusinessException("O sistema não obteve sucesso na atualização da entidade {0}.");
