@@ -4,7 +4,9 @@ using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Model.Lote;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
@@ -29,6 +31,7 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly LoteService _loteService;
         private readonly ApplicationLogService _applicationLogService;
         private readonly EtiquetaService _etiquetaService;
+        private readonly LogEtiquetagemService _logEtiquetagemService;
         private readonly UnitOfWork _uow;
 
         public BORecebimentoNotaController(
@@ -36,13 +39,15 @@ namespace FWLog.Web.Backoffice.Controllers
             RelatorioService relatorioService,
             LoteService loteService,
             ApplicationLogService applicationLogService,
-            EtiquetaService etiquetaService)
+            EtiquetaService etiquetaService,
+            LogEtiquetagemService logEtiquetagemService)
         {
             _loteService = loteService;
             _relatorioService = relatorioService;
             _applicationLogService = applicationLogService;
             _uow = uow;
             _etiquetaService = etiquetaService;
+            _logEtiquetagemService = logEtiquetagemService;
         }
 
         [HttpGet]
@@ -65,6 +70,10 @@ namespace FWLog.Web.Backoffice.Controllers
             model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
             model.Filter.PrazoInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
             model.Filter.PrazoFinal = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
+
+            //var a = new ImprimirEtiquetaDevolucaoRequest { IdImpressora = 121, QuantidadeEtiquetas = 1, Linha1 = "Linha 1", Linha2 = "Linha 2", Linha3 = "Linha 3" };
+
+            //_etiquetaService.ImprimirEtiquetaDevolucao(a);
 
             return View(model);
         }
@@ -647,20 +656,20 @@ namespace FWLog.Web.Backoffice.Controllers
                                 DataTratamento = loteDivergencias.First().DataTratamentoDivergencia.Value.ToString("dd/MM/yyyy hh:mm:ss")
                             };
 
-                        foreach (LoteDivergencia divergencia in loteDivergencias)
-                        {
-                            List<NotaFiscalItem> nfItem = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).ToList();
-
-                            var divergenciaItem = new ExibirDivergenciaRecebimentoItemViewModel
+                            foreach (LoteDivergencia divergencia in loteDivergencias)
                             {
-                                Referencia = divergencia.Produto.Referencia,
-                                QuantidadeConferencia = divergencia.QuantidadeConferencia,
-                                QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
-                                QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
-                                QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Sum(s => s.Quantidade),
-                                QuantidadeMaisTratado = divergencia.QuantidadeDivergenciaMais ?? 0,
-                                QuantidadeMenosTratado = divergencia.QuantidadeDivergenciaMenos ?? 0
-                            };
+                                List<NotaFiscalItem> nfItem = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).ToList();
+
+                                var divergenciaItem = new ExibirDivergenciaRecebimentoItemViewModel
+                                {
+                                    Referencia = divergencia.Produto.Referencia,
+                                    QuantidadeConferencia = divergencia.QuantidadeConferencia,
+                                    QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
+                                    QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
+                                    QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Sum(s => s.Quantidade),
+                                    QuantidadeMaisTratado = divergencia.QuantidadeDivergenciaMais ?? 0,
+                                    QuantidadeMenosTratado = divergencia.QuantidadeDivergenciaMenos ?? 0
+                                };
 
                                 divergenciaViewModel.Divergencias.Add(divergenciaItem);
                             }
@@ -1027,6 +1036,18 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 //_etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
 
+                //Registra a impressão da etiqueta
+                var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem
+                {
+                    IdTipoEtiquetagem = TipoEtiquetagemEnum.Conferencia.GetHashCode(),
+                    IdEmpresa = IdEmpresa,
+                    IdProduto = produto.IdProduto,
+                    Quantidade = quantidadeCaixa,
+                    IdUsuario = User.Identity.GetUserId()
+                };
+
+                _logEtiquetagemService.Registrar(logEtiquetagem);
+
                 #endregion
 
                 return Json(new AjaxGenericResultModel
@@ -1168,6 +1189,65 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             return View(divergenciaViewModel);
+        }
+
+        [HttpGet]
+        public ActionResult RelatorioResumoEtiquetagem()
+        {
+            var model = new RelatorioResumoEtiquetagemViewModel
+            {
+                Filter = new RelatorioResumoEtiquetagemFilterViewModel() { }
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioResumoEtiquetagem)]
+        public ActionResult RelatorioResumoEtiquetagemPageData(DataTableFilter<RelatorioResumoEtiquetagemFilterViewModel> model)
+        {
+            var filtros = Mapper.Map<DataTableFilter<LogEtiquetagemListaFiltro>>(model);
+
+            IEnumerable<LogEtiquetagemListaLinhaTabela> result = _uow.LogEtiquetagemRepository.BuscarLista(filtros, out int registrosFiltrados, out int totalRegistros, IdEmpresa);
+
+            var relatorioResumoEtiquetagemListItemViewModel = new List<RelatorioResumoEtiquetagemListItemViewModel>();
+
+            List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
+
+            foreach (var item in result)
+            {
+                relatorioResumoEtiquetagemListItemViewModel.Add(new RelatorioResumoEtiquetagemListItemViewModel()
+                {
+                    IdLogEtiquetagem = item.IdLogEtiquetagem,
+                    Referencia = item.Referencia,
+                    Descricao = item.Descricao,
+                    TipoEtiquetagem = item.TipoEtiquetagem,
+                    Quantidade = item.Quantidade,
+                    DataHora = item.DataHora.ToString("dd/MM/yyyy HH:mm:ss"),
+                    Usuario = usuarios.Where(x => x.UserId.Equals(item.Usuario)).FirstOrDefault()?.PerfilUsuario.Nome
+                });
+            }
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
+                Data = relatorioResumoEtiquetagemListItemViewModel
+            });
+        }
+
+        [HttpPost]
+        public ActionResult DownloadRelatorioResumoEtiquetagem(RelatorioResumoEtiquetagemRequest viewModel)
+        {
+            ValidateModel(viewModel);
+
+            viewModel.IdEmpresa = IdEmpresa;
+            viewModel.NomeUsuario = User.Identity.Name;
+
+            byte[] relatorio = _relatorioService.GerarRelatorioResumoEtiquetagem(viewModel);
+
+            return File(relatorio, "application/pdf", "Relatório Resumo Etiquetagem.pdf");
         }
 
         [HttpGet]

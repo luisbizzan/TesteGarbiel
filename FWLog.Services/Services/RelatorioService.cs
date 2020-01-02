@@ -1,6 +1,7 @@
 ﻿using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
+using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Relatorio;
 using FWLog.Services.Relatorio.Model;
@@ -467,6 +468,58 @@ namespace FWLog.Services.Services
                 NomeUsuario = request.NomeUsuario,
                 Orientacao = Orientation.Landscape,
                 Titulo = "Relatório Rastreio de Peças",
+                Filtros = string.Empty,
+                Dados = dados
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            return fwRelatorio.Gerar(fwRelatorioDados);
+        }
+
+        public byte[] GerarRelatorioResumoEtiquetagem(RelatorioResumoEtiquetagemRequest request)
+        {
+            var filtro = new LogEtiquetagemListaFiltro()
+            {
+                IdProduto = request.IdProduto,
+                DataInicial = request.DataInicial,
+                DataFinal = request.DataFinal,
+                QuantidadeInicial = request.QuantidadeInicial,
+                QuantidadeFinal = request.QuantidadeFinal,
+                IdUsuarioEtiquetagem = request.IdUsuarioEtiquetagem
+            };
+
+            List<UsuarioEmpresa> usuarios = _unitiOfWork.UsuarioEmpresaRepository.ObterPorEmpresa(request.IdEmpresa);
+
+            var relatorio = _unitiOfWork.LogEtiquetagemRepository.Relatorio(filtro, request.IdEmpresa);
+
+            var list = new List<ResumoEtiquetagem>();
+
+            foreach (var item in relatorio)
+            {
+                list.Add(new ResumoEtiquetagem
+                {
+                    Referencia = item.Produto.Referencia,
+                    Descricao = item.Produto.Descricao,
+                    TipoEtiquetagem = item.TipoEtiquetagem.Descricao,
+                    Quantidade = item.Quantidade,
+                    DataHora = item.DataHora.ToString("dd/MM/yyyy HH:mm:ss"),
+                    Usuario = usuarios.Where(x => x.UserId.Equals(item.IdUsuario)).FirstOrDefault()?.PerfilUsuario.Nome
+                });
+            }
+
+            var dados = new List<IFwRelatorioDados>();
+            dados.AddRange(list);
+
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = request.NomeUsuario,
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório Resumo Etiquetagem",
                 Filtros = string.Empty,
                 Dados = dados
             };

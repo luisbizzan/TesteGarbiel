@@ -3,6 +3,8 @@ using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Model.Etiquetas;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
@@ -20,6 +22,11 @@ namespace FWLog.Services.Services
             _unitOfWork = unitOfWork;
             _impressoraService = impressoraService;
         }
+
+        /// <summary>
+        /// Pontos iniciais de cada coluna da etiqueta 102mm por 22mm com 3 colunas.
+        /// </summary>
+        private ReadOnlyCollection<CelulaEtiqueta> CelulasEtiqueta_102x22 { get; } = new List<CelulaEtiqueta> { new CelulaEtiqueta(0), new CelulaEtiqueta(272), new CelulaEtiqueta(545) }.AsReadOnly();
 
         public void ImprimirEtiquetaVolumeRecebimento(long idLote, long idImpressora)
         {
@@ -96,9 +103,9 @@ namespace FWLog.Services.Services
             etiquetaImprimir.Append($"^BEB,100,Y,N^FO460,100^FD{codReferencia}^FS"); // TODO: onde extrair este dado
 
             // Nome do Colaborador [5 Linha]
-            //int tamanhoNome = 13;
-            //string usuario = request.Usuario.Length > tamanhoNome ? request.Usuario.Substring(0, tamanhoNome) : request.Usuario;
-            etiquetaImprimir.Append($"^FO610,220^FB330,2,100,C,0^A0B,95,40^FD{request.Usuario}^FS");
+            int tamanhoNome = 13;
+            string usuario = request.Usuario.Length > tamanhoNome ? request.Usuario.Substring(0, tamanhoNome) : request.Usuario;
+            etiquetaImprimir.Append($"^FO610,220^FB330,2,100,C,0^A0B,95,40^FD{usuario}^FS");
 
             // Endereço Picking [5 Linha]
             etiquetaImprimir.Append($"^FO610,30^A0B,50,40^FD{endereco}^FS");
@@ -112,5 +119,220 @@ namespace FWLog.Services.Services
 
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
+
+        public void ImprimirEtiquetaPeca(ImprimirEtiquetaProdutoBase request)
+        {
+            Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
+            ProdutoEstoque empresaProduto = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, request.IdEmpresa);
+
+            string endereco = empresaProduto?.EnderecoArmazenagem?.Codigo ?? string.Empty;
+            string unidade = "PC"; // TODO: Unidade de medida
+
+            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / CelulasEtiqueta_102x22.Count);
+            int etiquetasRestantes = request.QuantidadeEtiquetas;
+
+            var etiquetaZpl = new StringBuilder();
+
+            for (int l = 0; l < linhas; l++)
+            {
+                var colunasImpressao = new List<CelulaEtiqueta>();
+
+                for (int c = 0; c <= etiquetasRestantes && c < CelulasEtiqueta_102x22.Count; c++)
+                {
+                    colunasImpressao.Add(CelulasEtiqueta_102x22.ElementAt(c));
+
+                    etiquetasRestantes--;
+                }
+
+                etiquetaZpl.Append("^XA");
+
+                // Velocidade de impressão
+                etiquetaZpl.Append("^PRA^FS");
+
+                // Configuração padrão dos códigos de barras
+                etiquetaZpl.Append("^BY2,,164");
+
+                foreach (CelulaEtiqueta celula in colunasImpressao)
+                {
+                    // Posição inicial de desenho da etiqueta
+                    etiquetaZpl.Append($"^LH{celula.X},0");
+
+                    // Label referência do produto
+                    etiquetaZpl.Append("^FO12,12^GB140,26,30^FS");
+                    etiquetaZpl.Append($"^FO14,16^A0N,30,25^FR^FD{produto.Referencia}^FS");
+
+                    // Label endereço do produto
+                    etiquetaZpl.Append($"^FO145,16^FB120,1,,R,0^A0N,30,20^FD{endereco}^FS");
+
+                    // Label descrição do produto
+                    etiquetaZpl.Append($"^FO12,44^FB260,1,,L,0^A0N,16,16^FD{produto.Descricao.Normalizar()}^FS");
+
+                    // Código de barras do produto
+                    etiquetaZpl.Append($"^FO42,62^BEN,74,Y,N^FD{produto.CodigoBarras}^FS");
+
+                    // Label quantidade por embalagem
+                    etiquetaZpl.Append($"^FO20,162^A0N,8,24^FDQuant.p/emb.: {produto.MultiploVenda.ToString().PadLeft(3, '0')} {unidade}^FS");
+                }
+
+                // Redefinir posição inicial de desenho
+                etiquetaZpl.Append("^LH0,0");
+
+                etiquetaZpl.Append("^XZ");
+            }
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+        }
+
+        public void ImprimirEtiquetaPersonalizada(ImprimirEtiquetaProdutoBase request)
+        {
+            Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
+
+            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / CelulasEtiqueta_102x22.Count);
+            int etiquetasRestantes = request.QuantidadeEtiquetas;
+
+            var etiquetaZpl = new StringBuilder();
+
+            for (int l = 0; l < linhas; l++)
+            {
+                var colunasImpressao = new List<CelulaEtiqueta>();
+
+                for (int c = 0; c <= etiquetasRestantes && c < CelulasEtiqueta_102x22.Count; c++)
+                {
+                    colunasImpressao.Add(CelulasEtiqueta_102x22.ElementAt(c));
+
+                    etiquetasRestantes--;
+                }
+
+                etiquetaZpl.Append("^XA");
+
+                // Velocidade de impressão
+                etiquetaZpl.Append("^PRA^FS");
+
+                // Configuração padrão dos códigos de barras
+                etiquetaZpl.Append("^BY2,,164");
+
+                foreach (CelulaEtiqueta celula in colunasImpressao)
+                {
+                    // Posição inicial de desenho da etiqueta
+                    etiquetaZpl.Append($"^LH{celula.X},0");
+
+                    // Label referência do produto
+                    etiquetaZpl.Append("^FO12,12^GB240,25,30^FS");
+                    etiquetaZpl.Append($"^FO14,16^A0N,30,35^FR^FD{produto.Referencia}^FS");
+
+                    // Label descrição do produto
+                    etiquetaZpl.Append($"^FO12,44^FB260,1,,L,0^A0N,16,16^FD{produto.Descricao.Normalizar()}^FS");
+
+                    // Código de barras do produto
+                    etiquetaZpl.Append($"^FO42,62^BEN,75,Y,N^FD{produto.CodigoBarras}^FS");
+                }
+
+                // Redefinir posição inicial de desenho
+                etiquetaZpl.Append("^LH0,0");
+
+                etiquetaZpl.Append("^XZ");
+            }
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+        }
+
+        public void ImprimirEtiquetaAvulso(ImprimirEtiquetaAvulsoRequest request)
+        {
+            var empresa = _unitOfWork.EmpresaRepository.GetById(request.IdEmpresa);
+
+            string sac = empresa.TelefoneSAC.MascaraTelefone();
+            string razaoSocial = empresa.RazaoSocial.Normalizar();
+            string cnpj = empresa.CNPJ.MascaraCNPJ();
+
+            int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / CelulasEtiqueta_102x22.Count);
+            int etiquetasRestantes = request.QuantidadeEtiquetas;
+
+            var etiquetaZpl = new StringBuilder();
+
+            for (int l = 0; l < linhas; l++)
+            {
+                var colunasImpressao = new List<CelulaEtiqueta>();
+
+                for (int c = 0; c <= etiquetasRestantes && c < CelulasEtiqueta_102x22.Count; c++)
+                {
+                    colunasImpressao.Add(CelulasEtiqueta_102x22.ElementAt(c));
+
+                    etiquetasRestantes--;
+                }
+
+                etiquetaZpl.Append("^XA");
+
+                // Velocidade de impressão
+                etiquetaZpl.Append("^PRA^FS");
+
+                foreach (CelulaEtiqueta celula in colunasImpressao)
+                {
+                    // Posição inicial de desenho da etiqueta
+                    etiquetaZpl.Append($"^LH{celula.X},0");
+
+                    // Label Distribuido por
+                    etiquetaZpl.Append("^FO12,40^FB260,1,,C,0^A0N,30,20^FDDISTRIBUIDO POR:^FS");
+                    etiquetaZpl.Append($"^FO12,70^FB260,1,,C,0^A0N,30,20^FD{razaoSocial}^FS");
+
+                    // Label CNPJ
+                    etiquetaZpl.Append($"^FO12,100^FB260,1,,C,0^A0N,30,20^FDCNPJ:{cnpj}^FS");
+
+                    // Label Telefone SAC
+                    etiquetaZpl.Append($"^FO12,130^FB260,1,,C,0^A0N,30,20^FDSAC.:{sac}^FS");
+                }
+
+                // Redefinir posição inicial de desenho
+                etiquetaZpl.Append("^LH0,0");
+
+                etiquetaZpl.Append("^XZ");
+            }
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+        }
+
+        public void ImprimirEtiquetaDevolucao(ImprimirEtiquetaDevolucaoRequest request)
+        {
+            string linha1 = request.Linha1?.Normalizar();
+            string linha2 = request.Linha2?.Normalizar();
+            string linha3 = request.Linha3?.Normalizar();
+
+            var etiquetaZpl = new StringBuilder();
+
+            etiquetaZpl.Append("^XA");
+
+            // Define quantidade de etiquetas a imprimir
+            etiquetaZpl.Append($"^PQ{request.QuantidadeEtiquetas}^FS");
+
+            // Fundo Etiqueta
+            etiquetaZpl.Append("^FO10,10^GB700,540,270^FS");
+
+            // Texto da etiqueta
+            etiquetaZpl.Append($@"^FO50,15^FB530,3,0,C,0^A0B,230,65^FR^FD{linha1}\&{linha2}\&{linha3}^FS");
+
+            etiquetaZpl.Append("^XZ");
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+        }
+
+        private class CelulaEtiqueta
+        {
+            internal CelulaEtiqueta(int x, int y = 0)
+            {
+                X = x;
+                Y = y;
+            }
+
+            public int X { get; private set; }
+            public int Y { get; private set; }
+        }
+
     }
 }
