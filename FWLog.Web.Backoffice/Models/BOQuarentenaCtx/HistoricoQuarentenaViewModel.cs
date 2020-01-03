@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
 {
@@ -12,8 +13,10 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
     {
         public string Data { get; set; }
 
+        [Display(Name = "Usuário")]
         public string Usuario { get; set; }
 
+        [Display(Name = "Descrição")]
         public string Descricao { get; set; }
     }
 

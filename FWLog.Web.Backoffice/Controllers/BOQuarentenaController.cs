@@ -3,6 +3,7 @@ using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Models.GeneralCtx;
+using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BOQuarentenaCtx;
@@ -271,7 +272,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     entidade.DataEncerramento = DateTime.Now;
                 }
 
-                _uow.QuarentenaRepository.Update(entidade);
+                _uow.QuarentenaRepository.Update(entidade, IdUsuario);
 
                 var userInfo = new BackOfficeUserInfo();
                 _boLogSystemService.Add(new BOLogSystemCreation
@@ -314,7 +315,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 var userLog = new UserLog
                 {
                     IP = userInfo.IP,
-                    UserId = userInfo.UserId
+                    UserId = IdUsuario
                 };
 
                 var request = new TermoResponsabilidadeRequest
@@ -349,10 +350,10 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var model = new HistoricoQuarentenaViewModel
             {
-                Itens = _uow.QuarentenaHistoricoRepository.Table().Where(x => x.IdQuarentena == id).ToList().Select(x => new HistoricoQuarentenaItemViewModel
+                Itens = _uow.QuarentenaHistoricoRepository.QuarentenaHistoricos().Where(x => x.IdQuarentena == id).ToList().Select(x => new HistoricoQuarentenaItemViewModel
                 {
                     Data = x.Data.ToString("dd/MM/yyyy"),
-                    Usuario = !string.IsNullOrWhiteSpace(x.IdUsuario) ? _uow.PerfilUsuarioRepository.GetByUserId(x.IdUsuario).Nome : string.Empty, 
+                    Usuario = x.NomeUsuario,
                     Descricao = x.Descricao
                 }).ToList()
             };

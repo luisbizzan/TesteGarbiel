@@ -34,7 +34,6 @@ namespace FWLog.Data.Repository.CommonCtx
             {
                 _dbSet.Add(entity);
             }
-
         }
 
         public virtual void Update(TEntity entity)
@@ -60,7 +59,6 @@ namespace FWLog.Data.Repository.CommonCtx
             {
                 _dbSet.Remove(entity);
             }
-
         }
     }
 }

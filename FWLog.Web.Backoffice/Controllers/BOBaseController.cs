@@ -131,5 +131,15 @@ namespace FWLog.Web.Backoffice.Controllers
         }
         private ReadOnlyCollection<long> idEmpresasPorUsuario;
 
+        protected string IdUsuario
+        {
+            get
+            {
+                var userInfo = new BackOfficeUserInfo();
+
+                return userInfo.UserId.ToString();
+            }
+        }
+
     }
 }

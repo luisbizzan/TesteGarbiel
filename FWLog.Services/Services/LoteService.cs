@@ -39,14 +39,15 @@ namespace FWLog.Services.Services
                 await AtualizarNotaFiscalIntegracao(nota, LoteStatusEnum.Recebido);
             }
 
-            lote = new Lote();
-
-            lote.IdLoteStatus = LoteStatusEnum.Recebido;
-            lote.IdNotaFiscal = idNotaFiscal;
-            lote.DataRecebimento = dataRecebimento;
-            lote.IdUsuarioRecebimento = userId;
-            lote.QuantidadeVolume = qtdVolumes;
-            lote.QuantidadePeca = nota.NotaFiscalItens.Sum(s => s.Quantidade);
+            lote = new Lote
+            {
+                IdLoteStatus = LoteStatusEnum.Recebido,
+                IdNotaFiscal = idNotaFiscal,
+                DataRecebimento = dataRecebimento,
+                IdUsuarioRecebimento = userId,
+                QuantidadeVolume = qtdVolumes,
+                QuantidadePeca = nota.NotaFiscalItens.Sum(s => s.Quantidade)
+            };
 
             _uow.LoteRepository.Add(lote);
 
@@ -76,10 +77,12 @@ namespace FWLog.Services.Services
 
                 if (conferencia.NullOrEmpty())
                 {
-                    divergencia = new LoteDivergencia();
-                    divergencia.QuantidadeConferenciaMenos = qtdOriginal;
-                    divergencia.QuantidadeConferencia = 0;
-                    divergencia.QuantidadeConferenciaMais = 0;
+                    divergencia = new LoteDivergencia
+                    {
+                        QuantidadeConferenciaMenos = qtdOriginal,
+                        QuantidadeConferencia = 0,
+                        QuantidadeConferenciaMais = 0
+                    };
 
                     var loteConferencia = new LoteConferencia()
                     {
@@ -87,9 +90,9 @@ namespace FWLog.Services.Services
                         IdTipoConferencia = empresaConfig.IdTipoConferencia.Value,
                         IdProduto = nfItem.Key,
                         Quantidade = 0,
-                        DataHoraInicio = DateTime.Now,//TODO VErificar
+                        DataHoraInicio = DateTime.Now,
                         DataHoraFim = DateTime.Now,
-                        Tempo = DateTime.Now,
+                        Tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0),
                         IdUsuarioConferente = userId
                     };
 
@@ -104,10 +107,12 @@ namespace FWLog.Services.Services
                         continue;
                     }
 
-                    divergencia = new LoteDivergencia();
-                    divergencia.QuantidadeConferencia = qtdConferida;
-                    divergencia.QuantidadeConferenciaMais = qtdConferida > qtdOriginal ? qtdConferida - qtdOriginal : 0;
-                    divergencia.QuantidadeConferenciaMenos = qtdConferida < qtdOriginal ? qtdOriginal - qtdConferida : 0;
+                    divergencia = new LoteDivergencia
+                    {
+                        QuantidadeConferencia = qtdConferida,
+                        QuantidadeConferenciaMais = qtdConferida > qtdOriginal ? qtdConferida - qtdOriginal : 0,
+                        QuantidadeConferenciaMenos = qtdConferida < qtdOriginal ? qtdOriginal - qtdConferida : 0
+                    };
                 }
 
                 if (divergencia == null)
@@ -129,14 +134,16 @@ namespace FWLog.Services.Services
             {
                 var qtdConferida = item.Value.Sum(s => s.Quantidade);
 
-                LoteDivergencia divergencia = new LoteDivergencia();
-                divergencia.QuantidadeConferenciaMais = qtdConferida;
-                divergencia.QuantidadeConferenciaMenos = 0;
-                divergencia.QuantidadeConferencia = qtdConferida;
-                divergencia.IdProduto = item.Key;
-                divergencia.IdLote = lote.IdLote;
-                divergencia.IdNotaFiscal = lote.IdNotaFiscal;
-                divergencia.IdLoteDivergenciaStatus = LoteDivergenciaStatusEnum.AguardandoTratativa;
+                LoteDivergencia divergencia = new LoteDivergencia
+                {
+                    QuantidadeConferenciaMais = qtdConferida,
+                    QuantidadeConferenciaMenos = 0,
+                    QuantidadeConferencia = qtdConferida,
+                    IdProduto = item.Key,
+                    IdLote = lote.IdLote,
+                    IdNotaFiscal = lote.IdNotaFiscal,
+                    IdLoteDivergenciaStatus = LoteDivergenciaStatusEnum.AguardandoTratativa
+                };
 
                 loteDivergencias.Add(divergencia);
             }
@@ -178,7 +185,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task<LoteStatusEnum> TratarDivergencia(TratarDivergenciaRequest request)
+        public async Task<LoteStatusEnum> TratarDivergencia(TratarDivergenciaRequest request, string IdUsuario)
         {
             ValidarDadosDivergencia(request);
 
@@ -214,7 +221,7 @@ namespace FWLog.Services.Services
 
                 if (lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva && !loteDivergenciasMenos.NullOrEmpty())
                 {
-                    CriarQuarentena(lote);
+                    CriarQuarentena(lote, IdUsuario);
                 }
 
                 transactionScope.Complete();
@@ -344,7 +351,7 @@ namespace FWLog.Services.Services
             return loteDivergenciasMenos;
         }
 
-        public async Task<ProcessamentoTratativaDivergencia> FinalizarProcessamentoTratativaDivergencia(long idLote)
+        public async Task<ProcessamentoTratativaDivergencia> FinalizarProcessamentoTratativaDivergencia(long idLote, string IdUsuario)
         {
             ProcessamentoTratativaDivergencia processamento = new ProcessamentoTratativaDivergencia()
             {
@@ -363,7 +370,7 @@ namespace FWLog.Services.Services
                 {
                     lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaTodas;
 
-                    CriarQuarentena(lote);
+                    CriarQuarentena(lote, IdUsuario);
                 }
                 else if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMenos > 0))
                 {
@@ -422,7 +429,7 @@ namespace FWLog.Services.Services
                 {
                     lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaTodas;
 
-                    CriarQuarentena(lote);
+                    CriarQuarentena(lote, IdUsuario);
                 }
                 else if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMenos > 0))
                 {
@@ -464,7 +471,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        private void CriarQuarentena(Lote lote)
+        private void CriarQuarentena(Lote lote, string IdUsuario)
         {
             Quarentena quarentena = new Quarentena()
             {
@@ -473,7 +480,7 @@ namespace FWLog.Services.Services
                 IdQuarentenaStatus = QuarentenaStatusEnum.Aberto
             };
 
-            _uow.QuarentenaRepository.Add(quarentena);
+            _uow.QuarentenaRepository.Add(quarentena, IdUsuario);
             _uow.SaveChanges();
         }
 

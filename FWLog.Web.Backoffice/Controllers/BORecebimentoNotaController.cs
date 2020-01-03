@@ -1135,7 +1135,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 request.IdUsuario = User.Identity.GetUserId();
                 request.IdEmpresa = IdEmpresa;
 
-                LoteStatusEnum statusLote = await _loteService.TratarDivergencia(request).ConfigureAwait(false);
+                LoteStatusEnum statusLote = await _loteService.TratarDivergencia(request, IdUsuario).ConfigureAwait(false);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -1442,7 +1442,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                ProcessamentoTratativaDivergencia processamento = await _loteService.FinalizarProcessamentoTratativaDivergencia(id).ConfigureAwait(false);
+                ProcessamentoTratativaDivergencia processamento = await _loteService.FinalizarProcessamentoTratativaDivergencia(id, IdUsuario).ConfigureAwait(false);
                 string json = JsonConvert.SerializeObject(processamento);
 
                 return Json(new AjaxGenericResultModel

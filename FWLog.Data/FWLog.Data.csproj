@@ -103,6 +103,7 @@
     <Compile Include="Logging\LogAttribute.cs" />
     <Compile Include="Models\Application.cs" />
     <Compile Include="Models\ApplicationSession.cs" />
+    <Compile Include="Models\DataTablesCtx\QuarentenaHistoricoListRow.cs" />
     <Compile Include="Models\ProdutoEndereco.cs" />
     <Compile Include="Models\BOLogSystem.cs" />
     <Compile Include="Models\AspNetUsers.cs" />

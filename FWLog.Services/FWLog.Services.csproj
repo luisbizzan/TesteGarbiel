@@ -142,6 +142,7 @@
     <Compile Include="Model\IntegracaoSankhya\ExecuteQueryResponse.cs" />
     <Compile Include="Model\IntegracaoSankhya\NotaFiscalIntegracao.cs" />
     <Compile Include="Model\Relatorios\RelatorioResumoEtiquetagemRequest.cs" />
+    <Compile Include="Model\Relatorios\TermoResponsabilidadeRequest.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
     <Compile Include="Model\TokenResponse.cs" />
