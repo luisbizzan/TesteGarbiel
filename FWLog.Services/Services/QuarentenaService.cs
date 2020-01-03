@@ -2,6 +2,7 @@
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.GeneralCtx;
+using FWLog.Services.Model.Relatorios;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
@@ -18,24 +19,10 @@ namespace FWLog.Services.Services
         public const string TextoAssinatura = "TextoAssinatura";
     }
 
-    public class Peca
+    internal class Peca
     {
         public string Referencia { get; set; }
         public int Quantidade { get; set; }
-    }
-
-    public class UserLog
-    {
-        public string IP { get; set; }
-        public object UserId { get; set; }
-    }
-
-    public class TermoResponsabilidadeRequest
-    {
-        public string NomeUsuario { get; set; }
-        public int IdImpressora { get; set; }
-        public long IdQuarentena { get; set; }
-        public UserLog UserLog { get; set; }
     }
 
     public class QuarentenaService : BaseService
@@ -111,7 +98,7 @@ namespace FWLog.Services.Services
 
         private void AtualizaCodConfirmacaoQuarentena()
         {
-            _uow.QuarentenaRepository.Update(_Quarentena);
+            _uow.QuarentenaRepository.Update(_Quarentena, _request.UserLog.UserId);
 
             _boLogSystemService.Add(new BOLogSystemCreation
             {

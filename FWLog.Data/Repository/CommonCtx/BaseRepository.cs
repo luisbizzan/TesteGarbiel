@@ -1,7 +1,4 @@
-﻿using FWLog.Data.Logging;
-using System;
-
-namespace FWLog.Data.Repository.CommonCtx
+﻿namespace FWLog.Data.Repository.CommonCtx
 {
     public abstract class BaseRepository
     {
