@@ -170,20 +170,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.UsuarioRecebimento.Id == model.CustomFilter.IdUsuarioRecebimento);
             }
 
-            /*
-             InicioConferencia = loteConferencia.First().DataHoraInicio.ToString("dd/MM/yyyy hh:mm:ss"),
-                                FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss"),
-             */
-
-            //if (model.CustomFilter.TempoInicial.HasValue)
-            //{
-            //    var lotes = query.Select(s => s.IdLote).ToList();
-            //    var conferencias = _uow.LoteConferenciaRepository.Todos().Where(w => lotes.Contains(w.IdLote)).Select(s => s.IdLote).ToList();
-
-            //    query = query.Where(x => conferencias.Contains(x.IdLote));
-            //}
-
-
             if (query.Any())
             {
                 foreach (var item in query)
