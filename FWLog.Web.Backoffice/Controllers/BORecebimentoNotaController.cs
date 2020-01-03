@@ -60,7 +60,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     ListaStatus = new SelectList(
                     _uow.LoteStatusRepository.Todos().Select(x => new SelectListItem
                     {
-                        Value = x.IdLoteStatus.ToString(),
+                        Value = x.IdLoteStatus.GetHashCode().ToString(),
                         Text = x.Descricao,
                     }), "Value", "Text"
                 )
@@ -162,6 +162,32 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.NotaFiscal.PrazoEntregaFornecedor <= prazoFinal);
             }
 
+            if (!model.CustomFilter.IdUsuarioConferencia.NullOrEmpty())
+            {
+                var lotes = query.Select(s => s.IdLote).ToList();
+                var conferencias = _uow.LoteConferenciaRepository.Todos().Where(w => w.IdUsuarioConferente == model.CustomFilter.IdUsuarioConferencia && lotes.Contains(w.IdLote)).Select(s => s.IdLote).ToList();
+                query = query.Where(x => conferencias.Contains(x.IdLote));
+            }
+
+            if (!model.CustomFilter.IdUsuarioRecebimento.NullOrEmpty())
+            {
+                query = query.Where(x => x.UsuarioRecebimento.Id == model.CustomFilter.IdUsuarioRecebimento);
+            }
+
+            /*
+             InicioConferencia = loteConferencia.First().DataHoraInicio.ToString("dd/MM/yyyy hh:mm:ss"),
+                                FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss"),
+             */
+
+            //if (model.CustomFilter.TempoInicial.HasValue)
+            //{
+            //    var lotes = query.Select(s => s.IdLote).ToList();
+            //    var conferencias = _uow.LoteConferenciaRepository.Todos().Where(w => lotes.Contains(w.IdLote)).Select(s => s.IdLote).ToList();
+
+            //    query = query.Where(x => conferencias.Contains(x.IdLote));
+            //}
+
+
             if (query.Any())
             {
                 foreach (var item in query)
@@ -193,6 +219,11 @@ namespace FWLog.Web.Backoffice.Controllers
                         }
                     }
 
+                    if (model.CustomFilter.Atraso.HasValue && model.CustomFilter.Atraso.Value != atraso)
+                    {
+                        continue;
+                    }
+
                     boRecebimentoNotaListItemViewModel.Add(new BORecebimentoNotaListItemViewModel()
                     {
                         Lote = item.IdLote == 0 ? (long?)null : item.IdLote,
@@ -209,16 +240,6 @@ namespace FWLog.Web.Backoffice.Controllers
                         IdLoteStatus = (int)item.LoteStatus.IdLoteStatus
                     });
                 }
-            }
-
-            if (model.CustomFilter.Atraso.HasValue)
-            {
-                boRecebimentoNotaListItemViewModel = boRecebimentoNotaListItemViewModel.Where(x => x.Atraso == model.CustomFilter.Atraso).ToList();
-            }
-
-            if (!string.IsNullOrEmpty(model.CustomFilter.IdUsuarioRecebimento))
-            {
-                boRecebimentoNotaListItemViewModel = boRecebimentoNotaListItemViewModel.Where(x => x.IdUsuarioRecebimento == model.CustomFilter.IdUsuarioRecebimento).ToList();
             }
 
             totalRecordsFiltered = boRecebimentoNotaListItemViewModel.Count;
