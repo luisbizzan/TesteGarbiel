@@ -20,7 +20,6 @@
             <div class="clearfix"></div>
         </div>
         <div class="x_content">
-            <!-- fields -->
             <div class="row">
                 <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.Name, new { @class = "control-label" })
@@ -36,18 +35,6 @@
                     @Html.LabelFor(m => m.PrinterTypeId, new { @class = "control-label" })
                     @Html.DropDownListFor(m => m.PrinterTypeId, (IEnumerable<SelectListItem>)ViewBag.PrinterTypes, "Selecione...", new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.PrinterTypeId)
-                </div>                
-                <div id="EmpresaPrincipal" class="col-xs-12 col-md-3 form-group">
-                    @Html.LabelFor(m => m.IdEmpresa, htmlAttributes: new { @class = "control-label" })
-                    <div class="input-group">
-                        @Html.TextBoxFor(m => m.RazaoEmpresa, new { id = "razaoSocial", @class = "form-control", @readonly = "true" })
-                        <span class="input-group-btn">
-                            <a id="pesquisarEmpresa" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
-                            <a id="limparEmpresa" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
-                        </span>
-                    </div>
-                    @Html.HiddenFor(m => m.IdEmpresa, new { id = "empresaId" })
-                    @Html.ValidationMessageFor(m => m.IdEmpresa)
                 </div>
             </div>
             <div class="row">
@@ -59,15 +46,11 @@
                     @Html.ValidationMessageFor(m => m.Ativa)
                 </div>
             </div>
-            <!-- /fields -->
-            <!-- footer -->
             <div class="ln_solid"></div>
             <div class="row col-xs-12 form-buttons">
-                <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.CancelAction</a>
-                <button type="submit" class="btn btn-primary">@Resources.CommonStrings.ConfirmAction</button>
+                <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                <button type="submit" class="btn btn-primary">Salvar</button>
             </div>
-            <!-- /footer -->
         </div>
     </div>
 }
-<div class="modal" id="modalEmpresaPrincipal" data-toggle="modal"></div>

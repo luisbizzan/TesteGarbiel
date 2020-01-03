@@ -18,8 +18,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public string StatusNotaFiscal { get; set; }
         [Display(Name = "Fornecedor")]
         public string Fornecedor { get; set; }
-        [Display(Name = "Quantidade")]
-        public string Quantidade { get; set; }
+        [Display(Name = "Qtd. Peças")]
+        public string QuantidadePeca { get; set; }
         [Display(Name = "Atraso")]
         public string DiasAtraso { get; set; }
         [Display(Name = "Compras")]
@@ -53,12 +53,16 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Tempo Total")]
         public string TempoTotalConferencia { get; set; }
         public bool EmConferenciaOuConferido { get; set; }
+        public bool Finalizado { get; set; } = false;
 
         public List<BODetalhesEntradaConferenciaItem> Items { get; set; }
+
+        public ExibirDivergenciaRecebimentoViewModel Divergencias { get; set; }
 
         public BODetalhesEntradaConferenciaViewModel()
         {
             Items = new List<BODetalhesEntradaConferenciaItem>();
+            Divergencias = new ExibirDivergenciaRecebimentoViewModel();
         }
     }
 

@@ -7,7 +7,7 @@
         [ColunaRelatorio(Nome = "Nota", Tamanho = 60)]
         public string Nota { get; set; }
         [ColunaRelatorio(Nome = "Peças", Tamanho = 40)]
-        public int QuantidadePeças { get; set; }
+        public int QuantidadePeca { get; set; }
         [ColunaRelatorio(Nome = "Volumes", Tamanho = 50)]
         public long QauntidadeVolumes { get; set; }
         [ColunaRelatorio(Nome = "Atraso", Tamanho = 45)]

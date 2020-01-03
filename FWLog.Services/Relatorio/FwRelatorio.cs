@@ -1,10 +1,12 @@
-﻿using MigraDoc.DocumentObjectModel;
+﻿using FWLog.Data.Resources;
+using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace FWLog.Services.Relatorio
 {
@@ -132,7 +134,7 @@ namespace FWLog.Services.Relatorio
             filtros.AddFormattedText(_dataSource.Filtros, new Font("Verdana", 10));
 
             var pImagem = rowHeader.Cells[1].AddParagraph();
-            var imagem = pImagem.AddImage(@"C:\Users\shino\Desktop\logo.png");
+            var imagem = pImagem.AddImage(ImagemBase64(ImagensResource.LogoFuracaoRelatorio));
             imagem.Height = new Unit(30, UnitType.Point);
             imagem.LockAspectRatio = true;
 
@@ -193,6 +195,19 @@ namespace FWLog.Services.Relatorio
                 pdfRenderer.PdfDocument.Save(stream, false);
                 return stream.ToArray();
             }
+        }
+
+        private string ImagemBase64(System.Drawing.Image imagem)
+        {
+            byte[] imagemByte = ImageToByteArray(imagem);
+            return "base64:" + Convert.ToBase64String(imagemByte);
+        }
+
+        private byte[] ImageToByteArray(System.Drawing.Image imagem)
+        {
+            MemoryStream ms = new MemoryStream();
+            imagem.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+            return ms.ToArray();
         }
     }
 }

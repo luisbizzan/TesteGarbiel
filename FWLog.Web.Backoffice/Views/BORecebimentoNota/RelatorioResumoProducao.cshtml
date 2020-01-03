@@ -1,0 +1,130 @@
+﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.RelatorioResumoProducaoViewModel
+
+@{
+    ViewBag.Title = "Relatorio Resumo Produção";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+            RecebimentopageDataUrl = Url.Action("ResumoProducaoRecebimentoPageData"),
+            ConferenciapageDataUrl = Url.Action("ResumoProducaoConferenciaPageData")
+        })
+}
+
+<!-- filter -->
+<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2 class="collapse-link">
+                <i class="fa fa-chevron-down fa-fw"></i>@Resources.CommonStrings.FilterHeader
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content" style="display: block;">
+            <div class="row" style="margin-bottom: 20px;">
+                <div class="col-sm-12 col-xs-12">
+                    <div class="form-group col-sm-4 col-xs-12">
+                        @Html.LabelFor(model => model.Filter.IdUsuario, htmlAttributes: new { @class = "control-label" })
+                        <div class="input-group">
+                            @Html.TextBoxFor(m => m.Filter.NomeUsuario, null, new { @class = "form-control", @readonly = "true" })
+                            <span class="input-group-btn">
+                                <a id="pesquisarUsuario" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                                <a id="limparUsuario" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                            </span>
+                        </div>
+                        @Html.HiddenFor(m => m.Filter.IdUsuario, new { data_field = "IdUsuario" })
+                    </div>
+                    <div class="form-group col-sm-4 col-xs-12">
+                        @Html.LabelFor(m => m.Filter.DataRecebimentoMinima)
+                        <div class='input-group date'>
+                            <span class="input-group-addon">
+                                <span>De</span>
+                            </span>
+                            @Html.TextBoxFor(m => m.Filter.DataRecebimentoMinima, new { @class = "form-control dateFormat ", data_field = "DataRecebimentoMinima" })
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-4 col-xs-12">
+                        @Html.LabelFor(m => m.Filter.DataRecebimentoMaxima)
+                        <div class='input-group date'>
+                            <span class="input-group-addon">
+                                <span>Até</span>
+                            </span>
+                            @Html.TextBoxFor(m => m.Filter.DataRecebimentoMaxima, new { @class = "form-control dateFormat ", data_field = "DataRecebimentoMaxima" })
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-3 col-xs-12" style="padding-top:10px;">
+                        @Html.Label("Conferencia")
+                        @Html.RadioButton("TipoRelatorio", "C")
+                        @Html.Label("Recebimento")
+                        @Html.RadioButton("TipoRelatorio", "R")
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 form-buttons">
+                    <button id="pesquisar" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- /filter -->
+<!-- table -->
+<div id="tabela" class="row" style="display:none;">
+    <div class="col-xs-12">
+        <div class="x_panel">
+            <!-- panel-title -->
+            <div class="x_title">
+                <h2>Lista</h2>
+                <div class="clearfix"></div>
+            </div>
+            <!-- /panel-title -->
+            <!-- panel-content -->
+            <div class="x_content">
+                <div id="dataTableConferencia" style="display:none;">
+                    <table class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.NomeUsuario)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.LotesRecebidosUsuario)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.PecasRecebidasUsuario)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.LotesRecebidos)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.PecasRecebidas)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.Percentual)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaConferencia.Ranking)</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div id="dataTableRecebimento" style="display:none;">
+                    <table class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.NomeUsuario)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.NotasRecebidasUsuario)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.VolumesRecebidosUsuario)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.NotasRecebidas)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.VolumesRecebidos)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.Percentual)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaRecebimento.Ranking)</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+            </div>
+            <!-- /panel-content -->
+        </div>
+    </div>
+</div>
+<!-- /table -->
+<div class="modal" id="modalUsuario" data-toggle="modal"></div>

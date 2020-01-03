@@ -13,7 +13,7 @@
                 text: "Emitir Termo de Responsabilidade",
                 attrs: { 'data-id': full.IdQuarentena, 'action': 'termoResponsabilidade' },
                 icon: 'fa fa-file-text',
-                visible: view.registrarRecebimento
+                visible: full.IdQuarentenaStatus === 1 || full.IdQuarentenaStatus === 2 ? true : false
             }
         ];
     });
@@ -135,7 +135,7 @@
             method: "POST",
             success: function (result) {
                 if (!!result.Success) {
-                    $modal.load(HOST_URL + CONTROLLER_PATH + "ExibirModalDetalhesQuarentena/" + id, function () {
+                    $modal.load(HOST_URL + CONTROLLER_PATH + "DetalhesQuarentena/" + id, function () {
                         $modal.modal();
 
                     });
@@ -186,7 +186,7 @@ function imprimir(acao, id) {
             $("#btnFechar").click();
         },
         error: function (data) {
-            PNotify.error({ text: "Não Ocorreu um erro na impressão." });
+            PNotify.error({ text: "Ocorreu um erro na impressão." });
             NProgress.done();
         }
     });

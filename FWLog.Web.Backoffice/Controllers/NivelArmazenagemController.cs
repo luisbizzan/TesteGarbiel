@@ -5,7 +5,6 @@ using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
-using FWLog.Web.Backoffice.EnumsAndConsts.LOVs;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.NivelArmazenagemCtx;
@@ -24,24 +23,13 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly UnitOfWork _unitOfWork;
         private readonly NivelArmazenagemService _nivelArmazenagemService;
 
-        private SelectList Status
-        {
-            get
-            {
-                if (status == null)
-                {
-                    status = new SelectList(new NaoSimLOV().Items, "Value", "Text");
-                }
-
-                return status;
-            }
-        }
-        private SelectList status;
-
-
         private void setViewBags()
         {
-            ViewBag.Status = Status;
+            ViewBag.Status = new SelectList(new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "Ativo", Value = "true"},
+                            new SelectListItem { Text = "Inativo", Value = "false"}
+                        }, "Value", "Text");
         }
 
         public NivelArmazenagemController(

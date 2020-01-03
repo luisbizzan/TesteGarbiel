@@ -12,6 +12,8 @@ using System.Linq;
 using System;
 using FWLog.Web.Api.Models.Usuario;
 using FWLog.Data.Models;
+using FWLog.Web.Api.Helpers;
+using FWLog.Web.Api.Models;
 
 namespace FWLog.Web.Api.Controllers
 {
@@ -51,7 +53,7 @@ namespace FWLog.Web.Api.Controllers
             ApplicationUser applicationUser = await UserManager.FindByNameAsync(loginRequest.Usuario);
             IList<string> userPermissions = await UserManager.GetPermissionsAsync(applicationUser.Id);
 
-            if (userPermissions == null || !userPermissions.Any(w => w.Equals("UserAppLogin", StringComparison.OrdinalIgnoreCase)))
+            if (userPermissions == null || !userPermissions.Any(w => w.Equals("RFAcessoLogin", StringComparison.OrdinalIgnoreCase)))
             {
                 return ApiForbidden(AccountResource.UserPermissionDenied, loginRequest.Usuario);
             }
@@ -89,6 +91,18 @@ namespace FWLog.Web.Api.Controllers
             };
 
             return ApiOk(permissionsResponse);
+        }
+
+        [HttpGet]
+        [Route("api/v1/usuario/empresa")]
+        [ApplicationAuthorize(Permissions = Permissions.ColetorAcesso.Login)]
+        public async Task<IHttpActionResult> ObterEmpresas()
+        {
+            ICollection<Empresa> empresas = await _unitOfWork.EmpresaRepository.EmpresasPorUsuario(User.Identity.GetUserId()).ConfigureAwait(false);
+
+            var empresaResposta = Mapper.Map<ICollection<Empresa>, List<EmpresaResposta>>(empresas);
+           
+            return ApiOk(empresaResposta);
         }
 
         [HttpPost]

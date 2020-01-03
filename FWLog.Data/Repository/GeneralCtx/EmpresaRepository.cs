@@ -3,7 +3,9 @@ using FWLog.Data.Models.GeneralCtx;
 using FWLog.Data.Repository.CommonCtx;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FWLog.Data.Repository.GeneralCtx
 {
@@ -60,6 +62,14 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.UsuarioEmpresa.AsNoTracking().Where(w => w.Empresa.Ativo && w.UserId == idUsuario)
                 .Select(s => s.Empresa.IdEmpresa).Distinct().ToList().AsReadOnly();
+        }
+
+        public async Task<ICollection<Empresa>> EmpresasPorUsuario(string idUsuario)
+        {
+            return await Entities.UsuarioEmpresa.AsNoTracking()
+                .Where(w => w.Empresa.Ativo && w.UserId == idUsuario)
+                .Select(s => s.Empresa)
+                .ToListAsync();
         }
 
         public Empresa ConsultaPorCodigoIntegracao(int codigoIntegracao)
