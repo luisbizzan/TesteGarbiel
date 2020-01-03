@@ -71,10 +71,6 @@ namespace FWLog.Web.Backoffice.Controllers
             model.Filter.PrazoInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
             model.Filter.PrazoFinal = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
 
-            //var a = new ImprimirEtiquetaDevolucaoRequest { IdImpressora = 121, QuantidadeEtiquetas = 1, Linha1 = "Linha 1", Linha2 = "Linha 2", Linha3 = "Linha 3" };
-
-            //_etiquetaService.ImprimirEtiquetaDevolucao(a);
-
             return View(model);
         }
 

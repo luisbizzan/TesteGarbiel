@@ -192,6 +192,8 @@ namespace FWLog.Services.Services
             NotaFiscal notafiscal = _uow.NotaFiscalRepository.GetById(request.IdNotaFiscal);
             Lote lote = _uow.LoteRepository.ObterLoteNota(request.IdNotaFiscal);
 
+            lote.ObservacaoDivergencia = request.ObservacaoDivergencia;
+
             if ((request.Divergencias.Any(a => a.QuantidadeMaisTratado > 0) && request.Divergencias.Any(a => a.QuantidadeMenosTratado > 0)) || request.Divergencias.Any(a => a.QuantidadeMenosTratado > 0))
             {
                 lote.IdLoteStatus = LoteStatusEnum.AguardandoCriacaoNFDevolucao;
