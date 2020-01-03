@@ -10,7 +10,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 {
     public class QuarentenaRepository : BaseRepository
     {
-        readonly IDbSet<Quarentena> _dbSet;
+        private readonly IDbSet<Quarentena> _dbSet;
 
         public QuarentenaRepository(Entities entities) : base(entities)
         {
@@ -61,7 +61,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public bool ExisteQuarentena(long idLote)
         {
-            return Entities.Quarentena.Any(f => f.IdLote == idLote);
+            return _dbSet.Any(f => f.IdLote == idLote);
         }
 
         public bool Any(Expression<Func<Quarentena, bool>> predicate)
