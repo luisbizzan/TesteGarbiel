@@ -13,8 +13,7 @@ namespace FWLog.Data.Models
         [Required]
         public long IdEmpresa { get; set; }
 
-        [Required]
-        public long IdProduto { get; set; }
+        public long? IdProduto { get; set; }
 
         [Required]
         public TipoEtiquetagemEnum IdTipoEtiquetagem { get; set; }

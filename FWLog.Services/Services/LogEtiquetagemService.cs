@@ -25,7 +25,7 @@ namespace FWLog.Services.Services
                 IdTipoEtiquetagem = (Data.Models.TipoEtiquetagemEnum)logEtiquetagem.IdTipoEtiquetagem,
                 DataHora = DateTime.Now,
                 IdUsuario = logEtiquetagem.IdUsuario,
-                Quantidade = logEtiquetagem.Quantidade                
+                Quantidade = logEtiquetagem.Quantidade
             };
 
             _unitOfWork.LogEtiquetagemRepository.Add(log);

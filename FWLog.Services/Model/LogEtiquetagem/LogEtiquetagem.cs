@@ -9,7 +9,7 @@ namespace FWLog.Services.Model.LogEtiquetagem
     
         public long IdEmpresa { get; set; }
 
-        public long IdProduto { get; set; }
+        public long? IdProduto { get; set; }
 
         public int IdTipoEtiquetagem { get; set; }
 
