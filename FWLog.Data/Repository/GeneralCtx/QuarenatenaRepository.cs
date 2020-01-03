@@ -31,9 +31,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             _dbSet.Add(entity);
         }
 
-        public void Update(Quarentena entity, string IdUsuario)
+        public void Update(Quarentena entity, string IdUsuario, string descricao = null)
         {
-            var log = new QuarentenaHistorico { Data = DateTime.Now, Descricao = "Atualização", IdQuarentena = entity.IdQuarentena, IdUsuario = IdUsuario };
+            string _descricao = descricao ?? $"Atualização: Status - {entity.QuarentenaStatus.Descricao} Observação - {entity.Observacao}";
+
+            var log = new QuarentenaHistorico { Data = DateTime.Now, Descricao = _descricao, IdQuarentena = entity.IdQuarentena, IdUsuario = IdUsuario };
 
             Entities.QuarentenaHistorico.Add(log);
 

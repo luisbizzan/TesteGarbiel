@@ -1,10 +1,30 @@
 ﻿(function () {
+    $('input[type=radio]').iCheck({
+        checkboxClass: 'icheckbox_flat-green',
+        radioClass: 'iradio_flat-green'
+    });
+
     $('.onlyNumber').mask('0#');
 
-    $("#pesquisarProduto").click(function () {
-        $("#modalProduto").load(HOST_URL + "Produto/SearchModal", function () {
-            $("#modalProduto").modal();
-        });
+    $('input[type=radio]').on('ifChanged', function () {
+        if (this.value == 4) {
+            limparProduto();
+            $("#limparProduto").attr("disabled", true);
+            $("#pesquisarProduto").attr("disabled", true);
+
+        }
+        else {
+            $("#limparProduto").attr("disabled", false);
+            $("#pesquisarProduto").attr("disabled", false);
+        }
+    });
+
+    $("#pesquisarProduto").on('click', function () {
+        if (!$(this).attr('disabled')) {
+            $("#modalProduto").load(HOST_URL + "Produto/SearchModal", function () {
+                $("#modalProduto").modal();
+            });
+        }
     });
 
     function limparProduto() {
@@ -13,7 +33,9 @@
     }
 
     $("#limparProduto").click(function () {
-        limparProduto();
+        if (!$(this).attr('disabled')) {
+            limparProduto();
+        }
     });
 
     $("#submit").click(function (e) {
@@ -22,13 +44,13 @@
         var dados = $("#recebimentoEtiquetaIndividualPersonalizada").serializeArray();
 
         $.ajax({
-            url: CONTROLLER_PATH + "ValidaImpressao",
+            url: HOST_URL + CONTROLLER_PATH + "ValidaImpressao",
             method: "POST",
             cache: false,
             data: dados,
             success: function (result) {
                 if (result.Success) {
-                    $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=zebra", function () {
+                    $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?tipo=zebra", function () {
                         $("#modalImpressoras").modal();
                     });
                 } else {
@@ -57,7 +79,7 @@ function imprimir(acao, id) {
     dados.push({ name: "IdImpressora", value: idImpressora });
 
     $.ajax({
-        url: CONTROLLER_PATH + "Imprimir",
+        url: HOST_URL + CONTROLLER_PATH + "Imprimir",
         method: "POST",
         cache: false,
         data: dados,

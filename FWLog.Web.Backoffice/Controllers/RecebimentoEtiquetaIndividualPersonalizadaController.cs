@@ -50,27 +50,27 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                var produto = _unitOfWork.ProdutoRepository.GetById(viewModel.IdProduto.Value);
-
-                if (produto == null)
-                {
-                    return Json(new AjaxGenericResultModel
-                    {
-                        Success = false,
-                        Message = "Rerência não encontrada. Por favor, tente novamente!"
-                    });
-                }
-
-                var request = new ImprimirEtiquetaProdutoBase
-                {
-                    IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
-                    IdEmpresa = IdEmpresa,
-                    QuantidadeEtiquetas = viewModel.Quantidade.Value,
-                    ReferenciaProduto = produto.Referencia
-                };
-
                 if (viewModel.TipoEtiquetagem == Data.Models.TipoEtiquetagemEnum.Individual.GetHashCode())
                 {
+                    var produto = _unitOfWork.ProdutoRepository.GetById(viewModel.IdProduto.Value);
+
+                    if (produto == null)
+                    {
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = "Rerência não encontrada. Por favor, tente novamente!"
+                        });
+                    }
+
+                    var request = new ImprimirEtiquetaProdutoBase
+                    {
+                        IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
+                        IdEmpresa = IdEmpresa,
+                        QuantidadeEtiquetas = viewModel.Quantidade.Value,
+                        ReferenciaProduto = produto.Referencia
+                    };
+
                     _etiquetaService.ImprimirEtiquetaPeca(request);
 
                     var requestAvulso = new ImprimirEtiquetaAvulsoRequest
@@ -83,13 +83,46 @@ namespace FWLog.Web.Backoffice.Controllers
                     _etiquetaService.ImprimirEtiquetaAvulso(requestAvulso);
                 }
                 else if (viewModel.TipoEtiquetagem == Data.Models.TipoEtiquetagemEnum.Personalizada.GetHashCode())
-                    _etiquetaService.ImprimirEtiquetaPersonalizada(request);
+                {
+                    var produto = _unitOfWork.ProdutoRepository.GetById(viewModel.IdProduto.Value);
 
+                    if (produto == null)
+                    {
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = "Rerência não encontrada. Por favor, tente novamente!"
+                        });
+                    }
+
+                    var request = new ImprimirEtiquetaProdutoBase
+                    {
+                        IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
+                        IdEmpresa = IdEmpresa,
+                        QuantidadeEtiquetas = viewModel.Quantidade.Value,
+                        ReferenciaProduto = produto.Referencia
+                    };
+
+                    _etiquetaService.ImprimirEtiquetaPersonalizada(request);
+                }
+                else if (viewModel.TipoEtiquetagem == Data.Models.TipoEtiquetagemEnum.Avulso.GetHashCode())
+                {
+                    var requestAvulso = new ImprimirEtiquetaAvulsoRequest
+                    {
+                        IdEmpresa = IdEmpresa,
+                        IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
+                        QuantidadeEtiquetas = viewModel.Quantidade.Value
+                    };
+
+                    _etiquetaService.ImprimirEtiquetaAvulso(requestAvulso);
+                }
+
+                // TODO: verificar, pois a Individual imprime 2 tipos de etiqueta
                 var logEtiquetagem = new LogEtiquetagem
                 {
                     IdTipoEtiquetagem = viewModel.TipoEtiquetagem,
                     IdEmpresa = IdEmpresa,
-                    IdProduto = viewModel.IdProduto.Value,
+                    IdProduto = viewModel.IdProduto,
                     Quantidade = viewModel.Quantidade.Value,
                     IdUsuario = User.Identity.GetUserId()
                 };
@@ -128,24 +161,27 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                if (viewModel.IdProduto == null)
+                if (viewModel.TipoEtiquetagem != Data.Models.TipoEtiquetagemEnum.Avulso.GetHashCode())
                 {
-                    return Json(new AjaxGenericResultModel
+                    if (viewModel.IdProduto == null)
                     {
-                        Success = false,
-                        Message = "Referência inválida. Por favor, tente novamente!"
-                    });
-                }
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = "Referência inválida. Por favor, tente novamente!"
+                        });
+                    }
 
-                var produto = _unitOfWork.ProdutoRepository.Todos().FirstOrDefault(x => x.IdProduto == viewModel.IdProduto);
+                    var produto = _unitOfWork.ProdutoRepository.Todos().FirstOrDefault(x => x.IdProduto == viewModel.IdProduto);
 
-                if (produto == null)
-                {
-                    return Json(new AjaxGenericResultModel
+                    if (produto == null)
                     {
-                        Success = false,
-                        Message = "Referência não encontrada. Por favor, tente novamente!"
-                    });
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = "Referência não encontrada. Por favor, tente novamente!"
+                        });
+                    }
                 }
 
                 return Json(new AjaxGenericResultModel
