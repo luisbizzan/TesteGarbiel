@@ -108,7 +108,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (model.CustomFilter.Lote.HasValue)
             {
-                query = query.Where(x => x.IdLote == Convert.ToInt32(model.CustomFilter.Lote));
+                query = query.Where(x => x.IdLote == model.CustomFilter.Lote.Value);
             }
 
             if (model.CustomFilter.Nota.HasValue)
