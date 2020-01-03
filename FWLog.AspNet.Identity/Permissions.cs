@@ -83,6 +83,7 @@ namespace FWLog.AspNet.Identity
             public const string RelatorioRastreioPeca = "RelatorioRecebimentoRastreioPeca";
             public const string RelatorioResumoEtiquetagem = "RelatorioResumoEtiquetagem";
             public const string ListarResumoProducao = "ListarResumoProducao";
+            public const string ConferirLote = "ConferirLote";
 
             public Recebimento() : base(Display.FromString("Recebimento de Notas Fiscais"))
             {
@@ -92,6 +93,7 @@ namespace FWLog.AspNet.Identity
                 Register(RelatorioRastreioPeca, Display.FromString("Relatório Rastreio de Peça"));
                 Register(RelatorioResumoEtiquetagem, Display.FromString("Relatório Resumo Etiquetagem"));
                 Register(ListarResumoProducao, Display.FromString("Listar Resumo Produção"));
+                Register(ConferirLote, Display.FromString("Conferir Lote"));
             }
         }
 
