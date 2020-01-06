@@ -21,7 +21,7 @@ namespace FWLog.Data.Models
         public long IdImpressora { get; set; }
 
         [ForeignKey(nameof(IdImpressora))]
-        public virtual Printer Impressoa { get; set; }
+        public virtual Printer Impressora { get; set; }
 
         [ForeignKey(nameof(IdImpressaoItem))]
         public virtual ImpressaoItem ImpressaoItem { get; set; }
