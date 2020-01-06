@@ -37,7 +37,6 @@ namespace FWLog.Data.Models
         [Log(DisplayName = "Código do Usuário Recebimento")]
         public string IdUsuarioRecebimento { get; set; }
 
-        [Required]
         [Log(DisplayName = "Observação Divergência")]
         [StringLength(500)]
         public string ObservacaoDivergencia { get; set; }
