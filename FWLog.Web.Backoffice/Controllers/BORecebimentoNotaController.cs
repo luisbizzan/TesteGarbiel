@@ -777,7 +777,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
 
             if (empresaConfig == null)
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "As configurações da empresa não foi encontrada. Por favor, tente novamente!");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "As configurações da empresa não foram encontradas. Por favor, tente novamente!");
 
             var model = new BOEntradaConferenciaViewModel
             {
@@ -854,7 +854,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "As configurações da empresa não foi encontrada. Por favor, tente novamente!"
+                    Message = "As configurações da empresa não foram encontradas. Por favor, tente novamente!"
                 });
             }
 
@@ -974,7 +974,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "As configurações da empresa não foi encontrada. Por favor, tente novamente!"
+                        Message = "As configurações da empresa não foram encontradas. Por favor, tente novamente!"
                     });
                 }
 
