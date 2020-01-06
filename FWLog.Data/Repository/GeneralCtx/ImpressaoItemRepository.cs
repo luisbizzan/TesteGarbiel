@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx
 {
-    public class ImpressoraItemRepository : GenericRepository<ImpressaoItem>
+    public class ImpressaoItemRepository : GenericRepository<ImpressaoItem>
     {
-        public ImpressoraItemRepository(Entities entities) : base(entities)
+        public ImpressaoItemRepository(Entities entities) : base(entities)
         {
 
         }

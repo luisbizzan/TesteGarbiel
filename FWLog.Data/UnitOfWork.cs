@@ -51,7 +51,7 @@ namespace FWLog.Data
         private ProdutoEnderecoRepository _produtoEnderecoRepository;
         private ProdutoEstoqueRepository _produtoEstoqueRepository;
         private QuarentenaHistoricoRepository _quarentenaHistoricoRepository;
-        private ImpressoraItemRepository _impressoraItemRepository;
+        private ImpressaoItemRepository _impressaoItemRepository;
         private PerfilImpressoraItemRepository _perfilImpressoraItemRepository;
         private PerfilImpressoraRepository _perfilImpressoraRepository;
 
@@ -65,9 +65,9 @@ namespace FWLog.Data
             get => _perfilImpressoraItemRepository ?? (_perfilImpressoraItemRepository = new PerfilImpressoraItemRepository(_context));
         }
 
-        public ImpressoraItemRepository ImpressoraItemRepository
+        public ImpressaoItemRepository ImpressaoItemRepository
         {
-            get => _impressoraItemRepository ?? (_impressoraItemRepository = new ImpressoraItemRepository(_context));
+            get => _impressaoItemRepository ?? (_impressaoItemRepository = new ImpressaoItemRepository(_context));
         }
 
         public QuarentenaHistoricoRepository QuarentenaHistoricoRepository
