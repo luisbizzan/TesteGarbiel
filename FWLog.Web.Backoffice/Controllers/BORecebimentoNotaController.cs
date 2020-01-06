@@ -868,11 +868,11 @@ namespace FWLog.Web.Backoffice.Controllers
             int quantidadeNaoConferida = 0;
 
             //Caso o item exista na nota, captura a quantidade.
-            if (referenciaNota.Count > 0)
+            if (referenciaNota.Any())
                 quantidadeNota = referenciaNota.Sum(x => x.Quantidade);
 
             //Caso exista o item já tenha sido conferido, captura a quantidade.
-            if (referenciaConferencia.Count > 0)
+            if (referenciaConferencia.Any())
                 quantidadeConferida = referenciaConferencia.Sum(x => x.Quantidade);
 
             if (quantidadeNota > quantidadeConferida)
@@ -892,8 +892,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode(),
                 Referencia = produto.Referencia,
                 DescricaoReferencia = produto.Descricao,
-                Embalagem = "",
-                Unidade = "",
+                Embalagem = string.Empty,
+                Unidade = string.Empty,
                 Multiplo = produto.MultiploVenda,
                 QuantidadeEstoque = empresaProduto == null ? 0 : empresaProduto.Saldo,
                 QuantidadeNaoConferida = quantidadeNaoConferida,
@@ -917,7 +917,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return Json(new AjaxGenericResultModel
             {
                 Success = true,
-                Message = "",
+                Message = string.Empty,
                 Data = json
             });
         }

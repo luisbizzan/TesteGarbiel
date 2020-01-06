@@ -8,6 +8,7 @@ namespace FWLog.Services.Model.Lote
         public long IdNotaFiscal { get; set; }
         public string IdUsuario { get; set; }
         public long IdEmpresa { get; set; }
+        [Required]
         public string ObservacaoDivergencia { get; set; }
 
         public List<TratarDivergenciaItemRequest> Divergencias { get; set; }
