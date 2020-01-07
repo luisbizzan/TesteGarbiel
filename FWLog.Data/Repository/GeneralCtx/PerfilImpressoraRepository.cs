@@ -11,7 +11,11 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public PerfilImpressoraRepository(Entities entities) : base(entities)
         {
+        }
 
+        public IQueryable<PerfilImpressora> RetornarAtivas()
+        {
+            return Entities.PerfilImpressora.Where(w => w.Ativo);
         }
 
         public IList<PerfilImpressoraTableRow> BuscarLista(DataTableFilter<PerfilImpressoraFilter> filtro, out int totalRecordsFiltered, out int totalRecords)

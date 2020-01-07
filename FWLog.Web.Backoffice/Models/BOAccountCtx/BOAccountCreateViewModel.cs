@@ -1,5 +1,4 @@
 ﻿using DartDigital.Library.Web.ModelValidation;
-using FWLog.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -49,10 +48,14 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
     {
         [Required]
         public long IdEmpresa { get; set; }
-        public string Nome { get; set; }        
+        public string Nome { get; set; }
         public bool IsEmpresaPrincipal { get; set; }
 
-        public List<GroupItemViewModel> Grupos { get; set; } = new List<GroupItemViewModel>();
-    }
+        [Display(Name = "Perfil Impressora Padrão")]
+        public long? IdPerfilImpressoraPadrao { get; set; }
 
+        public List<GroupItemViewModel> Grupos { get; set; } = new List<GroupItemViewModel>();
+
+        public System.Web.Mvc.SelectList PerfilImpressora { get; set; }
+    }
 }
