@@ -3,6 +3,7 @@
     let $referencia = $("#Referencia");
     var $quantidadePorCaixa = $("#QuantidadePorCaixa");
     var $quantidadeCaixa = $("#QuantidadeCaixa");
+    var $multiplo = $("#Multiplo");
 
     $('.onlyNumber').mask('0#');
 
@@ -32,9 +33,15 @@
         }
     });
 
+    $multiplo.on('keydown', function (e) {
+        if (e.keyCode == 9 && !e.target.value) {
+            return false;
+        }
+    });
+
     $('#modalRegistroConferencia').keydown(function (e) {
         if (e.keyCode == 13 && permiteRegistrar) {
-            registrarConferencia();
+            validarDiferencaMultiploConferencia();
         }
     });
 
@@ -86,6 +93,7 @@
         $.ajax({
             url: HOST_URL + CONTROLLER_PATH + "ValidarAcessoCoordenadorConferencia",
             cache: false,
+            global: false,
             method: "POST",
             data: {
                 usuario: usuario,
@@ -106,9 +114,7 @@
                     $("#Usuario").val('');
                     $("#Senha").val('');
 
-                    setTimeout(function () {
-                        $("#Referencia").focus();
-                    }, 150);
+                    $referencia.focus();
                 }
                 else {
                     PNotify.info({ text: result.Message });
@@ -188,9 +194,13 @@ function validarDiferencaMultiploConferencia() {
     let quantidadeCaixa = $("#QuantidadeCaixa").val();
     let inicioConferencia = $("#InicioConferencia").val();
 
+    if (!multiplo)
+        multiplo = 0;
+
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "VerificarDiferencaMultiploConferencia",
         cache: false,
+        global: false,
         method: "POST",
         data: {
             codigoBarrasOuReferencia: referencia,
@@ -198,8 +208,7 @@ function validarDiferencaMultiploConferencia() {
         },
         success: function (result) {
             if (result.Success) {
-                waitingDialog.hide();
-
+                
                 $('#modalAcessoCoordenador').modal('show');
 
                 setTimeout(function () {
@@ -214,6 +223,7 @@ function validarDiferencaMultiploConferencia() {
         }
     });
 }
+
 
 function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo) {
         overlay(true);
@@ -234,7 +244,8 @@ function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, i
                 codigoBarrasOuReferencia: referencia,
                 quantidadePorCaixa: quantidadePorCaixa,
                 quantidadeCaixa: quantidadeCaixa,
-                inicioConferencia: inicioConferencia
+                inicioConferencia: inicioConferencia,
+                multiplo: multiplo
             },
             success: function (result) {
                 if (result.Success) {
