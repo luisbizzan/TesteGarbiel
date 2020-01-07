@@ -45,6 +45,9 @@
             $(this).find(".isEmpresaPrincial").attr('id', `EmpresasGrupos_${i}__IsEmpresaPrincipal`);
             $(this).find(".isEmpresaPrincial").attr('name', `EmpresasGrupos[${i}].IsEmpresaPrincipal`);
 
+            $(this).find(".idPerfilImpressoraPadrao").attr('id', `EmpresasGrupos_${i}__IdPerfilImpressoraPadrao`);
+            $(this).find(".idPerfilImpressoraPadrao").attr('name', `EmpresasGrupos[${i}].IdPerfilImpressoraPadrao`);
+
             $(this).find("[data-group]").each(function (ii, ee) {
                 $(this).attr('id', `EmpresasGrupos_${i}__Grupos_${ii}__IsSelected`);
                 $(this).attr('name', `EmpresasGrupos[${i}].Grupos[${ii}].IsSelected`);

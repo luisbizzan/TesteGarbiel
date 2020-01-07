@@ -36,7 +36,7 @@ namespace FWLog.Services.Services
                 Subject = "Recuperação de Senha",
                 Body = template.GetHtml(),
                 IsBodyHtml = true,
-                EmailFrom = "FwLog Sistema <"+ emailFrom +">",
+                EmailFrom = "FwLog Sistema <" + emailFrom + ">",
                 EmailsTo = emailTo,
                 Attachments = null,
                 BodyEncoding = Encoding.Default
@@ -59,19 +59,34 @@ namespace FWLog.Services.Services
             _uow.SaveChanges();
         }
 
-        public void EditUsuarioEmpresas(IEnumerable<EmpresaSelectedItem> empresasUserOn, List<long> empresasUserEdit, string userId, long perfilUsuarioId)
+        public void EditUsuarioEmpresas(IEnumerable<EmpresaSelectedItem> empresasUserOn, List<impressorapadrao> empresasUserEdit, string userId, long perfilUsuarioId)
         {
             var empOld = _uow.UsuarioEmpresaRepository.GetAllEmpresasByUserId(userId);
 
             empOld = empresasUserOn.Where(w => empOld.Contains(w.IdEmpresa)).Select(s => s.IdEmpresa).ToList();
 
-            List<long> empAdd = empresasUserEdit.Where(x => !empOld.Any(y => y == x)).ToList();
-            List<long> empRem = empOld.Where(x => !empresasUserEdit.Any(y => y == x)).ToList();
+            List<impressorapadrao> empAdd = empresasUserEdit.Where(x => !empOld.Any(y => y == x.IdEmpresa)).ToList();
+            List<long> empRem = empOld.Where(x => !empresasUserEdit.Any(y => y.IdEmpresa == x)).ToList();
+            var empEdit = empOld.Where(x => !empAdd.Any(y => y.IdEmpresa == x) && !empRem.Any(y => y == x));
 
-            empAdd.ForEach(x => _uow.UsuarioEmpresaRepository.Add(new UsuarioEmpresa { UserId = userId, IdEmpresa = x, PerfilUsuarioId = perfilUsuarioId }));
+            empAdd.ForEach(x => _uow.UsuarioEmpresaRepository.Add(new UsuarioEmpresa { UserId = userId, IdEmpresa = x.IdEmpresa, PerfilUsuarioId = perfilUsuarioId, IdPerfilImpressoraPadrao = x.IdPerfilImpressoraPadrao }));
+            empEdit.ForEach(x =>
+            {
+                var usuarioEmpresa = _uow.UsuarioEmpresaRepository.Tabela().FirstOrDefault(y => y.IdEmpresa == x && y.UserId == userId);
+                usuarioEmpresa.IdPerfilImpressoraPadrao = empresasUserEdit.FirstOrDefault(y => y.IdEmpresa == x)?.IdPerfilImpressoraPadrao;
+                _uow.UsuarioEmpresaRepository.Update(usuarioEmpresa);
+            });
+
             empRem.ForEach(x => _uow.UsuarioEmpresaRepository.DeleteByUserId(userId, x));
 
             _uow.SaveChanges();
+        }
+
+        public class impressorapadrao
+        {
+            public long IdEmpresa { get; set; }
+
+            public long? IdPerfilImpressoraPadrao { get; set; }
         }
     }
 }

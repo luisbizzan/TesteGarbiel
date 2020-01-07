@@ -32,9 +32,9 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly PasswordService _passwordService;
 
         public BOAccountController(
-            UnitOfWork uow, 
-            BOAccountService boService, 
-            BOLogSystemService boLogSystemService, 
+            UnitOfWork uow,
+            BOAccountService boService,
+            BOLogSystemService boLogSystemService,
             PasswordService passwordService)
         {
             _unitOfWork = uow;
@@ -97,24 +97,18 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
         public async Task<ActionResult> AdicionarEmpresa(long id)
         {
-            List<string> gruposPermissoesUsuario = (await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), id).ConfigureAwait(false)).OrderBy(x => x).ToList();
-            
+            List<GroupItemViewModel> gruposPermissoesUsuario = (await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), id).ConfigureAwait(false))
+                .OrderBy(x => x).Select(x => new GroupItemViewModel { IsSelected = false, Name = x }).ToList();
+
+            var perfilImpressoras = PerfilImpressorasList(id);
+
             var empresasGrupos = new EmpresaGrupoViewModel
             {
                 IdEmpresa = id,
-                Nome = Empresas.First(f => f.IdEmpresa == id).Nome
+                Nome = Empresas.First(f => f.IdEmpresa == id).Nome,
+                Grupos = gruposPermissoesUsuario,
+                PerfilImpressora = perfilImpressoras
             };
-
-            foreach (string nomeGrupoPermissao in gruposPermissoesUsuario)
-            {
-                var groupItemViewModel = new GroupItemViewModel
-                {
-                    IsSelected = false,
-                    Name = nomeGrupoPermissao
-                };
-
-                empresasGrupos.Grupos.Add(groupItemViewModel);
-            }
 
             var list = new List<EmpresaGrupoViewModel>
             {
@@ -129,6 +123,11 @@ namespace FWLog.Web.Backoffice.Controllers
         public async Task<ActionResult> Create(BOAccountCreateViewModel model)
         {
             ViewBag.Empresas = _Empresas;
+
+            for (int i = 0; i < model.EmpresasGrupos.Count; i++)
+            {
+                model.EmpresasGrupos[i].PerfilImpressora = PerfilImpressorasList(model.EmpresasGrupos[i].IdEmpresa, IdPerfilImpressora: model.EmpresasGrupos[i].IdPerfilImpressoraPadrao);
+            }
 
             Func<string, ViewResult> errorView = (error) =>
             {
@@ -170,7 +169,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return errorView(null);
             }
 
-            if(!model.EmpresasGrupos.Where(w => w.IsEmpresaPrincipal).Any())
+            if (!model.EmpresasGrupos.Where(w => w.IsEmpresaPrincipal).Any())
             {
                 ModelState.AddModelError(nameof(model.EmpresasGrupos), "Selecione a empresa principal do usuário");
                 return errorView(null);
@@ -204,7 +203,7 @@ namespace FWLog.Web.Backoffice.Controllers
             _unitOfWork.PerfilUsuarioRepository.Add(perfilUsuario);
             _unitOfWork.SaveChanges();
 
-            model.EmpresasGrupos.ForEach(f => _unitOfWork.UsuarioEmpresaRepository.Add(new UsuarioEmpresa { UserId = user.Id, IdEmpresa = f.IdEmpresa, PerfilUsuarioId = perfilUsuario.PerfilUsuarioId }));
+            model.EmpresasGrupos.ForEach(f => _unitOfWork.UsuarioEmpresaRepository.Add(new UsuarioEmpresa { UserId = user.Id, IdEmpresa = f.IdEmpresa, PerfilUsuarioId = perfilUsuario.PerfilUsuarioId, IdPerfilImpressoraPadrao = f.IdPerfilImpressoraPadrao }));
             _unitOfWork.SaveChanges();
 
             var empresasGruposNew = new StringBuilder();
@@ -257,6 +256,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
             empresas = Empresas.Where(w => empresas.Contains(w.IdEmpresa)).Select(s => s.IdEmpresa).ToList();
 
+            var usuarioEmpresas = _unitOfWork.UsuarioEmpresaRepository.Tabela().Where(x => x.UserId == user.Id).ToList();
+
             var perfil = _unitOfWork.PerfilUsuarioRepository.GetByUserId(user.Id);
 
             var model = new BOAccountEditViewModel
@@ -275,11 +276,15 @@ namespace FWLog.Web.Backoffice.Controllers
 
             foreach (long empresa in empresas)
             {
+                var usuarioEmpresa = usuarioEmpresas.FirstOrDefault(x => x.IdEmpresa == empresa);
+
                 var empGrupos = new EmpresaGrupoViewModel
                 {
                     IdEmpresa = empresa,
                     Nome = Empresas.First(f => f.IdEmpresa == empresa).Nome,
-                    IsEmpresaPrincipal = perfil.EmpresaId == empresa ? true : false
+                    IsEmpresaPrincipal = perfil.EmpresaId == empresa ? true : false,
+                    IdPerfilImpressoraPadrao = usuarioEmpresa?.IdPerfilImpressoraPadrao,
+                    PerfilImpressora = PerfilImpressorasList(empresa, usuarioEmpresa?.IdPerfilImpressoraPadrao)
                 };
 
                 List<string> gruposPermissoesUsuario = (await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), empresa).ConfigureAwait(false)).OrderBy(x => x).ToList();
@@ -313,6 +318,11 @@ namespace FWLog.Web.Backoffice.Controllers
         public async Task<ActionResult> Edit(BOAccountEditViewModel model)
         {
             ViewBag.Empresas = _Empresas;
+
+            for (int i = 0; i < model.EmpresasGrupos.Count; i++)
+            {
+                model.EmpresasGrupos[i].PerfilImpressora = PerfilImpressorasList(model.EmpresasGrupos[i].IdEmpresa, IdPerfilImpressora: model.EmpresasGrupos[i].IdPerfilImpressoraPadrao);
+            }
 
             ViewResult errorView()
             {
@@ -403,7 +413,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             _boService.EditPerfilUsuario(perfilUsuario);
 
-            var empresasGrupos = model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Select(s => s.IdEmpresa).ToList();
+            var empresasGrupos = model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Select(s => new BOAccountService.impressorapadrao { IdEmpresa = s.IdEmpresa, IdPerfilImpressoraPadrao = s.IdPerfilImpressoraPadrao }).ToList();
             _boService.EditUsuarioEmpresas(Empresas, empresasGrupos, user.Id, perfilUsuario.PerfilUsuarioId);
 
             var userInfo = new BackOfficeUserInfo();
@@ -707,5 +717,16 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         private SelectList empresas;
+
+        private SelectList PerfilImpressorasList(long idEmpresa, long? IdPerfilImpressora = null)
+        {
+            return new SelectList(
+                          _unitOfWork.PerfilImpressoraRepository.RetornarAtivas().Where(x => x.IdEmpresa == idEmpresa).Select(x => new SelectListItem
+                          {
+                              Value = x.IdPerfilImpressora.ToString(),
+                              Text = x.Nome,
+                              Selected = IdPerfilImpressora == x.IdPerfilImpressora
+                          }).ToList(), "Value", "Text", IdPerfilImpressora);
+        }
     }
 }
