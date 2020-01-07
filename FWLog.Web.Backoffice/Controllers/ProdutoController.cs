@@ -28,7 +28,20 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize]
         public ActionResult SearchModal()
         {
-            var model = new ProdutoSearchModalViewModel();
+            var lista = new[]
+            {
+                new SelectListItem { Value = "true", Text = "Ativo" },
+                new SelectListItem { Value = "false", Text = "Inativo" }
+            };
+
+            var model = new ProdutoSearchModalViewModel()
+            {
+                Filter = new ProdutoSearchModalFilterViewModel()
+                {
+                    ListaStatus = new SelectList(lista, "Value", "Text")
+                }
+            };
+
             return View(model);
         }
 

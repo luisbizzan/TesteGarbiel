@@ -114,6 +114,9 @@
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaArmazenagemVolume.cs" />
+    <Compile Include="Model\Etiquetas\ImprimirEtiquetaAvulsoRequest.cs" />
+    <Compile Include="Model\Etiquetas\ImprimirEtiquetaDevolucaoRequest.cs" />
+    <Compile Include="Model\Etiquetas\ImprimirEtiquetaProdutoBase.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeRecebimento.cs" />
     <Compile Include="Model\IntegracaoSankhya\ConfirmarNotaFiscalResposta.cs" />
     <Compile Include="Model\IntegracaoSankhya\IncluirNotaFiscalXML.cs" />
@@ -127,6 +130,8 @@
     <Compile Include="Model\IntegracaoSankhya\EmpresaIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\UnidadeMedidaIntegracao.cs" />
+    <Compile Include="Model\LogEtiquetagem\LogEtiquetagem.cs" />
+    <Compile Include="Model\Lote\ProcessamentoTratativaDivergencia.cs" />
     <Compile Include="Model\Lote\ResumoFinalizarConferenciaResponse.cs" />
     <Compile Include="Model\Lote\TratarDivergenciaRequest.cs" />
     <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />
@@ -136,6 +141,8 @@
     <Compile Include="Model\Relatorios\RelatorioRecebimentoNotasRequest.cs" />
     <Compile Include="Model\IntegracaoSankhya\ExecuteQueryResponse.cs" />
     <Compile Include="Model\IntegracaoSankhya\NotaFiscalIntegracao.cs" />
+    <Compile Include="Model\Relatorios\RelatorioResumoEtiquetagemRequest.cs" />
+    <Compile Include="Model\Relatorios\TermoResponsabilidadeRequest.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
     <Compile Include="Model\TokenResponse.cs" />
@@ -145,14 +152,17 @@
     <Compile Include="Relatorio\IFwRelatorioDados.cs" />
     <Compile Include="Relatorio\Model\RastreioPeca.cs" />
     <Compile Include="Relatorio\Model\RecebimentoNotas.cs" />
+    <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ApplicationLogService.cs" />
     <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\PerfilImpressoraService.cs" />
     <Compile Include="Services\EmpresaService.cs" />
     <Compile Include="Services\EnderecoArmazenagemService.cs" />
     <Compile Include="Services\EtiquetaService.cs" />
     <Compile Include="Services\FreteTipoService.cs" />
     <Compile Include="Services\ImpressoraService.cs" />
+    <Compile Include="Services\LogEtiquetagemService.cs" />
     <Compile Include="Services\LoteService.cs" />
     <Compile Include="Services\NivelArmazenagemService.cs" />
     <Compile Include="Services\NotaFiscalService.cs" />

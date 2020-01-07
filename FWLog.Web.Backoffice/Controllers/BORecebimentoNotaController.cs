@@ -4,6 +4,7 @@ using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Lote;
 using FWLog.Services.Model.Relatorios;
@@ -29,6 +30,7 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly LoteService _loteService;
         private readonly ApplicationLogService _applicationLogService;
         private readonly EtiquetaService _etiquetaService;
+        private readonly LogEtiquetagemService _logEtiquetagemService;
         private readonly UnitOfWork _uow;
 
         public BORecebimentoNotaController(
@@ -36,16 +38,19 @@ namespace FWLog.Web.Backoffice.Controllers
             RelatorioService relatorioService,
             LoteService loteService,
             ApplicationLogService applicationLogService,
-            EtiquetaService etiquetaService)
+            EtiquetaService etiquetaService,
+            LogEtiquetagemService logEtiquetagemService)
         {
             _loteService = loteService;
             _relatorioService = relatorioService;
             _applicationLogService = applicationLogService;
             _uow = uow;
             _etiquetaService = etiquetaService;
+            _logEtiquetagemService = logEtiquetagemService;
         }
 
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
         public ActionResult Index()
         {
             var model = new BORecebimentoNotaListViewModel
@@ -55,7 +60,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     ListaStatus = new SelectList(
                     _uow.LoteStatusRepository.Todos().Select(x => new SelectListItem
                     {
-                        Value = x.IdLoteStatus.ToString(),
+                        Value = x.IdLoteStatus.GetHashCode().ToString(),
                         Text = x.Descricao,
                     }), "Value", "Text"
                 )
@@ -70,6 +75,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
         public ActionResult PageData(DataTableFilter<BORecebimentoNotaFilterViewModel> model)
         {
             List<BORecebimentoNotaListItemViewModel> boRecebimentoNotaListItemViewModel = new List<BORecebimentoNotaListItemViewModel>();
@@ -98,7 +104,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (model.CustomFilter.Lote.HasValue)
             {
-                query = query.Where(x => x.IdLote == Convert.ToInt32(model.CustomFilter.Lote));
+                query = query.Where(x => x.IdLote == model.CustomFilter.Lote.Value);
             }
 
             if (model.CustomFilter.Nota.HasValue)
@@ -152,6 +158,18 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.NotaFiscal.PrazoEntregaFornecedor <= prazoFinal);
             }
 
+            if (!model.CustomFilter.IdUsuarioConferencia.NullOrEmpty())
+            {
+                var lotes = query.Select(s => s.IdLote).ToList();
+                var conferencias = _uow.LoteConferenciaRepository.Todos().Where(w => w.IdUsuarioConferente == model.CustomFilter.IdUsuarioConferencia && lotes.Contains(w.IdLote)).Select(s => s.IdLote).ToList();
+                query = query.Where(x => conferencias.Contains(x.IdLote));
+            }
+
+            if (!model.CustomFilter.IdUsuarioRecebimento.NullOrEmpty())
+            {
+                query = query.Where(x => x.UsuarioRecebimento.Id == model.CustomFilter.IdUsuarioRecebimento);
+            }
+
             if (query.Any())
             {
                 foreach (var item in query)
@@ -183,6 +201,11 @@ namespace FWLog.Web.Backoffice.Controllers
                         }
                     }
 
+                    if (model.CustomFilter.Atraso.HasValue && model.CustomFilter.Atraso.Value != atraso)
+                    {
+                        continue;
+                    }
+
                     boRecebimentoNotaListItemViewModel.Add(new BORecebimentoNotaListItemViewModel()
                     {
                         Lote = item.IdLote == 0 ? (long?)null : item.IdLote,
@@ -199,16 +222,6 @@ namespace FWLog.Web.Backoffice.Controllers
                         IdLoteStatus = (int)item.LoteStatus.IdLoteStatus
                     });
                 }
-            }
-
-            if (model.CustomFilter.Atraso.HasValue)
-            {
-                boRecebimentoNotaListItemViewModel = boRecebimentoNotaListItemViewModel.Where(x => x.Atraso == model.CustomFilter.Atraso).ToList();
-            }
-
-            if (!string.IsNullOrEmpty(model.CustomFilter.IdUsuarioRecebimento))
-            {
-                boRecebimentoNotaListItemViewModel = boRecebimentoNotaListItemViewModel.Where(x => x.IdUsuarioRecebimento == model.CustomFilter.IdUsuarioRecebimento).ToList();
             }
 
             totalRecordsFiltered = boRecebimentoNotaListItemViewModel.Count;
@@ -228,6 +241,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult DetalhesEtiquetaConferencia()
         {
             var viewModel = new BODetalhesEtiquetaConferenciaViewModel
@@ -242,6 +256,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult ResumoFinalizarConferencia(long id)
         {
             ResumoFinalizarConferenciaResponse response = _loteService.ResumoFinalizarConferencia(id, IdEmpresa);
@@ -252,6 +267,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult ResumoDivergenciaConferencia(long id)
         {
             var model = new ResumoDivergenciaConferenciaViewModel
@@ -271,6 +287,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
         public ActionResult DownloadRelatorioNotas(BODownloadRelatorioNotasViewModel viewModel)
         {
             ValidateModel(viewModel);
@@ -284,6 +301,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
         public ActionResult DownloadDetalhesNotaEntradaConferencia(int id)
         {
             var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
@@ -299,6 +317,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
         public JsonResult ImprimirDetalhesEntradaConferencia(BOImprimirDetalhesEntradaConferenciaViewModel viewModel)
         {
             try
@@ -331,6 +350,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public JsonResult ValidarModalRegistroRecebimento(long id)
         {
             var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
@@ -351,6 +371,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public ActionResult ExibirModalRegistroRecebimento(long id)
         {
             var modal = new BORegistroRecebimentoViewModel
@@ -362,6 +383,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public JsonResult ValidarNotaFiscalRegistro(string chaveAcesso, long idNotaFiscal)
         {
             var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
@@ -392,6 +414,7 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public ActionResult CarregarDadosNotaFiscalRegistro(string id)
         {
             var notafiscal = _uow.NotaFiscalRepository.GetById(Convert.ToInt64(id));
@@ -418,6 +441,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public async Task<JsonResult> RegistrarRecebimentoNota(long idNotaFiscal, DateTime dataRecebimento, int qtdVolumes, bool notaFiscalPesquisada)
         {
             if (!(idNotaFiscal > 0) || !(qtdVolumes > 0) || !notaFiscalPesquisada)
@@ -453,6 +477,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
         public JsonResult ImprimirRelatorioNotas(BOImprimirRelatorioNotasViewModel viewModel)
         {
             try
@@ -479,6 +504,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public JsonResult ImprimirEtiquetaRecebimento(BOImprimirEtiquetaRecebimentoViewModel viewModel)
         {
             try
@@ -506,6 +532,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
         public ActionResult DetalhesEntradaConferencia(long id)
         {
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
@@ -649,7 +676,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                             foreach (LoteDivergencia divergencia in loteDivergencias)
                             {
-                                NotaFiscalItem nfItem = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).FirstOrDefault();
+                                List<NotaFiscalItem> nfItem = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).ToList();
 
                                 var divergenciaItem = new ExibirDivergenciaRecebimentoItemViewModel
                                 {
@@ -657,7 +684,7 @@ namespace FWLog.Web.Backoffice.Controllers
                                     QuantidadeConferencia = divergencia.QuantidadeConferencia,
                                     QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
                                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
-                                    QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Quantidade,
+                                    QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Sum(s => s.Quantidade),
                                     QuantidadeMaisTratado = divergencia.QuantidadeDivergenciaMais ?? 0,
                                     QuantidadeMenosTratado = divergencia.QuantidadeDivergenciaMenos ?? 0
                                 };
@@ -675,6 +702,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(model);
         }
 
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public JsonResult ValidarInicioConferencia(long id)
         {
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
@@ -731,8 +759,8 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult EntradaConferencia(long id)
         {
             var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
@@ -749,7 +777,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
 
             if (empresaConfig == null)
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "As configurações da empresa não foi encontrada. Por favor, tente novamente!");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "As configurações da empresa não foram encontradas. Por favor, tente novamente!");
 
             var model = new BOEntradaConferenciaViewModel
             {
@@ -777,6 +805,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult ObterDadosReferenciaConferencia(string codigoBarrasOuReferencia, long idLote)
         {
             //Valida se o código de barras ou referência é vazio ou nulo.
@@ -825,7 +854,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "As configurações da empresa não foi encontrada. Por favor, tente novamente!"
+                    Message = "As configurações da empresa não foram encontradas. Por favor, tente novamente!"
                 });
             }
 
@@ -839,11 +868,11 @@ namespace FWLog.Web.Backoffice.Controllers
             int quantidadeNaoConferida = 0;
 
             //Caso o item exista na nota, captura a quantidade.
-            if (referenciaNota.Count > 0)
+            if (referenciaNota.Any())
                 quantidadeNota = referenciaNota.Sum(x => x.Quantidade);
 
             //Caso exista o item já tenha sido conferido, captura a quantidade.
-            if (referenciaConferencia.Count > 0)
+            if (referenciaConferencia.Any())
                 quantidadeConferida = referenciaConferencia.Sum(x => x.Quantidade);
 
             if (quantidadeNota > quantidadeConferida)
@@ -863,8 +892,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode(),
                 Referencia = produto.Referencia,
                 DescricaoReferencia = produto.Descricao,
-                Embalagem = "",
-                Unidade = "",
+                Embalagem = string.Empty,
+                Unidade = string.Empty,
                 Multiplo = produto.MultiploVenda,
                 QuantidadeEstoque = empresaProduto == null ? 0 : empresaProduto.Saldo,
                 QuantidadeNaoConferida = quantidadeNaoConferida,
@@ -888,11 +917,12 @@ namespace FWLog.Web.Backoffice.Controllers
             return Json(new AjaxGenericResultModel
             {
                 Success = true,
-                Message = "",
+                Message = string.Empty,
                 Data = json
             });
         }
 
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public JsonResult RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia)
         {
             try
@@ -944,7 +974,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "As configurações da empresa não foi encontrada. Por favor, tente novamente!"
+                        Message = "As configurações da empresa não foram encontradas. Por favor, tente novamente!"
                     });
                 }
 
@@ -1027,6 +1057,28 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 //_etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
 
+                //var requestPecasMais = new ImprimirEtiquetaDevolucaoRequest
+                //{
+                //    Linha1 = lote.IdLote.ToString().PadLeft(10, '0'),
+                //    Linha2 = produto.Referencia,
+                //    Linha3 = "PC.A+",
+                //    IdImpressora = null
+                //};
+
+                //_etiquetaService.ImprimirEtiquetaDevolucao(requestPecasMais);
+
+                //Registra a impressão da etiqueta
+                var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem
+                {
+                    IdTipoEtiquetagem = TipoEtiquetagemEnum.Conferencia.GetHashCode(),
+                    IdEmpresa = IdEmpresa,
+                    IdProduto = produto.IdProduto,
+                    Quantidade = quantidadeCaixa,
+                    IdUsuario = User.Identity.GetUserId()
+                };
+
+                _logEtiquetagemService.Registrar(logEtiquetagem);
+
                 #endregion
 
                 return Json(new AjaxGenericResultModel
@@ -1075,7 +1127,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             foreach (LoteDivergencia divergencia in loteDivergencias)
             {
-                NotaFiscalItem nfItem = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).FirstOrDefault();
+                List<NotaFiscalItem> nfItem = divergencia.NotaFiscal.NotaFiscalItens.Where(w => w.Produto.IdProduto == divergencia.Produto.IdProduto).ToList();
 
                 var divergenciaItem = new TratarDivergenciaRecebimentoItemViewModel
                 {
@@ -1084,7 +1136,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     QuantidadeConferencia = divergencia.QuantidadeConferencia,
                     QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
-                    QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Quantidade
+                    QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Sum(s => s.Quantidade)
                 };
 
                 divergenciaViewModel.Divergencias.Add(divergenciaItem);
@@ -1104,12 +1156,12 @@ namespace FWLog.Web.Backoffice.Controllers
                 request.IdUsuario = User.Identity.GetUserId();
                 request.IdEmpresa = IdEmpresa;
 
-                await _loteService.TratarDivergencia(request).ConfigureAwait(false);
+                LoteStatusEnum statusLote = await _loteService.TratarDivergencia(request, IdUsuario).ConfigureAwait(false);
 
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,
-                    Message = "Tratamento de divergências finalizado."
+                    Message = statusLote == LoteStatusEnum.AguardandoCriacaoNFDevolucao ? "Iniciando a criação da nota fiscal de devolução." : "Tratamento de divergências finalizado."
                 }, JsonRequestBehavior.DenyGet);
 
             }
@@ -1142,7 +1194,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ConferidoPor = perfilUsuario.Nome,
                 InicioConferencia = loteConferencia.First().DataHoraInicio.ToString("dd/MM/yyyy hh:mm:ss"),
                 FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss"),
-                NotaFiscal = notaFiscal.Numero.ToString(),
+                NotaFiscal = string.Concat(notaFiscal.Numero.ToString(), " - ", notaFiscal.Serie),
                 IdLote = lote.IdLote,
                 StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao,
                 UsuarioTratamento = _uow.PerfilUsuarioRepository.GetByUserId(loteDivergencias.First().IdUsuarioDivergencia).Nome,
@@ -1171,6 +1223,68 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioResumoEtiquetagem)]
+        public ActionResult RelatorioResumoEtiquetagem()
+        {
+            var model = new RelatorioResumoEtiquetagemViewModel
+            {
+                Filter = new RelatorioResumoEtiquetagemFilterViewModel() { }
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioResumoEtiquetagem)]
+        public ActionResult RelatorioResumoEtiquetagemPageData(DataTableFilter<RelatorioResumoEtiquetagemFilterViewModel> model)
+        {
+            var filtros = Mapper.Map<DataTableFilter<LogEtiquetagemListaFiltro>>(model);
+
+            IEnumerable<LogEtiquetagemListaLinhaTabela> result = _uow.LogEtiquetagemRepository.BuscarLista(filtros, out int registrosFiltrados, out int totalRegistros, IdEmpresa);
+
+            var relatorioResumoEtiquetagemListItemViewModel = new List<RelatorioResumoEtiquetagemListItemViewModel>();
+
+            List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
+
+            foreach (var item in result)
+            {
+                relatorioResumoEtiquetagemListItemViewModel.Add(new RelatorioResumoEtiquetagemListItemViewModel()
+                {
+                    IdLogEtiquetagem = item.IdLogEtiquetagem,
+                    Referencia = item.Referencia,
+                    Descricao = item.Descricao,
+                    TipoEtiquetagem = item.TipoEtiquetagem,
+                    Quantidade = item.Quantidade,
+                    DataHora = item.DataHora.ToString("dd/MM/yyyy HH:mm:ss"),
+                    Usuario = usuarios.Where(x => x.UserId.Equals(item.Usuario)).FirstOrDefault()?.PerfilUsuario.Nome
+                });
+            }
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
+                Data = relatorioResumoEtiquetagemListItemViewModel
+            });
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioResumoEtiquetagem)]
+        public ActionResult DownloadRelatorioResumoEtiquetagem(RelatorioResumoEtiquetagemRequest viewModel)
+        {
+            ValidateModel(viewModel);
+
+            viewModel.IdEmpresa = IdEmpresa;
+            viewModel.NomeUsuario = User.Identity.Name;
+
+            byte[] relatorio = _relatorioService.GerarRelatorioResumoEtiquetagem(viewModel);
+
+            return File(relatorio, "application/pdf", "Relatório Resumo Etiquetagem.pdf");
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
         public ActionResult RelatorioRastreioPeca()
         {
             return View(new RelatorioRastreioPecaViewModel());
@@ -1208,6 +1322,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioRastreioPeca)]
         public ActionResult DownloadRelatorioRastreioPeca(RelatorioRastreioPecaRequest viewModel)
         {
             ValidateModel(viewModel);
@@ -1221,6 +1336,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public async Task<JsonResult> FinalizarConferencia(long id)
         {
             try
@@ -1246,6 +1362,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ListarResumoProducao)]
         public ActionResult RelatorioResumoProducao()
         {
             return View(new RelatorioResumoProducaoViewModel());
@@ -1319,5 +1436,104 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
+        public async Task<JsonResult> ContinuarProcessamentoLote(long id)
+        {
+            try
+            {
+                var lote = _uow.LoteRepository.ObterLoteNota(id);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Data = (lote.IdLoteStatus == LoteStatusEnum.AguardandoCriacaoNFDevolucao).ToString(),
+                }, JsonRequestBehavior.DenyGet);
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Data = "false",
+                    Message = e is BusinessException ? e.Message : "Não foi possivel verificar o status do lote."
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
+        public async Task<JsonResult> FinalizarProcessamentoTratativaDivergencia(long id)
+        {
+            try
+            {
+                ProcessamentoTratativaDivergencia processamento = await _loteService.FinalizarProcessamentoTratativaDivergencia(id, IdUsuario).ConfigureAwait(false);
+                string json = JsonConvert.SerializeObject(processamento);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = !processamento.ProcessamentoErro,
+                    Message = processamento.ProcessamentoErro ? "Não foi possivel finalizar a tratativa de divergência." : "Trativa de Divergência finalizada com sucesso.",
+                    Data = json
+                }, JsonRequestBehavior.DenyGet); ;
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Data = "false",
+                    Message = e is BusinessException ? e.Message : "Não foi possivel finalizar a tratativa de divergência."
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
+        public ActionResult ResumoProcessamentoDivergencia(long id)
+        {
+            NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+            Lote lote = _uow.LoteRepository.ObterLoteNota(id);
+            List<LoteConferencia> loteConferencia = _uow.LoteConferenciaRepository.Obter(lote.IdLote);
+            List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(id);
+            PerfilUsuario perfilUsuario = _uow.PerfilUsuarioRepository.GetByUserId(loteConferencia.First().IdUsuarioConferente);
+
+            NotaFiscal notafiscalDevolucao = null;
+            if (notaFiscal.CodigoIntegracaoNFDevolucao != null)
+            {
+                notafiscalDevolucao = _uow.NotaFiscalRepository.ObterPorCodigoIntegracao(notaFiscal.CodigoIntegracaoNFDevolucao.Value);
+            }
+
+            LoteStatusEnum[] statusNFConfirmada = new LoteStatusEnum[] { LoteStatusEnum.AguardandoConfirmacaoNFDevolucao, LoteStatusEnum.AguardandoAutorizacaoSefaz };
+            LoteStatusEnum[] statusNFAutorizada = new LoteStatusEnum[] { LoteStatusEnum.FinalizadoDivergenciaNegativa, LoteStatusEnum.FinalizadoDivergenciaTodas };
+
+            var divergenciaViewModel = new ExibirDivergenciaRecebimentoViewModel
+            {
+                ConferidoPor = perfilUsuario.Nome,
+                InicioConferencia = loteConferencia.First().DataHoraInicio.ToString("dd/MM/yyyy hh:mm:ss"),
+                FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss"),
+                NotaFiscal = string.Concat(notaFiscal.Numero.ToString(), " - ", notaFiscal.Serie),
+                IdLote = lote.IdLote,
+                StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao,
+                UsuarioTratamento = _uow.PerfilUsuarioRepository.GetByUserId(loteDivergencias.First().IdUsuarioDivergencia).Nome,
+                DataTratamento = loteDivergencias.First().DataTratamentoDivergencia.Value.ToString("dd/MM/yyyy hh:mm:ss"),
+                Processamento = new ProcessamentoTratativaDivergenciaViewModel()
+                {
+                    AtualizacaoNFCompra = true,
+                    ConfirmacaoNFCompra = true,
+                    AtualizacaoEstoque = true,
+                    CriacaoNFDevolucao = notafiscalDevolucao != null,
+                    ConfirmacaoNFDevolucao = notafiscalDevolucao != null && Array.Exists(statusNFConfirmada, x => x == lote.IdLoteStatus),
+                    AutorizacaoNFDevolucaoSefaz = notafiscalDevolucao != null && Array.Exists(statusNFAutorizada, x => x == lote.IdLoteStatus),
+                    CriacaoQuarentena = _uow.QuarentenaRepository.ExisteQuarentena(lote.IdLote)
+                }
+            };
+
+            return View(divergenciaViewModel);
+        }
     }
 }

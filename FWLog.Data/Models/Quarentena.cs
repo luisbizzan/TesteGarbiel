@@ -6,19 +6,20 @@ namespace FWLog.Data.Models
 {
     public class Quarentena
     {
-        [Key]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Required]
         public long IdQuarentena { get; set; }
-
+        [Required]
+        [Index]
         public long IdLote { get; set; }
-
+        [Required]
         public DateTime DataAbertura { get; set; }
-
         public DateTime? DataEncerramento { get; set; }
-
+        [StringLength(500)]
         public string Observacao { get; set; }
-
         public string CodigoConfirmacao { get; set; }
-
+        [Required]
+        [Index]
         public QuarentenaStatusEnum IdQuarentenaStatus { get; set; }
 
         [ForeignKey(nameof(IdLote))]

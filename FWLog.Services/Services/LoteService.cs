@@ -1,4 +1,5 @@
 ﻿using FWLog.Data;
+using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.Lote;
@@ -38,14 +39,15 @@ namespace FWLog.Services.Services
                 await AtualizarNotaFiscalIntegracao(nota, LoteStatusEnum.Recebido);
             }
 
-            lote = new Lote();
-
-            lote.IdLoteStatus = LoteStatusEnum.Recebido;
-            lote.IdNotaFiscal = idNotaFiscal;
-            lote.DataRecebimento = dataRecebimento;
-            lote.IdUsuarioRecebimento = userId;
-            lote.QuantidadeVolume = qtdVolumes;
-            lote.QuantidadePeca = nota.NotaFiscalItens.Sum(s => s.Quantidade);
+            lote = new Lote
+            {
+                IdLoteStatus = LoteStatusEnum.Recebido,
+                IdNotaFiscal = idNotaFiscal,
+                DataRecebimento = dataRecebimento,
+                IdUsuarioRecebimento = userId,
+                QuantidadeVolume = qtdVolumes,
+                QuantidadePeca = nota.NotaFiscalItens.Sum(s => s.Quantidade)
+            };
 
             _uow.LoteRepository.Add(lote);
 
@@ -75,10 +77,12 @@ namespace FWLog.Services.Services
 
                 if (conferencia.NullOrEmpty())
                 {
-                    divergencia = new LoteDivergencia();
-                    divergencia.QuantidadeConferenciaMenos = qtdOriginal;
-                    divergencia.QuantidadeConferencia = 0;
-                    divergencia.QuantidadeConferenciaMais = 0;
+                    divergencia = new LoteDivergencia
+                    {
+                        QuantidadeConferenciaMenos = qtdOriginal,
+                        QuantidadeConferencia = 0,
+                        QuantidadeConferenciaMais = 0
+                    };
 
                     var loteConferencia = new LoteConferencia()
                     {
@@ -86,9 +90,9 @@ namespace FWLog.Services.Services
                         IdTipoConferencia = empresaConfig.IdTipoConferencia.Value,
                         IdProduto = nfItem.Key,
                         Quantidade = 0,
-                        DataHoraInicio = DateTime.Now,//TODO VErificar
+                        DataHoraInicio = DateTime.Now,
                         DataHoraFim = DateTime.Now,
-                        Tempo = DateTime.Now,
+                        Tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0),
                         IdUsuarioConferente = userId
                     };
 
@@ -103,10 +107,12 @@ namespace FWLog.Services.Services
                         continue;
                     }
 
-                    divergencia = new LoteDivergencia();
-                    divergencia.QuantidadeConferencia = qtdConferida;
-                    divergencia.QuantidadeConferenciaMais = qtdConferida > qtdOriginal ? qtdConferida - qtdOriginal : 0;
-                    divergencia.QuantidadeConferenciaMenos = qtdConferida < qtdOriginal ? qtdOriginal - qtdConferida : 0;
+                    divergencia = new LoteDivergencia
+                    {
+                        QuantidadeConferencia = qtdConferida,
+                        QuantidadeConferenciaMais = qtdConferida > qtdOriginal ? qtdConferida - qtdOriginal : 0,
+                        QuantidadeConferenciaMenos = qtdConferida < qtdOriginal ? qtdOriginal - qtdConferida : 0
+                    };
                 }
 
                 if (divergencia == null)
@@ -128,14 +134,16 @@ namespace FWLog.Services.Services
             {
                 var qtdConferida = item.Value.Sum(s => s.Quantidade);
 
-                LoteDivergencia divergencia = new LoteDivergencia();
-                divergencia.QuantidadeConferenciaMais = qtdConferida;
-                divergencia.QuantidadeConferenciaMenos = 0;
-                divergencia.QuantidadeConferencia = qtdConferida;
-                divergencia.IdProduto = item.Key;
-                divergencia.IdLote = lote.IdLote;
-                divergencia.IdNotaFiscal = lote.IdNotaFiscal;
-                divergencia.IdLoteDivergenciaStatus = LoteDivergenciaStatusEnum.AguardandoTratativa;
+                LoteDivergencia divergencia = new LoteDivergencia
+                {
+                    QuantidadeConferenciaMais = qtdConferida,
+                    QuantidadeConferenciaMenos = 0,
+                    QuantidadeConferencia = qtdConferida,
+                    IdProduto = item.Key,
+                    IdLote = lote.IdLote,
+                    IdNotaFiscal = lote.IdNotaFiscal,
+                    IdLoteDivergenciaStatus = LoteDivergenciaStatusEnum.AguardandoTratativa
+                };
 
                 loteDivergencias.Add(divergencia);
             }
@@ -175,28 +183,24 @@ namespace FWLog.Services.Services
 
                 transactionScope.Complete();
             }
-
-            //TODO verificar qual metodo vai chamar a finalização para tratar a exception como no RegistrarRecebimentoNotaFiscal
         }
 
-        public async Task TratarDivergencia(TratarDivergenciaRequest request)
+        public async Task<LoteStatusEnum> TratarDivergencia(TratarDivergenciaRequest request, string IdUsuario)
         {
             ValidarDadosDivergencia(request);
 
             NotaFiscal notafiscal = _uow.NotaFiscalRepository.GetById(request.IdNotaFiscal);
             Lote lote = _uow.LoteRepository.ObterLoteNota(request.IdNotaFiscal);
 
-            if (request.Divergencias.Any(a => a.QuantidadeMaisTratado > 0) && request.Divergencias.Any(a => a.QuantidadeMenosTratado > 0))
+            lote.ObservacaoDivergencia = request.ObservacaoDivergencia;
+
+            if ((request.Divergencias.Any(a => a.QuantidadeMaisTratado > 0) && request.Divergencias.Any(a => a.QuantidadeMenosTratado > 0)) || request.Divergencias.Any(a => a.QuantidadeMenosTratado > 0))
             {
-                lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaTodas;
+                lote.IdLoteStatus = LoteStatusEnum.AguardandoCriacaoNFDevolucao;
             }
             else if (request.Divergencias.Any(a => a.QuantidadeMaisTratado > 0))
             {
                 lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaPositiva;
-            }
-            else if (request.Divergencias.Any(a => a.QuantidadeMenosTratado > 0))
-            {
-                lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaNegativa;
             }
             else
             {
@@ -219,55 +223,16 @@ namespace FWLog.Services.Services
 
                 if (lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva && !loteDivergenciasMenos.NullOrEmpty())
                 {
-                    CriarQuarentena(lote);
+                    CriarQuarentena(lote, IdUsuario);
                 }
 
                 transactionScope.Complete();
             }
 
-            /*
-            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
-            {
-                if (lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas || lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa)
-                {
-                    NotaFiscal notafiscalDevolucao = null;
-
-                    if (notafiscal.CodigoIntegracaoNFDevolucao == null)
-                    {
-                        notafiscalDevolucao = await CriarNotaDevolucao();
-                        notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.NotaDevolucaoCriada;
-                        notafiscal.CodigoIntegracaoNFDevolucao = notafiscalDevolucao.CodigoIntegracao;
-                        _uow.SaveChanges();
-                    }
-                    else
-                    {
-                        notafiscalDevolucao = _uow.NotaFiscalRepository.ObterPorCodigoIntegracao(notafiscal.CodigoIntegracaoNFDevolucao.Value);
-
-                    }
-
-                    if (notafiscalDevolucao == null)
-                    {
-                        throw new Exception();//verificar
-                    }
-
-                    if (notafiscalDevolucao.IdNotaFiscalStatus == NotaFiscalStatusEnum.NotaDevolucaoCriada)
-                    {
-                        await ConfirmarNotaFiscalIntegracao(notafiscalDevolucao, null);
-                        notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.Confirmada;
-                        _uow.SaveChanges();
-                    }
-
-                    if (notafiscalDevolucao.IdNotaFiscalStatus == NotaFiscalStatusEnum.Confirmada && notafiscalDevolucao.IdNotaFiscalStatus != NotaFiscalStatusEnum.NotaDevolucaoAutorizada)
-                    {
-                        await VerificarNotaFiscalAutorizada(notafiscalDevolucao);
-                        notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.NotaDevolucaoAutorizada;
-                        _uow.SaveChanges();
-                    }
-                }
-            }*/
+            return lote.IdLoteStatus;
         }
 
-        public void ValidarDadosDivergencia(TratarDivergenciaRequest request)
+        private void ValidarDadosDivergencia(TratarDivergenciaRequest request)
         {
             NotaFiscal notafiscal = _uow.NotaFiscalRepository.GetById(request.IdNotaFiscal);
 
@@ -388,9 +353,102 @@ namespace FWLog.Services.Services
             return loteDivergenciasMenos;
         }
 
-        private async Task<NotaFiscal> CriarNotaDevolucao()
+        public async Task<ProcessamentoTratativaDivergencia> FinalizarProcessamentoTratativaDivergencia(long idLote, string IdUsuario)
         {
-            return new NotaFiscal();
+            ProcessamentoTratativaDivergencia processamento = new ProcessamentoTratativaDivergencia()
+            {
+                AtualizacaoNFCompra = true,
+                ConfirmacaoNFCompra = true,
+                AtualizacaoEstoque = true,
+                ProcessamentoErro = false
+            };
+
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//Temporário 
+            {
+                Lote lote = _uow.LoteRepository.GetById(idLote);
+                List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(lote.IdNotaFiscal);
+
+                if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMais > 0) && loteDivergencias.Any(a => a.QuantidadeDivergenciaMenos > 0))
+                {
+                    lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaTodas;
+
+                    CriarQuarentena(lote, IdUsuario);
+                }
+                else if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMenos > 0))
+                {
+                    lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaNegativa;
+                }
+
+                _uow.SaveChanges();
+
+                return processamento;
+            }
+
+            try
+            {
+                Lote lote = _uow.LoteRepository.GetById(idLote);
+
+                if (lote.IdLoteStatus != LoteStatusEnum.AguardandoCriacaoNFDevolucao)
+                {
+                    return processamento;
+                }
+
+                NotaFiscal notafiscalDevolucao = null;
+
+                if (lote.NotaFiscal.CodigoIntegracaoNFDevolucao == null)
+                {
+                    notafiscalDevolucao = await CriarNFDevolucao();
+                    notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.NotaDevolucaoCriada;
+                    lote.NotaFiscal.CodigoIntegracaoNFDevolucao = notafiscalDevolucao.CodigoIntegracao;
+                    lote.IdLoteStatus = LoteStatusEnum.AguardandoConfirmacaoNFDevolucao;
+                    _uow.SaveChanges();
+                }
+                else
+                {
+                    notafiscalDevolucao = _uow.NotaFiscalRepository.ObterPorCodigoIntegracao(lote.NotaFiscal.CodigoIntegracaoNFDevolucao.Value);
+                }
+
+                processamento.CriacaoNFDevolucao = true;
+
+                if (notafiscalDevolucao.IdNotaFiscalStatus == NotaFiscalStatusEnum.Confirmada)
+                {
+                    await ConfirmarNotaFiscalIntegracao(notafiscalDevolucao);
+                    notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.Confirmada;
+                    lote.IdLoteStatus = LoteStatusEnum.AguardandoAutorizacaoSefaz;
+                    _uow.SaveChanges();
+                }
+
+                processamento.ConfirmacaoNFDevolucao = true;
+
+                await VerificarNotaFiscalAutorizada(notafiscalDevolucao);
+                notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.NotaDevolucaoAutorizada;
+                _uow.SaveChanges();
+                processamento.AutorizaçãoNFDevolucaoSefaz = true;
+
+                List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(lote.IdNotaFiscal);
+
+                if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMais > 0) && loteDivergencias.Any(a => a.QuantidadeDivergenciaMenos > 0))
+                {
+                    lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaTodas;
+
+                    CriarQuarentena(lote, IdUsuario);
+                }
+                else if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMenos > 0))
+                {
+                    lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaNegativa;
+                }
+
+                _uow.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                ApplicationLogService log = new ApplicationLogService(_uow);
+                log.Error(ApplicationEnum.BackOffice, e);
+
+                processamento.ProcessamentoErro = true;
+            }
+
+            return processamento;
         }
 
         private void AtualizarSaldoArmazenagem(Dictionary<long, List<NotaFiscalItem>> nfItens, NotaFiscal notafiscal, List<LoteDivergencia> loteDivergenciasMenos)
@@ -415,7 +473,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        private void CriarQuarentena(Lote lote)
+        private void CriarQuarentena(Lote lote, string IdUsuario)
         {
             Quarentena quarentena = new Quarentena()
             {
@@ -424,7 +482,7 @@ namespace FWLog.Services.Services
                 IdQuarentenaStatus = QuarentenaStatusEnum.Aberto
             };
 
-            _uow.QuarentenaRepository.Add(quarentena);
+            _uow.QuarentenaRepository.Add(quarentena, IdUsuario);
             _uow.SaveChanges();
         }
 
@@ -490,6 +548,11 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException(string.Format("A nota fiscal {0} ainda não está autorizada no Sankhya.", notafiscal.CodigoIntegracao));
             }
+        }
+
+        private async Task<NotaFiscal> CriarNFDevolucao()
+        {
+            return new NotaFiscal();
         }
     }
 }

@@ -60,6 +60,9 @@ namespace FWLog.Data.Models
 
         public string Especie { get; set; }
 
+        [StringLength(20)]
+        public string NumeroFicticioNF { get; set; }
+
         public DateTime DataEmissao { get; set; }
 
         public DateTime PrazoEntregaFornecedor { get; set; } 

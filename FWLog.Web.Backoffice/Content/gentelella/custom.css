@@ -190,7 +190,7 @@
 
 .nav-md .container.body .col-md-3.left_col {
   min-height: 100%;
-  width: 230px;
+  width: 257px;
   padding: 0;
   position: absolute;
   display: flex;
@@ -205,10 +205,10 @@ body .container.body .right_col {
 
 .nav-md .container.body .right_col {
   padding: 10px 20px 0;
-  margin-left: 230px; }
+  margin-left: 257px; }
 
 .nav_title {
-  width: 230px;
+  width: 257px;
   float: left;
   background: #2A3F54;
   border-radius: 0;
@@ -336,7 +336,7 @@ body {
 
 .main_container .top_nav {
   display: block;
-  margin-left: 230px; }
+  margin-left: 257px; }
 
 .no-padding {
   padding: 0 !important; }
@@ -1444,7 +1444,7 @@ span.right {
   display: block;
   padding: 5px 0 0 0;
   position: fixed;
-  width: 230px;
+  width: 257px;
   background: #2A3F54; }
 
 .sidebar-footer a {
@@ -1474,7 +1474,7 @@ span.right {
 
 @media (min-width: 992px) {
   footer {
-    margin-left: 230px; } }
+    margin-left: 257px; } }
 
 @media (min-width: 992px) {
   .tile_count .tile_stats_count {
@@ -2835,7 +2835,7 @@ ul.project_files li a i {
 .pricing_features {
   background: #FAFAFA;
   padding: 20px 15px;
-  min-height: 230px;
+  min-height: 257px;
   font-size: 13.5px; }
 
 .pricing_features ul li {

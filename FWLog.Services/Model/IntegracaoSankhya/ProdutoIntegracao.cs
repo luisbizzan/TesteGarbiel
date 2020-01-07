@@ -1,27 +1,71 @@
 ﻿using FWLog.Services.Integracao.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Services.Model.IntegracaoSankhya
 {
     [TabelaIntegracao(DisplayName = "TGFPRO")]
     public class ProdutoIntegracao
     {
-        public string CODPROD { get; set; }
-        public string DESCRPROD { get; set; } 
-        public string CODFAB { get; set; }         
-        public string FABRICANTE { get; set; } 
-        public string LARGURA { get; set; } 
-        public string ALTURA { get; set; } 
-        public string UNIDADE { get; set; } 
-        public string ATIVO { get; set; } 
-        public string ENDIMAGEM { get; set; } 
-        public string ESPESSURA { get; set; } 
-        public string PRODUTONFE { get; set; } 
-        public string M3 { get; set; } 
-        public string AGRUPCOMPMINIMO { get; set; } 
-        public string PESOBRUTO { get; set; } 
-        public string PESOLIQ { get; set; } 
-        public string REFERENCIA { get; set; } 
-        public string AD_REFX { get; set; } 
-        public string REFFORN { get; set; } 
+        [TabelaIntegracao(DisplayName = "CODPROD")]
+        [Required]
+        public string CodigoIntegracao { get; set; }
+
+        [TabelaIntegracao(DisplayName = "DESCRPROD")]
+        [Required]
+        public string Descricao { get; set; }
+
+        [TabelaIntegracao(DisplayName = "CODFAB")]
+        public string CodigoFabricante { get; set; }
+
+        [TabelaIntegracao(DisplayName = "FABRICANTE")]
+        public string NomeFabricante { get; set; }
+
+        [TabelaIntegracao(DisplayName = "LARGURA")]
+        public string Largura { get; set; }
+
+        [TabelaIntegracao(DisplayName = "ALTURA")]
+        public string Altura { get; set; }
+               
+        [TabelaIntegracao(DisplayName = "ATIVO")]
+        [Required]
+        public string Ativo { get; set; }
+
+        [TabelaIntegracao(DisplayName = "ENDIMAGEM")]
+        public string EnderecoImagem { get; set; }
+
+        [TabelaIntegracao(DisplayName = "ESPESSURA")]
+        public string Comprimento { get; set; }
+
+        [TabelaIntegracao(DisplayName = "PRODUTONFE")]
+        [Required]
+        public string CodigoProdutoNFE { get; set; }
+
+        [TabelaIntegracao(DisplayName = "M3")]
+        public string MetroCubico { get; set; }
+
+        [TabelaIntegracao(DisplayName = "AGRUPCOMPMINIMO")]
+        [Required]
+        public string MultiploVenda { get; set; }
+
+        [TabelaIntegracao(DisplayName = "PESOBRUTO")]
+        [Required]
+        public string PesoBruto { get; set; }
+
+        [TabelaIntegracao(DisplayName = "PESOLIQ")]
+        [Required]
+        public string PesoLiquido { get; set; }
+
+        [TabelaIntegracao(DisplayName = "REFERENCIA")]
+        public string CodigoBarras { get; set; }
+
+        [TabelaIntegracao(DisplayName = "AD_REFX")]
+        public string Referencia { get; set; }
+
+        [TabelaIntegracao(DisplayName = "REFFORN")]
+        public string ReferenciaFornecedor { get; set; }
+
+        [TabelaIntegracao(DisplayName = "CODVOL")]
+        public string UnidadeMedidaSigla { get; set; }
+
     }
 }

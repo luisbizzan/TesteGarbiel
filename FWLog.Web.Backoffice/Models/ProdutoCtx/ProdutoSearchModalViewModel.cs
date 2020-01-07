@@ -7,7 +7,6 @@ namespace FWLog.Web.Backoffice.Models.ProdutoCtx
     {
         public ProdutoSearchModalItemViewModel EmptyItem { get; set; }
         public ProdutoSearchModalFilterViewModel Filter { get; set; }
-        public SelectList Status { get; set; }
 
         public ProdutoSearchModalViewModel()
         {
@@ -40,5 +39,7 @@ namespace FWLog.Web.Backoffice.Models.ProdutoCtx
 
         [Display(Name = "Status")]
         public bool? Status { get; set; }
+
+        public SelectList ListaStatus { get; set; }
     }
 }

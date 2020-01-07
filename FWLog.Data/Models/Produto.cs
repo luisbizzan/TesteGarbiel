@@ -16,6 +16,9 @@ namespace FWLog.Data.Models
         public long? CodigoFabricante { get; set; }
 
         [Required]
+        public long IdUnidadeMedida { get; set; }
+
+        [Required]
         [StringLength(40)]
         [Index]
         public string Descricao { get; set; }
@@ -58,5 +61,8 @@ namespace FWLog.Data.Models
 
         [Required]
         public bool Ativo { get; set; }
+
+        [ForeignKey(nameof(IdUnidadeMedida))]
+        public virtual UnidadeMedida UnidadeMedida { get; set; }
     }
 }

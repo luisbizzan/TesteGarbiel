@@ -1,18 +1,20 @@
-﻿namespace FWLog.Data.Models.DataTablesCtx
+﻿using System;
+
+namespace FWLog.Data.Models.DataTablesCtx
 {
     public class LogEtiquetagemListaLinhaTabela
     {
         public long IdLogEtiquetagem { get; set; }
 
-        public long IdProduto { get; set; }
+        public string Referencia { get; set; }
 
-        public string DescricaoProduto { get; set; }
+        public string Descricao { get; set; }
 
         public string TipoEtiquetagem { get; set; }
 
-        public long Quantidade { get; set; }
+        public int Quantidade { get; set; }
 
-        public string DataHora { get; set; }
+        public DateTime DataHora { get; set; }
 
         public string Usuario { get; set; }
     }

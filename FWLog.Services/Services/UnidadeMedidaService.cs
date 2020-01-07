@@ -26,13 +26,13 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            List<UnidadeMedidaIntegracao> unidadesMedidaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<UnidadeMedidaIntegracao>();
+            List<UnidadeMedidaIntegracao> unidadesMedidaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<UnidadeMedidaIntegracao>();
 
             foreach (var unidadeInt in unidadesMedidaIntegracao)
             {
                 try
                 {
-                    ValidarDadosIntegração(unidadeInt);
+                    ValidarDadosIntegracao(unidadeInt);
 
                     bool unidadeNova = false;
 

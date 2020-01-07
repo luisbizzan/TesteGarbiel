@@ -15,7 +15,8 @@
                 pageDataUrl = Url.Action("PageData"),
                 registrarRecebimento = User.HasPermission(Permissions.Recebimento.RegistrarRecebimento),
                 registrarRecebimentoUrl = Url.Action("ExibirModalRegistroRecebimento"),
-                tratarDivergencias = User.HasPermission(Permissions.Recebimento.TratarDivergencia)
+                tratarDivergencias = User.HasPermission(Permissions.Recebimento.TratarDivergencia),
+                conferirLote = User.HasPermission(Permissions.Recebimento.ConferirLote)
             }
         )
 }
@@ -199,3 +200,4 @@
 <div class="modal" id="modalUsuarioRecebimento" data-toggle="modal" data-myvalue="1"></div>
 <div class="modal" id="modalUsuarioConferencia" data-toggle="modal" data-myvalue="2"></div>
 <div class="modal" id="modalDivergencia" data-backdrop="static"></div>
+<div class="modal" id="modalProcessamentoTratativaDivergencia" data-backdrop="static"></div>

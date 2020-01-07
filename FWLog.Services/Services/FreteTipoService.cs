@@ -29,13 +29,13 @@ namespace FWLog.Services.Services
             string where = "WHERE NUCAMPO IN (SELECT NUCAMPO FROM TDDCAM WHERE NOMETAB = 'TGFCAB' AND NOMECAMPO = 'CIF_FOB')";
 
 
-            List<FreteTipoIntegracao> freteTiposIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<FreteTipoIntegracao>(where: where);
+            List<FreteTipoIntegracao> freteTiposIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<FreteTipoIntegracao>(where: where);
 
             foreach (var freteTipoInt in freteTiposIntegracao)
             {
                 try
                 {
-                    ValidarDadosIntegração(freteTipoInt);
+                    ValidarDadosIntegracao(freteTipoInt);
 
                     bool freteTipoNovo = false;
 

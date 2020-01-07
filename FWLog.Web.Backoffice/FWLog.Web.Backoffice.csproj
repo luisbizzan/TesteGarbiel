@@ -232,6 +232,7 @@
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
     <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\NivelArmazenagemController.cs" />
+    <Compile Include="Controllers\PerfilImpressoraController.cs" />
     <Compile Include="Controllers\PontoArmazenagemController.cs" />
     <Compile Include="Controllers\BOPrinterController.cs" />
     <Compile Include="Controllers\BOQuarentenaController.cs" />
@@ -269,13 +270,16 @@
     <Compile Include="Helpers\HtmlRequestHelper.cs" />
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
+    <Compile Include="Mapping\PerfilImpressoraProfile.cs" />
     <Compile Include="Mapping\EmpresaProfile.cs" />
     <Compile Include="Mapping\EnderecoArmazenagemProfile.cs" />
     <Compile Include="Mapping\NivelArmazenagemProfile.cs" />
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
+    <Compile Include="Models\BOQuarentenaCtx\HistoricoQuarentenaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirEtiquetaRecebimentoViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\RelatorioResumoEtiquetagemViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\ResumoDivergenciaConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\RelatorioResumoProducaoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\RelatorioRastreioPecaViewModel.cs" />
@@ -307,6 +311,8 @@
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemDetailsViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemListViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemPesquisaModalViewModel.cs" />
+    <Compile Include="Models\PerfilImpressoraCtx\PerfilImpressoraCreateViewModel.cs" />
+    <Compile Include="Models\PerfilImpressoraCtx\PerfilImpressoraListViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemCadastroViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemDetalhesViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemEditarViewModel.cs" />
@@ -451,10 +457,12 @@
     <Content Include="Scripts\dart\HttpService.js" />
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoEtiquetagem.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoProducao.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\resumoDivergenciaConferencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\resumoFinalizarConferencia.js" />
     <Content Include="Scripts\Views\BOQuarentena\detalhesQuarentena.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\resumoProcessamentoDivergencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\tratarDivergencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\entradaConferencia.js" />
     <Content Include="Scripts\Views\BOPrinter\create.js" />
@@ -473,11 +481,15 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\pesquisaModal.js" />
+    <Content Include="Scripts\Views\PerfilImpressora\cadastrar.js" />
+    <Content Include="Scripts\Views\PerfilImpressora\editar.js" />
+    <Content Include="Scripts\Views\PerfilImpressora\index.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\editar.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\index.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Produto\searchModal.js" />
+    <Content Include="Scripts\Views\RecebimentoEtiquetaIndividualPersonalizada\index.js" />
     <Content Include="Scripts\Views\RecebimentoEtiqueta\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
@@ -524,6 +536,14 @@
     <Content Include="Views\BORecebimentoNota\ResumoProducaoRecebimento.cshtml" />
     <Content Include="Views\BORecebimentoNota\RelatorioResumoProducao.cshtml" />
     <Content Include="Views\BORecebimentoNota\ResumoDivergenciaConferencia.cshtml" />
+    <Content Include="Views\BORecebimentoNota\RelatorioResumoEtiquetagem.cshtml" />
+    <Content Include="Views\BORecebimentoNota\ResumoProcessamentoDivergencia.cshtml" />
+    <Content Include="Views\BOQuarentena\Historico.cshtml" />
+    <Content Include="Views\PerfilImpressora\Cadastrar.cshtml" />
+    <Content Include="Views\PerfilImpressora\Detalhes.cshtml" />
+    <Content Include="Views\PerfilImpressora\Editar.cshtml" />
+    <Content Include="Views\PerfilImpressora\Index.cshtml" />
+    <Content Include="Views\PerfilImpressora\_ListaImpressoras.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

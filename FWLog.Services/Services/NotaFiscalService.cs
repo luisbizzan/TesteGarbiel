@@ -29,13 +29,13 @@ namespace FWLog.Services.Services
 
             var where = " WHERE TGFCAB.TIPMOV = 'C' AND TGFCAB.STATUSNOTA <> 'L' AND (TGFCAB.AD_STATUSREC = 0 OR TGFCAB.AD_STATUSREC IS NULL)";
             var inner = "INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
-            List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<NotaFiscalIntegracao>(where, inner);
+            List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalIntegracao>(where, inner);
 
             List<FreteTipo> tiposFrete = _uow.FreteTipoRepository.RetornarTodos();
             IQueryable<Empresa> empresas = _uow.EmpresaRepository.Tabela();
             var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
 
-            Dictionary<string, List<NotaFiscalIntegracao>> notasIntegracaoGrp = notasIntegracao.GroupBy(g => g.NUNOTA).ToDictionary(d => d.Key, d => d.ToList());
+            Dictionary<string, List<NotaFiscalIntegracao>> notasIntegracaoGrp = notasIntegracao.GroupBy(g => g.CodigoIntegracao).ToDictionary(d => d.Key, d => d.ToList());
 
             foreach (var notasInt in notasIntegracaoGrp)
             {
@@ -43,23 +43,23 @@ namespace FWLog.Services.Services
                 {
                     var notafiscalIntegracao = notasInt.Value.First();
 
-                    ValidarDadosIntegração(notafiscalIntegracao);
+                    ValidarDadosIntegracao(notafiscalIntegracao);
 
-                    var codEmp = Convert.ToInt64(notafiscalIntegracao.CODEMP);
+                    var codEmp = Convert.ToInt64(notafiscalIntegracao.CodigoIntegracaoEmpresa);
                     Empresa empresa = empresas.FirstOrDefault(f => f.CodigoIntegracao == codEmp);
                     if (empresa == null)
                     {
                         throw new Exception("Código da Empresa (CODEMP) inválido");
                     }
 
-                    var codParcTransp = Convert.ToInt64(notafiscalIntegracao.CODPARCTRANSP);
+                    var codParcTransp = Convert.ToInt64(notafiscalIntegracao.CodigoIntegracaoTransportadora);
                     Transportadora transportadora = _uow.TransportadoraRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codParcTransp);
                     if (transportadora == null)
                     {
                         throw new Exception("Código da Transportadora (CODPARCTRANSP) inválido");
                     }
 
-                    var codParc = Convert.ToInt64(notafiscalIntegracao.CODPARC);
+                    var codParc = Convert.ToInt64(notafiscalIntegracao.CodigoIntegracaoFornecedor);
                     Fornecedor fornecedor = _uow.FornecedorRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codParc);
                     if (fornecedor == null)
                     {
@@ -68,7 +68,7 @@ namespace FWLog.Services.Services
 
                     bool notaNova = true;
 
-                    var codNota = Convert.ToInt64(notafiscalIntegracao.NUNOTA);
+                    var codNota = Convert.ToInt64(notafiscalIntegracao.CodigoIntegracao);
                     NotaFiscal notafiscal = _uow.NotaFiscalRepository.ObterPorCodigoIntegracao(codNota);
 
                     if (notafiscal != null)
@@ -88,46 +88,47 @@ namespace FWLog.Services.Services
                         notafiscal = new NotaFiscal();
                     }
 
-                    notafiscal.Numero = Convert.ToInt32(notafiscalIntegracao.NUMNOTA);
-                    notafiscal.Serie = notafiscalIntegracao.SERIENOTA;
+                    notafiscal.Numero = Convert.ToInt32(notafiscalIntegracao.Numero);
+                    notafiscal.Serie = notafiscalIntegracao.Serie;
                     notafiscal.CodigoIntegracao = codNota;
-                    notafiscal.ValorTotal = Convert.ToDecimal(notafiscalIntegracao.VLRNOTA.Replace(".", ","));
-                    notafiscal.ValorFrete = Convert.ToDecimal(notafiscalIntegracao.VLRFRETE.Replace(".", ","));
-                    notafiscal.NumeroConhecimento = notafiscalIntegracao.NUMCF == null ? (long?)null : Convert.ToInt64(notafiscalIntegracao.NUMCF);
-                    notafiscal.PesoBruto = notafiscalIntegracao.PESOBRUTO == null ? (decimal?)null : Convert.ToDecimal(notafiscalIntegracao.PESOBRUTO.Replace(".", ","));
-                    notafiscal.Quantidade = Convert.ToInt32(notafiscalIntegracao.QTDVOL);
-                    notafiscal.Especie = notafiscalIntegracao.VOLUME;
-                    notafiscal.StatusIntegracao = notafiscalIntegracao.STATUSNOTA;
+                    notafiscal.ValorTotal = Convert.ToDecimal(notafiscalIntegracao.ValorTotal.Replace(".", ","));
+                    notafiscal.ValorFrete = Convert.ToDecimal(notafiscalIntegracao.ValorFrete.Replace(".", ","));
+                    notafiscal.NumeroConhecimento = notafiscalIntegracao.NumeroConhecimento == null ? (long?)null : Convert.ToInt64(notafiscalIntegracao.NumeroConhecimento);
+                    notafiscal.PesoBruto = notafiscalIntegracao.PesoBruto == null ? (decimal?)null : Convert.ToDecimal(notafiscalIntegracao.PesoBruto.Replace(".", ","));
+                    notafiscal.Quantidade = Convert.ToInt32(notafiscalIntegracao.QuantidadeVolume);
+                    notafiscal.Especie = notafiscalIntegracao.Especie;
+                    notafiscal.StatusIntegracao = notafiscalIntegracao.StatusIntegracao;
                     notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.ProcessandoIntegracao;
-                    notafiscal.ChaveAcesso = notafiscalIntegracao.CHAVENFE;
+                    notafiscal.ChaveAcesso = notafiscalIntegracao.ChaveAcesso;
                     notafiscal.IdFornecedor = fornecedor.IdFornecedor;
-                    notafiscal.DataEmissao = notafiscalIntegracao.DTNEG == null ? DateTime.Now : Convert.ToDateTime(notafiscalIntegracao.DTNEG);
+                    notafiscal.DataEmissao = notafiscalIntegracao.DataEmissao == null ? DateTime.Now : Convert.ToDateTime(notafiscalIntegracao.DataEmissao);
                     notafiscal.IdEmpresa = empresa.IdEmpresa;
                     notafiscal.IdTransportadora = transportadora.IdTransportadora;
                     notafiscal.CodigoIntegracaoVendedor = Convert.ToInt32(notafiscalIntegracao.CodigoIntegracaoVendedor);
                     notafiscal.IdNotaFiscalTipo = NotaFiscalTipoEnum.Compra;
+                    notafiscal.NumeroFicticioNF = notafiscalIntegracao.NumeroFicticioNF;
 
-                    FreteTipo freteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notafiscalIntegracao.CIF_FOB);
+                    FreteTipo freteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notafiscalIntegracao.FreteTipo);
                     if (freteTipo != null)
                     {
                         notafiscal.IdFreteTipo = freteTipo.IdFreteTipo;
                     }
 
-                    var notafiscalItens = notasInt.Value.Select(s => new { s.NUNOTA, s.CODPROD, s.CODVOL, s.QTDNEG, s.VLRUNIT, s.VLRTOT }).ToList();
+                    var notafiscalItens = notasInt.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.UnidadeMedida, s.Quantidade, s.ValorUnitarioItem, s.ValorTotal }).ToList();
 
                     List<NotaFiscalItem> itemsNotaFsical = new List<NotaFiscalItem>();
 
                     foreach (var item in notafiscalItens)
                     {
-                        var codProduto = Convert.ToInt64(item.CODPROD);
-                        var qtdNeg = Convert.ToInt32(item.QTDNEG);
+                        var codProduto = Convert.ToInt64(item.CodigoIntegracaoProduto);
+                        var qtdNeg = Convert.ToInt32(item.Quantidade);
                         Produto produto = _uow.ProdutoRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codProduto);
                         if (produto == null)
                         {
                             throw new Exception("Código da Produto (CODPROD) inválido");
                         }
 
-                        var unidade = unidadesMedida.FirstOrDefault(f => f.Sigla == item.CODVOL);
+                        var unidade = unidadesMedida.FirstOrDefault(f => f.Sigla == item.UnidadeMedida);
                         if (unidade == null)
                         {
                             throw new Exception("Código da Unidade de Medida (CODVOL) inválido");
@@ -147,8 +148,8 @@ namespace FWLog.Services.Services
                         notaFiscalItem.IdUnidadeMedida = unidade.IdUnidadeMedida;
                         notaFiscalItem.IdProduto = produto.IdProduto;
                         notaFiscalItem.Quantidade = qtdNeg;
-                        notaFiscalItem.ValorUnitario = Convert.ToDecimal(item.VLRUNIT.Replace(".", ","));
-                        notaFiscalItem.ValorTotal = Convert.ToDecimal(item.VLRTOT.Replace(".", ","));
+                        notaFiscalItem.ValorUnitario = Convert.ToDecimal(item.ValorUnitarioItem.Replace(".", ","));
+                        notaFiscalItem.ValorTotal = Convert.ToDecimal(item.ValorTotal.Replace(".", ","));
                         notaFiscalItem.CodigoNotaFiscal = codNota;
 
                         if (itemNovo)
@@ -192,7 +193,7 @@ namespace FWLog.Services.Services
         {
             string where = string.Format("WHERE NUNOTA = {0} ", codigoIntegracao);
             string union = string.Format("UNION SELECT NUNOTA FROM TGFCAB_EXC WHERE NUNOTA = {0}", codigoIntegracao);
-            List<NotaFiscalCanceladaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<NotaFiscalCanceladaIntegracao>(where, union);
+            List<NotaFiscalCanceladaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalCanceladaIntegracao>(where, union);
 
             if (!notasIntegracao.NullOrEmpty())
             {
@@ -205,7 +206,7 @@ namespace FWLog.Services.Services
         public async Task<bool> VerificarNotaFiscalAutorizada(long codigoIntegracao)
         {
             string where = string.Format("WHERE NUNOTA = {0} ", codigoIntegracao);
-            List<NotaFiscalAutorizadaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryComplexa<NotaFiscalAutorizadaIntegracao>(where);
+            List<NotaFiscalAutorizadaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalAutorizadaIntegracao>(where);
 
             if (notasIntegracao == null || notasIntegracao.First().StatusNFE != "A")
             {

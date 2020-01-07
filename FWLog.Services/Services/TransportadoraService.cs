@@ -32,19 +32,19 @@ namespace FWLog.Services.Services
             where.Append("CGC_CPF IS NOT NULL ");
             where.Append("AND RAZAOSOCIAL IS NOT NULL ");
             where.Append("AND TRANSPORTADORA = 'S' ");
-            //where.Append("AND INTEGRARFWLOG = 1 "); Esperando criação do campo no Sankhya
+            where.Append("AND AD_INTEGRARFWLOG = '1' ");
 
-            List<TransportadoraIntegracao> transportadorasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQueryGenerico<TransportadoraIntegracao>(where: where.ToString());
+            List<TransportadoraIntegracao> transportadorasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<TransportadoraIntegracao>(where: where.ToString());
 
             foreach (var transpInt in transportadorasIntegracao)
             {
                 try
                 {
-                    ValidarTransportadoraIntegracao(transpInt);
+                    ValidarDadosIntegracao(transpInt);
 
                     bool transportadoraNova = false;
 
-                    var codParc = Convert.ToInt64(transpInt.CODPARC);
+                    var codParc = Convert.ToInt64(transpInt.CodigoIntegracao);
                     Transportadora transportadora = _uow.TransportadoraRepository.ConsultarPorCodigoIntegracao(codParc);
 
                     if (transportadora == null)
@@ -54,10 +54,10 @@ namespace FWLog.Services.Services
                     }
 
                     transportadora.CodigoIntegracao = codParc;
-                    transportadora.Ativo = transpInt.ATIVO == "S" ? true : false;
-                    transportadora.CNPJ = transpInt.CGC_CPF;
-                    transportadora.NomeFantasia = transpInt.RAZAOSOCIAL;
-                    transportadora.RazaoSocial = transpInt.NOMEPARC;
+                    transportadora.Ativo = transpInt.Ativo == "S" ? true : false;
+                    transportadora.CNPJ = transpInt.CNPJ;
+                    transportadora.RazaoSocial = transpInt.RazaoSocial;
+                    transportadora.NomeFantasia = transpInt.NomeFantasia;
 
                     if (transportadoraNova)
                     {
@@ -66,29 +66,20 @@ namespace FWLog.Services.Services
 
                     await _uow.SaveChangesAsync();
 
-                    //bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", transportadora.CodigoIntegracao, "DTALTER", DateTime.UtcNow);
-                    //if (!atualizacaoOK)
-                    //{
-                    //    throw new Exception("A atualização de Transportadora no Sankhya não terminou com sucesso.");
-                    //}
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", transportadora.CodigoIntegracao, "AD_INTEGRARFWLOG", "0");
+                    if (!atualizacaoOK)
+                    {
+                        throw new Exception("A atualização de Transportadora no Sankhya não terminou com sucesso.");
+                    }
                 }
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da seguinte Transportadora: {0}.", transpInt.CODPARC));
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da seguinte Transportadora: {0}.", transpInt.CodigoIntegracao));
 
                     continue;
                 }
             }
-        }
-
-        public void ValidarTransportadoraIntegracao(TransportadoraIntegracao transportadoraIntegracao)
-        {
-            ValidarCampo(transportadoraIntegracao.CODPARC, nameof(transportadoraIntegracao.CODPARC));
-            ValidarCampo(transportadoraIntegracao.ATIVO, nameof(transportadoraIntegracao.ATIVO));
-            ValidarCampo(transportadoraIntegracao.CGC_CPF, nameof(transportadoraIntegracao.CGC_CPF));
-            ValidarCampo(transportadoraIntegracao.NOMEPARC, nameof(transportadoraIntegracao.NOMEPARC));
-            ValidarCampo(transportadoraIntegracao.RAZAOSOCIAL, nameof(transportadoraIntegracao.RAZAOSOCIAL));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
+using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Relatorio;
 using FWLog.Services.Relatorio.Model;
@@ -112,6 +113,18 @@ namespace FWLog.Services.Services
                 query = query.Where(x => x.NotaFiscal.PrazoEntregaFornecedor <= prazoFinal);
             }
 
+            if (!request.IdUsuarioRecebimento.NullOrEmpty())
+            {
+                query = query.Where(x => x.UsuarioRecebimento.Id == request.IdUsuarioRecebimento);
+            }
+
+            if (!request.IdUsuarioConferencia.NullOrEmpty())
+            {
+                var lotes = query.Select(s => s.IdLote).ToList();
+                var conferencias = _unitiOfWork.LoteConferenciaRepository.Todos().Where(w => w.IdUsuarioConferente == request.IdUsuarioConferencia && lotes.Contains(w.IdLote)).Select(s => s.IdLote).ToList();
+                query = query.Where(x => conferencias.Contains(x.IdLote));
+            }
+
             var listaRecebimentoNotas = new List<IFwRelatorioDados>();
 
             if (query.Any())
@@ -130,7 +143,6 @@ namespace FWLog.Services.Services
                             {
                                 atraso = DateTime.Now.Subtract(prazoEntrega).Days;
                             }
-
                         }
                         else
                         {
@@ -139,6 +151,11 @@ namespace FWLog.Services.Services
                                 atraso = item.DataRecebimento.Subtract(prazoEntrega).Days;
                             }
                         }
+                    }
+
+                    if (request.Atraso.HasValue && request.Atraso.Value != atraso)
+                    {
+                        continue;
                     }
 
                     var recebimentoNotas = new RecebimentoNotas
@@ -248,6 +265,10 @@ namespace FWLog.Services.Services
 
             Lote lote = _unitiOfWork.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
             bool IsNotaRecebida = lote != null;
+
+            LoteStatusEnum[] loteNaoConferido = new LoteStatusEnum[] { LoteStatusEnum.AguardandoRecebimento, LoteStatusEnum.Desconhecido, LoteStatusEnum.Recebido };
+
+            bool LoteNaoConferido = lote == null || Array.Exists(loteNaoConferido, x => x == lote.IdLoteStatus);
 
             row = tabela.AddRow();
             paragraph = row.Cells[0].AddParagraph();
@@ -395,47 +416,48 @@ namespace FWLog.Services.Services
                 Bold = true
             };
 
-            List<NotaFiscalItem> notaFiscalItems = _unitiOfWork.NotaFiscalItemRepository.ObterItens(notaFiscal.IdNotaFiscal);
-
-            tabela = document.Sections[0].AddTable();
-            tabela.Format.Font = new Font("Verdana", new Unit(9));
-
-            tabela.AddColumn(new Unit(88));
-            tabela.AddColumn(new Unit(88));
-            tabela.AddColumn(new Unit(88));
-            tabela.AddColumn(new Unit(88));
-            tabela.AddColumn(new Unit(88));
-            tabela.AddColumn(new Unit(88));
-
-            row = tabela.AddRow();
-            row.Format.Font = new Font("Verdana", new Unit(9));
-            row.HeadingFormat = true;
-            row.Format.Font.Bold = true;
-
-            row.Cells[0].AddParagraph("Referência");
-            row.Cells[1].AddParagraph("Quantidade");
-            row.Cells[2].AddParagraph("Início");
-            row.Cells[3].AddParagraph("Termino");
-            row.Cells[4].AddParagraph("Conferido por");
-            row.Cells[5].AddParagraph("Tempo");
-
-            if (notaFiscalItems.Count > 0)
+            if (!LoteNaoConferido)
             {
-                foreach (NotaFiscalItem notaFiscalItem in notaFiscalItems)
+                var loteConferencia = _unitiOfWork.LoteConferenciaRepository.ObterPorId(lote.IdLote);
+                List<UsuarioEmpresa> usuarios = _unitiOfWork.UsuarioEmpresaRepository.ObterPorEmpresa(lote.NotaFiscal.IdEmpresa);
+
+                tabela = document.Sections[0].AddTable();
+                tabela.Format.Font = new Font("Verdana", new Unit(9));
+
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+
+                row = tabela.AddRow();
+                row.Format.Font = new Font("Verdana", new Unit(9));
+                row.HeadingFormat = true;
+                row.Format.Font.Bold = true;
+
+                row.Cells[0].AddParagraph("Referência");
+                row.Cells[1].AddParagraph("Quantidade");
+                row.Cells[2].AddParagraph("Início");
+                row.Cells[3].AddParagraph("Termino");
+                row.Cells[4].AddParagraph("Conferido por");
+                row.Cells[5].AddParagraph("Tempo");
+
+                foreach (var item in loteConferencia)
                 {
                     row = tabela.AddRow();
                     paragraph = row.Cells[0].AddParagraph();
-                    paragraph.AddText(string.IsNullOrEmpty(notaFiscalItem.Produto.Referencia) ? string.Empty : notaFiscalItem.Produto.Referencia);//TODO Verificar
+                    paragraph.AddText(item.Produto.Referencia);
                     paragraph = row.Cells[1].AddParagraph();
-                    paragraph.AddText(notaFiscalItem.Quantidade.ToString());
+                    paragraph.AddText(item.Quantidade.ToString());
                     paragraph = row.Cells[2].AddParagraph();
-                    paragraph.AddText("Não Conferido");
+                    paragraph.AddText(item.DataHoraInicio.ToString("dd/MM/yyyy HH:mm:ss"));
                     paragraph = row.Cells[3].AddParagraph();
-                    paragraph.AddText("Não Conferido");
+                    paragraph.AddText(item.DataHoraFim.ToString("dd/MM/yyyy HH:mm:ss"));
                     paragraph = row.Cells[4].AddParagraph();
-                    paragraph.AddText("Não Conferido");
+                    paragraph.AddText(usuarios.Where(x => x.UserId.Equals(item.UsuarioConferente.Id)).FirstOrDefault()?.PerfilUsuario.Nome);
                     paragraph = row.Cells[5].AddParagraph();
-                    paragraph.AddText("Não Conferido");
+                    paragraph.AddText(item.Tempo.ToString("HH:mm:ss"));
                 }
             }
 
@@ -467,6 +489,58 @@ namespace FWLog.Services.Services
                 NomeUsuario = request.NomeUsuario,
                 Orientacao = Orientation.Landscape,
                 Titulo = "Relatório Rastreio de Peças",
+                Filtros = string.Empty,
+                Dados = dados
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            return fwRelatorio.Gerar(fwRelatorioDados);
+        }
+
+        public byte[] GerarRelatorioResumoEtiquetagem(RelatorioResumoEtiquetagemRequest request)
+        {
+            var filtro = new LogEtiquetagemListaFiltro()
+            {
+                IdProduto = request.IdProduto,
+                DataInicial = request.DataInicial,
+                DataFinal = request.DataFinal,
+                QuantidadeInicial = request.QuantidadeInicial,
+                QuantidadeFinal = request.QuantidadeFinal,
+                IdUsuarioEtiquetagem = request.IdUsuarioEtiquetagem
+            };
+
+            List<UsuarioEmpresa> usuarios = _unitiOfWork.UsuarioEmpresaRepository.ObterPorEmpresa(request.IdEmpresa);
+
+            var relatorio = _unitiOfWork.LogEtiquetagemRepository.Relatorio(filtro, request.IdEmpresa);
+
+            var list = new List<ResumoEtiquetagem>();
+
+            foreach (var item in relatorio)
+            {
+                list.Add(new ResumoEtiquetagem
+                {
+                    Referencia = item.Produto.Referencia,
+                    Descricao = item.Produto.Descricao,
+                    TipoEtiquetagem = item.TipoEtiquetagem.Descricao,
+                    Quantidade = item.Quantidade,
+                    DataHora = item.DataHora.ToString("dd/MM/yyyy HH:mm:ss"),
+                    Usuario = usuarios.Where(x => x.UserId.Equals(item.IdUsuario)).FirstOrDefault()?.PerfilUsuario.Nome
+                });
+            }
+
+            var dados = new List<IFwRelatorioDados>();
+            dados.AddRange(list);
+
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = request.NomeUsuario,
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório Resumo Etiquetagem",
                 Filtros = string.Empty,
                 Dados = dados
             };

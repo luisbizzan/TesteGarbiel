@@ -1,0 +1,39 @@
+﻿@model List<FWLog.Web.Backoffice.Models.PerfilImpressoraCtx.TipoImpressaoViewModel>
+@using Res = Resources.CommonStrings;
+
+@for (int i = 0; i < Model.Count(); i++)
+{
+    <div class="x_panel panelImpressaoItem">
+        <div class="x_title">
+            @Html.Label(Model[i].Descricao)
+            @Html.Hidden(string.Format("TiposImpressao[{0}].Descricao", i.ToString()), Model[i].Descricao, new { @class = "descricao" })
+            @Html.Hidden(string.Format("TiposImpressao[{0}].IdImpressaoItem", i.ToString()), Model[i].IdImpressaoItem, new { @class = "idImpressaoItem" })
+            <div class="btn-group btn-group-sm pull-right">
+                <button type="button" class="btn btn-default form-group checkAllGroups"><i class="fa fa-check-square-o"></i> @Res.CheckAllLabel</button>
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="javascript:void(0);" class="uncheckAllGroups"><i class="fa fa-square-o"></i> @Res.UncheckAllLabel</a></li>
+                </ul>
+                <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
+            </div>
+        </div>
+        <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12 impressoras">
+        @for (int imp = 0; imp < Model[i].Impressoras.Count(); imp++)
+        {
+            <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="checkbox">
+                    <label>
+                        @Html.Hidden(string.Format("TiposImpressao[{0}].Impressoras[{1}].IdImpressora", i, imp), Model[i].Impressoras[imp].IdImpressora, new { @class = "idImpressora" })
+                        @Html.Hidden(string.Format("TiposImpressao[{0}].Impressoras[{1}].Nome", i, imp), Model[i].Impressoras[imp].Nome, new { @class = "nomeImpressora" })
+                        @Html.CheckBox(string.Format("TiposImpressao[{0}].Impressoras[{1}].Selecionado", i, imp), Model[i].Impressoras[imp].Selecionado, new { data_group = "" })
+
+                        @Html.DisplayFor(m => m[i].Impressoras[imp].Nome)
+                    </label>
+                </div>
+            </div>
+        }
+        </div>       
+    </div>
+}

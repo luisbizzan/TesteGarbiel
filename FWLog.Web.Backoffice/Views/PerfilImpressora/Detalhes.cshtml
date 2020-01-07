@@ -1,0 +1,72 @@
+﻿@model FWLog.Web.Backoffice.Models.PerfilImpressoraCtx.PerfilImpressoraCreateViewModel
+
+@{
+    ViewBag.Title = "Visualização de PerfilImpressora";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript()
+}
+
+<div class="x_panel">
+    <div class="x_title">
+        <h2>Detalhes do Perfil de Impressora</h2>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+        <div class="row">
+            <div class="form-group col-sm-6 col-xs-12">
+                @Html.LabelFor(m => m.Nome, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.Nome, new { @class = "form-control", @readonly = "readonly" })
+                @Html.ValidationMessageFor(m => m.Nome)
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-12 col-md-6 col-lg-3" style="pointer-events: none;">
+                @Html.LabelFor(m => m.Ativo)
+                <div class="checkbox">
+                    @Html.CheckBoxFor(m => m.Ativo, new { @class = "flat" })
+                </div>
+                @Html.ValidationMessageFor(m => m.Ativo)
+            </div>
+        </div>
+        <div class="row">
+            <div class="x_title">
+                <h2>Tipos de Impressão</h2>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div style="padding-top: 7px">
+            @for (int i = 0; i < Model.TiposImpressao.Count(); i++)
+            {
+                <div class="x_panel">
+                    <div class="x_title">
+                        @Html.Label(Model.TiposImpressao[i].Descricao)
+                    </div>
+                    <div class="row col-xs-12">
+                        @for (int imp = 0; imp < Model.TiposImpressao[i].Impressoras.Count(); imp++)
+                        {
+                            <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3" style="pointer-events: none;">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBox(string.Format("TiposImpressao[{0}].Impressoras[{1}].Selecionado", i, imp), Model.TiposImpressao[i].Impressoras[imp].Selecionado, new { data_group = "" })
+
+                                        @Html.DisplayFor(m => m.TiposImpressao[i].Impressoras[imp].Nome)
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="ln_solid"></div>
+        <div class="row col-xs-12 form-buttons">
+            <a href="@Url.Action("Index")" class="btn btn-default">@Resources.CommonStrings.BackAction</a>
+            <a href="@Url.Action("Edit", new { id = Model.IdPerfilImpressora })" class="btn btn-primary">@Resources.CommonStrings.EditAction</a>
+        </div>
+    </div>
+</div>
+
+

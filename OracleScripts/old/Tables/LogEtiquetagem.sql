@@ -5,7 +5,7 @@ CREATE TABLE "LogEtiquetagem"
     "IdProduto" NUMBER REFERENCES "Produto"("IdProduto") NOT NULL,
 	"IdTipoEtiquetagem" SMALLINT REFERENCES "TipoEtiquetagem"("IdTipoEtiquetagem") NOT NULL,
 	"Quantidade" NUMBER NOT NULL,
-    "DataHora" TIMESTAMP NOT NULL,
+    "DataHora" TIMESTAMP(6) NOT NULL,
     "IdUsuario" VARCHAR2(128 BYTE) REFERENCES "AspNetUsers"("Id") NOT NULL
 );
     
