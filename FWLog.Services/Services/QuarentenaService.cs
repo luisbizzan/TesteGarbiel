@@ -98,7 +98,7 @@ namespace FWLog.Services.Services
 
         private void AtualizaCodConfirmacaoQuarentena()
         {
-            _uow.QuarentenaRepository.Update(_Quarentena, _request.UserLog.UserId);
+            _uow.QuarentenaRepository.Update(_Quarentena, _request.UserLog.UserId, "Impressão do Termo de Responsabilidade.");
 
             _boLogSystemService.Add(new BOLogSystemCreation
             {

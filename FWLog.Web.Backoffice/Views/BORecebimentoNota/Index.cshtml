@@ -15,7 +15,8 @@
                 pageDataUrl = Url.Action("PageData"),
                 registrarRecebimento = User.HasPermission(Permissions.Recebimento.RegistrarRecebimento),
                 registrarRecebimentoUrl = Url.Action("ExibirModalRegistroRecebimento"),
-                tratarDivergencias = User.HasPermission(Permissions.Recebimento.TratarDivergencia)
+                tratarDivergencias = User.HasPermission(Permissions.Recebimento.TratarDivergencia),
+                conferirLote = User.HasPermission(Permissions.Recebimento.ConferirLote)
             }
         )
 }

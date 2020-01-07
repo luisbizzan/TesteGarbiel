@@ -1,0 +1,1 @@
+ALTER TABLE "LogEtiquetagem" MODIFY "IdProduto" NULL;

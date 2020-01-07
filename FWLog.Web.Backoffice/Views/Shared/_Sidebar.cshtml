@@ -27,6 +27,7 @@
         ),
         new MenuGroup(text: Res.ConfigurationMenuGroup, icon: "fa fa-cog").SetItems(
             new MenuItem { Text = "Empresa", Url = Url.Action("Editar", "Empresa"), RequirePermission = Permissions.Empresa.EditarConfiguracao },
+            new MenuItem { Text = "Perfil de Impressora", Url = Url.Action("Index", "PerfilImpressora"), RequirePermission = Permissions.PerfilImpressora.Listar },
             new MenuItem { Text = Res.PrinterMenuItem, Url = Url.Action("Index", "BOPrinter"), RequirePermission = Permissions.Printer.List }
         ),
          new MenuGroup(text: Res.RelatoriosMenuItem, icon: "fa fa-archive").SetItems(

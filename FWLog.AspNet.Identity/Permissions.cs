@@ -84,6 +84,7 @@ namespace FWLog.AspNet.Identity
             public const string RelatorioResumoEtiquetagem = "RelatorioResumoEtiquetagem";
             public const string ListarResumoProducao = "ListarResumoProducao";
             public const string PermitirDiferencaMultiploConferencia = "PermitirDiferencaMultiploConferencia";
+            public const string ConferirLote = "ConferirLote";
 
             public Recebimento() : base(Display.FromString("Recebimento de Notas Fiscais"))
             {
@@ -94,6 +95,7 @@ namespace FWLog.AspNet.Identity
                 Register(RelatorioResumoEtiquetagem, Display.FromString("Relatório Resumo Etiquetagem"));
                 Register(ListarResumoProducao, Display.FromString("Listar Resumo Produção"));
                 Register(PermitirDiferencaMultiploConferencia, Display.FromString("Permitir Diferença de Múltiplo na Conferência"));
+                Register(ConferirLote, Display.FromString("Conferir Lote"));
             }
         }
 
@@ -195,6 +197,22 @@ namespace FWLog.AspNet.Identity
             public RecebimentoEtiquetaIndividualEPersonalizada() : base(Display.FromString("Etiqueta Individual e Personalizada"))
             {
                 Register(Imprimir, Display.FromString("Imprimir Etiqueta Individual e Personalizada"));
+            }
+        }
+
+        public class PerfilImpressora : PermissionGroupBuildItem
+        {
+            public const string Listar = "PerfilImpressoraList";
+            public const string Criar = "PerfilImpressoraCreate";
+            public const string Editar = "PerfilImpressoraEdit";
+            public const string Excluir = "PerfilImpressoraDelete";
+
+            public PerfilImpressora() : base(Display.FromResource("Perfil Impressora"))
+            {
+                Register(Listar, Display.FromResource("Listar Perfil de Impressoras"));
+                Register(Criar, Display.FromResource("Criar Perfil de Impressora"));
+                Register(Editar, Display.FromResource("Editar Perfil de Impressora"));
+                Register(Excluir, Display.FromResource("Excluir Perfil de Impressora"));
             }
         }
     }

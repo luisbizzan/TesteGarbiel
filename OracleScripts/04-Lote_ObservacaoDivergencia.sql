@@ -1,0 +1,1 @@
+ALTER TABLE "Lote" ADD "ObservacaoDivergencia" VARCHAR2(500);

@@ -22,6 +22,10 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Fim da Conferência")]
         public string FimConferencia { get; set; }
 
+        [Required]
+        [Display(Name = "Observação")]
+        public string ObservacaoDivergencia { get; set; }
+
         public List<TratarDivergenciaRecebimentoItemViewModel> Divergencias { get; set; }
     }
 

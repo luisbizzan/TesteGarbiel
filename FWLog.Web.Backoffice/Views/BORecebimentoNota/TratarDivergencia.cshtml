@@ -37,6 +37,13 @@
                                 @Html.LabelFor(m => m.FimConferencia): @Html.DisplayTextFor(m => m.FimConferencia)
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-12">
+                                @Html.LabelFor(m => m.ObservacaoDivergencia)
+                                @Html.TextAreaFor(m => m.ObservacaoDivergencia, new { @class = "form-control", @rows = 10, @style = "height:100px !important;" })
+                                @Html.ValidationMessageFor(m => m.ObservacaoDivergencia)
+                            </div>
+                        </div>
                         <div class="row" style="margin-top: 25px; overflow-y: auto;">
                             <div class="col-sm-12 col-lg-12">
                                 <table class="table table-bordered">

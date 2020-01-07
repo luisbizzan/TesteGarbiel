@@ -118,33 +118,33 @@
     };
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        var acaoDivergencia = full.IdLoteStatus === 6 || full.IdLoteStatus === 7 || full.IdLoteStatus === 8 ? "exibirDivergencias" : "tratarDivergencias";
-        var visivelDivergencia = full.IdLoteStatus === 5 || full.IdLoteStatus === 6 || full.IdLoteStatus === 7 || full.IdLoteStatus === 8 ? true : false;
-        var textoDivergencia = full.IdLoteStatus === 5 ? "Tratar Divergências" : "Exibir Divergências";
-        var visivelProcessamento = full.IdLoteStatus === 9 || full.IdLoteStatus === 10 || full.IdLoteStatus === 11 ? true : false;
+        var visivelDivergencia = view.tratarDivergencias && full.IdLoteStatus === 5;
+        var visivelProcessamento = view.tratarDivergencias && (full.IdLoteStatus === 9 || full.IdLoteStatus === 10 || full.IdLoteStatus === 11);
+        var visivelRegistrarRecibimento = view.registrarRecebimento && full.IdLoteStatus === 1;
+        var visivelConferirLote = view.conferirLote && (full.IdLoteStatus === 2 || full.IdLoteStatus === 3);
 
         return [
             {
                 text: "Detalhes da Nota",
                 attrs: { 'data-id': full.IdNotaFiscal, 'action': 'detalhesNota' },
                 icon: 'fa fa-eye',
-                visible: view.registrarRecebimento
+                visible: view.detailsVisible
             },
             {
                 text: "Registrar Recebimento",
                 attrs: { 'data-id': full.IdNotaFiscal, 'action': 'registrarRecebimento' },
                 icon: 'fa fa-pencil-square',
-                visible: view.registrarRecebimento
+                visible: visivelRegistrarRecibimento
             },
             {
                 text: "Conferir Nota",
                 attrs: { 'data-id': full.IdNotaFiscal, 'action': 'conferirNota' },
                 icon: 'fa fa-check-square-o',
-                visible: view.registrarRecebimento
+                visible: visivelConferirLote
             },
             {
-                text: textoDivergencia,
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': acaoDivergencia },
+                text: "Tratar Divergências",
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'tratarDivergencias' },
                 icon: 'fa fa-warning',
                 visible: visivelDivergencia
             },
@@ -173,12 +173,6 @@
         },
         initComplete: function (settings, json) {
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
-        },
-        stateSaveParams: function (settings, data) {
-            dart.dataTables.saveFilterToData(data);
-        },
-        stateLoadParams: function (settings, data) {
-            dart.dataTables.loadFilterFromData(data);
         },
         columns: [
             { data: 'Lote', render: iconeStatus },
@@ -358,7 +352,7 @@ function registrarRecebimento() {
 }
 
 function BuscarNotaFiscal() {
-    var keycode = (event.keyCode || event.which);
+    var keycode = event.keyCode || event.which;
 
     if (keycode === 13) {
         $(".validacaoChaveAcesso").text("");

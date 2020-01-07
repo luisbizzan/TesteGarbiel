@@ -1,7 +1,12 @@
 ﻿(function () {
+    let permiteRegistrar = false;
+    let $referencia = $("#Referencia");
+    var $quantidadePorCaixa = $("#QuantidadePorCaixa");
+    var $quantidadeCaixa = $("#QuantidadeCaixa");
+
     $('.onlyNumber').mask('0#');
 
-    $("#QuantidadePorCaixa").mask("S#############", {
+    $quantidadePorCaixa.mask("S#############", {
         translation: {
             'S': {
                 pattern: /-/,
@@ -10,16 +15,52 @@
         }
     });
 
-    $('#modalRegistroConferencia').keypress(function (e) {
-        if (e.keyCode == '13') {
-            validarDiferencaMultiploConferencia();
+	$quantidadePorCaixa.on('keydown', function (e) {
+        if (e.keyCode == 9 && !e.target.value) {
+            return false;
         }
     });
 
-    $("#Referencia").blur(function () {
-        if ($(this).val() == '') {
-            waitingDialog.hide();
-            $("#Referencia").focus();
+    $quantidadeCaixa.on('keydown', function (e) {
+        if (e.keyCode == 9) {
+            if (!e.target.value) {
+            } else {
+                $referencia.focus();
+            }
+
+            return false;
+        }
+    });
+
+    $('#modalRegistroConferencia').keydown(function (e) {
+        if (e.keyCode == 13 && permiteRegistrar) {
+            registrarConferencia();
+        }
+    });
+
+    $referencia.focus(function () {
+        permiteRegistrar = false;
+    });
+
+    $referencia.on('keypress keydown', function (e) {
+        if (e.keyCode == 13) {
+            if (!e.target.value) {
+                PNotify.info({ text: 'Referência está vazio. Por favor, entre com um valor!' });
+
+                $referencia.focus();
+
+                return false;
+            } else {
+                carregarDadosReferenciaConferencia();
+            }
+        } else {
+            resetarCamposConferencia(false);
+        }
+    });
+
+    $referencia.blur(function () {
+        if (!$(this).val()) {
+            $referencia.focus();
         }
         else {
             carregarDadosReferenciaConferencia();
@@ -79,49 +120,66 @@
         });
     });
 
-})();
+    function carregarDadosReferenciaConferencia() {
+        let referencia = $referencia.val();
 
-function carregarDadosReferenciaConferencia() {
-    let referencia = $("#Referencia").val();
+        $("#QuantidadePorCaixa").focus();
 
-    $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "ObterDadosReferenciaConferencia",
-        cache: false,
-        method: "POST",
-        data: {
-            idLote: view_modal.idLote,
-            codigoBarrasOuReferencia: referencia
-        },
-        success: function (result) {
-            if (result.Success) {
-                var model = JSON.parse(result.Data);
+        overlay(true);
 
-                $("#DescricaoReferencia").val(model.DescricaoReferencia);
-                $("#Embalagem").val(model.Embalagem);
-                $("#Unidade").val(model.Unidade);
-                $("#Multiplo").val(model.Multiplo);
-                $("#QuantidadeEstoque").val(model.QuantidadeEstoque);
-                $("#Localizacao").val(model.Localizacao);
-                $("#QuantidadeNaoConferida").val(model.QuantidadeNaoConferida);
-                $("#QuantidadeConferida").val(model.QuantidadeConferida);
-                $("#InicioConferencia").val(model.InicioConferencia);
+        $.ajax({
+            url: HOST_URL + CONTROLLER_PATH + "ObterDadosReferenciaConferencia",
+            global: false,
+            cache: false,
+            method: "POST",
+            data: {
+                idLote: view_modal.idLote,
+                codigoBarrasOuReferencia: referencia
+            },
+            success: function (result) {
+                if (result.Success) {
+                    var model = JSON.parse(result.Data);
 
-                if (model.EnviarPicking) {
-                    $("#msgEnviarPicking").removeClass("hidden");
+                    $("#DescricaoReferencia").val(model.DescricaoReferencia);
+                    $("#Embalagem").val(model.Embalagem);
+                    $("#Unidade").val(model.Unidade);
+                    $("#Multiplo").val(model.Multiplo);
+                    $("#QuantidadeEstoque").val(model.QuantidadeEstoque);
+                    $("#Localizacao").val(model.Localizacao);
+                    $("#QuantidadeNaoConferida").val(model.QuantidadeNaoConferida);
+                    $("#QuantidadeConferida").val(model.QuantidadeConferida);
+                    $("#InicioConferencia").val(model.InicioConferencia);
+
+                    if (model.EnviarPicking) {
+                        $("#msgEnviarPicking").removeClass("hidden");
+                    }
+
+                    overlay(false);
+
+                    $("#Multiplo").focus();
+
+                    permiteRegistrar = true;
+                } else {
+                    PNotify.info({ text: result.Message });
+
+                    overlay(false);
+
+                    $referencia.focus();
+
+                    permiteRegistrar = false;
                 }
+            },
+            error: function () {
+                PNotify.info({ text: 'Não foi possível obter dados. Por favor, tente novamente!' });
 
-                waitingDialog.hide();
+                overlay(false);
+
                 $("#Multiplo").focus();
 
-            } else {
-                PNotify.info({ text: result.Message });
-
-                waitingDialog.hide();
-                $("#Referencia").focus();
+                permiteRegistrar = false;
             }
-        }
-    });
-}
+        });
+    }
 
 function validarDiferencaMultiploConferencia() {
     let referencia = $("#Referencia").val();
@@ -158,44 +216,66 @@ function validarDiferencaMultiploConferencia() {
 }
 
 function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo) {
-    if (quantidadePorCaixa === '')
-        quantidadePorCaixa = 0;
+        overlay(true);
 
-    if (quantidadeCaixa === '')
-        quantidadeCaixa = 0;
+        if (quantidadePorCaixa === '')
+            quantidadePorCaixa = 0;
 
-    $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "RegistrarConferencia",
-        cache: false,
-        method: "POST",
-        data: {
-            idLote: view_modal.idLote,
-            codigoBarrasOuReferencia: referencia,
-            quantidadePorCaixa: quantidadePorCaixa,
-            quantidadeCaixa: quantidadeCaixa,
-            inicioConferencia: inicioConferencia,
-            multiplo: multiplo
-        },
-        success: function (result) {
-            if (result.Success) {
+        if (quantidadeCaixa === '')
+            quantidadeCaixa = 0;
 
-                PNotify.info({ text: result.Message });
+        $.ajax({
+            url: HOST_URL + CONTROLLER_PATH + "RegistrarConferencia",
+            global: false,
+            cache: false,
+            method: "POST",
+            data: {
+                idLote: view_modal.idLote,
+                codigoBarrasOuReferencia: referencia,
+                quantidadePorCaixa: quantidadePorCaixa,
+                quantidadeCaixa: quantidadeCaixa,
+                inicioConferencia: inicioConferencia
+            },
+            success: function (result) {
+                if (result.Success) {
 
-                resetarCamposConferencia();
+                    PNotify.info({ text: result.Message });
 
-                if (!$('#msgEnviarPicking').hasClass('hidden')) {
-                    $("#msgEnviarPicking").addClass("hidden");
+                    resetarCamposConferencia();
+
+                    if (!$('#msgEnviarPicking').hasClass('hidden')) {
+                        $("#msgEnviarPicking").addClass("hidden");
+                    }
+
+                    permiteRegistrar = false;
+
+                    overlay(false);
+
+                    $referencia.focus();
+
+                } else {
+                    PNotify.info({ text: result.Message });
+
+                    overlay(false);
+
+                    permiteRegistrar = true;
                 }
-
-                waitingDialog.hide();
-                $("#Referencia").focus();
-
-            } else {
-                PNotify.info({ text: result.Message });
             }
+        });
+    }
+
+    function overlay(show) {
+        var $overlay = $('#overlay');
+
+        if (!!show) {
+            $referencia.attr('disabled', true);
+            $overlay.show();
+        } else {
+            $referencia.attr('disabled', false);
+            $overlay.hide();
         }
-    });
-}
+    }
+})();
 
 function confirmarfinalizarConferencia() {
     $(".close").click();
@@ -221,9 +301,12 @@ function finalizarConferencia() {
     $("#dataTable").DataTable().ajax.reload();
 }
 
-function resetarCamposConferencia() {
-    $("#Referencia").val('');
-    $("#DescricaoReferencia").val('');
+function resetarCamposConferencia(limpaReferencia = true) {
+    if (!!limpaReferencia) {
+        $("#Referencia").val('');
+    }
+	
+	$("#DescricaoReferencia").val('');
     $("#Embalagem").val('');
     $("#Unidade").val('');
     $("#Multiplo").val('');

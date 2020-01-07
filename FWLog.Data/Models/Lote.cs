@@ -37,6 +37,10 @@ namespace FWLog.Data.Models
         [Log(DisplayName = "Código do Usuário Recebimento")]
         public string IdUsuarioRecebimento { get; set; }
 
+        [Log(DisplayName = "Observação Divergência")]
+        [StringLength(500)]
+        public string ObservacaoDivergencia { get; set; }
+
         //[Required]
         //[Log(DisplayName = "Ganho de Estoque movimentado")]
         //public bool GanhoEstoqueEfetuado { get; set; }
@@ -47,7 +51,7 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdNotaFiscal))]
         public virtual NotaFiscal NotaFiscal { get; set; }
 
-		[ForeignKey(nameof(IdUsuarioRecebimento))]
+        [ForeignKey(nameof(IdUsuarioRecebimento))]
         public virtual AspNetUsers UsuarioRecebimento { get; set; }
 
     }

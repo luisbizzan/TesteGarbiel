@@ -103,7 +103,12 @@
     <Compile Include="Logging\LogAttribute.cs" />
     <Compile Include="Models\Application.cs" />
     <Compile Include="Models\ApplicationSession.cs" />
+    <Compile Include="Models\DataTablesCtx\PerfilImpressoraTableRow.cs" />
     <Compile Include="Models\DataTablesCtx\QuarentenaHistoricoListRow.cs" />
+    <Compile Include="Models\FilterCtx\PerfilImpressoraFilter.cs" />
+    <Compile Include="Models\ImpressaoItem.cs" />
+    <Compile Include="Models\PerfilImpressora.cs" />
+    <Compile Include="Models\PerfilImpressoraItem.cs" />
     <Compile Include="Models\ProdutoEndereco.cs" />
     <Compile Include="Models\BOLogSystem.cs" />
     <Compile Include="Models\AspNetUsers.cs" />
@@ -218,6 +223,9 @@
     <Compile Include="Repository\GeneralCtx\TipoConferenciaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoEtiquetagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoMovimentacaoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PerfilImpressoraRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PerfilImpressoraItemRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\ImpressaoItemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TransportadoraRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UnidadeMedidaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\UsuarioEmpresaRepository.cs" />

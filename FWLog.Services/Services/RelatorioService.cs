@@ -113,6 +113,18 @@ namespace FWLog.Services.Services
                 query = query.Where(x => x.NotaFiscal.PrazoEntregaFornecedor <= prazoFinal);
             }
 
+            if (!request.IdUsuarioRecebimento.NullOrEmpty())
+            {
+                query = query.Where(x => x.UsuarioRecebimento.Id == request.IdUsuarioRecebimento);
+            }
+
+            if (!request.IdUsuarioConferencia.NullOrEmpty())
+            {
+                var lotes = query.Select(s => s.IdLote).ToList();
+                var conferencias = _unitiOfWork.LoteConferenciaRepository.Todos().Where(w => w.IdUsuarioConferente == request.IdUsuarioConferencia && lotes.Contains(w.IdLote)).Select(s => s.IdLote).ToList();
+                query = query.Where(x => conferencias.Contains(x.IdLote));
+            }
+
             var listaRecebimentoNotas = new List<IFwRelatorioDados>();
 
             if (query.Any())
@@ -131,7 +143,6 @@ namespace FWLog.Services.Services
                             {
                                 atraso = DateTime.Now.Subtract(prazoEntrega).Days;
                             }
-
                         }
                         else
                         {
@@ -140,6 +151,11 @@ namespace FWLog.Services.Services
                                 atraso = item.DataRecebimento.Subtract(prazoEntrega).Days;
                             }
                         }
+                    }
+
+                    if (request.Atraso.HasValue && request.Atraso.Value != atraso)
+                    {
+                        continue;
                     }
 
                     var recebimentoNotas = new RecebimentoNotas
