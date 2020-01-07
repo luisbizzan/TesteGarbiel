@@ -20,8 +20,6 @@ namespace FWLog.Web.Backoffice.Mapping
             CreateMap<PerfilImpressoraCreateViewModel, PerfilImpressora>()
                 .ForMember(dest => dest.PerfilImpressoraItens, opt => opt.MapFrom(src => MappingPerfilImpressoraItem(src.TiposImpressao, src.IdPerfilImpressora))); ;
 
-            CreateMap<PerfilImpressora, PerfilImpressoraDetailsViewModel>();
-
             CreateMap<PerfilImpressoraFilterViewModel, PerfilImpressoraFilter>();
         }
 

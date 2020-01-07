@@ -16,5 +16,15 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.PerfilImpressoraItem.AsNoTracking().Where(w => w.IdPerfilImpressora == idPerfilImpressora).ToList();
         }
+
+        public void Delete(List<PerfilImpressoraItem> itens)
+        {
+            foreach (var item in itens)
+            {
+                var perfilImpressoraItem = Entities.PerfilImpressoraItem.FirstOrDefault(f => f.IdImpressaoItem == item.IdImpressaoItem && f.IdImpressora == item.IdImpressora && f.IdPerfilImpressora == item.IdPerfilImpressora);
+
+                Entities.PerfilImpressoraItem.Remove(perfilImpressoraItem);
+            }
+        }
     }
 }

@@ -45,7 +45,7 @@
                 <div style="padding-top: 7px">
                     <div class="form-group col-sm-12 col-md-6 col-lg-3 col-xl-3">
                         @Html.DropDownList("ddlImpressaoItem", (IEnumerable<SelectListItem>)ViewBag.ImpressaoItens, "Selecione o Tipo de Impressão", new { @class = "form-control" })
-                        <span class="text-danger validationImpressaoItem"></span>
+                        <span class="text-danger validationImpressaoItem">@Html.ValidationMessageFor(m => m.TiposImpressao)</span>
                     </div>
                     <div>
                         <button type="button" id="btnAddImpressaoItem" class="btn btn-primary btn-dt-action m-r-sm">

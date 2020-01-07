@@ -35,7 +35,7 @@ namespace FWLog.Services.Services
             {
                 _uow.PerfilImpressoraRepository.Update(perfilImpressora);
                 _uow.PerfilImpressoraItemRepository.AddRange(perfilItensAdd);
-                _uow.PerfilImpressoraItemRepository.DeleteRange(perfilItensRem);
+                _uow.PerfilImpressoraItemRepository.Delete(perfilItensRem);
 
                 _uow.SaveChanges();
                 transactionScope.Complete();
@@ -44,8 +44,13 @@ namespace FWLog.Services.Services
 
         public void Delete(PerfilImpressora perfilImpressora)
         {
-            _uow.PerfilImpressoraRepository.Delete(perfilImpressora);
-            _uow.SaveChanges();
+            using (TransactionScope transactionScope = _uow.CreateTransactionScope())
+            {
+                _uow.PerfilImpressoraItemRepository.Delete(perfilImpressora.PerfilImpressoraItens.ToList());
+                _uow.PerfilImpressoraRepository.Delete(perfilImpressora);
+                _uow.SaveChanges();
+                transactionScope.Complete();
+            }
         }
     }
 }

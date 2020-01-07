@@ -312,7 +312,6 @@
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemListViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\PerfilImpressoraCtx\PerfilImpressoraCreateViewModel.cs" />
-    <Compile Include="Models\PerfilImpressoraCtx\PerfilImpressoraDetailsViewModel.cs" />
     <Compile Include="Models\PerfilImpressoraCtx\PerfilImpressoraListViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemCadastroViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemDetalhesViewModel.cs" />

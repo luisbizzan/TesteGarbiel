@@ -50,7 +50,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public List<Printer> ObterPorEmpresa(long idEmpresa)
         {
-            return Entities.Printer.Where(w => w.CompanyId == idEmpresa).ToList();
+            return Entities.Printer.Where(w => w.CompanyId == idEmpresa).OrderBy(o => o.Name).ToList();
         }
     }
 }

@@ -78,12 +78,39 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.PerfilImpressora.Criar)]
         public ActionResult Cadastrar(PerfilImpressoraCreateViewModel model)
         {
-            //TODO validações
-            if (!ModelState.IsValid)
+            Func<string, ViewResult> errorView = (error) =>
             {
                 CarregarDadosImpressaoItem();
 
+                if (error != null)
+                {
+                    Notify.Error(Resources.CommonStrings.RequestUnexpectedErrorMessage);
+                }
+
                 return View(model);
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return errorView(null);
+            }
+
+            if (model.TiposImpressao.NullOrEmpty())
+            {
+                ModelState.AddModelError(nameof(model.TiposImpressao), "Selecione pelo menos um tipo de impressão para o perfil.");
+                return errorView(null);
+            }
+
+            if (!model.TiposImpressao.Where(w => w.Impressoras.Any(a => a.Selecionado)).Any())
+            {
+                ModelState.AddModelError(nameof(model.TiposImpressao), "Escolha pelo menos uma impressora para o perfil");
+                return errorView(null);
+            }
+
+            if (model.TiposImpressao.Where(w => !w.Impressoras.Any(a => a.Selecionado)).Any())
+            {
+                ModelState.AddModelError(nameof(model.TiposImpressao), "Todos os tipos de impressão selecionados devem ter pelos menos um empresa escolhida.");
+                return errorView(null);
             }
 
             PerfilImpressora perfilImpressora = Mapper.Map<PerfilImpressora>(model);
@@ -127,6 +154,8 @@ namespace FWLog.Web.Backoffice.Controllers
                         modelTipos.Impressoras.Add(impressoraView);
                     }
                 }
+
+                modelTipos.Impressoras = modelTipos.Impressoras.OrderBy(o => o.Nome).ToList();
             }
 
             return View(model);
@@ -136,12 +165,41 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.PerfilImpressora.Editar)]
         public ActionResult Editar(PerfilImpressoraCreateViewModel model)
         {
-            if (!ModelState.IsValid)
+            Func<string, ViewResult> errorView = (error) =>
             {
                 CarregarDadosImpressaoItem();
 
+                if (error != null)
+                {
+                    Notify.Error(Resources.CommonStrings.RequestUnexpectedErrorMessage);
+                }
+
                 return View(model);
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return errorView(null);
             }
+
+            if (model.TiposImpressao.NullOrEmpty())
+            {
+                ModelState.AddModelError(nameof(model.TiposImpressao), "Selecione pelo menos um tipo de impressão para o perfil.");
+                return errorView(null);
+            }
+
+            if (!model.TiposImpressao.Where(w => w.Impressoras.Any(a => a.Selecionado)).Any())
+            {
+                ModelState.AddModelError(nameof(model.TiposImpressao), "Escolha uma impressora para um tipo de impressao para o perfil");
+                return errorView(null);
+            }
+
+            if (model.TiposImpressao.Where(w => !w.Impressoras.Any(a => a.Selecionado)).Any())
+            {
+                ModelState.AddModelError(nameof(model.TiposImpressao), "Todos os tipos de impressão selecionados devem ter pelos menos um empresa escolhida.");
+                return errorView(null);
+            }
+
 
             PerfilImpressora perfilImpressora = Mapper.Map<PerfilImpressora>(model);
 
@@ -163,7 +221,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 throw new HttpException(404, "Not found");
             }
 
-            var model = Mapper.Map<PerfilImpressoraDetailsViewModel>(perfilImpressora);
+            var model = Mapper.Map<PerfilImpressoraCreateViewModel>(perfilImpressora);
 
             return View(model);
         }
