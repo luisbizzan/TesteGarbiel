@@ -146,15 +146,28 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName] ?? new HttpCookie(EmpresaCookie.CookieName) { Expires = DateTime.MaxValue };
 
+                var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
+
                 if (!long.TryParse(cookie.Values[EmpresaCookie.PerfilImpressora], out long idPerfilImpressora))
                 {
-                    var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
-
                     idPerfilImpressora = uow.UsuarioEmpresaRepository.Tabela().FirstOrDefault(x => x.IdEmpresa == IdEmpresa && x.UserId == IdUsuario).IdPerfilImpressoraPadrao.GetValueOrDefault();
 
                     cookie.Values[EmpresaCookie.PerfilImpressora] = idPerfilImpressora.ToString();
 
                     Response.Cookies.Add(cookie);
+                }
+                else
+                {
+                    bool perfilDaEmpresaSelecionada = uow.PerfilImpressoraRepository.RetornarAtivas().Any(x => x.IdPerfilImpressora == idPerfilImpressora && x.IdEmpresa == IdEmpresa);
+
+                    if (!perfilDaEmpresaSelecionada)
+                    {
+                        idPerfilImpressora = uow.UsuarioEmpresaRepository.Tabela().FirstOrDefault(x => x.IdEmpresa == IdEmpresa && x.UserId == IdUsuario).IdPerfilImpressoraPadrao.GetValueOrDefault();
+
+                        cookie.Values[EmpresaCookie.PerfilImpressora] = idPerfilImpressora.ToString();
+
+                        Response.Cookies.Add(cookie);
+                    }
                 }
 
                 return idPerfilImpressora;
