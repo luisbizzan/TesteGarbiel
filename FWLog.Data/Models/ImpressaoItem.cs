@@ -4,7 +4,6 @@ namespace FWLog.Data.Models
 {
     public enum ImpressaoItemEnum
     {
-        Desconhecido = 0,
         RelatorioA4 = 1,
         EtiquetaVolume = 2,
         EtiquetaIndividual = 3,

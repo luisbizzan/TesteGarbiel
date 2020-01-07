@@ -197,5 +197,21 @@ namespace FWLog.AspNet.Identity
                 Register(Imprimir, Display.FromString("Imprimir Etiqueta Individual e Personalizada"));
             }
         }
+
+        public class PerfilImpressora : PermissionGroupBuildItem
+        {
+            public const string Listar = "PerfilImpressoraList";
+            public const string Criar = "PerfilImpressoraCreate";
+            public const string Editar = "PerfilImpressoraEdit";
+            public const string Excluir = "PerfilImpressoraDelete";
+
+            public PerfilImpressora() : base(Display.FromResource("Perfil Impressora"))
+            {
+                Register(Listar, Display.FromResource("Listar Perfil de Impressoras"));
+                Register(Criar, Display.FromResource("Criar Perfil de Impressora"));
+                Register(Editar, Display.FromResource("Editar Perfil de Impressora"));
+                Register(Excluir, Display.FromResource("Excluir Perfil de Impressora"));
+            }
+        }
     }
 }

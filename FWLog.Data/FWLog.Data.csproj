@@ -103,7 +103,9 @@
     <Compile Include="Logging\LogAttribute.cs" />
     <Compile Include="Models\Application.cs" />
     <Compile Include="Models\ApplicationSession.cs" />
+    <Compile Include="Models\DataTablesCtx\PerfilImpressoraTableRow.cs" />
     <Compile Include="Models\DataTablesCtx\QuarentenaHistoricoListRow.cs" />
+    <Compile Include="Models\FilterCtx\PerfilImpressoraFilter.cs" />
     <Compile Include="Models\ImpressaoItem.cs" />
     <Compile Include="Models\PerfilImpressora.cs" />
     <Compile Include="Models\PerfilImpressoraItem.cs" />
