@@ -25,10 +25,10 @@
     <div class="container body">
         <div class="main_container">
             @if (User.Identity.IsAuthenticated)
-        {
-            @Html.Partial("_Sidebar")
-            @Html.Partial("_Header")
-    }
+            {
+                @Html.Partial("_Sidebar")
+                @Html.Partial("_Header")
+            }
             <div class="right_col" role="main" style="height: 100%">
                 <div class="clearfix"></div>
                 @RenderBody()
@@ -40,7 +40,7 @@
                 <div class="clearfix"></div>
             </footer>
         </div>
-    
+
     </div>
 
     @Html.Partial("_JavaScriptGlobalResources")
@@ -60,7 +60,7 @@
     @Scripts.Render("~/script-bundles/vendors/autocomplete")
     @Html.Partial("_ScriptGlobalOptions")
     @Scripts.Render("~/script-bundles/dart")
-    @Html.Partial("_Notify")    
+    @Html.Partial("_Notify")
     @RenderSection("Scripts", required: false)
 </body>
 </html>

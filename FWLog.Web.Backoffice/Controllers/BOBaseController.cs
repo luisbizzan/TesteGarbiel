@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
@@ -78,8 +79,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 return;
             }
 
-            var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
-
             cookie = cookie ?? new HttpCookie(EmpresaCookie.CookieName);
 
             cookie.Values[EmpresaCookie.IdEmpresa] = idEmpresa.ToString();
@@ -138,6 +137,34 @@ namespace FWLog.Web.Backoffice.Controllers
                 var userInfo = new BackOfficeUserInfo();
 
                 return userInfo.UserId.ToString();
+            }
+        }
+
+        protected long IdPerfilImpressora
+        {
+            get
+            {
+                HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName];
+
+                long idPerfilImpressora;
+
+                if (cookie == null)
+                {
+                    cookie = new HttpCookie(EmpresaCookie.CookieName) { Expires = DateTime.MaxValue };
+
+                    var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
+
+                    idPerfilImpressora = uow.UsuarioEmpresaRepository.Tabela().FirstOrDefault(x => x.IdEmpresa == IdEmpresa && x.UserId == IdUsuario).IdPerfilImpressoraPadrao.GetValueOrDefault();
+
+                    cookie.Values[EmpresaCookie.PerfilImpressora] = idPerfilImpressora.ToString();
+                    Response.Cookies.Add(cookie);
+                }
+                else
+                {
+                    _ = long.TryParse(cookie.Values[EmpresaCookie.PerfilImpressora], out idPerfilImpressora);
+                }
+
+                return idPerfilImpressora;
             }
         }
 
