@@ -9,6 +9,7 @@ namespace FWLog.Web.Backoffice.Models.PerfilImpressoraCtx
 
         public long IdEmpresa { get; set; }
 
+        [Required]
         public string Nome { get; set; }
 
         public bool Ativo { get; set; }
@@ -18,7 +19,6 @@ namespace FWLog.Web.Backoffice.Models.PerfilImpressoraCtx
 
     public class TipoImpressaoViewModel
     {
-        [Required]
         public int IdImpressaoItem { get; set; }
         public string Descricao { get; set; }        
         public List<ImpressoraViewModel> Impressoras { get; set; } = new List<ImpressoraViewModel>();

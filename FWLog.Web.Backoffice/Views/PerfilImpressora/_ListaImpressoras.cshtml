@@ -26,9 +26,10 @@
                 <div class="checkbox">
                     <label>
                         @Html.Hidden(string.Format("TiposImpressao[{0}].Impressoras[{1}].IdImpressora", i, imp), Model[i].Impressoras[imp].IdImpressora, new { @class = "idImpressora" })
+                        @Html.Hidden(string.Format("TiposImpressao[{0}].Impressoras[{1}].Nome", i, imp), Model[i].Impressoras[imp].Nome, new { @class = "nomeImpressora" })
                         @Html.CheckBox(string.Format("TiposImpressao[{0}].Impressoras[{1}].Selecionado", i, imp), Model[i].Impressoras[imp].Selecionado, new { data_group = "" })
 
-                        @Html.DisplayFor(m => m[i].Impressoras[imp].Nome)                        
+                        @Html.DisplayFor(m => m[i].Impressoras[imp].Nome)
                     </label>
                 </div>
             </div>

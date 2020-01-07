@@ -47,12 +47,16 @@
                 $(this).attr('name', `TiposImpressao[${i}].Impressoras[${ii}].Selecionado`);
             });
 
-            $(this).find(".impressoras").find('input[type=hidden]').not(".idImpressora").each(function (ii, ee) {
+            $(this).find(".impressoras").find('input[type=hidden]').not(".idImpressora, .nomeImpressora").each(function (ii, ee) {
                 $(this).attr('name', `TiposImpressao[${i}].Impressoras[${ii}].Selecionado`);
             });
 
             $(this).find(".impressoras").find("input:hidden.idImpressora").each(function (ii, ee) {
                 $(this).attr('name', `TiposImpressao[${i}].Impressoras[${ii}].IdImpressora`);
+            });
+
+            $(this).find(".impressoras").find("input:hidden.nomeImpressora").each(function (ii, ee) {
+                $(this).attr('name', `TiposImpressao[${i}].Impressoras[${ii}].Nome`);
             });
         });
     });
