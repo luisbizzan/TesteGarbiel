@@ -144,27 +144,28 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             get
             {
-                HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName];
+                HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName] ?? new HttpCookie(EmpresaCookie.CookieName) { Expires = DateTime.MaxValue };
 
-                long idPerfilImpressora;
-
-                if (cookie == null)
+                if (!long.TryParse(cookie.Values[EmpresaCookie.PerfilImpressora], out long idPerfilImpressora))
                 {
-                    cookie = new HttpCookie(EmpresaCookie.CookieName) { Expires = DateTime.MaxValue };
-
                     var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
 
                     idPerfilImpressora = uow.UsuarioEmpresaRepository.Tabela().FirstOrDefault(x => x.IdEmpresa == IdEmpresa && x.UserId == IdUsuario).IdPerfilImpressoraPadrao.GetValueOrDefault();
 
                     cookie.Values[EmpresaCookie.PerfilImpressora] = idPerfilImpressora.ToString();
+
                     Response.Cookies.Add(cookie);
-                }
-                else
-                {
-                    _ = long.TryParse(cookie.Values[EmpresaCookie.PerfilImpressora], out idPerfilImpressora);
                 }
 
                 return idPerfilImpressora;
+            }
+            set
+            {
+                HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName] ?? new HttpCookie(EmpresaCookie.CookieName) { Expires = DateTime.MaxValue };
+
+                cookie.Values[EmpresaCookie.PerfilImpressora] = value.ToString();
+
+                Response.Cookies.Add(cookie);
             }
         }
 

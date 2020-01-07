@@ -21,14 +21,18 @@
                             </li>
                         </ul>
                     </li>
-                    <!-- /usuario -->
+                    <!-- empresa -->
                     <li class="dropdown" role="presentation">
                         <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                             @Html.Action("BuscarEmpresas", "Empresa")
                         </a>
-
                     </li>
-
+                    <!-- perfil Impressora -->
+                    <li class="dropdown" role="presentation">
+                        <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            @Html.Action("BuscarPerfilImpressora", "PerfilImpressora")
+                        </a>
+                    </li>
                 </ul>
             }
         </nav>

@@ -126,7 +126,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             for (int i = 0; i < model.EmpresasGrupos.Count; i++)
             {
-                model.EmpresasGrupos[i].PerfilImpressora = PerfilImpressorasList(model.EmpresasGrupos[i].IdEmpresa, IdPerfilImpressora: model.EmpresasGrupos[i].IdPerfilImpressoraPadrao);
+                model.EmpresasGrupos[i].PerfilImpressora = PerfilImpressorasList(model.EmpresasGrupos[i].IdEmpresa, idPerfilImpressora: model.EmpresasGrupos[i].IdPerfilImpressoraPadrao);
             }
 
             Func<string, ViewResult> errorView = (error) =>
@@ -321,7 +321,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             for (int i = 0; i < model.EmpresasGrupos.Count; i++)
             {
-                model.EmpresasGrupos[i].PerfilImpressora = PerfilImpressorasList(model.EmpresasGrupos[i].IdEmpresa, IdPerfilImpressora: model.EmpresasGrupos[i].IdPerfilImpressoraPadrao);
+                model.EmpresasGrupos[i].PerfilImpressora = PerfilImpressorasList(model.EmpresasGrupos[i].IdEmpresa, idPerfilImpressora: model.EmpresasGrupos[i].IdPerfilImpressoraPadrao);
             }
 
             ViewResult errorView()
@@ -718,15 +718,15 @@ namespace FWLog.Web.Backoffice.Controllers
 
         private SelectList empresas;
 
-        private SelectList PerfilImpressorasList(long idEmpresa, long? IdPerfilImpressora = null)
+        private SelectList PerfilImpressorasList(long idEmpresa, long? idPerfilImpressora = null)
         {
             return new SelectList(
                           _unitOfWork.PerfilImpressoraRepository.RetornarAtivas().Where(x => x.IdEmpresa == idEmpresa).Select(x => new SelectListItem
                           {
                               Value = x.IdPerfilImpressora.ToString(),
                               Text = x.Nome,
-                              Selected = IdPerfilImpressora == x.IdPerfilImpressora
-                          }).ToList(), "Value", "Text", IdPerfilImpressora);
+                              Selected = idPerfilImpressora == x.IdPerfilImpressora
+                          }).ToList(), "Value", "Text", idPerfilImpressora);
         }
     }
 }
