@@ -539,6 +539,7 @@
     <Content Include="Views\BORecebimentoNota\RelatorioResumoEtiquetagem.cshtml" />
     <Content Include="Views\BORecebimentoNota\ResumoProcessamentoDivergencia.cshtml" />
     <Content Include="Views\BOQuarentena\Historico.cshtml" />
+    <Content Include="Views\BORecebimentoNota\AcessoCoordenador.cshtml" />
     <Content Include="Views\PerfilImpressora\Cadastrar.cshtml" />
     <Content Include="Views\PerfilImpressora\Detalhes.cshtml" />
     <Content Include="Views\PerfilImpressora\Editar.cshtml" />

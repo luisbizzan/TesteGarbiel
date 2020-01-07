@@ -3,6 +3,7 @@
     let $referencia = $("#Referencia");
     var $quantidadePorCaixa = $("#QuantidadePorCaixa");
     var $quantidadeCaixa = $("#QuantidadeCaixa");
+    var $multiplo = $("#Multiplo");
 
     $('.onlyNumber').mask('0#');
 
@@ -15,7 +16,7 @@
         }
     });
 
-    $quantidadePorCaixa.on('keydown', function (e) {
+	$quantidadePorCaixa.on('keydown', function (e) {
         if (e.keyCode == 9 && !e.target.value) {
             return false;
         }
@@ -32,9 +33,15 @@
         }
     });
 
+    $multiplo.on('keydown', function (e) {
+        if (e.keyCode == 9 && !e.target.value) {
+            return false;
+        }
+    });
+
     $('#modalRegistroConferencia').keydown(function (e) {
         if (e.keyCode == 13 && permiteRegistrar) {
-            registrarConferencia();
+            validarDiferencaMultiploConferencia();
         }
     });
 
@@ -68,7 +75,7 @@
     });
 
     $("#confirmarConferencia").click(function () {
-        registrarConferencia();
+        validarDiferencaMultiploConferencia();
     });
 
     $("#finalizarConferencia").click(function () {
@@ -77,6 +84,46 @@
 
     $("#exibirDivergencia").click(function () {
         exibirDivergencia();
+    });
+
+    $("#validarAcessoCoordenador").click(function () {
+        let usuario = $("#Usuario").val();
+        let senha = $("#Senha").val();
+
+        $.ajax({
+            url: HOST_URL + CONTROLLER_PATH + "ValidarAcessoCoordenadorConferencia",
+            cache: false,
+            global: false,
+            method: "POST",
+            data: {
+                usuario: usuario,
+                senha: senha
+            },
+            success: function (result) {
+                if (result.Success) {
+                    let referencia = $("#Referencia").val();
+                    let multiplo = $("#Multiplo").val();
+                    let quantidadePorCaixa = $("#QuantidadePorCaixa").val();
+                    let quantidadeCaixa = $("#QuantidadeCaixa").val();
+                    let inicioConferencia = $("#InicioConferencia").val();
+
+                    registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo);
+
+                    $('#modalAcessoCoordenador').modal('toggle');
+
+                    $("#Usuario").val('');
+                    $("#Senha").val('');
+
+                    $referencia.focus();
+                }
+                else {
+                    PNotify.info({ text: result.Message });
+                }
+            },
+            error: function (request, status, error) {
+                PNotify.warning({ text: result.Message });
+            }
+        });
     });
 
     function carregarDadosReferenciaConferencia() {
@@ -115,7 +162,7 @@
 
                     overlay(false);
 
-                    $("#QuantidadePorCaixa").focus();
+                    $("#Multiplo").focus();
 
                     permiteRegistrar = true;
                 } else {
@@ -133,19 +180,52 @@
 
                 overlay(false);
 
-                $referencia.focus();
+                $("#Multiplo").focus();
 
                 permiteRegistrar = false;
             }
         });
     }
 
-    function registrarConferencia() {
-        let referencia = $("#Referencia").val();
-        let quantidadePorCaixa = $("#QuantidadePorCaixa").val();
-        let quantidadeCaixa = $("#QuantidadeCaixa").val();
-        let inicioConferencia = $("#InicioConferencia").val();
+function validarDiferencaMultiploConferencia() {
+    let referencia = $("#Referencia").val();
+    let multiplo = $("#Multiplo").val();
+    let quantidadePorCaixa = $("#QuantidadePorCaixa").val();
+    let quantidadeCaixa = $("#QuantidadeCaixa").val();
+    let inicioConferencia = $("#InicioConferencia").val();
 
+    if (!multiplo)
+        multiplo = 0;
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "VerificarDiferencaMultiploConferencia",
+        cache: false,
+        global: false,
+        method: "POST",
+        data: {
+            codigoBarrasOuReferencia: referencia,
+            multiplo: multiplo
+        },
+        success: function (result) {
+            if (result.Success) {
+                
+                $('#modalAcessoCoordenador').modal('show');
+
+                setTimeout(function () {
+                    $("#Usuario").focus();
+                }, 150);
+            } else {
+                registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo);
+            }
+        },
+        error: function (request, status, error) {
+            PNotify.info({ text: request.responseText });
+        }
+    });
+}
+
+
+function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo) {
         overlay(true);
 
         if (quantidadePorCaixa === '')
@@ -164,7 +244,8 @@
                 codigoBarrasOuReferencia: referencia,
                 quantidadePorCaixa: quantidadePorCaixa,
                 quantidadeCaixa: quantidadeCaixa,
-                inicioConferencia: inicioConferencia
+                inicioConferencia: inicioConferencia,
+                multiplo: multiplo
             },
             success: function (result) {
                 if (result.Success) {
@@ -235,7 +316,8 @@ function resetarCamposConferencia(limpaReferencia = true) {
     if (!!limpaReferencia) {
         $("#Referencia").val('');
     }
-
+	
+	$("#DescricaoReferencia").val('');
     $("#Embalagem").val('');
     $("#Unidade").val('');
     $("#Multiplo").val('');
