@@ -5,60 +5,52 @@
     @BundleHelper.RenderViewScriptModal()
 }
 
-<div class="modal-dialog modal-lg">
-    <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">
-                <span aria-hidden="true">×</span>
-            </button>
-            <h4 class="modal-title" id="myModalLabel">Selecione uma impressora</h4>
-        </div>
-        <div class="modal-body">
-            <div class="x_panel">
-                <div class="x_content">
-                    <div class="row">
-                        @if (Model.Impressoras.Count > 0)
+<div class="vertical-alignment-helper">
+    <div class="modal-dialog vertical-align-center" style="z-index: 1000">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirmar impressão</h4>
+            </div><div class="container"></div>
+            <div class="modal-body" style="overflow: auto; max-height: calc(90vh - 40px);">
+                <div class="row">
+                    @if (Model.Impressoras.Count() > 0)
+                    {
+                        if (Model.Impressoras.Count() == 1)
                         {
-                            if (Model.Impressoras.Count == 1)
-                            {
-                                <div class="col-sm-12 col-lg-12">
-                                    <h2>A impressão será enviada para <b>@Model.Impressoras.First().Nome</b></h2>
-                                    @Html.Hidden("IdImpressora", Model.Impressoras.First().IdImpressora)
-                                </div>
-                            }
-                            else
-                            {
-                                for (var i = 0; i < Model.Impressoras.Count(); i++)
-                                {
-                                    <div class="col-sm-12 col-lg-12">
-                                        <div class="form-group">
-                                            @Html.RadioButton("IdImpressora", Model.Impressoras[i].IdImpressora, i == 0 ? true : false, new { Id = "IdImpressora" + Model.Impressoras[i].IdImpressora })
-                                            <label for="IdImpressora@(Model.Impressoras[i].IdImpressora)">@Model.Impressoras[i].Nome</label>
-                                        </div>
-                                    </div>
-                                }
-                            }
+                            <div class="col-sm-12 col-lg-12">
+                                <span>Deseja imprimir <b>@Model.ImpressaoItemDescricao</b> na impressora <b>@Model.Impressoras.First().Text</b>.</span>
+                                @Html.Hidden("IdImpressora", Model.Impressoras.First().Value)
+                            </div>
                         }
                         else
                         {
                             <div class="col-sm-12 col-lg-12">
-                                Nenhuma impressora configurada.
+                                <div class="form-group" style="padding-bottom: 5px">
+                                    @Html.Label("Impressora:")
+                                    @Html.DropDownList("IdImpressora", Model.Impressoras, new { @class = "form-control" })
+                                </div>
+                                <span>A impressão de <b>@Model.ImpressaoItemDescricao</b> será realizada na impressora selecionada. </span>
                             </div>
                         }
-                        @Html.Hidden("Acao", Model.Acao)
-                        @Html.Hidden("Id", Model.Id)
-                    </div>
-                    <div class="row navbar-right">
+                    }
+                    else
+                    {
                         <div class="col-sm-12 col-lg-12">
-                            <button type="button" id="btnFechar" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                            @if (!Model.Impressoras.NullOrEmpty())
-                            {
-                                <button type="button" id="btnImprimir" class="btn btn-primary"><i class="fa fa-fw fa-print"></i>Imprimir</button>
-                            }
+                            Nenhum perfil de impressora configurada para este tipo de impressão.
                         </div>
-                    </div>
+                    }
+                    @Html.Hidden("Acao", Model.Acao)
+                    @Html.Hidden("Id", Model.Id)
                 </div>
+            </div>
+            <div class="modal-footer">
+                @if (Model.Impressoras.Count() > 0)
+                {
+                    <a id="btnImprimir" class="btn btn-primary">Imprimir</a>
+                }
+                <a href="#" class="btn btn-default" data-dismiss="modal">Fechar</a>
             </div>
         </div>
     </div>
 </div>
+

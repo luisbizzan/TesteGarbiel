@@ -21,5 +21,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.ImpressaoItem;
         }
+
+        public ImpressaoItem Obter(int idImpressaoItem)
+        {
+            return Entities.ImpressaoItem.FirstOrDefault(f => (int)f.IdImpressaoItem == idImpressaoItem);
+        }
     }
 }

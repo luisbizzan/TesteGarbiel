@@ -329,7 +329,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     IdEmpresa = IdEmpresa,
                     NomeUsuario = User.Identity.Name,
-                    IdNotaFiscal = viewModel.IdNotaFiscal
+                    IdNotaFiscal = viewModel.IdNotaFiscal,
+                    IdImpressora = viewModel.IdImpressora
                 };
 
                 _relatorioService.ImprimirDetalhesNotaEntradaConferencia(relatorioRequest);
@@ -341,8 +342,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.DenyGet);
 
             }
-            catch
+            catch (Exception e)
             {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
@@ -494,8 +497,10 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Impressão enviada com sucesso."
                 }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
@@ -522,8 +527,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.DenyGet);
 
             }
-            catch
+            catch (Exception e)
             {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,

@@ -10,7 +10,7 @@
     });
 
     $("#imprimirRelatorio").click(function () {
-        $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=laser&acao=notas", function () {
+        $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=1&acao=notas", function () {
             $("#modalImpressoras").modal();
         });
     });
@@ -270,7 +270,8 @@ function imprimir(acao, id) {
                 },
                 success: function (result) {
                     mensagemImpressao(result);
-                    $("#btnFechar").click();
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
                 }
             });
             break;
@@ -284,7 +285,8 @@ function imprimir(acao, id) {
                 },
                 success: function (result) {
                     mensagemImpressao(result);
-                    $("#btnFechar").click();
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
                 }
             });
             break;
@@ -298,7 +300,8 @@ function imprimir(acao, id) {
                 },
                 success: function (result) {
                     mensagemImpressao(result);
-                    $("#btnFechar").click();
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
                 }
             });
             break;
