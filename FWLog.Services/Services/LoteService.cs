@@ -221,7 +221,7 @@ namespace FWLog.Services.Services
 
                 AtualizarSaldoArmazenagem(nfItens, notafiscal, loteDivergenciasMenos);
 
-                if (lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva && !loteDivergenciasMenos.NullOrEmpty())
+                if (lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva && loteDivergenciasMenos.NullOrEmpty())
                 {
                     CriarQuarentena(lote, IdUsuario);
                 }
