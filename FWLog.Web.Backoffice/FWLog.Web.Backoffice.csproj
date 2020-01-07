@@ -532,6 +532,7 @@
     <Content Include="Views\BORecebimentoNota\RelatorioResumoEtiquetagem.cshtml" />
     <Content Include="Views\BORecebimentoNota\ResumoProcessamentoDivergencia.cshtml" />
     <Content Include="Views\BOQuarentena\Historico.cshtml" />
+    <Content Include="Views\BORecebimentoNota\AcessoCoordenador.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

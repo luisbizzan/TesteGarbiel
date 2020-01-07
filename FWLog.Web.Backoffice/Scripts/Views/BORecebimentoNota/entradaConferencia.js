@@ -12,7 +12,7 @@
 
     $('#modalRegistroConferencia').keypress(function (e) {
         if (e.keyCode == '13') {
-            registrarConferencia();
+            validarDiferencaMultiploConferencia();
         }
     });
 
@@ -27,7 +27,7 @@
     });
 
     $("#confirmarConferencia").click(function () {
-        registrarConferencia();
+        validarDiferencaMultiploConferencia();
     });
 
     $("#finalizarConferencia").click(function () {
@@ -36,6 +36,47 @@
 
     $("#exibirDivergencia").click(function () {
         exibirDivergencia();
+    });
+
+    $("#validarAcessoCoordenador").click(function () {
+        let usuario = $("#Usuario").val();
+        let senha = $("#Senha").val();
+
+        $.ajax({
+            url: HOST_URL + CONTROLLER_PATH + "ValidarAcessoCoordenadorConferencia",
+            cache: false,
+            method: "POST",
+            data: {
+                usuario: usuario,
+                senha: senha
+            },
+            success: function (result) {
+                if (result.Success) {
+                    let referencia = $("#Referencia").val();
+                    let multiplo = $("#Multiplo").val();
+                    let quantidadePorCaixa = $("#QuantidadePorCaixa").val();
+                    let quantidadeCaixa = $("#QuantidadeCaixa").val();
+                    let inicioConferencia = $("#InicioConferencia").val();
+
+                    registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo);
+
+                    $('#modalAcessoCoordenador').modal('toggle');
+
+                    $("#Usuario").val('');
+                    $("#Senha").val('');
+
+                    setTimeout(function () {
+                        $("#Referencia").focus();
+                    }, 150);
+                }
+                else {
+                    PNotify.info({ text: result.Message });
+                }
+            },
+            error: function (request, status, error) {
+                PNotify.warning({ text: result.Message });
+            }
+        });
     });
 
 })();
@@ -70,7 +111,7 @@ function carregarDadosReferenciaConferencia() {
                 }
 
                 waitingDialog.hide();
-                $("#QuantidadePorCaixa").focus();
+                $("#Multiplo").focus();
 
             } else {
                 PNotify.info({ text: result.Message });
@@ -82,12 +123,41 @@ function carregarDadosReferenciaConferencia() {
     });
 }
 
-function registrarConferencia() {
+function validarDiferencaMultiploConferencia() {
     let referencia = $("#Referencia").val();
+    let multiplo = $("#Multiplo").val();
     let quantidadePorCaixa = $("#QuantidadePorCaixa").val();
     let quantidadeCaixa = $("#QuantidadeCaixa").val();
     let inicioConferencia = $("#InicioConferencia").val();
 
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "VerificarDiferencaMultiploConferencia",
+        cache: false,
+        method: "POST",
+        data: {
+            codigoBarrasOuReferencia: referencia,
+            multiplo: multiplo
+        },
+        success: function (result) {
+            if (result.Success) {
+                waitingDialog.hide();
+
+                $('#modalAcessoCoordenador').modal('show');
+
+                setTimeout(function () {
+                    $("#Usuario").focus();
+                }, 150);
+            } else {
+                registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo);
+            }
+        },
+        error: function (request, status, error) {
+            PNotify.info({ text: request.responseText });
+        }
+    });
+}
+
+function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo) {
     if (quantidadePorCaixa === '')
         quantidadePorCaixa = 0;
 
@@ -103,7 +173,8 @@ function registrarConferencia() {
             codigoBarrasOuReferencia: referencia,
             quantidadePorCaixa: quantidadePorCaixa,
             quantidadeCaixa: quantidadeCaixa,
-            inicioConferencia: inicioConferencia
+            inicioConferencia: inicioConferencia,
+            multiplo: multiplo
         },
         success: function (result) {
             if (result.Success) {
@@ -152,6 +223,7 @@ function finalizarConferencia() {
 
 function resetarCamposConferencia() {
     $("#Referencia").val('');
+    $("#DescricaoReferencia").val('');
     $("#Embalagem").val('');
     $("#Unidade").val('');
     $("#Multiplo").val('');

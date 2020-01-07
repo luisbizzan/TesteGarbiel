@@ -14,6 +14,7 @@ using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -874,7 +875,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 DescricaoReferencia = produto.Descricao,
                 Embalagem = "",
                 Unidade = "",
-                Multiplo = produto.MultiploVenda,
                 QuantidadeEstoque = empresaProduto == null ? 0 : empresaProduto.Saldo,
                 QuantidadeNaoConferida = quantidadeNaoConferida,
                 QuantidadeConferida = quantidadeConferida,
@@ -902,7 +902,86 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-        public JsonResult RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia)
+        [HttpPost]
+        public JsonResult VerificarDiferencaMultiploConferencia(string codigoBarrasOuReferencia, decimal multiplo)
+        {
+            //Valida novamente se a referência é valida.
+            if (string.IsNullOrEmpty(codigoBarrasOuReferencia))
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Referência inválida. Por favor, tente novamente!"
+                });
+            }
+
+            var referencia = _uow.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(codigoBarrasOuReferencia);
+
+            //Valida se a referencia (peça) foi encontrado.
+            if (referencia == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Referência não cadastrada. Por favor, tente novamente!"
+                });
+            }
+
+            //Verifica se o múltiplo é igual.
+            if (referencia.MultiploVenda == multiplo)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = ""
+                });
+            }
+
+            //Passou pelas validações e neste caso a diferença de múltiplo existe, retornando true.
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = ""
+            });
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ValidarAcessoCoordenadorConferencia(string usuario, string senha)
+        {
+            //Validar Login
+            var retornoLogin = await SignInManager.PasswordSignInAsync(usuario, senha, false, shouldLockout: true).ConfigureAwait(false);
+
+            if (retornoLogin != SignInStatus.Success)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Usuário ou senha inválidos. Por favor, tente novamente!"
+                });
+            }
+
+            //validar Permissão
+            ApplicationUser applicationUser = await UserManager.FindByNameAsync(usuario);
+
+            var permissao = applicationUser.Permissions.Where(x => x.Permission.Name == Permissions.Recebimento.PermitirDiferencaMultiploConferencia);
+
+            if (permissao == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "O usuário não possui permissão para confirmar a diferença de múltiplo. Por favor, tente novamente!"
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = ""
+            });
+        }
+
+        public JsonResult RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo)
         {
             try
             {
@@ -925,6 +1004,17 @@ namespace FWLog.Web.Backoffice.Controllers
                     {
                         Success = false,
                         Message = "Referência não cadastrada. Por favor, tente novamente!"
+                    });
+                }
+
+                //Valida se o produto está fora de linha (fornecedor 400)
+                // TODO essa validação deverá ser alterada após a Sankhya criar a estrutura de produto ativo por empresa.
+                if (!produto.Ativo)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "A referência informada está fora de linha. Por favor, tente novamente!"
                     });
                 }
 
@@ -953,19 +1043,19 @@ namespace FWLog.Web.Backoffice.Controllers
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "As configurações da empresa não foi encontrada. Por favor, tente novamente!"
+                        Message = "As configurações da empresa não foram encontradas. Por favor, tente novamente!"
                     });
                 }
 
                 //Valida se os campos quantidade por caixa e quantidade de caixa são iguais a 1 quando o tipo da conferência é 100%.
                 //Isso é feito porque na conferência 100% a quantidade por caixa e quantidade de caixa não podem ser maior que 1.
                 if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento
-                    && quantidadePorCaixa != 1 && quantidadeCaixa != 1)
+                    && quantidadePorCaixa != 1)
                 {
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "Neste tipo de conferência, não é permitido um valor diferente de 1 nos campos quantidade por caixa e quantidade de caixa. Por favor, tente novamente!"
+                        Message = "Neste tipo de conferência, não é permitido um valor diferente de 1 no campo quantidade por caixa. Por favor, tente novamente!"
                     });
                 }
 
@@ -976,6 +1066,16 @@ namespace FWLog.Web.Backoffice.Controllers
                     {
                         Success = false,
                         Message = "Os campos quantidade por caixa e quantidade de caixa não podem ser 0. Por favor, tente novamente!"
+                    });
+                }
+
+                //Valida se o múltilo é igual a 0.
+                if (multiplo == 0)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "O campo múltiplo não pode ser 0. Por favor, tente novamente!"
                     });
                 }
 
@@ -991,7 +1091,6 @@ namespace FWLog.Web.Backoffice.Controllers
                             Message = "A quantidade por caixa não pode ser menor que a quantidade conferida. Por favor, tente novamente!"
                         });
                     }
-
                 }
 
                 //Decidi não verificar o status do lote, sendo assim, sempre atualizado para Em Conferência.

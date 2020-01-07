@@ -18,12 +18,12 @@
         </div>
         <div class="x_content">
             <div class="row">
-                <div class="form-group col-sm-1 col-xs-12">
+                <div class="form-group col-sm-2 col-xs-12">
                     @*@Html.RadioButton("TipoEtiqueta", "I", true)*@
                     @Html.RadioButtonFor(model => model.TipoEtiquetagem, 1, new { @checked = true })
                     @Html.Label("Individual")
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-3 col-xs-12">
                     @Html.RadioButtonFor(model => model.TipoEtiquetagem, 2)
                     @Html.Label("Personalizada")
                 </div>

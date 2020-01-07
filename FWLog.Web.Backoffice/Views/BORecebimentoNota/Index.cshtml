@@ -200,3 +200,33 @@
 <div class="modal" id="modalUsuarioConferencia" data-toggle="modal" data-myvalue="2"></div>
 <div class="modal" id="modalDivergencia" data-backdrop="static"></div>
 <div class="modal" id="modalProcessamentoTratativaDivergencia" data-backdrop="static"></div>
+
+<div class="modal fade" id="modalAcessoCoordenador" data-backdrop="static">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Validar Acesso</h4>
+                </div><div class="container"></div>
+                <div class="modal-body" style="overflow: auto; max-height: calc(90vh - 40px);">
+                    <div class="col-xs-12 col-sm-6 col-lg-6">
+                        <div class="form-group">
+                            <label>Usuário</label>
+                            <input id="Usuario" name="Usuario" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-lg-6">
+                        <div class="form-group">
+                            <label>Senha</label>
+                            <input id="Senha" name="Senha" type="password" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-default" data-dismiss="modal">Cancelar</a>
+                    <a id="validarAcessoCoordenador" class="btn btn-primary">Confirmar</a>
+                </div>
+            </div>
+        </div>
+    </div>  
+</div>
