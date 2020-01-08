@@ -490,6 +490,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 ValidateModel(viewModel);
 
                 var request = Mapper.Map<ImprimirRelatorioRecebimentoNotasRequest>(viewModel);
+
+                request.IdEmpresa = IdEmpresa;
+                request.NomeUsuario = User.Identity.Name;
+
                 _relatorioService.ImprimirRelatorioRecebimentoNotas(request);
 
                 return Json(new AjaxGenericResultModel
