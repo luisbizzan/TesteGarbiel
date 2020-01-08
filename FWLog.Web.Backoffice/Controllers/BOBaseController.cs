@@ -150,11 +150,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 if (!long.TryParse(cookie.Values[EmpresaCookie.PerfilImpressora], out long idPerfilImpressora))
                 {
-                    idPerfilImpressora = uow.UsuarioEmpresaRepository.Tabela().FirstOrDefault(x => x.IdEmpresa == IdEmpresa && x.UserId == IdUsuario).IdPerfilImpressoraPadrao.GetValueOrDefault();
-
-                    cookie.Values[EmpresaCookie.PerfilImpressora] = idPerfilImpressora.ToString();
-
-                    Response.Cookies.Add(cookie);
+                    idPerfilImpressora = PerfilImpressoraPadrao(cookie, uow);
                 }
                 else
                 {
@@ -162,11 +158,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                     if (!perfilDaEmpresaSelecionada)
                     {
-                        idPerfilImpressora = uow.UsuarioEmpresaRepository.Tabela().FirstOrDefault(x => x.IdEmpresa == IdEmpresa && x.UserId == IdUsuario).IdPerfilImpressoraPadrao.GetValueOrDefault();
-
-                        cookie.Values[EmpresaCookie.PerfilImpressora] = idPerfilImpressora.ToString();
-
-                        Response.Cookies.Add(cookie);
+                        idPerfilImpressora = PerfilImpressoraPadrao(cookie, uow);
                     }
                 }
 
@@ -182,5 +174,14 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
+        private long PerfilImpressoraPadrao(HttpCookie cookie, UnitOfWork uow)
+        {
+            long idPerfilImpressora = uow.UsuarioEmpresaRepository.Tabela().FirstOrDefault(x => x.IdEmpresa == IdEmpresa && x.UserId == IdUsuario).IdPerfilImpressoraPadrao.GetValueOrDefault();
+            cookie.Values[EmpresaCookie.PerfilImpressora] = idPerfilImpressora.ToString();
+
+            Response.Cookies.Add(cookie);
+
+            return idPerfilImpressora;
+        }
     }
 }
