@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace FWLog.Services.Relatorio
 {
@@ -195,6 +194,24 @@ namespace FWLog.Services.Relatorio
                 pdfRenderer.PdfDocument.Save(stream, false);
                 return stream.ToArray();
             }
+
+            //DocumentRenderer renderer = new DocumentRenderer(_document);
+            //PdfDocumentRenderer pdfRenderer = new PdfDocumentRenderer
+            //{
+            //    Document = _document,
+            //    DocumentRenderer = renderer
+            //};
+
+            //using (MemoryStream ms = new MemoryStream())
+            //{
+            //    pdfRenderer.PdfDocument.Save(ms, false);
+            //    byte[] buffer = new byte[ms.Length];
+            //    ms.Seek(0, SeekOrigin.Begin);
+            //    ms.Flush();
+            //    ms.Read(buffer, 0, (int)ms.Length);
+
+            //    return buffer;
+            //}
         }
 
         private string ImagemBase64(System.Drawing.Image imagem)

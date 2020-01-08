@@ -9,7 +9,9 @@ using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace FWLog.Services.Services
 {
@@ -70,7 +72,7 @@ namespace FWLog.Services.Services
             {
                 query = query.Where(x => x.IdLote == request.Lote);
             }
-                       
+
             if (request.Nota.HasValue)
             {
                 query = query.Where(x => x.NotaFiscal.Numero == request.Nota);
@@ -209,6 +211,21 @@ namespace FWLog.Services.Services
             };
 
             byte[] relatorio = GerarDetalhesNotaEntradaConferencia(relatorioRequest);
+
+            //var a = Encoding.ASCII.GetString(relatorio);
+            //var aa = Encoding.UTF8.GetBytes(a);
+
+            //var b = Encoding.UTF8.GetString(relatorio);
+            //var bb = Encoding.ASCII.GetBytes(b);
+
+            //bool e = relatorio == aa;
+
+            ////File.WriteAllBytes("Foo.txt", relatorio);
+
+            //using (Stream file = File.OpenWrite(@"C:\Users\Jonatas\Desktop\Dart\Furacao\here.pdf"))
+            //{
+            //    file.Write(relatorio, 0, relatorio.Length);
+            //}
 
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
