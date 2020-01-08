@@ -254,7 +254,7 @@ function imprimir(acao, id) {
                 url: "/BORecebimentoNota/ImprimirRelatorioNotas",
                 method: "POST",
                 data: {
-                    IdImpressora: $("input[name='IdImpressora']:checked").val(),
+                    IdImpressora: $("#IdImpressora").val(),
                     Lote: $("#Filter_Lote").val(),
                     Nota: $("#Filter_Nota").val(),
                     ChaveAcesso: $("#Filter_ChaveAcesso").val(),
@@ -280,7 +280,7 @@ function imprimir(acao, id) {
                 url: "/BORecebimentoNota/ImprimirDetalhesEntradaConferencia",
                 method: "POST",
                 data: {
-                    IdImpressora: $("input[name='IdImpressora']:checked").val(),
+                    IdImpressora: $("#IdImpressora").val(),
                     IdNotaFiscal: id
                 },
                 success: function (result) {
@@ -295,7 +295,7 @@ function imprimir(acao, id) {
                 url: "/BORecebimentoNota/ImprimirEtiquetaRecebimento",
                 method: "POST",
                 data: {
-                    IdImpressora: $("input[name='IdImpressora']:checked").val(),
+                    IdImpressora: $("#IdImpressora").val(),
                     IdNotaFiscal: id
                 },
                 success: function (result) {

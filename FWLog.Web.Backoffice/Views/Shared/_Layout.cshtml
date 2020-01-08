@@ -8,8 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@ViewBag.Title</title>
     <script>
-        var HOST_URL = "@HtmlRequestHelper.Host()"
-        var CONTROLLER_PATH = "@( HtmlRequestHelper.Controller() + '/')"
+        var HOST_URL = "@HtmlRequestHelper.Host()";
+        var CONTROLLER_PATH = "@( HtmlRequestHelper.Controller() + '/')";
+
+        Object.defineProperty(String, 'empty', {
+            get: function () {
+                return new String().toString();
+            }
+        });
     </script>
     @Styles.Render("~/style-bundles/vendors/nprogress")
     @Styles.Render("~/style-bundles/vendors/dropzone")

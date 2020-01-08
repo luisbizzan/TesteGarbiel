@@ -30,7 +30,7 @@
 
 
 function imprimir(acao, id) {
-    var idImpressora = $("input[name='IdImpressora']:checked").val();
+    var idImpressora = $("#IdImpressora").val();
 
     var dados = $("#recebimentoEtiqueta").serializeArray();
     dados.push({ name: "IdImpressora", value: idImpressora });

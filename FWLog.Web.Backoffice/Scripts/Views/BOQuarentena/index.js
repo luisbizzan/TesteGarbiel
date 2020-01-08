@@ -183,7 +183,7 @@ function setFornecedor(idFornecedor, razaoSocial) {
 
 //Recebendo o id da quarentena no parâmetro 'acao'.
 function imprimir(acao, id) {
-    var idImpressora = $("input[name='IdImpressora']:checked").val();
+    var idImpressora = $("#IdImpressora").val();
 
     $.ajax({
         url: CONTROLLER_PATH + "TermoResponsabilidade",

@@ -50,7 +50,24 @@
             data: dados,
             success: function (result) {
                 if (result.Success) {
-                    $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?tipo=zebra", function () {
+                    var tipo = $('input[type=radio]:checked').val();
+                    var idImpressaoItem;
+
+                    switch (parseInt(tipo)) {
+                        case 4:
+                            idImpressaoItem = 5;
+                            break;
+                        case 1:
+                            idImpressaoItem = 3;
+                            break;
+                        case 2:
+                            idImpressaoItem = 1; // TODO: definir o tipo correto de impressão
+                            break;
+
+                        default:
+                    }
+
+                    $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=" + idImpressaoItem, function () {
                         $("#modalImpressoras").modal();
                     });
                 } else {
@@ -73,7 +90,7 @@ function setProduto(idProduto, descricao) {
 }
 
 function imprimir(acao, id) {
-    var idImpressora = $("input[name='IdImpressora']:checked").val();
+    var idImpressora = $("#IdImpressora").val();
 
     var dados = $("#recebimentoEtiquetaIndividualPersonalizada").serializeArray();
     dados.push({ name: "IdImpressora", value: idImpressora });
