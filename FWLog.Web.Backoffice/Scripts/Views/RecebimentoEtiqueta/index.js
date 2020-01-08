@@ -13,7 +13,7 @@
             data: dados,
             success: function (result) {
                 if (result.Success) {
-                    $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=10", function () {
+                    $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=2", function () {
                         $("#modalImpressoras").modal();
                     });
                 } else {
