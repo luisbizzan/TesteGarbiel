@@ -55,13 +55,13 @@
 
                     switch (parseInt(tipo)) {
                         case 4:
-                            idImpressaoItem = 5;
+                            idImpressaoItem = 4;
                             break;
                         case 1:
                             idImpressaoItem = 3;
                             break;
                         case 2:
-                            idImpressaoItem = 1; // TODO: definir o tipo correto de impressão
+                            idImpressaoItem = 8; 
                             break;
 
                         default:
