@@ -240,7 +240,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult Selecionar(int idImpressaoItem, string acao, string id)
         {
             ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(idImpressaoItem);
-            List<Printer> impressoras = _uow.BOPrinterRepository.ObterPorPerfil(4, impressaoItem.IdImpressaoItem);
+            List<Printer> impressoras = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem);
 
             var listaImpressoras = new SelectList(
                   impressoras.Select(x => new SelectListItem
