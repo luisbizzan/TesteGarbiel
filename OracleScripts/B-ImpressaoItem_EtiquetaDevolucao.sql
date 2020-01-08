@@ -1,0 +1,1 @@
+INSERT INTO "ImpressaoItem" ("IdImpressaoItem", "Descricao") VALUES (9, 'Etiqueta de Devolução');

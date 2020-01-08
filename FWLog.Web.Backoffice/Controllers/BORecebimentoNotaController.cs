@@ -6,6 +6,7 @@ using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Model.Lote;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
@@ -329,7 +330,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     IdEmpresa = IdEmpresa,
                     NomeUsuario = User.Identity.Name,
-                    IdNotaFiscal = viewModel.IdNotaFiscal
+                    IdNotaFiscal = viewModel.IdNotaFiscal,
+                    IdImpressora = viewModel.IdImpressora
                 };
 
                 _relatorioService.ImprimirDetalhesNotaEntradaConferencia(relatorioRequest);
@@ -341,8 +343,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.DenyGet);
 
             }
-            catch
+            catch (Exception e)
             {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
@@ -494,8 +498,10 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Impressão enviada com sucesso."
                 }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
@@ -522,8 +528,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.DenyGet);
 
             }
-            catch
+            catch (Exception e)
             {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
@@ -1018,7 +1026,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
-		public JsonResult RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo)
+        public JsonResult RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo)
         {
             try
             {
@@ -1178,29 +1186,29 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 _uow.SaveChanges();
 
-                #region AGUARDANDO A DEFINIÇÃO DE IMPRESSORA PADRÃO
+                #region Impressão Automática de Etiquetas
 
-                //var request = new EtiquetaArmazenagemVolumeRequest
-                //{
-                //    NroLote = idLote,
-                //    QuantidadeEtiquetas = quantidadeCaixa,
-                //    QuantidadePorCaixa = quantidadePorCaixa,
-                //    ReferenciaProduto = produto.Referencia,
-                //    Usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome,
-                //    IdImpressora = null
-                //};
+                var request = new ImprimirEtiquetaArmazenagemVolume
+                {
+                    NroLote = idLote,
+                    QuantidadeEtiquetas = quantidadeCaixa,
+                    QuantidadePorCaixa = quantidadePorCaixa,
+                    ReferenciaProduto = produto.Referencia,
+                    Usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome,
+                    IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(2).IdImpressaoItem).First().Id
+                };
 
-                //_etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
+                _etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
 
-                //var requestPecasMais = new ImprimirEtiquetaDevolucaoRequest
-                //{
-                //    Linha1 = lote.IdLote.ToString().PadLeft(10, '0'),
-                //    Linha2 = produto.Referencia,
-                //    Linha3 = "PC.A+",
-                //    IdImpressora = null
-                //};
+                var requestPecasMais = new ImprimirEtiquetaDevolucaoRequest
+                {
+                    Linha1 = lote.IdLote.ToString().PadLeft(10, '0'),
+                    Linha2 = produto.Referencia,
+                    Linha3 = "PC.A+",
+                    IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(9).IdImpressaoItem).First().Id
+                };
 
-                //_etiquetaService.ImprimirEtiquetaDevolucao(requestPecasMais);
+                _etiquetaService.ImprimirEtiquetaDevolucao(requestPecasMais);
 
                 //Registra a impressão da etiqueta
                 var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem

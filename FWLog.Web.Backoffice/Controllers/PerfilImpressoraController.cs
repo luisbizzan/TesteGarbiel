@@ -1,26 +1,26 @@
 ﻿using AutoMapper;
+using FWLog.AspNet.Identity;
 using FWLog.Data;
-using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
+using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
-using FWLog.Web.Backoffice.Models.PerfilImpressoraCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using FWLog.Web.Backoffice.Models.PerfilImpressoraCtx;
 using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
-using System.Web;
-using FWLog.AspNet.Identity;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
     public class PerfilImpressoraController : BOBaseController
     {
-        UnitOfWork _uow;
-        PerfilImpressoraService _perfilImpressoraService;
+        private readonly UnitOfWork _uow;
+        private readonly PerfilImpressoraService _perfilImpressoraService;
 
         public PerfilImpressoraController(UnitOfWork uow, PerfilImpressoraService perfilImpressoraService)
         {
@@ -240,7 +240,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
                 }, JsonRequestBehavior.DenyGet);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return Json(new AjaxGenericResultModel
                 {
@@ -282,6 +282,26 @@ namespace FWLog.Web.Backoffice.Controllers
             };
 
             return PartialView("_ListaImpressoras", list);
+        }
+
+        public ActionResult BuscarPerfilImpressora()
+        {
+            long idPerfilImpressora = IdPerfilImpressora;
+
+            ViewBag.Perfis = new SelectList(
+                          _uow.PerfilImpressoraRepository.RetornarAtivas().Where(x => x.IdEmpresa == IdEmpresa).Select(x => new SelectListItem
+                          {
+                              Value = x.IdPerfilImpressora.ToString(),
+                              Text = x.Nome,
+                              Selected = x.IdPerfilImpressora == idPerfilImpressora
+                          }).ToList(), "Value", "Text", idPerfilImpressora);
+
+            return PartialView("_MudarPerfilImpressora");
+        }
+
+        public void DefinePerfilImpressoraSessao(long idPerfil)
+        {
+            IdPerfilImpressora = idPerfil;
         }
 
         private void CarregarDadosImpressaoItem()

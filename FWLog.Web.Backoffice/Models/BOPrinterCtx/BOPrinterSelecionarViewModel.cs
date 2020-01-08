@@ -1,17 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Models.BOPrinterCtx
 {
     public class BOPrinterSelecionarViewModel
     {
+        public string ImpressaoItemDescricao { get; set; }
         public string Acao { get; set; }
         public string Id { get; set; }
-        public List<BOPrinterSelecionarImpressoraViewModel> Impressoras { get; set; }
-    }
-
-    public class BOPrinterSelecionarImpressoraViewModel
-    {
-        public long IdImpressora { get; set; }
-        public string Nome { get; set; }
+        public SelectList Impressoras { get; set; }
     }
 }
