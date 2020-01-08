@@ -929,7 +929,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        public JsonResult VerificarDiferencaMultiploConferencia(string codigoBarrasOuReferencia, decimal multiplo)
+        public JsonResult VerificarDiferencaMultiploConferencia(string codigoBarrasOuReferencia, int quantidadePorCaixa, decimal multiplo)
         {
             //Valida novamente se a referência é valida.
             if (string.IsNullOrEmpty(codigoBarrasOuReferencia))
@@ -963,12 +963,22 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            //Passou pelas validações e neste caso a diferença de múltiplo existe, retornando true.
-            return Json(new AjaxGenericResultModel
+            if (quantidadePorCaixa % multiplo != 0)
             {
-                Success = true,
-                Message = ""
-            });
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Quantidade informada não confere com o múltiplo. Para prosseguir, é necessário a validação do Coordenador."
+                });
+            }
+            else
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "O múltiplo está diferente ao do cadastro. Para prosseguir, é necessário a validação do Coordenador."
+                });
+            }
         }
 
         [HttpPost]
@@ -1003,7 +1013,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return Json(new AjaxGenericResultModel
             {
                 Success = true,
-                Message = "O múltiplo está diferente ao do cadastro. Para prosseguir, solicite a liberação ao Coordenador."
+                Message = ""
             });
         }
 
