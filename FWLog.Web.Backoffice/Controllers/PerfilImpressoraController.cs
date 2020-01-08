@@ -286,13 +286,15 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult BuscarPerfilImpressora()
         {
+            long idPerfilImpressora = IdPerfilImpressora;
+
             ViewBag.Perfis = new SelectList(
                           _uow.PerfilImpressoraRepository.RetornarAtivas().Where(x => x.IdEmpresa == IdEmpresa).Select(x => new SelectListItem
                           {
                               Value = x.IdPerfilImpressora.ToString(),
                               Text = x.Nome,
-                              Selected = x.IdPerfilImpressora == IdPerfilImpressora
-                          }).ToList(), "Value", "Text", IdPerfilImpressora);
+                              Selected = x.IdPerfilImpressora == idPerfilImpressora
+                          }).ToList(), "Value", "Text", idPerfilImpressora);
 
             return PartialView("_MudarPerfilImpressora");
         }

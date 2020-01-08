@@ -88,7 +88,7 @@ namespace FWLog.Web.Backoffice.Controllers
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
 
             List<ImpressoraListaLinhaTabela> resultado = _uow.BOPrinterRepository.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);
-            
+
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
