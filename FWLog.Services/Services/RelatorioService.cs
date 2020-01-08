@@ -42,7 +42,14 @@ namespace FWLog.Services.Services
                 IdFornecedor = request.IdFornecedor,
                 Atraso = request.Atraso,
                 QuantidadePeca = request.QuantidadePeca,
-                QuantidadeVolume = request.Volume
+                QuantidadeVolume = request.Volume,
+                IdUsuarioConferencia = request.IdUsuarioConferencia,
+                IdEmpresa = request.IdEmpresa,
+                IdUsuarioRecebimento = request.IdUsuarioRecebimento,
+                NomeUsuario = request.NomeUsuario,
+                Prazo = request.Prazo,
+                TempoFinal = request.TempoFinal,
+                TempoInicial = request.TempoInicial
             };
 
             byte[] relatorio = GerarRelatorioRecebimentoNotas(relatorioRequest);

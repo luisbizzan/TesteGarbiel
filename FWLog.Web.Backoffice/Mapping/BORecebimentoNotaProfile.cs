@@ -11,6 +11,7 @@ namespace FWLog.Web.Backoffice.Mapping
         {
             CreateMap<BODownloadRelatorioNotasViewModel, RelatorioRecebimentoNotasRequest>();
             CreateMap<TratarDivergenciaRecebimentoViewModel, TratarDivergenciaRequest>();
+            CreateMap<BOImprimirRelatorioNotasViewModel, ImprimirRelatorioRecebimentoNotasRequest>();
         }
     }
 }

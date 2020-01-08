@@ -266,7 +266,9 @@ function imprimir(acao, id) {
                     IdFornecedor: $("#Filter_IdFornecedor").val(),
                     Atraso: $("#Filter_Atraso").val(),
                     QuantidadePeca: $("#Filter_QuantidadePeca").val(),
-                    Volume: $("#Filter_Volume").val()
+                    Volume: $("#Filter_Volume").val(),
+                    IdUsuarioRecebimento: $("#Filter_IdUsuarioRecebimento").val(),
+                    IdUsuarioConferencia: $("#Filter_IdUsuarioConferencia").val()
                 },
                 success: function (result) {
                     mensagemImpressao(result);
