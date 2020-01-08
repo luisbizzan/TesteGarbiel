@@ -2,8 +2,10 @@
 @using FWLog.AspNet.Identity
 
 @{
-    ViewBag.Title = "Recebimento de Notas Fiscais";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+                /**/
+
+                ViewBag.Title = "Recebimento de Notas Fiscais";
+                Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @section Scripts {
@@ -210,6 +212,10 @@
                     <h4 class="modal-title">Validar Acesso</h4>
                 </div><div class="container"></div>
                 <div class="modal-body" style="overflow: auto; max-height: calc(90vh - 40px);">
+                    <div class="col-xs-12">
+                        <p id="Mensagem">O múltiplo está diferente ao do cadastro. Para prosseguir, solicite a liberação ao Coordenador.</p>
+                    </div>
+                    <br />
                     <div class="col-xs-12 col-sm-6 col-lg-6">
                         <div class="form-group">
                             <label>Usuário</label>
@@ -229,5 +235,5 @@
                 </div>
             </div>
         </div>
-    </div>  
+    </div>
 </div>

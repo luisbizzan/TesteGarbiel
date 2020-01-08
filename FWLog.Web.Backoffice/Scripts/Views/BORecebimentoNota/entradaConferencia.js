@@ -211,6 +211,8 @@ function validarDiferencaMultiploConferencia() {
                 
                 $('#modalAcessoCoordenador').modal('show');
 
+                $('#Mensagem').text(result.Message);
+
                 setTimeout(function () {
                     $("#Usuario").focus();
                 }, 150);

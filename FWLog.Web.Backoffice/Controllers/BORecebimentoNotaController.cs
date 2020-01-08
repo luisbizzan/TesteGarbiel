@@ -809,6 +809,8 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult ObterDadosReferenciaConferencia(string codigoBarrasOuReferencia, long idLote)
         {
+            bool alertarUsuarioSobreTipoDePeca = false;
+
             //Valida se o código de barras ou referência é vazio ou nulo.
             if (string.IsNullOrEmpty(codigoBarrasOuReferencia))
             {
@@ -827,9 +829,13 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Referência não cadastrada. Por favor, tente novamente!"
+                    Message = "Referência sem código de barras. Por favor, tente novamente!"
                 });
             }
+
+            //Atribui verdadeiro a variável para que a mensagem seja recebida.
+            if (produto.UnidadeMedida.Sigla == "KT" || produto.UnidadeMedida.Sigla == "MT" || produto.UnidadeMedida.Sigla == "CT")
+                alertarUsuarioSobreTipoDePeca = true;
 
             //Captura o lote novamente.
             var lote = _uow.LoteRepository.GetById(idLote);
@@ -943,7 +949,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Referência não cadastrada. Por favor, tente novamente!"
+                    Message = "Referência sem código de barras. Por favor, tente novamente!"
                 });
             }
 
@@ -997,7 +1003,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return Json(new AjaxGenericResultModel
             {
                 Success = true,
-                Message = ""
+                Message = "O múltiplo está diferente ao do cadastro. Para prosseguir, solicite a liberação ao Coordenador."
             });
         }
 
@@ -1024,7 +1030,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "Referência não cadastrada. Por favor, tente novamente!"
+                        Message = "Referência sem código de barras. Por favor, tente novamente!"
                     });
                 }
 
@@ -1036,6 +1042,26 @@ namespace FWLog.Web.Backoffice.Controllers
                     {
                         Success = false,
                         Message = "A referência informada está fora de linha. Por favor, tente novamente!"
+                    });
+                }
+
+                //Valida se a largura, altura e comprimento do produto.
+                if (!(produto.Largura.HasValue || produto.Altura.HasValue || produto.Comprimento.HasValue))
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Referência sem cubicagem. Por favor, tente novamente!"
+                    });
+                }
+
+                //Valida se o múltiplo é menor ou igual a 0.
+                if (produto.MultiploVenda <= 0)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Referência sem múltiplo. Por favor, tente novamente!"
                     });
                 }
 
