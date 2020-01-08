@@ -48,11 +48,11 @@
     $referencia.focus(function () {
         permiteRegistrar = false;
     });
-
+    debugger;
     $referencia.on('keypress keydown', function (e) {
         if (e.keyCode == 13) {
             if (!e.target.value) {
-                PNotify.info({ text: 'Referência está vazio. Por favor, entre com um valor!' });
+                PNotify.info({ text: 'Referência está vazio. Por favor, informe o código de barras ou a referência!' });
 
                 $referencia.focus();
 
@@ -61,7 +61,11 @@
                 carregarDadosReferenciaConferencia();
             }
         } else {
-            resetarCamposConferencia(false);
+            let tipoConferencia = $("#TipoConferencia").val();
+
+            if (tipoConferencia == "Por Quantidade") {
+                resetarCamposConferencia(false);
+            }
         }
     });
 
@@ -204,12 +208,15 @@ function validarDiferencaMultiploConferencia() {
         method: "POST",
         data: {
             codigoBarrasOuReferencia: referencia,
+            quantidadePorCaixa: quantidadePorCaixa,
             multiplo: multiplo
         },
         success: function (result) {
             if (result.Success) {
                 
                 $('#modalAcessoCoordenador').modal('show');
+
+                $('#Mensagem').text(result.Message);
 
                 setTimeout(function () {
                     $("#Usuario").focus();

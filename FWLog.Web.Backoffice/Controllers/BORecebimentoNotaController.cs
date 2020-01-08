@@ -821,6 +821,8 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult ObterDadosReferenciaConferencia(string codigoBarrasOuReferencia, long idLote)
         {
+            bool alertarUsuarioSobreTipoDePeca = false;
+
             //Valida se o código de barras ou referência é vazio ou nulo.
             if (string.IsNullOrEmpty(codigoBarrasOuReferencia))
             {
@@ -839,9 +841,13 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Referência não cadastrada. Por favor, tente novamente!"
+                    Message = "Referência sem código de barras. Por favor, tente novamente!"
                 });
             }
+
+            //Atribui verdadeiro a variável para que a mensagem seja recebida.
+            if (produto.UnidadeMedida.Sigla == "KT" || produto.UnidadeMedida.Sigla == "MT" || produto.UnidadeMedida.Sigla == "CT")
+                alertarUsuarioSobreTipoDePeca = true;
 
             //Captura o lote novamente.
             var lote = _uow.LoteRepository.GetById(idLote);
@@ -935,7 +941,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        public JsonResult VerificarDiferencaMultiploConferencia(string codigoBarrasOuReferencia, decimal multiplo)
+        public JsonResult VerificarDiferencaMultiploConferencia(string codigoBarrasOuReferencia, int quantidadePorCaixa, decimal multiplo)
         {
             //Valida novamente se a referência é valida.
             if (string.IsNullOrEmpty(codigoBarrasOuReferencia))
@@ -955,7 +961,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Referência não cadastrada. Por favor, tente novamente!"
+                    Message = "Referência sem código de barras. Por favor, tente novamente!"
                 });
             }
 
@@ -969,12 +975,22 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            //Passou pelas validações e neste caso a diferença de múltiplo existe, retornando true.
-            return Json(new AjaxGenericResultModel
+            if (quantidadePorCaixa % multiplo != 0)
             {
-                Success = true,
-                Message = ""
-            });
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Quantidade informada não confere com o múltiplo. Para prosseguir, é necessário a validação do Coordenador."
+                });
+            }
+            else
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "O múltiplo está diferente ao do cadastro. Para prosseguir, é necessário a validação do Coordenador."
+                });
+            }
         }
 
         [HttpPost]
@@ -1036,7 +1052,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "Referência não cadastrada. Por favor, tente novamente!"
+                        Message = "Referência sem código de barras. Por favor, tente novamente!"
                     });
                 }
 
@@ -1048,6 +1064,26 @@ namespace FWLog.Web.Backoffice.Controllers
                     {
                         Success = false,
                         Message = "A referência informada está fora de linha. Por favor, tente novamente!"
+                    });
+                }
+
+                //Valida se a largura, altura e comprimento do produto.
+                if (!(produto.Largura.HasValue || produto.Altura.HasValue || produto.Comprimento.HasValue))
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Referência sem cubicagem. Por favor, tente novamente!"
+                    });
+                }
+
+                //Valida se o múltiplo é menor ou igual a 0.
+                if (produto.MultiploVenda <= 0)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Referência sem múltiplo. Por favor, tente novamente!"
                     });
                 }
 
