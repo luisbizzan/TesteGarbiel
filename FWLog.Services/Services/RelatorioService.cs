@@ -212,21 +212,6 @@ namespace FWLog.Services.Services
 
             byte[] relatorio = GerarDetalhesNotaEntradaConferencia(relatorioRequest);
 
-            //var a = Encoding.ASCII.GetString(relatorio);
-            //var aa = Encoding.UTF8.GetBytes(a);
-
-            //var b = Encoding.UTF8.GetString(relatorio);
-            //var bb = Encoding.ASCII.GetBytes(b);
-
-            //bool e = relatorio == aa;
-
-            ////File.WriteAllBytes("Foo.txt", relatorio);
-
-            //using (Stream file = File.OpenWrite(@"C:\Users\Jonatas\Desktop\Dart\Furacao\here.pdf"))
-            //{
-            //    file.Write(relatorio, 0, relatorio.Length);
-            //}
-
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
 
@@ -362,7 +347,7 @@ namespace FWLog.Services.Services
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Peso: ", TextFormat.Bold);
 
-            if (notaFiscal.PesoBruto.HasValue)
+            if (notaFiscal.PesoBruto.HasValue)      
             {
                 paragraph.AddText(notaFiscal.PesoBruto.Value.ToString("F"));
             }
@@ -380,6 +365,7 @@ namespace FWLog.Services.Services
             paragraph.AddText(notaFiscal.ValorFrete.ToString("C"));
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Recebido por: ", TextFormat.Bold);
+
             if (IsNotaRecebida)
             {
                 paragraph.AddText(lote.UsuarioRecebimento.UserName);
@@ -389,61 +375,82 @@ namespace FWLog.Services.Services
                 paragraph.AddText("Não recebido");
             }
 
-
-            row.Cells[2].MergeRight = 1;
-
-            if (IsNotaRecebida)
-            {
-                if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia)
-                {
-                    paragraph = document.Sections[0].AddParagraph();
-                    paragraph.Format.SpaceAfter = 20;
-                    paragraph.Format.Font = new Font("Verdana", new Unit(12))
-                    {
-                        Bold = true
-                    };
-                    paragraph.AddText("Conferência");
-
-                    tabela = document.Sections[0].AddTable();
-                    tabela.Format.Font = new Font("Verdana", new Unit(9));
-                    tabela.Rows.HeightRule = RowHeightRule.Exactly;
-                    tabela.Rows.Height = 20;
-
-                    tabela.AddColumn(new Unit(132));
-                    tabela.AddColumn(new Unit(132));
-                    tabela.AddColumn(new Unit(132));
-                    tabela.AddColumn(new Unit(132));
-
-                    row = tabela.AddRow();
-                    paragraph = row.Cells[0].AddParagraph();
-                    row.Cells[0].MergeRight = 1;
-                    paragraph.AddFormattedText("Tipo Conferência: ", TextFormat.Bold);
-                    paragraph = row.Cells[2].AddParagraph();
-                    row.Cells[2].MergeRight = 1;
-                    paragraph.AddFormattedText("Conferido por: ", TextFormat.Bold);
-
-                    row = tabela.AddRow();
-                    paragraph = row.Cells[0].AddParagraph();
-                    paragraph.AddFormattedText("Início: ", TextFormat.Bold);
-                    paragraph = row.Cells[1].AddParagraph();
-                    paragraph.AddFormattedText("Fim: ", TextFormat.Bold);
-                    paragraph = row.Cells[2].AddParagraph();
-                    row.Cells[2].MergeRight = 1;
-                    paragraph.AddFormattedText("Tempo Total: ", TextFormat.Bold);
-                }
-            }
-
             paragraph = document.Sections[0].AddParagraph();
-            paragraph.Format.SpaceAfter = 20;
             paragraph.Format.Font = new Font("Verdana", new Unit(12))
             {
                 Bold = true
             };
 
+            row.Cells[2].MergeRight = 1;
+
             if (!LoteNaoConferido)
             {
                 var loteConferencia = _unitiOfWork.LoteConferenciaRepository.ObterPorId(lote.IdLote);
                 List<UsuarioEmpresa> usuarios = _unitiOfWork.UsuarioEmpresaRepository.ObterPorEmpresa(lote.NotaFiscal.IdEmpresa);
+
+                paragraph = document.Sections[0].AddParagraph();
+                paragraph.Format.SpaceAfter = 20;
+                paragraph.Format.Font = new Font("Verdana", new Unit(12))
+                {
+                    Bold = true
+                };
+                paragraph.AddText("Conferência");
+
+                tabela = document.Sections[0].AddTable();
+                tabela.Format.Font = new Font("Verdana", new Unit(9));
+                tabela.Rows.HeightRule = RowHeightRule.Exactly;
+                tabela.Rows.Height = 20;
+
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+
+                row = tabela.AddRow();
+                paragraph = row.Cells[0].AddParagraph();
+                row.Cells[0].MergeRight = 2;
+                paragraph.AddFormattedText("Tipo Conferência: ", TextFormat.Bold);
+                paragraph.AddText(loteConferencia.FirstOrDefault().TipoConferencia.Descricao);
+
+                paragraph = row.Cells[3].AddParagraph();
+                row.Cells[3].MergeRight = 2;
+                paragraph.AddFormattedText("Conferido por: ", TextFormat.Bold);
+                paragraph.AddText(_unitiOfWork.PerfilUsuarioRepository.GetByUserId(loteConferencia.FirstOrDefault().UsuarioConferente.Id).Nome);
+
+                row = tabela.AddRow();
+                paragraph = row.Cells[0].AddParagraph();
+                row.Cells[0].MergeRight = 1;
+                paragraph.AddFormattedText("Início: ", TextFormat.Bold);
+                paragraph.AddText(lote.DataInicioConferencia.HasValue ? lote.DataInicioConferencia.Value.ToString("dd/MM/yyyy HH:mm:ss") : string.Empty);
+
+                paragraph = row.Cells[2].AddParagraph();
+                row.Cells[2].MergeRight = 1;
+                paragraph.AddFormattedText("Fim: ", TextFormat.Bold);
+
+                if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia || lote.IdLoteStatus == LoteStatusEnum.Finalizado ||
+                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa || lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
+                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
+                {
+                    paragraph.AddText(lote.DataFinalConferencia.HasValue ? lote.DataFinalConferencia.Value.ToString("dd/MM/yyyy HH:mm:ss") : string.Empty);
+                }
+
+                paragraph = row.Cells[4].AddParagraph();
+                row.Cells[4].MergeRight = 1;
+                paragraph.AddFormattedText("Tempo Total: ", TextFormat.Bold);
+
+                if (lote.DataFinalConferencia.HasValue && lote.DataInicioConferencia.HasValue)
+                {
+                    paragraph.AddText((lote.DataFinalConferencia.Value - lote.DataInicioConferencia.Value).ToString("h'h 'm'm 's's'"));
+                }
+
+                paragraph = document.Sections[0].AddParagraph();
+                paragraph.Format.SpaceAfter = 10;
+                paragraph.Format.Font = new Font("Verdana", new Unit(12))
+                {
+                    Bold = true
+                };
 
                 tabela = document.Sections[0].AddTable();
                 tabela.Format.Font = new Font("Verdana", new Unit(9));

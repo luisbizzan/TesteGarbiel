@@ -172,6 +172,24 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.UsuarioRecebimento.Id == model.CustomFilter.IdUsuarioRecebimento);
             }
 
+            if (!string.IsNullOrEmpty(model.CustomFilter.TempoInicial))
+            {
+                long hora = Convert.ToInt32(model.CustomFilter.TempoInicial.Substring(0, 2));
+                long minutos = Convert.ToInt32(model.CustomFilter.TempoInicial.Substring(3, 2));
+                long totalSegundos = (hora * 3600) + (minutos*60);
+
+                query = query.Where(x =>x.TempoTotalConferencia >= totalSegundos);
+            }
+
+            if (!string.IsNullOrEmpty(model.CustomFilter.TempoFinal))
+            {
+                long hora = Convert.ToInt32(model.CustomFilter.TempoInicial.Substring(0, 2));
+                long minutos = Convert.ToInt32(model.CustomFilter.TempoInicial.Substring(3, 2));
+                long totalSegundos = (hora * 3600) + (minutos * 60);
+
+                query = query.Where(x => x.TempoTotalConferencia >= totalSegundos);
+            }
+
             if (query.Any())
             {
                 foreach (var item in query)
@@ -624,7 +642,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         model.UsuarioConferencia = _uow.PerfilUsuarioRepository.GetByUserId(loteConferencia.FirstOrDefault().UsuarioConferente.Id).Nome;
 
                         //Captura a menor data de início da conferência.
-                        model.DataInicioConferencia = loteConferencia.Min(x => x.DataHoraInicio).ToString("dd/MM/yyyy HH:mm");
+                        model.DataInicioConferencia = lote.DataInicioConferencia.HasValue ? lote.DataInicioConferencia.Value.ToString("dd/MM/yyyy HH:mm:ss") : string.Empty;
 
                         //Captura a maior data fim de conferência.
                         if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia ||
@@ -632,17 +650,15 @@ namespace FWLog.Web.Backoffice.Controllers
                             lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
                             lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
                             lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
-                            model.DataFimConferencia = loteConferencia.Max(x => x.DataHoraFim).ToString("dd/MM/yyyy HH:mm:ss");
-
-                        var tempo = new TimeSpan(0, 0, 0);
+                        {
+                            model.DataFimConferencia = lote.DataFinalConferencia.HasValue ? lote.DataFinalConferencia.Value.ToString("dd/MM/yyyy HH:mm:ss") : string.Empty;
+                        }
 
                         List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
 
                         //Calcula o tempo total.
                         foreach (var item in loteConferencia)
                         {
-                            tempo.Add(new TimeSpan(item.Tempo.Hour, item.Tempo.Minute, item.Tempo.Second));
-
                             var entradaConferenciaItem = new BODetalhesEntradaConferenciaItem
                             {
                                 Referencia = item.Produto.Referencia,
@@ -661,7 +677,9 @@ namespace FWLog.Web.Backoffice.Controllers
                             lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
                             lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
                             lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
-                            model.TempoTotalConferencia = tempo.ToString("h'h 'm'm 's's'");
+                        {
+                            model.TempoTotalConferencia = TimeSpan.FromSeconds(lote.TempoTotalConferencia).ToString("h'h 'm'm 's's'");
+                        }
                     }
 
                     var _emConferencia = new[] { LoteStatusEnum.Conferencia, LoteStatusEnum.ConferidoDivergencia };
@@ -805,6 +823,12 @@ namespace FWLog.Web.Backoffice.Controllers
                 TipoConferencia = empresaConfig.TipoConferencia.Descricao,
                 IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode()
             };
+
+            if (!lote.DataInicioConferencia.HasValue)
+            {
+                lote.DataInicioConferencia = DateTime.Now;
+                _uow.SaveChanges();
+            }
 
             //Se o tipo da conferência for, o usuário não poderá informar a quantidade por caixa e quantidade de caixa.
             //Sabendo disso, atribui 1 para os campos.
