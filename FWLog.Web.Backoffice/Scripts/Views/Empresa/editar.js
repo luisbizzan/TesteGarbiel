@@ -1,5 +1,17 @@
 ﻿(function () {
-    $.validator.setDefaults({ ignore: [] });
+    $.validator.setDefaults({ ignore: null });
+    $.validator.addMethod("CNPJValido",
+        function (value, element, params) {
+            let noMaskValue = value.replace("/", String.empty).replace(".", String.empty).replace("-", String.empty);
+            let isValid = dart.validations.isValidCnpj(noMaskValue);
+
+            return isValid;
+        }, "Deve ser um CNPJ válido."
+    );
+
+    $.validator.addClassRules({
+        CNPJValido: { CNPJValido: true }
+    });
 
     $("#pesquisarEmpresaMatriz").click(function () {
         $("#modalEmpresaMatriz").load(HOST_URL + "Empresa/SearchModal?CampoSelecionado=EmpresaMatriz", function () {

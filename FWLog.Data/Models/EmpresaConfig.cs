@@ -26,6 +26,8 @@ namespace FWLog.Data.Models
         [Required]
         public bool EmpresaFazGarantia { get; set; }
 
+        public string CNPJConferenciaAutomatica { get; set; }
+
         [Index]
         public TipoConferenciaEnum? IdTipoConferencia { get; set; }
 
