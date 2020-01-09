@@ -4,6 +4,8 @@
     var $quantidadePorCaixa = $("#QuantidadePorCaixa");
     var $quantidadeCaixa = $("#QuantidadeCaixa");
     var $multiplo = $("#Multiplo");
+    var $tipoConferencia = $("#TipoConferencia");
+    var listaReferencia = new Array; 
 
     $('.onlyNumber').mask('0#');
 
@@ -19,6 +21,12 @@
 	$quantidadePorCaixa.on('keydown', function (e) {
         if (e.keyCode == 9 && !e.target.value) {
             return false;
+        }
+    });
+
+    $quantidadePorCaixa.on('focus', function () {
+        if ($tipoConferencia.val() != "Por Quantidade") {
+            $quantidadePorCaixa.css({ 'background': '#98fb9873' });
         }
     });
 
@@ -41,14 +49,59 @@
 
     $('#modalRegistroConferencia').keydown(function (e) {
         if (e.keyCode == 13 && permiteRegistrar) {
-            validarDiferencaMultiploConferencia();
+            if ($tipoConferencia.val() == "Por Quantidade") {
+                validarDiferencaMultiploConferencia();
+            }
         }
+
+        if (e.keyCode == 27 && permiteRegistrar) {
+            if ($tipoConferencia.val() != "Por Quantidade") {
+                validarDiferencaMultiploConferencia();
+            }
+        }
+    });    
+
+    onScan.attachTo($quantidadePorCaixa[0]);
+    
+    $quantidadePorCaixa[0].addEventListener('scan', function (sScancode, iQuatity) {
+        if ($tipoConferencia.val() != "Por Quantidade") {
+            if (listaReferencia[0] != sScancode.detail.scanCode) {
+                PNotify.info({ text: 'Referência inválida, não corresponde a referência iniciada!' });
+            }
+            else {
+                //Altera a cor de fundo do campo para dar um destaque.
+                setTimeout(alterarBackgroundInput, 400);
+
+                //Captura o valor da quantidade por Caixa.
+                let contador = Number($quantidadePorCaixa.val()) + 1;
+
+                //Atribui o valor somado.
+                $quantidadePorCaixa.val(contador);
+
+                //Atualiza o valor no array
+                if (typeof listaReferencia[1] === 'undefined') {
+                    listaReferencia.push(contador);
+                }
+                else {
+                    listaReferencia[1] = contador;
+                }
+
+                //Retorna a cor de fundo original do campo.
+                $quantidadePorCaixa.css({ 'background': '#eee' });
+            }
+        }
+    });
+
+    onScan.attachTo($multiplo[0]);
+
+    $multiplo[0].addEventListener('scan', function (sScancode, iQuatity) {
+        $multiplo.val('');
     });
 
     $referencia.focus(function () {
         permiteRegistrar = false;
     });
-    debugger;
+    
     $referencia.on('keypress keydown', function (e) {
         if (e.keyCode == 13) {
             if (!e.target.value) {
@@ -58,12 +111,13 @@
 
                 return false;
             } else {
-                carregarDadosReferenciaConferencia();
+                debugger;
+                $.when(carregarDadosReferenciaConferencia()).promise(
+                    listaReferencia.push($referencia.val())
+                );
             }
         } else {
-            let tipoConferencia = $("#TipoConferencia").val();
-
-            if (tipoConferencia == "Por Quantidade") {
+            if ($tipoConferencia == "Por Quantidade") {
                 resetarCamposConferencia(false);
             }
         }
@@ -76,6 +130,10 @@
         else {
             carregarDadosReferenciaConferencia();
         }
+    });
+
+    $quantidadePorCaixa.blur(function () {
+        $quantidadePorCaixa.css({ 'background': '#eee' });
     });
 
     $("#confirmarConferencia").click(function () {
@@ -133,7 +191,7 @@
     function carregarDadosReferenciaConferencia() {
         let referencia = $referencia.val();
 
-        $("#QuantidadePorCaixa").focus();
+        //$("#QuantidadePorCaixa").focus();
 
         overlay(true);
 
@@ -149,7 +207,6 @@
             success: function (result) {
                 if (result.Success) {
                     var model = JSON.parse(result.Data);
-
                     $("#DescricaoReferencia").val(model.DescricaoReferencia);
                     $("#Embalagem").val(model.Embalagem);
                     $("#Unidade").val(model.Unidade);
@@ -159,10 +216,14 @@
                     $("#QuantidadeNaoConferida").val(model.QuantidadeNaoConferida);
                     $("#QuantidadeConferida").val(model.QuantidadeConferida);
                     $("#InicioConferencia").val(model.InicioConferencia);
+                    $("#QuantidadeCaixa").val(model.QuantidadeCaixa);
 
                     if (model.EnviarPicking) {
                         $("#msgEnviarPicking").removeClass("hidden");
                     }
+
+                    //Reset array.
+                    listaReferencia = new Array;
 
                     overlay(false);
 
@@ -231,7 +292,6 @@ function validarDiferencaMultiploConferencia() {
     });
 }
 
-
 function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo) {
         overlay(true);
 
@@ -257,7 +317,7 @@ function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, i
             success: function (result) {
                 if (result.Success) {
 
-                    PNotify.info({ text: result.Message });
+                    PNotify.success({ text: result.Message });
 
                     resetarCamposConferencia();
 
@@ -292,6 +352,10 @@ function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, i
             $referencia.attr('disabled', false);
             $overlay.hide();
         }
+    }
+
+    function alterarBackgroundInput() {
+        $quantidadePorCaixa.css({ 'background': '#98fb9873' });
     }
 })();
 
@@ -335,3 +399,4 @@ function resetarCamposConferencia(limpaReferencia = true) {
     $("#QuantidadeNaoConferida").val('');
     $("#QuantidadeConferida").val('');
 }
+

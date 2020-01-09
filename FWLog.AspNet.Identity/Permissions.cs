@@ -85,6 +85,7 @@ namespace FWLog.AspNet.Identity
             public const string ListarResumoProducao = "ListarResumoProducao";
             public const string PermitirDiferencaMultiploConferencia = "PermitirDiferencaMultiploConferencia";
             public const string ConferirLote = "ConferirLote";
+            public const string ConferirLoteAutomatico = "ConferirLoteAutomatico";
 
             public Recebimento() : base(Display.FromString("Recebimento de Notas Fiscais"))
             {
@@ -96,6 +97,7 @@ namespace FWLog.AspNet.Identity
                 Register(ListarResumoProducao, Display.FromString("Listar Resumo Produção"));
                 Register(PermitirDiferencaMultiploConferencia, Display.FromString("Permitir Diferença de Múltiplo na Conferência"));
                 Register(ConferirLote, Display.FromString("Conferir Lote"));
+                Register(ConferirLoteAutomatico, Display.FromString("Conferir Lote Automático"));
             }
         }
 

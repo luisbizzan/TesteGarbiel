@@ -790,6 +790,13 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
+
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
+        public JsonResult ValidarConferenciaAutomatica(long id)
+        {
+            throw new NotImplementedException();
+        }
+
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult EntradaConferencia(long id)
@@ -940,8 +947,15 @@ namespace FWLog.Web.Backoffice.Controllers
                 QuantidadeEstoque = empresaProduto == null ? 0 : empresaProduto.Saldo,
                 QuantidadeNaoConferida = quantidadeNaoConferida,
                 QuantidadeConferida = quantidadeConferida,
-                InicioConferencia = DateTime.Now.ToString()
+                InicioConferencia = DateTime.Now.ToString(),
+                QuantidadePorCaixa = null
             };
+
+            //Se o tipo da conferência for Por Quantidade, atribui 1 para o campo quantidade de caixa.
+            if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento)
+                model.QuantidadeCaixa = 1;
+            else
+                model.QuantidadeCaixa = null;
 
             if (empresaProduto == null || (empresaProduto != null && empresaProduto.EnderecoArmazenagem == null))
             {

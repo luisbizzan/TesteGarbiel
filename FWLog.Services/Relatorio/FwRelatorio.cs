@@ -187,31 +187,16 @@ namespace FWLog.Services.Relatorio
                 Document = _document
             };
 
-            pdfRenderer.RenderDocument();
-
-            using (var stream = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
-                pdfRenderer.PdfDocument.Save(stream, false);
-                return stream.ToArray();
+                pdfRenderer.RenderDocument();
+                pdfRenderer.Save(ms, false);
+
+                byte[] buffer = ms.GetBuffer();
+                ms.Flush();
+
+                return buffer;
             }
-
-            //DocumentRenderer renderer = new DocumentRenderer(_document);
-            //PdfDocumentRenderer pdfRenderer = new PdfDocumentRenderer
-            //{
-            //    Document = _document,
-            //    DocumentRenderer = renderer
-            //};
-
-            //using (MemoryStream ms = new MemoryStream())
-            //{
-            //    pdfRenderer.PdfDocument.Save(ms, false);
-            //    byte[] buffer = new byte[ms.Length];
-            //    ms.Seek(0, SeekOrigin.Begin);
-            //    ms.Flush();
-            //    ms.Read(buffer, 0, (int)ms.Length);
-
-            //    return buffer;
-            //}
         }
 
         private string ImagemBase64(System.Drawing.Image imagem)
