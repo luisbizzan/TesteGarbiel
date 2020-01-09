@@ -467,13 +467,12 @@ function conferirNota() {
         method: "POST",
         success: function (result) {
             if (result.Success) {
-
-
-
-                $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
-                    $modal.modal();
-                    $("#Referencia").focus();
-                });
+                if (!conferirAutomatico()) {
+                    $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
+                        $modal.modal();
+                        $("#Referencia").focus();
+                    });
+                }
             } else {
                 PNotify.info({ text: result.Message });
             }
