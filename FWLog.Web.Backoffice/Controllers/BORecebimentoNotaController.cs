@@ -772,6 +772,13 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
+
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
+        public JsonResult ValidarConferenciaAutomatica(long id)
+        {
+            throw new NotImplementedException();
+        }
+
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult EntradaConferencia(long id)

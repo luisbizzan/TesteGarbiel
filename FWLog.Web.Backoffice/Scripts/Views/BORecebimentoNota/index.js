@@ -467,6 +467,9 @@ function conferirNota() {
         method: "POST",
         success: function (result) {
             if (result.Success) {
+
+
+
                 $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
                     $modal.modal();
                     $("#Referencia").focus();
@@ -479,6 +482,33 @@ function conferirNota() {
             PNotify.info({ text: request.responseText });
         }
     });
+}
+
+
+function conferirAutomatico() {
+    var rtn = false;
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "ValidarConferenciaAutomatica/" + id,
+        cache: false,
+        method: "POST",
+        success: function (result) {
+            if (result.Success) {
+                if (result.Data) {
+                    rtn = result.Data;
+
+                    PNotify.success({ text: result.Message });
+                }
+            } else {
+                PNotify.info({ text: result.Message });
+            }
+        },
+        error: function (request, status, error) {
+            PNotify.info({ text: request.responseText });
+        }
+    });
+
+    return rtn;
 }
 
 function tratarDivergencias() {
