@@ -50,6 +50,11 @@
                             @Html.HiddenFor(m => m.IdEmpresaGarantia, new { @class = "idempresa" })
                             @Html.ValidationMessageFor(m => m.IdEmpresaGarantia)
                         </div>
+                        <div class="col-xs-12 col-md-3 form-group">
+                            @Html.LabelFor(m => m.CNPJConferenciaAutomatica, new { @class = "control-label" })
+                            @Html.TextBoxFor(m => m.CNPJConferenciaAutomatica, new { @class = "form-control CNPJValido", @data_mask = "99.999.999/9999-99" })
+                            @Html.ValidationMessageFor(m => m.CNPJConferenciaAutomatica)
+                        </div>
                     </div>
                     <div class="row">
                         <div class="form-group col-xs-12 col-md-3">
@@ -138,7 +143,7 @@
                         <div class="col-xs-12 col-md-6 col-lg-3">
                             @Html.LabelFor(m => m.Empresa.Ativo)
                             <div class="checkbox">
-                                @Html.CheckBoxFor(m => m.Empresa.Ativo, new { @class = "flat", @disabled = true})
+                                @Html.CheckBoxFor(m => m.Empresa.Ativo, new { @class = "flat", @disabled = true })
                             </div>
                         </div>
                     </div>

@@ -23,11 +23,14 @@ namespace FWLog.Web.Backoffice.Models.EmpresaCtx
         public TipoConferenciaEnum? IdTipoConferencia { get; set; }
         [Display(Name = "Empresa Faz Garantia?")]
         public bool EmpresaFazGarantia { get; set; }
+        [Display(Name = "CNPJ Conferência Automática")]
+        public string CNPJConferenciaAutomatica { get; set; }
 
         public EmpresaDetalhesViewModel Empresa { get; set; }
 
         public string RazaoSocialEmpresaMatriz { get; set; }
         public string RazaoSocialEmpresaGarantia { get; set; }
+
         public SelectList TiposEmpresa { get; set; }
         public SelectList TiposConferencia { get; set; }
     }
