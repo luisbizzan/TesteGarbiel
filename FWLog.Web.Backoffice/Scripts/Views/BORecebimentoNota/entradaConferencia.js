@@ -4,6 +4,7 @@
     var $quantidadePorCaixa = $("#QuantidadePorCaixa");
     var $quantidadeCaixa = $("#QuantidadeCaixa");
     var $multiplo = $("#Multiplo");
+    var $tipoConferencia = $("#TipoConferencia");
 
     $('.onlyNumber').mask('0#');
 
@@ -41,14 +42,41 @@
 
     $('#modalRegistroConferencia').keydown(function (e) {
         if (e.keyCode == 13 && permiteRegistrar) {
-            validarDiferencaMultiploConferencia();
+            if ($tipoConferencia.val() == "Por Quantidade") {
+                validarDiferencaMultiploConferencia();
+            }
+        }
+
+        if (e.keyCode == 27 && permiteRegistrar) {
+            if ($tipoConferencia.val() != "Por Quantidade") {
+                validarDiferencaMultiploConferencia();
+            }
+        }
+    });    
+    onScan.attachTo($quantidadePorCaixa[0]);
+    
+    $quantidadePorCaixa[0].addEventListener('scan', function (sScancode, iQuatity) {
+        if ($tipoConferencia.val() != "Por Quantidade") {
+            
+            //Altera a cor de fundo do campo para dar um destaque.
+            setTimeout(alterarBackgroundInput, 400);
+
+            //Captura o valor da quantidade por Caixa.
+            let contador = Number($quantidadePorCaixa.val()) + 1;
+
+            //Atribui o valor somado.
+            $quantidadePorCaixa.val(contador);
+
+            //Retorna a cor de fundo original do campo.
+            $quantidadePorCaixa.css({ 'background': '#eee' })
         }
     });
+    
 
     $referencia.focus(function () {
         permiteRegistrar = false;
     });
-    debugger;
+    
     $referencia.on('keypress keydown', function (e) {
         if (e.keyCode == 13) {
             if (!e.target.value) {
@@ -61,9 +89,7 @@
                 carregarDadosReferenciaConferencia();
             }
         } else {
-            let tipoConferencia = $("#TipoConferencia").val();
-
-            if (tipoConferencia == "Por Quantidade") {
+            if ($tipoConferencia == "Por Quantidade") {
                 resetarCamposConferencia(false);
             }
         }
@@ -231,7 +257,6 @@ function validarDiferencaMultiploConferencia() {
     });
 }
 
-
 function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo) {
         overlay(true);
 
@@ -293,6 +318,10 @@ function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, i
             $overlay.hide();
         }
     }
+
+    function alterarBackgroundInput() {
+        $quantidadePorCaixa.css({ 'background': '#98fb9873' });
+    }
 })();
 
 function confirmarfinalizarConferencia() {
@@ -335,3 +364,4 @@ function resetarCamposConferencia(limpaReferencia = true) {
     $("#QuantidadeNaoConferida").val('');
     $("#QuantidadeConferida").val('');
 }
+
