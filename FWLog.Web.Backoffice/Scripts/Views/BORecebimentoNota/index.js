@@ -2,6 +2,31 @@
     $.validator.setDefaults({ ignore: null });
     $('.onlyNumber').mask('0#');
     $("dateFormat").mask("99/99/9999");
+    $('.hourMinute').mask("99:99", { reverse: true });
+
+    $.validator.addMethod('validateTime', function (value, ele) {
+        if (value === "") {
+            return true;
+        }
+        let regex = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/;
+        let validaRegex = regex.test(value);
+        if (validaRegex) {
+            return true;
+        }
+        return false;
+    }, 'Hora inválida');
+
+    $("#Filter_TempoInicial").blur(function () {
+        if ($(this).val() === ":") {
+            $(this).val("");
+        }
+    });
+
+    $("#Filter_InicialInicial").blur(function () {
+        if ($(this).val() === ":") {
+            $(this).val("");
+        }
+    });
 
     $("#imprimirEtiquetaConferencia").click(function () {
         $("#modalEtiquetaConferencia").load("BORecebimentoNota/DetalhesEtiquetaConferencia", function () {
@@ -37,7 +62,9 @@
                 QuantidadePeca: $("#Filter_QuantidadePeca").val(),
                 QuantidadeVolume: $("#Filter_QuantidadeVolume").val(),
                 IdUsuarioRecebimento: $("#Filter_IdUsuarioRecebimento").val(),
-                IdUsuarioConferencia: $("#Filter_IdUsuarioConferencia").val()
+                IdUsuarioConferencia: $("#Filter_IdUsuarioConferencia").val(),
+                TempoInicial: $("#Filter_TempoInicial").val(),
+                TempoFinal: $("#Filter_TempoFinal").val()
             },
             success: function (data) {
                 var a = document.createElement('a');
@@ -268,7 +295,9 @@ function imprimir(acao, id) {
                     QuantidadePeca: $("#Filter_QuantidadePeca").val(),
                     Volume: $("#Filter_Volume").val(),
                     IdUsuarioRecebimento: $("#Filter_IdUsuarioRecebimento").val(),
-                    IdUsuarioConferencia: $("#Filter_IdUsuarioConferencia").val()
+                    IdUsuarioConferencia: $("#Filter_IdUsuarioConferencia").val(),
+                    TempoInicial: $("#Filter_TempoInicial").val(),
+                    TempoFinal: $("#Filter_TempoFinal").val()
                 },
                 success: function (result) {
                     mensagemImpressao(result);
