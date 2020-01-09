@@ -34,8 +34,9 @@
             }
         </div>
         <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 10px">
-            <div class="form-group col-sm-12" style="border-top: 2px solid #E6E9ED; margin-top: 10px">
-                <label style="font-weight: 400">@Html.CheckBox(string.Format("EmpresasGrupos[{0}].IsEmpresaPrincipal", i.ToString()), Model[i].IsEmpresaPrincipal, new { @class = "isEmpresaPrincial" }) Definiar como empresa principal</label>
+            <div class="form-group col-sm-12 empresaprincipal" style="border-top: 2px solid #E6E9ED; margin-top: 10px">
+                @Html.CheckBox(string.Format("EmpresasGrupos[{0}].IsEmpresaPrincipal", i.ToString()), Model[i].IsEmpresaPrincipal, new { @class = "isEmpresaPrincial" })
+                <label style="font-weight: 400">Definir como empresa principal</label>
             </div>
         </div>
         <div class="form-group col-sm-12 col-md-6 col-lg-3 col-xl-3">
