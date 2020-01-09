@@ -16,6 +16,7 @@ namespace FWLog.Services.Services
 
         public void Imprimir(byte[] dadosImpressao, long idImpressora)
         {
+#if !DEBUG
             Printer impressora = _unitOfWork.BOPrinterRepository.GetById(idImpressora);
             string[] ipPorta = impressora.IP.Split(':');
 
@@ -34,6 +35,7 @@ namespace FWLog.Services.Services
                 s.Shutdown(SocketShutdown.Both);
                 s.Close();
             }
+#endif
         }
     }
 }
