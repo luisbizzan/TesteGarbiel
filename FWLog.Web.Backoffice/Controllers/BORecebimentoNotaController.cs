@@ -813,14 +813,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode()
             };
 
-            //Se o tipo da conferência for, o usuário não poderá informar a quantidade por caixa e quantidade de caixa.
-            //Sabendo disso, atribui 1 para os campos.
-            if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento)
-            {
-                model.QuantidadePorCaixa = 1;
-                model.QuantidadeCaixa = 1;
-            }
-
             return View(model);
         }
 
@@ -923,8 +915,15 @@ namespace FWLog.Web.Backoffice.Controllers
                 QuantidadeEstoque = empresaProduto == null ? 0 : empresaProduto.Saldo,
                 QuantidadeNaoConferida = quantidadeNaoConferida,
                 QuantidadeConferida = quantidadeConferida,
-                InicioConferencia = DateTime.Now.ToString()
+                InicioConferencia = DateTime.Now.ToString(),
+                QuantidadePorCaixa = null
             };
+
+            //Se o tipo da conferência for Por Quantidade, atribui 1 para o campo quantidade de caixa.
+            if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento)
+                model.QuantidadeCaixa = 1;
+            else
+                model.QuantidadeCaixa = null;
 
             if (empresaProduto == null || (empresaProduto != null && empresaProduto.EnderecoArmazenagem == null))
             {
