@@ -143,6 +143,11 @@ namespace FWLog.Web.Backoffice.Controllers
                 return errorView(null);
             }
 
+            if (model.EmpresasGrupos.Any(x => x.IdPerfilImpressoraPadrao == null))
+            {
+                ModelState.AddModelError(nameof(model.EmpresasGrupos), "Selecione um Perfil de Impressão Padrão em todas as empresas.");
+            }
+
             var existingUserByName = await UserManager.FindByNameAsync(model.UserName).ConfigureAwait(false);
 
             if (existingUserByName != null)
@@ -174,7 +179,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ModelState.AddModelError(nameof(model.EmpresasGrupos), "Selecione a empresa principal do usuário");
                 return errorView(null);
             }
-                      
+
             if (!ModelState.IsValid)
             {
                 return errorView(null);
@@ -339,6 +344,12 @@ namespace FWLog.Web.Backoffice.Controllers
             if (user == null)
             {
                 throw new HttpException(404, "Not found");
+            }
+
+            if (model.EmpresasGrupos.Any(x => x.IdPerfilImpressoraPadrao == null))
+            {
+                ModelState.AddModelError(nameof(model.EmpresasGrupos), "Selecione um Perfil de Impressão Padrão em todas as empresas.");
+                return errorView();
             }
 
             var existingUserByEmail = await UserManager.FindByEmailAsync(model.Email).ConfigureAwait(false);
