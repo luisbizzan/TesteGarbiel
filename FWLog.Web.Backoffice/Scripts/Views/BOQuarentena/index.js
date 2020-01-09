@@ -200,7 +200,7 @@ function imprimir(acao, id) {
                 PNotify.error({ text: result.Message });
             }
 
-            $("#btnFechar").click();
+            $('#modalImpressoras').modal('toggle');
         },
         error: function (data) {
             PNotify.error({ text: "Ocorreu um erro na impressão." });
