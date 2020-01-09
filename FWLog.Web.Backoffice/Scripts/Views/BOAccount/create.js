@@ -53,6 +53,10 @@
                 $(this).attr('name', `EmpresasGrupos[${i}].Grupos[${ii}].IsSelected`);
             });
 
+            $(this).find(".empresaprincipal").find('input[type=hidden]').each(function (ii, ee) {
+                $(this).attr('name', `EmpresasGrupos_${i}__IsEmpresaPrincipal`);
+            });
+
             $(this).find(".empresasGrupo").find('input[type=hidden]').not(".NomeGrupo").each(function (ii, ee) {
                 $(this).attr('name', `EmpresasGrupos[${i}].Grupos[${ii}].IsSelected`);
             });
