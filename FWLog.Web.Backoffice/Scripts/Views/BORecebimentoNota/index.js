@@ -492,7 +492,7 @@ function conferirNota() {
 
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ValidarInicioConferencia/" + id,
-        cache: false,
+        cache: false,        
         method: "POST",
         success: function (result) {
             if (result.Success) {
@@ -519,6 +519,7 @@ function conferirAutomatico() {
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ValidarConferenciaAutomatica/" + id,
         cache: false,
+        async: false,
         method: "POST",
         success: function (result) {
             if (result.Success) {
