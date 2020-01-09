@@ -212,21 +212,6 @@ namespace FWLog.Services.Services
 
             byte[] relatorio = GerarDetalhesNotaEntradaConferencia(relatorioRequest);
 
-            //var a = Encoding.ASCII.GetString(relatorio);
-            //var aa = Encoding.UTF8.GetBytes(a);
-
-            //var b = Encoding.UTF8.GetString(relatorio);
-            //var bb = Encoding.ASCII.GetBytes(b);
-
-            //bool e = relatorio == aa;
-
-            ////File.WriteAllBytes("Foo.txt", relatorio);
-
-            //using (Stream file = File.OpenWrite(@"C:\Users\Jonatas\Desktop\Dart\Furacao\here.pdf"))
-            //{
-            //    file.Write(relatorio, 0, relatorio.Length);
-            //}
-
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
 
