@@ -158,7 +158,7 @@
     function termoResponsabilidade() {
         var id = $(this).data("id");
 
-        $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=laser&acao=" + id, function () {
+        $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=1&acao=" + id, function () {
             $("#modalImpressoras").modal();
         });
     }
@@ -200,7 +200,7 @@ function imprimir(acao, id) {
                 PNotify.error({ text: result.Message });
             }
 
-            $("#btnFechar").click();
+            $('#modalImpressoras').modal('toggle');
         },
         error: function (data) {
             PNotify.error({ text: "Ocorreu um erro na impressão." });

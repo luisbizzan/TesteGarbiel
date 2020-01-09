@@ -9,7 +9,9 @@ using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace FWLog.Services.Services
 {
@@ -70,7 +72,7 @@ namespace FWLog.Services.Services
             {
                 query = query.Where(x => x.IdLote == request.Lote);
             }
-                       
+
             if (request.Nota.HasValue)
             {
                 query = query.Where(x => x.NotaFiscal.Numero == request.Nota);

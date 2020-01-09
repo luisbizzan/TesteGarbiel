@@ -5,14 +5,13 @@ namespace FWLog.Data.Models
     public enum ImpressaoItemEnum
     {
         RelatorioA4 = 1,
-        EtiquetaVolume = 2,
+        EtiquetaLote = 2,
         EtiquetaIndividual = 3,
-        EtiquetaPadrao = 4,
-        EtiquetaAvulso = 5,
-        EtiquetaRecebimento = 6,
-        EtiquetaEndereco = 7,
-        EtiquetaPicking = 8,
-        EtiquetaDevolucao = 9
+        EtiquetaAvulso = 4,        
+        EtiquetaRecebimento = 5,
+        EtiquetaEndereco = 6,        
+        EtiquetaDevolucao = 7,        
+        EtiquetaPersonalizada = 8
     }
 
     public class ImpressaoItem

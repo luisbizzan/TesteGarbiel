@@ -174,7 +174,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ModelState.AddModelError(nameof(model.EmpresasGrupos), "Selecione a empresa principal do usuário");
                 return errorView(null);
             }
-
+                      
             if (!ModelState.IsValid)
             {
                 return errorView(null);
@@ -358,6 +358,12 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Any())
             {
                 ModelState.AddModelError(nameof(model.EmpresasGrupos), Res.RequiredOnlyGroup);
+                return errorView();
+            }
+
+            if (!model.EmpresasGrupos.Any(w => w.IsEmpresaPrincipal))
+            {
+                ModelState.AddModelError(nameof(model.EmpresasGrupos), "Selecione a empresa principal do usuário.");
                 return errorView();
             }
 
