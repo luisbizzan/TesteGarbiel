@@ -531,12 +531,7 @@ function conferirNota() {
     });
 }
 
-
-<<<<<<< HEAD
 function validarConferenciaAutomatica() {
-=======
-function conferirAutomatico(id) {
->>>>>>> 16e9bce96453fae16bb13accda1852464feb8062
     var rtn = false;
 
     $.ajax({

@@ -819,6 +819,15 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
 
+            //Remove as peças já conferidas.
+            var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
+
+            foreach (var item in loteConferencia)
+            {
+                _uow.LoteConferenciaRepository.Delete(item);
+                _uow.SaveChanges();
+            }
+
             var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
 
             lote.IdLoteStatus = LoteStatusEnum.Conferencia;
@@ -828,7 +837,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 DateTime tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 1);
 
-                LoteConferencia loteConferencia = new LoteConferencia()
+                LoteConferencia loteConf = new LoteConferencia()
                 {
                     IdLote = lote.IdLote,
                     IdTipoConferencia = TipoConferenciaEnum.PorQuantidade,
@@ -840,7 +849,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     IdUsuarioConferente = usuario.UsuarioId
                 };
 
-                _uow.LoteConferenciaRepository.Add(loteConferencia);
+                _uow.LoteConferenciaRepository.Add(loteConf);
 
                 _uow.SaveChanges();
             }
@@ -911,13 +920,13 @@ namespace FWLog.Web.Backoffice.Controllers
                 _uow.SaveChanges();
             }
 
-            //Se o tipo da conferência for, o usuário não poderá informar a quantidade por caixa e quantidade de caixa.
-            //Sabendo disso, atribui 1 para os campos.
-            if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento)
-            {
-                model.QuantidadePorCaixa = 1;
-                model.QuantidadeCaixa = 1;
-            }
+            ////Se o tipo da conferência for, o usuário não poderá informar a quantidade por caixa e quantidade de caixa.
+            ////Sabendo disso, atribui 1 para os campos.
+            //if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento)
+            //{
+            //    model.QuantidadePorCaixa = 1;
+            //    model.QuantidadeCaixa = 1;
+            //}
 
             return View(model);
         }
@@ -1356,6 +1365,31 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Não foi possível registrar a conferência. Por favor, tente novamente!"
                 });
             }
+        }
+
+        [HttpPost]
+        public JsonResult ObterTipoConferencia()
+        {
+            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+
+            if (empresaConfig == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "",
+                    Data = "0"
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = empresaConfig.TipoConferencia.Descricao,
+                Data = empresaConfig.TipoConferencia.IdTipoConferencia.ToString()
+            });
+
+            
         }
 
         [HttpGet]
