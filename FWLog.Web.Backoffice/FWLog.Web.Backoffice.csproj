@@ -627,6 +627,9 @@
     <Content Include="Content\gentelella\custom.scss" />
     <Content Include="Content\vendors\bootstrap-select\bootstrap-select.css.map" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\furacao-web - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\furacao-web - ReadOnly - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\furacao-web - Web Deploy.pubxml" />
     <None Include="Scripts\jquery\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery\jquery-3.3.1.min.js" />

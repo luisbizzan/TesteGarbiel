@@ -60,6 +60,19 @@
                 validarDiferencaMultiploConferencia();
             }
         }
+
+        if (e.keyCode == 115) {
+            if ($tipoConferencia.val() != "Por Quantidade") {
+
+                $('#modalAcessoCoordenadorTipoConferencia').modal('show');
+
+                $('#MensagemTipoConferencia').text('Solicite a liberação do Coordenador para alterar o tipo de conferência.');
+
+                setTimeout(function () {
+                    $("#UsuarioTipoConferencia").focus();
+                }, 150);
+            }
+        }
     });
 
     onScan.attachTo($quantidadePorCaixa[0]);
@@ -133,8 +146,12 @@
         }
     });
 
+    debugger
     $quantidadePorCaixa.blur(function () {
-        $quantidadePorCaixa.css({ 'background': '#eee' });
+        if ($tipoConferencia != 'Por Quantidade') {
+            $quantidadePorCaixa.css({ 'background': '#eee' });
+        }
+        
     });
 
     $("#confirmarConferencia").click(function () {
@@ -178,6 +195,44 @@
                     $("#Senha").val('');
 
                     $referencia.focus();
+                }
+                else {
+                    PNotify.warning({ text: result.Message });
+                }
+            },
+            error: function (request, status, error) {
+                PNotify.warning({ text: result.Message });
+            }
+        });
+    });
+
+    $("#validarAcessoCoordenadorTipoConferencia").click(function () {
+        let usuario = $("#UsuarioTipoConferencia").val();
+        let senha = $("#SenhaTipoConferencia").val();
+
+        $.ajax({
+            url: HOST_URL + CONTROLLER_PATH + "ValidarAcessoCoordenadorConferencia",
+            cache: false,
+            global: false,
+            method: "POST",
+            data: {
+                usuario: usuario,
+                senha: senha
+            },
+            success: function (result) {
+                if (result.Success) {
+                    $("#IdTipoConferencia").val('1');
+                    $("#TipoConferencia").val('Por Quantidade');
+                    $("#QuantidadePorCaixa").attr("readonly", false); 
+                    $("#QuantidadeCaixa").attr("readonly", false);
+                    $("#QuantidadeCaixa").val('');
+
+                    $('#modalAcessoCoordenadorTipoConferencia').modal('toggle');
+
+                    $quantidadePorCaixa.focus();
+
+                    $("#UsuarioTipoConferencia").val('');
+                    $("#SenhaTipoConferencia").val('');
                 }
                 else {
                     PNotify.warning({ text: result.Message });
@@ -397,6 +452,9 @@ function resetarCamposConferencia(limpaReferencia = true) {
         $("#Referencia").val('');
     }
 
+    resetarTipoConferencia();
+
+
     $("#DescricaoReferencia").val('');
     $("#Embalagem").val('');
     $("#Unidade").val('');
@@ -407,5 +465,30 @@ function resetarCamposConferencia(limpaReferencia = true) {
     $("#Localizacao").val('');
     $("#QuantidadeNaoConferida").val('');
     $("#QuantidadeConferida").val('');
+
+    
+}
+
+function resetarTipoConferencia() {
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "ObterTipoConferencia",
+        cache: false,
+        global: false,
+        method: "POST",
+        success: function (result) {
+            if (result.Success) {
+                if (result.Message != 'Por Quantidade') {
+                    $("#IdTipoConferencia").val(result.Data);
+                    $("#TipoConferencia").val(result.Message);
+                    $("#QuantidadePorCaixa").attr("readonly", true);
+                    $("#QuantidadeCaixa").attr("readonly", true);
+                }
+            }
+        },
+        error: function (request, status, error) {
+            PNotify.error({ text: request.responseText });
+        }
+    });
 }
 

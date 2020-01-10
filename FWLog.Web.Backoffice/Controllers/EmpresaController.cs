@@ -183,7 +183,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 return View(model);
             }
 
-            model.CNPJConferenciaAutomatica = Regex.Replace(model.CNPJConferenciaAutomatica, @"[^\d]", string.Empty);
+            if (!string.IsNullOrWhiteSpace(model.CNPJConferenciaAutomatica))
+            {
+                model.CNPJConferenciaAutomatica = Regex.Replace(model.CNPJConferenciaAutomatica, @"[^\d]", string.Empty);
+            }
 
             EmpresaConfig empresaConfig = Mapper.Map<EmpresaConfig>(model);
 
