@@ -454,7 +454,7 @@ function RegistrarNotaFiscal() {
             if (result.Success) {
                 PNotify.success({ text: result.Message });
                 $(".close").click();
-                $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=zebra&acao=etqrecebimento&id=" + $("#IdNotaFiscal").val(), function () {
+                $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=5&acao=etqrecebimento&id=" + $("#IdNotaFiscal").val(), function () {
                     $("#modalImpressoras").modal();
                 });
                 $("#dataTable").DataTable().ajax.reload();
@@ -496,7 +496,7 @@ function conferirNota() {
         method: "POST",
         success: function (result) {
             if (result.Success) {
-                if (!conferirAutomatico()) {
+                if (!conferirAutomatico(id)) {
                     $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
                         $modal.modal();
                         $("#Referencia").focus();
@@ -513,7 +513,7 @@ function conferirNota() {
 }
 
 
-function conferirAutomatico() {
+function conferirAutomatico(id) {
     var rtn = false;
 
     $.ajax({
