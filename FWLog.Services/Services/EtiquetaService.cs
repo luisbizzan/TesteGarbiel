@@ -137,7 +137,7 @@ namespace FWLog.Services.Services
             {
                 var colunasImpressao = new List<CelulaEtiqueta>();
 
-                for (int c = 0; c <= etiquetasRestantes && c < CelulasEtiqueta_102x22.Count; c++)
+                for (int c = 0; etiquetasRestantes > 0 && c < CelulasEtiqueta_102x22.Count; c++)
                 {
                     colunasImpressao.Add(CelulasEtiqueta_102x22.ElementAt(c));
 
@@ -198,7 +198,7 @@ namespace FWLog.Services.Services
             {
                 var colunasImpressao = new List<CelulaEtiqueta>();
 
-                for (int c = 0; c <= etiquetasRestantes && c < CelulasEtiqueta_102x22.Count; c++)
+                for (int c = 0; etiquetasRestantes > 0 && c < CelulasEtiqueta_102x22.Count; c++)
                 {
                     colunasImpressao.Add(CelulasEtiqueta_102x22.ElementAt(c));
 
@@ -257,7 +257,7 @@ namespace FWLog.Services.Services
             {
                 var colunasImpressao = new List<CelulaEtiqueta>();
 
-                for (int c = 0; c <= etiquetasRestantes && c < CelulasEtiqueta_102x22.Count; c++)
+                for (int c = 0; etiquetasRestantes > 0 && c < CelulasEtiqueta_102x22.Count; c++)
                 {
                     colunasImpressao.Add(CelulasEtiqueta_102x22.ElementAt(c));
 

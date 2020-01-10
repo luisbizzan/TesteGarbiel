@@ -8,8 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@ViewBag.Title</title>
     <script>
-        var HOST_URL = "@HtmlRequestHelper.Host()"
-        var CONTROLLER_PATH = "@( HtmlRequestHelper.Controller() + '/')"
+        var HOST_URL = "@HtmlRequestHelper.Host()";
+        var CONTROLLER_PATH = "@( HtmlRequestHelper.Controller() + '/')";
+
+        Object.defineProperty(String, 'empty', {
+            get: function () {
+                return new String().toString();
+            }
+        });
     </script>
     @Styles.Render("~/style-bundles/vendors/nprogress")
     @Styles.Render("~/style-bundles/vendors/dropzone")
@@ -25,10 +31,10 @@
     <div class="container body">
         <div class="main_container">
             @if (User.Identity.IsAuthenticated)
-        {
-            @Html.Partial("_Sidebar")
-            @Html.Partial("_Header")
-    }
+            {
+                @Html.Partial("_Sidebar")
+                @Html.Partial("_Header")
+            }
             <div class="right_col" role="main" style="height: 100%">
                 <div class="clearfix"></div>
                 @RenderBody()
@@ -40,7 +46,7 @@
                 <div class="clearfix"></div>
             </footer>
         </div>
-    
+
     </div>
 
     @Html.Partial("_JavaScriptGlobalResources")
@@ -58,9 +64,10 @@
     @Scripts.Render("~/script-bundles/vendors/bootstrap-select")
     @Scripts.Render("~/script-bundles/vendors/cropper")
     @Scripts.Render("~/script-bundles/vendors/autocomplete")
+    @Scripts.Render("~/script-bundles/vendors/onScan")
     @Html.Partial("_ScriptGlobalOptions")
     @Scripts.Render("~/script-bundles/dart")
-    @Html.Partial("_Notify")    
+    @Html.Partial("_Notify")
     @RenderSection("Scripts", required: false)
 </body>
 </html>

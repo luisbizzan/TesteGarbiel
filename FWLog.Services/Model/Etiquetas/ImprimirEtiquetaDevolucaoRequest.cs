@@ -6,6 +6,6 @@
         public string Linha2 { get; set; }
         public string Linha3 { get; set; }
         public int QuantidadeEtiquetas { get; set; } = 1;
-        public int IdImpressora { get; set; }
+        public long IdImpressora { get; set; }
     }
 }

@@ -2,6 +2,8 @@
 @using FWLog.AspNet.Identity
 
 @{
+    /**/
+
     ViewBag.Title = "Recebimento de Notas Fiscais";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -141,11 +143,13 @@
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.TempoInicial)
-                    @Html.TextBoxFor(m => m.Filter.TempoInicial, new { @class = "form-control", data_field = "TempoInicial" })
+                    @Html.TextBoxFor(m => m.Filter.TempoInicial, new { @class = "form-control hourMinute validateTime", data_field = "TempoInicial" })
+                    @Html.ValidationMessageFor(m => m.Filter.TempoInicial)
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.TempoFinal)
-                    @Html.TextBoxFor(m => m.Filter.TempoFinal, new { @class = "form-control", data_field = "TempoFinal" })
+                    @Html.TextBoxFor(m => m.Filter.TempoFinal, new { @class = "form-control hourMinute validateTime", data_field = "TempoFinal" })
+                    @Html.ValidationMessageFor(m => m.Filter.TempoFinal)
                 </div>
             </div>
             <div class="row">
@@ -192,7 +196,7 @@
     </div>
 </div>
 <div class="modal" id="modalEtiquetaConferencia"></div>
-<div class="modal" id="modalImpressoras"></div>
+<div class="modal fade" id="modalImpressoras" data-backdrop="static"></div>
 <div class="modal" id="modalRegistroRecebimento" data-backdrop="static"></div>
 <div class="modal" id="modalDetalhesEntradaConferencia"></div>
 <div class="modal" id="modalFornecedor"></div>
@@ -201,3 +205,37 @@
 <div class="modal" id="modalUsuarioConferencia" data-toggle="modal" data-myvalue="2"></div>
 <div class="modal" id="modalDivergencia" data-backdrop="static"></div>
 <div class="modal" id="modalProcessamentoTratativaDivergencia" data-backdrop="static"></div>
+
+<div class="modal fade" id="modalAcessoCoordenador" data-backdrop="static">
+    <div class="vertical-alignment-helper">
+        <div class="modal-dialog vertical-align-center">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Validar Acesso</h4>
+                </div><div class="container"></div>
+                <div class="modal-body" style="overflow: auto; max-height: calc(90vh - 40px);">
+                    <div class="col-xs-12">
+                        <p id="Mensagem"></p>
+                    </div>
+                    <br />
+                    <div class="col-xs-12 col-sm-6 col-lg-6">
+                        <div class="form-group">
+                            <label>Usuário</label>
+                            <input id="Usuario" name="Usuario" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-lg-6">
+                        <div class="form-group">
+                            <label>Senha</label>
+                            <input id="Senha" name="Senha" type="password" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-default" data-dismiss="modal">Cancelar</a>
+                    <a id="validarAcessoCoordenador" class="btn btn-primary">Confirmar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

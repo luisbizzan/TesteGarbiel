@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace FWLog.Services.Relatorio
 {
@@ -188,12 +187,15 @@ namespace FWLog.Services.Relatorio
                 Document = _document
             };
 
-            pdfRenderer.RenderDocument();
-
-            using (var stream = new MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
-                pdfRenderer.PdfDocument.Save(stream, false);
-                return stream.ToArray();
+                pdfRenderer.RenderDocument();
+                pdfRenderer.Save(ms, false);
+
+                byte[] buffer = ms.GetBuffer();
+                ms.Flush();
+
+                return buffer;
             }
         }
 

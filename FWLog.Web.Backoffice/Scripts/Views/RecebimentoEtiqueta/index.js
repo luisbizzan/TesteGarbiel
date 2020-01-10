@@ -13,7 +13,7 @@
             data: dados,
             success: function (result) {
                 if (result.Success) {
-                    $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=zebra", function () {
+                    $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=2", function () {
                         $("#modalImpressoras").modal();
                     });
                 } else {
@@ -30,7 +30,7 @@
 
 
 function imprimir(acao, id) {
-    var idImpressora = $("input[name='IdImpressora']:checked").val();
+    var idImpressora = $("#IdImpressora").val();
 
     var dados = $("#recebimentoEtiqueta").serializeArray();
     dados.push({ name: "IdImpressora", value: idImpressora });

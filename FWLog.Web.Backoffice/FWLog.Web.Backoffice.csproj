@@ -456,6 +456,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Scripts\dart\HttpService.js" />
     <Content Include="Scripts\dart\waitingDialog.js" />
+    <Content Include="Scripts\vendors\onScan\onscan.js" />
+    <Content Include="Scripts\vendors\onScan\onscan.min.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoEtiquetagem.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoProducao.js" />
@@ -539,11 +541,13 @@
     <Content Include="Views\BORecebimentoNota\RelatorioResumoEtiquetagem.cshtml" />
     <Content Include="Views\BORecebimentoNota\ResumoProcessamentoDivergencia.cshtml" />
     <Content Include="Views\BOQuarentena\Historico.cshtml" />
+    <Content Include="Views\BORecebimentoNota\AcessoCoordenador.cshtml" />
     <Content Include="Views\PerfilImpressora\Cadastrar.cshtml" />
     <Content Include="Views\PerfilImpressora\Detalhes.cshtml" />
     <Content Include="Views\PerfilImpressora\Editar.cshtml" />
     <Content Include="Views\PerfilImpressora\Index.cshtml" />
     <Content Include="Views\PerfilImpressora\_ListaImpressoras.cshtml" />
+    <Content Include="Views\Shared\_MudarPerfilImpressora.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

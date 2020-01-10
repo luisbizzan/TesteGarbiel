@@ -41,9 +41,13 @@ namespace FWLog.Data.Models
         [StringLength(500)]
         public string ObservacaoDivergencia { get; set; }
 
-        //[Required]
-        //[Log(DisplayName = "Ganho de Estoque movimentado")]
-        //public bool GanhoEstoqueEfetuado { get; set; }
+        [Log(DisplayName = "Data Inicial da Conferência")]
+        public DateTime? DataInicioConferencia { get; set; }
+
+        [Log(DisplayName = "Data Final da Conferência")]
+        public DateTime? DataFinalConferencia { get; set; }
+
+        public long? TempoTotalConferencia { get; set; }
 
         [ForeignKey(nameof(IdLoteStatus))]
         public virtual LoteStatus LoteStatus { get; set; }

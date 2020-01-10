@@ -83,7 +83,9 @@ namespace FWLog.AspNet.Identity
             public const string RelatorioRastreioPeca = "RelatorioRecebimentoRastreioPeca";
             public const string RelatorioResumoEtiquetagem = "RelatorioResumoEtiquetagem";
             public const string ListarResumoProducao = "ListarResumoProducao";
+            public const string PermitirDiferencaMultiploConferencia = "PermitirDiferencaMultiploConferencia";
             public const string ConferirLote = "ConferirLote";
+            public const string ConferirLoteAutomatico = "ConferirLoteAutomatico";
 
             public Recebimento() : base(Display.FromString("Recebimento de Notas Fiscais"))
             {
@@ -93,7 +95,9 @@ namespace FWLog.AspNet.Identity
                 Register(RelatorioRastreioPeca, Display.FromString("Relatório Rastreio de Peça"));
                 Register(RelatorioResumoEtiquetagem, Display.FromString("Relatório Resumo Etiquetagem"));
                 Register(ListarResumoProducao, Display.FromString("Listar Resumo Produção"));
+                Register(PermitirDiferencaMultiploConferencia, Display.FromString("Permitir Diferença de Múltiplo na Conferência"));
                 Register(ConferirLote, Display.FromString("Conferir Lote"));
+                Register(ConferirLoteAutomatico, Display.FromString("Conferir Lote Automático"));
             }
         }
 
@@ -205,12 +209,12 @@ namespace FWLog.AspNet.Identity
             public const string Editar = "PerfilImpressoraEdit";
             public const string Excluir = "PerfilImpressoraDelete";
 
-            public PerfilImpressora() : base(Display.FromResource("Perfil Impressora"))
+            public PerfilImpressora() : base(Display.FromString("Perfil Impressora"))
             {
-                Register(Listar, Display.FromResource("Listar Perfil de Impressoras"));
-                Register(Criar, Display.FromResource("Criar Perfil de Impressora"));
-                Register(Editar, Display.FromResource("Editar Perfil de Impressora"));
-                Register(Excluir, Display.FromResource("Excluir Perfil de Impressora"));
+                Register(Listar, Display.FromString("Listar Perfil de Impressoras"));
+                Register(Criar, Display.FromString("Criar Perfil de Impressora"));
+                Register(Editar, Display.FromString("Editar Perfil de Impressora"));
+                Register(Excluir, Display.FromString("Excluir Perfil de Impressora"));
             }
         }
     }

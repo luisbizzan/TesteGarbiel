@@ -109,6 +109,11 @@ namespace FWLog.Web.Backoffice
             bundles.Add(new ScriptBundle("~/script-bundles/vendors/autocomplete").Include(
                 "~/Scripts/vendors/devbridge-autocomplete/jquery.autocomplete.js"
             ));
+
+            // OnScan
+            bundles.Add(new ScriptBundle("~/script-bundles/vendors/onscan").Include(
+               "~/Scripts/vendors/onScan/onscan.min.js"
+            ));
         }
 
         private static void RegisterStyles(BundleCollection bundles)
