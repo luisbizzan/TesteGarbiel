@@ -5,7 +5,7 @@
     var $quantidadeCaixa = $("#QuantidadeCaixa");
     var $multiplo = $("#Multiplo");
     var $tipoConferencia = $("#TipoConferencia");
-    var listaReferencia = new Array; 
+    var listaReferencia = new Array;
 
     $('.onlyNumber').mask('0#');
 
@@ -18,7 +18,7 @@
         }
     });
 
-	$quantidadePorCaixa.on('keydown', function (e) {
+    $quantidadePorCaixa.on('keydown', function (e) {
         if (e.keyCode == 9 && !e.target.value) {
             return false;
         }
@@ -47,26 +47,27 @@
         }
     });
 
-    $('#modalRegistroConferencia').keydown(function (e) {
+    $('#modalRegistroConferencia').on('keydown', function (e) {
         if (e.keyCode == 13 && permiteRegistrar) {
             if ($tipoConferencia.val() == "Por Quantidade") {
                 validarDiferencaMultiploConferencia();
             }
         }
 
-        if (e.keyCode == 27 && permiteRegistrar) {
+        //if (e.keyCode == 27 && permiteRegistrar) {
+        if (e.keyCode == 27) {
             if ($tipoConferencia.val() != "Por Quantidade") {
                 validarDiferencaMultiploConferencia();
             }
         }
-    });    
+    });
 
     onScan.attachTo($quantidadePorCaixa[0]);
-    
+
     $quantidadePorCaixa[0].addEventListener('scan', function (sScancode, iQuatity) {
         if ($tipoConferencia.val() != "Por Quantidade") {
             if (listaReferencia[0] != sScancode.detail.scanCode) {
-                PNotify.info({ text: 'Referência inválida, não corresponde a referência iniciada!' });
+                PNotify.warning({ text: 'Referência inválida, não corresponde a referência iniciada!' });
             }
             else {
                 //Altera a cor de fundo do campo para dar um destaque.
@@ -101,19 +102,19 @@
     $referencia.focus(function () {
         permiteRegistrar = false;
     });
-    
+
     $referencia.on('keypress keydown', function (e) {
         if (e.keyCode == 13) {
             if (!e.target.value) {
-                PNotify.info({ text: 'Referência está vazio. Por favor, informe o código de barras ou a referência!' });
+                PNotify.warning({ text: 'Referência está vazio. Por favor, informe o código de barras ou a referência!' });
 
                 $referencia.focus();
 
                 return false;
             } else {
-                debugger;
-                $.when(carregarDadosReferenciaConferencia()).promise(
+                $.when(carregarDadosReferenciaConferencia()).then(function () {
                     listaReferencia.push($referencia.val())
+                }
                 );
             }
         } else {
@@ -179,7 +180,7 @@
                     $referencia.focus();
                 }
                 else {
-                    PNotify.info({ text: result.Message });
+                    PNotify.warning({ text: result.Message });
                 }
             },
             error: function (request, status, error) {
@@ -198,6 +199,7 @@
         $.ajax({
             url: HOST_URL + CONTROLLER_PATH + "ObterDadosReferenciaConferencia",
             global: false,
+            async: false,
             cache: false,
             method: "POST",
             data: {
@@ -216,6 +218,7 @@
                     $("#QuantidadeNaoConferida").val(model.QuantidadeNaoConferida);
                     $("#QuantidadeConferida").val(model.QuantidadeConferida);
                     $("#InicioConferencia").val(model.InicioConferencia);
+                    $("#QuantidadePorCaixa").val(model.quantidadePorCaixa);
                     $("#QuantidadeCaixa").val(model.QuantidadeCaixa);
 
                     if (model.EnviarPicking) {
@@ -231,7 +234,7 @@
 
                     permiteRegistrar = true;
                 } else {
-                    PNotify.info({ text: result.Message });
+                    PNotify.warning({ text: result.Message });
 
                     overlay(false);
 
@@ -241,7 +244,7 @@
                 }
             },
             error: function () {
-                PNotify.info({ text: 'Não foi possível obter dados. Por favor, tente novamente!' });
+                PNotify.warning({ text: 'Não foi possível obter dados. Por favor, tente novamente!' });
 
                 overlay(false);
 
@@ -252,47 +255,52 @@
         });
     }
 
-function validarDiferencaMultiploConferencia() {
-    let referencia = $("#Referencia").val();
-    let multiplo = $("#Multiplo").val();
-    let quantidadePorCaixa = $("#QuantidadePorCaixa").val();
-    let quantidadeCaixa = $("#QuantidadeCaixa").val();
-    let inicioConferencia = $("#InicioConferencia").val();
 
-    if (!multiplo)
-        multiplo = 0;
+    function validarDiferencaMultiploConferencia() {
+        let referencia = $("#Referencia").val();
+        let multiplo = $("#Multiplo").val();
+        let quantidadePorCaixa = $("#QuantidadePorCaixa").val();
+        let quantidadeCaixa = $("#QuantidadeCaixa").val();
+        let inicioConferencia = $("#InicioConferencia").val();
+        let idTipoConferencia = $("#IdTipoConferencia").val();
 
-    $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "VerificarDiferencaMultiploConferencia",
-        cache: false,
-        global: false,
-        method: "POST",
-        data: {
-            codigoBarrasOuReferencia: referencia,
-            quantidadePorCaixa: quantidadePorCaixa,
-            multiplo: multiplo
-        },
-        success: function (result) {
-            if (result.Success) {
-                
-                $('#modalAcessoCoordenador').modal('show');
+        if (!multiplo)
+            multiplo = 0;
 
-                $('#Mensagem').text(result.Message);
+        if (!quantidadePorCaixa)
+            quantidadePorCaixa = 0;
 
-                setTimeout(function () {
-                    $("#Usuario").focus();
-                }, 150);
-            } else {
-                registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo);
+        $.ajax({
+            url: HOST_URL + CONTROLLER_PATH + "VerificarDiferencaMultiploConferencia",
+            cache: false,
+            global: false,
+            method: "POST",
+            data: {
+                codigoBarrasOuReferencia: referencia,
+                quantidadePorCaixa: quantidadePorCaixa,
+                multiplo: multiplo
+            },
+            success: function (result) {
+                if (result.Success) {
+
+                    $('#modalAcessoCoordenador').modal('show');
+
+                    $('#Mensagem').text(result.Message);
+
+                    setTimeout(function () {
+                        $("#Usuario").focus();
+                    }, 150);
+                } else {
+                    registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia);
+                }
+            },
+            error: function (request, status, error) {
+                PNotify.error({ text: request.responseText });
             }
-        },
-        error: function (request, status, error) {
-            PNotify.info({ text: request.responseText });
-        }
-    });
-}
+        });
+    }
 
-function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo) {
+    function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia) {
         overlay(true);
 
         if (quantidadePorCaixa === '')
@@ -312,7 +320,8 @@ function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, i
                 quantidadePorCaixa: quantidadePorCaixa,
                 quantidadeCaixa: quantidadeCaixa,
                 inicioConferencia: inicioConferencia,
-                multiplo: multiplo
+                multiplo: multiplo,
+                idTipoConferencia: idTipoConferencia
             },
             success: function (result) {
                 if (result.Success) {
@@ -332,7 +341,7 @@ function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, i
                     $referencia.focus();
 
                 } else {
-                    PNotify.info({ text: result.Message });
+                    PNotify.warning({ text: result.Message });
 
                     overlay(false);
 
@@ -387,8 +396,8 @@ function resetarCamposConferencia(limpaReferencia = true) {
     if (!!limpaReferencia) {
         $("#Referencia").val('');
     }
-	
-	$("#DescricaoReferencia").val('');
+
+    $("#DescricaoReferencia").val('');
     $("#Embalagem").val('');
     $("#Unidade").val('');
     $("#Multiplo").val('');

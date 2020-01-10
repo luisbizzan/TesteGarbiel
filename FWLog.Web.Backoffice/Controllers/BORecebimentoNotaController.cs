@@ -1003,6 +1003,16 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
+            //Valida se o múltilo é igual ou menor 0.
+            if (multiplo < 0 || multiplo == 0)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Múltiplo inválido. Por favor, tente novamente!"
+                });
+            }
+
             //Verifica se o múltiplo é igual.
             if (referencia.MultiploVenda == multiplo)
             {
@@ -1068,7 +1078,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
-        public JsonResult RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo)
+        public JsonResult RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo, int idTipoConferencia)
         {
             try
             {
@@ -1142,27 +1152,17 @@ namespace FWLog.Web.Backoffice.Controllers
                 //Captura o usuário novamente.
                 var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
 
-                var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+                var tipoConferencia = (TipoConferenciaEnum)idTipoConferencia;
 
-                //Valida as configurações da empresa.
-                if (empresaConfig == null)
+                //Valida se o campo quantidade de caixa é igual a 1 quando o tipo da conferência é 100%.
+                //Isso é feito porque na conferência 100% a quantidade de caixa não pode ser maior que 1.
+                if (tipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento
+                    && quantidadeCaixa != 1)
                 {
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "As configurações da empresa não foram encontradas. Por favor, tente novamente!"
-                    });
-                }
-
-                //Valida se os campos quantidade por caixa e quantidade de caixa são iguais a 1 quando o tipo da conferência é 100%.
-                //Isso é feito porque na conferência 100% a quantidade por caixa e quantidade de caixa não podem ser maior que 1.
-                if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento
-                    && quantidadePorCaixa != 1)
-                {
-                    return Json(new AjaxGenericResultModel
-                    {
-                        Success = false,
-                        Message = "Neste tipo de conferência, não é permitido um valor diferente de 1 no campo quantidade por caixa. Por favor, tente novamente!"
+                        Message = "Neste tipo de conferência, não é permitido um valor diferente de 1 no campo quantidade de caixa. Por favor, tente novamente!"
                     });
                 }
 
@@ -1176,13 +1176,13 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                //Valida se o múltilo é igual a 0.
-                if (multiplo == 0)
+                //Valida se o múltilo é igual ou menor 0.
+                if (multiplo < 0 || multiplo == 0)
                 {
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "O campo múltiplo não pode ser 0. Por favor, tente novamente!"
+                        Message = "Múltiplo inválido. Por favor, tente novamente!"
                     });
                 }
 
@@ -1215,7 +1215,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 LoteConferencia loteConferencia = new LoteConferencia()
                 {
                     IdLote = lote.IdLote,
-                    IdTipoConferencia = empresaConfig.IdTipoConferencia.Value,
+                    IdTipoConferencia = tipoConferencia,
                     IdProduto = produto.IdProduto,
                     Quantidade = quantidadePorCaixa > 0 ? quantidadePorCaixa * quantidadeCaixa : quantidadePorCaixa,
                     DataHoraInicio = dataHoraInicio,
