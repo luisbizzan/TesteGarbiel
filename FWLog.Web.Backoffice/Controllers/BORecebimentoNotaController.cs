@@ -176,18 +176,18 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 long hora = Convert.ToInt32(model.CustomFilter.TempoInicial.Substring(0, 2));
                 long minutos = Convert.ToInt32(model.CustomFilter.TempoInicial.Substring(3, 2));
-                long totalSegundos = (hora * 3600) + (minutos*60);
+                long totalSegundos = (hora * 3600) + (minutos * 60);
 
-                query = query.Where(x =>x.TempoTotalConferencia >= totalSegundos);
+                query = query.Where(x => x.TempoTotalConferencia >= totalSegundos);
             }
 
             if (!string.IsNullOrEmpty(model.CustomFilter.TempoFinal))
             {
-                long hora = Convert.ToInt32(model.CustomFilter.TempoInicial.Substring(0, 2));
-                long minutos = Convert.ToInt32(model.CustomFilter.TempoInicial.Substring(3, 2));
+                long hora = Convert.ToInt32(model.CustomFilter.TempoFinal.Substring(0, 2));
+                long minutos = Convert.ToInt32(model.CustomFilter.TempoFinal.Substring(3, 2));
                 long totalSegundos = (hora * 3600) + (minutos * 60);
 
-                query = query.Where(x => x.TempoTotalConferencia >= totalSegundos);
+                query = query.Where(x => x.TempoTotalConferencia <= totalSegundos);
             }
 
             if (query.Any())
@@ -678,7 +678,7 @@ namespace FWLog.Web.Backoffice.Controllers
                             lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
                             lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
                         {
-                            model.TempoTotalConferencia = TimeSpan.FromSeconds(lote.TempoTotalConferencia).ToString("h'h 'm'm 's's'");
+                            model.TempoTotalConferencia = lote.TempoTotalConferencia.HasValue ? TimeSpan.FromSeconds(lote.TempoTotalConferencia.Value).ToString("h'h 'm'm 's's'") : string.Empty;
                         }
                     }
 
@@ -792,9 +792,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
-        public JsonResult ValidarConferenciaAutomatica(long id)
+        public void ValidarConferenciaAutomatica(long id)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
 
         [HttpGet]
@@ -1247,7 +1247,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     Linha1 = lote.IdLote.ToString().PadLeft(10, '0'),
                     Linha2 = produto.Referencia,
                     Linha3 = "PC.A+",
-                    IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(9).IdImpressaoItem).First().Id
+                    IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
                 };
 
                 _etiquetaService.ImprimirEtiquetaDevolucao(requestPecasMais);
