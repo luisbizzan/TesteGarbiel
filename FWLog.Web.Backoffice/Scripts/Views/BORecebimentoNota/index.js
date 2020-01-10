@@ -496,10 +496,29 @@ function conferirNota() {
         method: "POST",
         success: function (result) {
             if (result.Success) {
-                if (!conferirAutomatico(id)) {
+                if (!validarConferenciaAutomatica()) {
                     $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
                         $modal.modal();
                         $("#Referencia").focus();
+                    });
+                }
+                else {
+                    $.ajax({
+                        url: HOST_URL + CONTROLLER_PATH + "RegistrarConferenciaAutomatica/" + id,
+                        cache: false,
+                        async: false,
+                        method: "POST",
+                        success: function (result) {
+                            if (result.Success) {
+                                PNotify.success({ text: result.Message });
+                            }
+                            else {
+                                PNotify.warning({ text: result.Message });
+                            }
+                        },
+                        error: function (request, status, error) {
+                            PNotify.error({ text: request.responseText });
+                        }
                     });
                 }
             } else {
@@ -507,29 +526,22 @@ function conferirNota() {
             }
         },
         error: function (request, status, error) {
-            PNotify.info({ text: request.responseText });
+            PNotify.error({ text: request.responseText });
         }
     });
 }
 
-
-function conferirAutomatico(id) {
+function validarConferenciaAutomatica() {
     var rtn = false;
 
     $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "ValidarConferenciaAutomatica/" + id,
+        url: HOST_URL + CONTROLLER_PATH + "ValidarConferenciaAutomatica/",
         cache: false,
         async: false,
         method: "POST",
         success: function (result) {
             if (result.Success) {
-                if (result.Data) {
-                    rtn = result.Data;
-
-                    PNotify.success({ text: result.Message });
-                }
-            } else {
-                PNotify.info({ text: result.Message });
+                rtn = true;
             }
         },
         error: function (request, status, error) {
