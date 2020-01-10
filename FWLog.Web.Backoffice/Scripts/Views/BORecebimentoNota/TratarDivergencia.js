@@ -27,7 +27,6 @@
         if (quantidadeMenos !== "") {
             if (quantidadeNota - quantidadeMenos < 0) {
                 PNotify.error({ text: "A quantidade a MENOS não pode maior que o total da nota." });
-                $(this).focus();
             }
 
             $(this).css("border-color", "");
