@@ -792,10 +792,93 @@ namespace FWLog.Web.Backoffice.Controllers
 
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
-        public void ValidarConferenciaAutomatica(long id)
+        public async Task<JsonResult> ValidarConferenciaAutomatica()
         {
-            // throw new NotImplementedException();
+            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+
+            bool conferenciaAutomatica = false;
+
+            if (empresaConfig != null)
+            {
+                if (!String.IsNullOrEmpty(empresaConfig.CNPJConferenciaAutomatica))
+                {
+                    conferenciaAutomatica = true;
+                }
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = conferenciaAutomatica
+            });
+		}
+
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
+        public async Task<JsonResult> RegistrarConferenciaAutomatica(long id)
+        {
+            var notaFiscalItens = _uow.NotaFiscalItemRepository.ObterItens(id);
+
+            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+
+            //Remove as peças já conferidas.
+            var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
+
+            foreach (var item in loteConferencia)
+            {
+                _uow.LoteConferenciaRepository.Delete(item);
+                _uow.SaveChanges();
+            }
+
+            var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
+
+            lote.IdLoteStatus = LoteStatusEnum.Conferencia;
+            _uow.LoteRepository.Update(lote);
+
+            foreach (var item in notaFiscalItens)
+            {
+                DateTime tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 1);
+
+                LoteConferencia loteConf = new LoteConferencia()
+                {
+                    IdLote = lote.IdLote,
+                    IdTipoConferencia = TipoConferenciaEnum.PorQuantidade,
+                    IdProduto = item.IdProduto,
+                    Quantidade = item.Quantidade,
+                    DataHoraInicio = DateTime.Now,
+                    DataHoraFim = DateTime.Now,
+                    Tempo = tempo,
+                    IdUsuarioConferente = usuario.UsuarioId
+                };
+
+                _uow.LoteConferenciaRepository.Add(loteConf);
+
+                _uow.SaveChanges();
+            }
+
+            try
+            {
+                await _loteService.FinalizarConferencia(lote.IdLote, usuario.UsuarioId, IdEmpresa).ConfigureAwait(false);
+
+                lote.IdLoteStatus = LoteStatusEnum.Finalizado;
+                _uow.LoteRepository.Update(lote);
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = e is BusinessException ? e.Message : "Não foi possível comunicar a finalização da conferência com o Sankhya."
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = "Conferência finalizada com sucesso."
+            });
         }
+
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
@@ -837,13 +920,13 @@ namespace FWLog.Web.Backoffice.Controllers
                 _uow.SaveChanges();
             }
 
-            //Se o tipo da conferência for, o usuário não poderá informar a quantidade por caixa e quantidade de caixa.
-            //Sabendo disso, atribui 1 para os campos.
-            if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento)
-            {
-                model.QuantidadePorCaixa = 1;
-                model.QuantidadeCaixa = 1;
-            }
+            ////Se o tipo da conferência for, o usuário não poderá informar a quantidade por caixa e quantidade de caixa.
+            ////Sabendo disso, atribui 1 para os campos.
+            //if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento)
+            //{
+            //    model.QuantidadePorCaixa = 1;
+            //    model.QuantidadeCaixa = 1;
+            //}
 
             return View(model);
         }
@@ -1282,6 +1365,31 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Não foi possível registrar a conferência. Por favor, tente novamente!"
                 });
             }
+        }
+
+        [HttpPost]
+        public JsonResult ObterTipoConferencia()
+        {
+            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+
+            if (empresaConfig == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "",
+                    Data = "0"
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = empresaConfig.TipoConferencia.Descricao,
+                Data = empresaConfig.TipoConferencia.IdTipoConferencia.ToString()
+            });
+
+            
         }
 
         [HttpGet]
