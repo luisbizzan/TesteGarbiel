@@ -792,10 +792,84 @@ namespace FWLog.Web.Backoffice.Controllers
 
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
-        public JsonResult ValidarConferenciaAutomatica(long id)
+        public async Task<JsonResult> ValidarConferenciaAutomatica()
         {
-            throw new NotImplementedException();
+            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+
+            bool conferenciaAutomatica = false;
+
+            if (empresaConfig != null)
+            {
+                if (!String.IsNullOrEmpty(empresaConfig.CNPJConferenciaAutomatica))
+                {
+                    conferenciaAutomatica = true;
+                }
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = conferenciaAutomatica
+            });
         }
+
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
+        public async Task<JsonResult> RegistrarConferenciaAutomatica(long id)
+        {
+            var notaFiscalItens = _uow.NotaFiscalItemRepository.ObterItens(id);
+
+            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+
+            var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
+
+            lote.IdLoteStatus = LoteStatusEnum.Conferencia;
+            _uow.LoteRepository.Update(lote);
+
+            foreach (var item in notaFiscalItens)
+            {
+                DateTime tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 1);
+
+                LoteConferencia loteConferencia = new LoteConferencia()
+                {
+                    IdLote = lote.IdLote,
+                    IdTipoConferencia = TipoConferenciaEnum.PorQuantidade,
+                    IdProduto = item.IdProduto,
+                    Quantidade = item.Quantidade,
+                    DataHoraInicio = DateTime.Now,
+                    DataHoraFim = DateTime.Now,
+                    Tempo = tempo,
+                    IdUsuarioConferente = usuario.UsuarioId
+                };
+
+                _uow.LoteConferenciaRepository.Add(loteConferencia);
+
+                _uow.SaveChanges();
+            }
+
+            try
+            {
+                await _loteService.FinalizarConferencia(lote.IdLote, usuario.UsuarioId, IdEmpresa).ConfigureAwait(false);
+
+                lote.IdLoteStatus = LoteStatusEnum.Finalizado;
+                _uow.LoteRepository.Update(lote);
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = e is BusinessException ? e.Message : "Não foi possível comunicar a finalização da conferência com o Sankhya."
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = "Conferência finalizada com sucesso."
+            });
+        }
+
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
