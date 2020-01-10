@@ -7,7 +7,7 @@
         public int QuantidadeEtiquetas { get; set; }
         public int QuantidadePorCaixa { get; set; }
         public string Usuario { get; set; }
-        public int IdImpressora { get; set; }
+        public long IdImpressora { get; set; }
         public long IdEmpresa { get; set; }
         public decimal? Multiplo { get; set; }
     }

@@ -148,6 +148,10 @@ namespace FWLog.Services.Services
                 loteDivergencias.Add(divergencia);
             }
 
+            var tempoTotal = new TimeSpan(0, 0, 0);
+            loteConferencias.ForEach(f => { tempoTotal = tempoTotal.Add(new TimeSpan(f.Tempo.Hour, f.Tempo.Minute, f.Tempo.Second)); });
+            lote.TempoTotalConferencia = Convert.ToInt64(tempoTotal.TotalSeconds);
+
             NotaFiscalStatusEnum notaStatus;
             LoteStatusEnum loteStatus;
 
@@ -170,6 +174,7 @@ namespace FWLog.Services.Services
             using (TransactionScope transactionScope = _uow.CreateTransactionScope())
             {
                 lote.IdLoteStatus = loteStatus;
+                lote.DataFinalConferencia = DateTime.Now;
                 notafiscal.IdNotaFiscalStatus = notaStatus;
 
                 _uow.LoteConferenciaRepository.AddRange(loteNaoConferido);

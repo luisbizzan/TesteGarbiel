@@ -12,6 +12,24 @@
             onConfirm: confirmMudarEmpresa
         });
     });
+
+    $('[data-toggle="tooltip"]').on('click', function () {
+        $(this).tooltip('hide')
+    });
+
+    $('#ddlPerfilImpressora').change(function (e) {
+        var valor = e.target.value;
+
+        $.ajax({
+            type: "POST",
+            url: HOST_URL + "PerfilImpressora/DefinePerfilImpressoraSessao",
+            data: { idPerfil: valor }
+        });
+    });
+
+    $('[data-toggle="tooltip"]').tooltip({
+        trigger: 'hover'
+    });
 });
 
 var cancelMudarEmpresa = BuscarIdEmpresa;

@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
@@ -78,8 +79,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 return;
             }
 
-            var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
-
             cookie = cookie ?? new HttpCookie(EmpresaCookie.CookieName);
 
             cookie.Values[EmpresaCookie.IdEmpresa] = idEmpresa.ToString();
@@ -141,5 +140,48 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
+        protected long IdPerfilImpressora
+        {
+            get
+            {
+                HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName] ?? new HttpCookie(EmpresaCookie.CookieName) { Expires = DateTime.MaxValue };
+
+                var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
+
+                if (!long.TryParse(cookie.Values[EmpresaCookie.PerfilImpressora], out long idPerfilImpressora))
+                {
+                    idPerfilImpressora = PerfilImpressoraPadrao(cookie, uow);
+                }
+                else
+                {
+                    bool perfilDaEmpresaSelecionada = uow.PerfilImpressoraRepository.RetornarAtivas().Any(x => x.IdPerfilImpressora == idPerfilImpressora && x.IdEmpresa == IdEmpresa);
+
+                    if (!perfilDaEmpresaSelecionada)
+                    {
+                        idPerfilImpressora = PerfilImpressoraPadrao(cookie, uow);
+                    }
+                }
+
+                return idPerfilImpressora;
+            }
+            set
+            {
+                HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName] ?? new HttpCookie(EmpresaCookie.CookieName) { Expires = DateTime.MaxValue };
+
+                cookie.Values[EmpresaCookie.PerfilImpressora] = value.ToString();
+
+                Response.Cookies.Add(cookie);
+            }
+        }
+
+        private long PerfilImpressoraPadrao(HttpCookie cookie, UnitOfWork uow)
+        {
+            long idPerfilImpressora = uow.UsuarioEmpresaRepository.Tabela().FirstOrDefault(x => x.IdEmpresa == IdEmpresa && x.UserId == IdUsuario).IdPerfilImpressoraPadrao.GetValueOrDefault();
+            cookie.Values[EmpresaCookie.PerfilImpressora] = idPerfilImpressora.ToString();
+
+            Response.Cookies.Add(cookie);
+
+            return idPerfilImpressora;
+        }
     }
 }

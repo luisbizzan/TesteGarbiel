@@ -2,6 +2,31 @@
     $.validator.setDefaults({ ignore: null });
     $('.onlyNumber').mask('0#');
     $("dateFormat").mask("99/99/9999");
+    $('.hourMinute').mask("99:99", { reverse: true });
+
+    $.validator.addMethod('validateTime', function (value, ele) {
+        if (value === "") {
+            return true;
+        }
+        let regex = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/;
+        let validaRegex = regex.test(value);
+        if (validaRegex) {
+            return true;
+        }
+        return false;
+    }, 'Hora inválida');
+
+    $("#Filter_TempoInicial").blur(function () {
+        if ($(this).val() === ":") {
+            $(this).val("");
+        }
+    });
+
+    $("#Filter_InicialInicial").blur(function () {
+        if ($(this).val() === ":") {
+            $(this).val("");
+        }
+    });
 
     $("#imprimirEtiquetaConferencia").click(function () {
         $("#modalEtiquetaConferencia").load("BORecebimentoNota/DetalhesEtiquetaConferencia", function () {
@@ -10,7 +35,7 @@
     });
 
     $("#imprimirRelatorio").click(function () {
-        $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=laser&acao=notas", function () {
+        $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=1&acao=notas", function () {
             $("#modalImpressoras").modal();
         });
     });
@@ -37,7 +62,9 @@
                 QuantidadePeca: $("#Filter_QuantidadePeca").val(),
                 QuantidadeVolume: $("#Filter_QuantidadeVolume").val(),
                 IdUsuarioRecebimento: $("#Filter_IdUsuarioRecebimento").val(),
-                IdUsuarioConferencia: $("#Filter_IdUsuarioConferencia").val()
+                IdUsuarioConferencia: $("#Filter_IdUsuarioConferencia").val(),
+                TempoInicial: $("#Filter_TempoInicial").val(),
+                TempoFinal: $("#Filter_TempoFinal").val()
             },
             success: function (data) {
                 var a = document.createElement('a');
@@ -254,7 +281,7 @@ function imprimir(acao, id) {
                 url: "/BORecebimentoNota/ImprimirRelatorioNotas",
                 method: "POST",
                 data: {
-                    IdImpressora: $("input[name='IdImpressora']:checked").val(),
+                    IdImpressora: $("#IdImpressora").val(),
                     Lote: $("#Filter_Lote").val(),
                     Nota: $("#Filter_Nota").val(),
                     ChaveAcesso: $("#Filter_ChaveAcesso").val(),
@@ -266,11 +293,16 @@ function imprimir(acao, id) {
                     IdFornecedor: $("#Filter_IdFornecedor").val(),
                     Atraso: $("#Filter_Atraso").val(),
                     QuantidadePeca: $("#Filter_QuantidadePeca").val(),
-                    Volume: $("#Filter_Volume").val()
+                    Volume: $("#Filter_Volume").val(),
+                    IdUsuarioRecebimento: $("#Filter_IdUsuarioRecebimento").val(),
+                    IdUsuarioConferencia: $("#Filter_IdUsuarioConferencia").val(),
+                    TempoInicial: $("#Filter_TempoInicial").val(),
+                    TempoFinal: $("#Filter_TempoFinal").val()
                 },
                 success: function (result) {
                     mensagemImpressao(result);
-                    $("#btnFechar").click();
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
                 }
             });
             break;
@@ -279,12 +311,13 @@ function imprimir(acao, id) {
                 url: "/BORecebimentoNota/ImprimirDetalhesEntradaConferencia",
                 method: "POST",
                 data: {
-                    IdImpressora: $("input[name='IdImpressora']:checked").val(),
+                    IdImpressora: $("#IdImpressora").val(),
                     IdNotaFiscal: id
                 },
                 success: function (result) {
                     mensagemImpressao(result);
-                    $("#btnFechar").click();
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
                 }
             });
             break;
@@ -293,12 +326,13 @@ function imprimir(acao, id) {
                 url: "/BORecebimentoNota/ImprimirEtiquetaRecebimento",
                 method: "POST",
                 data: {
-                    IdImpressora: $("input[name='IdImpressora']:checked").val(),
+                    IdImpressora: $("#IdImpressora").val(),
                     IdNotaFiscal: id
                 },
                 success: function (result) {
                     mensagemImpressao(result);
-                    $("#btnFechar").click();
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
                 }
             });
             break;
@@ -420,7 +454,7 @@ function RegistrarNotaFiscal() {
             if (result.Success) {
                 PNotify.success({ text: result.Message });
                 $(".close").click();
-                $("#modalImpressoras").load("BOPrinter/Selecionar?tipo=zebra&acao=etqrecebimento&id=" + $("#IdNotaFiscal").val(), function () {
+                $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=5&acao=etqrecebimento&id=" + $("#IdNotaFiscal").val(), function () {
                     $("#modalImpressoras").modal();
                 });
                 $("#dataTable").DataTable().ajax.reload();
@@ -458,14 +492,16 @@ function conferirNota() {
 
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ValidarInicioConferencia/" + id,
-        cache: false,
+        cache: false,        
         method: "POST",
         success: function (result) {
             if (result.Success) {
-                $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
-                    $modal.modal();
-                    $("#Referencia").focus();
-                });
+                if (!conferirAutomatico(id)) {
+                    $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
+                        $modal.modal();
+                        $("#Referencia").focus();
+                    });
+                }
             } else {
                 PNotify.info({ text: result.Message });
             }
@@ -474,6 +510,34 @@ function conferirNota() {
             PNotify.info({ text: request.responseText });
         }
     });
+}
+
+
+function conferirAutomatico(id) {
+    var rtn = false;
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "ValidarConferenciaAutomatica/" + id,
+        cache: false,
+        async: false,
+        method: "POST",
+        success: function (result) {
+            if (result.Success) {
+                if (result.Data) {
+                    rtn = result.Data;
+
+                    PNotify.success({ text: result.Message });
+                }
+            } else {
+                PNotify.info({ text: result.Message });
+            }
+        },
+        error: function (request, status, error) {
+            PNotify.info({ text: request.responseText });
+        }
+    });
+
+    return rtn;
 }
 
 function tratarDivergencias() {

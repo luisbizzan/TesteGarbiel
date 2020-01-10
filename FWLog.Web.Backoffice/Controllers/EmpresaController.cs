@@ -5,10 +5,11 @@ using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
-using FWLog.Web.Backoffice.Models.EmpresaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using FWLog.Web.Backoffice.Models.EmpresaCtx;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -98,7 +99,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 query = query.Where(x => x.IdEmpresaTipo != EmpresaTipoEnum.Filial);
             }
-                                   
+
             foreach (var item in query)
             {
                 empresaSearchModalItemViewModel.Add(new EmpresaSearchModalItemViewModel()
@@ -108,7 +109,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     RazaoSocial = item.Empresa.RazaoSocial,
                     NomeFantasia = item.Empresa.NomeFantasia,
                     Sigla = item.Empresa.Sigla,
-                    CNPJ = item.Empresa.CNPJ.Substring(0, 2) + "." + item.Empresa.CNPJ.Substring(2, 3) + "." + item.Empresa.CNPJ.Substring(5, 3) + "/" + item.Empresa.CNPJ.Substring(8, 4) + "-" + item.Empresa.CNPJ.Substring(12, 2) 
+                    CNPJ = item.Empresa.CNPJ.Substring(0, 2) + "." + item.Empresa.CNPJ.Substring(2, 3) + "." + item.Empresa.CNPJ.Substring(5, 3) + "/" + item.Empresa.CNPJ.Substring(8, 4) + "-" + item.Empresa.CNPJ.Substring(12, 2)
                 });
             }
 
@@ -156,7 +157,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             if (model.IdEmpresa == model.IdEmpresaGarantia && !model.EmpresaFazGarantia)
             {
-                ModelState.AddModelError(nameof(model.EmpresaFazGarantia), string.Format("A empresa editada não pode ser selecionada para Garantia, se não estiver marcada para fazer garantia.", model.RazaoSocialEmpresaGarantia));
+                ModelState.AddModelError(nameof(model.EmpresaFazGarantia), "A empresa editada não pode ser selecionada para Garantia, se não estiver marcada para fazer garantia.");
             }
 
             var empresaConfigGarantia = _unitOfWork.EmpresaConfigRepository.ConsultarPorIdEmpresa(model.IdEmpresaGarantia);
@@ -181,6 +182,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 return View(model);
             }
+
+            model.CNPJConferenciaAutomatica = Regex.Replace(model.CNPJConferenciaAutomatica, @"[^\d]", string.Empty);
 
             EmpresaConfig empresaConfig = Mapper.Map<EmpresaConfig>(model);
 

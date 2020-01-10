@@ -88,7 +88,7 @@ namespace FWLog.Web.Backoffice.Controllers
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
 
             List<ImpressoraListaLinhaTabela> resultado = _uow.BOPrinterRepository.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);
-            
+
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
@@ -237,28 +237,21 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult Selecionar(string tipo, string acao, string id)
+        public ActionResult Selecionar(int idImpressaoItem, string acao, string id)
         {
-            int idTipoImpressora = tipo.Equals("zebra", StringComparison.OrdinalIgnoreCase) ? 1 : 2;
+            ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(idImpressaoItem);
+            List<Printer> impressoras = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem);
 
-            List<Printer> impressoras = _uow.BOPrinterRepository.Tabela(IdEmpresasPorUsuario).Where(
-                w => w.CompanyId == IdEmpresa && 
-                w.Ativa == true && 
-                w.PrinterTypeId == idTipoImpressora).ToList();
-
-            var listaImpressoras = new List<BOPrinterSelecionarImpressoraViewModel>();
-
-            foreach (Printer impressora in impressoras)
-            {
-                listaImpressoras.Add(new BOPrinterSelecionarImpressoraViewModel
-                {
-                    IdImpressora = impressora.Id,
-                    Nome = impressora.Name
-                });
-            }
+            var listaImpressoras = new SelectList(
+                  impressoras.Select(x => new SelectListItem
+                  {
+                      Value = x.Id.ToString(),
+                      Text = x.Name,
+                  }), "Value", "Text");
 
             return View(new BOPrinterSelecionarViewModel
             {
+                ImpressaoItemDescricao = impressaoItem.Descricao,
                 Acao = acao,
                 Id = id,
                 Impressoras = listaImpressoras

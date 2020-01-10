@@ -126,7 +126,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             for (int i = 0; i < model.EmpresasGrupos.Count; i++)
             {
-                model.EmpresasGrupos[i].PerfilImpressora = PerfilImpressorasList(model.EmpresasGrupos[i].IdEmpresa, IdPerfilImpressora: model.EmpresasGrupos[i].IdPerfilImpressoraPadrao);
+                model.EmpresasGrupos[i].PerfilImpressora = PerfilImpressorasList(model.EmpresasGrupos[i].IdEmpresa, idPerfilImpressora: model.EmpresasGrupos[i].IdPerfilImpressoraPadrao);
             }
 
             Func<string, ViewResult> errorView = (error) =>
@@ -141,6 +141,11 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!ModelState.IsValid)
             {
                 return errorView(null);
+            }
+
+            if (model.EmpresasGrupos.Any(x => x.IdPerfilImpressoraPadrao == null))
+            {
+                ModelState.AddModelError(nameof(model.EmpresasGrupos), "Selecione um Perfil de Impressão Padrão em todas as empresas.");
             }
 
             var existingUserByName = await UserManager.FindByNameAsync(model.UserName).ConfigureAwait(false);
@@ -321,7 +326,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             for (int i = 0; i < model.EmpresasGrupos.Count; i++)
             {
-                model.EmpresasGrupos[i].PerfilImpressora = PerfilImpressorasList(model.EmpresasGrupos[i].IdEmpresa, IdPerfilImpressora: model.EmpresasGrupos[i].IdPerfilImpressoraPadrao);
+                model.EmpresasGrupos[i].PerfilImpressora = PerfilImpressorasList(model.EmpresasGrupos[i].IdEmpresa, idPerfilImpressora: model.EmpresasGrupos[i].IdPerfilImpressoraPadrao);
             }
 
             ViewResult errorView()
@@ -341,6 +346,12 @@ namespace FWLog.Web.Backoffice.Controllers
                 throw new HttpException(404, "Not found");
             }
 
+            if (model.EmpresasGrupos.Any(x => x.IdPerfilImpressoraPadrao == null))
+            {
+                ModelState.AddModelError(nameof(model.EmpresasGrupos), "Selecione um Perfil de Impressão Padrão em todas as empresas.");
+                return errorView();
+            }
+
             var existingUserByEmail = await UserManager.FindByEmailAsync(model.Email).ConfigureAwait(false);
 
             if (existingUserByEmail != null && existingUserByEmail.Id != user.Id)
@@ -358,6 +369,12 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Any())
             {
                 ModelState.AddModelError(nameof(model.EmpresasGrupos), Res.RequiredOnlyGroup);
+                return errorView();
+            }
+
+            if (!model.EmpresasGrupos.Any(w => w.IsEmpresaPrincipal))
+            {
+                ModelState.AddModelError(nameof(model.EmpresasGrupos), "Selecione a empresa principal do usuário.");
                 return errorView();
             }
 
@@ -718,15 +735,15 @@ namespace FWLog.Web.Backoffice.Controllers
 
         private SelectList empresas;
 
-        private SelectList PerfilImpressorasList(long idEmpresa, long? IdPerfilImpressora = null)
+        private SelectList PerfilImpressorasList(long idEmpresa, long? idPerfilImpressora = null)
         {
             return new SelectList(
                           _unitOfWork.PerfilImpressoraRepository.RetornarAtivas().Where(x => x.IdEmpresa == idEmpresa).Select(x => new SelectListItem
                           {
                               Value = x.IdPerfilImpressora.ToString(),
                               Text = x.Nome,
-                              Selected = IdPerfilImpressora == x.IdPerfilImpressora
-                          }).ToList(), "Value", "Text", IdPerfilImpressora);
+                              Selected = idPerfilImpressora == x.IdPerfilImpressora
+                          }).ToList(), "Value", "Text", idPerfilImpressora);
         }
     }
 }

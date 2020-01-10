@@ -1,5 +1,7 @@
 ﻿using FWLog.Data;
 using FWLog.Data.Models;
+using System;
+using System.Configuration;
 using System.Net;
 using System.Net.Sockets;
 
@@ -16,26 +18,27 @@ namespace FWLog.Services.Services
 
         public void Imprimir(byte[] dadosImpressao, long idImpressora)
         {
-            Printer impressora = _unitOfWork.BOPrinterRepository.GetById(idImpressora);
-            string[] ipPorta = impressora.IP.Split(':');
-
-            if (ipPorta.Length == 1)
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["Impressao_Habilitar"]))
             {
-                ipPorta[1] = "9100";
+                Printer impressora = _unitOfWork.BOPrinterRepository.GetById(idImpressora);
+                string[] ipPorta = impressora.IP.Split(':');
+
+                if (ipPorta.Length == 1)
+                {
+                    ipPorta[1] = "9100";
+                }
+
+                IPAddress ip = IPAddress.Parse(ipPorta[0]);
+                IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
+
+                using (Socket s = new Socket(SocketType.Stream, ProtocolType.Tcp))
+                {
+                    s.Connect(ipep);
+                    s.Send(dadosImpressao);
+                    s.Shutdown(SocketShutdown.Both);
+                    s.Close();
+                }
             }
-
-            IPAddress ip = IPAddress.Parse(ipPorta[0]);
-            IPEndPoint ipep = new IPEndPoint(ip, int.Parse(ipPorta[1]));
-
-            TcpClient client = new TcpClient() { NoDelay = true };
-            client.Connect(ipep);
-
-            NetworkStream stream = client.GetStream();
-            stream.Write(dadosImpressao, 0, dadosImpressao.Length);
-
-            stream.Flush();
-            stream.Close();
-            client.Close();
         }
     }
 }
