@@ -70,10 +70,10 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Conferido por")]
         public string IdUsuarioConferencia { get; set; }
         public string UserNameConferencia { get; set; }
-        [Display(Name = "Tempo de Conferência Inicial")]
-        public TimeSpan? TempoInicial { get; set; }
-        [Display(Name = "Tempo de Conferência Final")]
-        public TimeSpan? TempoFinal { get; set; }
+        [Display(Name = "Início da Conferência")]
+        public string TempoInicial { get; set; }
+        [Display(Name = "Fim da Conferência")]
+        public string TempoFinal { get; set; }
         public SelectList ListaStatus { get; set; }
     }
 }
