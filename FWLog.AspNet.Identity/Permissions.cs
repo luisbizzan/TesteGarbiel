@@ -209,12 +209,12 @@ namespace FWLog.AspNet.Identity
             public const string Editar = "PerfilImpressoraEdit";
             public const string Excluir = "PerfilImpressoraDelete";
 
-            public PerfilImpressora() : base(Display.FromResource("Perfil Impressora"))
+            public PerfilImpressora() : base(Display.FromString("Perfil Impressora"))
             {
-                Register(Listar, Display.FromResource("Listar Perfil de Impressoras"));
-                Register(Criar, Display.FromResource("Criar Perfil de Impressora"));
-                Register(Editar, Display.FromResource("Editar Perfil de Impressora"));
-                Register(Excluir, Display.FromResource("Excluir Perfil de Impressora"));
+                Register(Listar, Display.FromString("Listar Perfil de Impressoras"));
+                Register(Criar, Display.FromString("Criar Perfil de Impressora"));
+                Register(Editar, Display.FromString("Editar Perfil de Impressora"));
+                Register(Excluir, Display.FromString("Excluir Perfil de Impressora"));
             }
         }
     }

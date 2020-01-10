@@ -34,6 +34,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                           "SELECT " +
                               "A.\"IdLote\", " +
                               "A.\"DataRecebimento\", " +
+                              "A.\"TempoTotalConferencia\" ," +
                               "CASE WHEN A.\"IdLote\" IS NULL THEN B.\"Quantidade\" ELSE A.\"QuantidadeVolume\" END \"QuantidadeVolume\", " +
                               "CASE WHEN A.\"IdLote\" IS NULL THEN (SELECT SUM(\"Quantidade\") FROM \"NotaFiscalItem\" WHERE \"IdNotaFiscal\" = B.\"IdNotaFiscal\") ELSE A.\"QuantidadePeca\" END \"QuantidadePeca\", " +
                               "B.\"IdNotaFiscal\", " +

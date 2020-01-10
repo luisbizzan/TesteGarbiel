@@ -436,11 +436,7 @@ namespace FWLog.Services.Services
                 paragraph = row.Cells[4].AddParagraph();
                 row.Cells[4].MergeRight = 1;
                 paragraph.AddFormattedText("Tempo Total: ", TextFormat.Bold);
-
-                if (lote.DataFinalConferencia.HasValue && lote.DataInicioConferencia.HasValue)
-                {
-                    paragraph.AddText((lote.DataFinalConferencia.Value - lote.DataInicioConferencia.Value).ToString("h'h 'm'm 's's'"));
-                }
+                paragraph.AddText(lote.TempoTotalConferencia.HasValue ? TimeSpan.FromSeconds(lote.TempoTotalConferencia.Value).ToString("h'h 'm'm 's's'") : string.Empty);
 
                 paragraph = document.Sections[0].AddParagraph();
                 paragraph.Format.SpaceAfter = 10;

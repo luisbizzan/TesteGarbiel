@@ -47,7 +47,7 @@ namespace FWLog.Data.Models
         [Log(DisplayName = "Data Final da Conferência")]
         public DateTime? DataFinalConferencia { get; set; }
 
-        public long TempoTotalConferencia { get; set; }
+        public long? TempoTotalConferencia { get; set; }
 
         [ForeignKey(nameof(IdLoteStatus))]
         public virtual LoteStatus LoteStatus { get; set; }
