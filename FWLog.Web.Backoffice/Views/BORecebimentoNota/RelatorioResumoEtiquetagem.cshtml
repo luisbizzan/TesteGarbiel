@@ -1,7 +1,7 @@
 ﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.RelatorioResumoEtiquetagemViewModel
 
 @{
-    ViewBag.Title = "Resumo Etiquetagem";
+    ViewBag.Title = "Relatório - Resumo Etiquetagem";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -23,7 +23,7 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="form-group col-sm-4 col-xs-12">
+                <div class="form-group col-md-6 col-lg-4">
                     @Html.LabelFor(m => m.Filter.IdProduto)
                     <div class="input-group">
                         @Html.TextBoxFor(m => m.Filter.DescricaoProduto, null, new { @class = "form-control", @readonly = "true" })
@@ -34,33 +34,7 @@
                     </div>
                     @Html.HiddenFor(m => m.Filter.IdProduto, new { data_field = "IdProduto" })
                 </div>
-                <div class="form-group col-sm-4 col-xs-6">
-                    @Html.LabelFor(m => m.Filter.DataInicial)
-                    <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.DataInicial, new { @class = "form-control dateFormat ", data_field = "DataInicial" })
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
-                    </div>
-                </div>
-                <div class="form-group col-sm-4 col-xs-6">
-                    @Html.LabelFor(m => m.Filter.DataFinal)
-                    <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.DataFinal, new { @class = "form-control dateFormat", data_field = "DataFinal" })
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
-                    </div>
-                </div>
-                <div class="form-group col-sm-4 col-xs-6">
-                    @Html.LabelFor(m => m.Filter.QuantidadeInicial)
-                    @Html.TextBoxFor(m => m.Filter.QuantidadeInicial, new { @class = "form-control onlyNumber", data_field = "QuantidadeInicial" })
-                </div>
-                <div class="form-group col-sm-4 col-xs-6">
-                    @Html.LabelFor(m => m.Filter.QuantidadeFinal)
-                    @Html.TextBoxFor(m => m.Filter.QuantidadeFinal, new { @class = "form-control onlyNumber", data_field = "QuantidadeFinal" })
-                </div>
-                <div class="form-group col-sm-4 col-xs-12">
+                <div class="form-group col-md-6 col-lg-4">
                     @Html.LabelFor(m => m.Filter.IdUsuarioEtiquetagem)
                     <div class="input-group">
                         @Html.TextBoxFor(m => m.Filter.UsuarioEtiquetagem, null, new { @class = "form-control", @readonly = "true" })
@@ -71,6 +45,32 @@
                     </div>
                     @Html.HiddenFor(m => m.Filter.IdUsuarioEtiquetagem, new { data_field = "IdUsuarioEtiquetagem" })
                 </div>
+                <div class="form-group col-md-6 col-lg-4">
+                    @Html.LabelFor(m => m.Filter.DataInicial)
+                    <div class='input-group date'>
+                        @Html.TextBoxFor(m => m.Filter.DataInicial, new { @class = "form-control dateFormat ", data_field = "DataInicial" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group col-md-6 col-lg-4">
+                    @Html.LabelFor(m => m.Filter.DataFinal)
+                    <div class='input-group date'>
+                        @Html.TextBoxFor(m => m.Filter.DataFinal, new { @class = "form-control dateFormat", data_field = "DataFinal" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group col-md-6 col-lg-4">
+                    @Html.LabelFor(m => m.Filter.QuantidadeInicial)
+                    @Html.TextBoxFor(m => m.Filter.QuantidadeInicial, new { @class = "form-control onlyNumber", data_field = "QuantidadeInicial" })
+                </div>
+                <div class="form-group col-md-6 col-lg-4">
+                    @Html.LabelFor(m => m.Filter.QuantidadeFinal)
+                    @Html.TextBoxFor(m => m.Filter.QuantidadeFinal, new { @class = "form-control onlyNumber", data_field = "QuantidadeFinal" })
+                </div>                
             </div>
             <div class="row">
                 <div class="col-xs-12 form-buttons">

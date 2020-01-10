@@ -1,7 +1,7 @@
 ﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.RelatorioResumoProducaoViewModel
 
 @{
-    ViewBag.Title = "Relatorio Resumo Produção";
+    ViewBag.Title = "Relatório - Resumo Produção";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -13,6 +13,16 @@
             ConferenciapageDataUrl = Url.Action("ResumoProducaoConferenciaPageData")
         })
 }
+
+<style>
+    .pointer {
+        cursor: pointer;
+    }
+
+    .tipo > div {
+        margin-bottom: 10px;
+    }
+</style>
 
 <!-- filter -->
 <form data-filter="form" data-filter-for="dataTable" class="form-filter">
@@ -26,7 +36,7 @@
         <div class="x_content" style="display: block;">
             <div class="row" style="margin-bottom: 20px;">
                 <div class="col-sm-12 col-xs-12">
-                    <div class="form-group col-sm-4 col-xs-12">
+                    <div class="form-group col-md-12 col-lg-4">
                         @Html.LabelFor(model => model.Filter.IdUsuario, htmlAttributes: new { @class = "control-label" })
                         <div class="input-group">
                             @Html.TextBoxFor(m => m.Filter.NomeUsuario, null, new { @class = "form-control", @readonly = "true" })
@@ -37,7 +47,7 @@
                         </div>
                         @Html.HiddenFor(m => m.Filter.IdUsuario, new { data_field = "IdUsuario" })
                     </div>
-                    <div class="form-group col-sm-4 col-xs-12">
+                    <div class="form-group col-md-6 col-lg-4">
                         @Html.LabelFor(m => m.Filter.DataRecebimentoMinima)
                         <div class='input-group date'>
                             <span class="input-group-addon">
@@ -49,7 +59,7 @@
                             </span>
                         </div>
                     </div>
-                    <div class="form-group col-sm-4 col-xs-12">
+                    <div class="form-group col-md-6 col-lg-4">
                         @Html.LabelFor(m => m.Filter.DataRecebimentoMaxima)
                         <div class='input-group date'>
                             <span class="input-group-addon">
@@ -61,11 +71,15 @@
                             </span>
                         </div>
                     </div>
-                    <div class="form-group col-sm-3 col-xs-12" style="padding-top:10px;">
-                        @Html.Label("Conferencia")
-                        @Html.RadioButton("TipoRelatorio", "C")
-                        @Html.Label("Recebimento")
-                        @Html.RadioButton("TipoRelatorio", "R")
+                    <div class="form-group col-sm-12 col-xs-12 tipo" style="padding-top:10px;">
+                        <div class="form-group">
+                            @Html.RadioButton("TipoRelatorio", "C", new { id = "C" })
+                            @Html.Label("Conferência", new { @class = "pointer", @for = "C" })
+                        </div>
+                        <div class="form-group">
+                            @Html.RadioButton("TipoRelatorio", "R", new { id = "R" })
+                            @Html.Label("Recebimento", new { @class = "pointer", @for = "R" })
+                        </div>
                     </div>
                 </div>
             </div>

@@ -31,11 +31,11 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="form-group col-sm-6 col-xs-12">
+                <div class="form-group col-md-6 col-lg-6">
                     @Html.LabelFor(m => m.Filtro.Nome)
                     @Html.TextBoxFor(m => m.Filtro.Nome, new { @class = "form-control", data_field = "Nome" })
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-md-6 col-lg-2">
                     @Html.LabelFor(m => m.Filtro.Status)
                     @Html.DropDownListFor(m => m.Filtro.Status, Model.Status, "Todos", new { @class = "form-control", data_field = "Status" })
                 </div>
