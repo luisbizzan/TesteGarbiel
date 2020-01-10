@@ -2,6 +2,10 @@
     $.validator.setDefaults({ ignore: null });
     $.validator.addMethod("CNPJValido",
         function (value, element, params) {
+            if (!value) {
+                return true;
+            }
+
             let noMaskValue = value.replace("/", String.empty).replace(".", String.empty).replace("-", String.empty);
             let isValid = dart.validations.isValidCnpj(noMaskValue);
 
