@@ -35,8 +35,8 @@ namespace FWLog.Services.Services
             inner.Append("LEFT JOIN TSIBAI ON TSIEMP.CODBAI = TSIBAI.CODBAI ");
             inner.Append("LEFT JOIN TSICID ON TSIEMP.CODCID = TSICID.CODCID ");
             inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF");
-            
-            var where = "WHERE AD_INTEGRARFWLOG = '1' "; 
+
+            var where = "WHERE AD_INTEGRARFWLOG = '1' ";
 
             List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(inner: inner.ToString(), where: where);
 
@@ -70,11 +70,11 @@ namespace FWLog.Services.Services
                     empresaConfig.Empresa.NomeFantasia = empInt.NomeFantasia;
                     empresaConfig.Empresa.Numero = empInt.Numero;
                     empresaConfig.Empresa.RazaoSocial = empInt.RazaoSocial;
-                    empresaConfig.Empresa.Sigla = empInt.Sigla == null ? empInt.NomeFantasia.Substring(0, 3) : empInt.Sigla;//TODO temporário
+                    empresaConfig.Empresa.Sigla = empInt.Sigla;
                     empresaConfig.Empresa.Telefone = empInt.Telefone;
                     empresaConfig.Empresa.TelefoneSAC = empInt.TelefoneSAC;
                     empresaConfig.IdEmpresaTipo = empInt.EmpresaMatriz == empInt.CodigoIntegracao ? EmpresaTipoEnum.Matriz : EmpresaTipoEnum.Filial;
-                  
+
                     if (empresaNova)
                     {
                         _unitOfWork.EmpresaConfigRepository.Add(empresaConfig);
