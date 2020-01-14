@@ -802,6 +802,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 if (!String.IsNullOrEmpty(empresaConfig.CNPJConferenciaAutomatica))
                 {
+                    //TODO Verificar se o CNPJ da Nota é igual ao configurado no menu empresa.
                     conferenciaAutomatica = true;
                 }
             }

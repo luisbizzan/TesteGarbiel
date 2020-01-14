@@ -47,18 +47,10 @@
         }
     });
 
+    debugger
     $('#modalRegistroConferencia').on('keydown', function (e) {
-        if (e.keyCode == 13 && permiteRegistrar) {
-            if ($tipoConferencia.val() == "Por Quantidade") {
-                validarDiferencaMultiploConferencia();
-            }
-        }
-
-        //if (e.keyCode == 27 && permiteRegistrar) {
-        if (e.keyCode == 27) {
-            if ($tipoConferencia.val() != "Por Quantidade") {
-                validarDiferencaMultiploConferencia();
-            }
+        if (e.keyCode == 27 && permiteRegistrar) {
+            validarDiferencaMultiploConferencia();
         }
 
         if (e.keyCode == 115) {
@@ -146,9 +138,10 @@
         }
     });
 
-    debugger
+    
     $quantidadePorCaixa.blur(function () {
         if ($tipoConferencia != 'Por Quantidade') {
+            debugger
             $quantidadePorCaixa.css({ 'background': '#eee' });
         }
         
@@ -469,6 +462,7 @@ function resetarCamposConferencia(limpaReferencia = true) {
     
 }
 
+debugger
 function resetarTipoConferencia() {
 
     $.ajax({
