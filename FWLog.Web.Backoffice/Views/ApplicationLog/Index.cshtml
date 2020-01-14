@@ -29,15 +29,15 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="col-xs-12 col-sm-3 form-group">
+                <div class="form-group col-md-6 col-lg-3">
                     @Html.LabelFor(m => m.Filter.Level)
                     @Html.DropDownListFor(m => m.Filter.Level, Model.Filter.LevelOptions, "ALL", new { @class = "form-control", data_field = "Level" })
                 </div>
-                <div class="col-xs-12 col-sm-3 form-group">
+                <div class="form-group col-md-6 col-lg-3">
                     @Html.LabelFor(m => m.Filter.Message)
                     @Html.TextBoxFor(m => m.Filter.Message, new { @class = "form-control", data_field = "Message" })
                 </div>
-                <div class="col-xs-12 col-sm-3">
+                <div class="form-group col-md-6 col-lg-3">
                     <div class="form-group">
                         @Html.LabelFor(m => m.Filter.CreatedStart)
                         <div class='input-group date'>
@@ -48,7 +48,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-3">
+                <div class="form-group col-md-6 col-lg-3">
                     <div class="form-group">
                         @Html.LabelFor(m => m.Filter.CreatedEnd)
                         <div class='input-group date'>

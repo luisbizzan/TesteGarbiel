@@ -31,15 +31,15 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="form-group col-sm-3 col-xs-12">
+                <div class="form-group col-md-4 col-lg-3">
                     @Html.LabelFor(m => m.Filter.Name)
                     @Html.TextBoxFor(m => m.Filter.Name, new { @class = "form-control", data_field = "Name" })
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-md-4 col-lg-2">
                     @Html.LabelFor(m => m.Filter.PrinterTypeId)
                     @Html.DropDownListFor(m => m.Filter.PrinterTypeId, (IEnumerable<SelectListItem>)ViewBag.PrinterTypes, "Todos...", new { @class = "form-control", data_field = "PrinterTypeId"  })
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-md-4 col-lg-2">
                     @Html.LabelFor(m => m.Filter.Status)
                     @Html.DropDownListFor(m => m.Filter.Status, (IEnumerable<SelectListItem>)ViewBag.Status, "Todos...", new { @class = "form-control", data_field = "Status" })
                 </div>

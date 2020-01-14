@@ -29,11 +29,11 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="form-group col-sm-3 col-xs-12">
+                <div class="form-group col-md-6 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.Descricao)
                     @Html.TextBoxFor(m => m.Filtros.Descricao, new { @class = "form-control", data_field = "Descricao" })
                 </div>
-                <div class="form-group col-sm-3 col-xs-12">
+                <div class="form-group col-md-6 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.IdNivelArmazenagem)
                     <div class="input-group">
                         @Html.TextBoxFor(m => m.Filtros.DescricaoNivelArmazenagem, null, new { @class = "form-control", @readonly = "true" })
@@ -44,15 +44,15 @@
                     </div>
                     @Html.HiddenFor(m => m.Filtros.IdNivelArmazenagem, new { data_field = "IdNivelArmazenagem" })
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-md-4 col-lg-2">
                     @Html.LabelFor(m => m.Filtros.IdTipoArmazenagem)
                     @Html.DropDownListFor(m => m.Filtros.IdTipoArmazenagem, Model.TiposArmazenagem, "Todos", new { @class = "form-control", data_field = "IdTipoArmazenagem" })
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-md-4 col-lg-2">
                     @Html.LabelFor(m => m.Filtros.IdTipoMovimentacao)
                     @Html.DropDownListFor(m => m.Filtros.IdTipoMovimentacao, Model.TiposMovimentacao, "Todos", new { @class = "form-control", data_field = "IdTipoMovimentacao" })
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-md-4 col-lg-2">
                     @Html.LabelFor(m => m.Filtros.Status)
                     @Html.DropDownListFor(m => m.Filtros.Status, Model.Status, "Todos", new { @class = "form-control", data_field = "Status" })
                 </div>

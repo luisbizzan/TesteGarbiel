@@ -15,9 +15,9 @@
                 if (result.Success) {
                     $(".close").click();
                     $("#dataTable").DataTable().ajax.reload();
-                    PNotify.info({ text: result.Message });
+                    PNotify.success({ text: result.Message });
                 } else {
-                    PNotify.info({ text: result.Message });
+                    PNotify.error({ text: result.Message });
                 }
             }
         });

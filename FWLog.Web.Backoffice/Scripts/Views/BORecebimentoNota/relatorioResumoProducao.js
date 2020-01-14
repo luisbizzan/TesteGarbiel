@@ -1,4 +1,9 @@
 ﻿(function () {
+    $('input[type=radio]').iCheck({
+        checkboxClass: 'icheckbox_flat-green',
+        radioClass: 'iradio_flat-green'
+    });
+
     let $divTables = $('#tabela');
 
     let $tableConferencia = $('#dataTableConferencia > table');
