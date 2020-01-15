@@ -2,9 +2,6 @@
 <div class="top_nav getpoints">
     <div class="nav_menu">
         <nav>
-            <div class="nav toggle">
-                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
-            </div>
             @if (Request.IsAuthenticated)
             {
                 <ul class="nav navbar-nav navbar-right">
@@ -12,7 +9,7 @@
                     <li class="">
                         <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                             @User.Identity.Name
-                            <span class="fa fa-angle-down"></span>
+                            <span class="fa fa-angle-down" style="display: inline-block;"></span>
                         </a>
                         <ul class="dropdown-menu dropdown-usermenu pull-right">
                             <li>
