@@ -387,6 +387,17 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
+            ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(5);
+
+            if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não há impressora configurada para Etiqueta de Recebimento.",
+                });
+            }
+
             return Json(new AjaxGenericResultModel
             {
                 Success = true
@@ -736,6 +747,28 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public JsonResult ValidarInicioConferencia(long id)
         {
+            ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(2);
+
+            if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não há impressora configurada para Etiqueta de Lote.",
+                });
+            }
+
+            impressaoItem = _uow.ImpressaoItemRepository.Obter(7);
+
+            if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não há impressora configurada para Etiqueta de Devolução.",
+                });
+            }
+
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
 
             //Valida a Nota Fiscal.
@@ -811,7 +844,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 Success = conferenciaAutomatica
             });
-		}
+        }
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
         public async Task<JsonResult> RegistrarConferenciaAutomatica(long id)
@@ -1390,7 +1423,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Data = empresaConfig.TipoConferencia.IdTipoConferencia.ToString()
             });
 
-            
+
         }
 
         [HttpGet]
