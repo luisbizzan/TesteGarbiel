@@ -233,7 +233,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         Fornecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
                         QuantidadePeca = item.QuantidadePeca == 0 ? (int?)null : item.QuantidadePeca,
                         QuantidadeVolume = item.QuantidadeVolume == 0 ? (int?)null : item.QuantidadeVolume,
-                        RecebidoEm = item.LoteStatus.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento ? item.DataRecebimento.ToString() : "-",
+                        RecebidoEm = item.LoteStatus.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento ? item.DataRecebimento.ToString("dd/MM/yyyy HH:mm") : " - ",
                         Status = item.LoteStatus.Descricao,
                         IdNotaFiscal = item.NotaFiscal.IdNotaFiscal,
                         Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
