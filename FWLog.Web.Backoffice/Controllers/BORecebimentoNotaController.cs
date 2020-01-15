@@ -387,6 +387,17 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
+            ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(5);
+
+            if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não há impressora configurada para Etiqueta de Recebimento.",
+                });
+            }
+
             return Json(new AjaxGenericResultModel
             {
                 Success = true

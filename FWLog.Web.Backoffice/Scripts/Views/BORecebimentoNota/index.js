@@ -365,6 +365,7 @@ function registrarRecebimento() {
         cache: false,
         success: function (result) {
             let $modalRegistroRecebimento = $("#modalRegistroRecebimento");
+
             if (result.Success) {
                 $modalRegistroRecebimento.load(HOST_URL + CONTROLLER_PATH + "ExibirModalRegistroRecebimento/" + id, function () {
                     $modalRegistroRecebimento.modal();
@@ -379,7 +380,7 @@ function registrarRecebimento() {
                     $('.money').mask("#.##0,00", { reverse: true });
                 });
             } else {
-                PNotify.info({ text: result.Message });
+                PNotify.warning({ text: result.Message });
             }
         }
     });
@@ -522,7 +523,7 @@ function conferirNota() {
                     });
                 }
             } else {
-                PNotify.info({ text: result.Message });
+                PNotify.warning({ text: result.Message });
             }
         },
         error: function (request, status, error) {
