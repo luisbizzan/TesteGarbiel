@@ -1,12 +1,10 @@
 ﻿(function () {
     var $observacao = $('#ObservacaoDivergencia');
-
     $(".onlyNumber").mask("0#");
 
     $observacao.blur(function () {
-        if (!!$(this).val()) {
+        if (!$(this).val()) {
             $(this).css("border-color", "");
-            $(".validacao-confirmar").text("");
         }
     });
 
@@ -16,7 +14,6 @@
             $(this).closest('tr').css("background-color", "");
             $(this).closest('tr').find(".quantidade-menos").css("border-color", "");
             $(this).closest('tr').find(".quantidade-menos").val("");
-            $(".validacao-confirmar").text("");
         }
     });
 
@@ -33,7 +30,6 @@
             $(this).closest('tr').css("background-color", "");
             $(this).closest('tr').find(".quantidade-mais").css("border-color", "");
             $(this).closest('tr').find(".quantidade-mais").val("");
-            $(".validacao-confirmar").text("");
         }
     });
 
@@ -43,7 +39,6 @@
         if (!$observacao.val()) {
             $observacao.css("border-color", "#a94442");
             PNotify.error({ text: "Obervação é obrigatório." });
-            $(".validacao-confirmar").text("Obervação é obrigatório.");
             return;
         }
 
@@ -60,7 +55,6 @@
 
         if (!isVAlid) {
             PNotify.error({ text: "Existem divergências não tratadas." });
-            $(".validacao-confirmar").text("Existem divergências não tratadas.");
             return;
         }
 
@@ -75,7 +69,6 @@
                 } else {
                     PNotify.success({ text: result.Message });
                     VerificarStatusLote($("#IdNotaFiscal").val());
-
                 }
             }
         });
@@ -99,13 +92,10 @@ function VerificarStatusLote(id) {
                 }
 
                 PNotify.info({ text: "Continuando processo de finalização da tratativa de divergência..." });
-
                 let $modal = $("#modalProcessamentoTratativaDivergencia");
-
                 $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoProcessamentoDivergencia/" + id, function () {
                     $modal.modal();
                     $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
-
                     FinalizarTratativa();
                 });
             }

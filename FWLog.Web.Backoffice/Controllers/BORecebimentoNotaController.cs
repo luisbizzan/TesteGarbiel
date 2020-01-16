@@ -1479,6 +1479,19 @@ namespace FWLog.Web.Backoffice.Controllers
             try
             {
                 ValidateModel(viewModel);
+
+                foreach(var divergencia in viewModel.Divergencias)
+                {
+                    if(divergencia.QuantidadeMaisTratado.HasValue == false && divergencia.QuantidadeMenosTratado.HasValue == false)
+                    {
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = "Existem divergências não tratadas."
+                        }, JsonRequestBehavior.DenyGet);
+                    }
+                }
+
                 var request = Mapper.Map<TratarDivergenciaRequest>(viewModel);
                 request.IdUsuario = User.Identity.GetUserId();
                 request.IdEmpresa = IdEmpresa;
