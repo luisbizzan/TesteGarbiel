@@ -1,4 +1,5 @@
 ﻿(function () {
+    $(".onlyNumber").mask("0#");
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
