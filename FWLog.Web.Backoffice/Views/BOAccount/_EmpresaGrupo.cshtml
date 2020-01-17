@@ -41,7 +41,7 @@
         </div>
         <div class="form-group col-sm-12 col-md-6 col-lg-3 col-xl-3" style="margin-top: 10px;">
             @Html.LabelFor(m => m[i].IdPerfilImpressoraPadrao)
-            @Html.DropDownList(string.Format("EmpresasGrupos[{0}].IdPerfilImpressoraPadrao", i), (IEnumerable<SelectListItem>)Model[i].PerfilImpressora, new { @class = "form-control idPerfilImpressoraPadrao" })
+            @Html.DropDownList(string.Format("EmpresasGrupos[{0}].IdPerfilImpressoraPadrao", i), (IEnumerable<SelectListItem>)Model[i].PerfilImpressora, Res.Select, new { @class = "form-control idPerfilImpressoraPadrao" })
             <span class="text-danger validationEmpresa">@Html.ValidationMessageFor(m => m[i].IdPerfilImpressoraPadrao)</span>
         </div>
     </div>

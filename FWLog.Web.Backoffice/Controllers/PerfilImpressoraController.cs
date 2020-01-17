@@ -288,13 +288,21 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             long idPerfilImpressora = IdPerfilImpressora;
 
-            ViewBag.Perfis = new SelectList(
-                          _uow.PerfilImpressoraRepository.RetornarAtivas().Where(x => x.IdEmpresa == IdEmpresa).Select(x => new SelectListItem
-                          {
-                              Value = x.IdPerfilImpressora.ToString(),
-                              Text = x.Nome,
-                              Selected = x.IdPerfilImpressora == idPerfilImpressora
-                          }).ToList(), "Value", "Text", idPerfilImpressora);
+            List<SelectListItem> list = new List<SelectListItem>();
+
+            if (idPerfilImpressora == 0)
+            {
+                list.Add(new SelectListItem { Value = 0.ToString(), Text = "Perfil de Impressão não Configurado", Disabled = true });
+            }
+
+            list.AddRange(_uow.PerfilImpressoraRepository.RetornarAtivas().Where(x => x.IdEmpresa == IdEmpresa).Select(x => new SelectListItem
+            {
+                Value = x.IdPerfilImpressora.ToString(),
+                Text = x.Nome,
+                Selected = x.IdPerfilImpressora == idPerfilImpressora
+            }).ToList());
+
+            ViewBag.Perfis = new SelectList(list, "Value", "Text", idPerfilImpressora, new[] { 0.ToString() });
 
             return PartialView("_MudarPerfilImpressora");
         }
