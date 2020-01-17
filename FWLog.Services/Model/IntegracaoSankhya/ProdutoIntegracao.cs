@@ -55,8 +55,11 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [Required]
         public string PesoLiquido { get; set; }
 
-        [TabelaIntegracao(DisplayName = "REFERENCIA")]
+        [TabelaIntegracao(DisplayName = "AD_CODBAR")]
         public string CodigoBarras { get; set; }
+
+        [TabelaIntegracao(DisplayName = "REFERENCIA")]
+        public string CodigoBarras2 { get; set; }
 
         [TabelaIntegracao(DisplayName = "AD_REFX")]
         public string Referencia { get; set; }

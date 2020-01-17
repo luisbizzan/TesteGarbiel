@@ -36,9 +36,11 @@ namespace FWLog.Data.Models
         [StringLength(30)]
         public string ReferenciaFornecedor { get; set; }
 
-
         [StringLength(50)]
         public string CodigoBarras { get; set; }
+
+        [StringLength(50)]
+        public string CodigoBarras2 { get; set; }
 
         [Required]
         public int CodigoProdutoNFE { get; set; }
