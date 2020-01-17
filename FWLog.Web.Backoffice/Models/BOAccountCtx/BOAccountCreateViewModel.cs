@@ -10,6 +10,7 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
     {
         [Required]
         [Display(Name = "Código do Usuário")]
+        [StringLength(5, MinimumLength = 5, ErrorMessage = "O código do usuário deve ter exatamente 5 números.")]
         public string UserName { get; set; }
         [Required]
         [MvcEmailValidation]

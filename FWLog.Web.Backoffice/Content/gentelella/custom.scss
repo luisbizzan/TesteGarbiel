@@ -1,12 +1,24 @@
+.row-actions {
+    white-space: nowrap;
+}
+
+label {
+    margin-bottom: 2px !important;
+}
+
 .left_col {
     background: #2A3F54;
 }
 
+.empresasGrupo {
+    margin-top: 10px;
+}
+
 .nav-sm .container.body .col-md-3.left_col {
     min-height: 100%;
-    width: 70px;
+    width: 85px;
     padding: 0;
-    z-index: 9999;
+    z-index: 10;
     position: absolute;
 }
 
@@ -25,13 +37,14 @@
 }
 
 .nav-sm .container.body .right_col {
-    padding: 10px 20px;
-    margin-left: 70px;
+    padding: 10px 10px;
+    margin-left: 85px;
     z-index: 2;
 }
 
 .nav-sm .navbar.nav_title {
-    width: 70px;
+    width: 200px;
+    height: 59px !important;
 }
 
 .nav-sm .navbar.nav_title a span {
@@ -58,7 +71,7 @@
 .nav-sm .nav.side-menu li a {
     text-align: center !important;
     font-weight: 400;
-    font-size: 10px;
+    font-size: 11px;
     padding: 10px 5px;
 }
 
@@ -90,13 +103,14 @@
 }
 
 .nav-sm ul.nav.child_menu {
-    left: 100%;
+    left: 84px;
     position: absolute;
     top: 0;
     width: 210px;
     z-index: 4000;
     background: #3E5367;
     display: none;
+    box-shadow: -6px 8px 5px 0px rgba(50, 50, 50, 0.9);
 }
 
 .nav-sm ul.nav.child_menu li {
@@ -105,6 +119,7 @@
 
 .nav-sm ul.nav.child_menu li a {
     text-align: left !important;
+    font-size: 12px !important;
 }
 
 .nav-sm .profile {
@@ -413,9 +428,9 @@ body {
     color: #73879C;
     background: #2A3F54;
     font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 400;
-    line-height: 1.471;
+    line-height: 1;
 }
 
 .main_container .top_nav {
@@ -572,7 +587,7 @@ a:hover, a:focus {
 
 .top_nav .navbar-right {
     margin: 0;
-    width: 70%;
+    width: 85%;
     float: right;
 }
 
@@ -856,7 +871,7 @@ footer {
 }
 
 .nav-sm footer {
-    margin-left: 70px;
+    margin-left: 85px;
 }
 
 .footer_fixed footer {
@@ -1034,7 +1049,7 @@ h2 {
     position: relative;
     width: 100%;
     margin-bottom: 10px;
-    padding: 10px 17px;
+    padding: 10px 7px;
     display: inline-block;
     background: #fff;
     border: 1px solid #E6E9ED;
@@ -1305,6 +1320,16 @@ h3.degrees {
 }
 
 /* *********  tables styling  ******************************* */
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+    padding: 7px;
+    line-height: 1;
+    vertical-align: middle;
+}
 
 .bulk-actions {
     display: none;
@@ -1368,7 +1393,7 @@ table.jambo_table tbody tr.selected td {
 .dataTables_wrapper {
     position: relative;
     clear: both;
-    zoom: 1;
+    /*zoom: 1;*/
 }
 
 .dataTables_processing {
@@ -2453,7 +2478,7 @@ legend {
 }
 
 .form-group {
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .validate {

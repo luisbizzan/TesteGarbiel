@@ -86,6 +86,15 @@ namespace FWLog.Web.Backoffice.Controllers
             Response.Cookies.Add(cookie);
         }
 
+        protected void CookieLogoff()
+        {
+            HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName] ?? new HttpCookie(EmpresaCookie.CookieName);
+
+            cookie.Expires = DateTime.Now.AddDays(-1);
+
+            Response.Cookies.Add(cookie);
+        }
+
         public long IdEmpresa
         {
             get

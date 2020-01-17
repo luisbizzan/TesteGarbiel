@@ -365,6 +365,7 @@ function registrarRecebimento() {
         cache: false,
         success: function (result) {
             let $modalRegistroRecebimento = $("#modalRegistroRecebimento");
+
             if (result.Success) {
                 $modalRegistroRecebimento.load(HOST_URL + CONTROLLER_PATH + "ExibirModalRegistroRecebimento/" + id, function () {
                     $modalRegistroRecebimento.modal();
@@ -379,7 +380,7 @@ function registrarRecebimento() {
                     $('.money').mask("#.##0,00", { reverse: true });
                 });
             } else {
-                PNotify.info({ text: result.Message });
+                PNotify.warning({ text: result.Message });
             }
         }
     });
@@ -496,7 +497,7 @@ function conferirNota() {
         method: "POST",
         success: function (result) {
             if (result.Success) {
-                if (!validarConferenciaAutomatica()) {
+                if (!validarConferenciaAutomatica(id)) {
                     $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
                         $modal.modal();
                         $("#Referencia").focus();
@@ -522,7 +523,7 @@ function conferirNota() {
                     });
                 }
             } else {
-                PNotify.info({ text: result.Message });
+                PNotify.warning({ text: result.Message });
             }
         },
         error: function (request, status, error) {
@@ -531,17 +532,17 @@ function conferirNota() {
     });
 }
 
-function validarConferenciaAutomatica() {
-    var rtn = false;
+function validarConferenciaAutomatica(idNotaFiscal) {
+    var retorno = false;
 
     $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "ValidarConferenciaAutomatica/",
+        url: HOST_URL + CONTROLLER_PATH + "ValidarConferenciaAutomatica/" + idNotaFiscal,
         cache: false,
         async: false,
         method: "POST",
         success: function (result) {
             if (result.Success) {
-                rtn = true;
+                retorno = true;
             }
         },
         error: function (request, status, error) {
@@ -549,7 +550,7 @@ function validarConferenciaAutomatica() {
         }
     });
 
-    return rtn;
+    return retorno;
 }
 
 function tratarDivergencias() {

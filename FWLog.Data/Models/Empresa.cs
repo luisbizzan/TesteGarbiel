@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
@@ -15,7 +14,6 @@ namespace FWLog.Data.Models
         [Index]
         public string RazaoSocial { get; set; }
 
-        [Required]
         [StringLength(3)]
         public string Sigla { get; set; }
 
@@ -57,7 +55,6 @@ namespace FWLog.Data.Models
         public int CodigoIntegracao { get; set; }
 
         [StringLength(15)]
-        [Required]
         public string TelefoneSAC { get; set; }
     }
 }

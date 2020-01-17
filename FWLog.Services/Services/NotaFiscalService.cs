@@ -6,6 +6,7 @@ using FWLog.Services.Model.IntegracaoSankhya;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -101,7 +102,7 @@ namespace FWLog.Services.Services
                     notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.ProcessandoIntegracao;
                     notafiscal.ChaveAcesso = notafiscalIntegracao.ChaveAcesso;
                     notafiscal.IdFornecedor = fornecedor.IdFornecedor;
-                    notafiscal.DataEmissao = notafiscalIntegracao.DataEmissao == null ? DateTime.Now : Convert.ToDateTime(notafiscalIntegracao.DataEmissao);
+                    notafiscal.DataEmissao = notafiscalIntegracao.DataEmissao == null ? DateTime.Now : DateTime.ParseExact(notafiscalIntegracao.DataEmissao, "ddMMyyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     notafiscal.IdEmpresa = empresa.IdEmpresa;
                     notafiscal.IdTransportadora = transportadora.IdTransportadora;
                     notafiscal.CodigoIntegracaoVendedor = Convert.ToInt32(notafiscalIntegracao.CodigoIntegracaoVendedor);

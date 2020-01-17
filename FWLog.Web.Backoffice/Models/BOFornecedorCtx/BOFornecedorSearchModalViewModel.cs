@@ -39,7 +39,7 @@ namespace FWLog.Web.Backoffice.Models.BOFornecedorCtx
         [Display(Name = "Razão Social")]
         public string RazaoSocial { get; set; }
 
-        [Display(Name = "NomeFantasia")]
+        [Display(Name = "Nome Fantasia")]
         public string NomeFantasia { get; set; }
 
         [Display(Name = "CNPJ")]

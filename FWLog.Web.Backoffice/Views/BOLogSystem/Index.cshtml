@@ -29,25 +29,23 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="col-xs-12 col-sm-3 form-group">
+                <div class="form-group col-md-4 col-lg-3">
                     @Html.LabelFor(m => m.Filter.UserName)
                     @Html.TextBoxFor(m => m.Filter.UserName, new { @class = "form-control", data_field = "UserName" })
                 </div>
-                <div class="col-xs-12 col-sm-3 form-group">
+                <div class="form-group col-md-4 col-lg-3">
                     @Html.LabelFor(m => m.Filter.ActionType)
                     @Html.DropDownListFor(m => m.Filter.ActionType, Model.Filter.ActionTypeOptions, Res.LabelAll, new { @class = "form-control", data_field = "ActionType" })
                 </div>
-                <div class="col-xs-12 col-sm-3 form-group">
+                <div class="form-group col-md-4 col-lg-3">
                     @Html.LabelFor(m => m.Filter.IP)
                     @Html.TextBoxFor(m => m.Filter.IP, new { @class = "form-control", data_field = "IP" })
                 </div>
-                <div class="col-xs-12 col-sm-3 form-group">
+                <div class="form-group col-md-4 col-lg-3">
                     @Html.LabelFor(m => m.Filter.Entity)
                     @Html.DropDownListFor(m => m.Filter.ActionType, Model.Filter.EntityOptions, Res.LabelAll, new { @class = "form-control", data_field = "Entity" })
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-3">
+                <div class="form-group col-md-4 col-lg-3">
                     <div class="form-group">
                         @Html.LabelFor(m => m.Filter.ExecutionDateStart)
                         <div class='input-group date'>
@@ -58,7 +56,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-3">
+                <div class="form-group col-md-4 col-lg-3">
                     <div class="form-group">
                         @Html.LabelFor(m => m.Filter.ExecutionDateEnd)
                         <div class='input-group date'>

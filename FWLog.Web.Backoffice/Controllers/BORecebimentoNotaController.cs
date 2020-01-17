@@ -233,7 +233,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         Fornecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
                         QuantidadePeca = item.QuantidadePeca == 0 ? (int?)null : item.QuantidadePeca,
                         QuantidadeVolume = item.QuantidadeVolume == 0 ? (int?)null : item.QuantidadeVolume,
-                        RecebidoEm = item.LoteStatus.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento ? item.DataRecebimento.ToString() : "-",
+                        RecebidoEm = item.LoteStatus.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento ? item.DataRecebimento.ToString("dd/MM/yyyy HH:mm") : " - ",
                         Status = item.LoteStatus.Descricao,
                         IdNotaFiscal = item.NotaFiscal.IdNotaFiscal,
                         Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
@@ -384,6 +384,17 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Success = false,
                     Message = "Recebimento da mecadoria já efetivado no sistema.",
+                });
+            }
+
+            ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(5);
+
+            if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não há impressora configurada para Etiqueta de Recebimento.",
                 });
             }
 
@@ -612,7 +623,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 model.UsuarioRecebimento = _uow.PerfilUsuarioRepository.GetByUserId(lote.UsuarioRecebimento.Id).Nome;
                 model.Volumes = lote.QuantidadeVolume.ToString();
                 model.QuantidadePeca = lote.QuantidadePeca.ToString();
-                model.StatusNotaFiscal = notaFiscal.NotaFiscalStatus.Descricao;
+                model.StatusNotaFiscal = lote.LoteStatus.Descricao;
 
                 if (lote.DataRecebimento > notaFiscal.PrazoEntregaFornecedor)
                 {
@@ -736,6 +747,28 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public JsonResult ValidarInicioConferencia(long id)
         {
+            ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(2);
+
+            if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não há impressora configurada para Etiqueta de Lote.",
+                });
+            }
+
+            impressaoItem = _uow.ImpressaoItemRepository.Obter(7);
+
+            if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não há impressora configurada para Etiqueta de Devolução.",
+                });
+            }
+
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
 
             //Valida a Nota Fiscal.
@@ -792,7 +825,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
-        public async Task<JsonResult> ValidarConferenciaAutomatica()
+        public async Task<JsonResult> ValidarConferenciaAutomatica(long id)
         {
             var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
 
@@ -802,7 +835,10 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 if (!String.IsNullOrEmpty(empresaConfig.CNPJConferenciaAutomatica))
                 {
-                    conferenciaAutomatica = true;
+                    var notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+
+                    if (notaFiscal != null && notaFiscal.Fornecedor.CNPJ == empresaConfig.CNPJConferenciaAutomatica)
+                        conferenciaAutomatica = true;
                 }
             }
 
@@ -810,7 +846,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 Success = conferenciaAutomatica
             });
-		}
+        }
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
         public async Task<JsonResult> RegistrarConferenciaAutomatica(long id)
@@ -1127,10 +1163,12 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpPost]
         public async Task<JsonResult> ValidarAcessoCoordenadorConferencia(string usuario, string senha)
         {
-            //Validar Login
-            var retornoLogin = await SignInManager.PasswordSignInAsync(usuario, senha, false, shouldLockout: true).ConfigureAwait(false);
+            ApplicationUser applicationUser = await UserManager.FindByNameAsync(usuario);
 
-            if (retornoLogin != SignInStatus.Success)
+            //Validar Login
+            var retornoLogin = SignInManager.UserManager.CheckPassword(applicationUser, senha);
+
+            if (!retornoLogin)
             {
                 return Json(new AjaxGenericResultModel
                 {
@@ -1140,16 +1178,14 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             //validar Permissão
-            ApplicationUser applicationUser = await UserManager.FindByNameAsync(usuario);
+            var permissao = UserManager.GetPermissions(applicationUser.Id).Contains(Permissions.Recebimento.PermitirDiferencaMultiploConferencia);
 
-            var permissao = applicationUser.Permissions.Where(x => x.Permission.Name == Permissions.Recebimento.PermitirDiferencaMultiploConferencia);
-
-            if (permissao == null)
+            if (!permissao)
             {
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "O usuário não possui permissão para confirmar a diferença de múltiplo. Por favor, tente novamente!"
+                    Message = "O usuário informado não possui permissão para confirmar a diferença de múltiplo. Solicite a permissão para o Administrador."
                 });
             }
 
@@ -1386,10 +1422,61 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 Success = true,
                 Message = empresaConfig.TipoConferencia.Descricao,
-                Data = empresaConfig.TipoConferencia.IdTipoConferencia.ToString()
+                Data = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode().ToString()
             });
+        }
 
-            
+        [HttpPost]
+        public JsonResult ConsultarPecasHaMaisConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa)
+        {
+            int pecasHaMais = 0;
+
+            try
+            {
+                //Captura o id da nota fiscal com base no id do lote.
+                var idNotaFiscal = _uow.LoteRepository.GetById(idLote).IdNotaFiscal;
+
+                if (idNotaFiscal != 0)
+                {
+                    //Captura o id do produto.
+                    var idProduto = _uow.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(codigoBarrasOuReferencia).IdProduto;
+
+                    if (idProduto != 0)
+                    {
+                        //Captura os itens da nota fiscal do produto.
+                        var notaFiscalItem = _uow.NotaFiscalItemRepository.ObterPorItem(idNotaFiscal, idProduto);
+
+                        if (notaFiscalItem.Count > 0)
+                        {
+                            int quantidadePecasNota = 0;
+
+                            //Captura a quantidade total do produto.
+                            foreach (var item in notaFiscalItem)
+                            {
+                                quantidadePecasNota = +item.Quantidade;
+                            }
+
+                            //Verifica se a quantidade de peças da nota é maior que a quantidade informada.
+                            if (quantidadePecasNota > quantidadePorCaixa)
+                                pecasHaMais = quantidadePecasNota - quantidadePorCaixa;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Data = Convert.ToString(pecasHaMais)
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Data = Convert.ToString(pecasHaMais)
+            });
         }
 
         [HttpGet]
@@ -1445,6 +1532,19 @@ namespace FWLog.Web.Backoffice.Controllers
             try
             {
                 ValidateModel(viewModel);
+
+                foreach(var divergencia in viewModel.Divergencias)
+                {
+                    if(divergencia.QuantidadeMaisTratado.HasValue == false && divergencia.QuantidadeMenosTratado.HasValue == false)
+                    {
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = "Existem divergências não tratadas."
+                        }, JsonRequestBehavior.DenyGet);
+                    }
+                }
+
                 var request = Mapper.Map<TratarDivergenciaRequest>(viewModel);
                 request.IdUsuario = User.Identity.GetUserId();
                 request.IdEmpresa = IdEmpresa;

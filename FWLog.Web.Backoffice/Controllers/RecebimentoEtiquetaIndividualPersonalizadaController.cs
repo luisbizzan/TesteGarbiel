@@ -72,15 +72,6 @@ namespace FWLog.Web.Backoffice.Controllers
                     };
 
                     _etiquetaService.ImprimirEtiquetaPeca(request);
-
-                    var requestAvulso = new ImprimirEtiquetaAvulsoRequest
-                    {
-                        IdEmpresa = IdEmpresa,
-                        IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
-                        QuantidadeEtiquetas = viewModel.Quantidade.Value
-                    };
-
-                    _etiquetaService.ImprimirEtiquetaAvulso(requestAvulso);
                 }
                 else if (viewModel.TipoEtiquetagem == Data.Models.TipoEtiquetagemEnum.Personalizada.GetHashCode())
                 {
@@ -182,6 +173,16 @@ namespace FWLog.Web.Backoffice.Controllers
                             Message = "Referência não encontrada. Por favor, tente novamente!"
                         });
                     }
+
+
+                }
+                else if (string.IsNullOrWhiteSpace(_unitOfWork.EmpresaRepository.GetById(IdEmpresa)?.TelefoneSAC))
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Telefone de SAC não está cadastrado. Por favor, tente novamente!"
+                    });
                 }
 
                 return Json(new AjaxGenericResultModel

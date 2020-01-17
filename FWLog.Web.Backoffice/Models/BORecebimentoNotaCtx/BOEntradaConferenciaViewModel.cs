@@ -30,7 +30,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public string TipoConferencia { get; set; }
         public int IdTipoConferencia { get; set; }
 
-        [Display(Name = "Referência")]
+        [Display(Name = "Referência/Cód. Barras")]
         [Required]
         public string Referencia { get; set; }
 

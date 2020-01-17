@@ -48,19 +48,19 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="col-xs-12 col-sm-3 form-group">
+                <div class="form-group col-md-2 col-lg-2">
+                    @Html.LabelFor(m => m.Filter.UserName)
+                    @Html.TextBoxFor(m => m.Filter.UserName, new { @class = "form-control onlyNumber", @maxlength = 5, data_field = "UserName" })
+                </div>
+                <div class="form-group col-md-4 col-lg-4">
                     @Html.LabelFor(m => m.Filter.Nome)
                     @Html.TextBoxFor(m => m.Filter.Nome, new { @class = "form-control", data_field = "Nome" })
                 </div>
-                <div class="col-xs-12 col-sm-2 form-group">
-                    @Html.LabelFor(m => m.Filter.UserName)
-                    @Html.TextBoxFor(m => m.Filter.UserName, new { @class = "form-control", data_field = "UserName" })
-                </div>
-                <div class="col-xs-12 col-sm-3 form-group">
+                <div class="form-group col-md-4 col-lg-4">
                     @Html.LabelFor(m => m.Filter.Email)
                     @Html.TextBoxFor(m => m.Filter.Email, new { @class = "form-control", data_field = "Email" })
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-md-2 col-lg-2">
                     @Html.LabelFor(m => m.Filter.Ativo)
                     @Html.DropDownListFor(m => m.Filter.Ativo, Model.Status, "Todos", new { @class = "form-control", data_field = "Ativo" })
                 </div>

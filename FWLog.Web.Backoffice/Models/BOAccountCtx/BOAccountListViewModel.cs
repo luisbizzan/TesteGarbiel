@@ -33,6 +33,7 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
     public class BOAccountFilterViewModel
     {
         [Display(Name = nameof(Res.UserNameLabel), ResourceType = typeof(Res))]
+        [StringLength(5)]
         public string UserName { get; set; }
         [Display(Name = nameof(Res.EmailLabel), ResourceType = typeof(Res))]
         public string Email { get; set; }

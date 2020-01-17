@@ -51,6 +51,19 @@ namespace FWLog.Data.Repository.GeneralCtx
                              QtdRecebida = lc.Quantidade
                          });
 
+            query = query.AsEnumerable().GroupBy(x => new { x.IdLote, x.NroNota, x.IdEmpresa, x.ReferenciaPronduto }, (key, group) => new RelatorioRastreioPecaListaLinhaTabela
+            {
+                IdLote = key.IdLote,
+                IdEmpresa = key.IdEmpresa,
+                NroNota = key.NroNota,
+                ReferenciaPronduto = key.ReferenciaPronduto,
+                Empresa = group.FirstOrDefault().Empresa,
+                DataCompra = group.Min(y => y.DataCompra),
+                DataRecebimento = group.Max(y => y.DataRecebimento),
+                QtdCompra = group.Sum(y => y.QtdCompra),
+                QtdRecebida = group.Sum(y => y.QtdRecebida)
+            }).AsQueryable();
+
             query = query.WhereIf(!string.IsNullOrEmpty(filter.ReferenciaPronduto), x => x.ReferenciaPronduto.ToUpper().Contains(filter.ReferenciaPronduto.ToUpper()));
             query = query.WhereIf(filter.IdLote.HasValue, x => x.IdLote == filter.IdLote);
             query = query.WhereIf(filter.NroNota.HasValue, x => x.NroNota == filter.NroNota);

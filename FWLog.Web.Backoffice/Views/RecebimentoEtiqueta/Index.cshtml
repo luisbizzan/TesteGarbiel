@@ -1,6 +1,7 @@
 ﻿@model FWLog.Web.Backoffice.Models.RecebimentoNotaCtx.RecebimentoEtiquetaViewModel
 
 @{
+    ViewBag.Title = "Etiqueta - Lote";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -17,22 +18,22 @@
         </div>
         <div class="x_content">
             <div class="row">
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-3 col-xs-12">
                     @Html.LabelFor(m => m.NroLote, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.NroLote, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.NroLote)
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-3 col-xs-12">
                     @Html.LabelFor(m => m.ReferenciaProduto, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.ReferenciaProduto, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.ReferenciaProduto)
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-3 col-xs-12">
                     @Html.LabelFor(m => m.QtdPorCaixa, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.QtdPorCaixa, new { @class = "form-control onlyNumber", type = "number" })
                     @Html.ValidationMessageFor(m => m.QtdPorCaixa)
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-3 col-xs-12">
                     @Html.LabelFor(m => m.QtdCaixas, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.QtdCaixas, new { @class = "form-control onlyNumber", type = "number" })
                     @Html.ValidationMessageFor(m => m.QtdCaixas)
