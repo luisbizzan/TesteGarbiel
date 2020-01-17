@@ -36,9 +36,10 @@ namespace FWLog.Services.Services
             inner.Append("LEFT JOIN TSICID ON TSIEMP.CODCID = TSICID.CODCID ");
             inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF");
 
-            var where = "WHERE AD_INTEGRARFWLOG = '1' ";
+            string where = "WHERE TSIEMP.AD_FILIAL IS NOT NULL AND TSIEMP.AD_NOMEFILIAL IS NOT NULL AND TSIEMP.AD_INTEGRARFWLOG = '1' ";
 
             List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(inner: inner.ToString(), where: where);
+            empresasIntegracao = empresasIntegracao.OrderBy("CodigoIntegracao", "ASC").ToList();
 
             foreach (var empInt in empresasIntegracao)
             {
@@ -82,7 +83,7 @@ namespace FWLog.Services.Services
 
                     await _unitOfWork.SaveChangesAsync();
 
-                    if (!string.IsNullOrEmpty(empInt.EmpresaMatriz))
+                    if (!string.IsNullOrEmpty(empInt.EmpresaMatriz) && !empInt.EmpresaMatriz.Equals(codEmp.ToString()))
                     {
                         var codEmpMatriz = Convert.ToInt32(empInt.EmpresaMatriz);
                         var empMatriz = _unitOfWork.EmpresaRepository.Tabela().FirstOrDefault(f => f.CodigoIntegracao == codEmpMatriz);
