@@ -4,5 +4,17 @@
     "inputFiles": [
       "Content/gentelella/custom.css"
     ]
+  },
+  {
+    "outputFileName": "Content/dart/dart-template.min.css",
+    "inputFiles": [
+      "Content/dart/dart-template.css"
+    ]
+  },
+  {
+    "outputFileName": "Content/site.min.css",
+    "inputFiles": [
+      "Content/site.css"
+    ]
   }
 ]
