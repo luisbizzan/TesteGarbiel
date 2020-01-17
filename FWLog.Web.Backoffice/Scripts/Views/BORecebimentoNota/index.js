@@ -496,7 +496,7 @@ function conferirNota() {
         method: "POST",
         success: function (result) {
             if (result.Success) {
-                if (!validarConferenciaAutomatica()) {
+                if (!validarConferenciaAutomatica(id)) {
                     $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
                         $modal.modal();
                         $("#Referencia").focus();
@@ -531,17 +531,17 @@ function conferirNota() {
     });
 }
 
-function validarConferenciaAutomatica() {
-    var rtn = false;
+function validarConferenciaAutomatica(idNotaFiscal) {
+    var retorno = false;
 
     $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "ValidarConferenciaAutomatica/",
+        url: HOST_URL + CONTROLLER_PATH + "ValidarConferenciaAutomatica/" + idNotaFiscal,
         cache: false,
         async: false,
         method: "POST",
         success: function (result) {
             if (result.Success) {
-                rtn = true;
+                retorno = true;
             }
         },
         error: function (request, status, error) {
@@ -549,7 +549,7 @@ function validarConferenciaAutomatica() {
         }
     });
 
-    return rtn;
+    return retorno;
 }
 
 function tratarDivergencias() {

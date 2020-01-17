@@ -612,7 +612,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 model.UsuarioRecebimento = _uow.PerfilUsuarioRepository.GetByUserId(lote.UsuarioRecebimento.Id).Nome;
                 model.Volumes = lote.QuantidadeVolume.ToString();
                 model.QuantidadePeca = lote.QuantidadePeca.ToString();
-                model.StatusNotaFiscal = notaFiscal.NotaFiscalStatus.Descricao;
+                model.StatusNotaFiscal = lote.LoteStatus.Descricao;
 
                 if (lote.DataRecebimento > notaFiscal.PrazoEntregaFornecedor)
                 {
@@ -792,7 +792,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
-        public async Task<JsonResult> ValidarConferenciaAutomatica()
+        public async Task<JsonResult> ValidarConferenciaAutomatica(long id)
         {
             var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
 
@@ -802,8 +802,10 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 if (!String.IsNullOrEmpty(empresaConfig.CNPJConferenciaAutomatica))
                 {
-                    //TODO Verificar se o CNPJ da Nota é igual ao configurado no menu empresa.
-                    conferenciaAutomatica = true;
+                    var notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+
+                    if (notaFiscal != null && notaFiscal.Fornecedor.CNPJ == empresaConfig.CNPJConferenciaAutomatica)
+                        conferenciaAutomatica = true;
                 }
             }
 
@@ -1128,10 +1130,12 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpPost]
         public async Task<JsonResult> ValidarAcessoCoordenadorConferencia(string usuario, string senha)
         {
-            //Validar Login
-            var retornoLogin = await SignInManager.PasswordSignInAsync(usuario, senha, false, shouldLockout: true).ConfigureAwait(false);
+            ApplicationUser applicationUser = await UserManager.FindByNameAsync(usuario);
 
-            if (retornoLogin != SignInStatus.Success)
+            //Validar Login
+            var retornoLogin = SignInManager.UserManager.CheckPassword(applicationUser, senha);
+
+            if (!retornoLogin)
             {
                 return Json(new AjaxGenericResultModel
                 {
@@ -1141,16 +1145,14 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             //validar Permissão
-            ApplicationUser applicationUser = await UserManager.FindByNameAsync(usuario);
+            var permissao = UserManager.GetPermissions(applicationUser.Id).Contains(Permissions.Recebimento.PermitirDiferencaMultiploConferencia);
 
-            var permissao = applicationUser.Permissions.Where(x => x.Permission.Name == Permissions.Recebimento.PermitirDiferencaMultiploConferencia);
-
-            if (permissao == null)
+            if (!permissao)
             {
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "O usuário não possui permissão para confirmar a diferença de múltiplo. Por favor, tente novamente!"
+                    Message = "O usuário informado não possui permissão para confirmar a diferença de múltiplo. Solicite a permissão para o Administrador."
                 });
             }
 
@@ -1387,10 +1389,64 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 Success = true,
                 Message = empresaConfig.TipoConferencia.Descricao,
-                Data = empresaConfig.TipoConferencia.IdTipoConferencia.ToString()
+                Data = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode().ToString()
             });
+        }
+
+        [HttpPost]
+        public JsonResult ConsultarPecasHaMaisConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa)
+        {
+            int pecasHaMais = 0;
+
+            try
+            {
+                //Captura o id da nota fiscal com base no id do lote.
+                var idNotaFiscal = _uow.LoteRepository.GetById(idLote).IdNotaFiscal;
+
+                if (idNotaFiscal != 0)
+                {
+                    //Captura o id do produto.
+                    var idProduto = _uow.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(codigoBarrasOuReferencia).IdProduto;
+
+                    if (idProduto != 0)
+                    {
+                        //Captura os itens da nota fiscal do produto.
+                        var notaFiscalItem = _uow.NotaFiscalItemRepository.ObterPorItem(idNotaFiscal, idProduto);
+
+                        if (notaFiscalItem.Count > 0)
+                        {
+                            int quantidadePecasNota = 0;
+
+                            //Captura a quantidade total do produto.
+                            foreach (var item in notaFiscalItem)
+                            {
+                                quantidadePecasNota = +item.Quantidade;
+                            }
+
+                            //Verifica se a quantidade de peças da nota é maior que a quantidade informada.
+                            if (quantidadePecasNota > quantidadePorCaixa)
+                                pecasHaMais = quantidadePecasNota - quantidadePorCaixa;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Data = Convert.ToString(pecasHaMais)
+                });
+            }
+            
 
             
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Data = Convert.ToString(pecasHaMais)
+            });
         }
 
         [HttpGet]

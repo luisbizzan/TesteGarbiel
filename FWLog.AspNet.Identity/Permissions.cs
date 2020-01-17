@@ -95,7 +95,7 @@ namespace FWLog.AspNet.Identity
                 Register(RelatorioRastreioPeca, Display.FromString("Relatório Rastreio de Peça"));
                 Register(RelatorioResumoEtiquetagem, Display.FromString("Relatório Resumo Etiquetagem"));
                 Register(ListarResumoProducao, Display.FromString("Listar Resumo Produção"));
-                Register(PermitirDiferencaMultiploConferencia, Display.FromString("Permitir Diferença de Múltiplo na Conferência"));
+                Register(PermitirDiferencaMultiploConferencia, Display.FromString("Permitir Diferença de Múltiplo"));
                 Register(ConferirLote, Display.FromString("Conferir Lote"));
                 Register(ConferirLoteAutomatico, Display.FromString("Conferir Lote Automático"));
             }
