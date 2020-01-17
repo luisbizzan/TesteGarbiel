@@ -1,13 +1,26 @@
 ﻿@charset "UTF-8";
+.row-actions {
+    white-space: nowrap;
+}
+
+label {
+    margin-bottom: 2px !important;
+}
+
 .left_col {
-  background: #2A3F54; }
+    background: #2A3F54;
+}
+.empresasGrupo{
+    margin-top: 10px;
+}
 
 .nav-sm .container.body .col-md-3.left_col {
-  min-height: 100%;
-  width: 85px;
-  padding: 0;
-  z-index: 9999;
-  position: absolute; }
+    min-height: 100%;
+    width: 85px;
+    padding: 0;
+    z-index: 10;
+    position: absolute;
+}
 
 .nav-sm .container.body .col-md-3.left_col.menu_fixed {
   position: fixed;
@@ -21,7 +34,7 @@
   visibility: hidden; }
 
 .nav-sm .container.body .right_col {
-  padding: 10px 20px;
+  padding: 10px 10px;
   margin-left: 85px;
   z-index: 2; }
 
@@ -76,7 +89,7 @@
   margin-bottom: 5px; }
 
 .nav-sm ul.nav.child_menu {
-    left: 102%;
+    left: 84px;
     position: absolute;
     top: 0;
     width: 210px;
@@ -336,9 +349,9 @@ body {
   color: #73879C;
   background: #2A3F54;
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 400;
-  line-height: 1.471; }
+  line-height: 1; }
 
 .main_container .top_nav {
   display: block;
@@ -831,7 +844,7 @@ h2 {
   position: relative;
   width: 100%;
   margin-bottom: 10px;
-  padding: 10px 17px;
+  padding: 10px 7px;
   display: inline-block;
   background: #fff;
   border: 1px solid #E6E9ED;
@@ -1050,6 +1063,17 @@ h3.degrees {
   margin-bottom: 0; }
 
 /* *********  tables styling  ******************************* */
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+    padding: 7px;
+    line-height: 1;
+    vertical-align: middle;
+}
+
 .bulk-actions {
   display: none; }
 
@@ -1100,7 +1124,8 @@ table.jambo_table tbody tr.selected td {
 .dataTables_wrapper {
   position: relative;
   clear: both;
-  zoom: 1; }
+  /*zoom: 1;*/
+}
 
 .dataTables_processing {
   position: absolute;
@@ -1993,7 +2018,7 @@ legend {
   padding-right: 45px; }
 
 .form-group {
-  margin-bottom: 5px; }
+  margin-bottom: 10px; }
 
 .validate {
   margin-top: 10px; }
