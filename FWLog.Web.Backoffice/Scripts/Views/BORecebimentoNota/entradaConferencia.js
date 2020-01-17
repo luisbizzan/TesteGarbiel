@@ -65,10 +65,13 @@
                 if ($tipoConferencia.val() != "Por Quantidade") {
                     $('#modalRegistrarConferencia').modal('show');
 
-                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.'); 
+                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.'); 
 
-                    if (consultarPecasHaMaisConferencia() > 0)
-                        $('#MensagemPecasHaMais').text('Atenção, foi identificado divergência com o pedido de compra. Separar' + 10 + 'para peças A+.'); 
+                    $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {
+                        if (qtdePecasHaMais > 0)
+                            $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' para peças A+.'); 
+                    }
+                    );
                 }
                 else {
                     validarDiferencaMultiploConferencia();
@@ -166,7 +169,23 @@
     });
 
     $("#confirmarConferencia").click(function () {
-        validarDiferencaMultiploConferencia();
+        //Se o tipo da conferência é 100%. 
+                //Caso seja, solicita confirmação do usuário. 
+                //Caso contrário, chama o método para validar o múltiplo da conferência e posteriormente o registro da conferência.
+                if ($tipoConferencia.val() != "Por Quantidade") {
+                    $('#modalRegistrarConferencia').modal('show');
+
+                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.'); 
+
+                    $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {
+                        if (qtdePecasHaMais > 0)
+                            $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' para peças A+.');
+                    }
+                    );
+                }
+                else {
+                    validarDiferencaMultiploConferencia();
+                }
     });
 
     $("#confirmarRegistroConferencia").click(function () {
@@ -483,8 +502,6 @@ function resetarCamposConferencia(limpaReferencia = true) {
     $("#Localizacao").val('');
     $("#QuantidadeNaoConferida").val('');
     $("#QuantidadeConferida").val('');
-
-    
 }
 
 function consultarPecasHaMaisConferencia() {
@@ -497,6 +514,7 @@ function consultarPecasHaMaisConferencia() {
         url: HOST_URL + CONTROLLER_PATH + "ConsultarPecasHaMaisConferencia",
         cache: false,
         global: false,
+        async: false,
         method: "POST",
         data: {
             codigoBarrasOuReferencia: referencia,
