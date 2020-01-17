@@ -1336,7 +1336,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     IdLote = lote.IdLote,
                     IdTipoConferencia = tipoConferencia,
                     IdProduto = produto.IdProduto,
-                    Quantidade = quantidadePorCaixa > 0 ? quantidadePorCaixa * quantidadeCaixa : quantidadePorCaixa,
+                    Quantidade = quantidadePorCaixa * quantidadeCaixa,
                     DataHoraInicio = dataHoraInicio,
                     DataHoraFim = dataHoraFim,
                     Tempo = tempo,
@@ -1453,12 +1453,12 @@ namespace FWLog.Web.Backoffice.Controllers
                             //Captura a quantidade total do produto.
                             foreach (var item in notaFiscalItem)
                             {
-                                quantidadePecasNota = +item.Quantidade;
+                                quantidadePecasNota = quantidadePecasNota + item.Quantidade;
                             }
 
                             //Verifica se a quantidade de peças da nota é maior que a quantidade informada.
-                            if (quantidadePecasNota > quantidadePorCaixa)
-                                pecasHaMais = quantidadePecasNota - quantidadePorCaixa;
+                            if (quantidadePorCaixa > quantidadePecasNota)
+                                pecasHaMais = quantidadePorCaixa - quantidadePecasNota;
                         }
                     }
                 }
