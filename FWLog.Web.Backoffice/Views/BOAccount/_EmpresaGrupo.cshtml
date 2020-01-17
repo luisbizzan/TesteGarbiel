@@ -19,14 +19,14 @@
                 <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></button>
             </div>
         </div>
-        <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12 empresasGrupo">
+        <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 10px;">
             @for (int grupo = 0; grupo < Model[i].Grupos.Count(); grupo++)
             {
                 <div class="form-group col-xs-12 col-sm-6 col-md-4 col-lg-3">
                     <div class="checkbox">
                         <label>
                             @Html.Hidden(string.Format("EmpresasGrupos[{0}].Grupos[{1}].Name", i, grupo), Model[i].Grupos[grupo].Name, new { @class = "NomeGrupo" })
-                            @Html.CheckBox(string.Format("EmpresasGrupos[{0}].Grupos[{1}].IsSelected", i, grupo), Model[i].Grupos[grupo].IsSelected, new { data_group = "", style="margin-top: 0px;" })
+                            @Html.CheckBox(string.Format("EmpresasGrupos[{0}].Grupos[{1}].IsSelected", i, grupo), Model[i].Grupos[grupo].IsSelected, new { data_group = "", style = "margin-top: 0px;" })
                             @Html.DisplayFor(m => m[i].Grupos[grupo].Name)
                         </label>
                     </div>

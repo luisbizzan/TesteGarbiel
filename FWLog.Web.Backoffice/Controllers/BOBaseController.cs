@@ -185,7 +185,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         private long PerfilImpressoraPadrao(HttpCookie cookie, UnitOfWork uow)
         {
-            long idPerfilImpressora = uow.UsuarioEmpresaRepository.Tabela().FirstOrDefault(x => x.IdEmpresa == IdEmpresa && x.UserId == IdUsuario).IdPerfilImpressoraPadrao.GetValueOrDefault();
+            long idPerfilImpressora = uow.UsuarioEmpresaRepository.Tabela().FirstOrDefault(x => x.IdEmpresa == IdEmpresa && x.UserId == IdUsuario)?.IdPerfilImpressoraPadrao ?? 0;
             cookie.Values[EmpresaCookie.PerfilImpressora] = idPerfilImpressora.ToString();
 
             Response.Cookies.Add(cookie);
