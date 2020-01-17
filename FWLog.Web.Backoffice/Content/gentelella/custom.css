@@ -1,26 +1,22 @@
 ﻿@charset "UTF-8";
 .row-actions {
-    white-space: nowrap;
-}
+  white-space: nowrap; }
 
 label {
-    margin-bottom: 2px !important;
-}
+  margin-bottom: 2px !important; }
 
 .left_col {
-    background: #2A3F54;
-}
-.empresasGrupo{
-    margin-top: 10px;
-}
+  background: #2A3F54; }
+
+.empresasGrupo {
+  margin-top: 10px; }
 
 .nav-sm .container.body .col-md-3.left_col {
-    min-height: 100%;
-    width: 85px;
-    padding: 0;
-    z-index: 10;
-    position: absolute;
-}
+  min-height: 100%;
+  width: 85px;
+  padding: 0;
+  z-index: 10;
+  position: absolute; }
 
 .nav-sm .container.body .col-md-3.left_col.menu_fixed {
   position: fixed;
@@ -40,8 +36,7 @@ label {
 
 .nav-sm .navbar.nav_title {
   width: 200px;
-  height: 59px !important;
-}
+  height: 59px !important; }
 
 .nav-sm .navbar.nav_title a span {
   display: none; }
@@ -89,23 +84,21 @@ label {
   margin-bottom: 5px; }
 
 .nav-sm ul.nav.child_menu {
-    left: 84px;
-    position: absolute;
-    top: 0;
-    width: 210px;
-    z-index: 4000;
-    background: #3E5367;
-    display: none;
-    box-shadow: -6px 8px 5px 0px rgba(50, 50, 50, 0.9);
-}
+  left: 84px;
+  position: absolute;
+  top: 0;
+  width: 210px;
+  z-index: 4000;
+  background: #3E5367;
+  display: none;
+  box-shadow: -6px 8px 5px 0px rgba(50, 50, 50, 0.9); }
 
 .nav-sm ul.nav.child_menu li {
   padding: 0 10px; }
 
 .nav-sm ul.nav.child_menu li a {
   text-align: left !important;
-  font-size: 12px !important;
-}
+  font-size: 12px !important; }
 
 .nav-sm .profile {
   display: none; }
@@ -469,7 +462,7 @@ a:hover, a:focus {
 
 .top_nav .navbar-right {
   margin: 0;
-  width: 70%;
+  width: 85%;
   float: right; }
 
 .top_nav .navbar-right li {
@@ -1069,10 +1062,9 @@ h3.degrees {
 .table > thead > tr > td,
 .table > tbody > tr > td,
 .table > tfoot > tr > td {
-    padding: 7px;
-    line-height: 1;
-    vertical-align: middle;
-}
+  padding: 7px;
+  line-height: 1;
+  vertical-align: middle; }
 
 .bulk-actions {
   display: none; }
@@ -1124,8 +1116,7 @@ table.jambo_table tbody tr.selected td {
 .dataTables_wrapper {
   position: relative;
   clear: both;
-  /*zoom: 1;*/
-}
+  /*zoom: 1;*/ }
 
 .dataTables_processing {
   position: absolute;

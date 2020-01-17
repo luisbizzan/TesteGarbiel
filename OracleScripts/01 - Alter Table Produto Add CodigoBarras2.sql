@@ -1,0 +1,1 @@
+ALTER TABLE "Produto" ADD "CodigoBarras2" VARCHAR2(100 BYTE);

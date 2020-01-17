@@ -666,6 +666,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             CookieSalvarEmpresa(0, applicationUser.Id, true);
+            CookieLogoff();
 
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("LogOn", "BOAccountBase");

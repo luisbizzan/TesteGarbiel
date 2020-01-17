@@ -159,6 +159,10 @@ footer {
     z-index: 1042 !important;
 }
 
+#modalAcessoCoordenadorTipoConferencia {
+    z-index: 1080 !important;
+}
+
 .vertical-alignment-helper {
     display: table;
     height: 80%;

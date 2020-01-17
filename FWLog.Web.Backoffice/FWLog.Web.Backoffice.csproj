@@ -333,6 +333,9 @@
       <LastGenOutput>BOPrinterStrings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources</CustomToolNamespace>
     </EmbeddedResource>
+    <Content Include="Content\site.min.css">
+      <DependentUpon>site.css</DependentUpon>
+    </Content>
     <Content Include="favicon.ico" />
     <EmbeddedResource Include="GlobalResources\NivelArmazenagem\NivelArmazenagemStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -344,6 +347,7 @@
     <Content Include="Scripts\dart\documentReady.js" />
     <Content Include="Scripts\dart\dropzoneImageCropper.js" />
     <Content Include=".editorconfig" />
+    <None Include="bundleconfig.json" />
     <None Include="Content\dart\dart-template.scss" />
     <Compile Include="Controllers\ApplicationLogController.cs" />
     <Compile Include="Controllers\BOAccountBaseController.cs" />
