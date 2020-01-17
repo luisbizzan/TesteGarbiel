@@ -125,20 +125,25 @@
     var iconeStatus = function (data, type, row) {
         if (type === 'display') {
             var nomeCor,
-                lote = row.Lote || '';
+                lote = row.Lote || '',
+                tooltipText;
 
-            if (row.Atraso === 0)
+            if (row.Atraso === 0) {
                 nomeCor = 'verde';
+                tooltipText = 'Sem atraso';
+            }
 
             if (row.Atraso > 0) {
                 if (row.Atraso > 2) {
                     nomeCor = 'vermelho';
+                    tooltipText = 'Mais que 2 dias de atraso';
                 } else {
                     nomeCor = 'amarelo';
+                    tooltipText = 'Até 2 dias de atraso';
                 }
             }
 
-            return `<i class="fa fa-circle icone-status-${nomeCor}"></i>${lote}`;
+            return `<i class="fa fa-circle icone-status-${nomeCor}" title = "${tooltipText}" data-toggle = "tooltip"></i>${lote}`;
         }
 
         return data;
@@ -493,7 +498,7 @@ function conferirNota() {
 
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ValidarInicioConferencia/" + id,
-        cache: false,        
+        cache: false,
         method: "POST",
         success: function (result) {
             if (result.Success) {
