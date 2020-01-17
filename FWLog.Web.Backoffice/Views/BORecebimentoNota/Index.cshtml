@@ -50,7 +50,7 @@
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.IdStatus)
-                    @Html.DropDownListFor(m => m.Filter.IdStatus, Model.Filter.ListaStatus, "Selecione...", new { @class = "form-control", data_field = "IdStatus" })
+                    @Html.DropDownListFor(m => m.Filter.IdStatus, Model.Filter.ListaStatus, "Todos", new { @class = "form-control", data_field = "IdStatus" })
                 </div>
             </div>
             <div class="row">
@@ -175,7 +175,7 @@
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
-                <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                <table id="dataTable" class="table table-striped table-bordered dt-responsive" style="width:100%">
                     <thead>
                         <tr>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Lote)</th>

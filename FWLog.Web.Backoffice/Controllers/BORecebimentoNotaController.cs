@@ -233,7 +233,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         Fornecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
                         QuantidadePeca = item.QuantidadePeca == 0 ? (int?)null : item.QuantidadePeca,
                         QuantidadeVolume = item.QuantidadeVolume == 0 ? (int?)null : item.QuantidadeVolume,
-                        RecebidoEm = item.LoteStatus.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento ? item.DataRecebimento.ToString() : "-",
+                        RecebidoEm = item.LoteStatus.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento ? item.DataRecebimento.ToString("dd/MM/yyyy HH:mm") : " - ",
                         Status = item.LoteStatus.Descricao,
                         IdNotaFiscal = item.NotaFiscal.IdNotaFiscal,
                         Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
@@ -384,6 +384,17 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Success = false,
                     Message = "Recebimento da mecadoria já efetivado no sistema.",
+                });
+            }
+
+            ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(5);
+
+            if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não há impressora configurada para Etiqueta de Recebimento.",
                 });
             }
 
@@ -736,6 +747,28 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public JsonResult ValidarInicioConferencia(long id)
         {
+            ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(2);
+
+            if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não há impressora configurada para Etiqueta de Lote.",
+                });
+            }
+
+            impressaoItem = _uow.ImpressaoItemRepository.Obter(7);
+
+            if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não há impressora configurada para Etiqueta de Devolução.",
+                });
+            }
+
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
 
             //Valida a Nota Fiscal.
@@ -813,7 +846,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 Success = conferenciaAutomatica
             });
-		}
+        }
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
         public async Task<JsonResult> RegistrarConferenciaAutomatica(long id)
@@ -1438,9 +1471,6 @@ namespace FWLog.Web.Backoffice.Controllers
                     Data = Convert.ToString(pecasHaMais)
                 });
             }
-            
-
-            
 
             return Json(new AjaxGenericResultModel
             {
@@ -1502,6 +1532,19 @@ namespace FWLog.Web.Backoffice.Controllers
             try
             {
                 ValidateModel(viewModel);
+
+                foreach(var divergencia in viewModel.Divergencias)
+                {
+                    if(divergencia.QuantidadeMaisTratado.HasValue == false && divergencia.QuantidadeMenosTratado.HasValue == false)
+                    {
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = "Existem divergências não tratadas."
+                        }, JsonRequestBehavior.DenyGet);
+                    }
+                }
+
                 var request = Mapper.Map<TratarDivergenciaRequest>(viewModel);
                 request.IdUsuario = User.Identity.GetUserId();
                 request.IdEmpresa = IdEmpresa;

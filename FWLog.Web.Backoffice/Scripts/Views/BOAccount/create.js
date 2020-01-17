@@ -1,5 +1,6 @@
 ﻿(function () {
     loadButtonsEvents();
+    $(".onlyNumber").mask("0#");
 
     $('#ddlEmpresas').on('change', function () {
         $(".validationEmpresa").text("");

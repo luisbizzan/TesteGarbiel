@@ -21,34 +21,34 @@
         </div>
         <div class="x_content">
             <div class="row">
-                <div class="form-group col-sm-4 col-xs-12">
+                <div class="form-group col-sm-2 col-lg-2 col-xs-12">
                     @Html.LabelFor(m => m.UserName, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @disabled = "disabled" })
                     @Html.ValidationMessageFor(m => m.UserName)
                 </div>
-                <div class="form-group col-sm-3 col-xs-12">
+                <div class="form-group col-sm-5 col-lg-5 col-xs-12">
                     @Html.LabelFor(m => m.Nome, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Nome, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.Nome)
                 </div>
-                <div class="form-group col-sm-3 col-xs-12">
+                <div class="form-group col-sm-5 col-lg-5 col-xs-12">
                     @Html.LabelFor(m => m.Email, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.Email)
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-4 col-lg-4 col-xs-12">
                     @Html.LabelFor(m => m.Departamento, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Departamento, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.Departamento)
                 </div>
-                <div class="form-group col-sm-3 col-xs-12">
+                <div class="form-group col-sm-4 col-lg-4 col-xs-12">
                     @Html.LabelFor(m => m.Cargo, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Cargo, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.Cargo)
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-4 col-lg-4 col-xs-12">
                     @Html.LabelFor(m => m.DataNascimento, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.DataNascimento, new { @class = "form-control dateMask" })
                     @Html.ValidationMessageFor(m => m.DataNascimento)

@@ -1,21 +1,45 @@
-﻿<!-- top navigation -->
+﻿<style>
+    .usr {
+        display: inline-block;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .combo {
+        max-width: 300px;
+    }
+
+    .usr-completo {
+        text-align: center;
+    }
+</style>
+
+<!-- top navigation -->
 <div class="top_nav getpoints">
     <div class="nav_menu">
         <nav>
-            <div class="nav toggle">
-                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
-            </div>
             @if (Request.IsAuthenticated)
             {
                 <ul class="nav navbar-nav navbar-right">
                     <!-- usuario -->
                     <li class="">
                         <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                            @User.Identity.Name
-                            <span class="fa fa-angle-down"></span>
+                            <span class="usr">
+                                @User.Identity.Name
+                            </span>
+                            <span class="fa fa-angle-down" style="display: inline-block;"></span>
                         </a>
                         <ul class="dropdown-menu dropdown-usermenu pull-right">
                             <li>
+                                <div class="usr-completo">
+                                    <sup>
+                                        @User.Identity.Name
+                                    </sup>
+                                </div>
+                                <hr style="margin: 0px;" />
                                 <a href="@Url.Action("ChangePassword", "BOAccount")"><i class="fa fa-key pull-right"></i>@Resources.CommonStrings.ChangePasswordAction</a>
                                 <a href="@Url.Action("LogOff", "BOAccount")"><i class="fa fa-sign-out pull-right"></i> @Resources.CommonStrings.LogOffAction</a>
                             </li>
@@ -23,13 +47,13 @@
                     </li>
                     <!-- empresa -->
                     <li class="dropdown" role="presentation">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <a class="dropdown-toggle combo" data-toggle="dropdown" aria-expanded="false">
                             @Html.Action("BuscarEmpresas", "Empresa")
                         </a>
                     </li>
                     <!-- perfil Impressora -->
                     <li class="dropdown" role="presentation">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <a class="dropdown-toggle combo" data-toggle="dropdown" aria-expanded="false">
                             @Html.Action("BuscarPerfilImpressora", "PerfilImpressora")
                         </a>
                     </li>

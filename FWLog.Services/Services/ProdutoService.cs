@@ -29,10 +29,10 @@ namespace FWLog.Services.Services
             }
 
             StringBuilder where = new StringBuilder();
-            
+
             where.Append("WHERE DESCRPROD IS NOT NULL ");
             where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
-            where.Append("AND AD_INTEGRARFWLOG = '1'"); 
+            where.Append("AND AD_INTEGRARFWLOG = '1'");
 
             List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoIntegracao>(where: where.ToString());
 
@@ -73,8 +73,8 @@ namespace FWLog.Services.Services
                     produto.MetroCubico = produtoInt.MetroCubico == null ? (decimal?)null : Convert.ToDecimal(produtoInt.MetroCubico.Replace(".", ","));
                     produto.MultiploVenda = Convert.ToDecimal(produtoInt.MultiploVenda.Replace(".", ","));
                     produto.NomeFabricante = produtoInt.NomeFabricante;
-                    produto.PesoBruto = Convert.ToDecimal(produtoInt.PesoBruto.Replace(".", ","));
-                    produto.PesoLiquido = Convert.ToDecimal(produtoInt.PesoLiquido.Replace(".", ","));
+                    produto.PesoBruto = Convert.ToDecimal(produtoInt.PesoBruto.Replace(".", ",")) / 1000;
+                    produto.PesoLiquido = Convert.ToDecimal(produtoInt.PesoLiquido.Replace(".", ",")) / 1000;
                     produto.Referencia = produtoInt.Referencia;
                     produto.ReferenciaFornecedor = produtoInt.ReferenciaFornecedor;
                     produto.CodigoBarras = produtoInt.CodigoBarras;
