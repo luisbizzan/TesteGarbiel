@@ -32,7 +32,7 @@ namespace FWLog.Services.Services
 
             where.Append("WHERE DESCRPROD IS NOT NULL ");
             where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
-            where.Append("AND AD_INTEGRARFWLOG = '1'");
+            where.Append("AND AD_INTEGRARFWLOG = '1' AND ROWNUM <= 1000 ORDER BY 1 DESC");
 
             List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoIntegracao>(where: where.ToString());
 
@@ -80,14 +80,14 @@ namespace FWLog.Services.Services
                     produto.CodigoBarras = produtoInt.CodigoBarras;
                     produto.IdUnidadeMedida = unidade.IdUnidadeMedida;
 
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", "CODPROD", produto.CodigoIntegracao, "AD_INTEGRARFWLOG", "0");
+
                     if (produtoNovo)
                     {
                         _uow.ProdutoRepository.Add(produto);
                     }
 
-                    await _uow.SaveChangesAsync();
-
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", "CODPROD", produto.CodigoIntegracao, "AD_INTEGRARFWLOG", "0");
+                    _uow.SaveChanges();
 
                     if (!atualizacaoOK)
                     {
@@ -97,9 +97,7 @@ namespace FWLog.Services.Services
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração do seguinte Produto: {0}.", produtoInt.CodigoIntegracao));
-
-                    continue;
+                        applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração do seguinte Produto: {0}.", produtoInt.CodigoIntegracao));
                 }
             }
         }

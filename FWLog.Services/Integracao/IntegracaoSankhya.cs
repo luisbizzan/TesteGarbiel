@@ -301,18 +301,10 @@ namespace FWLog.Services.Integracao
             XDocument doc = XDocument.Parse(responseContent);
             XElement root = doc.Root;
 
-            try
-            {
-                string status = root.Attribute("status")?.Value;
-                if (status == null || status != "1")
-                {
-                    throw new BusinessException("O sistema não obteve sucesso na atualização da entidade {0}.");
-                }
-            }
-            catch (Exception)
+            string status = root.Attribute("status")?.Value;
+            if (status == null || status != "1")
             {
                 var erro = DeserializarXML<IntegracaoErroResposta>(root.ToString());
-
                 throw new BusinessException(string.Format("O sistema não obteve sucesso na atualização da entidade {0}. Mensagem de Erro {1}", entidade, erro.Mensagem));
             }
 
