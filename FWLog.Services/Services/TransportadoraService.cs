@@ -59,23 +59,24 @@ namespace FWLog.Services.Services
                     transportadora.RazaoSocial = transpInt.RazaoSocial;
                     transportadora.NomeFantasia = transpInt.NomeFantasia;
 
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", transportadora.CodigoIntegracao, "AD_INTEGRARFWLOG", "0");
+                    
+                    if (!atualizacaoOK)
+                    {
+                        throw new Exception("A atualização de Transportadora no Sankhya não terminou com sucesso.");
+                    }
+
                     if (transportadoraNova)
                     {
                         _uow.TransportadoraRepository.Add(transportadora);
                     }
 
-                    await _uow.SaveChangesAsync();
-
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", transportadora.CodigoIntegracao, "AD_INTEGRARFWLOG", "0");
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização de Transportadora no Sankhya não terminou com sucesso.");
-                    }
+                    _uow.SaveChanges();
                 }
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da seguinte Transportadora: {0}.", transpInt.CodigoIntegracao));
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração da Transportadora: {0}.", transpInt.CodigoIntegracao));
 
                     continue;
                 }

@@ -32,7 +32,7 @@ namespace FWLog.Services.Services
 
             where.Append("WHERE DESCRPROD IS NOT NULL ");
             where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
-            where.Append("AND AD_INTEGRARFWLOG = '1' AND ROWNUM <= 1000 ORDER BY 1 DESC");
+            where.Append("AND AD_INTEGRARFWLOG = '1' ");
 
             List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoIntegracao>(where: where.ToString());
 
@@ -45,6 +45,7 @@ namespace FWLog.Services.Services
                     ValidarDadosIntegracao(produtoInt);
 
                     var unidade = unidadesMedida.FirstOrDefault(f => f.Sigla == produtoInt.UnidadeMedidaSigla);
+                    
                     if (unidade == null)
                     {
                         throw new Exception("Código da Unidade de Medida (CODVOL) inválido");
@@ -82,22 +83,22 @@ namespace FWLog.Services.Services
 
                     bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", "CODPROD", produto.CodigoIntegracao, "AD_INTEGRARFWLOG", "0");
 
+                    if (!atualizacaoOK)
+                    {
+                        throw new Exception("A atualização de Produto no Sankhya não terminou com sucesso.");
+                    }
+
                     if (produtoNovo)
                     {
                         _uow.ProdutoRepository.Add(produto);
                     }
 
                     _uow.SaveChanges();
-
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização de Produto no Sankhya não terminou com sucesso.");
-                    }
                 }
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
-                        applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração do seguinte Produto: {0}.", produtoInt.CodigoIntegracao));
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do Produto: {0}.", produtoInt.CodigoIntegracao));
                 }
             }
         }

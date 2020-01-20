@@ -50,21 +50,21 @@ namespace FWLog.Services.Services
                     Empresa empresa = empresas.FirstOrDefault(f => f.CodigoIntegracao == codEmp);
                     if (empresa == null)
                     {
-                        throw new Exception("Código da Empresa (CODEMP) inválido");
+                        throw new Exception(string.Format("Código da Empresa (CODEMP: {0}) inválido", notafiscalIntegracao.CodigoIntegracaoEmpresa));
                     }
 
                     var codParcTransp = Convert.ToInt64(notafiscalIntegracao.CodigoIntegracaoTransportadora);
                     Transportadora transportadora = _uow.TransportadoraRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codParcTransp);
                     if (transportadora == null)
                     {
-                        throw new Exception("Código da Transportadora (CODPARCTRANSP) inválido");
+                        throw new Exception(string.Format("Código da Transportadora (CODPARCTRANSP: {0}) inválido", notafiscalIntegracao.CodigoIntegracaoTransportadora));
                     }
 
                     var codParc = Convert.ToInt64(notafiscalIntegracao.CodigoIntegracaoFornecedor);
                     Fornecedor fornecedor = _uow.FornecedorRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codParc);
                     if (fornecedor == null)
                     {
-                        throw new Exception("Código da Fornecedor (CODPARC) inválido");
+                        throw new Exception(string.Format("Código da Fornecedor (CODPARC: {0}) inválido", notafiscalIntegracao.CodigoIntegracaoFornecedor));
                     }
 
                     bool notaNova = true;
@@ -124,15 +124,16 @@ namespace FWLog.Services.Services
                         var codProduto = Convert.ToInt64(item.CodigoIntegracaoProduto);
                         var qtdNeg = Convert.ToInt32(item.Quantidade);
                         Produto produto = _uow.ProdutoRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codProduto);
+
                         if (produto == null)
                         {
-                            throw new Exception("Código da Produto (CODPROD) inválido");
+                            throw new Exception(string.Format("Código da Produto (CODPROD: {0}) inválido", item.CodigoIntegracaoProduto));
                         }
 
                         var unidade = unidadesMedida.FirstOrDefault(f => f.Sigla == item.UnidadeMedida);
                         if (unidade == null)
                         {
-                            throw new Exception("Código da Unidade de Medida (CODVOL) inválido");
+                            throw new Exception(string.Format("Código da Unidade de Medida (CODVOL: {0}) inválido", item.UnidadeMedida));
                         }
 
                         bool itemNovo = false;
@@ -161,13 +162,6 @@ namespace FWLog.Services.Services
                         }
                     }
 
-                    if (notaNova)
-                    {
-                        _uow.NotaFiscalRepository.Add(notafiscal);
-                    }
-
-                    await _uow.SaveChangesAsync();
-
                     bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", "NUNOTA", notafiscal.CodigoIntegracao, "AD_STATUSREC", NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode());
 
                     if (!atualizacaoOK)
@@ -177,15 +171,17 @@ namespace FWLog.Services.Services
 
                     notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento;
 
-                    await _uow.SaveChangesAsync();
+                    if (notaNova)
+                    {
+                        _uow.NotaFiscalRepository.Add(notafiscal);
+                    }
 
+                    _uow.SaveChanges();
                 }
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da seguinte nota fiscal: {0}.", notasInt.Key));
-
-                    continue;
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração da seguinte nota fiscal: {0}.", notasInt.Key));
                 }
             }
         }

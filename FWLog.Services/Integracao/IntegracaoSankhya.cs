@@ -305,7 +305,9 @@ namespace FWLog.Services.Integracao
             if (status == null || status != "1")
             {
                 var erro = DeserializarXML<IntegracaoErroResposta>(root.ToString());
-                throw new BusinessException(string.Format("O sistema não obteve sucesso na atualização da entidade {0}. Mensagem de Erro {1}", entidade, erro.Mensagem));
+                byte[] erroData = Convert.FromBase64String(erro.Mensagem);
+                string decodedString = Encoding.UTF8.GetString(erroData);
+                throw new BusinessException(string.Format("Entidade: {0} Erro: {1}", entidade, decodedString));
             }
 
             return true;

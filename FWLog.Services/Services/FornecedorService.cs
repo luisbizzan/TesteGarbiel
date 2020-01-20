@@ -59,12 +59,12 @@ namespace FWLog.Services.Services
                     fornecedor.RazaoSocial = fornecInt.RazaoSocial;
                     fornecedor.NomeFantasia = fornecInt.NomeFantasia;
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", fornecedor.CodigoIntegracao, "AD_INTEGRARFWLOG", '0');
+                    //bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", fornecedor.CodigoIntegracao, "AD_INTEGRARFWLOG", '0');
 
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização de Fornecedor no Sankhya não terminou com sucesso.");
-                    }
+                    //if (!atualizacaoOK)
+                    //{
+                    //    throw new Exception("A atualização de Fornecedor no Sankhya não terminou com sucesso.");
+                    //}
 
                     if (fornecedorNovo)
                     {
@@ -76,7 +76,7 @@ namespace FWLog.Services.Services
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração do seguinte Fornecedor: {0}.", fornecInt.CodigoIntegracao));
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do Fornecedor: {0}.", fornecInt.CodigoIntegracao));
                 }
             }
         }

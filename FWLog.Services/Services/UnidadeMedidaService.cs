@@ -52,12 +52,12 @@ namespace FWLog.Services.Services
                         _uow.UnidadeMedidaRepository.Add(unidadeMedida);
                     }
 
-                    await _uow.SaveChangesAsync();
+                    _uow.SaveChanges();
                 }
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da seguinte unidade de medida: {0}.", unidadeInt.Sigla));
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração da unidade de medida: {0}.", unidadeInt.Sigla));
 
                     continue;
                 }

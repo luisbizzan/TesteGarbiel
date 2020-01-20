@@ -55,14 +55,12 @@ namespace FWLog.Services.Services
                         _uow.FreteTipoRepository.Add(freteTipo);
                     }
 
-                    await _uow.SaveChangesAsync();
+                    _uow.SaveChanges();
                 }
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração do seguinte tipo de frete: {0}.", freteTipoInt.Sigla));
-
-                    continue;
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do tipo de frete: {0}.", freteTipoInt.Sigla));
                 }
             }
         }

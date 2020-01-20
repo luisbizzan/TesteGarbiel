@@ -76,12 +76,19 @@ namespace FWLog.Services.Services
                     empresaConfig.Empresa.TelefoneSAC = empInt.TelefoneSAC;
                     empresaConfig.IdEmpresaTipo = empInt.EmpresaMatriz == empInt.CodigoIntegracao ? EmpresaTipoEnum.Matriz : EmpresaTipoEnum.Filial;
 
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", "CODEMP", codEmp, "AD_INTEGRARFWLOG", '0');
+
+                    if (!atualizacaoOK)
+                    {
+                        throw new Exception("A atualização de Empresa no Sankhya não terminou com sucesso.");
+                    }
+
                     if (empresaNova)
                     {
                         _unitOfWork.EmpresaConfigRepository.Add(empresaConfig);
                     }
 
-                    await _unitOfWork.SaveChangesAsync();
+                    _unitOfWork.SaveChanges();
 
                     if (!string.IsNullOrEmpty(empInt.EmpresaMatriz) && !empInt.EmpresaMatriz.Equals(codEmp.ToString()))
                     {
@@ -92,21 +99,14 @@ namespace FWLog.Services.Services
                         {
                             empresaConfig.IdEmpresaMatriz = empMatriz.IdEmpresa;
 
-                            await _unitOfWork.SaveChangesAsync();
+                            _unitOfWork.SaveChanges();
                         }
-                    }
-
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", "CODEMP", codEmp, "AD_INTEGRARFWLOG", '0');
-
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização de Empresa no Sankhya não terminou com sucesso.");
                     }
                 }
                 catch (Exception ex)
                 {
                     var applicationLogService = new ApplicationLogService(_unitOfWork);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da seguinte Empresa: {0}.", empInt.CodigoIntegracao));
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração da Empresa: {0}.", empInt.CodigoIntegracao));
 
                     continue;
                 }
