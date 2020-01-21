@@ -746,5 +746,15 @@ namespace FWLog.Web.Backoffice.Controllers
                               Selected = idPerfilImpressora == x.IdPerfilImpressora
                           }).ToList(), "Value", "Text", idPerfilImpressora);
         }
+
+        [HttpGet]
+        public string LabelUsuario()
+        {
+            PerfilUsuario usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
+
+            string rtn = $"{usuario.Usuario.UserName} - {usuario.Nome}";
+
+            return rtn;
+        }
     }
 }

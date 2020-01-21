@@ -17,6 +17,8 @@
     }
 </style>
 
+@{MvcHtmlString labelUsuario = Html.Action("LabelUsuario", "BOAccount");}
+
 <!-- top navigation -->
 <div class="top_nav getpoints">
     <div class="nav_menu">
@@ -28,7 +30,7 @@
                     <li class="">
                         <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                             <span class="usr">
-                                @User.Identity.Name
+                                @labelUsuario
                             </span>
                             <span class="fa fa-angle-down" style="display: inline-block;"></span>
                         </a>
@@ -36,7 +38,7 @@
                             <li>
                                 <div class="usr-completo">
                                     <sup>
-                                        @User.Identity.Name
+                                        @labelUsuario
                                     </sup>
                                 </div>
                                 <hr style="margin: 0px;" />

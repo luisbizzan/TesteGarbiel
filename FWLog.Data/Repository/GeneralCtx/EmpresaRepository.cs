@@ -48,12 +48,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                     s.Empresa.Sigla,
                     s.Empresa.NomeFantasia,
                     s.Empresa.IdEmpresa
-                }
-                ).ToList();
+                }).ToList();
 
             return empresas.Select(s => new EmpresaSelectedItem
             {
-                Nome = string.Format("{0} - {1}", s.Sigla, s.NomeFantasia),
+                Nome = $"Unidade: {s.Sigla}",
                 IdEmpresa = s.IdEmpresa
             });
         }
