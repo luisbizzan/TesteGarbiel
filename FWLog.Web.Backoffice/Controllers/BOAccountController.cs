@@ -95,7 +95,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.Create)]
-        public async Task<ActionResult> AdicionarEmpresa(long id)
+        public async Task<ActionResult> AdicionarEmpresa(long id, int index)
         {
             List<GroupItemViewModel> gruposPermissoesUsuario = (await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), id).ConfigureAwait(false))
                 .OrderBy(x => x).Select(x => new GroupItemViewModel { IsSelected = false, Name = x }).ToList();
@@ -104,6 +104,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var empresasGrupos = new EmpresaGrupoViewModel
             {
+                Index = index,
                 IdEmpresa = id,
                 Nome = Empresas.First(f => f.IdEmpresa == id).Nome,
                 Grupos = gruposPermissoesUsuario,
@@ -410,6 +411,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 empresasGruposNew.AppendLine(" || ");
 
                 IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, rolesIgnorar, item.IdEmpresa).ConfigureAwait(false);
+
+                var a = selectedRoles.ToList();
 
                 if (!result.Succeeded)
                 {
