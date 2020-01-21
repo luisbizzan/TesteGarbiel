@@ -109,6 +109,7 @@
     <Compile Include="Models\ImpressaoItem.cs" />
     <Compile Include="Models\PerfilImpressora.cs" />
     <Compile Include="Models\PerfilImpressoraItem.cs" />
+    <Compile Include="Models\ProdutoEmpresa.cs" />
     <Compile Include="Models\ProdutoEndereco.cs" />
     <Compile Include="Models\BOLogSystem.cs" />
     <Compile Include="Models\AspNetUsers.cs" />
@@ -196,6 +197,7 @@
     <Compile Include="Repository\CommonCtx\BaseRepository.cs" />
     <Compile Include="Repository\CommonCtx\CacheRepository.cs" />
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\ProdutoEmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoEnderecoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />
