@@ -26,17 +26,10 @@
                     <div class="row">
                         @Html.HiddenFor(m => m.IdEmpresa)
                         @Html.HiddenFor(m => m.IdEmpresaConfig)
+                        @Html.HiddenFor(m => m.IdEmpresaMatriz, new { @class = "idempresa" })
                         <div id="EmpresaMatriz" class="form-group col-md-6 col-lg-3">
                             @Html.LabelFor(m => m.IdEmpresaMatriz, htmlAttributes: new { @class = "control-label" })
-                            <div class="input-group">
-                                @Html.TextBoxFor(m => m.RazaoSocialEmpresaMatriz, null, new { @class = "form-control razaoSocial", @readonly = "true" })
-                                <span class="input-group-btn">
-                                    <a id="pesquisarEmpresaMatriz" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
-                                    <a id="limparEmpresaMatriz" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
-                                </span>
-                            </div>
-                            @Html.HiddenFor(m => m.IdEmpresaMatriz, new { @class = "idempresa" })
-                            @Html.ValidationMessageFor(m => m.IdEmpresaMatriz)
+                            @Html.TextBoxFor(m => m.RazaoSocialEmpresaMatriz, null, new { @class = "form-control razaoSocial", @readonly = "true" })
                         </div>
                         <div id="EmpresaGarantia" class="form-group col-md-6 col-lg-3">
                             @Html.LabelFor(m => m.IdEmpresaGarantia, htmlAttributes: new { @class = "control-label" })
@@ -50,7 +43,6 @@
                             @Html.HiddenFor(m => m.IdEmpresaGarantia, new { @class = "idempresa" })
                             @Html.ValidationMessageFor(m => m.IdEmpresaGarantia)
                         </div>
-
                     </div>
                     <div class="row">
                         <div class="form-group col-md-6 col-lg-3">
@@ -154,4 +146,3 @@
     </div>
 }
 <div class="modal" id="modalEmpresaGarantia" data-toggle="modal" data-myvalue="1"></div>
-<div class="modal" id="modalEmpresaMatriz" data-toggle="modal" data-myvalue="2"></div>
