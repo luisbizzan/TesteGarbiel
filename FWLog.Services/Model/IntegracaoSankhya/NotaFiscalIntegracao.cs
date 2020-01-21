@@ -90,6 +90,10 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TGFITE.VLRTOT")]
         [Required]
         public string ValorTotalItem { get; set; }
+
+        [TabelaIntegracao(DisplayName = "TGFITE.SEQUENCIA")]
+        [Required]
+        public string Sequencia { get; set; }
     }
 
     [TabelaIntegracao(DisplayName = "TGFCAN")]
