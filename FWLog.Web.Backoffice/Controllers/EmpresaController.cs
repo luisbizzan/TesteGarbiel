@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models;
@@ -70,16 +71,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
             totalRecords = query.Count();
 
-            if (model.CustomFilter.CodigoIntegracao.HasValue)
-            {
-                query = query.Where(x => x.Empresa.CodigoIntegracao == model.CustomFilter.CodigoIntegracao.Value);
-            }
-
-            if (!string.IsNullOrEmpty(model.CustomFilter.RazaoSocial))
-            {
-                query = query.Where(x => x.Empresa.RazaoSocial.Contains(model.CustomFilter.RazaoSocial));
-            }
-
             if (!string.IsNullOrEmpty(model.CustomFilter.NomeFantasia))
             {
                 query = query.Where(x => x.Empresa.NomeFantasia.Contains(model.CustomFilter.NomeFantasia));
@@ -105,11 +96,9 @@ namespace FWLog.Web.Backoffice.Controllers
                 empresaSearchModalItemViewModel.Add(new EmpresaSearchModalItemViewModel()
                 {
                     IdEmpresa = item.IdEmpresa,
-                    CodigoIntegracao = item.Empresa.CodigoIntegracao,
-                    RazaoSocial = item.Empresa.RazaoSocial,
                     NomeFantasia = item.Empresa.NomeFantasia,
                     Sigla = item.Empresa.Sigla,
-                    CNPJ = item.Empresa.CNPJ.Substring(0, 2) + "." + item.Empresa.CNPJ.Substring(2, 3) + "." + item.Empresa.CNPJ.Substring(5, 3) + "/" + item.Empresa.CNPJ.Substring(8, 4) + "-" + item.Empresa.CNPJ.Substring(12, 2)
+                    CNPJ = item.Empresa.CNPJ.MascaraCNPJ()
                 });
             }
 

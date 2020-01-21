@@ -20,12 +20,6 @@ namespace FWLog.Web.Backoffice.Models.EmpresaCtx
     {
         public long IdEmpresa { get; set; }
 
-        [Display(Name = "Código")]
-        public long CodigoIntegracao { get; set; }
-
-        [Display(Name = "Razão Social")]
-        public string RazaoSocial { get; set; }
-
         [Display(Name = "Nome Fantasia")]
         public string NomeFantasia { get; set; }
 
@@ -40,7 +34,6 @@ namespace FWLog.Web.Backoffice.Models.EmpresaCtx
     {
         public EmpresaSearchModalFilterViewModel()
         {
-
         }
 
         public EmpresaSearchModalFilterViewModel(string campoSelecionado)
@@ -49,13 +42,6 @@ namespace FWLog.Web.Backoffice.Models.EmpresaCtx
         }
 
         public string CampoSelecionado { get; set; }
-
-        [Display(Name = "Código")]
-        public long? CodigoIntegracao { get; set; }
-
-        [Display(Name = "Razão Social")]
-        [StringLength(40)]
-        public string RazaoSocial { get; set; }
 
         [Display(Name = "Nome Fantasia")]
         [StringLength(40)]

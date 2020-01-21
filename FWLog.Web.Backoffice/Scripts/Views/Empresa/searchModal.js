@@ -25,11 +25,9 @@
 
         },
         columns: [
-            { data: 'CodigoIntegracao' },
-            { data: 'RazaoSocial' },
+            { data: 'Sigla' },
             { data: 'NomeFantasia' },
             { data: 'CNPJ' },
-            { data: 'Sigla' },
             actionsColumn
         ],
         "bInfo": false
