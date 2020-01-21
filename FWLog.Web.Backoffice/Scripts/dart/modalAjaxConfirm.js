@@ -43,16 +43,16 @@
         var postUrl = function (url, onFinish) {
             $.post(url, function (result) {
                 if (result.Success) {
-                    PNotify.success({ text: result.Message });                    
+                    PNotify.success({ text: result.Message });
                 } else {
-                    PNotify.error({ text: result.Message });                 
+                    PNotify.error({ text: result.Message });
                 }
             }).fail(function () {
                 PNotify.error({
-                    text: resources.get("AjaxErrorMessage") });                  
-            })
-            .always(function () {
-                onFinish();
+                    text: resources.get("AjaxErrorMessage")
+                });
+            }).always(function (result) {
+                onFinish(result);
             });
         };
 
@@ -60,11 +60,11 @@
         var open = function (options) {
 
             var title = options.title || resources.get("ConfirmTitle");
-            var message = options.message || resources.get("ActionConfirmationMessage");            
+            var message = options.message || resources.get("ActionConfirmationMessage");
             var onConfirm = options.onConfirm || function () { };
             var onCancel = options.onCancel || function () { };
             var confirmText = options.confirmText || resources.get("ConfirmAction");
-            var cancelText = options.cancelText || resources.get("CancelAction");            
+            var cancelText = options.cancelText || resources.get("CancelAction");
 
             var confirmEvent = function () {
                 $modal.modal('hide');
@@ -79,7 +79,7 @@
             var $modal = getHtml(title, message, confirmEvent, confirmText, cancelText, cancelEvent).appendTo('body');
 
             $modal.modal('show');
-        };   
+        };
 
         return {
             open: open

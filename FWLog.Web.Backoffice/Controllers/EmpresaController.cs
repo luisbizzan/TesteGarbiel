@@ -42,7 +42,8 @@ namespace FWLog.Web.Backoffice.Controllers
             return Json(new AjaxGenericResultModel
             {
                 Success = true,
-                Message = Resources.CommonStrings.ChangeCompanySuccess
+                Message = Resources.CommonStrings.ChangeCompanySuccess,
+                Data = Url.Action("Index", "BOHome")
             }, JsonRequestBehavior.DenyGet);
         }
 

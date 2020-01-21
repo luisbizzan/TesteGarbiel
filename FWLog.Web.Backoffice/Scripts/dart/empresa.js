@@ -9,7 +9,8 @@
             message: "Deseja realmente mudar a empresa?",
             url: HOST_URL + "Empresa/MudarEmpresa/" + id,
             onCancel: cancelMudarEmpresa,
-            onConfirm: confirmMudarEmpresa
+            onConfirm: confirmMudarEmpresa,
+
         });
     });
 
@@ -46,6 +47,6 @@ function BuscarIdEmpresa() {
     });
 }
 
-function Confirm() {
-    location.reload();
+function Confirm(result) {
+    window.location.href = result.Data;
 }
