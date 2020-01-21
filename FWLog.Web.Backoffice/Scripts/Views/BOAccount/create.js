@@ -1,5 +1,6 @@
 ﻿(function () {
     loadButtonsEvents();
+
     $(".onlyNumber").mask("0#");
 
     $('#ddlEmpresas').on('change', function () {
@@ -9,7 +10,7 @@
     $('#btnAddEmpresa').on('click', function () {
         var id = $('#ddlEmpresas').val() === "" ? 0 : $('#ddlEmpresas').val();
 
-        if (id === 0) {
+        if (id == 0) {
             $(".validationEmpresa").text("Selecione uma empresa para adiconar ao usuário.");
 
             return;
@@ -29,7 +30,7 @@
             return;
         }
 
-        $.post(HOST_URL + "BOAccount/AdicionarEmpresa/" + id, function (result) {
+        $.post(HOST_URL + CONTROLLER_PATH + "AdicionarEmpresa", { id }, function (result) {
             $("#EmpresasSelecionadas").append(result);
             loadButtonsEvents();
         });
@@ -66,31 +67,27 @@
                 $(this).attr('name', `EmpresasGrupos[${i}].Grupos[${ii}].Name`);
             });
         });
+
+        loadButtonsEvents();
     });
 })();
 
 function loadButtonsEvents() {
-    $(".btn-danger").off();
     $(".btn-danger").on('click', function () {
         $(this).parents(".panelEmpresa").remove();
     });
 
-    $(".checkAllGroups").off();
     $('.checkAllGroups').on('click', function () {
         $(this).parents(".panelEmpresa").find("[data-group]").prop('checked', true);
     });
 
-    $(".uncheckAllGroups").off();
     $('.uncheckAllGroups').on('click', function () {
         $(this).parents(".panelEmpresa").find("[data-group]").prop('checked', false);
     });
 
-    $("[data-group]").off();
     $("[data-group]").on('click', function () { $(".validationEmpresa").text(""); });
 
-    $(".isEmpresaPrincial").off();
-
-    if ($('.isEmpresaPrincial').length === 1) {
+    if ($('.isEmpresaPrincial').length == 1) {
         $('.isEmpresaPrincial').prop('checked', true);
     }
 

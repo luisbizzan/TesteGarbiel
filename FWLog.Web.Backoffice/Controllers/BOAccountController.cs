@@ -168,7 +168,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return errorView(null);
             }
 
-            if (!model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Any())
+            if (!model.EmpresasGrupos.All(w => w.Grupos.Any(a => a.IsSelected)))
             {
                 ModelState.AddModelError(nameof(model.EmpresasGrupos), Res.RequiredOnlyGroup);
                 return errorView(null);
@@ -366,7 +366,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return errorView();
             }
 
-            if (!model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Any())
+            if (!model.EmpresasGrupos.All(w => w.Grupos.Any(a => a.IsSelected)))
             {
                 ModelState.AddModelError(nameof(model.EmpresasGrupos), Res.RequiredOnlyGroup);
                 return errorView();
@@ -747,7 +747,6 @@ namespace FWLog.Web.Backoffice.Controllers
                           }).ToList(), "Value", "Text", idPerfilImpressora);
         }
 
-        [HttpGet]
         public string LabelUsuario()
         {
             PerfilUsuario usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());

@@ -31,6 +31,9 @@ namespace FWLog.Data.Models
         public decimal ValorTotal { get; set; }
 
         [Required]
+        public int Sequencia { get; set; }
+
+        [Required]
         [Index]
         public long CodigoNotaFiscal { get; set; }
 
