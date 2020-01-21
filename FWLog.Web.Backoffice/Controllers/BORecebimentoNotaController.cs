@@ -1224,8 +1224,9 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 //Valida se o produto está fora de linha (fornecedor 400)
-                // TODO essa validação deverá ser alterada após a Sankhya criar a estrutura de produto ativo por empresa.
-                if (!produto.Ativo)
+                var produtoEmpresa = _uow.ProdutoEmpresaRepository.ConsultarPorProduto(produto.IdProduto);
+
+                if (!produtoEmpresa.Ativo)
                 {
                     return Json(new AjaxGenericResultModel
                     {
