@@ -1226,7 +1226,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 //Valida se o produto está fora de linha (fornecedor 400)
                 var produtoEmpresa = _uow.ProdutoEmpresaRepository.ConsultarPorProduto(produto.IdProduto);
 
-                if (!produtoEmpresa.Ativo)
+                if (produtoEmpresa == null || !produtoEmpresa.Ativo)
                 {
                     return Json(new AjaxGenericResultModel
                     {
@@ -1434,6 +1434,15 @@ namespace FWLog.Web.Backoffice.Controllers
 
             try
             {
+                if (quantidadePorCaixa == 0)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "O campo quantidade por caixa não pode ser 0. Por favor, tente novamente!"
+                    });
+                }
+
                 //Captura o id da nota fiscal com base no id do lote.
                 var idNotaFiscal = _uow.LoteRepository.GetById(idLote).IdNotaFiscal;
 

@@ -368,36 +368,11 @@ namespace FWLog.Services.Services
                 ProcessamentoErro = false
             };
 
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//Temporário 
-            {
-                Lote lote = _uow.LoteRepository.GetById(idLote);
-                List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(lote.IdNotaFiscal);
-
-                if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMais > 0) && loteDivergencias.Any(a => a.QuantidadeDivergenciaMenos > 0))
-                {
-                    lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaTodas;
-
-                    CriarQuarentena(lote, IdUsuario);
-                }
-                else if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMenos > 0))
-                {
-                    lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaNegativa;
-                }
-
-                _uow.SaveChanges();
-
-                return processamento;
-            }
-
             try
             {
                 Lote lote = _uow.LoteRepository.GetById(idLote);
-
-                if (lote.IdLoteStatus != LoteStatusEnum.AguardandoCriacaoNFDevolucao)
-                {
-                    return processamento;
-                }
-
+                
+                //TODO Nota de Devolução
                 NotaFiscal notafiscalDevolucao = null;
 
                 if (lote.NotaFiscal.CodigoIntegracaoNFDevolucao == null)
@@ -415,7 +390,7 @@ namespace FWLog.Services.Services
 
                 processamento.CriacaoNFDevolucao = true;
 
-                if (notafiscalDevolucao.IdNotaFiscalStatus == NotaFiscalStatusEnum.Confirmada)
+                if (notafiscalDevolucao.IdNotaFiscalStatus != NotaFiscalStatusEnum.Confirmada)
                 {
                     await ConfirmarNotaFiscalIntegracao(notafiscalDevolucao);
                     notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.Confirmada;

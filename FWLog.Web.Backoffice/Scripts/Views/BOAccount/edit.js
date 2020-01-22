@@ -1,6 +1,8 @@
 ﻿(function () {
     loadButtonsEvents();
 
+    $(".onlyNumber").mask("0#");
+
     $('#ddlEmpresas').on('change', function () {
         $(".validationEmpresa").text("");
     });
@@ -8,7 +10,7 @@
     $('#btnAddEmpresa').on('click', function () {
         var id = $('#ddlEmpresas').val() === "" ? 0 : $('#ddlEmpresas').val();
 
-        if (id === 0) {
+        if (id == 0) {
             $(".validationEmpresa").text("Selecione uma empresa para adiconar ao usuário.");
 
             return;
@@ -17,7 +19,7 @@
         var bok = false;
 
         $(".idEmpresa").each(function (i, e) {
-            if (id === $(this).val()) {
+            if (id == $(this).val()) {
                 $(".validationEmpresa").text("A empresa escolhida já foi adicionada ao usuário.");
                 bok = true;
                 return;
@@ -28,7 +30,7 @@
             return;
         }
 
-        $.post(HOST_URL + "BOAccount/AdicionarEmpresa/" + id, function (result) {
+        $.post(HOST_URL + CONTROLLER_PATH + "AdicionarEmpresa", { id}, function (result) {
             $("#EmpresasSelecionadas").append(result);
             loadButtonsEvents();
         });
@@ -71,25 +73,20 @@
 })();
 
 function loadButtonsEvents() {
-    $(".btn-danger").off();
     $(".btn-danger").on('click', function () {
         $(this).parents(".panelEmpresa").remove();
     });
 
-    $(".checkAllGroups").off();
     $('.checkAllGroups').on('click', function () {
         $(this).parents(".panelEmpresa").find("[data-group]").prop('checked', true);
     });
 
-    $(".uncheckAllGroups").off();
     $('.uncheckAllGroups').on('click', function () {
         $(this).parents(".panelEmpresa").find("[data-group]").prop('checked', false);
     });
 
-    $("[data-group]").off();
     $("[data-group]").on('click', function () { $(".validationEmpresa").text(""); });
 
-    $(".isEmpresaPrincial").off();
     $('.isEmpresaPrincial').on('click', function () {
         if ($(this).is(":checked")) {
             $("#EmpresasSelecionadas").find(".panelEmpresa").each(function (i, e) {

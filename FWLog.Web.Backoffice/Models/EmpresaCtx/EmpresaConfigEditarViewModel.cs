@@ -13,9 +13,8 @@ namespace FWLog.Web.Backoffice.Models.EmpresaCtx
         [Required]
         [Display(Name = "Empresa Garantia")]
         public long IdEmpresaGarantia { get; set; }
-        [Required]
         [Display(Name = "Empresa Matriz")]
-        public long IdEmpresaMatriz { get; set; }
+        public long? IdEmpresaMatriz { get; set; }
         [Required]
         [Display(Name = "Tipo da Empresa")]
         public EmpresaTipoEnum IdEmpresaTipo { get; set; }
