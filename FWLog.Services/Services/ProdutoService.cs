@@ -81,6 +81,8 @@ namespace FWLog.Services.Services
                     produto.CodigoBarras = produtoInt.CodigoBarras;
                     produto.IdUnidadeMedida = unidade.IdUnidadeMedida;
 
+                    
+
                     bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", "CODPROD", produto.CodigoIntegracao, "AD_INTEGRARFWLOG", "0");
 
                     if (!atualizacaoOK)
@@ -91,6 +93,20 @@ namespace FWLog.Services.Services
                     if (produtoNovo)
                     {
                         _uow.ProdutoRepository.Add(produto);
+
+                        List<Empresa> empresas = _uow.EmpresaRepository.Tabela().ToList();
+
+                        foreach(Empresa empresa in empresas)
+                        {
+                            var produtoEstoque = new ProdutoEstoque
+                            {
+                                IdProduto = produto.IdProduto,
+                                IdEmpresa = empresa.IdEmpresa,
+                                Saldo = 0
+                            };
+
+                            _uow.ProdutoEstoqueRepository.Add(produtoEstoque);
+                        }
                     }
 
                     _uow.SaveChanges();
