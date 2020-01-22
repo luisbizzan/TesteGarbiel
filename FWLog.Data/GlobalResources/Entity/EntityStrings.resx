@@ -328,7 +328,7 @@
     <value>Código do Usuário</value>
   </data>
   <data name="UserName" xml:space="preserve">
-    <value>Usuário</value>
+    <value>Nome do Usuário</value>
   </data>
   <data name="Cargo" xml:space="preserve">
     <value>Cargo</value>

@@ -695,6 +695,9 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!string.IsNullOrEmpty(filter.CustomFilter.UserName))
                 query = query.Where(x => x.Usuario.UserName.Contains(filter.CustomFilter.UserName));
 
+            if (!string.IsNullOrEmpty(filter.CustomFilter.Nome))
+                query = query.Where(x => x.Nome.Contains(filter.CustomFilter.Nome));
+
             if (!string.IsNullOrEmpty(filter.CustomFilter.Departamento))
                 query = query.Where(x => x.Departamento.Contains(filter.CustomFilter.Departamento));
 
@@ -706,7 +709,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     UsuarioId = x.UsuarioId,
                     UserName = x.Usuario.UserName,
-                    Cargo = x.Cargo,
+                    Nome     = x.Nome,
+                    Cargo    = x.Cargo,
                     Departamento = x.Departamento
                 }).ToList();
 

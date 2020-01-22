@@ -4,7 +4,7 @@
             {
                 action: 'select',
                 visible: true,
-                attrs: { 'data-select': full.UsuarioId, 'name-select': full.UserName }
+                attrs: { 'data-select': full.UsuarioId, 'name-select': full.Nome }
             }
         ];
     });
@@ -24,6 +24,7 @@
         },
         columns: [
             { data: 'UserName' },
+            { data: 'Nome' },
             { data: 'Departamento' },
             { data: 'Cargo' },
             actionsColumn
@@ -32,6 +33,8 @@
     });
 
     $('#dataTableModal').on('click', '[data-select]', function () {
+        debugger 
+
         setUsuario($(this).attr('data-select'), $(this).attr("name-select"), view_modal.origem);
     });
 
