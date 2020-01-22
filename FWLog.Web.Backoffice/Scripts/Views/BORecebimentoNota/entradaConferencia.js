@@ -63,13 +63,17 @@
                 //Caso seja, solicita confirmação do usuário. 
                 //Caso contrário, chama o método para validar o múltiplo da conferência e posteriormente o registro da conferência.
                 if ($tipoConferencia.val() != "Por Quantidade") {
-                    $('#modalRegistrarConferencia').modal('show');
+                    $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {                        
+                        if (!qtdePecasHaMais)
+                            return
+                        else {
+                            $('#modalRegistrarConferencia').modal('show');
 
-                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.'); 
+                            $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.'); 
 
-                    $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {
-                        if (qtdePecasHaMais > 0)
-                            $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' para peças A+.'); 
+                            if (qtdePecasHaMais > 0)
+                                $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+.'); 
+                        }
                     }
                     );
                 }
@@ -173,13 +177,17 @@
                 //Caso seja, solicita confirmação do usuário. 
                 //Caso contrário, chama o método para validar o múltiplo da conferência e posteriormente o registro da conferência.
                 if ($tipoConferencia.val() != "Por Quantidade") {
-                    $('#modalRegistrarConferencia').modal('show');
-
-                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.'); 
-
                     $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {
-                        if (qtdePecasHaMais > 0)
-                            $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' para peças A+.');
+                        if (!qtdePecasHaMais)
+                            return
+                        else {
+                            $('#modalRegistrarConferencia').modal('show');
+
+                            $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.');
+
+                            if (qtdePecasHaMais > 0)
+                                $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+.');
+                        }
                     }
                     );
                 }
@@ -510,6 +518,9 @@ function consultarPecasHaMaisConferencia() {
     let idLote = $("#IdLote").val();
     let retorno = 0;
 
+    if (!quantidadePorCaixa)
+        quantidadePorCaixa = 0;
+
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ConsultarPecasHaMaisConferencia",
         cache: false,
@@ -523,7 +534,11 @@ function consultarPecasHaMaisConferencia() {
         },
         success: function (result) {
             if (result.Success) {
-                retorno = result.Data; 
+                retorno = result.Data;
+            }
+            else {
+                PNotify.warning({ text: result.Message });
+                retorno = undefined;
             }
         },
         error: function (request, status, error) {

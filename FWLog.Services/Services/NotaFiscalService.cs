@@ -189,9 +189,8 @@ namespace FWLog.Services.Services
 
         public async Task<bool> VerificarNotaFiscalCancelada(long codigoIntegracao)
         {
-            string where = string.Format("WHERE NUNOTA = {0} ", codigoIntegracao);
-            string union = string.Format("UNION SELECT NUNOTA FROM TGFCAB_EXC WHERE NUNOTA = {0}", codigoIntegracao);
-            List<NotaFiscalCanceladaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalCanceladaIntegracao>(where, union);
+            string union = string.Format("WHERE NUNOTA = {0} UNION SELECT NUNOTA FROM TGFCAB_EXC WHERE NUNOTA = {0}", codigoIntegracao);
+            List<NotaFiscalCanceladaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalCanceladaIntegracao>(inner: union);
 
             if (!notasIntegracao.NullOrEmpty())
             {

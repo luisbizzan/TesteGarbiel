@@ -36,7 +36,7 @@ namespace FWLog.Services.Services
             inner.Append("LEFT JOIN TSICID ON TSIEMP.CODCID = TSICID.CODCID ");
             inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF");
 
-            string where = "WHERE TSIEMP.AD_FILIAL IS NOT NULL AND TSIEMP.AD_NOMEFILIAL IS NOT NULL AND TSIEMP.AD_INTEGRARFWLOG = '1' ";
+            string where = "WHERE TSIEMP.AD_FILIAL IS NOT NULL AND TSIEMP.AD_NOMEFILIAL IS NOT NULL AND TSIEMP.AD_INTEGRARFWLOG = '1' ORDER BY TSIEMP.CODEMP ASC ";
 
             List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(inner: inner.ToString(), where: where);
             empresasIntegracao = empresasIntegracao.OrderBy("CodigoIntegracao", "ASC").ToList();
@@ -55,8 +55,10 @@ namespace FWLog.Services.Services
                     if (empresaConfig == null)
                     {
                         empresaNova = true;
-                        empresaConfig = new EmpresaConfig();
-                        empresaConfig.Empresa = new Empresa();
+                        empresaConfig = new EmpresaConfig
+                        {
+                            Empresa = new Empresa()
+                        };
                     }
 
                     empresaConfig.Empresa.CodigoIntegracao = codEmp;
@@ -98,7 +100,6 @@ namespace FWLog.Services.Services
                         if (empMatriz != null)
                         {
                             empresaConfig.IdEmpresaMatriz = empMatriz.IdEmpresa;
-
                             _unitOfWork.SaveChanges();
                         }
                     }
@@ -107,8 +108,6 @@ namespace FWLog.Services.Services
                 {
                     var applicationLogService = new ApplicationLogService(_unitOfWork);
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração da Empresa: {0}.", empInt.CodigoIntegracao));
-
-                    continue;
                 }
             }
         }
