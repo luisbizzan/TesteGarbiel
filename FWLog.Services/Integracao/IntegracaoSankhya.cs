@@ -170,7 +170,7 @@ namespace FWLog.Services.Integracao
 
             if (!httpResponse.IsSuccessStatusCode)
             {
-                throw new Exception(string.Format("O sistema obteve o status {0} na resposta do serviço 'CRUDServiceProvider.saveRecord' Integração Sankhya", httpResponse.StatusCode));
+                throw new Exception(string.Format("O sistema obteve o status {0} na resposta do serviço '{1}' Integração Sankhya", httpResponse.StatusCode, serviceName));
             }
 
             return httpResponse.Content.ReadAsStringAsync().Result;
@@ -354,6 +354,56 @@ namespace FWLog.Services.Integracao
                 var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
 
                 throw new Exception(string.Format("Ocorreu um erro na inclusão de uma nova nota fiscal da nota fiscal. Mensagem de Erro {0}", erro.Mensagem));
+            }
+
+            return true;
+        }
+
+        public async Task<bool> Devolucao(DevolucaoTotalXML model)
+        {
+            throw new NotImplementedException();
+
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return false;
+            }
+
+            string incluirNotaXML = SerializarXML(model);
+
+            string rootXML = await Instance.ExecutarServicoSankhya(incluirNotaXML, "SelecaoDocumentoSP.faturar", "mgecom");
+
+            IncluirNotaFiscalResposta resposta = DeserializarXML<IncluirNotaFiscalResposta>(rootXML);
+
+            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria?.CodigoIntegracao == null)
+            {
+                var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
+
+                throw new Exception(string.Format("Ocorreu um erro na devolução. Mensagem de Erro {0}", erro.Mensagem));
+            }
+
+            return true;
+        }
+
+        public async Task<bool> Devolucao(DevolucaoParcialXML model)
+        {
+            throw new NotImplementedException();
+
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return false;
+            }
+
+            string incluirNotaXML = SerializarXML(model);
+
+            string rootXML = await Instance.ExecutarServicoSankhya(incluirNotaXML, "SelecaoDocumentoSP.faturar", "mgecom");
+
+            IncluirNotaFiscalResposta resposta = DeserializarXML<IncluirNotaFiscalResposta>(rootXML);
+
+            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria?.CodigoIntegracao == null)
+            {
+                var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
+
+                throw new Exception(string.Format("Ocorreu um erro na devolução. Mensagem de Erro {0}", erro.Mensagem));
             }
 
             return true;
