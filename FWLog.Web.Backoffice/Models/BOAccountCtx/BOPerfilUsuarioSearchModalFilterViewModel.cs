@@ -21,8 +21,11 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
         [Display(Name = "Código")]
         public string UsuarioId { get; set; }
 
-        [Display(Name = "Usuário")]
+        [Display(Name = "Código do Usuário")]
         public string UserName { get; set; }
+
+        [Display(Name = "Nome do Usuário")]
+        public string Nome { get; set; }
 
         [Display(Name = "Departamento")]
         public string Departamento { get; set; }
@@ -33,7 +36,10 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
 
     public class BOPerfilUsuarioSearchModalFilterViewModel
     {
-        [Display(Name = "Usuário")]
+        [Display(Name = "Nome do Usuário")]
+        public string Nome { get; set; }
+
+        [Display(Name = "Código do Usuário")]
         public string UserName { get; set; }
 
         [Display(Name = "Departamento")]
