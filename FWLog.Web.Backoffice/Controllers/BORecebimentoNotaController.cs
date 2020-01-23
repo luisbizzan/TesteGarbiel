@@ -1147,7 +1147,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = ""
+                    Message = string.Empty
                 });
             }
 
@@ -1201,7 +1201,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return Json(new AjaxGenericResultModel
             {
                 Success = true,
-                Message = ""
+                Message = string.Empty
             });
         }
 
@@ -1306,7 +1306,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 //Valida se o múltilo é igual ou menor 0.
-                if (multiplo < 0 || multiplo == 0)
+                if (multiplo <= 0)
                 {
                     return Json(new AjaxGenericResultModel
                     {
@@ -1334,7 +1334,11 @@ namespace FWLog.Web.Backoffice.Controllers
                 lote.IdLoteStatus = LoteStatusEnum.Conferencia;
                 _uow.LoteRepository.Update(lote);
 
-                DateTime dataHoraInicio = !string.IsNullOrEmpty(inicioConferencia) ? Convert.ToDateTime(inicioConferencia) : DateTime.Now;
+                if (!DateTime.TryParse(inicioConferencia, out DateTime dataHoraInicio))
+                {
+                    dataHoraInicio = DateTime.Now;
+                }
+
                 DateTime dataHoraFim = DateTime.Now;
 
                 TimeSpan diferenca = dataHoraFim - dataHoraInicio;
@@ -1423,7 +1427,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "",
+                    Message = string.Empty,
                     Data = "0"
                 });
             }
@@ -1472,7 +1476,7 @@ namespace FWLog.Web.Backoffice.Controllers
                             //Captura a quantidade total do produto.
                             foreach (var item in notaFiscalItem)
                             {
-                                quantidadePecasNota = quantidadePecasNota + item.Quantidade;
+                                quantidadePecasNota += item.Quantidade;
                             }
 
                             //Verifica se a quantidade de peças da nota é maior que a quantidade informada.
