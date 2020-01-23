@@ -85,8 +85,8 @@ namespace FWLog.Web.Backoffice.Controllers
             int totalRecordsFiltered = 0;
             if (model.CustomFilter.PrazoInicial == null)
             {
-                if(model.CustomFilter.DataInicial == null)
-                  ModelState.AddModelError(nameof(model.CustomFilter.PrazoInicial), "Prazo inicial obrigatório.");
+                if (model.CustomFilter.DataInicial == null)
+                    ModelState.AddModelError(nameof(model.CustomFilter.PrazoInicial), "Prazo inicial obrigatório.");
             }
 
             if (model.CustomFilter.PrazoFinal == null)
@@ -106,7 +106,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            var query = _uow.LoteRepository.Obter(IdEmpresa, NotaFiscalTipoEnum.Compra).AsQueryable();
+            var query = _uow.LoteRepository.Obter(IdEmpresa, NotaFiscalTipoEnum.Compra);
 
             totalRecords = query.Count();
 
@@ -180,7 +180,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (!model.CustomFilter.IdUsuarioRecebimento.NullOrEmpty())
             {
-                query = query.Where(x => x.UsuarioRecebimento.Id == model.CustomFilter.IdUsuarioRecebimento);
+                query = query.Where(x => x.UsuarioRecebimento?.Id == model.CustomFilter.IdUsuarioRecebimento);
             }
 
             if (!string.IsNullOrEmpty(model.CustomFilter.TempoInicial))
@@ -201,58 +201,55 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.TempoTotalConferencia <= totalSegundos);
             }
 
-            if (query.Any())
+            foreach (var item in query)
             {
-                foreach (var item in query)
+                //Atribui 0 para dias em atraso.
+                long? atraso = 0;
+
+                //Se o prazo de entrega do fornecedor for igual a null, o atraso já será considerado 0. Caso contrário, entra no IF para outras validações.
+                if (item.NotaFiscal.PrazoEntregaFornecedor != null)
                 {
-                    //Atribui 0 para dias em atraso.
-                    long? atraso = 0;
+                    //Atribui o prazo de entrega da nota fiscal.
+                    DateTime prazoEntrega = item.NotaFiscal.PrazoEntregaFornecedor;
 
-                    //Se o prazo de entrega do fornecedor for igual a null, o atraso já será considerado 0. Caso contrário, entra no IF para outras validações.
-                    if (item.NotaFiscal.PrazoEntregaFornecedor != null)
+                    //Se a data de recebimento for nula, captura a quantidade de dias entre o prazo de entrega e a data atual.
+                    if (item.LoteStatus.IdLoteStatus == LoteStatusEnum.AguardandoRecebimento)
                     {
-                        //Atribui o prazo de entrega da nota fiscal.
-                        DateTime prazoEntrega = item.NotaFiscal.PrazoEntregaFornecedor;
-
-                        //Se a data de recebimento for nula, captura a quantidade de dias entre o prazo de entrega e a data atual.
-                        if (item.LoteStatus.IdLoteStatus == LoteStatusEnum.AguardandoRecebimento)
+                        if (DateTime.Now > prazoEntrega)
                         {
-                            if (DateTime.Now > prazoEntrega)
-                            {
-                                atraso = DateTime.Now.Subtract(prazoEntrega).Days;
-                            }
-
+                            atraso = DateTime.Now.Subtract(prazoEntrega).Days;
                         }
-                        else //Se a data de recebimento NÃO for nula, captura a quantidade de dias entre o prazo de entrega e a data de recebimento.
+
+                    }
+                    else //Se a data de recebimento NÃO for nula, captura a quantidade de dias entre o prazo de entrega e a data de recebimento.
+                    {
+                        if (item.DataRecebimento > prazoEntrega)
                         {
-                            if (item.DataRecebimento > prazoEntrega)
-                            {
-                                atraso = item.DataRecebimento.Subtract(prazoEntrega).Days;
-                            }
+                            atraso = item.DataRecebimento.Subtract(prazoEntrega).Days;
                         }
                     }
-
-                    if (model.CustomFilter.Atraso.HasValue && model.CustomFilter.Atraso.Value != atraso)
-                    {
-                        continue;
-                    }
-
-                    boRecebimentoNotaListItemViewModel.Add(new BORecebimentoNotaListItemViewModel()
-                    {
-                        Lote = item.IdLote == 0 ? (long?)null : item.IdLote,
-                        Nota = item.NotaFiscal.Numero == 0 ? (long?)null : item.NotaFiscal.Numero,
-                        Fornecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
-                        QuantidadePeca = item.QuantidadePeca == 0 ? (int?)null : item.QuantidadePeca,
-                        QuantidadeVolume = item.QuantidadeVolume == 0 ? (int?)null : item.QuantidadeVolume,
-                        RecebidoEm = item.LoteStatus.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento ? item.DataRecebimento.ToString("dd/MM/yyyy HH:mm") : " - ",
-                        Status = item.LoteStatus.Descricao,
-                        IdNotaFiscal = item.NotaFiscal.IdNotaFiscal,
-                        Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
-                        Atraso = atraso,
-                        IdUsuarioRecebimento = item.UsuarioRecebimento == null ? "" : item.UsuarioRecebimento.Id,
-                        IdLoteStatus = (int)item.LoteStatus.IdLoteStatus
-                    });
                 }
+
+                if (model.CustomFilter.Atraso.HasValue && model.CustomFilter.Atraso.Value != atraso)
+                {
+                    continue;
+                }
+
+                boRecebimentoNotaListItemViewModel.Add(new BORecebimentoNotaListItemViewModel()
+                {
+                    Lote = item.IdLote == 0 ? (long?)null : item.IdLote,
+                    Nota = item.NotaFiscal.Numero == 0 ? (long?)null : item.NotaFiscal.Numero,
+                    Fornecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
+                    QuantidadePeca = item.QuantidadePeca == 0 ? (int?)null : item.QuantidadePeca,
+                    QuantidadeVolume = item.QuantidadeVolume == 0 ? (int?)null : item.QuantidadeVolume,
+                    RecebidoEm = item.LoteStatus.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento ? item.DataRecebimento.ToString("dd/MM/yyyy HH:mm") : " - ",
+                    Status = item.LoteStatus.Descricao,
+                    IdNotaFiscal = item.NotaFiscal.IdNotaFiscal,
+                    Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
+                    Atraso = atraso,
+                    IdUsuarioRecebimento = item.UsuarioRecebimento == null ? string.Empty : item.UsuarioRecebimento.Id,
+                    IdLoteStatus = (int)item.LoteStatus.IdLoteStatus
+                });
             }
 
             totalRecordsFiltered = boRecebimentoNotaListItemViewModel.Count;
@@ -261,6 +258,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 .OrderBy(model.OrderByColumn, model.OrderByDirection)
                 .Skip(model.Start)
                 .Take(model.Length);
+
 
             return DataTableResult.FromModel(new DataTableResponseModel()
             {
@@ -1554,9 +1552,9 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ValidateModel(viewModel);
 
-                foreach(var divergencia in viewModel.Divergencias)
+                foreach (var divergencia in viewModel.Divergencias)
                 {
-                    if(divergencia.QuantidadeMaisTratado.HasValue == false && divergencia.QuantidadeMenosTratado.HasValue == false)
+                    if (divergencia.QuantidadeMaisTratado.HasValue == false && divergencia.QuantidadeMenosTratado.HasValue == false)
                     {
                         return Json(new AjaxGenericResultModel
                         {
