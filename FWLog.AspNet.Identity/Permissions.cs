@@ -86,6 +86,8 @@ namespace FWLog.AspNet.Identity
             public const string PermitirDiferencaMultiploConferencia = "PermitirDiferencaMultiploConferencia";
             public const string ConferirLote = "ConferirLote";
             public const string ConferirLoteAutomatico = "ConferirLoteAutomatico";
+            public const string ImprimirEtiquetaLote = "ImprimirEtiquetaLote";
+            public const string Imprimir = "EtiquetaIndividualEPersonalizadaImprimir";
 
             public Recebimento() : base(Display.FromString("Recebimento de Notas Fiscais"))
             {
@@ -98,6 +100,8 @@ namespace FWLog.AspNet.Identity
                 Register(PermitirDiferencaMultiploConferencia, Display.FromString("Permitir Diferença de Múltiplo"));
                 Register(ConferirLote, Display.FromString("Conferir Lote"));
                 Register(ConferirLoteAutomatico, Display.FromString("Conferir Lote Automático"));
+                Register(ImprimirEtiquetaLote, Display.FromString("Imprimir Etiqueta de Lote"));
+                Register(Imprimir, Display.FromString("Imprimir Etiqueta Individual e Personalizada"));
             }
         }
 
@@ -178,27 +182,6 @@ namespace FWLog.AspNet.Identity
             public ColetorAcesso() : base(Display.FromString("Acesso - Coletor"))
             {
                 Register(Login, Display.FromString("Acessar Coletor"));
-            }
-        }
-
-        public class RecebimentoEtiqueta : PermissionGroupBuildItem
-        {
-            public const string ImprimirEtiquetaLote = "ImprimirEtiquetaLote";
-
-            public RecebimentoEtiqueta() : base(Display.FromString("Etiqueta de Lote"))
-            {
-                Register(ImprimirEtiquetaLote, Display.FromString("Imprimir Etiqueta de Lote"));
-            }
-        }
-
-        public class RecebimentoEtiquetaIndividualEPersonalizada : PermissionGroupBuildItem
-        {
-            public const string Imprimir = "EtiquetaIndividualEPersonalizadaImprimir";
-            
-
-            public RecebimentoEtiquetaIndividualEPersonalizada() : base(Display.FromString("Etiqueta Individual e Personalizada"))
-            {
-                Register(Imprimir, Display.FromString("Imprimir Etiqueta Individual e Personalizada"));
             }
         }
 

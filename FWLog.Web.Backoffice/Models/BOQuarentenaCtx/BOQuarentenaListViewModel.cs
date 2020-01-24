@@ -34,6 +34,7 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
 
     public class BOQuarentenaFilterViewModel
     {
+        [Display(Name = "Chave Acesso")]
         public string ChaveAcesso { get; set; }
 
         public long? Lote { get; set; }
