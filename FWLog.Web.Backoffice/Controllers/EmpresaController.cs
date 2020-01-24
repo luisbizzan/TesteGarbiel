@@ -153,7 +153,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var empresaConfigGarantia = _unitOfWork.EmpresaConfigRepository.ConsultarPorIdEmpresa(model.IdEmpresaGarantia);
             if (!empresaConfigGarantia.EmpresaFazGarantia)
             {
-                ModelState.AddModelError(nameof(model.IdEmpresaGarantia), string.Format("A Empresa '{0}' não pode ser selecionada para Garantia, se não estiver marcada para fazer garantia.", model.RazaoSocialEmpresaGarantia));
+                ModelState.AddModelError(nameof(model.IdEmpresaGarantia), string.Format("A Empresa '{0}' não pode ser selecionada para Garantia, se não estiver marcada para fazer garantia.", model.NomeFantasiaEmpresaGarantia));
             }
 
             if (!ModelState.IsValid)
