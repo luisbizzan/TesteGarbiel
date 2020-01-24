@@ -50,6 +50,13 @@
         }
     });
 
+    $(document).ready(function () {
+
+        removerMsgConferenciaManual();
+    });
+
+
+
     //Captura todas as teclas da tela.
     $(document).on('keydown', function (e) {
 
@@ -273,6 +280,8 @@
                     $("#QuantidadeCaixa").attr("readonly", false);
                     $("#QuantidadeCaixa").val('');
 
+                    removerMsgConferenciaManual();
+
                     $('#modalAcessoCoordenadorTipoConferencia').modal('toggle');
 
                     $quantidadePorCaixa.focus();
@@ -460,6 +469,20 @@
 
     function alterarBackgroundInput() {
         $quantidadePorCaixa.css({ 'background': '#98fb9873' });
+    }
+
+    function removerMsgConferenciaManual() {
+        if ($tipoConferencia.val() == "Por Quantidade") {
+
+            $("#legendaTipoConferencia").addClass("hidden");
+            $("#legendaRegistroConferencia").removeClass("col-lg-2");
+            $("#legendaRegistroConferencia").addClass("col-lg-6");
+        }
+        else {
+            $("#legendaTipoConferencia").removeClass("hidden");
+            $("#legendaRegistroConferencia").removeClass("col-lg-6");
+            $("#legendaRegistroConferencia").addClass("col-lg-2");
+        }
     }
 })();
 
