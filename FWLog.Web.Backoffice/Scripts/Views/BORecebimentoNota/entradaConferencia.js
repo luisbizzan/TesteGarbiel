@@ -531,6 +531,21 @@
         }
     }
 
+    function removerMsgConferenciaManual() {
+        if ($tipoConferencia.val() == "Por Quantidade") {
+
+            $("#legendaTipoConferencia").addClass("hidden");
+            $("#legendaRegistroConferencia").removeClass("col-lg-2");
+            $("#legendaRegistroConferencia").addClass("col-lg-6");
+        }
+        else {
+            $("#legendaTipoConferencia").removeClass("hidden");
+            $("#legendaRegistroConferencia").removeClass("col-lg-6");
+            $("#legendaRegistroConferencia").addClass("col-lg-2");
+        }
+    }
+
+    removerMsgConferenciaManual();
 })();
 
 var confirmRegistrarConferencia = Confirm;

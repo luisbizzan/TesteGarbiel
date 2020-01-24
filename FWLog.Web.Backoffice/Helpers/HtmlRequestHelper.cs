@@ -11,9 +11,13 @@ namespace FWLog.Web.Backoffice.Helpers
             var routeValues = HttpContext.Current.Request.RequestContext.RouteData.Values;
 
             if (routeValues.ContainsKey("id"))
+            {
                 return (string)routeValues["id"];
+            }
             else if (HttpContext.Current.Request.QueryString.AllKeys.Contains("id"))
+            {
                 return HttpContext.Current.Request.QueryString["id"];
+            }
 
             return string.Empty;
         }
@@ -23,7 +27,9 @@ namespace FWLog.Web.Backoffice.Helpers
             var routeValues = HttpContext.Current.Request.RequestContext.RouteData.Values;
 
             if (routeValues.ContainsKey("controller"))
+            {
                 return (string)routeValues["controller"];
+            }
 
             return string.Empty;
         }
@@ -33,7 +39,9 @@ namespace FWLog.Web.Backoffice.Helpers
             var routeValues = HttpContext.Current.Request.RequestContext.RouteData.Values;
 
             if (routeValues.ContainsKey("action"))
+            {
                 return (string)routeValues["action"];
+            }
 
             return string.Empty;
         }
@@ -43,7 +51,9 @@ namespace FWLog.Web.Backoffice.Helpers
             var dataTokens = HttpContext.Current.Request.RequestContext.RouteData.DataTokens;
 
             if (dataTokens.ContainsKey("area"))
+            {
                 return (string)dataTokens["area"];
+            }
 
             return string.Empty;
         }
@@ -54,10 +64,12 @@ namespace FWLog.Web.Backoffice.Helpers
             var pathAndQuery = HttpContext.Current.Request.Url.PathAndQuery;
             var controllerPositionUrl = pathAndQuery.IndexOf(Controller());
             var subhost = "/";
+            
             if (controllerPositionUrl != -1)
             {
                 subhost = pathAndQuery.Remove(controllerPositionUrl);
             }
+
             var absoluteUri = HttpContext.Current.Request.Url.AbsoluteUri;
 
             if (http != null)
@@ -75,6 +87,7 @@ namespace FWLog.Web.Backoffice.Helpers
         public static string Http()
         {
             var http = HttpContext.Current.Request.Headers["X-Forwarded-Proto"];
+
             if (http != null)
             {
                 if (http.Equals("https", StringComparison.OrdinalIgnoreCase))
@@ -82,6 +95,7 @@ namespace FWLog.Web.Backoffice.Helpers
                     return "https";
                 }
             }
+
             return "http";
         }
     }
