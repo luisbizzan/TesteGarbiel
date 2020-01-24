@@ -33,19 +33,20 @@
 
 })();
 
-function setEmpresa(idEmpresa, razaoSocial, campo) {
-    let razao = $("#" + campo).find(".razaoSocial");
+function setEmpresa(idEmpresa, nomeFantasia, campo) {
+    debugger
+    let _nomeFantasia = $("#" + campo).find(".nomeFantasia");
     let empresa = $("#" + campo).find(".idEmpresa");
-    razao.val(razaoSocial);
+    _nomeFantasia.val(nomeFantasia);
     empresa.val(idEmpresa);
     $("#modal" + campo).modal("hide");
     $("#modal" + campo).empty();
 }
 
 function limparEmpresa(campo) {
-    let razao = $("#" + campo).find(".razaoSocial");
+    let _nomeFantasia = $("#" + campo).find(".nomeFantasia");
     let empresa = $("#" + campo).find(".idEmpresa");
-    razao.val("");
+    _nomeFantasia.val("");
     empresa.val("");
 }
 
