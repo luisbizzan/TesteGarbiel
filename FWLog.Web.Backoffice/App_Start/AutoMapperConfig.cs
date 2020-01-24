@@ -11,8 +11,6 @@ namespace FWLog.Web.Backoffice.App_Start
             {
                 config.AddProfiles(Assembly.GetExecutingAssembly());
             });
-
-            //Mapper.AssertConfigurationIsValid();
         }
     }
 }

@@ -42,7 +42,6 @@ namespace Identity
         private static void CreateAdminUser(BackofficeUserManager userManager)
         {
             string email = App.UserName;
-
             var adminUser = userManager.FindByName(email);
 
             if (adminUser == null)

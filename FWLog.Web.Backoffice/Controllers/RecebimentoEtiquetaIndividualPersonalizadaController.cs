@@ -36,7 +36,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.RecebimentoEtiquetaIndividualEPersonalizada.Imprimir)]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.Imprimir)]
         public JsonResult Imprimir(RecebimentoEtiquetaIndividualPersonalizadaViewModel viewModel)
         {
             try
