@@ -18,6 +18,7 @@ namespace FWLog.Web.Backoffice.Models.EmpresaCtx
         [Required]
         [Display(Name = "Tipo da Empresa")]
         public EmpresaTipoEnum IdEmpresaTipo { get; set; }
+        [Required]
         [Display(Name = "Tipo da Conferência")]
         public TipoConferenciaEnum? IdTipoConferencia { get; set; }
         [Display(Name = "Empresa Faz Garantia?")]
@@ -27,8 +28,8 @@ namespace FWLog.Web.Backoffice.Models.EmpresaCtx
 
         public EmpresaDetalhesViewModel Empresa { get; set; }
 
-        public string RazaoSocialEmpresaMatriz { get; set; }
-        public string RazaoSocialEmpresaGarantia { get; set; }
+        public string NomeFantasiaEmpresaMatriz { get; set; }
+        public string NomeFantasiaEmpresaGarantia { get; set; }
 
         public SelectList TiposEmpresa { get; set; }
         public SelectList TiposConferencia { get; set; }
