@@ -4,6 +4,31 @@
     $("dateFormat").mask("99/99/9999");
     $('.hourMinute').mask("99:99", { reverse: true });
 
+    $.validator.addMethod('validateDateOrPrazoInicial', function (value, ele) {
+        var dataInicial = $("#Filter_DataInicial").val();
+
+        if (value != "") 
+            return true
+        else if (dataInicial != "") 
+            return true
+        else
+            return false;
+    }, 'Data Inicial ou Prazo Inicial Obrigatório');
+
+
+
+    $.validator.addMethod('validateDateOrPrazoFinal', function (value, ele) {
+        var dataFinal = $("#Filter_DataFinal").val();
+
+        if (value != "")
+            return true
+        else if (dataFinal != "")
+            return true
+        else
+            return false;
+    }, 'Data Final ou Prazo Final Obrigatório');
+
+
     $.validator.addMethod('validateTime', function (value, ele) {
         if (value === "") {
             return true;

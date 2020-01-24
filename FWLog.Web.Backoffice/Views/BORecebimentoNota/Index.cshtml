@@ -57,7 +57,7 @@
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataInicial)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.DataInicial, new { @class = "form-control dateFormat ", data_field = "DataInicial" })
+                        @Html.TextBoxFor(m => m.Filter.DataInicial,  new {@class = "form-control dateFormat", data_field = "DataInicial" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -75,7 +75,7 @@
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.PrazoInicial)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.PrazoInicial, new { @class = "form-control dateFormat", data_field = "PrazoInicial", @required = "required" })
+                        @Html.TextBoxFor(m => m.Filter.PrazoInicial, new { @class = "form-control dateFormat validateDateOrPrazoInicial", data_field = "PrazoInicial" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -85,7 +85,7 @@
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.PrazoFinal)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.PrazoFinal, new { @class = "form-control dateFormat", data_field = "PrazoFinal" })
+                        @Html.TextBoxFor(m => m.Filter.PrazoFinal, new { @class = "form-control dateFormat validateDateOrPrazoFinal", data_field = "PrazoFinal" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
