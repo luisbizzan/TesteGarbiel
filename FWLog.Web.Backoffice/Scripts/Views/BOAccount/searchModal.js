@@ -9,11 +9,6 @@
         ];
     });
 
-    debugger
-
-    //$('#dataTableModal').DataTable().clear();
-
-    //if (!$.fn.dataTable.isDataTable('#dataTableModal')) {
     $('.dataTableModal').DataTable({
         destroy: true,
         ajax: {
@@ -37,7 +32,6 @@
         ],
         "bInfo": false
     });
-    //}
 
     function setUsuario_Click() {
         setUsuario($(this).attr('data-select'), $(this).attr("name-select"), view_modal.origem);
