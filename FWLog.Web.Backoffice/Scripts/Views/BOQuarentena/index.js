@@ -172,11 +172,9 @@
     }
 })();
 
-function setFornecedor(idFornecedor, razaoSocial) {
-    let razao = $("#Filter_RazaoSocialFornecedor");
-    let fornecedor = $("#Filter_IdFornecedor");
-    razao.val(razaoSocial);
-    fornecedor.val(idFornecedor);
+function setFornecedor(idFornecedor, nomeFantasia) {
+    $("#Filter_NomeFantasiaFornecedor").val(nomeFantasia);
+    $("#Filter_IdFornecedor").val(idFornecedor);
     $("#modalFornecedor").modal("hide");
     $("#modalFornecedor").empty();
 }

@@ -62,7 +62,7 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
         [Display(Name = "Fornecedor")]
         public long? IdFornecedor { get; set; }
 
-        public string RazaoSocialFornecedor { get; set; }
+        public string NomeFantasiaFornecedor { get; set; }
 
         public SelectList ListaQuarentenaStatus { get; set; }
 
