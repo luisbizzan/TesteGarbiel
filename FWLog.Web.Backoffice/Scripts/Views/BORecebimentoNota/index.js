@@ -265,7 +265,7 @@
     });
 
     function limparFornecedor() {
-        $("#Filter_RazaoSocialFornecedor").val("");
+        $("#Filter_NomeFantasiaFornecedor").val("");
         $("#Filter_IdFornecedor").val("");
     }
 
