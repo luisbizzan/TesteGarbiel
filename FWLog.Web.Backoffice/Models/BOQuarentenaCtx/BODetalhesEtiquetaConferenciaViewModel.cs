@@ -9,6 +9,15 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
     {
         public long IdQuarentena { get; set; }
 
+        [Display(Name = "Nota/Série")]
+        public string NotaSerie { get; set; }
+
+        [Display(Name = "Lote")]
+        public string Lote { get; set; }
+
+        [Display(Name = "Status")]
+        public string LoteStatus { get; set; }
+
         [Display(Name = "Data de Abertura")]
         public string DataAbertura { get; set; }
 
@@ -23,12 +32,15 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
 
         [Display(Name = "Código Termo Responsabilidade")]
         public string CodigoConfirmacao { get; set; }
+        
+        [Display(Name = "Observação")]
+        public string ObservacaoDivergencia { get; set; }
 
         public bool PermiteEdicao
         {
             get
             {
-                QuarentenaStatusEnum[] statusNaoPermite = new QuarentenaStatusEnum[] { QuarentenaStatusEnum.EncaminhadoAuditoria, QuarentenaStatusEnum.Finalizado };
+                QuarentenaStatusEnum[] statusNaoPermite = new QuarentenaStatusEnum[] { QuarentenaStatusEnum.Retirado, QuarentenaStatusEnum.Finalizado };
 
                 return !Array.Exists(statusNaoPermite, x => x == IdStatus);
             }

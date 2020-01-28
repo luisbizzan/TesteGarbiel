@@ -1,12 +1,16 @@
 ﻿(function () {
+    $('.onlyNumber').mask('0#');
+    $('.codigoConfirmacao').css({'display': 'none'});
+
     $("#status").change(function () {
         var status = this.value;
 
-        if (status != 4) {
-            $("#codigoConfirmacao").val("");
+        if (status == 2) {
+            $(".codigoConfirmacao").css({ 'display': 'block' });
         }
-
-        $("#codigoConfirmacao").prop("disabled", status != 4);
+        else {
+            $(".codigoConfirmacao").css({ 'display': 'none' });
+        }
     });
 
     $("#submit").click(function (e) {
@@ -24,7 +28,7 @@
 
                     fechaModal();
                 } else {
-                    PNotify.error({ text: result.Message });
+                    PNotify.warning({ text: result.Message });
                 }
             }
         });
