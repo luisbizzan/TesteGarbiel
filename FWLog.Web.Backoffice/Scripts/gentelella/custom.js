@@ -38,7 +38,7 @@ $(document).ready(function () {
         var $li = $(this);
 
         $li.addClass('active');
-        $li.children("ul.child_menu").slideDown('fast');
+        $li.children("ul.child_menu").slideDown(80);
 
     }, function () {
         var $li = $(this);
@@ -49,7 +49,7 @@ $(document).ready(function () {
             $li.removeClass('active');
         }
 
-        $li.children("ul.child_menu").slideUp('fast');
+        $li.children("ul.child_menu").slideUp(10);
     });
 
     // toggle small or large menu

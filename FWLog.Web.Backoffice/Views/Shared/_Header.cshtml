@@ -12,6 +12,11 @@
         max-width: 300px;
     }
 
+    .usr-completo p {
+        margin: 0 0 3px;
+        font-size: 11px;
+    }
+
     .usr-completo {
         text-align: center;
     }
@@ -37,9 +42,9 @@
                         <ul class="dropdown-menu dropdown-usermenu pull-right">
                             <li>
                                 <div class="usr-completo">
-                                    <sup>
+                                    <p>
                                         @labelUsuario
-                                    </sup>
+                                    </p>
                                 </div>
                                 <hr style="margin: 0px;" />
                                 <a href="@Url.Action("ChangePassword", "BOAccount")"><i class="fa fa-key pull-right"></i>@Resources.CommonStrings.ChangePasswordAction</a>

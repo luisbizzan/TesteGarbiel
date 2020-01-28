@@ -6,7 +6,7 @@
             {
                 action: 'select',
                 visible: true,
-                attrs: { 'data-select': full.IdFornecedor, 'name-select': full.RazaoSocial }
+                attrs: { 'data-select': full.IdFornecedor, 'name-select': full.NomeFantasia }
             }
         ];
     });
