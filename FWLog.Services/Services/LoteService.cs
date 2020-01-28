@@ -479,6 +479,10 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("A confirmação da nota fiscal no Sankhya não terminou com sucesso.");
             }
+            else
+            {
+                await VerificarNotaFiscalConfirmada(notafiscal);
+            }
         }
 
         private async Task AtualizarNotaFiscalIntegracao(NotaFiscal notafiscal, LoteStatusEnum loteStatusEnum)
@@ -527,6 +531,17 @@ namespace FWLog.Services.Services
             if (!atualizacaoOK)
             {
                 throw new BusinessException(string.Format("A nota fiscal {0} ainda não está autorizada no Sankhya.", notafiscal.CodigoIntegracao));
+            }
+        }
+
+        private async Task VerificarNotaFiscalConfirmada(NotaFiscal notafiscal)
+        {
+            var notaFiscalService = new NotaFiscalService(_uow);
+
+            bool atualizacaoOK = await notaFiscalService.VerificarNotaFiscalConfirmada(notafiscal.CodigoIntegracao);
+            if (!atualizacaoOK)
+            {
+                throw new BusinessException(string.Format("O serviço de confirmação da nota fiscal respondeu com sucesso, porém a nota fiscal {0} não está confirmada no Sankhya.", notafiscal.CodigoIntegracao));
             }
         }
 
