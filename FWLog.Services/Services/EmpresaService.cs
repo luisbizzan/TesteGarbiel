@@ -29,16 +29,22 @@ namespace FWLog.Services.Services
             }
 
             StringBuilder inner = new StringBuilder();
-
             inner.Append("INNER JOIN TGFEMP ON TSIEMP.CODEMP = TGFEMP.CODEMP ");
             inner.Append("LEFT JOIN TSIEND ON TSIEMP.CODEND = TSIEND.CODEND ");
             inner.Append("LEFT JOIN TSIBAI ON TSIEMP.CODBAI = TSIBAI.CODBAI ");
             inner.Append("LEFT JOIN TSICID ON TSIEMP.CODCID = TSICID.CODCID ");
             inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF");
 
-            string where = "WHERE TSIEMP.AD_FILIAL IS NOT NULL AND TSIEMP.AD_NOMEFILIAL IS NOT NULL AND TSIEMP.AD_INTEGRARFWLOG = '1' ORDER BY TSIEMP.CODEMP ASC ";
+            StringBuilder where = new StringBuilder();
+            inner.Append(" WHERE TSIEMP.AD_FILIAL IS NOT NULL ");
+            inner.Append("AND TSIEMP.AD_NOMEFILIAL IS NOT NULL ");
+            inner.Append("AND TSIEMP.AD_INTEGRARFWLOG = '1' ");
+            inner.Append("AND TGFEMP.AD_FONE_SAC IS NOT NULL ");
+            inner.Append("AND TSIEMP.AD_FILIAL IS NOT NULL ");
+            inner.Append("AND TSIEMP.AD_NOMEFILIAL IS NOT NULL ");
+            inner.Append("ORDER BY TSIEMP.CODEMP ASC ");
 
-            List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(inner: inner.ToString(), where: where);
+            List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString());
             empresasIntegracao = empresasIntegracao.OrderBy("CodigoIntegracao", "ASC").ToList();
 
             foreach (var empInt in empresasIntegracao)
