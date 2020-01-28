@@ -33,6 +33,11 @@
         //Captura todas as teclas da tela.
         $(document).on('keydown', document_Keydown);
 
+        $(document).ready(function () {
+
+            removerMsgConferenciaManual();
+        });
+
         $confirmarConferencia.on('click', confirmarConferencia_Click);
 
         $confirmarRegistroConferencia.on('click', confirmarRegistroConferencia_Click);
@@ -444,7 +449,7 @@
         var senha = $("#SenhaTipoConferencia").val();
 
         $.ajax({
-            url: HOST_URL + CONTROLLER_PATH + "ValidarAcessoCoordenadorConferencia",
+            url: HOST_URL + CONTROLLER_PATH + "ValidarAcessoMudancaConferenciaManual",
             cache: false,
             global: false,
             method: "POST",
@@ -459,6 +464,8 @@
                     $("#QuantidadePorCaixa").attr("readonly", false);
                     $("#QuantidadeCaixa").attr("readonly", false);
                     $("#QuantidadeCaixa").val('');
+
+                    removerMsgConferenciaManual();
 
                     $('#modalAcessoCoordenadorTipoConferencia').modal('toggle');
 
@@ -485,32 +492,38 @@
                     //Verifica se a tecla pressionada é ESC (Registrar Conferência).
                     case 27: {
 
-                        //Se o tipo da conferência é 100%. 
-                        //Caso seja, solicita confirmação do usuário. 
-                        //Caso contrário, chama o método para validar o múltiplo da conferência e posteriormente o registro da conferência.
-                        if ($tipoConferencia.val() != "Por Quantidade") {
-                            $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {
-                                if (!qtdePecasHaMais)
-                                    return
-                                else {
-                                    $('#modalRegistrarConferencia').modal('show');
+                        //Verifica se o modal de acesso do cordenador esta aberto
+                        var modalEstaAberta = ($('#modalAcessoCoordenadorTipoConferencia').data('bs.modal') || {}).isShown;
 
-                                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.');
+                        if (!modalEstaAberta) {
+                            //Se o tipo da conferência é 100%.
+                            //Caso seja, solicita confirmação do usuário. 
+                            //Caso contrário, chama o método para validar o múltiplo da conferência e posteriormente o registro da conferência.
+                            if ($tipoConferencia.val() != "Por Quantidade") {
+                                $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {
+                                    if (!qtdePecasHaMais)
+                                        return
+                                    else {
+                                        $('#modalRegistrarConferencia').modal('show');
 
-                                    if (qtdePecasHaMais > 0)
-                                        $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+.');
+                                        $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.');
+
+                                        if (qtdePecasHaMais > 0)
+                                            $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+.');
+                                    }
                                 }
+                                );
                             }
-                            );
-                        }
-                        else {
-                            validarDiferencaMultiploConferencia();
+                            else {
+                                validarDiferencaMultiploConferencia();
+                            }
                         }
 
                         break;
                     }
                     //Verifica se a tela pressionada é F4 (Alterar Tipo da Conferência)
                     case 115: {
+
                         if ($tipoConferencia.val() != "Por Quantidade") {
 
                             $('#modalAcessoCoordenadorTipoConferencia').modal('show');
@@ -532,6 +545,7 @@
     }
 
     function removerMsgConferenciaManual() {
+
         if ($tipoConferencia.val() == "Por Quantidade") {
 
             $("#legendaTipoConferencia").addClass("hidden");
@@ -545,7 +559,6 @@
         }
     }
 
-    removerMsgConferenciaManual();
 })();
 
 var confirmRegistrarConferencia = Confirm;

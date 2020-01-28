@@ -754,7 +754,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
-        public JsonResult ValidarInicioConferencia(long id)
+        public async Task<JsonResult> ValidarInicioConferencia(long id)
         {
             var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
 
@@ -766,7 +766,34 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Nenhum tipo de conferência configurado para a empresa Unidade: " + empresaConfig.Empresa.Sigla + ".",
                 });
             }
+           
+            if(empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.PorQuantidade)
+            {
+                var permissao = UserManager.GetPermissions(User.Identity.GetUserId()).Contains(Permissions.Recebimento.ConferenciaManual);
 
+                if (!permissao)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "O usuário informado não possui permissão para conferência manual. Por favor, tente novamente!"
+                    });
+                }
+                
+            }
+            else
+            {
+                var permissao = UserManager.GetPermissions(User.Identity.GetUserId()).Contains(Permissions.Recebimento.Conferencia100PorCento);
+
+                if (!permissao)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "O usuário informado não possui permissão para conferência 100%. Por favor, tente novamente!"
+                    });
+                }
+            }
 
             ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(2);
 
@@ -1207,6 +1234,42 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Success = false,
                     Message = "O usuário informado não possui permissão para confirmar a diferença de múltiplo. Solicite a permissão para o Administrador."
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = string.Empty
+            });
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ValidarAcessoMudancaConferenciaManual(string usuario, string senha)
+        {
+            ApplicationUser applicationUser = await UserManager.FindByNameAsync(usuario);
+
+            //Validar Login
+            var retornoLogin = SignInManager.UserManager.CheckPassword(applicationUser, senha);
+
+            if (!retornoLogin)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Usuário ou senha inválidos. Por favor, tente novamente!"
+                });
+            }
+
+            //validar Permissão
+            var permissao = UserManager.GetPermissions(applicationUser.Id).Contains(Permissions.Recebimento.ConferenciaManual);
+
+            if (!permissao)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "O usuário informado não possui permissão para conferência manual. Por favor, tente novamente!"
                 });
             }
 
