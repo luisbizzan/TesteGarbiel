@@ -21,7 +21,7 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
     {
         public long IdQuarentena { get; set; }
         public long Lote { get; set; }
-        public long Nota { get; set; }
+        public int Nota { get; set; }
         public string Fornecedor { get; set; }
         public long? Atraso { get; set; }
         [Display(Name = "Data Abertura")]
@@ -62,7 +62,7 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
         [Display(Name = "Fornecedor")]
         public long? IdFornecedor { get; set; }
 
-        public string RazaoSocialFornecedor { get; set; }
+        public string NomeFantasiaFornecedor { get; set; }
 
         public SelectList ListaQuarentenaStatus { get; set; }
 
