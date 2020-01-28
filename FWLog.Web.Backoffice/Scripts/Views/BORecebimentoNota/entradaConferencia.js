@@ -515,8 +515,7 @@
                                         if (qtdePecasHaMais > 0)
                                             $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+.');
                                     }
-                                }
-                                );
+                                });
                             }
                             else {
                                 validarDiferencaMultiploConferencia();
