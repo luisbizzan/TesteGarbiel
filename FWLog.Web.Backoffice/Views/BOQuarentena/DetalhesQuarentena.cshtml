@@ -16,111 +16,136 @@
         <div class="modal-body">
             @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "detalhesQuarentenaForm" }))
             {
-                <div class="x_panel">
-                    <div class="x_content">
-
-                        <div class="row">
-                            <div class="col-sm-6 col-lg-2">
-                                <div class="form-group">
-                                    @Html.HiddenFor(f => f.IdQuarentena)
-
-                                    @Html.LabelFor(f => f.DataAbertura)
-                                    @Html.TextBoxFor(m => m.DataAbertura, new { @class = "form-control", @readonly = "readonly" })
-                                </div>
+                <div class="x_content">
+                    <div class="row">
+                        @Html.HiddenFor(f => f.IdQuarentena)
+                        <div class="col-xs-6 col-sm-4 col-lg-4">
+                            <div class="form-group">
+                                @Html.LabelFor(f => f.NotaSerie)
+                                @Html.TextBoxFor(m => m.NotaSerie, new { @class = "form-control", @readonly = "readonly" })
                             </div>
-                            <div class="col-sm-6 col-lg-3">
-                                <div class="form-group">
-                                    @Html.LabelFor(f => f.DataEncerramento)
-                                    @Html.TextBoxFor(m => m.DataEncerramento, new { @class = "form-control", @readonly = "readonly" })
-                                </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-4 col-lg-4">
+                            <div class="form-group">
+                                @Html.LabelFor(f => f.Lote)
+                                @Html.TextBoxFor(m => m.Lote, new { @class = "form-control", @readonly = "readonly" })
                             </div>
-                            <div class="col-sm-12 col-lg-3">
-                                <div class="form-group">
-                                    @Html.LabelFor(m => m.IdStatus, new { @class = "control-label" })
-                                    @if (Model.PermiteEdicao)
-                                    {
-                                        @Html.DropDownListFor(m => m.IdStatus, (IEnumerable<SelectListItem>)ViewBag.Status, new { id = "status", @class = "form-control" })
-                                    }
-                                    else
-                                    {
-                                        @Html.DropDownListFor(m => m.IdStatus, (IEnumerable<SelectListItem>)ViewBag.Status, new { @class = "form-control", @disabled = "disabled" })
-                                    }
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-lg-4">
+                            <div class="form-group">
+                                @Html.LabelFor(f => f.LoteStatus)
+                                @Html.TextBoxFor(m => m.LoteStatus, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-4 col-lg-2">
+                            <div class="form-group">
+                                @Html.LabelFor(f => f.DataAbertura)
+                                @Html.TextBoxFor(m => m.DataAbertura, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-4 col-lg-3">
+                            <div class="form-group">
+                                @Html.LabelFor(f => f.DataEncerramento)
+                                @Html.TextBoxFor(m => m.DataEncerramento, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="col-xs-6 col-sm-4 col-lg-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.IdStatus, new { @class = "control-label" })
+                                @if (Model.PermiteEdicao)
+                                {
+                                    @Html.DropDownListFor(m => m.IdStatus, (IEnumerable<SelectListItem>)ViewBag.Status, new { id = "status", @class = "form-control" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownListFor(m => m.IdStatus, (IEnumerable<SelectListItem>)ViewBag.Status, new { @class = "form-control", @disabled = "disabled" })
+                                }
 
-                                    @Html.ValidationMessageFor(m => m.IdStatus)
-                                </div>
+                                @Html.ValidationMessageFor(m => m.IdStatus)
                             </div>
-                            <div class="col-sm-6 col-lg-4">
+                        </div>
+                        <div class="col-xs-6 col-sm-4 col-lg-4">
+                            <div class="form-group codigoConfirmacao">
+                                @Html.LabelFor(f => f.CodigoConfirmacao)
+                                @Html.TextBoxFor(m => m.CodigoConfirmacao, new { id = "codigoConfirmacao", @class = "form-control onlyNumber" })
+                                @Html.ValidationMessageFor(m => m.CodigoConfirmacao)
+                            </div>
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                @Html.LabelFor(f => f.Observacao)
+                                @if (Model.PermiteEdicao)
+                                {
+                                    @Html.TextAreaFor(m => m.Observacao, new { @class = "form-control", @rows = 10, @style = "height:100px !important;" })
+                                }
+                                else
+                                {
+                                    @Html.TextAreaFor(m => m.Observacao, new { @class = "form-control", @rows = 10, @style = "height:100px !important;", @readonly = "readonly" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="x_title">
+                    <h4 style="margin-bottom: 0px;">Divergência</h4>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="row" style="margin-top:10px;">
+                        @if (Model.Divergencias.Any())
+                        {
+                            <div class="col-xs-12">
                                 <div class="form-group">
-                                    @Html.LabelFor(f => f.CodigoConfirmacao)
-                                    @Html.TextBoxFor(m => m.CodigoConfirmacao, new { id = "codigoConfirmacao", @class = "form-control", @disabled = "disabled" })
-                                    @Html.ValidationMessageFor(m => m.CodigoConfirmacao)
+                                    @Html.LabelFor(f => f.ObservacaoDivergencia)
+                                    @Html.TextAreaFor(m => m.ObservacaoDivergencia, new { @class = "form-control", @rows = 10, @style = "height:50px !important;", @readonly = "readonly" })
                                 </div>
                             </div>
                             <div class="col-sm-12 col-lg-12">
-                                <div class="form-group">
-                                    @Html.LabelFor(f => f.Observacao)
-                                    @if (Model.PermiteEdicao)
-                                    {
-                                        @Html.TextAreaFor(m => m.Observacao, new { @class = "form-control", @rows = 10, @style = "height:100px !important;" })
-                                    }
-                                    else
-                                    {
-                                        @Html.TextAreaFor(m => m.Observacao, new { @class = "form-control", @rows = 10, @style = "height:100px !important;", @readonly = "readonly" })
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row" style="margin-top:25px;">
-                            @if (Model.Divergencias.Any())
-                            {
-                                <div class="col-sm-12 col-lg-12">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>@Html.LabelFor(m => m.Divergencias[0].Referencia)</th>
-                                                <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeNotaFiscal)</th>
-                                                <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeConferencia)</th>
-                                                <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeMais)</th>
-                                                <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeMenos)</th>
-                                                <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeMaisTratado)</th>
-                                                <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeMenosTratado)</th>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>@Html.LabelFor(m => m.Divergencias[0].Referencia)</th>
+                                            <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeNotaFiscal)</th>
+                                            <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeConferencia)</th>
+                                            <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeMais)</th>
+                                            <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeMenos)</th>
+                                            <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeMaisTratado)</th>
+                                            <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeMenosTratado)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.Divergencias.Count(); i++)
+                                        {
+                                            <tr class="linha-divergencia">
+                                                <td>@Model.Divergencias[i].Referencia</td>
+                                                <td style="text-align:center">@Model.Divergencias[i].QuantidadeNotaFiscal</td>
+                                                <td style="text-align:center">@Model.Divergencias[i].QuantidadeConferencia</td>
+                                                <td style="text-align:center">@Model.Divergencias[i].QuantidadeMais</td>
+                                                <td style="text-align:center">@Model.Divergencias[i].QuantidadeMenos</td>
+                                                <td style="text-align:center">@Model.Divergencias[i].QuantidadeMaisTratado</td>
+                                                <td style="text-align:center">@Model.Divergencias[i].QuantidadeMenosTratado</td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @for (int i = 0; i < Model.Divergencias.Count(); i++)
-                                            {
-                                                <tr class="linha-divergencia">
-                                                    <td>@Model.Divergencias[i].Referencia</td>
-                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeNotaFiscal</td>
-                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeConferencia</td>
-                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeMais</td>
-                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeMenos</td>
-                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeMaisTratado</td>
-                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeMenosTratado</td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            }
-                            else
-                            {
-                                <p>
-                                    Nenhuma divergência encontrada.
-                                </p>
-                            }
-                        </div>
-
-                        @if (Model.PermiteEdicao)
-                        {
-                            <div class="row navbar-right">
-                                <div class="col-sm-12 col-lg-12">
-                                    <button id="submit" class="btn btn-default">Atualizar</button>
-                                </div>
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
                         }
+                        else
+                        {
+                            <p>
+                                Nenhuma divergência encontrada.
+                            </p>
+                        }
                     </div>
+
+                    @if (Model.PermiteEdicao)
+                    {
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-12 text-right">
+                                <button id="submit" class="btn btn-default">Atualizar</button>
+                            </div>
+                        </div>
+                    }
                 </div>
             }
         </div>

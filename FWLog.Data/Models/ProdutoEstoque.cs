@@ -19,6 +19,8 @@ namespace FWLog.Data.Models
         [Index]
         public long? IdEnderecoArmazenagem { get; set; }
 
+        public int DiasPrazoEntrega { get; set; }
+
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
 

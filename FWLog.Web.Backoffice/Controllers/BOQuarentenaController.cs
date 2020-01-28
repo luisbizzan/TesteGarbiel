@@ -64,7 +64,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     ListaQuarentenaStatus = new SelectList(
                     _uow.QuarentenaStatusRepository.Todos().Select(x => new SelectListItem
                     {
-                        Value = x.IdQuarentenaStatus.ToString(),
+                        Value = x.IdQuarentenaStatus.GetHashCode().ToString(),
                         Text = x.Descricao
                     }), "Value", "Text")
                 }
@@ -86,13 +86,13 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.Lote.NotaFiscal.ChaveAcesso.Contains(model.CustomFilter.ChaveAcesso));
 
             if (model.CustomFilter.Lote.HasValue)
-                query = query.Where(x => x.IdLote == Convert.ToInt32(model.CustomFilter.Lote));
+                query = query.Where(x => x.IdLote == model.CustomFilter.Lote.Value);
 
             if (model.CustomFilter.Nota.HasValue)
                 query = query.Where(x => x.Lote.NotaFiscal.Numero == model.CustomFilter.Nota);
 
             if (model.CustomFilter.IdFornecedor.HasValue)
-                query = query.Where(x => x.Lote.NotaFiscal.Fornecedor.IdFornecedor == model.CustomFilter.IdFornecedor);
+                query = query.Where(x => x.Lote.NotaFiscal.IdFornecedor == model.CustomFilter.IdFornecedor);
 
             if (model.CustomFilter.IdQuarentenaStatus.HasValue)
                 query = query.Where(x => (int)x.QuarentenaStatus.IdQuarentenaStatus == model.CustomFilter.IdQuarentenaStatus);
@@ -187,12 +187,17 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var model = new DetalhesQuarentenaViewModel
             {
+                NotaSerie = entidade.Lote.NotaFiscal.Numero + " - " + entidade.Lote.NotaFiscal.Serie,
+                Lote = entidade.IdLote.ToString(),
+                LoteStatus = entidade.Lote.LoteStatus.Descricao,
                 IdQuarentena = entidade.IdQuarentena,
                 IdStatus = entidade.QuarentenaStatus.IdQuarentenaStatus,
                 DataAbertura = entidade.DataAbertura.ToString("dd/MM/yyyy"),
                 DataEncerramento = entidade.DataEncerramento.HasValue ? entidade.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
-                Observacao = entidade.Observacao
+                Observacao = entidade.Observacao,
             };
+
+            model.ObservacaoDivergencia = entidade.Lote.ObservacaoDivergencia;
 
             List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.Todos().Where(x => x.IdLote == entidade.IdLote).ToList();
 
@@ -224,11 +229,13 @@ namespace FWLog.Web.Backoffice.Controllers
 
             string mensagemErro = null;
 
-            if (model.IdStatus == QuarentenaStatusEnum.Finalizado)
+            //Verifica se o status da quarentena é Retirado.
+            //Caso seja, valida o código de confirmação pois, sem ele, o sistema não deve permitir alterar o status para retirado.
+            if (model.IdStatus == QuarentenaStatusEnum.Retirado)
             {
                 if (string.IsNullOrEmpty(model.CodigoConfirmacao))
                 {
-                    ModelState.AddModelError(nameof(model.CodigoConfirmacao), (mensagemErro = "O código é obrigatório para finalizar."));
+                    ModelState.AddModelError(nameof(model.CodigoConfirmacao), (mensagemErro = "O código de confirmação é obrigatório para retirar a mercadoria."));
                 }
                 else
                 {
@@ -236,11 +243,12 @@ namespace FWLog.Web.Backoffice.Controllers
 
                     if (!existeCod)
                     {
-                        ModelState.AddModelError(nameof(model.CodigoConfirmacao), (mensagemErro = "O código está incorreto!"));
+                        ModelState.AddModelError(nameof(model.CodigoConfirmacao), (mensagemErro = "O código de confirmação está incorreto!"));
                     }
                 }
             }
 
+            //Valida a model.
             if (!ModelState.IsValid)
             {
                 return Json(new AjaxGenericResultModel
@@ -252,8 +260,10 @@ namespace FWLog.Web.Backoffice.Controllers
 
             try
             {
+                //Captura os dados para atualiza-los posteriormente.
                 Quarentena entidade = _uow.QuarentenaRepository.GetById(model.IdQuarentena);
 
+                //Captura os dados "antigo" para o log.
                 Quarentena old = new Quarentena
                 {
                     DataAbertura = entidade.DataAbertura,
@@ -261,13 +271,30 @@ namespace FWLog.Web.Backoffice.Controllers
                     IdLote = entidade.IdLote,
                     IdQuarentena = entidade.IdQuarentena,
                     IdQuarentenaStatus = entidade.IdQuarentenaStatus,
+                    CodigoConfirmacao = entidade.CodigoConfirmacao,
                     Observacao = entidade.Observacao
                 };
 
+                //Verifica se o status anterior era Encaminhado para Auditoria e o atual Aberto.
+                //Caso seja, informa o usuário que a ação não é permitida.
+                if (old.IdQuarentenaStatus == QuarentenaStatusEnum.EncaminhadoAuditoria && model.IdStatus == QuarentenaStatusEnum.Aberto)
+                {
+                    ModelState.AddModelError(nameof(model.IdStatus), (mensagemErro = "A quarentena foi encaminhada para Auditoria. Não é permitido atualizar o status para Aberto."));
+
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = mensagemErro ?? Resources.CommonStrings.RegisterEditedErrorMessage
+                    });
+                }
+
+                //Atualiza o status e observação da quarentena.
                 entidade.IdQuarentenaStatus = model.IdStatus;
                 entidade.Observacao = model.Observacao;
 
-                if (!model.PermiteEdicao)
+                //Verifica se o status é Retirado ou Finalizado.
+                //Caso seja, insere a data de encerramento pois, considera-se que a mercadoria foi retirada ou alguma outra ação feita (finalizado).
+                if (model.IdStatus == QuarentenaStatusEnum.Retirado || model.IdStatus == QuarentenaStatusEnum.Finalizado)
                 {
                     entidade.DataEncerramento = DateTime.Now;
                 }

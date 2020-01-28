@@ -137,6 +137,7 @@
     <Compile Include="Model\Lote\ProcessamentoTratativaDivergencia.cs" />
     <Compile Include="Model\Lote\ResumoFinalizarConferenciaResponse.cs" />
     <Compile Include="Model\Lote\TratarDivergenciaRequest.cs" />
+    <Compile Include="Model\IntegracaoSankhya\ProdutoPrazoEntregaIntegracao.cs" />
     <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirDetalhesNotaEntradaConferenciaRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirRelatorioRecebimentoNotasRequest.cs" />
