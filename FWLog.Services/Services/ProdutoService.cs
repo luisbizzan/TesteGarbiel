@@ -115,6 +115,8 @@ namespace FWLog.Services.Services
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do Produto: {0}.", produtoInt.CodigoIntegracao));
+
+                    continue;
                 }
             }
         }

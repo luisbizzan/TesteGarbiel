@@ -1115,7 +1115,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 QuantidadeNaoConferida = quantidadeNaoConferida,
                 QuantidadeConferida = quantidadeConferida,
                 InicioConferencia = DateTime.Now.ToString(),
-                QuantidadePorCaixa = null
+                QuantidadePorCaixa = null,
+                Multiplo = produto.MultiploVenda
             };
 
             //Se o tipo da conferência for Por Quantidade, atribui 1 para o campo quantidade de caixa.

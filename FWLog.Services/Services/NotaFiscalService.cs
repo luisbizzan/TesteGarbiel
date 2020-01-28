@@ -183,6 +183,8 @@ namespace FWLog.Services.Services
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração da seguinte nota fiscal: {0}.", notasInt.Key));
+
+                    continue;
                 }
             }
         }
