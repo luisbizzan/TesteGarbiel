@@ -265,7 +265,7 @@
     });
 
     function limparFornecedor() {
-        $("#Filter_RazaoSocialFornecedor").val("");
+        $("#Filter_NomeFantasiaFornecedor").val("");
         $("#Filter_IdFornecedor").val("");
     }
 
@@ -496,8 +496,8 @@ function RegistrarNotaFiscal() {
     });
 }
 
-function setFornecedor(idFornecedor, razaoSocial) {
-    $("#Filter_RazaoSocialFornecedor").val(razaoSocial);
+function setFornecedor(idFornecedor, nomeFantasia) {
+    $("#Filter_NomeFantasiaFornecedor").val(nomeFantasia);
     $("#Filter_IdFornecedor").val(idFornecedor);
     $("#modalFornecedor").modal("hide");
     $("#modalFornecedor").empty();

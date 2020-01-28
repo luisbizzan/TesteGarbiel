@@ -61,6 +61,8 @@ namespace FWLog.Services.Services
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do tipo de frete: {0}.", freteTipoInt.Sigla));
+                    
+                    continue;
                 }
             }
         }

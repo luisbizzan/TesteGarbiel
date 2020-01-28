@@ -1,7 +1,9 @@
 ﻿(function () {
-    let permiteRegistrar = false;
+    let multiplo = 1;
 
     let listaReferencia = new Array;
+
+    let permiteRegistrar = false;
 
     let $confirmarConferencia = $("#confirmarConferencia");
     let $confirmarRegistroConferencia = $("#confirmarRegistroConferencia");
@@ -65,14 +67,14 @@
         onScan.attachTo($quantidadePorCaixa[0], {
             onScan: function (sScancode, iQuatity) {
                 if ($tipoConferencia.val() != "Por Quantidade") {
-                    if (listaReferencia[0] != sScancode.detail.scanCode) {
+                    if (listaReferencia[0] != sScancode) {
                         PNotify.warning({ text: 'Referência inválida, não corresponde à referência iniciada!' });
                     } else {
                         //Altera a cor de fundo do campo para dar um destaque.
                         setTimeout(alterarBackgroundInput, 400);
 
                         //Captura o valor da quantidade por Caixa.
-                        var contador = Number($quantidadePorCaixa.val()) + 1;
+                        var contador = Number($quantidadePorCaixa.val()) + (iQuatity * multiplo);
 
                         //Atribui o valor somado.
                         $quantidadePorCaixa.val(contador);
@@ -152,10 +154,12 @@
             success: function (result) {
                 if (result.Success) {
                     var model = JSON.parse(result.Data);
+                    multiplo = model.Multiplo;
+
                     $("#DescricaoReferencia").val(model.DescricaoReferencia);
                     $("#Embalagem").val(model.Embalagem);
                     $("#Unidade").val(model.Unidade);
-                    $("#Multiplo").val(model.Multiplo);
+                    $("#Multiplo").val('');
                     $("#QuantidadeEstoque").val(model.QuantidadeEstoque);
                     $("#Localizacao").val(model.Localizacao);
                     $("#QuantidadeNaoConferida").val(model.QuantidadeNaoConferida);
@@ -500,8 +504,7 @@
                                     if (qtdePecasHaMais > 0)
                                         $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+.');
                                 }
-                            }
-                            );
+                            });
                         }
                         else {
                             validarDiferencaMultiploConferencia();

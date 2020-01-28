@@ -61,7 +61,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public int? QuantidadeVolume { get; set; }
         [Display(Name = "Fornecedor")]
         public long? IdFornecedor { get; set; }
-        public string RazaoSocialFornecedor { get; set; }
+        public string NomeFantasiaFornecedor { get; set; }
         [Display(Name = "Recebido por")]
         public string IdUsuarioRecebimento { get; set; }
         public string UserNameRecebimento { get; set; }
