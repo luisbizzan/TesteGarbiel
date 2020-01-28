@@ -4,6 +4,8 @@
     {
         public string Nome { get; set; }
 
+        public string UsuarioId { get; set; }
+
         public long LOTESRECEBIDASUSUARIO { get; set; }
 
         public long PECASRECEBIDASUSUARIO { get; set; }
