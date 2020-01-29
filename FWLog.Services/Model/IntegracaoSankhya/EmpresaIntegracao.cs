@@ -14,6 +14,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string RazaoSocial { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIEMP.AD_NOMEFILIAL")]
+        [Required]
         public string NomeFantasia { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIEMP.CGC")]
@@ -47,12 +48,14 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string EmpresaMatriz { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIEMP.AD_FILIAL")]
+        [Required]
         public string Sigla { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIUFS.DESCRICAO")]
         public string Estadp { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFEMP.AD_FONE_SAC")]
+        [Required]
         public string TelefoneSAC { get; set; }
     }
 }

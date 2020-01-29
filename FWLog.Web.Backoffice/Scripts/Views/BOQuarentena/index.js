@@ -118,9 +118,9 @@
     });
 
     function limparFornecedor() {
-        let razao = $("#Filter_NomeFantasiaFornecedor");
+        let nomeFantasia = $("#Filter_NomeFantasiaFornecedor");
         let fornecedor = $("#Filter_IdFornecedor");
-        razao.val("");
+        nomeFantasia.val("");
         fornecedor.val("");
     }
 

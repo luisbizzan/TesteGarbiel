@@ -33,7 +33,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public void Update(Quarentena entity, string IdUsuario, string descricao = null)
         {
-            string _descricao = descricao ?? $"Atualização: Status - {entity.QuarentenaStatus.Descricao} Observação - {entity.Observacao}";
+            string _descricao = descricao ?? $"Atualização: Status - {entity.IdQuarentenaStatus.ToString()} Observação - {entity.Observacao}";
 
             var log = new QuarentenaHistorico { Data = DateTime.Now, Descricao = _descricao, IdQuarentena = entity.IdQuarentena, IdUsuario = IdUsuario };
 
