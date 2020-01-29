@@ -754,7 +754,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
-        public JsonResult ValidarInicioConferencia(long id)
+        public async Task<JsonResult> ValidarInicioConferencia(long id)
         {
             var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
 
@@ -767,6 +767,33 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
+            if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.PorQuantidade)
+            {
+                var permissao = UserManager.GetPermissions(User.Identity.GetUserId()).Contains(Permissions.Recebimento.ConferenciaManual);
+
+                if (!permissao)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "O usuário informado não possui permissão para conferência manual. Por favor, tente novamente!"
+                    });
+                }
+
+            }
+            else
+            {
+                var permissao = UserManager.GetPermissions(User.Identity.GetUserId()).Contains(Permissions.Recebimento.Conferencia100PorCento);
+
+                if (!permissao)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "O usuário informado não possui permissão para conferência 100%. Por favor, tente novamente!"
+                    });
+                }
+            }
 
             ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(2);
 
@@ -1218,6 +1245,42 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [HttpPost]
+        public async Task<JsonResult> ValidarAcessoMudancaConferenciaManual(string usuario, string senha)
+        {
+            ApplicationUser applicationUser = await UserManager.FindByNameAsync(usuario);
+
+            //Validar Login
+            var retornoLogin = SignInManager.UserManager.CheckPassword(applicationUser, senha);
+
+            if (!retornoLogin)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Usuário ou senha inválidos. Por favor, tente novamente!"
+                });
+            }
+
+            //validar Permissão
+            var permissao = UserManager.GetPermissions(applicationUser.Id).Contains(Permissions.Recebimento.ConferenciaManual);
+
+            if (!permissao)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "O usuário informado não possui permissão para conferência manual. Por favor, tente novamente!"
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = string.Empty
+            });
+        }
+
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public JsonResult RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo, int idTipoConferencia)
         {
@@ -1289,27 +1352,33 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                var usuarioLogado = new BackOfficeUserInfo();
-
-                //Captura o usuário novamente.
-                var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
-
                 var tipoConferencia = (TipoConferenciaEnum)idTipoConferencia;
 
                 //Valida se o campo quantidade de caixa é igual a 1 quando o tipo da conferência é 100%.
                 //Isso é feito porque na conferência 100% a quantidade de caixa não pode ser maior que 1.
-                if (tipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento
-                    && quantidadeCaixa != 1)
+                if (tipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento)
                 {
-                    return Json(new AjaxGenericResultModel
+                    if (quantidadeCaixa != 1)
                     {
-                        Success = false,
-                        Message = "Neste tipo de conferência, não é permitido um valor diferente de 1 no campo quantidade de caixa. Por favor, tente novamente!"
-                    });
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = "Neste tipo de conferência, não é permitido um valor diferente de 1 no campo quantidade de caixa. Por favor, tente novamente!"
+                        });
+                    }
+
+                    if (quantidadePorCaixa < 1)
+                    {
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = "Neste tipo de conferência, não é permitido um valor menor que 1 no campo quantidade por caixa. Por favor, tente novamente!"
+                        });
+                    }
                 }
 
                 //Valida se a quantidade por caixa e quantidade de caixa é igual a 0.
-                if (quantidadePorCaixa == 0 || (quantidadePorCaixa > 0 && quantidadeCaixa == 0))
+                if (quantidadePorCaixa == 0 || quantidadeCaixa == 0)
                 {
                     return Json(new AjaxGenericResultModel
                     {
@@ -1367,7 +1436,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     DataHoraInicio = dataHoraInicio,
                     DataHoraFim = dataHoraFim,
                     Tempo = tempo,
-                    IdUsuarioConferente = usuario.UsuarioId
+                    IdUsuarioConferente = IdUsuario
                 };
 
                 _uow.LoteConferenciaRepository.Add(loteConferencia);
@@ -1482,7 +1551,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         //Captura os itens da nota fiscal do produto.
                         var notaFiscalItem = _uow.NotaFiscalItemRepository.ObterPorItem(idNotaFiscal, idProduto);
 
-                        if (notaFiscalItem.Count > 0)
+                        if (notaFiscalItem.Any())
                         {
                             int quantidadePecasNota = 0;
 
@@ -1535,7 +1604,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(id);
 
-            if (loteDivergencias.Count > 0)
+            if (loteDivergencias.Any())
             {
                 divergenciaViewModel.InicioConferencia = loteConferencia.First().DataHoraInicio.ToString("dd/MM/yyyy hh:mm:ss");
                 divergenciaViewModel.FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss");
@@ -1567,7 +1636,14 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                ValidateModel(viewModel);
+                if (!ModelState.IsValid)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Não foi possível tratar as divergências, formulário está inválido."
+                    }, JsonRequestBehavior.AllowGet);
+                }
 
                 foreach (var divergencia in viewModel.Divergencias)
                 {
@@ -1592,7 +1668,6 @@ namespace FWLog.Web.Backoffice.Controllers
                     Success = true,
                     Message = statusLote == LoteStatusEnum.AguardandoCriacaoNFDevolucao ? "Iniciando a criação da nota fiscal de devolução." : "Tratamento de divergências finalizado."
                 }, JsonRequestBehavior.DenyGet);
-
             }
             catch (Exception e)
             {
@@ -1601,7 +1676,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = e is BusinessException ? e.Message : "Não foi possível comunicar a finalização da tratativa de divergência com o Sankhya."
+                    Message = e is BusinessException ? e.Message : "Não foi possível finalizar tratamento de divergências."
                 }, JsonRequestBehavior.DenyGet);
             }
         }
