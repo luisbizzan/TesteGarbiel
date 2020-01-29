@@ -1,4 +1,5 @@
-﻿using FWLog.Data;
+﻿using FWLog.AspNet.Identity;
+using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
@@ -12,6 +13,7 @@ using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -382,10 +384,64 @@ namespace FWLog.Web.Backoffice.Controllers
                     Data = x.Data.ToString("dd/MM/yyyy"),
                     Usuario = x.NomeUsuario,
                     Descricao = x.Descricao
-                }).ToList()
+                }).OrderByDescending(x => x.Data).ToList()
             };
 
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ValidarPermissao(string acao)
+        {
+            try
+            {
+                bool permissao = false;
+                string mensagem = "";
+
+                switch (acao)
+                {
+                    case "AtualizarStatus":
+                        permissao = UserManager.GetPermissions(User.Identity.GetUserId()).Contains(Permissions.RecebimentoQuarentena.AtualizarStatus);
+                        mensagem = "O usuário informado não possui permissão para atualizar o status. Solicite a permissão para o Administrador.";
+                        break;
+                    case "EmitirTermoResponsabilidade":
+                        permissao = UserManager.GetPermissions(User.Identity.GetUserId()).Contains(Permissions.RecebimentoQuarentena.EmitirTermoResponsabilidade);
+                        mensagem = "O usuário informado não possui permissão para emitir o termo de responsabilidade. Solicite a permissão para o Administrador.";
+                        break;
+                    case "ConsultarHistorico":
+                        permissao = UserManager.GetPermissions(User.Identity.GetUserId()).Contains(Permissions.RecebimentoQuarentena.ConsultarHistorico);
+                        mensagem = "O usuário informado não possui permissão para consultar o histórico. Solicite a permissão para o Administrador.";
+                        break;
+                }
+
+                if (permissao)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = true,
+                        Message = string.Empty
+                    });
+                }
+                else
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = mensagem
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não foi possível validar a permissão do usuário. Por favor, tente novamente!"
+                });
+            }
+            
         }
     }
 }
