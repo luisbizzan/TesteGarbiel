@@ -468,13 +468,13 @@ namespace FWLog.Web.Backoffice.Controllers
                 ChaveAcesso = notafiscal.ChaveAcesso,
                 DataRecebimento = dataAtual.ToString("dd/MM/yyyy"),
                 HoraRecebimento = dataAtual.ToString("HH:mm:ss"),
-                FornecedorNome = string.Concat(notafiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notafiscal.Fornecedor.RazaoSocial),
+                FornecedorNome = string.Concat(notafiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notafiscal.Fornecedor.NomeFantasia),
                 NumeroSerieNotaFiscal = string.Format("{0}-{1}", notafiscal.Numero, notafiscal.Serie),
                 ValorTotal = notafiscal.ValorTotal.ToString("n2"),
                 DataAtual = dataAtual,
                 ValorFrete = notafiscal.ValorFrete.ToString("n2"),
                 NumeroConhecimento = notafiscal.NumeroConhecimento,
-                TransportadoraNome = string.Concat(notafiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notafiscal.Transportadora.RazaoSocial),
+                TransportadoraNome = string.Concat(notafiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notafiscal.Transportadora.NomeFantasia),
                 Peso = notafiscal.PesoBruto.HasValue ? notafiscal.PesoBruto.Value.ToString("n2") : null,
                 QtdVolumes = notafiscal.Quantidade == 0 ? (int?)null : notafiscal.Quantidade,
                 NotaFiscalPesquisada = true
@@ -594,7 +594,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ChaveAcesso = notaFiscal.ChaveAcesso,
                 NumeroNotaFiscal = notaFiscal.Numero.ToString(),
                 StatusNotaFiscal = notaFiscal.NotaFiscalStatus.ToString(),
-                Fornecedor = string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.RazaoSocial),
+                Fornecedor = string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.NomeFantasia),
                 DataCompra = notaFiscal.DataEmissao.ToString("dd/MM/yyyy"),
                 PrazoRecebimento = notaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
                 FornecedorCNPJ = notaFiscal.Fornecedor.CNPJ.Substring(0, 2) + "." + notaFiscal.Fornecedor.CNPJ.Substring(2, 3) + "." + notaFiscal.Fornecedor.CNPJ.Substring(5, 3) + "/" + notaFiscal.Fornecedor.CNPJ.Substring(8, 4) + "-" + notaFiscal.Fornecedor.CNPJ.Substring(12, 2),
@@ -602,7 +602,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ValorFrete = notaFiscal.ValorFrete.ToString("C"),
                 NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
                 PesoConhecimento = notaFiscal.PesoBruto.HasValue ? notaFiscal.PesoBruto.Value.ToString("F") : null,
-                TransportadoraNome = string.Concat(notaFiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notaFiscal.Transportadora.RazaoSocial),
+                TransportadoraNome = string.Concat(notaFiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notaFiscal.Transportadora.NomeFantasia),
                 DiasAtraso = "0"
             };
 
@@ -633,7 +633,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 model.Volumes = lote.QuantidadeVolume.ToString();
                 model.QuantidadePeca = lote.QuantidadePeca.ToString();
                 model.StatusNotaFiscal = lote.LoteStatus.Descricao;
-
+                model.Observacao = lote.ObservacaoDivergencia;
+                
                 if (lote.DataRecebimento > notaFiscal.PrazoEntregaFornecedor)
                 {
                     TimeSpan atraso = lote.DataRecebimento.Subtract(notaFiscal.PrazoEntregaFornecedor);
@@ -642,12 +643,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 #region CONFERENCIA
                 //Verifica se o lote está em conferência ou já foi conferido.
-                if (lote.IdLoteStatus == LoteStatusEnum.Conferencia ||
-                    lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia ||
-                    lote.IdLoteStatus == LoteStatusEnum.Finalizado ||
-                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
-                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
-                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
+                if (lote.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento && lote.IdLoteStatus != LoteStatusEnum.Recebido)
                 {
                     model.EmConferenciaOuConferido = true;
 
@@ -664,15 +660,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         //Captura a menor data de início da conferência.
                         model.DataInicioConferencia = lote.DataInicioConferencia.HasValue ? lote.DataInicioConferencia.Value.ToString("dd/MM/yyyy HH:mm:ss") : string.Empty;
 
-                        //Captura a maior data fim de conferência.
-                        if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia ||
-                            lote.IdLoteStatus == LoteStatusEnum.Finalizado ||
-                            lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
-                            lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
-                            lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
-                        {
-                            model.DataFimConferencia = lote.DataFinalConferencia.HasValue ? lote.DataFinalConferencia.Value.ToString("dd/MM/yyyy HH:mm:ss") : string.Empty;
-                        }
+                        model.DataFimConferencia = lote.DataFinalConferencia.HasValue ? lote.DataFinalConferencia.Value.ToString("dd/MM/yyyy HH:mm:ss") : string.Empty;
 
                         List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
 
@@ -692,15 +680,13 @@ namespace FWLog.Web.Backoffice.Controllers
                             model.Items.Add(entradaConferenciaItem);
                         }
 
-                        if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia ||
-                            lote.IdLoteStatus == LoteStatusEnum.Finalizado ||
-                            lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
-                            lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
-                            lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
+                        if (lote.IdLoteStatus != LoteStatusEnum.Conferencia)
                         {
                             model.TempoTotalConferencia = lote.TempoTotalConferencia.HasValue ? TimeSpan.FromSeconds(lote.TempoTotalConferencia.Value).ToString("h'h 'm'm 's's'") : string.Empty;
                         }
                     }
+
+                    model.ConferidoDivergencia = lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia;
 
                     var _emConferencia = new[] { LoteStatusEnum.Conferencia, LoteStatusEnum.ConferidoDivergencia };
                     if (!Array.Exists(_emConferencia, x => x == lote.IdLoteStatus))
@@ -715,12 +701,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
                             var divergenciaViewModel = new ExibirDivergenciaRecebimentoViewModel
                             {
-                                ConferidoPor = perfilUsuario.Nome,
-                                InicioConferencia = loteConferencia.First().DataHoraInicio.ToString("dd/MM/yyyy hh:mm:ss"),
-                                FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss"),
-                                NotaFiscal = notaFiscal.Numero.ToString(),
+                                NotaFiscal = string.Concat(notaFiscal.Numero.ToString(), " - ", notaFiscal.Serie),
                                 IdLote = lote.IdLote,
-                                StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao,
+                                StatusNotasFiscal = lote.LoteStatus.Descricao,
                                 UsuarioTratamento = _uow.PerfilUsuarioRepository.GetByUserId(loteDivergencias.First().IdUsuarioDivergencia).Nome,
                                 DataTratamento = loteDivergencias.First().DataTratamentoDivergencia.Value.ToString("dd/MM/yyyy hh:mm:ss")
                             };
@@ -767,34 +750,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
            
-            if(empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.PorQuantidade)
-            {
-                var permissao = UserManager.GetPermissions(User.Identity.GetUserId()).Contains(Permissions.Recebimento.ConferenciaManual);
-
-                if (!permissao)
-                {
-                    return Json(new AjaxGenericResultModel
-                    {
-                        Success = false,
-                        Message = "O usuário informado não possui permissão para conferência manual. Por favor, tente novamente!"
-                    });
-                }
-                
-            }
-            else
-            {
-                var permissao = UserManager.GetPermissions(User.Identity.GetUserId()).Contains(Permissions.Recebimento.Conferencia100PorCento);
-
-                if (!permissao)
-                {
-                    return Json(new AjaxGenericResultModel
-                    {
-                        Success = false,
-                        Message = "O usuário informado não possui permissão para conferência 100%. Por favor, tente novamente!"
-                    });
-                }
-            }
-
             ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(2);
 
             if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
@@ -1263,14 +1218,14 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             //validar Permissão
-            var permissao = UserManager.GetPermissions(applicationUser.Id).Contains(Permissions.Recebimento.ConferenciaManual);
+            var permissao = UserManager.GetPermissions(applicationUser.Id).Contains(Permissions.Recebimento.PermitirConferenciaManual);
 
             if (!permissao)
             {
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "O usuário informado não possui permissão para conferência manual. Por favor, tente novamente!"
+                    Message = "O usuário informado não possui permissão para permitir a conferência manual. Contate o Administrador."
                 });
             }
 
@@ -1694,7 +1649,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss"),
                 NotaFiscal = string.Concat(notaFiscal.Numero.ToString(), " - ", notaFiscal.Serie),
                 IdLote = lote.IdLote,
-                StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao,
+                StatusNotasFiscal = lote.LoteStatus.Descricao,
                 UsuarioTratamento = _uow.PerfilUsuarioRepository.GetByUserId(loteDivergencias.First().IdUsuarioDivergencia).Nome,
                 DataTratamento = loteDivergencias.First().DataTratamentoDivergencia.Value.ToString("dd/MM/yyyy hh:mm:ss")
             };
@@ -2016,7 +1971,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss"),
                 NotaFiscal = string.Concat(notaFiscal.Numero.ToString(), " - ", notaFiscal.Serie),
                 IdLote = lote.IdLote,
-                StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao,
+                StatusNotasFiscal = lote.LoteStatus.Descricao,
                 UsuarioTratamento = _uow.PerfilUsuarioRepository.GetByUserId(loteDivergencias.First().IdUsuarioDivergencia).Nome,
                 DataTratamento = loteDivergencias.First().DataTratamentoDivergencia.Value.ToString("dd/MM/yyyy hh:mm:ss"),
                 Processamento = new ProcessamentoTratativaDivergenciaViewModel()

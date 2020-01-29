@@ -533,7 +533,7 @@
                             $('#UsuarioTipoConferencia').val('');
                             $('#SenhaTipoConferencia').val('');
 
-                            $('#MensagemTipoConferencia').text('Solicite a liberação do Coordenador para alterar o tipo de conferência.');
+                            $('#MensagemTipoConferencia').text('Solicite a liberação do Coordenador para permitir a conferência manual.');
 
                             setTimeout(function () {
                                 $("#UsuarioTipoConferencia").focus();
