@@ -18,7 +18,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public int? QuantidadePeca { get; set; }
         public int? Volume { get; set; }
         public int? IdFornecedor { get; set; }
-        public int? IdUsuarioRecebimento { get; set; }
+        public string IdUsuarioRecebimento { get; set; }
         public string IdUsuarioConferencia { get; set; }
         public TimeSpan? TempoInicial { get; set; }
         public TimeSpan? TempoFinal { get; set; }
