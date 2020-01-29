@@ -40,7 +40,7 @@
                         <div class="row">
                             <div class="col-sm-12 col-lg-12">
                                 @Html.LabelFor(m => m.ObservacaoDivergencia)*:
-                                @Html.TextAreaFor(m => m.ObservacaoDivergencia, new { @class = "form-control", @rows = 10, @style = "height:100px !important;" })
+                                @Html.TextAreaFor(m => m.ObservacaoDivergencia, new { id = "ObservacaoDivergencia", @class = "form-control", @rows = 10, @style = "height:100px !important;" })
                                 @Html.ValidationMessageFor(m => m.ObservacaoDivergencia)
                             </div>
                         </div>

@@ -1,9 +1,11 @@
 ﻿(function () {
-    var $observacao = $('#ObservacaoDivergencia');
     $(".onlyNumber").mask("0#");
 
+    let $observacao = $('#ObservacaoDivergencia');
+    let $linhasDivergencias = $(".linha-divergencia");
+
     $observacao.blur(function () {
-        if (!$(this).val()) {
+        if (!!$(this).val()) {
             $(this).css("border-color", "");
         }
     });
@@ -23,7 +25,7 @@
 
         if (quantidadeMenos !== "") {
             if (quantidadeNota - quantidadeMenos < 0) {
-                PNotify.error({ text: "A quantidade a MENOS não pode maior que o total da nota." });
+                PNotify.error({ text: "Quantidade a MENOS não pode exceder o total da nota." });
             }
 
             $(this).css("border-color", "");
@@ -34,46 +36,71 @@
     });
 
     $("#tratarDivergenciasRecebimento").click(function () {
-        var isVAlid = true;
+        try {
+            var _model = { isValid: true, Message: '' };
 
-        if (!$observacao.val()) {
-            $observacao.css("border-color", "#a94442");
-            PNotify.error({ text: "Obervação é obrigatório." });
-            return;
-        }
+            if (!$observacao.val()) {
+                $observacao.css("border-color", "#a94442");
 
-        $(".linha-divergencia").each(function () {
-            var inputs = $(this).find("input[type=text]");
-
-            if ($(inputs[0]).val() === "" && $(inputs[1]).val() === "") {
-                isVAlid = false;
-                $(this).css("background-color", "#ffeded");
-                $(inputs[0]).css("border-color", "#a94442");
-                $(inputs[1]).css("border-color", "#a94442");
+                throw new divergenciaValidation('Campo Obervação é obrigatório.');
             }
-        });
 
-        if (!isVAlid) {
-            PNotify.error({ text: "Existem divergências não tratadas." });
-            return;
-        }
+            $linhasDivergencias.each(function () {
+                var $quantidadeNota = $('.quantidade-nota', this);
+                var $quantidadeMais = $('.quantidade-mais', this);
+                var $quantidadeMenos = $('.quantidade-menos', this);
 
-        $.ajax({
-            url: HOST_URL + "BORecebimentoNota/TratarDivergencia",
-            cache: false,
-            method: "POST",
-            data: $("#divergencias").serialize(),
-            success: function (result) {
-                if (!result.Success) {
-                    PNotify.error({ text: result.Message });
-                } else {
-                    PNotify.success({ text: result.Message });
-                    VerificarStatusLote($("#IdNotaFiscal").val());
+                if (!$quantidadeMais.val() && !$quantidadeMenos.val()) {
+                    _model = { isValid: false, Message: 'Existem divergências não tratadas.' };
+
+                    $(this).css("background-color", "#ffeded");
+
+                    $quantidadeMais.css("border-color", "#a94442");
+                    $quantidadeMenos.css("border-color", "#a94442");
+
+                    return;
                 }
+
+                if ($quantidadeNota.val() - $quantidadeMenos.val() < 0) {
+                    _model = { isValid: false, Message: 'Quantidade a MENOS não pode exceder o total da nota.' };
+
+                    $(this).css("background-color", "#ffeded");
+
+                    $quantidadeMenos.css("border-color", "#a94442");
+                }
+            });
+
+            if (!_model.isValid) {
+                throw new divergenciaValidation(_model.Message);
             }
-        });
+
+            $.ajax({
+                url: HOST_URL + "BORecebimentoNota/TratarDivergencia",
+                cache: false,
+                method: "POST",
+                data: $("#divergencias").serialize(),
+                success: function (result) {
+                    if (!result.Success) {
+                        PNotify.error({ text: result.Message });
+                    } else {
+                        PNotify.success({ text: result.Message });
+                        VerificarStatusLote($("#IdNotaFiscal").val());
+                    }
+                }
+            });
+        } catch (e) {
+            if (!!e.texto) {
+                PNotify.error({ text: e.texto });
+            } else {
+                throw e;
+            }
+        }
     });
 })();
+
+function divergenciaValidation(message) {
+    this.texto = message;
+}
 
 function VerificarStatusLote(id) {
     $.ajax({
