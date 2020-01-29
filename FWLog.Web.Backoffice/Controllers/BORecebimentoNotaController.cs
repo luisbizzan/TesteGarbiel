@@ -766,8 +766,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Nenhum tipo de conferência configurado para a empresa Unidade: " + empresaConfig.Empresa.Sigla + ".",
                 });
             }
-           
-            if(empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.PorQuantidade)
+
+            if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.PorQuantidade)
             {
                 var permissao = UserManager.GetPermissions(User.Identity.GetUserId()).Contains(Permissions.Recebimento.ConferenciaManual);
 
@@ -779,7 +779,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         Message = "O usuário informado não possui permissão para conferência manual. Por favor, tente novamente!"
                     });
                 }
-                
+
             }
             else
             {
@@ -1352,27 +1352,33 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                var usuarioLogado = new BackOfficeUserInfo();
-
-                //Captura o usuário novamente.
-                var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
-
                 var tipoConferencia = (TipoConferenciaEnum)idTipoConferencia;
 
                 //Valida se o campo quantidade de caixa é igual a 1 quando o tipo da conferência é 100%.
                 //Isso é feito porque na conferência 100% a quantidade de caixa não pode ser maior que 1.
-                if (tipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento
-                    && quantidadeCaixa != 1)
+                if (tipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento)
                 {
-                    return Json(new AjaxGenericResultModel
+                    if (quantidadeCaixa != 1)
                     {
-                        Success = false,
-                        Message = "Neste tipo de conferência, não é permitido um valor diferente de 1 no campo quantidade de caixa. Por favor, tente novamente!"
-                    });
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = "Neste tipo de conferência, não é permitido um valor diferente de 1 no campo quantidade de caixa. Por favor, tente novamente!"
+                        });
+                    }
+
+                    if (quantidadePorCaixa < 1)
+                    {
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = "Neste tipo de conferência, não é permitido um valor menor que 1 no campo quantidade por caixa. Por favor, tente novamente!"
+                        });
+                    }
                 }
 
                 //Valida se a quantidade por caixa e quantidade de caixa é igual a 0.
-                if (quantidadePorCaixa == 0 || (quantidadePorCaixa > 0 && quantidadeCaixa == 0))
+                if (quantidadePorCaixa == 0 || quantidadeCaixa == 0)
                 {
                     return Json(new AjaxGenericResultModel
                     {
@@ -1430,7 +1436,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     DataHoraInicio = dataHoraInicio,
                     DataHoraFim = dataHoraFim,
                     Tempo = tempo,
-                    IdUsuarioConferente = usuario.UsuarioId
+                    IdUsuarioConferente = IdUsuario
                 };
 
                 _uow.LoteConferenciaRepository.Add(loteConferencia);
