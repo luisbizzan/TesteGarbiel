@@ -26,4 +26,15 @@
             $("#modalImpressoras").modal();
         });
     });
+
+    $(".bar_tabs").click(function () {
+        if (!$("#entradaConferencia").is(":visible")) {
+            $(".impressao").show();
+        }
+        else {
+            $(".impressao").hide();
+        }
+    });
+
+    $(".informacoes").find("label").css("margin-top", "3px");
 })();

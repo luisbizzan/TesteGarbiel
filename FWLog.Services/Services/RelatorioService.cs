@@ -121,7 +121,7 @@ namespace FWLog.Services.Services
 
             if (!request.IdUsuarioRecebimento.NullOrEmpty())
             {
-                query = query.Where(x => x.UsuarioRecebimento.Id == request.IdUsuarioRecebimento);
+                query = query.Where(x => x.UsuarioRecebimento != null && x.UsuarioRecebimento.Id == request.IdUsuarioRecebimento);
             }
 
             if (!request.IdUsuarioConferencia.NullOrEmpty())
@@ -129,6 +129,24 @@ namespace FWLog.Services.Services
                 var lotes = query.Select(s => s.IdLote).ToList();
                 var conferencias = _unitiOfWork.LoteConferenciaRepository.Todos().Where(w => w.IdUsuarioConferente == request.IdUsuarioConferencia && lotes.Contains(w.IdLote)).Select(s => s.IdLote).ToList();
                 query = query.Where(x => conferencias.Contains(x.IdLote));
+            }
+
+            if(request.TempoInicial.HasValue)
+            {
+                int hora = request.TempoInicial.Value.Hours;
+                int minutos = request.TempoInicial.Value.Minutes;
+                long totalSegundos = (hora * 3600) + (minutos * 60);
+
+                query = query.Where(x => x.TempoTotalConferencia >= totalSegundos);
+            }
+
+            if (request.TempoFinal.HasValue)
+            {
+                int hora = request.TempoFinal.Value.Hours;
+                int minutos = request.TempoFinal.Value.Minutes;
+                long totalSegundos = (hora * 3600) + (minutos * 60);
+
+                query = query.Where(x => x.TempoTotalConferencia <= totalSegundos);
             }
 
             var listaRecebimentoNotas = new List<IFwRelatorioDados>();
@@ -263,11 +281,11 @@ namespace FWLog.Services.Services
             row.Cells[0].MergeRight = 1;
             paragraph = row.Cells[0].AddParagraph();
             paragraph.AddFormattedText("Fornecedor: ", TextFormat.Bold);
-            paragraph.AddText(string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.RazaoSocial));
+            paragraph.AddText(string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.NomeFantasia));
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Transportadora: ", TextFormat.Bold);
-            paragraph.AddText(string.Concat(notaFiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notaFiscal.Transportadora.RazaoSocial));
+            paragraph.AddText(string.Concat(notaFiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notaFiscal.Transportadora.NomeFantasia));
 
             Lote lote = _unitiOfWork.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
             bool IsNotaRecebida = lote != null;
