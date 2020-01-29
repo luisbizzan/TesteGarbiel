@@ -111,11 +111,18 @@ namespace FWLog.AspNet.Identity
 
         public class RecebimentoQuarentena : PermissionGroupBuildItem
         {
-            public const string List = "QuarentenaList";
+            public const string Listar = "QuarentenaListar";
+            public const string AtualizarStatus = "QuarentenaAtualizarStatus";
+            public const string EmitirTermoResponsabilidade = "QuarentenaEmitirTermoResponsabilidade";
+            public const string ConsultarHistorico = "QuarentenaConsultarHistorico";
+
 
             public RecebimentoQuarentena() : base(Display.FromString("Quarentena Recebimento"))
             {
-                Register(List, Display.FromString("Listar Quarentena"));
+                Register(Listar, Display.FromString("Listar Quarentena"));
+                Register(AtualizarStatus, Display.FromString("Atualizar Status Quarentena"));
+                Register(EmitirTermoResponsabilidade, Display.FromString("Emitir Termo de Responsabilidade"));
+                Register(ConsultarHistorico, Display.FromString("Consultar Histórico Quarentena"));
             }
         }
 

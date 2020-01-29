@@ -1,6 +1,7 @@
 ﻿using FWLog.Data.Models;
 using FWLog.Data.Repository.CommonCtx;
 using Oracle.ManagedDataAccess.Client;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx
@@ -18,6 +19,11 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             string sql = "UPDATE \"ProdutoEstoque\" SET \"Saldo\" = \"Saldo\" + :SALDO WHERE \"IdProduto\" = :IDPRODUTO AND \"IdEmpresa\" = :IDEMPRESA ";
             Entities.Database.ExecuteSqlCommand(sql, new OracleParameter(":SALDO", saldo), new OracleParameter(":IDPRODUTO", idProduto), new OracleParameter(":IDEMPRESA", idEmpresa));
+        }
+
+        public int ObterDiasPrazoEntrega(long idEmpresa , List<long> listIdProdutos)
+        {
+            return Entities.ProdutoEstoque.Where(w => w.IdEmpresa == idEmpresa && listIdProdutos.Contains(w.IdProduto)).Max(m => m.DiasPrazoEntrega);
         }
     }
 }

@@ -704,6 +704,8 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!string.IsNullOrEmpty(filter.CustomFilter.Cargo))
                 query = query.Where(x => x.Cargo.Contains(filter.CustomFilter.Cargo));
 
+            query = query.Where(x => x.EmpresaId == IdEmpresa);
+          
             List<BOPerfilUsuarioSearchModalItemViewModel> boPerfilUsuarioSearchModalFilterViewModel =
                 query.Select(x => new BOPerfilUsuarioSearchModalItemViewModel()
                 {

@@ -116,7 +116,7 @@ namespace FWLog.Services.Services
                     }
 
                     var notafiscalItens = notasInt.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.UnidadeMedida, s.Quantidade, s.ValorUnitarioItem, s.ValorTotal, s.Sequencia }).ToList();
-
+                    
                     List<NotaFiscalItem> itemsNotaFsical = new List<NotaFiscalItem>();
 
                     foreach (var item in notafiscalItens)
@@ -146,7 +146,7 @@ namespace FWLog.Services.Services
                             notaFiscalItem = new NotaFiscalItem();
                             itemNovo = true;
                         }
-
+                        
                         notaFiscalItem.IdUnidadeMedida = unidade.IdUnidadeMedida;
                         notaFiscalItem.IdProduto = produto.IdProduto;
                         notaFiscalItem.Quantidade = qtdNeg;
@@ -170,7 +170,10 @@ namespace FWLog.Services.Services
                         throw new Exception("A atualização de nota fiscal no Sankhya não terminou com sucesso.");
                     }
 
+                    int diasPrazoEntrega = _uow.ProdutoEstoqueRepository.ObterDiasPrazoEntrega(notafiscal.IdEmpresa, notafiscal.NotaFiscalItens.Select(s => s.IdProduto).ToList());
+
                     notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento;
+                    notafiscal.PrazoEntregaFornecedor = notafiscal.DataEmissao.AddDays(diasPrazoEntrega);
 
                     if (notaNova)
                     {
@@ -213,6 +216,14 @@ namespace FWLog.Services.Services
             }
 
             return true;
+        }
+
+        public async Task<bool> VerificarNotaFiscalConfirmada(long codigoIntegracao)
+        {
+            string where = string.Format("WHERE TGFCAB.NUNOTA = {0} AND TGFCAB.STATUSNOTA = 'L' ", codigoIntegracao);
+            List<NotaFiscalConfirmadaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalConfirmadaIntegracao>(where);
+
+            return !notasIntegracao.NullOrEmpty();
         }
     }
 }
