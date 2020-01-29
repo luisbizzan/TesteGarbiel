@@ -1482,7 +1482,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         //Captura os itens da nota fiscal do produto.
                         var notaFiscalItem = _uow.NotaFiscalItemRepository.ObterPorItem(idNotaFiscal, idProduto);
 
-                        if (notaFiscalItem.Count > 0)
+                        if (notaFiscalItem.Any())
                         {
                             int quantidadePecasNota = 0;
 
@@ -1535,7 +1535,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(id);
 
-            if (loteDivergencias.Count > 0)
+            if (loteDivergencias.Any())
             {
                 divergenciaViewModel.InicioConferencia = loteConferencia.First().DataHoraInicio.ToString("dd/MM/yyyy hh:mm:ss");
                 divergenciaViewModel.FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss");
@@ -1567,7 +1567,14 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                ValidateModel(viewModel);
+                if (!ModelState.IsValid)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Não foi possível tratar as divergências, formulário está inválido."
+                    }, JsonRequestBehavior.AllowGet);
+                }
 
                 foreach (var divergencia in viewModel.Divergencias)
                 {
@@ -1592,7 +1599,6 @@ namespace FWLog.Web.Backoffice.Controllers
                     Success = true,
                     Message = statusLote == LoteStatusEnum.AguardandoCriacaoNFDevolucao ? "Iniciando a criação da nota fiscal de devolução." : "Tratamento de divergências finalizado."
                 }, JsonRequestBehavior.DenyGet);
-
             }
             catch (Exception e)
             {
@@ -1601,7 +1607,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = e is BusinessException ? e.Message : "Não foi possível comunicar a finalização da tratativa de divergência com o Sankhya."
+                    Message = e is BusinessException ? e.Message : "Não foi possível finalizar tratamento de divergências."
                 }, JsonRequestBehavior.DenyGet);
             }
         }
