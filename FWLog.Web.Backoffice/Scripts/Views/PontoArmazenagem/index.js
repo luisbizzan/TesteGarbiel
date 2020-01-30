@@ -38,7 +38,6 @@
         },
         order: [[0, "DESC"]],
         columns: [
-            { data: 'IdPontoArmazenagem' },
             { data: 'NivelArmazenagem' },
             { data: 'Descricao' },
             { data: 'TipoArmazenagem' },

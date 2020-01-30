@@ -20,7 +20,7 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
         [Required]
         [Display(Name = "Tipo de Movimentação")]
         public TipoMovimentacaoEnum IdTipoMovimentacao { get; set; }
-        [Display(Name = "Limite de Peso Vertical - Kg")]
+        [Display(Name = "Limite de Peso Vertical (KG)")]
         public decimal? LimitePesoVertical { get; set; }
         [Required]
         [Display(Name = "Status")]
