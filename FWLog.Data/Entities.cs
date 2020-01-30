@@ -11,7 +11,7 @@ namespace FWLog.Data
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("DART");
+            modelBuilder.HasDefaultSchema("DARTQA");
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
         }
 
