@@ -81,9 +81,9 @@ namespace FWLog.Services.Services
                     produto.CodigoBarras = produtoInt.CodigoBarras;
                     produto.IdUnidadeMedida = unidade.IdUnidadeMedida;
 
+                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() } };
 
-
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", "CODPROD", produto.CodigoIntegracao, "AD_INTEGRARFWLOG", "0");
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", campoChave, "AD_INTEGRARFWLOG", "0");
 
                     if (!atualizacaoOK)
                     {
@@ -123,9 +123,9 @@ namespace FWLog.Services.Services
 
         public async Task ConsultarProdutoPrazoEntrega()
         {
-            //string where = "WHERE AD_INTEGRARFWLOG = '1' ";
+            string where = "WHERE AD_INTEGRARFWLOG = '1' ";
 
-            List <ProdutoPrazoEntregaIntegracao> produtoPrazoEntregaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoPrazoEntregaIntegracao>();
+            List<ProdutoPrazoEntregaIntegracao> produtoPrazoEntregaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoPrazoEntregaIntegracao>(where);
 
             foreach (var produtoInt in produtoPrazoEntregaIntegracao)
             {
@@ -159,6 +159,15 @@ namespace FWLog.Services.Services
                     }
 
                     produtoEstoque.DiasPrazoEntrega = Convert.ToInt32(produtoInt.DiasPrazoEntrega);
+
+                    Dictionary<string, string> chaves = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() }, { "CODEMP", empresa.CodigoIntegracao.ToString() } };
+
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("EmpresaProdutoImpostos", chaves, "AD_INTEGRARFWLOG", "0");
+
+                    if (!atualizacaoOK)
+                    {
+                        throw new Exception("A atualização do Prazo de Entrega do Produto no Sankhya não terminou com sucesso.");
+                    }
 
                     if (produtoEstoqueNovo)
                     {
