@@ -1,0 +1,1 @@
+ALTER TABLE "ProdutoEstoque" ADD "IdProdutoEstoqueStatus" NUMBER(10,0) REFERENCES "ProdutoEstoqueStatus"("IdProdutoEstoqueStatus") NOT NULL;

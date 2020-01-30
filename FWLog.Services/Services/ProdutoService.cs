@@ -34,7 +34,7 @@ namespace FWLog.Services.Services
             where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
             where.Append("AND AD_INTEGRARFWLOG = '1' ");
 
-            List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoIntegracao>(where: where.ToString());
+            List<Model.IntegracaoSankhya.ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoIntegracao>(where: where.ToString());
 
             var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
 
@@ -98,7 +98,7 @@ namespace FWLog.Services.Services
 
                         foreach (Empresa empresa in empresas)
                         {
-                            var produtoEstoque = new ProdutoEstoque
+                            var produtoEstoque = new Data.Models.ProdutoEstoque
                             {
                                 IdProduto = produto.IdProduto,
                                 IdEmpresa = empresa.IdEmpresa,
@@ -147,12 +147,12 @@ namespace FWLog.Services.Services
 
                     bool produtoEstoqueNovo = false;
 
-                    ProdutoEstoque produtoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, empresa.IdEmpresa);
+                    Data.Models.ProdutoEstoque produtoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, empresa.IdEmpresa);
 
                     if (produtoEstoque == null)
                     {
                         produtoEstoqueNovo = true;
-                        produtoEstoque = new ProdutoEstoque();
+                        produtoEstoque = new Data.Models.ProdutoEstoque();
 
                         produtoEstoque.IdEmpresa = empresa.IdEmpresa;
                         produtoEstoque.IdProduto = produto.IdProduto;

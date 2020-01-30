@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
 {
-    public class ProdutoEmpresaService : BaseService
+    public class ProdutoEstoqueService : BaseService
     {
         private UnitOfWork _uow;
 
-        public ProdutoEmpresaService(UnitOfWork uow)
+        public ProdutoEstoqueService(UnitOfWork uow)
         {
             _uow = uow;
         }
@@ -26,7 +26,7 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            List<ProdutoEmpresaIntegracao> produtoEmpresaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoEmpresaIntegracao>();
+            List<ProdutoEstoqueIntegracao> produtoEmpresaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoEstoqueIntegracao>();
 
             foreach (var produtoEmpresaInt in produtoEmpresaIntegracao)
             {
@@ -37,23 +37,23 @@ namespace FWLog.Services.Services
 
                     if (empresa != null && produto != null)
                     {
-                        bool produtoEmpresaNovo = false;
+                        bool produtoEstoqueNovo = false;
 
-                        ProdutoEmpresa produtoEmpresa = _uow.ProdutoEmpresaRepository.ConsultarPorProdutoEmpresa(produto.IdProduto, empresa.IdEmpresa);
+                        ProdutoEstoque produtoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, empresa.IdEmpresa);
 
-                        if (produtoEmpresa == null)
+                        if (produtoEstoque == null)
                         {
-                            produtoEmpresaNovo = true;
-                            produtoEmpresa = new ProdutoEmpresa();
+                            produtoEstoqueNovo = true;
+                            produtoEstoque = new ProdutoEstoque();
                         }
 
-                        produtoEmpresa.IdEmpresa = empresa.IdEmpresa;
-                        produtoEmpresa.IdProduto = produto.IdProduto;
-                        produtoEmpresa.Ativo = produtoEmpresaInt.Ativo == "S" ? true : false;
+                        produtoEstoque.IdEmpresa = empresa.IdEmpresa;
+                        produtoEstoque.IdProduto = produto.IdProduto;
+                        produtoEstoque.IdProdutoEnderedoStatus = Convert.ToInt32(produtoEmpresaInt.Status);
 
-                        if (produtoEmpresaNovo)
+                        if (produtoEstoqueNovo)
                         {
-                            _uow.ProdutoEmpresaRepository.Add(produtoEmpresa);
+                            _uow.ProdutoEstoqueRepository.Add(produtoEstoque);
                         }
 
                         await _uow.SaveChangesAsync();

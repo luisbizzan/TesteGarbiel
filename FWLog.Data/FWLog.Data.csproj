@@ -109,7 +109,6 @@
     <Compile Include="Models\ImpressaoItem.cs" />
     <Compile Include="Models\PerfilImpressora.cs" />
     <Compile Include="Models\PerfilImpressoraItem.cs" />
-    <Compile Include="Models\ProdutoEmpresa.cs" />
     <Compile Include="Models\ProdutoEndereco.cs" />
     <Compile Include="Models\BOLogSystem.cs" />
     <Compile Include="Models\AspNetUsers.cs" />
@@ -142,6 +141,7 @@
     <Compile Include="Models\LoteDivergencia.cs" />
     <Compile Include="Models\LoteDivergenciaStatus.cs" />
     <Compile Include="Models\NotaFiscalTipo.cs" />
+    <Compile Include="Models\ProdutoEstoqueStatus.cs" />
     <Compile Include="Models\QuarentenaHistorico.cs" />
     <Compile Include="Models\TipoConferencia.cs" />
     <Compile Include="Models\EmpresaTipo.cs" />
@@ -197,7 +197,6 @@
     <Compile Include="Repository\CommonCtx\BaseRepository.cs" />
     <Compile Include="Repository\CommonCtx\CacheRepository.cs" />
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
-    <Compile Include="Repository\GeneralCtx\ProdutoEmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoEnderecoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />
@@ -216,6 +215,7 @@
     <Compile Include="Repository\GeneralCtx\NotaFiscalRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PontoArmazenagemRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\ProdutoEstoqueStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarenatenaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\QuarentenaHistoricoRepository.cs" />
