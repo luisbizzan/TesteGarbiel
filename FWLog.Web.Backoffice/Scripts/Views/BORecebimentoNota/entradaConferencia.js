@@ -490,23 +490,21 @@
 
     function document_Keydown(e) {
         //Verifica se o modal de conferência está aberto.
-        if ($('#modalConferencia').is(':visible')) {
-            if (permiteRegistrar) {
-                switch (e.keyCode) {
-                    //Verifica se a tecla pressionada é ESC (Registrar Conferência).
-                    case 27: {
+        if (permiteRegistrar) {
+            if ($('#modalConferencia').is(':visible')) {
+                var modalConferenciaAberta = VerificaModalConferenciaAberta();
 
-                        //Verifica se o modal de acesso do cordenador esta aberto
-                        var modalEstaAberta = ($('#modalAcessoCoordenadorTipoConferencia').data('bs.modal') || {}).isShown;
-
-                        if (!modalEstaAberta) {
+                if (modalConferenciaAberta) {
+                    switch (e.keyCode) {
+                        //Verifica se a tecla pressionada é ESC (Registrar Conferência).
+                        case 27: {
                             //Se o tipo da conferência é 100%.
                             //Caso seja, solicita confirmação do usuário. 
                             //Caso contrário, chama o método para validar o múltiplo da conferência e posteriormente o registro da conferência.
                             if ($tipoConferencia.val() != "Por Quantidade") {
                                 $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {
                                     if (!qtdePecasHaMais)
-                                        return
+                                        return;
                                     else {
                                         $('#modalRegistrarConferencia').modal('show');
 
@@ -520,27 +518,27 @@
                             else {
                                 validarDiferencaMultiploConferencia();
                             }
+
+                            break;
                         }
+                        //Verifica se a tela pressionada é F4 (Alterar Tipo da Conferência)
+                        case 115: {
 
-                        break;
-                    }
-                    //Verifica se a tela pressionada é F4 (Alterar Tipo da Conferência)
-                    case 115: {
+                            if ($tipoConferencia.val() != "Por Quantidade") {
 
-                        if ($tipoConferencia.val() != "Por Quantidade") {
+                                $('#modalAcessoCoordenadorTipoConferencia').modal('show');
+                                $('#UsuarioTipoConferencia').val('');
+                                $('#SenhaTipoConferencia').val('');
 
-                            $('#modalAcessoCoordenadorTipoConferencia').modal('show');
-                            $('#UsuarioTipoConferencia').val('');
-                            $('#SenhaTipoConferencia').val('');
+                                $('#MensagemTipoConferencia').text('Solicite a liberação do Coordenador para alterar o tipo de conferência.');
 
-                            $('#MensagemTipoConferencia').text('Solicite a liberação do Coordenador para alterar o tipo de conferência.');
+                                setTimeout(function () {
+                                    $("#UsuarioTipoConferencia").focus();
+                                }, 150);
+                            }
 
-                            setTimeout(function () {
-                                $("#UsuarioTipoConferencia").focus();
-                            }, 150);
+                            break;
                         }
-
-                        break;
                     }
                 }
             }
@@ -562,6 +560,20 @@
         }
     }
 
+    // Solução paliativa permanete onde verifica qual modal está na frente
+    function VerificaModalConferenciaAberta() {
+        var $listaModais = $('.modal:visible');
+
+        var listaModais = $listaModais.map(function (a, b) {
+            return { zIndex: parseInt($(b).css('z-index')), elem: b };
+        }).sort((a, b) => (a.zIndex < b.zIndex) ? 1 : -1);
+
+        if (listaModais.length == 0) {
+            return false;
+        }
+
+        return $(listaModais[0].elem).is('#modalConferencia');
+    }
 })();
 
 var confirmRegistrarConferencia = Confirm;
