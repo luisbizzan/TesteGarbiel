@@ -234,6 +234,9 @@ namespace FWLog.Services.Services
         {
             Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
             NotaFiscal notaFiscal = _unitiOfWork.NotaFiscalRepository.GetById(request.IdNotaFiscal);
+            Lote lote = _unitiOfWork.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
+
+            bool IsNotaRecebida = lote != null;
 
             var fwRelatorioDados = new FwRelatorioDados
             {
@@ -275,7 +278,7 @@ namespace FWLog.Services.Services
 
             paragraph = row.Cells[3].AddParagraph();
             paragraph.AddFormattedText("Status: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.NotaFiscalStatus.Descricao);
+            paragraph.AddText(IsNotaRecebida ? lote.LoteStatus.Descricao : notaFiscal.NotaFiscalStatus.Descricao);
 
             row = tabela.AddRow();
             row.Cells[0].MergeRight = 1;
@@ -286,9 +289,6 @@ namespace FWLog.Services.Services
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Transportadora: ", TextFormat.Bold);
             paragraph.AddText(string.Concat(notaFiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notaFiscal.Transportadora.NomeFantasia));
-
-            Lote lote = _unitiOfWork.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
-            bool IsNotaRecebida = lote != null;
 
             LoteStatusEnum[] loteNaoConferido = new LoteStatusEnum[] { LoteStatusEnum.AguardandoRecebimento, LoteStatusEnum.Desconhecido, LoteStatusEnum.Recebido };
 
@@ -305,7 +305,7 @@ namespace FWLog.Services.Services
 
             paragraph = row.Cells[1].AddParagraph();
             paragraph.AddFormattedText("Nota: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.IdNotaFiscal.ToString());
+            paragraph.AddText(string.Concat(notaFiscal.Numero.ToString(), " - ", notaFiscal.Serie));
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("CNPJ: ", TextFormat.Bold);
@@ -336,13 +336,13 @@ namespace FWLog.Services.Services
             paragraph.AddText(IsNotaRecebida ? lote.QuantidadeVolume.ToString() : notaFiscal.Quantidade.ToString());
 
             paragraph = row.Cells[1].AddParagraph();
-            paragraph.AddFormattedText("Volumes: ", TextFormat.Bold);
 
             if (IsNotaRecebida)
             {
                 if (lote.DataRecebimento > notaFiscal.PrazoEntregaFornecedor)
                 {
-                    TimeSpan atraso = DateTime.Now.Subtract(notaFiscal.PrazoEntregaFornecedor);
+                    TimeSpan atraso = lote.DataRecebimento.Subtract(notaFiscal.PrazoEntregaFornecedor);
+                    paragraph.AddFormattedText("Atraso: ", TextFormat.Bold);
                     paragraph.AddText(atraso.Days.ToString());
                 }
                 else
@@ -383,7 +383,9 @@ namespace FWLog.Services.Services
 
             if (IsNotaRecebida)
             {
-                paragraph.AddText(lote.UsuarioRecebimento.UserName);
+                var usuario = _unitiOfWork.PerfilUsuarioRepository.GetByUserId(lote.UsuarioRecebimento.Id);
+
+                paragraph.AddText(string.Concat(usuario.Usuario.UserName, " - ", usuario.Nome)) ;
             }
             else
             {
