@@ -7,10 +7,10 @@ namespace FWLog.Web.Api.Controllers
 {
     public class ProdutoEmpresaController : ApiBaseController
     {
-        private ProdutoEmpresaService _produtoEmpresaService;
+        private ProdutoEstoqueService _produtoEmpresaService;
         private UnitOfWork _unitOfWork;
 
-        public ProdutoEmpresaController(UnitOfWork unitOfWork, ProdutoEmpresaService produtoEmpresaService)
+        public ProdutoEmpresaController(UnitOfWork unitOfWork, ProdutoEstoqueService produtoEmpresaService)
         {
             _unitOfWork = unitOfWork;
             _produtoEmpresaService = produtoEmpresaService;
