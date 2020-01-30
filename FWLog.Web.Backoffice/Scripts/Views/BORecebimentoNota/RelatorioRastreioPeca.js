@@ -20,11 +20,11 @@
                 DataCompraMinima: $("#Filter_DataCompraMinima").val(),
                 DataCompraMaxima: $("#Filter_DataCompraMaxima").val(),
                 DataRecebimentoMinima: $("#Filter_DataRecebimentoMinima").val(),
-                DataRecebimentoMaxima: $("#Filter_QtdRecebidaMaxima").val(),
-                QtdCompraMinima: $("#Filter_DataRecebimentoMaxima").val(),
-                QtdCompraMaxima: $("#Filter_QtdCompraMinima").val(),
-                QtdRecebidaMinima: $("#Filter_QtdCompraMaxima").val(),
-                QtdRecebidaMaxima: $("#Filter_QtdRecebidaMinima").val()
+                DataRecebimentoMaxima: $("#Filter_DataRecebimentoMaxima").val(),
+                QtdCompraMinima: $("#Filter_QtdCompraMinima").val(),
+                QtdCompraMaxima: $("#Filter_QtdCompraMaxima").val(),
+                QtdRecebidaMinima: $("#Filter_QtdRecebidaMinima").val(),
+                QtdRecebidaMaxima: $("#Filter_QtdRecebidaMaxima").val()
             },
             success: function (data) {
                 var a = document.createElement('a');
@@ -91,7 +91,6 @@
             },
             "error": function (data) {
                 if (!!(data.statusText)) {
-                    PNotify.error({ text: data.statusText });
                     NProgress.done();
                 }
             }
