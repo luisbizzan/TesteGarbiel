@@ -271,7 +271,7 @@ namespace FWLog.Services.Integracao
             return resultList;
         }
 
-        public async Task<bool> AtualizarInformacaoIntegracao(string entidade, string campoPKIntegracao, long valorPKIntegracao, string campo, object valor)
+        public async Task<bool> AtualizarInformacaoIntegracao(string entidade, Dictionary<string, string> camposChaves, string campo, object valor)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
@@ -279,7 +279,15 @@ namespace FWLog.Services.Integracao
             }
 
             XElement dataRow = new XElement("dataRow", new XElement("localFields", new XElement(campo, valor)));
-            dataRow.Add(new XElement("key", new XElement(campoPKIntegracao, valorPKIntegracao)));
+
+            List<XElement> chaves = new List<XElement>();
+
+            foreach (KeyValuePair<string, string> chave in camposChaves)
+            {
+                chaves.Add(new XElement(chave.Key, chave.Value));
+            }
+
+            dataRow.Add(new XElement("key", chaves));
 
             XAttribute[] attArray = {
                 new XAttribute("rootEntity", entidade),
