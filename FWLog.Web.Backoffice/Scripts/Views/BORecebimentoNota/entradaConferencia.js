@@ -523,14 +523,13 @@
                         }
                         //Verifica se a tela pressionada é F4 (Alterar Tipo da Conferência)
                         case 115: {
-
                             if ($tipoConferencia.val() != "Por Quantidade") {
 
                                 $('#modalAcessoCoordenadorTipoConferencia').modal('show');
                                 $('#UsuarioTipoConferencia').val('');
                                 $('#SenhaTipoConferencia').val('');
 
-                                $('#MensagemTipoConferencia').text('Solicite a liberação do Coordenador para alterar o tipo de conferência.');
+                                $('#MensagemTipoConferencia').text('Solicite a liberação do Coordenador para permitir a conferência manual.');
 
                                 setTimeout(function () {
                                     $("#UsuarioTipoConferencia").focus();
