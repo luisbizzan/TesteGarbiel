@@ -323,7 +323,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var relatorioRequest = Mapper.Map<RelatorioRecebimentoNotasRequest>(viewModel);
             relatorioRequest.IdEmpresa = IdEmpresa;
-            relatorioRequest.NomeUsuario = User.Identity.Name;
+            relatorioRequest.NomeUsuario = LabelUsuario;
             byte[] relatorio = _relatorioService.GerarRelatorioRecebimentoNotas(relatorioRequest);
 
             return File(relatorio, "application/pdf", "Relatório Recebimento Notas.pdf");
@@ -336,7 +336,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
             {
                 IdEmpresa = IdEmpresa,
-                NomeUsuario = User.Identity.Name,
+                NomeUsuario = LabelUsuario,
                 IdNotaFiscal = id
             };
 
@@ -356,7 +356,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 var relatorioRequest = new ImprimirDetalhesNotaEntradaConferenciaRequest
                 {
                     IdEmpresa = IdEmpresa,
-                    NomeUsuario = User.Identity.Name,
+                    NomeUsuario = LabelUsuario,
                     IdNotaFiscal = viewModel.IdNotaFiscal,
                     IdImpressora = viewModel.IdImpressora
                 };
@@ -530,7 +530,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 var request = Mapper.Map<ImprimirRelatorioRecebimentoNotasRequest>(viewModel);
 
                 request.IdEmpresa = IdEmpresa;
-                request.NomeUsuario = User.Identity.Name;
+                request.NomeUsuario = LabelUsuario;
 
                 _relatorioService.ImprimirRelatorioRecebimentoNotas(request);
 

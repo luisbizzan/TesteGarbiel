@@ -137,6 +137,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return idEmpresasPorUsuario;
             }
         }
+
         private ReadOnlyCollection<long> idEmpresasPorUsuario;
 
         protected string IdUsuario
@@ -180,6 +181,17 @@ namespace FWLog.Web.Backoffice.Controllers
                 cookie.Values[EmpresaCookie.PerfilImpressora] = value.ToString();
 
                 Response.Cookies.Add(cookie);
+            }
+        }
+
+        protected string LabelUsuario
+        {
+            get
+            {
+                var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
+                var userInfo = new BackOfficeUserInfo();
+                var usuario = uow.PerfilUsuarioRepository.GetByUserId(userInfo.UserId.ToString());
+                return $"{usuario.Usuario.UserName} - {usuario.Nome}";
             }
         }
 
