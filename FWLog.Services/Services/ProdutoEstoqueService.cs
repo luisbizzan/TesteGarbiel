@@ -49,7 +49,7 @@ namespace FWLog.Services.Services
 
                         produtoEstoque.IdEmpresa = empresa.IdEmpresa;
                         produtoEstoque.IdProduto = produto.IdProduto;
-                        produtoEstoque.IdProdutoEnderedoStatus = Convert.ToInt32(produtoEmpresaInt.Status);
+                        produtoEstoque.IdProdutoEstoqueStatus = (ProdutoEstoqueStatusEnum)produtoEmpresaInt.Status;
 
                         if (produtoEstoqueNovo)
                         {

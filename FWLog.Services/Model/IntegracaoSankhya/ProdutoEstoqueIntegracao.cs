@@ -16,6 +16,6 @@ namespace FWLog.Services.Model.IntegracaoSankhya
 
         [TabelaIntegracao(DisplayName = "AD_STATUS")]
         [Required]
-        public string Status { get; set; }
+        public int Status { get; set; }
     }
 }
