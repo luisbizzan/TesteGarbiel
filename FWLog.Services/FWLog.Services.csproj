@@ -137,7 +137,6 @@
     <Compile Include="Model\Lote\ProcessamentoTratativaDivergencia.cs" />
     <Compile Include="Model\Lote\ResumoFinalizarConferenciaResponse.cs" />
     <Compile Include="Model\Lote\TratarDivergenciaRequest.cs" />
-    <Compile Include="Model\IntegracaoSankhya\ProdutoPrazoEntregaIntegracao.cs" />
     <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirDetalhesNotaEntradaConferenciaRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirRelatorioRecebimentoNotasRequest.cs" />
@@ -175,7 +174,6 @@
     <Compile Include="Services\BOLogSystemService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\PontoArmazenagemService.cs" />
-    <Compile Include="Services\ProdutoEstoqueService.cs" />
     <Compile Include="Services\ProdutoService.cs" />
     <Compile Include="Services\QuarentenaService.cs" />
     <Compile Include="Services\RelatorioService.cs" />

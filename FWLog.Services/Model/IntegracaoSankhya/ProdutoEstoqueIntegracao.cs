@@ -10,12 +10,16 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [Required]
         public string CodigoIntegracaoProduto { get; set; }
 
-        [TabelaIntegracao(DisplayName = "CODEMP ")]
+        [TabelaIntegracao(DisplayName = "CODEMP")]
         [Required]
         public string CodigoIntegracaoEmpresa { get; set; }
 
         [TabelaIntegracao(DisplayName = "AD_STATUS")]
         [Required]
         public string Status { get; set; }
+
+        [TabelaIntegracao(DisplayName = "LEADTIME")]
+        [Required]
+        public string DiasPrazoEntrega { get; set; }
     }
 }

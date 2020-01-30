@@ -98,7 +98,7 @@ namespace FWLog.Services.Services
 
                         foreach (Empresa empresa in empresas)
                         {
-                            var produtoEstoque = new Data.Models.ProdutoEstoque
+                            var produtoEstoque = new ProdutoEstoque
                             {
                                 IdProduto = produto.IdProduto,
                                 IdEmpresa = empresa.IdEmpresa,
@@ -125,7 +125,7 @@ namespace FWLog.Services.Services
         {
             string where = "WHERE AD_INTEGRARFWLOG = '1' ";
 
-            List<ProdutoPrazoEntregaIntegracao> produtoPrazoEntregaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoPrazoEntregaIntegracao>(where);
+            List<ProdutoEstoqueIntegracao> produtoPrazoEntregaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoEstoqueIntegracao>(where);
 
             foreach (var produtoInt in produtoPrazoEntregaIntegracao)
             {
@@ -147,18 +147,19 @@ namespace FWLog.Services.Services
 
                     bool produtoEstoqueNovo = false;
 
-                    Data.Models.ProdutoEstoque produtoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, empresa.IdEmpresa);
+                   ProdutoEstoque produtoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, empresa.IdEmpresa);
 
                     if (produtoEstoque == null)
                     {
                         produtoEstoqueNovo = true;
-                        produtoEstoque = new Data.Models.ProdutoEstoque();
+                        produtoEstoque = new ProdutoEstoque();
 
                         produtoEstoque.IdEmpresa = empresa.IdEmpresa;
                         produtoEstoque.IdProduto = produto.IdProduto;
                     }
 
                     produtoEstoque.DiasPrazoEntrega = Convert.ToInt32(produtoInt.DiasPrazoEntrega);
+                    produtoEstoque.IdProdutoEstoqueStatus = (ProdutoEstoqueStatusEnum)Convert.ToInt32(produtoInt.Status);
 
                     Dictionary<string, string> chaves = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() }, { "CODEMP", empresa.CodigoIntegracao.ToString() } };
 
