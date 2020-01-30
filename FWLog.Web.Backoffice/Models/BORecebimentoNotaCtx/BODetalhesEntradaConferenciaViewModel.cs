@@ -52,8 +52,11 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public string DataFimConferencia { get; set; }
         [Display(Name = "Tempo Total")]
         public string TempoTotalConferencia { get; set; }
+        [Display(Name = "Observação")]
+        public string Observacao { get; set; }
         public bool EmConferenciaOuConferido { get; set; }
         public bool Finalizado { get; set; } = false;
+        public bool ConferidoDivergencia  { get; set; } = false;
 
         public List<BODetalhesEntradaConferenciaItem> Items { get; set; }
 

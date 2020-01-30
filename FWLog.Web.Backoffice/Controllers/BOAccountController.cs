@@ -67,15 +67,32 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.List)]
         public ActionResult PageData(DataTableFilter<BOAccountFilterViewModel> model)
         {
-            var filtros = Mapper.Map<DataTableFilter<UsuarioListaFiltro>>(model);
-            filtros.CustomFilter.IdEmpresa = IdEmpresa;
+            var query = _unitOfWork.PerfilUsuarioRepository.Tabela();
+            query = query.Where(x => x.EmpresaId == IdEmpresa);
 
-            List<UsuarioListaLinhaTabela> result = _unitOfWork.PerfilUsuarioRepository.PesquisarLista(filtros);
+            int totalRecords = query.Count();
+            int totalRecordsFiltered = 0;
 
-            return DataTableResult.FromModel(new DataTableResponseModel
+            IEnumerable<BOAccountListItemViewModel> list = query.ToList()
+                .Select(x => new BOAccountListItemViewModel
+                {
+                    UserName = x.Usuario.UserName,
+                    Nome = x.Nome
+                });
+
+            totalRecordsFiltered = list.Count();
+
+            var result = list
+                .OrderBy(model.OrderByColumn, model.OrderByDirection)
+                .Skip(model.Start)
+                .Take(model.Length);
+
+            return DataTableResult.FromModel(new DataTableResponseModel()
             {
                 Draw = model.Draw,
-                Data = Mapper.Map<IEnumerable<BOAccountListItemViewModel>>(result)
+                RecordsTotal = totalRecords,
+                RecordsFiltered = totalRecordsFiltered,
+                Data = result
             });
         }
 
@@ -689,6 +706,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult SearchModalPageData(DataTableFilter<BOPerfilUsuarioSearchModalFilterViewModel> filter)
         {
             var query = _unitOfWork.PerfilUsuarioRepository.Tabela();
+            query = query.Where(x => x.EmpresaId == IdEmpresa);
 
             int totalRecords = query.Count();
 
@@ -704,7 +722,6 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!string.IsNullOrEmpty(filter.CustomFilter.Cargo))
                 query = query.Where(x => x.Cargo.Contains(filter.CustomFilter.Cargo));
 
-            query = query.Where(x => x.EmpresaId == IdEmpresa);
           
             List<BOPerfilUsuarioSearchModalItemViewModel> boPerfilUsuarioSearchModalFilterViewModel =
                 query.Select(x => new BOPerfilUsuarioSearchModalItemViewModel()
