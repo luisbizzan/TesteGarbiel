@@ -97,6 +97,11 @@ namespace FWLog.Services.Services
                     {
                         _unitOfWork.EmpresaConfigRepository.Add(empresaConfig);
                     }
+                    else
+                    {
+                        _unitOfWork.EmpresaRepository.Update(empresaConfig.Empresa);
+                        _unitOfWork.EmpresaConfigRepository.Update(empresaConfig);
+                    }
 
                     _unitOfWork.SaveChanges();
 
@@ -108,6 +113,7 @@ namespace FWLog.Services.Services
                         if (empMatriz != null)
                         {
                             empresaConfig.IdEmpresaMatriz = empMatriz.IdEmpresa;
+                            _unitOfWork.EmpresaConfigRepository.Update(empresaConfig);
                             _unitOfWork.SaveChanges();
                         }
                     }
