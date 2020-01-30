@@ -45,7 +45,7 @@ namespace FWLog.Services.Services
                     ValidarDadosIntegracao(produtoInt);
 
                     var unidade = unidadesMedida.FirstOrDefault(f => f.Sigla == produtoInt.UnidadeMedidaSigla);
-                    
+
                     if (unidade == null)
                     {
                         throw new Exception("Código da Unidade de Medida (CODVOL) inválido");
@@ -81,7 +81,7 @@ namespace FWLog.Services.Services
                     produto.CodigoBarras = produtoInt.CodigoBarras;
                     produto.IdUnidadeMedida = unidade.IdUnidadeMedida;
 
-                    
+
 
                     bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", "CODPROD", produto.CodigoIntegracao, "AD_INTEGRARFWLOG", "0");
 
@@ -96,7 +96,7 @@ namespace FWLog.Services.Services
 
                         List<Empresa> empresas = _uow.EmpresaRepository.Tabela().ToList();
 
-                        foreach(Empresa empresa in empresas)
+                        foreach (Empresa empresa in empresas)
                         {
                             var produtoEstoque = new ProdutoEstoque
                             {
@@ -115,6 +115,62 @@ namespace FWLog.Services.Services
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do Produto: {0}.", produtoInt.CodigoIntegracao));
+
+                    continue;
+                }
+            }
+        }
+
+        public async Task ConsultarProdutoPrazoEntrega()
+        {
+            //string where = "WHERE AD_INTEGRARFWLOG = '1' ";
+
+            List <ProdutoPrazoEntregaIntegracao> produtoPrazoEntregaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoPrazoEntregaIntegracao>();
+
+            foreach (var produtoInt in produtoPrazoEntregaIntegracao)
+            {
+                try
+                {
+                    ValidarDadosIntegracao(produtoInt);
+
+                    Empresa empresa = _uow.EmpresaRepository.ConsultaPorCodigoIntegracao(Convert.ToInt32(produtoInt.CodigoIntegracaoEmpresa));
+                    if (empresa == null)
+                    {
+                        throw new Exception(string.Format("Código da Empresa (CODEMP: {0}) inválido", produtoInt.CodigoIntegracaoEmpresa));
+                    }
+
+                    Produto produto = _uow.ProdutoRepository.ConsultarPorCodigoIntegracao(Convert.ToInt32(produtoInt.CodigoIntegracaoProduto));
+                    if (produto == null)
+                    {
+                        throw new Exception(string.Format("Código da Produto (CODPROD: {0}) inválido", produtoInt.CodigoIntegracaoProduto));
+                    }
+
+                    bool produtoEstoqueNovo = false;
+
+                    ProdutoEstoque produtoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, empresa.IdEmpresa);
+
+                    if (produtoEstoque == null)
+                    {
+                        produtoEstoqueNovo = true;
+                        produtoEstoque = new ProdutoEstoque();
+
+                        produtoEstoque.IdEmpresa = empresa.IdEmpresa;
+                        produtoEstoque.IdProduto = produto.IdProduto;
+                    }
+
+                    produtoEstoque.DiasPrazoEntrega = Convert.ToInt32(produtoInt.DiasPrazoEntrega);
+
+                    if (produtoEstoqueNovo)
+                    {
+                        _uow.ProdutoEstoqueRepository.Add(produtoEstoque);
+                    }
+
+                    await _uow.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    var applicationLogService = new ApplicationLogService(_uow);
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração do Prazo de Entrega do Produto {0} Empresa: {1}.", produtoInt.CodigoIntegracaoProduto, produtoInt.CodigoIntegracaoEmpresa));
 
                     continue;
                 }

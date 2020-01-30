@@ -118,9 +118,9 @@
     });
 
     function limparFornecedor() {
-        let razao = $("#Filter_NomeFantasiaFornecedor");
+        let nomeFantasia = $("#Filter_NomeFantasiaFornecedor");
         let fornecedor = $("#Filter_IdFornecedor");
-        razao.val("");
+        nomeFantasia.val("");
         fornecedor.val("");
     }
 
@@ -139,18 +139,34 @@
         let $modal = $("#modalAlterarStatus");
 
         $.ajax({
-            url: HOST_URL + CONTROLLER_PATH + "ValidarModalDetalhesQuarentena/" + id,
+            url: HOST_URL + CONTROLLER_PATH + "ValidarPermissao",
+            data: { acao: "AtualizarStatus" },
             cache: false,
             method: "POST",
             success: function (result) {
-                if (!!result.Success) {
-                    $modal.load(HOST_URL + CONTROLLER_PATH + "DetalhesQuarentena/" + id, function () {
-                        $modal.modal();
+                if (result.Success) {
+                    $.ajax({
+                        url: HOST_URL + CONTROLLER_PATH + "ValidarModalDetalhesQuarentena/" + id,
+                        cache: false,
+                        method: "POST",
+                        success: function (result) {
+                            if (!!result.Success) {
+                                $modal.load(HOST_URL + CONTROLLER_PATH + "DetalhesQuarentena/" + id, function () {
+                                    $modal.modal();
 
+                                });
+                            } else {
+                                PNotify.error({ text: result.Message });
+                            }
+                        }
                     });
-                } else {
-                    PNotify.error({ text: result.Message });
                 }
+                else {
+                    PNotify.warning({ text: result.Message });
+                }
+            },
+            error: function (request, status, error) {
+                PNotify.error({ text: request.responseText });
             }
         });
     }
@@ -158,16 +174,46 @@
     function termoResponsabilidade() {
         var id = $(this).data("id");
 
-        $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=1&acao=" + id, function () {
-            $("#modalImpressoras").modal();
+        $.ajax({
+            url: HOST_URL + CONTROLLER_PATH + "ValidarPermissao",
+            data: { acao: "EmitirTermoResponsabilidade" },
+            cache: false,
+            method: "POST",
+            success: function (result) {
+                if (result.Success) {
+                    $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=1&acao=" + id, function () {
+                        $("#modalImpressoras").modal();
+                    });
+                } else {
+                    PNotify.warning({ text: result.Message });
+                }
+            },
+            error: function (request, status, error) {
+                PNotify.error({ text: request.responseText });
+            }
         });
     }
 
     function historicoQuarentena() {
         var id = $(this).data("id");
 
-        $("#modalHistoricoQuarentena").load(CONTROLLER_PATH + "Historico/" + id, function () {
-            $("#modalHistoricoQuarentena").modal();
+        $.ajax({
+            url: HOST_URL + CONTROLLER_PATH + "ValidarPermissao",
+            data: { acao: "ConsultarHistorico"},
+            cache: false,
+            method: "POST",
+            success: function (result) {
+                if (result.Success) {
+                    $("#modalHistoricoQuarentena").load(CONTROLLER_PATH + "Historico/" + id, function () {
+                        $("#modalHistoricoQuarentena").modal();
+                    });
+                } else {
+                    PNotify.warning({ text: result.Message });
+                }
+            },
+            error: function (request, status, error) {
+                PNotify.error({ text: request.responseText });
+            }
         });
     }
 })();

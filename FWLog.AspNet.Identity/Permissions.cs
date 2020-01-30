@@ -88,6 +88,7 @@ namespace FWLog.AspNet.Identity
             public const string ConferirLoteAutomatico = "ConferirLoteAutomatico";
             public const string ImprimirEtiquetaLote = "ImprimirEtiquetaLote";
             public const string Imprimir = "EtiquetaIndividualEPersonalizadaImprimir";
+            public const string PermitirConferenciaManual = "PermitirConferenciaManual";
 
             public Recebimento() : base(Display.FromString("Recebimento de Notas Fiscais"))
             {
@@ -102,16 +103,24 @@ namespace FWLog.AspNet.Identity
                 Register(ConferirLoteAutomatico, Display.FromString("Conferir Lote Automático"));
                 Register(ImprimirEtiquetaLote, Display.FromString("Imprimir Etiqueta de Lote"));
                 Register(Imprimir, Display.FromString("Imprimir Etiqueta Individual e Personalizada"));
+                Register(PermitirConferenciaManual, Display.FromString("Permitir Conferência Manual"));
             }
         }
 
         public class RecebimentoQuarentena : PermissionGroupBuildItem
         {
-            public const string List = "QuarentenaList";
+            public const string Listar = "QuarentenaListar";
+            public const string AtualizarStatus = "QuarentenaAtualizarStatus";
+            public const string EmitirTermoResponsabilidade = "QuarentenaEmitirTermoResponsabilidade";
+            public const string ConsultarHistorico = "QuarentenaConsultarHistorico";
+
 
             public RecebimentoQuarentena() : base(Display.FromString("Quarentena Recebimento"))
             {
-                Register(List, Display.FromString("Listar Quarentena"));
+                Register(Listar, Display.FromString("Listar Quarentena"));
+                Register(AtualizarStatus, Display.FromString("Atualizar Status Quarentena"));
+                Register(EmitirTermoResponsabilidade, Display.FromString("Emitir Termo de Responsabilidade"));
+                Register(ConsultarHistorico, Display.FromString("Consultar Histórico Quarentena"));
             }
         }
 
