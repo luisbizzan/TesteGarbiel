@@ -217,6 +217,14 @@ namespace FWLog.Services.Services
 
             return true;
         }
+
+        public async Task<bool> VerificarNotaFiscalConfirmada(long codigoIntegracao)
+        {
+            string where = string.Format("WHERE TGFCAB.NUNOTA = {0} AND TGFCAB.STATUSNOTA = 'L' ", codigoIntegracao);
+            List<NotaFiscalConfirmadaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalConfirmadaIntegracao>(where);
+
+            return !notasIntegracao.NullOrEmpty();
+        }
     }
 }
 

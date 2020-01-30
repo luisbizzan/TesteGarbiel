@@ -13,6 +13,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
         public long IdLote { get; set; }
         public string NotaFiscal { get; set; }
+        public string Serie { get; set; }
         [Display(Name = "Status")]
         public string StatusNotasFiscal { get; set; }
         [Display(Name = "Conferido por")]
@@ -43,9 +44,9 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public int QuantidadeMais { get; set; }
         [Display(Name = "A-")]
         public int QuantidadeMenos { get; set; }
-        [Display(Name = "Qtd. Tratado A+")]
+        [Display(Name = "Tratado A+")]
         public int? QuantidadeMaisTratado { get; set; }
-        [Display(Name = "Qtd. Tratado A-")]
+        [Display(Name = "Tratado A-")]
         public int? QuantidadeMenosTratado { get; set; }
     }
 

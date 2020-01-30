@@ -110,6 +110,12 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string StatusNFE { get; set; }
     }
 
+    [TabelaIntegracao(DisplayName = "TGFCAB")]
+    public class NotaFiscalConfirmadaIntegracao
+    {
+        [TabelaIntegracao(DisplayName = "TGFCAB.NUNOTA")]
+        public string CodigoIntegracao { get; set; }
+    }
 }
 
 

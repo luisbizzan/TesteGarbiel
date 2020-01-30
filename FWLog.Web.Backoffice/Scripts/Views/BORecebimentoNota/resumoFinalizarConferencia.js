@@ -13,7 +13,7 @@
             data: { },
             success: function (result) {
                 if (result.Success) {
-                    $(".close").click();
+                    $('#modalConferencia').modal('toggle');
                     $("#dataTable").DataTable().ajax.reload();
                     PNotify.success({ text: result.Message });
                 } else {

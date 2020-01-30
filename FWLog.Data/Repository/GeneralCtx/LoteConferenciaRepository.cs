@@ -4,6 +4,7 @@ using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,59 +29,107 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.LoteConferencia.Where(w => w.IdLote == idLote && w.IdProduto == idProduto).ToList();
         }
 
-        public IQueryable<RelatorioRastreioPecaListaLinhaTabela> RastreioPeca(IRelatorioRastreioPecaListaFiltro filter)
+        public List<RelatorioRastreioPecaListaLinhaTabela> RastreioPeca(IRelatorioRastreioPecaListaFiltro filter, out int totalRecordsFiltered, out int totalRecords)
         {
-            var query = (from lc in Entities.LoteConferencia
-                         join l in Entities.Lote on lc.IdLote equals l.IdLote
-                         join n in Entities.NotaFiscal on l.IdNotaFiscal equals n.IdNotaFiscal
-                         join p in Entities.Produto on lc.IdProduto equals p.IdProduto
-                         where n.IdEmpresa == filter.IdEmpresa
-                         && l.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento
-                         && l.IdLoteStatus != LoteStatusEnum.Recebido
-                         && l.IdLoteStatus != LoteStatusEnum.Conferencia
-                         select new RelatorioRastreioPecaListaLinhaTabela
-                         {
-                             IdLote = l.IdLote,
-                             IdEmpresa = n.IdEmpresa,
-                             Empresa = n.Empresa.NomeFantasia,
-                             NroNota = n.Numero,
-                             ReferenciaPronduto = p.Referencia,
-                             DataCompra = n.DataEmissao,
-                             DataRecebimento = lc.DataHoraFim,
-                             QtdCompra = n.Quantidade,
-                             QtdRecebida = lc.Quantidade
-                         });
+            var resultList = new List<RelatorioRastreioPecaListaLinhaTabela>();
 
-            query = query.AsEnumerable().GroupBy(x => new { x.IdLote, x.NroNota, x.IdEmpresa, x.ReferenciaPronduto }, (key, group) => new RelatorioRastreioPecaListaLinhaTabela
-            {
-                IdLote = key.IdLote,
-                IdEmpresa = key.IdEmpresa,
-                NroNota = key.NroNota,
-                ReferenciaPronduto = key.ReferenciaPronduto,
-                Empresa = group.FirstOrDefault().Empresa,
-                DataCompra = group.Min(y => y.DataCompra),
-                DataRecebimento = group.Max(y => y.DataRecebimento),
-                QtdCompra = group.Sum(y => y.QtdCompra),
-                QtdRecebida = group.Sum(y => y.QtdRecebida)
-            }).AsQueryable();
+            IQueryable<RelatorioRastreioPecaListaLinhaTabela> query = Entities.LoteConferencia
+                .Where(x => x.Lote.NotaFiscal.IdEmpresa == filter.IdEmpresa &&
+                            (x.Lote.IdLoteStatus == LoteStatusEnum.Finalizado || x.Lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa
+                            || x.Lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva || x.Lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas))
+                .Select(s => new RelatorioRastreioPecaListaLinhaTabela
+                {
+                    IdLote = s.IdLote,
+                    NroNota = s.Lote.NotaFiscal.Numero,
+                    IdNotaFiscal = s.Lote.IdNotaFiscal,
+                    ReferenciaPronduto = s.Produto.Referencia,
+                    DataCompra = s.Lote.NotaFiscal.DataEmissao,
+                    DataRecebimento = s.Lote.DataRecebimento,
+                    IdProduto = s.IdProduto,
+                    QtdRecebida = s.Quantidade,
+                    IdEmpresa = s.Lote.NotaFiscal.IdEmpresa,
+                    Empresa = s.Lote.NotaFiscal.Empresa.NomeFantasia,
+                    IdLoteStatus = s.Lote.IdLoteStatus
+                }); ;
 
             query = query.WhereIf(!string.IsNullOrEmpty(filter.ReferenciaPronduto), x => x.ReferenciaPronduto.ToUpper().Contains(filter.ReferenciaPronduto.ToUpper()));
             query = query.WhereIf(filter.IdLote.HasValue, x => x.IdLote == filter.IdLote);
             query = query.WhereIf(filter.NroNota.HasValue, x => x.NroNota == filter.NroNota);
 
-            query = query.WhereIf(filter.DataCompraMinima.HasValue, x => x.DataCompra >= filter.DataCompraMinima);
-            query = query.WhereIf(filter.DataCompraMaxima.HasValue, x => x.DataCompra <= filter.DataCompraMaxima);
+            if (filter.DataCompraMinima.HasValue)
+            {
+                query = query.Where(x => x.DataCompra >= filter.DataCompraMinima.Value);
+            }
 
-            query = query.WhereIf(filter.DataRecebimentoMinima.HasValue, x => x.DataRecebimento >= filter.DataRecebimentoMinima);
-            query = query.WhereIf(filter.DataRecebimentoMaxima.HasValue, x => x.DataRecebimento <= filter.DataCompraMaxima);
+            if (filter.DataCompraMaxima.HasValue)
+            {
+                DateTime data = new DateTime(filter.DataCompraMaxima.Value.Year, filter.DataCompraMaxima.Value.Month, filter.DataCompraMaxima.Value.Day, 23, 59, 59);
+                query = query.Where(x => x.DataCompra <= data);
+            }
 
-            query = query.WhereIf(filter.QtdCompraMinima.HasValue, x => x.QtdCompra >= filter.QtdCompraMinima);
-            query = query.WhereIf(filter.QtdCompraMaxima.HasValue, x => x.QtdCompra <= filter.QtdCompraMaxima);
+            if (filter.DataRecebimentoMinima.HasValue)
+            {
+                query = query.Where(x => x.DataRecebimento >= filter.DataRecebimentoMinima.Value);
+            }
 
-            query = query.WhereIf(filter.QtdRecebidaMinima.HasValue, x => x.QtdRecebida >= filter.QtdRecebidaMinima);
-            query = query.WhereIf(filter.QtdRecebidaMaxima.HasValue, x => x.QtdRecebida <= filter.QtdRecebidaMaxima);
+            if (filter.DataRecebimentoMaxima.HasValue)
+            {
+                DateTime data = new DateTime(filter.DataRecebimentoMaxima.Value.Year, filter.DataRecebimentoMaxima.Value.Month, filter.DataRecebimentoMaxima.Value.Day, 23, 59, 59);
+                query = query.Where(x => x.DataRecebimento <= data);
+            }
 
-            return query;
+            var loteConferencias = query.GroupBy(g => new { g.IdLote, g.IdProduto }).ToDictionary(d => d.Key, d => d.ToList());
+
+            totalRecords = loteConferencias.Count();
+
+            var nfItem = Entities.NotaFiscalItem.Where(w => query.Select(s => s.IdNotaFiscal).ToList().Contains(w.IdNotaFiscal)).ToList();
+            var divergencias = Entities.LoteDivergencia.Where(w => query.Select(s => s.IdLote).ToList().Contains(w.IdLote)).ToList();
+
+            foreach (var item in loteConferencias)
+            {
+                var conferencia = item.Value.First();
+
+                int qtdCompra = nfItem.Where(w => w.IdNotaFiscal == conferencia.IdNotaFiscal && w.IdProduto == item.Key.IdProduto).Sum(s => s.Quantidade);
+
+                int qtdRecebida = qtdCompra;
+
+                if (conferencia.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa || conferencia.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas)
+                {
+                    var divergencia = divergencias.FirstOrDefault(f => f.IdProduto == item.Key.IdProduto && f.IdLote == item.Key.IdLote);
+
+                    if (divergencia != null && divergencia.QuantidadeDivergenciaMenos.HasValue)
+                    {
+                        qtdRecebida = qtdRecebida - divergencia.QuantidadeDivergenciaMenos.Value;
+                    }
+                }
+
+                if ((filter.QtdCompraMinima.HasValue && qtdCompra < filter.QtdCompraMinima) ||
+                    (filter.QtdCompraMaxima.HasValue && qtdCompra > filter.QtdCompraMaxima) ||
+                    (filter.QtdRecebidaMinima.HasValue && qtdRecebida < filter.QtdRecebidaMinima) ||
+                    (filter.QtdRecebidaMaxima.HasValue && qtdRecebida < filter.QtdRecebidaMaxima))
+                {
+                    continue;
+                }
+
+                var linha = new RelatorioRastreioPecaListaLinhaTabela()
+                {
+                    IdLote = item.Key.IdLote,
+                    IdEmpresa = conferencia.IdEmpresa,
+                    NroNota = conferencia.NroNota,
+                    ReferenciaPronduto = conferencia.ReferenciaPronduto,
+                    Empresa = conferencia.Empresa,
+                    DataCompra = conferencia.DataCompra,
+                    DataRecebimento = conferencia.DataRecebimento,
+                    QtdCompra = qtdCompra,
+                    QtdRecebida = qtdRecebida
+                };
+
+                resultList.Add(linha);
+            }
+
+            totalRecordsFiltered = resultList.Count();
+
+            return resultList;
         }
 
         public bool ExisteConferencia(long idLote)
