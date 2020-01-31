@@ -13,7 +13,7 @@
         $("#IdNivelArmazenagem").valid();
     });
 
-    $('#LimitePesoVertical').mask('000.000.000.000.000.00', { reverse: true });
+    $('#LimitePesoVertical').mask('#000,00', { reverse: true });
 
 })();
 
