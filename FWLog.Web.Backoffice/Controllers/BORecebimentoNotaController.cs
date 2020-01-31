@@ -634,7 +634,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 model.QuantidadePeca = lote.QuantidadePeca.ToString();
                 model.StatusNotaFiscal = lote.LoteStatus.Descricao;
                 model.Observacao = lote.ObservacaoDivergencia;
-                
+
                 if (lote.DataRecebimento > notaFiscal.PrazoEntregaFornecedor)
                 {
                     TimeSpan atraso = lote.DataRecebimento.Subtract(notaFiscal.PrazoEntregaFornecedor);
@@ -749,7 +749,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Nenhum tipo de conferência configurado para a empresa Unidade: " + empresaConfig.Empresa.Sigla + ".",
                 });
             }
-           
+
             ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(2);
 
             if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
@@ -1850,7 +1850,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 VolumesRecebidosUsuario = x.VOLUMESRECEBIDOSUSUARIO,
                 Percentual = x.PERCENTUAL,
                 Ranking = x.RANKING
-            });
+            }).PaginationResult(model);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
@@ -1884,7 +1884,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 PecasRecebidasUsuario = x.PECASRECEBIDASUSUARIO,
                 Percentual = x.PERCENTUAL,
                 Ranking = x.RANKING
-            });
+            }).PaginationResult(model);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
