@@ -4,6 +4,7 @@ using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -71,8 +72,13 @@ namespace FWLog.Data.Repository.GeneralCtx
             query = query.WhereIf(filter.DataCompraMinima.HasValue, x => x.DataCompra >= filter.DataCompraMinima);
             query = query.WhereIf(filter.DataCompraMaxima.HasValue, x => x.DataCompra <= filter.DataCompraMaxima);
 
+            var datafilter = filter.DataRecebimentoMaxima;
+
             query = query.WhereIf(filter.DataRecebimentoMinima.HasValue, x => x.DataRecebimento >= filter.DataRecebimentoMinima);
-            query = query.WhereIf(filter.DataRecebimentoMaxima.HasValue, x => x.DataRecebimento <= filter.DataCompraMaxima);
+            query = query.WhereIf(filter.DataRecebimentoMaxima.HasValue, x => x.DataRecebimento <= new DateTime(filter.DataRecebimentoMaxima.Value.Year,
+                                                                                                                filter.DataRecebimentoMaxima.Value.Month,
+                                                                                                                filter.DataRecebimentoMaxima.Value.Day,
+                                                                                                                23,59,59));
 
             query = query.WhereIf(filter.QtdCompraMinima.HasValue, x => x.QtdCompra >= filter.QtdCompraMinima);
             query = query.WhereIf(filter.QtdCompraMaxima.HasValue, x => x.QtdCompra <= filter.QtdCompraMaxima);
