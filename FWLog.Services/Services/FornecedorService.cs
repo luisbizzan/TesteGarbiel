@@ -59,12 +59,14 @@ namespace FWLog.Services.Services
                     fornecedor.RazaoSocial = fornecInt.RazaoSocial;
                     fornecedor.NomeFantasia = fornecInt.NomeFantasia;
 
-                    //bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", "CODPARC", fornecedor.CodigoIntegracao, "AD_INTEGRARFWLOG", '0');
+                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", fornecedor.CodigoIntegracao.ToString() } };
 
-                    //if (!atualizacaoOK)
-                    //{
-                    //    throw new Exception("A atualização de Fornecedor no Sankhya não terminou com sucesso.");
-                    //}
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", '0');
+
+                    if (!atualizacaoOK)
+                    {
+                        throw new Exception("A atualização de Fornecedor no Sankhya não terminou com sucesso.");
+                    }
 
                     if (fornecedorNovo)
                     {

@@ -634,7 +634,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 model.QuantidadePeca = lote.QuantidadePeca.ToString();
                 model.StatusNotaFiscal = lote.LoteStatus.Descricao;
                 model.Observacao = lote.ObservacaoDivergencia;
-                
+
                 if (lote.DataRecebimento > notaFiscal.PrazoEntregaFornecedor)
                 {
                     TimeSpan atraso = lote.DataRecebimento.Subtract(notaFiscal.PrazoEntregaFornecedor);
@@ -749,7 +749,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Nenhum tipo de conferência configurado para a empresa Unidade: " + empresaConfig.Empresa.Sigla + ".",
                 });
             }
-           
+
             ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(2);
 
             if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
@@ -1264,9 +1264,9 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 //Valida se o produto está fora de linha (fornecedor 400)
-                var produtoEmpresa = _uow.ProdutoEmpresaRepository.ConsultarPorProduto(produto.IdProduto);
+                var produtoEstoque = _uow.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto);
 
-                if (produtoEmpresa == null || !produtoEmpresa.Ativo)
+                if (produtoEstoque.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.Ativo)
                 {
                     return Json(new AjaxGenericResultModel
                     {
@@ -1755,9 +1755,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             model.CustomFilter.IdEmpresa = IdEmpresa;
 
-            var list = _uow.LoteConferenciaRepository.RastreioPeca(model.CustomFilter);
-
-            int total = list.Count();
+            var list = _uow.LoteConferenciaRepository.RastreioPeca(model.CustomFilter, out int registrosFiltrados, out int totalRegistros);
 
             var result = list.PaginationResult(model).Select(x => new RelatorioRastreioPecaListItemViewModel
             {
@@ -1774,8 +1772,8 @@ namespace FWLog.Web.Backoffice.Controllers
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
-                RecordsTotal = total,
-                RecordsFiltered = total,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
                 Data = result
             });
         }
@@ -1787,9 +1785,8 @@ namespace FWLog.Web.Backoffice.Controllers
             ValidateModel(viewModel);
 
             viewModel.IdEmpresa = IdEmpresa;
-            viewModel.NomeUsuario = User.Identity.Name;
 
-            byte[] relatorio = _relatorioService.GerarRelatorioRastreioPeca(viewModel);
+            byte[] relatorio = _relatorioService.GerarRelatorioRastreioPeca(viewModel, User.Identity.GetUserId());
 
             return File(relatorio, "application/pdf", "Relatório Rastreio de Peças.pdf");
         }
