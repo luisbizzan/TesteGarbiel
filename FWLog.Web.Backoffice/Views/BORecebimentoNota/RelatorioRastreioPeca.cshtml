@@ -91,7 +91,7 @@
                                     <span class="input-group-addon">
                                         <span>Máx.</span>
                                     </span>
-                                    @Html.TextBoxFor(m => m.Filter.QtdCompraMaxima, new { @class = "form-control", data_field = "QtdCompraMaxima", type = "number" })
+                                    @Html.TextBoxFor(m => m.Filter.QtdCompraMaxima, new { @class = "form-control", data_field = "QtdCompraMaxima validateQtdCompraMaxima", type = "number" })
                                 </div>
                             </div>
                         </div>
@@ -149,8 +149,9 @@
                                     <span class="input-group-addon">
                                         <span>Máx.</span>
                                     </span>
-                                    @Html.TextBoxFor(m => m.Filter.QtdRecebidaMaxima, new { @class = "form-control", data_field = "QtdRecebidaMaxima", type = "number" })
+                                    @Html.TextBoxFor(m => m.Filter.QtdRecebidaMaxima, new { @class = "form-control validateQtdRecebidaMaxima", data_field = "QtdRecebidaMaxima", type = "number" })
                                 </div>
+                                @Html.ValidationMessageFor(m => m.Filter.QtdRecebidaMaxima)
                             </div>
                         </div>
                     </div>

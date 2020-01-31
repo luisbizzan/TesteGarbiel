@@ -101,12 +101,14 @@ namespace FWLog.Web.Backoffice.Controllers
                 return errorView(null);
             }
 
+            var teste = model.TiposImpressao.Where(w => w.Impressoras.Any(a => a.Selecionado)).Any();
             if (!model.TiposImpressao.Where(w => w.Impressoras.Any(a => a.Selecionado)).Any())
             {
                 ModelState.AddModelError(nameof(model.TiposImpressao), "Escolha pelo menos uma impressora para o perfil");
                 return errorView(null);
             }
 
+            var teste2 = model.TiposImpressao.Where(w => w.Impressoras.Any(a => a.Selecionado)).Any();
             if (model.TiposImpressao.Where(w => !w.Impressoras.Any(a => a.Selecionado)).Any())
             {
                 ModelState.AddModelError(nameof(model.TiposImpressao), "Todos os tipos de impressão selecionados devem ter pelos menos um empresa escolhida.");

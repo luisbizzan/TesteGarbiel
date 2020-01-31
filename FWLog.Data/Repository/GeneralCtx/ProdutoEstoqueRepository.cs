@@ -25,10 +25,5 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.ProdutoEstoque.Where(w => w.IdEmpresa == idEmpresa && listIdProdutos.Contains(w.IdProduto)).Max(m => m.DiasPrazoEntrega);
         }
-
-        public ProdutoEstoque ConsultarPorProduto(long idProduto)
-        {
-            return Entities.ProdutoEstoque.Where(x => x.IdProduto == idProduto).FirstOrDefault();
-        }
     }
 }
