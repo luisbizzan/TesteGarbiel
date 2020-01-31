@@ -26,7 +26,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/prazoentrega")]
+        [Route("api/v1/produtoempresa")]
         [AllowAnonymous]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarProdutoPrazoEntrega()

@@ -323,7 +323,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var relatorioRequest = Mapper.Map<RelatorioRecebimentoNotasRequest>(viewModel);
             relatorioRequest.IdEmpresa = IdEmpresa;
-            relatorioRequest.NomeUsuario = User.Identity.Name;
+            relatorioRequest.NomeUsuario = LabelUsuario;
             byte[] relatorio = _relatorioService.GerarRelatorioRecebimentoNotas(relatorioRequest);
 
             return File(relatorio, "application/pdf", "Relatório Recebimento Notas.pdf");
@@ -336,7 +336,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest
             {
                 IdEmpresa = IdEmpresa,
-                NomeUsuario = User.Identity.Name,
+                NomeUsuario = LabelUsuario,
                 IdNotaFiscal = id
             };
 
@@ -356,7 +356,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 var relatorioRequest = new ImprimirDetalhesNotaEntradaConferenciaRequest
                 {
                     IdEmpresa = IdEmpresa,
-                    NomeUsuario = User.Identity.Name,
+                    NomeUsuario = LabelUsuario,
                     IdNotaFiscal = viewModel.IdNotaFiscal,
                     IdImpressora = viewModel.IdImpressora
                 };
@@ -530,7 +530,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 var request = Mapper.Map<ImprimirRelatorioRecebimentoNotasRequest>(viewModel);
 
                 request.IdEmpresa = IdEmpresa;
-                request.NomeUsuario = User.Identity.Name;
+                request.NomeUsuario = LabelUsuario;
 
                 _relatorioService.ImprimirRelatorioRecebimentoNotas(request);
 
@@ -1264,9 +1264,9 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 //Valida se o produto está fora de linha (fornecedor 400)
-                var produtoEmpresa = _uow.ProdutoEmpresaRepository.ConsultarPorProduto(produto.IdProduto);
+                var produtoEstoque = _uow.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto);
 
-                if (produtoEmpresa == null || !produtoEmpresa.Ativo)
+                if (produtoEstoque.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.Ativo)
                 {
                     return Json(new AjaxGenericResultModel
                     {
@@ -1755,9 +1755,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             model.CustomFilter.IdEmpresa = IdEmpresa;
 
-            var list = _uow.LoteConferenciaRepository.RastreioPeca(model.CustomFilter);
-
-            int total = list.Count();
+            var list = _uow.LoteConferenciaRepository.RastreioPeca(model.CustomFilter, out int registrosFiltrados, out int totalRegistros);
 
             var result = list.PaginationResult(model).Select(x => new RelatorioRastreioPecaListItemViewModel
             {
@@ -1774,8 +1772,8 @@ namespace FWLog.Web.Backoffice.Controllers
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
-                RecordsTotal = total,
-                RecordsFiltered = total,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
                 Data = result
             });
         }
@@ -1787,9 +1785,8 @@ namespace FWLog.Web.Backoffice.Controllers
             ValidateModel(viewModel);
 
             viewModel.IdEmpresa = IdEmpresa;
-            viewModel.NomeUsuario = User.Identity.Name;
 
-            byte[] relatorio = _relatorioService.GerarRelatorioRastreioPeca(viewModel);
+            byte[] relatorio = _relatorioService.GerarRelatorioRastreioPeca(viewModel, User.Identity.GetUserId());
 
             return File(relatorio, "application/pdf", "Relatório Rastreio de Peças.pdf");
         }

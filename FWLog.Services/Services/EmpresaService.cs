@@ -84,7 +84,9 @@ namespace FWLog.Services.Services
                     empresaConfig.Empresa.TelefoneSAC = empInt.TelefoneSAC;
                     empresaConfig.IdEmpresaTipo = empInt.EmpresaMatriz == empInt.CodigoIntegracao ? EmpresaTipoEnum.Matriz : EmpresaTipoEnum.Filial;
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", "CODEMP", codEmp, "AD_INTEGRARFWLOG", '0');
+                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODEMP", codEmp.ToString() } };
+
+                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", campoChave, "AD_INTEGRARFWLOG", '0');
 
                     if (!atualizacaoOK)
                     {
@@ -94,6 +96,11 @@ namespace FWLog.Services.Services
                     if (empresaNova)
                     {
                         _unitOfWork.EmpresaConfigRepository.Add(empresaConfig);
+                    }
+                    else
+                    {
+                        _unitOfWork.EmpresaRepository.Update(empresaConfig.Empresa);
+                        _unitOfWork.EmpresaConfigRepository.Update(empresaConfig);
                     }
 
                     _unitOfWork.SaveChanges();
@@ -106,6 +113,7 @@ namespace FWLog.Services.Services
                         if (empMatriz != null)
                         {
                             empresaConfig.IdEmpresaMatriz = empMatriz.IdEmpresa;
+                            _unitOfWork.EmpresaConfigRepository.Update(empresaConfig);
                             _unitOfWork.SaveChanges();
                         }
                     }

@@ -80,6 +80,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                           splitOn: "IdLote, IdNotaFiscal, IdFornecedor, IdFreteTipo, IdLoteStatus, Id, IdNotaFiscalStatus"
                           );
                 }
+
+                conn.Close();
             }
 
             return lote;
