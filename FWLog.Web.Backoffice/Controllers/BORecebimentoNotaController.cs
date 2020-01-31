@@ -1266,7 +1266,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 //Valida se o produto está fora de linha (fornecedor 400)
                 var produtoEstoque = _uow.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto);
 
-                if (produtoEstoque.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.Ativo)
+                if (produtoEstoque.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.ForaLinha)
                 {
                     return Json(new AjaxGenericResultModel
                     {
