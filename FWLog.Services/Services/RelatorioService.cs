@@ -508,9 +508,9 @@ namespace FWLog.Services.Services
             return fwRelatorio.GerarCustomizado();
         }
 
-        public byte[] GerarRelatorioRastreioPeca(RelatorioRastreioPecaRequest request)
+        public byte[] GerarRelatorioRastreioPeca(IRelatorioRastreioPecaListaFiltro filtro, string userId)
         {
-            var list = _unitiOfWork.LoteConferenciaRepository.RastreioPeca(request).Select(x => new RastreioPeca
+            var list = _unitiOfWork.LoteConferenciaRepository.RastreioPeca(filtro, out int registrosFiltrados, out int totalRegistros).Select(x => new RastreioPeca
             {
                 DataRecebimento = x.DataRecebimento,
                 Empresa = x.Empresa,
@@ -524,13 +524,15 @@ namespace FWLog.Services.Services
             var dados = new List<IFwRelatorioDados>();
             dados.AddRange(list);
 
-            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filtro.IdEmpresa);
+
+            PerfilUsuario usuario = _unitiOfWork.PerfilUsuarioRepository.GetByUserId(userId);
 
             var fwRelatorioDados = new FwRelatorioDados
             {
                 DataCriacao = DateTime.Now,
                 NomeEmpresa = empresa.RazaoSocial,
-                NomeUsuario = request.NomeUsuario,
+                NomeUsuario = $"{usuario.Usuario.UserName} - {usuario.Nome}",
                 Orientacao = Orientation.Landscape,
                 Titulo = "Relatório Rastreio de Peças",
                 Filtros = string.Empty,

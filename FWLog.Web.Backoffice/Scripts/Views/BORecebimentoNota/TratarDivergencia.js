@@ -2,7 +2,7 @@
     $(".onlyNumber").mask("0#");
 
     let $observacao = $('#ObservacaoDivergencia');
-    let $linhasDivergencias = $(".linha-divergencia");
+    let $linhasDivergencias = $(".linha-tratarDivergencia");
 
     $observacao.blur(function () {
         if (!!$(this).val()) {

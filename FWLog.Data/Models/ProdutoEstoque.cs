@@ -21,6 +21,9 @@ namespace FWLog.Data.Models
 
         public int DiasPrazoEntrega { get; set; }
 
+        [Required]
+        public ProdutoEstoqueStatusEnum IdProdutoEstoqueStatus { get; set; }
+
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
 
