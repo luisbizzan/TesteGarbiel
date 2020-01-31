@@ -59,11 +59,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (Model.Divergencias.Count > 0)
+                                        @if (Model.Divergencias.Any())
                                         {
                                             for (int i = 0; i < Model.Divergencias.Count(); i++)
                                             {
-                                                <tr class="linha-divergencia">
+                                                <tr class="linha-tratarDivergencia">
                                                     <td>
                                                         @Model.Divergencias[i].Referencia
                                                         @Html.Hidden(string.Format("Divergencias[{0}].IdLoteDivergencia", i), Model.Divergencias[i].IdLoteDivergencia)
