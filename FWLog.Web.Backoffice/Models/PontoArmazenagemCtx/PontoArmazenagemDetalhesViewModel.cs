@@ -14,8 +14,8 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
         public string TipoArmazenagem { get; set; }
         [Display(Name = "Tipo de Movimentação")]
         public string TipoMovimentacao { get; set; }
-        [Display(Name = "Limite de Peso Vertical - Kg")]
-        public decimal LimitePesoVertical { get; set; }
+        [Display(Name = "Limite de Peso Vertical (KG)")]
+        public string LimitePesoVertical { get; set; }
         [Display(Name = "Status")]
         public string Status { get; set; }
     }

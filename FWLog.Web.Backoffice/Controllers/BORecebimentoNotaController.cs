@@ -1847,7 +1847,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 VolumesRecebidosUsuario = x.VOLUMESRECEBIDOSUSUARIO,
                 Percentual = x.PERCENTUAL,
                 Ranking = x.RANKING
-            });
+            }).PaginationResult(model);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
@@ -1881,7 +1881,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 PecasRecebidasUsuario = x.PECASRECEBIDASUSUARIO,
                 Percentual = x.PERCENTUAL,
                 Ranking = x.RANKING
-            });
+            }).PaginationResult(model);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {

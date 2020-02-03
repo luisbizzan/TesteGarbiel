@@ -8,6 +8,7 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.PontoArmazenagemCtx;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -122,7 +123,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Descricao = viewModel.Descricao,
                 IdTipoArmazenagem = viewModel.IdTipoArmazenagem,
                 IdTipoMovimentacao = viewModel.IdTipoMovimentacao,
-                LimitePesoVertical = viewModel.LimitePesoVertical,
+                LimitePesoVertical =  viewModel.LimitePesoVertical != null ? decimal.Parse(viewModel.LimitePesoVertical) : (decimal?)null,
                 Ativo = viewModel.Ativo
             };
 

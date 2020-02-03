@@ -13,7 +13,8 @@
         $("#IdNivelArmazenagem").valid();
     });
 
-    $('#LimitePesoVertical').mask('0#');
+    $('#LimitePesoVertical').mask('#000,00', { reverse: true });
+
 })();
 
 function selecionarNivelArmazenagem(idNivelArmazenagem, descricao) {
