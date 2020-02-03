@@ -38,7 +38,6 @@
         },
         order: [[2, "DESC"]],
         columns: [
-            { data: 'IdEnderecoArmazenagem' },
             { data: 'NivelArmazenagem' },
             { data: 'PontoArmazenagem' },
             { data: 'Codigo' },

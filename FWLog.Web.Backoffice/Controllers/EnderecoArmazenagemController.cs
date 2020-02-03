@@ -84,6 +84,13 @@ namespace FWLog.Web.Backoffice.Controllers
                 return View(viewModel);
             }
 
+            var enderecoarmazenagemcadastrado = _unitOfWork.EnderecoArmazenagemRepository.ConsultarPorNivelEPontoArmazenagem(viewModel.IdNivelArmazenagem, viewModel.IdPontoArmazenagem, IdEmpresa);
+            if (enderecoarmazenagemcadastrado != null)
+            {
+                Notify.Error("Já existe um Endereço de Armazenagem cadastrado com este ponto e nível para esta empresa!");
+                return View(viewModel);
+            }
+
             var enderecoArmazenagem = Mapper.Map<EnderecoArmazenagem>(viewModel);
             enderecoArmazenagem.IdEmpresa = IdEmpresa;
 
@@ -132,6 +139,13 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.EnderecoArmazenagem.Editar)]
         public ActionResult Editar(EnderecoArmazenagemEditarViewModel viewModel)
         {
+            var enderecoarmazenagemcadastrado = _unitOfWork.EnderecoArmazenagemRepository.ConsultarPorNivelEPontoArmazenagem(viewModel.IdNivelArmazenagem, viewModel.IdPontoArmazenagem, IdEmpresa);
+            if (enderecoarmazenagemcadastrado != null)
+            {
+                Notify.Error("Já existe um Endereço de Armazenagem cadastrado com este ponto e nível para esta empresa!");
+                return View(viewModel);
+            }
+
             var enderecoArmazenagem = Mapper.Map<EnderecoArmazenagem>(viewModel);
             enderecoArmazenagem.IdEmpresa = IdEmpresa;
 
