@@ -33,8 +33,8 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
 
     public class EnderecoArmazenagemListaItemViewModel
     {
-       /* [Display(Name = "ID")]
-        public long IdEnderecoArmazenagem { get; set; }*/
+        [Display(Name = "ID")]
+        public long IdEnderecoArmazenagem { get; set; }
         [Display(Name = "Nível")]
         public string NivelArmazenagem { get; set; }
         [Display(Name = "Ponto")]
