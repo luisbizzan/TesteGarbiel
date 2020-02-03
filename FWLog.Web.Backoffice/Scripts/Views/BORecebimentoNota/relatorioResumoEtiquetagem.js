@@ -1,6 +1,29 @@
 ﻿(function () {
     $('.onlyNumber').mask('0#');
 
+    //jQuery.validator.setDefaults({
+    //    debug: true,
+    //    success: "valid"
+    //});
+
+    //$("#form-teste").validate({
+    //    rules: {
+    //        "Filter.QuantidadeFinal": {
+    //            required: true,
+    //            minlength: 3,
+    //            number: true
+    //        }
+    //    },
+    //    messages: {
+    //        "Filter.QuantidadeFinal": {
+    //            required: "Por favor, informe seu nome",
+    //            minlength: "O nome deve ter pelo menos 3 caracteres"
+    //        }
+    //    }
+    //});
+
+   
+
     dart.dataTables.loadFormFilterEvents();
 
     $("#pesquisarProduto").click(function () {
@@ -107,12 +130,12 @@
         initComplete: function (settings, json) {
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
         },
-        stateSaveParams: function (settings, data) {
-            dart.dataTables.saveFilterToData(data);
-        },
-        stateLoadParams: function (settings, data) {
-            dart.dataTables.loadFilterFromData(data);
-        },
+        //stateSaveParams: function (settings, data) {
+        //    dart.dataTables.saveFilterToData(data);
+        //},
+        //stateLoadParams: function (settings, data) {
+        //    dart.dataTables.loadFilterFromData(data);
+        //},
         columns: [
             { data: 'IdLogEtiquetagem' },
             { data: 'Referencia' },
