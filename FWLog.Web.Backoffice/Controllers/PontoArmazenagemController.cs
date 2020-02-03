@@ -123,7 +123,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Descricao = viewModel.Descricao,
                 IdTipoArmazenagem = viewModel.IdTipoArmazenagem,
                 IdTipoMovimentacao = viewModel.IdTipoMovimentacao,
-                LimitePesoVertical = decimal.Parse(viewModel.LimitePesoVertical),
+                LimitePesoVertical =  viewModel.LimitePesoVertical != null ? decimal.Parse(viewModel.LimitePesoVertical) : (decimal?)null,
                 Ativo = viewModel.Ativo
             };
 
