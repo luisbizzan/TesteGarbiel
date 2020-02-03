@@ -5,6 +5,27 @@
         $("#tabela").show();
     });
 
+
+    $.validator.addMethod('validateQtdCompraMaxima', function (value, ele) {
+        debugger
+        var qtdMinima = $("#Filter_QtdCompraMinima").val();
+
+        if (value >= qtdMinima)
+            return true
+        else
+            return false;
+    }, 'Quantidade maxima deve ser maior que a quantidade minima');
+
+    $.validator.addMethod('validateQtdRecebidaMaxima', function (value, ele) {
+        debugger
+        var qtdMinima = $("#Filter_QtdRecebidaMinima").val();
+
+        if (value >= qtdMinima)
+            return true
+        else
+            return false;
+    }, 'Quantidade maxima deve ser maior que a quantidade minima');
+
     $("#downloadRelatorio").click(function () {
         $.ajax({
             url: `/${CONTROLLER_PATH}/DownloadRelatorioRastreioPeca`,

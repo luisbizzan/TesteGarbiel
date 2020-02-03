@@ -1,105 +1,137 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace FWLog.Services.Model.IntegracaoSankhya
 {
     [XmlRoot(ElementName = "serviceRequest")]
     public class DevolucaoParcialXML
     {
-        public DevolucaoParcialXML(string nota)
+        public DevolucaoParcialXML() { }
+        public DevolucaoParcialXML(long codigoIntegracao, string codTipOper, List<ElementoItemDetalhes> listItemDetalhes)
         {
-            RequestBody = new RequestBody(nota);
+            RequestBody = new ElementoCorpoDevolucaoParcial(codigoIntegracao, codTipOper, listItemDetalhes);
         }
 
         [XmlAttribute(AttributeName = "serviceName")]
-        public string ServiceName { get; } = "SelecaoDocumentoSP.faturar";
+        public string ServiceName { get; set; } = "SelecaoDocumentoSP.faturar";
 
         [XmlElement(ElementName = "requestBody")]
-        public RequestBody RequestBody { get; }
+        public ElementoCorpoDevolucaoParcial RequestBody { get; set; }
     }
 
-    [XmlRoot(ElementName = "item")]
-    public class Item
+    public class ElementoCorpoDevolucaoParcial
     {
-        [XmlAttribute(AttributeName = "QTDFAT")]
-        public string QTDFAT { get; set; }
+        public ElementoCorpoDevolucaoParcial() { }
+        public ElementoCorpoDevolucaoParcial(long codigoIntegracao, string codTipOper, List<ElementoItemDetalhes> listItemDetalhes)
+        {
+            Notas = new ElementoNotasDevolucaoParcial(codigoIntegracao, codTipOper, listItemDetalhes);
+        }
 
-        [XmlText]
-        public string Text { get; set; }
+        [XmlElement(ElementName = "notas")]
+        public ElementoNotasDevolucaoParcial Notas { get; set; }
+    }
+    public class ElementoNotasDevolucaoParcial : ElementoNotasBase
+    {
+        public ElementoNotasDevolucaoParcial() { }
+
+        public ElementoNotasDevolucaoParcial(long codigoIntegracao, string codTipOper, List<ElementoItemDetalhes> listItemDetalhes)
+        {
+            Nota = new ElementoNotaDevolucaoParcial(codigoIntegracao, listItemDetalhes);
+            CodTipOper = codTipOper;
+        }
+
+        [XmlElement(ElementName = "nota")]
+        public ElementoNotaDevolucaoParcial Nota { get; set; }
     }
 
-    [XmlRoot(ElementName = "itens")]
-    public class Itens
+    public class ElementoNotasBase
     {
-        [XmlElement(ElementName = "item")]
-        public Item Item { get; set; }
-    }
-
-    [XmlRoot(ElementName = "nota")]
-    public class Nota
-    {
-        [XmlElement(ElementName = "itens")]
-        public Itens Itens { get; set; }
-
-        [XmlAttribute(AttributeName = "NUNOTA")]
-        public string NUNOTA { get; set; }
-    }
-
-    [XmlRoot(ElementName = "notas")]
-    public class Notas2 : NotasBase
-    {
-        public Nota Nota { get; set; }
-    }
-
-    public abstract class NotasBase
-    {
-        #region Fixos
+        public ElementoNotasBase() { }
 
         [XmlElement(ElementName = "notasComMoeda")]
-        public NotasComMoeda NotasComMoeda { get; } = new NotasComMoeda();
+        public NotasComMoeda NotasComMoeda { get; set; } = new NotasComMoeda();
 
         [XmlAttribute(AttributeName = "codTipOper")]
-        public string CodTipOper { get; } = "1301";
+        public string CodTipOper { get; set; }
 
         [XmlAttribute(AttributeName = "dtFaturamento")]
-        public string DtFaturamento { get; } = string.Empty;
+        public string DtFaturamento { get; set; } = string.Empty;
 
         [XmlAttribute(AttributeName = "serie")]
-        public string Serie { get; } = string.Empty;
+        public string Serie { get; set; } = string.Empty;
 
         [XmlAttribute(AttributeName = "dtSaida")]
-        public string DtSaida { get; } = string.Empty;
+        public string DtSaida { get; set; } = string.Empty;
 
         [XmlAttribute(AttributeName = "hrSaida")]
-        public string HrSaida { get; } = string.Empty;
+        public string HrSaida { get; set; } = string.Empty;
 
         [XmlAttribute(AttributeName = "tipoFaturamento")]
-        public string TipoFaturamento { get; } = "FaturamentoNormal";
+        public string TipoFaturamento { get; set; } = "FaturamentoNormal";
 
         [XmlAttribute(AttributeName = "codLocalDestino")]
-        public string CodLocalDestino { get; } = string.Empty;
+        public string CodLocalDestino { get; set; } = string.Empty;
 
         [XmlAttribute(AttributeName = "dataValidada")]
-        public string DataValidada { get; } = true.ToString();
+        public string DataValidada { get; set; } = true.ToString();
 
         [XmlAttribute(AttributeName = "faturarTodosItens")]
-        public string FaturarTodosItens { get; } = true.ToString();
+        public string FaturarTodosItens { get; set; } = true.ToString();
 
         [XmlAttribute(AttributeName = "umaNotaParaCada")]
-        public string UmaNotaParaCada { get; } = false.ToString();
+        public string UmaNotaParaCada { get; set; } = false.ToString();
 
         [XmlAttribute(AttributeName = "ownerServiceCall")]
-        public string OwnerServiceCall { get; } = "FaturamentoPopup788";
+        public string OwnerServiceCall { get; set; } = "FaturamentoPopup788";
 
         [XmlAttribute(AttributeName = "ehWizardFaturamento")]
-        public string EhWizardFaturamento { get; } = true.ToString();
+        public string EhWizardFaturamento { get; set; } = true.ToString();
 
         [XmlAttribute(AttributeName = "ehPedidoWeb")]
-        public string EhPedidoWeb { get; } = false.ToString();
+        public string EhPedidoWeb { get; set; } = false.ToString();
 
         [XmlAttribute(AttributeName = "nfeDevolucaoViaRecusa")]
-        public string NfeDevolucaoViaRecusa { get; } = false.ToString();
+        public string NfeDevolucaoViaRecusa { get; set; } = false.ToString();
+    }
 
-        #endregion
+    public class ElementoItemDetalhes
+    {
+        [XmlAttribute(AttributeName = "QTDFAT")]
+        public int Quantidade { get; set; }
 
+        [XmlText]
+        public string Sequencia { get; set; }
+
+        [XmlIgnore]
+        public long IdProduto { get; set; }
+    }
+
+    public class ElementoItem
+    {
+        public ElementoItem() { }
+        public ElementoItem(List<ElementoItemDetalhes> listItemDetalhes)
+        {
+            ItemDetalhes = listItemDetalhes;
+        }
+
+        [XmlElement(ElementName = "item")]
+        public List<ElementoItemDetalhes> ItemDetalhes { get; set; }
+    }
+
+    public class ElementoNotaDevolucaoParcial
+    {
+        public ElementoNotaDevolucaoParcial() { }
+
+        public ElementoNotaDevolucaoParcial(long codigoIntegracao, List<ElementoItemDetalhes> listItemDetalhes)
+        {
+            CodigoIntegracao = codigoIntegracao.ToString();
+            Itens = new ElementoItem(listItemDetalhes);
+        }
+
+        [XmlElement(ElementName = "itens")]
+        public ElementoItem Itens { get; set; }
+
+        [XmlAttribute(AttributeName = "NUNOTA")]
+        public string CodigoIntegracao { get; set; }
     }
 }

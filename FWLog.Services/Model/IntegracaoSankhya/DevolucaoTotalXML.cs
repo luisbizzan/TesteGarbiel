@@ -2,54 +2,52 @@
 
 namespace FWLog.Services.Model.IntegracaoSankhya
 {
-
     [XmlRoot(ElementName = "serviceRequest")]
     public class DevolucaoTotalXML
     {
-        public DevolucaoTotalXML(string nota)
+        public DevolucaoTotalXML() { }
+        public DevolucaoTotalXML(long codigoIntegracao, string codTipOper)
         {
-            RequestBody = new RequestBody(nota);
+            RequestBody = new ElementoCorpoDevolucao(codigoIntegracao, codTipOper);
         }
 
         [XmlAttribute(AttributeName = "serviceName")]
-        public string ServiceName { get; } = "SelecaoDocumentoSP.faturar";
+        public string ServiceName { get; set; } = "SelecaoDocumentoSP.faturar";
 
         [XmlElement(ElementName = "requestBody")]
-        public RequestBody RequestBody { get; }
+        public ElementoCorpoDevolucao RequestBody { get; set; }
     }
 
-    [XmlRoot(ElementName = "requestBody")]
-    public class RequestBody
+    public class ElementoCorpoDevolucao
     {
-        public RequestBody(string nota)
+        public ElementoCorpoDevolucao() { }
+        public ElementoCorpoDevolucao(long codigoIntegracao, string codTipOper)
         {
-            Notas = new Notas1(nota);
+            Notas = new ElementoNotas(codigoIntegracao, codTipOper);
         }
 
         [XmlElement(ElementName = "notas")]
-        public Notas1 Notas { get; }
+        public ElementoNotas Notas { get; set; }
     }
 
-
-    [XmlRoot(ElementName = "notas")]
-    public class Notas1
+    public class NotasComMoeda
     {
-        public Notas1(string nota)
+        public NotasComMoeda() { }
+        [XmlAttribute(AttributeName = "valorMoeda")]
+        public string ValorMoeda { get; set; } = "undefined";
+    }
+
+    public class ElementoNotas : ElementoNotasBase
+    {
+        public ElementoNotas() { }
+
+        public ElementoNotas(long codigoIntegracao, string codTipOper)
         {
-            Nota = nota;
+            Nota = codigoIntegracao.ToString();
+            CodTipOper = codTipOper;
         }
 
         [XmlElement(ElementName = "nota")]
-        public string Nota { get; }
-
+        public string Nota { get; set; }
     }
-
-    [XmlRoot(ElementName = "notasComMoeda")]
-    public class NotasComMoeda
-    {
-        [XmlAttribute(AttributeName = "valorMoeda")]
-        public string ValorMoeda { get; }
-    }
-
-
 }

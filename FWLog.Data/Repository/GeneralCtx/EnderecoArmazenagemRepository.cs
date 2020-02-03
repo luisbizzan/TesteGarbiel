@@ -42,5 +42,10 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return query.ToList();
         }
+
+        public EnderecoArmazenagem ConsultarPorNivelEPontoArmazenagem(long? nivel, long? pontoarmazenagem, long idEmpresa)
+        {
+            return Entities.EnderecoArmazenagem.FirstOrDefault(f => f.IdNivelArmazenagem == nivel && f.IdPontoArmazenagem == pontoarmazenagem && f.IdEmpresa == idEmpresa);
+        }
     }
 }

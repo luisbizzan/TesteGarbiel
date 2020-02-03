@@ -1,0 +1,1 @@
+ALTER TABLE DART."NotaFiscal" ADD "NFDevolucaoConfirmada" NUMBER(1,0);

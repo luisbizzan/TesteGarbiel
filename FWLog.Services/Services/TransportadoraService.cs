@@ -61,13 +61,8 @@ namespace FWLog.Services.Services
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", transportadora.CodigoIntegracao.ToString() } };
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
                     
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização de Transportadora no Sankhya não terminou com sucesso.");
-                    }
-
                     if (transportadoraNova)
                     {
                         _uow.TransportadoraRepository.Add(transportadora);

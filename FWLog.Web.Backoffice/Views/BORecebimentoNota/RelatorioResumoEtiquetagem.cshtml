@@ -13,7 +13,7 @@
         })
 }
 
-<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+<form id="form-teste" data-filter="form" data-filter-for="dataTable" class="form-filter">
     <div class="x_panel">
         <div class="x_title">
             <h2 class="collapse-link">
@@ -69,7 +69,7 @@
                 </div>
                 <div class="form-group col-md-6 col-lg-4">
                     @Html.LabelFor(m => m.Filter.QuantidadeFinal)
-                    @Html.TextBoxFor(m => m.Filter.QuantidadeFinal, new { @class = "form-control onlyNumber", data_field = "QuantidadeFinal" })
+                    @Html.TextBoxFor(m => m.Filter.QuantidadeFinal, new { @class = "form-control onlyNumber", data_field = "QuantidadeFinal" })                    
                 </div>                
             </div>
             <div class="row">

@@ -2,6 +2,7 @@
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
+using FWLog.Services.Model.IntegracaoSankhya;
 using FWLog.Services.Model.Lote;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,12 @@ namespace FWLog.Services.Services
     public class LoteService
     {
         private UnitOfWork _uow;
+        private NotaFiscalService notaFiscalService;
 
         public LoteService(UnitOfWork uow)
         {
             _uow = uow;
+            notaFiscalService = new NotaFiscalService(_uow);
         }
 
         public async Task RegistrarRecebimentoNotaFiscal(long idNotaFiscal, string userId, DateTime dataRecebimento, int qtdVolumes)
@@ -161,7 +164,7 @@ namespace FWLog.Services.Services
                 notaStatus = NotaFiscalStatusEnum.Confirmada;
 
                 await AtualizarNotaFiscalIntegracao(notafiscal, loteStatus);
-                await ConfirmarNotaFiscalIntegracao(notafiscal);
+                await ConfirmarNotaFiscalIntegracao(notafiscal.CodigoIntegracao);
             }
             else
             {
@@ -213,7 +216,7 @@ namespace FWLog.Services.Services
             }
 
             await AtualizarNotaFiscalIntegracao(notafiscal, lote.IdLoteStatus);
-            await ConfirmarNotaFiscalIntegracao(notafiscal);
+            await ConfirmarNotaFiscalIntegracao(notafiscal.CodigoIntegracao);
 
             Dictionary<long, List<NotaFiscalItem>> nfItens = notafiscal.NotaFiscalItens.GroupBy(g => g.IdProduto).ToDictionary(g => g.Key, g => g.ToList());
 
@@ -371,41 +374,55 @@ namespace FWLog.Services.Services
             try
             {
                 Lote lote = _uow.LoteRepository.GetById(idLote);
-                
-                //TODO Nota de Devolução
-                NotaFiscal notafiscalDevolucao = null;
+                List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(lote.IdNotaFiscal);
 
-                if (lote.NotaFiscal.CodigoIntegracaoNFDevolucao == null)
+                //if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
+                //{
+                //    // Este trecho de código está assim para finalizar a tratativa de divergencia quando nao estava comunicando com sankhya
+
+                //    if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMais > 0) && loteDivergencias.Any(a => a.QuantidadeDivergenciaMenos > 0))
+                //    {
+                //        lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaTodas;
+
+                //        CriarQuarentena(lote, IdUsuario);
+                //    }
+                //    else if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMenos > 0))
+                //    {
+                //        lote.IdLoteStatus = LoteStatusEnum.FinalizadoDivergenciaNegativa;
+                //    }
+
+                //    _uow.SaveChanges();
+
+                //    return processamento;
+                //}
+
+                if (!lote.NotaFiscal.CodigoIntegracaoNFDevolucao.HasValue)
                 {
-                    notafiscalDevolucao = await CriarNFDevolucao();
-                    notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.NotaDevolucaoCriada;
-                    lote.NotaFiscal.CodigoIntegracaoNFDevolucao = notafiscalDevolucao.CodigoIntegracao;
+                    lote.NotaFiscal.CodigoIntegracaoNFDevolucao = await CarregarNotaFiscalDevolucao(lote);
                     lote.IdLoteStatus = LoteStatusEnum.AguardandoConfirmacaoNFDevolucao;
                     _uow.SaveChanges();
                 }
-                else
+
+                if (!lote.NotaFiscal.CodigoIntegracaoNFDevolucao.HasValue)
                 {
-                    notafiscalDevolucao = _uow.NotaFiscalRepository.ObterPorCodigoIntegracao(lote.NotaFiscal.CodigoIntegracaoNFDevolucao.Value);
+                    throw new BusinessException("Não possível encontrar o Código de Integração da Nota Fiscal de Devolução");
                 }
 
                 processamento.CriacaoNFDevolucao = true;
 
-                if (notafiscalDevolucao.IdNotaFiscalStatus != NotaFiscalStatusEnum.Confirmada)
+                if (!lote.NotaFiscal.NFDevolucaoConfirmada)
                 {
-                    await ConfirmarNotaFiscalIntegracao(notafiscalDevolucao);
-                    notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.Confirmada;
+                    await ConfirmarNotaFiscalIntegracao(lote.NotaFiscal.CodigoIntegracaoNFDevolucao.Value);
+                    lote.NotaFiscal.NFDevolucaoConfirmada = true;
                     lote.IdLoteStatus = LoteStatusEnum.AguardandoAutorizacaoSefaz;
                     _uow.SaveChanges();
                 }
 
                 processamento.ConfirmacaoNFDevolucao = true;
 
-                await VerificarNotaFiscalAutorizada(notafiscalDevolucao);
-                notafiscalDevolucao.IdNotaFiscalStatus = NotaFiscalStatusEnum.NotaDevolucaoAutorizada;
-                _uow.SaveChanges();
-                processamento.AutorizaçãoNFDevolucaoSefaz = true;
+                await VerificarNotaFiscalAutorizada(lote.NotaFiscal.CodigoIntegracaoNFDevolucao.Value);
 
-                List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(lote.IdNotaFiscal);
+                processamento.AutorizaçãoNFDevolucaoSefaz = true;
 
                 if (loteDivergencias.Any(a => a.QuantidadeDivergenciaMais > 0) && loteDivergencias.Any(a => a.QuantidadeDivergenciaMenos > 0))
                 {
@@ -429,6 +446,75 @@ namespace FWLog.Services.Services
             }
 
             return processamento;
+        }
+
+        private async Task<long> CarregarNotaFiscalDevolucao(Lote lote)
+        {
+            List<ElementoItemDetalhes> itensDevolucao = new List<ElementoItemDetalhes>();
+            List<LoteDivergencia> divergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(lote.IdNotaFiscal).Where(w => w.QuantidadeDivergenciaMenos > 0).ToList();
+            List<NotaFiscalItem> nfItens = _uow.NotaFiscalItemRepository.ObterItens(lote.IdNotaFiscal);
+
+            foreach (LoteDivergencia divergencia in divergencias)
+            {
+                var nfProduto = nfItens.Where(w => w.IdProduto == divergencia.IdProduto).OrderBy(o => o.Sequencia).ToList();
+
+                if (nfProduto.NullOrEmpty())
+                {
+                    throw new BusinessException("Não foi possível encontrar os itens da nota fiscal para tratar a divergência.");
+                }
+
+                if (nfProduto.Count() == 1)
+                {
+                    var itemDevolucao = new ElementoItemDetalhes()
+                    {
+                        Quantidade = divergencia.QuantidadeDivergenciaMenos.Value,
+                        Sequencia = nfProduto.First().Sequencia.ToString(),
+                        IdProduto = nfProduto.First().IdProduto
+                    };
+
+                    itensDevolucao.Add(itemDevolucao);
+                }
+                else
+                {
+                    foreach (NotaFiscalItem nfItem in nfProduto)
+                    {
+                        int qtdAlocada = 0;
+                        int qtdPendente = 0;
+
+                        if (itensDevolucao.Any(s => s.IdProduto == nfItem.IdProduto))
+                        {
+                            qtdAlocada = itensDevolucao.Where(s => s.IdProduto == nfItem.IdProduto).Sum(s => s.Quantidade);
+                        }
+
+                        if (divergencia.QuantidadeDivergenciaMenos > qtdAlocada)
+                        {
+                            qtdPendente = divergencia.QuantidadeDivergenciaMenos.Value - qtdAlocada;
+                        }
+
+                        var itemDevolucao = new ElementoItemDetalhes()
+                        {
+                            Quantidade = nfItem.Quantidade <= qtdPendente ? nfItem.Quantidade : qtdPendente,
+                            Sequencia = nfItem.Sequencia.ToString(),
+                            IdProduto = nfItem.IdProduto
+                        };
+
+                        itensDevolucao.Add(itemDevolucao);
+
+                        if (itensDevolucao.Where(s => s.IdProduto == nfItem.IdProduto).Sum(s => s.Quantidade) == divergencia.QuantidadeDivergenciaMenos)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            long CodigoIntegracaoNFDevolucao = await IntegracaoSankhya.Instance.GerarNotaFiscalDevolucao(lote.NotaFiscal.CodigoIntegracao, itensDevolucao);
+            if (CodigoIntegracaoNFDevolucao <= 0)
+            {
+                throw new BusinessException(string.Format("O serviço de confirmação da nota fiscal respondeu com sucesso, porém a nota fiscal {0} não está confirmada no Sankhya.", lote.NotaFiscal.CodigoIntegracao));
+            }
+
+            return CodigoIntegracaoNFDevolucao;
         }
 
         private void AtualizarSaldoArmazenagem(Dictionary<long, List<NotaFiscalItem>> nfItens, NotaFiscal notafiscal, List<LoteDivergencia> loteDivergenciasMenos)
@@ -466,22 +552,19 @@ namespace FWLog.Services.Services
             _uow.SaveChanges();
         }
 
-        private async Task ConfirmarNotaFiscalIntegracao(NotaFiscal notafiscal)
+        private async Task ConfirmarNotaFiscalIntegracao(long codigoIntegracao)
         {
             if (!(Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"])))//TODO Temporário
             {
                 return;
             }
 
-            var atualizacaoOK = await IntegracaoSankhya.Instance.ConfirmarNotaFiscal(notafiscal.CodigoIntegracao);
+            await IntegracaoSankhya.Instance.ConfirmarNotaFiscal(codigoIntegracao);
 
+            bool atualizacaoOK = await notaFiscalService.VerificarNotaFiscalConfirmada(codigoIntegracao);
             if (!atualizacaoOK)
             {
-                throw new BusinessException("A confirmação da nota fiscal no Sankhya não terminou com sucesso.");
-            }
-            else
-            {
-                await VerificarNotaFiscalConfirmada(notafiscal);
+                throw new BusinessException(string.Format("O serviço de confirmação da nota fiscal respondeu com sucesso, porém a nota fiscal {0} não está confirmada no Sankhya.", codigoIntegracao));
             }
         }
 
@@ -494,12 +577,7 @@ namespace FWLog.Services.Services
 
             Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", notafiscal.CodigoIntegracao.ToString() } };
 
-            bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", loteStatusEnum.GetHashCode());
-
-            if (!atualizacaoOK)
-            {
-                throw new BusinessException("A atualização da nota fiscal no Sankhya não terminou com sucesso.");
-            }
+            await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", loteStatusEnum.GetHashCode());
         }
 
         private async Task VerificarNotaFiscalCancelada(NotaFiscal notafiscal)
@@ -509,8 +587,6 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            var notaFiscalService = new NotaFiscalService(_uow);
-
             bool atualizacaoOK = await notaFiscalService.VerificarNotaFiscalCancelada(notafiscal.CodigoIntegracao);
 
             if (atualizacaoOK)
@@ -519,37 +595,19 @@ namespace FWLog.Services.Services
             }
         }
 
-        private async Task VerificarNotaFiscalAutorizada(NotaFiscal notafiscal)
+        private async Task VerificarNotaFiscalAutorizada(long codigoIntegracao)
         {
             if (!(Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"])))//TODO Temporário
             {
                 return;
             }
 
-            var notaFiscalService = new NotaFiscalService(_uow);
-
-            bool atualizacaoOK = await notaFiscalService.VerificarNotaFiscalAutorizada(notafiscal.CodigoIntegracao);
+            bool atualizacaoOK = await notaFiscalService.VerificarNotaFiscalAutorizada(codigoIntegracao);
 
             if (!atualizacaoOK)
             {
-                throw new BusinessException(string.Format("A nota fiscal {0} ainda não está autorizada no Sankhya.", notafiscal.CodigoIntegracao));
+                throw new BusinessException(string.Format("A nota fiscal {0} ainda não está autorizada no Sankhya.", codigoIntegracao));
             }
-        }
-
-        private async Task VerificarNotaFiscalConfirmada(NotaFiscal notafiscal)
-        {
-            var notaFiscalService = new NotaFiscalService(_uow);
-
-            bool atualizacaoOK = await notaFiscalService.VerificarNotaFiscalConfirmada(notafiscal.CodigoIntegracao);
-            if (!atualizacaoOK)
-            {
-                throw new BusinessException(string.Format("O serviço de confirmação da nota fiscal respondeu com sucesso, porém a nota fiscal {0} não está confirmada no Sankhya.", notafiscal.CodigoIntegracao));
-            }
-        }
-
-        private async Task<NotaFiscal> CriarNFDevolucao()
-        {
-            return new NotaFiscal();
         }
     }
 }

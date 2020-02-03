@@ -7,15 +7,13 @@
     $.validator.addMethod('validateDateOrPrazoInicial', function (value, ele) {
         var dataInicial = $("#Filter_DataInicial").val();
 
-        if (value != "") 
+        if (value != "")
             return true
-        else if (dataInicial != "") 
+        else if (dataInicial != "")
             return true
         else
             return false;
     }, 'Data Inicial ou Prazo Inicial Obrigatório');
-
-
 
     $.validator.addMethod('validateDateOrPrazoFinal', function (value, ele) {
         var dataFinal = $("#Filter_DataFinal").val();
@@ -27,7 +25,6 @@
         else
             return false;
     }, 'Data Final ou Prazo Final Obrigatório');
-
 
     $.validator.addMethod('validateTime', function (value, ele) {
         if (value === "") {
@@ -315,7 +312,7 @@ function imprimir(acao, id) {
                     Lote: $("#Filter_Lote").val(),
                     Nota: $("#Filter_Nota").val(),
                     ChaveAcesso: $("#Filter_ChaveAcesso").val(),
-                    IdStatus: $("#Filter_ListaStatus").val(),
+                    IdStatus: $("#Filter_IdStatus").val(),
                     DataInicial: $("#Filter_DataInicial").val(),
                     DataFinal: $("#Filter_DataFinal").val(),
                     PrazoInicial: $("#Filter_PrazoInicial").val(),
