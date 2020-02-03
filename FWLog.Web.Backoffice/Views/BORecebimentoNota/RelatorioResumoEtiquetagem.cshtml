@@ -65,11 +65,13 @@
                 </div>
                 <div class="form-group col-md-6 col-lg-4">
                     @Html.LabelFor(m => m.Filter.QuantidadeInicial)
-                    @Html.TextBoxFor(m => m.Filter.QuantidadeInicial, new { @class = "form-control onlyNumber", data_field = "QuantidadeInicial" })
+                    @Html.TextBoxFor(m => m.Filter.QuantidadeInicial, new { @class = "form-control onlyNumber validateQtdeInicial", data_field = "QuantidadeInicial" })
+                    @Html.ValidationMessageFor(m => m.Filter.QuantidadeInicial)
                 </div>
                 <div class="form-group col-md-6 col-lg-4">
                     @Html.LabelFor(m => m.Filter.QuantidadeFinal)
-                    @Html.TextBoxFor(m => m.Filter.QuantidadeFinal, new { @class = "form-control onlyNumber", data_field = "QuantidadeFinal" })
+                    @Html.TextBoxFor(m => m.Filter.QuantidadeFinal, new { @class = "form-control onlyNumber validateQtdeFinal", data_field = "QuantidadeFinal" })
+                    @Html.ValidationMessageFor(m => m.Filter.QuantidadeFinal)
                 </div>                
             </div>
             <div class="row">

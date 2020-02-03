@@ -37,6 +37,37 @@
         $("#tabela").removeClass("hidden");
     });
 
+    $.validator.addMethod("validateQtdeFinal", function (value, element, params) {
+        //Capture valor da quantidade inicial.
+        var qtdeInicial = $("#Filter_QuantidadeInicial").val();
+        //Atribuo 0 caso não tenha nada preenchido.
+        if (!qtdeInicial)
+            qtdeInicial = 0;
+        if (!value)
+            return true;
+        //Retorno verdadeiro se for maior que a quantidade inicial.
+        return parseInt(value) >= parseInt(qtdeInicial);
+    }, "O valor deve ser um número maior que a Quantidade Inicial.");
+
+    $.validator.addClassRules({
+        validateQtdeFinal: { validateQtdeFinal: true }
+    });
+
+    $.validator.addMethod("validateQtdeInicial", function (value, element, params) {
+        //Capture valor da quantidade inicial.
+        var qtdeFinal = $("#Filter_QuantidadeFinal").val();
+        //Atribuo 0 caso não tenha nada preenchido.
+        if (qtdeFinal && parseInt(value) > parseInt(qtdeFinal))
+            return false;
+        if (!value)
+            value = 0;
+        return true;
+    }, "O valor deve ser um número menor que a Quantidade Final.");
+
+    $.validator.addClassRules({
+        validateQtdeInicial: { validateQtdeInicial: true }
+    });
+
     $("#downloadRelatorio").click(function () {
         $.ajax({
             url: `/${CONTROLLER_PATH}/DownloadRelatorioResumoEtiquetagem`,
@@ -106,12 +137,6 @@
         deferLoading: 0,
         initComplete: function (settings, json) {
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
-        },
-        stateSaveParams: function (settings, data) {
-            dart.dataTables.saveFilterToData(data);
-        },
-        stateLoadParams: function (settings, data) {
-            dart.dataTables.loadFilterFromData(data);
         },
         columns: [
             { data: 'IdLogEtiquetagem' },
