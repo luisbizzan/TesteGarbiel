@@ -103,7 +103,9 @@ namespace FWLog.Services.Services
                             {
                                 IdProduto = produto.IdProduto,
                                 IdEmpresa = empresa.IdEmpresa,
-                                Saldo = 0
+                                Saldo = 0, 
+                                IdProdutoEstoqueStatus = ProdutoEstoqueStatusEnum.Ativo,
+                                DiasPrazoEntrega = 10
                             };
 
                             _uow.ProdutoEstoqueRepository.Add(produtoEstoque);
