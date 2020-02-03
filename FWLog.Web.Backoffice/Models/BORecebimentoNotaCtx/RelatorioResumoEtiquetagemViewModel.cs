@@ -60,7 +60,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Quantidade Final")]
         public int? QuantidadeFinal { get; set; }
 
-        [Display(Name = "Impresso por")]
+        [Display(Name = "Usuário")]
         public string IdUsuarioEtiquetagem { get; set; }
         public string UsuarioEtiquetagem { get; set; }
 
