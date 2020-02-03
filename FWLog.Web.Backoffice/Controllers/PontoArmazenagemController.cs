@@ -116,13 +116,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 return View(viewModel);
             }
 
-            var pontoArmazenagemCadastrado = _unitOfWork.PontoArmazenagemRepository.BuscarPontoArmazenagemPorIdEmpresa(IdEmpresa);
-
-            if(pontoArmazenagemCadastrado != null)
-            {
-
-            }
-
             var pontoArmazenagem = new PontoArmazenagem
             {
                 IdEmpresa = IdEmpresa,
