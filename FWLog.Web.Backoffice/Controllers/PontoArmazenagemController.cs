@@ -116,6 +116,13 @@ namespace FWLog.Web.Backoffice.Controllers
                 return View(viewModel);
             }
 
+            var pontoArmazenagemCadastrado = _unitOfWork.PontoArmazenagemRepository.BuscarPontoArmazenagemPorIdEmpresa(IdEmpresa);
+
+            if(pontoArmazenagemCadastrado != null)
+            {
+
+            }
+
             var pontoArmazenagem = new PontoArmazenagem
             {
                 IdEmpresa = IdEmpresa,
@@ -123,7 +130,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Descricao = viewModel.Descricao,
                 IdTipoArmazenagem = viewModel.IdTipoArmazenagem,
                 IdTipoMovimentacao = viewModel.IdTipoMovimentacao,
-                LimitePesoVertical = decimal.Parse(viewModel.LimitePesoVertical),
+                LimitePesoVertical =  viewModel.LimitePesoVertical != null ? decimal.Parse(viewModel.LimitePesoVertical) : (decimal?)null,
                 Ativo = viewModel.Ativo
             };
 
