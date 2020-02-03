@@ -34,6 +34,6 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public ConfirmarNotaFiscalValor() { }
 
         [XmlElement("NUNOTA")]
-        public string CodigoIntegracao { get; set; }
+        public long CodigoIntegracao { get; set; }
     }
 }

@@ -165,12 +165,7 @@ namespace FWLog.Services.Services
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", notafiscal.CodigoIntegracao.ToString() } };
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode());
-
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização de nota fiscal no Sankhya não terminou com sucesso.");
-                    }
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode());
 
                     int diasPrazoEntrega = _uow.ProdutoEstoqueRepository.ObterDiasPrazoEntrega(notafiscal.IdEmpresa, notafiscal.NotaFiscalItens.Select(s => s.IdProduto).ToList());
 

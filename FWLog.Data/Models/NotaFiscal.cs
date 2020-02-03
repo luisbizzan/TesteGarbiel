@@ -65,14 +65,14 @@ namespace FWLog.Data.Models
 
         public DateTime DataEmissao { get; set; }
 
-        public DateTime PrazoEntregaFornecedor { get; set; } 
+        public DateTime PrazoEntregaFornecedor { get; set; }
 
         [Required]
         public decimal ValorTotal { get; set; }
 
         [Required]
         public decimal ValorFrete { get; set; }
-       
+
         public decimal? PesoBruto { get; set; }
 
         [Required]
@@ -83,6 +83,8 @@ namespace FWLog.Data.Models
         [Required]
         public NotaFiscalTipoEnum IdNotaFiscalTipo { get; set; }
 
+        public bool NFDevolucaoConfirmada { get; set; }
+
         [ForeignKey(nameof(IdFornecedor))]
         public virtual Fornecedor Fornecedor { get; set; }
 
@@ -92,7 +94,7 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdFreteTipo))]
         public virtual FreteTipo FreteTipo { get; set; }
 
-        [ForeignKey(nameof(IdEmpresa))] 
+        [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
 
         [ForeignKey(nameof(IdNotaFiscalStatus))]

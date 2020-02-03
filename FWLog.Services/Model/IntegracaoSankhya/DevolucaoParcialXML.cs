@@ -7,7 +7,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     public class DevolucaoParcialXML
     {
         public DevolucaoParcialXML() { }
-        public DevolucaoParcialXML(string codigoIntegracao, string codTipOper, List<ElementoItemDetalhes> listItemDetalhes)
+        public DevolucaoParcialXML(long codigoIntegracao, string codTipOper, List<ElementoItemDetalhes> listItemDetalhes)
         {
             RequestBody = new ElementoCorpoDevolucaoParcial(codigoIntegracao, codTipOper, listItemDetalhes);
         }
@@ -22,7 +22,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     public class ElementoCorpoDevolucaoParcial
     {
         public ElementoCorpoDevolucaoParcial() { }
-        public ElementoCorpoDevolucaoParcial(string codigoIntegracao, string codTipOper, List<ElementoItemDetalhes> listItemDetalhes)
+        public ElementoCorpoDevolucaoParcial(long codigoIntegracao, string codTipOper, List<ElementoItemDetalhes> listItemDetalhes)
         {
             Notas = new ElementoNotasDevolucaoParcial(codigoIntegracao, codTipOper, listItemDetalhes);
         }
@@ -34,7 +34,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     {
         public ElementoNotasDevolucaoParcial() { }
 
-        public ElementoNotasDevolucaoParcial(string codigoIntegracao, string codTipOper, List<ElementoItemDetalhes> listItemDetalhes)
+        public ElementoNotasDevolucaoParcial(long codigoIntegracao, string codTipOper, List<ElementoItemDetalhes> listItemDetalhes)
         {
             Nota = new ElementoNotaDevolucaoParcial(codigoIntegracao, listItemDetalhes);
             CodTipOper = codTipOper;
@@ -97,10 +97,13 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     public class ElementoItemDetalhes
     {
         [XmlAttribute(AttributeName = "QTDFAT")]
-        public string Quantidade { get; set; } = "QTDFAT";
+        public int Quantidade { get; set; }
 
         [XmlText]
-        public string Sequencia { get; set; } = "Text";
+        public string Sequencia { get; set; }
+
+        [XmlIgnore]
+        public long IdProduto { get; set; }
     }
 
     public class ElementoItem
@@ -119,9 +122,9 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     {
         public ElementoNotaDevolucaoParcial() { }
 
-        public ElementoNotaDevolucaoParcial(string codigoIntegracao, List<ElementoItemDetalhes> listItemDetalhes)
+        public ElementoNotaDevolucaoParcial(long codigoIntegracao, List<ElementoItemDetalhes> listItemDetalhes)
         {
-            CodigoIntegracao = codigoIntegracao;
+            CodigoIntegracao = codigoIntegracao.ToString();
             Itens = new ElementoItem(listItemDetalhes);
         }
 
