@@ -83,12 +83,7 @@ namespace FWLog.Services.Services
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() } };
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", campoChave, "AD_INTEGRARFWLOG", "0");
-
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização de Produto no Sankhya não terminou com sucesso.");
-                    }
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", campoChave, "AD_INTEGRARFWLOG", "0");
 
                     if (produtoNovo)
                     {
@@ -163,12 +158,7 @@ namespace FWLog.Services.Services
 
                     Dictionary<string, string> chaves = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() }, { "CODEMP", empresa.CodigoIntegracao.ToString() } };
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("EmpresaProdutoImpostos", chaves, "AD_INTEGRARFWLOG", "0");
-
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização do Prazo de Entrega do Produto no Sankhya não terminou com sucesso.");
-                    }
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("EmpresaProdutoImpostos", chaves, "AD_INTEGRARFWLOG", "0");
 
                     if (produtoEstoqueNovo)
                     {
