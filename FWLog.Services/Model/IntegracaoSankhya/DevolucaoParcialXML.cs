@@ -97,10 +97,12 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     public class ElementoItemDetalhes
     {
         [XmlAttribute(AttributeName = "QTDFAT")]
-        public string Quantidade { get; set; } = "QTDFAT";
+        public int Quantidade { get; set; }
 
         [XmlText]
-        public string Sequencia { get; set; } = "Text";
+        public int Sequencia { get; set; } 
+
+        public long IdProduto { get; set; }
     }
 
     public class ElementoItem

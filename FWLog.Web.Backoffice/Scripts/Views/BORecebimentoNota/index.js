@@ -315,7 +315,7 @@ function imprimir(acao, id) {
                     Lote: $("#Filter_Lote").val(),
                     Nota: $("#Filter_Nota").val(),
                     ChaveAcesso: $("#Filter_ChaveAcesso").val(),
-                    IdStatus: $("#Filter_ListaStatus").val(),
+                    IdStatus: $("#Filter_IdStatus").val(),
                     DataInicial: $("#Filter_DataInicial").val(),
                     DataFinal: $("#Filter_DataFinal").val(),
                     PrazoInicial: $("#Filter_PrazoInicial").val(),
