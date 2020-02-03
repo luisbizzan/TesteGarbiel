@@ -51,6 +51,10 @@ namespace FWLog.Services.Services
                     {
                         _uow.UnidadeMedidaRepository.Add(unidadeMedida);
                     }
+                    else
+                    {
+                        _uow.UnidadeMedidaRepository.Update(unidadeMedida);
+                    }
 
                     _uow.SaveChanges();
                 }
@@ -58,8 +62,6 @@ namespace FWLog.Services.Services
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração da unidade de medida: {0}.", unidadeInt.Sigla));
-
-                    continue;
                 }
             }
         }

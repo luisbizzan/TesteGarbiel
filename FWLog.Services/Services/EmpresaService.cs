@@ -122,8 +122,6 @@ namespace FWLog.Services.Services
                 {
                     var applicationLogService = new ApplicationLogService(_unitOfWork);
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração da Empresa: {0}.", empInt.CodigoIntegracao));
-                    
-                    continue;
                 }
             }
         }

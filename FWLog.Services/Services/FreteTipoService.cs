@@ -28,7 +28,6 @@ namespace FWLog.Services.Services
 
             string where = "WHERE NUCAMPO IN (SELECT NUCAMPO FROM TDDCAM WHERE NOMETAB = 'TGFCAB' AND NOMECAMPO = 'CIF_FOB')";
 
-
             List<FreteTipoIntegracao> freteTiposIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<FreteTipoIntegracao>(where: where);
 
             foreach (var freteTipoInt in freteTiposIntegracao)
@@ -54,6 +53,10 @@ namespace FWLog.Services.Services
                     {
                         _uow.FreteTipoRepository.Add(freteTipo);
                     }
+                    else
+                    {
+                        _uow.FreteTipoRepository.Update(freteTipo);
+                    }
 
                     _uow.SaveChanges();
                 }
@@ -61,8 +64,6 @@ namespace FWLog.Services.Services
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do tipo de frete: {0}.", freteTipoInt.Sigla));
-                    
-                    continue;
                 }
             }
         }
