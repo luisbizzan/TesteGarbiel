@@ -57,19 +57,12 @@ namespace FWLog.Web.Backoffice.Controllers
 
             IEnumerable<NivelArmazenagemTableRow> result = _unitOfWork.NivelArmazenagemRepository.SearchForDataTable(model, out int recordsFiltered, out int totalRecords);
 
-            var list = result.Select(x => new NivelArmazenagemListItemViewModel
-            {
-                Descricao = x.Descricao,
-                IdNivelArmazenagem = x.IdNivelArmazenagem,
-                Status = x.Ativo ? "Ativo" : "Inativo"
-            });
-
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
                 RecordsTotal = totalRecords,
                 RecordsFiltered = recordsFiltered,
-                Data = list
+                Data = Mapper.Map<IEnumerable<NivelArmazenagemListItemViewModel>>(result)
             });
         }
 

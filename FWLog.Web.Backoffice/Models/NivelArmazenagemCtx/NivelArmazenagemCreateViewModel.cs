@@ -8,6 +8,7 @@ namespace FWLog.Web.Backoffice.Models.NivelArmazenagemCtx
 
         public long IdEmpresa { get; set; }
 
+        [Display(Name = "Descrição")]
         public string Descricao { get; set; }
 
         [Display(Name = "Ativo?")]
