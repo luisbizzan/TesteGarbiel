@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FWLog.AspNet.Identity
 {
-    [Table("AspNetPermissions", Schema = "DART")]
+    [Table("AspNetPermissions", Schema = "DARTQA")]
     public class ApplicationPermission
     {
         [Key]
@@ -30,7 +30,7 @@ namespace FWLog.AspNet.Identity
         }
     }
 
-    [Table("AspNetRolePermissions", Schema = "DART")]
+    [Table("AspNetRolePermissions", Schema = "DARTQA")]
     public class RolePermission
     {
         [Key, Column(Order = 0)]
@@ -43,7 +43,7 @@ namespace FWLog.AspNet.Identity
         public virtual ApplicationPermission Permission { get; set; }
     }
 
-    [Table("AspNetUserPermissions", Schema = "DART")]
+    [Table("AspNetUserPermissions", Schema = "DARTQA")]
     public class UserPermission
     {
         [Key, Column(Order = 0)]
@@ -56,7 +56,7 @@ namespace FWLog.AspNet.Identity
         public virtual ApplicationPermission Permission { get; set; }
     }
 
-    [Table("AspNetUsers", Schema = "DART")]
+    [Table("AspNetUsers", Schema = "DARTQA")]
     public class ApplicationUser : IdentityUser<string, IdentityUserLogin, UserRole, IdentityUserClaim>, IUser, IUser<string>
     {
         public int ApplicationId { get; set; }
@@ -75,7 +75,7 @@ namespace FWLog.AspNet.Identity
         }
     }
 
-    [Table("AspNetRoles", Schema = "DART")]
+    [Table("AspNetRoles", Schema = "DARTQA")]
     public class ApplicationRole : IdentityRole<string, UserRole>
     {
         public int ApplicationId { get; set; }
@@ -92,7 +92,7 @@ namespace FWLog.AspNet.Identity
         }
     }
 
-    [Table("AspNetUserRoles", Schema = "DART")]
+    [Table("AspNetUserRoles", Schema = "DARTQA")]
     public class UserRole : IdentityUserRole
     {
         public long CompanyId { get; set; }
@@ -111,7 +111,7 @@ namespace FWLog.AspNet.Identity
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("DART");
+            modelBuilder.HasDefaultSchema("DARTQA");
 
             base.OnModelCreating(modelBuilder);
 
