@@ -32,7 +32,8 @@ namespace FWLog.Services.Services
 
             where.Append("WHERE DESCRPROD IS NOT NULL ");
             where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
-            where.Append("AND AD_INTEGRARFWLOG = '1' ");
+            //where.Append("AND AD_INTEGRARFWLOG = '1' ORDER BY CODPROD OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY ");
+            where.Append("ORDER BY CODPROD OFFSET 0 ROWS FETCH NEXT 5000 ROWS ONLY ");
 
             List<Model.IntegracaoSankhya.ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoIntegracao>(where: where.ToString());
 
@@ -83,7 +84,12 @@ namespace FWLog.Services.Services
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() } };
 
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", campoChave, "AD_INTEGRARFWLOG", "0");
+                    //bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", campoChave, "AD_INTEGRARFWLOG", "0");
+
+                    //if (!atualizacaoOK)
+                    //{
+                    //    throw new Exception("A atualização de Produto no Sankhya não terminou com sucesso.");
+                    //}
 
                     if (produtoNovo)
                     {
@@ -97,21 +103,29 @@ namespace FWLog.Services.Services
                             {
                                 IdProduto = produto.IdProduto,
                                 IdEmpresa = empresa.IdEmpresa,
-                                Saldo = 0
+                                Saldo = 0, 
+                                IdProdutoEstoqueStatus = ProdutoEstoqueStatusEnum.Ativo,
+                                DiasPrazoEntrega = 10
                             };
 
                             _uow.ProdutoEstoqueRepository.Add(produtoEstoque);
                         }
+                    }
+                    else
+                    {
+                        _uow.ProdutoRepository.Update(produto);
                     }
 
                     _uow.SaveChanges();
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do Produto: {0}.", produtoInt.CodigoIntegracao));
-
-                    continue;
+                    try
+                    {
+                        var applicationLogService = new ApplicationLogService(_uow);
+                        applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do Produto: {0}.", produtoInt.CodigoIntegracao));
+                    }
+                    catch { }
                 }
             }
         }

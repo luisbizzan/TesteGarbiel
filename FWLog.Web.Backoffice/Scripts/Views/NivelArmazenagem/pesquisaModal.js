@@ -9,7 +9,8 @@
         ];
     });
 
-    $('#dataTableModal').DataTable({
+    $('.dataTableModal').DataTable({
+        destroy: true,
         ajax: {
             "url": view_modal.pageDataUrl,
             "type": "POST",
@@ -19,7 +20,7 @@
         },
         lengthChange: false,
         initComplete: function (settings, json) {
-            dart.dataTables.addEventsForDropdownAutoposition($('#dataTableModal'));
+            dart.dataTables.addEventsForDropdownAutoposition($('.dataTableModal'));
 
         },
         columns: [
@@ -31,9 +32,12 @@
         "bInfo": false
     });
 
-    $('#dataTableModal').on('click', '[data-select]', function () {
-        selecionarNivelArmazenagem($(this).attr('data-select'), $(this).attr("name-select"));
-    });
+    function selecionarNivelArmazenagem_Click() {
+        selecionarNivelArmazenagem($(this).attr('data-select'), $(this).attr("name-select"), view_modal.origem);
+    }
+
+    $('.dataTableModal').off('click', '[data-select]', selecionarNivelArmazenagem_Click);
+    $('.dataTableModal').on('click', '[data-select]', selecionarNivelArmazenagem_Click);
 
     dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));
 
