@@ -38,6 +38,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         {
             Nota = new ElementoNotaDevolucaoParcial(codigoIntegracao, listItemDetalhes);
             CodTipOper = codTipOper;
+            FaturarTodosItens = "false";
         }
 
         [XmlElement(ElementName = "nota")]
@@ -76,7 +77,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string DataValidada { get; set; } = true.ToString();
 
         [XmlAttribute(AttributeName = "faturarTodosItens")]
-        public string FaturarTodosItens { get; set; } = true.ToString();
+        public string FaturarTodosItens { get; set; }
 
         [XmlAttribute(AttributeName = "umaNotaParaCada")]
         public string UmaNotaParaCada { get; set; } = false.ToString();
