@@ -6,9 +6,9 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     public class DevolucaoTotalXML
     {
         public DevolucaoTotalXML() { }
-        public DevolucaoTotalXML(string nota, string codTipOper)
+        public DevolucaoTotalXML(long codigoIntegracao, string codTipOper)
         {
-            RequestBody = new ElementoCorpoDevolucao(nota, codTipOper);
+            RequestBody = new ElementoCorpoDevolucao(codigoIntegracao, codTipOper);
         }
 
         [XmlAttribute(AttributeName = "serviceName")]
@@ -21,7 +21,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     public class ElementoCorpoDevolucao
     {
         public ElementoCorpoDevolucao() { }
-        public ElementoCorpoDevolucao(string codigoIntegracao, string codTipOper)
+        public ElementoCorpoDevolucao(long codigoIntegracao, string codTipOper)
         {
             Notas = new ElementoNotas(codigoIntegracao, codTipOper);
         }
@@ -41,10 +41,11 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     {
         public ElementoNotas() { }
 
-        public ElementoNotas(string codigoIntegracao, string codTipOper)
+        public ElementoNotas(long codigoIntegracao, string codTipOper)
         {
-            Nota = codigoIntegracao;
+            Nota = codigoIntegracao.ToString();
             CodTipOper = codTipOper;
+            FaturarTodosItens = "true";
         }
 
         [XmlElement(ElementName = "nota")]

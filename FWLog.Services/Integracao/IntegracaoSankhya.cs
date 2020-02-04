@@ -87,7 +87,7 @@ namespace FWLog.Services.Integracao
 
             if (!login.IsSuccessStatusCode)
             {
-                throw new Exception("O sistema não obteve sucesso na autorização da Integração Sankhya.");
+                throw new BusinessException("O sistema não obteve sucesso na autorização da Integração Sankhya.");
             }
 
             string responseContent = login.Content.ReadAsStringAsync().Result;
@@ -98,7 +98,7 @@ namespace FWLog.Services.Integracao
             {
                 var erro = DeserializarXML<IntegracaoErroResposta>(responseContent);
 
-                throw new Exception(string.Format("O sistema não obteve o jsessionid na autorização da Integração Sankhya. Mensagem de Erro {0}", erro.Mensagem));
+                throw new BusinessException(string.Format("O sistema não obteve o jsessionid na autorização da Integração Sankhya. Mensagem de Erro {0}", erro.Mensagem));
             }
 
             UltimaAutenticacao = DateTime.UtcNow;
@@ -170,7 +170,7 @@ namespace FWLog.Services.Integracao
 
             if (!httpResponse.IsSuccessStatusCode)
             {
-                throw new Exception(string.Format("O sistema obteve o status {0} na resposta do serviço '{1}' Integração Sankhya", httpResponse.StatusCode, serviceName));
+                throw new BusinessException(string.Format("O sistema obteve o status {0} na resposta do serviço '{1}' Integração Sankhya", httpResponse.StatusCode, serviceName));
             }
 
             return httpResponse.Content.ReadAsStringAsync().Result;
@@ -197,7 +197,7 @@ namespace FWLog.Services.Integracao
 
             if (!httpResponse.IsSuccessStatusCode)
             {
-                throw new Exception(string.Format("O sistema obteve o status {0} na consulta da 'DbExplorerSP' Integração Sankhya", httpResponse.StatusCode));
+                throw new BusinessException(string.Format("O sistema obteve o status {0} na consulta da 'DbExplorerSP' Integração Sankhya", httpResponse.StatusCode));
             }
 
             string result = httpResponse.Content.ReadAsStringAsync().Result;
@@ -271,13 +271,8 @@ namespace FWLog.Services.Integracao
             return resultList;
         }
 
-        public async Task<bool> AtualizarInformacaoIntegracao(string entidade, Dictionary<string, string> camposChaves, string campo, object valor)
+        public async Task AtualizarInformacaoIntegracao(string entidade, Dictionary<string, string> camposChaves, string campo, object valor)
         {
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            {
-                return false;
-            }
-
             XElement dataRow = new XElement("dataRow", new XElement("localFields", new XElement(campo, valor)));
 
             List<XElement> chaves = new List<XElement>();
@@ -315,106 +310,58 @@ namespace FWLog.Services.Integracao
                 var erro = DeserializarXML<IntegracaoErroResposta>(root.ToString());
                 byte[] erroData = Convert.FromBase64String(erro.Mensagem);
                 string decodedString = Encoding.UTF8.GetString(erroData);
-                throw new BusinessException(string.Format("Entidade: {0} Erro: {1}", entidade, decodedString));
+                throw new BusinessException(string.Format("Erro na atualização da Entidade: {0} Erro: {1}", entidade, decodedString));
             }
-
-            return true;
         }
 
-        public async Task<bool> ConfirmarNotaFiscal(long condigoIntegracao)
+        public async Task ConfirmarNotaFiscal(long condigoIntegracao)
         {
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            {
-                return false;
-            }
-
             string confirmarNotaXML = SerializarXML(new ConfirmarNotaFiscalXML(condigoIntegracao.ToString()));
 
             string rootXML = await Instance.ExecutarServicoSankhya(confirmarNotaXML, "CACSP.confirmarNota", "mgecom");
 
             ConfirmarNotaFiscalResposta resposta = DeserializarXML<ConfirmarNotaFiscalResposta>(rootXML);
 
-            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria?.CodigoIntegracao == null)
+            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria?.CodigoIntegracao <= 0 || condigoIntegracao != resposta.CorpoResposta.ChavePrimaria?.CodigoIntegracao)
             {
                 var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
 
                 throw new BusinessException(string.Format("Ocorreu um erro na confirmação da nota fiscal número único {0}. Mensagem de Erro {1}", condigoIntegracao, erro.Mensagem));
             }
-
-            return true;
         }
-
-        public async Task<bool> IncluirNotaFiscal()
+             
+        public async Task<long> GerarNotaFiscalDevolucao(long codigoIntegracao, List<ElementoItemDetalhes> itensDevolucao)
         {
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            string codTipOper = ConfigurationManager.AppSettings["IntegracaoSankhya_CodigoDevolucaoCompra"];
+
+            if (string.IsNullOrEmpty(codTipOper))
             {
-                return false;
+                throw new BusinessException("Não foi possível encontrar a configuração para o campo 'codTipOper'");
             }
 
-            string incluirNotaXML = SerializarXML(new IncluirNotaFiscalXML());
+            string devolucaoXML;
 
-            string rootXML = await Instance.ExecutarServicoSankhya(incluirNotaXML, "CACSP.incluirNota", "mgecom");
+            if (itensDevolucao.NullOrEmpty())
+            {
+                devolucaoXML = SerializarXML(new DevolucaoTotalXML(codigoIntegracao, codTipOper));
+            }
+            else
+            {
+                devolucaoXML = SerializarXML(new DevolucaoParcialXML(codigoIntegracao, codTipOper, itensDevolucao));
+            }
 
-            IncluirNotaFiscalResposta resposta = DeserializarXML<IncluirNotaFiscalResposta>(rootXML);
+            string rootXML = await Instance.ExecutarServicoSankhya(devolucaoXML, "SelecaoDocumentoSP.faturar", "mgecom");
 
-            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria?.CodigoIntegracao == null)
+            DevolucaoRespostaXML resposta = DeserializarXML<DevolucaoRespostaXML>(rootXML);
+
+            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.Notas?.CodigoIntegracao <= 0)
             {
                 var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
 
-                throw new Exception(string.Format("Ocorreu um erro na inclusão de uma nova nota fiscal da nota fiscal. Mensagem de Erro {0}", erro.Mensagem));
+                throw new BusinessException(string.Format("Ocorreu um erro na chamada do serviço 'SelecaoDocumentoSP.faturar' para criação da Nota Fiscal de Devolução. Mensagem de Erro {0}", erro.Mensagem));
             }
 
-            return true;
-        }
-
-        public async Task<bool> Devolucao(DevolucaoTotalXML model)
-        {
-            throw new NotImplementedException();
-
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            {
-                return false;
-            }
-
-            string incluirNotaXML = SerializarXML(model);
-
-            string rootXML = await Instance.ExecutarServicoSankhya(incluirNotaXML, "SelecaoDocumentoSP.faturar", "mgecom");
-
-            IncluirNotaFiscalResposta resposta = DeserializarXML<IncluirNotaFiscalResposta>(rootXML);
-
-            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria?.CodigoIntegracao == null)
-            {
-                var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
-
-                throw new Exception(string.Format("Ocorreu um erro na devolução. Mensagem de Erro {0}", erro.Mensagem));
-            }
-
-            return true;
-        }
-
-        public async Task<bool> Devolucao(DevolucaoParcialXML model)
-        {
-            throw new NotImplementedException();
-
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            {
-                return false;
-            }
-
-            string incluirNotaXML = SerializarXML(model);
-
-            string rootXML = await Instance.ExecutarServicoSankhya(incluirNotaXML, "SelecaoDocumentoSP.faturar", "mgecom");
-
-            IncluirNotaFiscalResposta resposta = DeserializarXML<IncluirNotaFiscalResposta>(rootXML);
-
-            if (resposta.CorpoResposta == null || resposta.Status != "1" || resposta.CorpoResposta.ChavePrimaria?.CodigoIntegracao == null)
-            {
-                var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
-
-                throw new Exception(string.Format("Ocorreu um erro na devolução. Mensagem de Erro {0}", erro.Mensagem));
-            }
-
-            return true;
+            return Convert.ToInt64(resposta.CorpoResposta.Notas.CodigoIntegracao);
         }
     }
 }

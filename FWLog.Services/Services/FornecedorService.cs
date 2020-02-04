@@ -61,16 +61,15 @@ namespace FWLog.Services.Services
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", fornecedor.CodigoIntegracao.ToString() } };
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", '0');
-
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização de Fornecedor no Sankhya não terminou com sucesso.");
-                    }
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", '0');
 
                     if (fornecedorNovo)
                     {
                         _uow.FornecedorRepository.Add(fornecedor);
+                    }
+                    else
+                    {
+                        _uow.FornecedorRepository.Update(fornecedor);
                     }
 
                     _uow.SaveChanges();
@@ -79,8 +78,6 @@ namespace FWLog.Services.Services
                 {
                     var applicationLogService = new ApplicationLogService(_uow);
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do Fornecedor: {0}.", fornecInt.CodigoIntegracao));
-
-                    continue;
                 }
             }
         }

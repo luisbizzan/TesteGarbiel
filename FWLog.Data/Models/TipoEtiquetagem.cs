@@ -8,7 +8,8 @@ namespace FWLog.Data.Models
         Individual = 1,
         Personalizada = 2,
         Conferencia = 3,
-        Avulso = 4
+        Avulso = 4, 
+        Lote = 5
     }
 
     public class TipoEtiquetagem

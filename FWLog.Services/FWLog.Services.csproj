@@ -121,9 +121,8 @@
     <Compile Include="Model\IntegracaoSankhya\ConfirmarNotaFiscalResposta.cs" />
     <Compile Include="Model\IntegracaoSankhya\DevolucaoParcialXML.cs" />
     <Compile Include="Model\IntegracaoSankhya\DevolucaoTotalXML.cs" />
-    <Compile Include="Model\IntegracaoSankhya\IncluirNotaFiscalXML.cs" />
     <Compile Include="Model\IntegracaoSankhya\IntegracaoErroResposta.cs" />
-    <Compile Include="Model\IntegracaoSankhya\IncluirNotaFiscalResposta.cs" />
+    <Compile Include="Model\IntegracaoSankhya\DevolucaoRespostaXML.cs" />
     <Compile Include="Model\IntegracaoSankhya\ConfirmarNotaFiscalXML.cs" />
     <Compile Include="Model\IntegracaoSankhya\FornecedorIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\FreteTipoIntegracao.cs" />

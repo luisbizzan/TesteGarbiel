@@ -86,12 +86,7 @@ namespace FWLog.Services.Services
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODEMP", codEmp.ToString() } };
 
-                    bool atualizacaoOK = await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", campoChave, "AD_INTEGRARFWLOG", '0');
-
-                    if (!atualizacaoOK)
-                    {
-                        throw new Exception("A atualização de Empresa no Sankhya não terminou com sucesso.");
-                    }
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", campoChave, "AD_INTEGRARFWLOG", '0');
 
                     if (empresaNova)
                     {
@@ -122,8 +117,6 @@ namespace FWLog.Services.Services
                 {
                     var applicationLogService = new ApplicationLogService(_unitOfWork);
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração da Empresa: {0}.", empInt.CodigoIntegracao));
-                    
-                    continue;
                 }
             }
         }
