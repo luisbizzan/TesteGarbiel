@@ -69,5 +69,15 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return query.ToList();
         }
+
+        public PontoArmazenagem BuscarPontoArmazenagemPorIdEmpresaPorPontoEPorNivel( long? idNivelArmazenagem, string descricao, long IdEmpresa)
+        {
+            var pontoArmazenagem = Entities.PontoArmazenagem
+               .FirstOrDefault(x => x.IdNivelArmazenagem == idNivelArmazenagem
+               && x.Descricao == descricao
+               && x.IdEmpresa == IdEmpresa);
+
+            return pontoArmazenagem;
+        }
     }
 }

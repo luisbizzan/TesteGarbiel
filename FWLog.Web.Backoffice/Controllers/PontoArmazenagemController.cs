@@ -116,20 +116,33 @@ namespace FWLog.Web.Backoffice.Controllers
                 return View(viewModel);
             }
 
-            var pontoArmazenagem = new PontoArmazenagem
+            var pontoArmazenagemExistente = _unitOfWork.PontoArmazenagemRepository
+                .BuscarPontoArmazenagemPorIdEmpresaPorPontoEPorNivel(viewModel.IdNivelArmazenagem.Value, 
+                                                                     viewModel.Descricao, 
+                                                                     IdEmpresa);
+
+            if(pontoArmazenagemExistente != null)
             {
-                IdEmpresa = IdEmpresa,
-                IdNivelArmazenagem = viewModel.IdNivelArmazenagem.Value,
-                Descricao = viewModel.Descricao,
-                IdTipoArmazenagem = viewModel.IdTipoArmazenagem,
-                IdTipoMovimentacao = viewModel.IdTipoMovimentacao,
-                LimitePesoVertical =  viewModel.LimitePesoVertical != null ? decimal.Parse(viewModel.LimitePesoVertical) : (decimal?)null,
-                Ativo = viewModel.Ativo
-            };
+                Notify.Warning("Ponto de armazenagem já existente, por favor verifique e tente novamente!");
+            }
+            else
+            {
+                var pontoArmazenagem = new PontoArmazenagem
+                {
+                    IdEmpresa = IdEmpresa,
+                    IdNivelArmazenagem = viewModel.IdNivelArmazenagem.Value,
+                    Descricao = viewModel.Descricao,
+                    IdTipoArmazenagem = viewModel.IdTipoArmazenagem,
+                    IdTipoMovimentacao = viewModel.IdTipoMovimentacao,
+                    LimitePesoVertical = viewModel.LimitePesoVertical != null ? decimal.Parse(viewModel.LimitePesoVertical) : (decimal?)null,
+                    Ativo = viewModel.Ativo
+                };
 
-            _pontoArmazenagemService.Cadastrar(pontoArmazenagem);
+                _pontoArmazenagemService.Cadastrar(pontoArmazenagem);
 
-            Notify.Success("Ponto de Armazenagem cadastrado com sucesso.");
+                Notify.Success("Ponto de Armazenagem cadastrado com sucesso.");
+            }
+            
             return RedirectToAction("Index");
         }
 
