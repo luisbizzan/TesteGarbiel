@@ -6,6 +6,9 @@ namespace FWLog.Web.Backoffice.Models.RecebimentoNotaCtx
     {
         public int? IdImpressora { get; set; }
 
+        [Display(Name = "Tipo Etiqueta")]
+        public int TipoEtiquetagem { get; set; }
+
         [Display(Name = "Número do Lote")]
         public long? NroLote { get; set; }
 

@@ -45,6 +45,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         {
             Nota = codigoIntegracao.ToString();
             CodTipOper = codTipOper;
+            FaturarTodosItens = "true";
         }
 
         [XmlElement(ElementName = "nota")]

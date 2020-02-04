@@ -339,18 +339,18 @@ namespace FWLog.Services.Integracao
                 throw new BusinessException("Não foi possível encontrar a configuração para o campo 'codTipOper'");
             }
 
-            string incluirNotaXML;
+            string devolucaoXML;
 
             if (itensDevolucao.NullOrEmpty())
             {
-                incluirNotaXML = SerializarXML(new DevolucaoTotalXML(codigoIntegracao, codTipOper));
+                devolucaoXML = SerializarXML(new DevolucaoTotalXML(codigoIntegracao, codTipOper));
             }
             else
             {
-                incluirNotaXML = SerializarXML(new DevolucaoParcialXML(codigoIntegracao, codTipOper, itensDevolucao));
+                devolucaoXML = SerializarXML(new DevolucaoParcialXML(codigoIntegracao, codTipOper, itensDevolucao));
             }
 
-            string rootXML = await Instance.ExecutarServicoSankhya(incluirNotaXML, "SelecaoDocumentoSP.faturar", "mgecom");
+            string rootXML = await Instance.ExecutarServicoSankhya(devolucaoXML, "SelecaoDocumentoSP.faturar", "mgecom");
 
             DevolucaoRespostaXML resposta = DeserializarXML<DevolucaoRespostaXML>(rootXML);
 

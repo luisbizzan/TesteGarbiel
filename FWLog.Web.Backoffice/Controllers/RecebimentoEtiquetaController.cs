@@ -8,6 +8,7 @@ using Microsoft.AspNet.Identity;
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using FWLog.Services.Model.LogEtiquetagem;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -15,12 +16,14 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly EtiquetaService _etiquetaService;
+        private readonly LogEtiquetagemService _logEtiquetagemService;
         private readonly ApplicationLogService _applicationLogService;
 
-        public RecebimentoEtiquetaController(UnitOfWork unitOfWork, EtiquetaService etiquetaService, ApplicationLogService applicationLogService)
+        public RecebimentoEtiquetaController(UnitOfWork unitOfWork, LogEtiquetagemService logEtiquetagemService, EtiquetaService etiquetaService, ApplicationLogService applicationLogService)
         {
             _unitOfWork = unitOfWork;
             _etiquetaService = etiquetaService;
+            _logEtiquetagemService = logEtiquetagemService;
             _applicationLogService = applicationLogService;
         }
 
@@ -56,6 +59,18 @@ namespace FWLog.Web.Backoffice.Controllers
                 };
 
                 _etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
+
+                // Lote: a quantidade salva é a quantidade de caixas/volume do lote.
+                var logEtiquetagem = new LogEtiquetagem
+                {
+                    //IdTipoEtiquetagem = viewModel.TipoEtiquetagem,
+                    IdTipoEtiquetagem = Data.Models.TipoEtiquetagemEnum.Lote.GetHashCode(),
+                    IdEmpresa = IdEmpresa,
+                    Quantidade = viewModel.QtdCaixas.Value,
+                    IdUsuario = User.Identity.GetUserId()
+                };
+
+                _logEtiquetagemService.Registrar(logEtiquetagem);
 
                 return Json(new AjaxGenericResultModel
                 {
