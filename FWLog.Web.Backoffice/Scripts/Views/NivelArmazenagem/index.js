@@ -34,7 +34,6 @@
         },
         order: [[1, "desc"]],
         columns: [
-            { data: 'IdNivelArmazenagem', width: 100 },
             { data: 'Descricao' },
             { data: 'Status', width: 100  },
             actionsColumn
