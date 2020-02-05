@@ -1,5 +1,6 @@
 ﻿using FWLog.Data.Logging;
 using FWLog.Data.Models;
+using System.Configuration;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 
@@ -11,8 +12,9 @@ namespace FWLog.Data
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("DARTQA");
+            modelBuilder.HasDefaultSchema(ConfigurationManager.AppSettings["DatabaseSchema"]);
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+            base.OnModelCreating(modelBuilder);
         }
 
         public virtual DbSet<Application> Application { get; set; }
