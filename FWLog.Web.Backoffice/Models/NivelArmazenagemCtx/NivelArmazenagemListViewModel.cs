@@ -28,6 +28,7 @@ namespace FWLog.Web.Backoffice.Models.NivelArmazenagemCtx
 
     public class NivelArmazenagemFilterViewModel
     {
+        [Display(Name = "Descrição")]
         public string Descricao { get; set; }
 
         public bool? Status { get; set; }

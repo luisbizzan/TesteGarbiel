@@ -11,8 +11,7 @@ namespace FWLog.Web.Backoffice.Mapping
     {
         public NivelArmazenagemProfile()
         {
-            CreateMap<NivelArmazenagemTableRow, NivelArmazenagemListItemViewModel>()
-                .ForMember(x => x.Status, op => op.MapFrom(x => x.Ativo.BooleanResource()));
+            CreateMap<NivelArmazenagemTableRow, NivelArmazenagemListItemViewModel>();
 
             CreateMap<NivelArmazenagem, NivelArmazenagemCreateViewModel>().ReverseMap();
 

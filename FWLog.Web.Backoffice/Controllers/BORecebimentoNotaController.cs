@@ -1831,7 +1831,11 @@ namespace FWLog.Web.Backoffice.Controllers
             var filter = new RelatorioResumoProducaoFilter
             {
                 DateMin = model.CustomFilter.DataRecebimentoMinima,
-                DateMax = model.CustomFilter.DataRecebimentoMaxima,
+                DateMax = model.CustomFilter.DataRecebimentoMaxima.HasValue ? 
+                    new DateTime(model.CustomFilter.DataRecebimentoMaxima.Value.Year, 
+                                 model.CustomFilter.DataRecebimentoMaxima.Value.Month, 
+                                 model.CustomFilter.DataRecebimentoMaxima.Value.Day, 23, 59, 59) 
+                    : model.CustomFilter.DataRecebimentoMaxima,
                 UserId = model.CustomFilter.IdUsuario,
                 IdEmpresa = IdEmpresa
             };
@@ -1865,7 +1869,11 @@ namespace FWLog.Web.Backoffice.Controllers
             var filter = new RelatorioResumoProducaoFilter
             {
                 DateMin = model.CustomFilter.DataRecebimentoMinima,
-                DateMax = model.CustomFilter.DataRecebimentoMaxima,
+                DateMax = model.CustomFilter.DataRecebimentoMaxima.HasValue ?
+                    new DateTime(model.CustomFilter.DataRecebimentoMaxima.Value.Year,
+                                 model.CustomFilter.DataRecebimentoMaxima.Value.Month,
+                                 model.CustomFilter.DataRecebimentoMaxima.Value.Day, 23, 59, 59)
+                    : model.CustomFilter.DataRecebimentoMaxima,
                 UserId = model.CustomFilter.IdUsuario,
                 IdEmpresa = IdEmpresa
             };
@@ -1958,20 +1966,11 @@ namespace FWLog.Web.Backoffice.Controllers
             List<LoteDivergencia> loteDivergencias = _uow.LoteDivergenciaRepository.RetornarPorNotaFiscal(id);
             PerfilUsuario perfilUsuario = _uow.PerfilUsuarioRepository.GetByUserId(loteConferencia.First().IdUsuarioConferente);
 
-            NotaFiscal notafiscalDevolucao = null;
-            if (notaFiscal.CodigoIntegracaoNFDevolucao != null)
-            {
-                notafiscalDevolucao = _uow.NotaFiscalRepository.ObterPorCodigoIntegracao(notaFiscal.CodigoIntegracaoNFDevolucao.Value);
-            }
-
-            LoteStatusEnum[] statusNFConfirmada = new LoteStatusEnum[] { LoteStatusEnum.AguardandoConfirmacaoNFDevolucao, LoteStatusEnum.AguardandoAutorizacaoSefaz };
-            LoteStatusEnum[] statusNFAutorizada = new LoteStatusEnum[] { LoteStatusEnum.FinalizadoDivergenciaNegativa, LoteStatusEnum.FinalizadoDivergenciaTodas };
-
             var divergenciaViewModel = new ExibirDivergenciaRecebimentoViewModel
             {
                 ConferidoPor = perfilUsuario.Nome,
-                InicioConferencia = loteConferencia.First().DataHoraInicio.ToString("dd/MM/yyyy hh:mm:ss"),
-                FimConferencia = loteConferencia.Last().DataHoraFim.ToString("dd/MM/yyyy hh:mm:ss"),
+                InicioConferencia = lote.DataInicioConferencia.Value.ToString("dd/MM/yyyy hh:mm:ss"),
+                FimConferencia = lote.DataFinalConferencia.Value.ToString("dd/MM/yyyy hh:mm:ss"),
                 NotaFiscal = string.Concat(notaFiscal.Numero.ToString(), " - ", notaFiscal.Serie),
                 IdLote = lote.IdLote,
                 StatusNotasFiscal = lote.LoteStatus.Descricao,
@@ -1982,9 +1981,9 @@ namespace FWLog.Web.Backoffice.Controllers
                     AtualizacaoNFCompra = true,
                     ConfirmacaoNFCompra = true,
                     AtualizacaoEstoque = true,
-                    CriacaoNFDevolucao = notafiscalDevolucao != null,
-                    ConfirmacaoNFDevolucao = notafiscalDevolucao != null && Array.Exists(statusNFConfirmada, x => x == lote.IdLoteStatus),
-                    AutorizacaoNFDevolucaoSefaz = notafiscalDevolucao != null && Array.Exists(statusNFAutorizada, x => x == lote.IdLoteStatus),
+                    CriacaoNFDevolucao = notaFiscal.CodigoIntegracaoNFDevolucao.HasValue,
+                    ConfirmacaoNFDevolucao = notaFiscal.CodigoIntegracaoNFDevolucao.HasValue && notaFiscal.NFDevolucaoConfirmada,
+                    AutorizacaoNFDevolucaoSefaz = false,
                     CriacaoQuarentena = _uow.QuarentenaRepository.ExisteQuarentena(lote.IdLote)
                 }
             };
