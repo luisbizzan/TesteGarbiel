@@ -59,7 +59,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string DtFaturamento { get; set; } = string.Empty;
 
         [XmlAttribute(AttributeName = "serie")]
-        public string Serie { get; set; } = string.Empty;
+        public string Serie { get; set; } = "1";
 
         [XmlAttribute(AttributeName = "dtSaida")]
         public string DtSaida { get; set; } = string.Empty;

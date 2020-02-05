@@ -77,7 +77,9 @@ namespace FWLog.Web.Backoffice.Controllers
                 .Select(x => new BOAccountListItemViewModel
                 {
                     UserName = x.Usuario.UserName,
-                    Nome = x.Nome
+                    Nome = x.Nome,
+                    Email = x.Usuario.Email,
+                    Status = x.Ativo ? "Ativo" : "Inativo"
                 });
 
             totalRecordsFiltered = list.Count();
