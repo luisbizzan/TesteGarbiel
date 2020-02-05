@@ -1831,7 +1831,11 @@ namespace FWLog.Web.Backoffice.Controllers
             var filter = new RelatorioResumoProducaoFilter
             {
                 DateMin = model.CustomFilter.DataRecebimentoMinima,
-                DateMax = model.CustomFilter.DataRecebimentoMaxima,
+                DateMax = model.CustomFilter.DataRecebimentoMaxima.HasValue ? 
+                    new DateTime(model.CustomFilter.DataRecebimentoMaxima.Value.Year, 
+                                 model.CustomFilter.DataRecebimentoMaxima.Value.Month, 
+                                 model.CustomFilter.DataRecebimentoMaxima.Value.Day, 23, 59, 59) 
+                    : model.CustomFilter.DataRecebimentoMaxima,
                 UserId = model.CustomFilter.IdUsuario,
                 IdEmpresa = IdEmpresa
             };
@@ -1865,7 +1869,11 @@ namespace FWLog.Web.Backoffice.Controllers
             var filter = new RelatorioResumoProducaoFilter
             {
                 DateMin = model.CustomFilter.DataRecebimentoMinima,
-                DateMax = model.CustomFilter.DataRecebimentoMaxima,
+                DateMax = model.CustomFilter.DataRecebimentoMaxima.HasValue ?
+                    new DateTime(model.CustomFilter.DataRecebimentoMaxima.Value.Year,
+                                 model.CustomFilter.DataRecebimentoMaxima.Value.Month,
+                                 model.CustomFilter.DataRecebimentoMaxima.Value.Day, 23, 59, 59)
+                    : model.CustomFilter.DataRecebimentoMaxima,
                 UserId = model.CustomFilter.IdUsuario,
                 IdEmpresa = IdEmpresa
             };
