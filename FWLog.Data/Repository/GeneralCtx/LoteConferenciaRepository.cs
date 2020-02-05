@@ -81,14 +81,6 @@ namespace FWLog.Data.Repository.GeneralCtx
             var loteConferencias = query.GroupBy(g => new { g.IdLote, g.IdProduto }).ToDictionary(d => d.Key, d => d.ToList());
 
             totalRecords = loteConferencias.Count();
-
-            var datafilter = filter.DataRecebimentoMaxima;
-
-            query = query.WhereIf(filter.DataRecebimentoMinima.HasValue, x => x.DataRecebimento >= filter.DataRecebimentoMinima);
-            query = query.WhereIf(filter.DataRecebimentoMaxima.HasValue, x => x.DataRecebimento <= new DateTime(filter.DataRecebimentoMaxima.Value.Year,
-                                                                                                                filter.DataRecebimentoMaxima.Value.Month,
-                                                                                                                filter.DataRecebimentoMaxima.Value.Day,
-                                                                                                                23,59,59));
 																												
             var nfItem = Entities.NotaFiscalItem.Where(w => query.Select(s => s.IdNotaFiscal).ToList().Contains(w.IdNotaFiscal)).ToList();
             var divergencias = Entities.LoteDivergencia.Where(w => query.Select(s => s.IdLote).ToList().Contains(w.IdLote)).ToList();
