@@ -854,47 +854,49 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
         public async Task<JsonResult> RegistrarConferenciaAutomatica(long id)
         {
-            var notaFiscalItens = _uow.NotaFiscalItemRepository.ObterItens(id);
-
-            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
-
-            //Remove as peças já conferidas.
-            var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
-
-            foreach (var item in loteConferencia)
-            {
-                _uow.LoteConferenciaRepository.Delete(item);
-                _uow.SaveChanges();
-            }
-
-            var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
-
-            lote.IdLoteStatus = LoteStatusEnum.Conferencia;
-            _uow.LoteRepository.Update(lote);
-
-            foreach (var item in notaFiscalItens)
-            {
-                DateTime tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 1);
-
-                LoteConferencia loteConf = new LoteConferencia()
-                {
-                    IdLote = lote.IdLote,
-                    IdTipoConferencia = TipoConferenciaEnum.PorQuantidade,
-                    IdProduto = item.IdProduto,
-                    Quantidade = item.Quantidade,
-                    DataHoraInicio = DateTime.Now,
-                    DataHoraFim = DateTime.Now,
-                    Tempo = tempo,
-                    IdUsuarioConferente = usuario.UsuarioId
-                };
-
-                _uow.LoteConferenciaRepository.Add(loteConf);
-
-                _uow.SaveChanges();
-            }
-
             try
             {
+                var notaFiscalItens = _uow.NotaFiscalItemRepository.ObterItens(id);
+
+                var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+
+                //Remove as peças já conferidas.
+                var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
+
+                foreach (var item in loteConferencia)
+                {
+                    _uow.LoteConferenciaRepository.Delete(item);
+                    _uow.SaveChanges();
+                }
+
+                var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
+
+                lote.IdLoteStatus = LoteStatusEnum.Conferencia;
+                _uow.LoteRepository.Update(lote);
+
+                await _loteService.AtualizarNotaFiscalIntegracao(lote.NotaFiscal, lote.IdLoteStatus);
+
+                foreach (var item in notaFiscalItens)
+                {
+                    DateTime tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 1);
+
+                    LoteConferencia loteConf = new LoteConferencia()
+                    {
+                        IdLote = lote.IdLote,
+                        IdTipoConferencia = TipoConferenciaEnum.PorQuantidade,
+                        IdProduto = item.IdProduto,
+                        Quantidade = item.Quantidade,
+                        DataHoraInicio = DateTime.Now,
+                        DataHoraFim = DateTime.Now,
+                        Tempo = tempo,
+                        IdUsuarioConferente = usuario.UsuarioId
+                    };
+
+                    _uow.LoteConferenciaRepository.Add(loteConf);
+
+                    _uow.SaveChanges();
+                }
+
                 await _loteService.FinalizarConferencia(lote.IdLote, usuario.UsuarioId, IdEmpresa).ConfigureAwait(false);
 
                 lote.IdLoteStatus = LoteStatusEnum.Finalizado;
@@ -1237,7 +1239,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
-        public JsonResult RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo, int idTipoConferencia)
+        public async Task<JsonResult> RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo, int idTipoConferencia)
         {
             try
             {
@@ -1366,10 +1368,13 @@ namespace FWLog.Web.Backoffice.Controllers
                     }
                 }
 
-                //Decidi não verificar o status do lote, sendo assim, sempre atualizado para Em Conferência.
-                //Validações anteriores garantem que o status não será atualizado se diferente de Recebido.
-                lote.IdLoteStatus = LoteStatusEnum.Conferencia;
-                _uow.LoteRepository.Update(lote);
+                if (lote.IdLoteStatus != LoteStatusEnum.Conferencia)
+                {
+                    lote.IdLoteStatus = LoteStatusEnum.Conferencia;
+                    _uow.LoteRepository.Update(lote);
+
+                    await _loteService.AtualizarNotaFiscalIntegracao(lote.NotaFiscal, lote.IdLoteStatus);
+                }
 
                 if (!DateTime.TryParse(inicioConferencia, out DateTime dataHoraInicio))
                 {
@@ -1831,10 +1836,10 @@ namespace FWLog.Web.Backoffice.Controllers
             var filter = new RelatorioResumoProducaoFilter
             {
                 DateMin = model.CustomFilter.DataRecebimentoMinima,
-                DateMax = model.CustomFilter.DataRecebimentoMaxima.HasValue ? 
-                    new DateTime(model.CustomFilter.DataRecebimentoMaxima.Value.Year, 
-                                 model.CustomFilter.DataRecebimentoMaxima.Value.Month, 
-                                 model.CustomFilter.DataRecebimentoMaxima.Value.Day, 23, 59, 59) 
+                DateMax = model.CustomFilter.DataRecebimentoMaxima.HasValue ?
+                    new DateTime(model.CustomFilter.DataRecebimentoMaxima.Value.Year,
+                                 model.CustomFilter.DataRecebimentoMaxima.Value.Month,
+                                 model.CustomFilter.DataRecebimentoMaxima.Value.Day, 23, 59, 59)
                     : model.CustomFilter.DataRecebimentoMaxima,
                 UserId = model.CustomFilter.IdUsuario,
                 IdEmpresa = IdEmpresa

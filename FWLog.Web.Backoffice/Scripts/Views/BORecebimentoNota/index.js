@@ -539,6 +539,7 @@ function conferirNota() {
                         success: function (result) {
                             if (result.Success) {
                                 PNotify.success({ text: result.Message });
+                                $("#dataTable").DataTable().ajax.reload();
                             }
                             else {
                                 PNotify.warning({ text: result.Message });
