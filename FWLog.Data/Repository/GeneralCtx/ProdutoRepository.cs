@@ -11,7 +11,6 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public ProdutoRepository(Entities entities) : base(entities)
         {
-
         }
 
         public Produto ConsultarPorCodigoIntegracao(long codigoIntegracao)
@@ -21,7 +20,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public Produto ConsultarPorCodigoBarrasOuReferencia(string codigoBarrasOuReferencia)
         {
-            return Entities.Produto.FirstOrDefault(f => f.CodigoBarras == codigoBarrasOuReferencia || f.Referencia == codigoBarrasOuReferencia);
+            return Entities.Produto.FirstOrDefault(f => f.CodigoBarras == codigoBarrasOuReferencia || f.Referencia == codigoBarrasOuReferencia || f.CodigoBarras2 == codigoBarrasOuReferencia);
         }
 
         public IQueryable<Produto> Todos()
@@ -34,7 +33,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRecords = Entities.Produto.Count();
 
             IQueryable<ProdutoPesquisaModalListaLinhaTabela> query =
-                Entities.Produto.AsNoTracking().Where(w => 
+                Entities.Produto.AsNoTracking().Where(w =>
                     (model.CustomFilter.Referencia.Equals(string.Empty) || w.Referencia.Contains(model.CustomFilter.Referencia)) &&
                     (model.CustomFilter.Descricao.Equals(string.Empty) || w.Descricao.Contains(model.CustomFilter.Descricao)) &&
                     (model.CustomFilter.Status.HasValue == false || w.Ativo == model.CustomFilter.Status))
