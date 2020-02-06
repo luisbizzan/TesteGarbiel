@@ -56,5 +56,7 @@ namespace FWLog.Data.Models
 
         [StringLength(15)]
         public string TelefoneSAC { get; set; }
+
+        public virtual EmpresaConfig EmpresaConfig { get; set; }
     }
 }

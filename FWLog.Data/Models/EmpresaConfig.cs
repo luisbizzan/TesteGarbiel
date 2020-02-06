@@ -11,6 +11,7 @@ namespace FWLog.Data.Models
 
         [Index]
         [Required]
+        [ForeignKey("Empresa")]
         public long IdEmpresa { get; set; }
 
         [Index]
@@ -40,10 +41,9 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdEmpresaGarantia))]
         public virtual Empresa EmpresaGarantia { get; set; }
 
-        [ForeignKey(nameof(IdEmpresa))]
-        public virtual Empresa Empresa { get; set; }
-
         [ForeignKey(nameof(IdTipoConferencia))]
         public virtual TipoConferencia TipoConferencia { get; set; }
+
+        public virtual Empresa Empresa { get; set; }
     }
 }
