@@ -386,13 +386,14 @@ namespace FWLog.Web.Backoffice.Controllers
         public JsonResult ValidarModalRegistroRecebimento(long id)
         {
             var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+            var notafiscal = _uow.NotaFiscalRepository.GetById(id);
 
-            if (lote != null)
+            if (lote != null || notafiscal.IdNotaFiscalStatus != NotaFiscalStatusEnum.AguardandoRecebimento)
             {
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Recebimento da mecadoria já efetivado no sistema.",
+                    Message = "Recebimento da mecadoria já se enconta efetivado no sistema.",
                 });
             }
 
@@ -487,6 +488,18 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public async Task<JsonResult> RegistrarRecebimentoNota(long idNotaFiscal, DateTime dataRecebimento, int qtdVolumes, bool notaFiscalPesquisada)
         {
+            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(idNotaFiscal);
+            var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
+
+            if (lote != null || notafiscal.IdNotaFiscalStatus != NotaFiscalStatusEnum.AguardandoRecebimento)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Recebimento da mecadoria já se enconta efetivado no sistema.",
+                });
+            }
+
             if (!(idNotaFiscal > 0) || !(qtdVolumes > 0) || !notaFiscalPesquisada)
             {
                 return Json(new AjaxGenericResultModel
