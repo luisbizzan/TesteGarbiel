@@ -6,7 +6,6 @@ namespace FWLog.Data.Models
     public class Empresa
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Required]
         public long IdEmpresa { get; set; }
 
         [Required]
@@ -57,6 +56,7 @@ namespace FWLog.Data.Models
         [StringLength(15)]
         public string TelefoneSAC { get; set; }
 
+        [ForeignKey(nameof(IdEmpresa))]
         public virtual EmpresaConfig EmpresaConfig { get; set; }
     }
 }

@@ -5,13 +5,9 @@ namespace FWLog.Data.Models
 {
     public class EmpresaConfig
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Required]
-        public long IdEmpresaConfig { get; set; }
-
+        [Key]
         [Index]
         [Required]
-        [ForeignKey("Empresa")]
         public long IdEmpresa { get; set; }
 
         [Index]
@@ -44,6 +40,7 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdTipoConferencia))]
         public virtual TipoConferencia TipoConferencia { get; set; }
 
+        [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
     }
 }
