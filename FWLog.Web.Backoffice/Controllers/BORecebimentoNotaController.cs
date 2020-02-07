@@ -851,16 +851,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-
-       
-
-        
-
-       
-
-       
-
-
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult EntradaConferencia(long id)
