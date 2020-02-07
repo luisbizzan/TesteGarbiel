@@ -1774,7 +1774,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                await _loteService.FinalizarConferencia(id, User.Identity.GetUserId(), IdEmpresa).ConfigureAwait(false);
+                await _loteService.FinalizarConferencia(id, User.Identity.GetUserId()).ConfigureAwait(false);
             }
             catch (Exception e)
             {
