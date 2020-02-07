@@ -654,7 +654,6 @@ namespace FWLog.Web.Backoffice.Controllers
                     model.DiasAtraso = atraso.Days.ToString();
                 }
 
-                #region CONFERENCIA
                 //Verifica se o lote está em conferência ou já foi conferido.
                 if (lote.IdLoteStatus != LoteStatusEnum.AguardandoRecebimento && lote.IdLoteStatus != LoteStatusEnum.Recebido)
                 {
@@ -743,7 +742,6 @@ namespace FWLog.Web.Backoffice.Controllers
                         }
                     }
                 }
-                #endregion
             }
 
             return View(model);
