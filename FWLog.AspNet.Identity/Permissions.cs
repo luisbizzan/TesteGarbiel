@@ -85,7 +85,6 @@ namespace FWLog.AspNet.Identity
             public const string ListarResumoProducao = "ListarResumoProducao";
             public const string PermitirDiferencaMultiploConferencia = "PermitirDiferencaMultiploConferencia";
             public const string ConferirLote = "ConferirLote";
-            public const string ConferirLoteAutomatico = "ConferirLoteAutomatico";
             public const string ImprimirEtiquetaLote = "ImprimirEtiquetaLote";
             public const string Imprimir = "EtiquetaIndividualEPersonalizadaImprimir";
             public const string PermitirConferenciaManual = "PermitirConferenciaManual";
@@ -100,7 +99,6 @@ namespace FWLog.AspNet.Identity
                 Register(ListarResumoProducao, Display.FromString("Listar Resumo Produção"));
                 Register(PermitirDiferencaMultiploConferencia, Display.FromString("Permitir Diferença de Múltiplo"));
                 Register(ConferirLote, Display.FromString("Conferir Lote"));
-                Register(ConferirLoteAutomatico, Display.FromString("Conferir Lote Automático"));
                 Register(ImprimirEtiquetaLote, Display.FromString("Imprimir Etiqueta de Lote"));
                 Register(Imprimir, Display.FromString("Imprimir Etiqueta Individual e Personalizada"));
                 Register(PermitirConferenciaManual, Display.FromString("Permitir Conferência Manual"));
