@@ -759,7 +759,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "A conferência do lote já foi finalizada.",
+                    Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
                 });
             }
 
@@ -1015,7 +1015,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "A conferência do lote já foi finalizada.",
+                    Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
                 });
             }
 
@@ -1143,7 +1143,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "A conferência do lote já foi finalizada.",
+                    Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
                 });
             }
 
@@ -1585,6 +1585,26 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
+        public JsonResult ValidarModalTratarDivergencia(long id)
+        {
+            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+
+            if (lote.IdLoteStatus != LoteStatusEnum.ConferidoDivergencia)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = $"As divergências do lote: {lote.IdLote} já foram tratadas.",
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+        }
+
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
         public ActionResult TratarDivergencia(long id)
@@ -1637,6 +1657,17 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
+                var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(viewModel.IdNotaFiscal);
+
+                if (lote.IdLoteStatus != LoteStatusEnum.ConferidoDivergencia)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = $"As divergências do lote: {lote.IdLote} já foram tratadas.",
+                    });
+                }
+
                 if (!ModelState.IsValid)
                 {
                     return Json(new AjaxGenericResultModel
@@ -1851,7 +1882,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "A conferência do lote já foi finalizada.",
+                        Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
                     });
                 }
 
