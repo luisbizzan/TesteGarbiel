@@ -208,12 +208,14 @@
     }
 
     function validarDiferencaMultiploConferencia() {
+        debugger
         let referencia = $("#Referencia").val();
         let multiplo = $("#Multiplo").val();
         let quantidadePorCaixa = $("#QuantidadePorCaixa").val();
         let quantidadeCaixa = $("#QuantidadeCaixa").val();
         let inicioConferencia = $("#InicioConferencia").val();
         let idTipoConferencia = $("#IdTipoConferencia").val();
+        let idLote = $("#IdLote").val();
 
         if (!multiplo)
             multiplo = 0;
@@ -229,7 +231,8 @@
             data: {
                 codigoBarrasOuReferencia: referencia,
                 quantidadePorCaixa: quantidadePorCaixa,
-                multiplo: multiplo
+                multiplo: multiplo,
+                idLote: idLote
             },
             success: function (result) {
                 if (result.Success) {
