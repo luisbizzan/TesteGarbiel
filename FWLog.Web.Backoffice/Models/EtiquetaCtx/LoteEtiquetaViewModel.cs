@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FWLog.Web.Backoffice.Models.RecebimentoNotaCtx
+namespace FWLog.Web.Backoffice.Models.EtiquetaCtx
 {
-    public class RecebimentoEtiquetaViewModel
+    public class LoteEtiquetaViewModel
     {
         public int? IdImpressora { get; set; }
 

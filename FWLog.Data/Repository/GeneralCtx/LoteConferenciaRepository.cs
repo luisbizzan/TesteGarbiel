@@ -81,7 +81,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             var loteConferencias = query.GroupBy(g => new { g.IdLote, g.IdProduto }).ToDictionary(d => d.Key, d => d.ToList());
 
             totalRecords = loteConferencias.Count();
-																												
+
             var nfItem = Entities.NotaFiscalItem.Where(w => query.Select(s => s.IdNotaFiscal).ToList().Contains(w.IdNotaFiscal)).ToList();
             var divergencias = Entities.LoteDivergencia.Where(w => query.Select(s => s.IdLote).ToList().Contains(w.IdLote)).ToList();
 
@@ -161,6 +161,12 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
 
             return list;
+        }
+
+        public void DeletePorIdLote(long idLote)
+        {
+            var conferencias = Entities.LoteConferencia.Where(w => w.IdLote == idLote).ToList();
+            Entities.LoteConferencia.RemoveRange(conferencias);
         }
     }
 }
