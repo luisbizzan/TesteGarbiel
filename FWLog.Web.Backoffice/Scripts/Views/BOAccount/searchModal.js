@@ -10,7 +10,7 @@
     });
 
     $('.dataTableModal').DataTable({
-        destroy: true,
+     //   destroy: true,
         ajax: {
             "url": view_modal.pageDataUrl,
             "type": "POST",
@@ -33,6 +33,7 @@
         "bInfo": false
     });
 
+    /*
     function setUsuario_Click() {
         setUsuario($(this).attr('data-select'), $(this).attr("name-select"), view_modal.origem);
     }
@@ -41,4 +42,14 @@
     $('.dataTableModal').on('click', '[data-select]', setUsuario_Click);
 
     dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));
+})();*/
+    $('#dataTableModal').on('click', '[data-select]', function () {
+        setUsuario($(this).attr('data-select'), $(this).attr("name-select"));
+    });
+
+    dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));
+
+    var validator = $("#form-datatable-modal").validate({
+        ignore: ".ignore"
+    });
 })();
