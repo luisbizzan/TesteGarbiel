@@ -753,13 +753,13 @@ namespace FWLog.Web.Backoffice.Controllers
             var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
             var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
 
-            //TODO Finalizar colocando a msg
+            //Verifica se o lote já foi conferido durante o processo de conferência.
             if (lote.IdLoteStatus != LoteStatusEnum.Recebido && lote.IdLoteStatus != LoteStatusEnum.Conferencia)
             {
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "O lote já se encontra conferido",
+                    Message = "A conferência do lote já foi finalizada.",
                 });
             }
 
@@ -1009,13 +1009,13 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            //TODO Finalizar colocando a msg
+            //Verifica se o lote já foi conferido durante o processo de conferência.
             if (lote.IdLoteStatus != LoteStatusEnum.Recebido && lote.IdLoteStatus != LoteStatusEnum.Conferencia)
             {
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "O lote já se encontra conferido",
+                    Message = "A conferência do lote já foi finalizada.",
                 });
             }
 
@@ -1137,13 +1137,13 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var lote = _uow.LoteRepository.GetById(idLote);
 
-            //TODO Finalizar colocando a msg
+            //Verifica se o lote já foi conferido durante o processo de conferência.
             if (lote.IdLoteStatus != LoteStatusEnum.Recebido && lote.IdLoteStatus != LoteStatusEnum.Conferencia)
             {
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "O lote já se encontra conferido",
+                    Message = "A conferência do lote já foi finalizada.",
                 });
             }
 
@@ -1843,15 +1843,15 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+                var lote = _uow.LoteRepository.GetById(id);
 
-                //TODO Finalizar colocando a msg
+                //Verifica se o lote já foi conferido durante o processo de conferência.
                 if (lote.IdLoteStatus != LoteStatusEnum.Recebido && lote.IdLoteStatus != LoteStatusEnum.Conferencia)
                 {
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "O lote já se encontra conferido",
+                        Message = "A conferência do lote já foi finalizada.",
                     });
                 }
 
