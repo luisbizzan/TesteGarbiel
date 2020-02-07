@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ExtensionMethods.List;
+using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
@@ -21,6 +22,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -2046,5 +2048,71 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return View(divergenciaViewModel);
         }
+
+        public ActionResult PesquisaLote()
+        {
+            return View(new PesquisaLoteModalViewModel());
+        }
+
+        public ActionResult PesquisaLoteModalPageData(DataTableFilter<PesquisaLoteModalFilterViewModel> model)
+        {
+            List<PesquisaLoteModalItemViewModel> list = new List<PesquisaLoteModalItemViewModel>();
+
+            var query = _uow.LoteRepository.Todos();
+
+            int totalRecords = query.Count();
+
+            if (model.CustomFilter.NroLote.HasValue)
+            {
+                query = query.Where(x => x.IdLote == model.CustomFilter.NroLote);
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.CustomFilter.CNPJFornecedor))
+            {
+                string cnpj = Regex.Replace(model.CustomFilter.CNPJFornecedor, @"[^\d]", string.Empty);
+
+                query = query.Where(x => x.NotaFiscal.Fornecedor.CNPJ == cnpj);
+            }
+
+            if (model.CustomFilter.NroNota.HasValue)
+            {
+                query = query.Where(x => x.NotaFiscal.Numero == model.CustomFilter.NroNota);
+            }
+
+            if (model.CustomFilter.Recebimento.HasValue)
+            {
+                var dataInicio = model.CustomFilter.Recebimento.Value.Date;
+                var dataFim = model.CustomFilter.Recebimento.Value.Date.AddDays(1);
+
+                query = query.Where(x => x.DataRecebimento >= dataInicio && x.DataRecebimento < dataFim);
+            }
+
+            //if (!string.IsNullOrEmpty(model.CustomFilter.CodFornecesor))
+            //    query = query.Where(x => x.NotaFiscal.Fornecedor..Contains(model.CustomFilter.NomeFantasia));
+
+            foreach (var item in query.ToList())
+            {
+                list.Add(new PesquisaLoteModalItemViewModel()
+                {
+                    NomeFantasiaFormecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
+                    NroLote = item.IdLote,
+                    NroNota = item.NotaFiscal.Numero,
+                    Recebimento = item.DataRecebimento.ToString("dd/MM/yyyy")
+                });
+            }
+
+            int totalRecordsFiltered = list.Count;
+
+            var result = list.PaginationResult(model);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = totalRecordsFiltered,
+                Data = result
+            });
+        }
+
     }
 }
