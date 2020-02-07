@@ -756,6 +756,17 @@ namespace FWLog.Web.Backoffice.Controllers
         public async Task<JsonResult> ValidarInicioConferencia(long id)
         {
             var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+
+            //Verifica se o lote já foi conferido durante o processo de conferência.
+            if (lote.IdLoteStatus != LoteStatusEnum.Recebido && lote.IdLoteStatus != LoteStatusEnum.Conferencia)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "A conferência do lote já foi finalizada.",
+                });
+            }
 
             if (empresaConfig.TipoConferencia == null)
             {
@@ -799,8 +810,6 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Não foi possível buscar a Nota Fiscal. Por favor, tente novamente!"
                 });
             }
-
-            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
 
             //Valida o Lote.
             if (lote == null)
@@ -909,6 +918,28 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             bool alertarUsuarioSobreTipoDePeca = false;
 
+            //Captura o lote novamente.
+            var lote = _uow.LoteRepository.GetById(idLote);
+
+            if (lote == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Lote não encontrado. Por favor, tente novamente!"
+                });
+            }
+
+            //Verifica se o lote já foi conferido durante o processo de conferência.
+            if (lote.IdLoteStatus != LoteStatusEnum.Recebido && lote.IdLoteStatus != LoteStatusEnum.Conferencia)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "A conferência do lote já foi finalizada.",
+                });
+            }
+
             //Valida se o código de barras ou referência é vazio ou nulo.
             if (string.IsNullOrEmpty(codigoBarrasOuReferencia))
             {
@@ -934,20 +965,6 @@ namespace FWLog.Web.Backoffice.Controllers
             //Atribui verdadeiro a variável para que a mensagem seja recebida.
             if (produto.UnidadeMedida.Sigla == "KT" || produto.UnidadeMedida.Sigla == "MT" || produto.UnidadeMedida.Sigla == "CT")
                 alertarUsuarioSobreTipoDePeca = true;
-
-            //Captura o lote novamente.
-            var lote = _uow.LoteRepository.GetById(idLote);
-
-            if (lote == null)
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "Lote não encontrado. Por favor, tente novamente!"
-                });
-            }
-
-            var usuarioLogado = new BackOfficeUserInfo();
 
             //Captura o Usuário que está iniciando a conferência novamente.
             var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
@@ -1035,8 +1052,20 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        public JsonResult VerificarDiferencaMultiploConferencia(string codigoBarrasOuReferencia, int quantidadePorCaixa, decimal multiplo)
+        public JsonResult VerificarDiferencaMultiploConferencia(string codigoBarrasOuReferencia, int quantidadePorCaixa, decimal multiplo, long idLote)
         {
+            var lote = _uow.LoteRepository.GetById(idLote);
+
+            //Verifica se o lote já foi conferido durante o processo de conferência.
+            if (lote.IdLoteStatus != LoteStatusEnum.Recebido && lote.IdLoteStatus != LoteStatusEnum.Conferencia)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "A conferência do lote já foi finalizada.",
+                });
+            }
+
             //Valida novamente se a referência é valida.
             if (string.IsNullOrEmpty(codigoBarrasOuReferencia))
             {
@@ -1733,7 +1762,19 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                await _loteService.FinalizarConferencia(id, User.Identity.GetUserId()).ConfigureAwait(false);
+                var lote = _uow.LoteRepository.GetById(id);
+
+                //Verifica se o lote já foi conferido durante o processo de conferência.
+                if (lote.IdLoteStatus != LoteStatusEnum.Recebido && lote.IdLoteStatus != LoteStatusEnum.Conferencia)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "A conferência do lote já foi finalizada.",
+                    });
+                }
+
+                await _loteService.FinalizarConferencia(id, User.Identity.GetUserId(), IdEmpresa).ConfigureAwait(false);
             }
             catch (Exception e)
             {
