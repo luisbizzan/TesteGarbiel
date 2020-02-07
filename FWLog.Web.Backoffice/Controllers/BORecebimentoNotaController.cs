@@ -996,7 +996,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult ObterDadosReferenciaConferencia(string codigoBarrasOuReferencia, long idLote)
         {
             bool alertarUsuarioSobreTipoDePeca = false;
-            
+
             //Captura o lote novamente.
             var lote = _uow.LoteRepository.GetById(idLote);
 
@@ -1044,18 +1044,6 @@ namespace FWLog.Web.Backoffice.Controllers
             //Atribui verdadeiro a variável para que a mensagem seja recebida.
             if (produto.UnidadeMedida.Sigla == "KT" || produto.UnidadeMedida.Sigla == "MT" || produto.UnidadeMedida.Sigla == "CT")
                 alertarUsuarioSobreTipoDePeca = true;
-
-            //Captura o lote novamente.
-            var lote = _uow.LoteRepository.GetById(idLote);
-
-            if (lote == null)
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "Lote não encontrado. Por favor, tente novamente!"
-                });
-            }
 
             //Captura o Usuário que está iniciando a conferência novamente.
             var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
