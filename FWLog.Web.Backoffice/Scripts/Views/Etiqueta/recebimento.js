@@ -7,13 +7,13 @@
         var dados = $("#recebimentoEtiqueta").serializeArray();
 
         $.ajax({
-            url: CONTROLLER_PATH + "ValidaImpressao",
+            url: "RecebimentoValidaImpressao",
             method: "POST",
             cache: false,
             data: dados,
             success: function (result) {
                 if (result.Success) {
-                    $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=2", function () {
+                    $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=5", function () {
                         $("#modalImpressoras").modal();
                     });
                 } else {
@@ -28,7 +28,6 @@
     });
 })();
 
-
 function imprimir(acao, id) {
     var idImpressora = $("#IdImpressora").val();
 
@@ -36,7 +35,7 @@ function imprimir(acao, id) {
     dados.push({ name: "IdImpressora", value: idImpressora });
 
     $.ajax({
-        url: CONTROLLER_PATH + "Imprimir",
+        url: "RecebimentoImprimir",
         method: "POST",
         cache: false,
         data: dados,

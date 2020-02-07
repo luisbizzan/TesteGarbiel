@@ -1027,8 +1027,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            var usuarioLogado = new BackOfficeUserInfo();
-
             //Captura o Usuário que está iniciando a conferência novamente.
             var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
 
