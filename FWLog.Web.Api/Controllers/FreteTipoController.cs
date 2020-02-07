@@ -16,8 +16,7 @@ namespace FWLog.Web.Api.Controllers
             _freteTipoService = freteTipoService;
         }
 
-        [Route("api/v1/fretetipo")]
-        [AllowAnonymous]
+        [Route("api/v1/fretetipo/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarFreteTipo()
         {

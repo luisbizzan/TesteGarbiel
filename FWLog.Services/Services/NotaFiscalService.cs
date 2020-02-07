@@ -9,6 +9,7 @@ using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace FWLog.Services.Services
 {
@@ -18,7 +19,7 @@ namespace FWLog.Services.Services
 
         public NotaFiscalService(UnitOfWork uow)
         {
-            _uow = uow;
+            _uow = uow;           
         }
 
         public async Task ConsultaNotaFiscalCompra()
@@ -116,7 +117,7 @@ namespace FWLog.Services.Services
                     }
 
                     var notafiscalItens = notasInt.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.UnidadeMedida, s.Quantidade, s.ValorUnitarioItem, s.ValorTotal, s.Sequencia }).ToList();
-                    
+
                     List<NotaFiscalItem> itemsNotaFsical = new List<NotaFiscalItem>();
 
                     foreach (var item in notafiscalItens)
@@ -146,7 +147,7 @@ namespace FWLog.Services.Services
                             notaFiscalItem = new NotaFiscalItem();
                             itemNovo = true;
                         }
-                        
+
                         notaFiscalItem.IdUnidadeMedida = unidade.IdUnidadeMedida;
                         notaFiscalItem.IdProduto = produto.IdProduto;
                         notaFiscalItem.Quantidade = qtdNeg;
@@ -189,17 +190,20 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task<bool> VerificarNotaFiscalCancelada(long codigoIntegracao)
+        public async Task VerificarNotaFiscalCancelada(long codigoIntegracao)
         {
+            if (!(Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"])))//TODO Temporário
+            {
+                return;
+            }
+
             string union = string.Format("WHERE NUNOTA = {0} UNION SELECT NUNOTA FROM TGFCAB_EXC WHERE NUNOTA = {0}", codigoIntegracao);
             List<NotaFiscalCanceladaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalCanceladaIntegracao>(inner: union);
 
             if (!notasIntegracao.NullOrEmpty())
             {
-                return true;
+                throw new BusinessException(string.Format("A nota fiscal {0} está cancelada no Sankhya.", codigoIntegracao));
             }
-
-            return false;
         }
 
         public async Task<bool> VerificarNotaFiscalAutorizada(long codigoIntegracao)
@@ -221,6 +225,61 @@ namespace FWLog.Services.Services
             List<NotaFiscalConfirmadaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalConfirmadaIntegracao>(where);
 
             return !notasIntegracao.NullOrEmpty();
+        }
+
+        public async Task AtualizarNotaFiscalIntegracao(NotaFiscal notafiscal, LoteStatusEnum loteStatusEnum)
+        {
+            Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", notafiscal.CodigoIntegracao.ToString() } };
+
+            await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", loteStatusEnum.GetHashCode());
+        }
+
+        public async Task RegistrarRecebimentoNotaFiscal(long idNotaFiscal, string userId, DateTime dataRecebimento, int? qtdVolumes = null)
+        {
+            var loteService = new LoteService(_uow);
+            using (TransactionScope transactionScope = _uow.CreateTransactionScope())
+            {
+                var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
+
+                await VerificarNotaFiscalCancelada(notafiscal.CodigoIntegracao);
+
+                Lote lote = _uow.LoteRepository.GetById(idNotaFiscal);
+
+                if (lote != null)
+                {
+                    throw new BusinessException(string.Format("Já existe um lote criado para a Nota Fiscal {0}, portanto o recebimento não pode ser efetuado", idNotaFiscal));
+                }
+
+                if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
+                {
+                    await AtualizarNotaFiscalIntegracao(notafiscal, LoteStatusEnum.Recebido);
+                }
+
+                loteService.CriarLoteRecebimento(notafiscal, userId, dataRecebimento, qtdVolumes);
+
+                notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.Recebida;
+
+                _uow.SaveChanges();
+                transactionScope.Complete();
+            }
+        }
+
+        public async Task ReceberNotaFiscalAutomatico(string userId)
+        {
+            List<NotaFiscal> notasfiscais = await _uow.NotaFiscalRepository.ConsultarProcessamentoAutomatico();
+
+            foreach (NotaFiscal notafiscal in notasfiscais)
+            {
+                try
+                {
+                    await RegistrarRecebimentoNotaFiscal(notafiscal.IdNotaFiscal, userId, DateTime.Now);
+                }
+                catch (Exception ex)
+                {
+                    var applicationLogService = new ApplicationLogService(_uow);
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro no recebimento automático nota fiscal - IdNotaFiscal: {0}.", notafiscal.IdNotaFiscal));
+                }
+            }
         }
     }
 }

@@ -35,6 +35,7 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly ApplicationLogService _applicationLogService;
         private readonly EtiquetaService _etiquetaService;
         private readonly LogEtiquetagemService _logEtiquetagemService;
+        private readonly NotaFiscalService _notaFiscalService;
         private readonly UnitOfWork _uow;
 
         public BORecebimentoNotaController(
@@ -43,7 +44,8 @@ namespace FWLog.Web.Backoffice.Controllers
             LoteService loteService,
             ApplicationLogService applicationLogService,
             EtiquetaService etiquetaService,
-            LogEtiquetagemService logEtiquetagemService)
+            LogEtiquetagemService logEtiquetagemService,
+            NotaFiscalService notaFiscalService)
         {
             _loteService = loteService;
             _relatorioService = relatorioService;
@@ -51,6 +53,7 @@ namespace FWLog.Web.Backoffice.Controllers
             _uow = uow;
             _etiquetaService = etiquetaService;
             _logEtiquetagemService = logEtiquetagemService;
+            _notaFiscalService = notaFiscalService;
         }
 
         [HttpGet]
@@ -237,6 +240,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     continue;
                 }
 
+                var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+
                 boRecebimentoNotaListItemViewModel.Add(new BORecebimentoNotaListItemViewModel()
                 {
                     Lote = item.IdLote == 0 ? (long?)null : item.IdLote,
@@ -250,7 +255,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
                     Atraso = atraso,
                     IdUsuarioRecebimento = item.UsuarioRecebimento == null ? string.Empty : item.UsuarioRecebimento.Id,
-                    IdLoteStatus = (int)item.LoteStatus.IdLoteStatus
+                    IdLoteStatus = (int)item.LoteStatus.IdLoteStatus,
+                    ConferenciaAutomatica = empresaConfig.CNPJConferenciaAutomatica == item.NotaFiscal.Fornecedor.CNPJ
                 });
             }
 
@@ -513,8 +519,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             try
             {
-                var userInfo = new BackOfficeUserInfo();
-                await _loteService.RegistrarRecebimentoNotaFiscal(idNotaFiscal, userInfo.UserId.ToString(), dataRecebimento, qtdVolumes).ConfigureAwait(false);
+                await _notaFiscalService.RegistrarRecebimentoNotaFiscal(idNotaFiscal, User.Identity.GetUserId(), dataRecebimento, qtdVolumes).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -761,7 +766,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "A conferência do lote já foi finalizada.",
+                    Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
                 });
             }
 
@@ -848,100 +853,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
-        public async Task<JsonResult> ValidarConferenciaAutomatica(long id)
-        {
-            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
-
-            bool conferenciaAutomatica = false;
-
-            if (empresaConfig != null)
-            {
-                if (!String.IsNullOrEmpty(empresaConfig.CNPJConferenciaAutomatica))
-                {
-                    var notaFiscal = _uow.NotaFiscalRepository.GetById(id);
-
-                    if (notaFiscal != null && notaFiscal.Fornecedor.CNPJ == empresaConfig.CNPJConferenciaAutomatica)
-                        conferenciaAutomatica = true;
-                }
-            }
-
-            return Json(new AjaxGenericResultModel
-            {
-                Success = conferenciaAutomatica
-            });
-        }
-
-        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLoteAutomatico)]
-        public async Task<JsonResult> RegistrarConferenciaAutomatica(long id)
-        {
-            try
-            {
-                var notaFiscalItens = _uow.NotaFiscalItemRepository.ObterItens(id);
-
-                var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
-
-                //Remove as peças já conferidas.
-                var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
-
-                foreach (var item in loteConferencia)
-                {
-                    _uow.LoteConferenciaRepository.Delete(item);
-                    _uow.SaveChanges();
-                }
-
-                var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
-
-                lote.IdLoteStatus = LoteStatusEnum.Conferencia;
-                _uow.LoteRepository.Update(lote);
-
-                await _loteService.AtualizarNotaFiscalIntegracao(lote.NotaFiscal, lote.IdLoteStatus);
-
-                foreach (var item in notaFiscalItens)
-                {
-                    DateTime tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 1);
-
-                    LoteConferencia loteConf = new LoteConferencia()
-                    {
-                        IdLote = lote.IdLote,
-                        IdTipoConferencia = TipoConferenciaEnum.PorQuantidade,
-                        IdProduto = item.IdProduto,
-                        Quantidade = item.Quantidade,
-                        DataHoraInicio = DateTime.Now,
-                        DataHoraFim = DateTime.Now,
-                        Tempo = tempo,
-                        IdUsuarioConferente = usuario.UsuarioId
-                    };
-
-                    _uow.LoteConferenciaRepository.Add(loteConf);
-
-                    _uow.SaveChanges();
-                }
-
-                await _loteService.FinalizarConferencia(lote.IdLote, usuario.UsuarioId, IdEmpresa).ConfigureAwait(false);
-
-                lote.IdLoteStatus = LoteStatusEnum.Finalizado;
-                _uow.LoteRepository.Update(lote);
-            }
-            catch (Exception e)
-            {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
-
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = e is BusinessException ? e.Message : "Não foi possível comunicar a finalização da conferência com o Sankhya."
-                });
-            }
-
-            return Json(new AjaxGenericResultModel
-            {
-                Success = true,
-                Message = "Conferência finalizada com sucesso."
-            });
-        }
-
-
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult EntradaConferencia(long id)
@@ -1017,7 +928,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "A conferência do lote já foi finalizada.",
+                    Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
                 });
             }
 
@@ -1143,7 +1054,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "A conferência do lote já foi finalizada.",
+                    Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
                 });
             }
 
@@ -1585,6 +1496,26 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
+        public JsonResult ValidarModalTratarDivergencia(long id)
+        {
+            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+
+            if (lote.IdLoteStatus != LoteStatusEnum.ConferidoDivergencia)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = $"As divergências do lote: {lote.IdLote} já foram tratadas.",
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+        }
+
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
         public ActionResult TratarDivergencia(long id)
@@ -1637,6 +1568,17 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
+                var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(viewModel.IdNotaFiscal);
+
+                if (lote.IdLoteStatus != LoteStatusEnum.ConferidoDivergencia)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = $"As divergências do lote: {lote.IdLote} já foram tratadas.",
+                    });
+                }
+
                 if (!ModelState.IsValid)
                 {
                     return Json(new AjaxGenericResultModel
@@ -1851,11 +1793,11 @@ namespace FWLog.Web.Backoffice.Controllers
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "A conferência do lote já foi finalizada.",
+                        Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
                     });
                 }
 
-                await _loteService.FinalizarConferencia(id, User.Identity.GetUserId(), IdEmpresa).ConfigureAwait(false);
+                await _loteService.FinalizarConferencia(id, User.Identity.GetUserId()).ConfigureAwait(false);
             }
             catch (Exception e)
             {

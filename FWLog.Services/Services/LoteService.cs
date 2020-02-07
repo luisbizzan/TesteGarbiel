@@ -24,50 +24,29 @@ namespace FWLog.Services.Services
             notaFiscalService = new NotaFiscalService(_uow);
         }
 
-        public async Task RegistrarRecebimentoNotaFiscal(long idNotaFiscal, string userId, DateTime dataRecebimento, int qtdVolumes)
+        public void CriarLoteRecebimento(NotaFiscal notaFiscal, string userId, DateTime dataRecebimento, int? qtdVolumes = null)
         {
-            var nota = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
-
-            await VerificarNotaFiscalCancelada(nota);
-
-            Lote lote = _uow.LoteRepository.GetById(idNotaFiscal);
-
-            if (lote != null)
-            {
-                return;
-            }
-
-            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
-            {
-                await AtualizarNotaFiscalIntegracao(nota, LoteStatusEnum.Recebido);
-            }
-
-            lote = new Lote
+            var lote = new Lote
             {
                 IdLoteStatus = LoteStatusEnum.Recebido,
-                IdNotaFiscal = idNotaFiscal,
+                IdNotaFiscal = notaFiscal.IdNotaFiscal,
                 DataRecebimento = dataRecebimento,
                 IdUsuarioRecebimento = userId,
-                QuantidadeVolume = qtdVolumes,
-                QuantidadePeca = nota.NotaFiscalItens.Sum(s => s.Quantidade)
+                QuantidadeVolume = qtdVolumes == null ? notaFiscal.Quantidade : qtdVolumes.Value,
+                QuantidadePeca = notaFiscal.NotaFiscalItens.Sum(s => s.Quantidade)
             };
 
             _uow.LoteRepository.Add(lote);
-
-            nota.IdNotaFiscalStatus = NotaFiscalStatusEnum.Recebida;
-
             _uow.SaveChanges();
         }
 
-        public async Task FinalizarConferencia(long idlote, string userId, long idEmpresa)
+        public async Task FinalizarConferencia(long idlote, string userId)
         {
             Lote lote = _uow.LoteRepository.GetById(idlote);
             NotaFiscal notafiscal = _uow.NotaFiscalRepository.GetById(lote.IdNotaFiscal);
             List<LoteConferencia> loteConferencias = _uow.LoteConferenciaRepository.Obter(lote.IdLote);
             List<LoteDivergencia> loteDivergencias = new List<LoteDivergencia>();
             List<LoteConferencia> loteNaoConferido = new List<LoteConferencia>();
-
-            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(idEmpresa);
 
             var nfItens = notafiscal.NotaFiscalItens.GroupBy(g => g.IdProduto).ToDictionary(g => g.Key, g => g.ToList());
 
@@ -90,7 +69,7 @@ namespace FWLog.Services.Services
                     var loteConferencia = new LoteConferencia()
                     {
                         IdLote = lote.IdLote,
-                        IdTipoConferencia = empresaConfig.IdTipoConferencia.Value,
+                        IdTipoConferencia = notafiscal.Empresa.EmpresaConfig.IdTipoConferencia.Value,
                         IdProduto = nfItem.Key,
                         Quantidade = 0,
                         DataHoraInicio = DateTime.Now,
@@ -581,24 +560,7 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", notafiscal.CodigoIntegracao.ToString() } };
-
-            await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", loteStatusEnum.GetHashCode());
-        }
-
-        private async Task VerificarNotaFiscalCancelada(NotaFiscal notafiscal)
-        {
-            if (!(Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"])))//TODO Temporário
-            {
-                return;
-            }
-
-            bool atualizacaoOK = await notaFiscalService.VerificarNotaFiscalCancelada(notafiscal.CodigoIntegracao);
-
-            if (atualizacaoOK)
-            {
-                throw new BusinessException(string.Format("A nota fiscal {0} está cancelada no Sankhya.", notafiscal.CodigoIntegracao));
-            }
+            await notaFiscalService.AtualizarNotaFiscalIntegracao(notafiscal, loteStatusEnum);
         }
 
         private async Task VerificarNotaFiscalAutorizada(long codigoIntegracao)
@@ -613,6 +575,62 @@ namespace FWLog.Services.Services
             if (!atualizacaoOK)
             {
                 throw new BusinessException(string.Format("A nota fiscal {0} ainda não está autorizada no Sankhya.", codigoIntegracao));
+            }
+        }
+
+        public async Task ConferirLoteAutomatico(string userId)
+        {
+            List<Lote> lotes = await _uow.LoteRepository.ConsultarProcessamentoAutomatico();
+
+            foreach (Lote lote in lotes)
+            {
+                try
+                {
+                    await RegistrarConferenciaAutomatico(lote, userId);
+                }
+                catch (Exception ex)
+                {
+                    var applicationLogService = new ApplicationLogService(_uow);
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro no conferência automática do lote - IdNotaFiscal: {0}.", lote.IdLote));
+                }
+            }
+        }
+
+        public async Task RegistrarConferenciaAutomatico(Lote lote, string userId)
+        {
+            using (TransactionScope transactionScope = _uow.CreateTransactionScope())
+            {
+                lote.IdLoteStatus = LoteStatusEnum.Conferencia;
+                lote.DataInicioConferencia = DateTime.Now;
+
+                await AtualizarNotaFiscalIntegracao(lote.NotaFiscal, lote.IdLoteStatus);
+
+                _uow.LoteConferenciaRepository.DeletePorIdLote(lote.IdLote);
+
+                _uow.SaveChanges();
+
+                foreach (var item in lote.NotaFiscal.NotaFiscalItens)
+                {
+                    LoteConferencia loteConf = new LoteConferencia()
+                    {
+                        IdLote = lote.IdLote,
+                        IdTipoConferencia = TipoConferenciaEnum.PorQuantidade,
+                        IdProduto = item.IdProduto,
+                        Quantidade = item.Quantidade,
+                        DataHoraInicio = DateTime.Now,
+                        DataHoraFim = DateTime.Now,
+                        Tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0),
+                        IdUsuarioConferente = userId
+                    };
+
+                    _uow.LoteConferenciaRepository.Add(loteConf);
+                }
+
+                _uow.SaveChanges();
+
+                await FinalizarConferencia(lote.IdLote, userId);
+
+                transactionScope.Complete();
             }
         }
     }

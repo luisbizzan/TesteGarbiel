@@ -16,8 +16,7 @@ namespace FWLog.Web.Api.Controllers
             _empresaService = empresaService;
         }
 
-        [Route("api/v1/empresa")]
-        [AllowAnonymous]
+        [Route("api/v1/empresa/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarEmpresa()
         {

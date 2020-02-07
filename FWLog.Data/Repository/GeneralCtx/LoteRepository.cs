@@ -6,8 +6,10 @@ using FWLog.Data.Repository.CommonCtx;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace FWLog.Data.Repository.GeneralCtx
 {
@@ -121,6 +123,15 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
 
             return list;
+        }
+
+        public Task<List<Lote>> ConsultarProcessamentoAutomatico()
+        {
+            return Entities.Lote
+                .Where(w => w.IdLoteStatus == LoteStatusEnum.Recebido &&
+                       w.NotaFiscal.Empresa.Ativo &&
+                       w.NotaFiscal.Empresa.EmpresaConfig.CNPJConferenciaAutomatica == w.NotaFiscal.Fornecedor.CNPJ)
+                .ToListAsync();
         }
 
     }

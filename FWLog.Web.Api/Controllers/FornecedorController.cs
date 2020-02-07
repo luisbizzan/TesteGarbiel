@@ -16,8 +16,7 @@ namespace FWLog.Web.Api.Controllers
             _fornecedorService = fornecedorService;
         }
 
-        [Route("api/v1/fornecedor")]
-        [AllowAnonymous]
+        [Route("api/v1/fornecedor/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarFornecedor()
         {

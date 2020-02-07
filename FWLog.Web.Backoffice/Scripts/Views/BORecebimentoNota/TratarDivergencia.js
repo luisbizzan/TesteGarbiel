@@ -82,6 +82,8 @@
                 success: function (result) {
                     if (!result.Success) {
                         PNotify.error({ text: result.Message });
+                        $("#dataTable").DataTable().ajax.reload();
+                        $("#modalDivergencia").modal("hide");
                     } else {
                         PNotify.success({ text: result.Message });
                         VerificarStatusLote($("#IdNotaFiscal").val());
