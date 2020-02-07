@@ -172,10 +172,10 @@
     };
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        var visivelDivergencia = view.tratarDivergencias && full.IdLoteStatus === 5;
-        var visivelProcessamento = view.tratarDivergencias && (full.IdLoteStatus === 9 || full.IdLoteStatus === 10 || full.IdLoteStatus === 11);
-        var visivelRegistrarRecibimento = view.registrarRecebimento && full.IdLoteStatus === 1;
-        var visivelConferirLote = view.conferirLote && (full.IdLoteStatus === 2 || full.IdLoteStatus === 3);
+        var visivelDivergencia = !full.ConferenciaAutomatica && view.tratarDivergencias && full.IdLoteStatus === 5;
+        var visivelProcessamento = !full.ConferenciaAutomatica && view.tratarDivergencias && (full.IdLoteStatus === 9 || full.IdLoteStatus === 10 || full.IdLoteStatus === 11);
+        var visivelRegistrarRecibimento = !full.ConferenciaAutomatica && view.registrarRecebimento && full.IdLoteStatus === 1;
+        var visivelConferirLote = !full.ConferenciaAutomatica && view.conferirLote && (full.IdLoteStatus === 2 || full.IdLoteStatus === 3);
 
         return [
             {
@@ -205,7 +205,7 @@
             {
                 text: "Sincronizar Integração Sankhya",
                 attrs: { 'data-id': full.IdNotaFiscal, 'action': 'exibirProcessamento' },
-                icon: 'fa fa-gears',
+                icon: 'fa fa-repeat',
                 visible: visivelProcessamento
             }
         ];
@@ -524,31 +524,32 @@ function conferirNota() {
         method: "POST",
         success: function (result) {
             if (result.Success) {
-                if (!validarConferenciaAutomatica(id)) {
-                    $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
-                        $modal.modal();
-                        $("#Referencia").focus();
-                    });
-                }
-                else {
-                    $.ajax({
-                        url: HOST_URL + CONTROLLER_PATH + "RegistrarConferenciaAutomatica/" + id,
-                        cache: false,
-                        async: false,
-                        method: "POST",
-                        success: function (result) {
-                            if (result.Success) {
-                                PNotify.success({ text: result.Message });
-                            }
-                            else {
-                                PNotify.warning({ text: result.Message });
-                            }
-                        },
-                        error: function (request, status, error) {
-                            PNotify.error({ text: request.responseText });
-                        }
-                    });
-                }
+                //if (!validarConferenciaAutomatica(id)) {
+                $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
+                    $modal.modal();
+                    $("#Referencia").focus();
+                });
+                //}
+                //else {
+                //    $.ajax({
+                //        url: HOST_URL + CONTROLLER_PATH + "RegistrarConferenciaAutomatica/" + id,
+                //        cache: false,
+                //        async: false,
+                //        method: "POST",
+                //        success: function (result) {
+                //            if (result.Success) {
+                //                PNotify.success({ text: result.Message });
+                //                $("#dataTable").DataTable().ajax.reload();
+                //            }
+                //            else {
+                //                PNotify.warning({ text: result.Message });
+                //            }
+                //        },
+                //        error: function (request, status, error) {
+                //            PNotify.error({ text: request.responseText });
+                //        }
+                //    });
+                //}
             } else {
                 PNotify.warning({ text: result.Message });
             }
@@ -559,26 +560,26 @@ function conferirNota() {
     });
 }
 
-function validarConferenciaAutomatica(idNotaFiscal) {
-    var retorno = false;
+//function validarConferenciaAutomatica(idNotaFiscal) {
+//    var retorno = false;
 
-    $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "ValidarConferenciaAutomatica/" + idNotaFiscal,
-        cache: false,
-        async: false,
-        method: "POST",
-        success: function (result) {
-            if (result.Success) {
-                retorno = true;
-            }
-        },
-        error: function (request, status, error) {
-            PNotify.info({ text: request.responseText });
-        }
-    });
+//    $.ajax({
+//        url: HOST_URL + CONTROLLER_PATH + "ValidarConferenciaAutomatica/" + idNotaFiscal,
+//        cache: false,
+//        async: false,
+//        method: "POST",
+//        success: function (result) {
+//            if (result.Success) {
+//                retorno = true;
+//            }
+//        },
+//        error: function (request, status, error) {
+//            PNotify.info({ text: request.responseText });
+//        }
+//    });
 
-    return retorno;
-}
+//    return retorno;
+//}
 
 function tratarDivergencias() {
     let id = $(this).data("id");

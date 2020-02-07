@@ -82,14 +82,6 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             totalRecords = loteConferencias.Count();
 
-            var datafilter = filter.DataRecebimentoMaxima;
-
-            query = query.WhereIf(filter.DataRecebimentoMinima.HasValue, x => x.DataRecebimento >= filter.DataRecebimentoMinima);
-            query = query.WhereIf(filter.DataRecebimentoMaxima.HasValue, x => x.DataRecebimento <= new DateTime(filter.DataRecebimentoMaxima.Value.Year,
-                                                                                                                filter.DataRecebimentoMaxima.Value.Month,
-                                                                                                                filter.DataRecebimentoMaxima.Value.Day,
-                                                                                                                23,59,59));
-																												
             var nfItem = Entities.NotaFiscalItem.Where(w => query.Select(s => s.IdNotaFiscal).ToList().Contains(w.IdNotaFiscal)).ToList();
             var divergencias = Entities.LoteDivergencia.Where(w => query.Select(s => s.IdLote).ToList().Contains(w.IdLote)).ToList();
 
@@ -169,6 +161,12 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
 
             return list;
+        }
+
+        public void DeletePorIdLote(long idLote)
+        {
+            var conferencias = Entities.LoteConferencia.Where(w => w.IdLote == idLote).ToList();
+            Entities.LoteConferencia.RemoveRange(conferencias);
         }
     }
 }

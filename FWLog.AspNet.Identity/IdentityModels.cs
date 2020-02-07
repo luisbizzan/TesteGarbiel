@@ -3,6 +3,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Configuration;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace FWLog.AspNet.Identity
 {
-    [Table("AspNetPermissions", Schema = "DART")]
+    [Table("AspNetPermissions")]
     public class ApplicationPermission
     {
         [Key]
@@ -30,7 +31,7 @@ namespace FWLog.AspNet.Identity
         }
     }
 
-    [Table("AspNetRolePermissions", Schema = "DART")]
+    [Table("AspNetRolePermissions")]
     public class RolePermission
     {
         [Key, Column(Order = 0)]
@@ -43,7 +44,7 @@ namespace FWLog.AspNet.Identity
         public virtual ApplicationPermission Permission { get; set; }
     }
 
-    [Table("AspNetUserPermissions", Schema = "DART")]
+    [Table("AspNetUserPermissions")]
     public class UserPermission
     {
         [Key, Column(Order = 0)]
@@ -56,7 +57,7 @@ namespace FWLog.AspNet.Identity
         public virtual ApplicationPermission Permission { get; set; }
     }
 
-    [Table("AspNetUsers", Schema = "DART")]
+    [Table("AspNetUsers")]
     public class ApplicationUser : IdentityUser<string, IdentityUserLogin, UserRole, IdentityUserClaim>, IUser, IUser<string>
     {
         public int ApplicationId { get; set; }
@@ -75,7 +76,7 @@ namespace FWLog.AspNet.Identity
         }
     }
 
-    [Table("AspNetRoles", Schema = "DART")]
+    [Table("AspNetRoles")]
     public class ApplicationRole : IdentityRole<string, UserRole>
     {
         public int ApplicationId { get; set; }
@@ -92,7 +93,7 @@ namespace FWLog.AspNet.Identity
         }
     }
 
-    [Table("AspNetUserRoles", Schema = "DART")]
+    [Table("AspNetUserRoles")]
     public class UserRole : IdentityUserRole
     {
         public long CompanyId { get; set; }
@@ -111,11 +112,9 @@ namespace FWLog.AspNet.Identity
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("DART");
-
-            base.OnModelCreating(modelBuilder);
-
+            modelBuilder.HasDefaultSchema(ConfigurationManager.AppSettings["DatabaseSchema"]);
             modelBuilder.Entity<UserRole>().HasKey(k => new { k.UserId, k.RoleId, k.CompanyId });
+            base.OnModelCreating(modelBuilder);
         }
 
         static ApplicationDbContext()

@@ -69,7 +69,7 @@
                     $quantidadeMenos.css("border-color", "#a94442");
                 }
             });
-
+         
             if (!_model.isValid) {
                 throw new divergenciaValidation(_model.Message);
             }
@@ -78,7 +78,7 @@
                 url: HOST_URL + "BORecebimentoNota/TratarDivergencia",
                 cache: false,
                 method: "POST",
-                data: $("#divergencias").serialize(),
+                data: $("#tratarDivergencias").serialize(),
                 success: function (result) {
                     if (!result.Success) {
                         PNotify.error({ text: result.Message });
