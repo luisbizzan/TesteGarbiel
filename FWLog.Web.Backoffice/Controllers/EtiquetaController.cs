@@ -3,7 +3,7 @@ using FWLog.Data.EnumsAndConsts;
 using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Models.CommonCtx;
-using FWLog.Web.Backoffice.Models.RecebimentoNotaCtx;
+using FWLog.Web.Backoffice.Models.EtiquetaCtx;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Linq;
@@ -12,14 +12,14 @@ using FWLog.Services.Model.LogEtiquetagem;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
-    public class RecebimentoEtiquetaController : BOBaseController
+    public class EtiquetaController : BOBaseController
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly EtiquetaService _etiquetaService;
         private readonly LogEtiquetagemService _logEtiquetagemService;
         private readonly ApplicationLogService _applicationLogService;
 
-        public RecebimentoEtiquetaController(UnitOfWork unitOfWork, LogEtiquetagemService logEtiquetagemService, EtiquetaService etiquetaService, ApplicationLogService applicationLogService)
+        public EtiquetaController(UnitOfWork unitOfWork, LogEtiquetagemService logEtiquetagemService, EtiquetaService etiquetaService, ApplicationLogService applicationLogService)
         {
             _unitOfWork = unitOfWork;
             _etiquetaService = etiquetaService;
@@ -27,14 +27,16 @@ namespace FWLog.Web.Backoffice.Controllers
             _applicationLogService = applicationLogService;
         }
 
+        #region Lote
+
         [HttpGet]
-        public ActionResult Index()
+        public ActionResult Lote()
         {
-            return View(new RecebimentoEtiquetaViewModel());
+            return View(new LoteEtiquetaViewModel());
         }
 
         [HttpPost]
-        public JsonResult Imprimir(RecebimentoEtiquetaViewModel viewModel)
+        public JsonResult LoteImprimir(LoteEtiquetaViewModel viewModel)
         {
             try
             {
@@ -90,9 +92,8 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-
         [HttpPost]
-        public JsonResult ValidaImpressao(RecebimentoEtiquetaViewModel viewModel)
+        public JsonResult LoteValidaImpressao(LoteEtiquetaViewModel viewModel)
         {
             try
             {
@@ -172,5 +173,115 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        #endregion
+
+        #region Recebimento
+
+        [HttpGet]
+        public ActionResult Recebimento()
+        {
+            return View(new RecebimentoEtiquetaViewModel());
+        }
+
+        [HttpPost]
+        public JsonResult RecebimentoImprimir(RecebimentoEtiquetaViewModel viewModel)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Não foi possível solicitar impressão."
+                    });
+                }
+
+                _etiquetaService.ImprimirEtiquetaVolumeRecebimento(viewModel.NroLote.GetValueOrDefault(), viewModel.IdImpressora.GetValueOrDefault(), viewModel.Quantide.GetValueOrDefault());
+
+                // Lote: a quantidade salva é a quantidade de caixas/volume do lote.
+                var logEtiquetagem = new LogEtiquetagem
+                {
+                    //IdTipoEtiquetagem = viewModel.TipoEtiquetagem,
+                    IdTipoEtiquetagem = Data.Models.TipoEtiquetagemEnum.Lote.GetHashCode(),
+                    IdEmpresa = IdEmpresa,
+                    Quantidade = viewModel.Quantide.Value,
+                    IdUsuario = User.Identity.GetUserId()
+                };
+
+                _logEtiquetagemService.Registrar(logEtiquetagem);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult RecebimentoValidaImpressao(RecebimentoEtiquetaViewModel viewModel)
+        {
+            try
+            {
+                if (!(viewModel.Quantide > 0))
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Quantidade deve ser maior que zero."
+                    });
+                }
+
+                var lote = _unitOfWork.LoteRepository.GetById(viewModel.NroLote.GetValueOrDefault());
+
+                if (lote == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Lote não encontrado."
+                    });
+                }
+
+                if (viewModel.Quantide > lote.QuantidadeVolume)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Quantidade não pode ser maior que a quantidade de volumes do lote."
+                    });
+                }
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu na validação da impressão."
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        #endregion
+
     }
 }

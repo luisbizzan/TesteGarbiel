@@ -10,11 +10,12 @@
         new MenuGroup(Res.MenuRecebimento, "fa fa-truck").SetItems(
             new MenuItem { Text = Res.MenuRecebimentoNotas, Url = Url.Action("Index", "BORecebimentoNota"), RequirePermission = Permissions.Recebimento.List },
             new MenuItem { Text = Res.MenuRecebimentoQuarentena, Url = Url.Action("Index", "BOQuarentena"), RequirePermission = Permissions.RecebimentoQuarentena.Listar },
-            new MenuItem { Text = "Etiqueta - Lote", Url = Url.Action("Index", "RecebimentoEtiqueta"), RequirePermission = Permissions.Recebimento.ImprimirEtiquetaLote },
+            new MenuItem { Text = "Etiqueta - Lote", Url = Url.Action("Lote", "Etiqueta"), RequirePermission = Permissions.Recebimento.ImprimirEtiquetaLote },
+            new MenuItem { Text = "Etiqueta - Recebimento", Url = Url.Action("Recebimento", "Etiqueta"), RequirePermission = Permissions.Recebimento.ImprimirEtiquetaLote },
             new MenuItem { Text = "Etiqueta - Individual e Personalizada", Url = Url.Action("Index", "RecebimentoEtiquetaIndividualPersonalizada"), RequirePermission = Permissions.Recebimento.Imprimir },
             new MenuItem { Text = "Relatório - Rastreio de Peça", Url = Url.Action("RelatorioRastreioPeca", "BORecebimentoNota"), RequirePermission = Permissions.Recebimento.RelatorioRastreioPeca },
             new MenuItem { Text = "Relatório - Resumo Etiquetagem", Url = Url.Action("RelatorioResumoEtiquetagem", "BORecebimentoNota"), RequirePermission = Permissions.Recebimento.RelatorioResumoEtiquetagem },
-            new MenuItem { Text = "Relatório - Resumo Produção", Url = Url.Action("RelatorioResumoProducao", "BORecebimentoNota"), RequirePermission = Permissions.Recebimento.ListarResumoProducao }          
+            new MenuItem { Text = "Relatório - Resumo Produção", Url = Url.Action("RelatorioResumoProducao", "BORecebimentoNota"), RequirePermission = Permissions.Recebimento.ListarResumoProducao }
         ),
         new MenuGroup("Armazenagem", "fa fa-cubes").SetItems(
             new MenuItem { Text = "Níveis de Armazenagem", Url = Url.Action("Index", "NivelArmazenagem"), RequirePermission = Permissions.NivelArmazenagem.Listar },

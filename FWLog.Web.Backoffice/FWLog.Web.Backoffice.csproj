@@ -231,6 +231,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
     <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
+    <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\NivelArmazenagemController.cs" />
     <Compile Include="Controllers\PerfilImpressoraController.cs" />
     <Compile Include="Controllers\PontoArmazenagemController.cs" />
@@ -243,7 +244,6 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BOFornecedorController.cs" />
     <Compile Include="Controllers\ProdutoController.cs" />
-    <Compile Include="Controllers\RecebimentoEtiquetaController.cs" />
     <Compile Include="Controllers\RecebimentoEtiquetaIndividualPersonalizadaController.cs" />
     <Compile Include="EnumsAndConsts\EmpresaCookie.cs" />
     <Compile Include="GlobalResources\BOPrinter\BOPrinterStrings.Designer.cs">
@@ -307,6 +307,7 @@
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemDetalhesViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemEditarViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemListaViewModel.cs" />
+    <Compile Include="Models\EtiquetaCtx\LoteEtiquetaViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemCreateViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemDetailsViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemListViewModel.cs" />
@@ -319,7 +320,7 @@
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoSearchModalViewModel.cs" />
-    <Compile Include="Models\RecebimentoEtiquetaCtx\RecebimentoEtiquetaViewModel.cs" />
+    <Compile Include="Models\EtiquetaCtx\RecebimentoEtiquetaViewModel.cs" />
     <Compile Include="Models\RecebimentoEtiquetaIndividualPersonalizadaCtx\RecebimentoEtiquetaIndividualListViewModel.cs" />
     <Compile Include="Startup.cs" />
     <Content Include="Content\dart\dart-template.css">
@@ -485,6 +486,7 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\editar.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
+    <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\PerfilImpressora\cadastrar.js" />
@@ -496,7 +498,7 @@
     <Content Include="Scripts\Views\PontoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Produto\searchModal.js" />
     <Content Include="Scripts\Views\RecebimentoEtiquetaIndividualPersonalizada\index.js" />
-    <Content Include="Scripts\Views\RecebimentoEtiqueta\index.js" />
+    <Content Include="Scripts\Views\Etiqueta\lote.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
     <Content Include="Views\Shared\_MudarEmpresa.cshtml" />
@@ -536,7 +538,6 @@
     <Content Include="Views\BORecebimentoNota\RelatorioRastreioPeca.cshtml" />
     <Content Include="Views\BORecebimentoNota\ExibirDivergencia.cshtml" />
     <Content Include="Views\BORecebimentoNota\ResumoFinalizarConferencia.cshtml" />
-    <Content Include="Views\RecebimentoEtiqueta\Index.cshtml" />
     <Content Include="Views\Produto\SearchModal.cshtml" />
     <Content Include="Views\RecebimentoEtiquetaIndividualPersonalizada\Index.cshtml" />
     <Content Include="Views\BORecebimentoNota\ResumoProducaoRecebimento.cshtml" />
@@ -552,6 +553,8 @@
     <Content Include="Views\PerfilImpressora\Index.cshtml" />
     <Content Include="Views\PerfilImpressora\_ListaImpressoras.cshtml" />
     <Content Include="Views\Shared\_MudarPerfilImpressora.cshtml" />
+    <Content Include="Views\Etiqueta\Lote.cshtml" />
+    <Content Include="Views\Etiqueta\Recebimento.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

@@ -16,8 +16,7 @@ namespace FWLog.Web.Api.Controllers
             _produtoService = produtoService;
         }
 
-        [Route("api/v1/produto")]
-        [AllowAnonymous]
+        [Route("api/v1/produto/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarProduto()
         {
@@ -26,8 +25,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/produtoempresa")]
-        [AllowAnonymous]
+        [Route("api/v1/produto-empresa/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarProdutoPrazoEntrega()
         {
