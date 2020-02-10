@@ -29,7 +29,19 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public List<LogEtiquetagemListaLinhaTabela> BuscarLista(DataTableFilter<LogEtiquetagemListaFiltro> model, out int totalRecordsFiltered, out int totalRecords, long idEmpresa)
         {
-            totalRecords = Entities.LogEtiquetagem.Count(x=> x.IdEmpresa == idEmpresa);
+            totalRecords = Entities.LogEtiquetagem.Count(x => x.IdEmpresa == idEmpresa);
+
+            DateTime? _dataInicial = null, _dataFinal = null;
+
+            if (model.CustomFilter.DataInicial.HasValue)
+            {
+                _dataInicial = model.CustomFilter.DataInicial.Value.Date;
+            }
+
+            if (model.CustomFilter.DataFinal.HasValue)
+            {
+                _dataFinal = model.CustomFilter.DataFinal.Value.Date.AddDays(1);
+            }
 
             var query =
                 Entities.LogEtiquetagem.Where(w =>
@@ -38,8 +50,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                 (model.CustomFilter.QuantidadeInicial.HasValue == false || w.Quantidade >= model.CustomFilter.QuantidadeInicial.Value) &&
                 (model.CustomFilter.QuantidadeFinal.HasValue == false || w.Quantidade <= model.CustomFilter.QuantidadeFinal.Value) &&
                 (string.IsNullOrEmpty(model.CustomFilter.IdUsuarioEtiquetagem) || w.IdUsuario.Contains(model.CustomFilter.IdUsuarioEtiquetagem)) &&
-                (model.CustomFilter.DataInicial.HasValue == false || w.DataHora >= model.CustomFilter.DataInicial.Value) &&
-                (model.CustomFilter.DataFinal.HasValue == false || w.DataHora <= model.CustomFilter.DataFinal.Value))
+                (_dataInicial.HasValue == false || w.DataHora >= _dataInicial.Value) &&
+                (_dataFinal.HasValue == false || w.DataHora < _dataFinal.Value))
                 .Select(s => new LogEtiquetagemListaLinhaTabela
                 {
                     IdLogEtiquetagem = s.IdLogEtiquetagem,

@@ -67,34 +67,33 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.BOAccount.List)]
         public ActionResult PageData(DataTableFilter<BOAccountFilterViewModel> model)
         {
-            var query = _unitOfWork.PerfilUsuarioRepository.Tabela();
-            query = query.Where(x => x.EmpresaId == IdEmpresa);
 
-            int totalRecords = query.Count();
-            int totalRecordsFiltered = 0;
+            int totalRecords = UserManager.Users.Count();
+            var filtros = Mapper.Map<DataTableFilter<UsuarioListaFiltro>>(model);
+            filtros.CustomFilter.IdEmpresa = IdEmpresa;
 
-            IEnumerable<BOAccountListItemViewModel> list = query.ToList()
-                .Select(x => new BOAccountListItemViewModel
-                {
-                    UserName = x.Usuario.UserName,
-                    Nome = x.Nome,
-                    Email = x.Usuario.Email,
-                    Status = x.Ativo ? "Ativo" : "Inativo"
-                });
+            var query = UserManager.Users.Select(x => new UsuarioListaLinhaTabela
+            {
+                UserName = x.UserName,
+                Email = x.Email
+            });
 
-            totalRecordsFiltered = list.Count();
+            if (!String.IsNullOrEmpty(filtros.CustomFilter.UserName))
+            {
+                query = query.Where(x => x.UserName.Contains(filtros.CustomFilter.UserName));
+            }
 
-            var result = list
-                .OrderBy(model.OrderByColumn, model.OrderByDirection)
-                .Skip(model.Start)
-                .Take(model.Length);
+            // Quantidade total de registros com filtros aplicados, sem Skip() e Take().
+            int recordsFiltered = query.Count();
 
-            return DataTableResult.FromModel(new DataTableResponseModel()
+            List<UsuarioListaLinhaTabela> result = _unitOfWork.PerfilUsuarioRepository.PesquisarLista(filtros);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
                 RecordsTotal = totalRecords,
-                RecordsFiltered = totalRecordsFiltered,
-                Data = result
+                RecordsFiltered = recordsFiltered,
+                Data = Mapper.Map<IEnumerable<BOAccountListItemViewModel>>(result)
             });
         }
 
@@ -707,31 +706,34 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize]
         public ActionResult SearchModalPageData(DataTableFilter<BOPerfilUsuarioSearchModalFilterViewModel> filter)
         {
+            int totalRecords = UserManager.Users.Count();
+            var filtros = Mapper.Map<DataTableFilter<BOPerfilUsuarioSearchModalFilterViewModel>>(filter);
+
             var query = _unitOfWork.PerfilUsuarioRepository.Tabela();
             query = query.Where(x => x.EmpresaId == IdEmpresa);
 
-            int totalRecords = query.Count();
+            if (!String.IsNullOrEmpty(filtros.CustomFilter.UserName))
+                query = query.Where(x => x.Usuario.UserName.Contains(filtros.CustomFilter.UserName));
 
-            if (!string.IsNullOrEmpty(filter.CustomFilter.UserName))
-                query = query.Where(x => x.Usuario.UserName.Contains(filter.CustomFilter.UserName));
+            if (!String.IsNullOrEmpty(filtros.CustomFilter.Nome))
+                query = query.Where(x => x.Nome.Contains(filtros.CustomFilter.Nome));
 
-            if (!string.IsNullOrEmpty(filter.CustomFilter.Nome))
-                query = query.Where(x => x.Nome.Contains(filter.CustomFilter.Nome));
+            if (!String.IsNullOrEmpty(filtros.CustomFilter.Departamento))
+                query = query.Where(x => x.Departamento.Contains(filtros.CustomFilter.Departamento));
 
-            if (!string.IsNullOrEmpty(filter.CustomFilter.Departamento))
-                query = query.Where(x => x.Departamento.Contains(filter.CustomFilter.Departamento));
+            if (!String.IsNullOrEmpty(filtros.CustomFilter.UserName))
+                query = query.Where(x => x.Usuario.UserName.Contains(filtros.CustomFilter.UserName));
 
-            if (!string.IsNullOrEmpty(filter.CustomFilter.Cargo))
-                query = query.Where(x => x.Cargo.Contains(filter.CustomFilter.Cargo));
+            // Quantidade total de registros com filtros aplicados, sem Skip() e Take().
+            int recordsFiltered = query.Count();
 
-          
             List<BOPerfilUsuarioSearchModalItemViewModel> boPerfilUsuarioSearchModalFilterViewModel =
                 query.Select(x => new BOPerfilUsuarioSearchModalItemViewModel()
                 {
                     UsuarioId = x.UsuarioId,
                     UserName = x.Usuario.UserName,
-                    Nome     = x.Nome,
-                    Cargo    = x.Cargo,
+                    Nome = x.Nome,
+                    Cargo = x.Cargo,
                     Departamento = x.Departamento
                 }).ToList();
 

@@ -28,26 +28,30 @@ namespace FWLog.Services.Services
         /// </summary>
         private ReadOnlyCollection<CelulaEtiqueta> CelulasEtiqueta_102x22 { get; } = new List<CelulaEtiqueta> { new CelulaEtiqueta(0), new CelulaEtiqueta(272), new CelulaEtiqueta(545) }.AsReadOnly();
 
-        public void ImprimirEtiquetaVolumeRecebimento(long idLote, long idImpressora)
+        public void ImprimirEtiquetaVolumeRecebimento(long idLote, long idImpressora, int? quantidade = null)
         {
             Lote lote = _unitOfWork.LoteRepository.GetById(idLote);
 
+            int _quantidade = quantidade ?? lote.QuantidadeVolume;
+
             var etiquetaImprimir = new StringBuilder();
 
-            for (int i = 1; i <= lote.QuantidadeVolume; i++)
-            {
-                etiquetaImprimir.Append("^XA");
-                etiquetaImprimir.Append("^FWB");
-                etiquetaImprimir.Append("^FO16,20^GB710,880^FS");
-                etiquetaImprimir.Append("^BY3,8,120");
-                etiquetaImprimir.Append(string.Concat("^FO280,90^BC^FD", idLote.ToString().PadLeft(10, '0'), "^FS"));
-                etiquetaImprimir.Append("^FO50,90^FB470,3,0,C,0^A0,230,100^FD");
-                etiquetaImprimir.Append(string.Concat("FOR.", lote.NotaFiscal.Fornecedor.IdFornecedor));
-                etiquetaImprimir.Append(@"\&\&");
-                etiquetaImprimir.Append(string.Concat("NF.", lote.NotaFiscal.Numero));
-                etiquetaImprimir.Append("^FS");
-                etiquetaImprimir.Append("^XZ");
-            }
+            etiquetaImprimir.Append("^XA");
+
+            // Define quantidade de etiquetas a imprimir
+            etiquetaImprimir.Append($"^PQ{_quantidade}^FS");
+
+            etiquetaImprimir.Append("^FWB");
+            etiquetaImprimir.Append("^FO16,20^GB710,880^FS");
+            etiquetaImprimir.Append("^BY3,8,120");
+            etiquetaImprimir.Append($"^FO280,90^BC^FD{idLote.ToString().PadLeft(10, '0')}^FS");
+            etiquetaImprimir.Append("^FO50,90^FB470,3,0,C,0^A0,230,100^FD");
+            etiquetaImprimir.Append($"FOR.{lote.NotaFiscal.Fornecedor.IdFornecedor}");
+            etiquetaImprimir.Append(@"\&\&");
+            etiquetaImprimir.Append($"NF.{lote.NotaFiscal.Numero}");
+            etiquetaImprimir.Append("^FS");
+
+            etiquetaImprimir.Append("^XZ");
 
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaImprimir.ToString());
 
@@ -155,7 +159,7 @@ namespace FWLog.Services.Services
                 foreach (CelulaEtiqueta celula in colunasImpressao)
                 {
                     // Posição inicial de desenho da etiqueta
-                    etiquetaZpl.Append($"^LH{celula.X},0");
+                    etiquetaZpl.Append($"^LH{celula.X},{celula.Y}");
 
                     // Label referência do produto
                     etiquetaZpl.Append("^FO12,12^GB140,26,30^FS");
@@ -216,7 +220,7 @@ namespace FWLog.Services.Services
                 foreach (CelulaEtiqueta celula in colunasImpressao)
                 {
                     // Posição inicial de desenho da etiqueta
-                    etiquetaZpl.Append($"^LH{celula.X},0");
+                    etiquetaZpl.Append($"^LH{celula.X},{celula.Y}");
 
                     // Label referência do produto
                     etiquetaZpl.Append("^FO12,12^GB240,25,30^FS");
@@ -272,7 +276,7 @@ namespace FWLog.Services.Services
                 foreach (CelulaEtiqueta celula in colunasImpressao)
                 {
                     // Posição inicial de desenho da etiqueta
-                    etiquetaZpl.Append($"^LH{celula.X},0");
+                    etiquetaZpl.Append($"^LH{celula.X},{celula.Y}");
 
                     // Label Distribuido por
                     etiquetaZpl.Append("^FO12,40^FB260,1,,C,0^A0N,30,20^FDDISTRIBUIDO POR:^FS");

@@ -37,8 +37,8 @@
         },
         order: [[0, "ASC"]],
         columns: [
-            { data: 'Nome' },
             { data: 'UserName' },
+            { data: 'Nome' },
             { data: 'Email' },
             { data: 'Status' },
             actionsColumn
