@@ -17,7 +17,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
     public class PesquisaLoteModalItemViewModel
     {
-        [Display(Name = "Nro Lote")]
+        [Display(Name = "Lote")]
         public long? NroLote { get; set; }
 
         [Display(Name = "Nota Fiscal")]
@@ -32,14 +32,14 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
     public class PesquisaLoteModalFilterViewModel
     {
-        [Display(Name = "Nro Lote")]
+        [Display(Name = "Lote")]
         public long? NroLote { get; set; }
 
         [Display(Name = "Nota Fiscal")]
         public int? NroNota { get; set; }
 
         [Display(Name = "Código do Fornecedor")]
-        public string CodFornecesor { get; set; }
+        public long? CodFornecesor { get; set; }
 
         [Display(Name = "CNPJ do Fornecedor")]
         public string CNPJFornecedor { get; set; }
