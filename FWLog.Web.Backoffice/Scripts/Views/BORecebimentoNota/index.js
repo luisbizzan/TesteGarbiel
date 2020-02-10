@@ -256,7 +256,7 @@
     dart.dataTables.loadFormFilterEvents();
 
     $("#pesquisarFornecedor").click(function () {
-        $("#modalFornecedor").load(HOST_URL + "BOFornecedor/SearchModal", function () {
+        $("#modalFornecedor").load("BORecebimentoNota/PesquisaLote", function () {
             $("#modalFornecedor").modal();
         });
     });
@@ -622,5 +622,3 @@ function exibirProcessamento() {
         $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
     });
 }
-
-
