@@ -56,7 +56,7 @@
                                     <span class="input-group-addon">
                                         <span>De</span>
                                     </span>
-                                    @Html.TextBoxFor(m => m.Filter.DataCompraMinima, new { @class = "form-control dateFormat ", data_field = "DataCompraMinima" })
+                                    @Html.TextBoxFor(m => m.Filter.DataCompraMinima, new { @class = "form-control dateFormat", data_field = "DataCompraMinima" })
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -68,7 +68,7 @@
                                     <span class="input-group-addon">
                                         <span>Até</span>
                                     </span>
-                                    @Html.TextBoxFor(m => m.Filter.DataCompraMaxima, new { @class = "form-control dateFormat ", data_field = "DataCompraMaxima" })
+                                    @Html.TextBoxFor(m => m.Filter.DataCompraMaxima, new { @class = "form-control dateFormat", data_field = "DataCompraMaxima" })
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -82,8 +82,9 @@
                                     <span class="input-group-addon">
                                         <span>Min.</span>
                                     </span>
-                                    @Html.TextBoxFor(m => m.Filter.QtdCompraMinima, new { @class = "form-control", data_field = "QtdCompraMinima", type = "number" })
+                                    @Html.TextBoxFor(m => m.Filter.QtdCompraMinima, new { @class = "form-control validateQtdCompraMinima", data_field = "QtdCompraMinima", type = "number" })
                                 </div>
+                                @Html.ValidationMessageFor(m => m.Filter.QtdCompraMinima)
                             </div>
                             <div class="form-group col-sm-6 col-xs-12 col-md-12 col-lg-6">
                                 @Html.LabelFor(m => m.Filter.QtdCompraMaxima)
@@ -91,8 +92,9 @@
                                     <span class="input-group-addon">
                                         <span>Máx.</span>
                                     </span>
-                                    @Html.TextBoxFor(m => m.Filter.QtdCompraMaxima, new { @class = "form-control", data_field = "QtdCompraMaxima validateQtdCompraMaxima", type = "number" })
+                                    @Html.TextBoxFor(m => m.Filter.QtdCompraMaxima, new { @class = "form-control validateQtdCompraMaxima", data_field = "QtdCompraMaxima", type = "number" })
                                 </div>
+                                @Html.ValidationMessageFor(m => m.Filter.QtdCompraMaxima)
                             </div>
                         </div>
                     </div>
@@ -140,8 +142,9 @@
                                     <span class="input-group-addon">
                                         <span>Min.</span>
                                     </span>
-                                    @Html.TextBoxFor(m => m.Filter.QtdRecebidaMinima, new { @class = "form-control", data_field = "QtdRecebidaMinima", type = "number" })
+                                    @Html.TextBoxFor(m => m.Filter.QtdRecebidaMinima, new { @class = "form-control validateQtdRecebidaMinima", data_field = "QtdRecebidaMinima", type = "number" })
                                 </div>
+                                @Html.ValidationMessageFor(m => m.Filter.QtdRecebidaMinima)
                             </div>
                             <div class="form-group col-sm-6 col-xs-12 col-md-12 col-lg-6">
                                 @Html.LabelFor(m => m.Filter.QtdRecebidaMaxima)
