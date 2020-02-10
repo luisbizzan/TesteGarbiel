@@ -1,0 +1,1 @@
+ALTER TABLE "ProdutoEstoque" ADD "MediaVenda" FLOAT NULL
