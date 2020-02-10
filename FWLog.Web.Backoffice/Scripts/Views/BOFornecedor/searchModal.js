@@ -25,7 +25,7 @@
 
         },
         columns: [
-            { data: 'CodigoIntegracao' },
+            { data: 'IdFornecedor' },
             { data: 'RazaoSocial' },
             { data: 'NomeFantasia' },
             { data: 'CNPJ' },
