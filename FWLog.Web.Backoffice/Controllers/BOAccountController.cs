@@ -721,8 +721,8 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!String.IsNullOrEmpty(filtros.CustomFilter.Departamento))
                 query = query.Where(x => x.Departamento.Contains(filtros.CustomFilter.Departamento));
 
-            if (!String.IsNullOrEmpty(filtros.CustomFilter.UserName))
-                query = query.Where(x => x.Usuario.UserName.Contains(filtros.CustomFilter.UserName));
+            if (!String.IsNullOrEmpty(filtros.CustomFilter.Cargo))
+                query = query.Where(x => x.Cargo.Contains(filtros.CustomFilter.Cargo));
 
             // Quantidade total de registros com filtros aplicados, sem Skip() e Take().
             int recordsFiltered = query.Count();

@@ -12,6 +12,7 @@
     });
 
     $('#dataTableModal').DataTable({
+       // destroy: true,
         ajax: {
             "url": view_modal.pageDataUrl,
             "type": "POST",
@@ -25,7 +26,7 @@
 
         },
         columns: [
-            { data: 'CodigoIntegracao' },
+            { data: 'IdFornecedor' },
             { data: 'RazaoSocial' },
             { data: 'NomeFantasia' },
             { data: 'CNPJ' },

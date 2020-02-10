@@ -63,13 +63,12 @@ namespace FWLog.Web.Backoffice.Controllers
                 Filter = new BORecebimentoNotaFilterViewModel()
                 {
                     ListaStatus = new SelectList(
-                    _uow.LoteStatusRepository.Todos().Select(x => new SelectListItem
+                    _uow.LoteStatusRepository.Todos().OrderBy(o => o.Descricao).Select(x => new SelectListItem
                     {
                         Value = x.IdLoteStatus.GetHashCode().ToString(),
                         Text = x.Descricao,
                     }), "Value", "Text"
-                )
-                }
+                )}
             };
 
             model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
@@ -610,9 +609,9 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 IdNotaFiscal = notaFiscal.IdNotaFiscal,
                 ChaveAcesso = notaFiscal.ChaveAcesso,
-                NumeroNotaFiscal = notaFiscal.Numero.ToString(),
+                NumeroNotaFiscal = string.Concat(notaFiscal.Numero.ToString(), " - ", notaFiscal.Serie),
                 StatusNotaFiscal = notaFiscal.NotaFiscalStatus.ToString(),
-                Fornecedor = string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.NomeFantasia),
+                Fornecedor = string.Concat(notaFiscal.Fornecedor.IdFornecedor.ToString(), " - ", notaFiscal.Fornecedor.NomeFantasia),
                 DataCompra = notaFiscal.DataEmissao.ToString("dd/MM/yyyy"),
                 PrazoRecebimento = notaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
                 FornecedorCNPJ = notaFiscal.Fornecedor.CNPJ.Substring(0, 2) + "." + notaFiscal.Fornecedor.CNPJ.Substring(2, 3) + "." + notaFiscal.Fornecedor.CNPJ.Substring(5, 3) + "/" + notaFiscal.Fornecedor.CNPJ.Substring(8, 4) + "-" + notaFiscal.Fornecedor.CNPJ.Substring(12, 2),
@@ -620,7 +619,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ValorFrete = notaFiscal.ValorFrete.ToString("C"),
                 NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
                 PesoConhecimento = notaFiscal.PesoBruto.HasValue ? notaFiscal.PesoBruto.Value.ToString("F") : null,
-                TransportadoraNome = string.Concat(notaFiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notaFiscal.Transportadora.NomeFantasia),
+                TransportadoraNome = string.Concat(notaFiscal.Transportadora.IdTransportadora.ToString(), " - ", notaFiscal.Transportadora.NomeFantasia),
                 DiasAtraso = "0"
             };
 
@@ -665,7 +664,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     model.EmConferenciaOuConferido = true;
 
                     //Captura as conferências do lote.
-                    var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
+                    var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote).OrderByDescending(x => x.DataHoraFim).ToList();
 
                     if (loteConferencia.Count > 0)
                     {
