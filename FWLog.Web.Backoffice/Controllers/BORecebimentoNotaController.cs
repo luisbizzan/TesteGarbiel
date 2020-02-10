@@ -65,13 +65,12 @@ namespace FWLog.Web.Backoffice.Controllers
                 Filter = new BORecebimentoNotaFilterViewModel()
                 {
                     ListaStatus = new SelectList(
-                    _uow.LoteStatusRepository.Todos().Select(x => new SelectListItem
+                    _uow.LoteStatusRepository.Todos().OrderBy(o => o.Descricao).Select(x => new SelectListItem
                     {
                         Value = x.IdLoteStatus.GetHashCode().ToString(),
                         Text = x.Descricao,
                     }), "Value", "Text"
-                )
-                }
+                )}
             };
 
             model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
