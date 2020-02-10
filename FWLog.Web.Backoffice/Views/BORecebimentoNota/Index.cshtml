@@ -18,9 +18,9 @@
                 registrarRecebimento = User.HasPermission(Permissions.Recebimento.RegistrarRecebimento),
                 registrarRecebimentoUrl = Url.Action("ExibirModalRegistroRecebimento"),
                 tratarDivergencias = User.HasPermission(Permissions.Recebimento.TratarDivergencia),
-                conferirLote = User.HasPermission(Permissions.Recebimento.ConferirLote)                
-            }
-        )
+                conferirLote = User.HasPermission(Permissions.Recebimento.ConferirLote)
+                }
+            )
 }
 
 <form data-filter="form" data-filter-for="dataTable" class="form-filter" id="formRecebimentoNota">
@@ -36,25 +36,25 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-2 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.Lote)
                     @Html.TextBoxFor(m => m.Filter.Lote, new { @class = "form-control onlyNumber", data_field = "Lote" })
                 </div>
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-2 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.Nota)
                     @Html.TextBoxFor(m => m.Filter.Nota, new { @class = "form-control onlyNumber", data_field = "Nota" })
                 </div>
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-5 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.ChaveAcesso)
                     @Html.TextBoxFor(m => m.Filter.ChaveAcesso, new { @class = "form-control onlyNumber", data_field = "ChaveAcesso" })
                 </div>
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.IdStatus)
                     @Html.DropDownListFor(m => m.Filter.IdStatus, Model.Filter.ListaStatus, "Todos", new { @class = "form-control", data_field = "IdStatus" })
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataInicial)
                     <div class='input-group date'>
                         @Html.TextBoxFor(m => m.Filter.DataInicial, new { @class = "form-control dateFormat", data_field = "DataInicial" })
@@ -63,7 +63,7 @@
                         </span>
                     </div>
                 </div>
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataFinal)
                     <div class='input-group date'>
                         @Html.TextBoxFor(m => m.Filter.DataFinal, new { @class = "form-control dateFormat", data_field = "DataFinal" })
@@ -72,7 +72,7 @@
                         </span>
                     </div>
                 </div>
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.PrazoInicial)
                     <div class='input-group date'>
                         @Html.TextBoxFor(m => m.Filter.PrazoInicial, new { @class = "form-control dateFormat validateDateOrPrazoInicial", data_field = "PrazoInicial" })
@@ -82,7 +82,7 @@
                     </div>
                     @Html.ValidationMessageFor(m => m.Filter.PrazoInicial)
                 </div>
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.PrazoFinal)
                     <div class='input-group date'>
                         @Html.TextBoxFor(m => m.Filter.PrazoFinal, new { @class = "form-control dateFormat validateDateOrPrazoFinal", data_field = "PrazoFinal" })
@@ -94,10 +94,10 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(model => model.Filter.IdFornecedor, htmlAttributes: new { @class = "control-label" })
                     <div class="input-group">
-                        @Html.TextBoxFor(m => m.Filter.NomeFantasiaFornecedor, null, new { @class = "form-control", @readonly = "true"})
+                        @Html.TextBoxFor(m => m.Filter.NomeFantasiaFornecedor, null, new { @class = "form-control", @readonly = "true" })
                         <span class="input-group-btn">
                             <a id="pesquisarFornecedor" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
                             <a id="limparFornecedor" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
@@ -105,21 +105,21 @@
                     </div>
                     @Html.HiddenFor(m => m.Filter.IdFornecedor, new { data_field = "IdFornecedor" })
                 </div>
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.Atraso)
                     @Html.TextBoxFor(m => m.Filter.Atraso, new { @class = "form-control onlyNumber", data_field = "Atraso" })
                 </div>
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.QuantidadePeca)
                     @Html.TextBoxFor(m => m.Filter.QuantidadePeca, new { @class = "form-control onlyNumber", data_field = "QuantidadePeca" })
                 </div>
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.QuantidadeVolume)
                     @Html.TextBoxFor(m => m.Filter.QuantidadeVolume, new { @class = "form-control onlyNumber", data_field = "QuantidadeVolume" })
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(model => model.Filter.IdUsuarioRecebimento, htmlAttributes: new { @class = "control-label" })
                     <div class="input-group">
                         @Html.TextBoxFor(m => m.Filter.UserNameRecebimento, null, new { @class = "form-control", @readonly = "true" })
@@ -130,7 +130,7 @@
                     </div>
                     @Html.HiddenFor(m => m.Filter.IdUsuarioRecebimento, new { data_field = "IdUsuarioRecebimento" })
                 </div>
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(model => model.Filter.IdUsuarioConferencia, htmlAttributes: new { @class = "control-label" })
                     <div class="input-group">
                         @Html.TextBoxFor(m => m.Filter.UserNameConferencia, null, new { @class = "form-control", @readonly = "true" })
@@ -141,12 +141,12 @@
                     </div>
                     @Html.HiddenFor(model => model.Filter.IdUsuarioConferencia, new { data_field = "IdUsuarioConferencia" })
                 </div>
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.TempoInicial)
                     @Html.TextBoxFor(m => m.Filter.TempoInicial, new { @class = "form-control hourMinute validateTime", data_field = "TempoInicial" })
                     @Html.ValidationMessageFor(m => m.Filter.TempoInicial)
                 </div>
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.TempoFinal)
                     @Html.TextBoxFor(m => m.Filter.TempoFinal, new { @class = "form-control hourMinute validateTime", data_field = "TempoFinal" })
                     @Html.ValidationMessageFor(m => m.Filter.TempoFinal)

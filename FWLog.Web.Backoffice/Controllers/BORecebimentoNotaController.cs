@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ExtensionMethods.List;
+using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
@@ -21,6 +22,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -63,13 +65,12 @@ namespace FWLog.Web.Backoffice.Controllers
                 Filter = new BORecebimentoNotaFilterViewModel()
                 {
                     ListaStatus = new SelectList(
-                    _uow.LoteStatusRepository.Todos().Select(x => new SelectListItem
+                    _uow.LoteStatusRepository.Todos().OrderBy(o => o.Descricao).Select(x => new SelectListItem
                     {
                         Value = x.IdLoteStatus.GetHashCode().ToString(),
                         Text = x.Descricao,
                     }), "Value", "Text"
-                )
-                }
+                )}
             };
 
             model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
@@ -610,9 +611,9 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 IdNotaFiscal = notaFiscal.IdNotaFiscal,
                 ChaveAcesso = notaFiscal.ChaveAcesso,
-                NumeroNotaFiscal = notaFiscal.Numero.ToString(),
+                NumeroNotaFiscal = string.Concat(notaFiscal.Numero.ToString(), " - ", notaFiscal.Serie),
                 StatusNotaFiscal = notaFiscal.NotaFiscalStatus.ToString(),
-                Fornecedor = string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.NomeFantasia),
+                Fornecedor = string.Concat(notaFiscal.Fornecedor.IdFornecedor.ToString(), " - ", notaFiscal.Fornecedor.NomeFantasia),
                 DataCompra = notaFiscal.DataEmissao.ToString("dd/MM/yyyy"),
                 PrazoRecebimento = notaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
                 FornecedorCNPJ = notaFiscal.Fornecedor.CNPJ.Substring(0, 2) + "." + notaFiscal.Fornecedor.CNPJ.Substring(2, 3) + "." + notaFiscal.Fornecedor.CNPJ.Substring(5, 3) + "/" + notaFiscal.Fornecedor.CNPJ.Substring(8, 4) + "-" + notaFiscal.Fornecedor.CNPJ.Substring(12, 2),
@@ -620,7 +621,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ValorFrete = notaFiscal.ValorFrete.ToString("C"),
                 NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
                 PesoConhecimento = notaFiscal.PesoBruto.HasValue ? notaFiscal.PesoBruto.Value.ToString("F") : null,
-                TransportadoraNome = string.Concat(notaFiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notaFiscal.Transportadora.NomeFantasia),
+                TransportadoraNome = string.Concat(notaFiscal.Transportadora.IdTransportadora.ToString(), " - ", notaFiscal.Transportadora.NomeFantasia),
                 DiasAtraso = "0"
             };
 
@@ -665,7 +666,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     model.EmConferenciaOuConferido = true;
 
                     //Captura as conferências do lote.
-                    var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote);
+                    var loteConferencia = _uow.LoteConferenciaRepository.ObterPorId(lote.IdLote).OrderByDescending(x => x.DataHoraFim).ToList();
 
                     if (loteConferencia.Count > 0)
                     {
@@ -850,16 +851,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
         }
-
-
-       
-
-        
-
-       
-
-       
-
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
@@ -1998,5 +1989,73 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return View(divergenciaViewModel);
         }
+
+        public ActionResult PesquisaLote()
+        {
+            return View(new PesquisaLoteModalViewModel());
+        }
+
+        public ActionResult PesquisaLoteModalPageData(DataTableFilter<PesquisaLoteModalFilterViewModel> model)
+        {
+            List<PesquisaLoteModalItemViewModel> list = new List<PesquisaLoteModalItemViewModel>();
+
+            var query = _uow.LoteRepository.Todos();
+
+            int totalRecords = query.Count();
+
+            if (model.CustomFilter.NroLote.HasValue)
+            {
+                query = query.Where(x => x.IdLote == model.CustomFilter.NroLote);
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.CustomFilter.CNPJFornecedor))
+            {
+                string cnpj = Regex.Replace(model.CustomFilter.CNPJFornecedor, @"[^\d]", string.Empty);
+
+                query = query.Where(x => x.NotaFiscal.Fornecedor.CNPJ == cnpj);
+            }
+
+            if (model.CustomFilter.NroNota.HasValue)
+            {
+                query = query.Where(x => x.NotaFiscal.Numero == model.CustomFilter.NroNota);
+            }
+
+            if (model.CustomFilter.Recebimento.HasValue)
+            {
+                var dataInicio = model.CustomFilter.Recebimento.Value.Date;
+                var dataFim = model.CustomFilter.Recebimento.Value.Date.AddDays(1);
+
+                query = query.Where(x => x.DataRecebimento >= dataInicio && x.DataRecebimento < dataFim);
+            }
+
+            if (model.CustomFilter.CodFornecesor.HasValue)
+            {
+                query = query.Where(x => x.NotaFiscal.IdFornecedor == model.CustomFilter.CodFornecesor.Value);
+            }
+
+            foreach (var item in query.ToList())
+            {
+                list.Add(new PesquisaLoteModalItemViewModel()
+                {
+                    NomeFantasiaFormecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
+                    NroLote = item.IdLote,
+                    NroNota = item.NotaFiscal.Numero,
+                    Recebimento = item.DataRecebimento.ToString("dd/MM/yyyy")
+                });
+            }
+
+            int totalRecordsFiltered = list.Count;
+
+            var result = list.PaginationResult(model);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = totalRecordsFiltered,
+                Data = result
+            });
+        }
+
     }
 }

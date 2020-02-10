@@ -622,5 +622,3 @@ function exibirProcessamento() {
         $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
     });
 }
-
-

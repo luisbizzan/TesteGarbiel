@@ -181,5 +181,52 @@ namespace FWLog.Services.Services
                 }
             }
         }
+
+        public async Task AtualizarMediaVenda()
+        {
+            string where = "WHERE AD_INTEGRARFWLOG = '1' ";
+
+            List<ProdutoMediaVendaIntegracao> produtoMediaVenda = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoMediaVendaIntegracao>(where);
+
+            foreach (var produtoInt in produtoMediaVenda)
+            {
+                try
+                {
+                    ValidarDadosIntegracao(produtoInt);
+
+                    Empresa empresa = _uow.EmpresaRepository.ConsultaPorCodigoIntegracao(Convert.ToInt32(produtoInt.CodigoIntegracaoEmpresa));
+
+                    if (empresa == null)
+                    {
+                        throw new Exception(string.Format("Código da Empresa (CODEMP: {0}) inválido", produtoInt.CodigoIntegracaoEmpresa));
+                    }
+
+                    Produto produto = _uow.ProdutoRepository.ConsultarPorCodigoIntegracao(Convert.ToInt32(produtoInt.CodigoIntegracaoProduto));
+
+                    if (produto == null)
+                    {
+                        throw new Exception(string.Format("Código da Produto (CODPROD: {0}) inválido", produtoInt.CodigoIntegracaoProduto));
+                    }
+
+                    ProdutoEstoque produtoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, empresa.IdEmpresa);
+
+                    if (produtoEstoque != null)
+                    {
+                        produtoEstoque.MediaVenda = produtoInt.MediaVenda;                        
+                    }
+
+                    Dictionary<string, string> chaves = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() }, { "CODEMP", empresa.CodigoIntegracao.ToString() } };
+
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("AD_VGWMEDIA", chaves, "AD_INTEGRARFWLOG", "0");
+
+                    await _uow.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    var applicationLogService = new ApplicationLogService(_uow);
+                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da Média de Venda do Produto {0} Empresa: {1}.", produtoInt.CodigoIntegracaoProduto, produtoInt.CodigoIntegracaoEmpresa));
+                }
+            }
+        }
     }
 }

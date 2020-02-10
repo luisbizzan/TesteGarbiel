@@ -278,6 +278,7 @@
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\HistoricoQuarentenaViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\PesquisaLoteModalViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirEtiquetaRecebimentoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\RelatorioResumoEtiquetagemViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\ResumoDivergenciaConferenciaViewModel.cs" />
@@ -470,6 +471,7 @@
     <Content Include="Scripts\Views\BORecebimentoNota\resumoFinalizarConferencia.js" />
     <Content Include="Scripts\Views\BOQuarentena\detalhesQuarentena.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\resumoProcessamentoDivergencia.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\pesquisaLote.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\tratarDivergencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\entradaConferencia.js" />
     <Content Include="Scripts\Views\BOPrinter\create.js" />
@@ -555,6 +557,7 @@
     <Content Include="Views\Shared\_MudarPerfilImpressora.cshtml" />
     <Content Include="Views\Etiqueta\Lote.cshtml" />
     <Content Include="Views\Etiqueta\Recebimento.cshtml" />
+    <Content Include="Views\BORecebimentoNota\PesquisaLote.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

@@ -54,11 +54,11 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public DateTime? PrazoInicial { get; set; }
         [Display(Name = "Prazo de Entrega Final")]
         public DateTime? PrazoFinal { get; set; }
-        [Display(Name = "Atraso na Entrega (dias)")]
+        [Display(Name = "Dias de Atraso")]
         public int? Atraso { get; set; }
-        [Display(Name = "Quantidade de Peças")]
+        [Display(Name = "Qtd de Peças")]
         public int? QuantidadePeca { get; set; }
-        [Display(Name = "Quantidade de Volumes")]
+        [Display(Name = "Qtd de Volumes")]
         public int? QuantidadeVolume { get; set; }
         [Display(Name = "Fornecedor")]
         public long? IdFornecedor { get; set; }
@@ -69,9 +69,9 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Conferido por")]
         public string IdUsuarioConferencia { get; set; }
         public string UserNameConferencia { get; set; }
-        [Display(Name = "Tempo de Conferência Inicial")]
+        [Display(Name = "Tempo Conf. Inicial")]
         public string TempoInicial { get; set; }
-        [Display(Name = "Tempo de Conferência Final")]
+        [Display(Name = "Tempo Conf. Final")]
         public string TempoFinal { get; set; }
         public SelectList ListaStatus { get; set; }
     }

@@ -1,11 +1,10 @@
 ﻿(function () {
-
-    $('#checkAllRoles').on('click', function () {
-        $('[data-role]').prop('checked', true);
+    $("#checkAllRoles").click(function () {
+        $("input[type=checkbox]").prop('checked', true).iCheck('update');
     });
 
-    $('#uncheckAllRoles').on('click', function () {
-        $('[data-role]').prop('checked', false);
+    $("#uncheckAllRoles").click(function () {
+        $("input[type=checkbox]").prop('checked', false).iCheck('update');
     });
 
     $('#roleSearch').on('keyup', function () {
