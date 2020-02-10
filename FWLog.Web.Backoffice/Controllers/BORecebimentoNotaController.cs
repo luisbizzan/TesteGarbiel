@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ExtensionMethods.List;
+using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
@@ -21,6 +22,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -764,7 +766,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "A conferência do lote já foi finalizada.",
+                    Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
                 });
             }
 
@@ -851,16 +853,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-
-       
-
-        
-
-       
-
-       
-
-
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult EntradaConferencia(long id)
@@ -936,7 +928,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "A conferência do lote já foi finalizada.",
+                    Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
                 });
             }
 
@@ -1062,7 +1054,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "A conferência do lote já foi finalizada.",
+                    Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
                 });
             }
 
@@ -1504,6 +1496,26 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
+        public JsonResult ValidarModalTratarDivergencia(long id)
+        {
+            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+
+            if (lote.IdLoteStatus != LoteStatusEnum.ConferidoDivergencia)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = $"As divergências do lote: {lote.IdLote} já foram tratadas.",
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+        }
+
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
         public ActionResult TratarDivergencia(long id)
@@ -1556,6 +1568,17 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
+                var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(viewModel.IdNotaFiscal);
+
+                if (lote.IdLoteStatus != LoteStatusEnum.ConferidoDivergencia)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = $"As divergências do lote: {lote.IdLote} já foram tratadas.",
+                    });
+                }
+
                 if (!ModelState.IsValid)
                 {
                     return Json(new AjaxGenericResultModel
@@ -1770,7 +1793,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "A conferência do lote já foi finalizada.",
+                        Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
                     });
                 }
 
@@ -1967,5 +1990,71 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return View(divergenciaViewModel);
         }
+
+        public ActionResult PesquisaLote()
+        {
+            return View(new PesquisaLoteModalViewModel());
+        }
+
+        public ActionResult PesquisaLoteModalPageData(DataTableFilter<PesquisaLoteModalFilterViewModel> model)
+        {
+            List<PesquisaLoteModalItemViewModel> list = new List<PesquisaLoteModalItemViewModel>();
+
+            var query = _uow.LoteRepository.Todos();
+
+            int totalRecords = query.Count();
+
+            if (model.CustomFilter.NroLote.HasValue)
+            {
+                query = query.Where(x => x.IdLote == model.CustomFilter.NroLote);
+            }
+
+            if (!string.IsNullOrWhiteSpace(model.CustomFilter.CNPJFornecedor))
+            {
+                string cnpj = Regex.Replace(model.CustomFilter.CNPJFornecedor, @"[^\d]", string.Empty);
+
+                query = query.Where(x => x.NotaFiscal.Fornecedor.CNPJ == cnpj);
+            }
+
+            if (model.CustomFilter.NroNota.HasValue)
+            {
+                query = query.Where(x => x.NotaFiscal.Numero == model.CustomFilter.NroNota);
+            }
+
+            if (model.CustomFilter.Recebimento.HasValue)
+            {
+                var dataInicio = model.CustomFilter.Recebimento.Value.Date;
+                var dataFim = model.CustomFilter.Recebimento.Value.Date.AddDays(1);
+
+                query = query.Where(x => x.DataRecebimento >= dataInicio && x.DataRecebimento < dataFim);
+            }
+
+            //if (!string.IsNullOrEmpty(model.CustomFilter.CodFornecesor))
+            //    query = query.Where(x => x.NotaFiscal.Fornecedor..Contains(model.CustomFilter.NomeFantasia));
+
+            foreach (var item in query.ToList())
+            {
+                list.Add(new PesquisaLoteModalItemViewModel()
+                {
+                    NomeFantasiaFormecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
+                    NroLote = item.IdLote,
+                    NroNota = item.NotaFiscal.Numero,
+                    Recebimento = item.DataRecebimento.ToString("dd/MM/yyyy")
+                });
+            }
+
+            int totalRecordsFiltered = list.Count;
+
+            var result = list.PaginationResult(model);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = totalRecordsFiltered,
+                Data = result
+            });
+        }
+
     }
 }
