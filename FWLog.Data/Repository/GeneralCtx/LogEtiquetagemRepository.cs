@@ -51,7 +51,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 (model.CustomFilter.QuantidadeFinal.HasValue == false || w.Quantidade <= model.CustomFilter.QuantidadeFinal.Value) &&
                 (string.IsNullOrEmpty(model.CustomFilter.IdUsuarioEtiquetagem) || w.IdUsuario.Contains(model.CustomFilter.IdUsuarioEtiquetagem)) &&
                 (_dataInicial.HasValue == false || w.DataHora >= _dataInicial.Value) &&
-                (_dataFinal.HasValue == false || w.DataHora <= _dataFinal.Value))
+                (_dataFinal.HasValue == false || w.DataHora < _dataFinal.Value))
                 .Select(s => new LogEtiquetagemListaLinhaTabela
                 {
                     IdLogEtiquetagem = s.IdLogEtiquetagem,
