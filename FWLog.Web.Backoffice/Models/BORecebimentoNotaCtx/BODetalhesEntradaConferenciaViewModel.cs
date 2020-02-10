@@ -36,7 +36,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public string ValorTotal { get; set; }
         [Display(Name = "Frete")]
         public string ValorFrete { get; set; }
-        [Display(Name = "Nro. Conhecimento")]
+        [Display(Name = "Nro. CT-e")]
         public string NumeroConhecimento { get; set; }
         [Display(Name = "Peso Conhecimento")]
         public string PesoConhecimento { get; set; }
