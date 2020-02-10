@@ -2029,8 +2029,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 query = query.Where(x => x.DataRecebimento >= dataInicio && x.DataRecebimento < dataFim);
             }
 
-            //if (!string.IsNullOrEmpty(model.CustomFilter.CodFornecesor))
-            //    query = query.Where(x => x.NotaFiscal.Fornecedor..Contains(model.CustomFilter.NomeFantasia));
+            if (model.CustomFilter.CodFornecesor.HasValue)
+            {
+                query = query.Where(x => x.NotaFiscal.IdFornecedor == model.CustomFilter.CodFornecesor.Value);
+            }
 
             foreach (var item in query.ToList())
             {

@@ -256,7 +256,7 @@
     dart.dataTables.loadFormFilterEvents();
 
     $("#pesquisarFornecedor").click(function () {
-        $("#modalFornecedor").load("BORecebimentoNota/PesquisaLote", function () {
+        $("#modalFornecedor").load(HOST_URL + "BOFornecedor/SearchModal", function () {
             $("#modalFornecedor").modal();
         });
     });
