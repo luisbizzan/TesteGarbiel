@@ -1,7 +1,13 @@
 ﻿(function () {
-    $("#Filter_CNPJ").mask("99.999.999/9999-99");
+    var $Data = $('#Filter_Recebimento').closest('.date');
 
-    let actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
+    $Data.datetimepicker({
+        locale: moment.locale(),
+        format: 'L',
+        allowInputToggle: true
+    });
+
+    var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
             {
                 action: 'select',
@@ -12,7 +18,6 @@
     });
 
     $('#dataTableModal').DataTable({
-       // destroy: true,
         ajax: {
             "url": view_modal.pageDataUrl,
             "type": "POST",
@@ -23,20 +28,19 @@
         lengthChange: false,
         initComplete: function (settings, json) {
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTableModal'));
-
         },
         columns: [
-            { data: 'IdFornecedor' },
-            { data: 'RazaoSocial' },
-            { data: 'NomeFantasia' },
-            { data: 'CNPJ' },
+            { data: 'NroLote' },
+            { data: 'NroNota' },
+            { data: 'Recebimento' },
+            { data: 'NomeFantasiaFormecedor' },
             actionsColumn
         ],
         "bInfo": false
     });
 
     $('#dataTableModal').on('click', '[data-select]', function () {
-        setFornecedor($(this).attr('data-select'), $(this).attr("name-select"));
+        setLote($(this).attr('data-select'), $(this).attr("name-select"));
     });
 
     dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));

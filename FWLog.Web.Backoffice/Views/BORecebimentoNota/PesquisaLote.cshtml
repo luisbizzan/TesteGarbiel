@@ -1,16 +1,14 @@
-﻿@model FWLog.Web.Backoffice.Models.BOFornecedorCtx.BOFornecedorSearchModalViewModel
+﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.PesquisaLoteModalViewModel
 @{
     Layout = null;
     @BundleHelper.RenderViewScriptModal(
-                        new
-                        {
-                            detailsVisible = false,
-                            editVisible = false,
-                            deleteVisible = false,
-                            pageDataUrl = Url.Action("SearchModalPageData")
-                        }
-
-                    )
+    new
+    {
+        detailsVisible = false,
+        editVisible = false,
+        deleteVisible = false,
+        pageDataUrl = Url.Action("PesquisaLoteModalPageData")
+    })
 }
 
 <div class="modal-dialog modal-lg">
@@ -19,27 +17,32 @@
             <button type="button" class="close" data-dismiss="modal">
                 <span aria-hidden="true">×</span>
             </button>
-            <h4 class="modal-title" id="myModalLabel">Selecione o Fornecedor</h4>
+            <h4 class="modal-title" id="myModalLabel">Selecione o Lote</h4>
         </div>
         <div class="modal-body">
             <form data-filter="form" data-filter-for="dataTableModal" class="form-filter" id="form-datatable-modal">
                 <div class="x_panel">
                     <div class="row">
                         <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
-                            @Html.LabelFor(m => m.Filter.IdFornecedor)
-                            @Html.TextBoxFor(m => m.Filter.IdFornecedor, new { @class = "form-control", data_field = "IdFornecedor" })
+                            @Html.LabelFor(m => m.Filter.NroLote)
+                            @Html.TextBoxFor(m => m.Filter.NroLote, new { @class = "form-control", data_field = "NroLote" })
                         </div>
                         <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
-                            @Html.LabelFor(m => m.Filter.RazaoSocial)
-                            @Html.TextBoxFor(m => m.Filter.RazaoSocial, new { @class = "form-control", data_field = "RazaoSocial" })
+                            @Html.LabelFor(m => m.Filter.NroNota)
+                            @Html.TextBoxFor(m => m.Filter.NroNota, new { @class = "form-control", data_field = "NroNota" })
                         </div>
                         <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
-                            @Html.LabelFor(m => m.Filter.NomeFantasia)
-                            @Html.TextBoxFor(m => m.Filter.NomeFantasia, new { @class = "form-control", data_field = "NomeFantasia" })
+                            @Html.LabelFor(m => m.Filter.CodFornecesor)
+                            @Html.TextBoxFor(m => m.Filter.CodFornecesor, new { @class = "form-control", data_field = "CodFornecesor" })
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
-                            @Html.LabelFor(m => m.Filter.CNPJ)
-                            @Html.TextBoxFor(m => m.Filter.CNPJ, new { @class = "form-control", data_field = "CNPJ" })
+                        <div class="col-xs-12 col-md-6 col-lg-4 form-group">
+                            @Html.LabelFor(m => m.Filter.Recebimento)
+                            <div class='input-group date'>
+                                @Html.TextBoxFor(m => m.Filter.Recebimento, new { @class = "form-control dateFormat", data_field = "Recebimento" })
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -57,10 +60,10 @@
                             <table id="dataTableModal" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
                                 <thead>
                                     <tr>
-                                        <th>@Html.DisplayNameFor(m => m.EmptyItem.IdFornecedor)</th>
-                                        <th>@Html.DisplayNameFor(m => m.EmptyItem.RazaoSocial)</th>
-                                        <th>@Html.DisplayNameFor(m => m.EmptyItem.NomeFantasia)</th>
-                                        <th>@Html.DisplayNameFor(m => m.EmptyItem.CNPJ)</th>
+                                        <th>@Html.DisplayNameFor(m => m.EmptyItem.NroLote)</th>
+                                        <th>@Html.DisplayNameFor(m => m.EmptyItem.NroNota)</th>
+                                        <th>@Html.DisplayNameFor(m => m.EmptyItem.Recebimento)</th>
+                                        <th>@Html.DisplayNameFor(m => m.EmptyItem.NomeFantasiaFormecedor)</th>
                                         <th>@Resources.CommonStrings.ActionsLabel</th>
                                     </tr>
                                 </thead>

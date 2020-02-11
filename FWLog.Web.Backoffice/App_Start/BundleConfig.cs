@@ -19,11 +19,7 @@ namespace FWLog.Web.Backoffice
                 bundle.Orderer = new AsIsBundleOrderer();
             }
 
-#if DEBUG
             BundleTable.EnableOptimizations = false;
-#else
-            BundleTable.EnableOptimizations = true;
-#endif
         }
 
         private static void RegisterScripts(BundleCollection bundles)
@@ -100,7 +96,7 @@ namespace FWLog.Web.Backoffice
             ));
 
             bundles.Add(new ScriptBundle("~/script-bundles/vendors/onscan").Include(
-               "~/Scripts/vendors/onScan/onscan.min.js"
+               "~/Scripts/vendors/onScan/onscan.js"
             ));
         }
 

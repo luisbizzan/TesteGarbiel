@@ -13,7 +13,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Lote")]
         public long IdLote { get; set; }
         [Display(Name = "Nota Fiscal")]
-        public int NumeroNotaFiscal { get; set; }
+        public string NumeroNotaFiscal { get; set; }
         [Display(Name = "Recebido em")]
         public string DataRecebimento { get; set; }
         [Display(Name = "Fornecedor")]
@@ -23,12 +23,16 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Tipo de Conferência")]
         public string TipoConferencia { get; set; }
         public long IdNotaFiscal { get; set; }
+        [Display(Name = "Conferente")]
+        public string NomeConferente { get; set; }
 
         public List<ResumoFinalizarConferenciaItemViewModel> Itens { get; set; }
     }
 
     public class ResumoFinalizarConferenciaItemViewModel
     {
+        [Display(Name = "Descrição")]
+        public string DescricaoProduto { get; set; }
         [Display(Name = "Referência")]
         public string Referencia { get; set; }
         [Display(Name = "Qtde. Nota")]

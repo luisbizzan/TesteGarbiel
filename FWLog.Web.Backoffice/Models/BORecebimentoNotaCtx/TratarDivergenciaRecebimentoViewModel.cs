@@ -47,5 +47,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public int? QuantidadeMaisTratado { get; set; }
         [Display(Name = "Qtd. A-")]
         public int? QuantidadeMenosTratado { get; set; }
+        [Display(Name = "Descricao")]
+        public string DescricaoProduto { get; set; }
+
     }
 }

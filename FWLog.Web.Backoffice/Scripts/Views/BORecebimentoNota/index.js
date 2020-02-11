@@ -583,10 +583,23 @@ function conferirNota() {
 
 function tratarDivergencias() {
     let id = $(this).data("id");
-    let $modal = $("#modalDivergencia");
 
-    $modal.load(HOST_URL + CONTROLLER_PATH + "TratarDivergencia/" + id, function () {
-        $modal.modal();
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "ValidarModalTratarDivergencia/" + id,
+        method: "POST",
+        cache: false,
+        success: function (result) {
+            let $modal = $("#modalDivergencia");
+
+            if (result.Success) {
+                $modal.load(HOST_URL + CONTROLLER_PATH + "TratarDivergencia/" + id, function () {
+                    $modal.modal();
+                });
+            } else {
+                PNotify.error({ text: result.Message });
+                $("#dataTable").DataTable().ajax.reload();
+            }
+        }
     });
 }
 
@@ -609,5 +622,3 @@ function exibirProcessamento() {
         $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
     });
 }
-
-

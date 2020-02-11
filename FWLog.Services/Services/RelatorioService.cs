@@ -284,11 +284,11 @@ namespace FWLog.Services.Services
             row.Cells[0].MergeRight = 1;
             paragraph = row.Cells[0].AddParagraph();
             paragraph.AddFormattedText("Fornecedor: ", TextFormat.Bold);
-            paragraph.AddText(string.Concat(notaFiscal.Fornecedor.CodigoIntegracao.ToString(), " - ", notaFiscal.Fornecedor.NomeFantasia));
+            paragraph.AddText(string.Concat(notaFiscal.Fornecedor.IdFornecedor.ToString(), " - ", notaFiscal.Fornecedor.NomeFantasia));
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Transportadora: ", TextFormat.Bold);
-            paragraph.AddText(string.Concat(notaFiscal.Transportadora.CodigoIntegracao.ToString(), " - ", notaFiscal.Transportadora.NomeFantasia));
+            paragraph.AddText(string.Concat(notaFiscal.Transportadora.IdTransportadora.ToString(), " - ", notaFiscal.Transportadora.NomeFantasia));
 
             LoteStatusEnum[] loteNaoConferido = new LoteStatusEnum[] { LoteStatusEnum.AguardandoRecebimento, LoteStatusEnum.Desconhecido, LoteStatusEnum.Recebido };
 
@@ -368,7 +368,7 @@ namespace FWLog.Services.Services
             }
 
             paragraph = row.Cells[3].AddParagraph();
-            paragraph.AddFormattedText("Nro. Conhecimento: ", TextFormat.Bold);
+            paragraph.AddFormattedText("Nro. CT-e: ", TextFormat.Bold);
             paragraph.AddText(notaFiscal.NumeroConhecimento.ToString());
 
             row = tabela.AddRow();
@@ -402,7 +402,7 @@ namespace FWLog.Services.Services
 
             if (!LoteNaoConferido)
             {
-                var loteConferencia = _unitiOfWork.LoteConferenciaRepository.ObterPorId(lote.IdLote);
+                var loteConferencia = _unitiOfWork.LoteConferenciaRepository.ObterPorId(lote.IdLote).OrderByDescending(x => x.DataHoraFim).ToList();
                 List<UsuarioEmpresa> usuarios = _unitiOfWork.UsuarioEmpresaRepository.ObterPorEmpresa(lote.NotaFiscal.IdEmpresa);
 
                 paragraph = document.Sections[0].AddParagraph();
@@ -427,12 +427,12 @@ namespace FWLog.Services.Services
 
                 row = tabela.AddRow();
                 paragraph = row.Cells[0].AddParagraph();
-                row.Cells[0].MergeRight = 2;
+                row.Cells[0].MergeRight = 1;
                 paragraph.AddFormattedText("Tipo Conferência: ", TextFormat.Bold);
                 paragraph.AddText(loteConferencia.FirstOrDefault().TipoConferencia.Descricao);
 
-                paragraph = row.Cells[3].AddParagraph();
-                row.Cells[3].MergeRight = 2;
+                paragraph = row.Cells[2].AddParagraph();
+                row.Cells[2].MergeRight = 1;
                 paragraph.AddFormattedText("Conferido por: ", TextFormat.Bold);
                 paragraph.AddText(_unitiOfWork.PerfilUsuarioRepository.GetByUserId(loteConferencia.FirstOrDefault().UsuarioConferente.Id).Nome);
 
