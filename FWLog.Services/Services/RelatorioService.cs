@@ -58,7 +58,9 @@ namespace FWLog.Services.Services
 
         public byte[] GerarRelatorioRecebimentoNotas(RelatorioRecebimentoNotasRequest request)
         {
-            IQueryable<Lote> query = _unitiOfWork.LoteRepository.Obter(request.IdEmpresa, NotaFiscalTipoEnum.Compra).AsQueryable();
+            IQueryable<Lote> query = _unitiOfWork.LoteRepository.Obter(request.IdEmpresa, NotaFiscalTipoEnum.Compra)
+                .AsQueryable()
+                .OrderByDescending(x => x.IdLote).ThenByDescending(x => x.NotaFiscal.PrazoEntregaFornecedor);
 
             if (!string.IsNullOrEmpty(request.ChaveAcesso))
             {
@@ -185,7 +187,7 @@ namespace FWLog.Services.Services
                     var recebimentoNotas = new RecebimentoNotas
                     {
                         Lote = item.IdLote == 0 ? "-" : item.IdLote.ToString(),
-                        Nota = item.NotaFiscal.Numero == 0 ? "-" : item.NotaFiscal.Numero.ToString(),
+                        Nota = item.NotaFiscal.Numero == 0 ? "-" : string.Concat(item.NotaFiscal.Numero.ToString(), "-", item.NotaFiscal.Serie),
                         Fornecedor = item.NotaFiscal.Fornecedor.NomeFantasia,
                         Status = item.LoteStatus.Descricao,
                         QauntidadeVolumes = item.QuantidadeVolume,
@@ -193,7 +195,6 @@ namespace FWLog.Services.Services
                         Atraso = atraso.ToString(),
                         Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy")
                     };
-
                     listaRecebimentoNotas.Add(recebimentoNotas);
                 }
             }
@@ -207,7 +208,14 @@ namespace FWLog.Services.Services
                 NomeUsuario = request.NomeUsuario,
                 Orientacao = Orientation.Portrait,
                 Titulo = "Relatório Notas Fiscais Recebimento",
-                Filtros = string.Empty,
+                Filtros = new FwRelatorioDadosFiltro
+                {
+                    Status = request.IdStatus == null ? "Todos" : EnumExtensions.GetDisplayName((LoteStatusEnum)request.IdStatus),
+                    PrazoDeEntregaInicial = request.PrazoInicial,
+                    PrazoDeEntregaFinal = request.PrazoFinal,
+                    DataRecebimentoInicial = request.DataInicial,
+                    DataRecebimentoFinal = request.DataFinal
+                },
                 Dados = listaRecebimentoNotas
             };
 
@@ -235,6 +243,7 @@ namespace FWLog.Services.Services
             Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
             NotaFiscal notaFiscal = _unitiOfWork.NotaFiscalRepository.GetById(request.IdNotaFiscal);
             Lote lote = _unitiOfWork.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
+            
 
             bool IsNotaRecebida = lote != null;
 
@@ -244,8 +253,8 @@ namespace FWLog.Services.Services
                 NomeEmpresa = empresa.RazaoSocial,
                 NomeUsuario = request.NomeUsuario,
                 Orientacao = Orientation.Portrait,
-                Titulo = "Detalhes Nota Fiscal Entrada/Conferencia",
-                Filtros = string.Empty
+                Titulo = "Detalhes Nota Fiscal Entrada/Conferência",
+                Filtros = null
             };
 
             var fwRelatorio = new FwRelatorio();
@@ -535,7 +544,7 @@ namespace FWLog.Services.Services
                 NomeUsuario = $"{usuario.Usuario.UserName} - {usuario.Nome}",
                 Orientacao = Orientation.Landscape,
                 Titulo = "Relatório Rastreio de Peças",
-                Filtros = string.Empty,
+                Filtros = null,
                 Dados = dados
             };
 
@@ -587,7 +596,7 @@ namespace FWLog.Services.Services
                 NomeUsuario = request.NomeUsuario,
                 Orientacao = Orientation.Landscape,
                 Titulo = "Relatório Resumo Etiquetagem",
-                Filtros = string.Empty,
+                Filtros = null,
                 Dados = dados
             };
 
