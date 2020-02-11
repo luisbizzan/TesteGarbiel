@@ -158,13 +158,11 @@ namespace FWLog.Services.Relatorio
                 }
                 else if (_dataSource.Filtros?.DataRecebimentoInicial != null)
                 {
-                    dataRecebimento = rowHeader.Cells[0].AddParagraph();
                     dataRecebimento.AddFormattedText("Data de Recebimento Inicial: ", TextFormat.Bold);
                     dataRecebimento.AddText(string.Concat(_dataSource.Filtros.DataRecebimentoInicial?.ToString("dd/MM/yyyy")));
                 }
                 else if (_dataSource.Filtros.DataRecebimentoFinal != null)
                 {
-                    dataRecebimento = rowHeader.Cells[0].AddParagraph();
                     dataRecebimento.AddFormattedText("Data de Recebimento Final: ", TextFormat.Bold);
                     dataRecebimento.AddText(string.Concat(_dataSource.Filtros.DataRecebimentoFinal?.ToString("dd/MM/yyyy")));
                 }
