@@ -146,13 +146,13 @@
 
     function carregarDadosReferenciaConferencia() {
         var referencia = $referencia.val();
-        
+
         overlay(true);
 
         $.ajax({
             url: HOST_URL + CONTROLLER_PATH + "ObterDadosReferenciaConferencia",
             global: false,
-            async: true,
+            async: false,
             cache: false,
             method: "POST",
             data: {
