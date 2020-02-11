@@ -1013,7 +1013,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 QuantidadeConferida = quantidadeConferida,
                 InicioConferencia = DateTime.Now.ToString(),
                 QuantidadePorCaixa = null,
-                Multiplo = produto.MultiploVenda
+                Multiplo = produto.MultiploVenda,
+                MediaVenda = _uow.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto, IdEmpresa).MediaVenda
             };
 
             //Se o tipo da conferência for Por Quantidade, atribui 1 para o campo quantidade de caixa.

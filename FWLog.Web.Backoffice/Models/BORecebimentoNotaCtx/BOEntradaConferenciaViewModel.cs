@@ -57,8 +57,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Total de Itens")]
         public int? TotalItens { get; set; }
 
-        [Display(Name = "Média de Vendas")]
-        public decimal? MediaVendaMes { get; set; }
+        [Display(Name = "Média de Vendas (6 meses)")]
+        public double? MediaVenda { get; set; }
 
         [Display(Name = "Qtde. Estoque")]
         public long? QuantidadeEstoque { get; set; }
