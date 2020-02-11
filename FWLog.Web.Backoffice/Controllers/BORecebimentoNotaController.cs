@@ -34,6 +34,7 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly EtiquetaService _etiquetaService;
         private readonly LogEtiquetagemService _logEtiquetagemService;
         private readonly NotaFiscalService _notaFiscalService;
+        private readonly ProdutoService _produtoService;
         private readonly UnitOfWork _uow;
 
         public BORecebimentoNotaController(
@@ -43,7 +44,8 @@ namespace FWLog.Web.Backoffice.Controllers
             ApplicationLogService applicationLogService,
             EtiquetaService etiquetaService,
             LogEtiquetagemService logEtiquetagemService,
-            NotaFiscalService notaFiscalService)
+            NotaFiscalService notaFiscalService,
+            ProdutoService produtoService)
         {
             _loteService = loteService;
             _relatorioService = relatorioService;
@@ -52,6 +54,7 @@ namespace FWLog.Web.Backoffice.Controllers
             _etiquetaService = etiquetaService;
             _logEtiquetagemService = logEtiquetagemService;
             _notaFiscalService = notaFiscalService;
+            _produtoService = produtoService;
         }
 
         [HttpGet]
@@ -918,7 +921,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
-        public ActionResult ObterDadosReferenciaConferencia(string codigoBarrasOuReferencia, long idLote)
+        public async Task<ActionResult> ObterDadosReferenciaConferencia(string codigoBarrasOuReferencia, long idLote)
         {
             bool alertarUsuarioSobreTipoDePeca = false;
 
@@ -1026,8 +1029,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 InicioConferencia = DateTime.Now.ToString(),
                 QuantidadePorCaixa = null,
                 Multiplo = produto.MultiploVenda,
-                QuantidadeReservada = 0,
-                MediaVendaMes = empresaProduto.MediaVenda.HasValue ? empresaProduto.MediaVenda.Value.ToString("N2") : string.Empty
+                QuantidadeReservada = await _produtoService.ConsultarQuantidadeReservada(produto.IdProduto, IdEmpresa),
+                MediaVenda = empresaProduto.MediaVenda.HasValue ? empresaProduto.MediaVenda.Value.ToString("N2") : string.Empty
             };
 
             //Se o tipo da conferência for Por Quantidade, atribui 1 para o campo quantidade de caixa.
