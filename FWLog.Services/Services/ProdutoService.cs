@@ -237,6 +237,11 @@ namespace FWLog.Services.Services
 
         public async Task<long> ConsultarQuantidadeReservada(long idProduto, long idEmpresa)
         {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return 0;
+            }
+            
             long quantidadeReservada = 0;
 
             Empresa empresa = _uow.EmpresaRepository.GetById(idEmpresa);
