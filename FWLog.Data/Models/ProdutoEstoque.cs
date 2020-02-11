@@ -24,7 +24,7 @@ namespace FWLog.Data.Models
         [Required]
         public ProdutoEstoqueStatusEnum IdProdutoEstoqueStatus { get; set; }
 
-        public float? MediaVenda { get; set; }
+        public double? MediaVenda { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }

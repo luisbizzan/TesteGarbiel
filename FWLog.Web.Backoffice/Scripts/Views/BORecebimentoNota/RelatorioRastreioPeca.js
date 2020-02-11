@@ -5,26 +5,69 @@
         $("#tabela").show();
     });
 
-
     $.validator.addMethod('validateQtdCompraMaxima', function (value, ele) {
-        debugger
         var qtdMinima = $("#Filter_QtdCompraMinima").val();
 
+        if (!value || !qtdMinima) {
+            return true;
+        }
+
+        value = parseInt(value);
+        qtdMinima = parseInt(qtdMinima);
+
         if (value >= qtdMinima)
-            return true
+            return true;
         else
             return false;
-    }, 'Quantidade maxima deve ser maior que a quantidade minima');
+    }, 'Quantidade máxima deve ser maior que a quantidade mínima.');
 
     $.validator.addMethod('validateQtdRecebidaMaxima', function (value, ele) {
-        debugger
         var qtdMinima = $("#Filter_QtdRecebidaMinima").val();
 
+        if (!value || !qtdMinima) {
+            return true;
+        }
+
+        value = parseInt(value);
+        qtdMinima = parseInt(qtdMinima);
+
         if (value >= qtdMinima)
-            return true
+            return true;
         else
             return false;
-    }, 'Quantidade maxima deve ser maior que a quantidade minima');
+    }, 'Quantidade máxima deve ser maior que a quantidade mínima.');
+
+    $.validator.addMethod('validateQtdCompraMinima', function (value, ele) {
+        var qtdMaxima = $("#Filter_QtdCompraMaxima").val();
+
+        if (!qtdMaxima || !value) {
+            return true;
+        }
+
+        value = parseInt(value);
+        qtdMaxima = parseInt(qtdMaxima);
+
+        if (value <= qtdMaxima)
+            return true;
+        else
+            return false;
+    }, 'Quantidade mínima deve ser menor que a quantidade máxima.');
+
+    $.validator.addMethod('validateQtdRecebidaMinima', function (value, ele) {
+        var qtdMaxima = $("#Filter_QtdRecebidaMaxima").val();
+
+        if (!qtdMaxima || !value) {
+            return true;
+        }
+
+        value = parseInt(value);
+        qtdMaxima = parseInt(qtdMaxima);
+
+        if (value <= qtdMaxima)
+            return true;
+        else
+            return false;
+    }, 'Quantidade mínima deve ser menor que a quantidade máxima.');
 
     $("#downloadRelatorio").click(function () {
         $.ajax({

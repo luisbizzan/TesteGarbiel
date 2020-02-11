@@ -237,22 +237,24 @@ namespace FWLog.Services.Services
             }
         }
 
-        public ResumoFinalizarConferenciaResponse ResumoFinalizarConferencia(long idLote, long idEmpresa)
+        public ResumoFinalizarConferenciaResponse ResumoFinalizarConferencia(long idLote, long idEmpresa, string userId)
         {
             EmpresaConfig empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(idEmpresa);
             Lote lote = _uow.LoteRepository.GetById(idLote);
             var itensNotaFiscal = _uow.NotaFiscalItemRepository.ObterItens(lote.IdNotaFiscal).GroupBy(g => g.IdProduto);
             List<LoteConferencia> itensConferidos = _uow.LoteConferenciaRepository.ObterPorId(idLote);
+            var usuario = _uow.PerfilUsuarioRepository.GetByUserId(userId);
 
             var response = new ResumoFinalizarConferenciaResponse
             {
                 DataRecebimento = lote.DataRecebimento.ToString("dd/MM/yyyy hh:mm:ss"),
                 IdLote = lote.IdLote,
                 IdNotaFiscal = lote.IdNotaFiscal,
-                NumeroNotaFiscal = lote.NotaFiscal.Numero,
+                NumeroNotaFiscal = string.Concat(lote.NotaFiscal.Numero, " - ", lote.NotaFiscal.Serie),
                 QuantidadeVolume = lote.QuantidadeVolume,
-                RazaoSocialFornecedor = lote.NotaFiscal.Fornecedor.RazaoSocial,
-                TipoConferencia = empresaConfig.TipoConferencia.Descricao
+                RazaoSocialFornecedor = lote.NotaFiscal.Fornecedor.NomeFantasia,
+                TipoConferencia = empresaConfig.TipoConferencia.Descricao,
+                NomeConferente = usuario.Nome
             };
 
             foreach (var itemNota in itensNotaFiscal)
@@ -260,6 +262,7 @@ namespace FWLog.Services.Services
                 var itensConferencia = itensConferidos.Where(x => x.IdProduto == itemNota.Key);
                 int quantidadeNota = itemNota.Sum(s => s.Quantidade);
                 string referencia = itemNota.First().Produto.Referencia;
+                string descricao = itemNota.First().Produto.Descricao;
 
                 if (itensConferencia.Any())
                 {
@@ -269,6 +272,7 @@ namespace FWLog.Services.Services
                     var item = new ResumoFinalizarConferenciaItemResponse
                     {
                         Referencia = referencia,
+                        DescricaoProduto = descricao,
                         QuantidadeConferido = quantidadeConferido,
                         QuantidadeNota = quantidadeNota,
                         DivergenciaMais = diferencaNotaConferido < 0 ? diferencaNotaConferido * -1 : 0,
@@ -282,6 +286,7 @@ namespace FWLog.Services.Services
                     var item = new ResumoFinalizarConferenciaItemResponse
                     {
                         Referencia = referencia,
+                        DescricaoProduto = descricao,
                         QuantidadeConferido = 0,
                         QuantidadeNota = quantidadeNota,
                         DivergenciaMais = 0,
@@ -301,6 +306,7 @@ namespace FWLog.Services.Services
                 var item = new ResumoFinalizarConferenciaItemResponse
                 {
                     Referencia = itemForaNota.First().Produto.Referencia,
+                    DescricaoProduto = itemForaNota.First().Produto.Descricao,
                     QuantidadeConferido = quantidadeConferido,
                     QuantidadeNota = 0,
                     DivergenciaMais = quantidadeConferido,

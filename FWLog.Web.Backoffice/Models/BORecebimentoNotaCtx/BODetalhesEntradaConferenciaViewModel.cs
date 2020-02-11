@@ -72,6 +72,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
     public class BODetalhesEntradaConferenciaItem
     {
         public string Referencia { get; set; }
+        public string DescricaoProduto { get; set; }
         public long Quantidade { get; set; }
         public string DataInicioConferencia { get; set; }
         public string DataFimConferencia { get; set; }

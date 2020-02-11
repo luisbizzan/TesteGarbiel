@@ -12,6 +12,7 @@
     });
 
     $('#dataTableModal').DataTable({
+       // destroy: true,
         ajax: {
             "url": view_modal.pageDataUrl,
             "type": "POST",

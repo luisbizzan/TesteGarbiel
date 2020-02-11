@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ExtensionMethods.List;
-using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
@@ -15,7 +14,6 @@ using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -36,6 +34,7 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly EtiquetaService _etiquetaService;
         private readonly LogEtiquetagemService _logEtiquetagemService;
         private readonly NotaFiscalService _notaFiscalService;
+        private readonly ProdutoService _produtoService;
         private readonly UnitOfWork _uow;
 
         public BORecebimentoNotaController(
@@ -45,7 +44,8 @@ namespace FWLog.Web.Backoffice.Controllers
             ApplicationLogService applicationLogService,
             EtiquetaService etiquetaService,
             LogEtiquetagemService logEtiquetagemService,
-            NotaFiscalService notaFiscalService)
+            NotaFiscalService notaFiscalService,
+            ProdutoService produtoService)
         {
             _loteService = loteService;
             _relatorioService = relatorioService;
@@ -54,6 +54,7 @@ namespace FWLog.Web.Backoffice.Controllers
             _etiquetaService = etiquetaService;
             _logEtiquetagemService = logEtiquetagemService;
             _notaFiscalService = notaFiscalService;
+            _produtoService = produtoService;
         }
 
         [HttpGet]
@@ -295,7 +296,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult ResumoFinalizarConferencia(long id)
         {
-            ResumoFinalizarConferenciaResponse response = _loteService.ResumoFinalizarConferencia(id, IdEmpresa);
+            ResumoFinalizarConferenciaResponse response = _loteService.ResumoFinalizarConferencia(id, IdEmpresa, User.Identity.GetUserId());
 
             var viewModel = Mapper.Map<ResumoFinalizarConferenciaViewModel>(response);
 
@@ -306,12 +307,25 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult ResumoDivergenciaConferencia(long id)
         {
+            var lote = _uow.LoteRepository.GetById(id);
+            var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
+            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+
             var model = new ResumoDivergenciaConferenciaViewModel
             {
-                IdNotaFiscal = _uow.LoteRepository.GetById(id).IdNotaFiscal,
-                Divergencias = _loteService.ResumoFinalizarConferencia(id, IdEmpresa).Itens.Where(x => x.DivergenciaMais > 0 || x.DivergenciaMenos > 0).Select(x => new ResumoDivergenciaConferenciaItemViewModel
+                IdNotaFiscal = lote.IdNotaFiscal,
+                IdLote = lote.IdLote,
+                NumeroNotaFiscal = string.Concat(lote.NotaFiscal.Numero, " - ", lote.NotaFiscal.Serie),
+                NomeConferente = usuario.Nome,
+                DataHoraRecebimento = lote.DataRecebimento.ToString("dd/MM/yyyy HH:mm"),
+                NomeFornecedor = lote.NotaFiscal.Fornecedor.NomeFantasia,
+                QuantidadeVolume = lote.QuantidadeVolume,
+                TipoConferencia = empresaConfig.TipoConferencia.Descricao,
+
+                Divergencias = _loteService.ResumoFinalizarConferencia(id, IdEmpresa, User.Identity.GetUserId()).Itens.Where(x => x.DivergenciaMais > 0 || x.DivergenciaMenos > 0).Select(x => new ResumoDivergenciaConferenciaItemViewModel
                 {
                     Referencia = x.Referencia,
+                    DescricaoProduto = x.DescricaoProduto,
                     QuantidadeConferencia = x.QuantidadeConferido,
                     QuantidadeNotaFiscal = x.QuantidadeNota,
                     QuantidadeMais = x.DivergenciaMais,
@@ -688,6 +702,7 @@ namespace FWLog.Web.Backoffice.Controllers
                             var entradaConferenciaItem = new BODetalhesEntradaConferenciaItem
                             {
                                 Referencia = item.Produto.Referencia,
+                                DescricaoProduto = item.Produto.Descricao,
                                 Quantidade = item.Quantidade,
                                 DataInicioConferencia = item.DataHoraInicio.ToString("dd/MM/yyyy HH:mm:ss"),
                                 DataFimConferencia = item.DataHoraFim.ToString("dd/MM/yyyy HH:mm:ss"),
@@ -738,7 +753,8 @@ namespace FWLog.Web.Backoffice.Controllers
                                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
                                     QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Sum(s => s.Quantidade),
                                     QuantidadeMaisTratado = divergencia.QuantidadeDivergenciaMais ?? 0,
-                                    QuantidadeMenosTratado = divergencia.QuantidadeDivergenciaMenos ?? 0
+                                    QuantidadeMenosTratado = divergencia.QuantidadeDivergenciaMenos ?? 0,
+                                    DescricaoProduto = divergencia.Produto.Descricao,
                                 };
 
                                 divergenciaViewModel.Divergencias.Add(divergenciaItem);
@@ -905,7 +921,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
-        public ActionResult ObterDadosReferenciaConferencia(string codigoBarrasOuReferencia, long idLote)
+        public async Task<ActionResult> ObterDadosReferenciaConferencia(string codigoBarrasOuReferencia, long idLote)
         {
             bool alertarUsuarioSobreTipoDePeca = false;
 
@@ -995,7 +1011,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 IdNotaFiscal = lote.NotaFiscal.IdNotaFiscal,
                 IdLote = lote.IdLote,
-                NumeroNotaFiscal = lote.NotaFiscal.Numero + lote.NotaFiscal.Serie,
+                NumeroNotaFiscal = string.Concat(lote.NotaFiscal.Numero, " - ", lote.NotaFiscal.Serie),
                 IdUuarioConferente = usuario.UsuarioId,
                 NomeConferente = usuario.Nome,
                 DataHoraRecebimento = lote.DataRecebimento.ToString("dd/MM/yyyy HH:mm"),
@@ -1005,14 +1021,16 @@ namespace FWLog.Web.Backoffice.Controllers
                 IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode(),
                 Referencia = produto.Referencia,
                 DescricaoReferencia = produto.Descricao,
-                Embalagem = string.Empty,
-                Unidade = string.Empty,
+                Embalagem = produto.MultiploVenda.ToString("N2"),
+                Unidade = produto.UnidadeMedida.Sigla,
                 QuantidadeEstoque = empresaProduto == null ? 0 : empresaProduto.Saldo,
                 QuantidadeNaoConferida = quantidadeNaoConferida,
                 QuantidadeConferida = quantidadeConferida,
                 InicioConferencia = DateTime.Now.ToString(),
                 QuantidadePorCaixa = null,
-                Multiplo = produto.MultiploVenda
+                Multiplo = produto.MultiploVenda,
+                QuantidadeReservada = await _produtoService.ConsultarQuantidadeReservada(produto.IdProduto, IdEmpresa),
+                MediaVenda = empresaProduto.MediaVenda.HasValue ? empresaProduto.MediaVenda.Value.ToString("N2") : string.Empty
             };
 
             //Se o tipo da conferência for Por Quantidade, atribui 1 para o campo quantidade de caixa.
@@ -1528,7 +1546,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var divergenciaViewModel = new TratarDivergenciaRecebimentoViewModel
             {
                 ConferidoPor = perfilUsuario.Nome,
-                NotaFiscal = notaFiscal.Numero.ToString(),
+                NotaFiscal = string.Concat(notaFiscal.Numero, " - ", notaFiscal.Serie),
                 IdNotaFiscal = notaFiscal.IdNotaFiscal,
                 StatusNotasFiscal = notaFiscal.NotaFiscalStatus.Descricao
             };
@@ -1552,7 +1570,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     QuantidadeConferencia = divergencia.QuantidadeConferencia,
                     QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
-                    QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Sum(s => s.Quantidade)
+                    QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Sum(s => s.Quantidade),
+                    DescricaoProduto = divergencia.Produto.Descricao
                 };
 
                 divergenciaViewModel.Divergencias.Add(divergenciaItem);

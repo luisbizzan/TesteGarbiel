@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Services.Model.IntegracaoSankhya
 {
-    [TabelaIntegracao(DisplayName = "AD_MEDVENDPRO")]
-    public class ProdutoMediaVendaIntegracao
+    [TabelaIntegracao(DisplayName = "TGFEST")]
+    public class ProdutoReservadoIntegracao
     {
         [TabelaIntegracao(DisplayName = "CODPROD")]
         [Required]
@@ -14,8 +14,8 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [Required]
         public string CodigoIntegracaoEmpresa { get; set; }
 
-        [TabelaIntegracao(DisplayName = "MEDIA_6_MESES")]
+        [TabelaIntegracao(DisplayName = "RESERVADO")]
         [Required]
-        public string MediaVenda { get; set; }
+        public string Reservado { get; set; }
     }
 }

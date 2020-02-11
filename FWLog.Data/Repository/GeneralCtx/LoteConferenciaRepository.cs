@@ -106,7 +106,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 if ((filter.QtdCompraMinima.HasValue && qtdCompra < filter.QtdCompraMinima) ||
                     (filter.QtdCompraMaxima.HasValue && qtdCompra > filter.QtdCompraMaxima) ||
                     (filter.QtdRecebidaMinima.HasValue && qtdRecebida < filter.QtdRecebidaMinima) ||
-                    (filter.QtdRecebidaMaxima.HasValue && qtdRecebida < filter.QtdRecebidaMaxima))
+                    (filter.QtdRecebidaMaxima.HasValue && qtdRecebida > filter.QtdRecebidaMaxima))
                 {
                     continue;
                 }

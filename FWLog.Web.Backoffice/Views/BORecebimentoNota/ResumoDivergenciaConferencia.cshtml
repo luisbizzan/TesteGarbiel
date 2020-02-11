@@ -13,49 +13,84 @@
                 <h4 class="modal-title" id="myModalLabel">Divergências da Conferência</h4>
             </div>
             <div class="modal-body">
-                <div class="x_panel">
-                    <div class="x_content">
-                        <div class="row" style="margin-top: 25px; overflow-y: auto;">
-                            <div class="col-sm-12 col-lg-12">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Referência</th>
-                                            <th style="width:100px; text-align:center">Qtde. Nota</th>
-                                            <th style="width:120px; text-align:center">Qtde. Conferido</th>
-                                            <th style="width:100px; text-align:center">Qtde. A+</th>
-                                            <th style="width:100px; text-align:center">Qdte. A-</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (Model.Divergencias.Count > 0)
-                                        {
-                                            for (int i = 0; i < Model.Divergencias.Count(); i++)
-                                            {
-                                                <tr class="linha-divergencia">
-                                                    <td>@Model.Divergencias[i].Referencia</td>
-                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeNotaFiscal</td>
-                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeConferencia</td>
-                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeMais</td>
-                                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeMenos</td>
-                                                </tr>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <tr class="even">
-                                                <td colspan="8">Nenhuma divergência encontrada.</td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
+                <div class="row">
+                    <div class="col-xs-6 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.IdLote):@Model.IdLote
                         </div>
-                        <div class="row navbar-right">
-                            <div class="col-sm-12 col-lg-12">
-                                <button type="button" id="voltar" class="btn btn-default">Voltar</button>
-                            </div>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(f => f.NumeroNotaFiscal): @Model.NumeroNotaFiscal
                         </div>
+                    </div>
+                    <div class="col-xs-5 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(f => f.DataHoraRecebimento): @Model.DataHoraRecebimento
+                        </div>
+                    </div>
+                    <div class="col-xs-7 col-md-3 ">
+                        <div class="form-group">
+                            @Html.LabelFor(f => f.NomeConferente): @Model.NomeConferente
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(f => f.NomeFornecedor): @Model.NomeFornecedor
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(f => f.QuantidadeVolume): @Model.QuantidadeVolume
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(f => f.TipoConferencia): @Model.TipoConferencia
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 5px; overflow-y: auto;">
+                    <div class="col-sm-12 col-lg-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Referência</th>
+                                    <th>Descrição</th>
+                                    <th style="width:100px; text-align:center">Qtde. Nota</th>
+                                    <th style="width:120px; text-align:center">Qtde. Conferido</th>
+                                    <th style="width:100px; text-align:center">Qtde. A+</th>
+                                    <th style="width:100px; text-align:center">Qdte. A-</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Divergencias.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.Divergencias.Count(); i++)
+                                    {
+                                <tr class="linha-divergencia">
+                                    <td>@Model.Divergencias[i].Referencia</td>
+                                    <td>@Model.Divergencias[i].DescricaoProduto</td>
+                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeNotaFiscal</td>
+                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeConferencia</td>
+                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeMais</td>
+                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeMenos</td>
+                                </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr class="even">
+                                        <td colspan="8">Nenhuma divergência encontrada.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row navbar-right">
+                    <div class="col-sm-12 col-lg-12">
+                        <button type="button" id="voltar" class="btn btn-default">Voltar</button>
                     </div>
                 </div>
             </div>
