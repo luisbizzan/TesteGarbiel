@@ -4,6 +4,8 @@ using FWLog.Web.Api.Helpers;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -140,6 +142,48 @@ namespace FWLog.Web.Api.Controllers
             LogHelper.Warn(message);
             var apiErrorResponse = ApiErrorBuilder.BuildResponse(message);
             return Content(HttpStatusCode.NotFound, apiErrorResponse);
+        }
+
+        public long IdEmpresa
+        {
+            get
+            {
+                return RetornaIdEmpresaHeader();
+            }
+        }
+
+        public int IdAplicacao
+        {
+            get
+            {
+                return RetornaIdAplicacaoHeader();
+            }
+        }
+
+        private long RetornaIdEmpresaHeader()
+        {
+            Request.Headers.TryGetValues("X-FWLOG-API-IdEmpresa", out IEnumerable<string> idEmpresaHeader);
+
+            if (idEmpresaHeader != null && idEmpresaHeader.Any())
+            {
+                long.TryParse(idEmpresaHeader.FirstOrDefault(), out long idEmpresa);
+                return idEmpresa;
+            }
+
+            return 0;
+        }
+
+        private int RetornaIdAplicacaoHeader()
+        {
+            Request.Headers.TryGetValues("X-FWLOG-API-IdAplicacao", out IEnumerable<string> idAplicacaoHeader);
+
+            if (idAplicacaoHeader != null && idAplicacaoHeader.Any())
+            {
+                int.TryParse(idAplicacaoHeader.FirstOrDefault(), out int idAplicacao);
+                return idAplicacao;
+            }
+
+            return 0;
         }
     }
 }

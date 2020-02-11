@@ -26,27 +26,25 @@ namespace FWLog.Web.Api
             app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
             app.UseCookieAuthentication(new CookieAuthenticationOptions());
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
-
             PublicClientId = "self";
+
             OAuthOptions = new OAuthAuthorizationServerOptions
             {
                 TokenEndpointPath = new PathString("/api/v1/token"),
                 Provider = new ApplicationOAuthProvider(PublicClientId),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),                
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
                 AllowInsecureHttp = true
             };
 
             app.UseOAuthBearerTokens(OAuthOptions);
         }
 
-        static WebApiUserManager CreateUserManagerOwin(IdentityFactoryOptions<WebApiUserManager> options,
-            IOwinContext context)
+        static WebApiUserManager CreateUserManagerOwin(IdentityFactoryOptions<WebApiUserManager> options, IOwinContext context)
         {
             return WebApiUserManager.Create(options, context, App.Id);
         }
 
-        static ApplicationRoleManager CreateRoleManagerOwin(IdentityFactoryOptions<ApplicationRoleManager> options,
-            IOwinContext context)
+        static ApplicationRoleManager CreateRoleManagerOwin(IdentityFactoryOptions<ApplicationRoleManager> options, IOwinContext context)
         {
             return ApplicationRoleManager.Create(options, context, App.Id);
         }

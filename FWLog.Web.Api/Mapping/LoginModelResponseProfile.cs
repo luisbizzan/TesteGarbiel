@@ -8,8 +8,7 @@ namespace FWLog.Web.Api.Mapping
     {
         public LoginModelResponseProfile()
         {
-            CreateMap<TokenResponse, LoginModelResponse>()
-                .ForMember(x => x.Empresas, opt => opt.Ignore());
+            CreateMap<TokenResponse, LoginModelResponse>().ForMember(x => x.Empresas, opt => opt.Ignore());
         }
     }
 }

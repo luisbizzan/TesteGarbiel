@@ -41,7 +41,6 @@ namespace FWLog.Web.Api.Helpers
             };
 
             httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
             actionContext.Response = httpResponseMessage;
 
             var logWarnMessage = string.Format("{0}: {1}", apiError.Message, actionContext.Request.ToString());
@@ -72,12 +71,9 @@ namespace FWLog.Web.Api.Helpers
             }
 
             string userId = user.Identity.GetUserId();
-
             var userManager = actionContext.Request.GetOwinContext().GetUserManager<WebApiUserManager>();
             IList<string> permissions = userManager.GetPermissions(userId);
-
             var customUser = new ApplicationClaimsPrincipal((ClaimsPrincipal)user, permissions);
-
             actionContext.ControllerContext.RequestContext.Principal = customUser;
             Thread.CurrentPrincipal = customUser;
         }

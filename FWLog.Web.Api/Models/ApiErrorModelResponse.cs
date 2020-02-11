@@ -36,5 +36,4 @@ namespace FWLog.Web.Api.Models
     {
         public string Message { get; set; }
     }
-
 }

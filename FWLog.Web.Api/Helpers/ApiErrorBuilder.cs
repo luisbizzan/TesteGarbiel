@@ -29,8 +29,7 @@ namespace FWLog.Web.Api.Helpers
                 {
                     var apiError = new ApiError
                     {
-                        Message = error.ErrorMessage.NullOrEmpty() ?
-                            string.Format("Um campo obrigatório não foi informado ou não está no padrão correto, favor verificar o modelo. A exceção gerada foi: {0}.", error.Exception) : error.ErrorMessage
+                        Message = error.ErrorMessage.NullOrEmpty() ? string.Format("Um campo obrigatório não foi informado ou não está no padrão correto, favor verificar o modelo. A exceção gerada foi: {0}.", error.Exception) : error.ErrorMessage
                     };
 
                     apiErrorResponse.Errors.Add(apiError);
