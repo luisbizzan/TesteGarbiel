@@ -45,8 +45,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
             totalRecords = query.Count();
 
-            if (model.CustomFilter.CodigoIntegracao.HasValue)
-                query = query.Where(x => x.CodigoIntegracao == model.CustomFilter.CodigoIntegracao.Value);
+            if (model.CustomFilter.IdFornecedor.HasValue)
+                query = query.Where(x => x.IdFornecedor == model.CustomFilter.IdFornecedor.Value);
 
             if (!string.IsNullOrEmpty(model.CustomFilter.RazaoSocial))
                 query = query.Where(x => x.RazaoSocial.Contains(model.CustomFilter.RazaoSocial));

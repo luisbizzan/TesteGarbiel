@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ExtensionMethods.List;
-using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
@@ -15,7 +14,6 @@ using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
