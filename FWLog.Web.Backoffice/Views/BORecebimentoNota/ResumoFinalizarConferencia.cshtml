@@ -12,65 +12,78 @@
                 <h4 class="modal-title" id="myModalLabel">Resumo da Conferência</h4>
             </div>
             <div class="modal-body">
-                <div class="x_panel">
-                    <div class="x_content">
-                        <div class="row">
-                            <div class="col-sm-12 col-lg-4">
-                                @Html.LabelFor(m => m.IdLote): @Html.DisplayTextFor(m => m.IdLote)
-                                @Html.HiddenFor(m => m.IdNotaFiscal)
-                                @Html.HiddenFor(m => m.IdLote)
-                            </div>
-                            <div class="col-sm-12 col-lg-4">
-                                @Html.LabelFor(m => m.NumeroNotaFiscal): @Html.DisplayTextFor(m => m.NumeroNotaFiscal)
-                            </div>
-                            <div class="col-sm-12 col-lg-4">
-                                @Html.LabelFor(m => m.DataRecebimento): @Html.DisplayTextFor(m => m.DataRecebimento)
-                            </div>
+                @Html.HiddenFor(m => m.IdNotaFiscal)
+                @Html.HiddenFor(m => m.IdLote)
+                <div class="row">
+                    <div class="col-xs-6 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.IdLote):@Model.IdLote
                         </div>
-                        <div class="row">
-                            <div class="col-sm-12 col-lg-4">
-                                @Html.LabelFor(m => m.RazaoSocialFornecedor): @Html.DisplayTextFor(m => m.RazaoSocialFornecedor)
-                            </div>
-                            <div class="col-sm-12 col-lg-4">
-                                @Html.LabelFor(m => m.QuantidadeVolume): @Html.DisplayTextFor(m => m.QuantidadeVolume)
-                            </div>
-                            <div class="col-sm-12 col-lg-4">
-                                @Html.LabelFor(m => m.TipoConferencia): @Html.DisplayTextFor(m => m.TipoConferencia)
-                            </div>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(f => f.NumeroNotaFiscal): @Model.NumeroNotaFiscal
                         </div>
-                        <div class="row" style="margin-top: 25px; overflow-y: auto;">
-                            <div class="col-sm-12 col-lg-12">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>@Html.LabelFor(m => m.Itens[0].Referencia)</th>
-                                            <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].QuantidadeNota)</th>
-                                            <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].QuantidadeConferido)</th>
-                                            <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].DivergenciaMais)</th>
-                                            <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].DivergenciaMenos)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach(var item in Model.Itens)
-                                        {
-                                            <tr class="linha-divergencia">
-                                                <td>@item.Referencia</td>
-                                                <td style="text-align:center">@item.QuantidadeNota</td>
-                                                <td style="text-align:center">@item.QuantidadeConferido</td>
-                                                <td style="text-align:center">@item.DivergenciaMais</td>
-                                                <td style="text-align:center">@item.DivergenciaMenos</td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
+                    </div>
+                    <div class="col-xs-5 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(f => f.DataRecebimento): @Model.DataRecebimento
                         </div>
-                        <div class="row navbar-right">
-                            <div class="col-sm-12 col-lg-12">
-                                <button type="button" id="btnVoltarConferencia" class="btn btn-default">Voltar</button>
-                                <button type="button" id="btnFinalizarConferencia" class="btn btn-primary">Finalizar Conferência</button>
-                            </div>
+                    </div>
+                    <div class="col-xs-7 col-md-3 ">
+                        <div class="form-group">
+                            @Html.LabelFor(f => f.NomeConferente): @Model.NomeConferente
                         </div>
+                    </div>
+                    <div class="col-xs-12 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(f => f.RazaoSocialFornecedor): @Model.RazaoSocialFornecedor
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <div class="form-group">
+                            @Html.LabelFor(f => f.QuantidadeVolume): @Model.QuantidadeVolume
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-md-6">
+                        <div class="form-group">
+                            @Html.LabelFor(f => f.TipoConferencia): @Model.TipoConferencia
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 5px; overflow-y: auto;">
+                    <div class="col-sm-12 col-lg-12">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>@Html.LabelFor(m => m.Itens[0].Referencia)</th>
+                                    <th>@Html.LabelFor(m => m.Itens[0].DescricaoProduto)</th>
+                                    <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].QuantidadeNota)</th>
+                                    <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].QuantidadeConferido)</th>
+                                    <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].DivergenciaMais)</th>
+                                    <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].DivergenciaMenos)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Itens)
+                                {
+                                <tr class="linha-divergencia">
+                                    <td>@item.Referencia</td>
+                                    <td>@item.DescricaoProduto</td>
+                                    <td style="text-align:center">@item.QuantidadeNota</td>
+                                    <td style="text-align:center">@item.QuantidadeConferido</td>
+                                    <td style="text-align:center">@item.DivergenciaMais</td>
+                                    <td style="text-align:center">@item.DivergenciaMenos</td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row navbar-right">
+                    <div class="col-sm-12 col-lg-12">
+                        <button type="button" id="btnVoltarConferencia" class="btn btn-default">Voltar</button>
+                        <button type="button" id="btnFinalizarConferencia" class="btn btn-primary">Finalizar Conferência</button>
                     </div>
                 </div>
             </div>

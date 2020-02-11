@@ -40,7 +40,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Embalagem")]
         public string Embalagem { get; set; }
 
-        [Display(Name = "Unidade")]
+        [Display(Name = "Unidade de Medida")]
         public string Unidade { get; set; }
 
         [Display(Name = "Múltiplo")]
@@ -58,7 +58,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public int? TotalItens { get; set; }
 
         [Display(Name = "Média de Vendas")]
-        public decimal? MediaVendaMes { get; set; }
+        public string MediaVendaMes { get; set; }
 
         [Display(Name = "Qtde. Estoque")]
         public long? QuantidadeEstoque { get; set; }
