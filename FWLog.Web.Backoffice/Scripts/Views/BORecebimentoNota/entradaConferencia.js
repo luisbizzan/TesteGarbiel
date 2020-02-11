@@ -152,7 +152,7 @@
         $.ajax({
             url: HOST_URL + CONTROLLER_PATH + "ObterDadosReferenciaConferencia",
             global: false,
-            async: false,
+            async: true,
             cache: false,
             method: "POST",
             data: {
