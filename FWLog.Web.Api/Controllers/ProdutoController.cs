@@ -1,5 +1,6 @@
 ﻿using FWLog.Data;
 using FWLog.Services.Services;
+using FWLog.Web.Api.Models.Produto;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -32,6 +33,24 @@ namespace FWLog.Web.Api.Controllers
             await _produtoService.ConsultarProdutoPrazoEntrega();
 
             return ApiOk();
+        }
+
+        [Route("api/v1/produto-media-venda/integrar")]
+        [HttpPost]
+        public async Task<IHttpActionResult> ConsultarMeviaVenda()
+        {
+            await _produtoService.ConsultarMediaVenda();
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/produto-quantidade-reservada/integrar")]
+        [HttpPost]
+        public async Task<IHttpActionResult> ConsultarQuantidadeReservada(ProdutoReservadoModelRequest request)
+        {
+            var quantidadeReservada = await _produtoService.ConsultarQuantidadeReservada(request.IdProduto, request.IdEmpresa);
+
+            return ApiOk(quantidadeReservada);
         }
     }
 }
