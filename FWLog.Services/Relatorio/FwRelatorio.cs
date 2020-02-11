@@ -113,8 +113,8 @@ namespace FWLog.Services.Relatorio
 
             if (_dataSource.Orientacao == Orientation.Portrait)
             {
-                headerTable.AddColumn(new Unit(365, UnitType.Point));
-                var columnRight = headerTable.AddColumn(new Unit(150, UnitType.Point));
+                headerTable.AddColumn(new Unit(300, UnitType.Point));
+                var columnRight = headerTable.AddColumn(new Unit(215, UnitType.Point));
                 columnRight.Format.Alignment = ParagraphAlignment.Right;
             }
             else
@@ -128,9 +128,47 @@ namespace FWLog.Services.Relatorio
             var titulo = rowHeader.Cells[0].AddParagraph();
             titulo.AddFormattedText(_dataSource.Titulo, new Font("Verdana", 12));
             titulo.Format.Font.Bold = true;
+            
+            var spaceLine = rowHeader.Cells[0].AddParagraph();
+            spaceLine.AddLineBreak();
 
-            var filtros = rowHeader.Cells[0].AddParagraph();
-            filtros.AddFormattedText(_dataSource.Filtros, new Font("Verdana", 10));
+            if(_dataSource.Filtros != null)
+            {
+                var status = rowHeader.Cells[0].AddParagraph();
+                status.AddFormattedText("Status: ", TextFormat.Bold);
+                status.AddFormattedText(new Font("Verdana", 10));
+                status.AddText(_dataSource.Filtros.Status);
+
+                var prazo = rowHeader.Cells[0].AddParagraph();
+                prazo.AddFormattedText("Prazo de Entrega: ", TextFormat.Bold);
+                prazo.AddFormattedText(new Font("Verdana", 10));
+                prazo.AddText(string.Concat(_dataSource.Filtros
+                    .PrazoDeEntregaInicial?.ToString("dd/MM/yyyy"), " à ", 
+                    _dataSource.Filtros.PrazoDeEntregaFinal?.ToString("dd/MM/yyyy")));
+
+                var dataRecebimento = rowHeader.Cells[0].AddParagraph();
+                dataRecebimento.AddFormattedText(new Font("Verdana", 10));
+
+                if (_dataSource.Filtros.DataRecebimentoInicial != null && _dataSource.Filtros.DataRecebimentoFinal != null)
+                {
+                    dataRecebimento.AddFormattedText("Data de Recebimento: ", TextFormat.Bold);
+                    dataRecebimento.AddText(string.Concat(_dataSource.Filtros
+                        .DataRecebimentoInicial?.ToString("dd/MM/yyyy"), " à ", 
+                        _dataSource.Filtros?.DataRecebimentoFinal?.ToString("dd/MM/yyyy")));
+                }
+                else if (_dataSource.Filtros?.DataRecebimentoInicial != null)
+                {
+                    dataRecebimento = rowHeader.Cells[0].AddParagraph();
+                    dataRecebimento.AddFormattedText("Data de Recebimento Inicial: ", TextFormat.Bold);
+                    dataRecebimento.AddText(string.Concat(_dataSource.Filtros.DataRecebimentoInicial?.ToString("dd/MM/yyyy")));
+                }
+                else if (_dataSource.Filtros.DataRecebimentoFinal != null)
+                {
+                    dataRecebimento = rowHeader.Cells[0].AddParagraph();
+                    dataRecebimento.AddFormattedText("Data de Recebimento Final: ", TextFormat.Bold);
+                    dataRecebimento.AddText(string.Concat(_dataSource.Filtros.DataRecebimentoFinal?.ToString("dd/MM/yyyy")));
+                }
+            }
 
             var pImagem = rowHeader.Cells[1].AddParagraph();
             var imagem = pImagem.AddImage(ImagemBase64(ImagensResource.LogoFuracaoRelatorio));
@@ -138,7 +176,10 @@ namespace FWLog.Services.Relatorio
             imagem.LockAspectRatio = true;
 
             var data = rowHeader.Cells[1].AddParagraph();
-            data.AddFormattedText(string.Concat("Data: ", _dataSource.DataCriacao.ToString("dd/MM/yyyy HH:mm"), Environment.NewLine, _dataSource.NomeEmpresa, Environment.NewLine, _dataSource.NomeUsuario), new Font("Verdana", 8));
+            data.AddFormattedText(string.Concat("Data: ", _dataSource.DataCriacao.ToString("dd/MM/yyyy HH:mm"), Environment.NewLine, _dataSource.NomeEmpresa), new Font("Verdana", 8));
+
+            var name = rowHeader.Cells[1].AddParagraph();
+            name.AddFormattedText(_dataSource.NomeUsuario, new Font("Verdana", 8));
 
             Paragraph cabecalhoHr = header.AddParagraph();
             cabecalhoHr.Format.Borders.Bottom = new Border
