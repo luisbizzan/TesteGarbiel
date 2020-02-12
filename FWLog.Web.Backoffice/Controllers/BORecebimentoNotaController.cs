@@ -1479,20 +1479,19 @@ namespace FWLog.Web.Backoffice.Controllers
                     {
                         //Captura os itens da nota fiscal do produto.
                         var notaFiscalItem = _uow.NotaFiscalItemRepository.ObterPorItem(idNotaFiscal, idProduto);
+                        var conferencia = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, idProduto);
 
                         if (notaFiscalItem.Any())
                         {
-                            int quantidadePecasNota = 0;
+                            int qtdConferida = conferencia.Sum(s => s.Quantidade);
+                            int quantidadePecasNota = notaFiscalItem.Sum(s => s.Quantidade);
 
-                            //Captura a quantidade total do produto.
-                            foreach (var item in notaFiscalItem)
-                            {
-                                quantidadePecasNota += item.Quantidade;
-                            }
-
-                            //Verifica se a quantidade de peças da nota é maior que a quantidade informada.
-                            if (quantidadePorCaixa > quantidadePecasNota)
-                                pecasHaMais = quantidadePorCaixa - quantidadePecasNota;
+                            pecasHaMais = (qtdConferida + quantidadePorCaixa) - quantidadePecasNota;
+                            pecasHaMais = pecasHaMais < 0 ? 0 : pecasHaMais;
+                        }
+                        else
+                        {
+                            pecasHaMais = quantidadePorCaixa;
                         }
                     }
                 }
