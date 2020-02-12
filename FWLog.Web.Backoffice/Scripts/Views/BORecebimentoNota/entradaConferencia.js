@@ -409,6 +409,7 @@
 
                     $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.');
 
+                    $('#MensagemPecasHaMais').text('');
                     if (qtdePecasHaMais > 0)
                         $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+.');
                 }
@@ -527,8 +528,10 @@
 
                                         $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.');
 
-                                        if (qtdePecasHaMais > 0)
+                                        $('#MensagemPecasHaMais').text('');
+                                        if (qtdePecasHaMais > 0) {
                                             $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+.');
+                                        }
                                     }
                                 });
                             }
@@ -562,17 +565,15 @@
     }
 
     function removerMsgConferenciaManual() {
-
-        if ($tipoConferencia.val() == "Por Quantidade") {
-
+        if ($tipoConferencia.text() === "Por Quantidade") {
             $("#legendaTipoConferencia").addClass("hidden");
-            $("#legendaRegistroConferencia").removeClass("col-lg-2");
-            $("#legendaRegistroConferencia").addClass("col-lg-6");
+            $("#legendaRegistroConferencia").removeClass("col-md-2");
+            $("#legendaRegistroConferencia").addClass("col-md-6");
         }
         else {
             $("#legendaTipoConferencia").removeClass("hidden");
-            $("#legendaRegistroConferencia").removeClass("col-lg-6");
-            $("#legendaRegistroConferencia").addClass("col-lg-2");
+            $("#legendaRegistroConferencia").removeClass("col-md-6");
+            $("#legendaRegistroConferencia").addClass("col-md-2");
         }
     }
 

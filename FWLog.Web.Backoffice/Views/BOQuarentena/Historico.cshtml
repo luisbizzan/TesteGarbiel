@@ -14,36 +14,65 @@
             <h4 class="modal-title" id="myModalLabel">Histórico da Quarentena</h4>
         </div>
         <div class="modal-body">
-            <div class="x_panel">
-                <div class="x_content">
-                    <div class="row" style="margin-top: 25px; overflow-y: auto;">
-                        <div class="col-sm-12 col-lg-12">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>@Html.LabelFor(m => m.Itens[0].Data)</th>
-                                        <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].Usuario)</th>
-                                        <th style="text-align:center">@Html.LabelFor(m => m.Itens[0].Descricao)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @for (int i = 0; i < Model.Itens.Count(); i++)
-                                    {
-                                    <tr class="linha-divergencia">
-                                        <td>@Model.Itens[i].Data</td>
-                                        <td style="text-align:center">@Model.Itens[i].Usuario</td>
-                                        <td style="text-align:center">@Model.Itens[i].Descricao</td>
-                                    </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+            <div class="row">
+                @Html.HiddenFor(f => f.IdQuarentena)
+                <div class="col-xs-6 col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(f => f.NotaSerie): @Model.NotaSerie
                     </div>
-                    <div class="row navbar-right">
-                        <div class="col-sm-12 col-lg-12">
-                            <button class="btn btn-default" data-dismiss="modal">Fechar</button>
-                        </div>
+                </div>
+                <div class="col-xs-6 col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(f => f.Lote): @Model.Lote
                     </div>
+                </div>
+                <div class="col-xs-12 col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(f => f.LoteStatus): @Model.LoteStatus
+                    </div>
+                </div>
+                <div class="col-xs-6 col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(f => f.DataAbertura): @Model.DataAbertura
+                    </div>
+                </div>
+                <div class="col-xs-6 col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(f => f.DataEncerramento): @Model.DataEncerramento
+                    </div>
+                </div>
+                <div class="col-xs-6 col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(f => f.IdStatus): @Model.IdStatus
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 5px; overflow-y: auto;">
+                <div class="col-sm-12 col-lg-12">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center; width: 15%">@Html.LabelFor(m => m.Itens[0].Data)</th>
+                                <th style="text-align:center; width: 15%">@Html.LabelFor(m => m.Itens[0].Usuario)</th>
+                                <th style="text-align:center; width: 70%">@Html.LabelFor(m => m.Itens[0].Descricao)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.Itens.Count(); i++)
+                            {
+                                <tr class="linha-divergencia">
+                                    <td style="text-align:center">@Model.Itens[i].Data</td>
+                                    <td style="text-align:center">@Model.Itens[i].Usuario</td>
+                                    <td style="text-align:left">@Model.Itens[i].Descricao</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row navbar-right">
+                <div class="col-sm-12 col-lg-12">
+                    <button class="btn btn-default" data-dismiss="modal">Fechar</button>
                 </div>
             </div>
         </div>
