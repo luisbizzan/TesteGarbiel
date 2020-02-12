@@ -1176,12 +1176,12 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 _etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
 
-                if (VerificarPecaHaMais(lote.IdLote, quantidadePorCaixa, lote.IdNotaFiscal, produto.IdProduto) > 0)
+                if (VerificarPecaHaMais(conferencia.Lote.IdLote, quantidadePorCaixa, conferencia.Lote.IdNotaFiscal, conferencia.Produto.IdProduto) > 0)
                 {
                     var requestPecasMais = new ImprimirEtiquetaDevolucaoRequest
                     {
-                        Linha1 = lote.IdLote.ToString().PadLeft(10, '0'),
-                        Linha2 = produto.Referencia,
+                        Linha1 = conferencia.Lote.IdLote.ToString().PadLeft(10, '0'),
+                        Linha2 = conferencia.Produto.Referencia,
                         Linha3 = "PC.A+",
                         IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
                     };
