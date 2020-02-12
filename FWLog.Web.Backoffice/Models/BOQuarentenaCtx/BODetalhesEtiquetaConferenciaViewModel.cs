@@ -51,6 +51,8 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
 
     public class DivergenciaItemViewModel
     {
+        [Display(Name = "Descrição")]
+        public string Descricao { get; set; }
         [Display(Name = "Referência")]
         public string Referencia { get; set; }
 
