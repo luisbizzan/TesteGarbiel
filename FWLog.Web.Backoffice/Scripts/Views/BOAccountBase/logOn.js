@@ -1,7 +1,5 @@
 ﻿(function () {
 
-    
-
     $('[data-language]').on('click', function () {
         debugger
         var selected = $(this).attr('data-language');
