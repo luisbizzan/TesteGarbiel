@@ -252,7 +252,7 @@ namespace FWLog.Services.Services
                 IdNotaFiscal = lote.IdNotaFiscal,
                 NumeroNotaFiscal = string.Concat(lote.NotaFiscal.Numero, " - ", lote.NotaFiscal.Serie),
                 QuantidadeVolume = lote.QuantidadeVolume,
-                RazaoSocialFornecedor = lote.NotaFiscal.Fornecedor.RazaoSocial,
+                RazaoSocialFornecedor = lote.NotaFiscal.Fornecedor.NomeFantasia,
                 TipoConferencia = empresaConfig.TipoConferencia.Descricao,
                 NomeConferente = usuario.Nome
             };

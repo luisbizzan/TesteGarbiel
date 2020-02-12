@@ -5,6 +5,7 @@ namespace FWLog.AspNet.Identity.Building
 {
     public class Display
     {
+        
         private string _value;
 
         public bool IsFromResource { get; }
@@ -22,6 +23,7 @@ namespace FWLog.AspNet.Identity.Building
 
         public static Display FromString(string text)
         {
+            text = text.Length <= 50 ? text : text.Substring(0, 50);
             return new Display(text, false);
         }
 

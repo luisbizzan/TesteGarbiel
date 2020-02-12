@@ -16,7 +16,6 @@
         <div class="modal-body">
             @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "detalhesQuarentenaForm" }))
             {
-                <div class="x_content">
                     <div class="row">
                         @Html.HiddenFor(f => f.IdQuarentena)
                         <div class="col-xs-6 col-sm-4 col-lg-4">
@@ -85,12 +84,11 @@
                             </div>
                         </div>
                     </div>
-                </div>
                 <div class="x_title">
                     <h4 style="margin-bottom: 0px;">Divergência</h4>
                     <div class="clearfix"></div>
                 </div>
-                <div class="x_content">
+                <div>
                     <div class="row" style="margin-top:10px;">
                         @if (Model.Divergencias.Any())
                         {
@@ -105,6 +103,7 @@
                                     <thead>
                                         <tr>
                                             <th>@Html.LabelFor(m => m.Divergencias[0].Referencia)</th>
+                                            <th>@Html.LabelFor(m => m.Divergencias[0].Descricao)</th>
                                             <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeNotaFiscal)</th>
                                             <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeConferencia)</th>
                                             <th style="text-align:center">@Html.LabelFor(m => m.Divergencias[0].QuantidadeMais)</th>
@@ -118,6 +117,7 @@
                                         {
                                             <tr class="linha-divergencia">
                                                 <td>@Model.Divergencias[i].Referencia</td>
+                                                <td>@Model.Divergencias[i].Descricao</td>
                                                 <td style="text-align:center">@Model.Divergencias[i].QuantidadeNotaFiscal</td>
                                                 <td style="text-align:center">@Model.Divergencias[i].QuantidadeConferencia</td>
                                                 <td style="text-align:center">@Model.Divergencias[i].QuantidadeMais</td>

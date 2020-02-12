@@ -1176,15 +1176,18 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 _etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
 
-                var requestPecasMais = new ImprimirEtiquetaDevolucaoRequest
+                if (VerificarPecaHaMais(lote.IdLote, quantidadePorCaixa, lote.IdNotaFiscal, produto.IdProduto) > 0)
                 {
-                    Linha1 = conferenciaRegistro.Lote.IdLote.ToString().PadLeft(10, '0'),
-                    Linha2 = conferenciaRegistro.Produto.Referencia,
-                    Linha3 = "PC.A+",
-                    IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
-                };
+                    var requestPecasMais = new ImprimirEtiquetaDevolucaoRequest
+                    {
+                        Linha1 = lote.IdLote.ToString().PadLeft(10, '0'),
+                        Linha2 = produto.Referencia,
+                        Linha3 = "PC.A+",
+                        IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
+                    };
 
-                _etiquetaService.ImprimirEtiquetaDevolucao(requestPecasMais);
+                    _etiquetaService.ImprimirEtiquetaDevolucao(requestPecasMais);
+                }
 
                 //Registra a impressão da etiqueta
                 var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem
@@ -1267,23 +1270,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                     if (idProduto != 0)
                     {
-                        //Captura os itens da nota fiscal do produto.
-                        var notaFiscalItem = _uow.NotaFiscalItemRepository.ObterPorItem(idNotaFiscal, idProduto);
-
-                        if (notaFiscalItem.Any())
-                        {
-                            int quantidadePecasNota = 0;
-
-                            //Captura a quantidade total do produto.
-                            foreach (var item in notaFiscalItem)
-                            {
-                                quantidadePecasNota += item.Quantidade;
-                            }
-
-                            //Verifica se a quantidade de peças da nota é maior que a quantidade informada.
-                            if (quantidadePorCaixa > quantidadePecasNota)
-                                pecasHaMais = quantidadePorCaixa - quantidadePecasNota;
-                        }
+                        pecasHaMais = VerificarPecaHaMais(idLote, quantidadePorCaixa, idNotaFiscal, idProduto);
                     }
                 }
             }
@@ -1301,6 +1288,34 @@ namespace FWLog.Web.Backoffice.Controllers
                 Success = true,
                 Data = Convert.ToString(pecasHaMais)
             });
+        }
+
+        private int VerificarPecaHaMais(long idLote, int quantidadePorCaixa, long idNotaFiscal, long idProduto)
+        {
+            int pecasHaMais;
+            //Captura os itens da nota fiscal do produto.
+            var notaFiscalItem = _uow.NotaFiscalItemRepository.ObterPorItem(idNotaFiscal, idProduto);
+            var conferencia = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, idProduto);
+
+            if (notaFiscalItem.Any())
+            {
+                int qtdConferida = conferencia.Sum(s => s.Quantidade);
+                int quantidadePecasNota = notaFiscalItem.Sum(s => s.Quantidade);
+
+                pecasHaMais = (qtdConferida + quantidadePorCaixa) - quantidadePecasNota;
+                pecasHaMais = pecasHaMais < 0 ? 0 : pecasHaMais;
+
+                if (pecasHaMais > quantidadePorCaixa)
+                {
+                    pecasHaMais = quantidadePorCaixa;
+                }
+            }
+            else
+            {
+                pecasHaMais = quantidadePorCaixa;
+            }
+
+            return pecasHaMais;
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
