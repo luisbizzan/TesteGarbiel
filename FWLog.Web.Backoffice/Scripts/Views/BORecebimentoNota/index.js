@@ -291,6 +291,16 @@
         });
     });
 
+    //Limpando a div da modal de usuários
+    $("#modalUsuarioConferencia").on("hidden.bs.modal", function () {
+        $("#modalUsuarioConferencia").text('');
+    });
+
+     //Limpando a div da modal de usuários
+    $("#modalUsuarioRecebimento").on("hidden.bs.modal", function () {
+        $("#modalUsuarioRecebimento").text('');
+    });
+
     function limparUsuarioConferencia() {
         $("#Filter_UserNameConferencia").val("");
         $("#Filter_IdUsuarioConferencia").val("");
