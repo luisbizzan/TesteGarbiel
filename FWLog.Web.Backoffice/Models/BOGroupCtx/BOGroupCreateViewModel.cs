@@ -15,7 +15,7 @@ namespace FWLog.Web.Backoffice.Models.BOGroupCtx
         public string Id { get; set; }
 
         [Required]
-        [StringLength(25)]
+        [StringLength(50)]
         [Display(Name = nameof(Res.NameLabel), ResourceType = typeof(Res))]
         public string Name { get; set; }
 

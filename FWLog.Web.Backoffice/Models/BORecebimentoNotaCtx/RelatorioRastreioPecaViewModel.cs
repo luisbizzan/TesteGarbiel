@@ -46,6 +46,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
     public class RelatorioRastreioPecaFilterViewModel : IRelatorioRastreioPecaListaFiltro
     {
+        public long? IdProduto { get; set; }
         public long IdEmpresa { get; set; }
 
         [Display(Name = "Número Lote")]
@@ -55,7 +56,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public int? NroNota { get; set; }
 
         [Display(Name = "Referência do Produto")]
-        public string ReferenciaPronduto { get; set; }
+        public string DescricaoProduto { get; set; }
 
         [Display(Name = "Data")]
         public DateTime? DataCompraMinima { get; set; }

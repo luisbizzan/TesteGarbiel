@@ -39,6 +39,7 @@ namespace FWLog.Web.Backoffice.Models.ProdutoCtx
 
         [Display(Name = "Status")]
         public bool? Status { get; set; }
+        public long? IdLote { get; set; }
 
         public SelectList ListaStatus { get; set; }
     }

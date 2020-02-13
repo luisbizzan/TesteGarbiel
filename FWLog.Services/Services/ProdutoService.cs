@@ -99,7 +99,7 @@ namespace FWLog.Services.Services
                             {
                                 IdProduto = produto.IdProduto,
                                 IdEmpresa = empresa.IdEmpresa,
-                                Saldo = 0, 
+                                Saldo = 0,
                                 IdProdutoEstoqueStatus = ProdutoEstoqueStatusEnum.Ativo,
                                 DiasPrazoEntrega = 10
                             };
@@ -148,7 +148,7 @@ namespace FWLog.Services.Services
 
                     bool produtoEstoqueNovo = false;
 
-                   ProdutoEstoque produtoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, empresa.IdEmpresa);
+                    ProdutoEstoque produtoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, empresa.IdEmpresa);
 
                     if (produtoEstoque == null)
                     {
@@ -186,7 +186,7 @@ namespace FWLog.Services.Services
         public async Task ConsultarMediaVenda()
         {
             string where = "WHERE AD_INTEGRARFWLOG = '1' ";
-            
+
             List<ProdutoMediaVendaIntegracao> produtoMediaVenda = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoMediaVendaIntegracao>(where);
 
             foreach (var produtoInt in produtoMediaVenda)

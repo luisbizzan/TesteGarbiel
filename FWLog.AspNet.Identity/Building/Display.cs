@@ -5,6 +5,7 @@ namespace FWLog.AspNet.Identity.Building
 {
     public class Display
     {
+        
         private string _value;
 
         public bool IsFromResource { get; }
