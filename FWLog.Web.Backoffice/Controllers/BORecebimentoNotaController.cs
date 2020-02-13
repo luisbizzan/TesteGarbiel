@@ -1192,7 +1192,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 //Registra a impressão da etiqueta
                 var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem
                 {
-                    IdTipoEtiquetagem = TipoEtiquetagemEnum.Conferencia.GetHashCode(),
+                    IdTipoEtiquetagem = TipoEtiquetagemEnum.Lote.GetHashCode(),
                     IdEmpresa = IdEmpresa,
                     IdProduto = conferenciaRegistro.Produto.IdProduto,
                     Quantidade = quantidadeCaixa,
