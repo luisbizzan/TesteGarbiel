@@ -54,6 +54,18 @@ namespace FWLog.Data
         private ImpressaoItemRepository _impressaoItemRepository;
         private PerfilImpressoraItemRepository _perfilImpressoraItemRepository;
         private PerfilImpressoraRepository _perfilImpressoraRepository;
+        private LoteProdutoRepository _loteProdutoRepository;
+        private LoteProdutoEnderecoRepository _loteEnderecoRepository;
+
+        public LoteProdutoEnderecoRepository LoteEnderecoRepository
+        {
+            get => _loteEnderecoRepository ?? (_loteEnderecoRepository = new LoteProdutoEnderecoRepository(_context));
+        }
+
+        public LoteProdutoRepository LoteProdutoRepository
+        {
+            get => _loteProdutoRepository ?? (_loteProdutoRepository = new LoteProdutoRepository(_context));
+        }
 
         public PerfilImpressoraRepository PerfilImpressoraRepository
         {
