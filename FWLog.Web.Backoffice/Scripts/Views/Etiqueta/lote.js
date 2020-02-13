@@ -27,6 +27,14 @@
         });
     });
 
+    $("#modalProduto").on("hidden.bs.modal", function () {
+        $("#modalProduto").text('');
+    });
+
+    $("#modalLote").on("hidden.bs.modal", function () {
+        $("#modalLote").text('');
+    });
+
     $("#pesquisarProduto").on('click', function () {
         if ($("#NroLote").val() > 0) {
             if (!$(this).attr('disabled')) {
