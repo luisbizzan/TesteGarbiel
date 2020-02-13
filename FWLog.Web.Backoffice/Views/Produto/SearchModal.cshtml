@@ -24,16 +24,17 @@
         <div class="modal-body">
             <form data-filter="form" data-filter-for="dataTableModal" class="form-filter" id="form-datatable-modal">
                 <div class="x_panel">
+                    @Html.HiddenFor(m => m.Filter.IdLote, new { data_field = "IdLote"})
                     <div class="row">
-                        <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
+                        <div class="col-xs-12 col-md-4 form-group">
                             @Html.LabelFor(m => m.Filter.Referencia)
                             @Html.TextBoxFor(m => m.Filter.Referencia, new { @class = "form-control", data_field = "Referencia" })
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
+                        <div class="col-xs-12 col-md-4 form-group">
                             @Html.LabelFor(m => m.Filter.Descricao)
                             @Html.TextBoxFor(m => m.Filter.Descricao, new { @class = "form-control", data_field = "Descricao" })
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
+                        <div class="col-xs-12 col-md-4 form-group">
                             @Html.LabelFor(m => m.Filter.Status)
                             @Html.DropDownListFor(m => m.Filter.Status, Model.Filter.ListaStatus, "Todos", new { @class = "form-control", data_field = "Status" })
                         </div>

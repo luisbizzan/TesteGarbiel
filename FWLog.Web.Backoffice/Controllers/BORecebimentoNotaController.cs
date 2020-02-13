@@ -1882,7 +1882,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 NotasRecebidasUsuario = x.NOTASRECEBIDASUSUARIO,
                 VolumesRecebidos = x.VOLUMESRECEBIDOS,
                 VolumesRecebidosUsuario = x.VOLUMESRECEBIDOSUSUARIO,
-                Percentual = x.PERCENTUAL,
+                Percentual = x.PERCENTUAL.ToString("N2"),
                 Ranking = x.RANKING
             }).PaginationResult(model);
 

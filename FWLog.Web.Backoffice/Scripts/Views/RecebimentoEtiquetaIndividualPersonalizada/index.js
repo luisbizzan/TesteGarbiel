@@ -27,6 +27,14 @@
         }
     });
 
+    $("#pesquisarProduto").on('click', function () {
+        if (!$(this).attr('disabled')) {
+            $("#modalProduto").load(HOST_URL + "Produto/SearchModal", function () {
+                $("#modalProduto").modal();
+            });
+        }
+    });
+
     function limparProduto() {
         $("#IdProduto").val("");
         $("#DescricaoProduto").val("");

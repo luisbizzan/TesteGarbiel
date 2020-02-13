@@ -4,10 +4,11 @@ namespace FWLog.Data.Models.FilterCtx
 {
     public interface IRelatorioRastreioPecaListaFiltro
     {
+        long? IdProduto { get; set; }
         long IdEmpresa { get; set; }
         long? IdLote { get; set; }
         int? NroNota { get; set; }
-        string ReferenciaPronduto { get; set; }
+        string DescricaoProduto { get; set; }
         DateTime? DataCompraMinima { get; set; }
         DateTime? DataCompraMaxima { get; set; }
         DateTime? DataRecebimentoMinima { get; set; }
@@ -20,10 +21,11 @@ namespace FWLog.Data.Models.FilterCtx
 
     public class RelatorioRastreioPecaListaFiltro : IRelatorioRastreioPecaListaFiltro
     {
+        public long? IdProduto { get; set; }
         public long IdEmpresa { get; set; }
         public long? IdLote { get; set; }
         public int? NroNota { get; set; }
-        public string ReferenciaPronduto { get; set; }
+        public string DescricaoProduto { get; set; }
         public DateTime? DataCompraMinima { get; set; }
         public DateTime? DataCompraMaxima { get; set; }
         public DateTime? DataRecebimentoMinima { get; set; }

@@ -35,10 +35,10 @@
     });
 
 
-      function setUsuario_Click() {
-       setUsuario($(this).attr('data-select'), $(this).attr("name-select"), view_modal.origem);
-       }
-       
+    function setUsuario_Click() {
+        setUsuario($(this).attr('data-select'), $(this).attr("name-select"), view_modal.origem);
+    }
+
     $('#dataTableModalUsu').off('click', '[data-select]', setUsuario_Click);
     $('#dataTableModalUsu').on('click', '[data-select]', setUsuario_Click);
 

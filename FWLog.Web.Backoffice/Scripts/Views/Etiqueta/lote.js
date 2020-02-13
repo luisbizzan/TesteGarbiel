@@ -26,6 +26,39 @@
             }
         });
     });
+
+    $("#pesquisarProduto").on('click', function () {
+        if ($("#NroLote").val() > 0) {
+            if (!$(this).attr('disabled')) {
+                $("#modalProduto").load(HOST_URL + "Produto/SearchModal/" + $("#NroLote").val(), function () {
+                    $("#modalProduto").modal();
+                });
+            }
+        }
+        else {
+            PNotify.warning({ text: "Selecione o Lote para abrir o filtro de Produtos." });
+        }
+    });
+
+    $("#pesquisarLote").on('click', function () {
+        if (!$(this).attr('disabled')) {
+            $("#modalLote").load(HOST_URL + "BORecebimentoNota/PesquisaLote", function () {
+                $("#modalLote").modal();
+            });
+        }
+    });
+
+    $("#limparProduto").click(function () {
+        if (!$(this).attr('disabled')) {
+            limparProduto();
+        }
+    });
+
+    $("#limparLote").click(function () {
+        if (!$(this).attr('disabled')) {
+            limparLote();
+        }
+    });
 })();
 
 function imprimir(acao, id) {
@@ -60,4 +93,26 @@ function fechaModal() {
 
     $modal.modal("hide");
     $modal.empty();
+}
+
+function setProduto(idProduto, descricao) {
+    $("#IdProduto").val(idProduto);
+    $("#DescricaoProduto").val(descricao);
+    $("#modalProduto").modal("hide");
+    $("#modalProduto").empty();
+}
+
+function setLote(idLote) {
+    $("#NroLote").val(idLote);
+    $("#modalLote").modal("hide");
+    $("#modalLote").empty();
+}
+
+function limparLote() {
+    $("#NroLote").val("");
+}
+
+function limparProduto() {
+    $("#IdProduto").val("");
+    $("#DescricaoProduto").val("");
 }
