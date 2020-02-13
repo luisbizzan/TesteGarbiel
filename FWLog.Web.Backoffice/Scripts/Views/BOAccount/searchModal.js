@@ -12,6 +12,7 @@
 
     $('#dataTableModalUsu').DataTable({
         destroy: true,
+        stateSave: false,
         ajax: {
             "url": view_modal.pageDataUrl,
             "type": "POST",
@@ -34,11 +35,10 @@
         "bInfo": false
     });
 
-
     function setUsuario_Click() {
         setUsuario($(this).attr('data-select'), $(this).attr("name-select"), view_modal.origem);
     }
-
+  
     $('#dataTableModalUsu').off('click', '[data-select]', setUsuario_Click);
     $('#dataTableModalUsu').on('click', '[data-select]', setUsuario_Click);
 
