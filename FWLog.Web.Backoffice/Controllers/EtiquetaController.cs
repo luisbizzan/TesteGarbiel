@@ -195,7 +195,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 var logEtiquetagem = new LogEtiquetagem
                 {
                     //IdTipoEtiquetagem = viewModel.TipoEtiquetagem,
-                    IdTipoEtiquetagem = Data.Models.TipoEtiquetagemEnum.Lote.GetHashCode(),
+                    IdTipoEtiquetagem = Data.Models.TipoEtiquetagemEnum.Recebimento.GetHashCode(),
                     IdEmpresa = IdEmpresa,
                     Quantidade = viewModel.Quantide.Value,
                     IdUsuario = User.Identity.GetUserId()

@@ -599,6 +599,17 @@ namespace FWLog.Web.Backoffice.Controllers
                 Lote lote = _uow.LoteRepository.ObterLoteNota(viewModel.IdNotaFiscal);
                 _etiquetaService.ImprimirEtiquetaVolumeRecebimento(lote.IdLote, viewModel.IdImpressora);
 
+                //Registra a impressão da etiqueta de Recebimento
+                var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem
+                {
+                    IdTipoEtiquetagem = TipoEtiquetagemEnum.Recebimento.GetHashCode(),
+                    IdEmpresa = IdEmpresa,
+                    Quantidade = lote.QuantidadeVolume,
+                    IdUsuario = User.Identity.GetUserId()
+                };
+
+                _logEtiquetagemService.Registrar(logEtiquetagem);
+
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,
@@ -1187,9 +1198,21 @@ namespace FWLog.Web.Backoffice.Controllers
                     };
 
                     _etiquetaService.ImprimirEtiquetaDevolucao(requestPecasMais);
+
+                    //Registra a impressão da etiqueta de Devolução
+                    var logEtiquetagemDevolucao = new Services.Model.LogEtiquetagem.LogEtiquetagem
+                    {
+                        IdTipoEtiquetagem = TipoEtiquetagemEnum.Devolucao.GetHashCode(),
+                        IdEmpresa = IdEmpresa,
+                        IdProduto = conferenciaRegistro.Produto.IdProduto,
+                        Quantidade = quantidadeCaixa,
+                        IdUsuario = User.Identity.GetUserId()
+                    };
+
+                    _logEtiquetagemService.Registrar(logEtiquetagemDevolucao);
                 }
 
-                //Registra a impressão da etiqueta
+                //Registra a impressão da etiqueta de Lote
                 var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem
                 {
                     IdTipoEtiquetagem = TipoEtiquetagemEnum.Lote.GetHashCode(),
