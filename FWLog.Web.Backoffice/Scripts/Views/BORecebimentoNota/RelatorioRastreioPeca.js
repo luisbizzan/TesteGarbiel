@@ -166,9 +166,6 @@
         stateSaveParams: function (settings, data) {
             dart.dataTables.saveFilterToData(data);
         },
-        stateLoadParams: function (settings, data) {
-            dart.dataTables.loadFilterFromData(data);
-        },
         columns: [
             { data: 'IdLote' },
             { data: 'NroNota' },
@@ -182,4 +179,31 @@
     $('#dataTable').dataTable.error = function (settings, helpPage, message) {
         console.log(message)
     };
+
+    $("#pesquisarProduto").on('click', function () {
+        if (!$(this).attr('disabled')) {
+            $("#modalProduto").load(HOST_URL + "Produto/SearchModal", function () {
+                $("#modalProduto").modal();
+            });
+        }
+    });
+
+    function limparProduto() {
+        $("#Filter_IdProduto").val("");
+        $("#Filter_DescricaoProduto").val("");
+    }
+
+    $("#limparProduto").click(function () {
+        if (!$(this).attr('disabled')) {
+            limparProduto();
+        }
+    });
+
 })();
+
+function setProduto(idProduto, descricao) {
+    $("#Filter_IdProduto").val(idProduto);
+    $("#Filter_DescricaoProduto").val(descricao);
+    $("#modalProduto").modal("hide");
+    $("#modalProduto").empty();
+}

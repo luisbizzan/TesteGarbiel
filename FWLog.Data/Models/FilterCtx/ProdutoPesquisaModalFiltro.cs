@@ -5,5 +5,6 @@
         public string Referencia { get; set; }
         public string Descricao { get; set; }
         public bool? Status { get; set; }
+        public long? IdLote { get; set; }
     }
 }

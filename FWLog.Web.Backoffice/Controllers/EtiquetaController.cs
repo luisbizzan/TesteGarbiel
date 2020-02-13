@@ -48,13 +48,15 @@ namespace FWLog.Web.Backoffice.Controllers
                         Message = "Não foi possível solicitar impressão."
                     });
                 }
+                                
+                var produto = _unitOfWork.ProdutoRepository.GetById(viewModel.IdProduto);
 
                 var request = new ImprimirEtiquetaArmazenagemVolume
                 {
                     NroLote = viewModel.NroLote.GetValueOrDefault(),
                     QuantidadeEtiquetas = viewModel.QtdCaixas.GetValueOrDefault(),
                     QuantidadePorCaixa = viewModel.QtdPorCaixa.GetValueOrDefault(),
-                    ReferenciaProduto = viewModel.ReferenciaProduto,
+                    ReferenciaProduto = produto.Referencia,
                     Usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome,
                     IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
                     IdEmpresa = IdEmpresa
@@ -115,23 +117,12 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                if (string.IsNullOrEmpty(viewModel.ReferenciaProduto))
+                if (string.IsNullOrEmpty(viewModel.DescricaoProduto))
                 {
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
                         Message = "Referência do Produto não pode ser vazio."
-                    });
-                }
-
-                long? idProduto = _unitOfWork.ProdutoRepository.Todos().FirstOrDefault(x => x.Referencia.ToUpper() == viewModel.ReferenciaProduto.ToUpper())?.IdProduto;
-
-                if (idProduto == null)
-                {
-                    return Json(new AjaxGenericResultModel
-                    {
-                        Success = false,
-                        Message = "Produto não encontrado."
                     });
                 }
 
@@ -146,7 +137,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                bool existeLoteProduto = _unitOfWork.LoteConferenciaRepository.ObterPorProduto(viewModel.NroLote.GetValueOrDefault(), idProduto.GetValueOrDefault()).Any();
+                bool existeLoteProduto = _unitOfWork.LoteConferenciaRepository.ObterPorProduto(viewModel.NroLote.GetValueOrDefault(), viewModel.IdProduto).Any();
 
                 if (!existeLoteProduto)
                 {
@@ -204,7 +195,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 var logEtiquetagem = new LogEtiquetagem
                 {
                     //IdTipoEtiquetagem = viewModel.TipoEtiquetagem,
-                    IdTipoEtiquetagem = Data.Models.TipoEtiquetagemEnum.Lote.GetHashCode(),
+                    IdTipoEtiquetagem = Data.Models.TipoEtiquetagemEnum.Recebimento.GetHashCode(),
                     IdEmpresa = IdEmpresa,
                     Quantidade = viewModel.Quantide.Value,
                     IdUsuario = User.Identity.GetUserId()

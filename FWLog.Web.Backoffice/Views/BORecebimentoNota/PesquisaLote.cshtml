@@ -23,19 +23,19 @@
             <form data-filter="form" data-filter-for="dataTableModal" class="form-filter" id="form-datatable-modal">
                 <div class="x_panel">
                     <div class="row">
-                        <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
+                        <div class="col-xs-12 col-md-3 form-group">
                             @Html.LabelFor(m => m.Filter.NroLote)
                             @Html.TextBoxFor(m => m.Filter.NroLote, new { @class = "form-control", data_field = "NroLote" })
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
+                        <div class="col-xs-12 col-md-3 form-group">
                             @Html.LabelFor(m => m.Filter.NroNota)
                             @Html.TextBoxFor(m => m.Filter.NroNota, new { @class = "form-control", data_field = "NroNota" })
                         </div>
-                        <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
+                        <div class="col-xs-12 col-md-3 form-group">
                             @Html.LabelFor(m => m.Filter.CodFornecesor)
                             @Html.TextBoxFor(m => m.Filter.CodFornecesor, new { @class = "form-control", data_field = "CodFornecesor" })
                         </div>
-                        <div class="col-xs-12 col-md-6 col-lg-4 form-group">
+                        <div class="col-xs-12 col-md-3 form-group">
                             @Html.LabelFor(m => m.Filter.Recebimento)
                             <div class='input-group date'>
                                 @Html.TextBoxFor(m => m.Filter.Recebimento, new { @class = "form-control dateFormat", data_field = "Recebimento" })

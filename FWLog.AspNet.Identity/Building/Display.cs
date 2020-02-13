@@ -23,7 +23,6 @@ namespace FWLog.AspNet.Identity.Building
 
         public static Display FromString(string text)
         {
-            text = text.Length <= 50 ? text : text.Substring(0, 50);
             return new Display(text, false);
         }
 
