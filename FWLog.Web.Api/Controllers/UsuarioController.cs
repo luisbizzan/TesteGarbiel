@@ -1,26 +1,24 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.Models;
+using FWLog.Services.Model.Usuario;
 using FWLog.Services.Services;
-using FWLog.Web.Api.GlobalResources;
-using Microsoft.AspNet.Identity.Owin;
+using FWLog.Web.Api.Models.Usuario;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Linq;
-using System;
-using FWLog.Web.Api.Models.Usuario;
-using FWLog.Data.Models;
-using FWLog.Web.Api.Helpers;
-using FWLog.Web.Api.Models;
 
 namespace FWLog.Web.Api.Controllers
 {
     public class UsuarioController : ApiBaseController
     {
-        private AccountService _accountService;
-        private UnitOfWork _unitOfWork;
+        private readonly AccountService _accountService;
+        private readonly UnitOfWork _unitOfWork;
 
         public UsuarioController(UnitOfWork unitOfWork, AccountService accountService)
         {
@@ -38,71 +36,64 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(ModelState);
             }
 
+            ApplicationUser applicationUser = await UserManager.FindByNameAsync(loginRequest.Usuario);
+
+            if(applicationUser == null)
+            {
+                return ApiNotFound("O usuário informado não foi encontrado.");
+            }
+
+            PerfilUsuario perfilUsuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(applicationUser.Id);
+
+            if (perfilUsuario == null)
+            {
+                return ApiNotFound("O usuário informado não foi encontrado.");
+            }
+
+            if (perfilUsuario.Ativo == false)
+            {
+                return ApiForbidden("O usuário não está ativo no sistema.", loginRequest.Usuario);
+            }
+
+            if(perfilUsuario.UsuarioEmpresas.Count == 0)
+            {
+                return ApiForbidden("O usuário não está vinculado a uma empresa.", loginRequest.Usuario);
+            }
+
             SignInStatus signInResult = await SignInManager.PasswordSignInAsync(loginRequest.Usuario, loginRequest.Senha, false, shouldLockout: true);
 
             if (signInResult == SignInStatus.Failure)
             {
-                return ApiBadRequest(AccountResource.InvalidUserOrPassword, loginRequest.Usuario);
+                return ApiBadRequest("Usuário ou senha inválidos.", loginRequest.Usuario);
             }
 
             if (signInResult == SignInStatus.LockedOut)
             {
-                return ApiForbidden(AccountResource.UserLockedOut, loginRequest.Usuario);
+                return ApiForbidden("O usuário está bloqueado para acessar a aplicação.", loginRequest.Usuario);
             }
 
-            ApplicationUser applicationUser = await UserManager.FindByNameAsync(loginRequest.Usuario);
             IList<string> userPermissions = await UserManager.GetPermissionsAsync(applicationUser.Id);
 
             if (userPermissions == null || !userPermissions.Any(w => w.Equals("RFAcessoLogin", StringComparison.OrdinalIgnoreCase)))
             {
-                return ApiForbidden(AccountResource.UserPermissionDenied, loginRequest.Usuario);
+                return ApiForbidden("O usuário não tem permissão para acessar a aplicação.", loginRequest.Usuario);
             }
 
-            var token = await _accountService.Token(loginRequest.Usuario, loginRequest.Senha);
-            var response = Mapper.Map<LoginModelResponse>(token);
-
-            var applicationSession = new ApplicationSession
-            {
-                DataLogin = DateTime.Now,
-                DataUltimaAcao = DateTime.Now,
-                IdApplication = 2,
-                IdAspNetUsers = applicationUser.Id
-            };
-
-            _unitOfWork.ApplicationSessionRepository.Add(applicationSession);
-            _unitOfWork.SaveChanges();
-
-            applicationUser.IdApplicationSession = applicationSession.IdApplicationSession;
-
+            GerarTokenAcessoColetorResponse tokenRespnse = await _accountService.GerarTokenAcessoColetor(loginRequest.Usuario, loginRequest.Senha, applicationUser.Id);
+            
+            applicationUser.IdApplicationSession = tokenRespnse.ApplicationSession.IdApplicationSession;
             UserManager.Update(applicationUser);
 
-            return ApiOk(response);
-        }
+            var empresasUsuario = Mapper.Map<List<EmpresaModelResponse>>(tokenRespnse.EmpresasUsuario);
 
-        [HttpGet]
-        [Route("api/v1/account/permissions")]
-        public async Task<IHttpActionResult> UserPermissions(int idEmpresa)
-        {
-            IList<string> permissions = await UserManager.GetPermissionsAsync(User.Identity.GetUserId());
-
-            var permissionsResponse = new PermissionsModelResponse
+            var response = new LoginModelResponse
             {
-                Permissions = new List<string>(permissions)
+                AccessToken = tokenRespnse.Token.AccessToken,
+                TokenType = tokenRespnse.Token.TokenType,
+                Empresas = empresasUsuario.OrderBy(o => o.Sigla).ToList()
             };
 
-            return ApiOk(permissionsResponse);
-        }
-
-        [HttpGet]
-        [Route("api/v1/usuario/empresa")]
-        [ApplicationAuthorize(Permissions = Permissions.ColetorAcesso.Login)]
-        public async Task<IHttpActionResult> ObterEmpresas()
-        {
-            ICollection<Empresa> empresas = await _unitOfWork.EmpresaRepository.EmpresasPorUsuario(User.Identity.GetUserId()).ConfigureAwait(false);
-
-            var empresaResposta = Mapper.Map<ICollection<Empresa>, List<EmpresaResposta>>(empresas);
-           
-            return ApiOk(empresaResposta);
+            return ApiOk(response);
         }
 
         [HttpPost]

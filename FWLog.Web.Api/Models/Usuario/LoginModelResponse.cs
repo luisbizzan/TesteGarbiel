@@ -11,7 +11,7 @@ namespace FWLog.Web.Api.Models.Usuario
 
     public class EmpresaModelResponse
     {
-        public int IdEmpresa { get; set; }
-        public string Nome { get; set; }
+        public long IdEmpresa { get; set; }
+        public string Sigla { get; set; }
     }
 }

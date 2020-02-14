@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FWLog.Services.Model;
+using FWLog.Data.Models;
 using FWLog.Web.Api.Models.Usuario;
 
 namespace FWLog.Web.Api.Mapping
@@ -8,7 +8,9 @@ namespace FWLog.Web.Api.Mapping
     {
         public LoginModelResponseProfile()
         {
-            CreateMap<TokenResponse, LoginModelResponse>().ForMember(x => x.Empresas, opt => opt.Ignore());
+            CreateMap<UsuarioEmpresa, EmpresaModelResponse>()
+                .ForMember(x => x.Sigla, opt => opt.MapFrom(x => x.Empresa.Sigla))
+                .ForMember(x => x.IdEmpresa, opt => opt.MapFrom(x => x.Empresa.IdEmpresa));
         }
     }
 }

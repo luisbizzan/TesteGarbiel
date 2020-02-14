@@ -38,5 +38,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.UsuarioEmpresa;
         }
+
+        public List<UsuarioEmpresa> RetornaAtivaPorUsuario(string idUsuario)
+        {
+            return Entities.UsuarioEmpresa.Where(w => w.UserId.Equals(idUsuario) && w.Empresa.Ativo == true).ToList();
+        }
     }
 }

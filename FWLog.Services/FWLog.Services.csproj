@@ -149,6 +149,7 @@
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
     <Compile Include="Model\TokenResponse.cs" />
+    <Compile Include="Model\Usuario\GerarTokenAcessoColetorResponse.cs" />
     <Compile Include="Relatorio\ColunaRelatorioAttribute.cs" />
     <Compile Include="Relatorio\FwRelatorio.cs" />
     <Compile Include="Relatorio\FwRelatorioDados.cs" />
