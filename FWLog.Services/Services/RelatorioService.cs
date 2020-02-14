@@ -153,6 +153,9 @@ namespace FWLog.Services.Services
 
             var listaRecebimentoNotas = new List<IFwRelatorioDados>();
 
+            //Variavel que irá guardar o status que o usuario seleciounou na tela
+            var statusSelecionado = "";
+
             if (query.Any())
             {
                 foreach (var item in query)
@@ -195,6 +198,9 @@ namespace FWLog.Services.Services
                         Atraso = atraso.ToString(),
                         Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy")
                     };
+
+                    statusSelecionado = item.LoteStatus.Descricao;
+
                     listaRecebimentoNotas.Add(recebimentoNotas);
                 }
             }
@@ -210,7 +216,7 @@ namespace FWLog.Services.Services
                 Titulo = "Relatório Notas Fiscais Recebimento",
                 Filtros = new FwRelatorioDadosFiltro
                 {
-                    Status = request.IdStatus == null ? "Todos" : EnumExtensions.GetDisplayName((LoteStatusEnum)request.IdStatus),
+                    Status = request.IdStatus == null ? "Todos" : statusSelecionado,
                     PrazoDeEntregaInicial = request.PrazoInicial,
                     PrazoDeEntregaFinal = request.PrazoFinal,
                     DataRecebimentoInicial = request.DataInicial,
