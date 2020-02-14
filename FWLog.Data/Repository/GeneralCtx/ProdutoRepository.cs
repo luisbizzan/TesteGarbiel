@@ -37,13 +37,13 @@ namespace FWLog.Data.Repository.GeneralCtx
                     (model.CustomFilter.Referencia.Equals(string.Empty) || w.Referencia.Contains(model.CustomFilter.Referencia)) &&
                     (model.CustomFilter.Descricao.Equals(string.Empty) || w.Descricao.Contains(model.CustomFilter.Descricao)) &&
                     (model.CustomFilter.Status.HasValue == false || w.Ativo == model.CustomFilter.Status))
-                .Select(s => new ProdutoPesquisaModalListaLinhaTabela
-                {
-                    IdProduto = s.IdProduto,
-                    Referencia = s.Referencia,
-                    Descricao = s.Descricao,
-                    Status = s.Ativo ? "Ativo" : "Inativo"
-                });
+                    .Select(s => new ProdutoPesquisaModalListaLinhaTabela
+                    {
+                        IdProduto = s.IdProduto,
+                        Referencia = s.Referencia,
+                        Descricao = s.Descricao,
+                        Status = s.Ativo ? "Ativo" : "Inativo"
+                    });
 
             totalRecordsFiltered = query.Count();
 

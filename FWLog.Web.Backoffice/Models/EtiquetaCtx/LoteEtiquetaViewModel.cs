@@ -9,17 +9,18 @@ namespace FWLog.Web.Backoffice.Models.EtiquetaCtx
         [Display(Name = "Tipo Etiqueta")]
         public int TipoEtiquetagem { get; set; }
 
-        [Display(Name = "Número do Lote")]
+        [Display(Name = "Lote")]
         public long? NroLote { get; set; }
+      
+        [Display(Name = "Produto")]
+        public string DescricaoProduto { get; set; }
 
-        [Required]
-        [Display(Name = "Referência do Produto")]
-        public string ReferenciaProduto { get; set; }
-
-        [Display(Name = "Quantide por Caixa")]
+        [Display(Name = "Quantidade por Caixa")]
         public int? QtdPorCaixa { get; set; }
 
         [Display(Name = "Quantidade de Caixas")]
         public int? QtdCaixas { get; set; }
+        [Required]
+        public long IdProduto { get; set; }
     }
 }

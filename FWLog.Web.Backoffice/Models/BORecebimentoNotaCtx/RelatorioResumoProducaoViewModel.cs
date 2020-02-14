@@ -39,8 +39,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Volumes Recebidos (Usuario)")]
         public long VolumesRecebidosUsuario { get; set; }
 
-        [Display(Name = "Percentual")]
-        public decimal Percentual { get; set; }
+        [Display(Name = "Percentual (%)")]
+        public string Percentual { get; set; }
     }
 
     public class RelatorioResumoProducaoConferenciaListItemViewModel
@@ -63,7 +63,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Peças Recebidas (Usuario)")]
         public long PecasRecebidasUsuario { get; set; }
 
-        [Display(Name = "Percentual")]
+        [Display(Name = "Percentual (%)")]
         public decimal Percentual { get; set; }
     }
 

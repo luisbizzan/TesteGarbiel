@@ -107,6 +107,8 @@
     <Compile Include="Models\DataTablesCtx\QuarentenaHistoricoListRow.cs" />
     <Compile Include="Models\FilterCtx\PerfilImpressoraFilter.cs" />
     <Compile Include="Models\ImpressaoItem.cs" />
+    <Compile Include="Models\LoteProdutoEndereco.cs" />
+    <Compile Include="Models\LoteProduto.cs" />
     <Compile Include="Models\PerfilImpressora.cs" />
     <Compile Include="Models\PerfilImpressoraItem.cs" />
     <Compile Include="Models\ProdutoEndereco.cs" />
@@ -197,6 +199,8 @@
     <Compile Include="Repository\CommonCtx\BaseRepository.cs" />
     <Compile Include="Repository\CommonCtx\CacheRepository.cs" />
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\LoteProdutoEnderecoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\LoteProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoEnderecoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />

@@ -52,7 +52,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     IdLoteStatus = s.Lote.IdLoteStatus
                 }); ;
 
-            query = query.WhereIf(!string.IsNullOrEmpty(filter.ReferenciaPronduto), x => x.ReferenciaPronduto.ToUpper().Contains(filter.ReferenciaPronduto.ToUpper()));
+            query = query.WhereIf(filter.IdProduto.HasValue, x => x.IdProduto == filter.IdProduto);
             query = query.WhereIf(filter.IdLote.HasValue, x => x.IdLote == filter.IdLote);
             query = query.WhereIf(filter.NroNota.HasValue, x => x.NroNota == filter.NroNota);
 
@@ -167,6 +167,32 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             var conferencias = Entities.LoteConferencia.Where(w => w.IdLote == idLote).ToList();
             Entities.LoteConferencia.RemoveRange(conferencias);
+        }
+
+        public List<ProdutoPesquisaModalListaLinhaTabela> BuscarLista(DataTableFilter<ProdutoPesquisaModalFiltro> model, out int totalRecordsFiltered, out int totalRecords)
+        {
+            totalRecords = Entities.LoteConferencia.Where(w => w.IdLote == model.CustomFilter.IdLote).Count();
+
+            IQueryable<ProdutoPesquisaModalListaLinhaTabela> query = Entities.LoteConferencia.AsNoTracking().Where(w => w.IdLote == model.CustomFilter.IdLote.Value &&
+               (model.CustomFilter.Referencia.Equals(string.Empty) || w.Produto.Referencia.Contains(model.CustomFilter.Referencia)) &&
+               (model.CustomFilter.Descricao.Equals(string.Empty) || w.Produto.Descricao.Contains(model.CustomFilter.Descricao)) &&
+               (model.CustomFilter.Status.HasValue == false || w.Produto.Ativo == model.CustomFilter.Status))
+               .Select(s => new ProdutoPesquisaModalListaLinhaTabela
+               {
+                   IdProduto = s.IdProduto,
+                   Referencia = s.Produto.Referencia,
+                   Descricao = s.Produto.Descricao,
+                   Status = s.Produto.Ativo ? "Ativo" : "Inativo"
+               });
+
+            totalRecordsFiltered = query.Count();
+
+            query = query
+                .OrderBy(model.OrderByColumn, model.OrderByDirection)
+                .Skip(model.Start)
+                .Take(model.Length);
+
+            return query.ToList();
         }
     }
 }
