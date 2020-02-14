@@ -94,7 +94,7 @@ namespace FWLog.Services.Services
 
             if (request.IdStatus.HasValue)
             {
-                query = query.Where(x => (int)x.LoteStatus.IdLoteStatus == request.IdStatus);
+                query = query.Where(x => (long)x.LoteStatus.IdLoteStatus == request.IdStatus.Value);
             }
 
             if (request.DataInicial.HasValue)
@@ -153,9 +153,6 @@ namespace FWLog.Services.Services
 
             var listaRecebimentoNotas = new List<IFwRelatorioDados>();
 
-            //Variavel que irá guardar o status que o usuario seleciounou na tela
-            var statusSelecionado = "";
-
             if (query.Any())
             {
                 foreach (var item in query)
@@ -199,13 +196,17 @@ namespace FWLog.Services.Services
                         Prazo = item.NotaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy")
                     };
 
-                    statusSelecionado = item.LoteStatus.Descricao;
-
                     listaRecebimentoNotas.Add(recebimentoNotas);
                 }
             }
 
             Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
+
+            string descricaoStatus = "Todos";
+            if (request.IdStatus.HasValue)
+            {
+                descricaoStatus = _unitiOfWork.LoteStatusRepository.Todos().FirstOrDefault(f => (long)f.IdLoteStatus == request.IdStatus.Value).Descricao;
+            }
 
             var fwRelatorioDados = new FwRelatorioDados
             {
@@ -216,7 +217,7 @@ namespace FWLog.Services.Services
                 Titulo = "Relatório Notas Fiscais Recebimento",
                 Filtros = new FwRelatorioDadosFiltro
                 {
-                    Status = request.IdStatus == null ? "Todos" : statusSelecionado,
+                    Status = descricaoStatus,
                     PrazoDeEntregaInicial = request.PrazoInicial,
                     PrazoDeEntregaFinal = request.PrazoFinal,
                     DataRecebimentoInicial = request.DataInicial,
