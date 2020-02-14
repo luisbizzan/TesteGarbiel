@@ -23,10 +23,10 @@ namespace FWLog.AspNet.Identity
             return new ApplicationRoleManager(new ApplicationRoleStore(context.Get<ApplicationDbContext>(), idApplication));
         }
 
-        public async Task<IdentityResult> CreateAsync(ApplicationRole role, IEnumerable<string> permissions)
+        public async Task<IdentityResult> CreateAsync(ApplicationRole role, IEnumerable<string> permissions, long idEmpresa, string idUsuario)
         {
             role.Id = Guid.NewGuid().ToString();
-            await _appRoleStore.CreateAsync(role, permissions);
+            await _appRoleStore.CreateAsync(role, permissions, idEmpresa,idUsuario);
             return IdentityResult.Success;
         }
 
