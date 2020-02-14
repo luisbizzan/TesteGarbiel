@@ -233,7 +233,6 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\web.config" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
@@ -245,11 +244,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Security\" />
-    <Folder Include="Views\FreteTipo\" />
-    <Folder Include="Views\Lote\" />
-    <Folder Include="Views\ProdutoEmpresa\" />
-    <Folder Include="Views\Teste\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GlobalResources\AccountResource.resx">
