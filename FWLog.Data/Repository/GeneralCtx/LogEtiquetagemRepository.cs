@@ -46,6 +46,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             var query =
                 Entities.LogEtiquetagem.Where(w =>
                 (w.IdEmpresa == idEmpresa) &&
+                (model.CustomFilter.IdTipoEtiquetagem.HasValue == false || (int)w.IdTipoEtiquetagem == model.CustomFilter.IdTipoEtiquetagem.Value) &&
                 (model.CustomFilter.IdProduto.HasValue == false || w.IdProduto == model.CustomFilter.IdProduto.Value) &&
                 (model.CustomFilter.QuantidadeInicial.HasValue == false || w.Quantidade >= model.CustomFilter.QuantidadeInicial.Value) &&
                 (model.CustomFilter.QuantidadeFinal.HasValue == false || w.Quantidade <= model.CustomFilter.QuantidadeFinal.Value) &&

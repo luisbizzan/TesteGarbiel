@@ -54,6 +54,12 @@ namespace FWLog.Data
         private ImpressaoItemRepository _impressaoItemRepository;
         private PerfilImpressoraItemRepository _perfilImpressoraItemRepository;
         private PerfilImpressoraRepository _perfilImpressoraRepository;
+        private TipoEtiquetagemRepository _tipoEtiquetagemRepository;
+
+        public TipoEtiquetagemRepository TipoEtiquetagemRepository
+        {
+            get => _tipoEtiquetagemRepository ?? (_tipoEtiquetagemRepository = new TipoEtiquetagemRepository(_context));
+        }
 
         public PerfilImpressoraRepository PerfilImpressoraRepository
         {

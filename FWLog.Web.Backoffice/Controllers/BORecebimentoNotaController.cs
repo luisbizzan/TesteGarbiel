@@ -1521,7 +1521,15 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var model = new RelatorioResumoEtiquetagemViewModel
             {
-                Filter = new RelatorioResumoEtiquetagemFilterViewModel() { }
+                Filter = new RelatorioResumoEtiquetagemFilterViewModel()
+                {
+                    ListaTipoEtiquetagem = new SelectList(
+                    _uow.TipoEtiquetagemRepository.Todos().Select(x => new SelectListItem
+                    {
+                        Value = x.IdTipoEtiquetagem.GetHashCode().ToString(),
+                        Text = x.Descricao
+                    }), "Value", "Text")
+                }
             };
 
             return View(model);
