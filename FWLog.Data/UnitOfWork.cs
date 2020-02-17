@@ -55,6 +55,7 @@ namespace FWLog.Data
         private PerfilImpressoraItemRepository _perfilImpressoraItemRepository;
         private PerfilImpressoraRepository _perfilImpressoraRepository;
         private TipoEtiquetagemRepository _tipoEtiquetagemRepository;
+        private LoteProdutoRepository _loteProdutoRepository;
 
         public TipoEtiquetagemRepository TipoEtiquetagemRepository
         {
@@ -249,6 +250,11 @@ namespace FWLog.Data
         public PerfilUsuarioRepository PerfilUsuarioRepository
         {
             get => _perfilUsuarioRepository ?? (_perfilUsuarioRepository = new PerfilUsuarioRepository(_context));
+        }
+
+        public LoteProdutoRepository LoteProdutoRepository
+        {
+            get => _loteProdutoRepository ?? (_loteProdutoRepository = new LoteProdutoRepository(_context));
         }
 
         public TransactionScope CreateTransactionScope()
