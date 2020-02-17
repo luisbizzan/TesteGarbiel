@@ -26,7 +26,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Data Recebimento")]
         public string Recebimento { get; set; }
 
-        [Display(Name = "Nome Fantasia do Formecedor")]
+        [Display(Name = "Fornecedor")]
         public string NomeFantasiaFormecedor { get; set; }
     }
 
