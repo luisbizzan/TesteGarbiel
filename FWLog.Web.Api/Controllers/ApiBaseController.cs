@@ -2,6 +2,7 @@
 using FWLog.Web.Api.App_Start;
 using FWLog.Web.Api.Helpers;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
@@ -142,6 +143,14 @@ namespace FWLog.Web.Api.Controllers
             LogHelper.Warn(message);
             var apiErrorResponse = ApiErrorBuilder.BuildResponse(message);
             return Content(HttpStatusCode.NotFound, apiErrorResponse);
+        }
+
+        protected string IdUsuario
+        {
+            get
+            {
+                return User.Identity.GetUserId();
+            }
         }
 
         public long IdEmpresa
