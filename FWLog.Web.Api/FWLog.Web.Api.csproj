@@ -211,8 +211,8 @@
     <Compile Include="Helpers\LogHelper.cs" />
     <Compile Include="Models\Produto\ProdutoReservadoModelRequest.cs" />
     <Compile Include="Models\Usuario\RecoverPasswordModelRequest.cs" />
-    <Compile Include="Models\Usuario\LoginModelResponse.cs" />
-    <Compile Include="Models\Usuario\LoginModelRequest.cs" />
+    <Compile Include="Models\Usuario\LoginResposta.cs" />
+    <Compile Include="Models\Usuario\LoginRequisicao.cs" />
     <Compile Include="Models\ApiErroResposta.cs" />
     <Compile Include="Models\Usuario\ValidarUsuarioRequisicao.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />

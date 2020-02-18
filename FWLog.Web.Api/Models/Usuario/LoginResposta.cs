@@ -2,7 +2,7 @@
 
 namespace FWLog.Web.Api.Models.Usuario
 {
-    public class LoginModelResponse
+    public class LoginResposta
     {
         public string AccessToken { get; set; }
         public string TokenType { get; set; }
