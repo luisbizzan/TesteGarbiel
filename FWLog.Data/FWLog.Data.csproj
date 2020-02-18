@@ -108,6 +108,8 @@
     <Compile Include="Models\FilterCtx\PerfilImpressoraFilter.cs" />
     <Compile Include="Models\ImpressaoItem.cs" />
     <Compile Include="Models\IntegracaoEntidade.cs" />
+    <Compile Include="Models\LoteMovimentacao.cs" />
+    <Compile Include="Models\LoteMovimentacaoTipo.cs" />
     <Compile Include="Models\LoteProdutoEndereco.cs" />
     <Compile Include="Models\LoteProduto.cs" />
     <Compile Include="Models\PerfilImpressora.cs" />
@@ -202,6 +204,8 @@
     <Compile Include="Repository\CommonCtx\CacheRepository.cs" />
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
     <Compile Include="Repository\GeneralCtx\IntegracaoEntidadeRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\LoteMovimentacaoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\LoteMovimentacaoTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteProdutoEnderecoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoEnderecoRepository.cs" />

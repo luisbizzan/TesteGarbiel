@@ -58,6 +58,19 @@ namespace FWLog.Data
         private LoteProdutoRepository _loteProdutoRepository;
         private IntegracaoTipoRepository     _integracaoTipoRepository;
         private IntegracaoEntidadeRepository _integracaoEntidadeRepository;
+        private LoteMovimentacaoRepository _loteMovimentacaoRepository;
+        private LoteMovimentacaoTipoRepository _loteMovimentacaoTipoRepository;
+
+        public LoteMovimentacaoTipoRepository LoteMovimentacaoTipoRepository
+        {
+            get => _loteMovimentacaoTipoRepository ?? (_loteMovimentacaoTipoRepository = new LoteMovimentacaoTipoRepository(_context));
+        }
+
+        public LoteMovimentacaoRepository LoteMovimentacaoRepository
+        {
+            get => _loteMovimentacaoRepository ?? (_loteMovimentacaoRepository = new LoteMovimentacaoRepository(_context));
+        }
+
         public TipoEtiquetagemRepository TipoEtiquetagemRepository
         {
             get => _tipoEtiquetagemRepository ?? (_tipoEtiquetagemRepository = new TipoEtiquetagemRepository(_context));
