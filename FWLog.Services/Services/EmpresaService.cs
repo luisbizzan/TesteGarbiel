@@ -15,8 +15,9 @@ namespace FWLog.Services.Services
     public class EmpresaService : BaseService
     {
         private UnitOfWork _unitOfWork;
+        private readonly IntegracaoLogService _integracaoLogService;
 
-        public EmpresaService(UnitOfWork uow)
+        public EmpresaService(UnitOfWork uow, IntegracaoLogService _integracaoLogService)
         {
             _unitOfWork = uow;
         }
@@ -44,7 +45,9 @@ namespace FWLog.Services.Services
             inner.Append("AND TSIEMP.AD_NOMEFILIAL IS NOT NULL ");
             inner.Append("ORDER BY TSIEMP.CODEMP ASC ");
 
-            List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString());
+            List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString(), 
+                                                                                                                              IntegracaoTipoEnum.BuscarEmpresa.GetHashCode(),
+                                                                                                                              IntegracaoEntidadeEnum.Empresa.GetHashCode());
             empresasIntegracao = empresasIntegracao.OrderBy("CodigoIntegracao", "ASC").ToList();
 
             foreach (var empInt in empresasIntegracao)
