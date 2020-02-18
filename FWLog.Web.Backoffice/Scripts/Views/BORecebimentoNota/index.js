@@ -296,7 +296,7 @@
         $("#modalUsuarioConferencia").text('');
     });
 
-     //Limpando a div da modal de usuários
+    //Limpando a div da modal de usuários
     $("#modalUsuarioRecebimento").on("hidden.bs.modal", function () {
         $("#modalUsuarioRecebimento").text('');
     });
@@ -534,38 +534,21 @@ function conferirNota() {
         method: "POST",
         success: function (result) {
             if (result.Success) {
-                //if (!validarConferenciaAutomatica(id)) {
                 $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
                     $modal.modal();
                     $("#Referencia").focus();
                 });
-                //}
-                //else {
-                //    $.ajax({
-                //        url: HOST_URL + CONTROLLER_PATH + "RegistrarConferenciaAutomatica/" + id,
-                //        cache: false,
-                //        async: false,
-                //        method: "POST",
-                //        success: function (result) {
-                //            if (result.Success) {
-                //                PNotify.success({ text: result.Message });
-                //                $("#dataTable").DataTable().ajax.reload();
-                //            }
-                //            else {
-                //                PNotify.warning({ text: result.Message });
-                //            }
-                //        },
-                //        error: function (request, status, error) {
-                //            PNotify.error({ text: request.responseText });
-                //        }
-                //    });
-                //}
             } else {
                 PNotify.warning({ text: result.Message });
             }
         },
         error: function (request, status, error) {
-            PNotify.error({ text: request.responseText });
+            if (request.responseText == 'undefined') {
+                PNotify.error({ text: 'Um erro inesperado ocorreu, atualize a página e tente novamente.' });
+            }
+            else {
+                PNotify.error({ text: request.responseText });
+            }
         }
     });
 }

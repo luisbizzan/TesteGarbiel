@@ -133,6 +133,5 @@ namespace FWLog.Data.Repository.GeneralCtx
                        w.NotaFiscal.Empresa.EmpresaConfig.CNPJConferenciaAutomatica == w.NotaFiscal.Fornecedor.CNPJ)
                 .ToListAsync();
         }
-
     }
 }

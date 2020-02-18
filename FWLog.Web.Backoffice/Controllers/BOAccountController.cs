@@ -118,6 +118,11 @@ namespace FWLog.Web.Backoffice.Controllers
             List<GroupItemViewModel> gruposPermissoesUsuario = (await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), id).ConfigureAwait(false))
                 .OrderBy(x => x).Select(x => new GroupItemViewModel { IsSelected = false, Name = x }).ToList();
 
+            if (gruposPermissoesUsuario.Any(x => x.Name == "Administrador"))
+            {
+                gruposPermissoesUsuario = RoleManager.Roles.OrderBy(x => x.Name).Select(x => new GroupItemViewModel { IsSelected = false, Name = x.Name }).ToList();
+            }
+
             var perfilImpressoras = PerfilImpressorasList(id);
 
             var empresasGrupos = new EmpresaGrupoViewModel
@@ -295,8 +300,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 UserName = user.UserName
             };
 
-            IEnumerable<ApplicationRole> groups = RoleManager.Roles.OrderBy(x => x.Name);
-
             foreach (long empresa in empresas)
             {
                 var usuarioEmpresa = usuarioEmpresas.FirstOrDefault(x => x.IdEmpresa == empresa);
@@ -312,23 +315,56 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 List<string> gruposPermissoesUsuario = (await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), empresa).ConfigureAwait(false)).OrderBy(x => x).ToList();
 
-                foreach (string nomeGrupoPermissao in gruposPermissoesUsuario)
+                if (gruposPermissoesUsuario.Contains("Administrador"))
                 {
-                    var groupItemViewModel = new GroupItemViewModel
+                    List<string> todosGrupos = RoleManager.Roles.OrderBy(x => x.Name).Select(x => x.Name).ToList();
+
+                    var nomeGruposFaltantes = todosGrupos.Where(x => !gruposPermissoesUsuario.Contains(x)).ToList();
+
+                    foreach (var grupoPermissaoUsuario in gruposPermissoesUsuario)
                     {
-                        IsSelected = false,
-                        Name = nomeGrupoPermissao
-                    };
+                        var groupItemViewModel = new GroupItemViewModel
+                        {
+                            IsSelected = true,
+                            Name = grupoPermissaoUsuario
+                        };
 
-                    empGrupos.Grupos.Add(groupItemViewModel);
+                        empGrupos.Grupos.Add(groupItemViewModel);
+                    }
+
+                    foreach (var nome in nomeGruposFaltantes)
+                    {
+                        var groupItemViewModel = new GroupItemViewModel
+                        {
+                            IsSelected = false,
+                            Name = nome
+                        };
+
+                        empGrupos.Grupos.Add(groupItemViewModel);
+                    }
                 }
-
-                IList<string> selectedRoles = await UserManager.GetUserRolesByIdEmpresa(user.Id, empresa).ConfigureAwait(false);
-
-                foreach (GroupItemViewModel group in empGrupos.Grupos.Where(x => selectedRoles.Contains(x.Name)))
+                else
                 {
-                    group.IsSelected = true;
+                    foreach (string nomeGrupoPermissao in gruposPermissoesUsuario)
+                    {
+                        var groupItemViewModel = new GroupItemViewModel
+                        {
+                            IsSelected = false,
+                            Name = nomeGrupoPermissao
+                        };
+
+                        empGrupos.Grupos.Add(groupItemViewModel);
+                    }
+
+                    IList<string> selectedRoles = await UserManager.GetUserRolesByIdEmpresa(user.Id, empresa).ConfigureAwait(false);
+
+                    foreach (GroupItemViewModel group in empGrupos.Grupos.Where(x => selectedRoles.Contains(x.Name)))
+                    {
+                        group.IsSelected = true;
+                    }
                 }
+
+                empGrupos.Grupos.OrderBy(x => x.Name);
 
                 model.EmpresasGrupos.Add(empGrupos);
             }

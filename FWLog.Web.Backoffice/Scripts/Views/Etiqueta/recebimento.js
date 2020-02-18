@@ -1,6 +1,24 @@
 ﻿(function () {
     $('.onlyNumber').mask('0#');
 
+    $("#pesquisarLote").on('click', function () {
+        if (!$(this).attr('disabled')) {
+            $("#modalLote").load(HOST_URL + "BORecebimentoNota/PesquisaLote", function () {
+                $("#modalLote").modal();
+            });
+        }
+    });
+
+    $("#limparLote").click(function () {
+        if (!$(this).attr('disabled')) {
+            limparLote();
+        }
+    });
+
+    $("#modalLote").on("hidden.bs.modal", function () {
+        $("#modalLote").text('');
+    });
+
     $("#submit").click(function (e) {
         e.preventDefault();
 
@@ -60,4 +78,14 @@ function fechaModal() {
 
     $modal.modal("hide");
     $modal.empty();
+}
+
+function setLote(idLote) {
+    $("#NroLote").val(idLote);
+    $("#modalLote").modal("hide");
+    $("#modalLote").empty();
+}
+
+function limparLote() {
+    $("#NroLote").val("");
 }

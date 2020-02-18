@@ -33,6 +33,21 @@
         limparUsuarioEtiquetagem();
     });
 
+    $("#pesquisarFornecedor").click(function () {
+        $("#modalFornecedor").load(HOST_URL + "BOFornecedor/SearchModal", function () {
+            $("#modalFornecedor").modal();
+        });
+    });
+
+    function limparFornecedor() {
+        $("#Filter_NomeFantasiaFornecedor").val("");
+        $("#Filter_IdFornecedor").val("");
+    }
+
+    $("#limparFornecedor").click(function () {
+        limparFornecedor();
+    });
+
     $(document.body).on('click', "#pesquisar", function () {
         $("#tabela").removeClass("hidden");
     });
@@ -159,6 +174,13 @@ function setProduto(idProduto, descricao) {
     $("#Filter_IdProduto").val(idProduto);
     $("#modalProduto").modal("hide");
     $("#modalProduto").empty();
+}
+
+function setFornecedor(idFornecedor, nomeFantasia) {
+    $("#Filter_NomeFantasiaFornecedor").val(nomeFantasia);
+    $("#Filter_IdFornecedor").val(idFornecedor);
+    $("#modalFornecedor").modal("hide");
+    $("#modalFornecedor").empty();
 }
 
 function setUsuario(idUsuario, nomeUsuario, origem) {

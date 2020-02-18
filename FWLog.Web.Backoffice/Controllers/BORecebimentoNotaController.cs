@@ -786,98 +786,111 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public async Task<JsonResult> ValidarInicioConferencia(long id)
         {
-            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
-            var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
-
-            //Verifica se o lote já foi conferido durante o processo de conferência.
-            if (lote.IdLoteStatus != LoteStatusEnum.Recebido && lote.IdLoteStatus != LoteStatusEnum.Conferencia)
+            try
             {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
-                });
-            }
+                var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+                var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
 
-            if (empresaConfig.TipoConferencia == null)
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "Nenhum tipo de conferência configurado para a empresa Unidade: " + empresaConfig.Empresa.Sigla + ".",
-                });
-            }
-
-            ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(2);
-
-            if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "Não há impressora configurada para Etiqueta de Lote.",
-                });
-            }
-
-            impressaoItem = _uow.ImpressaoItemRepository.Obter(7);
-
-            if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "Não há impressora configurada para Etiqueta de Devolução.",
-                });
-            }
-
-            NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
-
-            //Valida a Nota Fiscal.
-            if (notaFiscal == null)
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "Não foi possível buscar a Nota Fiscal. Por favor, tente novamente!"
-                });
-            }
-
-            //Valida o Lote.
-            if (lote == null)
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "O Lote ainda não foi recebido."
-                });
-            }
-            else
-            {
-                if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia)
+                //Verifica se o lote já foi conferido durante o processo de conferência.
+                if (lote.IdLoteStatus != LoteStatusEnum.Recebido && lote.IdLoteStatus != LoteStatusEnum.Conferencia)
                 {
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "O Lote já foi conferido."
+                        Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
                     });
                 }
-                else if (
-                    lote.IdLoteStatus == LoteStatusEnum.Finalizado ||
-                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
-                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
-                    lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas
-                    )
+
+                if (empresaConfig.TipoConferencia == null)
                 {
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "O Lote já foi conferido e finalizado."
+                        Message = "Nenhum tipo de conferência configurado para a empresa Unidade: " + empresaConfig.Empresa.Sigla + ".",
                     });
                 }
 
+                ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(2);
+
+                if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Não há impressora configurada para Etiqueta de Lote.",
+                    });
+                }
+
+                impressaoItem = _uow.ImpressaoItemRepository.Obter(7);
+
+                if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Não há impressora configurada para Etiqueta de Devolução.",
+                    });
+                }
+
+                NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+
+                //Valida a Nota Fiscal.
+                if (notaFiscal == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Não foi possível buscar a Nota Fiscal. Por favor, tente novamente!"
+                    });
+                }
+
+                //Valida o Lote.
+                if (lote == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "O Lote ainda não foi recebido."
+                    });
+                }
+                else
+                {
+                    if (lote.IdLoteStatus == LoteStatusEnum.ConferidoDivergencia)
+                    {
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = "O Lote já foi conferido."
+                        });
+                    }
+                    else if (
+                        lote.IdLoteStatus == LoteStatusEnum.Finalizado ||
+                        lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
+                        lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
+                        lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas
+                        )
+                    {
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = "O Lote já foi conferido e finalizado."
+                        });
+                    }
+
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = true
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
                 return Json(new AjaxGenericResultModel
                 {
-                    Success = true
+                    Success = false,
+                    Message = "Algo inesperado ocorreu, atualize a página e tente novamente."
                 });
             }
         }
@@ -1521,7 +1534,15 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var model = new RelatorioResumoEtiquetagemViewModel
             {
-                Filter = new RelatorioResumoEtiquetagemFilterViewModel() { }
+                Filter = new RelatorioResumoEtiquetagemFilterViewModel()
+                {
+                    ListaTipoEtiquetagem = new SelectList(
+                    _uow.TipoEtiquetagemRepository.Todos().Select(x => new SelectListItem
+                    {
+                        Value = x.IdTipoEtiquetagem.GetHashCode().ToString(),
+                        Text = x.Descricao
+                    }), "Value", "Text")
+                }
             };
 
             return View(model);
