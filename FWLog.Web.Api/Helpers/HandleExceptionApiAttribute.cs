@@ -15,22 +15,22 @@ namespace FWLog.Web.Api.Helpers
         public override void OnException(HttpActionExecutedContext context)
         {
             var httpResponse = new HttpResponseMessage();
-            var apiError = new ApiError();
+            var apiError = new ApiErro();
 
             if (context.Exception is HttpException httpException)
             {
                 httpResponse.StatusCode = (HttpStatusCode)httpException.GetHttpCode();
-                apiError.Message = httpException.Message;
+                apiError.Mensagem = httpException.Message;
             }
             else
             {
                 httpResponse.StatusCode = HttpStatusCode.InternalServerError;
-                apiError.Message = GeneralStrings.InternalServerError;
+                apiError.Mensagem = GeneralStrings.InternalServerError;
             }
 
-            var apiErrorResponse = new ApiErrorModelResponse
+            var apiErrorResponse = new ApiErroResposta
             {
-                Errors = new List<ApiError> { apiError }
+                Erros = new List<ApiErro> { apiError }
             };
 
             httpResponse.Content = new StringContent(JsonConvert.SerializeObject(apiErrorResponse));

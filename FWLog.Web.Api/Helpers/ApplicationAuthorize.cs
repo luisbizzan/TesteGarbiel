@@ -24,14 +24,14 @@ namespace FWLog.Web.Api.Helpers
 
         protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
         {
-            var apiError = new ApiError
+            var apiError = new ApiErro
             {
-                Message = GeneralStrings.AuthorizationDenied
+                Mensagem = GeneralStrings.AuthorizationDenied
             };
 
-            var apiErrorResponse = new ApiErrorModelResponse
+            var apiErrorResponse = new ApiErroResposta
             {
-                Errors = new List<ApiError> { apiError }
+                Erros = new List<ApiErro> { apiError }
             };
 
             var httpResponseMessage = new HttpResponseMessage
@@ -43,7 +43,7 @@ namespace FWLog.Web.Api.Helpers
             httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             actionContext.Response = httpResponseMessage;
 
-            var logWarnMessage = string.Format("{0}: {1}", apiError.Message, actionContext.Request.ToString());
+            var logWarnMessage = string.Format("{0}: {1}", apiError.Mensagem, actionContext.Request.ToString());
             LogHelper.Warn(logWarnMessage);
         }
 

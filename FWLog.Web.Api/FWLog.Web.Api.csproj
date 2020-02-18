@@ -213,7 +213,8 @@
     <Compile Include="Models\Usuario\RecoverPasswordModelRequest.cs" />
     <Compile Include="Models\Usuario\LoginModelResponse.cs" />
     <Compile Include="Models\Usuario\LoginModelRequest.cs" />
-    <Compile Include="Models\ApiErrorModelResponse.cs" />
+    <Compile Include="Models\ApiErroResposta.cs" />
+    <Compile Include="Models\Usuario\ValidarUsuarioRequisicao.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Helpers\ApplicationAuthorize.cs" />
     <Compile Include="App_Start\AutoMapperConfig.cs" />

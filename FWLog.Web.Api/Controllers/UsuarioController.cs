@@ -98,7 +98,7 @@ namespace FWLog.Web.Api.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("api/v1/account/logout")]
+        [Route("api/v1/usuario/logout")]
         public async Task<IHttpActionResult> Logout()
         {
             ApplicationUser applicationUser = await UserManager.FindByNameAsync(User.Identity.Name);
@@ -121,6 +121,38 @@ namespace FWLog.Web.Api.Controllers
             }
 
             AuthenticationManager.SignOut();
+            return ApiOk();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("api/v1/usuario/validar")]
+        public async Task<IHttpActionResult> ValidarUsuario(ValidarUsuarioRequisicao requisicao)
+        {
+            ApplicationUser usuarioAplicacao = await UserManager.FindByNameAsync(requisicao.Codigo);
+
+            if(usuarioAplicacao == null)
+            {
+                return ApiNotFound("Usuário não cadastrado.");
+            }
+
+            PerfilUsuario usuarioPerfil = _unitOfWork.PerfilUsuarioRepository.GetByUserId(usuarioAplicacao.Id);
+
+            if(usuarioPerfil == null)
+            {
+                return ApiNotFound("Usuário não cadastrado.");
+            }
+
+            if(usuarioPerfil.Ativo == false)
+            {
+                return ApiForbidden("Usuário inativo.");
+            }
+
+            if(usuarioPerfil.UsuarioEmpresas.Count == 0)
+            {
+                return ApiForbidden("Usuário sem empresa.");
+            }
+
             return ApiOk();
         }
     }
