@@ -38,11 +38,13 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 
         [Display(Name = "Usuário")]
         public string Usuario { get; set; }
+        public string Fornecedor { get; set; }
     }
 
     public class RelatorioResumoEtiquetagemFilterViewModel
     {
-        public int? TipoEtiquetagem { get; set; }
+        [Display(Name = "Tipo de Etiqueta")]
+        public int? IdTipoEtiquetagem { get; set; }
 
         [Display(Name = "Referência")]
         public long? IdProduto { get; set; }
@@ -63,6 +65,10 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Usuário")]
         public string IdUsuarioEtiquetagem { get; set; }
         public string UsuarioEtiquetagem { get; set; }
+
+        [Display(Name = "Fornecedor")]
+        public long? IdFornecedor { get; set; }
+        public string NomeFantasiaFornecedor { get; set; }
 
         public SelectList ListaTipoEtiquetagem { get; set; }
     }

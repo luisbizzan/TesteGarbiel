@@ -165,6 +165,9 @@ namespace FWLog.Services.Services
 
                 if (notaStatus == NotaFiscalStatusEnum.Confirmada)
                 {
+                    //Registrar quantidade recebida na entidade LoteProduto.
+                    RegistrarLoteProduto(nfItens, lote, null);
+
                     AtualizarSaldoArmazenagem(nfItens, notafiscal, null);
                 }
 
@@ -206,6 +209,9 @@ namespace FWLog.Services.Services
 
                 List<LoteDivergencia> loteDivergenciasMenos = GravarTratamentoDivergencia(request);
 
+                //Registrar quantidade recebida na entidade LoteProduto.
+                RegistrarLoteProduto(nfItens, lote, loteDivergenciasMenos);
+
                 AtualizarSaldoArmazenagem(nfItens, notafiscal, loteDivergenciasMenos);
 
                 if (lote.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva && loteDivergenciasMenos.NullOrEmpty())
@@ -237,22 +243,24 @@ namespace FWLog.Services.Services
             }
         }
 
-        public ResumoFinalizarConferenciaResponse ResumoFinalizarConferencia(long idLote, long idEmpresa)
+        public ResumoFinalizarConferenciaResponse ResumoFinalizarConferencia(long idLote, long idEmpresa, string userId)
         {
             EmpresaConfig empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(idEmpresa);
             Lote lote = _uow.LoteRepository.GetById(idLote);
             var itensNotaFiscal = _uow.NotaFiscalItemRepository.ObterItens(lote.IdNotaFiscal).GroupBy(g => g.IdProduto);
             List<LoteConferencia> itensConferidos = _uow.LoteConferenciaRepository.ObterPorId(idLote);
+            var usuario = _uow.PerfilUsuarioRepository.GetByUserId(userId);
 
             var response = new ResumoFinalizarConferenciaResponse
             {
                 DataRecebimento = lote.DataRecebimento.ToString("dd/MM/yyyy hh:mm:ss"),
                 IdLote = lote.IdLote,
                 IdNotaFiscal = lote.IdNotaFiscal,
-                NumeroNotaFiscal = lote.NotaFiscal.Numero,
+                NumeroNotaFiscal = string.Concat(lote.NotaFiscal.Numero, " - ", lote.NotaFiscal.Serie),
                 QuantidadeVolume = lote.QuantidadeVolume,
-                RazaoSocialFornecedor = lote.NotaFiscal.Fornecedor.RazaoSocial,
-                TipoConferencia = empresaConfig.TipoConferencia.Descricao
+                RazaoSocialFornecedor = lote.NotaFiscal.Fornecedor.NomeFantasia,
+                TipoConferencia = empresaConfig.TipoConferencia.Descricao,
+                NomeConferente = usuario.Nome
             };
 
             foreach (var itemNota in itensNotaFiscal)
@@ -260,6 +268,7 @@ namespace FWLog.Services.Services
                 var itensConferencia = itensConferidos.Where(x => x.IdProduto == itemNota.Key);
                 int quantidadeNota = itemNota.Sum(s => s.Quantidade);
                 string referencia = itemNota.First().Produto.Referencia;
+                string descricao = itemNota.First().Produto.Descricao;
 
                 if (itensConferencia.Any())
                 {
@@ -269,6 +278,7 @@ namespace FWLog.Services.Services
                     var item = new ResumoFinalizarConferenciaItemResponse
                     {
                         Referencia = referencia,
+                        DescricaoProduto = descricao,
                         QuantidadeConferido = quantidadeConferido,
                         QuantidadeNota = quantidadeNota,
                         DivergenciaMais = diferencaNotaConferido < 0 ? diferencaNotaConferido * -1 : 0,
@@ -282,6 +292,7 @@ namespace FWLog.Services.Services
                     var item = new ResumoFinalizarConferenciaItemResponse
                     {
                         Referencia = referencia,
+                        DescricaoProduto = descricao,
                         QuantidadeConferido = 0,
                         QuantidadeNota = quantidadeNota,
                         DivergenciaMais = 0,
@@ -301,6 +312,7 @@ namespace FWLog.Services.Services
                 var item = new ResumoFinalizarConferenciaItemResponse
                 {
                     Referencia = itemForaNota.First().Produto.Referencia,
+                    DescricaoProduto = itemForaNota.First().Produto.Descricao,
                     QuantidadeConferido = quantidadeConferido,
                     QuantidadeNota = 0,
                     DivergenciaMais = quantidadeConferido,
@@ -521,6 +533,41 @@ namespace FWLog.Services.Services
                 }
 
                 _uow.ProdutoEstoqueRepository.AtualizarSaldoArmazenagem(nfItem.Key, notafiscal.IdEmpresa, qtdNF);
+            }
+        }
+
+        private void RegistrarLoteProduto(Dictionary<long, List<NotaFiscalItem>> nfItens, Lote lote, List<LoteDivergencia> loteDivergenciasMenos)
+        {
+            LoteProduto loteProduto;
+
+            foreach (var nfItem in nfItens)
+            {
+                LoteDivergencia divergencia = null;
+
+                //Verifica se houve divergência a menos do produto no lote.
+                if (!loteDivergenciasMenos.NullOrEmpty())
+                {
+                    divergencia = loteDivergenciasMenos.FirstOrDefault(w => w.IdProduto == nfItem.Key); //Captura a divergência do produto.
+                }
+
+                //Captura a quantidade total do produto na nota.
+                int qtdNF = nfItem.Value.Sum(s => s.Quantidade);
+
+                if (divergencia != null && divergencia.QuantidadeDivergenciaMenos > 0)
+                {
+                    //Subtrai a quantidade de peças a menos da quantidade total do produto.
+                    qtdNF = qtdNF - divergencia.QuantidadeDivergenciaMenos.Value;
+                }
+
+                loteProduto = new LoteProduto();
+
+                loteProduto.IdEmpresa = lote.NotaFiscal.IdEmpresa;
+                loteProduto.IdLote = lote.IdLote;
+                loteProduto.IdProduto = nfItem.Key;
+                loteProduto.QuantidadeRecebida = qtdNF;
+                loteProduto.Saldo = qtdNF;
+
+                _uow.LoteProdutoRepository.Add(loteProduto);
             }
         }
 

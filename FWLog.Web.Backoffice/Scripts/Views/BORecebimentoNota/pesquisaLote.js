@@ -12,7 +12,7 @@
             {
                 action: 'select',
                 visible: true,
-                attrs: { 'data-select': full.IdFornecedor, 'name-select': full.NomeFantasia }
+                attrs: { 'data-select': full.NroLote}
             }
         ];
     });
@@ -26,6 +26,7 @@
             }
         },
         lengthChange: false,
+        stateSave: false,
         initComplete: function (settings, json) {
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTableModal'));
         },
@@ -40,7 +41,7 @@
     });
 
     $('#dataTableModal').on('click', '[data-select]', function () {
-        setLote($(this).attr('data-select'), $(this).attr("name-select"));
+        setLote($(this).attr('data-select'));
     });
 
     dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));

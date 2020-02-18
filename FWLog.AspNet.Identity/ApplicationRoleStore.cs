@@ -159,7 +159,7 @@ namespace FWLog.AspNet.Identity
             return this.db.SaveChangesAsync();
         }
 
-        public Task CreateAsync(ApplicationRole role, IEnumerable<string> permissions)
+        public Task CreateAsync(ApplicationRole role, IEnumerable<string> permissions, long idEmpresa, string idUsuario)
         {
             if (role == null)
             {
@@ -177,6 +177,15 @@ namespace FWLog.AspNet.Identity
                     PermissionId = x
                 })
                 .ToList();
+
+            var userRole = new UserRole
+            {
+                CompanyId = idEmpresa,
+                RoleId = role.Id,
+                UserId = idUsuario
+            };
+
+            role.Users.Add(userRole);
 
             role.RolePermissions = rolePermissions;
 

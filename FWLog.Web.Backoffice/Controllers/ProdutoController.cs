@@ -26,7 +26,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize]
-        public ActionResult SearchModal()
+        public ActionResult SearchModal(long? id = null)
         {
             var lista = new[]
             {
@@ -38,6 +38,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 Filter = new ProdutoSearchModalFilterViewModel()
                 {
+                    IdLote = id,
                     ListaStatus = new SelectList(lista, "Value", "Text")
                 }
             };
@@ -50,13 +51,29 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var filtro = Mapper.Map<DataTableFilter<ProdutoPesquisaModalFiltro>>(model);
 
-            IEnumerable<ProdutoPesquisaModalListaLinhaTabela> result = _uow.ProdutoRepository.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);
+            IEnumerable<ProdutoPesquisaModalListaLinhaTabela> result;
+
+            int _registrosFiltrados;
+            int _totalRegistros;
+
+            if (filtro.CustomFilter.IdLote.HasValue)
+            {
+                result = _uow.LoteConferenciaRepository.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);
+                _registrosFiltrados = registrosFiltrados;
+                _totalRegistros = totalRegistros;
+            }
+            else
+            {
+                result = _uow.ProdutoRepository.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);
+                _registrosFiltrados = registrosFiltrados;
+                _totalRegistros = totalRegistros;
+            }
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
-                RecordsTotal = totalRegistros,
-                RecordsFiltered = registrosFiltrados,
+                RecordsTotal = _totalRegistros,
+                RecordsFiltered = _registrosFiltrados,
                 Data = Mapper.Map<IEnumerable<ProdutoSearchModalItemViewModel>>(result)
             });
         }

@@ -129,6 +129,7 @@
                                     <thead>
                                         <tr>
                                             <th>Referência</th>
+                                            <th>Descrição</th>
                                             <th>Quantidade</th>
                                             <th>Início Conferência</th>
                                             <th>Termino Conferência</th>
@@ -143,6 +144,7 @@
                                             {
                                                 <tr>
                                                     <td>@item.Referencia</td>
+                                                    <td>@item.DescricaoProduto</td>
                                                     <td>@item.Quantidade</td>
                                                     <td>@item.DataInicioConferencia</td>
                                                     <td>@item.DataFimConferencia</td>
@@ -176,21 +178,19 @@
                     {
                         <div class="informacoes">
                             <div class="row">
-                                <div class="col-sm-4 col-lg-4">
+                                <div class="col-sm-4 col-md-4">
                                     @Html.LabelFor(m => m.Divergencias.NotaFiscal): @Html.DisplayTextFor(m => m.Divergencias.NotaFiscal)
                                 </div>
-                                <div class="col-sm-8 col-lg-6">
+                                <div class="col-sm-4 col-md-4">
                                     @Html.LabelFor(m => m.Divergencias.StatusNotasFiscal): @Html.DisplayTextFor(m => m.Divergencias.StatusNotasFiscal)
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-4 col-lg-4">
-                                    @Html.LabelFor(m => m.Divergencias.UsuarioTratamento): @Html.DisplayTextFor(m => m.Divergencias.UsuarioTratamento)
-                                </div>
-                                <div class="col-sm-4 col-lg-4">
+                                </div>   
+                                <div class="col-sm-4 col-md-4">
                                     @Html.LabelFor(m => m.Divergencias.DataTratamento): @Html.DisplayTextFor(m => m.Divergencias.DataTratamento)
                                 </div>
-                                <div class="col-xs-12">
+                                <div class="col-sm-12 col-md-12">
+                                    @Html.LabelFor(m => m.Divergencias.UsuarioTratamento): @Html.DisplayTextFor(m => m.Divergencias.UsuarioTratamento)
+                                </div>
+                                <div class="col-xs-12" style="margin-top: 5px">
                                     @Html.LabelFor(f => f.Observacao):
                                     @Html.TextAreaFor(m => m.Observacao, new { @class = "form-control", @rows = 10, @style = "font:12px; height:100px !important;", @readonly = "readonly" })
                                 </div>
@@ -203,6 +203,7 @@
                                     <thead>
                                         <tr>
                                             <th>@Html.LabelFor(m => m.Divergencias.Divergencias[0].Referencia)</th>
+                                            <th>@Html.LabelFor(m => m.Divergencias.Divergencias[0].DescricaoProduto)</th>
                                             <th style="text-align:center">@Html.LabelFor(m => m.Divergencias.Divergencias[0].QuantidadeNotaFiscal)</th>
                                             <th style="text-align:center">@Html.LabelFor(m => m.Divergencias.Divergencias[0].QuantidadeConferencia)</th>
                                             <th style="text-align:center">@Html.LabelFor(m => m.Divergencias.Divergencias[0].QuantidadeMaisTratado)</th>
@@ -214,6 +215,7 @@
                                         {
                                             <tr class="linha-divergencia">
                                                 <td>@Model.Divergencias.Divergencias[i].Referencia</td>
+                                                <td>@Model.Divergencias.Divergencias[i].DescricaoProduto</td>
                                                 <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeNotaFiscal</td>
                                                 <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeConferencia</td>
                                                 <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeMaisTratado</td>

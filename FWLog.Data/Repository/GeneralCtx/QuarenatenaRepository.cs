@@ -33,15 +33,15 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public void Update(Quarentena entity, string IdUsuario, string descricao = null)
         {
-            string _descricao = descricao ?? $"Atualização: Status - {entity.IdQuarentenaStatus.ToString()} Observação - {entity.Observacao}";
+            var entry = Entities.Entry(entity);
+            _dbSet.Attach(entity);
+            entry.State = EntityState.Modified;
+
+            string _descricao = descricao ?? $"Atualização - Status: {entity.QuarentenaStatus.Descricao}. Observação: {entity.Observacao}";
 
             var log = new QuarentenaHistorico { Data = DateTime.Now, Descricao = _descricao, IdQuarentena = entity.IdQuarentena, IdUsuario = IdUsuario };
 
             Entities.QuarentenaHistorico.Add(log);
-
-            var entry = Entities.Entry(entity);
-            _dbSet.Attach(entity);
-            entry.State = EntityState.Modified;
         }
 
         public void AddRange(IEnumerable<Quarentena> entities, string IdUsuario)
