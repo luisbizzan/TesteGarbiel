@@ -13,6 +13,7 @@
     let $multiplo = $("#Multiplo");
     let $quantidadeCaixa = $("#QuantidadeCaixa");
     let $quantidadePorCaixa = $("#QuantidadePorCaixa");
+    let $totalItens = $("#TotalItens");
     let $referencia = $("#Referencia");
     let $tipoConferencia = $("#TipoConferencia");
     let $validarAcessoCoordenador = $("#validarAcessoCoordenador");
@@ -55,9 +56,11 @@
         $multiplo.on('keydown', multiplo_Keydown);
 
         $quantidadeCaixa.on('keydown', quantidadeCaixa_Keydown);
+        $quantidadeCaixa.on('keyup', quantidade_KeyUp);
 
         $quantidadePorCaixa.on('focus', quantidadeDeCaixa_Focus);
         $quantidadePorCaixa.on('keydown', quantidadeDeCaixa_Keydown);
+        $quantidadePorCaixa.on('keyup', quantidade_KeyUp);
 
         $validarAcessoCoordenador.on('click', validarAcessoCoordenador_Click);
 
@@ -71,7 +74,7 @@
 
         onScan.attachTo($quantidadePorCaixa[0], {
             onScan: function (sScancode, iQuatity) {
-                if ($tipoConferencia.val() != "Por Quantidade") {
+                if ($tipoConferencia.text() != "Por Quantidade") {
                     if (listaReferencia[0] != sScancode) {
                         PNotify.warning({ text: 'Referência inválida, não corresponde à referência iniciada!' });
                     } else {
@@ -165,16 +168,22 @@
                     $("#Embalagem").val(model.Embalagem);
                     $("#Unidade").val(model.Unidade);
                     $("#Multiplo").val('');
-                    $("#QuantidadeEstoque").val(model.QuantidadeEstoque);
-                    $("#Localizacao").val(model.Localizacao);
-                    $("#QuantidadeNaoConferida").val(model.QuantidadeNaoConferida);
-                    $("#QuantidadeConferida").val(model.QuantidadeConferida);
+                    $("#QuantidadeEstoque").text(model.QuantidadeEstoque);
+                    $("#Localizacao").text(model.Localizacao);
+                    $("#QuantidadeNaoConferida").text(model.QuantidadeNaoConferida);
+                    $("#QuantidadeConferida").text(model.QuantidadeConferida);
                     $("#InicioConferencia").val(model.InicioConferencia);
                     $("#QuantidadePorCaixa").val(model.quantidadePorCaixa);
                     $("#QuantidadeCaixa").val(model.QuantidadeCaixa);
+                    $("#MediaVenda").val(model.MediaVenda);
+                    $("#QuantidadeReservada").text(model.QuantidadeReservada);
 
                     if (model.EnviarPicking) {
                         $("#msgEnviarPicking").removeClass("hidden");
+                    }
+
+                    if (result.Message != "") {
+                        PNotify.warning({ text: result.Message });
                     }
 
                     //Reset array.
@@ -208,7 +217,6 @@
     }
 
     function validarDiferencaMultiploConferencia() {
-        debugger
         let referencia = $("#Referencia").val();
         let multiplo = $("#Multiplo").val();
         let quantidadePorCaixa = $("#QuantidadePorCaixa").val();
@@ -256,7 +264,7 @@
 
     function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia) {
         overlay(true);
-
+        
         if (quantidadePorCaixa === '')
             quantidadePorCaixa = 0;
 
@@ -277,7 +285,7 @@
                 multiplo: multiplo,
                 idTipoConferencia: idTipoConferencia
             },
-            success: function (result) {
+            success: function (result) {               
                 if (result.Success) {
                     permiteRegistrar = false;
 
@@ -304,13 +312,14 @@
 
     function overlay(show) {
         var $overlay = $('#overlay');
-
         if (!!show) {
             $referencia.attr('disabled', true);
             $overlay.show();
+            $("#fecharConferencia").hide();
         } else {
             $referencia.attr('disabled', false);
             $overlay.hide();
+            $("#fecharConferencia").show();
         }
     }
 
@@ -325,7 +334,7 @@
     }
 
     function quantidadeDeCaixa_Focus() {
-        if ($tipoConferencia.val() != "Por Quantidade") {
+        if ($tipoConferencia.text() != "Por Quantidade") {
             $quantidadePorCaixa.css({ 'background': '#98fb9873' });
         } else {
             $quantidadePorCaixa.css({ 'background': '#fff' });
@@ -340,6 +349,15 @@
             }
 
             return false;
+        }
+    }
+
+    function quantidade_KeyUp(e) {
+        if ($quantidadeCaixa.val() > 0 && $quantidadePorCaixa.val() > 0) {
+            $totalItens.val($quantidadeCaixa.val() * $quantidadePorCaixa.val());
+        }
+        else {
+            $totalItens.val("0");
         }
     }
 
@@ -363,11 +381,11 @@
                 return false;
             } else {
                 $.when(carregarDadosReferenciaConferencia()).then(function () {
-                    listaReferencia.push($referencia.val())
+                    listaReferencia.push($referencia.val());
                 });
             }
         } else {
-            if ($tipoConferencia == "Por Quantidade") {
+            if ($tipoConferencia.text() == "Por Quantidade") {
                 resetarCamposConferencia(false);
             }
         }
@@ -386,17 +404,18 @@
         //Se o tipo da conferência é 100%. 
         //Caso seja, solicita confirmação do usuário. 
         //Caso contrário, chama o método para validar o múltiplo da conferência e posteriormente o registro da conferência.
-        if ($tipoConferencia.val() != "Por Quantidade") {
+        if ($tipoConferencia.text() != "Por Quantidade") {
             $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {
                 if (!qtdePecasHaMais)
                     return;
                 else {
                     $('#modalRegistrarConferencia').modal('show');
 
-                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.');
+                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, a etiqueta de volume será impressas.');
 
+                    $('#MensagemPecasHaMais').text('');
                     if (qtdePecasHaMais > 0)
-                        $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+.');
+                        $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+. A etiqueta PC A+ será impressa.');
                 }
             });
         }
@@ -504,7 +523,7 @@
                             //Se o tipo da conferência é 100%.
                             //Caso seja, solicita confirmação do usuário. 
                             //Caso contrário, chama o método para validar o múltiplo da conferência e posteriormente o registro da conferência.
-                            if ($tipoConferencia.val() != "Por Quantidade") {
+                            if ($tipoConferencia.text() != "Por Quantidade") {
                                 $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {
                                     if (!qtdePecasHaMais)
                                         return;
@@ -513,8 +532,10 @@
 
                                         $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.');
 
-                                        if (qtdePecasHaMais > 0)
+                                        $('#MensagemPecasHaMais').text('');
+                                        if (qtdePecasHaMais > 0) {
                                             $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+.');
+                                        }
                                     }
                                 });
                             }
@@ -526,7 +547,7 @@
                         }
                         //Verifica se a tela pressionada é F4 (Alterar Tipo da Conferência)
                         case 115: {
-                            if ($tipoConferencia.val() != "Por Quantidade") {
+                            if ($tipoConferencia.text() != "Por Quantidade") {
 
                                 $('#modalAcessoCoordenadorTipoConferencia').modal('show');
                                 $('#UsuarioTipoConferencia').val('');
@@ -548,17 +569,15 @@
     }
 
     function removerMsgConferenciaManual() {
-
-        if ($tipoConferencia.val() == "Por Quantidade") {
-
+        if ($tipoConferencia.text() === "Por Quantidade") {
             $("#legendaTipoConferencia").addClass("hidden");
-            $("#legendaRegistroConferencia").removeClass("col-lg-2");
-            $("#legendaRegistroConferencia").addClass("col-lg-6");
+            $("#legendaRegistroConferencia").removeClass("col-md-2");
+            $("#legendaRegistroConferencia").addClass("col-md-6");
         }
         else {
             $("#legendaTipoConferencia").removeClass("hidden");
-            $("#legendaRegistroConferencia").removeClass("col-lg-6");
-            $("#legendaRegistroConferencia").addClass("col-lg-2");
+            $("#legendaRegistroConferencia").removeClass("col-md-6");
+            $("#legendaRegistroConferencia").addClass("col-md-2");
         }
     }
 
@@ -621,10 +640,13 @@ function resetarCamposConferencia(limpaReferencia = true) {
     $("#Multiplo").val('');
     $("#QuantidadePorCaixa").val('');
     $("#QuantidadeCaixa").val('');
-    $("#QuantidadeEstoque").val('');
-    $("#Localizacao").val('');
-    $("#QuantidadeNaoConferida").val('');
-    $("#QuantidadeConferida").val('');
+    $("#QuantidadeEstoque").text('');
+    $("#Localizacao").text('');
+    $("#QuantidadeNaoConferida").text('');
+    $("#QuantidadeConferida").text('');
+    $("#MediaVendaMes").val('');
+    $("#QuantidadeReservada").text('');
+    $("#TotalItens").val('');
 }
 
 function consultarPecasHaMaisConferencia() {

@@ -115,7 +115,7 @@ namespace FWLog.Web.Backoffice.Controllers
             IEnumerable<string> permissions = model.PermissionGroups
                 .SelectMany(x => x.Permissions.Where(y => y.IsSelected)).Select(x => x.Name);
 
-            IdentityResult result = await RoleManager.CreateAsync(role, permissions);
+            IdentityResult result = await RoleManager.CreateAsync(role, permissions,IdEmpresa,IdUsuario);
 
             if (!result.Succeeded)
             {
@@ -206,6 +206,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             ApplicationRole oldRole = Mapper.Map<ApplicationRole>(role);
+
             role.Name = model.Name;
             IdentityResult result = await RoleManager.UpdateAsync(role, selectedPermissions);
 

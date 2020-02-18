@@ -209,6 +209,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 var divergenciaItem = new DivergenciaItemViewModel
                 {
+                    Descricao = divergencia.Produto.Descricao,
                     Referencia = divergencia.Produto.Referencia,
                     QuantidadeConferencia = divergencia.QuantidadeConferencia,
                     QuantidadeMais = divergencia.QuantidadeConferenciaMais.GetValueOrDefault(),
@@ -377,14 +378,23 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult Historico(long id)
         {
+            var entidade = _uow.QuarentenaRepository.GetById(id);
+
             var model = new HistoricoQuarentenaViewModel
             {
-                Itens = _uow.QuarentenaHistoricoRepository.QuarentenaHistoricos().Where(x => x.IdQuarentena == id).ToList().Select(x => new HistoricoQuarentenaItemViewModel
+                NotaSerie = entidade.Lote.NotaFiscal.Numero + " - " + entidade.Lote.NotaFiscal.Serie,
+                Lote = entidade.IdLote.ToString(),
+                LoteStatus = entidade.Lote.LoteStatus.Descricao,
+                IdQuarentena = entidade.IdQuarentena,
+                IdStatus = entidade.QuarentenaStatus.IdQuarentenaStatus,
+                DataAbertura = entidade.DataAbertura.ToString("dd/MM/yyyy"),
+                DataEncerramento = entidade.DataEncerramento.HasValue ? entidade.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
+                Itens = _uow.QuarentenaHistoricoRepository.QuarentenaHistoricos().Where(x => x.IdQuarentena == id).OrderByDescending(o => o.Data).ToList().Select(x => new HistoricoQuarentenaItemViewModel
                 {
                     Data = x.Data.ToString("dd/MM/yyyy"),
                     Usuario = x.NomeUsuario,
                     Descricao = x.Descricao
-                }).OrderByDescending(x => x.Data).ToList()
+                }).ToList()
             };
 
             return View(model);
@@ -441,7 +451,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Não foi possível validar a permissão do usuário. Por favor, tente novamente!"
                 });
             }
-            
+
         }
     }
 }

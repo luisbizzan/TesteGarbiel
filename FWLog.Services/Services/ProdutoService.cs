@@ -6,6 +6,7 @@ using FWLog.Services.Model.IntegracaoSankhya;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -98,7 +99,7 @@ namespace FWLog.Services.Services
                             {
                                 IdProduto = produto.IdProduto,
                                 IdEmpresa = empresa.IdEmpresa,
-                                Saldo = 0, 
+                                Saldo = 0,
                                 IdProdutoEstoqueStatus = ProdutoEstoqueStatusEnum.Ativo,
                                 DiasPrazoEntrega = 10
                             };
@@ -147,7 +148,7 @@ namespace FWLog.Services.Services
 
                     bool produtoEstoqueNovo = false;
 
-                   ProdutoEstoque produtoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, empresa.IdEmpresa);
+                    ProdutoEstoque produtoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, empresa.IdEmpresa);
 
                     if (produtoEstoque == null)
                     {
@@ -182,7 +183,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task AtualizarMediaVenda()
+        public async Task ConsultarMediaVenda()
         {
             string where = "WHERE AD_INTEGRARFWLOG = '1' ";
 
@@ -212,12 +213,17 @@ namespace FWLog.Services.Services
 
                     if (produtoEstoque != null)
                     {
-                        produtoEstoque.MediaVenda = produtoInt.MediaVenda;                        
+                        if (!String.IsNullOrEmpty(produtoInt.MediaVenda))
+                        {
+                            produtoEstoque.MediaVenda = double.Parse(produtoInt.MediaVenda, CultureInfo.InvariantCulture);
+                        }
+                        else
+                            produtoEstoque.MediaVenda = null;
                     }
 
                     Dictionary<string, string> chaves = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() }, { "CODEMP", empresa.CodigoIntegracao.ToString() } };
 
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("AD_VGWMEDIA", chaves, "AD_INTEGRARFWLOG", "0");
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("AD_MEDVENDPRO", chaves, "AD_INTEGRARFWLOG", "0");
 
                     await _uow.SaveChangesAsync();
                 }
@@ -227,6 +233,43 @@ namespace FWLog.Services.Services
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da Média de Venda do Produto {0} Empresa: {1}.", produtoInt.CodigoIntegracaoProduto, produtoInt.CodigoIntegracaoEmpresa));
                 }
             }
+        }
+
+        public async Task<long> ConsultarQuantidadeReservada(long idProduto, long idEmpresa)
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return 0;
+            }
+            
+            long quantidadeReservada = 0;
+
+            Empresa empresa = _uow.EmpresaRepository.GetById(idEmpresa);
+            Produto produto = _uow.ProdutoRepository.GetById(idProduto);
+
+            if (empresa != null && produto != null)
+            {
+                string where = "WHERE CODEMP = '" + empresa.CodigoIntegracao + "' AND CODPROD = '" + produto.CodigoIntegracao + "' ";
+
+                List<ProdutoReservadoIntegracao> produtoReservado = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoReservadoIntegracao>(where);
+
+                foreach (var produtoInt in produtoReservado)
+                {
+                    try
+                    {
+                        ValidarDadosIntegracao(produtoInt);
+
+                        quantidadeReservada = Convert.ToInt32(produtoInt.Reservado);
+                    }
+                    catch (Exception ex)
+                    {
+                        var applicationLogService = new ApplicationLogService(_uow);
+                        applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da Reserva do Produto {0} Empresa: {1}.", produtoInt.CodigoIntegracaoProduto, produtoInt.CodigoIntegracaoEmpresa));
+                    }
+                }
+            }
+
+            return quantidadeReservada;
         }
     }
 }

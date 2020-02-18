@@ -24,4 +24,13 @@
         }
     });
 
+    $(document).ready(function () {
+        if ($("#nomeGrupo").val() == "Administrador") {
+            $("#nomeGrupo").attr('readonly',true);
+        }
+        else {
+            $('#nomeGrupo').attr("readonly",false);   
+        }
+    });
+
 })();

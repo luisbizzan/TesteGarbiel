@@ -107,6 +107,9 @@
     <Compile Include="Models\DataTablesCtx\QuarentenaHistoricoListRow.cs" />
     <Compile Include="Models\FilterCtx\PerfilImpressoraFilter.cs" />
     <Compile Include="Models\ImpressaoItem.cs" />
+    <Compile Include="Models\IntegracaoEntidade.cs" />
+    <Compile Include="Models\LoteProdutoEndereco.cs" />
+    <Compile Include="Models\LoteProduto.cs" />
     <Compile Include="Models\PerfilImpressora.cs" />
     <Compile Include="Models\PerfilImpressoraItem.cs" />
     <Compile Include="Models\ProdutoEndereco.cs" />
@@ -168,7 +171,8 @@
     <Compile Include="Models\Quarentena.cs" />
     <Compile Include="Models\QuarentenaStatus.cs" />
     <Compile Include="Models\TipoArmazenagem.cs" />
-    <Compile Include="Models\TipoEtiquetagem.cs" />
+    <Compile Include="Models\TipoEtiquetagem - Cópia .cs" />
+    <Compile Include="Models\IntegracaoTipo.cs" />
     <Compile Include="Models\TipoMovimentacao.cs" />
     <Compile Include="Models\Transportadora.cs" />
     <Compile Include="Models\UnidadeMedida.cs" />
@@ -197,6 +201,9 @@
     <Compile Include="Repository\CommonCtx\BaseRepository.cs" />
     <Compile Include="Repository\CommonCtx\CacheRepository.cs" />
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\IntegracaoEntidadeRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\LoteProdutoEnderecoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\LoteProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoEnderecoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />
@@ -223,6 +230,7 @@
     <Compile Include="Repository\GeneralCtx\ProdutoEstoqueRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoConferenciaRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\IntegracaoTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoEtiquetagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoMovimentacaoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PerfilImpressoraRepository.cs" />

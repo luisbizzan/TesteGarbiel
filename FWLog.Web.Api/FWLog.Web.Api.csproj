@@ -209,6 +209,9 @@
     </Compile>
     <Compile Include="Helpers\ApiErrorBuilder.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
+    <Compile Include="Models\EmpresaResposta.cs" />
+    <Compile Include="Models\Produto\ProdutoReservadoModelRequest.cs" />
+    <Compile Include="Models\Usuario\PermissionsModelResponse.cs" />
     <Compile Include="Models\Usuario\RecoverPasswordModelRequest.cs" />
     <Compile Include="Models\Usuario\LoginModelResponse.cs" />
     <Compile Include="Models\Usuario\LoginModelRequest.cs" />

@@ -1,4 +1,5 @@
 ﻿(function () {
+
     let actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
             {
@@ -9,8 +10,9 @@
         ];
     });
 
-    $('.dataTableModal').DataTable({
-     //   destroy: true,
+    $('#dataTableModalUsu').DataTable({
+        destroy: true,
+        stateSave: false,
         ajax: {
             "url": view_modal.pageDataUrl,
             "type": "POST",
@@ -20,7 +22,7 @@
         },
         lengthChange: false,
         initComplete: function (settings, json) {
-            dart.dataTables.addEventsForDropdownAutoposition($('.dataTableModal'));
+            dart.dataTables.addEventsForDropdownAutoposition($('#dataTableModalUsu'));
 
         },
         columns: [
@@ -33,19 +35,12 @@
         "bInfo": false
     });
 
-    /*
     function setUsuario_Click() {
         setUsuario($(this).attr('data-select'), $(this).attr("name-select"), view_modal.origem);
     }
-
-    $('.dataTableModal').off('click', '[data-select]', setUsuario_Click);
-    $('.dataTableModal').on('click', '[data-select]', setUsuario_Click);
-
-    dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));
-})();*/
-    $('#dataTableModal').on('click', '[data-select]', function () {
-        setUsuario($(this).attr('data-select'), $(this).attr("name-select"));
-    });
+  
+    $('#dataTableModalUsu').off('click', '[data-select]', setUsuario_Click);
+    $('#dataTableModalUsu').on('click', '[data-select]', setUsuario_Click);
 
     dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));
 
