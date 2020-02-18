@@ -175,11 +175,15 @@
                     $("#InicioConferencia").val(model.InicioConferencia);
                     $("#QuantidadePorCaixa").val(model.quantidadePorCaixa);
                     $("#QuantidadeCaixa").val(model.QuantidadeCaixa);
-                    $("#MediaVendaMes").val(model.MediaVendaMes);
+                    $("#MediaVenda").val(model.MediaVenda);
                     $("#QuantidadeReservada").text(model.QuantidadeReservada);
 
                     if (model.EnviarPicking) {
                         $("#msgEnviarPicking").removeClass("hidden");
+                    }
+
+                    if (result.Message != "") {
+                        PNotify.warning({ text: result.Message });
                     }
 
                     //Reset array.
