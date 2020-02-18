@@ -182,6 +182,10 @@
                         $("#msgEnviarPicking").removeClass("hidden");
                     }
 
+                    if (result.Message != "") {
+                        PNotify.warning({ text: result.Message });
+                    }
+
                     //Reset array.
                     listaReferencia = new Array;
 
