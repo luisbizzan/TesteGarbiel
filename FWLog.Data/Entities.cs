@@ -62,6 +62,7 @@ namespace FWLog.Data
         public virtual DbSet<TipoEtiquetagem> TipoEtiquetagem { get; set; }
         public virtual DbSet<IntegracaoTipo> IntegracaoTipo { get; set; }
         public virtual DbSet<IntegracaoEntidade> IntegracaoEntidade { get; set; }
+        public virtual DbSet<LoteProduto> LoteProduto { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 
