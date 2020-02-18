@@ -5,7 +5,8 @@ namespace FWLog.Data.Models.FilterCtx
     public class LogEtiquetagemListaFiltro
     {
         public long? IdProduto { get; set; }
-        
+        public int? IdTipoEtiquetagem { get; set; }
+
         public DateTime? DataInicial { get; set; }
         
         public DateTime? DataFinal { get; set; }

@@ -165,6 +165,9 @@ namespace FWLog.Services.Services
 
                 if (notaStatus == NotaFiscalStatusEnum.Confirmada)
                 {
+                    //Registrar quantidade recebida na entidade LoteProduto.
+                    RegistrarLoteProduto(nfItens, lote, null);
+
                     AtualizarSaldoArmazenagem(nfItens, notafiscal, null);
                 }
 
@@ -205,6 +208,9 @@ namespace FWLog.Services.Services
                 _uow.SaveChanges();
 
                 List<LoteDivergencia> loteDivergenciasMenos = GravarTratamentoDivergencia(request);
+
+                //Registrar quantidade recebida na entidade LoteProduto.
+                RegistrarLoteProduto(nfItens, lote, loteDivergenciasMenos);
 
                 AtualizarSaldoArmazenagem(nfItens, notafiscal, loteDivergenciasMenos);
 
@@ -527,6 +533,41 @@ namespace FWLog.Services.Services
                 }
 
                 _uow.ProdutoEstoqueRepository.AtualizarSaldoArmazenagem(nfItem.Key, notafiscal.IdEmpresa, qtdNF);
+            }
+        }
+
+        private void RegistrarLoteProduto(Dictionary<long, List<NotaFiscalItem>> nfItens, Lote lote, List<LoteDivergencia> loteDivergenciasMenos)
+        {
+            LoteProduto loteProduto;
+
+            foreach (var nfItem in nfItens)
+            {
+                LoteDivergencia divergencia = null;
+
+                //Verifica se houve divergência a menos do produto no lote.
+                if (!loteDivergenciasMenos.NullOrEmpty())
+                {
+                    divergencia = loteDivergenciasMenos.FirstOrDefault(w => w.IdProduto == nfItem.Key); //Captura a divergência do produto.
+                }
+
+                //Captura a quantidade total do produto na nota.
+                int qtdNF = nfItem.Value.Sum(s => s.Quantidade);
+
+                if (divergencia != null && divergencia.QuantidadeDivergenciaMenos > 0)
+                {
+                    //Subtrai a quantidade de peças a menos da quantidade total do produto.
+                    qtdNF = qtdNF - divergencia.QuantidadeDivergenciaMenos.Value;
+                }
+
+                loteProduto = new LoteProduto();
+
+                loteProduto.IdEmpresa = lote.NotaFiscal.IdEmpresa;
+                loteProduto.IdLote = lote.IdLote;
+                loteProduto.IdProduto = nfItem.Key;
+                loteProduto.QuantidadeRecebida = qtdNF;
+                loteProduto.Saldo = qtdNF;
+
+                _uow.LoteProdutoRepository.Add(loteProduto);
             }
         }
 

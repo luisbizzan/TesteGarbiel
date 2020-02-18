@@ -118,7 +118,6 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
                 var userInfo = new BackOfficeUserInfo();
-                //aqui
                 return uow.EmpresaRepository.GetAllByUserId(userInfo.UserId.ToString()).OrderBy(x => x.Nome);
             }
         }

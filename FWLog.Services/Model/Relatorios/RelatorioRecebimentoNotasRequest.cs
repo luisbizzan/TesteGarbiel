@@ -10,7 +10,7 @@ namespace FWLog.Services.Model.Relatorios
         public int? Nota { get; set; }
         public string Prazo { get; set; }
         public string ChaveAcesso { get; set; }
-        public int? IdStatus { get; set; }
+        public long? IdStatus { get; set; }
         public DateTime? DataInicial { get; set; }
         public DateTime? DataFinal { get; set; }
         public DateTime? PrazoInicial { get; set; }

@@ -48,6 +48,30 @@ namespace FWLog.Web.Backoffice.Controllers
                         Message = "Não foi possível solicitar impressão."
                     });
                 }
+
+                //Instância a lote produto.
+                var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLote(viewModel.NroLote.Value);
+
+                if (loteProduto == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Não foi possível consultar o saldo do lote. Por favor, tente nvoamente!"
+                    });
+                }
+
+                var quantidadeTotalProduto = viewModel.QtdCaixas * viewModel.QtdPorCaixa;
+
+                //Verifica se o saldo do produto no lote é menor que a quantidade informada.
+                if (loteProduto.Saldo < quantidadeTotalProduto)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "O saldo do produto no lote é menor que a quantidade informada. Por favor, tente novamente!"
+                    });
+                }
                                 
                 var produto = _unitOfWork.ProdutoRepository.GetById(viewModel.IdProduto);
 
@@ -195,7 +219,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 var logEtiquetagem = new LogEtiquetagem
                 {
                     //IdTipoEtiquetagem = viewModel.TipoEtiquetagem,
-                    IdTipoEtiquetagem = Data.Models.TipoEtiquetagemEnum.Lote.GetHashCode(),
+                    IdTipoEtiquetagem = Data.Models.TipoEtiquetagemEnum.Recebimento.GetHashCode(),
                     IdEmpresa = IdEmpresa,
                     Quantidade = viewModel.Quantide.Value,
                     IdUsuario = User.Identity.GetUserId()

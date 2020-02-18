@@ -26,6 +26,7 @@
             }
         },
         lengthChange: false,
+        stateSave: false,
         initComplete: function (settings, json) {
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTableModal'));
         },

@@ -59,6 +59,9 @@ namespace FWLog.Data
         public virtual DbSet<ImpressaoItem> ImpressaoItem { get; set; }
         public virtual DbSet<PerfilImpressora> PerfilImpressora { get; set; }
         public virtual DbSet<PerfilImpressoraItem> PerfilImpressoraItem { get; set; }
+        public virtual DbSet<TipoEtiquetagem> TipoEtiquetagem { get; set; }
+        public virtual DbSet<IntegracaoTipo> IntegracaoTipo { get; set; }
+        public virtual DbSet<IntegracaoEntidade> IntegracaoEntidade { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 
