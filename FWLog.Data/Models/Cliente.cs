@@ -22,7 +22,7 @@ namespace FWLog.Data.Models
         [Required]
         [Index]
         [StringLength(14)]
-        public string CNPJ { get; set; }
+        public string CNPJCPF { get; set; }
 
         [Required]
         [Index]

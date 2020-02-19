@@ -12,15 +12,15 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public MotivoLaudoRepository(Entities entities) : base(entities) { }
 
-        public IEnumerable<MotivoLaudoTableRow> ObterDadosParaDataTable(DataTableFilter<MotivoLaudoFilter> filter, out int totalRecordsFiltered, out int totalRecords) 
+        public IEnumerable<MotivoLaudoLinhaTabela> ObterDadosParaDataTable(DataTableFilter<MotivoLaudoFiltro> filter, out int totalRecordsFiltered, out int totalRecords) 
         {
             totalRecords = Entities.MotivoLaudo.Count();
 
-            IQueryable<MotivoLaudoTableRow> query = Entities.MotivoLaudo.AsNoTracking()
+            IQueryable<MotivoLaudoLinhaTabela> query = Entities.MotivoLaudo.AsNoTracking()
                 .Where(x => (filter.CustomFilter.IdMotivoLaudo.HasValue == false || x.IdMotivoLaudo == filter.CustomFilter.IdMotivoLaudo) &&
                 (filter.CustomFilter.Descricao.Equals(string.Empty) || x.Descricao.Contains(filter.CustomFilter.Descricao)) &&
                 (filter.CustomFilter.Status.HasValue == false || x.Ativo == filter.CustomFilter.Status.Value))
-                .Select(e => new MotivoLaudoTableRow
+                .Select(e => new MotivoLaudoLinhaTabela
                 {
                     IdMotivoLaudo = e.IdMotivoLaudo,
                     Status = e.Ativo ? "Ativo" : "Inativo", 

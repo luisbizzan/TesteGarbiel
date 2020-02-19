@@ -1,6 +1,6 @@
 ﻿namespace FWLog.Data.Models.FilterCtx
 {
-    public class MotivoLaudoFilter
+    public class MotivoLaudoFiltro
     {
         public long? IdMotivoLaudo { get; set; }
         public string Descricao { get; set; }

@@ -8,7 +8,7 @@ namespace FWLog.Web.Backoffice.Mapping
     {
         public MotivoLaudoProfile()
         {
-            CreateMap<MotivoLaudoTableRow, MotivoLaudoListItemViewModel>();
+            CreateMap<MotivoLaudoLinhaTabela, MotivoLaudoListItemViewModel>();
         }
     }
 }

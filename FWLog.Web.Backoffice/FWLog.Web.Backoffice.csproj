@@ -230,6 +230,7 @@
     <Compile Include="App_Start\NinjectModules\GeneralModule.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
+    <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\MotivoLaudoController.cs" />
@@ -271,6 +272,7 @@
     <Compile Include="Helpers\HtmlRequestHelper.cs" />
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
+    <Compile Include="Mapping\ClienteProfile.cs" />
     <Compile Include="Mapping\MotivoLaudoProfile.cs" />
     <Compile Include="Mapping\PerfilImpressoraProfile.cs" />
     <Compile Include="Mapping\EmpresaProfile.cs" />
@@ -289,6 +291,7 @@
     <Compile Include="Models\BORecebimentoNotaCtx\ResumoFinalizarConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\TratarDivergenciaRecebimentoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\ExibirDivergenciaRecebimentoViewModel.cs" />
+    <Compile Include="Models\ClienteCtx\ClienteSearchModalViewModel.cs" />
     <Compile Include="Models\EmpresaCtx\EmpresaSearchModalViewModel.cs" />
     <Compile Include="Models\BOFornecedorCtx\BOFornecedorSearchModalViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
@@ -563,6 +566,7 @@
     <Content Include="Views\Etiqueta\Recebimento.cshtml" />
     <Content Include="Views\BORecebimentoNota\PesquisaLote.cshtml" />
     <Content Include="Views\MotivoLaudo\MotivoLaudo.cshtml" />
+    <Content Include="Views\Cliente\SearchModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
@@ -810,6 +814,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
+    <Folder Include="Scripts\Views\Cliente\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
