@@ -37,6 +37,10 @@ namespace FWLog.Data.Models
         [Index]
         public long CodigoNotaFiscal { get; set; }
 
+        public int? CodigoIntegracaoOrigem { get; set; }
+
+        public int? SequenciaOrigem { get; set; }
+
         [ForeignKey(nameof(IdNotaFiscal))]
         public virtual NotaFiscal NotaFiscal { get; set; }
 
