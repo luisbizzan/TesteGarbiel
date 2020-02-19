@@ -1,93 +1,65 @@
 ﻿using AutoMapper;
-using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
-using FWLog.Data.Models.FilterCtx;
-using FWLog.Web.Backoffice.Helpers;
-using FWLog.Web.Backoffice.Models.BOAccountCtx;
-using FWLog.Web.Backoffice.Models.CommonCtx;
-using FWLog.Web.Backoffice.Models.GarantiaCtx;
-using System;
+using FWLog.Services.Services;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using System.Web;
+using FWLog.Web.Backoffice.Helpers;
+using FWLog.AspNet.Identity;
+using FWLog.Web.Backoffice.Models.GarantiaCtx;
+using FWLog.Web.Backoffice.Models.CommonCtx;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
     public class GarantiaController : BOBaseController
     {
-        private readonly UnitOfWork _unitOfWork;
+        UnitOfWork _uow;
+        GarantiaService _garantiaService;
 
-        public GarantiaController(UnitOfWork unitOfWork)
+        public GarantiaController(UnitOfWork uow, GarantiaService garantiaService)
         {
-            _unitOfWork = unitOfWork;
+            _uow = uow;
+            _garantiaService = garantiaService;
+        }
+        
+		[ApplicationAuthorize(Permissions = Permissions.Garantia.Listar)]
+        public ActionResult Index()
+        {
+            return View(new GarantiaListViewModel());
         }
 
-        private void setViewBags()
+        [ApplicationAuthorize(Permissions = Permissions.Garantia.Listar)]
+        public ActionResult PageData(DataTableFilter<GarantiaFilterViewModel> model)
         {
-            ViewBag.Status = new SelectList(new List<SelectListItem>
-                        {
-                            new SelectListItem { Text = "Ativo", Value = "true"},
-                            new SelectListItem { Text = "Inativo", Value = "false"}
-                        }, "Value", "Text");
-        }
-
-        [HttpGet]
-        [ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Listar)]
-        public ActionResult MotivoLaudo()
-        {
-            setViewBags();
-
-            return View(new MotivoLaudoListViewModel());
-        }
-
-        [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Listar)]
-        public ActionResult PageData(DataTableFilter<MotivoLaudoFilterViewModel> model)
-        {
-            List<MotivoLaudoListItemViewModel> motivoLaudoListItem = new List<MotivoLaudoListItemViewModel>();
-            int totalRecords = 0;
-            int totalRecordsFiltered = 0;
-
-            var result = _unitOfWork.MotivoLaudoRepository.ObterTodos();
-
-            totalRecords = result.Count();
-
-            if (model.CustomFilter.IdMotivoLaudo.HasValue)
-            {
-                result = result.Where(x => x.IdMotivoLaudo == model.CustomFilter.IdMotivoLaudo);
-            }
-
-            if (!string.IsNullOrEmpty(model.CustomFilter.Descricao))
-            {
-                result = result.Where(x => x.Descricao == model.CustomFilter.Descricao);
-            }
-
-            if (model.CustomFilter.Status.HasValue)
-            {
-                result = result.Where(x => x.Ativo == model.CustomFilter.Status.Value);
-            }
-
-
-            foreach (var item in result)
-            {
-                motivoLaudoListItem.Add(new MotivoLaudoListItemViewModel
-                {
-                    IdMotivoLaudo = item.IdMotivoLaudo,
-                    Descricao = item.Descricao,
-                    Status = item.Ativo ? "Ativo" : "Inativo",
-                });
-            }
+            int recordsFiltered, totalRecords;
+            var filter = Mapper.Map<DataTableFilter<GarantiaFilter>>(model);
+            IEnumerable<GarantiaTableRow> result = _uow.GarantiaRepository.SearchForDataTable(filter, out recordsFiltered, out totalRecords);
 
             return DataTableResult.FromModel(new DataTableResponseModel
-            {
+            {	
                 Draw = model.Draw,
                 RecordsTotal = totalRecords,
-                RecordsFiltered = totalRecordsFiltered,
-                Data = motivoLaudoListItem
+                RecordsFiltered = recordsFiltered,
+                Data = Mapper.Map<IEnumerable<GarantiaListItemViewModel>>(result)
             });
+        }
+
+        [ApplicationAuthorize(Permissions = Permissions.Garantia.Listar)]
+        public ActionResult Details(int id)
+        {
+            Garantia garantia = _uow.GarantiaRepository.GetById(id);
+
+            if (garantia == null)
+            {
+                throw new HttpException(404, "Not found");
+            }
+
+            var model = Mapper.Map<GarantiaDetailsViewModel>(garantia);
+
+            return View(model);
         }
     }
 }

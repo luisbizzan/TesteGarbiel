@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FWLog.Web.Backoffice.Models.GarantiaCtx
+namespace FWLog.Web.Backoffice.Models.MotivoLaudoCtx
 {
     public class MotivoLaudoListViewModel
     {
