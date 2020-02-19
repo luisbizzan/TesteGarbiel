@@ -232,7 +232,7 @@
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
     <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\EtiquetaController.cs" />
-    <Compile Include="Controllers\GarantiaController.cs" />
+    <Compile Include="Controllers\MotivoLaudoController.cs" />
     <Compile Include="Controllers\NivelArmazenagemController.cs" />
     <Compile Include="Controllers\PerfilImpressoraController.cs" />
     <Compile Include="Controllers\PontoArmazenagemController.cs" />
@@ -271,6 +271,7 @@
     <Compile Include="Helpers\HtmlRequestHelper.cs" />
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
+    <Compile Include="Mapping\MotivoLaudoProfile.cs" />
     <Compile Include="Mapping\PerfilImpressoraProfile.cs" />
     <Compile Include="Mapping\EmpresaProfile.cs" />
     <Compile Include="Mapping\EnderecoArmazenagemProfile.cs" />
@@ -310,7 +311,7 @@
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemEditarViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\LoteEtiquetaViewModel.cs" />
-    <Compile Include="Models\GarantiaCtx\MotivoLaudoListViewModel.cs" />
+    <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoListViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemCreateViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemDetailsViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemListViewModel.cs" />
@@ -491,7 +492,7 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
-    <Content Include="Scripts\Views\Garantia\motivoLaudo.js" />
+    <Content Include="Scripts\Views\MotivoLaudo\motivoLaudo.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\PerfilImpressora\cadastrar.js" />
@@ -561,7 +562,7 @@
     <Content Include="Views\Etiqueta\Lote.cshtml" />
     <Content Include="Views\Etiqueta\Recebimento.cshtml" />
     <Content Include="Views\BORecebimentoNota\PesquisaLote.cshtml" />
-    <Content Include="Views\Garantia\MotivoLaudo.cshtml" />
+    <Content Include="Views\MotivoLaudo\MotivoLaudo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
