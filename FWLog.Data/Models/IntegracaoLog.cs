@@ -24,7 +24,7 @@ namespace FWLog.Data.Models
         public string   CabecalhoRequisicao                  { get; set; }
         public string   CorpoRequisicao                      { get; set; }
         public int      Status                               { get; set; }
-        public TimeSpan Duracao                              { get; set; }
+        public DateTime Duracao                              { get; set; }
         public string   CabecalhoResposta                    { get; set; }
         public string   CorpoResposta                        { get; set; }
 
