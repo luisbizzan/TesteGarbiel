@@ -211,16 +211,14 @@ namespace FWLog.AspNet.Identity
         public class MotivoLaudo : PermissionGroupBuildItem
         {
             public const string Listar = "MotivoLaudoList";
-            public const string Criar = "MotivoLaudoCreate";
+            //public const string Criar = "MotivoLaudoCreate";
             public const string Editar = "MotivoLaudoEdit";
-            public const string Excluir = "MotivoLaudoDelete";
 
             public MotivoLaudo() : base(Display.FromString("Motivo do Laudo"))
             {
                 Register(Listar, Display.FromString("Listar Motivos do Laudo"));
-                Register(Criar, Display.FromString("Criar Motivos do Laudo"));
+                //Register(Criar, Display.FromString("Criar Motivos do Laudo"));
                 Register(Editar, Display.FromString("Editar Motivos do Laudo"));
-                Register(Excluir, Display.FromString("Excluir Motivos do Laudo"));
             }
         }
     }
