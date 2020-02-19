@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
 {
-    public class GarantiaQuarentenaHistorico
+    public class GarantiaQuarentenaHis
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
-        public long IdGarantiaQuarentenaHistorico { get; set; }
+        public long IdGarantiaQuarentenaHist { get; set; }
 
         [Index]
         [Required]
@@ -18,10 +18,12 @@ namespace FWLog.Data.Models
         [Required]
         [StringLength(128)]
         public string IdUsuario { get; set; }
-       
+
+        [Required]
         public DateTime Data { get; set; }
 
         [StringLength(500)]
+        [Required]
         public string Descricao { get; set; }
 
         #region Foreign Key

@@ -297,3 +297,40 @@ ALTER TABLE DART."GarantiaQuarentena" ADD CONSTRAINT "GarantiaQuarentena_FK1" FO
 ALTER TABLE DART."GarantiaQuarentena" ADD CONSTRAINT "GarantiaQuarentena_FK2" FOREIGN KEY ("IdGarantiaQuarentenaStatus") REFERENCES DART."GarantiaQuarentenaStatus"("IdGarantiaQuarentenaStatus");
 
 /
+
+CREATE TABLE "GarantiaQuarentenaHis" 
+(
+  "IdGarantiaQuarentenaHis" NUMBER(19) NOT NULL 
+, "IdGarantiaQuarentena" NUMBER(19) NOT NULL 
+, "IdUsuario" VARCHAR2(127) NOT NULL 
+, "Data" TIMESTAMP NOT NULL 
+, "Descricao" VARCHAR2(500) NOT NULL 
+, CONSTRAINT "GarantiaQuarentenaHis_PK" PRIMARY KEY 
+  (
+    "IdGarantiaQuarentenaHis" 
+  )
+  USING INDEX 
+  (
+      CREATE UNIQUE INDEX "GarantiaQuarentenaHis_PK" ON "GarantiaQuarentenaHis" ("IdGarantiaQuarentenaHis" ASC ) 
+  )
+  ENABLE 
+);
+
+CREATE INDEX "GarantiaQuarentenaHis_INDEX1" ON "GarantiaQuarentenaHis" ("IdGarantiaQuarentena");
+CREATE INDEX "GarantiaQuarentenaHis_INDEX2" ON "GarantiaQuarentenaHis" ("IdUsuario");
+
+CREATE SEQUENCE "GarantiaQuarentenaHis_SEQ";
+
+CREATE TRIGGER "GarantiaQuarentenaHis_SEG_TRG" 
+BEFORE INSERT ON "GarantiaQuarentenaHis" 
+FOR EACH ROW 
+BEGIN
+  <<COLUMN_SEQUENCES>>
+  BEGIN
+    IF INSERTING AND :NEW."IdGarantiaQuarentenaHis" IS NULL THEN
+      SELECT "GarantiaQuarentenaHis_SEQ".NEXTVAL INTO :NEW."IdGarantiaQuarentenaHis" FROM SYS.DUAL;
+    END IF;
+  END COLUMN_SEQUENCES;
+END;
+/
+

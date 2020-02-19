@@ -27,12 +27,14 @@ namespace FWLog.Data.Models
         [StringLength(128)]
         public string IdUsuarioRecebimento { get; set; }
 
+        [Required]
         public DateTime DataRecebimento { get; set; }
    
         [StringLength(500)]
         public string Observacao { get; set; }
 
         [StringLength(100)]
+        [Required]
         public string InformacaoTransporte { get; set; }
 
         public DateTime DataIncioConferencia { get; set; }

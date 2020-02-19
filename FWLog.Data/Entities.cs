@@ -65,17 +65,17 @@ namespace FWLog.Data
         public virtual DbSet<LoteProduto> LoteProduto { get; set; }
         public virtual DbSet<LoteMovimentacao> LoteMovimentacao { get; set; }
         public virtual DbSet<LoteMovimentacaoTipo> LoteMovimentacaoTipo { get; set; }
-        //public virtual DbSet<Cliente> Cliente { get; set; }
-        //public virtual DbSet<Garantia> Garantia { get; set; }
-        //public virtual DbSet<GarantiaConferenciaTipo> GarantiaConferenciaTipo { get; set; }
-        //public virtual DbSet<GarantiaProduto> GarantiaProduto { get; set; }
-        //public virtual DbSet<GarantiaQuarentena> GarantiaQuarentena { get; set; }
-        //public virtual DbSet<GarantiaQuarentenaHistorico> GarantiaQuarentenaHistorico { get; set; }
+        public virtual DbSet<Cliente> Cliente { get; set; }
+        public virtual DbSet<Garantia> Garantia { get; set; }
+        public virtual DbSet<GarantiaConferenciaTipo> GarantiaConferenciaTipo { get; set; }
+        public virtual DbSet<GarantiaProduto> GarantiaProduto { get; set; }
+        public virtual DbSet<GarantiaQuarentena> GarantiaQuarentena { get; set; }
+        public virtual DbSet<GarantiaQuarentenaHis> GarantiaQuarentenaHist { get; set; }
         //public virtual DbSet<GarantiaQuarentenaProduto> GarantiaQuarentenaProduto { get; set; }
-        //public virtual DbSet<GarantiaQuarentenaStatus> GarantiaQuarentenaStatus { get; set; }
-        //public virtual DbSet<GarantiaStatus> GarantiaStatus { get; set; }
+        public virtual DbSet<GarantiaQuarentenaStatus> GarantiaQuarentenaStatus { get; set; }
+        public virtual DbSet<GarantiaStatus> GarantiaStatus { get; set; }
         public virtual DbSet<MotivoLaudo> MotivoLaudo { get; set; }
-        //public virtual DbSet<Representante> Representante { get; set; }
+        public virtual DbSet<Representante> Representante { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 
