@@ -22,6 +22,11 @@
             new MenuItem { Text = "Pontos de Armazenagem", Url = Url.Action("Index", "PontoArmazenagem"), RequirePermission = Permissions.PontoArmazenagem.Listar },
             new MenuItem { Text = "Endereços de Armazenagem", Url = Url.Action("Index", "EnderecoArmazenagem"), RequirePermission = Permissions.EnderecoArmazenagem.Listar }
         ),
+          new MenuGroup(text: Res.GarantiaMenuItem, icon: "fa fa-shield").SetItems(
+            new MenuItem { Text = "Solicitação de Garantia", Url = Url.Action("Index", "Garantia"), RequirePermission = Permissions.Garantia.Listar },
+            new MenuItem { Text = "Motivo do Laudo", Url = Url.Action("MotivoLaudo", "MotivoLaudo"), RequirePermission = Permissions.MotivoLaudo.Listar }
+
+        ),
         new MenuGroup(text: Res.UserMenuGroup, icon: "fa fa-user").SetItems(
             new MenuItem { Text = "Usuários", Url = Url.Action("Index", "BOAccount"), RequirePermission = Permissions.BOAccount.List },
             new MenuItem { Text = "Grupos de Usuários", Url = Url.Action("Index", "BOGroup"), RequirePermission = Permissions.Role.List }

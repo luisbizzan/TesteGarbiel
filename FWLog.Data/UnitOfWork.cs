@@ -60,6 +60,17 @@ namespace FWLog.Data
         private IntegracaoEntidadeRepository _integracaoEntidadeRepository;
         private LoteMovimentacaoRepository _loteMovimentacaoRepository;
         private LoteMovimentacaoTipoRepository _loteMovimentacaoTipoRepository;
+        private ClienteRepository _clienteRepository;
+        private GarantiaRepository _garantiaRepository;
+        private GarantiaConferenciaTipoRepository _garantiaConferenciaTipoRepository;
+        private GarantiaProdutoRepository _garantiaProdutoRepository;
+        private GarantiaQuarentenaRepository _garantiaQuarentenaRepository;
+        private GarantiaQuarentenaHisRepository _garantiaQuarentenaHisRepository;
+        //private GarantiaQuarentenaProdutoRepository _garantiaQuarentenaProdutoRepository;
+        private GarantiaQuarentenaStatusRepository _garantiaQuarentenaStatusRepository;
+        private GarantiaStatusRepository _garantiaStatusRepository;
+        private MotivoLaudoRepository _motivoLaudoRepository;
+        private RepresentanteRepository _representanteRepository;
 
         public LoteMovimentacaoTipoRepository LoteMovimentacaoTipoRepository
         {
@@ -280,6 +291,62 @@ namespace FWLog.Data
         {
             get => _loteProdutoRepository ?? (_loteProdutoRepository = new LoteProdutoRepository(_context));
         }
+
+        public ClienteRepository ClienteRepository
+        {
+            get => _clienteRepository ?? (_clienteRepository = new ClienteRepository(_context));
+        }
+
+        public GarantiaRepository GarantiaRepository
+        {
+            get => _garantiaRepository ?? (_garantiaRepository = new GarantiaRepository(_context));
+        }
+
+        public GarantiaConferenciaTipoRepository GarantiaConferenciaTipoRepository
+        {
+            get => _garantiaConferenciaTipoRepository ?? (_garantiaConferenciaTipoRepository = new GarantiaConferenciaTipoRepository(_context));
+        }
+
+        public GarantiaProdutoRepository GarantiaProdutoRepository
+        {
+            get => _garantiaProdutoRepository ?? (_garantiaProdutoRepository = new GarantiaProdutoRepository(_context));
+        }
+
+        public GarantiaQuarentenaRepository GarantiaQuarentenaRepository
+        {
+            get => _garantiaQuarentenaRepository ?? (_garantiaQuarentenaRepository = new GarantiaQuarentenaRepository(_context));
+        }
+
+        public GarantiaQuarentenaHisRepository GarantiaQuarentenaHisRepository
+        {
+            get => _garantiaQuarentenaHisRepository ?? (_garantiaQuarentenaHisRepository = new GarantiaQuarentenaHisRepository(_context));
+        }
+
+        //public GarantiaQuarentenaProdutoRepository GarantiaQuarentenaProdutoRepository
+        //{
+        //    get => _garantiaQuarentenaProdutoRepository ?? (_garantiaQuarentenaProdutoRepository = new GarantiaQuarentenaProdutoRepository(_context));
+        //}
+
+        public GarantiaQuarentenaStatusRepository GarantiaQuarentenaStatusRepository
+        {
+            get => _garantiaQuarentenaStatusRepository ?? (_garantiaQuarentenaStatusRepository = new GarantiaQuarentenaStatusRepository(_context));
+        }
+
+        public GarantiaStatusRepository GarantiaStatusRepository
+        {
+            get => _garantiaStatusRepository ?? (_garantiaStatusRepository = new GarantiaStatusRepository(_context));
+        }
+
+        public MotivoLaudoRepository MotivoLaudoRepository
+        {
+            get => _motivoLaudoRepository ?? (_motivoLaudoRepository = new MotivoLaudoRepository(_context));
+        }
+
+        public RepresentanteRepository RepresentanteRepository
+        {
+            get => _representanteRepository ?? (_representanteRepository = new RepresentanteRepository(_context));
+        }
+
 
         public TransactionScope CreateTransactionScope()
         {

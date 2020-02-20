@@ -21,7 +21,10 @@ namespace FWLog.Data.Models
         public long IdEmpresa { get; set; }
 
         [Index]
-        public long IdFornecedor { get; set; }
+        public long? IdFornecedor { get; set; }
+
+        [Index]
+        public long? IdCliente { get; set; }
 
         [Index]
         [Required]
@@ -85,8 +88,23 @@ namespace FWLog.Data.Models
 
         public bool NFDevolucaoConfirmada { get; set; }
 
+        public decimal? BaseICMS { get; set; }
+
+        public decimal? ValorICMS { get; set; }
+        
+        public decimal? BaseST { get; set; }
+
+        public decimal? ValorST { get; set; }
+
+        public decimal? ValorIPI { get; set; }
+
+        public decimal? ValorSeguro { get; set; }
+
         [ForeignKey(nameof(IdFornecedor))]
         public virtual Fornecedor Fornecedor { get; set; }
+
+        [ForeignKey(nameof(IdCliente))]
+        public virtual Cliente Cliente { get; set; }
 
         [ForeignKey(nameof(IdTransportadora))]
         public virtual Transportadora Transportadora { get; set; }
