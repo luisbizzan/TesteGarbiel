@@ -75,4 +75,29 @@
 
     dart.dataTables.loadFormFilterEvents();
 
+    $("#pesquisarCliente").click(function () {
+        debugger
+        $("#modalCliente").load(HOST_URL + "Cliente/SearchModal", function () {
+            $("#modalCliente").modal();
+        });
+    });
+
+    function limparFornecedor() {
+        let razaoSocial = $("#Filter_RazaoSocial");
+        let cliente = $("#Filter_IdCliente");
+        razaoSocial.val("");
+        cliente.val("");
+    }
+
+    $("#limparCliente").click(function () {
+        limparFornecedor();
+    });
+
 })();
+
+function setCliente(idCliente, nomeFantasia) {
+    $("#Filter_RazaoSocial").val(nomeFantasia);
+    $("#Filter_IdCliente").val(idCliente);
+    $("#modalCliente").modal("hide");
+    $("#modalCliente").empty();
+}

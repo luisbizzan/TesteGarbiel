@@ -1,21 +1,20 @@
 ﻿using AutoMapper;
-using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Web.Backoffice.Helpers;
+using FWLog.Web.Backoffice.Models.ClienteCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
-using FWLog.Web.Backoffice.Models.MotivoLaudoCtx;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
-    public class MotivoLaudoController : BOBaseController
+    public class ClienteController : BOBaseController
     {
         private readonly UnitOfWork _unitOfWork;
 
-        public MotivoLaudoController(UnitOfWork unitOfWork)
+        public ClienteController(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -30,26 +29,25 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        [ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Listar)]
-        public ActionResult MotivoLaudo()
+        public ActionResult SearchModal()
         {
             setViewBags();
 
-            return View(new MotivoLaudoListViewModel());
+            var model = new ClienteSearchModalViewModel();
+            return View(model);
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Listar)]
-        public ActionResult PageData(DataTableFilter<MotivoLaudoFiltro> model)
+        public ActionResult SearchModalPageData(DataTableFilter<ClientePesquisaModalFiltro> model)
         {
-            IEnumerable<MotivoLaudoLinhaTabela> result = _unitOfWork.MotivoLaudoRepository.ObterDadosParaDataTable(model, out int recordsFiltered, out int totalRecords);
+            IEnumerable<ClientePesquisaModalLinhaTabela> result = _unitOfWork.ClienteRepository.ObterDadosParaDataTable(model, out int recordsFiltered, out int totalRecords);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
                 RecordsTotal = totalRecords,
                 RecordsFiltered = recordsFiltered,
-                Data = Mapper.Map<IEnumerable<MotivoLaudoListItemViewModel>>(result)
+                Data = Mapper.Map<IEnumerable<ClienteSearchModalItemViewModel>>(result)
             });
         }
     }

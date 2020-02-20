@@ -17,12 +17,12 @@ namespace FWLog.Data.Models
         [Required]
         [Index]
         [StringLength(75)]
-        public string RazaoSozial { get; set; }
+        public string RazaoSocial { get; set; }
 
         [Required]
         [Index]
         [StringLength(14)]
-        public string CNPJ { get; set; }
+        public string CNPJCPF { get; set; }
 
         [Required]
         [Index]

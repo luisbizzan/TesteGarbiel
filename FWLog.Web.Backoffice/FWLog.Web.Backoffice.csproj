@@ -230,6 +230,7 @@
     <Compile Include="App_Start\NinjectModules\GeneralModule.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
+    <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\GarantiaController.cs" />
@@ -273,6 +274,8 @@
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
     <Compile Include="Mapping\GarantiaProfile.cs" />
+    <Compile Include="Mapping\ClienteProfile.cs" />
+    <Compile Include="Mapping\MotivoLaudoProfile.cs" />
     <Compile Include="Mapping\PerfilImpressoraProfile.cs" />
     <Compile Include="Mapping\EmpresaProfile.cs" />
     <Compile Include="Mapping\EnderecoArmazenagemProfile.cs" />
@@ -290,6 +293,7 @@
     <Compile Include="Models\BORecebimentoNotaCtx\ResumoFinalizarConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\TratarDivergenciaRecebimentoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\ExibirDivergenciaRecebimentoViewModel.cs" />
+    <Compile Include="Models\ClienteCtx\ClienteSearchModalViewModel.cs" />
     <Compile Include="Models\EmpresaCtx\EmpresaSearchModalViewModel.cs" />
     <Compile Include="Models\BOFornecedorCtx\BOFornecedorSearchModalViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
@@ -484,6 +488,7 @@
     <Content Include="Scripts\Views\BOPrinter\create.js" />
     <Content Include="Scripts\Views\BOPrinter\edit.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioRastreioPeca.js" />
+    <Content Include="Scripts\Views\Cliente\searchModal.js" />
     <Content Include="Scripts\Views\Empresa\editar.js" />
     <Content Include="Scripts\Views\Empresa\searchModal.js" />
     <Content Include="Scripts\Views\BOFornecedor\searchModal.js" />
@@ -568,6 +573,7 @@
     <Content Include="Views\Etiqueta\Recebimento.cshtml" />
     <Content Include="Views\BORecebimentoNota\PesquisaLote.cshtml" />
     <Content Include="Views\MotivoLaudo\MotivoLaudo.cshtml" />
+    <Content Include="Views\Cliente\SearchModal.cshtml" />
     <Content Include="Views\Garantia\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>

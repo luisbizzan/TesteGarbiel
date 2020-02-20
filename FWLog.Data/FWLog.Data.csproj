@@ -105,9 +105,13 @@
     <Compile Include="Models\ApplicationSession.cs" />
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\DataTablesCtx\GarantiaTableRow.cs" />
+    <Compile Include="Models\DataTablesCtx\ClientePesquisaModalLinhaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\MotivoLaudoLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\PerfilImpressoraTableRow.cs" />
     <Compile Include="Models\DataTablesCtx\QuarentenaHistoricoListRow.cs" />
     <Compile Include="Models\FilterCtx\GarantiaFilter.cs" />
+    <Compile Include="Models\FilterCtx\ClientePesquisaModalFiltro.cs" />
+    <Compile Include="Models\FilterCtx\MotivoLaudoFiltro.cs" />
     <Compile Include="Models\FilterCtx\PerfilImpressoraFilter.cs" />
     <Compile Include="Models\Garantia.cs" />
     <Compile Include="Models\GarantiaConferenciaTipo.cs" />
