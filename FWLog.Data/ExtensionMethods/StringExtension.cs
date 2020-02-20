@@ -89,7 +89,7 @@ namespace ExtensionMethods.String
         public static string CnpjOrCpf(this string source)
         {
             if (source.Length > 11)
-                Convert.ToUInt64(source).ToString(@"00\.000\.000\/0000\-00");
+                return Convert.ToUInt64(source).ToString(@"00\.000\.000\/0000\-00");
 
             return Convert.ToUInt64(source).ToString(@"000\.000\.000\-00");
         }
