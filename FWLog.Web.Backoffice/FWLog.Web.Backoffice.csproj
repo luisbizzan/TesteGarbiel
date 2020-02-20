@@ -248,6 +248,7 @@
     <Compile Include="Controllers\BOFornecedorController.cs" />
     <Compile Include="Controllers\ProdutoController.cs" />
     <Compile Include="Controllers\RecebimentoEtiquetaIndividualPersonalizadaController.cs" />
+    <Compile Include="Controllers\TransportadoraController.cs" />
     <Compile Include="EnumsAndConsts\EmpresaCookie.cs" />
     <Compile Include="GlobalResources\BOPrinter\BOPrinterStrings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -281,6 +282,7 @@
     <Compile Include="Mapping\EnderecoArmazenagemProfile.cs" />
     <Compile Include="Mapping\NivelArmazenagemProfile.cs" />
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
+    <Compile Include="Mapping\TransportadoraProfile.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\HistoricoQuarentenaViewModel.cs" />
@@ -334,6 +336,7 @@
     <Compile Include="Models\ProdutoCtx\ProdutoSearchModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\RecebimentoEtiquetaViewModel.cs" />
     <Compile Include="Models\RecebimentoEtiquetaIndividualPersonalizadaCtx\RecebimentoEtiquetaIndividualListViewModel.cs" />
+    <Compile Include="Models\TransportadoraCtx\TransportadoraSearchModalViewModel.cs" />
     <Compile Include="Startup.cs" />
     <Content Include="Content\dart\dart-template.css">
       <DependentUpon>dart-template.scss</DependentUpon>
@@ -575,6 +578,8 @@
     <Content Include="Views\MotivoLaudo\MotivoLaudo.cshtml" />
     <Content Include="Views\Cliente\SearchModal.cshtml" />
     <Content Include="Views\Garantia\Index.cshtml" />
+    <Content Include="Views\Transportadora\SearchModal.cshtml" />
+    <Content Include="Scripts\Views\Transportadora\searchModal.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

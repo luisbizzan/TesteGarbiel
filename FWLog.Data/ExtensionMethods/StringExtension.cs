@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Text.RegularExpressions;
 using Res = Resources.GeneralStrings;
 
@@ -78,6 +79,19 @@ namespace ExtensionMethods.String
             string pattern = @"^(\d{2})(\d{4,5})(\d{4})$";
             var regExp = new Regex(pattern);
             return regExp.Replace(source, "($1) $2-$3");
+        }
+
+        /// <summary>
+        /// Retorna cpf ou cnpj já com a máscara.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static string CnpjOrCpf(this string source)
+        {
+            if (source.Length > 11)
+                Convert.ToUInt64(source).ToString(@"00\.000\.000\/0000\-00");
+
+            return Convert.ToUInt64(source).ToString(@"000\.000\.000\-00");
         }
     }
 }

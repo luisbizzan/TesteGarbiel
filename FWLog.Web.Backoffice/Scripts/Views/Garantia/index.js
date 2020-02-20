@@ -76,28 +76,51 @@
     dart.dataTables.loadFormFilterEvents();
 
     $("#pesquisarCliente").click(function () {
-        debugger
         $("#modalCliente").load(HOST_URL + "Cliente/SearchModal", function () {
             $("#modalCliente").modal();
         });
     });
 
-    function limparFornecedor() {
-        let razaoSocial = $("#Filter_RazaoSocial");
-        let cliente = $("#Filter_IdCliente");
-        razaoSocial.val("");
-        cliente.val("");
-    }
+    $("#pesquisarTransportadora").click(function () {
+        $("#modalTransportadora").load(HOST_URL + "Transportadora/SearchModal", function () {
+            $("#modalTransportadora").modal();
+        });
+    });
 
     $("#limparCliente").click(function () {
-        limparFornecedor();
+        limparCliente();
+    });
+
+    $("#limparTransportadora").click(function () {
+        limparTransportadora();
     });
 
 })();
 
 function setCliente(idCliente, nomeFantasia) {
-    $("#Filter_RazaoSocial").val(nomeFantasia);
+    $("#Filter_RazaoSocialCliente").val(nomeFantasia);
     $("#Filter_IdCliente").val(idCliente);
     $("#modalCliente").modal("hide");
     $("#modalCliente").empty();
+}
+
+function limparCliente() {
+    let razaoSocial = $("#Filter_RazaoSocialCliente");
+    let cliente = $("#Filter_IdCliente");
+    razaoSocial.val("");
+    cliente.val("");
+}
+
+function setTransportadora(idTransportadora, nomeFantasia) {
+    $("#Filter_RazaoSocialTransportadora").val(nomeFantasia);
+    $("#Filter_IdTransportadora").val(idTransportadora);
+    $("#modalTransportadora").modal("hide");
+    $("#modalTransportadora").empty();
+}
+
+function limparTransportadora() {
+    let razaoSocial = $("#Filter_RazaoSocialTransportadora");
+    let cliente = $("#Filter_IdTransportadora");
+    razaoSocial.val("");
+    cliente.val("");
 }
