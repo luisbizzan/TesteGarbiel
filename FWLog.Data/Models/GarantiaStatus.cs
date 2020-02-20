@@ -5,7 +5,17 @@ namespace FWLog.Data.Models
 {
     public enum GarantiaStatusEnum
     {
-        Desconhecido = 0
+        Desconhecido = 0,
+        AguardandoRecebimento = 1,
+        Recebido = 2,
+        Conferencia = 3,
+        Finalizado = 4,
+        FinalizadoComDivergencia = 5,
+        AguardandoCriacaoNFDevolucao = 6,
+        AguardandoConfirmacaoNFDevolucao = 7,
+        AguardandoAutorizacaoSefaz = 8,
+        AguardandoMovimentacaoEstoque = 9,
+        Estorno = 10
     }
 
     public class GarantiaStatus
@@ -15,8 +25,8 @@ namespace FWLog.Data.Models
         public GarantiaStatusEnum IdGarantiaStatus { get; set; }
 
         [Required]
-        [StringLength(20)]
-        [Index(IsUnique=true)]
+        [StringLength(30)]
+        [Index(IsUnique = true)]
         public string Descricao { get; set; }
     }
 }

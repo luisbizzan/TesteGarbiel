@@ -352,5 +352,28 @@ ALTER TABLE DART."NotaFiscalItem" ADD "CodigoBarras" VARCHAR2(100);
 
 INSERT INTO DART."NotaFiscalTipo" ("IdNotaFiscalTipo","Descricao") 	VALUES (3,'Garantia');
 
+INSERT INTO DART."GarantiaStatus" ("IdGarantiaStatus","Descricao")
+	VALUES (1,'Ag. Recebimento');
+INSERT INTO DART."GarantiaStatus" ("IdGarantiaStatus","Descricao")
+	VALUES (2,'Recebido');
+INSERT INTO DART."GarantiaStatus" ("IdGarantiaStatus","Descricao")
+	VALUES (3,'Em conferência');
+INSERT INTO DART."GarantiaStatus" ("IdGarantiaStatus","Descricao")
+	VALUES (4,'Finalizado');
+INSERT INTO DART."GarantiaStatus" ("IdGarantiaStatus","Descricao")
+	VALUES (5,'Finalizado Diver.');
+INSERT INTO DART."GarantiaStatus" ("IdGarantiaStatus","Descricao")
+	VALUES (6,'Ag. Criação NF Devolução');
+INSERT INTO DART."GarantiaStatus" ("IdGarantiaStatus","Descricao")
+	VALUES (7,'Ag. Confirm. NF Devolução');
+INSERT INTO DART."GarantiaStatus" ("IdGarantiaStatus","Descricao")
+	VALUES (8,'Ag. Autorização Sefaz');
+INSERT INTO DART."GarantiaStatus" ("IdGarantiaStatus","Descricao")
+	VALUES (9,'Ag. Movim. Estoque');
+INSERT INTO DART."GarantiaStatus" ("IdGarantiaStatus","Descricao")
+	VALUES (10,'Estorno');
+	
+	ALTER TABLE DART."GarantiaStatus" MODIFY "Descricao" VARCHAR2(30);
+
 
 /

@@ -11,6 +11,8 @@ using FWLog.Web.Backoffice.Helpers;
 using FWLog.AspNet.Identity;
 using FWLog.Web.Backoffice.Models.GarantiaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using System;
+using System.Linq;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -24,11 +26,29 @@ namespace FWLog.Web.Backoffice.Controllers
             _uow = uow;
             _garantiaService = garantiaService;
         }
-        
-		[ApplicationAuthorize(Permissions = Permissions.Garantia.Listar)]
+
+        [ApplicationAuthorize(Permissions = Permissions.Garantia.Listar)]
         public ActionResult Index()
         {
-            return View(new GarantiaListViewModel());
+            var model = new GarantiaListViewModel
+            {
+                Filter = new GarantiaFilterViewModel()
+                {
+                    ListaStatus = new SelectList(
+                    _uow.GarantiaStatusRepository.Todos().OrderBy(o => o.IdGarantiaStatus).Select(x => new SelectListItem
+                    {
+                        Value = x.IdGarantiaStatus.GetHashCode().ToString(),
+                        Text = x.Descricao,
+                    }), "Value", "Text"
+                )
+                }
+            };
+
+            model.Filter.IdGarantiaStatus = GarantiaStatusEnum.AguardandoRecebimento.GetHashCode();
+            model.Filter.DataEmissaoInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(-7);
+            model.Filter.DataEmissaoFinal = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
+
+            return View(model);
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Garantia.Listar)]
@@ -36,13 +56,13 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             int recordsFiltered, totalRecords;
             var filter = Mapper.Map<DataTableFilter<GarantiaFilter>>(model);
-            
+
             filter.CustomFilter.IdEmpresa = IdEmpresa;
-            
+
             IEnumerable<GarantiaTableRow> result = _uow.GarantiaRepository.SearchForDataTable(filter, out recordsFiltered, out totalRecords);
 
             return DataTableResult.FromModel(new DataTableResponseModel
-            {	
+            {
                 Draw = model.Draw,
                 RecordsTotal = totalRecords,
                 RecordsFiltered = recordsFiltered,

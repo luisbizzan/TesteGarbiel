@@ -1,4 +1,42 @@
 ﻿(function () {
+    $.validator.setDefaults({ ignore: null });
+    $('.onlyNumber').mask('0#');
+    $("dateFormat").mask("99/99/9999");
+    $('.hourMinute').mask("99:99", { reverse: true });
+
+    $.validator.addMethod('validateDateOrPrazoInicial', function (value, ele) {
+        var dataInicial = $("#Filter_DataInicial").val();
+
+        if (value != "")
+            return true
+        else if (dataInicial != "")
+            return true
+        else
+            return false;
+    }, 'Data Inicial ou Prazo Inicial Obrigatório');
+
+    $.validator.addMethod('validateDateOrPrazoFinal', function (value, ele) {
+        var dataFinal = $("#Filter_DataFinal").val();
+
+        if (value != "")
+            return true
+        else if (dataFinal != "")
+            return true
+        else
+            return false;
+    }, 'Data Final ou Prazo Final Obrigatório');
+
+    $.validator.addMethod('validateTime', function (value, ele) {
+        if (value === "") {
+            return true;
+        }
+        let regex = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/;
+        let validaRegex = regex.test(value);
+        if (validaRegex) {
+            return true;
+        }
+        return false;
+    }, 'Hora inválida');
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
@@ -28,26 +66,11 @@
             dart.dataTables.loadFilterFromData(data);
         },
         columns: [
-            // TODO: Todas as proriedades da classe GarantiaListItemViewModel devem estar listadas aqui 
             { data: 'IdGarantia' },
             { data: 'IdCliente' },
             { data: 'IdTransportadora' },
             actionsColumn
         ]
-    });
-
-    // Delete
-    $('#dataTable').on('click', '[data-delete-url]', function () {
-
-        var deleteUrl = $(this).attr('data-delete-url');
-        var $table = $(this).closest('table');
-
-        dart.modalAjaxDelete.open({
-            deleteUrl: deleteUrl,
-            onConfirm: function () {
-                $table.DataTable().ajax.reload(null, false);
-            }
-        });
     });
 
     dart.dataTables.loadFormFilterEvents();
