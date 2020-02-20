@@ -336,4 +336,21 @@ END;
 
 ALTER TABLE DART."Cliente" MODIFY "TipoCliente" CHAR(1);
 ALTER TABLE DART."Cliente" RENAME COLUMN CNPJ TO CNPJCPF;
+ALTER TABLE DART."NotaFiscal" ADD "IdCliente" NUMBER(19,0);
+ALTER TABLE DART."NotaFiscal" MODIFY "IdFornecedor" NUMBER(19,0) NULL;
+ALTER TABLE DART."NotaFiscal" ADD "BaseICMS" FLOAT;
+ALTER TABLE DART."NotaFiscal" ADD "ValorICMS" FLOAT;
+ALTER TABLE DART."NotaFiscal" ADD "BaseST" FLOAT;
+ALTER TABLE DART."NotaFiscal" ADD "ValorST" FLOAT;
+ALTER TABLE DART."NotaFiscal" ADD "ValorIPI" FLOAT;
+ALTER TABLE DART."NotaFiscal" ADD "ValorSeguro" FLOAT;
+ALTER TABLE DART."NotaFiscalItem" ADD "CodigoIntegracaoNFOrigem" NUMBER(10,0);
+ALTER TABLE DART."NotaFiscalItem" ADD "SequenciaNFOrigem" VARCHAR2(22);
+ALTER TABLE DART."NotaFiscalItem" ADD CFOP VARCHAR2(22);
+ALTER TABLE DART."NotaFiscalItem" ADD "CodigoBarras" VARCHAR2(100);
+
+
+INSERT INTO DART."NotaFiscalTipo" ("IdNotaFiscalTipo","Descricao") 	VALUES (3,'Garantia');
+
+
 /

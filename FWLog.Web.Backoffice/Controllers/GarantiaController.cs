@@ -36,6 +36,9 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             int recordsFiltered, totalRecords;
             var filter = Mapper.Map<DataTableFilter<GarantiaFilter>>(model);
+            
+            filter.CustomFilter.IdEmpresa = IdEmpresa;
+            
             IEnumerable<GarantiaTableRow> result = _uow.GarantiaRepository.SearchForDataTable(filter, out recordsFiltered, out totalRecords);
 
             return DataTableResult.FromModel(new DataTableResponseModel

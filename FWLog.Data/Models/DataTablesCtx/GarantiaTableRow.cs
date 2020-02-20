@@ -1,10 +1,19 @@
-﻿namespace FWLog.Data.Models.DataTablesCtx
+﻿using System;
+
+namespace FWLog.Data.Models.DataTablesCtx
 {
     public class GarantiaTableRow
     {
-        public long IdGarantia { get; set; }
+        public long IdEmpresa { get; set; }
+        public long? IdGarantia { get; set; }
         public long? IdCliente { get; set; }
-        public long IdTransportadora { get; set; }
-        // TODO: Criar colunas do DataTable, deve conter as mesmas propriedades da classe GarantiaListItemViewModel
+        public long? IdTransportadora { get; set; }
+        public long? NumeroNF { get; set; }
+        public string NumeroFicticioNF { get; set; }
+        public string ChaveAcesso { get; set; }
+        public DateTime? DataEmissao { get; set; }                
+        public DateTime? DataRecebimento { get; set; }
+        public string IdUsuarioRecebimento { get; set; }
+        public GarantiaStatusEnum IdGarantiaStatus { get; set; }
     }
 }

@@ -1,7 +1,10 @@
-﻿using FWLog.Data.Models;
+﻿using Dapper;
+using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
+using Oracle.ManagedDataAccess.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,35 +15,122 @@ namespace FWLog.Data.Repository.GeneralCtx
         public GarantiaRepository(Entities entities) : base(entities)
         {
         }
+
         public IList<GarantiaTableRow> SearchForDataTable(DataTableFilter<GarantiaFilter> filter, out int totalRecordsFiltered, out int totalRecords)
         {
-            totalRecords = Entities.Garantia.Count();
+            IEnumerable<Garantia> garantia = null;
 
-            IQueryable<GarantiaTableRow> query = Entities.Garantia.AsNoTracking()
-                .Select(e => new GarantiaTableRow
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+
+                if (conn.State == System.Data.ConnectionState.Open)
                 {
-                    IdGarantia = e.IdGarantia,
-                    IdCliente = 0,
-                    IdTransportadora = e.NotaFiscal.IdTransportadora
-                   
-                    // TODO: Todas as propriedades da classe GarantiaTableRow devem ser setadas aqui
-                });
+                    garantia = conn.Query<Garantia, NotaFiscal, Cliente, GarantiaStatus, AspNetUsers, NotaFiscalStatus, Garantia>(
+                        "SELECT " +
+                            "garantia.\"IdGarantia\"," +
+                            "garantia.\"DataRecebimento\",	" +
+                            "nota.\"IdNotaFiscal\", " +
+                            "nota.\"Numero\"," +
+                            "nota.\"Serie\"," +
+                            "nota.\"ValorTotal\"," +
+                            "nota.\"ValorFrete\"," +
+                            "nota.\"NumeroConhecimento\"," +
+                            "nota.\"PesoBruto\"," +
+                            "nota.\"Especie\"," +
+                            "nota.\"Quantidade\"," +
+                            "nota.\"ChaveAcesso\"," +
+                            "nota.\"CodigoIntegracao\"," +
+                            "nota.\"DataEmissao\"," +
+                            "nota.\"PrazoEntregaFornecedor\"," +
+                            "nota.\"IdEmpresa\"," +
+                            "nota.\"IdTransportadora\"," +
+                            "cliente.*,	" +
+                            "garantiastatus.*," +
+                            "userr.*," +
+                            "nfstatus.* " +
+                        "FROM \"Garantia\" garantia " +
+                        "RIGHT JOIN \"NotaFiscal\" nota ON nota.\"IdNotaFiscal\" = garantia.\"IdNotaFiscal\" " +
+                        "INNER JOIN \"Cliente\" cliente ON cliente.\"IdCliente\" = nota.\"IdCliente\" " +
+                        "LEFT JOIN \"GarantiaStatus\" garantiastatus ON (garantiastatus.\"IdGarantiaStatus\" = CASE WHEN garantia.\"IdGarantiaStatus\" IS NULL THEN 1 ELSE garantia.\"IdGarantiaStatus\" END) " +
+                        "LEFT JOIN \"AspNetUsers\" userr ON userr.\"Id\" = garantia.\"IdUsuarioRecebimento\" " +
+                        "INNER JOIN \"NotaFiscalStatus\" nfstatus ON nfstatus.\"IdNotaFiscalStatus\" = nota.\"IdNotaFiscalStatus\" " +
+                        "WHERE (nota.\"IdNotaFiscalStatus\" <> 0 AND nota.\"IdNotaFiscalStatus\" IS NOT NULL) AND nota.\"IdEmpresa\" = " + filter.CustomFilter.IdEmpresa +
+                        "AND nota.\"IdNotaFiscalTipo\" = " + NotaFiscalTipoEnum.Garantia.GetHashCode(),
+                        map: (g, nf, f, gs, u, nfs) =>
+                        {
+                            g.NotaFiscal = nf;
+                            g.NotaFiscal.Cliente = f;
+                            g.GarantiaStatus = gs;
+                            g.UsuarioRecebimento = u;
+                            g.NotaFiscal.NotaFiscalStatus = nfs;
+                            return g;
+                        },
+                        splitOn: "IdGarantia, IdNotaFiscal, IdCliente, IdGarantiaStatus, Id, IdNotaFiscalStatus"
+                        );
+                }
 
-            // TODO: Todas as propriedades existentes na class GarantiaFilter deve conter um where aqui, considere o código a seguir como exemplo
-            //if (!string.IsNullOrEmpty(filter.CustomFilter.Name))
-            //{
-            //query = query.Where(x => x.Name.Contains(filter.CustomFilter.Name));
-            //}
+                conn.Close();
+            }
 
-            // Quantidade total de registros com filtros aplicados, sem Skip() e Take().
-            totalRecordsFiltered = query.Count();
+            totalRecords = garantia.Count();
 
-            query = query
+            var query = garantia.Where(x =>
+                (filter.CustomFilter.IdGarantia.HasValue == false || x.IdGarantia == filter.CustomFilter.IdGarantia.Value) &&
+                (filter.CustomFilter.IdCliente.HasValue == false || x.IdGarantia == filter.CustomFilter.IdCliente.Value) &&
+                (filter.CustomFilter.IdTransportadora.HasValue == false || x.IdGarantia == filter.CustomFilter.IdTransportadora.Value) &&
+                (filter.CustomFilter.NumeroNF.HasValue == false || x.NotaFiscal.Numero == filter.CustomFilter.NumeroNF.Value) &&
+                (string.IsNullOrEmpty(filter.CustomFilter.NumeroFicticioNF) == true || x.NotaFiscal.NumeroFicticioNF.Contains(filter.CustomFilter.NumeroFicticioNF)) &&
+                (string.IsNullOrEmpty(filter.CustomFilter.ChaveAcesso) == true || x.NotaFiscal.ChaveAcesso.Contains(filter.CustomFilter.ChaveAcesso)) &&
+                (filter.CustomFilter.IdGarantiaStatus.HasValue == false || (long)x.IdGarantiaStatus == filter.CustomFilter.IdGarantiaStatus.Value)
+            );
+
+            if (filter.CustomFilter.DataEmissaoInicial.HasValue)
+            {
+                DateTime dataInicial = new DateTime(filter.CustomFilter.DataEmissaoInicial.Value.Year, filter.CustomFilter.DataEmissaoInicial.Value.Month, filter.CustomFilter.DataEmissaoInicial.Value.Day, 23, 59, 59);
+                query = query.Where(x => x.NotaFiscal.DataEmissao <= dataInicial);
+            }
+
+            if (filter.CustomFilter.DataEmissaoFinal.HasValue)
+            {
+                DateTime dataFinal = new DateTime(filter.CustomFilter.DataEmissaoFinal.Value.Year, filter.CustomFilter.DataEmissaoFinal.Value.Month, filter.CustomFilter.DataEmissaoFinal.Value.Day, 00, 00, 00);
+                query = query.Where(x => x.NotaFiscal.DataEmissao >= dataFinal);
+            }
+
+            if (filter.CustomFilter.DataRecebimentoInicial.HasValue)
+            {
+                DateTime dataInicial = new DateTime(filter.CustomFilter.DataRecebimentoInicial.Value.Year, filter.CustomFilter.DataRecebimentoInicial.Value.Month, filter.CustomFilter.DataRecebimentoInicial.Value.Day, 23, 59, 59);
+                query = query.Where(x => x.DataRecebimento <= dataInicial);
+            }
+
+            if (filter.CustomFilter.DataRecebimentoFinal.HasValue)
+            {
+                DateTime dataFinal = new DateTime(filter.CustomFilter.DataRecebimentoFinal.Value.Year, filter.CustomFilter.DataRecebimentoFinal.Value.Month, filter.CustomFilter.DataRecebimentoFinal.Value.Day, 00, 00, 00);
+                query = query.Where(x => x.DataRecebimento >= dataFinal);
+            }
+
+            IEnumerable<GarantiaTableRow> queryResult = query.Select(e => new GarantiaTableRow
+            {
+                IdGarantia = e.IdGarantia == 0 ? (long?)null : e.IdGarantia,
+                IdCliente = e.NotaFiscal.Cliente.IdCliente,
+                IdTransportadora = e.NotaFiscal.IdTransportadora,
+                IdEmpresa = e.NotaFiscal.IdEmpresa,
+                NumeroNF = e.NotaFiscal.Numero,
+                NumeroFicticioNF = e.NotaFiscal.NumeroFicticioNF,
+                DataEmissao = e.NotaFiscal.DataEmissao,
+                DataRecebimento = e.DataRecebimento,
+                IdUsuarioRecebimento = e.UsuarioRecebimento == null ? string.Empty : e.UsuarioRecebimento.Id,
+                IdGarantiaStatus = e.IdGarantiaStatus
+            });
+
+            totalRecordsFiltered = queryResult.Count();
+
+            queryResult = queryResult
                 .OrderBy(filter.OrderByColumn, filter.OrderByDirection)
                 .Skip(filter.Start)
                 .Take(filter.Length);
 
-            return query.ToList();
+            return queryResult.ToList();
         }
 
     }
