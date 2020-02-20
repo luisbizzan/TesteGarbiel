@@ -163,6 +163,7 @@
     <Compile Include="Services\ApplicationLogService.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\ConferenciaService.cs" />
+    <Compile Include="Services\GarantiaService.cs" />
     <Compile Include="Services\PerfilImpressoraService.cs" />
     <Compile Include="Services\EmpresaService.cs" />
     <Compile Include="Services\EnderecoArmazenagemService.cs" />

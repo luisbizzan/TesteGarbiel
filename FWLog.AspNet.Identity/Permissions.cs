@@ -221,5 +221,15 @@ namespace FWLog.AspNet.Identity
                 Register(Editar, Display.FromString("Editar Motivos do Laudo"));
             }
         }
+
+        public class Garantia : PermissionGroupBuildItem
+        {
+            public const string Listar = "GarantiaList";
+
+            public Garantia() : base(Display.FromString("Solicitação de Garantia"))
+            {
+                Register(Listar, Display.FromString("Listar Solicitações de Garantia"));
+            }
+        }
     }
 }

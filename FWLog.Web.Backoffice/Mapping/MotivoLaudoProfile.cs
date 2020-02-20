@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FWLog.Data.Models.DataTablesCtx;
-using FWLog.Web.Backoffice.Models.GarantiaCtx;
+using FWLog.Web.Backoffice.Models.MotivoLaudoCtx;
 
 namespace FWLog.Web.Backoffice.Mapping
 {

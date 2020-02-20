@@ -5,7 +5,7 @@ using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
-using FWLog.Web.Backoffice.Models.GarantiaCtx;
+using FWLog.Web.Backoffice.Models.MotivoLaudoCtx;
 using System.Collections.Generic;
 using System.Web.Mvc;
 

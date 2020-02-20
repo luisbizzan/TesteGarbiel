@@ -1,8 +1,8 @@
-﻿@model FWLog.Web.Backoffice.Models.MotivoLaudoCtx.MotivoLaudoListViewModel
+﻿@model FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaListViewModel
 @using FWLog.AspNet.Identity
 
 @{
-    ViewBag.Title = "Lista de Motivos do Laudo";
+    ViewBag.Title = "Lista de Garantia";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,14 +10,13 @@
     @BundleHelper.RenderViewScript(
         new
         {
-            //editUrl = Url.Action("Edit"),
-            editVisible = User.HasPermission(Permissions.MotivoLaudo.Editar),
+            detailsUrl = Url.Action("Details"),
+            detailsVisible = User.HasPermission(Permissions.Garantia.Listar),
             pageDataUrl = Url.Action("PageData")
         }
     )
 }
 
-<!-- filter -->
 <form data-filter="form" data-filter-for="dataTable" class="form-filter">
     <div class="x_panel">
         <div class="x_title">
@@ -28,17 +27,17 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="form-group col-md-4 col-lg-4">
-                    @Html.LabelFor(m => m.Filter.IdMotivoLaudo)
-                    @Html.TextBoxFor(m => m.Filter.Descricao, new { @class = "form-control", data_field = "IdMotivoLaudo" })
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.IdCliente)
+                    @Html.TextBoxFor(m => m.Filter.IdCliente, new { @class = "form-control onlyNumber", data_field = "IdCliente" })
                 </div>
-                <div class="form-group col-md-6 col-lg-6">
-                    @Html.LabelFor(m => m.Filter.Descricao)
-                    @Html.TextBoxFor(m => m.Filter.Descricao, new { @class = "form-control", data_field = "Descricao" })
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.IdGarantia)
+                    @Html.TextBoxFor(m => m.Filter.IdGarantia, new { @class = "form-control onlyNumber", data_field = "IdGarantia" })
                 </div>
-                <div class="form-group col-md-2 col-lg-2">
-                    @Html.LabelFor(m => m.Filter.Status)
-                    @Html.DropDownListFor(m => m.Filter.Status, (IEnumerable<SelectListItem>)ViewBag.Status, "Todos", new { @class = "form-control", data_field = "Status" })
+                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.IdTransportadora)
+                    @Html.TextBoxFor(m => m.Filter.IdTransportadora, new { @class = "form-control onlyNumber", data_field = "IdTransportadora" })
                 </div>
             </div>
             <div class="row">
@@ -57,7 +56,7 @@
         <div class="x_panel">
             <!-- panel-title -->
             <div class="x_title">
-                <h2>Lista de Motivos do Laudo</h2>
+                <h2>Lista</h2>               
                 <div class="clearfix"></div>
             </div>
             <!-- /panel-title -->
@@ -66,9 +65,10 @@
                 <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
                     <thead>
                         <tr>
-                            <th>@Html.DisplayNameFor(m => m.EmptyItem.IdMotivoLaudo)</th>
-                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Descricao)</th>
-                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Status)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.IdGarantia)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.IdCliente)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.IdTransportadora)</th>
+                            @* TODO: Todas as propriedades da classe GarantiaListItemViewModel devem estar aqui *@
                             <th>@Resources.CommonStrings.ActionsLabel</th>
                         </tr>
                     </thead>
@@ -79,3 +79,4 @@
     </div>
 </div>
 <!-- /table -->
+

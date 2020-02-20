@@ -28,7 +28,7 @@ namespace FWLog.Web.Backoffice.Models.ClienteCtx
         public string NomeFantasia { get; set; }
 
         [Display(Name = "CNPJ/CPF")]
-        public string CNPJ { get; set; }
+        public string CNPJCPF { get; set; }
 
         [Display(Name = "Classificação")]
         public string Classificacao { get; set; }
@@ -46,6 +46,6 @@ namespace FWLog.Web.Backoffice.Models.ClienteCtx
         public string NomeFantasia { get; set; }
 
         [Display(Name = "CNPJ/CPF")]
-        public string CNPJ { get; set; }
+        public string CNPJCPF { get; set; }
     }
 }

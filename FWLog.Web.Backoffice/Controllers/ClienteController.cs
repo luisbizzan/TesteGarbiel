@@ -29,7 +29,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult SearchModalCliente()
+        public ActionResult SearchModal()
         {
             setViewBags();
 
@@ -38,7 +38,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        public ActionResult SearchModalClientePageData(DataTableFilter<ClientePesquisaModalFiltro> model)
+        public ActionResult SearchModalPageData(DataTableFilter<ClientePesquisaModalFiltro> model)
         {
             IEnumerable<ClientePesquisaModalLinhaTabela> result = _unitOfWork.ClienteRepository.ObterDadosParaDataTable(model, out int recordsFiltered, out int totalRecords);
 

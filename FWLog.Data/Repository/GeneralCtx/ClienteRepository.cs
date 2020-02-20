@@ -14,7 +14,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public IEnumerable<ClientePesquisaModalLinhaTabela> ObterDadosParaDataTable(DataTableFilter<ClientePesquisaModalFiltro> filter, out int totalRecordsFiltered, out int totalRecords)
         {
-            totalRecords = Entities.MotivoLaudo.Count();
+            totalRecords = Entities.Cliente.Count();
 
             IQueryable <ClientePesquisaModalLinhaTabela> query = Entities.Cliente.AsNoTracking()
                 .Where(x => (filter.CustomFilter.IdCliente.HasValue == false || x.IdCliente == filter.CustomFilter.IdCliente) &&
@@ -28,8 +28,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                     CodigoIntegracao = e.CodigoIntegracao,
                     Classificacao = e.Classificacao,
                     NomeFantasia = e.NomeFantasia,
-                    RazaoSocial = e.RazaoSozial
-                });;
+                    RazaoSocial = e.RazaoSocial
+                });
 
             totalRecordsFiltered = query.Count();
 
