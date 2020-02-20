@@ -44,7 +44,7 @@ namespace FWLog.Web.Backoffice.Controllers
             IEnumerable<ClientePesquisaModalLinhaTabela> result = _unitOfWork.ClienteRepository.ObterDadosParaDataTable(model, out int recordsFiltered, out int totalRecords);
             
             //Formatando a informação de cnpj ou cpf para o datatable
-            result.ForEach(x => x.CNPJCPF = x.CNPJCPF.CnpjOrCpf());
+            result.ForEach(x => x.CNPJCPF = x.CNPJCPF.CnpjOuCpf());
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {

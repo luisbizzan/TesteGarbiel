@@ -45,7 +45,7 @@ namespace FWLog.Web.Backoffice.Controllers
             IEnumerable<TransportadoraPesquisaModalLinhaTabela> result = _unitOfWork.TransportadoraRepository.ObterDadosParaDataTable(model, out int recordsFiltered, out int totalRecords);
 
             //Formatando o campo CNPJ para o datatable
-            result.ForEach(x => x.CNPJ = x.CNPJ.CnpjOrCpf());
+            result.ForEach(x => x.CNPJ = x.CNPJ.CnpjOuCpf());
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {

@@ -86,7 +86,7 @@ namespace ExtensionMethods.String
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static string CnpjOrCpf(this string source)
+        public static string CnpjOuCpf(this string source)
         {
             if (source.Length > 11)
                 return Convert.ToUInt64(source).ToString(@"00\.000\.000\/0000\-00");
