@@ -7,6 +7,7 @@ namespace FWLog.Data.Models
     {
         Compra = 1,
         DevolucaoCompra = 2,
+        Garantia = 3
     }
     public class NotaFiscalTipo
     {

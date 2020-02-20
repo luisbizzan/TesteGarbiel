@@ -1,4 +1,6 @@
-﻿namespace FWLog.Web.Backoffice.Models.GarantiaCtx
+﻿using System;
+
+namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 {
     public class GarantiaListViewModel
     {
@@ -15,18 +17,36 @@
 
     public class GarantiaListItemViewModel
     {
-        public long IdGarantia { get; set; }
-        public long IdCliente { get; set; }
-        public long IdTransportadora { get; set; }
-
-        // TODO: Criar colunas do DataTable, deve conter as mesmas propriedades da classe GarantiaTableRow
+        public long IdEmpresa { get; set; }
+        public long? IdGarantia { get; set; }
+        public long? IdCliente { get; set; }
+        public long? IdTransportadora { get; set; }
+        public long? NumeroNF { get; set; }
+        public string NumeroFicticioNF { get; set; }
+        public long? ChaveAcesso { get; set; }
+        public DateTime? DataEmissao{ get; set; }        
+        public DateTime? DataRecebimento { get; set; }        
+        public long? IdTranpostadora { get; set; }
+        public string IdUsuarioRecebimento { get; set; }
+        public string IddUsuarioConferente { get; set; }
+        public long? IdGarantiaStatus { get; set; }
     }
 
     public class GarantiaFilterViewModel
     {
-        public long IdGarantia { get; set; }
-        public long IdCliente { get; set; }
-        public long IdTransportadora { get; set; }
-        // TODO: Criar propriedades de filtro, deve conter os mesmos campos da classe GarantiaFilter
+        public long IdEmpresa { get; set; }
+        public long? IdGarantia { get; set; }
+        public long? IdCliente { get; set; }
+        public long? IdTransportadora { get; set; }
+        public long? NumeroNF { get; set; }
+        public string NumeroFicticioNF { get; set; }
+        public string ChaveAcesso { get; set; }
+        public DateTime? DataEmissaoInicial { get; set; }
+        public DateTime? DataEmissaoFinal { get; set; }
+        public DateTime? DataRecebimentoInicial { get; set; }
+        public DateTime? DataRecebimentoFinal { get; set; }
+        public long? IdTranpostadora { get; set; }
+        public string IdUsuarioRecebimento { get; set; }
+        public long? IdGarantiaStatus { get; set; }
     }
 }

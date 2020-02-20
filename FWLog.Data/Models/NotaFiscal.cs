@@ -88,6 +88,18 @@ namespace FWLog.Data.Models
 
         public bool NFDevolucaoConfirmada { get; set; }
 
+        public decimal? BaseICMS { get; set; }
+
+        public decimal? ValorICMS { get; set; }
+        
+        public decimal? BaseST { get; set; }
+
+        public decimal? ValorST { get; set; }
+
+        public decimal? ValorIPI { get; set; }
+
+        public decimal? ValorSeguro { get; set; }
+
         [ForeignKey(nameof(IdFornecedor))]
         public virtual Fornecedor Fornecedor { get; set; }
 
