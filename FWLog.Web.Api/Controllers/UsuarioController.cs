@@ -74,7 +74,10 @@ namespace FWLog.Web.Api.Controllers
 
             IList<string> usuarioPermissoes = await UserManager.GetPermissionsAsync(usuarioAplicacao.Id);
 
-            if (usuarioPermissoes == null || !usuarioPermissoes.Any(w => w.Equals("RFAcessoLogin", StringComparison.OrdinalIgnoreCase)))
+            if (usuarioPermissoes == null || !usuarioPermissoes.Any(w => 
+                w.Equals(Permissions.ColetorAcesso.AcessarRFArmazenagem, StringComparison.OrdinalIgnoreCase) ||
+                w.Equals(Permissions.ColetorAcesso.AcessarRFSeparacao, StringComparison.OrdinalIgnoreCase) ||
+                w.Equals(Permissions.ColetorAcesso.AcessarRFExpedicao, StringComparison.OrdinalIgnoreCase)))
             {
                 return ApiForbidden("Usuário sem permissão.", requisicao.Codigo);
             }
@@ -134,11 +137,16 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         [Route("api/v1/usuario/logout")]
-        public async Task<IHttpActionResult> Logout()
+        public IHttpActionResult Logout()
         {
-            ApplicationUser usuarioAplicacao = await UserManager.FindByNameAsync(User.Identity.Name);
+            if (string.IsNullOrWhiteSpace(IdUsuario))
+            {
+                AuthenticationManager.SignOut();
+                return ApiOk();
+            }
+
+            ApplicationUser usuarioAplicacao = UserManager.FindById(IdUsuario);
 
             if (usuarioAplicacao != null)
             {
