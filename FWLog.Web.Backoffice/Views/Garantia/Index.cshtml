@@ -27,9 +27,16 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
-                    @Html.LabelFor(m => m.Filter.IdCliente)
-                    @Html.TextBoxFor(m => m.Filter.IdCliente, new { @class = "form-control onlyNumber", data_field = "IdCliente" })
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdCliente, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.RazaoSocial, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarCliente" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparCliente" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdCliente, new { data_field = "IdCliente" })
                 </div>
                 <div class="col-xs-12 col-md-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.IdGarantia)
@@ -78,5 +85,6 @@
         </div>
     </div>
 </div>
+<div class="modal" id="modalCliente"></div>
 <!-- /table -->
 

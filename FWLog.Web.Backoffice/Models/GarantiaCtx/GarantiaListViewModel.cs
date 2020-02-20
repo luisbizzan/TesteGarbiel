@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 {
@@ -19,6 +20,7 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
     {
         public long IdEmpresa { get; set; }
         public long? IdGarantia { get; set; }
+        [Display(Name = "Cliente")]
         public long? IdCliente { get; set; }
         public long? IdTransportadora { get; set; }
         public long? NumeroNF { get; set; }
@@ -36,10 +38,12 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
     {
         public long IdEmpresa { get; set; }
         public long? IdGarantia { get; set; }
+        [Display(Name = "Cliente")]
         public long? IdCliente { get; set; }
         public long? IdTransportadora { get; set; }
         public long? NumeroNF { get; set; }
         public string NumeroFicticioNF { get; set; }
+        public string RazaoSocial { get; set; }
         public string ChaveAcesso { get; set; }
         public DateTime? DataEmissaoInicial { get; set; }
         public DateTime? DataEmissaoFinal { get; set; }
