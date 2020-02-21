@@ -182,7 +182,7 @@
                         $("#msgEnviarPicking").removeClass("hidden");
                     }
 
-                    if (result.Message != "") {
+                    if (result.Message != "" && result.Message != null) {
                         PNotify.warning({ text: result.Message });
                     }
 
@@ -411,11 +411,11 @@
                 else {
                     $('#modalRegistrarConferencia').modal('show');
 
-                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, a etiqueta de volume será impressas.');
+                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
 
                     $('#MensagemPecasHaMais').text('');
                     if (qtdePecasHaMais > 0)
-                        $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+. A etiqueta PC A+ será impressa.');
+                        $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+. As etiquetas de PC A serão impressas.');
                 }
             });
         }
@@ -530,11 +530,11 @@
                                     else {
                                         $('#modalRegistrarConferencia').modal('show');
 
-                                        $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume serão impressas.');
+                                        $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
 
                                         $('#MensagemPecasHaMais').text('');
                                         if (qtdePecasHaMais > 0) {
-                                            $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+. As etiquetas PC A serão impressas.');
+                                            $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+. As etiquetas de PC A serão impressas.');
                                         }
                                     }
                                 });
