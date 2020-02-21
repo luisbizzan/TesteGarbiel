@@ -40,7 +40,6 @@
             { data: 'RazaoSocial' },
             { data: 'NomeFantasia' },
             { data: 'CNPJCPF' },
-            { data: 'Classificacao' },
             { data: 'Status' },
             actionsColumn
         ],
