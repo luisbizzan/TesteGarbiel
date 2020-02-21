@@ -1,8 +1,11 @@
 ﻿@model FWLog.Web.Backoffice.Models.MotivoLaudoCtx.MotivoLaudoCreateViewModel
 
 @{
-    ViewBag.Title = "Edição de Motivo do Laudo";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = null;
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript()
 }
 
 <div class="modal-dialog modal-lg">
@@ -22,7 +25,7 @@
                     </div>
                     <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
                         @Html.LabelFor(m => m.Ativo)
-                        <div class="checkbox">
+                        <div>
                             @Html.CheckBoxFor(m => m.Ativo, new { @class = "flat" })
                         </div>
                     </div>

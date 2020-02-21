@@ -3,12 +3,15 @@
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
             {
-                action: 'edit',
-                href: view.editUrl + '?id=' + full.IdMotivoLaudo,
+                attrs: { 'data-id': full.IdMotivoLaudo, 'action': 'editarMotivoLaudo' },
+                //href: view.editUrl + '?id=' + full.IdMotivoLaudo,
+                icon: 'fa fa-edit',
                 visible: view.editVisible
             },
         ];
     });
+
+    $("#dataTable").on('click', "[action='editarMotivoLaudo']", editarMotivoLaudo);
 
     $('#dataTable').DataTable({
         ajax: {
@@ -39,3 +42,12 @@
     dart.dataTables.loadFormFilterEvents();
 
 })();
+
+function editarMotivoLaudo() {
+    let id = $(this).data("id");
+
+    $("#modalEditarMotivoLaudo").load(HOST_URL + CONTROLLER_PATH + "ExibirModalMotivoLaudo/" + id, function () {
+        $("#modalEditarMotivoLaudo").modal();
+        $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
+    });
+}

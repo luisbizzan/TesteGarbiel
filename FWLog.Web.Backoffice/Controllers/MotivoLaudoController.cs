@@ -101,7 +101,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-        [HttpGet]
+        //[HttpGet]
         //[ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public ActionResult ExibirModalMotivoLaudo(long id)
         {
@@ -109,24 +109,23 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var model = Mapper.Map<MotivoLaudoCreateViewModel>(motivoLaudo);
 
-            return PartialView("EditarMotivoLaudo", model);
+            return PartialView("Edit", model);
         }
 
+        //[HttpGet]
+        //[ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Editar)]
+        //public ActionResult Edit(int id)
+        //{
+        //    MotivoLaudo motivoLaudo = _unitOfWork.MotivoLaudoRepository.GetById(id);
 
-        [HttpGet]
-        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Editar)]
-        public ActionResult Edit(int id)
-        {
-            MotivoLaudo motivoLaudo = _unitOfWork.MotivoLaudoRepository.GetById(id);
+        //    if (motivoLaudo == null)
+        //    {
+        //        throw new HttpException(404, "Not found");
+        //    }
 
-            if (motivoLaudo == null)
-            {
-                throw new HttpException(404, "Not found");
-            }
+        //    var model = Mapper.Map<MotivoLaudoCreateViewModel>(motivoLaudo);
 
-            var model = Mapper.Map<MotivoLaudoCreateViewModel>(motivoLaudo);
-
-            return View(model);
-        }
+        //    return PartialView("Edit",model);
+        //}
     }
 }
