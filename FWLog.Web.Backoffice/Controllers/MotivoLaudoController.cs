@@ -12,6 +12,7 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
+using System.Web;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -98,6 +99,34 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 return errorView();
             }
+        }
+
+        [HttpGet]
+        //[ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
+        public ActionResult ExibirModalMotivoLaudo(long id)
+        {
+            MotivoLaudo motivoLaudo = _unitOfWork.MotivoLaudoRepository.GetById(id);
+
+            var model = Mapper.Map<MotivoLaudoCreateViewModel>(motivoLaudo);
+
+            return PartialView("EditarMotivoLaudo", model);
+        }
+
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Editar)]
+        public ActionResult Edit(int id)
+        {
+            MotivoLaudo motivoLaudo = _unitOfWork.MotivoLaudoRepository.GetById(id);
+
+            if (motivoLaudo == null)
+            {
+                throw new HttpException(404, "Not found");
+            }
+
+            var model = Mapper.Map<MotivoLaudoCreateViewModel>(motivoLaudo);
+
+            return View(model);
         }
     }
 }

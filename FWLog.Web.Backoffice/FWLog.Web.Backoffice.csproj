@@ -582,6 +582,7 @@
     <Content Include="Views\Transportadora\SearchModal.cshtml" />
     <Content Include="Scripts\Views\Transportadora\searchModal.js" />
     <Content Include="Views\MotivoLaudo\Create.cshtml" />
+    <Content Include="Views\MotivoLaudo\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
