@@ -85,6 +85,8 @@ namespace FWLog.Data.Models
 
         public bool NFDevolucaoConfirmada { get; set; }
 
+        public DateTime? DataVencimento { get; set; }
+
         [ForeignKey(nameof(IdFornecedor))]
         public virtual Fornecedor Fornecedor { get; set; }
 

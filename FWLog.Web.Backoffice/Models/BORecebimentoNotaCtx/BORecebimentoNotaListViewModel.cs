@@ -36,6 +36,8 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Recebido por")]
         public string IdUsuarioRecebimento { get; set; }
         public bool ConferenciaAutomatica { get; set; }
+        [Display(Name = "Vencimento")]
+        public string DataVencimento { get; set; }
     }
 
     public class BORecebimentoNotaFilterViewModel

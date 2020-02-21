@@ -29,8 +29,8 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            var where = " WHERE TGFCAB.NUNOTA = 250 AND TGFCAB.TIPMOV = 'C' AND TGFCAB.STATUSNOTA <> 'L' AND (TGFCAB.AD_STATUSREC = 0 OR TGFCAB.AD_STATUSREC IS NULL)";
-            var inner = "INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
+            var where = " WHERE TGFCAB.TIPMOV = 'C' AND TGFCAB.STATUSNOTA <> 'L' AND (TGFCAB.AD_STATUSREC = 0 OR TGFCAB.AD_STATUSREC IS NULL)";
+            var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
             List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalIntegracao>(where, inner);
 
             List<FreteTipo> tiposFrete = _uow.FreteTipoRepository.RetornarTodos();
@@ -66,6 +66,17 @@ namespace FWLog.Services.Services
                     if (fornecedor == null)
                     {
                         throw new Exception(string.Format("Código da Fornecedor (CODPARC: {0}) inválido", notafiscalIntegracao.CodigoIntegracaoFornecedor));
+                    }
+
+                    DateTime dataVencimento;
+
+                    try
+                    {
+                        dataVencimento = await ConsultarDataVencimento(notafiscalIntegracao.CodigoIntegracao);
+                    }
+                    catch (Exception)
+                    {
+                        throw new Exception(string.Format("Data de Vencimentoinválida (NUMNOTA: {0})", notafiscalIntegracao.CodigoIntegracao));
                     }
 
                     bool notaNova = true;
@@ -109,6 +120,7 @@ namespace FWLog.Services.Services
                     notafiscal.CodigoIntegracaoVendedor = Convert.ToInt32(notafiscalIntegracao.CodigoIntegracaoVendedor);
                     notafiscal.IdNotaFiscalTipo = NotaFiscalTipoEnum.Compra;
                     notafiscal.NumeroFicticioNF = notafiscalIntegracao.NumeroFicticioNF;
+                    notafiscal.DataVencimento = dataVencimento;
 
                     FreteTipo freteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notafiscalIntegracao.FreteTipo);
                     if (freteTipo != null)
@@ -280,6 +292,33 @@ namespace FWLog.Services.Services
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro no recebimento automático nota fiscal - IdNotaFiscal: {0}.", notafiscal.IdNotaFiscal));
                 }
             }
+        }
+
+        public async Task<DateTime> ConsultarDataVencimento(string codigoIntegracao)
+        {
+            DateTime dataVencimento;
+
+            string where = string.Format("WHERE NUMNOTA = {0} ", codigoIntegracao);
+            
+            try
+            {
+                List<NotaFiscalDataVencimentoIntegracao> nfDataVencimentoIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalDataVencimentoIntegracao>(where);
+
+                List<DateTime> listaDataVencimento = new List<DateTime>();
+
+                foreach (var item in nfDataVencimentoIntegracao)
+                {
+                    listaDataVencimento.Add(DateTime.ParseExact(item.DataVencimento, "ddMMyyyy HH:mm:ss", CultureInfo.InvariantCulture));
+                }
+
+                dataVencimento = listaDataVencimento.Min();
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+            return dataVencimento;
         }
     }
 }

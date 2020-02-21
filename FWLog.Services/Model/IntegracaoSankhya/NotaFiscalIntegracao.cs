@@ -116,6 +116,13 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TGFCAB.NUNOTA")]
         public string CodigoIntegracao { get; set; }
     }
+
+    [TabelaIntegracao(DisplayName = "TGFFIN")]
+    public class NotaFiscalDataVencimentoIntegracao
+    {
+        [TabelaIntegracao(DisplayName = "DTVENC")]
+        public string DataVencimento { get; set; }
+    }
 }
 
 
