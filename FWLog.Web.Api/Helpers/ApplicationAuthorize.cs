@@ -56,26 +56,28 @@ namespace FWLog.Web.Api.Helpers
                 return false;
             }
 
-            SetPrincipal(actionContext);
-
-            return AuthorizeValidationHelper.UserHasPermission(actionContext, Permissions);
-        }
-
-        private void SetPrincipal(HttpActionContext actionContext)
-        {
             IPrincipal user = actionContext.ControllerContext.RequestContext.Principal;
 
             if (user is ClaimsPrincipal == false)
             {
-                return;
+                return false;
             }
 
             string userId = user.Identity.GetUserId();
             var userManager = actionContext.Request.GetOwinContext().GetUserManager<WebApiUserManager>();
+            ApplicationUser usuarioAplicacao = userManager.FindById(userId);
+
+            if(usuarioAplicacao.IdApplicationSession.HasValue == false)
+            {
+                return false;
+            }
+
             IList<string> permissions = userManager.GetPermissions(userId);
             var customUser = new ApplicationClaimsPrincipal((ClaimsPrincipal)user, permissions);
             actionContext.ControllerContext.RequestContext.Principal = customUser;
             Thread.CurrentPrincipal = customUser;
+
+            return AuthorizeValidationHelper.UserHasPermission(actionContext, Permissions);
         }
     }
 }

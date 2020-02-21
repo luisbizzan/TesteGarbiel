@@ -16,10 +16,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             totalRecords = Entities.Cliente.Count();
 
-            IQueryable <ClientePesquisaModalLinhaTabela> query = Entities.Cliente.AsNoTracking()
+            IQueryable<ClientePesquisaModalLinhaTabela> query = Entities.Cliente.AsNoTracking()
                 .Where(x => (filter.CustomFilter.IdCliente.HasValue == false || x.IdCliente == filter.CustomFilter.IdCliente) &&
                 (filter.CustomFilter.NomeFantasia.Equals(string.Empty) || x.NomeFantasia.Contains(filter.CustomFilter.NomeFantasia)) &&
-                (filter.CustomFilter.CNPJCPF.Equals(string.Empty) || x.Classificacao.Contains(filter.CustomFilter.CNPJCPF.Replace(".", "").Replace("/", "").Replace("-", ""))))
+                (filter.CustomFilter.CNPJCPF.Equals(string.Empty) || x.CNPJCPF.Contains(filter.CustomFilter.CNPJCPF.Replace(".", "").Replace("/", "").Replace("-", ""))))
                 .Select(e => new ClientePesquisaModalLinhaTabela
                 {
                     IdCliente = e.IdCliente,
@@ -29,7 +29,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     Classificacao = e.Classificacao,
                     NomeFantasia = e.NomeFantasia,
                     RazaoSocial = e.RazaoSocial
-                });
+                }) ;
 
             totalRecordsFiltered = query.Count();
 

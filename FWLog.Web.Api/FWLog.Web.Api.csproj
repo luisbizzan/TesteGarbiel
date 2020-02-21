@@ -215,6 +215,7 @@
     <Compile Include="Models\Usuario\LoginRequisicao.cs" />
     <Compile Include="Models\ApiErroResposta.cs" />
     <Compile Include="Models\Usuario\ValidarUsuarioRequisicao.cs" />
+    <Compile Include="Models\Usuario\ValidarUsuarioResposta.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Helpers\ApplicationAuthorize.cs" />
     <Compile Include="App_Start\AutoMapperConfig.cs" />
