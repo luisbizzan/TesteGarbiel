@@ -259,7 +259,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     Atraso = atraso,
                     IdUsuarioRecebimento = item.UsuarioRecebimento == null ? string.Empty : item.UsuarioRecebimento.Id,
                     IdLoteStatus = (int)item.LoteStatus.IdLoteStatus,
-                    ConferenciaAutomatica = empresaConfig.CNPJConferenciaAutomatica == item.NotaFiscal.Fornecedor.CNPJ
+                    ConferenciaAutomatica = empresaConfig.CNPJConferenciaAutomatica == item.NotaFiscal.Fornecedor.CNPJ,
+                    DataVencimento = item.NotaFiscal.DataVencimento.HasValue ? item.NotaFiscal.DataVencimento.Value.ToString("dd/MM/yyyy") : ""
                 });
             }
 
