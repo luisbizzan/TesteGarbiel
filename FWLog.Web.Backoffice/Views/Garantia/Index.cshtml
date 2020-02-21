@@ -27,18 +27,7 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
-                    @Html.LabelFor(model => model.Filter.IdCliente, htmlAttributes: new { @class = "control-label" })
-                    <div class="input-group">
-                        @Html.TextBoxFor(m => m.Filter.RazaoSocial, null, new { @class = "form-control", @readonly = "true" })
-                        <span class="input-group-btn">
-                            <a id="pesquisarCliente" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
-                            <a id="limparCliente" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
-                        </span>
-                    </div>
-                    @Html.HiddenFor(m => m.Filter.IdCliente, new { data_field = "IdCliente" })
-                </div>
-                <div class="col-xs-12 col-md-6 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-2 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.IdGarantia)
                     @Html.TextBoxFor(m => m.Filter.IdGarantia, new { @class = "form-control onlyNumber", data_field = "IdGarantia" })
                 </div>
@@ -53,45 +42,56 @@
                 <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.IdGarantiaStatus)
                     @Html.DropDownListFor(m => m.Filter.IdGarantiaStatus, Model.Filter.ListaStatus, "Todos", new { @class = "form-control", data_field = "IdGarantiaStatus" })
-                </div>          
+                </div>
                 <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataEmissaoInicial)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.DataEmissaoInicial, new { @class = "form-control dateFormat", data_field = "DataEmissaoInicial" })
+                        @Html.TextBoxFor(m => m.Filter.DataEmissaoInicial, new { @class = "form-control dateFormat validateDateOrPrazoInicial", data_field = "DataEmissaoInicial" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
                     </div>
+                    @Html.ValidationMessageFor(m => m.Filter.DataEmissaoInicial)
                 </div>
                 <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataEmissaoFinal)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.DataEmissaoFinal, new { @class = "form-control dateFormat", data_field = "DataEmissaoFinal" })
+                        @Html.TextBoxFor(m => m.Filter.DataEmissaoFinal, new { @class = "form-control dateFormat validateDateOrPrazoInicial", data_field = "DataEmissaoFinal" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
                     </div>
+                    @Html.ValidationMessageFor(m => m.Filter.DataEmissaoFinal)
                 </div>
                 <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataRecebimentoInicial)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.DataRecebimentoInicial, new { @class = "form-control dateFormat validateDateOrPrazoInicial", data_field = "DataRecebimentoInicial" })
+                        @Html.TextBoxFor(m => m.Filter.DataRecebimentoInicial, new { @class = "form-control dateFormat", data_field = "DataRecebimentoInicial" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
                     </div>
-                    @Html.ValidationMessageFor(m => m.Filter.DataRecebimentoInicial)
                 </div>
                 <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataRecebimentoFinal)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.DataRecebimentoFinal, new { @class = "form-control dateFormat validateDateOrPrazoFinal", data_field = "DataRecebimentoFinal" })
+                        @Html.TextBoxFor(m => m.Filter.DataRecebimentoFinal, new { @class = "form-control dateFormat", data_field = "DataRecebimentoFinal" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
                     </div>
-                    @Html.ValidationMessageFor(m => m.Filter.DataRecebimentoFinal)
-                </div>           
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdCliente, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.RazaoSocial, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarCliente" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparCliente" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdCliente, new { data_field = "IdCliente" })
+                </div>
                 <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(model => model.Filter.IdTransportadora, htmlAttributes: new { @class = "control-label" })
                     <div class="input-group">
@@ -124,7 +124,7 @@
                         </span>
                     </div>
                     @Html.HiddenFor(model => model.Filter.IdUsuarioConferencia, new { data_field = "IdUsuarioConferencia" })
-                </div>                
+                </div>
             </div>
             <div class="row">
                 <div class="col-xs-12 form-buttons">
@@ -135,34 +135,32 @@
         </div>
     </div>
 </form>
-<!-- /filter -->
-<!-- table -->
 <div class="row">
     <div class="col-xs-12">
         <div class="x_panel">
-            <!-- panel-title -->
             <div class="x_title">
-                <h2>Lista</h2>
+                <h2>Solicitações de Garantia</h2>
                 <div class="clearfix"></div>
             </div>
-            <!-- /panel-title -->
-            <!-- panel-content -->
             <div class="x_content">
                 <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
                     <thead>
                         <tr>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.IdGarantia)</th>
-                            <th>@Html.DisplayNameFor(m => m.EmptyItem.IdCliente)</th>
-                            <th>@Html.DisplayNameFor(m => m.EmptyItem.IdTransportadora)</th>
-                            @* TODO: Todas as propriedades da classe GarantiaListItemViewModel devem estar aqui *@
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Cliente)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Transportadora)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.NumeroNF)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.NumeroFicticioNF)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataEmissao)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataRecebimento)</th>                                                        
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.GarantiaStatus)</th>
+
                             <th>@Resources.CommonStrings.ActionsLabel</th>
                         </tr>
                     </thead>
                 </table>
             </div>
-            <!-- /panel-content -->
         </div>
     </div>
 </div>
 <div class="modal" id="modalCliente"></div>
-<!-- /table -->

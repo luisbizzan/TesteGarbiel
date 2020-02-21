@@ -20,19 +20,22 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
     public class GarantiaListItemViewModel
     {
         public long IdEmpresa { get; set; }
+        [Display(Name = "Nro Solicitação")]
         public long? IdGarantia { get; set; }
         [Display(Name = "Cliente")]
-        public long? IdCliente { get; set; }
-        public long? IdTransportadora { get; set; }
+        public string Cliente { get; set; }
+        [Display(Name = "Transportadora")]
+        public string Transportadora { get; set; }
+        [Display(Name = "Nota Fiscal")]
         public long? NumeroNF { get; set; }
+        [Display(Name = "Nro Fictício NF")]
         public string NumeroFicticioNF { get; set; }
-        public long? ChaveAcesso { get; set; }
-        public DateTime? DataEmissao{ get; set; }        
-        public DateTime? DataRecebimento { get; set; }        
-        public long? IdTranpostadora { get; set; }
-        public string IdUsuarioRecebimento { get; set; }
-        public string IddUsuarioConferente { get; set; }
-        public long? IdGarantiaStatus { get; set; }
+        [Display(Name = "Data Emissão ")]
+        public DateTime? DataEmissao{ get; set; }
+        [Display(Name = "Data Recebimento")]
+        public DateTime? DataRecebimento { get; set; }       
+        [Display(Name = "Status")]
+        public string GarantiaStatus { get; set; }
     }
 
     public class GarantiaFilterViewModel
@@ -46,7 +49,7 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public long? IdTransportadora { get; set; }
         [Display(Name = "Nota Fiscal")]
         public long? NumeroNF { get; set; }
-        [Display(Name = "Número Fictício NF")]
+        [Display(Name = "Nro Fictício NF")]
         public string NumeroFicticioNF { get; set; }
         [Display(Name = "Chave de Acesso")]
         public string RazaoSocial { get; set; }

@@ -87,14 +87,14 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             if (filter.CustomFilter.DataEmissaoInicial.HasValue)
             {
-                DateTime dataInicial = new DateTime(filter.CustomFilter.DataEmissaoInicial.Value.Year, filter.CustomFilter.DataEmissaoInicial.Value.Month, filter.CustomFilter.DataEmissaoInicial.Value.Day, 23, 59, 59);
-                query = query.Where(x => x.NotaFiscal.DataEmissao <= dataInicial);
+                DateTime dataInicial = new DateTime(filter.CustomFilter.DataEmissaoInicial.Value.Year, filter.CustomFilter.DataEmissaoInicial.Value.Month, filter.CustomFilter.DataEmissaoInicial.Value.Day, 00, 00, 00);
+                query = query.Where(x => x.NotaFiscal.DataEmissao >= dataInicial);
             }
 
             if (filter.CustomFilter.DataEmissaoFinal.HasValue)
             {
-                DateTime dataFinal = new DateTime(filter.CustomFilter.DataEmissaoFinal.Value.Year, filter.CustomFilter.DataEmissaoFinal.Value.Month, filter.CustomFilter.DataEmissaoFinal.Value.Day, 00, 00, 00);
-                query = query.Where(x => x.NotaFiscal.DataEmissao >= dataFinal);
+                DateTime dataFinal = new DateTime(filter.CustomFilter.DataEmissaoFinal.Value.Year, filter.CustomFilter.DataEmissaoFinal.Value.Month, filter.CustomFilter.DataEmissaoFinal.Value.Day, 23, 59, 59);
+                query = query.Where(x => x.NotaFiscal.DataEmissao <= dataFinal);
             }
 
             if (filter.CustomFilter.DataRecebimentoInicial.HasValue)
@@ -112,15 +112,14 @@ namespace FWLog.Data.Repository.GeneralCtx
             IEnumerable<GarantiaTableRow> queryResult = query.Select(e => new GarantiaTableRow
             {
                 IdGarantia = e.IdGarantia == 0 ? (long?)null : e.IdGarantia,
-                IdCliente = e.NotaFiscal.Cliente.IdCliente,
-                IdTransportadora = e.NotaFiscal.IdTransportadora,
+                Cliente = string.Concat(e.NotaFiscal.Cliente.IdCliente, "-", e.NotaFiscal.Cliente.RazaoSocial),
+                Transportadora = e.NotaFiscal.Transportadora == null ? string.Empty : string.Concat(e.NotaFiscal.Transportadora.IdTransportadora, "-", e.NotaFiscal.Transportadora.NomeFantasia),
                 IdEmpresa = e.NotaFiscal.IdEmpresa,
                 NumeroNF = e.NotaFiscal.Numero,
                 NumeroFicticioNF = e.NotaFiscal.NumeroFicticioNF,
                 DataEmissao = e.NotaFiscal.DataEmissao,
-                DataRecebimento = e.DataRecebimento,
-                IdUsuarioRecebimento = e.UsuarioRecebimento == null ? string.Empty : e.UsuarioRecebimento.Id,
-                IdGarantiaStatus = e.IdGarantiaStatus
+                DataRecebimento = e.DataRecebimento,                
+                GarantiaStatus = e.GarantiaStatus.Descricao
             });
 
             totalRecordsFiltered = queryResult.Count();
@@ -132,8 +131,5 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return queryResult.ToList();
         }
-
     }
-
-
 }

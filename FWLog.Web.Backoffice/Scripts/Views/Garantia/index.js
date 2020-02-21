@@ -5,38 +5,26 @@
     $('.hourMinute').mask("99:99", { reverse: true });
 
     $.validator.addMethod('validateDateOrPrazoInicial', function (value, ele) {
-        var dataInicial = $("#Filter_DataInicial").val();
+        var dataInicial = $("#Filter_DataRecebimentoInicial").val();
 
-        if (value != "")
-            return true
-        else if (dataInicial != "")
-            return true
+        if (value !== "")
+            return true;
+        else if (dataInicial !== "")
+            return true;
         else
             return false;
-    }, 'Data Inicial ou Prazo Inicial Obrigatório');
+    }, 'Data Emissão Inicial ou Data Recbimento Obrigatório');
 
     $.validator.addMethod('validateDateOrPrazoFinal', function (value, ele) {
-        var dataFinal = $("#Filter_DataFinal").val();
+        var dataFinal = $("#Filter_DataRecebimentoFinal").val();
 
-        if (value != "")
-            return true
-        else if (dataFinal != "")
-            return true
+        if (value !== "")
+            return true;
+        else if (dataFinal !== "")
+            return true;
         else
             return false;
-    }, 'Data Final ou Prazo Final Obrigatório');
-
-    $.validator.addMethod('validateTime', function (value, ele) {
-        if (value === "") {
-            return true;
-        }
-        let regex = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/;
-        let validaRegex = regex.test(value);
-        if (validaRegex) {
-            return true;
-        }
-        return false;
-    }, 'Hora inválida');
+    }, 'Data Emissão Final ou Data Recbimento Final Obrigatório');
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
@@ -47,6 +35,48 @@
             }
         ];
     });
+
+    var $DataEmissaoInicial = $('#Filter_DataEmissaoInicial').closest('.date');
+    var $DataEmissaoFinal = $('#Filter_DataEmissaoFinal').closest('.date');
+    var $DataRecebimentoInicial = $('#Filter_DataRecebimentoInicial').closest('.date');
+    var $DataRecebimentoFinal = $('#Filter_DataRecebimentoFinal').closest('.date');
+
+    var createLinkedPickers = function () {
+        var dataInicial = $DataEmissaoInicial.datetimepicker({
+            locale: moment.locale(),
+            format: 'L',
+            allowInputToggle: true
+        });
+
+        var dataFinal = $DataEmissaoFinal.datetimepicker({
+            locale: moment.locale(),
+            useCurrent: false,
+            format: 'L',
+            allowInputToggle: true
+        });
+
+        new dart.DateTimePickerLink(dataInicial, dataFinal, { ignoreTime: true });
+    };
+
+    var createLinkedPickes2 = function () {
+        var prazoInicial = $DataRecebimentoInicial.datetimepicker({
+            locale: moment.locale(),
+            format: 'L',
+            allowInputToggle: true
+        });
+
+        var prazoFinal = $DataRecebimentoFinal.datetimepicker({
+            locale: moment.locale(),
+            useCurrent: false,
+            format: 'L',
+            allowInputToggle: true
+        });
+
+        new dart.DateTimePickerLink(prazoInicial, prazoFinal, { ignoreTime: true });
+    };
+
+    createLinkedPickers();
+    createLinkedPickes2();
 
     $('#dataTable').DataTable({
         ajax: {
@@ -67,8 +97,13 @@
         },
         columns: [
             { data: 'IdGarantia' },
-            { data: 'IdCliente' },
-            { data: 'IdTransportadora' },
+            { data: 'Cliente' },
+            { data: 'Transportadora' },
+            { data: 'NumeroNF' },
+            { data: 'NumeroFicticioNF' },
+            { data: 'DataEmissao' },            
+            { data: 'DataRecebimento' },
+            { data: 'GarantiaStatus' },
             actionsColumn
         ]
     });
@@ -76,7 +111,6 @@
     dart.dataTables.loadFormFilterEvents();
 
     $("#pesquisarCliente").click(function () {
-        debugger
         $("#modalCliente").load(HOST_URL + "Cliente/SearchModal", function () {
             $("#modalCliente").modal();
         });

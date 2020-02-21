@@ -6,14 +6,13 @@ namespace FWLog.Data.Models.DataTablesCtx
     {
         public long IdEmpresa { get; set; }
         public long? IdGarantia { get; set; }
-        public long? IdCliente { get; set; }
-        public long? IdTransportadora { get; set; }
+        public string Cliente { get; set; }
+        public string Transportadora { get; set; }
         public long? NumeroNF { get; set; }
         public string NumeroFicticioNF { get; set; }
         public string ChaveAcesso { get; set; }
         public DateTime? DataEmissao { get; set; }                
-        public DateTime? DataRecebimento { get; set; }
-        public string IdUsuarioRecebimento { get; set; }
-        public GarantiaStatusEnum IdGarantiaStatus { get; set; }
+        public DateTime? DataRecebimento { get; set; }          
+        public string GarantiaStatus { get; set; }
     }
 }
