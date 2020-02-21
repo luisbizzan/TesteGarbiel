@@ -30,8 +30,8 @@
                                 @Html.TextBoxFor(m => m.Filter.IdTransportadora, new { @class = "form-control onlyNumber", data_field = "IdTransportadora" })
                             </div>
                             <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
-                                @Html.LabelFor(m => m.Filter.NomeFantasia)
-                                @Html.TextBoxFor(m => m.Filter.NomeFantasia, new { @class = "form-control", data_field = "NomeFantasia" })
+                                @Html.LabelFor(m => m.Filter.RazaoSocial)
+                                @Html.TextBoxFor(m => m.Filter.RazaoSocial, new { @class = "form-control", data_field = "NomeFantasia" })
                             </div>
                             <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
                                 @Html.LabelFor(m => m.Filter.CNPJ)
@@ -55,7 +55,6 @@
                                     <tr>
                                         <th>@Html.DisplayNameFor(m => m.EmptyItem.IdTransportadora)</th>
                                         <th>@Html.DisplayNameFor(m => m.EmptyItem.RazaoSocial)</th>
-                                        <th>@Html.DisplayNameFor(m => m.EmptyItem.NomeFantasia)</th>
                                         <th>@Html.DisplayNameFor(m => m.EmptyItem.CNPJ)</th>
                                         <th>@Html.DisplayNameFor(m => m.EmptyItem.Status)</th>
                                         <th>@Resources.CommonStrings.ActionsLabel</th>

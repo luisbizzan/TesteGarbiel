@@ -28,7 +28,7 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
                             @Html.LabelFor(m => m.Filter.IdCliente)
-                            @Html.TextBoxFor(m => m.Filter.IdCliente, new { @class = "form-control onlyNumber", data_field = "IdFornecedor" })
+                            @Html.TextBoxFor(m => m.Filter.IdCliente, new { @class = "form-control onlyNumber", data_field = "IdCliente" })
                         </div>
                         <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
                             @Html.LabelFor(m => m.Filter.NomeFantasia)
@@ -58,7 +58,6 @@
                                         <th>@Html.DisplayNameFor(m => m.EmptyItem.RazaoSocial)</th>
                                         <th>@Html.DisplayNameFor(m => m.EmptyItem.NomeFantasia)</th>
                                         <th>@Html.DisplayNameFor(m => m.EmptyItem.CNPJCPF)</th>
-                                        <th>@Html.DisplayNameFor(m => m.EmptyItem.Classificacao)</th>
                                         <th>@Html.DisplayNameFor(m => m.EmptyItem.Status)</th>
                                         <th>@Resources.CommonStrings.ActionsLabel</th>
                                     </tr>

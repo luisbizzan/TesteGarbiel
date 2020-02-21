@@ -20,24 +20,14 @@ namespace FWLog.Web.Backoffice.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        private void setViewBags()
-        {
-            ViewBag.Status = new SelectList(new List<SelectListItem>
-                        {
-                            new SelectListItem { Text = "Ativo", Value = "true"},
-                            new SelectListItem { Text = "Inativo", Value = "false"}
-                        }, "Value", "Text");
-        }
-
         [HttpGet]
         public ActionResult SearchModal()
         {
-            setViewBags();
+            SetViewBags();
 
             var model = new TransportadoraSearchModalViewModel();
             return View(model);
         }
-
 
         [HttpPost]
         public ActionResult SearchModalPageData(DataTableFilter<TransportadoraPesquisaModalFiltro> model)

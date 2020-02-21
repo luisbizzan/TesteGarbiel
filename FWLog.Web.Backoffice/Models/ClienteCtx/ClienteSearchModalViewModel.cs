@@ -30,7 +30,6 @@ namespace FWLog.Web.Backoffice.Models.ClienteCtx
         [Display(Name = "CNPJ/CPF")]
         public string CNPJCPF { get; set; }
 
-        [Display(Name = "Classificação")]
         public string Classificacao { get; set; }
 
         [Display(Name = "Ativo")]
