@@ -26,6 +26,43 @@ namespace FWLog.Web.Api.Controllers
             _accountService = accountService;
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("api/v1/usuario/validar")]
+        public async Task<IHttpActionResult> ValidarUsuario(ValidarUsuarioRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            ApplicationUser usuarioAplicacao = await UserManager.FindByNameAsync(requisicao.Codigo);
+
+            if (usuarioAplicacao == null)
+            {
+                return ApiNotFound("Usuário não cadastrado.");
+            }
+
+            PerfilUsuario usuarioPerfil = _unitOfWork.PerfilUsuarioRepository.GetByUserId(usuarioAplicacao.Id);
+
+            if (usuarioPerfil == null)
+            {
+                return ApiNotFound("Usuário não cadastrado.");
+            }
+
+            if (usuarioPerfil.Ativo == false)
+            {
+                return ApiForbidden("Usuário inativo.");
+            }
+
+            if (usuarioPerfil.UsuarioEmpresas.Count == 0)
+            {
+                return ApiForbidden("Usuário sem empresa.");
+            }
+
+            return ApiOk();
+        }
+
         [AllowAnonymous]
         [HttpPost]
         [Route("api/v1/usuario/login")]
@@ -100,45 +137,8 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
-        [Route("api/v1/usuario/validar")]
-        public async Task<IHttpActionResult> ValidarUsuario(ValidarUsuarioRequisicao requisicao)
-        {
-            if (!ModelState.IsValid)
-            {
-                return ApiBadRequest(ModelState);
-            }
-
-            ApplicationUser usuarioAplicacao = await UserManager.FindByNameAsync(requisicao.Codigo);
-
-            if(usuarioAplicacao == null)
-            {
-                return ApiNotFound("Usuário não cadastrado.");
-            }
-
-            PerfilUsuario usuarioPerfil = _unitOfWork.PerfilUsuarioRepository.GetByUserId(usuarioAplicacao.Id);
-
-            if(usuarioPerfil == null)
-            {
-                return ApiNotFound("Usuário não cadastrado.");
-            }
-
-            if(usuarioPerfil.Ativo == false)
-            {
-                return ApiForbidden("Usuário inativo.");
-            }
-
-            if(usuarioPerfil.UsuarioEmpresas.Count == 0)
-            {
-                return ApiForbidden("Usuário sem empresa.");
-            }
-
-            return ApiOk();
-        }
-
-        [HttpPost]
         [Route("api/v1/usuario/logout")]
-        public IHttpActionResult Logout()
+        public async Task<IHttpActionResult> Logout()
         {
             if (string.IsNullOrWhiteSpace(IdUsuario))
             {
@@ -158,7 +158,7 @@ namespace FWLog.Web.Api.Controllers
                     usuarioSessao.DataUltimaAcao = DateTime.Now;
 
                     _unitOfWork.ApplicationSessionRepository.Update(usuarioSessao);
-                    _unitOfWork.SaveChanges();
+                    await _unitOfWork.SaveChangesAsync();
 
                     usuarioAplicacao.IdApplicationSession = null;
                     UserManager.Update(usuarioAplicacao);
@@ -167,6 +167,20 @@ namespace FWLog.Web.Api.Controllers
 
             AuthenticationManager.SignOut();
             return ApiOk();
+        }
+
+        [HttpGet]
+        [Route("api/v1/usuario/permissao")]
+        public async Task<IHttpActionResult> BuscarPermissoes()
+        {
+            var resposta = new BuscarPermissoesResposta
+            {
+                IdUsuario = IdUsuario,
+                IdEmpresa = IdEmpresa,
+                Permissoes = await UserManager.GetPermissionsByIdEmpresaAsync(IdUsuario, IdEmpresa)
+            };
+
+            return ApiOk(resposta);
         }
     }
 }
