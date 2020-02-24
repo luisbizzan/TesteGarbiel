@@ -34,5 +34,12 @@ namespace FWLog.Data.Models
 
         [Required]
         public bool Ativo { get; set; }
+
+        [Index]
+        [Required]
+        public long IdRepresentante { get; set; }
+
+        [ForeignKey(nameof(IdRepresentante))]
+        public virtual Representante Representante { get; set; }
     }
 }
