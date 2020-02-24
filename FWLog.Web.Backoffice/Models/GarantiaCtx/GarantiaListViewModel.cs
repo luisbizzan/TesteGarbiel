@@ -51,9 +51,9 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public long? NumeroNF { get; set; }
         [Display(Name = "Nro Fictício NF")]
         public string NumeroFicticioNF { get; set; }
-        [Display(Name = "Chave de Acesso")]
         public string RazaoSocialCliente { get; set; }
         public string RazaoSocialTransportadora { get; set; }
+        [Display(Name = "Chave de Acesso")]
         public string ChaveAcesso { get; set; }
         [Display(Name = "Data Emissão Inicial")]
         public DateTime? DataEmissaoInicial { get; set; }
