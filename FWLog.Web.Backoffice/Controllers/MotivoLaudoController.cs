@@ -101,9 +101,9 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-        //[HttpGet]
-        //[ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
-        public ActionResult ExibirModalMotivoLaudo(long id)
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Editar)]
+        public ActionResult ExibirModalDeEdicaoMotivoLaudo(long id)
         {
             MotivoLaudo motivoLaudo = _unitOfWork.MotivoLaudoRepository.GetById(id);
 
@@ -112,20 +112,64 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("Edit", model);
         }
 
-        //[HttpGet]
-        //[ApplicationAuthorize(Permissions = Permissions.NivelArmazenagem.Editar)]
-        //public ActionResult Edit(int id)
-        //{
-        //    MotivoLaudo motivoLaudo = _unitOfWork.MotivoLaudoRepository.GetById(id);
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Editar)]
+        public ActionResult Edit(MotivoLaudoCreateViewModel model)
+        {
+            Func<ViewResult> errorView = () =>
+            {
+                return View(model);
+            };
 
-        //    if (motivoLaudo == null)
-        //    {
-        //        throw new HttpException(404, "Not found");
-        //    }
+            if (!ModelState.IsValid)
+            {
+                return errorView();
+            }
 
-        //    var model = Mapper.Map<MotivoLaudoCreateViewModel>(motivoLaudo);
+            var motivoLaudo = new MotivoLaudo
+            {
+                Descricao = model.Descricao,
+                Ativo = model.Ativo,
+                IdMotivoLaudo = model.IdMotivoLaudo
+            };
 
-        //    return PartialView("Edit",model);
-        //}
+            try
+            {
+                _motivoLaudoService.Edit(motivoLaudo);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterEditedSuccessMessage
+                });
+
+                //Notify.Success();
+                //return RedirectToAction("MotivoLaudo");
+            }
+            catch (DbUpdateException e)
+            when (e.InnerException?.InnerException is OracleException sqlEx && sqlEx.Number == 1)
+            {
+                Notify.Error("");
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Já existe um motivo cadastrado com este nome."
+                });
+
+                //return errorView();
+            }
+            catch (Exception)
+            {
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = Resources.CommonStrings.RegisterEditedErrorMessage
+                });
+
+                //return errorView();
+            }
+        }
     }
 }

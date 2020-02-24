@@ -1,4 +1,5 @@
 ﻿@model FWLog.Web.Backoffice.Models.MotivoLaudoCtx.MotivoLaudoCreateViewModel
+@using FWLog.AspNet.Identity
 
 @{
     Layout = null;
@@ -9,7 +10,7 @@
 }
 
 <div class="modal-dialog modal-lg">
-    <div class="modal-content">
+    <div class="modal-content vertical-alignment-helper">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">
                 <span aria-hidden="true">×</span>
@@ -17,23 +18,22 @@
             <h4 class="modal-title" id="myModalLabel">Editar Motivo do Laudo</h4>
         </div>
         <div class="modal-body">
-            <form data-filter="form" data-filter-for="dataTableClienteModal" class="form-filter" id="form-datatable-modal">
+            <form data-filter="form" data-filter-for="dataTable" class="form-filter" id="form-datatable-modal">
                 <div class="row">
                     <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
                         @Html.LabelFor(m => m.Descricao)
-                        @Html.TextBoxFor(m => m.Descricao, new { @class = "form-control", data_field = "Descricao" })
+                        @Html.TextBoxFor(m => m.Descricao, new { @class = "form-control", @id = "DescricaoEdicao", data_field = "Descricao" })
                     </div>
                     <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
                         @Html.LabelFor(m => m.Ativo)
                         <div>
-                            @Html.CheckBoxFor(m => m.Ativo, new { @class = "flat" })
+                            @Html.CheckBoxFor(m => m.Ativo, new { @class = "flat", data_field = "Ativo" })
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12 form-buttons">
-                        <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
-                        <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                        <button type="button" id="confirmarEdicao" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.ConfirmAction</button>
                     </div>
                 </div>
             </form>
