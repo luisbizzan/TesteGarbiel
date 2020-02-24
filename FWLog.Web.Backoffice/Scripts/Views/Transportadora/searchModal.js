@@ -28,10 +28,9 @@
 
         },
         columns: [
-            { data: 'IdTransportadora' },
+            { data: 'IdTransportadora'},
             { data: 'RazaoSocial' },
-            { data: 'NomeFantasia' },
-            { data: 'CNPJ' },
+            { data: 'CNPJ'},
             { data: 'Status' },
             actionsColumn
         ],

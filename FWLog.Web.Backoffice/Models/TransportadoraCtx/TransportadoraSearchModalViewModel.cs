@@ -24,7 +24,6 @@ namespace FWLog.Web.Backoffice.Models.TransportadoraCtx
         [Display(Name = "Razão Social")]
         public string RazaoSocial { get; set; }
 
-        [Display(Name = "Nome Fantasia")]
         public string NomeFantasia { get; set; }
 
         [Display(Name = "CNPJ")]
@@ -39,8 +38,8 @@ namespace FWLog.Web.Backoffice.Models.TransportadoraCtx
         [Display(Name = "Código")]
         public long? IdTransportadora { get; set; }
 
-        [Display(Name = "Nome Fantasia")]
-        public string NomeFantasia { get; set; }
+        [Display(Name = "Razão Social")]
+        public string RazaoSocial { get; set; }
 
         [Display(Name = "CNPJ")]
         public string CNPJ { get; set; }

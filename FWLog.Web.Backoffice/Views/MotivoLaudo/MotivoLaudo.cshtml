@@ -58,6 +58,12 @@
             <!-- panel-title -->
             <div class="x_title">
                 <h2>Lista de Motivos do Laudo</h2>
+                <div class="nav navbar-right panel_toolbox">
+                    @if (User.HasPermission(Permissions.Role.Create))
+                    {
+                        <a class="btn btn-primary btn-dt-action" href="@Url.Action("Create")"><i class="fa fa-fw fa-plus"></i> Cadastrar</a>
+                    }
+                </div>
                 <div class="clearfix"></div>
             </div>
             <!-- /panel-title -->
