@@ -12,6 +12,7 @@
         {
             //editUrl = Url.Action("Edit"),
             editVisible = User.HasPermission(Permissions.MotivoLaudo.Editar),
+            editarMotivoLaudo = Url.Action("ExibirModalMotivoLaudo"),
             pageDataUrl = Url.Action("PageData")
         }
     )
@@ -84,4 +85,5 @@
         </div>
     </div>
 </div>
+<div class="modal" id="modalEditarMotivoLaudo"></div>
 <!-- /table -->
