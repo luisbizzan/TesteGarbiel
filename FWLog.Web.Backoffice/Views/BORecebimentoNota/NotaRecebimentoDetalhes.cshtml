@@ -1,0 +1,44 @@
+﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.BONotaRecebimentoViewModel
+@{
+    Layout = null;
+
+    @BundleHelper.RenderViewScriptModal()
+}
+
+<div class="col-sm-12 col-sm-6">
+    <div class="form-group">
+        @Html.Label("Data e Hora")
+        @Html.TextBoxFor(m => m.DataHora, new { @class = "form-control", @readonly = "readonly" })
+        @Html.HiddenFor(m => m.DataHora)     
+    </div>
+</div>
+<div class="col-sm-12 col-sm-6">
+    <div class="form-group">
+        @Html.Label("Fornecedor")
+        @Html.TextBoxFor(m => m.FornecedorNome, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="col-sm-12 col-sm-6">
+    <div class="form-group">
+        @Html.Label("Nota/Série")
+        @Html.TextBoxFor(m => m.NumeroSerieNotaFiscal, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="col-sm-12 col-sm-6">
+    <div class="form-group">
+        @Html.Label("Valor")
+        @Html.TextBoxFor(m => m.Valor, new { @class = "form-control money", @readonly = "readonly" })
+    </div>
+</div>
+<div class="col-sm-12 col-sm-6">
+    <div class="form-group">
+        @Html.Label("Status")
+        @Html.TextBoxFor(m => m.Status, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="col-sm-12 col-sm-6">
+    <div class="form-group">
+        @Html.Label("Qtd Volumes")
+        @Html.TextBoxFor(m => m.QuantidadeVolumes, new { @class = "form-control integer" })
+    </div>
+</div>

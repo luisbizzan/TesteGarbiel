@@ -59,6 +59,9 @@ namespace FWLog.Data
         private IntegracaoTipoRepository     _integracaoTipoRepository;
         private IntegracaoEntidadeRepository _integracaoEntidadeRepository;
         private IntegracaoLogRepository _integracaoLogRepository;
+        private NotaFiscalRecebimentoRepository _notaFiscalRecebimentoRepository;
+
+
         public TipoEtiquetagemRepository TipoEtiquetagemRepository
         {
             get => _tipoEtiquetagemRepository ?? (_tipoEtiquetagemRepository = new TipoEtiquetagemRepository(_context));
@@ -272,6 +275,11 @@ namespace FWLog.Data
         public LoteProdutoRepository LoteProdutoRepository
         {
             get => _loteProdutoRepository ?? (_loteProdutoRepository = new LoteProdutoRepository(_context));
+        }
+
+        public NotaFiscalRecebimentoRepository NotaFiscalRecebimentoRepository
+        {
+            get => _notaFiscalRecebimentoRepository ?? (_notaFiscalRecebimentoRepository = new NotaFiscalRecebimentoRepository(_context));
         }
 
         public TransactionScope CreateTransactionScope()

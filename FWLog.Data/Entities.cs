@@ -35,6 +35,7 @@ namespace FWLog.Data
         public virtual DbSet<LoteStatus> LoteStatus { get; set; }
         public virtual DbSet<NotaFiscal> NotaFiscal { get; set; }
         public virtual DbSet<NotaFiscalItem> NotaFiscalItem { get; set; }
+        public virtual DbSet<NotaFiscalRecebimento> NotaFiscalRecebimento { get; set; }
         public virtual DbSet<Produto> Produto { get; set; }
         public virtual DbSet<Transportadora> Transportadora { get; set; }
         public virtual DbSet<UnidadeMedida> UnidadeMedida { get; set; }

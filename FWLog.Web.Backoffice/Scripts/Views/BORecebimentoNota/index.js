@@ -301,6 +301,12 @@
         $("#modalUsuarioRecebimento").text('');
     });
 
+    $("#exibirModalNotaRecebimento").click(function () {
+        $("#modalNotaRecebimento").load(HOST_URL + "BORecebimentoNota/NotaRecebimento", function () {
+            $("#modalNotaRecebimento").modal();
+        });
+    });
+
     function limparUsuarioConferencia() {
         $("#Filter_UserNameConferencia").val("");
         $("#Filter_IdUsuarioConferencia").val("");

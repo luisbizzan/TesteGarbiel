@@ -450,6 +450,18 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("RegistroRecebimento", modal);
         }
 
+
+        [HttpGet]
+        [ApplicationAuthorize]
+        public ActionResult NotaRecebimento()
+        {
+            var viewModel = new BONotaRecebimentoViewModel
+            {
+            };
+
+            return PartialView("NotaRecebimento", viewModel);
+        }
+
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public JsonResult ValidarNotaFiscalRegistro(string chaveAcesso, long idNotaFiscal)
