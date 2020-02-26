@@ -130,6 +130,7 @@
     <Compile Include="Model\IntegracaoSankhya\ProdutoEstoqueIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoMediaVendaIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoReservadontegracao.cs" />
+    <Compile Include="Model\IntegracaoSankhya\RepresentanteIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\TransportadoraIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\EmpresaIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoIntegracao.cs" />
@@ -184,6 +185,7 @@
     <Compile Include="Services\QuarentenaService.cs" />
     <Compile Include="Services\RelatorioService.cs" />
     <Compile Include="Services\FornecedorService.cs" />
+    <Compile Include="Services\RepresentanteService.cs" />
     <Compile Include="Services\UnidadeMedidaService.cs" />
     <Compile Include="Services\TransportadoraService.cs" />
     <Compile Include="Templates\MailTemplate.cs" />
