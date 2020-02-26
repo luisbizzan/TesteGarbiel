@@ -96,14 +96,16 @@
             dart.dataTables.loadFilterFromData(data);
         },
         columns: [
-            { data: 'IdGarantia' },
-            { data: 'Cliente' },
-            { data: 'Transportadora' },
-            { data: 'NumeroNF' },
-            { data: 'NumeroFicticioNF' },
-            { data: 'DataEmissao' },            
-            { data: 'DataRecebimento' },
-            { data: 'GarantiaStatus' },
+            { data: 'IdGarantia', },
+            { data: 'Cliente', },
+            { data: 'CNPJCliente', },
+            { data: 'Transportadora', },
+            { data: 'Fornecedor', },
+            { data: 'NumeroNF', },
+            { data: 'NumeroFicticioNF', },
+            { data: 'DataEmissao', },
+            { data: 'DataRecebimento', },
+            { data: 'GarantiaStatus', },
             actionsColumn
         ]
     });
@@ -138,6 +140,36 @@
 
     $("#limparTransportadora").click(function () {
         limparTransportadora();
+    });
+
+    $("#pesquisarUsuarioRecebimento").click(function () {
+        $("#modalUsuarioRecebimento").load(HOST_URL + "BOAccount/SearchModal/Recebimento", function () {
+            $("#modalUsuarioRecebimento").modal();
+        });
+    });
+
+    $("#limparUsuarioRecebimento").click(function () {
+        limparUsuarioRecebimento();
+    });
+
+    $("#pesquisarUsuarioConferencia").click(function () {
+        $("#modalUsuarioConferencia").load(HOST_URL + "BOAccount/SearchModal/Conferencia", function () {
+            $("#modalUsuarioConferencia").modal();
+        });
+    });
+
+    $("#limparUsuarioConferencia").click(function () {
+        limparUsuarioConferencia();
+    });
+
+    //Limpando a div da modal de usuários
+    $("#modalUsuarioConferencia").on("hidden.bs.modal", function () {
+        $("#modalUsuarioConferencia").text('');
+    });
+
+    //Limpando a div da modal de usuários
+    $("#modalUsuarioRecebimento").on("hidden.bs.modal", function () {
+        $("#modalUsuarioRecebimento").text('');
     });
 
 })();
@@ -180,4 +212,28 @@ function setFornecedor(idFornecedor, nomeFantasia) {
 function limparFornecedor() {
     $("#Filter_NomeFantasiaFornecedor").val("");
     $("#Filter_IdFornecedor").val("");
+}
+
+function setUsuario(idUsuario, nomeUsuario, origem) {
+    if (origem === "Recebimento") {
+        $("#Filter_UserNameRecebimento").val(nomeUsuario);
+        $("#Filter_IdUsuarioRecebimento").val(idUsuario);
+        $("#modalUsuarioRecebimento").modal("hide");
+        $("#modalUsuarioRecebimento").empty();
+    } else {
+        $("#Filter_UserNameConferencia").val(nomeUsuario);
+        $("#Filter_IdUsuarioConferencia").val(idUsuario);
+        $("#modalUsuarioConferencia").modal("hide");
+        $("#modalUsuarioConferencia").empty();
+    }
+}
+
+function limparUsuarioRecebimento() {
+    $("#Filter_UserNameRecebimento").val("");
+    $("#Filter_IdUsuarioRecebimento").val("");
+}
+
+function limparUsuarioConferencia() {
+    $("#Filter_UserNameConferencia").val("");
+    $("#Filter_IdUsuarioConferencia").val("");
 }

@@ -7,6 +7,7 @@ namespace FWLog.Data.Models.DataTablesCtx
         public long IdEmpresa { get; set; }
         public long? IdGarantia { get; set; }
         public string Cliente { get; set; }
+        public string CNPJCliente { get; set; }
         public string Transportadora { get; set; }
         public string Fornecedor { get; set; }
         public long? NumeroNF { get; set; }
