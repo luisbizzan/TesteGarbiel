@@ -8,6 +8,7 @@ namespace FWLog.Data.Models.FilterCtx
         public long? IdGarantia { get; set; }
         public long? IdCliente { get; set; }
         public long? IdTransportadora { get; set; }
+        public long? IdFornecedor { get; set; }
         public long? NumeroNF { get; set; }
         public string NumeroFicticioNF { get; set; }
         public string ChaveAcesso { get; set; }

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using ExtensionMethods.String;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
@@ -45,6 +46,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "nota.\"PrazoEntregaFornecedor\"," +
                             "nota.\"IdEmpresa\"," +
                             "nota.\"IdTransportadora\"," +
+                            "nota.\"IdFornecedor\"," +
                             "cliente.*,	" +
                             "garantiastatus.*," +
                             "userr.*," +
@@ -79,6 +81,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 (filter.CustomFilter.IdGarantia.HasValue == false || x.IdGarantia == filter.CustomFilter.IdGarantia.Value) &&
                 (filter.CustomFilter.IdCliente.HasValue == false || x.IdGarantia == filter.CustomFilter.IdCliente.Value) &&
                 (filter.CustomFilter.IdTransportadora.HasValue == false || x.IdGarantia == filter.CustomFilter.IdTransportadora.Value) &&
+                (filter.CustomFilter.IdFornecedor.HasValue == false || x.IdGarantia == filter.CustomFilter.IdFornecedor.Value) &&
                 (filter.CustomFilter.NumeroNF.HasValue == false || x.NotaFiscal.Numero == filter.CustomFilter.NumeroNF.Value) &&
                 (string.IsNullOrEmpty(filter.CustomFilter.NumeroFicticioNF) == true || x.NotaFiscal.NumeroFicticioNF.Contains(filter.CustomFilter.NumeroFicticioNF)) &&
                 (string.IsNullOrEmpty(filter.CustomFilter.ChaveAcesso) == true || x.NotaFiscal.ChaveAcesso.Contains(filter.CustomFilter.ChaveAcesso)) &&
@@ -113,7 +116,9 @@ namespace FWLog.Data.Repository.GeneralCtx
             {
                 IdGarantia = e.IdGarantia == 0 ? (long?)null : e.IdGarantia,
                 Cliente = string.Concat(e.NotaFiscal.Cliente.IdCliente, "-", e.NotaFiscal.Cliente.RazaoSocial),
+                CNPJCliente = e.NotaFiscal.Cliente.CNPJCPF.CnpjOuCpf(),
                 Transportadora = e.NotaFiscal.Transportadora == null ? string.Empty : string.Concat(e.NotaFiscal.Transportadora.IdTransportadora, "-", e.NotaFiscal.Transportadora.NomeFantasia),
+                Fornecedor = e.NotaFiscal.Fornecedor == null ? string.Empty : string.Concat(e.NotaFiscal.Fornecedor.IdFornecedor, "-", e.NotaFiscal.Fornecedor.NomeFantasia),
                 IdEmpresa = e.NotaFiscal.IdEmpresa,
                 NumeroNF = e.NotaFiscal.Numero,
                 NumeroFicticioNF = e.NotaFiscal.NumeroFicticioNF,

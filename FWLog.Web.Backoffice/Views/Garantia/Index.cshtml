@@ -44,6 +44,28 @@
                     @Html.DropDownListFor(m => m.Filter.IdGarantiaStatus, Model.Filter.ListaStatus, "Todos", new { @class = "form-control", data_field = "IdGarantiaStatus" })
                 </div>
                 <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdCliente, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.RazaoSocialCliente, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarCliente" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparCliente" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdCliente, new { data_field = "IdCliente" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdTransportadora, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.RazaoSocialTransportadora, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarTransportadora" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparTransportadora" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdTransportadora, new { data_field = "IdTransportadora" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataEmissaoInicial)
                     <div class='input-group date'>
                         @Html.TextBoxFor(m => m.Filter.DataEmissaoInicial, new { @class = "form-control dateFormat validateDateOrPrazoInicial", data_field = "DataEmissaoInicial" })
@@ -82,26 +104,12 @@
                     </div>
                 </div>
                 <div class="col-xs-12 col-md-3 col-lg-3 form-group">
-                    @Html.LabelFor(model => model.Filter.IdCliente, htmlAttributes: new { @class = "control-label" })
-                    <div class="input-group">
-                        @Html.TextBoxFor(m => m.Filter.RazaoSocialCliente, null, new { @class = "form-control", @readonly = "true" })
-                        <span class="input-group-btn">
-                            <a id="pesquisarCliente" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
-                            <a id="limparCliente" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
-                        </span>
-                    </div>
-                    @Html.HiddenFor(m => m.Filter.IdCliente, new { data_field = "IdCliente" })
+                    @Html.LabelFor(m => m.Filter.NumeroFicticioNF)
+                    @Html.TextBoxFor(m => m.Filter.NumeroFicticioNF, new { @class = "form-control onlyNumber", data_field = "NumeroFicticioNF" })
                 </div>
                 <div class="col-xs-12 col-md-3 col-lg-3 form-group">
-                    @Html.LabelFor(model => model.Filter.IdTransportadora, htmlAttributes: new { @class = "control-label" })
-                    <div class="input-group">
-                        @Html.TextBoxFor(m => m.Filter.RazaoSocialTransportadora, null, new { @class = "form-control", @readonly = "true" })
-                        <span class="input-group-btn">
-                            <a id="pesquisarTransportadora" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
-                            <a id="limparTransportadora" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
-                        </span>
-                    </div>
-                    @Html.HiddenFor(m => m.Filter.IdTransportadora, new { data_field = "IdTransportadora" })
+                    @Html.LabelFor(m => m.Filter.NumeroNFOrigem)
+                    @Html.TextBoxFor(m => m.Filter.NumeroNFOrigem, new { @class = "form-control onlyNumber", data_field = "NumeroNFOrigem" })
                 </div>
                 <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(model => model.Filter.IdUsuarioRecebimento, htmlAttributes: new { @class = "control-label" })
@@ -125,12 +133,23 @@
                     </div>
                     @Html.HiddenFor(model => model.Filter.IdUsuarioConferencia, new { data_field = "IdUsuarioConferencia" })
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 form-buttons">
-                    <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
-                    <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdFornecedor, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.NomeFantasiaFornecedor, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarFornecedor" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparFornecedor" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdFornecedor, new { data_field = "IdFornecedor" })
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 form-buttons">
+                <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
+                <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
             </div>
         </div>
     </div>
@@ -148,13 +167,14 @@
                         <tr>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.IdGarantia)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Cliente)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.CNPJCliente)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Transportadora)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Fornecedor)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.NumeroNF)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.NumeroFicticioNF)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.DataEmissao)</th>
-                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataRecebimento)</th>                                                        
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataRecebimento)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.GarantiaStatus)</th>
-
                             <th>@Resources.CommonStrings.ActionsLabel</th>
                         </tr>
                     </thead>
@@ -165,4 +185,7 @@
 </div>
 <div class="modal" id="modalCliente"></div>
 <div class="modal" id="modalTransportadora"></div>
+<div class="modal" id="modalFornecedor"></div>
+<div class="modal" id="modalUsuarioRecebimento" data-toggle="modal" data-myvalue="1"></div>
+<div class="modal" id="modalUsuarioConferencia" data-toggle="modal" data-myvalue="2"></div>
 <!-- /table -->

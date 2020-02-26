@@ -12,6 +12,7 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
+using System.Web;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -97,6 +98,77 @@ namespace FWLog.Web.Backoffice.Controllers
                 Notify.Error(Resources.CommonStrings.RegisterCreatedErrorMessage);
 
                 return errorView();
+            }
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Editar)]
+        public ActionResult ExibirModalDeEdicaoMotivoLaudo(long id)
+        {
+            MotivoLaudo motivoLaudo = _unitOfWork.MotivoLaudoRepository.GetById(id);
+
+            var model = Mapper.Map<MotivoLaudoCreateViewModel>(motivoLaudo);
+
+            return PartialView("Edit", model);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Editar)]
+        public ActionResult Edit(MotivoLaudoCreateViewModel model)
+        {
+            Func<ViewResult> errorView = () =>
+            {
+                return View(model);
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return errorView();
+            }
+
+            var motivoLaudo = new MotivoLaudo
+            {
+                Descricao = model.Descricao,
+                Ativo = model.Ativo,
+                IdMotivoLaudo = model.IdMotivoLaudo
+            };
+
+            try
+            {
+                _motivoLaudoService.Edit(motivoLaudo);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterEditedSuccessMessage
+                });
+
+                //Notify.Success();
+                //return RedirectToAction("MotivoLaudo");
+            }
+            catch (DbUpdateException e)
+            when (e.InnerException?.InnerException is OracleException sqlEx && sqlEx.Number == 1)
+            {
+                Notify.Error("");
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Já existe um motivo cadastrado com este nome."
+                });
+
+                //return errorView();
+            }
+            catch (Exception)
+            {
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = Resources.CommonStrings.RegisterEditedErrorMessage
+                });
+
+                //return errorView();
             }
         }
     }
