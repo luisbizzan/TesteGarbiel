@@ -122,6 +122,16 @@
         });
     });
 
+    $("#pesquisarFornecedor").click(function () {
+        $("#modalFornecedor").load(HOST_URL + "BOFornecedor/SearchModal", function () {
+            $("#modalFornecedor").modal();
+        });
+    });
+
+    $("#limparFornecedor").click(function () {
+        limparFornecedor();
+    });
+
     $("#limparCliente").click(function () {
         limparCliente();
     });
@@ -158,4 +168,16 @@ function limparTransportadora() {
     let cliente = $("#Filter_IdTransportadora");
     razaoSocial.val("");
     cliente.val("");
+}
+
+function setFornecedor(idFornecedor, nomeFantasia) {
+    $("#Filter_NomeFantasiaFornecedor").val(nomeFantasia);
+    $("#Filter_IdFornecedor").val(idFornecedor);
+    $("#modalFornecedor").modal("hide");
+    $("#modalFornecedor").empty();
+}
+
+function limparFornecedor() {
+    $("#Filter_NomeFantasiaFornecedor").val("");
+    $("#Filter_IdFornecedor").val("");
 }

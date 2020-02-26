@@ -44,6 +44,28 @@
                     @Html.DropDownListFor(m => m.Filter.IdGarantiaStatus, Model.Filter.ListaStatus, "Todos", new { @class = "form-control", data_field = "IdGarantiaStatus" })
                 </div>
                 <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdCliente, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.RazaoSocialCliente, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarCliente" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparCliente" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdCliente, new { data_field = "IdCliente" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdTransportadora, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.RazaoSocialTransportadora, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarTransportadora" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparTransportadora" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdTransportadora, new { data_field = "IdTransportadora" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataEmissaoInicial)
                     <div class='input-group date'>
                         @Html.TextBoxFor(m => m.Filter.DataEmissaoInicial, new { @class = "form-control dateFormat validateDateOrPrazoInicial", data_field = "DataEmissaoInicial" })
@@ -82,28 +104,6 @@
                     </div>
                 </div>
                 <div class="col-xs-12 col-md-3 col-lg-3 form-group">
-                    @Html.LabelFor(model => model.Filter.IdCliente, htmlAttributes: new { @class = "control-label" })
-                    <div class="input-group">
-                        @Html.TextBoxFor(m => m.Filter.RazaoSocialCliente, null, new { @class = "form-control", @readonly = "true" })
-                        <span class="input-group-btn">
-                            <a id="pesquisarCliente" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
-                            <a id="limparCliente" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
-                        </span>
-                    </div>
-                    @Html.HiddenFor(m => m.Filter.IdCliente, new { data_field = "IdCliente" })
-                </div>
-                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
-                    @Html.LabelFor(model => model.Filter.IdTransportadora, htmlAttributes: new { @class = "control-label" })
-                    <div class="input-group">
-                        @Html.TextBoxFor(m => m.Filter.RazaoSocialTransportadora, null, new { @class = "form-control", @readonly = "true" })
-                        <span class="input-group-btn">
-                            <a id="pesquisarTransportadora" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
-                            <a id="limparTransportadora" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
-                        </span>
-                    </div>
-                    @Html.HiddenFor(m => m.Filter.IdTransportadora, new { data_field = "IdTransportadora" })
-                </div>
-                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(model => model.Filter.IdUsuarioRecebimento, htmlAttributes: new { @class = "control-label" })
                     <div class="input-group">
                         @Html.TextBoxFor(m => m.Filter.UserNameRecebimento, null, new { @class = "form-control", @readonly = "true" })
@@ -124,6 +124,17 @@
                         </span>
                     </div>
                     @Html.HiddenFor(model => model.Filter.IdUsuarioConferencia, new { data_field = "IdUsuarioConferencia" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdFornecedor, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.NomeFantasiaFornecedor, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarFornecedor" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparFornecedor" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdFornecedor, new { data_field = "IdFornecedor" })
                 </div>
             </div>
             <div class="row">
@@ -149,12 +160,12 @@
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.IdGarantia)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Cliente)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Transportadora)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Fornecedor)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.NumeroNF)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.NumeroFicticioNF)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.DataEmissao)</th>
-                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataRecebimento)</th>                                                        
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataRecebimento)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.GarantiaStatus)</th>
-
                             <th>@Resources.CommonStrings.ActionsLabel</th>
                         </tr>
                     </thead>
@@ -165,4 +176,5 @@
 </div>
 <div class="modal" id="modalCliente"></div>
 <div class="modal" id="modalTransportadora"></div>
+<div class="modal" id="modalFornecedor"></div>
 <!-- /table -->
