@@ -34,5 +34,14 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/nota-fiscal/consultar/data-vencimento")]
+        [HttpPost]
+        public async Task<IHttpActionResult> ConsultarDataVencimento()
+        {
+            await _notaFiscalService.ConsultarDataVencimento("2");
+
+            return ApiOk();
+        }
     }
 }

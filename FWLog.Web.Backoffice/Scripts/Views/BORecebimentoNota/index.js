@@ -236,6 +236,7 @@
             { data: 'RecebidoEm' },
             { data: 'Atraso' },
             { data: 'Prazo' },
+            { data: 'DataVencimento', width: '30px' },
             { data: 'Fornecedor' },
             { data: 'Status' },
             actionsColumn

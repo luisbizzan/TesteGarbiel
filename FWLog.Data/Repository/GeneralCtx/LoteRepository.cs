@@ -53,6 +53,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                               "B.\"DataEmissao\", " +
                               "B.\"PrazoEntregaFornecedor\", " +
                               "B.\"IdEmpresa\", " +
+                              "B.\"DataVencimento\", " +
                               "C.*, " +
                               "D.\"IdFreteTipo\", " +
                               "D.\"Sigla\", " +
