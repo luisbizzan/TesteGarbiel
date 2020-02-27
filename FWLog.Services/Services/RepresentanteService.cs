@@ -31,7 +31,7 @@ namespace FWLog.Services.Services
             where.Append("WHERE ");
             where.Append("CGC_CPF IS NOT NULL ");
             where.Append("AND RAZAOSOCIAL IS NOT NULL ");
-            where.Append("AND REPRESENTANTE = 'S' ");
+            where.Append("AND VENDEDOR = 'S' ");
             where.Append("AND AD_INTEGRARFWLOG = '1' ");
 
             List<RepresentanteIntegracao> representantesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<RepresentanteIntegracao>(where: where.ToString());

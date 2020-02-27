@@ -118,6 +118,7 @@
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaDevolucaoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaProdutoBase.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeRecebimento.cs" />
+    <Compile Include="Model\IntegracaoSankhya\ClienteIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ConfirmarNotaFiscalResposta.cs" />
     <Compile Include="Model\IntegracaoSankhya\DevolucaoParcialXML.cs" />
     <Compile Include="Model\IntegracaoSankhya\DevolucaoTotalXML.cs" />
@@ -163,6 +164,7 @@
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ApplicationLogService.cs" />
     <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\ClienteService.cs" />
     <Compile Include="Services\ConferenciaService.cs" />
     <Compile Include="Services\GarantiaService.cs" />
     <Compile Include="Services\MotivoLaudoService.cs" />
