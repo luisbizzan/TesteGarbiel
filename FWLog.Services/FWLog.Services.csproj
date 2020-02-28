@@ -116,8 +116,10 @@
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaArmazenagemVolume.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaAvulsoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaDevolucaoRequest.cs" />
+    <Compile Include="Model\Etiquetas\ImprimirEtiquetaEnderecoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaProdutoBase.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeRecebimento.cs" />
+    <Compile Include="Model\IntegracaoSankhya\ClienteIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ConfirmarNotaFiscalResposta.cs" />
     <Compile Include="Model\IntegracaoSankhya\DevolucaoParcialXML.cs" />
     <Compile Include="Model\IntegracaoSankhya\DevolucaoTotalXML.cs" />
@@ -130,6 +132,7 @@
     <Compile Include="Model\IntegracaoSankhya\ProdutoEstoqueIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoMediaVendaIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoReservadontegracao.cs" />
+    <Compile Include="Model\IntegracaoSankhya\RepresentanteIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\TransportadoraIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\EmpresaIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoIntegracao.cs" />
@@ -162,6 +165,7 @@
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ApplicationLogService.cs" />
     <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\ClienteService.cs" />
     <Compile Include="Services\ConferenciaService.cs" />
     <Compile Include="Services\GarantiaService.cs" />
     <Compile Include="Services\MotivoLaudoService.cs" />
@@ -184,6 +188,7 @@
     <Compile Include="Services\QuarentenaService.cs" />
     <Compile Include="Services\RelatorioService.cs" />
     <Compile Include="Services\FornecedorService.cs" />
+    <Compile Include="Services\RepresentanteService.cs" />
     <Compile Include="Services\UnidadeMedidaService.cs" />
     <Compile Include="Services\TransportadoraService.cs" />
     <Compile Include="Templates\MailTemplate.cs" />

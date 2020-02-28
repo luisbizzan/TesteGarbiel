@@ -25,7 +25,7 @@ namespace FWLog.Data.Models
         [Index]
         [Required]
         [StringLength(128)]
-        public string IdUsuarioRecebimento { get; set; }
+        public string IdUsuarioConferente { get; set; }
 
         [Required]
         public DateTime DataRecebimento { get; set; }
@@ -52,8 +52,8 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdRepresentante))]
         public virtual Representante Representante { get; set; }
 
-        [ForeignKey(nameof(IdUsuarioRecebimento))]
-        public virtual AspNetUsers UsuarioRecebimento { get; set; }
+        [ForeignKey(nameof(IdUsuarioConferente))]
+        public virtual AspNetUsers UsuarioConferente { get; set; }
 
         #endregion
     }

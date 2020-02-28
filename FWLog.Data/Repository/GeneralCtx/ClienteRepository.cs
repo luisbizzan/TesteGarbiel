@@ -12,6 +12,11 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public ClienteRepository(Entities entities) : base(entities) { }
 
+        public Cliente ConsultarPorCodigoIntegracao(long codigoIntegracao)
+        {
+            return Entities.Cliente.FirstOrDefault(f => f.CodigoIntegracao == codigoIntegracao);
+        }
+
         public IEnumerable<ClientePesquisaModalLinhaTabela> ObterDadosParaDataTable(DataTableFilter<ClientePesquisaModalFiltro> filter, out int totalRecordsFiltered, out int totalRecords)
         {
             totalRecords = Entities.Cliente.Count();

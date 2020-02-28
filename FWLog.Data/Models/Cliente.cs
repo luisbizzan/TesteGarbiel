@@ -36,10 +36,15 @@ namespace FWLog.Data.Models
         public bool Ativo { get; set; }
 
         [Index]
-        [Required]
-        public long IdRepresentante { get; set; }
+        public long? IdRepresentante { get; set; }
+
+        [Index]
+        public long? IdVendedor { get; set; }
 
         [ForeignKey(nameof(IdRepresentante))]
         public virtual Representante Representante { get; set; }
+
+        [ForeignKey(nameof(IdVendedor))]
+        public virtual Representante Vendedor { get; set; }
     }
 }
