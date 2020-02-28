@@ -238,6 +238,8 @@
             { data: 'Prazo' },
             { data: 'Fornecedor' },
             { data: 'Status' },
+            { data: 'Fornecedor' },
+            { data: 'Status' },
             actionsColumn
         ]
     });

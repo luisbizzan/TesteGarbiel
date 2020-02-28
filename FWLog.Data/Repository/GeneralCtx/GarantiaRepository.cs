@@ -55,7 +55,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         "RIGHT JOIN \"NotaFiscal\" nota ON nota.\"IdNotaFiscal\" = garantia.\"IdNotaFiscal\" " +
                         "INNER JOIN \"Cliente\" cliente ON cliente.\"IdCliente\" = nota.\"IdCliente\" " +
                         "LEFT JOIN \"GarantiaStatus\" garantiastatus ON (garantiastatus.\"IdGarantiaStatus\" = CASE WHEN garantia.\"IdGarantiaStatus\" IS NULL THEN 1 ELSE garantia.\"IdGarantiaStatus\" END) " +
-                        "LEFT JOIN \"AspNetUsers\" userr ON userr.\"Id\" = garantia.\"IdUsuarioRecebimento\" " +
+                        "LEFT JOIN \"AspNetUsers\" userr ON userr.\"Id\" = garantia.\"IdUsuarioConferente\" " +
                         "INNER JOIN \"NotaFiscalStatus\" nfstatus ON nfstatus.\"IdNotaFiscalStatus\" = nota.\"IdNotaFiscalStatus\" " +
                         "WHERE (nota.\"IdNotaFiscalStatus\" <> 0 AND nota.\"IdNotaFiscalStatus\" IS NOT NULL) AND nota.\"IdEmpresa\" = " + filter.CustomFilter.IdEmpresa +
                         "AND nota.\"IdNotaFiscalTipo\" = " + NotaFiscalTipoEnum.Garantia.GetHashCode(),
@@ -64,7 +64,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             g.NotaFiscal = nf;
                             g.NotaFiscal.Cliente = f;
                             g.GarantiaStatus = gs;
-                            g.UsuarioRecebimento = u;
+                            g.UsuarioConferente = u;
                             g.NotaFiscal.NotaFiscalStatus = nfs;
                             return g;
                         },
@@ -79,9 +79,9 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             var query = garantia.Where(x =>
                 (filter.CustomFilter.IdGarantia.HasValue == false || x.IdGarantia == filter.CustomFilter.IdGarantia.Value) &&
-                (filter.CustomFilter.IdCliente.HasValue == false || x.IdGarantia == filter.CustomFilter.IdCliente.Value) &&
-                (filter.CustomFilter.IdTransportadora.HasValue == false || x.IdGarantia == filter.CustomFilter.IdTransportadora.Value) &&
-                (filter.CustomFilter.IdFornecedor.HasValue == false || x.IdGarantia == filter.CustomFilter.IdFornecedor.Value) &&
+                (filter.CustomFilter.IdCliente.HasValue == false || x.NotaFiscal.IdCliente == filter.CustomFilter.IdCliente.Value) &&
+                (filter.CustomFilter.IdTransportadora.HasValue == false || x.NotaFiscal.IdTransportadora == filter.CustomFilter.IdTransportadora.Value) &&
+                (filter.CustomFilter.IdFornecedor.HasValue == false || x.NotaFiscal.IdFornecedor == filter.CustomFilter.IdFornecedor.Value) &&
                 (filter.CustomFilter.NumeroNF.HasValue == false || x.NotaFiscal.Numero == filter.CustomFilter.NumeroNF.Value) &&
                 (string.IsNullOrEmpty(filter.CustomFilter.NumeroFicticioNF) == true || x.NotaFiscal.NumeroFicticioNF.Contains(filter.CustomFilter.NumeroFicticioNF)) &&
                 (string.IsNullOrEmpty(filter.CustomFilter.ChaveAcesso) == true || x.NotaFiscal.ChaveAcesso.Contains(filter.CustomFilter.ChaveAcesso)) &&
@@ -110,6 +110,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             {
                 DateTime dataFinal = new DateTime(filter.CustomFilter.DataRecebimentoFinal.Value.Year, filter.CustomFilter.DataRecebimentoFinal.Value.Month, filter.CustomFilter.DataRecebimentoFinal.Value.Day, 00, 00, 00);
                 query = query.Where(x => x.DataRecebimento >= dataFinal);
+            }
+
+            if (!filter.CustomFilter.IdUsuarioConferente.NullOrEmpty())
+            {
+                query = query.Where(x => x.UsuarioConferente?.Id == filter.CustomFilter.IdUsuarioConferente);
             }
 
             IEnumerable<GarantiaTableRow> queryResult = query.Select(e => new GarantiaTableRow

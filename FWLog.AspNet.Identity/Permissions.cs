@@ -229,10 +229,12 @@ namespace FWLog.AspNet.Identity
         public class Garantia : PermissionGroupBuildItem
         {
             public const string Listar = "GarantiaList";
+            //public const string Editar = "GarantiaEdit";
 
             public Garantia() : base(Display.FromString("Solicitação de Garantia"))
             {
                 Register(Listar, Display.FromString("Listar Solicitações de Garantia"));
+                //Register(Editar, Display.FromString("Editar Solicitações de Garantia"));
             }
         }
     }
