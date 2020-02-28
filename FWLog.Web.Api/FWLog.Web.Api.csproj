@@ -192,6 +192,7 @@
     <Compile Include="App_Start\NinjectDependencyResolver.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\ApiBaseController.cs" />
+    <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\LoteController.cs" />
     <Compile Include="Controllers\UnidadeMedidaController.cs" />
     <Compile Include="Controllers\FreteTipoController.cs" />
@@ -209,6 +210,7 @@
     </Compile>
     <Compile Include="Helpers\ApiErrorBuilder.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
+    <Compile Include="Models\Etiqueta\ImprimirEtiquetaEnderecoRequisicao.cs" />
     <Compile Include="Models\Produto\ProdutoReservadoModelRequest.cs" />
     <Compile Include="Models\Usuario\BuscarPermissoesResposta.cs" />
     <Compile Include="Models\Usuario\RecoverPasswordModelRequest.cs" />
