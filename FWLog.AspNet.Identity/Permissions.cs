@@ -187,23 +187,38 @@ namespace FWLog.AspNet.Identity
             public const string AcessarRFArmazenagem = "RFAcessoArmazenagem";
             public const string AcessarRFSeparacao = "RFAcessoSeparacao";
             public const string AcessarRFExpedicao = "RFAcessoExpedicao";
-            public const string ImprimirEtiquetaEndereco = "RFImprimirEtiquetaEndereco";
-            public const string InstalarProduto = "RFInstalarProduto";
 
             public ColetorAcesso() : base(Display.FromString("Coletor - Acesso"))
             {
-                // Armazenagem
                 Register(AcessarRFArmazenagem, Display.FromString("Acessar Armazenagem"));
-                Register(ImprimirEtiquetaEndereco, Display.FromString("Imprimir Etiqueta Endereço"));
-                Register(InstalarProduto, Display.FromString("Instalar Produto"));
-
-                // Separação
                 Register(AcessarRFSeparacao, Display.FromString("Acessar Separação"));
-
-                // Expedição
                 Register(AcessarRFExpedicao, Display.FromString("Acessar Expedição"));
+            }
+        }
 
-                
+        public class RFArmazenagem : PermissionGroupBuildItem
+        {
+            public const string InstalarProduto = "RFInstalarProduto";
+            public const string AjustarQuantidade = "RFAjustarQuantidade";
+            public const string RetirarApoio = "RFRetirarApoio";
+            public const string Rastreamento = "RFRastreamento";
+            public const string ConferenciaAlas = "RFConferenciaAlas";
+            public const string AbastecerPicking = "RFAbastecerPicking";
+            public const string ImprimirEtiquetaLote = "RFImprimirEtiquetaLote";
+            public const string ImprimirEtiquetaEndereco = "RFImprimirEtiquetaEndereco";
+            public const string ImprimirEtiquetaPicking = "RFImprimirEtiquetaPicking";
+
+            public RFArmazenagem() : base(Display.FromString("Coletor - Armazenagem"))
+            {
+                Register(InstalarProduto, Display.FromString("Instalar Produto"));
+                Register(AjustarQuantidade, Display.FromString("Ajustar Quantidade"));
+                Register(RetirarApoio, Display.FromString("Retirar do Apoio"));
+                Register(Rastreamento, Display.FromString("Rastreamento"));
+                Register(ConferenciaAlas, Display.FromString("Conferência Alas"));
+                Register(AbastecerPicking, Display.FromString("Abastecer Picking"));
+                Register(ImprimirEtiquetaLote, Display.FromString("Impr. Etiq. Lote"));
+                Register(ImprimirEtiquetaEndereco, Display.FromString("Imprimir Etiqueta Endereço"));
+                Register(ImprimirEtiquetaPicking, Display.FromString("Impr. Etiq. Picking"));
             }
         }
 
