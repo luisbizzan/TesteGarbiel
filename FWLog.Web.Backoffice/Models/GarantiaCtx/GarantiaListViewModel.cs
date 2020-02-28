@@ -30,7 +30,7 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public string Transportadora { get; set; }
         [Display(Name = "Fornecedor")]
         public string Fornecedor { get; set; }
-        [Display(Name = "Nº NF")]
+        [Display(Name = "NF")]
         public long? NumeroNF { get; set; }
         [Display(Name = "Nº Fictício NF")]
         public string NumeroFicticioNF { get; set; }
@@ -67,9 +67,6 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public DateTime? DataRecebimentoInicial { get; set; }
         [Display(Name = "Data Recebimento Final")]
         public DateTime? DataRecebimentoFinal { get; set; }
-        [Display(Name = "Recebido por")]
-        public string IdUsuarioRecebimento { get; set; }        
-        public string UserNameRecebimento { get; set; }
         [Display(Name = "Status")]
         public long? IdGarantiaStatus { get; set; }
         [Display(Name = "Conferido Por")]

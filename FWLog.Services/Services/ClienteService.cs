@@ -35,7 +35,7 @@ namespace FWLog.Services.Services
             where.Append("AND CLIENTE = 'S' ");
             where.Append("AND AD_INTEGRARFWLOG = '1' ");
 
-            List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString()).;
+            List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString());
 
             foreach (var clienteInt in clientesIntegracao)
             {

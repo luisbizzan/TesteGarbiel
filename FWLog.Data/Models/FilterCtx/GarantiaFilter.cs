@@ -16,8 +16,7 @@ namespace FWLog.Data.Models.FilterCtx
         public DateTime? DataEmissaoFinal { get; set; }
         public DateTime? DataRecebimentoInicial { get; set; }
         public DateTime? DataRecebimentoFinal { get; set; }
-        public string IdUsuarioRecebimento { get; set; }
-        public string IddUsuarioConferente { get; set; }
+        public string IdUsuarioConferente { get; set; }
         public long? IdGarantiaStatus { get; set; }
     }
 }

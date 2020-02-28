@@ -6,20 +6,20 @@ namespace FWLog.Web.Api.Controllers
 {
     public class ClienteController : ApiBaseController
     {
-        public ClienteService _clienteService;
+        //public ClienteService _clienteService;
 
-        public ClienteController(ClienteService clienteService)
-        {
-            _clienteService = clienteService;
-        }
+        //public ClienteController(ClienteService clienteService)
+        //{
+        //    _clienteService = clienteService;
+        //}
 
-        [Route("api/v1/Cliente/integrar")]
-        [HttpPost]
-        public async Task<IHttpActionResult> ConsultarCliente()
-        {
-            await _clienteService.ConsultarCliente();
+        //[Route("api/v1/Cliente/integrar")]
+        //[HttpPost]
+        //public async Task<IHttpActionResult> ConsultarCliente()
+        //{
+        //    await _clienteService.ConsultarCliente();
 
-            return ApiOk();
-        }
+        //    return ApiOk();
+        //}
     }
 }

@@ -98,8 +98,6 @@
         columns: [
             { data: 'IdGarantia', },
             { data: 'Cliente', },
-            { data: 'CNPJCliente', },
-            { data: 'Transportadora', },
             { data: 'Fornecedor', },
             { data: 'NumeroNF', },
             { data: 'NumeroFicticioNF', },
