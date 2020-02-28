@@ -26,12 +26,14 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [Required]
         public string Ativo { get; set; }
 
-        //[TabelaIntegracao(DisplayName = "CODVEND")]
-        //[Required]
-        //public long IdRepresentante { get; set; }
+        [TabelaIntegracao(DisplayName = "CODVEND")]
+        public string IdRepresentante { get; set; }
 
-        //[TabelaIntegracao(DisplayName = "AD_CLASSIF")]
-        //[Required]
-        //public string Classificacao { get; set; }
+        [TabelaIntegracao(DisplayName = "AD_CODVENDATEND")]
+        public string IdVendedor { get; set; }
+
+        [TabelaIntegracao(DisplayName = "AD_CLASSIF")]
+        [Required]
+        public string Classificacao { get; set; }
     }
 }

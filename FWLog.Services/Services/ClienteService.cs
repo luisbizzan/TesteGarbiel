@@ -30,7 +30,6 @@ namespace FWLog.Services.Services
             StringBuilder where = new StringBuilder();
             where.Append("WHERE ");
             where.Append("CGC_CPF IS NOT NULL ");
-            //where.Append("CODVEND IS NOT NULL ");
             where.Append("AND RAZAOSOCIAL IS NOT NULL ");
             where.Append("AND CLIENTE = 'S' ");
             where.Append("AND AD_INTEGRARFWLOG = '1' ");
@@ -60,9 +59,13 @@ namespace FWLog.Services.Services
                     cliente.CNPJCPF = clienteInt.CNPJ;
                     cliente.RazaoSocial = clienteInt.RazaoSocial;
                     //cliente.Classificacao = clienteInt.Classificacao;
-                    //cliente.IdRepresentante = clienteInt.IdRepresentante;
                     cliente.Classificacao = "Padrão";
-                    cliente.IdRepresentante = 1;
+                    cliente.IdRepresentante = clienteInt.IdRepresentante == "0" || clienteInt.IdRepresentante == null  
+                                                        ? (long?)null 
+                                                        : Convert.ToInt64( clienteInt.IdRepresentante);
+                    cliente.IdVendedor = clienteInt.IdVendedor == "0" || clienteInt.IdVendedor == null 
+                                                        ? (long?)null 
+                                                        : Convert.ToInt64(clienteInt.IdVendedor);
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", cliente.CodigoIntegracao.ToString() } };
 
