@@ -182,17 +182,28 @@ namespace FWLog.AspNet.Identity
             }
         }
 
-        public class ColetorAcesso: PermissionGroupBuildItem
+        public class ColetorAcesso : PermissionGroupBuildItem
         {
             public const string AcessarRFArmazenagem = "RFAcessoArmazenagem";
             public const string AcessarRFSeparacao = "RFAcessoSeparacao";
             public const string AcessarRFExpedicao = "RFAcessoExpedicao";
+            public const string ImprimirEtiquetaEndereco = "RFImprimirEtiquetaEndereco";
+            public const string InstalarProduto = "RFInstalarProduto";
 
             public ColetorAcesso() : base(Display.FromString("Coletor - Acesso"))
             {
+                // Armazenagem
                 Register(AcessarRFArmazenagem, Display.FromString("Acessar Armazenagem"));
+                Register(ImprimirEtiquetaEndereco, Display.FromString("Imprimir Etiqueta Endereço"));
+                Register(InstalarProduto, Display.FromString("Instalar Produto"));
+
+                // Separação
                 Register(AcessarRFSeparacao, Display.FromString("Acessar Separação"));
+
+                // Expedição
                 Register(AcessarRFExpedicao, Display.FromString("Acessar Expedição"));
+
+                
             }
         }
 
