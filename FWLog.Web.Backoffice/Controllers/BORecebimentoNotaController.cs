@@ -473,14 +473,14 @@ namespace FWLog.Web.Backoffice.Controllers
             var notafiscal = _uow.NotaFiscalRepository.ObterPorChave(chaveAcesso);
             var notafiscalRecebimento = _uow.NotaFiscalRecebimentoRepository.ObterPorChave(chaveAcesso);
 
-            /*if (notafiscal != null)
+            if (notafiscal != null)
             {
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
                     Message = "Nota Fiscal já existe e foi efetivada no sistema.",
                 });
-            }*/
+            }
 
 
             if (notafiscalRecebimento != null)

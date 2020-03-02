@@ -295,7 +295,7 @@ namespace FWLog.Services.Services
                     Serie = serie,
                     Valor = valor,
                     QuantidadeVolumes = quantidadeVolumes,
-                    DataHora = DateTime.Now,
+                    DataHoraRegistro = DateTime.Now,
                     IdNotaRecebimentoStatus = NotaRecebimentoStatusEnum.Registrado,
                 };
 

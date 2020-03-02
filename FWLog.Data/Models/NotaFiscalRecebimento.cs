@@ -30,7 +30,9 @@ namespace FWLog.Data.Models
         public int?     QuantidadeVolumes        { get; set; }
                                                 
         [Required]                              
-        public DateTime DataHora                 { get; set; }
+        public DateTime DataHoraRegistro         { get; set; }
+
+        public DateTime DataHoraSincronismo      { get; set; }
 
         [Required]
         public NotaRecebimentoStatusEnum IdNotaRecebimentoStatus { get; set; }
