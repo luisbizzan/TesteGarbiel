@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace System
 {
@@ -11,31 +10,26 @@ namespace System
         public BusinessException(string message)
             : base(message)
         {
-
         }
 
         public BusinessException(string format, params object[] args)
-            : base(String.Format(format, args))
+            : base(string.Format(format, args))
         {
-
         }
 
         public BusinessException(string message, Exception innerException)
             : base(message, innerException)
         {
-
         }
 
         public BusinessException(Exception innerException, string format, params object[] args)
-            : base(String.Format(format, args), innerException)
+            : base(string.Format(format, args), innerException)
         {
-
         }
 
         protected BusinessException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-
         }
     }
 }

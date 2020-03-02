@@ -145,6 +145,13 @@ namespace FWLog.Web.Api.Controllers
             return Content(HttpStatusCode.NotFound, apiErrorResponse);
         }
 
+        public IHttpActionResult ApiInternalServerErrror(string mensagem, Exception ex)
+        {
+            LogHelper.Error(ex);
+            var apiErrorResponse = ApiErrorBuilder.BuildResponse(mensagem);
+            return Content(HttpStatusCode.InternalServerError, apiErrorResponse);
+        }
+
         protected string IdUsuario
         {
             get

@@ -326,6 +326,39 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
 
+        public void ImprimirEtiquetaEndereco(ImprimirEtiquetaEnderecoRequest request)
+        {
+            var textoEndereco = "11.B.33.44";
+            var codEndereco = 123.ToString().PadLeft(8, '0');
+
+            var etiquetaZpl = new StringBuilder();
+
+            etiquetaZpl.Append("^XA");
+
+            etiquetaZpl.Append("^LL176");
+
+            // Define quantidade de etiquetas a imprimir
+            etiquetaZpl.Append($"^PQ{request.QuantidadeEtiquetas}^FS");
+
+            // Contorno da etiqueta
+            etiquetaZpl.Append("^FO5,10^GB900,180,8^FS");
+
+            // Fundo do texto de endereço
+            etiquetaZpl.Append("^FO5,10^GB380,180,170^FS");
+
+            // Texto do endereço
+            etiquetaZpl.Append($"^FO5,20^FB380,1,0,C,0^A0N,200,85^FR^FD{textoEndereco}^FS");
+
+            // Código de barras do endereço
+            etiquetaZpl.Append($"^FO415,35^BY3,,110^BCN,,Y,N^FD{codEndereco}^FS");
+
+            etiquetaZpl.Append("^XZ");
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+        }
+
         private class CelulaEtiqueta
         {
             internal CelulaEtiqueta(int x, int y = 0)

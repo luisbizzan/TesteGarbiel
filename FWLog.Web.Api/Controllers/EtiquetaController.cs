@@ -1,7 +1,8 @@
 ﻿using FWLog.Data;
+using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Etiqueta;
-using System.Threading.Tasks;
+using System;
 using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
@@ -19,16 +20,33 @@ namespace FWLog.Web.Api.Controllers
 
         [HttpPost]
         [Route("api/v1/etiqueta/endereco")]
-        public async Task<IHttpActionResult> ImprimirEtiquetaEndereco(ImprimirEtiquetaEnderecoRequisicao requisicao)
+        public IHttpActionResult ImprimirEtiquetaEndereco(ImprimirEtiquetaEnderecoRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
                 return ApiBadRequest(ModelState);
             }
 
-            //chamar service
+            try
+            {
+                var requisicaoServico = new ImprimirEtiquetaEnderecoRequest
+                {
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    IdImpressora = requisicao.IdImpressora
+                };
 
-            return ApiOk();
+                _etiquetaService.ImprimirEtiquetaEndereco(requisicaoServico);
+
+                return ApiOk();
+            }
+            catch(BusinessException ex)
+            {
+                return ApiInternalServerErrror("Erro na impressora", ex);
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }
