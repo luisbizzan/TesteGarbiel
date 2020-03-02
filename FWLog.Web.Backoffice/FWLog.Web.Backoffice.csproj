@@ -321,6 +321,7 @@
     <Compile Include="Models\GarantiaCtx\GarantiaDetailsViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaCreateViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaListViewModel.cs" />
+    <Compile Include="Models\GarantiaCtx\GarantiaRegistroConferencia.cs" />
     <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoCreateViewModel.cs" />
     <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoListViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemCreateViewModel.cs" />
@@ -583,6 +584,7 @@
     <Content Include="Scripts\Views\Transportadora\searchModal.js" />
     <Content Include="Views\MotivoLaudo\Create.cshtml" />
     <Content Include="Views\MotivoLaudo\Edit.cshtml" />
+    <Content Include="Views\Garantia\RegistroConferencia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

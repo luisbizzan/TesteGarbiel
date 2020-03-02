@@ -15,6 +15,8 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
         public string IdUsuarioRecebimento { get; set; }
 
+        public string ChaveAcesso { get; set; }
+
         public DateTime DataRecebimento { get; set; }
 
         public string Observacao { get; set; }
