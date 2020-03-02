@@ -313,6 +313,7 @@
         $("#Filter_IdUsuarioConferencia").val("");
     }
 
+
     $("#limparUsuarioConferencia").click(function () {
         limparUsuarioConferencia();
     });
@@ -400,6 +401,7 @@ function detalhesNota() {
     });
 }
 
+
 function registrarRecebimento() {
     let id = $(this).data("id");
 
@@ -429,6 +431,9 @@ function registrarRecebimento() {
         }
     });
 }
+
+
+
 
 function BuscarNotaFiscal() {
     var keycode = event.keyCode || event.which;
@@ -510,11 +515,18 @@ function RegistrarNotaFiscal() {
     });
 }
 
-function setFornecedor(idFornecedor, nomeFantasia) {
-    $("#Filter_NomeFantasiaFornecedor").val(nomeFantasia);
-    $("#Filter_IdFornecedor").val(idFornecedor);
-    $("#modalFornecedor").modal("hide");
-    $("#modalFornecedor").empty();
+function setFornecedor(idFornecedor, nomeFantasia, origem) {
+    if (origem === "NotaRecebimentoDiv") {
+        $("#NomeFornecedor").val(nomeFantasia);
+        $("#IdFornecedor").val(idFornecedor);
+        $("#modalFornecedorNotaRecebimento").modal("hide");
+        $("#modalFornecedorNotaRecebimento").empty();
+    } else {
+        $("#Filter_NomeFantasiaFornecedor").val(nomeFantasia);
+        $("#Filter_IdFornecedor").val(idFornecedor);
+        $("#modalFornecedor").modal("hide");
+        $("#modalFornecedor").empty();
+    }
 }
 
 function setUsuario(idUsuario, nomeUsuario, origem) {

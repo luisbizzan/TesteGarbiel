@@ -592,6 +592,7 @@
     <Content Include="Scripts\vendors\onScan\onscan.js" />
     <Content Include="Scripts\vendors\onScan\onscan.min.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\notaRecebimento.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoEtiquetagem.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoProducao.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\resumoDivergenciaConferencia.js" />

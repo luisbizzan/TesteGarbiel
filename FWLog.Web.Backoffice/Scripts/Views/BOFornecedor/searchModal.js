@@ -11,7 +11,7 @@
         ];
     });
 
-    $('#dataTableModal').DataTable({
+    $('#dataTableModal').DataTable({ 
        // destroy: true,
         ajax: {
             "url": view_modal.pageDataUrl,
@@ -36,7 +36,7 @@
     });
 
     $('#dataTableModal').on('click', '[data-select]', function () {
-        setFornecedor($(this).attr('data-select'), $(this).attr("name-select"));
+        setFornecedor($(this).attr('data-select'), $(this).attr("name-select"), view_modal.origem);
     });
 
     dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));

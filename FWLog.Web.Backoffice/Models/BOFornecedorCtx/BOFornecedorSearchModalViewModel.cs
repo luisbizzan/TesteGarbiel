@@ -12,6 +12,8 @@ namespace FWLog.Web.Backoffice.Models.BOFornecedorCtx
             EmptyItem = new BOFornecedorSearchModalItemViewModel();
             Filter = new BOFornecedorSearchModalFilterViewModel();
         }
+
+        public string Origem { get; set; }
     }
 
     public class BOFornecedorSearchModalItemViewModel

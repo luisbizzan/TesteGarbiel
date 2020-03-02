@@ -1,44 +1,29 @@
 ﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.BONotaRecebimentoViewModel
-@{
-    Layout = null;
 
-    @BundleHelper.RenderViewScriptModal()
-}
 
-<div class="col-sm-12 col-sm-6">
+
+<div class="col-xs-12 col-sm-6 col-lg-3">
     <div class="form-group">
-        @Html.Label("Data e Hora")
-        @Html.TextBoxFor(m => m.DataHora, new { @class = "form-control", @readonly = "readonly" })
-        @Html.HiddenFor(m => m.DataHora)     
+        @Html.Label("Nota")
+        @Html.TextBoxFor(m => m.NumeroNF, new { @class = "form-control onlyNumber", maxlength = 9 })
     </div>
 </div>
-<div class="col-sm-12 col-sm-6">
+<div class="col-xs-12 col-sm-6 col-lg-3">
     <div class="form-group">
-        @Html.Label("Fornecedor")
-        @Html.TextBoxFor(m => m.FornecedorNome, new { @class = "form-control", @readonly = "readonly" })
+        @Html.Label("Série")
+        @Html.TextBoxFor(m => m.Serie, new { @class = "form-control", maxlength = 3 })
     </div>
 </div>
-<div class="col-sm-12 col-sm-6">
-    <div class="form-group">
-        @Html.Label("Nota/Série")
-        @Html.TextBoxFor(m => m.NumeroSerieNotaFiscal, new { @class = "form-control", @readonly = "readonly" })
-    </div>
-</div>
-<div class="col-sm-12 col-sm-6">
+<div class="col-xs-12 col-sm-6 col-lg-3">
     <div class="form-group">
         @Html.Label("Valor")
-        @Html.TextBoxFor(m => m.Valor, new { @class = "form-control money", @readonly = "readonly" })
+        @Html.TextBoxFor(m => m.Valor, new { @class = "form-control money" })
     </div>
 </div>
-<div class="col-sm-12 col-sm-6">
-    <div class="form-group">
-        @Html.Label("Status")
-        @Html.TextBoxFor(m => m.Status, new { @class = "form-control", @readonly = "readonly" })
-    </div>
-</div>
-<div class="col-sm-12 col-sm-6">
+<div class="col-xs-12 col-sm-6 col-lg-3">
     <div class="form-group">
         @Html.Label("Qtd Volumes")
-        @Html.TextBoxFor(m => m.QuantidadeVolumes, new { @class = "form-control integer" })
+        @Html.TextBoxFor(m => m.QuantidadeVolumes, new { @class = "form-control onlyNumber", maxlength = 5 })
     </div>
 </div>
+

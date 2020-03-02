@@ -148,7 +148,7 @@
     <Compile Include="Models\NotaFiscalTipo.cs" />
     <Compile Include="Models\ProdutoEstoqueStatus.cs" />
     <Compile Include="Models\QuarentenaHistorico.cs" />
-    <Compile Include="Models\StatusNotaRecebimento.cs" />
+    <Compile Include="Models\NotaRecebimentoStatus.cs" />
     <Compile Include="Models\TipoConferencia.cs" />
     <Compile Include="Models\EmpresaTipo.cs" />
     <Compile Include="Models\EnderecoArmazenagem.cs" />
@@ -209,6 +209,7 @@
     <Compile Include="Repository\GeneralCtx\LoteProdutoEnderecoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\NotaFiscalRecebimentoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\NotaRecebimentoStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoEnderecoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />

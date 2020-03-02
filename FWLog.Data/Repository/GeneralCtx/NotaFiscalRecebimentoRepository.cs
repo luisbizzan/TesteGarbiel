@@ -20,5 +20,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.NotaFiscalRecebimento;
         }
+
+        public NotaFiscalRecebimento ObterPorChave(string chaveAcesso)
+        {
+            return Entities.NotaFiscalRecebimento.FirstOrDefault(f => f.ChaveAcesso == chaveAcesso);
+        }
     }
 }

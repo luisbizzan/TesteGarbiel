@@ -9,28 +9,38 @@ namespace FWLog.Data.Models
         [Key]
         [Required]
         public long     IdNotaFiscalRecebimento  { get; set; }
-                                                 
+
+        public string   IdUsuarioRecebimento { get; set; }
+
         [Index]                                  
         [Required]                               
         public long     IdFornecedor             { get; set; }
                                                  
         [Required]                               
-        public int      NumeroNF                 { get; set; }
+        public int?     NumeroNF                 { get; set; }
                                                  
         [Required]                               
         public string   Serie                    { get; set; }
-                                                
+        public string   ChaveAcesso              { get; set; }
+
         [Required]                              
         public decimal  Valor                    { get; set; }
                                                 
         [Required]                              
-        public int      QuantidadeVolumes        { get; set; }
+        public int?     QuantidadeVolumes        { get; set; }
                                                 
         [Required]                              
         public DateTime DataHora                 { get; set; }
 
         [Required]
-        public StatusNotaRecebimentoEnum Status  { get; set; }
+        public NotaRecebimentoStatusEnum IdNotaRecebimentoStatus { get; set; }
+
+        [ForeignKey(nameof(IdNotaRecebimentoStatus))]
+        public virtual NotaRecebimentoStatus NotaRecebimentoStatus { get; set; }
+
+
+        [ForeignKey(nameof(IdUsuarioRecebimento))]
+        public virtual AspNetUsers UsuarioRecebimento { get; set; }
 
 
         [ForeignKey(nameof(IdFornecedor))]
