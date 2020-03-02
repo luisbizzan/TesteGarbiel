@@ -77,6 +77,7 @@ function registrarNotaRecebimentoDiv() {
         success: function (result) {
             if (result.Success) {
                 PNotify.success({ text: result.Message });
+                $('#modalNotaRecebimento').modal('toggle');
             } else {
                 PNotify.warning({ text: result.Message });
             }
