@@ -326,7 +326,7 @@ namespace FWLog.Services.Services
         {
             DateTime dataVencimento;
 
-            string where = string.Format("WHERE NUMNOTA = {0} ", codigoIntegracao);
+            string where = string.Format("WHERE NUNOTA = {0} ", codigoIntegracao);
             
             try
             {
