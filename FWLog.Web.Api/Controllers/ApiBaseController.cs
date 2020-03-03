@@ -1,8 +1,8 @@
 ﻿using FWLog.AspNet.Identity;
 using FWLog.Web.Api.App_Start;
 using FWLog.Web.Api.Helpers;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
@@ -17,13 +17,13 @@ using System.Web.Http.ModelBinding;
 namespace FWLog.Web.Api.Controllers
 {
     [ApplicationAuthorize]
-    public class ApiBaseController : ApiController
+    public abstract class ApiBaseController : ApiController
     {
         private WebApiUserManager _userManager;
         private ApplicationRoleManager _roleManager;
         private ApplicationSignInManager _signInManager;
 
-        public WebApiUserManager UserManager
+        protected WebApiUserManager UserManager
         {
             get => _userManager ?? (_userManager = Request.GetOwinContext().GetUserManager<WebApiUserManager>());
         }
@@ -43,30 +43,30 @@ namespace FWLog.Web.Api.Controllers
             get => Request.GetOwinContext().Authentication;
         }
 
-        public ApiBaseController()
+        protected ApiBaseController()
         {
             Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("pt-BR");
             Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
         }
 
-        public IHttpActionResult ApiOk()
+        protected IHttpActionResult ApiOk()
         {
             return Ok();
         }
 
-        public IHttpActionResult ApiOk<T>(T content)
+        protected IHttpActionResult ApiOk<T>(T content)
         {
             return Ok(content);
         }
 
-        public IHttpActionResult ApiBadRequest(string message)
+        protected IHttpActionResult ApiBadRequest(string message)
         {
             LogHelper.Warn(message);
             var apiErrorResponse = ApiErrorBuilder.BuildResponse(message);
             return Content(HttpStatusCode.BadRequest, apiErrorResponse);
         }
 
-        public IHttpActionResult ApiBadRequest(string message, string userName)
+        protected IHttpActionResult ApiBadRequest(string message, string userName)
         {
             if (string.IsNullOrWhiteSpace(userName))
             {
@@ -82,7 +82,7 @@ namespace FWLog.Web.Api.Controllers
             return Content(HttpStatusCode.BadRequest, apiErrorResponse);
         }
 
-        public IHttpActionResult ApiBadRequest(ModelStateDictionary modelState)
+        protected IHttpActionResult ApiBadRequest(ModelStateDictionary modelState)
         {
             if (modelState == null)
             {
@@ -94,13 +94,13 @@ namespace FWLog.Web.Api.Controllers
             return Content(HttpStatusCode.BadRequest, apiErrorResponse);
         }
 
-        public IHttpActionResult ApiUnauthorized(string message)
+        protected IHttpActionResult ApiUnauthorized(string message)
         {
             LogHelper.Warn(message);
             return ApiUnauthorized(message, string.Empty);
         }
 
-        public IHttpActionResult ApiUnauthorized(string message, string userName)
+        protected IHttpActionResult ApiUnauthorized(string message, string userName)
         {
             if (string.IsNullOrWhiteSpace(userName))
             {
@@ -116,13 +116,13 @@ namespace FWLog.Web.Api.Controllers
             return Content(HttpStatusCode.Unauthorized, apiErrorResponse);
         }
 
-        public IHttpActionResult ApiForbidden(string message)
+        protected IHttpActionResult ApiForbidden(string message)
         {
             LogHelper.Warn(message);
             return ApiForbidden(message, string.Empty);
         }
 
-        public IHttpActionResult ApiForbidden(string message, string userName)
+        protected IHttpActionResult ApiForbidden(string message, string userName)
         {
             if (string.IsNullOrWhiteSpace(userName))
             {
@@ -138,14 +138,14 @@ namespace FWLog.Web.Api.Controllers
             return Content(HttpStatusCode.Forbidden, apiErrorResponse);
         }
 
-        public IHttpActionResult ApiNotFound(string message)
+        protected IHttpActionResult ApiNotFound(string message)
         {
             LogHelper.Warn(message);
             var apiErrorResponse = ApiErrorBuilder.BuildResponse(message);
             return Content(HttpStatusCode.NotFound, apiErrorResponse);
         }
 
-        public IHttpActionResult ApiInternalServerErrror(string mensagem, Exception ex)
+        protected IHttpActionResult ApiInternalServerErrror(string mensagem, Exception ex)
         {
             LogHelper.Error(ex);
             var apiErrorResponse = ApiErrorBuilder.BuildResponse(mensagem);
@@ -160,7 +160,7 @@ namespace FWLog.Web.Api.Controllers
             }
         }
 
-        public long IdEmpresa
+        protected long IdEmpresa
         {
             get
             {
@@ -168,7 +168,7 @@ namespace FWLog.Web.Api.Controllers
             }
         }
 
-        public int IdAplicacao
+        protected int IdAplicacao
         {
             get
             {
