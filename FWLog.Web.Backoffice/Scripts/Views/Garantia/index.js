@@ -29,12 +29,14 @@
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
             {
-                action: 'details',
-                href: view.detailsUrl + '?id=' + full.IdGarantia,
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'detailsUrl' },
+                icon: 'fa fa-eye',
                 visible: view.detailsVisible
             }
         ];
     });
+
+    $("#dataTable").on('click', "[action='detailsUrl']", detalhesEntradaConferencia);
 
     var $DataEmissaoInicial = $('#Filter_DataEmissaoInicial').closest('.date');
     var $DataEmissaoFinal = $('#Filter_DataEmissaoFinal').closest('.date');
@@ -234,4 +236,13 @@ function limparUsuarioRecebimento() {
 function limparUsuarioConferencia() {
     $("#Filter_UserNameConferencia").val("");
     $("#Filter_IdUsuarioConferencia").val("");
+}
+
+function detalhesEntradaConferencia() {
+    var id = $(this).data("id");
+    let modalDetalhesEntradaConferencia = $("#modalDetalhesEntradaConferencia");
+
+    modalDetalhesEntradaConferencia.load(CONTROLLER_PATH + "DetalhesEntradaConferencia/" + id, function () {
+        modalDetalhesEntradaConferencia.modal();
+    });
 }

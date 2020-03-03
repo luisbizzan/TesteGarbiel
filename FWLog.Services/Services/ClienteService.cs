@@ -63,9 +63,10 @@ namespace FWLog.Services.Services
                     cliente.IdRepresentante = clienteInt.IdRepresentante == "0" || clienteInt.IdRepresentante == null  
                                                         ? (long?)null 
                                                         : Convert.ToInt64( clienteInt.IdRepresentante);
-                    cliente.IdVendedor = clienteInt.IdVendedor == "0" || clienteInt.IdVendedor == null 
-                                                        ? (long?)null 
-                                                        : Convert.ToInt64(clienteInt.IdVendedor);
+                    // Descomentar quando finalizar a integração de Cliente
+                    //cliente.IdVendedor = clienteInt.IdVendedor == "0" || clienteInt.IdVendedor == null 
+                    //                                    ? (long?)null 
+                    //                                    : Convert.ToInt64(clienteInt.IdVendedor);
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", cliente.CodigoIntegracao.ToString() } };
 

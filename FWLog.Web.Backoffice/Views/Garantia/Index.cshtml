@@ -10,7 +10,7 @@
     @BundleHelper.RenderViewScript(
         new
         {
-            detailsUrl = Url.Action("Details"),
+            detailsUrl = Url.Action("DetalhesEntradaConferencia"),
             detailsVisible = User.HasPermission(Permissions.Garantia.Listar),
             pageDataUrl = Url.Action("PageData")
         }
@@ -34,6 +34,7 @@
                 <div class="col-xs-12 col-md-2 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.NumeroNF)
                     @Html.TextBoxFor(m => m.Filter.NumeroNF, new { @class = "form-control onlyNumber", data_field = "NumeroNF" })
+                    @Html.HiddenFor(m => m.EmptyItem.IdNotaFiscal, new { data_field = "IdNotaFiscal" })
                 </div>
                 <div class="col-xs-12 col-md-5 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.ChaveAcesso)
@@ -175,4 +176,5 @@
 <div class="modal" id="modalFornecedor"></div>
 <div class="modal" id="modalUsuarioRecebimento" data-toggle="modal" data-myvalue="1"></div>
 <div class="modal" id="modalUsuarioConferencia" data-toggle="modal" data-myvalue="2"></div>
+<div class="modal" id="modalDetalhesEntradaConferencia"></div>
 <!-- /table -->

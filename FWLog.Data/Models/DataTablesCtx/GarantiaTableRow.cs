@@ -5,6 +5,7 @@ namespace FWLog.Data.Models.DataTablesCtx
     public class GarantiaTableRow
     {
         public long IdEmpresa { get; set; }
+        public long IdNotaFiscal { get; set; }
         public long? IdGarantia { get; set; }
         public string Cliente { get; set; }
         public string CNPJCliente { get; set; }

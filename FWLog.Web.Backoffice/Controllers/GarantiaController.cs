@@ -13,6 +13,7 @@ using FWLog.Web.Backoffice.Models.GarantiaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using System;
 using System.Linq;
+using ExtensionMethods.String;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -71,16 +72,48 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Garantia.Listar)]
-        public ActionResult Details(int id)
+        public ActionResult DetalhesEntradaConferencia(int id)
         {
-            Garantia garantia = _uow.GarantiaRepository.GetById(id);
+            var notaFiscal = _uow.NotaFiscalRepository.GetById(id);
 
-            if (garantia == null)
+            var itensDaNota = _uow.NotaFiscalItemRepository.ObterItens(id);
+
+            var valorProduto = itensDaNota.Sum(x => x.ValorUnitario);
+
+            var model = new GarantiaDetalhesEntradaConferencia
             {
-                throw new HttpException(404, "Not found");
-            }
+                IdNotaFiscal = id,
+                BaseICMS = notaFiscal.BaseICMS?.ToString(),
+                BaseST = notaFiscal.BaseST?.ToString(),
+                ChaveAcesso = notaFiscal.ChaveAcesso?.ToString(),
+                CienteCNPJ = notaFiscal.Cliente.CNPJCPF.CnpjOuCpf(),
+                DataEmissaoNF = notaFiscal?.DataEmissao.ToString("dd/MM/yyyy"),
+                NroFicticio = notaFiscal.NumeroFicticioNF,
+                NumeroNotaFiscal = string.Concat(notaFiscal?.Numero.ToString(), " - ", notaFiscal.Serie),
+                RazaoSocialCliente = notaFiscal.Cliente.RazaoSocial,
+                ValorFrete = notaFiscal.ValorFrete.ToString("C"),
+                ValorICMS = notaFiscal.ValorICMS?.ToString("C"),
+                ValorProduto = valorProduto.ToString("C"),
+                ValorSeguro = notaFiscal.ValorSeguro?.ToString("C"),
+                ValorST = notaFiscal.ValorST?.ToString("C"),
+                ValorIPI = notaFiscal.ValorIPI?.ToString("C"),
+                ValorTotal = notaFiscal?.ValorTotal.ToString("C"),
+            };
 
-            var model = Mapper.Map<GarantiaDetailsViewModel>(garantia);
+            foreach (var item in itensDaNota)
+            {
+                var entradaConferenciaItem = new GarantiaDetalhesEntradaConferenciaItem
+                {
+                    Referencia = item.Produto.Referencia,
+                    DescricaoProduto = item.Produto.Descricao,
+                    QuantidadeDeProduto = item.Quantidade,
+                    CFOP = item.CFOP.ToString(),
+                    NumeroNotaFiscalOrigem = item.CodigoIntegracaoNFOrigem?.ToString(),
+                    Unidade = item.UnidadeMedida.Sigla
+                };
+
+                model.ItensDaNota.Add(entradaConferenciaItem);
+            }
 
             return View(model);
         }

@@ -320,6 +320,7 @@
     <Compile Include="Models\EtiquetaCtx\LoteEtiquetaViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaDetailsViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaCreateViewModel.cs" />
+    <Compile Include="Models\GarantiaCtx\GarantiaDetalhesEntradaConferencia.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaListViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaRegistroConferencia.cs" />
     <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoCreateViewModel.cs" />
@@ -585,6 +586,7 @@
     <Content Include="Views\MotivoLaudo\Create.cshtml" />
     <Content Include="Views\MotivoLaudo\Edit.cshtml" />
     <Content Include="Views\Garantia\RegistroConferencia.cshtml" />
+    <Content Include="Views\Garantia\DetalhesEntradaConferencia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
