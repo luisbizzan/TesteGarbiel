@@ -15,15 +15,15 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public long IdNotaFiscal { get; set; }
         [Display(Name = "Chave Acesso")]
         public string ChaveAcesso { get; set; }
-        [Display(Name = "Nº Nota")]
+        [Display(Name = "Nota")]
         public string NumeroNotaFiscal { get; set; }
-        [Display(Name = "Nº Fictício(SAV)")]
+        [Display(Name = "Nº Fictício SAV")]
         public string NroFicticio { get; set; }
-        [Display(Name = "Data Emissão da NF")]
+        [Display(Name = "Data Emissão")]
         public string DataEmissaoNF { get; set; }
-        [Display(Name = "CNPJ do Cliente")]
+        [Display(Name = "CNPJ")]
         public string CienteCNPJ { get; set; }
-        [Display(Name = "Razão Social(Cliente)")]
+        [Display(Name = "Cliente")]
         public string RazaoSocialCliente { get; set; }
         [Display(Name = "Base ICMS")]
         public string BaseICMS { get; set; }
