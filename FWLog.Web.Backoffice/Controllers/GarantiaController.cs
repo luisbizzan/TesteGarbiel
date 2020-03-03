@@ -80,7 +80,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var valorProduto = itensDaNota.Sum(x => x.ValorUnitario);
 
-            var model = new GarantiaDetalhesEntradaConferencia
+            var model = new GarantiaDetalhesEntradaConferenciaViewModel
             {
                 IdNotaFiscal = id,
                 BaseICMS = notaFiscal.BaseICMS?.ToString(),
@@ -116,6 +116,50 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             return View(model);
+        }
+
+        [ApplicationAuthorize(Permissions = Permissions.Garantia.RegistrarRecebimento)]
+        public JsonResult ValidarModalRegistroRecebimento(long id)
+        {
+            //var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+            //var notafiscal = _uow.NotaFiscalRepository.GetById(id);
+
+            //if (lote != null || notafiscal.IdNotaFiscalStatus != NotaFiscalStatusEnum.AguardandoRecebimento)
+            //{
+            //    return Json(new AjaxGenericResultModel
+            //    {
+            //        Success = false,
+            //        Message = "Recebimento da mecadoria já se enconta efetivado no sistema.",
+            //    });
+            //}
+
+            //ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(5);
+
+            //if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+            //{
+            //    return Json(new AjaxGenericResultModel
+            //    {
+            //        Success = false,
+            //        Message = "Não há impressora configurada para Etiqueta de Recebimento.",
+            //    });
+            //}
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Garantia.RegistrarRecebimento)]
+        public ActionResult ExibirModalRegistroRecebimento(long id)
+        {
+            var modal = new GarantiaRegistroRecebimentoViewModel
+            {
+                IdNotaFiscal = id
+            };
+
+            return PartialView("RegistroRecebimento", modal);
         }
     }
 }

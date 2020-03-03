@@ -27,16 +27,26 @@
     }, 'Data Emissão Final ou Data Recbimento Final Obrigatório');
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
+        var visivelRegistrarRecibimento = view.registrarRecebimento && full.IdGarantia === null;
+
         return [
             {
+                text: "Detalhes da Nota",
                 attrs: { 'data-id': full.IdNotaFiscal, 'action': 'detailsUrl' },
                 icon: 'fa fa-eye',
                 visible: view.detailsVisible
+            },
+            {
+                text: "Registrar Recebimento",
+                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'registrarRecebimentoUrl' },
+                icon: 'fa fa-pencil-square',
+                visible: visivelRegistrarRecibimento
             }
         ];
     });
 
     $("#dataTable").on('click', "[action='detailsUrl']", detalhesEntradaConferencia);
+    $("#dataTable").on('click', "[action='registrarRecebimentoUrl']", registrarRecebimento);
 
     var $DataEmissaoInicial = $('#Filter_DataEmissaoInicial').closest('.date');
     var $DataEmissaoFinal = $('#Filter_DataEmissaoFinal').closest('.date');
@@ -244,5 +254,36 @@ function detalhesEntradaConferencia() {
 
     modalDetalhesEntradaConferencia.load(CONTROLLER_PATH + "DetalhesEntradaConferencia/" + id, function () {
         modalDetalhesEntradaConferencia.modal();
+    });
+}
+
+function registrarRecebimento() {
+    let id = $(this).data("id");
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "ValidarModalRegistroRecebimento/" + id,
+        method: "POST",
+        cache: false,
+        success: function (result) {
+            debugger
+            let $modalRegistroRecebimento = $("#modalRegistroRecebimento");
+
+            if (result.Success) {
+                $modalRegistroRecebimento.load(HOST_URL + CONTROLLER_PATH + "ExibirModalRegistroRecebimento/" + id, function () {
+                    $modalRegistroRecebimento.modal();
+                    //$("#ChaveAcesso").focus();
+                    //$('#ChaveAcesso').keypress(function (event) {
+                    //    BuscarNotaFiscal();
+                    //});
+                    //$("#RegistrarRecebimentoNota").click(function () {
+                    //    RegistrarNotaFiscal();
+                    //});
+                    //$('.integer').mask("#0", { reverse: true });
+                    //$('.money').mask("#.##0,00", { reverse: true });
+                });
+            } else {
+                PNotify.warning({ text: result.Message });
+            }
+        }
     });
 }

@@ -12,6 +12,8 @@
         {
             detailsUrl = Url.Action("DetalhesEntradaConferencia"),
             detailsVisible = User.HasPermission(Permissions.Garantia.Listar),
+            registrarRecebimento = User.HasPermission(Permissions.Garantia.RegistrarRecebimento),
+            registrarRecebimentoUrl = Url.Action("ExibirModalRegistroRecebimento"),
             pageDataUrl = Url.Action("PageData")
         }
     )
@@ -177,4 +179,5 @@
 <div class="modal" id="modalUsuarioRecebimento" data-toggle="modal" data-myvalue="1"></div>
 <div class="modal" id="modalUsuarioConferencia" data-toggle="modal" data-myvalue="2"></div>
 <div class="modal" id="modalDetalhesEntradaConferencia"></div>
+<div class="modal" id="modalRegistroRecebimento"></div>
 <!-- /table -->

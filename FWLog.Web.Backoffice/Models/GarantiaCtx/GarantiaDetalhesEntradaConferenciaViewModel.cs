@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 {
-    public class GarantiaDetalhesEntradaConferencia
+    public class GarantiaDetalhesEntradaConferenciaViewModel
     {
         public List<GarantiaDetalhesEntradaConferenciaItem> ItensDaNota { get; set; }
 
-        public GarantiaDetalhesEntradaConferencia()
+        public GarantiaDetalhesEntradaConferenciaViewModel()
         {
             ItensDaNota = new List<GarantiaDetalhesEntradaConferenciaItem>();
         }

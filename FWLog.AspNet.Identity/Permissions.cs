@@ -255,11 +255,13 @@ namespace FWLog.AspNet.Identity
         public class Garantia : PermissionGroupBuildItem
         {
             public const string Listar = "GarantiaList";
+            public const string RegistrarRecebimento = "RecebimentoRegistrar";
             //public const string Editar = "GarantiaEdit";
 
             public Garantia() : base(Display.FromString("Solicitação de Garantia"))
             {
                 Register(Listar, Display.FromString("Listar Solicitações de Garantia"));
+                Register(RegistrarRecebimento, Display.FromString("Registrar Recebimento"));
                 //Register(Editar, Display.FromString("Editar Solicitações de Garantia"));
             }
         }
