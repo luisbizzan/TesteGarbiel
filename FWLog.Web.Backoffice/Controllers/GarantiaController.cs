@@ -106,7 +106,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Referencia = item.Produto.Referencia,
                     DescricaoProduto = item.Produto.Descricao,
-                    QuantidadeDeProduto = item.Quantidade,
+                    QuantidadeProduto = item.Quantidade,
                     CFOP = item.CFOP.ToString(),
                     NumeroNotaFiscalOrigem = item.CodigoIntegracaoNFOrigem?.ToString(),
                     Unidade = item.UnidadeMedida.Sigla

@@ -51,7 +51,7 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public string DescricaoProduto { get; set; }
         public string Unidade { get; set; }
         public string CFOP { get; set; }
-        public long QuantidadeDeProduto { get; set; }
+        public long QuantidadeProduto { get; set; }
         public string NumeroNotaFiscalOrigem { get; set; }
     }
 }
