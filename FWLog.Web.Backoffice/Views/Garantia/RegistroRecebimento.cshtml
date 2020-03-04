@@ -14,38 +14,46 @@
             <h4 class="modal-title" id="myModalLabel">Registro da Solicitação de Garantia</h4>
         </div>
         <div class="modal-body">
-                <div class="form-group">
+            <div class="form-group">
+                <div class="row">
                     <div class="col-sm-12 col-md-12">
-                        @Html.LabelFor(m => m.ChaveAcesso)
-                        @Html.TextBoxFor(m => m.ChaveAcesso, new { @class = "form-control integer" })
-                        @Html.ValidationMessageFor(m => m.ChaveAcesso)
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.ChaveAcesso)
+                            @Html.TextBoxFor(m => m.ChaveAcesso, new { @class = "form-control integer", @id="ChaveAcesso" })
+                            @Html.ValidationMessageFor(m => m.ChaveAcesso)
+                        </div>
+                        <span class="text-danger validacaoChaveAcesso"></span>
                     </div>
-                    <span class="text-danger validacaoChaveAcesso"></span>
+                    @Html.HiddenFor(m => m.IdNotaFiscal)
                 </div>
-                @Html.HiddenFor(m => m.IdNotaFiscal)
-                <div class="col-sm-12 col-md-4">
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.NumeroNF)
-                        @Html.TextBoxFor(m => m.NumeroNF, new { @class = "form-control integer" })
+                <div class="row">
+                    <div class="col-sm-12 col-md-4">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.NumeroNF)
+                            @Html.TextBoxFor(m => m.NumeroNF, new { @class = "form-control integer", @id="NumeroNF" })
+                        </div>
                     </div>
-                </div>
-                <div class="col-sm-12 col-md-8">
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.InformacaoTransporte)
-                        @Html.TextBoxFor(m => m.InformacaoTransporte, new { @class = "form-control " })
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-12">
-                    <div class="form-group">
-                        @Html.LabelFor(m => m.Observacao)
-                        @Html.TextAreaFor(m => m.Observacao, new { @class = "form-control", rows = "10", @style = "height:100px !important;" })
-                        @Html.ValidationMessageFor(m => m.Observacao)
+                    <div class="col-sm-12 col-md-8">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.InformacaoTransporte)
+                            @Html.TextBoxFor(m => m.InformacaoTransporte, new { @class = "form-control",@id="InformacaoTransporte" })
+                        </div>
                     </div>
                 </div>
-            <div class="navbar-right">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.Observacao)
+                            @Html.TextAreaFor(m => m.Observacao, new { @class = "form-control", rows = "10", @style = "height:100px !important;",@id="Observacao"  })
+                            @Html.ValidationMessageFor(m => m.Observacao)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row navbar-right">
                 <div class="col-sm-12 col-lg-12">
                     <span class="text-danger validacaoConfirmar"></span>
-                    <button type="button" id="RegistrarConferenciaGarantia" class="btn btn-primary"><i class="fa fa-fw fa-floppy-o"></i> Confirmar</button>
+                    <button type="button" id="RegistrarRecebimentoGarantia" class="btn btn-primary"><i class="fa fa-fw fa-floppy-o"></i> Confirmar</button>
                 </div>
             </div>
         </div>

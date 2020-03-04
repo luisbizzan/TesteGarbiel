@@ -264,6 +264,36 @@ namespace FWLog.Services.Services
             }
         }
 
+        public async Task RegistrarRecebimentoNotaFiscalGarantia(long idNotaFiscal, string userId, string observacao, string informacaoTransportadora)
+        {
+            var garantiaService = new GarantiaService(_uow);
+            using (TransactionScope transactionScope = _uow.CreateTransactionScope())
+            {
+                var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
+
+                await VerificarNotaFiscalCancelada(notafiscal.CodigoIntegracao);
+
+                Garantia garantia = _uow.GarantiaRepository.PesquisarGarantiaPorIdNotaFiscal(idNotaFiscal);
+
+                if (garantia != null)
+                {
+                    throw new BusinessException(string.Format("Já existe uma garantia criada para a Nota Fiscal {0}, portanto o recebimento não pode ser efetuado", idNotaFiscal));
+                }
+
+                if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
+                {
+                    await AtualizarNotaFiscalIntegracao(notafiscal, LoteStatusEnum.Recebido);
+                }
+
+                garantiaService.CriarRecebimentoGarantia(idNotaFiscal, userId, observacao, informacaoTransportadora);
+
+                notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.Recebida;
+
+                _uow.SaveChanges();
+                transactionScope.Complete();
+            }
+        }
+
         public async Task ReceberNotaFiscalAutomatico(string userId)
         {
             List<NotaFiscal> notasfiscais = await _uow.NotaFiscalRepository.ConsultarProcessamentoAutomatico();

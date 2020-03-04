@@ -11,7 +11,8 @@ namespace FWLog.Data.Models
         EtiquetaRecebimento = 5,
         EtiquetaEndereco = 6,        
         EtiquetaDevolucao = 7,        
-        EtiquetaPersonalizada = 8
+        EtiquetaPersonalizada = 8,
+        EtiquetaGarantia = 9
     }
 
     public class ImpressaoItem

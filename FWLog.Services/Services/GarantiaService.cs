@@ -1,5 +1,6 @@
 ﻿using FWLog.Data;
 using FWLog.Data.Models;
+using System;
 
 namespace FWLog.Services.Services
 {
@@ -33,6 +34,22 @@ namespace FWLog.Services.Services
             // Adicionar validações se necessário...
 
             _uow.GarantiaRepository.Delete(garantia);
+            _uow.SaveChanges();
+        }
+
+        public void CriarRecebimentoGarantia(long idNotaFiscal, string userId,string observacao,string informacaoTransportadora)
+        {
+            var garantia = new Garantia
+            {
+                IdGarantiaStatus = GarantiaStatusEnum.Recebido,
+                IdNotaFiscal = idNotaFiscal,
+                DataRecebimento = DateTime.Now,
+                IdUsuarioConferente = userId,
+                Observacao = observacao,
+                InformacaoTransporte = informacaoTransportadora
+            };
+
+            _uow.GarantiaRepository.Add(garantia);
             _uow.SaveChanges();
         }
     }
