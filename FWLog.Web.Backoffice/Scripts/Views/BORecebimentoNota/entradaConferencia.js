@@ -264,7 +264,6 @@
 
     function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia) {
         overlay(true);
-        debugger
         if (quantidadePorCaixa === '')
             quantidadePorCaixa = 0;
 
