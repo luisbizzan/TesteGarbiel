@@ -264,7 +264,7 @@
 
     function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia) {
         overlay(true);
-        
+        debugger
         if (quantidadePorCaixa === '')
             quantidadePorCaixa = 0;
 
@@ -306,6 +306,9 @@
 
                     overlay(false);
                 }
+            },
+            error: function (request, status, error) {
+                PNotify.error({ text: request.responseText });
             }
         });
     }
@@ -458,14 +461,14 @@
                     $("#Usuario").val('');
                     $("#Senha").val('');
 
-                    $referencia.focus();
+                    $("#Referencia").focus();
                 }
                 else {
                     PNotify.warning({ text: result.Message });
                 }
             },
             error: function (request, status, error) {
-                PNotify.warning({ text: result.Message });
+                PNotify.error({ text: request.Message });
             }
         });
     }
@@ -505,7 +508,7 @@
                 }
             },
             error: function (request, status, error) {
-                PNotify.warning({ text: result.Message });
+                PNotify.error({ text: request.Message });
             }
         });
     }
@@ -676,7 +679,7 @@ function consultarPecasHaMaisConferencia() {
             }
         },
         error: function (request, status, error) {
-            PNotify.warning({ text: result.Message });
+            PNotify.error({ text: request.Message });
         }
     });
 
