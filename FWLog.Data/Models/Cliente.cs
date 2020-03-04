@@ -35,19 +35,14 @@ namespace FWLog.Data.Models
         [Required]
         public bool Ativo { get; set; }
 
-        [Index]
-        public long? IdRepresentante { get; set; }
+        public long? IdRepresentanteExterno { get; set; }
 
-        // Descomentar quando finalizar a integração de Cliente
-        //[Index]
-        //public long? IdVendedor { get; set; }
+        public long? IdRepresentanteInterno { get; set; }
 
-        [ForeignKey(nameof(IdRepresentante))]
-        public virtual Representante Representante { get; set; }
+        [ForeignKey(nameof(IdRepresentanteInterno))]
+        public virtual Representante RepresentanteInterno { get; set; }
 
-        // Descomentar quando finalizar a integração de Cliente
-        //[Index]
-        //[ForeignKey(nameof(IdVendedor))]
-        //public virtual Representante Vendedor { get; set; }
+        [ForeignKey(nameof(IdRepresentanteExterno))]
+        public virtual Representante RepresentanteExterno { get; set; }
     }
 }

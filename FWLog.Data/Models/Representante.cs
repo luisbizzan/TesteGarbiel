@@ -19,5 +19,8 @@ namespace FWLog.Data.Models
 
         [Required]
         public bool Ativo { get; set; }
+        
+        [Required]
+        public int CodigoIntegracaoVendedor { get; set; }
     }
 }
