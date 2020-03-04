@@ -5,14 +5,13 @@ namespace FWLog.AspNet.Identity.Building
 {
     public class Display
     {
-        
-        private string _value;
+        private string Value { get; }
 
         public bool IsFromResource { get; }
 
         private Display(string value, bool isFromResource)
         {
-            _value = value;
+            Value = value;
             IsFromResource = isFromResource;
         }
 
@@ -30,11 +29,11 @@ namespace FWLog.AspNet.Identity.Building
         {
             if (IsFromResource)
             {
-                return resourceManager != null ? resourceManager.GetString(_value) : throw new InvalidOperationException("The parameter resourceManager needs to be set");
+                return resourceManager != null ? resourceManager.GetString(Value) : throw new InvalidOperationException("The parameter resourceManager needs to be set");
             }
             else
             {
-                return _value;
+                return Value;
             }
         }
     }
