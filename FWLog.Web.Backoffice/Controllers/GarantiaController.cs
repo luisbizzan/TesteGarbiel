@@ -166,7 +166,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 IdNotaFiscal = id
             };
 
-            return PartialView("RegistroRecebimento", modal);
+            return PartialView("RegistroRecebimentoGarantia", modal);
         }
 
         [HttpPost]

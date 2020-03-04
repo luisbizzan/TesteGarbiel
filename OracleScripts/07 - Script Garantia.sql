@@ -344,6 +344,7 @@ ALTER TABLE DART."Cliente" ADD CONSTRAINT "CLIENTE_FK1" FOREIGN KEY ("IdRepresen
 ALTER TABLE DART."Cliente" ADD "IdRepresentanteInterno" NUMBER(19,0) NULL CONSTRAINT "CLIENTE_FK2" REFERENCES DART."Representante"("IdRepresentante");
 CREATE INDEX "Cliente_INDEX5" ON "Cliente" ("IdRepresentanteExterno" ASC);
 CREATE INDEX "Cliente_INDEX6" ON "Cliente" ("IdRepresentanteInterno" ASC);
+ALTER TABLE DART."Cliente" DROP COLUMN "TipoCliente";
 ALTER TABLE DART."Representante" ADD "CodigoIntegracaoVendedor" NUMBER(10,0) NOT NULL;
 CREATE INDEX "Representante_INDEX2" ON "Representante" ("CodigoIntegracaoVendedor" ASC);
 ALTER TABLE DART."NotaFiscal" ADD "IdCliente" NUMBER(19,0);
@@ -358,6 +359,7 @@ ALTER TABLE DART."NotaFiscalItem" ADD "CodigoIntegracaoNFOrigem" NUMBER(10,0);
 ALTER TABLE DART."NotaFiscalItem" ADD "SequenciaNFOrigem" VARCHAR2(22);
 ALTER TABLE DART."NotaFiscalItem" ADD CFOP VARCHAR2(22);
 ALTER TABLE DART."NotaFiscalItem" ADD "CodigoBarras" VARCHAR2(100);
+ALTER TABLE DART."NotaFiscal" ADD CONSTRAINT "NotaFiscal_FK7" FOREIGN KEY ("IdCliente") REFERENCES DART."Cliente"("IdCliente");
 
 
 

@@ -21,6 +21,7 @@ namespace FWLog.Data.Models
         public bool Ativo { get; set; }
         
         [Required]
+        [Index]
         public int CodigoIntegracaoVendedor { get; set; }
     }
 }

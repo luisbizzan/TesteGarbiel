@@ -128,7 +128,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                 NumeroNF = e.NotaFiscal.Numero,
                 NumeroFicticioNF = e.NotaFiscal.NumeroFicticioNF,
                 DataEmissao = e.NotaFiscal.DataEmissao,
-                //Tratar quando for MinValue
                 DataRecebimento = e.DataRecebimento != DateTime.MinValue ? DateTime.Parse(e.DataRecebimento.ToString("dd//MM/yyyy")) : (DateTime?)null,                
                 GarantiaStatus = e.GarantiaStatus.Descricao,
                 IdNotaFiscal = e.NotaFiscal.IdNotaFiscal

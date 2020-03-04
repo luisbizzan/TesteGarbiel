@@ -585,8 +585,8 @@
     <Content Include="Scripts\Views\Transportadora\searchModal.js" />
     <Content Include="Views\MotivoLaudo\Create.cshtml" />
     <Content Include="Views\MotivoLaudo\Edit.cshtml" />
-    <Content Include="Views\Garantia\RegistroRecebimento.cshtml" />
-    <Content Include="Views\Garantia\DetalhesEntradaConferencia.cshtml" />
+    <Content Include="Views\Garantia\RegistroRecebimentoGarantia.cshtml" />
+    <Content Include="Views\Garantia\DetalhesEntradaConferenciaGarantia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
