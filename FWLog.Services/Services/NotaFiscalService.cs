@@ -190,6 +190,15 @@ namespace FWLog.Services.Services
                         _uow.NotaFiscalRepository.Add(notafiscal);
                     }
 
+                    try
+                    {
+                        await AtualizarNotaFiscalRecebimento(notafiscal.ChaveAcesso).ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        throw new Exception(string.Format("Erro ao atualizar a nota fiscal de recebimento de sequinte chave de acesso: {0}.", notafiscal.ChaveAcesso));
+                    }
+
                     _uow.SaveChanges();
                 }
                 catch (Exception ex)
@@ -199,6 +208,28 @@ namespace FWLog.Services.Services
 
                     continue;
                 }
+            }
+        }
+
+        public async Task AtualizarNotaFiscalRecebimento(string chaveAcesso)
+        {
+            try
+            {
+                //Verificar se NF já cadastrada no sistema e não sincronizada.
+                var notafiscalRecebimento = _uow.NotaFiscalRecebimentoRepository.ObterNotaFiscalRecebimentoRegistrada(chaveAcesso);
+
+                if (notafiscalRecebimento != null)
+                {
+                    notafiscalRecebimento.DataHoraSincronismo = DateTime.Now;
+                    notafiscalRecebimento.IdNotaRecebimentoStatus = NotaRecebimentoStatusEnum.Sincronizado;
+
+                    _uow.NotaFiscalRecebimentoRepository.Update(notafiscalRecebimento);
+                    _uow.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 
@@ -276,6 +307,34 @@ namespace FWLog.Services.Services
             }
         }
 
+        public async Task RegistrarRecebimentoNotaFiscalDiv(string  idUsuarioRecebimento, 
+                                                            string  chaveAcesso,
+                                                            long    idFornecedor,
+                                                            int     numeroNf,
+                                                            string  serie,
+                                                            decimal valor,
+                                                            int?    quantidadeVolumes = null)
+        {
+            using (TransactionScope transactionScope = _uow.CreateTransactionScope())
+            {
+                var _notaFiscalRecebimento = new NotaFiscalRecebimento
+                {
+                    IdUsuarioRecebimento = idUsuarioRecebimento,
+                    ChaveAcesso = chaveAcesso,
+                    IdFornecedor = idFornecedor,
+                    NumeroNF = numeroNf,
+                    Serie = serie,
+                    Valor = valor,
+                    QuantidadeVolumes   = quantidadeVolumes,
+                    DataHoraRegistro    = DateTime.Now,
+                    IdNotaRecebimentoStatus = NotaRecebimentoStatusEnum.Registrado,
+                };
+
+                _uow.NotaFiscalRecebimentoRepository.Add(_notaFiscalRecebimento);
+                _uow.SaveChanges();
+                transactionScope.Complete();
+            }
+        }
         public async Task ReceberNotaFiscalAutomatico(string userId)
         {
             List<NotaFiscal> notasfiscais = await _uow.NotaFiscalRepository.ConsultarProcessamentoAutomatico();
@@ -298,7 +357,7 @@ namespace FWLog.Services.Services
         {
             DateTime dataVencimento;
 
-            string where = string.Format("WHERE NUMNOTA = {0} ", codigoIntegracao);
+            string where = string.Format("WHERE NUNOTA = {0} ", codigoIntegracao);
             
             try
             {

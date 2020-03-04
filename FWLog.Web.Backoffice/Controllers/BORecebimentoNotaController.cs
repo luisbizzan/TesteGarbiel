@@ -74,7 +74,8 @@ namespace FWLog.Web.Backoffice.Controllers
                         Value = x.IdLoteStatus.GetHashCode().ToString(),
                         Text = x.Descricao,
                     }), "Value", "Text"
-                )}
+                )
+                }
             };
 
             model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
@@ -407,6 +408,142 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
+
+
+
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
+        public JsonResult ValidarNotaRecebimento(string  chaveAcesso, long? idFornecedor, int? numeroNF, string serie, decimal? valor, int? quantidadeVolumes)
+        {
+            //Valida chave de cesso
+            var chaveValida = false;
+
+            if (string.IsNullOrWhiteSpace(chaveAcesso))
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Informe a chave de acesso da NF-e.",
+                });
+            }
+
+            if (chaveAcesso.Length != 44)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Chave de acesso não possui 44 digitos.",
+                });
+            }
+
+            string chaveacessosemdigito = chaveAcesso.Substring(0, 43);
+            string digitochaveacesso = chaveAcesso.Substring(chaveAcesso.Length - 1);
+
+            Int32 Peso = 2, Soma = 0, Contador, Digito;
+
+            for (Contador = (chaveacessosemdigito.Length - 1); Contador >= 0; Contador--)
+            {
+                Soma = Soma + (Convert.ToInt32(chaveacessosemdigito[Contador].ToString()) * Peso);
+
+                if (Peso < 9)
+                    Peso++;
+                else
+                    Peso = 2;
+            }
+
+            Digito = 11 - (Soma % 11);
+
+            if (Digito > 9) Digito = 0;
+
+            if (digitochaveacesso == Digito.ToString())
+                chaveValida = true;
+            else
+                chaveValida = false;
+
+            if (!chaveValida)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Chave da NF-e invalida.",
+                });
+            }
+
+
+            //Verificar se NF já cadastrada no sistema.
+            var notafiscal = _uow.NotaFiscalRepository.ObterPorChave(chaveAcesso);
+            var notafiscalRecebimento = _uow.NotaFiscalRecebimentoRepository.ObterPorChave(chaveAcesso);
+
+            if (notafiscal != null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Nota Fiscal já existe e foi efetivada no sistema.",
+                });
+            }
+
+
+            if (notafiscalRecebimento != null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Nota Fiscal já foi registrada no sistema.",
+                });
+ 
+            }
+
+            if (!(idFornecedor > 0))
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Informe o Fornecedor."
+                });
+            }
+
+            if (!(numeroNF > 0))
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Informe o número da Nota Fiscal."
+                });
+            }
+
+            if (string.IsNullOrWhiteSpace(serie))
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Informe a série da NF-e.",
+                });
+            }
+
+            if (!(valor > 0))
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Informe o valor da Nota Fiscal para confirmar o recebimento."
+                });
+            }
+
+            if (!(quantidadeVolumes > 0))
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Informe a quantidade de volumes para confirmar o recebimento."
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+        }
+
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public JsonResult ValidarModalRegistroRecebimento(long id)
         {
@@ -449,6 +586,18 @@ namespace FWLog.Web.Backoffice.Controllers
             };
 
             return PartialView("RegistroRecebimento", modal);
+        }
+
+
+        [HttpGet]
+        [ApplicationAuthorize]
+        public ActionResult NotaRecebimento()
+        {
+            var viewModel = new BONotaRecebimentoViewModel
+            {
+            };
+
+            return PartialView("NotaRecebimento", viewModel);
         }
 
         [HttpPost]
@@ -507,6 +656,38 @@ namespace FWLog.Web.Backoffice.Controllers
             };
 
             return PartialView("RegistroRecebimentoDetalhes", model);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
+        public async Task<JsonResult> SalvarNotaRecebimentoDiv(string chaveAcesso, long idFornecedor, int numeroNF, string serie, decimal valor, int quantidadeVolumes)
+        {
+            try
+            {
+                await _notaFiscalService.RegistrarRecebimentoNotaFiscalDiv(User.Identity.GetUserId(), 
+                                                                           chaveAcesso,
+                                                                           idFornecedor,
+                                                                           numeroNF,
+                                                                           serie,
+                                                                           valor,
+                                                                           quantidadeVolumes).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não foi possível salvar a nota fiscal de recebimento. Tente novamente."
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = "Recebimento da nota fiscal registrado com sucesso."
+            });
         }
 
         [HttpPost]
@@ -971,7 +1152,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             //Captura o Usuário que está iniciando a conferência novamente.
             var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
-            
+
             var model = new BOEntradaConferenciaViewModel
             {
                 IdNotaFiscal = conferencia.Lote.NotaFiscal.IdNotaFiscal,

@@ -28,9 +28,13 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         //[ApplicationAuthorize]
-        public ActionResult SearchModal()
+        public ActionResult SearchModal(string id)
         {
-            var model = new BOFornecedorSearchModalViewModel();
+            var model = new BOFornecedorSearchModalViewModel()
+            {
+                Origem = id
+            };
+
             return View(model);
         }
 
