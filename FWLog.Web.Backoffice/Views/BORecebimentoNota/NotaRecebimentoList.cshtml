@@ -1,0 +1,157 @@
+﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.NotaRecebimentoListViewModel
+@using FWLog.AspNet.Identity
+
+@{
+    /**/
+
+    ViewBag.Title = "Mercadorias sem Notas Fiscais";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @FWLog.Web.Backoffice.Helpers.Bundling.BundleHelper.RenderViewScript(
+            new
+            {
+                detailsVisible = User.HasPermission(Permissions.Recebimento.List),
+                pageDataUrl = Url.Action("PageData")
+                }
+            )
+}
+
+<form data-filter="form" data-filter-for="dataTable" class="form-filter" id="formRecebimentoNota">
+    <input type="hidden" id="tipoImpressora" />
+    <input type="hidden" id="relatorioImprimir" />
+    <input type="hidden" id="idNotaFiscalImprimir" />
+    <div class="x_panel">
+        <div class="x_title">
+            <h2 class="collapse-link">
+                <i class="fa fa-chevron-down fa-fw"></i> @Resources.CommonStrings.FilterHeader
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content" style="display: block;">
+            <div class="row">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdFornecedor, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.NomeFornecedor, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarFornecedor" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparFornecedor" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdFornecedor, new { data_field = "IdFornecedor" })
+                </div>
+                <div class="col-xs-12 col-md-2 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.NumeroNF)
+                    @Html.TextBoxFor(m => m.Filter.NumeroNF, new { @class = "form-control onlyNumber", data_field = "NumeroNF" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.DataRegistroInicial)
+                    <div class='input-group date'>
+                        @Html.TextBoxFor(m => m.Filter.DataRegistroInicial, new { @class = "form-control dateFormat", data_field = "DataRegistroInicial" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.DataRegistroFinal)
+                    <div class='input-group date'>
+                        @Html.TextBoxFor(m => m.Filter.DataRegistroFinal, new { @class = "form-control dateFormat", data_field = "DataRegistroFinal" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.DataSincronismoInicial)
+                    <div class='input-group date'>
+                        @Html.TextBoxFor(m => m.Filter.DataSincronismoInicial, new { @class = "form-control dateFormat", data_field = "DataSincronismoInicial" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.DataSincronismoFinal)
+                    <div class='input-group date'>
+                        @Html.TextBoxFor(m => m.Filter.DataSincronismoFinal, new { @class = "form-control dateFormat", data_field = "DataSincronismoFinal" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.DiasAguardando)
+                    @Html.TextBoxFor(m => m.Filter.DiasAguardando, new { @class = "form-control onlyNumber", data_field = "DiasAguardando" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdUsuarioRecebimento, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.UserNameRecebimento, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarUsuarioRecebimento" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparUsuarioRecebimento" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdUsuarioRecebimento, new { data_field = "IdUsuarioRecebimento" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.IdStatus)
+                    @Html.DropDownListFor(m => m.Filter.IdStatus, Model.Filter.ListaStatus, "Todos", new { @class = "form-control", data_field = "IdStatus" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 form-buttons">
+                    <button type="button" class="btn btn-default" data-filter="clear" id="limpaPesquisaNotaRecebimento">@Resources.CommonStrings.ClearAction</button>
+                    <button type="button" class="btn btn-primary" data-filter="search" id="pesquisaNotaRecebimento">@Resources.CommonStrings.SearchAction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Mercadorias sem Nota Fiscal</h2>
+                <div class="nav navbar-right">
+                    <div class="col-xs-12">
+                        <a id="downloadRelatorio" data-toggle="tooltip" title="Download Relatório" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
+                        <a id="imprimirRelatorio" data-toggle="tooltip" title="Imprimir Relatório" class="btn btn-default"><i class="fa fa-fw fa-print"></i></a>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table id="dataTable" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.NumeroNF)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Serie)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.NomeFornecedor)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataHoraRegistro)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataHoraSincronismo)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DiasAguardando)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.UserNameRecebimento)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Status)</th>
+                            <th>@Resources.CommonStrings.ActionsLabel</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modalFornecedor"              data-toggle="modal"></div>
+<div class="modal" id="modalUsuarioRecebimento"      data-toggle="modal"></div>
+<div class="modal" id="modalEtiquetaNotaRecebimento" data-toggle="modal"></div>
+<div class="modal fade" id="modalImpressoras"        data-backdrop="static"></div>
+
+
+
+

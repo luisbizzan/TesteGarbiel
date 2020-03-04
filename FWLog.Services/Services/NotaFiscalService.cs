@@ -190,6 +190,15 @@ namespace FWLog.Services.Services
                         _uow.NotaFiscalRepository.Add(notafiscal);
                     }
 
+                    try
+                    {
+                        await AtualizarNotaFiscalRecebimento(notafiscal.ChaveAcesso).ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        throw new Exception(string.Format("Erro ao atualizar a nota fiscal de recebimento de sequinte chave de acesso: {0}.", notafiscal.ChaveAcesso));
+                    }
+
                     _uow.SaveChanges();
                 }
                 catch (Exception ex)
@@ -199,6 +208,28 @@ namespace FWLog.Services.Services
 
                     continue;
                 }
+            }
+        }
+
+        public async Task AtualizarNotaFiscalRecebimento(string chaveAcesso)
+        {
+            try
+            {
+                //Verificar se NF já cadastrada no sistema e não sincronizada.
+                var notafiscalRecebimento = _uow.NotaFiscalRecebimentoRepository.ObterNotaFiscalRecebimentoRegistrada(chaveAcesso);
+
+                if (notafiscalRecebimento != null)
+                {
+                    notafiscalRecebimento.DataHoraSincronismo = DateTime.Now;
+                    notafiscalRecebimento.IdNotaRecebimentoStatus = NotaRecebimentoStatusEnum.Sincronizado;
+
+                    _uow.NotaFiscalRecebimentoRepository.Update(notafiscalRecebimento);
+                    _uow.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 
@@ -294,8 +325,8 @@ namespace FWLog.Services.Services
                     NumeroNF = numeroNf,
                     Serie = serie,
                     Valor = valor,
-                    QuantidadeVolumes = quantidadeVolumes,
-                    DataHoraRegistro = DateTime.Now,
+                    QuantidadeVolumes   = quantidadeVolumes,
+                    DataHoraRegistro    = DateTime.Now,
                     IdNotaRecebimentoStatus = NotaRecebimentoStatusEnum.Registrado,
                 };
 

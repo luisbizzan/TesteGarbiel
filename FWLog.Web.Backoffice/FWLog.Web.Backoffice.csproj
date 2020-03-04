@@ -279,6 +279,7 @@
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\HistoricoQuarentenaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BONotaRecebimentoViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\NotaRecebimentoListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\PesquisaLoteModalViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirEtiquetaRecebimentoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\RelatorioResumoEtiquetagemViewModel.cs" />
@@ -592,6 +593,7 @@
     <Content Include="Scripts\vendors\onScan\onscan.js" />
     <Content Include="Scripts\vendors\onScan\onscan.min.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\notaRecebimentoList.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\notaRecebimento.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoEtiquetagem.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoProducao.js" />
@@ -688,6 +690,7 @@
     <Content Include="Views\BORecebimentoNota\PesquisaLote.cshtml" />
     <Content Include="Views\BORecebimentoNota\NotaRecebimentoDetalhes.cshtml" />
     <Content Include="Views\BORecebimentoNota\NotaRecebimento.cshtml" />
+    <Content Include="Views\BORecebimentoNota\NotaRecebimentoList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
