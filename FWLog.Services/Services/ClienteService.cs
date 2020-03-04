@@ -29,10 +29,10 @@ namespace FWLog.Services.Services
 
             StringBuilder where = new StringBuilder();
             where.Append("WHERE ");
-            where.Append("CGC_CPF IS NOT NULL ");
-            where.Append("AND RAZAOSOCIAL IS NOT NULL ");
-            where.Append("AND CLIENTE = 'S' ");
-            where.Append("AND AD_INTEGRARFWLOG = '1' ");
+            where.Append("TGFPAR.CGC_CPF IS NOT NULL ");
+            where.Append("AND TGFPAR.RAZAOSOCIAL IS NOT NULL ");
+            where.Append("AND TGFPAR.CLIENTE = 'S' ");
+            where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
 
             List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString());
 
@@ -58,15 +58,13 @@ namespace FWLog.Services.Services
                     cliente.NomeFantasia = clienteInt.NomeFantasia;
                     cliente.CNPJCPF = clienteInt.CNPJ;
                     cliente.RazaoSocial = clienteInt.RazaoSocial;
-                    //cliente.Classificacao = clienteInt.Classificacao;
-                    cliente.Classificacao = "Padrão";
-                    cliente.IdRepresentante = clienteInt.IdRepresentante == "0" || clienteInt.IdRepresentante == null  
-                                                        ? (long?)null 
-                                                        : Convert.ToInt64( clienteInt.IdRepresentante);
-                    // Descomentar quando finalizar a integração de Cliente
-                    //cliente.IdVendedor = clienteInt.IdVendedor == "0" || clienteInt.IdVendedor == null 
-                    //                                    ? (long?)null 
-                    //                                    : Convert.ToInt64(clienteInt.IdVendedor);
+                    cliente.Classificacao = clienteInt.Classificacao;
+                    cliente.IdRepresentanteInterno = clienteInt.IdRepresentanteInterno == "0" || clienteInt.IdRepresentanteInterno == null
+                                                        ? (long?)null
+                                                        : _unitOfWork.RepresentanteRepository.BuscarCodigoPeloCodigoIntegracaoVendedor(Convert.ToInt64(clienteInt.IdRepresentanteInterno));
+                    cliente.IdRepresentanteExterno = clienteInt.IdRepresentanteExterno == "0" || clienteInt.IdRepresentanteExterno == null
+                                                        ? (long?)null
+                                                        : _unitOfWork.RepresentanteRepository.BuscarCodigoPeloCodigoIntegracaoVendedor(Convert.ToInt64(clienteInt.IdRepresentanteExterno));
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", cliente.CodigoIntegracao.ToString() } };
 

@@ -1,6 +1,8 @@
-﻿using FWLog.Data;
+﻿using FWLog.AspNet.Identity;
+using FWLog.Data;
 using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Services;
+using FWLog.Web.Api.Helpers;
 using FWLog.Web.Api.Models.Etiqueta;
 using System;
 using System.Web.Http;
@@ -19,7 +21,7 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/v1/etiqueta/endereco")]
+        [Route("api/v1/etiqueta/endereco/imprimir")]
         public IHttpActionResult ImprimirEtiquetaEndereco(ImprimirEtiquetaEnderecoRequisicao requisicao)
         {
             if (!ModelState.IsValid)
