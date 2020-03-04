@@ -268,7 +268,6 @@ function registrarRecebimento() {
             let $modalRegistroRecebimento = $("#modalRegistroRecebimento");
             if (result.Success) {
                 $modalRegistroRecebimento.load(HOST_URL + CONTROLLER_PATH + "ExibirModalRegistroRecebimento/" + id, function () {
-                    debugger
                     $modalRegistroRecebimento.modal();
                     $("#ChaveAcesso").focus();
 
@@ -361,10 +360,10 @@ function cliclkRegistroRecebemimento() {
 }
 
 function document_Keydown(e) {
-    debugger
     if (e.which == 13) {
         $('#RegistrarRecebimentoGarantia').click();
         cliclkRegistroRecebemimento();
     }
 }
+
 
