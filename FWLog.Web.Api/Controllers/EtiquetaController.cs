@@ -22,7 +22,6 @@ namespace FWLog.Web.Api.Controllers
 
         [HttpPost]
         [Route("api/v1/etiqueta/endereco/imprimir")]
-        [ApplicationAuthorize(Permissions = Permissions.Role.List)]
         public IHttpActionResult ImprimirEtiquetaEndereco(ImprimirEtiquetaEnderecoRequisicao requisicao)
         {
             if (!ModelState.IsValid)
