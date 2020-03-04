@@ -38,13 +38,16 @@ namespace FWLog.Data.Models
         [Index]
         public long? IdRepresentante { get; set; }
 
-        [Index]
-        public long? IdVendedor { get; set; }
+        // Descomentar quando finalizar a integração de Cliente
+        //[Index]
+        //public long? IdVendedor { get; set; }
 
         [ForeignKey(nameof(IdRepresentante))]
         public virtual Representante Representante { get; set; }
 
-        [ForeignKey(nameof(IdVendedor))]
-        public virtual Representante Vendedor { get; set; }
+        // Descomentar quando finalizar a integração de Cliente
+        //[Index]
+        //[ForeignKey(nameof(IdVendedor))]
+        //public virtual Representante Vendedor { get; set; }
     }
 }

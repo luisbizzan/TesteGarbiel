@@ -74,7 +74,8 @@ namespace FWLog.Web.Backoffice.Controllers
                         Value = x.IdLoteStatus.GetHashCode().ToString(),
                         Text = x.Descricao,
                     }), "Value", "Text"
-                )}
+                )
+                }
             };
 
             model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
@@ -970,7 +971,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             //Captura o Usuário que está iniciando a conferência novamente.
             var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
-            
+
             var model = new BOEntradaConferenciaViewModel
             {
                 IdNotaFiscal = conferencia.Lote.NotaFiscal.IdNotaFiscal,
@@ -1184,7 +1185,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 //Registrar conferência.
-                var conferenciaRegistro = await _conferenciaService.RegistrarConferencia(conferencia.Lote, conferencia.Produto, IdUsuario, inicioConferencia, idTipoConferencia, quantidadePorCaixa, quantidadeCaixa);
+                var conferenciaRegistro = await _conferenciaService.RegistrarConferencia(conferencia.Lote, conferencia.Produto, IdUsuario, inicioConferencia, idTipoConferencia, quantidadePorCaixa, quantidadeCaixa).ConfigureAwait(false);
 
                 #region Impressão Automática de Etiquetas
 

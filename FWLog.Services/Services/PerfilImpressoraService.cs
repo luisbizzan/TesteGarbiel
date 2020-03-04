@@ -8,7 +8,7 @@ namespace FWLog.Services.Services
 {
     public class PerfilImpressoraService
     {
-        UnitOfWork _uow;
+        private readonly UnitOfWork _uow;
 
         public PerfilImpressoraService(UnitOfWork uow)
         {

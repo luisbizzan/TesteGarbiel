@@ -128,8 +128,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                 NumeroNF = e.NotaFiscal.Numero,
                 NumeroFicticioNF = e.NotaFiscal.NumeroFicticioNF,
                 DataEmissao = e.NotaFiscal.DataEmissao,
-                DataRecebimento = e.DataRecebimento,                
-                GarantiaStatus = e.GarantiaStatus.Descricao
+                //Tratar quando for MinValue
+                DataRecebimento = e.DataRecebimento != DateTime.MinValue ? DateTime.Parse(e.DataRecebimento.ToString("dd//MM/yyyy")) : (DateTime?)null,                
+                GarantiaStatus = e.GarantiaStatus.Descricao,
+                IdNotaFiscal = e.NotaFiscal.IdNotaFiscal
             });
 
             totalRecordsFiltered = queryResult.Count();
@@ -140,6 +142,16 @@ namespace FWLog.Data.Repository.GeneralCtx
                 .Take(filter.Length);
 
             return queryResult.ToList();
+        }
+
+        public long BuscarNotaPeloIdGarantia(int idGarantia)
+        {
+            return Entities.Garantia.Where(x => x.IdGarantia == idGarantia).Select(x => x.IdNotaFiscal).FirstOrDefault();
+        }
+
+        public Garantia PesquisarGarantiaPorIdNotaFiscal(long idNotaFiscal)
+        {
+            return Entities.Garantia.FirstOrDefault(x => x.IdNotaFiscal == idNotaFiscal);
         }
     }
 }
