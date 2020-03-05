@@ -386,6 +386,9 @@ INSERT INTO DART."GarantiaStatus" ("IdGarantiaStatus","Descricao")
 	VALUES (10,'Estorno');
 	
 	ALTER TABLE DART."GarantiaStatus" MODIFY "Descricao" VARCHAR2(30);
+	
+	ALTER TABLE DART."Cliente" MODIFY "Classificacao" VARCHAR2(14) NULL;
+
 
 
 /
