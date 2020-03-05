@@ -19,7 +19,7 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/v1/etiqueta/endereco")]
+        [Route("api/v1/etiqueta/endereco/imprimir")]
         public IHttpActionResult ImprimirEtiquetaEndereco(ImprimirEtiquetaEnderecoRequisicao requisicao)
         {
             if (!ModelState.IsValid)
@@ -39,7 +39,7 @@ namespace FWLog.Web.Api.Controllers
 
                 return ApiOk();
             }
-            catch(BusinessException ex)
+            catch (BusinessException ex)
             {
                 return ApiInternalServerErrror("Erro na impressora", ex);
             }
