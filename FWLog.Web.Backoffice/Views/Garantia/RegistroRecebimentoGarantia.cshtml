@@ -13,13 +13,13 @@
             </button>
             <h4 class="modal-title" id="myModalLabel">Registro da Solicitação de Garantia</h4>
         </div>
-        <div class="modal-body">
+        <div class="modal-body"  style="overflow: auto; max-height: calc(90vh - 40px);">
             <div class="form-group">
                 <div class="row">
                     <div class="col-sm-12 col-md-12">
                         <div class="form-group">
                             @Html.LabelFor(m => m.ChaveAcesso)
-                            @Html.TextBoxFor(m => m.ChaveAcesso, new { @class = "form-control integer", @id="ChaveAcesso" })
+                            @Html.TextBoxFor(m => m.ChaveAcesso, new { @class = "form-control integer", @id = "ChaveAcesso" })
                             @Html.ValidationMessageFor(m => m.ChaveAcesso)
                         </div>
                         <span class="text-danger validacaoChaveAcesso"></span>
@@ -30,13 +30,13 @@
                     <div class="col-sm-12 col-md-4">
                         <div class="form-group">
                             @Html.LabelFor(m => m.NumeroNF)
-                            @Html.TextBoxFor(m => m.NumeroNF, new { @class = "form-control integer", @id="NumeroNF" })
+                            @Html.TextBoxFor(m => m.NumeroNF, new { @class = "form-control integer", @id = "NumeroNF" })
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-8">
                         <div class="form-group">
                             @Html.LabelFor(m => m.InformacaoTransporte)
-                            @Html.TextBoxFor(m => m.InformacaoTransporte, new { @class = "form-control",@id="InformacaoTransporte" })
+                            @Html.TextBoxFor(m => m.InformacaoTransporte, new { @class = "form-control", @id = "InformacaoTransporte" })
                         </div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                     <div class="col-sm-12 col-md-12">
                         <div class="form-group">
                             @Html.LabelFor(m => m.Observacao)
-                            @Html.TextAreaFor(m => m.Observacao, new { @class = "form-control", rows = "10", @style = "height:100px !important;",@id="Observacao"  })
+                            @Html.TextAreaFor(m => m.Observacao, new { @class = "form-control", rows = "10", @style = "height:100px !important;", @id = "Observacao" })
                             @Html.ValidationMessageFor(m => m.Observacao)
                         </div>
                     </div>

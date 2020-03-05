@@ -17,5 +17,6 @@ namespace FWLog.Data.Models.DataTablesCtx
         public DateTime? DataEmissao { get; set; }                
         public DateTime? DataRecebimento { get; set; }          
         public string GarantiaStatus { get; set; }
+        public int IdGarantiaStatus { get; set; }
     }
 }

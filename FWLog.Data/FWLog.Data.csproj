@@ -192,7 +192,7 @@
     <Compile Include="Models\Quarentena.cs" />
     <Compile Include="Models\QuarentenaStatus.cs" />
     <Compile Include="Models\TipoArmazenagem.cs" />
-    <Compile Include="Models\TipoEtiquetagem - Cópia .cs" />
+    <Compile Include="Models\TipoEtiquetagem.cs" />
     <Compile Include="Models\IntegracaoTipo.cs" />
     <Compile Include="Models\TipoMovimentacao.cs" />
     <Compile Include="Models\Transportadora.cs" />

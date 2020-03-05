@@ -17,6 +17,7 @@ using ExtensionMethods.String;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using FWLog.Data.EnumsAndConsts;
+using System.Net;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -79,7 +80,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Garantia.Listar)]
-        public ActionResult DetalhesEntradaConferencia(int id)
+        public ActionResult DetalhesEntradaConferenciaGarantia(int id)
         {
             var notaFiscal = _uow.NotaFiscalRepository.GetById(id);
 
@@ -254,6 +255,164 @@ namespace FWLog.Web.Backoffice.Controllers
                 Success = true,
                 Message = "Recebimento da nota fiscal registrado com sucesso. Garantira gerada"
             });
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Garantia.ConferirGarantia)]
+        public async Task<JsonResult> ValidarInicioConferenciaDaGarantia(long id)
+        {
+            try
+            {
+                var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+                var garantia = _uow.GarantiaRepository.GetById(id);
+
+                //Verifica se o lote já foi conferido durante o processo de conferência.
+                if (garantia.IdGarantiaStatus != GarantiaStatusEnum.Recebido && garantia.IdGarantiaStatus != GarantiaStatusEnum.Conferencia)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = $"A conferência do lote: {garantia.IdGarantia} já foi finalizada.",
+                    });
+                }
+
+                if (empresaConfig.TipoConferencia == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Nenhum tipo de conferência configurado para a empresa Unidade: " + empresaConfig.Empresa.Sigla + ".",
+                    });
+                }
+
+                ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(9);
+
+                if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Não há impressora configurada para Etiqueta de Garantia.",
+                    });
+                }
+
+                NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(garantia.IdNotaFiscal);
+
+                //Valida a Nota Fiscal.
+                if (notaFiscal == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Não foi possível buscar a Nota Fiscal. Por favor, tente novamente!"
+                    });
+                }
+
+                //Valida o Lote.
+                if (garantia == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "A garantia ainda não foi recebida."
+                    });
+                }
+                else
+                {
+                    ////if (garantia.IdGarantiaStatus == GarantiaStatusEnum.ConferidoDivergencia)
+                    ////{
+                    ////    return Json(new AjaxGenericResultModel
+                    ////    {
+                    ////        Success = false,
+                    ////        Message = "O Lote já foi conferido."
+                    ////    });
+                    ////}
+                    // if (
+                    //    garantia.IdLoteStatus == LoteStatusEnum.Finalizado ||
+                    //    garantia.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
+                    //    garantia.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
+                    //    garantia.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas
+                    //    )
+                    //{
+                    //    return Json(new AjaxGenericResultModel
+                    //    {
+                    //        Success = false,
+                    //        Message = "O Lote já foi conferido e finalizado."
+                    //    });
+                    //}
+
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = true
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Algo inesperado ocorreu, atualize a página e tente novamente."
+                });
+            }
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Garantia.ConferirGarantia)]
+        public ActionResult EntradaConferenciaGarantia(long id)
+        {
+            var garantia = _uow.GarantiaRepository.GetById(id);
+            var notafiscal = _uow.NotaFiscalRepository.GetById(garantia.IdNotaFiscal);
+
+            //Valida o Garantia.
+            if (garantia == null)
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Garantia não encontrado. Por favor, tente novamente!");
+
+            var usuarioLogado = new BackOfficeUserInfo();
+
+            //Captura o Usuário que está iniciando a conferência.
+            var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
+
+            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+
+            if (empresaConfig == null)
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "As configurações da empresa não foram encontradas. Por favor, tente novamente!");
+
+            var model = new GarantiaEntradaConferenciaViewModel
+            {
+                IdNotaFiscal = garantia.NotaFiscal.IdNotaFiscal,
+                IdGarantia = garantia.IdGarantia,
+                NumeroNotaFiscal = string.Concat(garantia.NotaFiscal.Numero, " - ", garantia.NotaFiscal.Serie),
+                IdUuarioConferente = usuario.UsuarioId,
+                NomeConferente = usuario.Nome,
+                DataDaSolicitacao = garantia.DataRecebimento.ToString("dd/MM/yyyy"),
+                Cliente = notafiscal.Cliente.RazaoSocial,
+                Representante = notafiscal.Cliente.RepresentanteExterno.Nome ?? notafiscal.Cliente.RepresentanteInterno.Nome
+                //Cliente = garantia
+                //DataHoraRecebimento = lote.DataRecebimento.ToString("dd/MM/yyyy HH:mm"),
+                //NomeFornecedor = lote.NotaFiscal.Fornecedor.NomeFantasia,
+                //QuantidadeVolume = lote.QuantidadeVolume,
+                //TipoConferencia = empresaConfig.TipoConferencia.Descricao,
+                //IdTipoConferencia = empresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode()
+            };
+
+            if (!garantia.DataInicioConferencia.HasValue)
+            {
+                garantia.DataInicioConferencia = DateTime.Now;
+                _uow.SaveChanges();
+            }
+
+            ////Se o tipo da conferência for, o usuário não poderá informar a quantidade por caixa e quantidade de caixa.
+            ////Sabendo disso, atribui 1 para os campos.
+            //if (empresaConfig.TipoConferencia.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento)
+            //{
+            //    model.QuantidadePorCaixa = 1;
+            //    model.QuantidadeCaixa = 1;
+            //}
+
+            return View(model);
         }
     }
 }

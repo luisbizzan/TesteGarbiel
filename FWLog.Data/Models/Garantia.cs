@@ -33,9 +33,9 @@ namespace FWLog.Data.Models
         [Required]
         public string InformacaoTransporte { get; set; }
 
-        public DateTime DataIncioConferencia { get; set; }
+        public DateTime? DataInicioConferencia { get; set; }
 
-        public DateTime DataFimConferencia { get; set; }
+        public DateTime? DataFimConferencia { get; set; }
 
         #region Foreign Key
         

@@ -321,6 +321,7 @@
     <Compile Include="Models\GarantiaCtx\GarantiaDetailsViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaCreateViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaDetalhesEntradaConferenciaViewModel.cs" />
+    <Compile Include="Models\GarantiaCtx\GarantiaEntradaConferenciaViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaListViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaRegistroRecebimentoViewModel.cs" />
     <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoCreateViewModel.cs" />
@@ -507,6 +508,7 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
+    <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
     <Content Include="Scripts\Views\MotivoLaudo\motivoLaudo.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
@@ -587,6 +589,7 @@
     <Content Include="Views\MotivoLaudo\Edit.cshtml" />
     <Content Include="Views\Garantia\RegistroRecebimentoGarantia.cshtml" />
     <Content Include="Views\Garantia\DetalhesEntradaConferenciaGarantia.cshtml" />
+    <Content Include="Views\Garantia\EntradaConferenciaGarantia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

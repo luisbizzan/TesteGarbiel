@@ -360,6 +360,11 @@ ALTER TABLE DART."NotaFiscalItem" ADD "SequenciaNFOrigem" VARCHAR2(22);
 ALTER TABLE DART."NotaFiscalItem" ADD CFOP VARCHAR2(22);
 ALTER TABLE DART."NotaFiscalItem" ADD "CodigoBarras" VARCHAR2(100);
 ALTER TABLE DART."NotaFiscal" ADD CONSTRAINT "NotaFiscal_FK7" FOREIGN KEY ("IdCliente") REFERENCES DART."Cliente"("IdCliente");
+ALTER TABLE DART."Garantia" RENAME COLUMN "DataIncioConferencia" TO "DataInicioConferencia";
+ALTER TABLE DART."Garantia" MODIFY "DataInicioConferencia" DATE NULL;
+ALTER TABLE DART."Garantia" MODIFY "DataFimConferencia" DATE NULL;
+ALTER TABLE DART."Garantia" MODIFY "DataRecebimento" DATE;
+
 
 
 

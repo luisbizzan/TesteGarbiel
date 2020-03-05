@@ -27,7 +27,9 @@
     }, 'Data Emissão Final ou Data Recbimento Final Obrigatório');
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
+        debugger
         var visivelRegistrarRecibimento = view.registrarRecebimento && full.IdGarantia === null;
+        var visivelConferirGarantia = view.conferirGarantia && (full.IdGarantiaStatus === 2 || full.IdGarantiaStatus === 3);
 
         return [
             {
@@ -41,12 +43,19 @@
                 attrs: { 'data-id': full.IdNotaFiscal, 'action': 'registrarRecebimentoUrl' },
                 icon: 'fa fa-pencil-square',
                 visible: visivelRegistrarRecibimento
+            },
+            {
+                text: "Conferir Garantia",
+                attrs: { 'data-id': full.IdGarantia, 'action': 'conferenciaGarantia' },
+                icon: 'fa fa-check-square-o',
+                visible: visivelConferirGarantia
             }
         ];
     });
 
     $("#dataTable").on('click', "[action='detailsUrl']", detalhesEntradaConferencia);
     $("#dataTable").on('click', "[action='registrarRecebimentoUrl']", registrarRecebimento);
+    $("#dataTable").on('click', "[action='conferenciaGarantia']", conferenciaGarantia);
 
     var $DataEmissaoInicial = $('#Filter_DataEmissaoInicial').closest('.date');
     var $DataEmissaoFinal = $('#Filter_DataEmissaoFinal').closest('.date');
@@ -252,7 +261,7 @@ function detalhesEntradaConferencia() {
     var id = $(this).data("id");
     let modalDetalhesEntradaConferencia = $("#modalDetalhesEntradaConferencia");
 
-    modalDetalhesEntradaConferencia.load(CONTROLLER_PATH + "DetalhesEntradaConferencia/" + id, function () {
+    modalDetalhesEntradaConferencia.load(CONTROLLER_PATH + "DetalhesEntradaConferenciaGarantia/" + id, function () {
         modalDetalhesEntradaConferencia.modal();
     });
 }
@@ -364,6 +373,35 @@ function document_Keydown(e) {
         $('#RegistrarRecebimentoGarantia').click();
         cliclkRegistroRecebemimento();
     }
+}
+
+function conferenciaGarantia() {
+    let id = $(this).data("id");
+    let $modal = $("#modalConferenciaGarantia");
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "ValidarInicioConferenciaDaGarantia/" + id,
+        cache: false,
+        method: "POST",
+        success: function (result) {
+            if (result.Success) {
+                $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferenciaGarantia/" + id, function (result) {
+                    $modal.modal();
+                    $("#Referencia").focus();
+                });
+            } else {
+                PNotify.warning({ text: result.Message });
+            }
+        },
+        error: function (request, status, error) {
+            if (request.responseText == 'undefined') {
+                PNotify.error({ text: 'Um erro inesperado ocorreu, atualize a página e tente novamente.' });
+            }
+            else {
+                PNotify.error({ text: request.responseText });
+            }
+        }
+    });
 }
 
 

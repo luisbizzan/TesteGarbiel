@@ -128,8 +128,9 @@ namespace FWLog.Data.Repository.GeneralCtx
                 NumeroNF = e.NotaFiscal.Numero,
                 NumeroFicticioNF = e.NotaFiscal.NumeroFicticioNF,
                 DataEmissao = e.NotaFiscal.DataEmissao,
-                DataRecebimento = e.DataRecebimento != DateTime.MinValue ? DateTime.Parse(e.DataRecebimento.ToString("dd//MM/yyyy")) : (DateTime?)null,                
+                ///*DataRecebimento = e.DataRecebimento != DateTime.MinValue ? DateTime.Parse(e.DataRecebimento.ToString("dd//MM/yyyy"))*/ : (DateTime?)null,                
                 GarantiaStatus = e.GarantiaStatus.Descricao,
+                IdGarantiaStatus = (int)e.GarantiaStatus.IdGarantiaStatus,
                 IdNotaFiscal = e.NotaFiscal.IdNotaFiscal
             });
 

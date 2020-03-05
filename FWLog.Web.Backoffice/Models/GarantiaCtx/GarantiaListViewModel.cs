@@ -21,6 +21,7 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
     {
         public long IdEmpresa { get; set; }
         public long IdNotaFiscal { get; set; }
+        public long IdGarantiaStatus { get; set; }
         [Display(Name = "Nº Solicitação")]
         public long? IdGarantia { get; set; }
         [Display(Name = "Cliente")]
