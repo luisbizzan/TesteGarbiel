@@ -10,6 +10,9 @@ namespace FWLog.Data.Models
         [Required]
         public long     IdNotaFiscalRecebimento  { get; set; }
 
+        [Required]
+        public long     IdEmpresa                { get; set; }
+
         public string   IdUsuarioRecebimento     { get; set; }
 
         [Index]                                  
@@ -46,5 +49,8 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdFornecedor))]
         public virtual Fornecedor Fornecedor     { get; set; }
+
+        [ForeignKey(nameof(IdEmpresa))]
+        public virtual Empresa Empresa { get; set; }
     }
 }

@@ -307,7 +307,8 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task RegistrarRecebimentoNotaFiscalDiv(string  idUsuarioRecebimento, 
+        public async Task<long> RegistrarRecebimentoNotaFiscalDiv(long idEmpresa, 
+                                                            string  idUsuarioRecebimento, 
                                                             string  chaveAcesso,
                                                             long    idFornecedor,
                                                             int     numeroNf,
@@ -315,10 +316,13 @@ namespace FWLog.Services.Services
                                                             decimal valor,
                                                             int?    quantidadeVolumes = null)
         {
+            long idNotaFiscalRecebimento = 0;
+
             using (TransactionScope transactionScope = _uow.CreateTransactionScope())
             {
                 var _notaFiscalRecebimento = new NotaFiscalRecebimento
                 {
+                    IdEmpresa = idEmpresa,
                     IdUsuarioRecebimento = idUsuarioRecebimento,
                     ChaveAcesso = chaveAcesso,
                     IdFornecedor = idFornecedor,
@@ -332,7 +336,10 @@ namespace FWLog.Services.Services
 
                 _uow.NotaFiscalRecebimentoRepository.Add(_notaFiscalRecebimento);
                 _uow.SaveChanges();
+                idNotaFiscalRecebimento = _notaFiscalRecebimento.IdNotaFiscalRecebimento;
                 transactionScope.Complete();
+
+                return idNotaFiscalRecebimento;
             }
         }
         public async Task ReceberNotaFiscalAutomatico(string userId)

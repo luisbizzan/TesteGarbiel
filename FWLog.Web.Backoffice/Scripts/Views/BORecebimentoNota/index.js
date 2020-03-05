@@ -320,6 +320,7 @@
 })();
 
 function imprimir(acao, id) {
+    debugger
     switch (acao) {
         case 'notas':
             $.ajax({
@@ -373,6 +374,21 @@ function imprimir(acao, id) {
                 data: {
                     IdImpressora: $("#IdImpressora").val(),
                     IdNotaFiscal: id
+                },
+                success: function (result) {
+                    mensagemImpressao(result);
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
+                }
+            });
+            break;
+        case 'etqrecebimentosemnota':
+            $.ajax({
+                url: "/BORecebimentoNota/ImprimirEtiquetaNotaRecebimento",
+                method: "POST",
+                data: {
+                    IdImpressora: $("#IdImpressora").val(),
+                    IdNotaFiscalRecebimento: id
                 },
                 success: function (result) {
                     mensagemImpressao(result);

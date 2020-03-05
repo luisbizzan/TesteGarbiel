@@ -332,7 +332,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            var query = _uow.NotaFiscalRecebimentoRepository.Todos();
+            var query = _uow.NotaFiscalRecebimentoRepository.ConsultarPorEmpresa(IdEmpresa);
 
             totalRecords = query.Count();
 
@@ -832,9 +832,11 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public async Task<JsonResult> SalvarNotaRecebimentoDiv(string chaveAcesso, long idFornecedor, int numeroNF, string serie, decimal valor, int quantidadeVolumes)
         {
+            long idNotaFiscalRecebimento = 0;
             try
             {
-                await _notaFiscalService.RegistrarRecebimentoNotaFiscalDiv(User.Identity.GetUserId(), 
+                 idNotaFiscalRecebimento = await _notaFiscalService.RegistrarRecebimentoNotaFiscalDiv(IdEmpresa, 
+                                                                           User.Identity.GetUserId(), 
                                                                            chaveAcesso,
                                                                            idFornecedor,
                                                                            numeroNF,
@@ -856,8 +858,9 @@ namespace FWLog.Web.Backoffice.Controllers
             return Json(new AjaxGenericResultModel
             {
                 Success = true,
-                Message = "Recebimento da nota fiscal registrado com sucesso."
-            });
+                Message = "Recebimento da nota fiscal registrado com sucesso.",
+                Data = idNotaFiscalRecebimento.ToString()
+            }); 
         }
 
         [HttpPost]
@@ -1014,6 +1017,47 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
+        public JsonResult ImprimirEtiquetaNotaRecebimento(BOImprimirEtiquetaNotaRecebimentoViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                NotaFiscalRecebimento _notaFiscalRecebimento = _uow.NotaFiscalRecebimentoRepository.GetById(viewModel.IdNotaFiscalRecebimento);
+                _etiquetaService.ImprimirEtiquetaNotaRecebimento(viewModel.IdNotaFiscalRecebimento, viewModel.IdImpressora);
+
+                //Registra a impressão da etiqueta de Recebimento
+                var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem
+                {
+                    IdTipoEtiquetagem = TipoEtiquetagemEnum.RecebimentoSemNota.GetHashCode(),
+                    IdEmpresa  = IdEmpresa,
+                    Quantidade = (int)(_notaFiscalRecebimento.QuantidadeVolumes),
+                    IdUsuario  = User.Identity.GetUserId()
+                };
+
+                _logEtiquetagemService.Registrar(logEtiquetagem);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão realizada com sucesso."
+                }, JsonRequestBehavior.DenyGet);
+
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
         public ActionResult DetalhesEntradaConferencia(long id)
@@ -1029,7 +1073,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Fornecedor = string.Concat(notaFiscal.Fornecedor.IdFornecedor.ToString(), " - ", notaFiscal.Fornecedor.NomeFantasia),
                 DataCompra = notaFiscal.DataEmissao.ToString("dd/MM/yyyy"),
                 PrazoRecebimento = notaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
-                FornecedorCNPJ = notaFiscal.Fornecedor.CNPJ.Substring(0, 2) + "." + notaFiscal.Fornecedor.CNPJ.Substring(2, 3) + "." + notaFiscal.Fornecedor.CNPJ.Substring(5, 3) + "/" + notaFiscal.Fornecedor.CNPJ.Substring(8, 4) + "-" + notaFiscal.Fornecedor.CNPJ.Substring(12, 2),
+                //FornecedorCNPJ = notaFiscal.Fornecedor.CNPJ.Substring(0, 2) + "." + notaFiscal.Fornecedor.CNPJ.Substring(2, 3) + "." + notaFiscal.Fornecedor.CNPJ.Substring(5, 3) + "/" + notaFiscal.Fornecedor.CNPJ.Substring(8, 4) + "-" + notaFiscal.Fornecedor.CNPJ.Substring(12, 2),
                 ValorTotal = notaFiscal.ValorTotal.ToString("C"),
                 ValorFrete = notaFiscal.ValorFrete.ToString("C"),
                 NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),

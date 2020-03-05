@@ -58,6 +58,40 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, idImpressora);
         }
 
+        public void ImprimirEtiquetaNotaRecebimento(long idNotaFiscalRecebimento, long idImpressora, int? quantidade = null)
+        {
+            NotaFiscalRecebimento notaFiscalRecebimento = _unitOfWork.NotaFiscalRecebimentoRepository.GetById(idNotaFiscalRecebimento);
+
+            int? _quantidade = quantidade ?? notaFiscalRecebimento.QuantidadeVolumes;
+            int _volume = 1;
+
+            var etiquetaImprimir = new StringBuilder();
+
+            etiquetaImprimir.Append("^XA");
+
+            // Define quantidade de etiquetas a imprimir
+            etiquetaImprimir.Append($"^PQ{_quantidade}^FS");
+
+            etiquetaImprimir.Append("^FWB");
+            etiquetaImprimir.Append("^FO16,20^GB710,880^FS");
+            etiquetaImprimir.Append("^BY3,8,120");
+            etiquetaImprimir.Append($"^FO280,90^BC^FD{idNotaFiscalRecebimento.ToString().PadLeft(10, '0')}^FS");
+            etiquetaImprimir.Append(@"\&\&");
+            etiquetaImprimir.Append($"NF.{notaFiscalRecebimento.NumeroNF}");
+            etiquetaImprimir.Append("^FO50,90^FB470,3,0,C,0^A0,230,100^FD");
+            etiquetaImprimir.Append($"FOR.{notaFiscalRecebimento.Fornecedor.IdFornecedor}");
+            etiquetaImprimir.Append(@"\&\&");
+            etiquetaImprimir.Append($"DATA.{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+            etiquetaImprimir.Append(@"\&\&");
+            etiquetaImprimir.Append($"VOL.{_volume}");
+
+            etiquetaImprimir.Append("^XZ");
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaImprimir.ToString());
+
+            _impressoraService.Imprimir(etiqueta, idImpressora);
+        }
+
         public void ImprimirEtiquetaArmazenagemVolume(ImprimirEtiquetaArmazenagemVolume request)
         {
             Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());

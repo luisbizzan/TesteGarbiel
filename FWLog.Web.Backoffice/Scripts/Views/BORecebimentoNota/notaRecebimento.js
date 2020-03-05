@@ -24,7 +24,6 @@
 
 
 function validarNotaRecebimentoDiv() {
-    debugger
     var chaveAcesso       = $('#ChaveAcesso').val();
     var idFornecedor      = $('#IdFornecedor').val();
     var numeroNF          = $('#NumeroNF').val();
@@ -78,6 +77,10 @@ function registrarNotaRecebimentoDiv() {
             if (result.Success) {
                 PNotify.success({ text: result.Message });
                 $('#modalNotaRecebimento').modal('toggle');
+                $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=9&acao=etqrecebimentosemnota&id=" + result.Data, function () {
+                    $("#modalImpressoras").modal();
+                });
+                $("#dataTable").DataTable().ajax.reload();
             } else {
                 PNotify.warning({ text: result.Message });
             }
