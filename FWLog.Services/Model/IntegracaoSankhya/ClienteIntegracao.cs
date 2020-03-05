@@ -6,33 +6,33 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     [TabelaIntegracao(DisplayName = "TGFPAR")]
     public class ClienteIntegracao
     {
-        [TabelaIntegracao(DisplayName = "TGFPAR.CODPARC")]
+        [TabelaIntegracao(DisplayName = "CODPARC")]
         [Required]
         public string CodigoIntegracao { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TGFPAR.NOMEPARC")]
+        [TabelaIntegracao(DisplayName = "NOMEPARC")]
         [Required]
         public string NomeFantasia { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TGFPAR.RAZAOSOCIAL")]
+        [TabelaIntegracao(DisplayName = "RAZAOSOCIAL")]
         [Required]
         public string RazaoSocial { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TGFPAR.CGC_CPF")]
+        [TabelaIntegracao(DisplayName = "CGC_CPF")]
         [Required]
         public string CNPJ { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TGFPAR.ATIVO")]
+        [TabelaIntegracao(DisplayName = "ATIVO")]
         [Required]
         public string Ativo { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TGFPAR.AD_CODVENDATEND")] 
-        public string IdRepresentanteInterno { get; set; }
+        [TabelaIntegracao(DisplayName = "CODVEND")]
+        public string IdRepresentante { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TGFPAR.CODVEND")]
-        public string IdRepresentanteExterno { get; set; }
+        [TabelaIntegracao(DisplayName = "AD_CODVENDATEND")]
+        public string IdVendedor { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TGFPAR.AD_CLASSIF")]
+        [TabelaIntegracao(DisplayName = "AD_CLASSIF")]
         [Required]
         public string Classificacao { get; set; }
     }

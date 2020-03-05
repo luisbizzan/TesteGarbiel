@@ -53,7 +53,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "nfstatus.* " +
                         "FROM \"Garantia\" garantia " +
                         "RIGHT JOIN \"NotaFiscal\" nota ON nota.\"IdNotaFiscal\" = garantia.\"IdNotaFiscal\" " +
-                        "LEFT JOIN \"Cliente\" cliente ON cliente.\"IdCliente\" = nota.\"IdCliente\" " +
+                        "INNER JOIN \"Cliente\" cliente ON cliente.\"IdCliente\" = nota.\"IdCliente\" " +
                         "LEFT JOIN \"GarantiaStatus\" garantiastatus ON (garantiastatus.\"IdGarantiaStatus\" = CASE WHEN garantia.\"IdGarantiaStatus\" IS NULL THEN 1 ELSE garantia.\"IdGarantiaStatus\" END) " +
                         "LEFT JOIN \"AspNetUsers\" userr ON userr.\"Id\" = garantia.\"IdUsuarioConferente\" " +
                         "INNER JOIN \"NotaFiscalStatus\" nfstatus ON nfstatus.\"IdNotaFiscalStatus\" = nota.\"IdNotaFiscalStatus\" " +
@@ -121,7 +121,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             {
                 IdGarantia = e.IdGarantia == 0 ? (long?)null : e.IdGarantia,
                 Cliente = string.Concat(e.NotaFiscal.Cliente.IdCliente, "-", e.NotaFiscal.Cliente.RazaoSocial),
-                CNPJCliente = e.NotaFiscal.Cliente == null ? null : e.NotaFiscal.Cliente.CNPJCPF.CnpjOuCpf(),
+                CNPJCliente = e.NotaFiscal.Cliente.CNPJCPF.CnpjOuCpf(),
                 Transportadora = e.NotaFiscal.Transportadora == null ? string.Empty : string.Concat(e.NotaFiscal.Transportadora.IdTransportadora, "-", e.NotaFiscal.Transportadora.NomeFantasia),
                 Fornecedor = e.NotaFiscal.Fornecedor == null ? string.Empty : string.Concat(e.NotaFiscal.Fornecedor.IdFornecedor, "-", e.NotaFiscal.Fornecedor.NomeFantasia),
                 IdEmpresa = e.NotaFiscal.IdEmpresa,
@@ -147,11 +147,6 @@ namespace FWLog.Data.Repository.GeneralCtx
         public long BuscarNotaPeloIdGarantia(int idGarantia)
         {
             return Entities.Garantia.Where(x => x.IdGarantia == idGarantia).Select(x => x.IdNotaFiscal).FirstOrDefault();
-        }
-
-        public Garantia PesquisarGarantiaPorIdNotaFiscal(long idNotaFiscal)
-        {
-            return Entities.Garantia.FirstOrDefault(x => x.IdNotaFiscal == idNotaFiscal);
         }
     }
 }

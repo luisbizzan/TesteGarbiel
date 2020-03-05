@@ -29,12 +29,12 @@ namespace FWLog.Services.Services
 
             StringBuilder where = new StringBuilder();
             where.Append("WHERE ");
-            where.Append("TGFPAR.RAZAOSOCIAL IS NOT NULL ");
-            where.Append("AND TGFPAR.VENDEDOR = 'S' ");
-            where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
-            var inner = "INNER JOIN TGFVEN ON TGFVEN.CODPARC = TGFPAR.CODPARC";
+            where.Append("CGC_CPF IS NOT NULL ");
+            where.Append("AND RAZAOSOCIAL IS NOT NULL ");
+            where.Append("AND VENDEDOR = 'S' ");
+            where.Append("AND AD_INTEGRARFWLOG = '1' ");
 
-            List<RepresentanteIntegracao> representantesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<RepresentanteIntegracao>(where: where.ToString(),inner);
+            List<RepresentanteIntegracao> representantesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<RepresentanteIntegracao>(where: where.ToString());
 
             foreach (var representanteInt in representantesIntegracao)
             {
@@ -55,8 +55,7 @@ namespace FWLog.Services.Services
 
                     representante.CodigoIntegracao = codParc;
                     representante.Ativo = representanteInt.Ativo == "S" ? true : false;
-                    representante.Nome = representanteInt.RazaoSocial;
-                    representante.CodigoIntegracaoVendedor = representanteInt.CodigoIntegracaoVendedor;
+                    representante.Nome = representanteInt.NomeFantasia;
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", representante.CodigoIntegracao.ToString() } };
 

@@ -6,28 +6,24 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     [TabelaIntegracao(DisplayName = "TGFPAR")]
     public class RepresentanteIntegracao
     {
-        [TabelaIntegracao(DisplayName = "TGFPAR.CODPARC")]
+        [TabelaIntegracao(DisplayName = "CODPARC")]
         [Required]
         public string CodigoIntegracao { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TGFPAR.NOMEPARC")]
+        [TabelaIntegracao(DisplayName = "NOMEPARC")]
         [Required]
         public string NomeFantasia { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TGFPAR.RAZAOSOCIAL")]
+        [TabelaIntegracao(DisplayName = "RAZAOSOCIAL")]
         [Required]
         public string RazaoSocial { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TGFPAR.CGC_CPF")]
+        [TabelaIntegracao(DisplayName = "CGC_CPF")]
         [Required]
         public string CNPJ { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TGFPAR.ATIVO")]
+        [TabelaIntegracao(DisplayName = "ATIVO")]
         [Required]
         public string Ativo { get; set; }
-
-        [TabelaIntegracao(DisplayName = "TGFVEN.CODVEND")]
-        [Required]
-        public int CodigoIntegracaoVendedor { get; set; }
     }
 }

@@ -13,10 +13,5 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.Representante.FirstOrDefault(f => f.CodigoIntegracao == codigoIntegracao);
         }
-
-        public long BuscarCodigoPeloCodigoIntegracaoVendedor(long codigoIntegracaoVendedor)
-        {
-            return Entities.Representante.Where(f => f.CodigoIntegracaoVendedor == codigoIntegracaoVendedor).Select(x => x.IdRepresentante).FirstOrDefault();
-        }
     }
 }

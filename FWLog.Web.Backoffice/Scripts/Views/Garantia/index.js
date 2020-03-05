@@ -265,19 +265,21 @@ function registrarRecebimento() {
         method: "POST",
         cache: false,
         success: function (result) {
+            debugger
             let $modalRegistroRecebimento = $("#modalRegistroRecebimento");
+
             if (result.Success) {
                 $modalRegistroRecebimento.load(HOST_URL + CONTROLLER_PATH + "ExibirModalRegistroRecebimento/" + id, function () {
                     $modalRegistroRecebimento.modal();
-                    $("#ChaveAcesso").focus();
-
-                    $(".form-control").on('keydown', document_Keydown);
-
-                    $("#RegistrarRecebimentoGarantia").click(function () {
-                        cliclkRegistroRecebemimento();
-                    });
-
-                    $('.integer').mask("#0", { reverse: true });
+                    //$("#ChaveAcesso").focus();
+                    //$('#ChaveAcesso').keypress(function (event) {
+                    //    BuscarNotaFiscal();
+                    //});
+                    //$("#RegistrarRecebimentoNota").click(function () {
+                    //    RegistrarNotaFiscal();
+                    //});
+                    //$('.integer').mask("#0", { reverse: true });
+                    //$('.money').mask("#.##0,00", { reverse: true });
                 });
             } else {
                 PNotify.warning({ text: result.Message });
@@ -285,85 +287,3 @@ function registrarRecebimento() {
         }
     });
 }
-
-function registrarNotaFiscal() {
-    debugger
-
-    $.ajax({
-        url: HOST_URL + "Garantia/RegistrarRecebimentoNota/",
-        method: "POST",
-        data: {
-            idNotaFiscal: $("#IdNotaFiscal").val(),
-            observacao: $("#Observacao").val(),
-            informacaoTransportadora: $("#InformacaoTransporte").val(),
-        },
-        success: function (result) {
-            if (result.Success) {
-                PNotify.success({ text: result.Message });
-                $(".close").click();
-                $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=5&acao=etqrecebimento&id=" + $("#IdNotaFiscal").val(), function () {
-                    $("#modalImpressoras").modal();
-                });
-                $("#dataTable").DataTable().ajax.reload();
-            } else {
-                $(".validacaoConfirmar").text(result.Message);
-            }
-        }
-    });
-}
-
-function validarNota() {
-
-    $.ajax({
-        url: HOST_URL + "Garantia/ValidarNotaFiscalRegistro",
-        method: "POST",
-        cache: false,
-        data: {
-            chaveAcesso: $("#ChaveAcesso").val(),
-            idNotaFiscal: $("#IdNotaFiscal").val(),
-            numeroNF: $("#NumeroNF").val()
-        },
-        success: function (result) {
-            return result;
-        }
-    });
-}
-
-function validarCamposDaModal() {
-    $(".validacaoConfirmar").text("");
-
-    if ($("#ChaveAcesso").val() === "" && $("#NumeroNF").val() === "") {
-        $(".validacaoConfirmar").text("Preencher pelo menos Chave Acesso ou Nº Nota Fiscal.");
-        return false;
-    }
-
-    if ($("#InformacaoTransporte").val() === "") {
-        $("#InformacaoTransporte").val("REPRESENTANTE");
-    }
-
-    return true;
-}
-
-function cliclkRegistroRecebemimento() {
-
-    if (!validarCamposDaModal())
-        return;
-
-    var result = validarNota();
-
-    if (!result.Success) {
-        PNotify.warning({ text: result.Message });
-        return;
-    }
-
-    registrarNotaFiscal();
-}
-
-function document_Keydown(e) {
-    if (e.which == 13) {
-        $('#RegistrarRecebimentoGarantia').click();
-        cliclkRegistroRecebemimento();
-    }
-}
-
-

@@ -1,8 +1,6 @@
-﻿using FWLog.AspNet.Identity;
-using FWLog.Data;
+﻿using FWLog.Data;
 using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Services;
-using FWLog.Web.Api.Helpers;
 using FWLog.Web.Api.Models.Etiqueta;
 using System;
 using System.Web.Http;
@@ -41,7 +39,7 @@ namespace FWLog.Web.Api.Controllers
 
                 return ApiOk();
             }
-            catch(BusinessException ex)
+            catch (BusinessException ex)
             {
                 return ApiInternalServerErrror("Erro na impressora", ex);
             }

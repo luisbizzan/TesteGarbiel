@@ -192,6 +192,7 @@
     <Compile Include="App_Start\NinjectDependencyResolver.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\ApiBaseController.cs" />
+    <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\ImpressoraController.cs" />
@@ -213,6 +214,8 @@
     </Compile>
     <Compile Include="Helpers\ApiErrorBuilder.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
+    <Compile Include="Models\EnderecoArmazenagem\EnderecoArmazenagemResposta.cs" />
+    <Compile Include="Models\EnderecoArmazenagem\EnderecosArmazenagemResposta.cs" />
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaEnderecoRequisicao.cs" />
     <Compile Include="Models\Impressora\ImpressoraResposta.cs" />
     <Compile Include="Models\Impressora\ImpressorasResposta.cs" />

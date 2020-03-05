@@ -14,9 +14,6 @@ using FWLog.Web.Backoffice.Models.CommonCtx;
 using System;
 using System.Linq;
 using ExtensionMethods.String;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using FWLog.Data.EnumsAndConsts;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -24,15 +21,11 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         UnitOfWork _uow;
         GarantiaService _garantiaService;
-        NotaFiscalService _notaFiscalService;
-        ApplicationLogService _applicationLogService;
 
-        public GarantiaController(UnitOfWork uow, GarantiaService garantiaService,NotaFiscalService notaFiscalService, ApplicationLogService applicationLogService)
+        public GarantiaController(UnitOfWork uow, GarantiaService garantiaService)
         {
             _uow = uow;
             _garantiaService = garantiaService;
-            _notaFiscalService = notaFiscalService;
-            _applicationLogService = applicationLogService;
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Garantia.Listar)]
@@ -128,19 +121,19 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Garantia.RegistrarRecebimento)]
         public JsonResult ValidarModalRegistroRecebimento(long id)
         {
-            var garantia = _uow.GarantiaRepository.PesquisarGarantiaPorIdNotaFiscal(id);
-            var notafiscal = _uow.NotaFiscalRepository.GetById(id);
+            //var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+            //var notafiscal = _uow.NotaFiscalRepository.GetById(id);
 
-            if (garantia != null || notafiscal.IdNotaFiscalStatus != NotaFiscalStatusEnum.AguardandoRecebimento)
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "A nota fiscal já foi recebida por outro usuário, verifique antes de continuar.",
-                });
-            }
+            //if (lote != null || notafiscal.IdNotaFiscalStatus != NotaFiscalStatusEnum.AguardandoRecebimento)
+            //{
+            //    return Json(new AjaxGenericResultModel
+            //    {
+            //        Success = false,
+            //        Message = "Recebimento da mecadoria já se enconta efetivado no sistema.",
+            //    });
+            //}
 
-            //ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(9);
+            //ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(5);
 
             //if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
             //{
@@ -167,93 +160,6 @@ namespace FWLog.Web.Backoffice.Controllers
             };
 
             return PartialView("RegistroRecebimento", modal);
-        }
-
-        [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.Garantia.RegistrarRecebimento)]
-        public JsonResult ValidarNotaFiscalRegistro(string chaveAcesso, long idNotaFiscal, long? numeroNF)
-        {
-            var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
-
-            if (notafiscal.ChaveAcesso != chaveAcesso )
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "A Chave de Acesso não condiz com a chave cadastrada da nota fiscal cadastrada."
-                });
-            }
-            else if(notafiscal.Numero != numeroNF)
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "O número da nota não condiz com o número da nota fiscal cadastrada."
-                });
-            }
-
-            ////var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(idNotaFiscal);
-
-            ////if (lote != null)
-            ////{
-            ////    return Json(new AjaxGenericResultModel
-            ////    {
-            ////        Success = false,
-            ////        Message = "Recebimento da mecadoria já efetivado no sistema."
-            ////    });
-            ////}
-
-            return Json(new AjaxGenericResultModel
-            {
-                Success = true,
-            });
-        }
-
-        [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.Garantia.RegistrarRecebimento)]
-        public async Task<JsonResult> RegistrarRecebimentoNota(long idNotaFiscal, string observacao, string informacaoTransportadora)
-        {
-            var garantia = _uow.GarantiaRepository.PesquisarGarantiaPorIdNotaFiscal(idNotaFiscal);
-            var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
-
-            if (garantia != null || notafiscal.IdNotaFiscalStatus != NotaFiscalStatusEnum.AguardandoRecebimento)
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "A nota fiscal já foi recebida por outro usuário, verifique antes de continuar.",
-                });
-            }
-
-            if (!(idNotaFiscal > 0))
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "Selecione a nota fiscal."
-                });
-            }
-
-            try
-            {
-                await _notaFiscalService.RegistrarRecebimentoNotaFiscalGarantia(idNotaFiscal, User.Identity.GetUserId(), observacao, informacaoTransportadora).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
-
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "Não foi possível atualizar o status da Nota Fiscal no Sankhya. Tente novamente."
-                });
-            }
-
-            return Json(new AjaxGenericResultModel
-            {
-                Success = true,
-                Message = "Recebimento da nota fiscal registrado com sucesso. Garantira gerada"
-            });
         }
     }
 }

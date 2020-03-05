@@ -17,7 +17,11 @@ namespace FWLog.Data.Models
         [Index]
         [Required]
         public GarantiaStatusEnum IdGarantiaStatus { get; set; }
-        
+
+        [Index]
+        [Required]
+        public long IdRepresentante { get; set; }
+
         [Index]
         [Required]
         [StringLength(128)]
@@ -44,6 +48,9 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdGarantiaStatus))]
         public virtual GarantiaStatus GarantiaStatus { get; set; }
+
+        [ForeignKey(nameof(IdRepresentante))]
+        public virtual Representante Representante { get; set; }
 
         [ForeignKey(nameof(IdUsuarioConferente))]
         public virtual AspNetUsers UsuarioConferente { get; set; }

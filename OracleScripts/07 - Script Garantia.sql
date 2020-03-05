@@ -89,7 +89,6 @@ CREATE TABLE "Representante"
 
 CREATE UNIQUE INDEX "Representante_PK" ON "Representante" ("IdRepresentante" ASC);
 CREATE INDEX "Representante_INDEX1" ON "Representante" ("CodigoIntegracao" ASC);
-
 /
 
 CREATE TABLE "GarantiaStatus" 
@@ -148,9 +147,8 @@ BEGIN
 END;
 
 ALTER TABLE DART."Garantia" ADD CONSTRAINT "Garantia_FK1" FOREIGN KEY ("IdNotaFiscal") REFERENCES DART."NotaFiscal"("IdNotaFiscal");
-ALTER TABLE DART."Garantia" ADD CONSTRAINT "Garantia_FK2" FOREIGN KEY ("IdUsuarioConferente") REFERENCES DART."AspNetUsers"("Id");
+ALTER TABLE DART."Garantia" ADD CONSTRAINT "Garantia_FK2" FOREIGN KEY ("IdUsuarioRecebimento") REFERENCES DART."AspNetUsers"("Id");
 ALTER TABLE DART."Garantia" ADD CONSTRAINT "Garantia_FK3" FOREIGN KEY ("IdGarantiaStatus") REFERENCES DART."GarantiaStatus"("IdGarantiaStatus");
-ALTER TABLE DART."Garantia" RENAME COLUMN "Garantia_FK3" FOREIGN KEY ("IdGarantiaStatus") REFERENCES DART."GarantiaStatus"("IdGarantiaStatus");
 /
 
 --------------------------------------------------------
@@ -338,14 +336,6 @@ END;
 
 ALTER TABLE DART."Cliente" MODIFY "TipoCliente" CHAR(1);
 ALTER TABLE DART."Cliente" RENAME COLUMN CNPJ TO CNPJCPF;
-ALTER TABLE DART."Cliente" RENAME COLUMN "IdRepresentante" TO "IdRepresentanteExterno";
-ALTER TABLE DART."Cliente" MODIFY "IdRepresentanteExterno" NUMBER(19,0) NULL;
-ALTER TABLE DART."Cliente" ADD CONSTRAINT "CLIENTE_FK1" FOREIGN KEY ("IdRepresentanteExterno") REFERENCES DART."Representante"("IdRepresentante");
-ALTER TABLE DART."Cliente" ADD "IdRepresentanteInterno" NUMBER(19,0) NULL CONSTRAINT "CLIENTE_FK2" REFERENCES DART."Representante"("IdRepresentante");
-CREATE INDEX "Cliente_INDEX5" ON "Cliente" ("IdRepresentanteExterno" ASC);
-CREATE INDEX "Cliente_INDEX6" ON "Cliente" ("IdRepresentanteInterno" ASC);
-ALTER TABLE DART."Representante" ADD "CodigoIntegracaoVendedor" NUMBER(10,0) NOT NULL;
-CREATE INDEX "Representante_INDEX2" ON "Representante" ("CodigoIntegracaoVendedor" ASC);
 ALTER TABLE DART."NotaFiscal" ADD "IdCliente" NUMBER(19,0);
 ALTER TABLE DART."NotaFiscal" MODIFY "IdFornecedor" NUMBER(19,0) NULL;
 ALTER TABLE DART."NotaFiscal" ADD "BaseICMS" FLOAT;
@@ -358,8 +348,6 @@ ALTER TABLE DART."NotaFiscalItem" ADD "CodigoIntegracaoNFOrigem" NUMBER(10,0);
 ALTER TABLE DART."NotaFiscalItem" ADD "SequenciaNFOrigem" VARCHAR2(22);
 ALTER TABLE DART."NotaFiscalItem" ADD CFOP VARCHAR2(22);
 ALTER TABLE DART."NotaFiscalItem" ADD "CodigoBarras" VARCHAR2(100);
-
-
 
 
 INSERT INTO DART."NotaFiscalTipo" ("IdNotaFiscalTipo","Descricao") 	VALUES (3,'Garantia');
@@ -386,9 +374,6 @@ INSERT INTO DART."GarantiaStatus" ("IdGarantiaStatus","Descricao")
 	VALUES (10,'Estorno');
 	
 	ALTER TABLE DART."GarantiaStatus" MODIFY "Descricao" VARCHAR2(30);
-	
-	ALTER TABLE DART."Cliente" MODIFY "Classificacao" VARCHAR2(14) NULL;
-
 
 
 /
