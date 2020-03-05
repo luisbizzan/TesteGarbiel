@@ -11,6 +11,11 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public EnderecoArmazenagemRepository(Entities entities) : base(entities) { }
 
+        public IQueryable<EnderecoArmazenagem> Tabela()
+        {
+            return Entities.EnderecoArmazenagem;
+        }
+
         public List<EnderecoArmazenagemListaLinhaTabela> BuscarLista(DataTableFilter<EnderecoArmazenagemListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
         {
             totalRecords = Entities.EnderecoArmazenagem.Where(w => w.IdEmpresa == model.CustomFilter.IdEmpresa).Count();
