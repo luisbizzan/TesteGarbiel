@@ -282,6 +282,7 @@
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirEtiquetaNotaRecebimentoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirNotasRecebimentoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BONotaRecebimentoViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirDevolucaoTotalViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\NotaRecebimentoListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\PesquisaLoteModalViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BOImprimirEtiquetaRecebimentoViewModel.cs" />
@@ -694,6 +695,7 @@
     <Content Include="Views\BORecebimentoNota\NotaRecebimentoDetalhes.cshtml" />
     <Content Include="Views\BORecebimentoNota\NotaRecebimento.cshtml" />
     <Content Include="Views\BORecebimentoNota\NotaRecebimentoList.cshtml" />
+    <Content Include="Views\BORecebimentoNota\DevolucaoTotal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

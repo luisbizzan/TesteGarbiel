@@ -439,6 +439,42 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
+        public JsonResult VerificarDevolucaoTotal(long id)
+        {
+            Lote lote                            = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+            List<NotaFiscalItem> notaFiscalItens = _uow.NotaFiscalItemRepository.ObterItens(id);
+            bool devolucaoTotal = true;
+            foreach (var item in notaFiscalItens)
+            {
+                if (item.Quantidade != item.QuantidadeDevolucao)
+                {
+                    devolucaoTotal = false;
+                    break;
+                }
+            }
+
+            if (devolucaoTotal)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Devolução Total da NF/Serie: " + lote.NotaFiscal.Numero + "-" + lote.NotaFiscal.Serie + ".",
+                });
+            } else
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "",
+                });
+            }
+        }
+
+
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public ActionResult DetalhesEtiquetaConferencia()
@@ -1323,6 +1359,22 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
         }
+
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
+        public ActionResult DevolucaoTotal(long id)
+        {
+            Lote lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+            var model = new BOImprimirDevolucaoTotalViewModel
+            {
+                NumeroNF = lote.NotaFiscal.Numero.ToString(),
+                Serie    = lote.NotaFiscal.Serie,
+            };
+
+            return View(model);
+        }
+
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]

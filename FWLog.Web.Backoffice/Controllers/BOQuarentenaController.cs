@@ -211,6 +211,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Descricao = divergencia.Produto.Descricao,
                     Referencia = divergencia.Produto.Referencia,
+                    QuantidadeDevolucao = divergencia.QuantidadeDevolucao,
                     QuantidadeConferencia = divergencia.QuantidadeConferencia,
                     QuantidadeMais = divergencia.QuantidadeConferenciaMais.GetValueOrDefault(),
                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos.GetValueOrDefault(),

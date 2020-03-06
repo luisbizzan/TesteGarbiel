@@ -167,10 +167,7 @@ namespace FWLog.Services.Services
                         notaFiscalItem.ValorTotal = Convert.ToDecimal(item.ValorTotal.Replace(".", ","));
                         notaFiscalItem.CodigoNotaFiscal = codNota;
                         notaFiscalItem.Sequencia = Convert.ToInt32(item.Sequencia);
-                        var quantidadeDevolucao = 0;
-                        if (!item.QuantidadeDevolucao.NullOrEmpty())
-                            quantidadeDevolucao = Convert.ToInt32(item.QuantidadeDevolucao);
-                        notaFiscalItem.QuantidadeDevolucao =    quantidadeDevolucao ;   ;
+                        notaFiscalItem.QuantidadeDevolucao = item.QuantidadeDevolucao.NullOrEmpty() ? 0 : Convert.ToInt32(item.QuantidadeDevolucao);
 
 
                         if (itemNovo)

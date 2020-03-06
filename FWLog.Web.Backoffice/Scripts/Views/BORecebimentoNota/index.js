@@ -561,7 +561,8 @@ function setUsuario(idUsuario, nomeUsuario, origem) {
 
 function conferirNota() {
     let id = $(this).data("id");
-    let $modal = $("#modalConferencia");
+    let $modal    = $("#modalConferencia");
+    let $modalDev = $("#modalDevolucaoTotal");
 
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ValidarInicioConferencia/" + id,
@@ -569,10 +570,25 @@ function conferirNota() {
         method: "POST",
         success: function (result) {
             if (result.Success) {
-                $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
-                    $modal.modal();
-                    $("#Referencia").focus();
-                });
+                $.ajax({
+                    url: HOST_URL + CONTROLLER_PATH + "VerificarDevolucaoTotal/" + id,
+                    cache: false,
+                    method: "POST",
+                    success: function (result) {
+                        if (result.Success) {
+                            $modalDev.load(HOST_URL + CONTROLLER_PATH + "DevolucaoTotal/" + id, function (result) {
+                                $modalDev.modal();
+                            });
+                        }
+                        else {
+                            //Chama a tela de conferência
+                            $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
+                                $modal.modal();
+                                $("#Referencia").focus();
+                            });
+                        }
+                    }
+                }); 
             } else {
                 PNotify.warning({ text: result.Message });
             }
@@ -587,6 +603,8 @@ function conferirNota() {
         }
     });
 }
+
+
 
 //function validarConferenciaAutomatica(idNotaFiscal) {
 //    var retorno = false;
