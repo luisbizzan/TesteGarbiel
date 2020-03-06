@@ -28,7 +28,7 @@ namespace FWLog.Web.Backoffice.Controllers
         NotaFiscalService _notaFiscalService;
         ApplicationLogService _applicationLogService;
 
-        public GarantiaController(UnitOfWork uow, GarantiaService garantiaService,NotaFiscalService notaFiscalService, ApplicationLogService applicationLogService)
+        public GarantiaController(UnitOfWork uow, GarantiaService garantiaService, NotaFiscalService notaFiscalService, ApplicationLogService applicationLogService)
         {
             _uow = uow;
             _garantiaService = garantiaService;
@@ -129,33 +129,46 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Garantia.RegistrarRecebimento)]
         public JsonResult ValidarModalRegistroRecebimento(long id)
         {
-            var garantia = _uow.GarantiaRepository.PesquisarGarantiaPorIdNotaFiscal(id);
-            var notafiscal = _uow.NotaFiscalRepository.GetById(id);
-
-            if (garantia != null || notafiscal.IdNotaFiscalStatus != NotaFiscalStatusEnum.AguardandoRecebimento)
+            try
             {
+                var garantia = _uow.GarantiaRepository.BuscarGarantiaPorIdNotaFiscal(id);
+                var notafiscal = _uow.NotaFiscalRepository.GetById(id);
+
+                if (garantia != null || notafiscal.IdNotaFiscalStatus != NotaFiscalStatusEnum.AguardandoRecebimento)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "A nota fiscal já foi recebida por outro usuário, verifique antes de continuar.",
+                    });
+                }
+
+                ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(10);
+
+                if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Não há impressora configurada para Etiqueta de Recebimento.",
+                    });
+                }
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                });
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "A nota fiscal já foi recebida por outro usuário, verifique antes de continuar.",
+                    Message = "Algo inesperado ocorreu, atualize a página e tente novamente."
                 });
             }
-
-            //ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(9);
-
-            //if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
-            //{
-            //    return Json(new AjaxGenericResultModel
-            //    {
-            //        Success = false,
-            //        Message = "Não há impressora configurada para Etiqueta de Recebimento.",
-            //    });
-            //}
-
-            return Json(new AjaxGenericResultModel
-            {
-                Success = true
-            });
         }
 
         [HttpGet]
@@ -174,47 +187,60 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Garantia.RegistrarRecebimento)]
         public JsonResult ValidarNotaFiscalRegistro(string chaveAcesso, long idNotaFiscal, long? numeroNF)
         {
-            var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
-
-            if (notafiscal.ChaveAcesso != chaveAcesso )
+            try
             {
+                var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
+
+                if (notafiscal.ChaveAcesso != chaveAcesso)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "A Chave de Acesso não condiz com a chave cadastrada da nota fiscal cadastrada."
+                    });
+                }
+                else if (notafiscal.Numero != numeroNF)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "O número da nota não condiz com o número da nota fiscal cadastrada."
+                    });
+                }
+
+                var garantia = _uow.GarantiaRepository.BuscarGarantiaPorIdNotaFiscal(idNotaFiscal);
+
+                if (garantia != null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Recebimento da garantia já efetivado no sistema."
+                    });
+                }
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                });
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "A Chave de Acesso não condiz com a chave cadastrada da nota fiscal cadastrada."
+                    Message = "Algo inesperado ocorreu, atualize a página e tente novamente."
                 });
             }
-            else if(notafiscal.Numero != numeroNF)
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "O número da nota não condiz com o número da nota fiscal cadastrada."
-                });
-            }
-
-            ////var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(idNotaFiscal);
-
-            ////if (lote != null)
-            ////{
-            ////    return Json(new AjaxGenericResultModel
-            ////    {
-            ////        Success = false,
-            ////        Message = "Recebimento da mecadoria já efetivado no sistema."
-            ////    });
-            ////}
-
-            return Json(new AjaxGenericResultModel
-            {
-                Success = true,
-            });
         }
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Garantia.RegistrarRecebimento)]
         public async Task<JsonResult> RegistrarRecebimentoNota(long idNotaFiscal, string observacao, string informacaoTransportadora)
         {
-            var garantia = _uow.GarantiaRepository.PesquisarGarantiaPorIdNotaFiscal(idNotaFiscal);
+            var garantia = _uow.GarantiaRepository.BuscarGarantiaPorIdNotaFiscal(idNotaFiscal);
             var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
 
             if (garantia != null || notafiscal.IdNotaFiscalStatus != NotaFiscalStatusEnum.AguardandoRecebimento)
@@ -263,29 +289,29 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
                 var garantia = _uow.GarantiaRepository.GetById(id);
 
-                //Verifica se o lote já foi conferido durante o processo de conferência.
+                //Valida a Garantia.
+                if (garantia == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "A garantia ainda não foi recebida."
+                    });
+                }
+
+                //Verifica se a garantia já foi conferido durante o processo de conferência.
                 if (garantia.IdGarantiaStatus != GarantiaStatusEnum.Recebido && garantia.IdGarantiaStatus != GarantiaStatusEnum.Conferencia)
                 {
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = $"A conferência do lote: {garantia.IdGarantia} já foi finalizada.",
+                        Message = $"A conferência da garantia: {garantia.IdGarantia} já foi finalizada.",
                     });
                 }
 
-                if (empresaConfig.TipoConferencia == null)
-                {
-                    return Json(new AjaxGenericResultModel
-                    {
-                        Success = false,
-                        Message = "Nenhum tipo de conferência configurado para a empresa Unidade: " + empresaConfig.Empresa.Sigla + ".",
-                    });
-                }
-
-                ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(9);
+                ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(10);
 
                 if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
                 {
@@ -308,44 +334,18 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                //Valida o Lote.
-                if (garantia == null)
-                {
-                    return Json(new AjaxGenericResultModel
-                    {
-                        Success = false,
-                        Message = "A garantia ainda não foi recebida."
-                    });
-                }
-                else
-                {
-                    ////if (garantia.IdGarantiaStatus == GarantiaStatusEnum.ConferidoDivergencia)
-                    ////{
-                    ////    return Json(new AjaxGenericResultModel
-                    ////    {
-                    ////        Success = false,
-                    ////        Message = "O Lote já foi conferido."
-                    ////    });
-                    ////}
-                    // if (
-                    //    garantia.IdLoteStatus == LoteStatusEnum.Finalizado ||
-                    //    garantia.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaNegativa ||
-                    //    garantia.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaPositiva ||
-                    //    garantia.IdLoteStatus == LoteStatusEnum.FinalizadoDivergenciaTodas
-                    //    )
-                    //{
-                    //    return Json(new AjaxGenericResultModel
-                    //    {
-                    //        Success = false,
-                    //        Message = "O Lote já foi conferido e finalizado."
-                    //    });
-                    //}
+                var mensagem = string.Empty;
 
-                    return Json(new AjaxGenericResultModel
-                    {
-                        Success = true
-                    });
+                if (User.Identity.GetUserId() != garantia.IdUsuarioConferente)
+                {
+                    mensagem = "A nota fiscal já está em conferência por outro usuário, verifique antes de continuar.";
                 }
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message =  mensagem
+                });
             }
             catch (Exception e)
             {
@@ -370,7 +370,6 @@ namespace FWLog.Web.Backoffice.Controllers
             if (garantia == null)
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Garantia não encontrado. Por favor, tente novamente!");
 
-            var usuarioLogado = new BackOfficeUserInfo();
 
             //Captura o Usuário que está iniciando a conferência.
             var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());

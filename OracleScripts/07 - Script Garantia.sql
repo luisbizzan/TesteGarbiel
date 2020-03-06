@@ -369,6 +369,8 @@ ALTER TABLE DART."Garantia" MODIFY "DataRecebimento" DATE;
 
 
 
+INSERT INTO DART."ImpressaoItem"("IdImpressaoItem","Descricao") VALUES (10,'Etiqueta de Garantia');
+
 INSERT INTO DART."NotaFiscalTipo" ("IdNotaFiscalTipo","Descricao") 	VALUES (3,'Garantia');
 
 INSERT INTO DART."GarantiaStatus" ("IdGarantiaStatus","Descricao")

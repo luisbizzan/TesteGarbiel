@@ -27,7 +27,6 @@
     }, 'Data Emissão Final ou Data Recbimento Final Obrigatório');
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        debugger
         var visivelRegistrarRecibimento = view.registrarRecebimento && full.IdGarantia === null;
         var visivelConferirGarantia = view.conferirGarantia && (full.IdGarantiaStatus === 2 || full.IdGarantiaStatus === 3);
 
@@ -387,8 +386,11 @@ function conferenciaGarantia() {
             if (result.Success) {
                 $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferenciaGarantia/" + id, function (result) {
                     $modal.modal();
+
                     $("#Referencia").focus();
                 });
+                if (result.Message != "")
+                    PNotify.warning({ text: result.Message });
             } else {
                 PNotify.warning({ text: result.Message });
             }

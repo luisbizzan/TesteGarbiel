@@ -144,12 +144,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return queryResult.ToList();
         }
 
-        public long BuscarNotaPeloIdGarantia(int idGarantia)
-        {
-            return Entities.Garantia.Where(x => x.IdGarantia == idGarantia).Select(x => x.IdNotaFiscal).FirstOrDefault();
-        }
-
-        public Garantia PesquisarGarantiaPorIdNotaFiscal(long idNotaFiscal)
+        public Garantia BuscarGarantiaPorIdNotaFiscal(long idNotaFiscal)
         {
             return Entities.Garantia.FirstOrDefault(x => x.IdNotaFiscal == idNotaFiscal);
         }

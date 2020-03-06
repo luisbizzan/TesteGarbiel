@@ -130,80 +130,26 @@
                             @Html.LabelFor(f => f.Tipo)
                             <div class="btn-group" style="display:block;">
                                 <button class="btn btn-secondary" tabindex="5" id="btnTipoGarantia" style="background-color:darkblue; color:#FFF;" type="button">Garantia</button>
-                                <button class="btn btn-secondary"tabindex="6" id="btnTipoLaudo" style="background-color:darkblue; color:#FFF;" type="button">Laudo</button>
+                                <button class="btn btn-secondary" tabindex="6" id="btnTipoLaudo" style="background-color:darkblue; color:#FFF;" type="button">Laudo</button>
                             </div>
                         </div>
                     </div>
-
-
-                    @*<div class="col-xs-12 col-md-12">
-            <div class="form-group">
-                @Html.LabelFor(f => f.DescricaoReferencia)
-                @Html.TextBoxFor(m => m.DescricaoReferencia, new { @class = "form-control", @readonly = "readonly" })
-            </div>
-        </div>
-        <div class="col-xs-6 col-md-3">
-            <div class="form-group">
-                @Html.LabelFor(f => f.Embalagem)
-                @Html.TextBoxFor(m => m.Embalagem, new { @class = "form-control", @readonly = "readonly" })
-            </div>
-        </div>*@
                 </div>
             </div>
-            @*<div>
-                    <div class="row">
-                        <div class="col-sm-12 col-lg-12">
-                            <h4 style="margin-top: 15px; margin-bottom: 0px;">Estoque e Vendas</h4>
-                            <div class="ln_solid" style="margin-bottom: 15px; margin-top: 0px;"></div>
-                        </div>
-                    </div>
-                    <div class="row" style="font-size: 13px">
-                        <div class="col-xs-6 col-md-3">
-                            <div class="form-group">
-                                @Html.LabelFor(f => f.QuantidadeEstoque): <span id="QuantidadeEstoque">@Model.QuantidadeEstoque</span>
-                            </div>
-                        </div>
-                        <div class="col-xs-6 col-md-3">
-                            <div class="form-group">
-                                @Html.LabelFor(f => f.QuantidadeReservada):  <span id="QuantidadeReservada">@Model.QuantidadeReservada</span>
-                            </div>
-                        </div>
-                        <div class="col-xs-6 col-md-3">
-                            <div class="form-group">
-                                @Html.LabelFor(f => f.QuantidadeNaoConferida): <span id="QuantidadeNaoConferida">@Model.QuantidadeNaoConferida</span>
-                            </div>
-                        </div>
-                        <div class="col-xs-6 col-md-3">
-                            <div class="form-group">
-                                @Html.LabelFor(f => f.QuantidadeConferida): <span id="QuantidadeConferida">@Model.QuantidadeConferida</span>
-                            </div>
-                        </div>
-                        <div class="col-xs-6 col-md-3">
-                            <div class="form-group">
-                                @Html.LabelFor(f => f.Localizacao): <span id="Localizacao">@Model.Localizacao</span>
-                            </div>
-                        </div>
-                        <div class="col-xs-12">
-                            <h5 id="msgEnviarPicking" class="text-danger hidden"><strong>Atenção! A mercadoria deve ser enviada para o Picking.</strong></h5>
-                        </div>
-                    </div>
-                </div>*@
-        <div class="row">
-            @*<div class="col-xs-12 col-md-4" id="legendaTipoConferencia">
-            <h5 style="padding-left: 5px"> <strong>F4</strong> - Conferência Manual</h5>
-        </div>
-        <div class="col-xs-12 col-md-2" id="legendaRegistroConferencia">
-            <h5><strong style="padding-left: 5px">ESC</strong> - Registrar</h5>
-        </div>*@
-
-            
-
-            <div class="col-sm-12 col-md-12" style="text-align: right;">
-                @*<button type="button" id="finalizarConferencia" class="btn btn-info">Finalizar</button>
-            <button type="button" id="exibirDivergencia" class="btn btn-default">Divergências</button>*@
+            <div class="row">
+                <div class="col-xs-12 col-md-4" id="legendaTipoConferencia">
+                    <h5 style="padding-left: 5px"> <strong>F4</strong> - Conferência Manual</h5>
+                </div>
+                @*<div class="col-xs-12 col-md-2" id="legendaRegistroConferencia">
+                        <h5><strong style="padding-left: 5px">ESC</strong> - Registrar</h5>
+                    </div>*@
+            <div class="col-sm-12 col-md-8" style="text-align: right;">
+                <button type="button" id="finalizarConferencia" class="btn btn-default">Imprimir Etiquetas</button>
+                <button type="button" id="finalizarConferencia" class="btn btn-info">Finalizar</button>
+                <button type="button" id="exibirDivergencia" class="btn btn-default">Divergências</button>
                 <a id="confirmarConferencia" data-toggle="tooltip" title="Confirmar" class="btn btn-primary">Registrar</a>
             </div>
-        </div>
+            </div>
         </div>
     </div>
 </div>

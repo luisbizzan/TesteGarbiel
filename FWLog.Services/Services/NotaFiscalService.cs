@@ -273,7 +273,7 @@ namespace FWLog.Services.Services
 
                 await VerificarNotaFiscalCancelada(notafiscal.CodigoIntegracao);
 
-                Garantia garantia = _uow.GarantiaRepository.PesquisarGarantiaPorIdNotaFiscal(idNotaFiscal);
+                Garantia garantia = _uow.GarantiaRepository.BuscarGarantiaPorIdNotaFiscal(idNotaFiscal);
 
                 if (garantia != null)
                 {
