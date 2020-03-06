@@ -313,6 +313,15 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(10);
 
+                if(impressaoItem == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Não foi encontrado item configurado para impressão de Etiqueta de Garantia.",
+                    });
+                }
+
                 if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
                 {
                     return Json(new AjaxGenericResultModel
