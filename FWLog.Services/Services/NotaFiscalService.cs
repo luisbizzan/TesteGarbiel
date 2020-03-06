@@ -128,7 +128,7 @@ namespace FWLog.Services.Services
                         notafiscal.IdFreteTipo = freteTipo.IdFreteTipo;
                     }
 
-                    var notafiscalItens = notasInt.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.UnidadeMedida, s.Quantidade, s.ValorUnitarioItem, s.ValorTotal, s.Sequencia }).ToList();
+                    var notafiscalItens = notasInt.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.UnidadeMedida, s.Quantidade, s.ValorUnitarioItem, s.ValorTotal, s.Sequencia, s.QuantidadeDevolucao }).ToList();
 
                     List<NotaFiscalItem> itemsNotaFsical = new List<NotaFiscalItem>();
 
@@ -167,6 +167,11 @@ namespace FWLog.Services.Services
                         notaFiscalItem.ValorTotal = Convert.ToDecimal(item.ValorTotal.Replace(".", ","));
                         notaFiscalItem.CodigoNotaFiscal = codNota;
                         notaFiscalItem.Sequencia = Convert.ToInt32(item.Sequencia);
+                        var quantidadeDevolucao = 0;
+                        if (!item.QuantidadeDevolucao.NullOrEmpty())
+                            quantidadeDevolucao = Convert.ToInt32(item.QuantidadeDevolucao);
+                        notaFiscalItem.QuantidadeDevolucao =    quantidadeDevolucao ;   ;
+
 
                         if (itemNovo)
                         {
