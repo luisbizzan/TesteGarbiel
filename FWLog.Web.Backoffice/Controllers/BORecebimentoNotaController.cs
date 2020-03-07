@@ -1228,6 +1228,7 @@ namespace FWLog.Web.Backoffice.Controllers
                                 {
                                     Referencia = divergencia.Produto.Referencia,
                                     QuantidadeConferencia = divergencia.QuantidadeConferencia,
+                                    QuantidadeDevolucao   = divergencia.QuantidadeDevolucao ?? 0,
                                     QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
                                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
                                     QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Sum(s => s.Quantidade),
@@ -1996,6 +1997,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Referencia = divergencia.Produto.Referencia,
                     QuantidadeConferencia = divergencia.QuantidadeConferencia,
+                    QuantidadeDevolucao   = divergencia.QuantidadeDevolucao ?? 0,
                     QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
                     QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Quantidade,
