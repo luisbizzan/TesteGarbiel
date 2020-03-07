@@ -426,14 +426,15 @@ namespace FWLog.Services.Services
 
             foreach (var itemNota in itensNotaFiscal)
             {
-                var itensConferencia = itensConferidos.Where(x => x.IdProduto == itemNota.Key);
-                int quantidadeNota = itemNota.Sum(s => s.Quantidade);
-                string referencia = itemNota.First().Produto.Referencia;
-                string descricao = itemNota.First().Produto.Descricao;
+                var itensConferencia    = itensConferidos.Where(x => x.IdProduto == itemNota.Key);
+                int quantidadeNota      = itemNota.Sum(s => s.Quantidade);
+                int quantidadeDevolucao = itemNota.Sum(s => s.QuantidadeDevolucao);
+                string referencia       = itemNota.First().Produto.Referencia;
+                string descricao        = itemNota.First().Produto.Descricao;
 
                 if (itensConferencia.Any())
                 {
-                    int quantidadeConferido = itensConferencia.Sum(s => s.Quantidade);
+                    int quantidadeConferido    = itensConferencia.Sum(s => s.Quantidade);
                     int diferencaNotaConferido = quantidadeNota - quantidadeConferido;
 
                     var item = new ResumoFinalizarConferenciaItemResponse
@@ -441,6 +442,7 @@ namespace FWLog.Services.Services
                         Referencia = referencia,
                         DescricaoProduto = descricao,
                         QuantidadeConferido = quantidadeConferido,
+                        QuantidadeDevolucao = quantidadeDevolucao,
                         QuantidadeNota = quantidadeNota,
                         DivergenciaMais = diferencaNotaConferido < 0 ? diferencaNotaConferido * -1 : 0,
                         DivergenciaMenos = diferencaNotaConferido > 0 ? diferencaNotaConferido : 0
@@ -455,6 +457,7 @@ namespace FWLog.Services.Services
                         Referencia = referencia,
                         DescricaoProduto = descricao,
                         QuantidadeConferido = 0,
+                        QuantidadeDevolucao = quantidadeDevolucao,
                         QuantidadeNota = quantidadeNota,
                         DivergenciaMais = 0,
                         DivergenciaMenos = quantidadeNota
@@ -469,12 +472,14 @@ namespace FWLog.Services.Services
             foreach (var itemForaNota in itensForaNota)
             {
                 int quantidadeConferido = itemForaNota.Sum(s => s.Quantidade);
+                int? quantidadeDevolucao = itemForaNota.Sum(s => s.QuantidadeDevolucao);
 
                 var item = new ResumoFinalizarConferenciaItemResponse
                 {
                     Referencia = itemForaNota.First().Produto.Referencia,
                     DescricaoProduto = itemForaNota.First().Produto.Descricao,
                     QuantidadeConferido = quantidadeConferido,
+                    QuantidadeDevolucao = quantidadeDevolucao ?? 0,
                     QuantidadeNota = 0,
                     DivergenciaMais = quantidadeConferido,
                     DivergenciaMenos = 0

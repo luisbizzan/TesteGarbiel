@@ -525,6 +525,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     Referencia = x.Referencia,
                     DescricaoProduto = x.DescricaoProduto,
                     QuantidadeConferencia = x.QuantidadeConferido,
+                    QuantidadeDevolucao   = x.QuantidadeDevolucao,
                     QuantidadeNotaFiscal = x.QuantidadeNota,
                     QuantidadeMais = x.DivergenciaMais,
                     QuantidadeMenos = x.DivergenciaMenos
@@ -1891,6 +1892,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     IdLoteDivergencia = divergencia.IdLoteDivergencia,
                     Referencia = divergencia.Produto.Referencia,
                     QuantidadeConferencia = divergencia.QuantidadeConferencia,
+                    QuantidadeDevolucao   = divergencia.QuantidadeDevolucao ?? 0,
                     QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
                     QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Sum(s => s.Quantidade),
