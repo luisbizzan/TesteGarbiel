@@ -54,14 +54,16 @@ namespace FWLog.Services.Services
             {
                 LoteDivergencia divergencia = null;
 
-                var qtdOriginal = nfItem.Value.Sum(s => s.Quantidade);
-                var conferencia = loteConferencias.Where(x => x.IdProduto == nfItem.Key).ToList();
+                var qtdOriginal  = nfItem.Value.Sum(s => s.Quantidade);
+                var qtdDevolucao = nfItem.Value.Sum(s => s.QuantidadeDevolucao);
+                var conferencia  = loteConferencias.Where(x => x.IdProduto == nfItem.Key).ToList();
 
                 if (conferencia.NullOrEmpty())
                 {
                     divergencia = new LoteDivergencia
                     {
                         QuantidadeConferenciaMenos = qtdOriginal,
+                        QuantidadeDevolucao = qtdDevolucao,
                         QuantidadeConferencia = 0,
                         QuantidadeConferenciaMais = 0
                     };
@@ -72,6 +74,7 @@ namespace FWLog.Services.Services
                         IdTipoConferencia = notafiscal.Empresa.EmpresaConfig.IdTipoConferencia.Value,
                         IdProduto = nfItem.Key,
                         Quantidade = 0,
+                        QuantidadeDevolucao = qtdDevolucao,
                         DataHoraInicio = DateTime.Now,
                         DataHoraFim = DateTime.Now,
                         Tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0),
@@ -92,6 +95,7 @@ namespace FWLog.Services.Services
                     divergencia = new LoteDivergencia
                     {
                         QuantidadeConferencia = qtdConferida,
+                        QuantidadeDevolucao   = qtdDevolucao,
                         QuantidadeConferenciaMais = qtdConferida > qtdOriginal ? qtdConferida - qtdOriginal : 0,
                         QuantidadeConferenciaMenos = qtdConferida < qtdOriginal ? qtdOriginal - qtdConferida : 0
                     };
@@ -115,12 +119,14 @@ namespace FWLog.Services.Services
             foreach (var item in conferenciaMais)
             {
                 var qtdConferida = item.Value.Sum(s => s.Quantidade);
+                var qtdDevolucao = item.Value.Sum(s => s.QuantidadeDevolucao);
 
                 LoteDivergencia divergencia = new LoteDivergencia
                 {
                     QuantidadeConferenciaMais = qtdConferida,
                     QuantidadeConferenciaMenos = 0,
                     QuantidadeConferencia = qtdConferida,
+                    QuantidadeDevolucao = qtdDevolucao,
                     IdProduto = item.Key,
                     IdLote = lote.IdLote,
                     IdNotaFiscal = lote.IdNotaFiscal,

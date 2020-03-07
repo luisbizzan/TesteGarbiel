@@ -320,7 +320,6 @@
 })();
 
 function imprimir(acao, id) {
-    debugger
     switch (acao) {
         case 'notas':
             $.ajax({

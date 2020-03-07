@@ -34,7 +34,6 @@
 })();
 
 function setEmpresa(idEmpresa, nomeFantasia, campo) {
-    debugger
     let _nomeFantasia = $("#" + campo).find(".nomeFantasia");
     let empresa = $("#" + campo).find(".idEmpresa");
     _nomeFantasia.val(nomeFantasia);

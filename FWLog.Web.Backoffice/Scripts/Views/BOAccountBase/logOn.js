@@ -1,13 +1,11 @@
 ﻿(function () {
 
     $('[data-language]').on('click', function () {
-        debugger
         var selected = $(this).attr('data-language');
         window.location = getLanguageUrl(selected);
     });
 
     var getLanguageUrl = function (culture) {
-        debugger
         return view.logOnUrl + "?l=" + encodeURIComponent(culture);
     };
 
