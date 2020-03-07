@@ -4,6 +4,5 @@
     {
         public string  NumeroNF { get; set; }
         public string  Serie    { get; set; }
-
     }                                                            
 }

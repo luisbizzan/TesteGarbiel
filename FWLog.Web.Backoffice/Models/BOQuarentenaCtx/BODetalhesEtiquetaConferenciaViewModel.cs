@@ -60,7 +60,7 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
         public int QuantidadeNotaFiscal { get; set; }
 
         [Display(Name = "Qtde. Devolução")]
-        public int QuantidadeDevolucao { get; set; }
+        public int? QuantidadeDevolucao { get; set; }
 
         [Display(Name = "Qtd. Conferência")]
         public int QuantidadeConferencia { get; set; }

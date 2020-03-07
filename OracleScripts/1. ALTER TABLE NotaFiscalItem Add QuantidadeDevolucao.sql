@@ -1,5 +1,5 @@
 --Adicionar a tabela sem definir como not null
-ALTER  TABLE "NotaFiscalItem"  "QuantidadeDevolucao" NUMBER(10,0) NOT NULL ;
+ALTER  TABLE "NotaFiscalItem"        ADD "QuantidadeDevolucao" NUMBER(10,0);
 
 --Adicionando o valor 0 no campo de quantidade de devolução
 UPDATE "NotaFiscalItem"  SET "QuantidadeDevolucao" = 0;

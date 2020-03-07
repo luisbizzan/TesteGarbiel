@@ -560,7 +560,7 @@ function setUsuario(idUsuario, nomeUsuario, origem) {
 }
 
 function conferirNota() {
-    let id = $(this).data("id");
+    let id        = $(this).data("id");
     let $modal    = $("#modalConferencia");
     let $modalDev = $("#modalDevolucaoTotal");
 
@@ -579,6 +579,8 @@ function conferirNota() {
                             $modalDev.load(HOST_URL + CONTROLLER_PATH + "DevolucaoTotal/" + id, function (result) {
                                 $modalDev.modal();
                             });
+                            $(".close").click();
+                            $("#dataTable").DataTable().ajax.reload();
                         }
                         else {
                             //Chama a tela de conferência

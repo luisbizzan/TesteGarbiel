@@ -2304,6 +2304,38 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
+        [HttpPost]
+        // [ApplicationAuthorize(Permissions = Permissions.Recebimento.DevolucaoTotal)]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
+        public async Task<JsonResult> FinalizarDevolucaoTotal()
+        {
+
+            long teste = 801; ///Retirar isso depois, receber o id do lote por parametro.
+            try
+            {
+                ProcessamentoTratativaDivergencia processamento = await _loteService.DevolucaoTotal(teste, IdUsuario).ConfigureAwait(false);
+                string json = JsonConvert.SerializeObject(processamento);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = !processamento.ProcessamentoErro,
+                    Message = processamento.ProcessamentoErro ? "Não foi possivel finalizar a devolução total." : "Devolução total finalizado com sucesso.",
+                    Data = json
+                }, JsonRequestBehavior.DenyGet); ;
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Data = "false",
+                    Message = e is BusinessException ? e.Message : "Não foi possivel finalizar a devolução total."
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
         public ActionResult ResumoProcessamentoDivergencia(long id)
