@@ -1635,6 +1635,68 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+
+        [HttpPost]
+        public async Task<JsonResult> ValidarPermissaoDevolucaoTotal()
+        {
+            var idUsuario = User.Identity.GetUserId();
+
+            //validar Permissão
+            var permissao = UserManager.GetPermissions(idUsuario).Contains(Permissions.Recebimento.DevolucaoTotal);
+
+            if (permissao)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = string.Empty
+                });
+            } else
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = string.Empty
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ValidarAcessoDevolucaoTotal(string usuario, string senha) 
+        {
+            ApplicationUser applicationUser = await UserManager.FindByNameAsync(usuario);
+
+            //Validar Login
+            var retornoLogin = SignInManager.UserManager.CheckPassword(applicationUser, senha);
+
+            if (!retornoLogin)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Usuário ou senha inválidos. Por favor, tente novamente!"
+                });
+            }
+
+            //validar Permissão
+            var permissao = UserManager.GetPermissions(applicationUser.Id).Contains(Permissions.Recebimento.DevolucaoTotal);
+
+            if (!permissao)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "O usuário informado não possui permissão para permitir a devolução total. Contate o Administrador."
+                });
+            }
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = string.Empty
+            });
+        }
+
+
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public async Task<JsonResult> RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo, int idTipoConferencia)
         {
