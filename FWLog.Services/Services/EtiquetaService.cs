@@ -45,10 +45,12 @@ namespace FWLog.Services.Services
             etiquetaImprimir.Append("^FO16,20^GB710,880^FS");
             etiquetaImprimir.Append("^BY3,8,120");
             etiquetaImprimir.Append($"^FO280,90^BC^FD{idLote.ToString().PadLeft(10, '0')}^FS");
-            etiquetaImprimir.Append("^FO50,90^FB470,3,0,C,0^A0,230,100^FD");
+            etiquetaImprimir.Append("^FO50,90^FB470,4,0,C,0^A0,230,100^FD");
             etiquetaImprimir.Append($"FOR.{lote.NotaFiscal.Fornecedor.IdFornecedor}");
             etiquetaImprimir.Append(@"\&\&");
             etiquetaImprimir.Append($"NF.{lote.NotaFiscal.Numero}");
+            etiquetaImprimir.Append(@"\&");
+            etiquetaImprimir.Append($"{lote.DataRecebimento.ToString("dd/MM/yyyy")}");
             etiquetaImprimir.Append("^FS");
 
             etiquetaImprimir.Append("^XZ");
@@ -337,6 +339,7 @@ namespace FWLog.Services.Services
             string linha1 = request.Linha1?.Normalizar();
             string linha2 = request.Linha2?.Normalizar();
             string linha3 = request.Linha3?.Normalizar();
+            string linha4 = request.Linha4?.Normalizar();
 
             var etiquetaZpl = new StringBuilder();
 
@@ -349,7 +352,7 @@ namespace FWLog.Services.Services
             etiquetaZpl.Append("^FO10,10^GB700,540,270^FS");
 
             // Texto da etiqueta
-            etiquetaZpl.Append($@"^FO50,15^FB530,3,0,C,0^A0B,230,65^FR^FD{linha1}\&{linha2}\&{linha3}^FS");
+            etiquetaZpl.Append($@"^FO50,15^FB530,4,0,C,0^A0B,230,65^FR^FD{linha1}\&{linha2}\&{linha3}\&{linha4}^FS");
 
             etiquetaZpl.Append("^XZ");
 

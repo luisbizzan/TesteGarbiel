@@ -748,7 +748,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Recebimento da mecadoria já se enconta efetivado no sistema.",
+                    Message = "Recebimento da mercadoria já se encontra efetivado no sistema.",
                 });
             }
 
@@ -815,7 +815,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Recebimento da mecadoria já efetivado no sistema."
+                    Message = "Recebimento da mercadoria já efetivado no sistema."
                 });
             }
 
@@ -898,7 +898,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Recebimento da mecadoria já se enconta efetivado no sistema.",
+                    Message = "Recebimento da mercadoria já se encontra efetivado no sistema.",
                 });
             }
 
@@ -1014,9 +1014,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem
                 {
                     IdTipoEtiquetagem = TipoEtiquetagemEnum.Recebimento.GetHashCode(),
-                    IdEmpresa = IdEmpresa,
+                    IdEmpresa  = IdEmpresa,
                     Quantidade = lote.QuantidadeVolume,
-                    IdUsuario = User.Identity.GetUserId()
+                    DataHora   = lote.DataRecebimento,
+                    IdUsuario  = User.Identity.GetUserId()
                 };
 
                 _logEtiquetagemService.Registrar(logEtiquetagem);
@@ -2287,7 +2288,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 LotesRecebidosUsuario = x.LOTESRECEBIDASUSUARIO,
                 PecasRecebidas = x.PECASRECEBIDAS,
                 PecasRecebidasUsuario = x.PECASRECEBIDASUSUARIO,
-                Percentual = x.PERCENTUAL,
+                Percentual = x.PERCENTUAL.ToString("N2"),
                 Ranking = x.RANKING
             }).PaginationResult(model);
 
@@ -2358,15 +2359,43 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.DevolucaoTotal)]
-        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public async Task<JsonResult> FinalizarDevolucaoTotal()
         {
 
-            long teste = 801; ///Retirar isso depois, receber o id do lote por parametro.
+            long idLote = 801; ///Retirar isso depois, receber o id do lote por parametro.
+            Lote lote = _uow.LoteRepository.GetById(idLote);
             try
             {
-                ProcessamentoTratativaDivergencia processamento = await _loteService.DevolucaoTotal(teste, IdUsuario).ConfigureAwait(false);
+                ProcessamentoTratativaDivergencia processamento = await _loteService.DevolucaoTotal(idLote, IdUsuario).ConfigureAwait(false);
                 string json = JsonConvert.SerializeObject(processamento);
+
+
+                //Novo Para Impressão
+                #region Impressão Automática de Etiquetas
+
+                var etiquetaDevolucaoRequest = new ImprimirEtiquetaDevolucaoRequest
+                {
+                    Linha1 = idLote.ToString().PadLeft(10, '0'),
+                    Linha2 = idLote.ToString().PadLeft(10, '0'),
+                    Linha3 = "Dev. Total",
+                    Linha4 = lote.DataRecebimento.ToString("dd/MM/yyyy"),
+                    IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
+                };
+
+                _etiquetaService.ImprimirEtiquetaDevolucao(etiquetaDevolucaoRequest);
+
+                //Registra o Log da impressão da etiqueta de Devolução
+                var logEtiquetagemDevolucao = new Services.Model.LogEtiquetagem.LogEtiquetagem
+                {
+                    IdTipoEtiquetagem = TipoEtiquetagemEnum.Devolucao.GetHashCode(),
+                    IdEmpresa = IdEmpresa,
+                    IdUsuario = User.Identity.GetUserId()
+                };
+
+                _logEtiquetagemService.Registrar(logEtiquetagemDevolucao);
+
+                #endregion
+
 
                 return Json(new AjaxGenericResultModel
                 {
