@@ -87,6 +87,7 @@
         columns: [
             { data: 'Lote' },
             { data: 'Nota' },
+            { data: 'ChaveAcesso' },
             { data: 'Fornecedor' },
             { data: 'DataAbertura', width: 100 },
             { data: 'DataEncerramento', width: 100 },

@@ -22,6 +22,7 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
         public long IdQuarentena { get; set; }
         public long Lote { get; set; }
         public int Nota { get; set; }
+        public string ChaveAcesso { get; set; }
         public string Fornecedor { get; set; }
         public long? Atraso { get; set; }
         [Display(Name = "Data Abertura")]

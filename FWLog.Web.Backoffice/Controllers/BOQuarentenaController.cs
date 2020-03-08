@@ -130,14 +130,15 @@ namespace FWLog.Web.Backoffice.Controllers
             IEnumerable<BOQuarentenaListItemViewModel> list = query.ToList()
                 .Select(x => new BOQuarentenaListItemViewModel
                 {
-                    IdQuarentena = x.IdQuarentena,
-                    Lote = x.IdLote,
-                    Nota = x.Lote.NotaFiscal.Numero,
-                    Fornecedor = x.Lote.NotaFiscal.Fornecedor.NomeFantasia,
-                    DataAbertura = x.DataAbertura.ToString("dd/MM/yyyy"),
-                    DataEncerramento = x.DataEncerramento.HasValue ? x.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
-                    Atraso = x.DataAbertura.Subtract(x.DataEncerramento ?? DateTime.Now).Days,
-                    Status = x.QuarentenaStatus.Descricao,
+                    IdQuarentena       = x.IdQuarentena,
+                    Lote               = x.IdLote,
+                    ChaveAcesso        = x.Lote.NotaFiscal.ChaveAcesso,
+                    Nota               = x.Lote.NotaFiscal.Numero,
+                    Fornecedor         = x.Lote.NotaFiscal.Fornecedor.NomeFantasia,
+                    DataAbertura       = x.DataAbertura.ToString("dd/MM/yyyy"),
+                    DataEncerramento   = x.DataEncerramento.HasValue ? x.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
+                    Atraso             = x.DataAbertura.Subtract(x.DataEncerramento ?? DateTime.Now).Days,
+                    Status             = x.QuarentenaStatus.Descricao,
                     IdQuarentenaStatus = (int)x.IdQuarentenaStatus
                 });
 
@@ -385,6 +386,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 NotaSerie = entidade.Lote.NotaFiscal.Numero + " - " + entidade.Lote.NotaFiscal.Serie,
                 Lote = entidade.IdLote.ToString(),
+                ChaveAcesso = entidade.Lote.NotaFiscal.ChaveAcesso,
                 LoteStatus = entidade.Lote.LoteStatus.Descricao,
                 IdQuarentena = entidade.IdQuarentena,
                 IdStatus = entidade.QuarentenaStatus.IdQuarentenaStatus,

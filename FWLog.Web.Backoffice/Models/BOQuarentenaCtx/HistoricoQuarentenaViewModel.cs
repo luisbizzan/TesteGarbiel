@@ -10,6 +10,8 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
 
         [Display(Name = "Nota/Série")]
         public string NotaSerie { get; set; }
+        [Display(Name = "Chave de Acesso")]
+        public string ChaveAcesso { get; set; }
 
         [Display(Name = "Lote")]
         public string Lote { get; set; }
