@@ -100,17 +100,10 @@ namespace FWLog.Web.Backoffice.Controllers
                         Value = x.IdNotaRecebimentoStatus.GetHashCode().ToString(),
                         Text = x.Descricao,
                     }), "Value", "Text"
-                )
-                }
+                )}
             };
 
             model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
-            //model.Filter.DataRegistroInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
-            //model.Filter.DataRegistroFinal   = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
-
-            //model.Filter.DataSincronismoInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
-            //model.Filter.DataSincronismoFinal   = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
-
             return View(model);
         }
 
@@ -336,11 +329,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
             totalRecords = query.Count();
 
-            /*if (!string.IsNullOrEmpty(model.CustomFilter.ChaveAcesso))
-            {
-                query = query.Where(x => !string.IsNullOrEmpty(x.NotaFiscal.ChaveAcesso) && x.NotaFiscal.ChaveAcesso.Contains(model.CustomFilter.ChaveAcesso));
-            }*/
-
             if (model.CustomFilter.IdFornecedor.HasValue)
             {
                 query = query.Where(x => x.IdFornecedor == model.CustomFilter.IdFornecedor);
@@ -398,7 +386,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
                 List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa); 
-
 
                 _notaRecebimentoListItemViewModel.Add(new NotaRecebimentoListItemViewModel()
                 {
@@ -556,7 +543,6 @@ namespace FWLog.Web.Backoffice.Controllers
             ValidateModel(viewModel);
 
             var relatorioRequest = Mapper.Map<RelatorioNotasRecebimentoRequest>(viewModel);
-           // relatorioRequest.NomeUsuario = LabelUsuario;
             byte[] relatorio = _relatorioService.GerarRelatorioNotasRecebimento(relatorioRequest);
 
             return File(relatorio, "application/pdf", "Relatório Recebimento Notas.pdf");
@@ -1364,7 +1350,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
 
         [HttpGet]
-        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.DevolucaoTotal)]
         public ActionResult DevolucaoTotal(long id)
         {
             Lote lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
@@ -2309,7 +2295,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        // [ApplicationAuthorize(Permissions = Permissions.Recebimento.DevolucaoTotal)]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.DevolucaoTotal)]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public async Task<JsonResult> FinalizarDevolucaoTotal()
         {

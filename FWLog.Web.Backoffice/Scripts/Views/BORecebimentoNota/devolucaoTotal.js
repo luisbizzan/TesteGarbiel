@@ -29,23 +29,14 @@ function FinalizarDevolucaoTotal() {
         method: "POST",
         success: function (result) {
             if (!result.Success) {
-                PNotify.error({ text: result.Message });
                 $('#modalDevolucaoTotal').modal('toggle');
-               /* var model = JSON.parse(result.Data);
-
-                $('.flat[id="Processamento_CriacaoQuarentena"]').iCheck(model.CriacaoQuarentena ? "check" : "uncheck");
-                $('.flat[id="Processamento_CriacaoNFDevolucao"]').iCheck(model.CriacaoNFDevolucao ? "check" : "uncheck");
-                $('.flat[id="Processamento_ConfirmacaoNFDevolucao"]').iCheck(model.ConfirmacaoNFDevolucao ? "check" : "uncheck");
-                $('.flat[id="Processamento_AutorizacaoNFDevolucaoSefaz"]').iCheck(model.AutorizacaoNFDevolucaoSefaz ? "check" : "uncheck");
-
-                $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });*/
+                PNotify.error({ text: result.Message });
             } else {
-                PNotify.success({ text: result.Message });
                 $(".close").click();
                 $('#modalDevolucaoTotal').modal('toggle');
                 $("#dataTable").DataTable().ajax.reload();
-                confirmarfinalizarConferencia();
-              //  $("#dataTable").DataTable().ajax.reload();
+                PNotify.success({ text: result.Message });
+                //confirmarfinalizarConferencia();   //Se não vai haver conferencia. não tem necessidade de exibir a tela de resumo.
             }
         }
     });
