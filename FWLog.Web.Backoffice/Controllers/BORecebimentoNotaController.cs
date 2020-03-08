@@ -512,6 +512,19 @@ namespace FWLog.Web.Backoffice.Controllers
             return File(relatorio, "application/pdf", "Relatório Recebimento Notas.pdf");
         }
 
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
+        public ActionResult DownloadNotasRecebimento(BODownloadNotasRecebimentoViewModel viewModel)
+        {
+            ValidateModel(viewModel);
+
+            var relatorioRequest = Mapper.Map<RelatorioNotasRecebimentoRequest>(viewModel);
+           // relatorioRequest.NomeUsuario = LabelUsuario;
+            byte[] relatorio = _relatorioService.GerarRelatorioNotasRecebimento(relatorioRequest);
+
+            return File(relatorio, "application/pdf", "Relatório Recebimento Notas.pdf");
+        }
+
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
         public ActionResult DownloadDetalhesNotaEntradaConferencia(int id)

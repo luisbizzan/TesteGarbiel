@@ -53,7 +53,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
     {
         public long                      IdNotaFiscalRecebimento { get; set; }
         public long?                     IdFornecedor            { get; set; }
-        public string                    NomeFornecedor            { get; set; }
+        public string                    NomeFornecedor          { get; set; }
         public int?                      NumeroNF                { get; set; }
         public string                    Serie                   { get; set; }
         public string                    Valor                   { get; set; }

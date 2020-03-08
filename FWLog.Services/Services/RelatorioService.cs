@@ -231,6 +231,137 @@ namespace FWLog.Services.Services
             return fwRelatorio.Gerar(fwRelatorioDados);
         }
 
+
+
+
+        public byte[] GerarRelatorioNotasRecebimento(RelatorioNotasRecebimentoRequest request)
+        {
+            IQueryable<NotaFiscalRecebimento> query = _unitiOfWork.NotaFiscalRecebimentoRepository.Todos()
+                .AsQueryable()
+                .OrderByDescending(x => x.IdNotaFiscalRecebimento);
+
+            if (!string.IsNullOrEmpty(request.ChaveAcesso))
+            {
+                query = query.Where(x => !string.IsNullOrEmpty(x.ChaveAcesso) && x.ChaveAcesso.Contains(request.ChaveAcesso));
+            }
+
+            if (request.NumeroNF.HasValue)
+            {
+                query = query.Where(x => x.NumeroNF == request.NumeroNF);
+            }
+
+            if (!string.IsNullOrEmpty(request.Serie))
+            {
+                query = query.Where(x => !string.IsNullOrEmpty(x.Serie) && x.ChaveAcesso.Contains(request.Serie));
+            }
+
+            if (request.IdFornecedor.HasValue)
+            {
+                query = query.Where(x => x.Fornecedor.IdFornecedor == request.IdFornecedor);
+            }
+
+            if (request.QuantidadeVolumes.HasValue)
+            {
+                query = query.Where(x => x.QuantidadeVolumes == request.QuantidadeVolumes);
+            }
+
+            if (request.IdStatus.HasValue)
+            {
+                query = query.Where(x => (long)x.NotaRecebimentoStatus.IdNotaRecebimentoStatus == request.IdStatus.Value);
+            }
+
+            if (request.DataRegistroInicial.HasValue)
+            {
+                DateTime dataRegistroInicial = new DateTime(request.DataRegistroInicial.Value.Year, request.DataRegistroInicial.Value.Month, request.DataRegistroInicial.Value.Day, 00, 00, 00);
+                query = query.Where(x => x.DataHoraRegistro >= dataRegistroInicial);
+            }
+
+            if (request.DataRegistroFinal.HasValue)
+            {
+                DateTime dataRegistroFinal = new DateTime(request.DataRegistroFinal.Value.Year, request.DataRegistroFinal.Value.Month, request.DataRegistroFinal.Value.Day, 23, 59, 59);
+                query = query.Where(x => x.DataHoraRegistro <= dataRegistroFinal);
+            }
+
+            if (request.DataSincronismoInicial.HasValue)
+            {
+                DateTime dataSincronismoInicial = new DateTime(request.DataSincronismoInicial.Value.Year, request.DataSincronismoInicial.Value.Month, request.DataSincronismoInicial.Value.Day, 00, 00, 00);
+                query = query.Where(x => x.DataHoraSincronismo >= dataSincronismoInicial);
+            }
+
+            if (request.DataSincronismoFinal.HasValue)
+            {
+                DateTime dataSincronismoFinal = new DateTime(request.DataSincronismoFinal.Value.Year, request.DataSincronismoFinal.Value.Month, request.DataSincronismoFinal.Value.Day, 23, 59, 59);
+                query = query.Where(x => x.DataHoraSincronismo <= dataSincronismoFinal);
+            }
+
+            if (!request.IdUsuarioRecebimento.NullOrEmpty())
+            {
+                query = query.Where(x => x.UsuarioRecebimento != null && x.UsuarioRecebimento.Id == request.IdUsuarioRecebimento);
+            }
+
+            var listaRecebimentoNotas = new List<IFwRelatorioDados>();
+
+            if (query.Any())
+            {
+                foreach (var item in query)
+                {
+                    long? diasAguardando = 0;
+
+                    if (item.DataHoraSincronismo != null)
+                    {
+                        diasAguardando = item.DataHoraSincronismo.Value.Subtract(item.DataHoraRegistro).Days;
+                    }
+                    else
+                        diasAguardando = DateTime.Now.Subtract(item.DataHoraRegistro).Days;
+
+                    var recebimentoNotas = new NotasRecebimento
+                    {
+                        Fornecedor          = item.Fornecedor.NomeFantasia,
+                        Usuario             = item.UsuarioRecebimento.UserName,
+                        NumeroNF            = item.NumeroNF == 0 ? "/" : string.Concat(item.NumeroNF.ToString(), "-", item.Serie),
+                        DiasAguardando      = diasAguardando.ToString() + " Dias",
+                        DataHoraRegistro    = item.DataHoraRegistro.ToString(),
+                        DataHoraSincronismo = item.DataHoraSincronismo.ToString(),
+                        Status              = item.NotaRecebimentoStatus.Descricao,
+                        QuantidadeVolumes   = item.QuantidadeVolumes,
+
+                    };
+
+                    listaRecebimentoNotas.Add(recebimentoNotas);
+                }
+            }
+
+            //Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
+
+            string descricaoStatus = "Todos";
+            if (request.IdStatus.HasValue)
+            {
+                descricaoStatus = _unitiOfWork.LoteStatusRepository.Todos().FirstOrDefault(f => (long)f.IdLoteStatus == request.IdStatus.Value).Descricao;
+            }
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório Notas Fiscais Recebimento",
+                Filtros = new FwRelatorioDadosFiltro
+                {
+                    Status                 = descricaoStatus,
+                    DataRecebimentoInicial = request.DataRegistroInicial,
+                    DataRecebimentoFinal   = request.DataRegistroFinal,
+                    DataSincronismoInicial = request.DataSincronismoInicial,
+                    DataSincronismoFinal   = request.DataSincronismoFinal
+                },
+                Dados = listaRecebimentoNotas
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            return fwRelatorio.Gerar(fwRelatorioDados);
+        }
+
+
+
         public void ImprimirDetalhesNotaEntradaConferencia(ImprimirDetalhesNotaEntradaConferenciaRequest request)
         {
             var relatorioRequest = new DetalhesNotaEntradaConferenciaRequest

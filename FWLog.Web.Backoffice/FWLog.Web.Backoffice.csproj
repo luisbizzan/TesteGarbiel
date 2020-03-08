@@ -278,6 +278,7 @@
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\HistoricoQuarentenaViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\BODownloadNotasRecebimentoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BONotaRecebimentoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\NotaRecebimentoListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\PesquisaLoteModalViewModel.cs" />

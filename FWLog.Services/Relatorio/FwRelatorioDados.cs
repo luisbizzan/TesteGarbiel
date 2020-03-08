@@ -17,10 +17,12 @@ namespace FWLog.Services.Relatorio
 
     public class FwRelatorioDadosFiltro
     {
-        public string Status { get; set; }
-        public DateTime? PrazoDeEntregaInicial { get; set; }
-        public DateTime? PrazoDeEntregaFinal { get; set; }
+        public string Status                    { get; set; }
+        public DateTime? PrazoDeEntregaInicial  { get; set; }
+        public DateTime? PrazoDeEntregaFinal    { get; set; }
         public DateTime? DataRecebimentoInicial { get; set; }
-        public DateTime? DataRecebimentoFinal { get; set; }
+        public DateTime? DataRecebimentoFinal   { get; set; }
+        public DateTime? DataSincronismoInicial { get; set; }
+        public DateTime? DataSincronismoFinal   { get; set; }
     }
 }

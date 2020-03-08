@@ -64,7 +64,7 @@
 
     $("#downloadRelatorio").click(function () {
         $.ajax({
-            url: "/BORecebimentoNota/DownloadRelatorioNotas",
+            url: "/BORecebimentoNota/DownloadNotasRecebimento",
             method: "POST",
             cache: false,
             xhrFields: {
