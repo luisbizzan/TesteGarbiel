@@ -22,7 +22,5 @@ namespace FWLog.Services.Relatorio
         public DateTime? PrazoDeEntregaFinal    { get; set; }
         public DateTime? DataRecebimentoInicial { get; set; }
         public DateTime? DataRecebimentoFinal   { get; set; }
-        public DateTime? DataSincronismoInicial { get; set; }
-        public DateTime? DataSincronismoFinal   { get; set; }
     }
 }

@@ -47,7 +47,7 @@
     $("#Filter_InicialInicial").blur(function () {
         if ($(this).val() === ":") {
             $(this).val("");
-        }
+        } 
     });
 
     $("#imprimirEtiquetaNotaRecebimento").click(function () {
@@ -57,7 +57,7 @@
     });
 
     $("#imprimirRelatorio").click(function () {
-        $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=1&acao=notas", function () {
+        $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=notas", function () {
             $("#modalImpressoras").modal();
         });
     });
@@ -244,7 +244,7 @@ function imprimir(acao, id) {
     switch (acao) {
         case 'notas':
             $.ajax({
-                url: "/BORecebimentoNota/ImprimirRelatorioNotas",
+                url: "/BORecebimentoNota/ImprimirNotasRecebimento",
                 method: "POST",
                 data: {
                     IdImpressora: $("#IdImpressora").val(),

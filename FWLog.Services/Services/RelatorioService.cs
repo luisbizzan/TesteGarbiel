@@ -56,6 +56,30 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
 
+
+        public void ImprimirRelatorioNotasRecebimento(ImprimirNotasRecebimentoRequest request)
+        {
+            var relatorioRequest = new RelatorioNotasRecebimentoRequest
+            {
+                NumeroNF               = request.NumeroNF,
+                ChaveAcesso            = request.ChaveAcesso,
+                IdStatus               = request.IdStatus,
+                DataRegistroInicial    = request.DataRegistroInicial,
+                DataRegistroFinal      = request.DataRegistroFinal,
+                DataSincronismoInicial = request.DataSincronismoInicial,
+                DataSincronismoFinal   = request.DataSincronismoFinal,
+                IdFornecedor           = request.IdFornecedor,
+                DiasAguardando         = request.DiasAguardando,
+                QuantidadeVolumes      = request.QuantidadeVolumes,
+                IdUsuarioRecebimento   = request.IdUsuarioRecebimento,
+                NomeUsuario            = request.NomeUsuario,
+            };
+
+            byte[] relatorio = GerarRelatorioNotasRecebimento(relatorioRequest);
+
+            _impressoraService.Imprimir(relatorio, request.IdImpressora);
+        }
+
         public byte[] GerarRelatorioRecebimentoNotas(RelatorioRecebimentoNotasRequest request)
         {
             IQueryable<Lote> query = _unitiOfWork.LoteRepository.Obter(request.IdEmpresa, NotaFiscalTipoEnum.Compra)
@@ -314,10 +338,12 @@ namespace FWLog.Services.Services
                     else
                         diasAguardando = DateTime.Now.Subtract(item.DataHoraRegistro).Days;
 
+                    List<PerfilUsuario> usuarios = _unitiOfWork.PerfilUsuarioRepository.Todos().ToList();
+
                     var recebimentoNotas = new NotasRecebimento
                     {
                         Fornecedor          = item.Fornecedor.NomeFantasia,
-                        Usuario             = item.UsuarioRecebimento.UserName,
+                        Usuario             = usuarios.Where(x => x.UsuarioId.Equals(item.IdUsuarioRecebimento)).FirstOrDefault()?.Nome,
                         NumeroNF            = item.NumeroNF == 0 ? "/" : string.Concat(item.NumeroNF.ToString(), "-", item.Serie),
                         DiasAguardando      = diasAguardando.ToString() + " Dias",
                         DataHoraRegistro    = item.DataHoraRegistro.ToString(),
@@ -336,7 +362,7 @@ namespace FWLog.Services.Services
             string descricaoStatus = "Todos";
             if (request.IdStatus.HasValue)
             {
-                descricaoStatus = _unitiOfWork.LoteStatusRepository.Todos().FirstOrDefault(f => (long)f.IdLoteStatus == request.IdStatus.Value).Descricao;
+                descricaoStatus = _unitiOfWork.NotaRecebimentoStatusRepository.Todos().FirstOrDefault(f => (long)f.IdNotaRecebimentoStatus == request.IdStatus.Value).Descricao;
             }
 
             var fwRelatorioDados = new FwRelatorioDados
@@ -344,14 +370,7 @@ namespace FWLog.Services.Services
                 DataCriacao = DateTime.Now,
                 Orientacao = Orientation.Landscape,
                 Titulo = "Relatório Notas Fiscais Recebimento",
-                Filtros = new FwRelatorioDadosFiltro
-                {
-                    Status                 = descricaoStatus,
-                    DataRecebimentoInicial = request.DataRegistroInicial,
-                    DataRecebimentoFinal   = request.DataRegistroFinal,
-                    DataSincronismoInicial = request.DataSincronismoInicial,
-                    DataSincronismoFinal   = request.DataSincronismoFinal
-                },
+                Filtros = null,
                 Dados = listaRecebimentoNotas
             };
 

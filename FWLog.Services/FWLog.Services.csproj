@@ -142,6 +142,7 @@
     <Compile Include="Model\Lote\TratarDivergenciaRequest.cs" />
     <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirDetalhesNotaEntradaConferenciaRequest.cs" />
+    <Compile Include="Model\Relatorios\ImprimirNotasRecebimentoRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirRelatorioRecebimentoNotasRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioRastreioPecaRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioNotasRecebimentoRequest.cs" />

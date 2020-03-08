@@ -397,7 +397,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     diasAguardando = DateTime.Now.Subtract(item.DataHoraRegistro).Days;
 
                 var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
-                List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
+                List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa); 
 
 
                 _notaRecebimentoListItemViewModel.Add(new NotaRecebimentoListItemViewModel()
@@ -921,6 +921,39 @@ namespace FWLog.Web.Backoffice.Controllers
                 request.NomeUsuario = LabelUsuario;
 
                 _relatorioService.ImprimirRelatorioRecebimentoNotas(request);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
+        public JsonResult ImprimirNotasRecebimento(BOImprimirNotasRecebimentoViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                var request = Mapper.Map<ImprimirNotasRecebimentoRequest>(viewModel);
+
+                request.NomeUsuario = LabelUsuario;
+
+                _relatorioService.ImprimirRelatorioNotasRecebimento(request);
 
                 return Json(new AjaxGenericResultModel
                 {
