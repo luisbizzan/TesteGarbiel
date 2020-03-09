@@ -32,7 +32,7 @@ namespace FWLog.Web.Api.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> BuscarPorId(long id)
         {
-            if(id == 0)
+            if(id <= 0)
             {
                 return ApiBadRequest("O lote deve ser informado.");
             }

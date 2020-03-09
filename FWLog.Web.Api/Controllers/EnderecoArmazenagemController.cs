@@ -1,6 +1,9 @@
-﻿using FWLog.Data;
+﻿using AutoMapper;
+using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Web.Api.Models.EnderecoArmazenagem;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
@@ -37,6 +40,27 @@ namespace FWLog.Web.Api.Controllers
             var rtn = new EnderecosArmazenagemResposta { Lista = lista };
 
             return ApiOk(rtn);
+        }
+
+        [HttpGet]
+        [Route("api/v1/endereco/{id}")]
+        public async Task<IHttpActionResult> Pesquisar(long id)
+        {
+            if (id <= 0)
+            {
+                return ApiBadRequest("O endereço deve ser informado.");
+            }
+
+            EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(id);
+
+            if (enderecoArmazenagem == null)
+            {
+                return ApiNotFound("O endereço não foi encontrado.");
+            }
+
+            var enderecoArmazenagemResposta = Mapper.Map<PesquisarEnderecoArmazenagemPorIdResposta>(enderecoArmazenagem);
+
+            return ApiOk(enderecoArmazenagemResposta);
         }
     }
 }
