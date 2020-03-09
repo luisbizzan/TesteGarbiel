@@ -1642,41 +1642,44 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 #region Impressão Automática de Etiquetas
 
-                var request = new ImprimirEtiquetaArmazenagemVolume
+                if(quantidadePorCaixa > 0)
                 {
-                    NroLote = idLote,
-                    QuantidadeEtiquetas = quantidadeCaixa,
-                    QuantidadePorCaixa = quantidadePorCaixa,
-                    ReferenciaProduto = conferenciaRegistro.Produto.Referencia,
-                    Usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome,
-                    IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(2).IdImpressaoItem).First().Id
-                };
-
-                _etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
-
-                if (VerificarPecaHaMais(conferencia.Lote.IdLote, quantidadePorCaixa, conferencia.Lote.IdNotaFiscal, conferencia.Produto.IdProduto) > 0)
-                {
-                    var requestPecasMais = new ImprimirEtiquetaDevolucaoRequest
+                    var request = new ImprimirEtiquetaArmazenagemVolume
                     {
-                        Linha1 = conferencia.Lote.IdLote.ToString().PadLeft(10, '0'),
-                        Linha2 = conferencia.Produto.Referencia,
-                        Linha3 = "PC.A+",
-                        IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
+                        NroLote = idLote,
+                        QuantidadeEtiquetas = quantidadeCaixa,
+                        QuantidadePorCaixa = quantidadePorCaixa,
+                        ReferenciaProduto = conferenciaRegistro.Produto.Referencia,
+                        Usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome,
+                        IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(2).IdImpressaoItem).First().Id
                     };
 
-                    _etiquetaService.ImprimirEtiquetaDevolucao(requestPecasMais);
+                    _etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
 
-                    //Registra a impressão da etiqueta de Devolução
-                    var logEtiquetagemDevolucao = new Services.Model.LogEtiquetagem.LogEtiquetagem
+                    if (VerificarPecaHaMaisAposConferencia(conferencia.Lote.IdLote, quantidadePorCaixa, conferencia.Lote.IdNotaFiscal, conferencia.Produto.IdProduto) > 0)
                     {
-                        IdTipoEtiquetagem = TipoEtiquetagemEnum.Devolucao.GetHashCode(),
-                        IdEmpresa = IdEmpresa,
-                        IdProduto = conferenciaRegistro.Produto.IdProduto,
-                        Quantidade = quantidadeCaixa,
-                        IdUsuario = User.Identity.GetUserId()
-                    };
+                        var requestPecasMais = new ImprimirEtiquetaDevolucaoRequest
+                        {
+                            Linha1 = conferencia.Lote.IdLote.ToString().PadLeft(10, '0'),
+                            Linha2 = conferencia.Produto.Referencia,
+                            Linha3 = "PC.A+",
+                            IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
+                        };
 
-                    _logEtiquetagemService.Registrar(logEtiquetagemDevolucao);
+                        _etiquetaService.ImprimirEtiquetaDevolucao(requestPecasMais);
+
+                        //Registra a impressão da etiqueta de Devolução
+                        var logEtiquetagemDevolucao = new Services.Model.LogEtiquetagem.LogEtiquetagem
+                        {
+                            IdTipoEtiquetagem = TipoEtiquetagemEnum.Devolucao.GetHashCode(),
+                            IdEmpresa = IdEmpresa,
+                            IdProduto = conferenciaRegistro.Produto.IdProduto,
+                            Quantidade = quantidadeCaixa,
+                            IdUsuario = User.Identity.GetUserId()
+                        };
+
+                        _logEtiquetagemService.Registrar(logEtiquetagemDevolucao);
+                    }
                 }
 
                 //Registra a impressão da etiqueta de Lote
@@ -1795,7 +1798,35 @@ namespace FWLog.Web.Backoffice.Controllers
                 pecasHaMais = (qtdConferida + quantidadePorCaixa) - quantidadePecasNota;
                 pecasHaMais = pecasHaMais < 0 ? 0 : pecasHaMais;
 
-                if (pecasHaMais > quantidadePorCaixa)
+                if (pecasHaMais > quantidadePorCaixa && quantidadePorCaixa > 0)
+                {
+                    pecasHaMais = quantidadePorCaixa;
+                }
+            }
+            else
+            {
+                pecasHaMais = quantidadePorCaixa;
+            }
+
+            return pecasHaMais;
+        }
+
+        private int VerificarPecaHaMaisAposConferencia(long idLote, int quantidadePorCaixa, long idNotaFiscal, long idProduto)
+        {
+            int pecasHaMais;
+            //Captura os itens da nota fiscal do produto.
+            var notaFiscalItem = _uow.NotaFiscalItemRepository.ObterPorItem(idNotaFiscal, idProduto);
+            var conferencia = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, idProduto);
+
+            if (notaFiscalItem.Any())
+            {
+                int qtdConferida = conferencia.Sum(s => s.Quantidade);
+                int quantidadePecasNota = notaFiscalItem.Sum(s => s.Quantidade);
+
+                pecasHaMais = qtdConferida - quantidadePecasNota;
+                pecasHaMais = pecasHaMais < 0 ? 0 : pecasHaMais;
+
+                if (pecasHaMais > quantidadePorCaixa && quantidadePorCaixa > 0)
                 {
                     pecasHaMais = quantidadePorCaixa;
                 }
