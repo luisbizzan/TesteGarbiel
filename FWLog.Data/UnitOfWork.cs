@@ -71,6 +71,12 @@ namespace FWLog.Data
         private GarantiaStatusRepository _garantiaStatusRepository;
         private MotivoLaudoRepository _motivoLaudoRepository;
         private RepresentanteRepository _representanteRepository;
+        private LoteProdutoEnderecoRepository _loteProdutoEnderecoRepository;
+
+        public LoteProdutoEnderecoRepository LoteProdutoEnderecoRepository
+        {
+            get => _loteProdutoEnderecoRepository ?? (_loteProdutoEnderecoRepository = new LoteProdutoEnderecoRepository(_context));
+        }
 
         public LoteMovimentacaoTipoRepository LoteMovimentacaoTipoRepository
         {

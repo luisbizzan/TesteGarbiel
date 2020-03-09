@@ -113,6 +113,9 @@
     <Compile Include="Integracao\Helpers\QueryPropertyAttribute.cs" />
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
+    <Compile Include="Model\Armazenagem\ValidarLoteInstalacaoRequisicao.cs" />
+    <Compile Include="Model\Armazenagem\ValidarLoteProdutoInstalacaoRequisicao.cs" />
+    <Compile Include="Model\Armazenagem\ValidarQuantidadeInstalacaoRequisicao.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaArmazenagemVolume.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaAvulsoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaDevolucaoRequest.cs" />
@@ -164,6 +167,7 @@
     <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ApplicationLogService.cs" />
+    <Compile Include="Services\ArmazenagemService.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\ClienteService.cs" />
     <Compile Include="Services\ConferenciaService.cs" />
