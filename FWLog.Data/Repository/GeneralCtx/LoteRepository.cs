@@ -87,7 +87,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 conn.Close();
             }
 
-            return lote;
+            return lote.OrderByDescending(x => x.IdLote).ThenByDescending(x => x.NotaFiscal.PrazoEntregaFornecedor);
         }
 
         public Lote ObterLoteNota(long idNotaFiscal)

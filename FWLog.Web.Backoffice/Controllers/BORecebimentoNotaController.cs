@@ -13,7 +13,6 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
-using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;
@@ -106,7 +105,6 @@ namespace FWLog.Web.Backoffice.Controllers
             model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
             return View(model);
         }
-
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
@@ -291,7 +289,6 @@ namespace FWLog.Web.Backoffice.Controllers
             totalRecordsFiltered = boRecebimentoNotaListItemViewModel.Count;
 
             var result = boRecebimentoNotaListItemViewModel
-                .OrderBy(model.OrderByColumn, model.OrderByDirection)
                 .Skip(model.Start)
                 .Take(model.Length);
 
@@ -304,9 +301,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 Data = result
             });
         }
-
-
-
 
         public ActionResult PageDataNotaRecebimento(DataTableFilter<NotaRecebimentoFilterViewModel> model)
         {
@@ -426,8 +420,6 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-
-
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public JsonResult VerificarDevolucaoTotal(long id)
@@ -460,7 +452,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
         }
-
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
@@ -600,9 +591,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.DenyGet);
             }
         }
-
-
-
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public JsonResult ValidarNotaRecebimento(string  chaveAcesso, long? idFornecedor, int? numeroNF, string serie, decimal? valor, int? quantidadeVolumes)
@@ -780,7 +768,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return PartialView("RegistroRecebimento", modal);
         }
-
 
         [HttpGet]
         [ApplicationAuthorize]
@@ -965,7 +952,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.AllowGet);
             }
         }
-
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
@@ -1348,7 +1334,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.DevolucaoTotal)]
         public ActionResult DevolucaoTotal(long id)
@@ -1362,7 +1347,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return View(model);
         }
-
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]

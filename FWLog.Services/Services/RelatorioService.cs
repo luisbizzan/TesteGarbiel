@@ -56,7 +56,6 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
 
-
         public void ImprimirRelatorioNotasRecebimento(ImprimirNotasRecebimentoRequest request)
         {
             var relatorioRequest = new RelatorioNotasRecebimentoRequest
@@ -255,9 +254,6 @@ namespace FWLog.Services.Services
             return fwRelatorio.Gerar(fwRelatorioDados);
         }
 
-
-
-
         public byte[] GerarRelatorioNotasRecebimento(RelatorioNotasRecebimentoRequest request)
         {
             IQueryable<NotaFiscalRecebimento> query = _unitiOfWork.NotaFiscalRecebimentoRepository.Todos()
@@ -378,8 +374,6 @@ namespace FWLog.Services.Services
 
             return fwRelatorio.Gerar(fwRelatorioDados);
         }
-
-
 
         public void ImprimirDetalhesNotaEntradaConferencia(ImprimirDetalhesNotaEntradaConferenciaRequest request)
         {
