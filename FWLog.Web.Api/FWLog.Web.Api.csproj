@@ -219,6 +219,7 @@
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaEnderecoRequisicao.cs" />
     <Compile Include="Models\Impressora\ImpressoraResposta.cs" />
     <Compile Include="Models\Impressora\ImpressorasResposta.cs" />
+    <Compile Include="Models\Lote\BuscarLotePorIdResposta.cs" />
     <Compile Include="Models\Produto\ProdutoReservadoModelRequest.cs" />
     <Compile Include="Models\Usuario\BuscarPermissoesResposta.cs" />
     <Compile Include="Models\Usuario\RecoverPasswordModelRequest.cs" />

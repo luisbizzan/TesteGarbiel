@@ -1,5 +1,8 @@
-﻿using FWLog.Data;
+﻿using AutoMapper;
+using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Services.Services;
+using FWLog.Web.Api.Models.Lote;
 using Microsoft.AspNet.Identity;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -23,6 +26,27 @@ namespace FWLog.Web.Api.Controllers
             await _loteService.ConferirLoteAutomatico(User.Identity.GetUserId());
 
             return ApiOk();
+        }
+
+        [Route("api/v1/lote/{id}")]
+        [HttpGet]
+        public async Task<IHttpActionResult> BuscarPorId(long id)
+        {
+            if(id == 0)
+            {
+                return ApiBadRequest("O lote deve ser informado.");
+            }
+
+            Lote lote = _unitOfWork.LoteRepository.GetById(id);
+
+            if(lote == null)
+            {
+                return ApiNotFound("O lote não foi encontrado");
+            }
+
+            var resposta = Mapper.Map<BuscarLotePorIdResposta>(lote);
+
+            return ApiOk(resposta);
         }
     }
 }
