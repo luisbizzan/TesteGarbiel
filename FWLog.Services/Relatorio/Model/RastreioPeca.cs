@@ -4,7 +4,7 @@ namespace FWLog.Services.Relatorio.Model
 {
     public class RastreioPeca : IFwRelatorioDados
     {
-        [ColunaRelatorio(Nome = "Empresa", Tamanho = 220)]
+        [ColunaRelatorio(Nome = "Empresa", Tamanho = 150)]
         public string Empresa { get; set; }
 
         [ColunaRelatorio(Nome = "Número Lote", Tamanho = 80)]
@@ -13,9 +13,9 @@ namespace FWLog.Services.Relatorio.Model
         [ColunaRelatorio(Nome = "Número Nota", Tamanho = 80)]
         public int NroNota { get; set; }
 
-        [ColunaRelatorio(Nome = "Referência do Pronduto", Tamanho = 150)]
-        public string ReferenciaPronduto { get; set; }
-
+        [ColunaRelatorio(Nome = "Referência - Descrição", Tamanho = 250)]
+        public string ReferenciaDescricaoProduto { get; set; }
+        
         [ColunaRelatorio(Nome = "Recebimento", Tamanho = 80)]
         public DateTime DataRecebimento { get; set; }
 

@@ -281,9 +281,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 //Verifica se o status anterior era Encaminhado para Auditoria e o atual Aberto.
                 //Caso seja, informa o usuário que a ação não é permitida.
-                if (old.IdQuarentenaStatus == QuarentenaStatusEnum.EncaminhadoAuditoria && model.IdStatus == QuarentenaStatusEnum.Aberto)
+                if (old.IdQuarentenaStatus == QuarentenaStatusEnum.EncaminhadoAuditoria && (model.IdStatus == QuarentenaStatusEnum.Aberto || model.IdStatus == QuarentenaStatusEnum.Retirado))
                 {
-                    ModelState.AddModelError(nameof(model.IdStatus), (mensagemErro = "A quarentena foi encaminhada para Auditoria. Não é permitido atualizar o status para Aberto."));
+                    ModelState.AddModelError(nameof(model.IdStatus), (mensagemErro = "A quarentena foi encaminhada para Auditoria. Não é permitido atualizar o status para " + model.IdStatus.ToString() + "."));
 
                     return Json(new AjaxGenericResultModel
                     {

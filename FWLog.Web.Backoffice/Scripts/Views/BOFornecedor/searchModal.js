@@ -1,5 +1,12 @@
 ﻿(function () {
-    $("#Filter_CNPJ").mask("99.999.999/9999-99");
+    var options = {
+        onKeyPress: function (cpf, ev, el, op) {
+            var masks = ['000.000.000-000', '00.000.000/0000-00'];
+            $('#Filter_CNPJ').mask((cpf.length > 14) ? masks[1] : masks[0], op);
+        }
+    }
+
+    $('#Filter_CNPJ').length > 11 ? $('#Filter_CNPJ').mask('00.000.000/0000-00', options) : $('#Filter_CNPJ').mask('000.000.000-00#', options);
 
     let actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [

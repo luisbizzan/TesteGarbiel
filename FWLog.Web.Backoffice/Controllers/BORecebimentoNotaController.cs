@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ExtensionMethods.List;
+using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
@@ -1082,7 +1083,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Fornecedor = string.Concat(notaFiscal.Fornecedor.IdFornecedor.ToString(), " - ", notaFiscal.Fornecedor.NomeFantasia),
                 DataCompra = notaFiscal.DataEmissao.ToString("dd/MM/yyyy"),
                 PrazoRecebimento = notaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
-                //FornecedorCNPJ = notaFiscal.Fornecedor.CNPJ.Substring(0, 2) + "." + notaFiscal.Fornecedor.CNPJ.Substring(2, 3) + "." + notaFiscal.Fornecedor.CNPJ.Substring(5, 3) + "/" + notaFiscal.Fornecedor.CNPJ.Substring(8, 4) + "-" + notaFiscal.Fornecedor.CNPJ.Substring(12, 2),
+                FornecedorCNPJ = StringExtension.CnpjOuCpf(notaFiscal.Fornecedor.CNPJ),
                 ValorTotal = notaFiscal.ValorTotal.ToString("C"),
                 ValorFrete = notaFiscal.ValorFrete.ToString("C"),
                 NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
@@ -2076,7 +2077,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 NroNota = x.NroNota,
                 QtdCompra = x.QtdCompra,
                 QtdRecebida = x.QtdRecebida,
-                ReferenciaPronduto = x.ReferenciaPronduto
+                ReferenciaProduto = x.ReferenciaProduto,
+                DescricaoProduto = x.DescricaoProduto
             });
 
             return DataTableResult.FromModel(new DataTableResponseModel

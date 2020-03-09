@@ -28,7 +28,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public string Volumes { get; set; }
         [Display(Name = "Prazo")]
         public string PrazoRecebimento { get; set; }
-        [Display(Name = "CNPJ")]
+        [Display(Name = "CNPJ/CPF")]
         public string FornecedorCNPJ { get; set; }
         [Display(Name = "Recebido por")]
         public string UsuarioRecebimento { get; set; }

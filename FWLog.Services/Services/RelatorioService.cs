@@ -678,7 +678,7 @@ namespace FWLog.Services.Services
                 NroNota = x.NroNota,
                 QtdCompra = x.QtdCompra,
                 QtdRecebida = x.QtdRecebida,
-                ReferenciaPronduto = x.ReferenciaPronduto
+                ReferenciaDescricaoProduto = x.ReferenciaProduto + " - " + x.DescricaoProduto
             }).ToList();
 
             var dados = new List<IFwRelatorioDados>();
@@ -726,8 +726,8 @@ namespace FWLog.Services.Services
             {
                 list.Add(new ResumoEtiquetagem
                 {
-                    Referencia = item.Produto.Referencia,
-                    Descricao = item.Produto.Descricao,
+                    Referencia = item.Produto != null ? item.Produto.Referencia : "",
+                    Descricao = item.Produto != null ? item.Produto.Descricao : "",
                     TipoEtiquetagem = item.TipoEtiquetagem.Descricao,
                     Quantidade = item.Quantidade,
                     DataHora = item.DataHora.ToString("dd/MM/yyyy HH:mm:ss"),
