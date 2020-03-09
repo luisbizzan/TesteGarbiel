@@ -161,6 +161,7 @@ namespace FWLog.AspNet.Identity
             public const string Editar = "EnderecoArmazenagemEditar";
             public const string Excluir = "EnderecoArmazenagemExcluir";
             public const string Visualizar = "EnderecoArmazenagemVisualizar";
+            public const string Imprimir = "EnderecoArmazenagemVisualizar";
 
             public EnderecoArmazenagem() : base(Display.FromString("Endereços de Armazenagem"))
             {
@@ -169,6 +170,7 @@ namespace FWLog.AspNet.Identity
                 Register(Editar, Display.FromString("Editar Endereço"));
                 Register(Excluir, Display.FromString("Excluir Endereço"));
                 Register(Visualizar, Display.FromString("Visualizar Endereço"));
+                Register(Imprimir, Display.FromString("Imprimir Endereço"));
             }
         }
 

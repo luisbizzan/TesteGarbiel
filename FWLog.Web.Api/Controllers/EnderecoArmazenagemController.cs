@@ -15,7 +15,7 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/v1/enderecos/{identificacao}")]
+        [Route("api/v1/enderecos")]
         public IHttpActionResult ImprimirEtiquetaEndereco([FromUri] string identificacao)
         {
             if (string.IsNullOrWhiteSpace(identificacao))
