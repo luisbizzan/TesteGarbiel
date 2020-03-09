@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -20,13 +20,19 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly EnderecoArmazenagemService _enderecoArmazenagemService;
+        private readonly EtiquetaService _etiquetaService;
+        private readonly ApplicationLogService _applicationLogService;
 
         public EnderecoArmazenagemController(
             UnitOfWork unitOfWork,
-            EnderecoArmazenagemService enderecoArmazenagemService)
+            EnderecoArmazenagemService enderecoArmazenagemService,
+            EtiquetaService etiquetaService,
+            ApplicationLogService applicationLogService)
         {
             _unitOfWork = unitOfWork;
             _enderecoArmazenagemService = enderecoArmazenagemService;
+            _etiquetaService = etiquetaService;
+            _applicationLogService = applicationLogService;
         }
 
         [HttpGet]
@@ -164,6 +170,51 @@ namespace FWLog.Web.Backoffice.Controllers
             var viewModel = Mapper.Map<EnderecoArmazenagemDetalhesViewModel>(enderecoArmazenagem);
 
             return View(viewModel);
+        }
+
+        [HttpGet]
+        public ActionResult ConfirmarImpressao(long IdEnderecoArmazenagem)
+        {
+            var endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(IdEnderecoArmazenagem);
+
+            return View(new EnderecoArmazenagemConfirmaImpressaoViewModel
+            {
+                IdEnderecoArmazenagem = endereco.IdEnderecoArmazenagem,
+                Codigo = endereco.Codigo
+            });
+        }
+
+        [HttpPost]
+        public JsonResult ImprimirEtiqueta(BOImprimirTermoResponsabilidadeViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                var request = new ImprimirEtiquetaEnderecoRequest
+                {
+                    IdEnderecoArmazenagem = viewModel.IdEnderecoArmazenagem,
+                    IdImpressora = viewModel.IdImpressora
+                };
+
+                _etiquetaService.ImprimirEtiquetaEndereco(request);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

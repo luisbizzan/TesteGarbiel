@@ -313,6 +313,8 @@
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORegistroRecebimentoViewModel.cs" />
     <Compile Include="Models\EmpresaCtx\EmpresaConfigEditarViewModel.cs" />
+    <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemConfirmaImpressaoViewModel.cs" />
+    <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemEtiquetaViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemCadastroViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemDetalhesViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemEditarViewModel.cs" />
@@ -506,6 +508,7 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\editar.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
+    <Content Include="Scripts\Views\EnderecoArmazenagem\confirmarImpressao.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
     <Content Include="Scripts\Views\MotivoLaudo\motivoLaudo.js" />
@@ -587,6 +590,7 @@
     <Content Include="Views\MotivoLaudo\Edit.cshtml" />
     <Content Include="Views\Garantia\RegistroRecebimento.cshtml" />
     <Content Include="Views\Garantia\DetalhesEntradaConferencia.cshtml" />
+    <Content Include="Views\EnderecoArmazenagem\ConfirmarImpressao.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
