@@ -54,5 +54,15 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return query.ToList();
         }
+
+        public Produto PesquisarPorCodigoBarras(string codigoBarras)
+        {
+            return Entities.Produto.Where(w => w.CodigoBarras.Equals(codigoBarras) || w.CodigoBarras.Equals(codigoBarras)).FirstOrDefault();
+        }
+
+        public Produto PesquisarPorReferencia(string referencia)
+        {
+            return Entities.Produto.Where(w => w.Referencia.Equals(referencia)).FirstOrDefault();
+        }
     }
 }

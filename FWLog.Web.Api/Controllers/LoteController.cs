@@ -44,9 +44,9 @@ namespace FWLog.Web.Api.Controllers
                 return ApiNotFound("O lote não foi encontrado");
             }
 
-            var resposta = Mapper.Map<BuscarLotePorIdResposta>(lote);
+            var loteResposta = Mapper.Map<BuscarLotePorIdResposta>(lote);
 
-            return ApiOk(resposta);
+            return ApiOk(loteResposta);
         }
     }
 }
