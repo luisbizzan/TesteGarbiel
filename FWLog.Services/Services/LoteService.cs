@@ -65,8 +65,7 @@ namespace FWLog.Services.Services
                         QuantidadeConferenciaMenos = qtdOriginal,
                         QuantidadeDevolucao = qtdDevolucao,
                         QuantidadeConferencia = 0,
-                        QuantidadeConferenciaMais = 0,
-                        QuantidadeDevolucao = 0
+                        QuantidadeConferenciaMais = 0
                     };
 
                     var loteConferencia = new LoteConferencia()
@@ -98,8 +97,7 @@ namespace FWLog.Services.Services
                         QuantidadeConferencia = qtdConferida,
                         QuantidadeDevolucao   = qtdDevolucao,
                         QuantidadeConferenciaMais = qtdConferida > qtdOriginal ? qtdConferida - qtdOriginal : 0,
-                        QuantidadeConferenciaMenos = qtdConferida < qtdOriginal ? qtdOriginal - qtdConferida : 0,
-                        QuantidadeDevolucao = 0
+                        QuantidadeConferenciaMenos = qtdConferida < qtdOriginal ? qtdOriginal - qtdConferida : 0
                     };
                 }
 

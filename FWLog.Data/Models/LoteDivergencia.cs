@@ -26,7 +26,6 @@ namespace FWLog.Data.Models
         public int? QuantidadeConferenciaMenos { get; set; }
         public int? QuantidadeDivergenciaMais  { get; set; }
         public int? QuantidadeDivergenciaMenos { get; set; }
-        public int? QuantidadeDevolucao { get; set; }
 
         [Index]
         public LoteDivergenciaStatusEnum IdLoteDivergenciaStatus { get; set; }
