@@ -18,6 +18,7 @@
     let $tipoConferencia = $("#TipoConferencia");
     let $validarAcessoCoordenador = $("#validarAcessoCoordenador");
     let $validarAcessoCoordenadorTipoConferencia = $("#validarAcessoCoordenadorTipoConferencia");
+    let $descricaoReferencia = $("#DescricaoReferencia");
 
     $('.onlyNumber').mask('0#');
 
@@ -264,7 +265,7 @@
 
     function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia) {
         overlay(true);
-        debugger
+
         if (quantidadePorCaixa === '')
             quantidadePorCaixa = 0;
 
@@ -308,7 +309,7 @@
                 }
             },
             error: function (request, status, error) {
-                PNotify.error({ text: request.responseText });
+                PNotify.error({ text: request.Message });
             }
         });
     }
@@ -348,7 +349,7 @@
         if (e.keyCode == 9) {
             if (!e.target.value) {
             } else {
-                $referencia.focus();
+                $confirmarConferencia.focus();
             }
 
             return false;

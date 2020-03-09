@@ -129,7 +129,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             CarregarDadosImpressaoItem();
 
-            PerfilImpressora perfilImpressora = _uow.PerfilImpressoraRepository.GetById(id);
+            PerfilImpressora perfilImpressora = _uow.PerfilImpressoraRepository.ObterPorIdImpressorasAtivas(id);
 
             if (perfilImpressora == null)
             {
@@ -157,7 +157,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     }
                 }
 
-                modelTipos.Impressoras = modelTipos.Impressoras.OrderBy(o => o.Nome).ToList();
+                modelTipos.Impressoras = modelTipos.Impressoras.Where(x=> x.IdImpressora != 0).OrderBy(o => o.Nome).ToList();
             }
 
             return View(model);
@@ -216,7 +216,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             CarregarDadosImpressaoItem();
 
-            PerfilImpressora perfilImpressora = _uow.PerfilImpressoraRepository.GetById(id);
+            PerfilImpressora perfilImpressora = _uow.PerfilImpressoraRepository.ObterPorIdImpressorasAtivas(id);
 
             if (perfilImpressora == null)
             {
@@ -224,6 +224,11 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             var model = Mapper.Map<PerfilImpressoraCreateViewModel>(perfilImpressora);
+
+            foreach (var modelTipos in model.TiposImpressao)
+            {
+                modelTipos.Impressoras = modelTipos.Impressoras.Where(x => x.IdImpressora != 0).OrderBy(o => o.Nome).ToList();
+            }
 
             return View(model);
         }

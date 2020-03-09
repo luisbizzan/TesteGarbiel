@@ -48,5 +48,46 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.PerfilImpressora.ToList();
         }
+
+        public PerfilImpressora ObterPorIdImpressorasAtivas(int id)
+        {
+            //Captura o perfil de imoressão
+            var perfilImpressora = Entities.PerfilImpressora.AsNoTracking().Where(x => x.IdPerfilImpressora == id).FirstOrDefault();
+
+            //Captura a lista de perfil impressão item
+            var listaPerfilImpressoraItem = perfilImpressora.PerfilImpressoraItens.ToList();
+
+            //Declaro uma nova lista de perfil de impressão item
+            List<PerfilImpressoraItem> listaPerfilImpressoraItemFiltro = new List<PerfilImpressoraItem>();
+
+            //Declara um perfil de impressão item que será utilizado no for.
+            PerfilImpressoraItem perfilImpressoraItemFiltro;
+
+            for (int i = 0; i < perfilImpressora.PerfilImpressoraItens.Count; i++)
+            {
+                perfilImpressoraItemFiltro = new PerfilImpressoraItem();
+
+                perfilImpressoraItemFiltro.IdImpressaoItem = listaPerfilImpressoraItem[i].IdImpressaoItem;
+                perfilImpressoraItemFiltro.IdPerfilImpressora = listaPerfilImpressoraItem[i].IdPerfilImpressora;
+                perfilImpressoraItemFiltro.ImpressaoItem = listaPerfilImpressoraItem[i].ImpressaoItem;
+                perfilImpressoraItemFiltro.PerfilImpressora = listaPerfilImpressoraItem[i].PerfilImpressora;
+                
+                if (listaPerfilImpressoraItem[i].Impressora.Ativa)
+                {
+                    perfilImpressoraItemFiltro.IdImpressora = listaPerfilImpressoraItem[i].IdImpressora;
+                    perfilImpressoraItemFiltro.Impressora = listaPerfilImpressoraItem[i].Impressora;
+                }
+                else
+                {
+                    perfilImpressoraItemFiltro.Impressora = new Printer();
+                }
+                
+                listaPerfilImpressoraItemFiltro.Add(perfilImpressoraItemFiltro);
+            }
+
+            perfilImpressora.PerfilImpressoraItens = listaPerfilImpressoraItemFiltro;
+
+            return perfilImpressora;
+        }
     }
 }
