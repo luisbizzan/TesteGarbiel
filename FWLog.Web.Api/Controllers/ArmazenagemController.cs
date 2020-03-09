@@ -22,13 +22,13 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                var requisicao = new ValidarLoteInstalacaoRequisicao
+                var validarLoteRequisicao = new ValidarLoteInstalacaoRequisicao
                 {
                     IdLote = idLote,
                     IdEmpresa = IdEmpresa
                 };
 
-                _armazenagemService.ValidarLoteInstalacao(requisicao);
+                _armazenagemService.ValidarLoteInstalacao(validarLoteRequisicao);
             }
             catch (BusinessException ex)
             {
@@ -48,14 +48,14 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                var serviceRequisicao = new ValidarLoteProdutoInstalacaoRequisicao
+                var validarProdutoRequisicao = new ValidarLoteProdutoInstalacaoRequisicao
                 {
                     IdLote = requisicao.IdLote,
                     IdProduto = requisicao.IdProduto,
                     IdEmpresa = IdEmpresa
                 };
 
-                _armazenagemService.ValidarLoteProdutoInstalacao(serviceRequisicao);
+                _armazenagemService.ValidarLoteProdutoInstalacao(validarProdutoRequisicao);
             }
             catch (BusinessException ex)
             {
@@ -75,7 +75,7 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                var serviceRequisicao = new ValidarQuantidadeInstalacaoRequisicao
+                var validarQuantidadeRequisicao = new ValidarQuantidadeInstalacaoRequisicao
                 {
                     IdLote = requisicao.IdLote,
                     IdProduto = requisicao.IdProduto,
@@ -83,7 +83,36 @@ namespace FWLog.Web.Api.Controllers
                     IdEmpresa = IdEmpresa
                 };
 
-                _armazenagemService.ValidarQuantidadeInstalacao(serviceRequisicao);
+                _armazenagemService.ValidarQuantidadeInstalacao(validarQuantidadeRequisicao);
+            }
+            catch (BusinessException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/instalar/validar-endereco")]
+        [HttpPost]
+        public async Task<IHttpActionResult> ValidarEnderecoInstalacao(ValidarEnderecoInstalacaoModelRequisicao requisicao)
+        {
+            try
+            {
+                var validarEnderecoRequisicao = new ValidarEnderecoInstalacaoRequisicao
+                {
+                    IdLote = requisicao.IdLote,
+                    IdProduto = requisicao.IdProduto,
+                    Quantidade = requisicao.Quantidade,
+                    IdEmpresa = IdEmpresa,
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem
+                };
+
+                _armazenagemService.ValidarQuantidadeInstalacao(validarEnderecoRequisicao);
             }
             catch (BusinessException ex)
             {

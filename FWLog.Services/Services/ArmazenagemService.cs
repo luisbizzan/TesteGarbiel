@@ -47,13 +47,13 @@ namespace FWLog.Services.Services
 
         public void ValidarLoteProdutoInstalacao(ValidarLoteProdutoInstalacaoRequisicao requisicao)
         {
-            var requisicaoValidarLote = new ValidarLoteInstalacaoRequisicao
+            var validarLoteRequisicao = new ValidarLoteInstalacaoRequisicao
             {
                 IdLote = requisicao.IdLote,
                 IdEmpresa = requisicao.IdEmpresa
             };
 
-            ValidarLoteInstalacao(requisicaoValidarLote);
+            ValidarLoteInstalacao(validarLoteRequisicao);
 
             if(requisicao.IdProduto <= 0)
             {
@@ -87,22 +87,22 @@ namespace FWLog.Services.Services
                 throw new BusinessException("A quantidade deve ser informada.");
             }
 
-            var requisicaoValidarLote = new ValidarLoteInstalacaoRequisicao
+            var validarLoteRequisicao = new ValidarLoteInstalacaoRequisicao
             {
                 IdLote = requisicao.IdLote,
                 IdEmpresa = requisicao.IdEmpresa
             };
 
-            ValidarLoteInstalacao(requisicaoValidarLote);
+            ValidarLoteInstalacao(validarLoteRequisicao);
 
-            var requisicaoValidarLoteProduto = new ValidarLoteProdutoInstalacaoRequisicao
+            var validarLoteProdutoRequisicao = new ValidarLoteProdutoInstalacaoRequisicao
             {
                 IdEmpresa = requisicao.IdEmpresa,
                 IdLote = requisicao.IdLote,
                 IdProduto = requisicao.IdProduto
             };
 
-            ValidarLoteProdutoInstalacao(requisicaoValidarLoteProduto);
+            ValidarLoteProdutoInstalacao(validarLoteProdutoRequisicao);
 
             var listaEnderecosLoteProduto = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorLoteProduto(requisicao.IdEmpresa, requisicao.IdLote, requisicao.IdProduto);
 
@@ -118,6 +118,64 @@ namespace FWLog.Services.Services
                     throw new BusinessException("Quantidade maior que o saldo do produto no lote.");
                 }
             }
+        }
+
+        public void ValidarEnderecoInstalacao(ValidarEnderecoInstalacaoRequisicao requisicao)
+        {
+            if(requisicao.IdEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("O endereço deve ser informado.");
+            }
+
+            var validarLoteRequisicao = new ValidarLoteInstalacaoRequisicao
+            {
+                IdLote = requisicao.IdLote,
+                IdEmpresa = requisicao.IdEmpresa
+            };
+
+            ValidarLoteInstalacao(validarLoteRequisicao);
+
+            var validarLoteProdutoRequisicao = new ValidarLoteProdutoInstalacaoRequisicao
+            {
+                IdEmpresa = requisicao.IdEmpresa,
+                IdLote = requisicao.IdLote,
+                IdProduto = requisicao.IdProduto
+            };
+
+            ValidarLoteProdutoInstalacao(validarLoteProdutoRequisicao);
+
+            var validarQuantidadeRequisicao = new ValidarQuantidadeInstalacaoRequisicao
+            {
+                IdEmpresa = requisicao.IdEmpresa,
+                IdLote = requisicao.IdLote,
+                IdProduto = requisicao.IdProduto,
+                Quantidade = requisicao.Quantidade
+            };
+
+            ValidarQuantidadeInstalacao(validarQuantidadeRequisicao);
+
+            EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPorEmpresaEndereco(requisicao.IdEmpresa, requisicao.IdEnderecoArmazenagem);
+
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("O endereço não foi encontrado.");
+            }
+
+            if(enderecoArmazenagem.Ativo == false)
+            {
+                throw new BusinessException("O endereço não está ativo.");
+            }
+
+            Produto produto = _unitOfWork.ProdutoRepository.GetById(requisicao.IdProduto);
+            decimal pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * requisicao.Quantidade;
+
+            //limite de peso do endereço
+            if (pesoInstalacao > enderecoArmazenagem.LimitePeso)
+            {
+                throw new BusinessException("Quantidade ultrapassa limite de peso do endereço.");
+            }
+
+            //limite de peso vertical
         }
     }
 }
