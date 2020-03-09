@@ -128,7 +128,7 @@ namespace FWLog.Services.Services
                         notafiscal.IdFreteTipo = freteTipo.IdFreteTipo;
                     }
 
-                    var notafiscalItens = notasInt.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.UnidadeMedida, s.Quantidade, s.ValorUnitarioItem, s.ValorTotal, s.Sequencia }).ToList();
+                    var notafiscalItens = notasInt.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.UnidadeMedida, s.Quantidade, s.ValorUnitarioItem, s.ValorTotal, s.Sequencia, s.QuantidadeDevolucao }).ToList();
 
                     List<NotaFiscalItem> itemsNotaFsical = new List<NotaFiscalItem>();
 
@@ -167,6 +167,8 @@ namespace FWLog.Services.Services
                         notaFiscalItem.ValorTotal = Convert.ToDecimal(item.ValorTotal.Replace(".", ","));
                         notaFiscalItem.CodigoNotaFiscal = codNota;
                         notaFiscalItem.Sequencia = Convert.ToInt32(item.Sequencia);
+                        notaFiscalItem.QuantidadeDevolucao = item.QuantidadeDevolucao.NullOrEmpty() ? 0 : Convert.ToInt32(item.QuantidadeDevolucao);
+
 
                         if (itemNovo)
                         {
@@ -307,7 +309,8 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task RegistrarRecebimentoNotaFiscalDiv(string  idUsuarioRecebimento, 
+        public async Task<long> RegistrarRecebimentoNotaFiscalDiv(long idEmpresa, 
+                                                            string  idUsuarioRecebimento, 
                                                             string  chaveAcesso,
                                                             long    idFornecedor,
                                                             int     numeroNf,
@@ -315,10 +318,13 @@ namespace FWLog.Services.Services
                                                             decimal valor,
                                                             int?    quantidadeVolumes = null)
         {
+            long idNotaFiscalRecebimento = 0;
+
             using (TransactionScope transactionScope = _uow.CreateTransactionScope())
             {
                 var _notaFiscalRecebimento = new NotaFiscalRecebimento
                 {
+                    IdEmpresa = idEmpresa,
                     IdUsuarioRecebimento = idUsuarioRecebimento,
                     ChaveAcesso = chaveAcesso,
                     IdFornecedor = idFornecedor,
@@ -332,7 +338,10 @@ namespace FWLog.Services.Services
 
                 _uow.NotaFiscalRecebimentoRepository.Add(_notaFiscalRecebimento);
                 _uow.SaveChanges();
+                idNotaFiscalRecebimento = _notaFiscalRecebimento.IdNotaFiscalRecebimento;
                 transactionScope.Complete();
+
+                return idNotaFiscalRecebimento;
             }
         }
         public async Task ReceberNotaFiscalAutomatico(string userId)

@@ -206,6 +206,7 @@
                                             <th>@Html.LabelFor(m => m.Divergencias.Divergencias[0].DescricaoProduto)</th>
                                             <th style="text-align:center">@Html.LabelFor(m => m.Divergencias.Divergencias[0].QuantidadeNotaFiscal)</th>
                                             <th style="text-align:center">@Html.LabelFor(m => m.Divergencias.Divergencias[0].QuantidadeConferencia)</th>
+                                            <th style="text-align:center">@Html.LabelFor(m => m.Divergencias.Divergencias[0].QuantidadeDevolucao)</th>
                                             <th style="text-align:center">@Html.LabelFor(m => m.Divergencias.Divergencias[0].QuantidadeMaisTratado)</th>
                                             <th style="text-align:center">@Html.LabelFor(m => m.Divergencias.Divergencias[0].QuantidadeMenosTratado)</th>
                                         </tr>
@@ -213,14 +214,15 @@
                                     <tbody>
                                         @for (int i = 0; i < Model.Divergencias.Divergencias.Count(); i++)
                                         {
-                                            <tr class="linha-divergencia">
-                                                <td>@Model.Divergencias.Divergencias[i].Referencia</td>
-                                                <td>@Model.Divergencias.Divergencias[i].DescricaoProduto</td>
-                                                <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeNotaFiscal</td>
-                                                <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeConferencia</td>
-                                                <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeMaisTratado</td>
-                                                <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeMenosTratado</td>
-                                            </tr>
+                                        <tr class="linha-divergencia">
+                                            <td>@Model.Divergencias.Divergencias[i].Referencia</td>
+                                            <td>@Model.Divergencias.Divergencias[i].DescricaoProduto</td>
+                                            <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeNotaFiscal</td>
+                                            <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeConferencia</td>
+                                            <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeDevolucao</td>
+                                            <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeMaisTratado</td>
+                                            <td style="text-align:center">@Model.Divergencias.Divergencias[i].QuantidadeMenosTratado</td>
+                                        </tr>
                                         }
                                     </tbody>
                                 </table>

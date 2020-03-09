@@ -19,10 +19,12 @@ namespace FWLog.Data.Models
         [Required]
         public long IdProduto { get; set; }
         [Required]
-        public int QuantidadeConferencia { get; set; }
-        public int? QuantidadeConferenciaMais { get; set; }
+        public int  QuantidadeConferencia      { get; set; }
+        [Required]
+        public int? QuantidadeDevolucao        { get; set; }
+        public int? QuantidadeConferenciaMais  { get; set; }
         public int? QuantidadeConferenciaMenos { get; set; }
-        public int? QuantidadeDivergenciaMais { get; set; }
+        public int? QuantidadeDivergenciaMais  { get; set; }
         public int? QuantidadeDivergenciaMenos { get; set; }
         public int? QuantidadeDevolucao { get; set; }
 
