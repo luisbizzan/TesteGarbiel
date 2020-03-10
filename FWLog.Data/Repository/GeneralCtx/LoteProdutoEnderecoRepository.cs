@@ -13,5 +13,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.LoteProdutoEndereco.Where(w => w.IdEmpresa == idEmpresa && w.IdLote == idLote && w.IdProduto == idProduto).ToList();
         }
+
+        public List<LoteProdutoEndereco> PesquisarPorEnderecos(List<long> idsEnderecosArmazenagem)
+        {
+            return Entities.LoteProdutoEndereco.Where(w => idsEnderecosArmazenagem.Contains(w.IdEnderecoArmazenagem)).ToList();
+        }
     }
 }

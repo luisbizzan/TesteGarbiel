@@ -112,7 +112,7 @@ namespace FWLog.Web.Api.Controllers
                     IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem
                 };
 
-                _armazenagemService.ValidarQuantidadeInstalacao(validarEnderecoRequisicao);
+                _armazenagemService.ValidarEnderecoInstalacao(validarEnderecoRequisicao);
             }
             catch (BusinessException ex)
             {

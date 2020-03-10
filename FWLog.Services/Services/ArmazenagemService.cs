@@ -4,8 +4,6 @@ using FWLog.Services.Model.Armazenagem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
 {
@@ -154,7 +152,7 @@ namespace FWLog.Services.Services
 
             ValidarQuantidadeInstalacao(validarQuantidadeRequisicao);
 
-            EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPorEmpresaEndereco(requisicao.IdEmpresa, requisicao.IdEnderecoArmazenagem);
+            EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(requisicao.IdEnderecoArmazenagem);
 
             if (enderecoArmazenagem == null)
             {
@@ -170,12 +168,32 @@ namespace FWLog.Services.Services
             decimal pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * requisicao.Quantidade;
 
             //limite de peso do endereço
-            if (pesoInstalacao > enderecoArmazenagem.LimitePeso)
-            {
-                throw new BusinessException("Quantidade ultrapassa limite de peso do endereço.");
+            if (enderecoArmazenagem.LimitePeso.HasValue) {
+                if (pesoInstalacao > enderecoArmazenagem.LimitePeso)
+                {
+                    throw new BusinessException("Quantidade ultrapassa limite de peso do endereço.");
+                }
             }
 
-            //limite de peso vertical
+            //limite de peso vertical ponto
+            if (enderecoArmazenagem.PontoArmazenagem.LimitePesoVertical.HasValue)
+            {
+                List<EnderecoArmazenagem> enderecosPontoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPorPontoArmazenagem(enderecoArmazenagem.IdPontoArmazenagem);
+                
+                List<long> enderecosVertical = enderecosPontoArmazenagem.
+                    Where(w => w.Corredor == enderecoArmazenagem.Corredor && w.Vertical == enderecoArmazenagem.Vertical && w.Ativo).
+                    Select(w => w.IdEnderecoArmazenagem).ToList();
+                
+                List<LoteProdutoEndereco> lotesProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecos(enderecosVertical);
+
+                decimal pesoVerticalInstalado = lotesProdutoEndereco.Sum(s => s.PesoTotal);
+                decimal limitePesoVerticalPonto = enderecoArmazenagem.PontoArmazenagem.LimitePesoVertical.Value;
+
+                if (pesoVerticalInstalado + pesoInstalacao > limitePesoVerticalPonto)
+                {
+                    throw new BusinessException("Quantidade ultrapassa limite de peso vertical.");
+                }
+            }
         }
     }
 }

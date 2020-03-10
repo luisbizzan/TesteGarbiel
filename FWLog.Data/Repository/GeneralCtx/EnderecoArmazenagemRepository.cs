@@ -53,9 +53,9 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.EnderecoArmazenagem.FirstOrDefault(f => f.IdNivelArmazenagem == nivel && f.IdPontoArmazenagem == pontoarmazenagem && f.IdEmpresa == idEmpresa);
         }
 
-        public EnderecoArmazenagem PesquisarPorEmpresaEndereco(long idEmpresa, long idEnderecoArmazenagem)
+        public List<EnderecoArmazenagem> PesquisarPorPontoArmazenagem(long idPontoArmazenagem)
         {
-            return Entities.EnderecoArmazenagem.Where(w => w.IdEmpresa == idEmpresa && w.IdEnderecoArmazenagem == idEnderecoArmazenagem).FirstOrDefault();
+            return Entities.EnderecoArmazenagem.Where(w => w.IdPontoArmazenagem == idPontoArmazenagem).ToList();
         }
     }
 }
