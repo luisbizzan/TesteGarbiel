@@ -102,7 +102,7 @@ namespace FWLog.Services.Services
 
             ValidarLoteProdutoInstalacao(validarLoteProdutoRequisicao);
 
-            var listaEnderecosLoteProduto = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorLoteProduto(requisicao.IdEmpresa, requisicao.IdLote, requisicao.IdProduto);
+            var listaEnderecosLoteProduto = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorLoteProduto(requisicao.IdLote, requisicao.IdProduto);
 
             if(listaEnderecosLoteProduto.Count > 0)
             {
@@ -164,6 +164,13 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O endereço não está ativo.");
             }
 
+            LoteProdutoEndereco loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(requisicao.IdEnderecoArmazenagem);
+
+            if (loteProdutoEndereco != null)
+            {
+                throw new BusinessException("O endereço já está ocupado.");
+            }
+
             Produto produto = _unitOfWork.ProdutoRepository.GetById(requisicao.IdProduto);
             decimal pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * requisicao.Quantidade;
 
@@ -175,7 +182,7 @@ namespace FWLog.Services.Services
                 }
             }
 
-            //limite de peso vertical ponto
+            //limite de peso vertical do ponto
             if (enderecoArmazenagem.PontoArmazenagem.LimitePesoVertical.HasValue)
             {
                 List<EnderecoArmazenagem> enderecosPontoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPorPontoArmazenagem(enderecoArmazenagem.IdPontoArmazenagem);
