@@ -58,6 +58,38 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, idImpressora);
         }
 
+        public void ImprimirEtiquetaNotaRecebimento(long idNotaFiscalRecebimento, long idImpressora, int? quantidade = null)
+        {
+            NotaFiscalRecebimento notaFiscalRecebimento = _unitOfWork.NotaFiscalRecebimentoRepository.GetById(idNotaFiscalRecebimento);
+
+            int? _quantidade = quantidade ?? notaFiscalRecebimento.QuantidadeVolumes;
+
+            var etiquetaImprimir = new StringBuilder();
+
+            etiquetaImprimir.Append("^XA");
+
+            // Define quantidade de etiquetas a imprimir
+            etiquetaImprimir.Append($"^PQ{_quantidade}^FS");
+
+            etiquetaImprimir.Append("^FWB");
+            etiquetaImprimir.Append("^FO16,20^GB710,880^FS");
+            etiquetaImprimir.Append("^FO50,50^FB470,4,0,C,0^A0,170,100^FD");
+            etiquetaImprimir.Append($"NF.{notaFiscalRecebimento.NumeroNF}");
+            etiquetaImprimir.Append(@"\&");
+            etiquetaImprimir.Append($"FOR.{notaFiscalRecebimento.Fornecedor.IdFornecedor}");
+            etiquetaImprimir.Append(@"\&");
+            etiquetaImprimir.Append($"{DateTime.Now.ToString("dd/MM/yyyy")}");
+            etiquetaImprimir.Append(@"\&");
+            etiquetaImprimir.Append($"VOL.{_quantidade}");
+
+            etiquetaImprimir.Append("^XZ");
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaImprimir.ToString());
+            //var teste = etiquetaImprimir.ToString();
+
+            _impressoraService.Imprimir(etiqueta, idImpressora);
+        }
+
         public void ImprimirEtiquetaArmazenagemVolume(ImprimirEtiquetaArmazenagemVolume request)
         {
             Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
@@ -109,6 +141,7 @@ namespace FWLog.Services.Services
             // Nome do Colaborador [5 Linha]
             int tamanhoNome = 13;
             string usuario = request.Usuario.Length > tamanhoNome ? request.Usuario.Substring(0, tamanhoNome) : request.Usuario;
+            usuario = usuario.Normalizar();
             etiquetaImprimir.Append($"^FO610,220^FB330,2,100,C,0^A0B,95,40^FD{usuario}^FS");
 
             // Endereço Picking [5 Linha]

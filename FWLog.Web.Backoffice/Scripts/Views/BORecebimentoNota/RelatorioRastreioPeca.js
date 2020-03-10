@@ -169,7 +169,8 @@
         columns: [
             { data: 'IdLote' },
             { data: 'NroNota' },
-            { data: 'ReferenciaPronduto' },
+            { data: 'ReferenciaProduto' },
+            { data: 'DescricaoProduto' },
             { data: 'DataRecebimento', width: 100 },
             { data: 'QtdCompra', width: 100 },
             { data: 'QtdRecebida', width: 100 }

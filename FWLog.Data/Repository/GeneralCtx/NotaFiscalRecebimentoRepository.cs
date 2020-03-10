@@ -1,5 +1,7 @@
 ﻿using FWLog.Data.Models;
 using FWLog.Data.Repository.CommonCtx;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx
@@ -14,6 +16,11 @@ namespace FWLog.Data.Repository.GeneralCtx
         public NotaFiscalRecebimento ConsultarPorCodigoIntegracao(long IdNotaFiscalRecebimento)
         {
             return Entities.NotaFiscalRecebimento.FirstOrDefault(f => f.IdNotaFiscalRecebimento == IdNotaFiscalRecebimento);
+        }
+
+        public IEnumerable<NotaFiscalRecebimento> ConsultarPorEmpresa(long idEmpresa)
+        {
+            return Entities.NotaFiscalRecebimento.Where(f => f.IdEmpresa == idEmpresa);
         }
 
         public IQueryable<NotaFiscalRecebimento> Todos()

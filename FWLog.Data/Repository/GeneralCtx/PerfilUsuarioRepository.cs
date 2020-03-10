@@ -23,6 +23,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.PerfilUsuario;
         }
 
+        public IEnumerable<PerfilUsuario> Todos()
+        {
+            return Entities.PerfilUsuario;
+        }
+
         public List<UsuarioListaLinhaTabela> PesquisarLista(DataTableFilter<UsuarioListaFiltro> model)
         {
             IQueryable<UsuarioListaLinhaTabela> query =

@@ -11,7 +11,8 @@ namespace FWLog.Data.Models.DataTablesCtx
         public long IdProduto { get; set; }
         public long IdLote { get; set; }
         public int NroNota { get; set; }
-        public string ReferenciaPronduto { get; set; }
+        public string ReferenciaProduto { get; set; }
+        public string DescricaoProduto { get; set; }
         public DateTime DataCompra { get; set; }
         public DateTime DataRecebimento { get; set; }
         public int QtdCompra { get; set; }

@@ -27,6 +27,7 @@ namespace FWLog.Services.Model.Lote
         public string DescricaoProduto { get; set; }
         public int QuantidadeNota { get; set; }
         public int QuantidadeConferido { get; set; }
+        public int QuantidadeDevolucao { get; set; }
         public int DivergenciaMais { get; set; }
         public int DivergenciaMenos { get; set; }
     }

@@ -10,7 +10,10 @@ namespace FWLog.Data.Models
         [Required]
         public long     IdNotaFiscalRecebimento  { get; set; }
 
-        public string   IdUsuarioRecebimento { get; set; }
+        [Required]
+        public long     IdEmpresa                { get; set; }
+
+        public string   IdUsuarioRecebimento     { get; set; }
 
         [Index]                                  
         [Required]                               
@@ -30,9 +33,9 @@ namespace FWLog.Data.Models
         public int?     QuantidadeVolumes        { get; set; }
                                                 
         [Required]                              
-        public DateTime DataHoraRegistro         { get; set; }
+        public DateTime  DataHoraRegistro         { get; set; }
 
-        public DateTime DataHoraSincronismo      { get; set; }
+        public DateTime? DataHoraSincronismo      { get; set; }
 
         [Required]
         public NotaRecebimentoStatusEnum IdNotaRecebimentoStatus { get; set; }
@@ -44,8 +47,10 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdUsuarioRecebimento))]
         public virtual AspNetUsers UsuarioRecebimento { get; set; }
 
-
         [ForeignKey(nameof(IdFornecedor))]
         public virtual Fornecedor Fornecedor     { get; set; }
+
+        [ForeignKey(nameof(IdEmpresa))]
+        public virtual Empresa Empresa { get; set; }
     }
 }

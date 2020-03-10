@@ -47,7 +47,7 @@
     $("#Filter_InicialInicial").blur(function () {
         if ($(this).val() === ":") {
             $(this).val("");
-        }
+        } 
     });
 
     $("#imprimirEtiquetaNotaRecebimento").click(function () {
@@ -57,14 +57,14 @@
     });
 
     $("#imprimirRelatorio").click(function () {
-        $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=1&acao=notas", function () {
+        $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=notas", function () {
             $("#modalImpressoras").modal();
         });
     });
 
     $("#downloadRelatorio").click(function () {
         $.ajax({
-            url: "/BORecebimentoNota/DownloadRelatorioNotas",
+            url: "/BORecebimentoNota/DownloadNotasRecebimento",
             method: "POST",
             cache: false,
             xhrFields: {
@@ -185,15 +185,14 @@
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
         },
         columns: [
-            { data: 'NumeroNF' },
-            { data: 'QuantidadePeca' },
-            { data: 'QuantidadeVolume' },
-            { data: 'DataRegistro'   , width: '30px'  },
-            { data: 'DataSincronismo', width: '30px'  },
-            { data: 'DiasAguardando' },
-            { data: 'Fornecedor' },
-            { data: 'Status' },
-            actionsColumn
+            { data: 'NomeFornecedor'                       },
+            { data: 'Usuario'                 , width: 100 },
+            { data: 'NumeroNF'                             },
+            { data: 'Serie'                                },
+            { data: 'DiasAguardando'                       },
+            { data: 'DataHoraRegistro'                     },
+            { data: 'DataHoraSincronismo'                  },
+            { data: 'Status'                               }
         ]
     });
 
@@ -211,7 +210,7 @@
     });
 
     function limparFornecedor() {
-        $("#Filter_NomeFantasiaFornecedor").val("");
+        $("#Filter_NomeFornecedor").val("");
         $("#Filter_IdFornecedor").val("");
     }
 
@@ -245,7 +244,7 @@ function imprimir(acao, id) {
     switch (acao) {
         case 'notas':
             $.ajax({
-                url: "/BORecebimentoNota/ImprimirRelatorioNotas",
+                url: "/BORecebimentoNota/ImprimirNotasRecebimento",
                 method: "POST",
                 data: {
                     IdImpressora: $("#IdImpressora").val(),
@@ -319,32 +318,18 @@ function detalhesNota() {
     });
 }
 
-function setFornecedor(idFornecedor, nomeFantasia, origem) {
-    if (origem === "NotaRecebimentoDiv") {
-        $("#NomeFornecedor").val(nomeFantasia);
-        $("#IdFornecedor").val(idFornecedor);
-        $("#modalFornecedorNotaRecebimento").modal("hide");
-        $("#modalFornecedorNotaRecebimento").empty();
-    } else {
-        $("#Filter_NomeFantasiaFornecedor").val(nomeFantasia);
-        $("#Filter_IdFornecedor").val(idFornecedor);
-        $("#modalFornecedor").modal("hide");
-        $("#modalFornecedor").empty();
-    }
+function setFornecedor(idFornecedor, nomeFornecedor, origem) {
+    $("#Filter_NomeFornecedor").val(nomeFornecedor);
+    $("#Filter_IdFornecedor").val(idFornecedor);
+    $("#modalFornecedor").modal("hide");
+    $("#modalFornecedor").empty();
 }
 
 function setUsuario(idUsuario, nomeUsuario, origem) {
-    if (origem === "Recebimento") {
-        $("#Filter_UserNameRecebimento").val(nomeUsuario);
-        $("#Filter_IdUsuarioRecebimento").val(idUsuario);
-        $("#modalUsuarioRecebimento").modal("hide");
-        $("#modalUsuarioRecebimento").empty();
-    } else {
-        $("#Filter_UserNameConferencia").val(nomeUsuario);
-        $("#Filter_IdUsuarioConferencia").val(idUsuario);
-        $("#modalUsuarioConferencia").modal("hide");
-        $("#modalUsuarioConferencia").empty();
-    }
+    $("#Filter_UserNameRecebimento").val(nomeUsuario);
+    $("#Filter_IdUsuarioRecebimento").val(idUsuario);
+    $("#modalUsuarioRecebimento").modal("hide");
+    $("#modalUsuarioRecebimento").empty();
 }
 
 

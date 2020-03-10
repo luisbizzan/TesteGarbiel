@@ -36,7 +36,6 @@
     });
 
     $("#tratarDivergenciasRecebimento").click(function () {
-        debugger
         try {
             var _model = { isValid: true, Message: '' };
 

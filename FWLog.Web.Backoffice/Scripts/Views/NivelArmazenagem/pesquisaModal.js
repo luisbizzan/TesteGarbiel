@@ -4,7 +4,7 @@
             {
                 action: 'select',
                 visible: true,
-                attrs: { 'data-select': full.IdNivelArmazenagem, 'name-select': full.Descricao }
+                attrs: { 'data-select': full.IdNivelArmazenagem, 'name-select': full.Descricao, 'status-select': full.Status }
             }
         ];
     });
@@ -33,7 +33,12 @@
     });
 
     function selecionarNivelArmazenagem_Click() {
-        selecionarNivelArmazenagem($(this).attr('data-select'), $(this).attr("name-select"), view_modal.origem);
+        let status = $(this).attr('status-select');
+
+        if (status != "Ativo")
+            PNotify.warning({ text: "O nível de armazenagem selecionado está inativo." });
+        else
+            selecionarNivelArmazenagem($(this).attr('data-select'), $(this).attr("name-select"), view_modal.origem);
     }
 
     $('.dataTableModal').off('click', '[data-select]', selecionarNivelArmazenagem_Click);
