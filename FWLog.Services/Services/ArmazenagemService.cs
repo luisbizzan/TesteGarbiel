@@ -52,6 +52,7 @@ namespace FWLog.Services.Services
 
                 var loteMovimentacao = new LoteMovimentacao
                 {
+                    IdEmpresa = requisicao.IdEmpresa,
                     IdLote = requisicao.IdLote,
                     IdProduto = requisicao.IdProduto,
                     IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,

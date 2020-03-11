@@ -17,7 +17,7 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [Route("api/v1/armazenagem/instalar/validar-lote/{idLote}")]
-        [HttpPost]
+        [HttpGet]
         public async Task<IHttpActionResult> ValidarLoteInstalacao(long idLote)
         {
             try
