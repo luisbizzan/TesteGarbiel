@@ -30,6 +30,7 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
         [Display(Name = "Data Encerramento")]
         public string DataEncerramento { get; set; }
         public string Status { get; set; }
+        public string LoteStatus { get; set; }
         public int IdQuarentenaStatus { get; set; }
     }
 

@@ -1,6 +1,6 @@
 ﻿(function () {
     $("#finalizarDevolucaoTotal").click(function () {
-        ValidarPermissaoDevolucaoTotal();
+        FinalizarDevolucaoTotal();
     });
 })();
 
@@ -104,4 +104,44 @@ function FinalizarDevolucaoTotal() {
             }
         }
     });
-}
+        }
+
+
+
+
+   /* function alterarStatus() {
+            let id = $(this).data("id");
+            let $modal = $("#modalAlterarStatus");
+
+            $.ajax({
+                url: HOST_URL + CONTROLLER_PATH + "ValidarPermissao",
+                data: { acao: "AtualizarStatus" },
+                cache: false,
+                method: "POST",
+                success: function (result) {
+                    if (result.Success) {
+                        $.ajax({
+                            url: HOST_URL + CONTROLLER_PATH + "ValidarModalDetalhesQuarentena/" + id,
+                            cache: false,
+                            method: "POST",
+                            success: function (result) {
+                                if (!!result.Success) {
+                                    $modal.load(HOST_URL + CONTROLLER_PATH + "DetalhesQuarentena/" + id, function () {
+                                        $modal.modal();
+
+                                    });
+                                } else {
+                                    PNotify.error({ text: result.Message });
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        PNotify.warning({ text: result.Message });
+                    }
+                },
+                error: function (request, status, error) {
+                    PNotify.error({ text: request.responseText });
+                }
+            });
+        }*/

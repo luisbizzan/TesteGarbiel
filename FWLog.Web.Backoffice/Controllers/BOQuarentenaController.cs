@@ -139,6 +139,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     DataEncerramento   = x.DataEncerramento.HasValue ? x.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
                     Atraso             = x.DataAbertura.Subtract(x.DataEncerramento ?? DateTime.Now).Days,
                     Status             = x.QuarentenaStatus.Descricao,
+                    LoteStatus         = x.Lote.IdLoteStatus.ToString(),
                     IdQuarentenaStatus = (int)x.IdQuarentenaStatus
                 });
 
@@ -175,6 +176,62 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Não foi possível buscar Nota Fiscal."
                 });
             }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+        }
+
+        [HttpPost]
+        public JsonResult ValidarChaveAcessoIgualDaNFe(DetalhesQuarentenaViewModel model)
+        {
+            bool chaveNfeIgual = false;
+            //bool existe = _uow.QuarentenaRepository.Any(x => x.Lote.NotaFiscal.ChaveAcesso == chaveAcesso);
+
+            Quarentena quarentena = _uow.QuarentenaRepository.GetById(model.IdQuarentena);
+            Lote       lote       = _uow.LoteRepository.GetById(quarentena.IdLote);
+
+
+            if (lote.IdLoteStatus.GetHashCode() == 12)
+            {
+                //Valida chave de cesso
+                var chaveValida = false;
+
+                if (string.IsNullOrWhiteSpace(model.ChaveAcesso))
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Informe a chave de acesso da NF-e.",
+                    });
+                }
+
+                if (model.ChaveAcesso.Length != 44)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Chave de acesso não possui 44 digitos.",
+                    });
+                }
+
+
+                if (lote.NotaFiscal.ChaveAcesso == model.ChaveAcesso)
+                    chaveNfeIgual = true;
+                else
+                    chaveNfeIgual = false;
+
+                if (!chaveNfeIgual)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "A chave de acesso informada não confere com a chave Nota Fiscal."
+                    });
+                }
+            }
+
 
             return Json(new AjaxGenericResultModel
             {
@@ -231,12 +288,9 @@ namespace FWLog.Web.Backoffice.Controllers
         public JsonResult DetalhesQuarentena(DetalhesQuarentenaViewModel model)
         {
             ValidateModel(model);
-
             string mensagemErro = null;
 
-            //Verifica se o status da quarentena é Retirado.
-            //Caso seja, valida o código de confirmação pois, sem ele, o sistema não deve permitir alterar o status para retirado.
-            if (model.IdStatus == QuarentenaStatusEnum.Retirado)
+            if (model.IdStatus == QuarentenaStatusEnum.Retirado && model.LoteStatus != "Finalizado(Dev. Total)")
             {
                 if (string.IsNullOrEmpty(model.CodigoConfirmacao))
                 {
