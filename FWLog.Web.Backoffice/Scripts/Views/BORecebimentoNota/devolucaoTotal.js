@@ -1,6 +1,10 @@
 ﻿(function () {
     $("#finalizarDevolucaoTotal").click(function () {
-        FinalizarDevolucaoTotal();
+        ValidarPermissaoDevolucaoTotal();
+    });
+
+    $("#validarAcessoCoordenadorDevolucaoTotal").click(function () {
+        ValidarAcessoDevolucaoTotal();
     });
 })();
 
@@ -17,26 +21,21 @@
 }*/
 
 function ExibirModalAcessoCoordenadorDevolucaoTotal() {
-    $(".close").click();
+    $('#modalAcessoCoordenadorDevolucaoTotal').modal('show');
+    $('#UsuarioDevolucaoTotal').val('');
+    $('#SenhaDevolucaoTotal').val('');
 
-    let $modal = $("#modalAcessoCoordenadorDevolucaoTotal");
+    $('#MensagemDevolucaoTotal').text('Solicite a liberação do Coordenador para devolução total.');
 
-    $modal.load(HOST_URL + CONTROLLER_PATH + "ValidarAcessoDevolucaoTotal/", function () {
-        $modal.modal();
-    });
+    setTimeout(function () {
+        $("#UsuarioDevolucaoTotal").focus();
+    }, 150);
 }
 
-
-
 function ValidarAcessoDevolucaoTotal() {
-    var usuario = $("#Usuario").val();
-    var senha   = $("#Senha").val();
-
-    $(".close").click();
-    let $modal = $("#modalAcessoCoordenadorDevolucaoTotal");
-
-    $modal.load(HOST_URL + CONTROLLER_PATH + "ValidarAcessoDevolucaoTotal/" + idLote, function () {
-        $modal.modal();
+    debugger
+    var usuario = $("#UsuarioDevolucaoTotal").val();
+    var senha = $("#SenhaDevolucaoTotal").val();
 
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ValidarAcessoDevolucaoTotal",
@@ -45,19 +44,18 @@ function ValidarAcessoDevolucaoTotal() {
         method: "POST",
         data: {
             usuario: usuario,
-            senha  : senha
+            senha: senha
         },
         success: function (result) {
             if (result.Success) {
-
                 FinalizarDevolucaoTotal();
 
-                $('#modalAcessoCoordenador').modal('toggle');
+                $('#modalAcessoCoordenadorDevolucaoTotal').modal('toggle');
 
-                $("#Usuario").val('');
-                $("#Senha").val('');
+                $('#UsuarioDevolucaoTotal').val('');
+                $('#SenhaDevolucaoTotal').val('');
 
-                //$("#Referencia").focus();
+                $("#UsuarioDevolucaoTotal").focus();
             }
             else {
                 PNotify.warning({ text: result.Message });
@@ -67,28 +65,29 @@ function ValidarAcessoDevolucaoTotal() {
             PNotify.error({ text: request.Message });
         }
     });
-}
+};
+
 
 function ValidarPermissaoDevolucaoTotal() {
     $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "ValidarPermissaoDevolucaoTotal",
-        method: "POST",
+        url: HOST_URL + CONTROLLER_PATH + "validarPermissaoDevolucaoTotal",
         cache: false,
+        method: "POST",
         success: function (result) {
             if (result.Success) {
                 FinalizarDevolucaoTotal();
-            } else {
-                ValidarAcessoDevolucaoTotal();
-                //PNotify.warning({ text: result.Message });
+            }
+            else {
+                ExibirModalAcessoCoordenadorDevolucaoTotal();
             }
         }
     });
-}
+};
 
 
 function FinalizarDevolucaoTotal() {
     $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "/FinalizarDevolucaoTotal/",
+        url: HOST_URL + CONTROLLER_PATH + "/finalizarDevolucaoTotal",
         cache: false,
         method: "POST",
         success: function (result) {
@@ -104,44 +103,10 @@ function FinalizarDevolucaoTotal() {
             }
         }
     });
-        }
+}
 
 
 
 
-   /* function alterarStatus() {
-            let id = $(this).data("id");
-            let $modal = $("#modalAlterarStatus");
 
-            $.ajax({
-                url: HOST_URL + CONTROLLER_PATH + "ValidarPermissao",
-                data: { acao: "AtualizarStatus" },
-                cache: false,
-                method: "POST",
-                success: function (result) {
-                    if (result.Success) {
-                        $.ajax({
-                            url: HOST_URL + CONTROLLER_PATH + "ValidarModalDetalhesQuarentena/" + id,
-                            cache: false,
-                            method: "POST",
-                            success: function (result) {
-                                if (!!result.Success) {
-                                    $modal.load(HOST_URL + CONTROLLER_PATH + "DetalhesQuarentena/" + id, function () {
-                                        $modal.modal();
 
-                                    });
-                                } else {
-                                    PNotify.error({ text: result.Message });
-                                }
-                            }
-                        });
-                    }
-                    else {
-                        PNotify.warning({ text: result.Message });
-                    }
-                },
-                error: function (request, status, error) {
-                    PNotify.error({ text: request.responseText });
-                }
-            });
-        }*/
