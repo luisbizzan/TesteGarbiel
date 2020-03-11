@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ExtensionMethods.List;
+using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
@@ -13,7 +14,6 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
-using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;
@@ -107,7 +107,6 @@ namespace FWLog.Web.Backoffice.Controllers
             model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
             return View(model);
         }
-
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
@@ -292,7 +291,6 @@ namespace FWLog.Web.Backoffice.Controllers
             totalRecordsFiltered = boRecebimentoNotaListItemViewModel.Count;
 
             var result = boRecebimentoNotaListItemViewModel
-                .OrderBy(model.OrderByColumn, model.OrderByDirection)
                 .Skip(model.Start)
                 .Take(model.Length);
 
@@ -305,9 +303,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 Data = result
             });
         }
-
-
-
 
         public ActionResult PageDataNotaRecebimento(DataTableFilter<NotaRecebimentoFilterViewModel> model)
         {
@@ -428,8 +423,6 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-
-
         [HttpPost]
         //[ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public JsonResult VerificarDevolucaoTotal(long id)
@@ -463,7 +456,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
         }
-
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
@@ -617,9 +609,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.DenyGet);
             }
         }
-
-
-
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public JsonResult ValidarNotaRecebimento(string chaveAcesso, long? idFornecedor, int? numeroNF, string serie, decimal? valor, int? quantidadeVolumes)
@@ -982,7 +971,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
         public JsonResult ImprimirNotasRecebimento(BOImprimirNotasRecebimentoViewModel viewModel)
@@ -1113,7 +1101,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Fornecedor = string.Concat(notaFiscal.Fornecedor.IdFornecedor.ToString(), " - ", notaFiscal.Fornecedor.NomeFantasia),
                 DataCompra = notaFiscal.DataEmissao.ToString("dd/MM/yyyy"),
                 PrazoRecebimento = notaFiscal.PrazoEntregaFornecedor.ToString("dd/MM/yyyy"),
-                //FornecedorCNPJ = notaFiscal.Fornecedor.CNPJ.Substring(0, 2) + "." + notaFiscal.Fornecedor.CNPJ.Substring(2, 3) + "." + notaFiscal.Fornecedor.CNPJ.Substring(5, 3) + "/" + notaFiscal.Fornecedor.CNPJ.Substring(8, 4) + "-" + notaFiscal.Fornecedor.CNPJ.Substring(12, 2),
+                FornecedorCNPJ = StringExtension.CnpjOuCpf(notaFiscal.Fornecedor.CNPJ),
                 ValorTotal = notaFiscal.ValorTotal.ToString("C"),
                 ValorFrete = notaFiscal.ValorFrete.ToString("C"),
                 NumeroConhecimento = notaFiscal.NumeroConhecimento.ToString(),
@@ -1365,7 +1353,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-
         [HttpGet]
         public ActionResult DevolucaoTotal(long id)
         {
@@ -1378,7 +1365,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return View(model);
         }
-
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
@@ -1748,41 +1734,44 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 #region Impressão Automática de Etiquetas
 
-                var request = new ImprimirEtiquetaArmazenagemVolume
+                if(quantidadePorCaixa > 0)
                 {
-                    NroLote = idLote,
-                    QuantidadeEtiquetas = quantidadeCaixa,
-                    QuantidadePorCaixa = quantidadePorCaixa,
-                    ReferenciaProduto = conferenciaRegistro.Produto.Referencia,
-                    Usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome,
-                    IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(2).IdImpressaoItem).First().Id
-                };
-
-                _etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
-
-                if (VerificarPecaHaMais(conferencia.Lote.IdLote, quantidadePorCaixa, conferencia.Lote.IdNotaFiscal, conferencia.Produto.IdProduto) > 0)
-                {
-                    var requestPecasMais = new ImprimirEtiquetaDevolucaoRequest
+                    var request = new ImprimirEtiquetaArmazenagemVolume
                     {
-                        Linha1 = conferencia.Lote.IdLote.ToString().PadLeft(10, '0'),
-                        Linha2 = conferencia.Produto.Referencia,
-                        Linha3 = "PC.A+",
-                        IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
+                        NroLote = idLote,
+                        QuantidadeEtiquetas = quantidadeCaixa,
+                        QuantidadePorCaixa = quantidadePorCaixa,
+                        ReferenciaProduto = conferenciaRegistro.Produto.Referencia,
+                        Usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome,
+                        IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(2).IdImpressaoItem).First().Id
                     };
 
-                    _etiquetaService.ImprimirEtiquetaDevolucao(requestPecasMais);
+                    _etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
 
-                    //Registra a impressão da etiqueta de Devolução
-                    var logEtiquetagemDevolucao = new Services.Model.LogEtiquetagem.LogEtiquetagem
+                    if (VerificarPecaHaMaisAposConferencia(conferencia.Lote.IdLote, quantidadePorCaixa, conferencia.Lote.IdNotaFiscal, conferencia.Produto.IdProduto) > 0)
                     {
-                        IdTipoEtiquetagem = TipoEtiquetagemEnum.Devolucao.GetHashCode(),
-                        IdEmpresa = IdEmpresa,
-                        IdProduto = conferenciaRegistro.Produto.IdProduto,
-                        Quantidade = quantidadeCaixa,
-                        IdUsuario = User.Identity.GetUserId()
-                    };
+                        var requestPecasMais = new ImprimirEtiquetaDevolucaoRequest
+                        {
+                            Linha1 = conferencia.Lote.IdLote.ToString().PadLeft(10, '0'),
+                            Linha2 = conferencia.Produto.Referencia,
+                            Linha3 = "PC.A+",
+                            IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
+                        };
 
-                    _logEtiquetagemService.Registrar(logEtiquetagemDevolucao);
+                        _etiquetaService.ImprimirEtiquetaDevolucao(requestPecasMais);
+
+                        //Registra a impressão da etiqueta de Devolução
+                        var logEtiquetagemDevolucao = new Services.Model.LogEtiquetagem.LogEtiquetagem
+                        {
+                            IdTipoEtiquetagem = TipoEtiquetagemEnum.Devolucao.GetHashCode(),
+                            IdEmpresa = IdEmpresa,
+                            IdProduto = conferenciaRegistro.Produto.IdProduto,
+                            Quantidade = quantidadeCaixa,
+                            IdUsuario = User.Identity.GetUserId()
+                        };
+
+                        _logEtiquetagemService.Registrar(logEtiquetagemDevolucao);
+                    }
                 }
 
                 //Registra a impressão da etiqueta de Lote
@@ -1901,7 +1890,35 @@ namespace FWLog.Web.Backoffice.Controllers
                 pecasHaMais = (qtdConferida + quantidadePorCaixa) - quantidadePecasNota;
                 pecasHaMais = pecasHaMais < 0 ? 0 : pecasHaMais;
 
-                if (pecasHaMais > quantidadePorCaixa)
+                if (pecasHaMais > quantidadePorCaixa && quantidadePorCaixa > 0)
+                {
+                    pecasHaMais = quantidadePorCaixa;
+                }
+            }
+            else
+            {
+                pecasHaMais = quantidadePorCaixa;
+            }
+
+            return pecasHaMais;
+        }
+
+        private int VerificarPecaHaMaisAposConferencia(long idLote, int quantidadePorCaixa, long idNotaFiscal, long idProduto)
+        {
+            int pecasHaMais;
+            //Captura os itens da nota fiscal do produto.
+            var notaFiscalItem = _uow.NotaFiscalItemRepository.ObterPorItem(idNotaFiscal, idProduto);
+            var conferencia = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, idProduto);
+
+            if (notaFiscalItem.Any())
+            {
+                int qtdConferida = conferencia.Sum(s => s.Quantidade);
+                int quantidadePecasNota = notaFiscalItem.Sum(s => s.Quantidade);
+
+                pecasHaMais = qtdConferida - quantidadePecasNota;
+                pecasHaMais = pecasHaMais < 0 ? 0 : pecasHaMais;
+
+                if (pecasHaMais > quantidadePorCaixa && quantidadePorCaixa > 0)
                 {
                     pecasHaMais = quantidadePorCaixa;
                 }
@@ -2183,7 +2200,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 NroNota = x.NroNota,
                 QtdCompra = x.QtdCompra,
                 QtdRecebida = x.QtdRecebida,
-                ReferenciaPronduto = x.ReferenciaPronduto
+                ReferenciaProduto = x.ReferenciaProduto,
+                DescricaoProduto = x.DescricaoProduto
             });
 
             return DataTableResult.FromModel(new DataTableResponseModel

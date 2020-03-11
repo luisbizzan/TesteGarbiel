@@ -18,6 +18,7 @@
     let $tipoConferencia = $("#TipoConferencia");
     let $validarAcessoCoordenador = $("#validarAcessoCoordenador");
     let $validarAcessoCoordenadorTipoConferencia = $("#validarAcessoCoordenadorTipoConferencia");
+    let $descricaoReferencia = $("#DescricaoReferencia");
 
     $('.onlyNumber').mask('0#');
 
@@ -75,6 +76,7 @@
         onScan.attachTo($quantidadePorCaixa[0], {
             onScan: function (sScancode, iQuatity) {
                 if ($tipoConferencia.text() != "Por Quantidade") {
+                    debugger
                     if (listaReferencia[0] != sScancode) {
                         PNotify.warning({ text: 'Referência inválida, não corresponde à referência iniciada!' });
                     } else {
@@ -264,6 +266,7 @@
 
     function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia) {
         overlay(true);
+
         if (quantidadePorCaixa === '')
             quantidadePorCaixa = 0;
 
@@ -284,7 +287,7 @@
                 multiplo: multiplo,
                 idTipoConferencia: idTipoConferencia
             },
-            success: function (result) {               
+            success: function (result) {
                 if (result.Success) {
                     permiteRegistrar = false;
 
@@ -307,7 +310,7 @@
                 }
             },
             error: function (request, status, error) {
-                PNotify.error({ text: request.responseText });
+                PNotify.error({ text: request.Message });
             }
         });
     }
@@ -347,7 +350,7 @@
         if (e.keyCode == 9) {
             if (!e.target.value) {
             } else {
-                $referencia.focus();
+                $confirmarConferencia.focus();
             }
 
             return false;
@@ -525,25 +528,25 @@
                             //Se o tipo da conferência é 100%.
                             //Caso seja, solicita confirmação do usuário. 
                             //Caso contrário, chama o método para validar o múltiplo da conferência e posteriormente o registro da conferência.
-                            if ($tipoConferencia.text() != "Por Quantidade") {
-                                $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {
-                                    if (!qtdePecasHaMais)
-                                        return;
-                                    else {
-                                        $('#modalRegistrarConferencia').modal('show');
-
-                                        $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
-
-                                        $('#MensagemPecasHaMais').text('');
-                                        if (qtdePecasHaMais > 0) {
-                                            $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+. As etiquetas de PC A serão impressas.');
-                                        }
+                            $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {
+                                if (!qtdePecasHaMais)
+                                    return;
+                                else {
+                                    $('#MensagemPecasHaMais').text('');
+                                    if (qtdePecasHaMais > 0) {
+                                        $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+. A etiqueta de PC A+ será impressa.');
                                     }
-                                });
-                            }
-                            else {
-                                validarDiferencaMultiploConferencia();
-                            }
+                                }
+
+                                if ($tipoConferencia.text() != "Por Quantidade" || ($tipoConferencia.text() == "Por Quantidade" && qtdePecasHaMais > 0 && $quantidadeCaixa > 0)) {
+                                    $('#modalRegistrarConferencia').modal('show');
+
+                                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
+                                }
+                                else {
+                                    validarDiferencaMultiploConferencia();
+                                }
+                            });
 
                             break;
                         }

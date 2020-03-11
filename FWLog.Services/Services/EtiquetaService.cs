@@ -143,6 +143,7 @@ namespace FWLog.Services.Services
             // Nome do Colaborador [5 Linha]
             int tamanhoNome = 13;
             string usuario = request.Usuario.Length > tamanhoNome ? request.Usuario.Substring(0, tamanhoNome) : request.Usuario;
+            usuario = usuario.Normalizar();
             etiquetaImprimir.Append($"^FO610,220^FB330,2,100,C,0^A0B,95,40^FD{usuario}^FS");
 
             // Endereço Picking [5 Linha]

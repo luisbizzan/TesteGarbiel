@@ -56,7 +56,6 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
 
-
         public void ImprimirRelatorioNotasRecebimento(ImprimirNotasRecebimentoRequest request)
         {
             var relatorioRequest = new RelatorioNotasRecebimentoRequest
@@ -255,9 +254,6 @@ namespace FWLog.Services.Services
             return fwRelatorio.Gerar(fwRelatorioDados);
         }
 
-
-
-
         public byte[] GerarRelatorioNotasRecebimento(RelatorioNotasRecebimentoRequest request)
         {
             IQueryable<NotaFiscalRecebimento> query = _unitiOfWork.NotaFiscalRecebimentoRepository.Todos()
@@ -378,8 +374,6 @@ namespace FWLog.Services.Services
 
             return fwRelatorio.Gerar(fwRelatorioDados);
         }
-
-
 
         public void ImprimirDetalhesNotaEntradaConferencia(ImprimirDetalhesNotaEntradaConferenciaRequest request)
         {
@@ -684,7 +678,7 @@ namespace FWLog.Services.Services
                 NroNota = x.NroNota,
                 QtdCompra = x.QtdCompra,
                 QtdRecebida = x.QtdRecebida,
-                ReferenciaPronduto = x.ReferenciaPronduto
+                ReferenciaDescricaoProduto = x.ReferenciaProduto + " - " + x.DescricaoProduto
             }).ToList();
 
             var dados = new List<IFwRelatorioDados>();
@@ -732,8 +726,8 @@ namespace FWLog.Services.Services
             {
                 list.Add(new ResumoEtiquetagem
                 {
-                    Referencia = item.Produto.Referencia,
-                    Descricao = item.Produto.Descricao,
+                    Referencia = item.Produto != null ? item.Produto.Referencia : "",
+                    Descricao = item.Produto != null ? item.Produto.Descricao : "",
                     TipoEtiquetagem = item.TipoEtiquetagem.Descricao,
                     Quantidade = item.Quantidade,
                     DataHora = item.DataHora.ToString("dd/MM/yyyy HH:mm:ss"),
