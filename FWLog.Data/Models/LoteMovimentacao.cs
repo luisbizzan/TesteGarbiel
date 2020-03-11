@@ -9,30 +9,29 @@ namespace FWLog.Data.Models
         [Key]
         [Required]
         public long IdLoteMovimentacao { get; set; }
-
+        [Index]
+        [Required]
+        public long IdEmpresa { get; set; }
         [Index]
         [Required]
         public long IdLote { get; set; }
-
         [Index]
         [Required]
         public long IdProduto { get; set; }
-
         [Index]
         [Required]
         public long IdEnderecoArmazenagem { get; set; }
-
         [Required]
         public string IdUsuarioMovimentacao { get; set; }
-
         [Required]
         public LoteMovimentacaoTipoEnum IdLoteMovimentacaoTipo { get; set; }
-
         [Required]
-        public long Quantidade { get; set; }
-
+        public int Quantidade { get; set; }
         [Required]
         public DateTime DataHora { get; set; }
+
+        [ForeignKey(nameof(IdEmpresa))]
+        public virtual Empresa Empresa { get; set; }
 
         [ForeignKey(nameof(IdLote))]
         public virtual Lote Lote { get; set; }

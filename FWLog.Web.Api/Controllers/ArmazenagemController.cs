@@ -125,5 +125,35 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/armazenagem/instalar")]
+        [HttpPost]
+        public async Task<IHttpActionResult> InstalarVolumeLote(InstalarVolumeLoteModelRequisicao requisicao)
+        {
+            try
+            {
+                var instalarVolumeLoteRequisicao = new InstalarVolumeLoteRequisicao
+                {
+                    IdLote = requisicao.IdLote,
+                    IdProduto = requisicao.IdProduto,
+                    Quantidade = requisicao.Quantidade,
+                    IdEmpresa = IdEmpresa,
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    IdUsuarioInstalacao = IdUsuario
+                };
+
+                await _armazenagemService.InstalarVolumeLote(instalarVolumeLoteRequisicao);
+            }
+            catch (BusinessException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
     }
 }

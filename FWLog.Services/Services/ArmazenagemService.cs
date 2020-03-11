@@ -4,6 +4,7 @@ using FWLog.Services.Model.Armazenagem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
 {
@@ -14,6 +15,57 @@ namespace FWLog.Services.Services
         public ArmazenagemService(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+        }
+
+        public async Task InstalarVolumeLote(InstalarVolumeLoteRequisicao requisicao)
+        {
+            var validarEnderecoInstalacaoRequisicao = new ValidarEnderecoInstalacaoRequisicao
+            {
+                IdEmpresa = requisicao.IdEmpresa,
+                IdLote = requisicao.IdLote,
+                IdProduto = requisicao.IdProduto,
+                Quantidade = requisicao.Quantidade,
+                IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem
+            };
+
+            ValidarEnderecoInstalacao(validarEnderecoInstalacaoRequisicao);
+
+            Produto produto = _unitOfWork.ProdutoRepository.GetById(requisicao.IdProduto);
+            decimal pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * requisicao.Quantidade;
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                var loteProdutoEndereco = new LoteProdutoEndereco
+                {
+                    IdEmpresa = requisicao.IdEmpresa,
+                    DataHoraInstalacao = DateTime.Now,
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    IdLote = requisicao.IdLote,
+                    IdProduto = requisicao.IdProduto,
+                    IdUsuarioInstalacao = requisicao.IdUsuarioInstalacao,
+                    Quantidade = requisicao.Quantidade,
+                    PesoTotal = pesoInstalacao
+                };
+
+                _unitOfWork.LoteProdutoEnderecoRepository.Add(loteProdutoEndereco);
+                await _unitOfWork.SaveChangesAsync();
+
+                var loteMovimentacao = new LoteMovimentacao
+                {
+                    IdEmpresa = requisicao.IdEmpresa,
+                    IdLote = requisicao.IdLote,
+                    IdProduto = requisicao.IdProduto,
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = requisicao.IdUsuarioInstalacao,
+                    Quantidade = requisicao.Quantidade,
+                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Entrada,
+                    DataHora = DateTime.Now
+                };
+
+                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                await _unitOfWork.SaveChangesAsync();
+                transacao.Complete();
+            }
         }
 
         public void ValidarLoteInstalacao(ValidarLoteInstalacaoRequisicao requisicao)
