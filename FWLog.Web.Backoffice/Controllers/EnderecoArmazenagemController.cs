@@ -12,6 +12,7 @@ using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -90,10 +91,12 @@ namespace FWLog.Web.Backoffice.Controllers
                 return View(viewModel);
             }
 
-            var enderecoarmazenagemcadastrado = _unitOfWork.EnderecoArmazenagemRepository.ConsultarPorNivelEPontoArmazenagem(viewModel.IdNivelArmazenagem, viewModel.IdPontoArmazenagem, IdEmpresa);
-            if (enderecoarmazenagemcadastrado != null)
+            List<EnderecoArmazenagem> enderecosPontoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPorPontoArmazenagem(viewModel.IdPontoArmazenagem.Value);
+            bool enderecoExiste = enderecosPontoArmazenagem.Any(w => w.Codigo.Equals(viewModel.Codigo, StringComparison.OrdinalIgnoreCase));
+
+            if (enderecoExiste)
             {
-                Notify.Error("Já existe um Endereço de Armazenagem cadastrado com este ponto e nível para esta empresa!");
+                Notify.Error("Endereço já existe no ponto de armazenagem.");
                 return View(viewModel);
             }
 
@@ -145,14 +148,36 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.EnderecoArmazenagem.Editar)]
         public ActionResult Editar(EnderecoArmazenagemEditarViewModel viewModel)
         {
-            var enderecoarmazenagemcadastrado = _unitOfWork.EnderecoArmazenagemRepository.ConsultarPorNivelEPontoArmazenagem(viewModel.IdNivelArmazenagem, viewModel.IdPontoArmazenagem, IdEmpresa);
-            if (enderecoarmazenagemcadastrado != null)
+            if (!ModelState.IsValid)
             {
-                Notify.Error("Já existe um Endereço de Armazenagem cadastrado com este ponto e nível para esta empresa!");
                 return View(viewModel);
             }
 
-            var enderecoArmazenagem = Mapper.Map<EnderecoArmazenagem>(viewModel);
+            EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(viewModel.IdEnderecoArmazenagem);
+
+            if (!enderecoArmazenagem.Codigo.Equals(viewModel.Codigo, StringComparison.OrdinalIgnoreCase))
+            {
+                List<EnderecoArmazenagem> enderecosPontoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPorPontoArmazenagem(viewModel.IdPontoArmazenagem.Value);
+                int numeroEnderecos = enderecosPontoArmazenagem.Where(w => 
+                    w.IdEnderecoArmazenagem != viewModel.IdEnderecoArmazenagem && 
+                    w.Codigo.Equals(viewModel.Codigo, StringComparison.OrdinalIgnoreCase)).Count();
+
+                if (numeroEnderecos > 0)
+                {
+                    Notify.Error("Endereço já existe no ponto de armazenagem.");
+                    return View(viewModel);
+                }
+            }
+
+            enderecoArmazenagem.Ativo = viewModel.Ativo;
+            enderecoArmazenagem.Codigo = viewModel.Codigo;
+            enderecoArmazenagem.EstoqueMaximo = viewModel.EstoqueMaximo;
+            enderecoArmazenagem.EstoqueMinimo = viewModel.EstoqueMinimo;
+            enderecoArmazenagem.IdNivelArmazenagem = viewModel.IdNivelArmazenagem.Value;
+            enderecoArmazenagem.IdPontoArmazenagem = viewModel.IdPontoArmazenagem.Value;
+            enderecoArmazenagem.IsFifo = viewModel.IsFifo;
+            enderecoArmazenagem.IsPontoSeparacao = viewModel.IsPontoSeparacao;
+            enderecoArmazenagem.LimitePeso = viewModel.LimitePeso;
             enderecoArmazenagem.IdEmpresa = IdEmpresa;
 
             _enderecoArmazenagemService.Editar(enderecoArmazenagem);
