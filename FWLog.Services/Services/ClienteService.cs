@@ -59,9 +59,10 @@ namespace FWLog.Services.Services
                     cliente.CNPJCPF = clienteInt.CNPJ;
                     cliente.RazaoSocial = clienteInt.RazaoSocial;
                     cliente.Classificacao = clienteInt.Classificacao;
+                    cliente.Classificacao = "Padrão";
                     cliente.IdRepresentanteInterno = clienteInt.IdRepresentanteInterno == "0" || clienteInt.IdRepresentanteInterno == null
-                                                        ? (long?)null
-                                                        : _unitOfWork.RepresentanteRepository.BuscarCodigoPeloCodigoIntegracaoVendedor(Convert.ToInt64(clienteInt.IdRepresentanteInterno));
+                                                         ? (long?)null
+                                                         : _unitOfWork.RepresentanteRepository.BuscarCodigoPeloCodigoIntegracaoVendedor(Convert.ToInt64(clienteInt.IdRepresentanteInterno));
                     cliente.IdRepresentanteExterno = clienteInt.IdRepresentanteExterno == "0" || clienteInt.IdRepresentanteExterno == null
                                                         ? (long?)null
                                                         : _unitOfWork.RepresentanteRepository.BuscarCodigoPeloCodigoIntegracaoVendedor(Convert.ToInt64(clienteInt.IdRepresentanteExterno));

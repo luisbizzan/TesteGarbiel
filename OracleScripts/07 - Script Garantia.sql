@@ -89,7 +89,6 @@ CREATE TABLE "Representante"
 
 CREATE UNIQUE INDEX "Representante_PK" ON "Representante" ("IdRepresentante" ASC);
 CREATE INDEX "Representante_INDEX1" ON "Representante" ("CodigoIntegracao" ASC);
-
 /
 
 CREATE TABLE "GarantiaStatus" 
@@ -148,9 +147,8 @@ BEGIN
 END;
 
 ALTER TABLE DART."Garantia" ADD CONSTRAINT "Garantia_FK1" FOREIGN KEY ("IdNotaFiscal") REFERENCES DART."NotaFiscal"("IdNotaFiscal");
-ALTER TABLE DART."Garantia" ADD CONSTRAINT "Garantia_FK2" FOREIGN KEY ("IdUsuarioConferente") REFERENCES DART."AspNetUsers"("Id");
+ALTER TABLE DART."Garantia" ADD CONSTRAINT "Garantia_FK2" FOREIGN KEY ("IdUsuarioRecebimento") REFERENCES DART."AspNetUsers"("Id");
 ALTER TABLE DART."Garantia" ADD CONSTRAINT "Garantia_FK3" FOREIGN KEY ("IdGarantiaStatus") REFERENCES DART."GarantiaStatus"("IdGarantiaStatus");
-ALTER TABLE DART."Garantia" RENAME COLUMN "Garantia_FK3" FOREIGN KEY ("IdGarantiaStatus") REFERENCES DART."GarantiaStatus"("IdGarantiaStatus");
 /
 
 --------------------------------------------------------

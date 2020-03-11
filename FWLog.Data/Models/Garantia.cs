@@ -17,7 +17,7 @@ namespace FWLog.Data.Models
         [Index]
         [Required]
         public GarantiaStatusEnum IdGarantiaStatus { get; set; }
-        
+
         [Index]
         [Required]
         [StringLength(128)]

@@ -6,7 +6,6 @@ using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Services.Services;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using System.Web;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.AspNet.Identity;
 using FWLog.Web.Backoffice.Models.GarantiaCtx;
@@ -311,25 +310,25 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(10);
+                //ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(10);
 
-                if(impressaoItem == null)
-                {
-                    return Json(new AjaxGenericResultModel
-                    {
-                        Success = false,
-                        Message = "Não foi encontrado item configurado para impressão de Etiqueta de Garantia.",
-                    });
-                }
+                //if(impressaoItem == null)
+                //{
+                //    return Json(new AjaxGenericResultModel
+                //    {
+                //        Success = false,
+                //        Message = "Não foi encontrado item configurado para impressão de Etiqueta de Garantia.",
+                //    });
+                //}
 
-                if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
-                {
-                    return Json(new AjaxGenericResultModel
-                    {
-                        Success = false,
-                        Message = "Não há impressora configurada para Etiqueta de Garantia.",
-                    });
-                }
+                //if (!_uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem).Any())
+                //{
+                //    return Json(new AjaxGenericResultModel
+                //    {
+                //        Success = false,
+                //        Message = "Não há impressora configurada para Etiqueta de Garantia.",
+                //    });
+                //}
 
                 NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(garantia.IdNotaFiscal);
 

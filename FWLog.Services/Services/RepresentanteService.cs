@@ -34,7 +34,7 @@ namespace FWLog.Services.Services
             where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
             var inner = "INNER JOIN TGFVEN ON TGFVEN.CODPARC = TGFPAR.CODPARC";
 
-            List<RepresentanteIntegracao> representantesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<RepresentanteIntegracao>(where: where.ToString(),inner);
+            List<RepresentanteIntegracao> representantesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<RepresentanteIntegracao>(where: where.ToString(), inner);
 
             foreach (var representanteInt in representantesIntegracao)
             {

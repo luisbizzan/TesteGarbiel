@@ -24,13 +24,13 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public string NomeConferente { get; set; }
         public string IdUuarioConferente { get; set; }
 
-        [Display(Name = "Cód. Barras")]
-        [Required]
-        public string CodigoDeBarras { get; set; }
-
-        [Display(Name = "Referência")]
+        [Display(Name = "Referência/Cód. Barras")]
         [Required]
         public string Referencia { get; set; }
+
+        [Display(Name = "Descrição")]
+        [Required]
+        public string Descricao { get; set; }
 
         [Display(Name = "Qtde.")]
         [Required]

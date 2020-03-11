@@ -15,6 +15,7 @@
             editarVisivel = User.HasPermission(Permissions.EnderecoArmazenagem.Editar),
             urlExcluir = Url.Action("ExcluirAjax"),
             excluirVisivel = User.HasPermission(Permissions.EnderecoArmazenagem.Excluir),
+            imprimirVisivel = User.HasPermission(Permissions.EnderecoArmazenagem.Imprimir),
             urlDadosLista = Url.Action("DadosLista")
         })
 }
@@ -103,3 +104,5 @@
 </div>
 <div class="modal" id="modalPesquisaNivelArmazenagem"></div>
 <div class="modal" id="modalPesquisaPontoArmazenagem"></div>
+<div class="modal" id="confirmarImpressao"></div>
+<div class="modal" id="modalImpressoras"></div>

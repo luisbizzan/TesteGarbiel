@@ -76,6 +76,7 @@ namespace FWLog.Data
         public virtual DbSet<GarantiaStatus> GarantiaStatus { get; set; }
         public virtual DbSet<MotivoLaudo> MotivoLaudo { get; set; }
         public virtual DbSet<Representante> Representante { get; set; }
+        public virtual DbSet<LoteProdutoEndereco> LoteProdutoEndereco { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 

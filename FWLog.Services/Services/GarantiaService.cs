@@ -37,7 +37,7 @@ namespace FWLog.Services.Services
             _uow.SaveChanges();
         }
 
-        public void CriarRecebimentoGarantia(long idNotaFiscal, string userId,string observacao,string informacaoTransportadora)
+        public void CriarRecebimentoGarantia(long idNotaFiscal, string userId, string observacao, string informacaoTransportadora)
         {
             var garantia = new Garantia
             {

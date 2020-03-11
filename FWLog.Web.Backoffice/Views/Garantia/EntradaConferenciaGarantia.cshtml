@@ -96,14 +96,8 @@
                 <div class="row">
                     <div class="col-xs-6 col-md-3">
                         <div class="form-group">
-                            @Html.LabelFor(f => f.CodigoDeBarras)
-                            @Html.TextBoxFor(m => m.Referencia, new { @class = "form-control", tabindex = 0, @autofocus = "autofocus" })
-                        </div>
-                    </div>
-                    <div class="col-xs-6 col-md-3">
-                        <div class="form-group">
                             @Html.LabelFor(f => f.Referencia)
-                            @Html.TextBoxFor(m => m.Referencia, new { @class = "form-control", tabindex = 1, @readonly = "readonly" })
+                            @Html.TextBoxFor(m => m.Referencia, new { @class = "form-control", tabindex = 0, @autofocus = "autofocus" })
                         </div>
                     </div>
                     <div class="col-xs-6 col-md-3">
@@ -124,7 +118,12 @@
                             @Html.TextBoxFor(m => m.Fabricante, new { @class = "form-control onlyNumber", tabindex = 4, @readonly = "readonly" })
                         </div>
                     </div>
-
+                    <div class="col-xs-6 col-md-12">
+                        <div class="form-group">
+                            @Html.LabelFor(f => f.Descricao)
+                            @Html.TextBoxFor(m => m.Referencia, new { @class = "form-control", tabindex = 1, @readonly = "readonly" })
+                        </div>
+                    </div>
                     <div class="col-xs-6 col-md-3">
                         <div class="form-group">
                             @Html.LabelFor(f => f.Tipo)

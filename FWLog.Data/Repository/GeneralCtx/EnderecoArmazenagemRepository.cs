@@ -11,6 +11,11 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public EnderecoArmazenagemRepository(Entities entities) : base(entities) { }
 
+        public IQueryable<EnderecoArmazenagem> Tabela()
+        {
+            return Entities.EnderecoArmazenagem;
+        }
+
         public List<EnderecoArmazenagemListaLinhaTabela> BuscarLista(DataTableFilter<EnderecoArmazenagemListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
         {
             totalRecords = Entities.EnderecoArmazenagem.Where(w => w.IdEmpresa == model.CustomFilter.IdEmpresa).Count();
@@ -46,6 +51,11 @@ namespace FWLog.Data.Repository.GeneralCtx
         public EnderecoArmazenagem ConsultarPorNivelEPontoArmazenagem(long? nivel, long? pontoarmazenagem, long idEmpresa)
         {
             return Entities.EnderecoArmazenagem.FirstOrDefault(f => f.IdNivelArmazenagem == nivel && f.IdPontoArmazenagem == pontoarmazenagem && f.IdEmpresa == idEmpresa);
+        }
+
+        public List<EnderecoArmazenagem> PesquisarPorPontoArmazenagem(long idPontoArmazenagem)
+        {
+            return Entities.EnderecoArmazenagem.Where(w => w.IdPontoArmazenagem == idPontoArmazenagem).ToList();
         }
     }
 }

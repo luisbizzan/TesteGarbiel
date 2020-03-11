@@ -26,7 +26,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [Required]
         public string Ativo { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TGFPAR.AD_CODVENDATEND")] 
+        [TabelaIntegracao(DisplayName = "TGFPAR.AD_CODVENDATEND")]
         public string IdRepresentanteInterno { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFPAR.CODVEND")]

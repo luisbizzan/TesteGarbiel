@@ -121,14 +121,14 @@ namespace FWLog.Data.Repository.GeneralCtx
             {
                 IdGarantia = e.IdGarantia == 0 ? (long?)null : e.IdGarantia,
                 Cliente = string.Concat(e.NotaFiscal.Cliente.IdCliente, "-", e.NotaFiscal.Cliente.RazaoSocial),
-                CNPJCliente = e.NotaFiscal.Cliente == null ? null : e.NotaFiscal.Cliente.CNPJCPF.CnpjOuCpf(),
+                CNPJCliente = e.NotaFiscal.Cliente.CNPJCPF.CnpjOuCpf(),
                 Transportadora = e.NotaFiscal.Transportadora == null ? string.Empty : string.Concat(e.NotaFiscal.Transportadora.IdTransportadora, "-", e.NotaFiscal.Transportadora.NomeFantasia),
                 Fornecedor = e.NotaFiscal.Fornecedor == null ? string.Empty : string.Concat(e.NotaFiscal.Fornecedor.IdFornecedor, "-", e.NotaFiscal.Fornecedor.NomeFantasia),
                 IdEmpresa = e.NotaFiscal.IdEmpresa,
                 NumeroNF = e.NotaFiscal.Numero,
                 NumeroFicticioNF = e.NotaFiscal.NumeroFicticioNF,
                 DataEmissao = e.NotaFiscal.DataEmissao,
-                ///*DataRecebimento = e.DataRecebimento != DateTime.MinValue ? DateTime.Parse(e.DataRecebimento.ToString("dd//MM/yyyy"))*/ : (DateTime?)null,                
+                //DataRecebimento = e.DataRecebimento != DateTime.MinValue ? DateTime.Parse(e.DataRecebimento.ToString("dd//MM/yyyy")) : (DateTime?)null,                
                 GarantiaStatus = e.GarantiaStatus.Descricao,
                 IdGarantiaStatus = (int)e.GarantiaStatus.IdGarantiaStatus,
                 IdNotaFiscal = e.NotaFiscal.IdNotaFiscal

@@ -1,4 +1,6 @@
-﻿using FWLog.Data;
+﻿using AutoMapper;
+using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Produto;
 using System.Threading.Tasks;
@@ -51,6 +53,48 @@ namespace FWLog.Web.Api.Controllers
             var quantidadeReservada = await _produtoService.ConsultarQuantidadeReservada(request.IdProduto, request.IdEmpresa);
 
             return ApiOk(quantidadeReservada);
+        }
+
+        [HttpGet]
+        [Route("api/v1/produto/pesquisar/{codref}")]
+        public async Task<IHttpActionResult> Pesquisar(string codref)
+        {
+            if (string.IsNullOrEmpty(codref))
+            {
+                return ApiBadRequest("Informe o código de barras ou referência do produto.");
+            }
+
+            Produto produto = _unitOfWork.ProdutoRepository.PesquisarPorCodigoBarras(codref);
+
+            if(produto == null)
+            {
+                produto = _unitOfWork.ProdutoRepository.PesquisarPorReferencia(codref);
+            }
+
+            if(produto == null)
+            {
+                return ApiNotFound("Nenhum produto foi encontrado.");
+            }
+
+            var produtoResposta = Mapper.Map<PesquisarPorCodigoBarrasReferenciaResposta>(produto);
+
+            return ApiOk(produtoResposta);
+        }
+
+        [HttpGet]
+        [Route("api/v1/produto/{id}")]
+        public async Task<IHttpActionResult> Pesquisar(long id)
+        {
+            Produto produto = _unitOfWork.ProdutoRepository.GetById(id);
+
+            if (produto == null)
+            {
+                return ApiNotFound("Nenhum produto foi encontrado.");
+            }
+
+            var produtoResposta = Mapper.Map<PesquisarPorCodigoBarrasReferenciaResposta>(produto);
+
+            return ApiOk(produtoResposta);
         }
     }
 }
