@@ -1,16 +1,15 @@
 ﻿(function () {
-
-    $("#finalizarConferencia").click(function () {
-        confirmarfinalizarConferencia();
+    $("#finalizarDevolucaoTotal").click(function () {
+        ValidarPermissaoDevolucaoTotal();
     });
 
-    $("#finalizarDevolucaoTotal").click(function () {
-        FinalizarDevolucaoTotal();
+    $("#validarAcessoCoordenadorDevolucaoTotal").click(function () {
+        ValidarAcessoDevolucaoTotal();
     });
 })();
 
 
-function confirmarfinalizarConferencia() {
+/*function confirmarfinalizarConferencia() {
     $(".close").click();
 
     let $modal = $("#modalConferencia");
@@ -19,12 +18,76 @@ function confirmarfinalizarConferencia() {
     $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoFinalizarConferencia/" + idLote, function () {
         $modal.modal();
     });
+}*/
+
+function ExibirModalAcessoCoordenadorDevolucaoTotal() {
+    $('#modalAcessoCoordenadorDevolucaoTotal').modal('show');
+    $('#UsuarioDevolucaoTotal').val('');
+    $('#SenhaDevolucaoTotal').val('');
+
+    $('#MensagemDevolucaoTotal').text('Solicite a liberação do Coordenador para devolução total.');
+
+    setTimeout(function () {
+        $("#UsuarioDevolucaoTotal").focus();
+    }, 150);
 }
+
+function ValidarAcessoDevolucaoTotal() {
+    debugger
+    var usuario = $("#UsuarioDevolucaoTotal").val();
+    var senha = $("#SenhaDevolucaoTotal").val();
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "ValidarAcessoDevolucaoTotal",
+        cache: false,
+        global: false,
+        method: "POST",
+        data: {
+            usuario: usuario,
+            senha: senha
+        },
+        success: function (result) {
+            if (result.Success) {
+                FinalizarDevolucaoTotal();
+
+                $('#modalAcessoCoordenadorDevolucaoTotal').modal('toggle');
+
+                $('#UsuarioDevolucaoTotal').val('');
+                $('#SenhaDevolucaoTotal').val('');
+
+                $("#UsuarioDevolucaoTotal").focus();
+            }
+            else {
+                PNotify.warning({ text: result.Message });
+            }
+        },
+        error: function (request, status, error) {
+            PNotify.error({ text: request.Message });
+        }
+    });
+};
+
+
+function ValidarPermissaoDevolucaoTotal() {
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "validarPermissaoDevolucaoTotal",
+        cache: false,
+        method: "POST",
+        success: function (result) {
+            if (result.Success) {
+                FinalizarDevolucaoTotal();
+            }
+            else {
+                ExibirModalAcessoCoordenadorDevolucaoTotal();
+            }
+        }
+    });
+};
 
 
 function FinalizarDevolucaoTotal() {
     $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "/FinalizarDevolucaoTotal/",
+        url: HOST_URL + CONTROLLER_PATH + "/finalizarDevolucaoTotal",
         cache: false,
         method: "POST",
         success: function (result) {
@@ -41,3 +104,9 @@ function FinalizarDevolucaoTotal() {
         }
     });
 }
+
+
+
+
+
+
