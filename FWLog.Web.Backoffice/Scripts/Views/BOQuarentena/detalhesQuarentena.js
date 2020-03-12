@@ -3,7 +3,8 @@
     $('.codigoConfirmacao').css({ 'display': 'none' });
     $('.chaveAcesso').css({ 'display': 'none' });
 
-    $("#status").change(function () {
+    //Método feito quando seria necessário informar a chave de acesso para finalizar quarentena de devolução total - Verificar com Vitão
+    /*$("#status").change(function () {
         var status = this.value;
         var loteStatus = $("#LoteStatus").val();
 
@@ -17,9 +18,21 @@
             $(".codigoConfirmacao").css({ 'display': 'none' });
             $(".chaveAcesso").css({ 'display': 'none' });
         }
+    });*/
+
+    $("#status").change(function () {
+        var status = this.value;
+        var loteStatus = $("#LoteStatus").val();
+
+        if (status == 2) {
+            $(".codigoConfirmacao").css({ 'display': 'block' });
+        }
+        else {
+            $(".codigoConfirmacao").css({ 'display': 'none' });
+        }
     });
 
-
+    /*
     $("#submit").click(function (e) {
         e.preventDefault();
 
@@ -50,8 +63,28 @@
                 }
             }
         });
-    });
+    });*/
 
+
+    $("#submit").click(function (e) {
+        e.preventDefault();
+
+        var model = $("#detalhesQuarentenaForm").serializeArray();
+
+        $.ajax({
+            url: "/BOQuarentena/DetalhesQuarentena",
+            method: "POST",
+            data: model,
+            success: function (result) {
+                if (!!result.Success) {
+                    PNotify.success({ text: result.Message });
+                    fechaModal();
+                } else {
+                    PNotify.warning({ text: result.Message });
+                }
+            }
+        });
+    });
     function fechaModal() {
         var $modal = $("#modalAlterarStatus");
 

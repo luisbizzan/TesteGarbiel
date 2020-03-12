@@ -290,7 +290,7 @@ namespace FWLog.Web.Backoffice.Controllers
             ValidateModel(model);
             string mensagemErro = null;
 
-            if (model.IdStatus == QuarentenaStatusEnum.Retirado && model.LoteStatus != "Finalizado(Dev. Total)")
+            if (model.IdStatus == QuarentenaStatusEnum.Retirado)
             {
                 if (string.IsNullOrEmpty(model.CodigoConfirmacao))
                 {
