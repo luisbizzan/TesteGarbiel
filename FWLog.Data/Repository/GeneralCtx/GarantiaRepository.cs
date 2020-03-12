@@ -27,7 +27,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                 if (conn.State == System.Data.ConnectionState.Open)
                 {
-                    garantia = conn.Query<Garantia, NotaFiscal, Cliente, GarantiaStatus, AspNetUsers, NotaFiscalStatus, Garantia>(
+                    garantia = conn.Query<Garantia, NotaFiscal, Cliente, Fornecedor, GarantiaStatus, AspNetUsers, NotaFiscalStatus, Garantia>(
                         "SELECT " +
                             "garantia.\"IdGarantia\"," +
                             "garantia.\"DataRecebimento\",	" +
@@ -48,27 +48,30 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "nota.\"IdTransportadora\"," +
                             "nota.\"IdFornecedor\"," +
                             "cliente.*,	" +
+                            "fornecedor.*,	" +
                             "garantiastatus.*," +
                             "userr.*," +
                             "nfstatus.* " +
                         "FROM \"Garantia\" garantia " +
                         "RIGHT JOIN \"NotaFiscal\" nota ON nota.\"IdNotaFiscal\" = garantia.\"IdNotaFiscal\" " +
                         "LEFT JOIN \"Cliente\" cliente ON cliente.\"IdCliente\" = nota.\"IdCliente\" " +
+                        "LEFT JOIN \"Fornecedor\" fornecedor ON fornecedor.\"IdFornecedor\" = nota.\"IdFornecedor\" " +
                         "LEFT JOIN \"GarantiaStatus\" garantiastatus ON (garantiastatus.\"IdGarantiaStatus\" = CASE WHEN garantia.\"IdGarantiaStatus\" IS NULL THEN 1 ELSE garantia.\"IdGarantiaStatus\" END) " +
                         "LEFT JOIN \"AspNetUsers\" userr ON userr.\"Id\" = garantia.\"IdUsuarioConferente\" " +
                         "INNER JOIN \"NotaFiscalStatus\" nfstatus ON nfstatus.\"IdNotaFiscalStatus\" = nota.\"IdNotaFiscalStatus\" " +
                         "WHERE (nota.\"IdNotaFiscalStatus\" <> 0 AND nota.\"IdNotaFiscalStatus\" IS NOT NULL) AND nota.\"IdEmpresa\" = " + filter.CustomFilter.IdEmpresa +
                         "AND nota.\"IdNotaFiscalTipo\" = " + NotaFiscalTipoEnum.Garantia.GetHashCode(),
-                        map: (g, nf, f, gs, u, nfs) =>
+                        map: (g, nf, c, f, gs, u, nfs) =>
                         {
                             g.NotaFiscal = nf;
-                            g.NotaFiscal.Cliente = f;
+                            g.NotaFiscal.Cliente = c;
+                            g.NotaFiscal.Fornecedor = f;
                             g.GarantiaStatus = gs;
                             g.UsuarioConferente = u;
                             g.NotaFiscal.NotaFiscalStatus = nfs;
                             return g;
                         },
-                        splitOn: "IdGarantia, IdNotaFiscal, IdCliente, IdGarantiaStatus, Id, IdNotaFiscalStatus"
+                        splitOn: "IdGarantia, IdNotaFiscal, IdCliente, IdFornecedor, IdGarantiaStatus, Id, IdNotaFiscalStatus"
                         );
                 }
 
@@ -123,12 +126,12 @@ namespace FWLog.Data.Repository.GeneralCtx
                 Cliente = string.Concat(e.NotaFiscal.Cliente.IdCliente, "-", e.NotaFiscal.Cliente.RazaoSocial),
                 CNPJCliente = e.NotaFiscal.Cliente.CNPJCPF.CnpjOuCpf(),
                 Transportadora = e.NotaFiscal.Transportadora == null ? string.Empty : string.Concat(e.NotaFiscal.Transportadora.IdTransportadora, "-", e.NotaFiscal.Transportadora.NomeFantasia),
-                Fornecedor = e.NotaFiscal.Fornecedor == null ? string.Empty : string.Concat(e.NotaFiscal.Fornecedor.IdFornecedor, "-", e.NotaFiscal.Fornecedor.NomeFantasia),
+                Fornecedor = e.NotaFiscal.Fornecedor == null ? string.Empty : string.Concat(e.NotaFiscal.Fornecedor.IdFornecedor, " - ", e.NotaFiscal.Fornecedor.NomeFantasia),
                 IdEmpresa = e.NotaFiscal.IdEmpresa,
                 NumeroNF = e.NotaFiscal.Numero,
                 NumeroFicticioNF = e.NotaFiscal.NumeroFicticioNF,
                 DataEmissao = e.NotaFiscal.DataEmissao,
-                //DataRecebimento = e.DataRecebimento != DateTime.MinValue ? DateTime.Parse(e.DataRecebimento.ToString("dd//MM/yyyy")) : (DateTime?)null,                
+                DataRecebimento = e.DataRecebimento != DateTime.MinValue ? e.DataRecebimento : (DateTime?)null,
                 GarantiaStatus = e.GarantiaStatus.Descricao,
                 IdGarantiaStatus = (int)e.GarantiaStatus.IdGarantiaStatus,
                 IdNotaFiscal = e.NotaFiscal.IdNotaFiscal

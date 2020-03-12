@@ -295,8 +295,6 @@ function registrarRecebimento() {
 }
 
 function registrarNotaFiscal() {
-    debugger
-
     $.ajax({
         url: HOST_URL + "Garantia/RegistrarRecebimentoNota/",
         method: "POST",

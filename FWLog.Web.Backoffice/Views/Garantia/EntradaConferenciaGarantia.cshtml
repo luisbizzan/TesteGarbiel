@@ -4,13 +4,12 @@
 
     @BundleHelper.RenderViewScriptModal(new
 {
-    //idLote = Model.IdLote
 })
 }
 
 <script>
     $(function () {
-        $("#CodigoDeBarras").focus();
+        $("#Referencia").focus();
     });
 </script>
 
@@ -47,11 +46,12 @@
 
             <div class="row">
                 @*@Html.HiddenFor(m => m.InicioConferencia)
-                    @Html.HiddenFor(m => m.IdTipoConferencia)*@
+        @Html.HiddenFor(m => m.IdTipoConferencia)*@
                 @Html.HiddenFor(m => m.IdGarantia)
+                @Html.HiddenFor(m => m.IdNotaFiscal)
                 <div class="col-xs-6 col-md-3">
                     <div class="form-group">
-                        @Html.LabelFor(m => m.IdGarantia):@Model.IdGarantia
+                        @Html.LabelFor(m => m.IdGarantia): @Model.IdGarantia
                     </div>
                 </div>
 
@@ -80,11 +80,16 @@
                         @Html.LabelFor(f => f.Cliente): @Model.Cliente
                     </div>
                 </div>
+                <div class="col-xs-6 col-md-3">
+                    <div class="form-group">
+                        @Html.LabelFor(f => f.Fornecedor): @Model.Fornecedor
+                    </div>
+                </div>
                 @*<div class="col-xs-6 col-md-6">
-                        <div class="form-group">
-                            @Html.LabelFor(f => f.TipoConferencia): <span id="TipoConferencia">@Model.TipoConferencia</span>
-                        </div>
-                    </div>*@
+            <div class="form-group">
+                @Html.LabelFor(f => f.TipoConferencia): <span id="TipoConferencia">@Model.TipoConferencia</span>
+            </div>
+        </div>*@
             </div>
             <div id="itens">
                 <div class="row">
@@ -103,33 +108,41 @@
                     <div class="col-xs-6 col-md-3">
                         <div class="form-group">
                             @Html.LabelFor(f => f.Quantidade)
-                            @Html.TextBoxFor(m => m.Quantidade, new { @class = "form-control", tabindex = 2, @readonly = "readonly", maxlength = 5 })
+                            @Html.TextBoxFor(m => m.Quantidade, new { @class = "form-control", tabindex = 1, @readonly = "readonly" })
                         </div>
                     </div>
                     <div class="col-xs-6 col-md-3">
                         <div class="form-group">
                             @Html.LabelFor(f => f.Unidade)
-                            @Html.TextBoxFor(m => m.Unidade, new { @class = "form-control onlyNumber", tabindex = 3, @readonly = "readonly" })
+                            @Html.TextBoxFor(m => m.Unidade, new { @class = "form-control onlyNumber", @readonly = "readonly" })
                         </div>
                     </div>
                     <div class="col-xs-6 col-md-3">
                         <div class="form-group">
                             @Html.LabelFor(f => f.Fabricante)
-                            @Html.TextBoxFor(m => m.Fabricante, new { @class = "form-control onlyNumber", tabindex = 4, @readonly = "readonly" })
+                            @Html.TextBoxFor(m => m.Fabricante, new { @class = "form-control onlyNumber", @readonly = "readonly" })
                         </div>
                     </div>
                     <div class="col-xs-6 col-md-12">
                         <div class="form-group">
                             @Html.LabelFor(f => f.Descricao)
-                            @Html.TextBoxFor(m => m.Referencia, new { @class = "form-control", tabindex = 1, @readonly = "readonly" })
+                            @Html.TextBoxFor(m => m.Descricao, new { @class = "form-control", @readonly = "readonly" })
                         </div>
                     </div>
                     <div class="col-xs-6 col-md-3">
                         <div class="form-group">
                             @Html.LabelFor(f => f.Tipo)
-                            <div class="btn-group" style="display:block;">
-                                <button class="btn btn-secondary" tabindex="5" id="btnTipoGarantia" style="background-color:darkblue; color:#FFF;" type="button">Garantia</button>
-                                <button class="btn btn-secondary" tabindex="6" id="btnTipoLaudo" style="background-color:darkblue; color:#FFF;" type="button">Laudo</button>
+                            @*<div class="btn-group" role="group" style="display:block;">
+                            <button type="button" class="btn btn-secondary" tabindex="5" id="btnTipoGarantia" style="background-color:darkblue; color:#FFF;">Garantia</button>
+                            <button type="button" class="btn btn-secondary" tabindex="6" id="btnTipoLaudo" style="background-color:darkblue; color:#FFF;">Laudo</button>
+                        </div>*@
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons" style="display:block;">
+                                <label class="btn btn-secondary active"  style="background-color:darkblue; color:#FFF;">
+                                    <input type="radio" name="options" id="btnTipoGarantia" checked> Garantia
+                                </label>
+                                <label class="btn btn-secondary"  style="background-color:darkblue; color:#FFF;">
+                                    <input type="radio" name="options" id="btnTipoLaudo"> Laudo
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -140,14 +153,14 @@
                     <h5 style="padding-left: 5px"> <strong>F4</strong> - Conferência Manual</h5>
                 </div>
                 @*<div class="col-xs-12 col-md-2" id="legendaRegistroConferencia">
-                        <h5><strong style="padding-left: 5px">ESC</strong> - Registrar</h5>
-                    </div>*@
-            <div class="col-sm-12 col-md-8" style="text-align: right;">
-                <button type="button" id="finalizarConferencia" class="btn btn-default">Imprimir Etiquetas</button>
-                <button type="button" id="finalizarConferencia" class="btn btn-info">Finalizar</button>
-                <button type="button" id="exibirDivergencia" class="btn btn-default">Divergências</button>
-                <a id="confirmarConferencia" data-toggle="tooltip" title="Confirmar" class="btn btn-primary">Registrar</a>
-            </div>
+                <h5><strong style="padding-left: 5px">ESC</strong> - Registrar</h5>
+            </div>*@
+                <div class="col-sm-12 col-md-8" style="text-align: right;">
+                    <button type="button" id="finalizarConferencia" class="btn btn-default">Imprimir Etiquetas</button>
+                    <button type="button" id="finalizarConferencia" class="btn btn-info">Finalizar</button>
+                    <button type="button" id="exibirDivergencia" class="btn btn-default">Divergências</button>
+                    <a id="confirmarConferencia" data-toggle="tooltip" title="Confirmar" class="btn btn-primary">Registrar</a>
+                </div>
             </div>
         </div>
     </div>

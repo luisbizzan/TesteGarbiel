@@ -20,6 +20,9 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         [Display(Name = "Cliente")]
         public string Cliente { get; set; }
 
+        [Display(Name = "Fornecedor")]
+        public string Fornecedor { get; set; }
+
         [Display(Name = "Conferente")]
         public string NomeConferente { get; set; }
         public string IdUuarioConferente { get; set; }
