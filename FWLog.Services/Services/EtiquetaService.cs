@@ -337,11 +337,11 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaDevolucao(ImprimirEtiquetaDevolucaoRequest request)
         {
-            string linha1 = request.Linha1?.Normalizar();
-            string linha2 = request.Linha2?.Normalizar();
-            string linha3 = request.Linha3?.Normalizar();
-            string linha4 = request.Linha4?.Normalizar();
-
+            string linha1  = request.Linha1?.Normalizar();
+            string linha2  = request.Linha2?.Normalizar();
+            string linha3  = request.Linha3?.Normalizar();
+            string linha4  = request.Linha4?.Normalizar();
+            
             var etiquetaZpl = new StringBuilder();
 
             etiquetaZpl.Append("^XA");
@@ -355,6 +355,64 @@ namespace FWLog.Services.Services
             // Texto da etiqueta
             etiquetaZpl.Append($@"^FO50,15^FB530,4,0,C,0^A0B,230,65^FR^FD{linha1}\&{linha2}\&{linha3}\&{linha4}^FS");
 
+            etiquetaZpl.Append("^XZ");
+
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+        }
+
+        public void ImprimirEtiquetaDevolucaoTotal(ImprimirEtiquetaDevolucaoTotalRequest request)
+        {
+            string nomeFornecedor = request.NomeFornecedor?.Normalizar();
+            string endFornecedor = request.EnderecoFornecedor?.Normalizar();
+            string cepFornecedor = request.CepFornecedor?.Normalizar();
+            string cidadeFornecedor = request.CidadeFornecedor?.Normalizar();
+            string estadoFornecedor = request.EstadoFornecedor?.Normalizar();
+            string telefoneFornecedor = request.TelefoneFornecedor?.Normalizar();
+            string idFornecedor = request.IdFornecedor?.Normalizar();
+            string siglaTransportador = request.SiglaTransportador?.Normalizar();
+            string idTransportadora = request.IdTransportadora?.Normalizar();
+            string nomeTransportadora = request.NomeTransportadora?.Normalizar();
+            string idLote = request.IdLote?.Normalizar();
+            string quantidadeVolumes = request.QuantidadeVolumes?.Normalizar();
+
+            var etiquetaZpl = new StringBuilder();
+
+            //Novo
+            etiquetaZpl.Append("^XA");
+
+            etiquetaZpl.Append("^LL860");
+
+            // Define quantidade de etiquetas a imprimir
+            etiquetaZpl.Append("^PQ1^FS");
+
+            // Fundo Etiqueta
+            etiquetaZpl.Append("^FO10,10^GB700,540,270^FS");
+
+            // Texto da etiqueta            
+            etiquetaZpl.Append($@"^FO196,50^FB510,4,0,L,0^A0B,32,25^FD{nomeFornecedor}\&{endFornecedor}\&{cepFornecedor}-{cidadeFornecedor}-{estadoFornecedor}\&TEL.:{telefoneFornecedor}^FS");
+            etiquetaZpl.Append("^FO354,100^A0B,70,60^FDDEVOLUCAO TOTAL^FS");
+            etiquetaZpl.Append("^FO425,425^GB,145,120,4^FS");
+            etiquetaZpl.Append($@"^FO445,440^A0B,100,70^FR^FD{siglaTransportador}^FS");
+            etiquetaZpl.Append($@"^FO440,30^FB390,4,0,L,0^A0B,30,20^FD{idTransportadora}\&{nomeTransportadora}^FS");
+            etiquetaZpl.Append("^FO550,525^A0B,20,20^FDLOTE^FS");
+            etiquetaZpl.Append($@"^FO570,375^A0B,80,80^FR^FD{idLote}^FS");
+            etiquetaZpl.Append("^FO550,230^A0B,20,20^FDVOLUME^FS");
+            etiquetaZpl.Append($@"^FO565,100^A0B,80,80^FD{quantidadeVolumes}^FS");
+            etiquetaZpl.Append("^FO75,75^XGLOGO.GRF,1,1^FS");
+            etiquetaZpl.Append("^FO75,75^XGLOGO.GRF,1,1^FS");
+
+            // Linhas Horizontais
+            etiquetaZpl.Append("^FO184,40^GBO,860,2^FS");
+            etiquetaZpl.Append("^FO344,40^GBO,860,2^FS");
+            etiquetaZpl.Append("^FO424,40^GBO,860,2^FS");
+            etiquetaZpl.Append("^FO544,40^GBO,860,2^FS");
+            etiquetaZpl.Append("^FO635,40^GBO,860,2^FS");
+
+            // Linhas Verticais
+            etiquetaZpl.Append("^ FO545,310^GB90,0,2^FS");
             etiquetaZpl.Append("^XZ");
 
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());

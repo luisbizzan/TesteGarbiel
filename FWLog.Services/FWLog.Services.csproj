@@ -115,6 +115,7 @@
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaArmazenagemVolume.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaAvulsoRequest.cs" />
+    <Compile Include="Model\Etiquetas\ImprimirEtiquetaDevolucaoTotalRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaDevolucaoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaProdutoBase.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeRecebimento.cs" />
