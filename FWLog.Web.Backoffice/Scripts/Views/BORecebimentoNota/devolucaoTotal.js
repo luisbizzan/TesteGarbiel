@@ -9,16 +9,20 @@
 })();
 
 
-/*function confirmarfinalizarConferencia() {
+
+
+function ExibirResumoTratativaDivergencia(id) {
     $(".close").click();
+    let $modal = $("#modalProcessamentoTratativaDivergencia");
 
-    let $modal = $("#modalConferencia");
-    let idLote = 801;
 
-    $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoFinalizarConferencia/" + idLote, function () {
+    $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoProcessamentoDivergencia/" + id, function () {
         $modal.modal();
+        $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
+        //FinalizarTratativa();
     });
-}*/
+
+}
 
 function ExibirModalAcessoCoordenadorDevolucaoTotal() {
     $('#modalAcessoCoordenadorDevolucaoTotal').modal('show');
@@ -87,7 +91,6 @@ function ValidarPermissaoDevolucaoTotal() {
 
 function FinalizarDevolucaoTotal() {
     var idLote = $('#IdLote').val();
-
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "/finalizarDevolucaoTotal",
         cache: false,
@@ -104,13 +107,42 @@ function FinalizarDevolucaoTotal() {
                 $('#modalDevolucaoTotal').modal('toggle');
                 $("#dataTable").DataTable().ajax.reload();
                 PNotify.success({ text: result.Message });
-                //confirmarfinalizarConferencia();   //Se não vai haver conferencia. não tem necessidade de exibir a tela de resumo.
+                VerificarStatusLoteDev($("#IdNotaFiscal").val());
+                ExibirResumoTratativaDivergencia($("#IdNotaFiscal").val());
             }
         }
     });
 }
 
 
+function VerificarStatusLoteDev(id) {
+    debugger
+    $.ajax({
+        url: HOST_URL + "BORecebimentoNota/ContinuarProcessamentoLote/" + id,
+        cache: false,
+        method: "POST",
+        success: function (result) {
+            if (!result.Success) {
+                PNotify.error({ text: result.Message });
+            } else {
+                $(".close").click();
+                $("#dataTable").DataTable().ajax.reload();
+
+                if (result.Data !== "True") {
+                    return;
+                }
+
+                PNotify.info({ text: "Continuando processo de finalização da tratativa de divergência..." });
+                let $modal = $("#modalProcessamentoTratativaDivergencia");
+                $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoProcessamentoDivergencia/" + id, function () {
+                    $modal.modal();
+                    $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
+                    FinalizarTratativa();
+                });
+            }
+        }
+    });
+}
 
 
 

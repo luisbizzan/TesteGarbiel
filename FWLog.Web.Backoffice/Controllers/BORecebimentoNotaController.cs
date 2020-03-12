@@ -1359,9 +1359,10 @@ namespace FWLog.Web.Backoffice.Controllers
             Lote lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
             var model = new BOImprimirDevolucaoTotalViewModel
             {
-                NumeroNF = lote.NotaFiscal.Numero.ToString(),
-                Serie = lote.NotaFiscal.Serie,
-                IdLote = lote.IdLote,
+                NumeroNF     = lote.NotaFiscal.Numero.ToString(),
+                Serie        = lote.NotaFiscal.Serie,
+                IdLote       = lote.IdLote,
+                IdNotaFiscal = lote.IdNotaFiscal,
             };
 
             return View(model);
