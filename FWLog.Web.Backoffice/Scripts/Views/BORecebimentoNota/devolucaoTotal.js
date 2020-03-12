@@ -86,10 +86,15 @@ function ValidarPermissaoDevolucaoTotal() {
 
 
 function FinalizarDevolucaoTotal() {
+    var idLote = $('#IdLote').val();
+
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "/finalizarDevolucaoTotal",
         cache: false,
         method: "POST",
+        data: {
+            idLote: idLote
+        },
         success: function (result) {
             if (!result.Success) {
                 $('#modalDevolucaoTotal').modal('toggle');
