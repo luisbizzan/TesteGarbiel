@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
 {
-    public class ConferenciaService 
+    public class ConferenciaService
     {
         private readonly UnitOfWork _uow;
         private readonly LoteService _loteService;
@@ -109,6 +109,110 @@ namespace FWLog.Services.Services
                 conferenciaResponse.Mensagem = "Atenção! Verificar o tipo da peça ou quantidade antes da conferência.";
 
             conferenciaResponse.Lote = lote;
+            conferenciaResponse.Produto = produto;
+            conferenciaResponse.EmpresaConfig = empresaConfig;
+            conferenciaResponse.ProdutoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, idEmpresa);
+
+            return conferenciaResponse;
+        }
+
+        public ConferenciaResponse ValidarProdutoGarantia(long idGarantia, long idNotaFiscal, string codigoBarrasOuReferencia, long idEmpresa)
+        {
+            conferenciaResponse.Sucesso = true;
+
+            //Validar garantia
+            var garantia = _uow.GarantiaRepository.GetById(idGarantia);
+
+            if (garantia == null)
+            {
+                conferenciaResponse.Sucesso = false;
+                conferenciaResponse.Mensagem = "Garantia não encontrado. Por favor, tente novamente!";
+
+                return conferenciaResponse;
+            }
+
+            //Validar se o lote já foi conferido durante o processo de conferência.
+            if (garantia.IdGarantiaStatus != GarantiaStatusEnum.Recebido && garantia.IdGarantiaStatus != GarantiaStatusEnum.Conferencia)
+            {
+                conferenciaResponse.Sucesso = false;
+                conferenciaResponse.Mensagem = $"A conferência da garantia: {garantia.IdGarantia} já foi finalizada.";
+
+                return conferenciaResponse;
+            }
+
+            //Valida se o código de barras ou referência é vazio ou nulo.
+            if (string.IsNullOrEmpty(codigoBarrasOuReferencia))
+            {
+                conferenciaResponse.Sucesso = false;
+                conferenciaResponse.Mensagem = "Referência inválida. Por favor, tente novamente!";
+
+                return conferenciaResponse;
+            }
+
+            //Valida se foi encontrado um produto através do código de barras, código de barras 2 ou da referência.
+            var produto = _uow.ProdutoRepository.ConsultarPorCodigoBarrasOuReferenciaGarantia(codigoBarrasOuReferencia, idGarantia);
+
+            if (produto == null)
+            {
+                conferenciaResponse.Sucesso = false;
+                conferenciaResponse.Mensagem = "Referência sem código de barras. Por favor, tente novamente!";
+
+                return conferenciaResponse;
+            }
+
+            var notaFiscalItem = _uow.NotaFiscalItemRepository.PegarNotaFiscal(idNotaFiscal, produto.IdProduto);
+
+            if (notaFiscalItem == null)
+                conferenciaResponse.Mensagem = "O produto não existe na nota fiscal, o mesmo será contabilizado como A+";
+
+            var garantiaProduto = _uow.GarantiaProdutoRepository.ObterPorProduto(idGarantia, produto.IdProduto);
+
+            if (garantiaProduto.Any() && notaFiscalItem != null)
+            {
+                var garantiaProdutoEmConferencia = garantiaProduto.Where(x => x.IdNotaFiscalItem == notaFiscalItem.IdNotaFiscalItem).ToList();
+
+                if (notaFiscalItem.Quantidade < garantiaProduto.Sum(x => x.Quantidade))
+                {
+                    conferenciaResponse.Mensagem = "A conferência do produto excedeu a quantidade da nota fiscal, a quantidade excedente será contabilizada como A+";
+                }
+            }
+
+            //Valida se as configurações da empresa existem.
+            var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(idEmpresa);
+
+            if (empresaConfig == null)
+            {
+                conferenciaResponse.Sucesso = false;
+                conferenciaResponse.Mensagem = "As configurações da empresa não foram encontradas. Por favor, tente novamente!";
+
+                return conferenciaResponse;
+            }
+
+            //Valida se o produto está fora de linha (fornecedor 400)
+            var produtoEstoque = _uow.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto, idEmpresa);
+
+            if (produtoEstoque.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.ForaLinha)
+            {
+                conferenciaResponse.Sucesso = false;
+                conferenciaResponse.Mensagem = "A referência informada está fora de linha. Por favor, tente novamente!";
+
+                return conferenciaResponse;
+            }
+
+            //Valida se a largura, altura e comprimento do produto.
+            if (!(produto.Largura.HasValue || produto.Altura.HasValue || produto.Comprimento.HasValue))
+            {
+                conferenciaResponse.Sucesso = false;
+                conferenciaResponse.Mensagem = "Referência sem cubicagem. Por favor, tente novamente!";
+
+                return conferenciaResponse;
+            }
+
+            //Valida se a unidade de medida é KT, MT OU CT.
+            if (produto.UnidadeMedida.Sigla == "KT" || produto.UnidadeMedida.Sigla == "MT" || produto.UnidadeMedida.Sigla == "CT")
+                conferenciaResponse.Mensagem = "Atenção! Verificar o tipo da peça ou quantidade antes da conferência.";
+
+            conferenciaResponse.Garantia = garantia;
             conferenciaResponse.Produto = produto;
             conferenciaResponse.EmpresaConfig = empresaConfig;
             conferenciaResponse.ProdutoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, idEmpresa);
@@ -241,6 +345,29 @@ namespace FWLog.Services.Services
 
             //Lote Conferência do produto.
             var referenciaConferencia = _uow.LoteConferenciaRepository.ObterPorProduto(lote.IdLote, produto.IdProduto);
+
+            //Captura a quantidade do produto da nota.
+            if (referenciaNota.Any())
+                quantidadeNota = referenciaNota.Sum(x => x.Quantidade);
+
+            //Captura a quantidade conferida do produto.
+            if (referenciaConferencia.Any())
+                quantidadeConferida = referenciaConferencia.Sum(x => x.Quantidade);
+
+            //Calcula a quantidade não conferida (quantidade da nota - quantidade conferida)
+            if (quantidadeNota > quantidadeConferida)
+                quantidadeNaoConferida = quantidadeNota - quantidadeConferida;
+        }
+
+        public void ConsultarQuantidadeConferidaENaoConferidaGarantia(Garantia garantia, Produto produto, ref int quantidadeConferida, ref int quantidadeNaoConferida)
+        {
+            int quantidadeNota = 0;
+
+            //NotaFiscalItem do produto.
+            var referenciaNota = _uow.NotaFiscalItemRepository.ObterPorItem(garantia.IdNotaFiscal, produto.IdProduto);
+
+            //O QUE VAI SUBSTITUIR É A GarantiaProduto.
+            var referenciaConferencia = _uow.GarantiaProdutoRepository.ObterPorProduto(garantia.IdGarantia, produto.IdProduto);
 
             //Captura a quantidade do produto da nota.
             if (referenciaNota.Any())

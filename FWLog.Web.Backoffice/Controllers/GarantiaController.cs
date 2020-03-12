@@ -17,22 +17,30 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using FWLog.Data.EnumsAndConsts;
 using System.Net;
+using Newtonsoft.Json;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
     public class GarantiaController : BOBaseController
-    {
-        UnitOfWork _uow;
-        GarantiaService _garantiaService;
-        NotaFiscalService _notaFiscalService;
-        ApplicationLogService _applicationLogService;
+    { 
+        private readonly UnitOfWork _uow;
+        private readonly GarantiaService _garantiaService;
+        private readonly NotaFiscalService _notaFiscalService;
+        private readonly ApplicationLogService _applicationLogService;
+        private readonly ConferenciaService _conferenciaService;
 
-        public GarantiaController(UnitOfWork uow, GarantiaService garantiaService, NotaFiscalService notaFiscalService, ApplicationLogService applicationLogService)
+        public GarantiaController(
+            UnitOfWork uow, 
+            GarantiaService garantiaService, 
+            NotaFiscalService notaFiscalService, 
+            ApplicationLogService applicationLogService,
+            ConferenciaService conferenciaService)
         {
             _uow = uow;
             _garantiaService = garantiaService;
             _notaFiscalService = notaFiscalService;
             _applicationLogService = applicationLogService;
+            _conferenciaService = conferenciaService;
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Garantia.Listar)]
@@ -396,6 +404,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 NomeConferente = usuario.Nome,
                 DataDaSolicitacao = garantia.DataRecebimento.ToString("dd/MM/yyyy"),
                 Cliente = notafiscal.Cliente.RazaoSocial,
+                Fornecedor = string.Concat(notafiscal.Fornecedor.IdFornecedor, " - ", notafiscal.Fornecedor.NomeFantasia),
                 Representante = notafiscal.Cliente.RepresentanteExterno.Nome ?? notafiscal.Cliente.RepresentanteInterno.Nome
                 //Cliente = garantia
                 //DataHoraRecebimento = lote.DataRecebimento.ToString("dd/MM/yyyy HH:mm"),
@@ -420,6 +429,85 @@ namespace FWLog.Web.Backoffice.Controllers
             //}
 
             return View(model);
+        }
+
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Garantia.ConferirGarantia)]
+        public async Task<ActionResult> ObterDadosReferenciaConferenciaGarantia(string codigoBarrasOuReferencia, long idGarantia, long idNotaFiscal)
+        {
+            //Validações do produto.
+            var conferencia = _conferenciaService.ValidarProdutoGarantia(idGarantia,idNotaFiscal, codigoBarrasOuReferencia, IdEmpresa);
+
+            if (!conferencia.Sucesso)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = conferencia.Sucesso,
+                    Message = conferencia.Mensagem
+                });
+            }
+
+            //Captura as quantidade conferida e não conferida do lote.
+            int quantidadeConferida = 0;
+            int quantidadeNaoConferida = 0;
+
+            //_conferenciaService.ConsultarQuantidadeConferidaENaoConferidaGarantia(conferencia.Garantia, conferencia.Produto, ref quantidadeConferida, ref quantidadeNaoConferida);
+
+            //Captura o Usuário que está iniciando a conferência novamente.
+            var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
+
+            var model = new GarantiaEntradaConferenciaViewModel
+            {
+
+                Descricao = conferencia.Produto.Descricao,
+                Fabricante = conferencia.Produto.NomeFabricante,
+                Unidade = conferencia.Produto.UnidadeMedida.Sigla
+
+                //IdNotaFiscal = conferencia.Lote.NotaFiscal.IdNotaFiscal,
+                //IdLote = conferencia.Lote.IdLote,
+                //NumeroNotaFiscal = string.Concat(conferencia.Lote.NotaFiscal.Numero, " - ", conferencia.Lote.NotaFiscal.Serie),
+                //IdUuarioConferente = usuario.UsuarioId,
+                //NomeConferente = usuario.Nome,
+                //DataHoraRecebimento = conferencia.Lote.DataRecebimento.ToString("dd/MM/yyyy HH:mm"),
+                //NomeFornecedor = conferencia.Lote.NotaFiscal.Fornecedor.NomeFantasia,
+                //QuantidadeVolume = conferencia.Lote.QuantidadeVolume,
+                //TipoConferencia = conferencia.EmpresaConfig.TipoConferencia.Descricao,
+                //IdTipoConferencia = conferencia.EmpresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode(),
+                //Referencia = conferencia.Produto.Referencia,
+                //DescricaoReferencia = conferencia.Produto.Descricao,
+                //Embalagem = conferencia.Produto.MultiploVenda.ToString("N2"),
+                //Unidade = conferencia.Produto.UnidadeMedida.Sigla,
+                //QuantidadeEstoque = conferencia.ProdutoEstoque == null ? 0 : conferencia.ProdutoEstoque.Saldo,
+                //QuantidadeNaoConferida = quantidadeNaoConferida,
+                //QuantidadeConferida = quantidadeConferida,
+                //InicioConferencia = DateTime.Now.ToString(),
+                //QuantidadePorCaixa = null,
+                //Multiplo = conferencia.Produto.MultiploVenda,
+                //QuantidadeReservada = await _produtoService.ConsultarQuantidadeReservada(conferencia.Produto.IdProduto, IdEmpresa),
+                //MediaVenda = conferencia.ProdutoEstoque.MediaVenda.HasValue ? conferencia.ProdutoEstoque.MediaVenda.Value.ToString("N2") : string.Empty,
+                //QuantidadeCaixa = conferencia.EmpresaConfig.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento ? 1 : null as int?
+            };
+
+            //if (conferencia.ProdutoEstoque == null || (conferencia.ProdutoEstoque != null && conferencia.ProdutoEstoque.EnderecoArmazenagem == null))
+            //{
+            //    model.Localizacao = string.Empty;
+            //    model.EnviarPicking = true;
+            //}
+            //else
+            //{
+            //    model.Localizacao = conferencia.ProdutoEstoque.EnderecoArmazenagem.Codigo;
+            //    model.EnviarPicking = conferencia.ProdutoEstoque.Saldo == 0 ? true : false;
+            //}
+
+            string json = JsonConvert.SerializeObject(model);
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = conferencia.Mensagem,
+                Data = json
+            });
         }
     }
 }

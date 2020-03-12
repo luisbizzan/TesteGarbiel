@@ -4,6 +4,7 @@ using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace FWLog.Data.Repository.GeneralCtx
 {
@@ -20,7 +21,21 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public Produto ConsultarPorCodigoBarrasOuReferencia(string codigoBarrasOuReferencia)
         {
-            return Entities.Produto.FirstOrDefault(f => f.CodigoBarras == codigoBarrasOuReferencia || f.Referencia == codigoBarrasOuReferencia || f.CodigoBarras2 == codigoBarrasOuReferencia);
+            return Entities.Produto.FirstOrDefault(f => f.CodigoBarras == codigoBarrasOuReferencia 
+                || f.Referencia == codigoBarrasOuReferencia 
+                || f.CodigoBarras2 == codigoBarrasOuReferencia);
+        }
+
+        public Produto ConsultarPorCodigoBarrasOuReferenciaGarantia(string codigoBarrasOuReferenciaOuGarantiaEtiqueta, long idGarantia)
+        {
+            var idGarantiaLenght = idGarantia.ToString().Length;
+
+            var etiquetaGarantiaFormatada = codigoBarrasOuReferenciaOuGarantiaEtiqueta.Substring(idGarantiaLenght);
+
+           return Entities.Produto.FirstOrDefault(f => f.CodigoBarras == codigoBarrasOuReferenciaOuGarantiaEtiqueta
+                || f.Referencia == codigoBarrasOuReferenciaOuGarantiaEtiqueta
+                || f.CodigoBarras2 == codigoBarrasOuReferenciaOuGarantiaEtiqueta
+                || f.CodigoBarras == etiquetaGarantiaFormatada);
         }
 
         public IQueryable<Produto> Todos()
