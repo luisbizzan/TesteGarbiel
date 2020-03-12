@@ -18,7 +18,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/armazenagem/instalar/validar-lote/{idLote}")]
         [HttpGet]
-        public async Task<IHttpActionResult> ValidarLoteInstalacao(long idLote)
+        public IHttpActionResult ValidarLoteInstalacao(long idLote)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace FWLog.Web.Api.Controllers
             }
             catch (BusinessException ex)
             {
-                return BadRequest(ex.Message);
+                return ApiBadRequest(ex.Message);
             }
             catch
             {
@@ -44,7 +44,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/armazenagem/instalar/validar-lote-produto")]
         [HttpPost]
-        public async Task<IHttpActionResult> ValidarLoteProdutoInstalacao(ValidarLoteProdutoInstalacaoModelRequisicao requisicao)
+        public IHttpActionResult ValidarLoteProdutoInstalacao(ValidarLoteProdutoInstalacaoModelRequisicao requisicao)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace FWLog.Web.Api.Controllers
             }
             catch (BusinessException ex)
             {
-                return BadRequest(ex.Message);
+                return ApiBadRequest(ex.Message);
             }
             catch
             {
@@ -71,7 +71,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/armazenagem/instalar/validar-quantidade")]
         [HttpPost]
-        public async Task<IHttpActionResult> ValidarQuantidadeInstalacao(ValidarQuantidadeInstalacaoModelRequisicao requisicao)
+        public IHttpActionResult ValidarQuantidadeInstalacao(ValidarQuantidadeInstalacaoModelRequisicao requisicao)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace FWLog.Web.Api.Controllers
             }
             catch (BusinessException ex)
             {
-                return BadRequest(ex.Message);
+                return ApiBadRequest(ex.Message);
             }
             catch
             {
@@ -99,7 +99,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/armazenagem/instalar/validar-endereco")]
         [HttpPost]
-        public async Task<IHttpActionResult> ValidarEnderecoInstalacao(ValidarEnderecoInstalacaoModelRequisicao requisicao)
+        public IHttpActionResult ValidarEnderecoInstalacao(ValidarEnderecoInstalacaoModelRequisicao requisicao)
         {
             try
             {
@@ -116,7 +116,7 @@ namespace FWLog.Web.Api.Controllers
             }
             catch (BusinessException ex)
             {
-                return BadRequest(ex.Message);
+                return ApiBadRequest(ex.Message);
             }
             catch
             {
@@ -146,7 +146,7 @@ namespace FWLog.Web.Api.Controllers
             }
             catch (BusinessException ex)
             {
-                return BadRequest(ex.Message);
+                return ApiBadRequest(ex.Message);
             }
             catch
             {
