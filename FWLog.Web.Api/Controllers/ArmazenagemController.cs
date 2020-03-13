@@ -175,5 +175,25 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/armazenagem/retirar/validar-lote")]
+        [HttpPost]
+        public IHttpActionResult ValidateLoteRetirar(ValidateLoteRetirarModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidateLoteRetirar(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
     }
 }

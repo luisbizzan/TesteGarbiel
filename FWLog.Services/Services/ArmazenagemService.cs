@@ -274,5 +274,24 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Nenhum volume instalado no endereço.");
             }
         }
+
+        public void ValidateLoteRetirar(long idEnderecoArmazenagem, long idLote)
+        {
+            ValidarEnderecoRetirar(idEnderecoArmazenagem);
+
+            if (idLote <= 0)
+            {
+                throw new BusinessException("O lote deve ser informado.");
+            }
+
+            var lote = _unitOfWork.LoteRepository.GetById(idLote);
+
+            if (lote == null)
+            {
+                throw new BusinessException("O lote não foi encontrado.");
+            }
+
+            //TODO: Validar se o Lote está instalado no endereço
+        }
     }
 }
