@@ -75,7 +75,7 @@ namespace FWLog.Web.Api.Controllers
 
             ApplicationUser usuarioAplicacao = await UserManager.FindByNameAsync(requisicao.Codigo);
 
-            if(usuarioAplicacao == null)
+            if (usuarioAplicacao == null)
             {
                 return ApiNotFound("Usuário não cadastrado.");
             }
@@ -92,7 +92,7 @@ namespace FWLog.Web.Api.Controllers
                 return ApiForbidden("Usuário inativo.", requisicao.Codigo);
             }
 
-            if(usuarioPerfil.UsuarioEmpresas.Count == 0)
+            if (usuarioPerfil.UsuarioEmpresas.Count == 0)
             {
                 return ApiForbidden("Usuário sem empresa.", requisicao.Codigo);
             }
@@ -111,7 +111,7 @@ namespace FWLog.Web.Api.Controllers
 
             IList<string> usuarioPermissoes = await UserManager.GetPermissionsAsync(usuarioAplicacao.Id);
 
-            if (usuarioPermissoes == null || !usuarioPermissoes.Any(w => 
+            if (usuarioPermissoes == null || !usuarioPermissoes.Any(w =>
                 w.Equals(Permissions.ColetorAcesso.AcessarRFArmazenagem, StringComparison.OrdinalIgnoreCase) ||
                 w.Equals(Permissions.ColetorAcesso.AcessarRFSeparacao, StringComparison.OrdinalIgnoreCase) ||
                 w.Equals(Permissions.ColetorAcesso.AcessarRFExpedicao, StringComparison.OrdinalIgnoreCase)))
@@ -120,7 +120,7 @@ namespace FWLog.Web.Api.Controllers
             }
 
             GerarTokenAcessoColetorResponse tokenResposta = await _accountService.GerarTokenAcessoColetor(requisicao.Codigo, requisicao.Senha, usuarioAplicacao.Id);
-            
+
             usuarioAplicacao.IdApplicationSession = tokenResposta.ApplicationSession.IdApplicationSession;
             UserManager.Update(usuarioAplicacao);
 
