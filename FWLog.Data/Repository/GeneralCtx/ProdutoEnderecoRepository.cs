@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace FWLog.Data.Repository.GeneralCtx
 {
-    public class ProdutoEnderecoRepository : GenericRepository<ProdutoEnderecoRepository>
+    public class ProdutoEnderecoRepository : GenericRepository<ProdutoEndereco>
     {
         public ProdutoEnderecoRepository(Entities entities) : base(entities) { }
 
