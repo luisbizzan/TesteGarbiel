@@ -116,7 +116,7 @@ namespace FWLog.Services.Services
             return conferenciaResponse;
         }
 
-        public ConferenciaResponse ValidarProdutoGarantia(long idGarantia, long idNotaFiscal, string codigoBarrasOuReferencia, long idEmpresa)
+        public ConferenciaResponse ValidarProdutoGarantia(long idGarantia, long idNotaFiscal, string codigoBarrasOuReferenciaOuEtiqueitaGarantia, long idEmpresa)
         {
             conferenciaResponse.Sucesso = true;
 
@@ -140,8 +140,17 @@ namespace FWLog.Services.Services
                 return conferenciaResponse;
             }
 
+
+            //if (codigoBarrasOuReferenciaOuEtiqueitaGarantia.Substring(0, idGarantia.ToString().Length) != idGarantia.ToString())
+            //{
+            //    conferenciaResponse.Sucesso = false;
+            //    conferenciaResponse.Mensagem = "A etiqueta deste produto não faz parte desta solicitação de garantia";
+
+            //    return conferenciaResponse;
+            //}
+
             //Valida se o código de barras ou referência é vazio ou nulo.
-            if (string.IsNullOrEmpty(codigoBarrasOuReferencia))
+            if (string.IsNullOrEmpty(codigoBarrasOuReferenciaOuEtiqueitaGarantia))
             {
                 conferenciaResponse.Sucesso = false;
                 conferenciaResponse.Mensagem = "Referência inválida. Por favor, tente novamente!";
@@ -150,7 +159,7 @@ namespace FWLog.Services.Services
             }
 
             //Valida se foi encontrado um produto através do código de barras, código de barras 2 ou da referência.
-            var produto = _uow.ProdutoRepository.ConsultarPorCodigoBarrasOuReferenciaGarantia(codigoBarrasOuReferencia, idGarantia);
+            var produto = _uow.ProdutoRepository.ConsultarPorCodigoBarrasOuReferenciaGarantia(codigoBarrasOuReferenciaOuEtiqueitaGarantia, idGarantia);
 
             if (produto == null)
             {
@@ -160,11 +169,13 @@ namespace FWLog.Services.Services
                 return conferenciaResponse;
             }
 
-            var notaFiscalItem = _uow.NotaFiscalItemRepository.PegarNotaFiscal(idNotaFiscal, produto.IdProduto);
+            var notaFiscalItem = _uow.NotaFiscalItemRepository.PegarNotaFiscalPeloIdDaNota(idNotaFiscal, produto.IdProduto);
 
             if (notaFiscalItem == null)
                 conferenciaResponse.Mensagem = "O produto não existe na nota fiscal, o mesmo será contabilizado como A+";
 
+
+            //Valida se já foi excedido a quantidade de iténs conferidos em relação a nota fiscal.
             var garantiaProduto = _uow.GarantiaProdutoRepository.ObterPorProduto(idGarantia, produto.IdProduto);
 
             if (garantiaProduto.Any() && notaFiscalItem != null)

@@ -431,7 +431,6 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(model);
         }
 
-
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Garantia.ConferirGarantia)]
         public async Task<ActionResult> ObterDadosReferenciaConferenciaGarantia(string codigoBarrasOuReferencia, long idGarantia, long idNotaFiscal)
@@ -508,6 +507,24 @@ namespace FWLog.Web.Backoffice.Controllers
                 Message = conferencia.Mensagem,
                 Data = json
             });
+        }
+
+        public AutoCompleteResult BuscarMotivoLaudoAutoComplete(string query)
+        {
+            try
+            {
+                int takeCount = 10;
+                IEnumerable<MotivoLaudo> search = _uow.MotivoLaudoRepository.SearchByDescrption(query, takeCount);
+                var suggestions = search.Select(x => new AutoCompleteSuggestionModel(value: x.Descricao, data: x.IdMotivoLaudo));
+                var response = new AutoCompleteResponseModel(suggestions);
+
+                return AutoCompleteResult.FromModel(response);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
     }
 }
