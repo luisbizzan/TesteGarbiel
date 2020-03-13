@@ -195,5 +195,25 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/armazenagem/retirar/validar-produto")]
+        [HttpPost]
+        public IHttpActionResult ValidarProdutoRetirar(ValidarProdutoRetirarModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidarProdutoRetirar(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
     }
 }

@@ -293,5 +293,36 @@ namespace FWLog.Services.Services
 
             //TODO: Validar se o Lote está instalado no endereço
         }
+
+        public void ValidarProdutoRetirar(long idEnderecoArmazenagem, long idLote, long idProduto)
+        {
+            ValidarEnderecoRetirar(idEnderecoArmazenagem);
+
+            ValidateLoteRetirar(idEnderecoArmazenagem, idLote);
+
+            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("O produto não foi encontrado.");
+            }
+
+            var produtoEndereco = _unitOfWork.ProdutoEnderecoRepository.GetById(idProduto);
+
+            if (produtoEndereco == null)
+            {
+                throw new BusinessException("Não foi encontrado lote associado ao produto.");
+            }
+
+            if (produtoEndereco.IdLote != idLote)
+            {
+                throw new BusinessException("Produto não pertence ao lote informado.");
+            }
+
+            if (produtoEndereco.IdEnderecoArmazenagem != idEnderecoArmazenagem)
+            {
+                throw new BusinessException("Produto não está instalado no endereço informado.");
+            }
+        }
     }
 }
