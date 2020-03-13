@@ -49,5 +49,9 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
         [Display(Name = "Tipo")]
         public string Tipo { get; set; }
+
+        [Display(Name = "Motivo Laudo")]
+        public string MotivoLaudo { get; set; }
+        public string IdMotivoLaudo { get; set; }
     }
 }

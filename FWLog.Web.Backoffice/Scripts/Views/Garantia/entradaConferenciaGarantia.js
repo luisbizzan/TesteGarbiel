@@ -3,8 +3,10 @@
     let $quantidade = $("#Quantidade");
     let $idGarantia = $("#IdGarantia").val();
     let $idNotaFiscal = $("#IdNotaFiscal").val();
-    let $modalConferencia = $("#modalConferencia");
-
+    let $modalConferenciaGarantia = $("#modalConferenciaGarantia");
+    let $btnTipoGarantia = $("#btnTipoGarantia");
+    let $motivoLaudo = $("#MotivoLaudo");
+    let $btnGroupTipo = $("#tipo .btn");
     let listaReferencia = new Array;
 
     let permiteRegistrar = false;
@@ -20,14 +22,22 @@
 
 
     function adicionaEventos() {
-        $modalConferencia.on('hidden.bs.modal', removeEventos);
+        $modalConferenciaGarantia.on('hidden.bs.modal', removeEventos);
+
+        $(document).on('keydown', document_Keydown);
 
         $referencia.on('blur', referencia_Blur);
         $referencia.on('focus', referencia_Focus);
         $referencia.on('keydown', referencia_Keydown);
 
+
         $quantidade.on('focus', quantidade_Focus);
         $quantidade.on('keydown', quantidade_Keydown);
+        $quantidade.on('blur', quantidade_Blur)
+        $quantidade.on('keyup', quantidade_KeyUp);
+
+        $btnGroupTipo.on('click', tipo_Click);
+
 
         onScan.attachTo($quantidade[0], {
             onScan: function (sScancode, iQuatity) {
@@ -56,21 +66,29 @@
                 }
             }
         });
+
+
     }
 
     function removeEventos() {
         $referencia.off('blur', referencia_Blur);
         $referencia.off('focus', referencia_Focus);
         $referencia.off('keydown', referencia_Keydown);
+
+        $(document).off('keydown', document_Keydown);
+
         $quantidade.off('focus', quantidade_Focus);
         $quantidade.off('keydown', quantidade_Keydown);
+        $quantidade.off('blur', quantidade_Blur)
+        $quantidade.off('keyup', quantidade_KeyUp);
 
+        $btnGroupTipo.off('click', tipo_Click);
 
         try {
             onScan.detachFrom($quantidade[0]);
         } catch (e) { }
 
-        $modalConferencia.off('hidden.bs.modal', removeEventos);
+        $modalConferenciaGarantia.off('hidden.bs.modal', removeEventos);
     }
 
     removeEventos();
@@ -91,7 +109,6 @@
         if (e.keyCode == 13) {
             if (!e.target.value) {
                 PNotify.warning({ text: 'Referência está vazio. Por favor, informe o código de barras ou a referência!' });
-
                 $referencia.focus();
 
                 return false;
@@ -99,14 +116,10 @@
                 $.when(carregarDadosReferenciaConferenciaGarantia()).then(function () {
                     listaReferencia.push($referencia.val());
                     $quantidade.focus();
+                    permiteRegistrar = true;
                 });
             }
         }
-        //else {
-        //    if ($tipoConferencia.text() == "Por Quantidade") {
-        //        resetarCamposConferencia(false);
-        //    }
-        //}
     }
 
     function quantidade_Focus() {
@@ -121,6 +134,24 @@
             }
 
             return false;
+        }
+    }
+
+    function quantidade_Blur() {
+        if ($referencia.val() && !$(this).val()) {
+            $quantidade.focus();
+        }
+    }
+
+    function quantidade_KeyUp() {
+        if ($(this).val() > 0) {
+            $btnGroupTipo.prop('disabled', false);
+            $btnTipoGarantia.addClass("btn-secondary-selected");
+        }
+        else {
+            $btnGroupTipo.prop('disabled', true);
+            $btnTipoGarantia.addClass("btn-secondary-selected");
+            $btnTipoGarantia.removeClass('btn-secondary-selected');
         }
     }
 
@@ -206,5 +237,56 @@
         return sScancodeFormated
     }
 
+    function tipo_Click(e) {
+        $btnGroupTipo.each(function (index) {
+            $(this).removeClass('btn-secondary-selected');
+        });
+
+        $(e.target).addClass("btn-secondary-selected");
+
+        var bla = $motivoLaudo;
+
+        if ($(e.target).attr("id") === 'btnTipoLaudo') {
+            $motivoLaudo.removeAttr("readonly");
+            $motivoLaudo.focus();
+        }
+        else {
+            $motivoLaudo.attr("readonly", "readonly");
+        }
+    }
+
+    function document_Keydown(e) {
+        //Verifica se o modal de conferência está aberto.
+        if (permiteRegistrar) {
+            if ($modalConferenciaGarantia.is(':visible')) {
+                var modalConferenciaAberta = VerificaModalConferenciaAberta();
+                if (modalConferenciaAberta) {
+                    switch (e.keyCode) {
+                        //Verifica se a tela pressionada é F4 (Permite inserir manualmente a quantidade)
+                        case 115: {
+                            $quantidade.removeAttr("readonly");
+                            $quantidade.css({ 'background': '#eee' });
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Solução paliativa permanete onde verifica qual modal está na frente
+    function VerificaModalConferenciaAberta() {
+        var $listaModais = $('.modal:visible');
+
+        var listaModais = $listaModais.map(function (a, b) {
+            return { zIndex: parseInt($(b).css('z-index')), elem: b };
+        }).sort((a, b) => (a.zIndex < b.zIndex) ? 1 : -1);
+
+        if (listaModais.length == 0) {
+            return false;
+        }
+
+        return $(listaModais[0].elem).is($modalConferenciaGarantia);
+    }
 })();
 
