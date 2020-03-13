@@ -36,6 +36,8 @@
         $quantidade.on('blur', quantidade_Blur)
         $quantidade.on('keyup', quantidade_KeyUp);
 
+        $motivoLaudo.on('keyup', motivoLaudo_KeyUp);
+
         $btnGroupTipo.on('click', tipo_Click);
 
 
@@ -66,8 +68,6 @@
                 }
             }
         });
-
-
     }
 
     function removeEventos() {
@@ -81,6 +81,8 @@
         $quantidade.off('keydown', quantidade_Keydown);
         $quantidade.off('blur', quantidade_Blur)
         $quantidade.off('keyup', quantidade_KeyUp);
+
+        $motivoLaudo.off('keyup', motivoLaudo_KeyUp);
 
         $btnGroupTipo.off('click', tipo_Click);
 
@@ -153,6 +155,14 @@
             $btnTipoGarantia.addClass("btn-secondary-selected");
             $btnTipoGarantia.removeClass('btn-secondary-selected');
         }
+    }
+
+    function motivoLaudo_KeyUp() {
+        var $input = $($motivoLaudo);
+        new dart.AutoComplete($input[0], {
+            serviceUrl: HOST_URL + CONTROLLER_PATH + 'BuscarMotivoLaudoAutoComplete',
+            selectedValueInput: $('#IdMotivoLaudo')[0]
+        });
     }
 
     function carregarDadosReferenciaConferenciaGarantia() {

@@ -31,5 +31,10 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return query.PaginationResult(filter);
         }
+
+        public IList<MotivoLaudo> SearchByDescrption(string Description, int takeCount)
+        {
+            return Entities.MotivoLaudo.Where(x => x.Descricao.Contains(Description)).Take(takeCount).ToList();
+        }
     }
 }
