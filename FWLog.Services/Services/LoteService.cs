@@ -282,7 +282,6 @@ namespace FWLog.Services.Services
                 if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
                 {
                     // Este trecho de código está assim para finalizar a tratativa de divergencia quando nao estava comunicando com sankhya
-
                     lote.IdLoteStatus = LoteStatusEnum.FinalizadoDevolucaoTotal;
                     CriarQuarentena(lote, userId);
 

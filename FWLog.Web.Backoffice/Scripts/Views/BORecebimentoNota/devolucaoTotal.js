@@ -19,7 +19,7 @@ function ExibirResumoTratativaDivergencia(id) {
     $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoProcessamentoDivergencia/" + id, function () {
         $modal.modal();
         $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
-        //FinalizarTratativa();
+        FinalizarTratativa();
     });
 
 }

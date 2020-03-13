@@ -45,9 +45,7 @@ namespace FWLog.Services.Services
             inner.Append("AND TSIEMP.AD_NOMEFILIAL IS NOT NULL ");
             inner.Append("ORDER BY TSIEMP.CODEMP ASC ");
 
-            List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString(), 
-                                                                                                                              IntegracaoTipoEnum.BuscarEmpresa.GetHashCode(),
-                                                                                                                              IntegracaoEntidadeEnum.Empresa.GetHashCode());
+            List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString());
             empresasIntegracao = empresasIntegracao.OrderBy("CodigoIntegracao", "ASC").ToList();
 
             foreach (var empInt in empresasIntegracao)

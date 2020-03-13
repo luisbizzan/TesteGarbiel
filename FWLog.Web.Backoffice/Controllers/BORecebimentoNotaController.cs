@@ -477,10 +477,6 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var viewModel = new BOImprimirDevolucaoTotalViewModel
             {
-                NumeroNF  = "222",
-                Serie     = "222",
-                Usuario   = "Teste",
-                Senha     = "Teste",
             };
 
             return PartialView("modalAcessoCoordenadorDevolucaoTotal", viewModel);
@@ -2422,23 +2418,27 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 var etiquetaDevolucaoRequest = new ImprimirEtiquetaDevolucaoTotalRequest
                 {
-                    NomeFornecedor     = lote.NotaFiscal.Fornecedor.NomeFantasia,
-                    EnderecoFornecedor = "Teste",
-                    CepFornecedor      = "Teste",
-                    CidadeFornecedor   = "Teste",
-                    EstadoFornecedor   = "Teste",
-                    SiglaTransportador = "Teste",
-                    TelefoneFornecedor = "Teste",
+                    NomeFornecedor     = lote.NotaFiscal.Fornecedor.RazaoSocial,
+                    EnderecoFornecedor = lote.NotaFiscal.Fornecedor.Endereco,
+                    CidadeFornecedor   = lote.NotaFiscal.Fornecedor.Cidade,
+                    EstadoFornecedor   = lote.NotaFiscal.Fornecedor.Estado,
+                    CepFornecedor      = lote.NotaFiscal.Fornecedor.CEP,
+                    TelefoneFornecedor = lote.NotaFiscal.Fornecedor.Telefone,
+                    NumeroFornecedor   = lote.NotaFiscal.Fornecedor.Numero,
+                    BairroFornecedor   = lote.NotaFiscal.Fornecedor.Bairro,
                     IdFornecedor       = lote.NotaFiscal.IdFornecedor.ToString(),
-                    IdTransportadora   = "Teste",
-                    NomeTransportadora = "Teste",
+                    IdTransportadora   = lote.NotaFiscal.IdTransportadora.ToString(),
+                    NomeTransportadora = lote.NotaFiscal.Transportadora.RazaoSocial,
                     IdLote             = lote.IdLote.ToString(),
-                    QuantidadeVolumes = lote.QuantidadeVolume.ToString(),
+                    QuantidadeVolumes  = lote.QuantidadeVolume.ToString(),
+
+                    //Temporário - Verificar depois com o Shankya qual o campo referente a sigla do transportador.
+                    SiglaTransportador = lote.NotaFiscal.Transportadora.RazaoSocial.Substring(0, 3),
 
                     IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
                 };
 
-               // _etiquetaService.ImprimirEtiquetaDevolucaoTotal(etiquetaDevolucaoRequest);
+                _etiquetaService.ImprimirEtiquetaDevolucaoTotal(etiquetaDevolucaoRequest);
 
                 //Registra o Log da impressão da etiqueta de Devolução
                 var logEtiquetagemDevolucao = new Services.Model.LogEtiquetagem.LogEtiquetagem
