@@ -84,7 +84,7 @@ namespace FWLog.Services.Services
 
             if (empresa == null)
             {
-                throw new BusinessException("A emrpesa naõ foi encontrada.");
+                throw new BusinessException("A emrpesa não foi encontrada.");
             }
 
             Lote lote = _unitOfWork.LoteRepository.PesquisarPorLoteEmpresa(requisicao.IdLote, requisicao.IdEmpresa);
@@ -250,6 +250,28 @@ namespace FWLog.Services.Services
                 {
                     throw new BusinessException("Quantidade ultrapassa limite de peso vertical.");
                 }
+            }
+        }
+
+        public void ValidarEnderecoRetirar(long idEnderecoArmazenagem)
+        {
+            if (idEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("O endereço deve ser informado.");
+            }
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("O endereço não foi encontrado.");
+            }
+
+            var loteProduto = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+
+            if (loteProduto == null)
+            {
+                throw new BusinessException("Nenhum volume instalado no endereço.");
             }
         }
     }

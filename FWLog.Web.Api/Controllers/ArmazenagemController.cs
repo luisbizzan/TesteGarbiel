@@ -155,5 +155,25 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/armazenagem/retirar/validar-endereco/{idEndereco}")]
+        [HttpPost]
+        public IHttpActionResult ValidarEnderecoRetirar(long idEndereco)
+        {
+            try
+            {
+                _armazenagemService.ValidarEnderecoRetirar(idEndereco);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
     }
 }
