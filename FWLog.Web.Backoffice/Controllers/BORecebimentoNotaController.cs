@@ -13,6 +13,7 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;
@@ -84,6 +85,35 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return View(model);
         }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
+        public ActionResult NotaRecebimentoList()
+        {
+            var model = new NotaRecebimentoListViewModel
+            {
+                Filter = new NotaRecebimentoFilterViewModel()
+                {
+                    ListaStatus = new SelectList(
+                    _uow.NotaRecebimentoStatusRepository.Todos().OrderBy(o => o.IdNotaRecebimentoStatus).Select(x => new SelectListItem
+                    {
+                        Value = x.IdNotaRecebimentoStatus.GetHashCode().ToString(),
+                        Text = x.Descricao,
+                    }), "Value", "Text"
+                )
+                }
+            };
+
+            model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
+            //model.Filter.DataRegistroInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
+            //model.Filter.DataRegistroFinal   = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
+
+            //model.Filter.DataSincronismoInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
+            //model.Filter.DataSincronismoFinal   = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
+
+            return View(model);
+        }
+
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.List)]
@@ -268,6 +298,133 @@ namespace FWLog.Web.Backoffice.Controllers
             totalRecordsFiltered = boRecebimentoNotaListItemViewModel.Count;
 
             var result = boRecebimentoNotaListItemViewModel
+                .OrderBy(model.OrderByColumn, model.OrderByDirection)
+                .Skip(model.Start)
+                .Take(model.Length);
+
+
+            return DataTableResult.FromModel(new DataTableResponseModel()
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = totalRecordsFiltered,
+                Data = result
+            });
+        }
+
+
+
+
+        public ActionResult PageDataNotaRecebimento(DataTableFilter<NotaRecebimentoFilterViewModel> model)
+        {
+            List<NotaRecebimentoListItemViewModel> _notaRecebimentoListItemViewModel = new List<NotaRecebimentoListItemViewModel>();
+            int totalRecords = 0;
+            int totalRecordsFiltered = 0;
+
+            if (!ModelState.IsValid)
+            {
+                return DataTableResult.FromModel(new DataTableResponseModel()
+                {
+                    Draw = model.Draw,
+                    RecordsTotal = totalRecords,
+                    RecordsFiltered = totalRecordsFiltered,
+                    Data = _notaRecebimentoListItemViewModel
+                });
+            }
+
+            var query = _uow.NotaFiscalRecebimentoRepository.Todos();
+
+            totalRecords = query.Count();
+
+            /*if (!string.IsNullOrEmpty(model.CustomFilter.ChaveAcesso))
+            {
+                query = query.Where(x => !string.IsNullOrEmpty(x.NotaFiscal.ChaveAcesso) && x.NotaFiscal.ChaveAcesso.Contains(model.CustomFilter.ChaveAcesso));
+            }*/
+
+            if (model.CustomFilter.IdFornecedor.HasValue)
+            {
+                query = query.Where(x => x.IdFornecedor == model.CustomFilter.IdFornecedor);
+            }
+
+            if (model.CustomFilter.DataRegistroInicial.HasValue)
+            {
+                DateTime dataRegistroInicial = new DateTime(model.CustomFilter.DataRegistroInicial.Value.Year, model.CustomFilter.DataRegistroInicial.Value.Month, model.CustomFilter.DataRegistroInicial.Value.Day, 00, 00, 00);
+                query = query.Where(x => x.DataHoraRegistro >= dataRegistroInicial);
+            }
+
+            if (model.CustomFilter.DataRegistroFinal.HasValue)
+            {
+                DateTime dataRegistroFinal = new DateTime(model.CustomFilter.DataRegistroFinal.Value.Year, model.CustomFilter.DataRegistroFinal.Value.Month, model.CustomFilter.DataRegistroFinal.Value.Day, 23, 59, 59);
+                query = query.Where(x => x.DataHoraRegistro <= dataRegistroFinal);
+            }
+
+            if (!model.CustomFilter.IdUsuarioRecebimento.NullOrEmpty())
+            {
+                query = query.Where(x => x.IdUsuarioRecebimento == model.CustomFilter.IdUsuarioRecebimento);
+            }
+
+            if (model.CustomFilter.DataSincronismoInicial != null)
+            {
+                DateTime dataSincronismoInicial = new DateTime(model.CustomFilter.DataSincronismoInicial.Value.Year, model.CustomFilter.DataSincronismoInicial.Value.Month, model.CustomFilter.DataSincronismoInicial.Value.Day,
+                    00, 00, 00);
+                query = query.Where(x => x.DataHoraSincronismo >= dataSincronismoInicial);
+            }
+
+            if (model.CustomFilter.DataSincronismoFinal != null)
+            {
+                DateTime dataSincronismoFinal = new DateTime(model.CustomFilter.DataSincronismoFinal.Value.Year, model.CustomFilter.DataSincronismoFinal.Value.Month, model.CustomFilter.DataSincronismoFinal.Value.Day, 23, 59, 59);
+                query = query.Where(x => x.DataHoraSincronismo <= dataSincronismoFinal);
+            }
+
+            if (model.CustomFilter.NumeroNF.HasValue)
+            {
+                query = query.Where(x => x.NumeroNF == model.CustomFilter.NumeroNF);
+            }
+
+            if (model.CustomFilter.IdStatus.HasValue)
+            {
+                query = query.Where(x => (int)x.IdNotaRecebimentoStatus == model.CustomFilter.IdStatus);
+            }
+
+            foreach (var item in query)
+            {   
+                long? diasAguardando = 0;
+
+                if (item.DataHoraSincronismo != null)
+                {
+                    diasAguardando = item.DataHoraSincronismo.Value.Subtract(item.DataHoraRegistro).Days;
+                } else
+                    diasAguardando = DateTime.Now.Subtract(item.DataHoraRegistro).Days;
+
+                var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
+                List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
+
+
+                _notaRecebimentoListItemViewModel.Add(new NotaRecebimentoListItemViewModel()
+                {
+                    IdFornecedor         = item.IdFornecedor,
+                    NomeFornecedor       = item.Fornecedor.NomeFantasia,
+                    ChaveAcesso          = item.ChaveAcesso,
+                    QuantidadeVolumes    = item.QuantidadeVolumes  == 0 ? (int?)null : item.QuantidadeVolumes,
+                    IdUsuarioRecebimento = item.UsuarioRecebimento == null ? string.Empty : item.UsuarioRecebimento.Id,
+                    Usuario = usuarios.Where(x => x.UserId.Equals(item.IdUsuarioRecebimento)).FirstOrDefault()?.PerfilUsuario.Nome,
+                    NumeroNF = item.NumeroNF == 0 ? (int?)null : item.NumeroNF,
+                    Serie = item.Serie,
+                    DiasAguardando = diasAguardando,                
+                    DataHoraRegistro = item.DataHoraRegistro.ToString("dd/MM/yyyy hh:mm:ss"),
+                    DataHoraSincronismo  = item.DataHoraSincronismo.HasValue ? item.DataHoraSincronismo.Value.ToString("dd/MM/yyyy hh:mm:ss") : "",
+                    Status = item.NotaRecebimentoStatus.Descricao,
+                });
+            }
+
+            if (model.CustomFilter.DiasAguardando.HasValue)
+            {
+                _notaRecebimentoListItemViewModel = _notaRecebimentoListItemViewModel.Where(x => x.DiasAguardando.Value == model.CustomFilter.DiasAguardando.Value).ToList();
+            }
+
+            totalRecordsFiltered = _notaRecebimentoListItemViewModel.Count;
+            
+            var result = _notaRecebimentoListItemViewModel
                 .OrderBy(model.OrderByColumn, model.OrderByDirection)
                 .Skip(model.Start)
                 .Take(model.Length);

@@ -293,7 +293,7 @@ namespace Resources {
                 return ResourceManager.GetString("MenuRecebimento", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Etiquetas.
         /// </summary>
