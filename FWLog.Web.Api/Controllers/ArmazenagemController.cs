@@ -222,7 +222,7 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                var detalhesVolumeInformado = _armazenagemService.ConsultaDetalhesVolumeInformado(idLote, idProduto, idEnderecoArmazenagem, IdEmpresa);
+                var detalhesVolumeInformado = _armazenagemService.ConsultaDetalhesVolumeInformado(idEnderecoArmazenagem, idLote, idProduto, IdEmpresa);
 
                 var response = new ConsultaDetalhesVolumeInformadoResposta
                 {
@@ -243,6 +243,26 @@ namespace FWLog.Web.Api.Controllers
             {
                 throw;
             }
+        }
+
+        [Route("api/v1/armazenagem/retirar")]
+        [HttpPost]
+        public async Task<IHttpActionResult> RetirarVolumeEndereco(RetirarVolumeEnderecoModelRequisicao requisicao)
+        {
+            try
+            {
+                await _armazenagemService.RetirarVolumeEndereco(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa, IdUsuario);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
         }
     }
 }

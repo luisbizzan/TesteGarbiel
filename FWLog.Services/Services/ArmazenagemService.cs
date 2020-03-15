@@ -325,9 +325,9 @@ namespace FWLog.Services.Services
             }
         }
 
-        public LoteProdutoEndereco ConsultaDetalhesVolumeInformado(long idLote, long idProduto, long idEnderecoArmazenagem, long IdEmpresa)
+        public LoteProdutoEndereco ConsultaDetalhesVolumeInformado(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa)
         {
-            var produtoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(idLote, idProduto, idEnderecoArmazenagem, IdEmpresa);
+            var produtoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
 
             if (produtoEndereco == null)
             {
@@ -335,6 +335,35 @@ namespace FWLog.Services.Services
             }
 
             return produtoEndereco;
+        }
+
+        public async Task RetirarVolumeEndereco(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa, string idUsuarioInstalacao)
+        {
+            ValidarProdutoRetirar(idEnderecoArmazenagem, idLote, idProduto);
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                var volume = ConsultaDetalhesVolumeInformado(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
+
+                _unitOfWork.LoteProdutoEnderecoRepository.Delete(volume);
+                await _unitOfWork.SaveChangesAsync();
+
+                var loteMovimentacao = new LoteMovimentacao
+                {
+                    IdEmpresa = idEmpresa,
+                    IdLote = idLote,
+                    IdProduto = idProduto,
+                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = idUsuarioInstalacao,
+                    Quantidade = volume.Quantidade,
+                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Saida,
+                    DataHora = DateTime.Now
+                };
+
+                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                await _unitOfWork.SaveChangesAsync();
+                transacao.Complete();
+            }
         }
     }
 }
