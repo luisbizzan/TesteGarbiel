@@ -215,5 +215,34 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route(" api/v1/armazenagem/detalhes/{idLote}/{idProduto}/{idEnderecoArmazenagem}")]
+        [HttpPost]
+        public IHttpActionResult ConsultaDetalhesVolumeInformado(long idLote, long idProduto, long idEnderecoArmazenagem)
+        {
+            try
+            {
+                var detalhesVolumeInformado = _armazenagemService.ConsultaDetalhesVolumeInformado(idLote, idProduto, idEnderecoArmazenagem, IdEmpresa);
+
+                var response = new ConsultaDetalhesVolumeInformadoResposta
+                {
+                    Quantidade = detalhesVolumeInformado.Quantidade,
+                    PesoTotal = detalhesVolumeInformado.PesoTotal,
+                    LimitePeso = detalhesVolumeInformado.EnderecoArmazenagem.LimitePeso,
+                    DataHoraInstalacao = detalhesVolumeInformado.DataHoraInstalacao,
+                    IdUsuarioInstalacao = detalhesVolumeInformado.IdUsuarioInstalacao
+                };
+
+                return ApiOk(response);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }

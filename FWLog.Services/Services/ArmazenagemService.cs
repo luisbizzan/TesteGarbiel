@@ -324,5 +324,17 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Produto não está instalado no endereço informado.");
             }
         }
+
+        public LoteProdutoEndereco ConsultaDetalhesVolumeInformado(long idLote, long idProduto, long idEnderecoArmazenagem, long IdEmpresa)
+        {
+            var produtoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(idLote, idProduto, idEnderecoArmazenagem, IdEmpresa);
+
+            if (produtoEndereco == null)
+            {
+                throw new BusinessException("Não foi encontrado volume com os dados informados.");
+            }
+
+            return produtoEndereco;
+        }
     }
 }
