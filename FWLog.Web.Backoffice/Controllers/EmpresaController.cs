@@ -149,7 +149,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (empresaConfigGarantia == null)
             {
-                ModelState.AddModelError(nameof(model.IdEmpresaGarantia), "Selecione uma Empresa Garantia.");
+                ModelState.AddModelError(nameof(model.IdEmpresaGarantia), "Empresa Garantia não encontrada.");
             }
 
             if (model.IdEmpresa == model.IdEmpresaGarantia && !model.EmpresaFazGarantia)
