@@ -13,7 +13,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TSIEMP.RAZAOSOCIAL")]
         public string RazaoSocial { get; set; }
 
-        [TabelaIntegracao(DisplayName = "TSIEMP.AD_NOMEFILIAL")]
+        [TabelaIntegracao(DisplayName = "TSIEMP.NOMEFANTASIA")]
         [Required]
         public string NomeFantasia { get; set; }
 

@@ -663,6 +663,7 @@
     <Content Include="Views\BORecebimentoNota\NotaRecebimento.cshtml" />
     <Content Include="Views\BORecebimentoNota\NotaRecebimentoList.cshtml" />
     <Content Include="Views\BORecebimentoNota\DevolucaoTotal.cshtml" />
+    <Content Include="Views\BORecebimentoNota\AcessoCoordenador - Cópia .cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

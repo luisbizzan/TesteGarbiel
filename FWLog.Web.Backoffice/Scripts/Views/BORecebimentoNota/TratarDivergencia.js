@@ -46,17 +46,19 @@
             }
 
             $linhasDivergencias.each(function () {
-                var $quantidadeNota = $('.quantidade-nota', this);
-                var $quantidadeMais = $('.quantidade-mais', this);
-                var $quantidadeMenos = $('.quantidade-menos', this);
+                var $quantidadeNota      = $('.quantidade-nota', this);
+                var $quantidadeMais      = $('.quantidade-mais', this);
+                var $quantidadeMenos     = $('.quantidade-menos', this);
+                var $quantidadeDevolucao = $('.quantidade-devolucao', this);
 
                 if (!$quantidadeMais.val() && !$quantidadeMenos.val()) {
                     _model = { isValid: false, Message: 'Existem divergências não tratadas.' };
 
                     $(this).css("background-color", "#ffeded");
 
-                    $quantidadeMais.css("border-color", "#a94442");
-                    $quantidadeMenos.css("border-color", "#a94442");
+                    $quantidadeMais.css("border-color"     , "#a94442");
+                    $quantidadeMenos.css("border-color"    , "#a94442");
+                    $quantidadeDevolucao.css("border-color", "#a94442");
 
                     return;
                 }

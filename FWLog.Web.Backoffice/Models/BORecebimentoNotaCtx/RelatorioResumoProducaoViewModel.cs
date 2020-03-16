@@ -64,7 +64,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public long PecasRecebidasUsuario { get; set; }
 
         [Display(Name = "Percentual (%)")]
-        public decimal Percentual { get; set; }
+        public string Percentual { get; set; }
     }
 
     public class RelatorioResumoProducaoFilterViewModel

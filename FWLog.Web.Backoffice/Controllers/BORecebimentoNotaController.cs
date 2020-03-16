@@ -100,7 +100,8 @@ namespace FWLog.Web.Backoffice.Controllers
                         Value = x.IdNotaRecebimentoStatus.GetHashCode().ToString(),
                         Text = x.Descricao,
                     }), "Value", "Text"
-                )}
+                )
+                }
             };
 
             model.Filter.IdStatus = LoteStatusEnum.AguardandoRecebimento.GetHashCode();
@@ -370,31 +371,32 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             foreach (var item in query)
-            {   
+            {
                 long? diasAguardando = 0;
 
                 if (item.DataHoraSincronismo != null)
                 {
                     diasAguardando = item.DataHoraSincronismo.Value.Subtract(item.DataHoraRegistro).Days;
-                } else
+                }
+                else
                     diasAguardando = DateTime.Now.Subtract(item.DataHoraRegistro).Days;
 
                 var empresaConfig = _uow.EmpresaConfigRepository.ConsultarPorIdEmpresa(IdEmpresa);
-                List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa); 
+                List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
 
                 _notaRecebimentoListItemViewModel.Add(new NotaRecebimentoListItemViewModel()
                 {
-                    IdFornecedor         = item.IdFornecedor,
-                    NomeFornecedor       = item.Fornecedor.NomeFantasia,
-                    ChaveAcesso          = item.ChaveAcesso,
-                    QuantidadeVolumes    = item.QuantidadeVolumes  == 0 ? (int?)null : item.QuantidadeVolumes,
+                    IdFornecedor = item.IdFornecedor,
+                    NomeFornecedor = item.Fornecedor.NomeFantasia,
+                    ChaveAcesso = item.ChaveAcesso,
+                    QuantidadeVolumes = item.QuantidadeVolumes == 0 ? (int?)null : item.QuantidadeVolumes,
                     IdUsuarioRecebimento = item.UsuarioRecebimento == null ? string.Empty : item.UsuarioRecebimento.Id,
                     Usuario = usuarios.Where(x => x.UserId.Equals(item.IdUsuarioRecebimento)).FirstOrDefault()?.PerfilUsuario.Nome,
                     NumeroNF = item.NumeroNF == 0 ? (int?)null : item.NumeroNF,
                     Serie = item.Serie,
-                    DiasAguardando = diasAguardando,                
+                    DiasAguardando = diasAguardando,
                     DataHoraRegistro = item.DataHoraRegistro.ToString("dd/MM/yyyy hh:mm:ss"),
-                    DataHoraSincronismo  = item.DataHoraSincronismo.HasValue ? item.DataHoraSincronismo.Value.ToString("dd/MM/yyyy hh:mm:ss") : "",
+                    DataHoraSincronismo = item.DataHoraSincronismo.HasValue ? item.DataHoraSincronismo.Value.ToString("dd/MM/yyyy hh:mm:ss") : "",
                     Status = item.NotaRecebimentoStatus.Descricao,
                 });
             }
@@ -405,7 +407,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             totalRecordsFiltered = _notaRecebimentoListItemViewModel.Count;
-            
+
             var result = _notaRecebimentoListItemViewModel
                 .OrderBy(model.OrderByColumn, model.OrderByDirection)
                 .Skip(model.Start)
@@ -422,10 +424,10 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
+        //[ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public JsonResult VerificarDevolucaoTotal(long id)
         {
-            Lote lote                            = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+            Lote lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
             List<NotaFiscalItem> notaFiscalItens = _uow.NotaFiscalItemRepository.ObterItens(id);
             bool devolucaoTotal = true;
             foreach (var item in notaFiscalItens)
@@ -444,7 +446,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     Success = true,
                     Message = "Devolução Total da NF/Serie: " + lote.NotaFiscal.Numero + "-" + lote.NotaFiscal.Serie + ".",
                 });
-            } else
+            }
+            else
             {
                 return Json(new AjaxGenericResultModel
                 {
@@ -467,6 +470,16 @@ namespace FWLog.Web.Backoffice.Controllers
             };
 
             return View(viewModel);
+        }
+
+        [HttpGet]
+        public ActionResult ModalAcessoCoordenadorDevolucaoTotal()
+        {
+            var viewModel = new BOImprimirDevolucaoTotalViewModel
+            {
+            };
+
+            return PartialView("modalAcessoCoordenadorDevolucaoTotal", viewModel);
         }
 
         [HttpGet]
@@ -504,7 +517,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     Referencia = x.Referencia,
                     DescricaoProduto = x.DescricaoProduto,
                     QuantidadeConferencia = x.QuantidadeConferido,
-                    QuantidadeDevolucao   = x.QuantidadeDevolucao,
+                    QuantidadeDevolucao = x.QuantidadeDevolucao,
                     QuantidadeNotaFiscal = x.QuantidadeNota,
                     QuantidadeMais = x.DivergenciaMais,
                     QuantidadeMenos = x.DivergenciaMenos
@@ -594,7 +607,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
-        public JsonResult ValidarNotaRecebimento(string  chaveAcesso, long? idFornecedor, int? numeroNF, string serie, decimal? valor, int? quantidadeVolumes)
+        public JsonResult ValidarNotaRecebimento(string chaveAcesso, long? idFornecedor, int? numeroNF, string serie, decimal? valor, int? quantidadeVolumes)
         {
             //Valida chave de cesso
             var chaveValida = false;
@@ -672,7 +685,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     Success = false,
                     Message = "Nota Fiscal já foi registrada no sistema.",
                 });
- 
+
             }
 
             if (!(idFornecedor > 0))
@@ -737,7 +750,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Recebimento da mecadoria já se enconta efetivado no sistema.",
+                    Message = "Recebimento da mercadoria já se encontra efetivado no sistema.",
                 });
             }
 
@@ -803,7 +816,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Recebimento da mecadoria já efetivado no sistema."
+                    Message = "Recebimento da mercadoria já efetivado no sistema."
                 });
             }
 
@@ -846,14 +859,14 @@ namespace FWLog.Web.Backoffice.Controllers
             long idNotaFiscalRecebimento = 0;
             try
             {
-                 idNotaFiscalRecebimento = await _notaFiscalService.RegistrarRecebimentoNotaFiscalDiv(IdEmpresa, 
-                                                                           User.Identity.GetUserId(), 
-                                                                           chaveAcesso,
-                                                                           idFornecedor,
-                                                                           numeroNF,
-                                                                           serie,
-                                                                           valor,
-                                                                           quantidadeVolumes).ConfigureAwait(false);
+                idNotaFiscalRecebimento = await _notaFiscalService.RegistrarRecebimentoNotaFiscalDiv(IdEmpresa,
+                                                                          User.Identity.GetUserId(),
+                                                                          chaveAcesso,
+                                                                          idFornecedor,
+                                                                          numeroNF,
+                                                                          serie,
+                                                                          valor,
+                                                                          quantidadeVolumes).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -871,7 +884,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Success = true,
                 Message = "Recebimento da nota fiscal registrado com sucesso.",
                 Data = idNotaFiscalRecebimento.ToString()
-            }); 
+            });
         }
 
         [HttpPost]
@@ -886,7 +899,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Recebimento da mecadoria já se enconta efetivado no sistema.",
+                    Message = "Recebimento da mercadoria já se encontra efetivado no sistema.",
                 });
             }
 
@@ -1003,6 +1016,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     IdTipoEtiquetagem = TipoEtiquetagemEnum.Recebimento.GetHashCode(),
                     IdEmpresa = IdEmpresa,
                     Quantidade = lote.QuantidadeVolume,
+                    DataHora = lote.DataRecebimento,
                     IdUsuario = User.Identity.GetUserId()
                 };
 
@@ -1042,9 +1056,9 @@ namespace FWLog.Web.Backoffice.Controllers
                 var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem
                 {
                     IdTipoEtiquetagem = TipoEtiquetagemEnum.RecebimentoSemNota.GetHashCode(),
-                    IdEmpresa  = IdEmpresa,
+                    IdEmpresa = IdEmpresa,
                     Quantidade = (int)(_notaFiscalRecebimento.QuantidadeVolumes),
-                    IdUsuario  = User.Identity.GetUserId()
+                    IdUsuario = User.Identity.GetUserId()
                 };
 
                 _logEtiquetagemService.Registrar(logEtiquetagem);
@@ -1202,7 +1216,7 @@ namespace FWLog.Web.Backoffice.Controllers
                                 {
                                     Referencia = divergencia.Produto.Referencia,
                                     QuantidadeConferencia = divergencia.QuantidadeConferencia,
-                                    QuantidadeDevolucao   = divergencia.QuantidadeDevolucao ?? 0,
+                                    QuantidadeDevolucao = divergencia.QuantidadeDevolucao ?? 0,
                                     QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
                                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
                                     QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Sum(s => s.Quantidade),
@@ -1336,14 +1350,15 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        [ApplicationAuthorize(Permissions = Permissions.Recebimento.DevolucaoTotal)]
         public ActionResult DevolucaoTotal(long id)
         {
             Lote lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
             var model = new BOImprimirDevolucaoTotalViewModel
             {
-                NumeroNF = lote.NotaFiscal.Numero.ToString(),
-                Serie    = lote.NotaFiscal.Serie,
+                NumeroNF     = lote.NotaFiscal.Numero.ToString(),
+                Serie        = lote.NotaFiscal.Serie,
+                IdLote       = lote.IdLote,
+                IdNotaFiscal = lote.IdNotaFiscal,
             };
 
             return View(model);
@@ -1620,6 +1635,81 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+
+
+        [HttpPost]
+        public async Task<JsonResult> ValidarPermissaoDevolucaoTotal()
+        {
+            try
+            {
+                bool permissao = false;
+                permissao = UserManager.GetPermissions(User.Identity.GetUserId()).Contains(Permissions.Recebimento.DevolucaoTotal);
+             
+                if (permissao)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = true          
+                    });
+                }
+                else
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false
+                    });
+                }
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Não foi possível validar a permissão do usuário. Por favor, tente novamente!"
+                });
+            }
+
+        }
+
+
+
+
+        [HttpPost]
+        public async Task<JsonResult> ValidarAcessoDevolucaoTotal(string usuario, string senha)
+        {
+            ApplicationUser applicationUser = await UserManager.FindByNameAsync(usuario);
+
+            var retornoLogin = SignInManager.UserManager.CheckPassword(applicationUser, senha);
+
+            if (!retornoLogin)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Usuário ou senha inválidos. Por favor, tente novamente!"
+                });
+            }
+
+            var permissao = UserManager.GetPermissions(applicationUser.Id).Contains(Permissions.Recebimento.DevolucaoTotal);
+
+            if (!permissao)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "O usuário informado não possui permissão para a devolução total. Contate o Administrador."
+                });
+            }
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = string.Empty
+            });
+        }
+
+
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public async Task<JsonResult> RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo, int idTipoConferencia)
         {
@@ -1679,6 +1769,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         };
 
                         _logEtiquetagemService.Registrar(logEtiquetagemDevolucao);
+
                     }
                 }
 
@@ -1894,7 +1985,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     IdLoteDivergencia = divergencia.IdLoteDivergencia,
                     Referencia = divergencia.Produto.Referencia,
                     QuantidadeConferencia = divergencia.QuantidadeConferencia,
-                    QuantidadeDevolucao   = divergencia.QuantidadeDevolucao ?? 0,
+                    QuantidadeDevolucao = divergencia.QuantidadeDevolucao ?? 0,
                     QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
                     QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Sum(s => s.Quantidade),
@@ -2001,7 +2092,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Referencia = divergencia.Produto.Referencia,
                     QuantidadeConferencia = divergencia.QuantidadeConferencia,
-                    QuantidadeDevolucao   = divergencia.QuantidadeDevolucao ?? 0,
+                    QuantidadeDevolucao = divergencia.QuantidadeDevolucao ?? 0,
                     QuantidadeMais = divergencia.QuantidadeConferenciaMais ?? 0,
                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos ?? 0,
                     QuantidadeNotaFiscal = nfItem == null ? 0 : nfItem.Quantidade,
@@ -2242,7 +2333,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 LotesRecebidosUsuario = x.LOTESRECEBIDASUSUARIO,
                 PecasRecebidas = x.PECASRECEBIDAS,
                 PecasRecebidasUsuario = x.PECASRECEBIDASUSUARIO,
-                Percentual = x.PERCENTUAL,
+                Percentual = x.PERCENTUAL.ToString("N2"),
                 Ranking = x.RANKING
             }).PaginationResult(model);
 
@@ -2313,15 +2404,54 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.DevolucaoTotal)]
-        [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
-        public async Task<JsonResult> FinalizarDevolucaoTotal()
+        public async Task<JsonResult> FinalizarDevolucaoTotal(long idLote)
         {
-
-            long teste = 801; ///Retirar isso depois, receber o id do lote por parametro.
+            Lote lote = _uow.LoteRepository.GetById(idLote);
             try
             {
-                ProcessamentoTratativaDivergencia processamento = await _loteService.DevolucaoTotal(teste, IdUsuario).ConfigureAwait(false);
+                ProcessamentoTratativaDivergencia processamento = await _loteService.DevolucaoTotal(lote.IdLote, IdUsuario).ConfigureAwait(false);
                 string json = JsonConvert.SerializeObject(processamento);
+
+
+                //Novo Para Impressão
+                #region Impressão Automática de Etiquetas
+
+                var etiquetaDevolucaoRequest = new ImprimirEtiquetaDevolucaoTotalRequest
+                {
+                    NomeFornecedor     = lote.NotaFiscal.Fornecedor.RazaoSocial,
+                    EnderecoFornecedor = lote.NotaFiscal.Fornecedor.Endereco,
+                    CidadeFornecedor   = lote.NotaFiscal.Fornecedor.Cidade,
+                    EstadoFornecedor   = lote.NotaFiscal.Fornecedor.Estado,
+                    CepFornecedor      = lote.NotaFiscal.Fornecedor.CEP,
+                    TelefoneFornecedor = lote.NotaFiscal.Fornecedor.Telefone,
+                    NumeroFornecedor   = lote.NotaFiscal.Fornecedor.Numero,
+                    BairroFornecedor   = lote.NotaFiscal.Fornecedor.Bairro,
+                    IdFornecedor       = lote.NotaFiscal.IdFornecedor.ToString(),
+                    IdTransportadora   = lote.NotaFiscal.IdTransportadora.ToString(),
+                    NomeTransportadora = lote.NotaFiscal.Transportadora.RazaoSocial,
+                    IdLote             = lote.IdLote.ToString(),
+                    QuantidadeVolumes  = lote.QuantidadeVolume.ToString(),
+
+                    //Temporário - Verificar depois com o Shankya qual o campo referente a sigla do transportador.
+                    SiglaTransportador = lote.NotaFiscal.Transportadora.RazaoSocial.Substring(0, 3),
+
+                    IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
+                };
+
+                _etiquetaService.ImprimirEtiquetaDevolucaoTotal(etiquetaDevolucaoRequest);
+
+                //Registra o Log da impressão da etiqueta de Devolução
+                var logEtiquetagemDevolucao = new Services.Model.LogEtiquetagem.LogEtiquetagem
+                {
+                    IdTipoEtiquetagem = TipoEtiquetagemEnum.Devolucao.GetHashCode(),
+                    IdEmpresa = IdEmpresa,
+                    IdUsuario = User.Identity.GetUserId()
+                };
+
+                _logEtiquetagemService.Registrar(logEtiquetagemDevolucao);
+
+                #endregion
+
 
                 return Json(new AjaxGenericResultModel
                 {

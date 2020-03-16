@@ -20,7 +20,7 @@
                         <div class="col-xs-12 col-sm-6 col-lg-6">
                             <div class="form-group">
                                 @Html.Label("Chave Acesso")
-                                @Html.TextBoxFor(m => m.ChaveAcesso, new { @class = "form-control onlyNumber" })
+                                @Html.TextBoxFor(m => m.ChaveAcesso, new { @class = "form-control onlyNumber" , maxlength = 44})
                                 @Html.ValidationMessageFor(m => m.ChaveAcesso)
                             </div>
                             <span class="text-danger validacaoChaveAcesso"></span>
