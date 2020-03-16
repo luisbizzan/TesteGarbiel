@@ -253,7 +253,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void ValidarEnderecoRetirar(long idEnderecoArmazenagem)
+        public void ValidarEndereco(long idEnderecoArmazenagem)
         {
             if (idEnderecoArmazenagem <= 0)
             {
@@ -277,7 +277,7 @@ namespace FWLog.Services.Services
 
         public void ValidateLoteRetirar(long idEnderecoArmazenagem, long idLote)
         {
-            ValidarEnderecoRetirar(idEnderecoArmazenagem);
+            ValidarEndereco(idEnderecoArmazenagem);
 
             if (idLote <= 0)
             {
@@ -301,7 +301,7 @@ namespace FWLog.Services.Services
 
         public void ValidarProdutoRetirar(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa)
         {
-            ValidarEnderecoRetirar(idEnderecoArmazenagem);
+            ValidarEndereco(idEnderecoArmazenagem);
 
             ValidateLoteRetirar(idEnderecoArmazenagem, idLote);
 
@@ -390,6 +390,30 @@ namespace FWLog.Services.Services
             if (loteProduto == null)
             {
                 throw new BusinessException("Nenhum volume instalado no endereço.");
+            }
+        }
+
+        public void ValidateLoteAjuste(long idEnderecoArmazenagem, long idLote)
+        {
+            ValidarEndereco(idEnderecoArmazenagem);
+
+            if (idLote <= 0)
+            {
+                throw new BusinessException("O lote deve ser informado.");
+            }
+
+            var lote = _unitOfWork.LoteRepository.GetById(idLote);
+
+            if (lote == null)
+            {
+                throw new BusinessException("O lote não foi encontrado.");
+            }
+
+            var loteProduto = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+
+            if (loteProduto.IdLote != idLote)
+            {
+                throw new BusinessException("O lote não está instalado no endereço informado.");
             }
         }
     }

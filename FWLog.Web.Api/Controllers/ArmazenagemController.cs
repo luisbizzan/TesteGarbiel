@@ -162,7 +162,7 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                _armazenagemService.ValidarEnderecoRetirar(idEndereco);
+                _armazenagemService.ValidarEndereco(idEndereco);
             }
             catch (BusinessException ex)
             {
@@ -277,6 +277,26 @@ namespace FWLog.Web.Api.Controllers
                 };
 
                 _armazenagemService.ValidarEnderecoAjuste(validarEnderecoRequisicao);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/ajustar/validar-lote")]
+        [HttpPost]
+        public IHttpActionResult ValidateLoteAjustar(ValidateLoteAjusteModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidateLoteAjuste(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0);
             }
             catch (BusinessException ex)
             {
