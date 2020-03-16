@@ -175,5 +175,121 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/armazenagem/retirar/validar-lote")]
+        [HttpPost]
+        public IHttpActionResult ValidateLoteRetirar(ValidateLoteRetirarModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidateLoteRetirar(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/retirar/validar-produto")]
+        [HttpPost]
+        public IHttpActionResult ValidarProdutoRetirar(ValidarProdutoRetirarModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidarProdutoRetirar(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/detalhes/{idLote}/{idProduto}/{idEnderecoArmazenagem}")]
+        [HttpGet]
+        public IHttpActionResult ConsultaDetalhesVolumeInformado(long idLote, long idProduto, long idEnderecoArmazenagem)
+        {
+            try
+            {
+                var detalhesVolumeInformado = _armazenagemService.ConsultaDetalhesVolumeInformado(idEnderecoArmazenagem, idLote, idProduto, IdEmpresa);
+
+                var response = new ConsultaDetalhesVolumeInformadoResposta
+                {
+                    Quantidade = detalhesVolumeInformado.Quantidade,
+                    PesoTotal = detalhesVolumeInformado.PesoTotal,
+                    LimitePeso = detalhesVolumeInformado.EnderecoArmazenagem.LimitePeso,
+                    DataHoraInstalacao = detalhesVolumeInformado.DataHoraInstalacao,
+                    IdUsuarioInstalacao = detalhesVolumeInformado.IdUsuarioInstalacao
+                };
+
+                return ApiOk(response);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        [Route("api/v1/armazenagem/retirar")]
+        [HttpPost]
+        public async Task<IHttpActionResult> RetirarVolumeEndereco(RetirarVolumeEnderecoModelRequisicao requisicao)
+        {
+            try
+            {
+                await _armazenagemService.RetirarVolumeEndereco(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa, IdUsuario);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/ajustar/validar-endereco")]
+        [HttpPost]
+        public IHttpActionResult ValidarEnderecoAjustar(ValidarEnderecoAjusteModelRequisicao requisicao)
+        {
+            try
+            {
+                var validarEnderecoRequisicao = new ValidarEnderecoAjusteRequisicao
+                {
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem
+                };
+
+                _armazenagemService.ValidarEnderecoAjuste(validarEnderecoRequisicao);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+
     }
 }

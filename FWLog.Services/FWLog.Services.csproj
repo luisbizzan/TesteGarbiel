@@ -114,6 +114,7 @@
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
     <Compile Include="Model\Armazenagem\InstalarVolumeLoteRequisicao.cs" />
+    <Compile Include="Model\Armazenagem\ValidarEnderecoAjusteRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarEnderecoInstalacaoRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarLoteInstalacaoRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarLoteProdutoInstalacaoRequisicao.cs" />
