@@ -216,8 +216,8 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route(" api/v1/armazenagem/detalhes/{idLote}/{idProduto}/{idEnderecoArmazenagem}")]
-        [HttpPost]
+        [Route("api/v1/armazenagem/detalhes/{idLote}/{idProduto}/{idEnderecoArmazenagem}")]
+        [HttpGet]
         public IHttpActionResult ConsultaDetalhesVolumeInformado(long idLote, long idProduto, long idEnderecoArmazenagem)
         {
             try
