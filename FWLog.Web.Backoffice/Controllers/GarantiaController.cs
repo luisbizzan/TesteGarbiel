@@ -488,17 +488,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 //QuantidadeCaixa = conferencia.EmpresaConfig.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento ? 1 : null as int?
             };
 
-            //if (conferencia.ProdutoEstoque == null || (conferencia.ProdutoEstoque != null && conferencia.ProdutoEstoque.EnderecoArmazenagem == null))
-            //{
-            //    model.Localizacao = string.Empty;
-            //    model.EnviarPicking = true;
-            //}
-            //else
-            //{
-            //    model.Localizacao = conferencia.ProdutoEstoque.EnderecoArmazenagem.Codigo;
-            //    model.EnviarPicking = conferencia.ProdutoEstoque.Saldo == 0 ? true : false;
-            //}
-
             string json = JsonConvert.SerializeObject(model);
 
             return Json(new AjaxGenericResultModel
@@ -522,7 +511,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-
                 throw;
             }
         }

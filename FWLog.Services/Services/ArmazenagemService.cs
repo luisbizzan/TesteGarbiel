@@ -267,9 +267,9 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O endereço não foi encontrado.");
             }
 
-            var loteProduto = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
 
-            if (loteProduto == null)
+            if (loteProdutoEndereco == null)
             {
                 throw new BusinessException("Nenhum volume instalado no endereço.");
             }
@@ -291,43 +291,43 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O lote não foi encontrado.");
             }
 
-            var loteProduto = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
 
-            if (loteProduto.IdLote != idLote)
+            if (loteProdutoEndereco.IdLote != idLote)
             {
                 throw new BusinessException("O lote não está instalado no endereço informado.");
             }
         }
 
-        public void ValidarProdutoRetirar(long idEnderecoArmazenagem, long idLote, long idProduto)
+        public void ValidarProdutoRetirar(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa)
         {
-            //ValidarEnderecoRetirar(idEnderecoArmazenagem);
+            ValidarEnderecoRetirar(idEnderecoArmazenagem);
 
-            //ValidateLoteRetirar(idEnderecoArmazenagem, idLote);
+            ValidateLoteRetirar(idEnderecoArmazenagem, idLote);
 
-            //var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
 
-            //if (produto == null)
-            //{
-            //    throw new BusinessException("O produto não foi encontrado.");
-            //}
+            if (produto == null)
+            {
+                throw new BusinessException("O produto não foi encontrado.");
+            }
 
-            //var produtoEndereco = _unitOfWork.ProdutoEnderecoRepository.GetById(idProduto);
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
 
-            //if (produtoEndereco == null)
-            //{
-            //    throw new BusinessException("Não foi encontrado lote associado ao produto.");
-            //}
+            if (loteProdutoEndereco == null)
+            {
+                throw new BusinessException("Não foi encontrado lote associado ao produto.");
+            }
 
-            //if (produtoEndereco.IdLote != idLote)
-            //{
-            //    throw new BusinessException("Produto não pertence ao lote informado.");
-            //}
+            if (loteProdutoEndereco.IdLote != idLote)
+            {
+                throw new BusinessException("Produto não pertence ao lote informado.");
+            }
 
-            //if (produtoEndereco.IdEnderecoArmazenagem != idEnderecoArmazenagem)
-            //{
-            //    throw new BusinessException("Produto não está instalado no endereço informado.");
-            //}
+            if (loteProdutoEndereco.IdEnderecoArmazenagem != idEnderecoArmazenagem)
+            {
+                throw new BusinessException("Produto não está instalado no endereço informado.");
+            }
         }
 
         public LoteProdutoEndereco ConsultaDetalhesVolumeInformado(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa)
@@ -344,7 +344,7 @@ namespace FWLog.Services.Services
 
         public async Task RetirarVolumeEndereco(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa, string idUsuarioInstalacao)
         {
-            ValidarProdutoRetirar(idEnderecoArmazenagem, idLote, idProduto);
+            ValidarProdutoRetirar(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
