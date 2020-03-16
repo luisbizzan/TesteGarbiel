@@ -58,6 +58,6 @@ namespace FWLog.Data.Models
 
         //[ForeignKey(nameof(IdEmpresa))]
         //[InverseProperty("Empresa")]
-        //public EmpresaConfig EmpresaConfig { get; set; }
+        public EmpresaConfig EmpresaConfig { get; set; }
     }
 }
