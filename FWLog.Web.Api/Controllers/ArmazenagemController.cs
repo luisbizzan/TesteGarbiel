@@ -202,7 +202,7 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                _armazenagemService.ValidarProdutoRetirar(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0);
+                _armazenagemService.ValidarProdutoRetirar(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa);
             }
             catch (BusinessException ex)
             {
@@ -289,7 +289,5 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
-
-
     }
 }
