@@ -291,7 +291,12 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O lote não foi encontrado.");
             }
 
-            //TODO: Validar se o Lote está instalado no endereço
+            var loteProduto = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+
+            if (loteProduto.IdLote != idLote)
+            {
+                throw new BusinessException("O lote não está instalado no endereço informado.");
+            }
         }
 
         public void ValidarProdutoRetirar(long idEnderecoArmazenagem, long idLote, long idProduto)
