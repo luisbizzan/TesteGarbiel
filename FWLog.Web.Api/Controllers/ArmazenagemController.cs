@@ -264,5 +264,32 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/armazenagem/ajustar/validar-endereco")]
+        [HttpPost]
+        public IHttpActionResult ValidarEnderecoAjustar(ValidarEnderecoAjusteModelRequisicao requisicao)
+        {
+            try
+            {
+                var validarEnderecoRequisicao = new ValidarEnderecoAjusteRequisicao
+                {
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem
+                };
+
+                _armazenagemService.ValidarEnderecoAjuste(validarEnderecoRequisicao);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+
     }
 }
