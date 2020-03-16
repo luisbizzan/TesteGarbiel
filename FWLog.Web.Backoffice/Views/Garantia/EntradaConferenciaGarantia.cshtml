@@ -32,7 +32,7 @@
 <div class="modal-dialog modal-lg" id="modalRegistroConferencia">
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" id="fecharConferencia" class="close" data-dismiss="modal">
+            <button type="button" id="fecharConferenciaGarantia" class="close" data-dismiss="modal">
                 <span aria-hidden="true">×</span>
             </button>
             <h4 class="modal-title" id="myModalLabel">Conferência da Garantia</h4>
@@ -134,19 +134,19 @@
                     <div class="col-xs-12 col-lg-3 col-md-3 col-sm-12">
                         @Html.LabelFor(f => f.MotivoLaudo, new { @class = "control-label"})
                         @Html.TextBoxFor(f => f.MotivoLaudo, new { @class = "form-control", placeholder = "Digite para pesquisar...",@readonly = "readonly" })
-                        @Html.HiddenFor(f => f.IdMotivoLaudo, new { @class = "can-validate" })
+                        @Html.HiddenFor(f => f.IdMotivoLaudo, new { @class = "can-validate"})
                         @Html.ValidationMessageFor(f => f.MotivoLaudo)
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-12 col-md-4" id="legendaTipoConferencia">
+            <div class="row" style="margin-top:30px;">
+                <div class="col-xs-12 col-md-3" id="legendaTipoConferencia">
                     <h5 style="padding-left: 5px"> <strong>F4</strong> - Conferência Manual</h5>
                 </div>
-                @*<div class="col-xs-12 col-md-2" id="legendaRegistroConferencia">
+                <div class="col-xs-12 col-md-2" id="legendaRegistroConferencia">
                     <h5><strong style="padding-left: 5px">ESC</strong> - Registrar</h5>
-                </div>*@
-                <div class="col-sm-12 col-md-8" style="text-align: right;">
+                </div>
+                <div class="col-sm-12 col-md-7" style="text-align: right;">
                     <button type="button" id="finalizarConferencia" class="btn btn-default">Imprimir Etiquetas</button>
                     <button type="button" id="finalizarConferencia" class="btn btn-info">Finalizar</button>
                     <button type="button" id="exibirDivergencia" class="btn btn-default">Divergências</button>

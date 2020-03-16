@@ -20,8 +20,22 @@
         }
     });
 
-
     function adicionaEventos() {
+
+        $(document).ready(function () {
+
+            var $input = $('#MotivoLaudo');
+            new dart.AutoComplete($input[0], {
+
+                serviceUrl: HOST_URL + CONTROLLER_PATH + 'BuscarMotivoLaudoAutoComplete',
+                selectedValueInput: $('#IdMotivoLaudo')[0],
+                global:false,
+            });
+
+            $btnGroupTipo.prop('disabled', true);
+            $btnTipoGarantia.removeClass('btn-secondary-selected');
+        });
+
         $modalConferenciaGarantia.on('hidden.bs.modal', removeEventos);
 
         $(document).on('keydown', document_Keydown);
@@ -36,10 +50,7 @@
         $quantidade.on('blur', quantidade_Blur)
         $quantidade.on('keyup', quantidade_KeyUp);
 
-        $motivoLaudo.on('keyup', motivoLaudo_KeyUp);
-
         $btnGroupTipo.on('click', tipo_Click);
-
 
         onScan.attachTo($quantidade[0], {
             onScan: function (sScancode, iQuatity) {
@@ -71,6 +82,7 @@
     }
 
     function removeEventos() {
+        $(document).off('keydown', document_Keydown);
         $referencia.off('blur', referencia_Blur);
         $referencia.off('focus', referencia_Focus);
         $referencia.off('keydown', referencia_Keydown);
@@ -81,8 +93,6 @@
         $quantidade.off('keydown', quantidade_Keydown);
         $quantidade.off('blur', quantidade_Blur)
         $quantidade.off('keyup', quantidade_KeyUp);
-
-        $motivoLaudo.off('keyup', motivoLaudo_KeyUp);
 
         $btnGroupTipo.off('click', tipo_Click);
 
@@ -152,17 +162,8 @@
         }
         else {
             $btnGroupTipo.prop('disabled', true);
-            $btnTipoGarantia.addClass("btn-secondary-selected");
             $btnTipoGarantia.removeClass('btn-secondary-selected');
         }
-    }
-
-    function motivoLaudo_KeyUp() {
-        var $input = $($motivoLaudo);
-        new dart.AutoComplete($input[0], {
-            serviceUrl: HOST_URL + CONTROLLER_PATH + 'BuscarMotivoLaudoAutoComplete',
-            selectedValueInput: $('#IdMotivoLaudo')[0]
-        });
     }
 
     function carregarDadosReferenciaConferenciaGarantia() {
@@ -192,6 +193,7 @@
 
                     if (result.Message != null) {
                         PNotify.warning({ text: result.Message });
+                        $referencia.focus();
                     }
 
                     //Reset array.
@@ -225,11 +227,11 @@
         if (!!show) {
             $referencia.attr('disabled', true);
             $overlay.show();
-            $("#fecharConferencia").hide();
+            $("#fecharConferenciaGarantia").hide();
         } else {
             $referencia.attr('disabled', false);
             $overlay.hide();
-            $("#fecharConferencia").show();
+            $("#fecharConferenciaGarantia").show();
         }
     }
 
@@ -253,8 +255,6 @@
         });
 
         $(e.target).addClass("btn-secondary-selected");
-
-        var bla = $motivoLaudo;
 
         if ($(e.target).attr("id") === 'btnTipoLaudo') {
             $motivoLaudo.removeAttr("readonly");
