@@ -38,15 +38,12 @@ namespace FWLog.Services.Services
 
             StringBuilder where = new StringBuilder();
             inner.Append(" WHERE TSIEMP.AD_FILIAL IS NOT NULL ");
-            inner.Append("AND TSIEMP.AD_NOMEFILIAL IS NOT NULL ");
+            inner.Append("AND TSIEMP.NOMEFANTASIA IS NOT NULL ");
             inner.Append("AND TSIEMP.AD_INTEGRARFWLOG = '1' ");
             inner.Append("AND TGFEMP.AD_FONE_SAC IS NOT NULL ");
-            inner.Append("AND TSIEMP.AD_FILIAL IS NOT NULL ");
-            inner.Append("AND TSIEMP.AD_NOMEFILIAL IS NOT NULL ");
             inner.Append("ORDER BY TSIEMP.CODEMP ASC ");
 
             List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString(), 
-                                                                                                                              IntegracaoTipoEnum.BuscarEmpresa.GetHashCode(),
                                                                                                                               IntegracaoEntidadeEnum.Empresa.GetHashCode());
             empresasIntegracao = empresasIntegracao.OrderBy("CodigoIntegracao", "ASC").ToList();
 
@@ -86,10 +83,6 @@ namespace FWLog.Services.Services
                     empresaConfig.Empresa.Telefone = empInt.Telefone;
                     empresaConfig.Empresa.TelefoneSAC = empInt.TelefoneSAC;
                     empresaConfig.IdEmpresaTipo = empInt.EmpresaMatriz == empInt.CodigoIntegracao ? EmpresaTipoEnum.Matriz : EmpresaTipoEnum.Filial;
-
-                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODEMP", codEmp.ToString() } };
-
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", campoChave, "AD_INTEGRARFWLOG", '0');
 
                     if (empresaNova)
                     {

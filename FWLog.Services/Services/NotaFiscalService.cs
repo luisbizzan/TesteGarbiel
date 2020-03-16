@@ -22,6 +22,31 @@ namespace FWLog.Services.Services
             _uow = uow;           
         }
 
+        public async Task LimparIntegracao()
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            var where = " WHERE TGFCAB.TIPMOV = 'C' AND TGFCAB.STATUSNOTA <> 'L' AND (TGFCAB.AD_STATUSREC <> 0 OR TGFCAB.AD_STATUSREC <> NULL)";
+            var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
+            List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalIntegracao>(where, inner);
+
+            List<FreteTipo> tiposFrete = _uow.FreteTipoRepository.RetornarTodos();
+            IQueryable<Empresa> empresas = _uow.EmpresaRepository.Tabela();
+            var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
+
+            Dictionary<string, List<NotaFiscalIntegracao>> notasIntegracaoGrp = notasIntegracao.GroupBy(g => g.CodigoIntegracao).ToDictionary(d => d.Key, d => d.ToList());
+
+            foreach (var notasInt in notasIntegracaoGrp)
+            {
+                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", notasInt.Value.First().CodigoIntegracao.ToString() } };
+
+                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", "0");
+            }
+        }
+
         public async Task ConsultaNotaFiscalCompra()
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
@@ -178,11 +203,7 @@ namespace FWLog.Services.Services
                         }
                     }
 
-                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", notafiscal.CodigoIntegracao.ToString() } };
-
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode());
-
-                    int diasPrazoEntrega = _uow.ProdutoEstoqueRepository.ObterDiasPrazoEntrega(notafiscal.IdEmpresa, notafiscal.NotaFiscalItens.Select(s => s.IdProduto).ToList());
+                    int diasPrazoEntrega = 0;
 
                     notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento;
                     notafiscal.PrazoEntregaFornecedor = notafiscal.DataEmissao.AddDays(diasPrazoEntrega);
@@ -202,6 +223,11 @@ namespace FWLog.Services.Services
                     }
 
                     _uow.SaveChanges();
+
+                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", notafiscal.CodigoIntegracao.ToString() } };
+
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode());
+
                 }
                 catch (Exception ex)
                 {

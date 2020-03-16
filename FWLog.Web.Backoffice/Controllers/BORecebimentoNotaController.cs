@@ -1261,10 +1261,12 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 if (empresaConfig.TipoConferencia == null)
                 {
+                    var empresa = _uow.EmpresaRepository.GetById(IdEmpresa);
+
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "Nenhum tipo de conferência configurado para a empresa Unidade: " + empresaConfig.Empresa.Sigla + ".",
+                        Message = "Nenhum tipo de conferência configurado para a empresa Unidade: " + empresa.Sigla + ".",
                     });
                 }
 
