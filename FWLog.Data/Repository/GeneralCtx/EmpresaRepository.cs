@@ -75,5 +75,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.Empresa.AsNoTracking().FirstOrDefault(f => f.CodigoIntegracao == codigoIntegracao);
         }
+
+        public Empresa ConsultaPorId(long idEmpresa)
+        {
+            return Entities.Empresa.AsNoTracking().FirstOrDefault(f => f.IdEmpresa == idEmpresa);
+        }
     }
 }
