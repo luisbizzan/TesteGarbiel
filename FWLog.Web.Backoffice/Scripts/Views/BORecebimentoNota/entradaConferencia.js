@@ -76,12 +76,11 @@
         onScan.attachTo($quantidadePorCaixa[0], {
             onScan: function (sScancode, iQuatity) {
                 if ($tipoConferencia.text() != "Por Quantidade") {
-                    debugger
                     if (listaReferencia[0] != sScancode) {
                         PNotify.warning({ text: 'Referência inválida, não corresponde à referência iniciada!' });
                     } else {
                         //Altera a cor de fundo do campo para dar um destaque.
-                        setTimeout(alterarBackgroundInput, 400);
+                        setTimeout(alterarBackgroundInput, 100);
 
                         //Captura o valor da quantidade por Caixa.
                         var contador = Number($quantidadePorCaixa.val()) + (iQuatity * multiplo);

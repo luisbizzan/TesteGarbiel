@@ -56,8 +56,8 @@ namespace FWLog.Data.Models
         [StringLength(15)]
         public string TelefoneSAC { get; set; }
 
-        //[ForeignKey(nameof(IdEmpresa))]
+        [ForeignKey(nameof(IdEmpresa))]
         //[InverseProperty("Empresa")]
-        public EmpresaConfig EmpresaConfig { get; set; }
+        public virtual EmpresaConfig EmpresaConfig { get; set; }
     }
 }
