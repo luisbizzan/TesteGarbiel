@@ -14,6 +14,7 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using log4net;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;
@@ -31,7 +32,7 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly RelatorioService _relatorioService;
         private readonly LoteService _loteService;
-        private readonly ApplicationLogService _applicationLogService;
+        private readonly ILog _log;
         private readonly EtiquetaService _etiquetaService;
         private readonly LogEtiquetagemService _logEtiquetagemService;
         private readonly NotaFiscalService _notaFiscalService;
@@ -43,22 +44,22 @@ namespace FWLog.Web.Backoffice.Controllers
             UnitOfWork uow,
             RelatorioService relatorioService,
             LoteService loteService,
-            ApplicationLogService applicationLogService,
             EtiquetaService etiquetaService,
             LogEtiquetagemService logEtiquetagemService,
             NotaFiscalService notaFiscalService,
             ConferenciaService conferenciaService,
-            ProdutoService produtoService)
+            ProdutoService produtoService,
+            ILog log)
         {
             _loteService = loteService;
             _relatorioService = relatorioService;
-            _applicationLogService = applicationLogService;
             _uow = uow;
             _etiquetaService = etiquetaService;
             _logEtiquetagemService = logEtiquetagemService;
             _notaFiscalService = notaFiscalService;
             _conferenciaService = conferenciaService;
             _produtoService = produtoService;
+            _log = log;
         }
 
         [HttpGet]
@@ -596,7 +597,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -870,7 +871,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -918,7 +919,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -957,7 +958,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -989,7 +990,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -1031,7 +1032,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -1072,7 +1073,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -1341,7 +1342,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -1664,7 +1665,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -1797,7 +1798,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -2052,7 +2053,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -2249,7 +2250,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -2364,7 +2365,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -2393,7 +2394,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -2464,7 +2465,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
