@@ -22,13 +22,13 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                var validarLoteRequisicao = new ValidarLoteInstalacaoRequisicao
+                var validarLoteRequisicao = new ValidarLoteRequisicao
                 {
                     IdLote = idLote,
                     IdEmpresa = IdEmpresa
                 };
 
-                _armazenagemService.ValidarLoteInstalacao(validarLoteRequisicao);
+                _armazenagemService.ValidarLote(validarLoteRequisicao);
             }
             catch (BusinessException ex)
             {
@@ -317,6 +317,34 @@ namespace FWLog.Web.Api.Controllers
             try
             {
                 _armazenagemService.ValidarProdutoAjuste(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/ajustar/validar-quantidade")]
+        [HttpPost]
+        public IHttpActionResult ValidarQuantidadeAjustar(ValidarQuantidadeInstalacaoModelRequisicao requisicao)
+        {
+            try
+            {
+                var validarQuantidadeRequisicao = new ValidarQuantidadeAjusteRequisicao
+                {
+                    IdLote = requisicao.IdLote,
+                    IdProduto = requisicao.IdProduto,
+                    Quantidade = requisicao.Quantidade,
+                    IdEmpresa = IdEmpresa
+                };
+
+                _armazenagemService.ValidarQuantidadeAjuste(validarQuantidadeRequisicao);
             }
             catch (BusinessException ex)
             {

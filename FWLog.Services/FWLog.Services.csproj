@@ -116,8 +116,10 @@
     <Compile Include="Model\Armazenagem\InstalarVolumeLoteRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarEnderecoAjusteRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarEnderecoInstalacaoRequisicao.cs" />
-    <Compile Include="Model\Armazenagem\ValidarLoteInstalacaoRequisicao.cs" />
+    <Compile Include="Model\Armazenagem\ValidarLoteProdutoAjusteRequisicao.cs" />
+    <Compile Include="Model\Armazenagem\ValidarLoteRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarLoteProdutoInstalacaoRequisicao.cs" />
+    <Compile Include="Model\Armazenagem\ValidarQuantidadeAjusteRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarQuantidadeInstalacaoRequisicao.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaArmazenagemVolume.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaAvulsoRequest.cs" />
