@@ -365,5 +365,27 @@ namespace FWLog.Services.Services
                 transacao.Complete();
             }
         }
+
+        public void ValidarEnderecoAjuste(ValidarEnderecoAjusteRequisicao requisicao)
+        {
+            if (requisicao.IdEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("O endereço deve ser informado.");
+            }
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(requisicao.IdEnderecoArmazenagem);
+
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("O endereço não foi encontrado.");
+            }
+
+            var loteProduto = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(requisicao.IdEnderecoArmazenagem);
+
+            if (loteProduto == null)
+            {
+                throw new BusinessException("Nenhum volume instalado no endereço.");
+            }
+        }
     }
 }
