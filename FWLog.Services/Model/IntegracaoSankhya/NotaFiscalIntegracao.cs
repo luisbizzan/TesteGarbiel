@@ -18,7 +18,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string Serie { get; set; }
 
 
-        [TabelaIntegracao(DisplayName = "TGFCAB.AD_QTDDEV")]
+        [TabelaIntegracao(DisplayName = "TGFITE.AD_QTDDEV")]
         public string QuantidadeDevolucao { get; set; }
 
 

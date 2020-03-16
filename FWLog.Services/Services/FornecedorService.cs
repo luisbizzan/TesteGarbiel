@@ -20,6 +20,30 @@ namespace FWLog.Services.Services
             _uow = uow;
         }
 
+        public async Task LimparIntegracao()
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            StringBuilder where = new StringBuilder();
+            where.Append("WHERE ");
+            where.Append("CGC_CPF IS NOT NULL ");
+            where.Append("AND RAZAOSOCIAL IS NOT NULL ");
+            where.Append("AND FORNECEDOR = 'S' ");
+            where.Append("AND AD_INTEGRARFWLOG = '0' ");
+
+            List<FornecedorIntegracao> fornecedoresIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<FornecedorIntegracao>(where: where.ToString());
+
+            foreach (var fornecInt in fornecedoresIntegracao)
+            {
+                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", fornecInt.CodigoIntegracao.ToString() } };
+
+                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", '1');
+            }
+        }
+
         public async Task ConsultarFornecedor()
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))

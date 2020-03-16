@@ -182,6 +182,7 @@
     <Compile Include="Services\BOAccountService.cs" />
     <Compile Include="Services\BOLogSystemService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\PerfilUsuarioService.cs" />
     <Compile Include="Services\PontoArmazenagemService.cs" />
     <Compile Include="Services\ProdutoService.cs" />
     <Compile Include="Services\QuarentenaService.cs" />
