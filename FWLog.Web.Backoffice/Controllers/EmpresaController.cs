@@ -145,13 +145,19 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Empresa.EditarConfiguracao)]
         public ActionResult Editar(EmpresaConfigEditarViewModel model)
         {
+            var empresaConfigGarantia = _unitOfWork.EmpresaConfigRepository.ConsultarPorIdEmpresa(model.IdEmpresaGarantia);
+
+            if (empresaConfigGarantia == null)
+            {
+                ModelState.AddModelError(nameof(model.IdEmpresaGarantia), "Selecione uma Empresa Garantia.");
+            }
+
             if (model.IdEmpresa == model.IdEmpresaGarantia && !model.EmpresaFazGarantia)
             {
                 ModelState.AddModelError(nameof(model.EmpresaFazGarantia), "A empresa editada não pode ser selecionada para Garantia, se não estiver marcada para fazer garantia.");
             }
 
-            var empresaConfigGarantia = _unitOfWork.EmpresaConfigRepository.ConsultarPorIdEmpresa(model.IdEmpresaGarantia);
-            if (!empresaConfigGarantia.EmpresaFazGarantia)
+            if (empresaConfigGarantia?.EmpresaFazGarantia == false)
             {
                 ModelState.AddModelError(nameof(model.IdEmpresaGarantia), string.Format("A Empresa '{0}' não pode ser selecionada para Garantia, se não estiver marcada para fazer garantia.", model.NomeFantasiaEmpresaGarantia));
             }
