@@ -301,33 +301,33 @@ namespace FWLog.Services.Services
 
         public void ValidarProdutoRetirar(long idEnderecoArmazenagem, long idLote, long idProduto)
         {
-            ValidarEnderecoRetirar(idEnderecoArmazenagem);
+            //ValidarEnderecoRetirar(idEnderecoArmazenagem);
 
-            ValidateLoteRetirar(idEnderecoArmazenagem, idLote);
+            //ValidateLoteRetirar(idEnderecoArmazenagem, idLote);
 
-            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+            //var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
 
-            if (produto == null)
-            {
-                throw new BusinessException("O produto não foi encontrado.");
-            }
+            //if (produto == null)
+            //{
+            //    throw new BusinessException("O produto não foi encontrado.");
+            //}
 
-            var produtoEndereco = _unitOfWork.ProdutoEnderecoRepository.GetById(idProduto);
+            //var produtoEndereco = _unitOfWork.ProdutoEnderecoRepository.GetById(idProduto);
 
-            if (produtoEndereco == null)
-            {
-                throw new BusinessException("Não foi encontrado lote associado ao produto.");
-            }
+            //if (produtoEndereco == null)
+            //{
+            //    throw new BusinessException("Não foi encontrado lote associado ao produto.");
+            //}
 
-            if (produtoEndereco.IdLote != idLote)
-            {
-                throw new BusinessException("Produto não pertence ao lote informado.");
-            }
+            //if (produtoEndereco.IdLote != idLote)
+            //{
+            //    throw new BusinessException("Produto não pertence ao lote informado.");
+            //}
 
-            if (produtoEndereco.IdEnderecoArmazenagem != idEnderecoArmazenagem)
-            {
-                throw new BusinessException("Produto não está instalado no endereço informado.");
-            }
+            //if (produtoEndereco.IdEnderecoArmazenagem != idEnderecoArmazenagem)
+            //{
+            //    throw new BusinessException("Produto não está instalado no endereço informado.");
+            //}
         }
 
         public LoteProdutoEndereco ConsultaDetalhesVolumeInformado(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa)

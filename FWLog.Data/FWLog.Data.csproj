@@ -132,7 +132,6 @@
     <Compile Include="Models\MotivoLaudo.cs" />
     <Compile Include="Models\PerfilImpressora.cs" />
     <Compile Include="Models\PerfilImpressoraItem.cs" />
-    <Compile Include="Models\ProdutoEndereco.cs" />
     <Compile Include="Models\BOLogSystem.cs" />
     <Compile Include="Models\AspNetUsers.cs" />
     <Compile Include="Models\AspNetPermissions.cs" />
@@ -237,7 +236,6 @@
     <Compile Include="Repository\GeneralCtx\LoteProdutoEnderecoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\MotivoLaudoRepository.cs" />
-    <Compile Include="Repository\GeneralCtx\ProdutoEnderecoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />
     <Compile Include="Repository\GeneralCtx\EmpresaConfigRepository.cs" />
