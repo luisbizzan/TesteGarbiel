@@ -477,10 +477,6 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var viewModel = new BOImprimirDevolucaoTotalViewModel
             {
-                NumeroNF  = "222",
-                Serie     = "222",
-                Usuario   = "Teste",
-                Senha     = "Teste",
             };
 
             return PartialView("modalAcessoCoordenadorDevolucaoTotal", viewModel);
@@ -1361,8 +1357,10 @@ namespace FWLog.Web.Backoffice.Controllers
             Lote lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
             var model = new BOImprimirDevolucaoTotalViewModel
             {
-                NumeroNF = lote.NotaFiscal.Numero.ToString(),
-                Serie = lote.NotaFiscal.Serie,
+                NumeroNF     = lote.NotaFiscal.Numero.ToString(),
+                Serie        = lote.NotaFiscal.Serie,
+                IdLote       = lote.IdLote,
+                IdNotaFiscal = lote.IdNotaFiscal,
             };
 
             return View(model);
@@ -1773,6 +1771,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         };
 
                         _logEtiquetagemService.Registrar(logEtiquetagemDevolucao);
+
                     }
                 }
 
@@ -2407,30 +2406,41 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.DevolucaoTotal)]
-        public async Task<JsonResult> FinalizarDevolucaoTotal()
+        public async Task<JsonResult> FinalizarDevolucaoTotal(long idLote)
         {
-
-            long idLote = 801; ///Retirar isso depois, receber o id do lote por parametro.
             Lote lote = _uow.LoteRepository.GetById(idLote);
             try
             {
-                ProcessamentoTratativaDivergencia processamento = await _loteService.DevolucaoTotal(idLote, IdUsuario).ConfigureAwait(false);
+                ProcessamentoTratativaDivergencia processamento = await _loteService.DevolucaoTotal(lote.IdLote, IdUsuario).ConfigureAwait(false);
                 string json = JsonConvert.SerializeObject(processamento);
 
 
                 //Novo Para Impressão
                 #region Impressão Automática de Etiquetas
 
-                var etiquetaDevolucaoRequest = new ImprimirEtiquetaDevolucaoRequest
+                var etiquetaDevolucaoRequest = new ImprimirEtiquetaDevolucaoTotalRequest
                 {
-                    Linha1 = idLote.ToString().PadLeft(10, '0'),
-                    Linha2 = idLote.ToString().PadLeft(10, '0'),
-                    Linha3 = "Dev. Total",
-                    Linha4 = lote.DataRecebimento.ToString("dd/MM/yyyy"),
+                    NomeFornecedor     = lote.NotaFiscal.Fornecedor.RazaoSocial,
+                    EnderecoFornecedor = lote.NotaFiscal.Fornecedor.Endereco,
+                    CidadeFornecedor   = lote.NotaFiscal.Fornecedor.Cidade,
+                    EstadoFornecedor   = lote.NotaFiscal.Fornecedor.Estado,
+                    CepFornecedor      = lote.NotaFiscal.Fornecedor.CEP,
+                    TelefoneFornecedor = lote.NotaFiscal.Fornecedor.Telefone,
+                    NumeroFornecedor   = lote.NotaFiscal.Fornecedor.Numero,
+                    BairroFornecedor   = lote.NotaFiscal.Fornecedor.Bairro,
+                    IdFornecedor       = lote.NotaFiscal.IdFornecedor.ToString(),
+                    IdTransportadora   = lote.NotaFiscal.IdTransportadora.ToString(),
+                    NomeTransportadora = lote.NotaFiscal.Transportadora.RazaoSocial,
+                    IdLote             = lote.IdLote.ToString(),
+                    QuantidadeVolumes  = lote.QuantidadeVolume.ToString(),
+
+                    //Temporário - Verificar depois com o Shankya qual o campo referente a sigla do transportador.
+                    SiglaTransportador = lote.NotaFiscal.Transportadora.RazaoSocial.Substring(0, 3),
+
                     IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
                 };
 
-                _etiquetaService.ImprimirEtiquetaDevolucao(etiquetaDevolucaoRequest);
+                _etiquetaService.ImprimirEtiquetaDevolucaoTotal(etiquetaDevolucaoRequest);
 
                 //Registra o Log da impressão da etiqueta de Devolução
                 var logEtiquetagemDevolucao = new Services.Model.LogEtiquetagem.LogEtiquetagem

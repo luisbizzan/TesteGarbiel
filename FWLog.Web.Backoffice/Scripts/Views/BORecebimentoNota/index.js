@@ -573,6 +573,9 @@ function conferirNota() {
                     url: HOST_URL + CONTROLLER_PATH + "VerificarDevolucaoTotal/" + id,
                     cache: false,
                     method: "POST",
+                    data: {
+                        idNota: id
+                    },
                     success: function (result) {
                         if (result.Success) {
                             $modalDev.load(HOST_URL + CONTROLLER_PATH + "DevolucaoTotal/" + id, function (result) {

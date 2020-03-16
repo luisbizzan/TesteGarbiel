@@ -15,10 +15,12 @@
                 <div class="row">
                     <div class="col-sm-12 col-lg-12">
                         <span>O sistema identificou que todos os volumes da nota <b>@Model.NumeroNF</b> - <b>@Model.Serie</b> deverão ser devolvidos. Para que o lote seja finalizado, clique na opção Finalizar.</span>
-                        @Html.Hidden("NumeroNF", Model.NumeroNF)
+                        @Html.Hidden("NumeroNF"    , Model.NumeroNF)
+                        @Html.Hidden("Serie"       , Model.Serie)
+                        @Html.Hidden("IdLote"      , Model.IdLote)
+                        @Html.Hidden("IdNotaFiscal", Model.IdNotaFiscal)
                     </div>
-                    @Html.Hidden("NumeroNF", Model.NumeroNF)
-                    @Html.Hidden("Serie", Model.Serie)
+                  
                 </div>
             </div>
             <div class="modal-footer">

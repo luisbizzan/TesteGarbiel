@@ -42,10 +42,10 @@ namespace FWLog.Services.Services
             inner.Append("AND TSIEMP.AD_INTEGRARFWLOG = '1' ");
             inner.Append("AND TGFEMP.AD_FONE_SAC IS NOT NULL ");
             inner.Append("ORDER BY TSIEMP.CODEMP ASC ");
+			
+			List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString());
 
-            List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString(), 
-                                                                                                                              IntegracaoEntidadeEnum.Empresa.GetHashCode());
-            empresasIntegracao = empresasIntegracao.OrderBy("CodigoIntegracao", "ASC").ToList();
+			empresasIntegracao = empresasIntegracao.OrderBy("CodigoIntegracao", "ASC").ToList();
 
             foreach (var empInt in empresasIntegracao)
             {
@@ -95,6 +95,7 @@ namespace FWLog.Services.Services
                     }
 
                     _unitOfWork.SaveChanges();
+
 
                     if (!string.IsNullOrEmpty(empInt.EmpresaMatriz) && !empInt.EmpresaMatriz.Equals(codEmp.ToString()))
                     {
