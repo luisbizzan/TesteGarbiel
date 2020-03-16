@@ -359,6 +359,36 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
 
+        // IMCOMPLETO.. FALTA A ENTIDADE DE REQUISIÇÃO
+        public void ImprimirEtiquetaPicking(ImprimirEtiquetaEnderecoRequest request)
+        {
+            var refProduto = "HB004572381";
+            var textoEndereco = "11.B.33.44";
+            var codEndereco = 123.ToString().PadLeft(7, '0');
+
+            var etiquetaZpl = new StringBuilder();
+
+            etiquetaZpl.Append("^XA");
+
+            // Define quantidade de etiquetas a imprimir
+            etiquetaZpl.Append($"^PQ{request.QuantidadeEtiquetas}^FS");
+
+            etiquetaZpl.Append("^LL880");
+
+            etiquetaZpl.Append("^FO15,20^GB270,760,150^FS");
+            etiquetaZpl.Append($"^FO55,15^FB760,1,0,C,0^A0B,250,120^FR^FD{refProduto}^FS");
+
+            etiquetaZpl.Append($"^FO440,15^FB760,1,0,C,0^A0B,180,150^FD0{textoEndereco}^FS");
+
+            etiquetaZpl.Append($"^FO600,250^BCR,85,N,N^FD{codEndereco}^FS");
+
+            etiquetaZpl.Append("^XZ");
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+        }
+
         private class CelulaEtiqueta
         {
             internal CelulaEtiqueta(int x, int y = 0)
