@@ -2401,7 +2401,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = !processamento.ProcessamentoErro,
-                    Message = processamento.ProcessamentoErro ? "Não foi possivel finalizar a tratativa de divergência." : "Trativa de Divergência finalizada com sucesso.",
+                    Message = processamento.ProcessamentoErro ? processamento.ProcessamentoErroMensagem : "Trativa de Divergência finalizada com sucesso.",
                     Data = json
                 }, JsonRequestBehavior.DenyGet); ;
             }

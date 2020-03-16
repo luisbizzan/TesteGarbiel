@@ -611,6 +611,7 @@ namespace FWLog.Services.Services
                 log.Error(ApplicationEnum.BackOffice, e);
 
                 processamento.ProcessamentoErro = true;
+                processamento.ProcessamentoErroMensagem = e.Message;
             }
 
             return processamento;
@@ -762,7 +763,10 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            await IntegracaoSankhya.Instance.ConfirmarNotaFiscal(codigoIntegracao);
+            var notaConfirmada = await notaFiscalService.VerificarNotaFiscalConfirmada(codigoIntegracao);
+
+            if (!notaConfirmada)
+                await IntegracaoSankhya.Instance.ConfirmarNotaFiscal(codigoIntegracao);
 
             bool atualizacaoOK = await notaFiscalService.VerificarNotaFiscalConfirmada(codigoIntegracao);
             if (!atualizacaoOK)
