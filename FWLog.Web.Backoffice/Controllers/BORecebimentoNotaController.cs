@@ -14,6 +14,7 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using log4net;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;
@@ -31,7 +32,7 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly RelatorioService _relatorioService;
         private readonly LoteService _loteService;
-        private readonly ApplicationLogService _applicationLogService;
+        private readonly ILog _log;
         private readonly EtiquetaService _etiquetaService;
         private readonly LogEtiquetagemService _logEtiquetagemService;
         private readonly NotaFiscalService _notaFiscalService;
@@ -43,22 +44,22 @@ namespace FWLog.Web.Backoffice.Controllers
             UnitOfWork uow,
             RelatorioService relatorioService,
             LoteService loteService,
-            ApplicationLogService applicationLogService,
             EtiquetaService etiquetaService,
             LogEtiquetagemService logEtiquetagemService,
             NotaFiscalService notaFiscalService,
             ConferenciaService conferenciaService,
-            ProdutoService produtoService)
+            ProdutoService produtoService,
+            ILog log)
         {
             _loteService = loteService;
             _relatorioService = relatorioService;
-            _applicationLogService = applicationLogService;
             _uow = uow;
             _etiquetaService = etiquetaService;
             _logEtiquetagemService = logEtiquetagemService;
             _notaFiscalService = notaFiscalService;
             _conferenciaService = conferenciaService;
             _produtoService = produtoService;
+            _log = log;
         }
 
         [HttpGet]
@@ -596,7 +597,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -870,7 +871,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -918,7 +919,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -957,7 +958,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -989,7 +990,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -1031,7 +1032,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -1072,7 +1073,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -1341,7 +1342,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -1357,9 +1358,9 @@ namespace FWLog.Web.Backoffice.Controllers
             Lote lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
             var model = new BOImprimirDevolucaoTotalViewModel
             {
-                NumeroNF     = lote.NotaFiscal.Numero.ToString(),
-                Serie        = lote.NotaFiscal.Serie,
-                IdLote       = lote.IdLote,
+                NumeroNF = lote.NotaFiscal.Numero.ToString(),
+                Serie = lote.NotaFiscal.Serie,
+                IdLote = lote.IdLote,
                 IdNotaFiscal = lote.IdNotaFiscal,
             };
 
@@ -1421,73 +1422,86 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public async Task<ActionResult> ObterDadosReferenciaConferencia(string codigoBarrasOuReferencia, long idLote)
         {
-            //Validações do produto.
-            var conferencia = _conferenciaService.ValidarProduto(idLote, codigoBarrasOuReferencia, IdEmpresa);
-
-            if (!conferencia.Sucesso)
+            try
             {
+                //Validações do produto.
+                var conferencia = _conferenciaService.ValidarProduto(idLote, codigoBarrasOuReferencia, IdEmpresa);
+                
+                if (!conferencia.Sucesso)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = conferencia.Sucesso,
+                        Message = conferencia.Mensagem
+                    });
+                }
+
+                //Captura as quantidade conferida e não conferida do lote.
+                int quantidadeConferida = 0;
+                int quantidadeNaoConferida = 0;
+
+                _conferenciaService.ConsultarQuantidadeConferidaENaoConferida(conferencia.Lote, conferencia.Produto, ref quantidadeConferida, ref quantidadeNaoConferida);
+
+                //Captura o Usuário que está iniciando a conferência novamente.
+                var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
+
+                var model = new BOEntradaConferenciaViewModel
+                {
+                    IdNotaFiscal = conferencia.Lote.NotaFiscal.IdNotaFiscal,
+                    IdLote = conferencia.Lote.IdLote,
+                    NumeroNotaFiscal = string.Concat(conferencia.Lote.NotaFiscal.Numero, " - ", conferencia.Lote.NotaFiscal.Serie),
+                    IdUuarioConferente = usuario.UsuarioId,
+                    NomeConferente = usuario.Nome,
+                    DataHoraRecebimento = conferencia.Lote.DataRecebimento.ToString("dd/MM/yyyy HH:mm"),
+                    NomeFornecedor = conferencia.Lote.NotaFiscal.Fornecedor.NomeFantasia,
+                    QuantidadeVolume = conferencia.Lote.QuantidadeVolume,
+                    TipoConferencia = conferencia.EmpresaConfig.TipoConferencia.Descricao,
+                    IdTipoConferencia = conferencia.EmpresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode(),
+                    Referencia = conferencia.Produto.Referencia,
+                    DescricaoReferencia = conferencia.Produto.Descricao,
+                    Embalagem = conferencia.Produto.MultiploVenda.ToString("N2"),
+                    Unidade = conferencia.Produto.UnidadeMedida.Sigla,
+                    QuantidadeEstoque = conferencia.ProdutoEstoque == null ? 0 : conferencia.ProdutoEstoque.Saldo,
+                    QuantidadeNaoConferida = quantidadeNaoConferida,
+                    QuantidadeConferida = quantidadeConferida,
+                    InicioConferencia = DateTime.Now.ToString(),
+                    QuantidadePorCaixa = null,
+                    Multiplo = conferencia.Produto.MultiploVenda,
+                    QuantidadeReservada = await _produtoService.ConsultarQuantidadeReservada(conferencia.Produto.IdProduto, IdEmpresa),
+                    MediaVenda = conferencia.ProdutoEstoque.MediaVenda.HasValue ? conferencia.ProdutoEstoque.MediaVenda.Value.ToString("N2") : string.Empty,
+                    QuantidadeCaixa = conferencia.EmpresaConfig.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento ? 1 : null as int?
+                };
+
+                if (conferencia.ProdutoEstoque == null || (conferencia.ProdutoEstoque != null && conferencia.ProdutoEstoque.EnderecoArmazenagem == null))
+                {
+                    model.Localizacao = string.Empty;
+                    model.EnviarPicking = true;
+                }
+                else
+                {
+                    model.Localizacao = conferencia.ProdutoEstoque.EnderecoArmazenagem.Codigo;
+                    model.EnviarPicking = conferencia.ProdutoEstoque.Saldo == 0 ? true : false;
+                }
+
+                string json = JsonConvert.SerializeObject(model);
+
                 return Json(new AjaxGenericResultModel
                 {
-                    Success = conferencia.Sucesso,
-                    Message = conferencia.Mensagem
+                    Success = true,
+                    Message = conferencia.Mensagem,
+                    Data = json
                 });
             }
-
-            //Captura as quantidade conferida e não conferida do lote.
-            int quantidadeConferida = 0;
-            int quantidadeNaoConferida = 0;
-
-            _conferenciaService.ConsultarQuantidadeConferidaENaoConferida(conferencia.Lote, conferencia.Produto, ref quantidadeConferida, ref quantidadeNaoConferida);
-
-            //Captura o Usuário que está iniciando a conferência novamente.
-            var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
-
-            var model = new BOEntradaConferenciaViewModel
+            catch (Exception e)
             {
-                IdNotaFiscal = conferencia.Lote.NotaFiscal.IdNotaFiscal,
-                IdLote = conferencia.Lote.IdLote,
-                NumeroNotaFiscal = string.Concat(conferencia.Lote.NotaFiscal.Numero, " - ", conferencia.Lote.NotaFiscal.Serie),
-                IdUuarioConferente = usuario.UsuarioId,
-                NomeConferente = usuario.Nome,
-                DataHoraRecebimento = conferencia.Lote.DataRecebimento.ToString("dd/MM/yyyy HH:mm"),
-                NomeFornecedor = conferencia.Lote.NotaFiscal.Fornecedor.NomeFantasia,
-                QuantidadeVolume = conferencia.Lote.QuantidadeVolume,
-                TipoConferencia = conferencia.EmpresaConfig.TipoConferencia.Descricao,
-                IdTipoConferencia = conferencia.EmpresaConfig.TipoConferencia.IdTipoConferencia.GetHashCode(),
-                Referencia = conferencia.Produto.Referencia,
-                DescricaoReferencia = conferencia.Produto.Descricao,
-                Embalagem = conferencia.Produto.MultiploVenda.ToString("N2"),
-                Unidade = conferencia.Produto.UnidadeMedida.Sigla,
-                QuantidadeEstoque = conferencia.ProdutoEstoque == null ? 0 : conferencia.ProdutoEstoque.Saldo,
-                QuantidadeNaoConferida = quantidadeNaoConferida,
-                QuantidadeConferida = quantidadeConferida,
-                InicioConferencia = DateTime.Now.ToString(),
-                QuantidadePorCaixa = null,
-                Multiplo = conferencia.Produto.MultiploVenda,
-                QuantidadeReservada = await _produtoService.ConsultarQuantidadeReservada(conferencia.Produto.IdProduto, IdEmpresa),
-                MediaVenda = conferencia.ProdutoEstoque.MediaVenda.HasValue ? conferencia.ProdutoEstoque.MediaVenda.Value.ToString("N2") : string.Empty,
-                QuantidadeCaixa = conferencia.EmpresaConfig.IdTipoConferencia == TipoConferenciaEnum.ConferenciaCemPorcento ? 1 : null as int?
-            };
+                _log.Error(e.Message, e);
 
-            if (conferencia.ProdutoEstoque == null || (conferencia.ProdutoEstoque != null && conferencia.ProdutoEstoque.EnderecoArmazenagem == null))
-            {
-                model.Localizacao = string.Empty;
-                model.EnviarPicking = true;
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro ao realizar a leitura do produto",
+                });
             }
-            else
-            {
-                model.Localizacao = conferencia.ProdutoEstoque.EnderecoArmazenagem.Codigo;
-                model.EnviarPicking = conferencia.ProdutoEstoque.Saldo == 0 ? true : false;
-            }
-
-            string json = JsonConvert.SerializeObject(model);
-
-            return Json(new AjaxGenericResultModel
-            {
-                Success = true,
-                Message = conferencia.Mensagem,
-                Data = json
-            });
         }
 
         [HttpPost]
@@ -1646,12 +1660,12 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 bool permissao = false;
                 permissao = UserManager.GetPermissions(User.Identity.GetUserId()).Contains(Permissions.Recebimento.DevolucaoTotal);
-             
+
                 if (permissao)
                 {
                     return Json(new AjaxGenericResultModel
                     {
-                        Success = true          
+                        Success = true
                     });
                 }
                 else
@@ -1664,7 +1678,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -1734,7 +1748,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 #region Impressão Automática de Etiquetas
 
-                if(quantidadePorCaixa > 0)
+                if (quantidadePorCaixa > 0)
                 {
                     var request = new ImprimirEtiquetaArmazenagemVolume
                     {
@@ -1797,7 +1811,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -2052,7 +2066,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -2249,7 +2263,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -2364,7 +2378,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -2393,7 +2407,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -2420,19 +2434,19 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 var etiquetaDevolucaoRequest = new ImprimirEtiquetaDevolucaoTotalRequest
                 {
-                    NomeFornecedor     = lote.NotaFiscal.Fornecedor.RazaoSocial,
+                    NomeFornecedor = lote.NotaFiscal.Fornecedor.RazaoSocial,
                     EnderecoFornecedor = lote.NotaFiscal.Fornecedor.Endereco,
-                    CidadeFornecedor   = lote.NotaFiscal.Fornecedor.Cidade,
-                    EstadoFornecedor   = lote.NotaFiscal.Fornecedor.Estado,
-                    CepFornecedor      = lote.NotaFiscal.Fornecedor.CEP,
+                    CidadeFornecedor = lote.NotaFiscal.Fornecedor.Cidade,
+                    EstadoFornecedor = lote.NotaFiscal.Fornecedor.Estado,
+                    CepFornecedor = lote.NotaFiscal.Fornecedor.CEP,
                     TelefoneFornecedor = lote.NotaFiscal.Fornecedor.Telefone,
-                    NumeroFornecedor   = lote.NotaFiscal.Fornecedor.Numero,
-                    BairroFornecedor   = lote.NotaFiscal.Fornecedor.Bairro,
-                    IdFornecedor       = lote.NotaFiscal.IdFornecedor.ToString(),
-                    IdTransportadora   = lote.NotaFiscal.IdTransportadora.ToString(),
+                    NumeroFornecedor = lote.NotaFiscal.Fornecedor.Numero,
+                    BairroFornecedor = lote.NotaFiscal.Fornecedor.Bairro,
+                    IdFornecedor = lote.NotaFiscal.IdFornecedor.ToString(),
+                    IdTransportadora = lote.NotaFiscal.IdTransportadora.ToString(),
                     NomeTransportadora = lote.NotaFiscal.Transportadora.RazaoSocial,
-                    IdLote             = lote.IdLote.ToString(),
-                    QuantidadeVolumes  = lote.QuantidadeVolume.ToString(),
+                    IdLote = lote.IdLote.ToString(),
+                    QuantidadeVolumes = lote.QuantidadeVolume.ToString(),
 
                     //Temporário - Verificar depois com o Shankya qual o campo referente a sigla do transportador.
                     SiglaTransportador = lote.NotaFiscal.Transportadora.RazaoSocial.Substring(0, 3),
@@ -2464,7 +2478,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {
