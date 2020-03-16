@@ -219,6 +219,7 @@
     <Compile Include="Models\Armazenagem\InstalarVolumeLoteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\RetirarVolumeEnderecoModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarEnderecoAjusteModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidarProdutoAjusteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarProdutoRetirarModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidateLoteAjusteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidateLoteRetirarModelRequisicao.cs" />

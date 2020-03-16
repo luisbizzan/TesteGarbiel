@@ -416,5 +416,34 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O lote não está instalado no endereço informado.");
             }
         }
+
+        public void ValidarProdutoAjuste(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa)
+        {
+            ValidateLoteAjuste(idEnderecoArmazenagem, idLote);
+
+            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("O produto não foi encontrado.");
+            }
+
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
+
+            if (loteProdutoEndereco == null)
+            {
+                throw new BusinessException("Não foi encontrado lote associado ao produto.");
+            }
+
+            if (loteProdutoEndereco.IdLote != idLote)
+            {
+                throw new BusinessException("Produto não pertence ao lote informado.");
+            }
+
+            if (loteProdutoEndereco.IdEnderecoArmazenagem != idEnderecoArmazenagem)
+            {
+                throw new BusinessException("Produto não está instalado no endereço informado.");
+            }
+        }
     }
 }

@@ -309,5 +309,25 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/armazenagem/ajustar/validar-produto")]
+        [HttpPost]
+        public IHttpActionResult ValidarProdutoAjustar(ValidarProdutoAjusteModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidarProdutoAjuste(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
     }
 }
