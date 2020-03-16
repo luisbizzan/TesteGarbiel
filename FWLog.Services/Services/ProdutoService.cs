@@ -306,7 +306,7 @@ namespace FWLog.Services.Services
             
             long quantidadeReservada = 0;
 
-            Empresa empresa = _uow.EmpresaRepository.GetById(idEmpresa);
+            Empresa empresa = _uow.EmpresaRepository.ConsultaPorId(idEmpresa);
             Produto produto = _uow.ProdutoRepository.GetById(idProduto);
 
             if (empresa != null && produto != null)
