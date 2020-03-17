@@ -80,7 +80,8 @@
             data: {
                 IdLote: $("#Filter_IdLote").val(),
                 NroNota: $("#Filter_NroNota").val(),
-                ReferenciaPronduto: $("#Filter_ReferenciaPronduto").val(),
+                IdProduto: $("#Filter_IdProduto").val(),
+                ReferenciaPronduto: $("#Filter_DescricaoProduto").val(),
                 DataCompraMinima: $("#Filter_DataCompraMinima").val(),
                 DataCompraMaxima: $("#Filter_DataCompraMaxima").val(),
                 DataRecebimentoMinima: $("#Filter_DataRecebimentoMinima").val(),
