@@ -5,7 +5,8 @@ namespace FWLog.Data.Models
     public enum LoteMovimentacaoTipoEnum
     {
         Entrada = 1,
-        Saida = 2
+        Saida = 2,
+        Ajuste = 3
     }
 
     public class LoteMovimentacaoTipo

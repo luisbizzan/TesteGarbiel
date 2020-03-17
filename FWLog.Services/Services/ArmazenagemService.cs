@@ -528,5 +528,56 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Saldo do produto no lote insuficiente.");
             }
         }
+
+        public async Task AjustarVolumeLote(AjustarVolumeLoteRequisicao requisicao)
+        {
+            var validarEnderecoInstalacaoRequisicao = new ValidarEnderecoAjusteRequisicao
+            {
+                IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem
+            };
+
+            ValidarEnderecoAjuste(validarEnderecoInstalacaoRequisicao);
+
+            ValidarProdutoAjuste(requisicao.IdEnderecoArmazenagem, requisicao.IdLote, requisicao.IdProduto, requisicao.IdEmpresa);
+
+            ValidarQuantidadeAjuste(new ValidarQuantidadeAjusteRequisicao
+            {
+                IdEmpresa = requisicao.IdEmpresa,
+                IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                IdLote = requisicao.IdLote,
+                IdProduto = requisicao.IdProduto,
+                Quantidade = requisicao.Quantidade
+            });
+
+            Produto produto = _unitOfWork.ProdutoRepository.GetById(requisicao.IdProduto);
+            decimal pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * requisicao.Quantidade;
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                LoteProdutoEndereco produtoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(requisicao.IdEnderecoArmazenagem);
+
+                produtoEndereco.Quantidade = requisicao.Quantidade;
+                produtoEndereco.PesoTotal = pesoInstalacao;
+
+                _unitOfWork.LoteProdutoEnderecoRepository.Update(produtoEndereco);
+                await _unitOfWork.SaveChangesAsync();
+
+                var loteMovimentacao = new LoteMovimentacao
+                {
+                    IdEmpresa = requisicao.IdEmpresa,
+                    IdLote = requisicao.IdLote,
+                    IdProduto = requisicao.IdProduto,
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = requisicao.IdUsuarioAjuste,
+                    Quantidade = requisicao.Quantidade,
+                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Ajuste,
+                    DataHora = DateTime.Now
+                };
+
+                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                await _unitOfWork.SaveChangesAsync();
+                transacao.Complete();
+            }
+        }
     }
 }

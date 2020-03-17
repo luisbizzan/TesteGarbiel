@@ -358,5 +358,35 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/armazenagem/ajustar")]
+        [HttpPost]
+        public async Task<IHttpActionResult> AjustarVolumeLote(AjustarVolumeLoteModelRequisicao requisicao)
+        {
+            try
+            {
+                var instalarVolumeLoteRequisicao = new AjustarVolumeLoteRequisicao
+                {
+                    IdLote = requisicao.IdLote,
+                    IdProduto = requisicao.IdProduto,
+                    Quantidade = requisicao.Quantidade,
+                    IdEmpresa = IdEmpresa,
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    IdUsuarioAjuste = IdUsuario
+                };
+
+                await _armazenagemService.AjustarVolumeLote(instalarVolumeLoteRequisicao);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
     }
 }
