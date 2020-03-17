@@ -341,6 +341,7 @@ namespace FWLog.Web.Api.Controllers
                     IdLote = requisicao.IdLote,
                     IdProduto = requisicao.IdProduto,
                     Quantidade = requisicao.Quantidade,
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
                     IdEmpresa = IdEmpresa
                 };
 

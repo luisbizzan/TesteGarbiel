@@ -223,6 +223,11 @@ namespace FWLog.Services.Services
             Produto produto = _unitOfWork.ProdutoRepository.GetById(requisicao.IdProduto);
             decimal pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * requisicao.Quantidade;
 
+            ValidarPeso(enderecoArmazenagem, pesoInstalacao);
+        }
+
+        private void ValidarPeso(EnderecoArmazenagem enderecoArmazenagem, decimal pesoInstalacao)
+        {
             //limite de peso do endereço
             if (enderecoArmazenagem.LimitePeso.HasValue)
             {
@@ -481,6 +486,12 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("Quantidade maior que o saldo do produto no lote.");
             }
+
+            EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(requisicao.IdEnderecoArmazenagem);
+            Produto produto = _unitOfWork.ProdutoRepository.GetById(requisicao.IdProduto);
+            decimal pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * requisicao.Quantidade;
+
+            ValidarPeso(enderecoArmazenagem, pesoInstalacao);
         }
 
         public void ValidarLoteProdutoAjuste(ValidarLoteProdutoAjusteRequisicao requisicao)
