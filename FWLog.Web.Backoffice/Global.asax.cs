@@ -165,7 +165,7 @@ namespace FWLog.Web.Backoffice
 
             var userManager = HttpContext.Current.GetOwinContext().GetUserManager<BackofficeUserManager>();
             var user = (ClaimsPrincipal)User;
-            var applicationUser = await userManager.FindByIdAsync(User.Identity.GetUserId()).ConfigureAwait(false);
+            var applicationUser = userManager.FindById(User.Identity.GetUserId());
             var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
 
             ApplicationSession applicationSession = uow.ApplicationSessionRepository.GetById(applicationUser.IdApplicationSession.Value);
