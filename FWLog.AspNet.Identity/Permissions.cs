@@ -269,5 +269,20 @@ namespace FWLog.AspNet.Identity
                 //Register(Editar, Display.FromString("Editar Solicitações de Garantia"));
             }
         }
+
+        public class Produto : PermissionGroupBuildItem
+        {
+            public const string Listar = "ProdutoListar";
+            public const string Visualizar = "ProdutoVisualizar";
+            public const string Editar = "ProdutoEditar";
+
+            public Produto() : base(Display.FromString("Produtos"))
+            {
+                Register(Listar, Display.FromString("Listar produto"));
+                Register(Visualizar, Display.FromString("Visualizar produto"));
+                Register(Editar, Display.FromString("Editar produto"));
+            }
+        }
+
     }
 }

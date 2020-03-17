@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
@@ -10,18 +11,38 @@ using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
-    public class ProdutoController : Controller
+    public class ProdutoController : BOBaseController
     {
-        private readonly UnitOfWork _uow;
+        private readonly UnitOfWork _unitOfWork;
 
-        public ProdutoController(UnitOfWork uow)
+        public ProdutoController(UnitOfWork unitOfWork)
         {
-            _uow = uow;
+            _unitOfWork = unitOfWork;
         }
 
-        // GET: Fornecedor
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Produto.Listar)]
+        public ActionResult PageData(DataTableFilter<ProdutoListaFilterViewModel> model)
+        {
+            var filter = Mapper.Map<DataTableFilter<ProdutoListaFiltro>>(model);
+
+            filter.CustomFilter.IdEmpresa = IdEmpresa;
+
+            IEnumerable<ProdutoListaLinhaTabela> result = _unitOfWork.ProdutoRepository.ObterDadosParaDataTable(filter, out int recordsFiltered, out int totalRecords);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = recordsFiltered,
+                Data = Mapper.Map<IEnumerable<ProdutoListaItemViewModel>>(result)
+            });
+        }
+
         public ActionResult Index()
         {
+            SetViewBags();
+
             return View();
         }
 
@@ -58,13 +79,13 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (filtro.CustomFilter.IdLote.HasValue)
             {
-                result = _uow.LoteConferenciaRepository.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);
+                result = _unitOfWork.LoteConferenciaRepository.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);
                 _registrosFiltrados = registrosFiltrados;
                 _totalRegistros = totalRegistros;
             }
             else
             {
-                result = _uow.ProdutoRepository.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);
+                result = _unitOfWork.ProdutoRepository.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);
                 _registrosFiltrados = registrosFiltrados;
                 _totalRegistros = totalRegistros;
             }
