@@ -414,8 +414,9 @@
                     return;
                 else {
                     $('#modalRegistrarConferencia').modal('show');
+                    var total = $quantidadePorCaixa.val() * $quantidadeCaixa.val();
 
-                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
+                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + total + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
 
                     $('#MensagemPecasHaMais').text('');
                     if (qtdePecasHaMais > 0)
@@ -540,7 +541,8 @@
                                 if ($tipoConferencia.text() != "Por Quantidade" || ($tipoConferencia.text() == "Por Quantidade" && qtdePecasHaMais > 0 && $quantidadeCaixa > 0)) {
                                     $('#modalRegistrarConferencia').modal('show');
 
-                                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
+                                    var total = $quantidadePorCaixa.val() * $quantidadeCaixa.val();
+                                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + total + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
                                 }
                                 else {
                                     validarDiferencaMultiploConferencia();
@@ -656,6 +658,7 @@ function resetarCamposConferencia(limpaReferencia = true) {
 function consultarPecasHaMaisConferencia() {
     let referencia = $("#Referencia").val();
     let quantidadePorCaixa = $("#QuantidadePorCaixa").val() || 0;
+    let quantidadeCaixa = $("#QuantidadeCaixa").val() || 0;
     let idLote = $("#IdLote").val();
     let retorno = 0;
 
@@ -668,7 +671,8 @@ function consultarPecasHaMaisConferencia() {
         data: {
             codigoBarrasOuReferencia: referencia,
             idLote: idLote,
-            quantidadePorCaixa: quantidadePorCaixa
+            quantidadePorCaixa: quantidadePorCaixa,
+            quantidadeCaixa: quantidadeCaixa
         },
         success: function (result) {
             if (result.Success) {

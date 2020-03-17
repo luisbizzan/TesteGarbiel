@@ -1426,7 +1426,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 //Validações do produto.
                 var conferencia = _conferenciaService.ValidarProduto(idLote, codigoBarrasOuReferencia, IdEmpresa);
-                
+
                 if (!conferencia.Sucesso)
                 {
                     return Json(new AjaxGenericResultModel
@@ -1762,7 +1762,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                     _etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);
 
-                    if (VerificarPecaHaMaisAposConferencia(conferencia.Lote.IdLote, quantidadePorCaixa, conferencia.Lote.IdNotaFiscal, conferencia.Produto.IdProduto) > 0)
+                    if (VerificarPecaHaMaisAposConferencia(conferencia.Lote.IdLote, quantidadePorCaixa, quantidadeCaixa, conferencia.Lote.IdNotaFiscal, conferencia.Produto.IdProduto) > 0)
                     {
                         var requestPecasMais = new ImprimirEtiquetaDevolucaoRequest
                         {
@@ -1845,7 +1845,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        public JsonResult ConsultarPecasHaMaisConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa)
+        public JsonResult ConsultarPecasHaMaisConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa)
         {
             int pecasHaMais = 0;
 
@@ -1870,7 +1870,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                     if (idProduto != 0)
                     {
-                        pecasHaMais = VerificarPecaHaMais(idLote, quantidadePorCaixa, idNotaFiscal, idProduto);
+                        pecasHaMais = VerificarPecaHaMais(idLote, quantidadePorCaixa, quantidadeCaixa, idNotaFiscal, idProduto);
                     }
                 }
             }
@@ -1890,40 +1890,49 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-        private int VerificarPecaHaMais(long idLote, int quantidadePorCaixa, long idNotaFiscal, long idProduto)
+        private int VerificarPecaHaMais(long idLote, int quantidadePorCaixa, int quantidadeCaixa, long idNotaFiscal, long idProduto)
         {
+            if (quantidadePorCaixa < 0)
+            {
+                return 0;
+            }
+
             int pecasHaMais;
             //Captura os itens da nota fiscal do produto.
             var notaFiscalItem = _uow.NotaFiscalItemRepository.ObterPorItem(idNotaFiscal, idProduto);
             var conferencia = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, idProduto);
+
+            var qtdTotalPecas = quantidadePorCaixa * quantidadeCaixa;
 
             if (notaFiscalItem.Any())
             {
                 int qtdConferida = conferencia.Sum(s => s.Quantidade);
                 int quantidadePecasNota = notaFiscalItem.Sum(s => s.Quantidade);
 
-                pecasHaMais = (qtdConferida + quantidadePorCaixa) - quantidadePecasNota;
+                pecasHaMais = (qtdConferida + qtdTotalPecas) - quantidadePecasNota;
                 pecasHaMais = pecasHaMais < 0 ? 0 : pecasHaMais;
 
-                if (pecasHaMais > quantidadePorCaixa && quantidadePorCaixa > 0)
+                if (pecasHaMais > qtdTotalPecas && qtdTotalPecas > 0)
                 {
-                    pecasHaMais = quantidadePorCaixa;
+                    pecasHaMais = qtdTotalPecas;
                 }
             }
             else
             {
-                pecasHaMais = quantidadePorCaixa;
+                pecasHaMais = qtdTotalPecas;
             }
 
             return pecasHaMais;
         }
 
-        private int VerificarPecaHaMaisAposConferencia(long idLote, int quantidadePorCaixa, long idNotaFiscal, long idProduto)
+        private int VerificarPecaHaMaisAposConferencia(long idLote, int quantidadePorCaixa, int quantidadeCaixa, long idNotaFiscal, long idProduto)
         {
             int pecasHaMais;
             //Captura os itens da nota fiscal do produto.
             var notaFiscalItem = _uow.NotaFiscalItemRepository.ObterPorItem(idNotaFiscal, idProduto);
             var conferencia = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, idProduto);
+
+            var qtdTotalPecas = quantidadePorCaixa * quantidadeCaixa;
 
             if (notaFiscalItem.Any())
             {
@@ -1933,14 +1942,14 @@ namespace FWLog.Web.Backoffice.Controllers
                 pecasHaMais = qtdConferida - quantidadePecasNota;
                 pecasHaMais = pecasHaMais < 0 ? 0 : pecasHaMais;
 
-                if (pecasHaMais > quantidadePorCaixa && quantidadePorCaixa > 0)
+                if (pecasHaMais > qtdTotalPecas && qtdTotalPecas > 0)
                 {
-                    pecasHaMais = quantidadePorCaixa;
+                    pecasHaMais = qtdTotalPecas;
                 }
             }
             else
             {
-                pecasHaMais = quantidadePorCaixa;
+                pecasHaMais = qtdTotalPecas;
             }
 
             return pecasHaMais;
