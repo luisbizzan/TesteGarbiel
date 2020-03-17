@@ -230,7 +230,7 @@ namespace FWLog.Web.Api.Controllers
                     PesoTotal = detalhesVolumeInformado.PesoTotal,
                     LimitePeso = detalhesVolumeInformado.EnderecoArmazenagem.LimitePeso,
                     DataHoraInstalacao = detalhesVolumeInformado.DataHoraInstalacao,
-                    IdUsuarioInstalacao = detalhesVolumeInformado.IdUsuarioInstalacao
+                    CodigoUsuarioInstalacao = detalhesVolumeInformado.AspNetUsers.UserName
                 };
 
                 return ApiOk(response);
