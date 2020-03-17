@@ -166,14 +166,18 @@ namespace FWLog.Web.Backoffice
             var userManager = HttpContext.Current.GetOwinContext().GetUserManager<BackofficeUserManager>();
             var user = (ClaimsPrincipal)User;
             var applicationUser = userManager.FindById(User.Identity.GetUserId());
-            var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
-
-            ApplicationSession applicationSession = uow.ApplicationSessionRepository.GetById(applicationUser.IdApplicationSession.Value);
-
+            
             long idEmpresa = 0;
-            if (applicationSession != null && applicationSession.IdEmpresa.HasValue)
+            if (applicationUser != null)
             {
-                idEmpresa = applicationSession.IdEmpresa.Value;
+                var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
+
+                ApplicationSession applicationSession = uow.ApplicationSessionRepository.GetById(applicationUser.IdApplicationSession.Value);
+                
+                if (applicationSession != null && applicationSession.IdEmpresa.HasValue)
+                {
+                    idEmpresa = applicationSession.IdEmpresa.Value;
+                }
             }
 
             string userId = user.Identity.GetUserId();
