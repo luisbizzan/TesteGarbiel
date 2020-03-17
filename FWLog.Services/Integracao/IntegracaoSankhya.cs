@@ -273,7 +273,10 @@ namespace FWLog.Services.Integracao
             {
                 var erro = DeserializarXML<IntegracaoErroResposta>(resultado);
 
-                throw new BusinessException(string.Format("Ocorreu um erro na consulta da tabela {0}. Mensagem de Erro {1}", classAttr.DisplayName, erro.Mensagem));
+                byte[] erroData = Convert.FromBase64String(erro.Mensagem);
+                string decodedString = Encoding.UTF8.GetString(erroData);
+
+                throw new BusinessException(string.Format("Ocorreu um erro na consulta da tabela {0}. Mensagem de Erro {1}", classAttr.DisplayName, decodedString));
             }
 
             resultList = new List<TClass>();
@@ -347,7 +350,10 @@ namespace FWLog.Services.Integracao
             {
                 var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
 
-                throw new BusinessException(string.Format("Ocorreu um erro na confirmação da nota fiscal número único {0}. Mensagem de Erro {1}", condigoIntegracao, erro.Mensagem));
+                byte[] erroData = Convert.FromBase64String(erro.Mensagem);
+                string decodedString = Encoding.UTF8.GetString(erroData);
+
+                throw new BusinessException(string.Format("Ocorreu um erro na confirmação da nota fiscal número único {0}. Mensagem de Erro {1}", condigoIntegracao, decodedString));
             }
         }
              
@@ -379,7 +385,10 @@ namespace FWLog.Services.Integracao
             {
                 var erro = DeserializarXML<IntegracaoErroResposta>(rootXML.ToString());
 
-                throw new BusinessException(string.Format("Ocorreu um erro na chamada do serviço 'SelecaoDocumentoSP.faturar' para criação da Nota Fiscal de Devolução. Mensagem de Erro {0}", erro.Mensagem));
+                byte[] erroData = Convert.FromBase64String(erro.Mensagem);
+                string decodedString = Encoding.UTF8.GetString(erroData);
+
+                throw new BusinessException(string.Format("Ocorreu um erro na chamada do serviço 'SelecaoDocumentoSP.faturar' para criação da Nota Fiscal de Devolução. Mensagem de Erro {0}", decodedString));
             }
 
             return Convert.ToInt64(resposta.CorpoResposta.Notas.CodigoIntegracao);
