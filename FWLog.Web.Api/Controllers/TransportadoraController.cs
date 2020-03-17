@@ -16,6 +16,7 @@ namespace FWLog.Web.Api.Controllers
             _transportadoraService = transportadoraService;
         }
 
+        [AllowAnonymous]
         [Route("api/v1/transportadora/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarTransportadora()

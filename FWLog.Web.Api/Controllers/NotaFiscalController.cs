@@ -26,6 +26,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [AllowAnonymous]
         [Route("api/v1/nota-fiscal/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultaNota()
@@ -44,6 +45,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [AllowAnonymous]
         [Route("api/v1/nota-fiscal/consultar/data-vencimento")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarDataVencimento()
