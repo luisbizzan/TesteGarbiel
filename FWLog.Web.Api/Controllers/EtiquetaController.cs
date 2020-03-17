@@ -48,5 +48,37 @@ namespace FWLog.Web.Api.Controllers
                 throw;
             }
         }
+
+        [HttpPost]
+        [Route("api/v1/etiqueta/picking/imprimir")]
+        public IHttpActionResult ImprimirEtiquetaPicking(ImprimirEtiquetaPickingRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                var requisicaoServico = new ImprimirEtiquetaPickingRequest
+                {
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    IdProduto = requisicao.IdProduto,
+                    IdImpressora = requisicao.IdImpressora
+                };
+
+                _etiquetaService.ImprimirEtiquetaPicking(requisicaoServico);
+
+                return ApiOk();
+            }
+            catch (BusinessException ex)
+            {
+                return ApiInternalServerErrror("Erro na impressora", ex);
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }
