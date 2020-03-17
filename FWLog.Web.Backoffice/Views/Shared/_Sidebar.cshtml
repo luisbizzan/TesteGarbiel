@@ -20,7 +20,8 @@
         new MenuGroup("Armazenagem", "fa fa-cubes").SetItems(
             new MenuItem { Text = "Níveis de Armazenagem", Url = Url.Action("Index", "NivelArmazenagem"), RequirePermission = Permissions.NivelArmazenagem.Listar },
             new MenuItem { Text = "Pontos de Armazenagem", Url = Url.Action("Index", "PontoArmazenagem"), RequirePermission = Permissions.PontoArmazenagem.Listar },
-            new MenuItem { Text = "Endereços de Armazenagem", Url = Url.Action("Index", "EnderecoArmazenagem"), RequirePermission = Permissions.EnderecoArmazenagem.Listar }
+            new MenuItem { Text = "Endereços de Armazenagem", Url = Url.Action("Index", "EnderecoArmazenagem"), RequirePermission = Permissions.EnderecoArmazenagem.Listar },
+            new MenuItem { Text = "Listagem de Produto", Url = Url.Action("Index", "Produto"), RequirePermission = Permissions.Produto.Listar }
         ),
           new MenuGroup(text: Res.GarantiaMenuItem, icon: "fa fa-shield").SetItems(
             new MenuItem { Text = "Solicitação de Garantia", Url = Url.Action("Index", "Garantia"), RequirePermission = Permissions.Garantia.Listar },
