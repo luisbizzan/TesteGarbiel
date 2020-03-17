@@ -61,8 +61,6 @@ namespace Identity
                 {
                     throw new InvalidOperationException(result.Errors.FirstOrDefault());
                 }
-
-                
             }
 
             var permissionsBuildItens = PermissionManager.Groups.SelectMany(x => x.Permissions);

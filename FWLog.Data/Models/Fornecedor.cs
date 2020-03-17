@@ -38,7 +38,7 @@ namespace FWLog.Data.Models
         [StringLength(6)]
         public string Numero { get; set; }
 
-        [StringLength(10)]
+        [StringLength(30)]
         public string Complemento { get; set; }
 
         [StringLength(50)]

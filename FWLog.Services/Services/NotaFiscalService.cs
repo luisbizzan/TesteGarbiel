@@ -101,7 +101,7 @@ namespace FWLog.Services.Services
                     }
                     catch (Exception)
                     {
-                        throw new Exception(string.Format("Data de Vencimentoinválida (NUMNOTA: {0})", notafiscalIntegracao.CodigoIntegracao));
+                        throw new Exception(string.Format("Data de Vencimento inválida (NUMNOTA: {0})", notafiscalIntegracao.CodigoIntegracao));
                     }
 
                     bool notaNova = true;
@@ -161,8 +161,8 @@ namespace FWLog.Services.Services
                     {
                         var codProduto = Convert.ToInt64(item.CodigoIntegracaoProduto);
                         var qtdNeg = Convert.ToInt32(item.Quantidade);
-                        Produto produto = _uow.ProdutoRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codProduto);
 
+                        Produto produto = _uow.ProdutoRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codProduto);
                         if (produto == null)
                         {
                             throw new Exception(string.Format("Código da Produto (CODPROD: {0}) inválido", item.CodigoIntegracaoProduto));
