@@ -10,7 +10,7 @@ namespace FWLog.Web.Api.Models.Armazenagem
 
         public decimal? LimitePeso { get; set; }
 
-        public string IdUsuarioInstalacao { get; set; }
+        public string CodigoUsuarioInstalacao { get; set; }
 
         public DateTime DataHoraInstalacao { get; set; }
     }

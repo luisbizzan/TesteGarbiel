@@ -219,7 +219,9 @@
     <Compile Include="Models\Armazenagem\InstalarVolumeLoteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\RetirarVolumeEnderecoModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarEnderecoAjusteModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidarProdutoAjusteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarProdutoRetirarModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidateLoteAjusteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidateLoteRetirarModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarEnderecoInstalacaoModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarLoteProdutoInstalacaoModelRequisicao.cs" />
@@ -228,6 +230,7 @@
     <Compile Include="Models\EnderecoArmazenagem\EnderecosArmazenagemResposta.cs" />
     <Compile Include="Models\EnderecoArmazenagem\PesquisarEnderecoArmazenagemPorIdResposta.cs" />
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaEnderecoRequisicao.cs" />
+    <Compile Include="Models\Etiqueta\ImprimirEtiquetaPickingRequisicao.cs" />
     <Compile Include="Models\Impressora\ImpressoraResposta.cs" />
     <Compile Include="Models\Impressora\ImpressorasResposta.cs" />
     <Compile Include="Models\Lote\BuscarLotePorIdResposta.cs" />

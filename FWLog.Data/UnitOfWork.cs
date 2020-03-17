@@ -48,7 +48,6 @@ namespace FWLog.Data
         private TipoConferenciaRepository _tipoConferenciaRepository;
         private LoteConferenciaRepository _loteConferenciaRepository;
         private LogEtiquetagemRepository _loteEtiquetagemRepository;
-        private ProdutoEnderecoRepository _produtoEnderecoRepository;
         private ProdutoEstoqueRepository _produtoEstoqueRepository;
         private QuarentenaHistoricoRepository _quarentenaHistoricoRepository;
         private ImpressaoItemRepository _impressaoItemRepository;
@@ -121,11 +120,6 @@ namespace FWLog.Data
         public QuarentenaHistoricoRepository QuarentenaHistoricoRepository
         {
             get => _quarentenaHistoricoRepository ?? (_quarentenaHistoricoRepository = new QuarentenaHistoricoRepository(_context));
-        }
-
-        public ProdutoEnderecoRepository ProdutoEnderecoRepository
-        {
-            get => _produtoEnderecoRepository ?? (_produtoEnderecoRepository = new ProdutoEnderecoRepository(_context));
         }
 
         public LogEtiquetagemRepository LogEtiquetagemRepository
