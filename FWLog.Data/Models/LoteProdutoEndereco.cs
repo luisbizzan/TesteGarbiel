@@ -15,8 +15,7 @@ namespace FWLog.Data.Models
         public long IdEmpresa { get; set; }
 
         [Index]
-        [Required]
-        public long IdLote { get; set; }
+        public long? IdLote { get; set; }
 
         [Index]
         [Required]

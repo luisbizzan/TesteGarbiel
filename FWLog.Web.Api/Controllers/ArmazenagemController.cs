@@ -358,5 +358,88 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/armazenagem/ajustar")]
+        [HttpPost]
+        public async Task<IHttpActionResult> AjustarVolumeLote(AjustarVolumeLoteModelRequisicao requisicao)
+        {
+            try
+            {
+                var instalarVolumeLoteRequisicao = new AjustarVolumeLoteRequisicao
+                {
+                    IdLote = requisicao.IdLote,
+                    IdProduto = requisicao.IdProduto,
+                    Quantidade = requisicao.Quantidade,
+                    IdEmpresa = IdEmpresa,
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    IdUsuarioAjuste = IdUsuario
+                };
+
+                await _armazenagemService.AjustarVolumeLote(instalarVolumeLoteRequisicao);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/abastecer/validar-endereco")]
+        [HttpPost]
+        public IHttpActionResult ValidarEnderecoAbastecer(ValidarEnderecoAbastecerModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidarEnderecoAbastecer((requisicao?.IdEnderecoArmazenagem).GetValueOrDefault());
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/detalhes/{idEnderecoArmazenagem}")]
+        [HttpGet]
+        public IHttpActionResult ConsultaDetalhesEnderecoArmazenagem(long idEnderecoArmazenagem)
+        {
+            try
+            {
+                var detalhesEnderecoArmazenagem = _armazenagemService.ConsultaDetalhesEnderecoArmazenagem(idEnderecoArmazenagem);
+
+                var response = new ConsultaDetalhesEnderecoArmazenagemResposta
+                {
+                    IdLoteProdutoEndereco = detalhesEnderecoArmazenagem.IdLoteProdutoEndereco,
+                    IdEmpresa = detalhesEnderecoArmazenagem.IdEmpresa,
+                    IdLote = detalhesEnderecoArmazenagem.IdLote,
+                    IdProduto = detalhesEnderecoArmazenagem.IdProduto,
+                    IdEnderecoArmazenagem = detalhesEnderecoArmazenagem.IdEnderecoArmazenagem,
+                    Quantidade = detalhesEnderecoArmazenagem.Quantidade,
+                    CodigoUsuarioInstalacao = detalhesEnderecoArmazenagem.AspNetUsers.UserName,
+                    DataHoraInstalacao = detalhesEnderecoArmazenagem.DataHoraInstalacao,
+                    PesoTotal = detalhesEnderecoArmazenagem.PesoTotal
+                };
+
+                return ApiOk(response);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }
