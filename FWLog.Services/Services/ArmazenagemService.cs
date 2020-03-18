@@ -579,5 +579,42 @@ namespace FWLog.Services.Services
                 transacao.Complete();
             }
         }
+
+        public void ValidarEnderecoAbastecer(long idEnderecoArmazenagem)
+        {
+            if (idEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("O endereço deve ser informado.");
+            }
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("O endereço não foi encontrado.");
+            }
+
+            if (!enderecoArmazenagem.Ativo)
+            {
+                throw new BusinessException("O endereço não está ativo.");
+            }
+
+            if (!enderecoArmazenagem.IsPontoSeparacao)
+            {
+                throw new BusinessException("O endereço não é um ponto de separação.");
+            }
+
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+
+            if (loteProdutoEndereco == null)
+            {
+                throw new BusinessException("Nenhum volume instalado no endereço.");
+            }
+
+            if (enderecoArmazenagem.EstoqueMaximo.HasValue && loteProdutoEndereco.Quantidade >= enderecoArmazenagem.EstoqueMaximo.Value)
+            {
+                throw new BusinessException("Quantidade no endereço já atingiu o máximo permitido.");
+            }
+        }
     }
 }
