@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
+
 namespace FWLog.Web.Backoffice.Controllers
 {
     public class EnderecoArmazenagemController : BOBaseController
@@ -240,6 +241,30 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Ocorreu um erro na impressão."
                 }, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        [HttpGet]
+        public ActionResult PesquisaModal()
+        {
+            var model = new EnderecoArmazenagemPesquisaModalViewModel();
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult EnderecoArmazenagemPesquisaModalDadosLista(DataTableFilter<EnderecoArmazenagemPesquisaModalFiltroViewModel> model)
+        {
+            var filtros = Mapper.Map<DataTableFilter<EnderecoArmazenagemPesquisaModalFiltro>>(model);
+            filtros.CustomFilter.IdEmpresa = IdEmpresa;
+
+            IEnumerable<EnderecoArmazenagemPesquisaModalListaLinhaTabela> result = _unitOfWork.EnderecoArmazenagemRepository.BuscarListaModal(filtros, out int registrosFiltrados, out int totalRegistros);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
+                Data = Mapper.Map<IEnumerable<EnderecoArmazenagemPesquisaModalItemViewModel>>(result)
+            });
         }
     }
 }

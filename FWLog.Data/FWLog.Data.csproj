@@ -104,6 +104,7 @@
     <Compile Include="Models\Application.cs" />
     <Compile Include="Models\ApplicationSession.cs" />
     <Compile Include="Models\Cliente.cs" />
+    <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemPesquisaModalListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\GarantiaTableRow.cs" />
     <Compile Include="Models\DataTablesCtx\ClientePesquisaModalLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\MotivoLaudoLinhaTabela.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="Models\DataTablesCtx\ProdutoListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\QuarentenaHistoricoListRow.cs" />
     <Compile Include="Models\DataTablesCtx\TransportadoraPesquisaModalLinhaTabela.cs" />
+    <Compile Include="Models\FilterCtx\EnderecoArmazenagemPesquisaModalFiltro.cs" />
     <Compile Include="Models\FilterCtx\GarantiaFilter.cs" />
     <Compile Include="Models\FilterCtx\ClientePesquisaModalFiltro.cs" />
     <Compile Include="Models\FilterCtx\MotivoLaudoFiltro.cs" />

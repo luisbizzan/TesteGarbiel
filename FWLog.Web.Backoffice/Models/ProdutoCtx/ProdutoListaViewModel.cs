@@ -41,7 +41,9 @@ namespace FWLog.Web.Backoffice.Models.ProdutoCtx
 
     public class ProdutoListaFilterViewModel
     {
-
+        [Display(Name = "Endereco Armazenagem")]
+        public long IdEnderecoArmazenagem { get; set; }
+        public string Codigo { get; set; }
         public long IdEmpresa { get; set; }
         [Display(Name = "Referência")]
         public string Referencia { get; set; }
