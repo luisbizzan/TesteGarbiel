@@ -52,6 +52,12 @@
         ]
     });
 
+    $("#pesquisarEnderecoArmazenagem").click(function () {
+        $("#modalEnderecoArmazenagem").load(HOST_URL + "EnderecoArmazenagem/PesquisaModal", function () {
+            $("#modalEnderecoArmazenagem").modal();
+        });
+    });
+   
     dart.dataTables.loadFormFilterEvents();
 
 })();

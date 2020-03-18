@@ -57,5 +57,35 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.EnderecoArmazenagem.Where(w => w.IdPontoArmazenagem == idPontoArmazenagem).ToList();
         }
+
+        public IList<EnderecoArmazenagemPesquisaModalListaLinhaTabela> BuscarListaModal(DataTableFilter<EnderecoArmazenagemPesquisaModalFiltro> filtros, out int registrosFiltrados, out int totalRegistros)
+        {
+            totalRegistros = Entities.EnderecoArmazenagem.Count(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa);
+
+            var query = (from e in Entities.EnderecoArmazenagem
+                     where e.IdEmpresa == filtros.CustomFilter.IdEmpresa && 
+                     (filtros.CustomFilter.Codigo.Equals(string.Empty) || e.Codigo.Contains(filtros.CustomFilter.Codigo)) &&
+                     e.Ativo == true &&
+                     e.IsPontoSeparacao == true &&
+                     !(from p in Entities.ProdutoEstoque where p.IdEnderecoArmazenagem == e.IdEnderecoArmazenagem select p.IdEnderecoArmazenagem).Any()
+                     select new EnderecoArmazenagemPesquisaModalListaLinhaTabela
+                     {
+                         IdEmpresaArmazenagem = e.IdEnderecoArmazenagem,
+                         Codigo = e.Codigo,
+                         EstoqueMaximo = e.EstoqueMaximo,
+                         EstoqueMinimo = e.EstoqueMinimo,
+                         Fifo = e.IsFifo ? "Sim" : "Não",
+                         LimitePeso = e.LimitePeso
+                     });
+
+            registrosFiltrados = query.Count();
+
+            query = query
+                .OrderBy(filtros.OrderByColumn, filtros.OrderByDirection)
+                .Skip(filtros.Start)
+                .Take(filtros.Length);
+
+            return query.ToList();
+        }
     }
 }
