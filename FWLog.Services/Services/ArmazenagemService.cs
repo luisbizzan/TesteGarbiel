@@ -84,7 +84,7 @@ namespace FWLog.Services.Services
 
             if (empresa == null)
             {
-                throw new BusinessException("A emrpesa não foi encontrada.");
+                throw new BusinessException("A empresa não foi encontrada.");
             }
 
             Lote lote = _unitOfWork.LoteRepository.PesquisarPorLoteEmpresa(requisicao.IdLote, requisicao.IdEmpresa);
@@ -627,6 +627,59 @@ namespace FWLog.Services.Services
             }
 
             return loteProdutoEndereco;
+        }
+
+        public void ValidateLoteAbastecer(long idEnderecoArmazenagem, long idLote, long idProduto)
+        {
+            ValidarEnderecoAbastecer(idEnderecoArmazenagem);
+
+            if (idLote <= 0)
+            {
+                throw new BusinessException("O lote deve ser informado.");
+            }
+
+            var lote = _unitOfWork.LoteRepository.GetById(idLote);
+
+            if (lote == null)
+            {
+                throw new BusinessException("O lote não foi encontrado.");
+            }
+
+            if (idProduto <= 0)
+            {
+                throw new BusinessException("O produto deve ser informado.");
+            }
+
+            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("O produto não foi encontrado.");
+            }
+
+            var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(idLote, idProduto);
+
+            if (loteProduto == null)
+            {
+                throw new BusinessException("Não foi encontrado produto para esse lote.");
+            }
+
+            if (loteProduto.Saldo == 0)
+            {
+                throw new BusinessException("Não existem mais produtos disponíveis no lote.");
+            }
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (enderecoArmazenagem.IsFifo)
+            {
+                var loteMaisAntigo = _unitOfWork.LoteProdutoRepository.PesquisarProdutoMaisAntigoPorEmpresaESaldo(idProduto, loteProduto.IdEmpresa);
+
+                if (loteMaisAntigo.IdLote != idLote)
+                {
+                    throw new BusinessException("Endereço controla FIFO. Lote informado não é o mais antigo.");
+                }
+            }
         }
     }
 }
