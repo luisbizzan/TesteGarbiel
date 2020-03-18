@@ -49,5 +49,8 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdEnderecoArmazenagem))]
         public virtual EnderecoArmazenagem EnderecoArmazenagem { get; set; }
+
+        [ForeignKey(nameof(IdUsuarioInstalacao))]
+        public virtual AspNetUsers AspNetUsers { get; set; }
     }
 }

@@ -22,13 +22,13 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                var validarLoteRequisicao = new ValidarLoteInstalacaoRequisicao
+                var validarLoteRequisicao = new ValidarLoteRequisicao
                 {
                     IdLote = idLote,
                     IdEmpresa = IdEmpresa
                 };
 
-                _armazenagemService.ValidarLoteInstalacao(validarLoteRequisicao);
+                _armazenagemService.ValidarLote(validarLoteRequisicao);
             }
             catch (BusinessException ex)
             {
@@ -162,7 +162,7 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                _armazenagemService.ValidarEnderecoRetirar(idEndereco);
+                _armazenagemService.ValidarEndereco(idEndereco);
             }
             catch (BusinessException ex)
             {
@@ -230,7 +230,7 @@ namespace FWLog.Web.Api.Controllers
                     PesoTotal = detalhesVolumeInformado.PesoTotal,
                     LimitePeso = detalhesVolumeInformado.EnderecoArmazenagem.LimitePeso,
                     DataHoraInstalacao = detalhesVolumeInformado.DataHoraInstalacao,
-                    IdUsuarioInstalacao = detalhesVolumeInformado.IdUsuarioInstalacao
+                    CodigoUsuarioInstalacao = detalhesVolumeInformado.AspNetUsers.UserName
                 };
 
                 return ApiOk(response);
@@ -277,6 +277,125 @@ namespace FWLog.Web.Api.Controllers
                 };
 
                 _armazenagemService.ValidarEnderecoAjuste(validarEnderecoRequisicao);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/ajustar/validar-lote")]
+        [HttpPost]
+        public IHttpActionResult ValidateLoteAjustar(ValidateLoteAjusteModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidateLoteAjuste(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/ajustar/validar-produto")]
+        [HttpPost]
+        public IHttpActionResult ValidarProdutoAjustar(ValidarProdutoAjusteModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidarProdutoAjuste(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/ajustar/validar-quantidade")]
+        [HttpPost]
+        public IHttpActionResult ValidarQuantidadeAjustar(ValidarQuantidadeInstalacaoModelRequisicao requisicao)
+        {
+            try
+            {
+                var validarQuantidadeRequisicao = new ValidarQuantidadeAjusteRequisicao
+                {
+                    IdLote = requisicao.IdLote,
+                    IdProduto = requisicao.IdProduto,
+                    Quantidade = requisicao.Quantidade,
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    IdEmpresa = IdEmpresa
+                };
+
+                _armazenagemService.ValidarQuantidadeAjuste(validarQuantidadeRequisicao);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/ajustar")]
+        [HttpPost]
+        public async Task<IHttpActionResult> AjustarVolumeLote(AjustarVolumeLoteModelRequisicao requisicao)
+        {
+            try
+            {
+                var instalarVolumeLoteRequisicao = new AjustarVolumeLoteRequisicao
+                {
+                    IdLote = requisicao.IdLote,
+                    IdProduto = requisicao.IdProduto,
+                    Quantidade = requisicao.Quantidade,
+                    IdEmpresa = IdEmpresa,
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    IdUsuarioAjuste = IdUsuario
+                };
+
+                await _armazenagemService.AjustarVolumeLote(instalarVolumeLoteRequisicao);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/abastecer/validar-endereco")]
+        [HttpPost]
+        public IHttpActionResult ValidarEnderecoAbastecer(ValidarEnderecoAbastecerModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidarEnderecoAbastecer((requisicao?.IdEnderecoArmazenagem).GetValueOrDefault());
             }
             catch (BusinessException ex)
             {
