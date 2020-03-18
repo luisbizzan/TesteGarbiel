@@ -616,5 +616,17 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Quantidade no endereço já atingiu o máximo permitido.");
             }
         }
+
+        public LoteProdutoEndereco ConsultaDetalhesEnderecoArmazenagem(long idEnderecoArmazenagem)
+        {
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+
+            if (loteProdutoEndereco == null)
+            {
+                throw new BusinessException("Nenhum volume instalado no endereço.");
+            }
+
+            return loteProdutoEndereco;
+        }
     }
 }

@@ -408,5 +408,38 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/armazenagem/detalhes/{idEnderecoArmazenagem}")]
+        [HttpGet]
+        public IHttpActionResult ConsultaDetalhesEnderecoArmazenagem(long idEnderecoArmazenagem)
+        {
+            try
+            {
+                var detalhesEnderecoArmazenagem = _armazenagemService.ConsultaDetalhesEnderecoArmazenagem(idEnderecoArmazenagem);
+
+                var response = new ConsultaDetalhesEnderecoArmazenagemResposta
+                {
+                    IdLoteProdutoEndereco = detalhesEnderecoArmazenagem.IdLoteProdutoEndereco,
+                    IdEmpresa = detalhesEnderecoArmazenagem.IdEmpresa,
+                    IdLote = detalhesEnderecoArmazenagem.IdLote,
+                    IdProduto = detalhesEnderecoArmazenagem.IdProduto,
+                    IdEnderecoArmazenagem = detalhesEnderecoArmazenagem.IdEnderecoArmazenagem,
+                    Quantidade = detalhesEnderecoArmazenagem.Quantidade,
+                    IdUsuarioInstalacao = detalhesEnderecoArmazenagem.IdUsuarioInstalacao,
+                    DataHoraInstalacao = detalhesEnderecoArmazenagem.DataHoraInstalacao,
+                    PesoTotal = detalhesEnderecoArmazenagem.PesoTotal
+                };
+
+                return ApiOk(response);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }
