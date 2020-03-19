@@ -423,6 +423,7 @@ namespace FWLog.Web.Api.Controllers
                     IdEmpresa = detalhesEnderecoArmazenagem.IdEmpresa,
                     IdLote = detalhesEnderecoArmazenagem.IdLote,
                     IdProduto = detalhesEnderecoArmazenagem.IdProduto,
+                    ReferenciaProduto = detalhesEnderecoArmazenagem.Produto.Referencia,
                     IdEnderecoArmazenagem = detalhesEnderecoArmazenagem.IdEnderecoArmazenagem,
                     Quantidade = detalhesEnderecoArmazenagem.Quantidade,
                     CodigoUsuarioInstalacao = detalhesEnderecoArmazenagem.AspNetUsers.UserName,
@@ -440,6 +441,70 @@ namespace FWLog.Web.Api.Controllers
             {
                 throw;
             }
+        }
+
+        [Route("api/v1/armazenagem/abastecer/validar-lote")]
+        [HttpPost]
+        public IHttpActionResult ValidateLoteAbastecer(ValidateLoteAbastecerModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidarLoteAbastecer(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/abastecer/validar-quantidade")]
+        [HttpPost]
+        public IHttpActionResult ValidarQuantidadeAbastecer(ValidarQuantidadeeAbastecerModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidarQuantidadeAbastecer(requisicao?.IdEnderecoArmazenagem ?? 0,
+                                                                requisicao?.IdLote ?? 0,
+                                                                requisicao?.IdProduto ?? 0,
+                                                                requisicao?.Quantidade ?? 0);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/abastecer")]
+        [HttpPost]
+        public async Task<IHttpActionResult> AbastecerPicking(AbastecerPickingModelRequisicao requisicao)
+        {
+            try
+            {
+                await _armazenagemService.AbastecerPicking(requisicao?.IdEnderecoArmazenagem ?? 0,
+                                                                requisicao?.IdLote ?? 0,
+                                                                requisicao?.IdProduto ?? 0,
+                                                                requisicao?.Quantidade ?? 0,
+                                                                IdEmpresa,
+                                                                IdUsuario);
+            }
+            catch (BusinessException exception)
+            {
+                return ApiBadRequest(exception.Message);
+            }
+
+            return ApiOk();
         }
     }
 }

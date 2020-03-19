@@ -224,6 +224,9 @@
     <Compile Include="Models\Armazenagem\ValidarEnderecoAjusteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarProdutoAjusteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarProdutoRetirarModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\AbastecerPickingModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidarQuantidadeeAbastecerModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidateLoteAbastecerModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidateLoteAjusteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidateLoteRetirarModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarEnderecoInstalacaoModelRequisicao.cs" />

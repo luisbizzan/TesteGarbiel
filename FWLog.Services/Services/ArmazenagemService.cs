@@ -84,7 +84,7 @@ namespace FWLog.Services.Services
 
             if (empresa == null)
             {
-                throw new BusinessException("A emrpesa não foi encontrada.");
+                throw new BusinessException("A empresa não foi encontrada.");
             }
 
             Lote lote = _unitOfWork.LoteRepository.PesquisarPorLoteEmpresa(requisicao.IdLote, requisicao.IdEmpresa);
@@ -627,6 +627,135 @@ namespace FWLog.Services.Services
             }
 
             return loteProdutoEndereco;
+        }
+
+        public void ValidarLoteAbastecer(long idEnderecoArmazenagem, long idLote, long idProduto)
+        {
+            ValidarEnderecoAbastecer(idEnderecoArmazenagem);
+
+            if (idLote <= 0)
+            {
+                throw new BusinessException("O lote deve ser informado.");
+            }
+
+            var lote = _unitOfWork.LoteRepository.GetById(idLote);
+
+            if (lote == null)
+            {
+                throw new BusinessException("O lote não foi encontrado.");
+            }
+
+            if (idProduto <= 0)
+            {
+                throw new BusinessException("O produto deve ser informado.");
+            }
+
+            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("O produto não foi encontrado.");
+            }
+
+            var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(idLote, idProduto);
+
+            if (loteProduto == null)
+            {
+                throw new BusinessException("Não foi encontrado produto para esse lote.");
+            }
+
+            if (loteProduto.Saldo == 0)
+            {
+                throw new BusinessException("Não existem mais produtos disponíveis no lote.");
+            }
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (enderecoArmazenagem.IsFifo)
+            {
+                var loteMaisAntigo = _unitOfWork.LoteProdutoRepository.PesquisarProdutoMaisAntigoPorEmpresaESaldo(idProduto, loteProduto.IdEmpresa);
+
+                if (loteMaisAntigo.IdLote != idLote)
+                {
+                    throw new BusinessException("Endereço controla FIFO. Lote informado não é o mais antigo.");
+                }
+            }
+        }
+
+        public void ValidarQuantidadeAbastecer(long idEnderecoArmazenagem, long idLote, long idProduto, int quantidade)
+        {
+            ValidarEnderecoAbastecer(idEnderecoArmazenagem);
+
+            ValidarLoteAbastecer(idEnderecoArmazenagem, idLote, idProduto);
+
+            if (quantidade <= 0)
+            {
+                throw new BusinessException("Quantidade deve ser maior que zero.");
+            }
+
+            var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(idLote, idProduto);
+
+            if (quantidade > loteProduto.Saldo)
+            {
+                throw new BusinessException("Quantidade deve ser menor que o saldo disponível.");
+            }
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (enderecoArmazenagem.EstoqueMaximo.HasValue)
+            {
+                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+
+                var quantidadeAposAbastecer = quantidade + loteProdutoEndereco.Quantidade;
+
+                if (quantidadeAposAbastecer > enderecoArmazenagem.EstoqueMaximo)
+                {
+                    throw new BusinessException("Quantidade informada e instalada devem ser menores que o estoque máximo do endereço.");
+                }
+            }
+        }
+
+        public async Task AbastecerPicking(long idEnderecoArmazenagem, long idLote, long idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
+        {
+            ValidarEnderecoAbastecer(idEnderecoArmazenagem);
+
+            ValidarLoteAbastecer(idEnderecoArmazenagem, idLote, idProduto);
+
+            ValidarQuantidadeAbastecer(idEnderecoArmazenagem, idLote, idProduto, quantidade);
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(idLote, idProduto);
+
+                loteProduto.Saldo -= quantidade;
+
+                _unitOfWork.LoteProdutoRepository.Update(loteProduto);
+                await _unitOfWork.SaveChangesAsync();
+
+                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+
+                loteProdutoEndereco.Quantidade += quantidade;
+
+                _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
+                await _unitOfWork.SaveChangesAsync();
+
+                var loteMovimentacao = new LoteMovimentacao
+                {
+                    IdEmpresa = idEmpresa,
+                    IdLote = idLote,
+                    IdProduto = idProduto,
+                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = idUsuarioOperacao,
+                    Quantidade = quantidade,
+                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Abastecimento,
+                    DataHora = DateTime.Now
+                };
+
+                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                await _unitOfWork.SaveChangesAsync();
+
+                transacao.Complete();
+            }
         }
     }
 }
