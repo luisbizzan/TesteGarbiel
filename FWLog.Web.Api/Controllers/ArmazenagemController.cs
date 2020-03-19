@@ -441,5 +441,25 @@ namespace FWLog.Web.Api.Controllers
                 throw;
             }
         }
+
+        [Route("api/v1/armazenagem/abastecer/validar-lote")]
+        [HttpPost]
+        public IHttpActionResult ValidateLoteAbastecer(ValidateLoteAbastecerModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidateLoteAbastecer(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
     }
 }
