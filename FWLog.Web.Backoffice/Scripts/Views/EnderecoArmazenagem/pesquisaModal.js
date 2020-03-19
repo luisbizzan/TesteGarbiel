@@ -35,6 +35,7 @@
     });
 
     function selecionarEnderecoArmazenagem_Click() {
+        debugger
         selecionarEnderecoArmazenagem($(this).attr('data-select'), $(this).attr("name-select"));
     }
 

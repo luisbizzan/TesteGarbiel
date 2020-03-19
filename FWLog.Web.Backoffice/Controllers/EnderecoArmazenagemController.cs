@@ -244,9 +244,12 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult PesquisaModal()
+        public ActionResult PesquisaModal(long? id)
         {
             var model = new EnderecoArmazenagemPesquisaModalViewModel();
+
+            model.Filtros.IdPontoArmazenagem = id;
+
             return View(model);
         }
 

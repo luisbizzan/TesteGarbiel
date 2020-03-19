@@ -28,6 +28,7 @@
                         <div class="col-xs-12 col-sm-5 form-group">
                             @Html.LabelFor(m => m.Filtros.Codigo)
                             @Html.TextBoxFor(m => m.Filtros.Codigo, new { @class = "form-control", data_field = "Codigo" })
+                            @Html.HiddenFor(m => m.Filtros.IdPontoArmazenagem, new { data_field = "IdPontoArmazenagem" })
                         </div>
                     </div>
                     <div class="row">

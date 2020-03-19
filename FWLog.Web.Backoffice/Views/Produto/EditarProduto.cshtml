@@ -1,0 +1,69 @@
+﻿@model FWLog.Web.Backoffice.Models.ProdutoCtx.ProdutoEditarViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript()
+}
+
+@using (Html.BeginForm("EditarProduto"))
+{
+    @Html.HiddenFor(x => x.IdProduto)
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Editar Produto Estoque</h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="row">
+                <div class="form-group col-sm-4 col-xs-12">
+                    @Html.LabelFor(m => m.IdNivelArmazenagem, new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.DescricaoNivelArmazenagem, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.IdNivelArmazenagem, new { data_field = "IdNivelArmazenagem" })
+                    @Html.ValidationMessageFor(m => m.IdNivelArmazenagem)
+                </div>
+                <div class="form-group col-sm-4 col-xs-12">
+                    @Html.LabelFor(m => m.IdPontoArmazenagem, new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.DescricaoPontoArmazenagem, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.IdPontoArmazenagem, new { data_field = "IdPontoArmazenagem" })
+                    @Html.ValidationMessageFor(m => m.IdNivelArmazenagem)
+                </div>
+                <div class="form-group col-sm-4 col-xs-12">
+                    @Html.LabelFor(m => m.IdEnderecoArmazenagem, new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.CodigoEnderecoArmazenagem, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarEnderecoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparEnderecoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.IdEnderecoArmazenagem, new { data_field = "IdEnderecoArmazenagem" })
+                    @Html.ValidationMessageFor(m => m.IdEnderecoArmazenagem)
+                </div>
+            </div>
+            <div class="ln_solid"></div>
+            <div class="row col-xs-12 form-buttons">
+                <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </div>
+    </div>
+}
+<div class="modal" id="modalPesquisaNivelArmazenagem"></div>
+<div class="modal" id="modalPesquisaEnderecoArmazenagem"></div>
+<div class="modal" id="modalPesquisaPontoArmazenagem"></div>
+
+

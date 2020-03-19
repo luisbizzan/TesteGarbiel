@@ -2,22 +2,21 @@
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
+            //{
+            //    text: "Detalhes",
+            //    icon: 'fa fa-eye',
+            //    action: 'details',
+            //    href: view.detalhesProdutoUrl + '/' + full.IdProduto,
+            //    visible: view.detalhesVisivel
+            //},
             {
-                text: "Detalhes",
-                attrs: { 'data-id': full.IdNotaFiscal, 'action': 'detailsUrl' },
-                icon: 'fa fa-eye',
-                visible: view.detailsVisible
-            },
-            {
-                text: "Editar",
-                attrs: { 'data-id': full.IdMotivoLaudo, 'action': 'editarMotivoLaudo' },
-                icon: 'fa fa-edit',
-                visible: view.editVisible
+                text: "Inserir/Editar",
+                action: 'edit',
+                href: view.editarProdutoUrl + '/' + full.IdProduto,
+                visible: view.edicaoEInsercaoVisivel
             },
         ];
     });
-
-    $("#dataTable").on('click', "[action='editarMotivoLaudo']", editarMotivoLaudo);
 
     $('#dataTable').DataTable({
         ajax: {
@@ -27,15 +26,15 @@
                 dart.dataTables.saveFilterToData(data);
             }
         },
-        initComplete: function (settings, json) {
-            dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
-        },
-        stateSaveParams: function (settings, data) {
-            dart.dataTables.saveFilterToData(data);
-        },
-        stateLoadParams: function (settings, data) {
-            dart.dataTables.loadFilterFromData(data);
-        },
+        //initComplete: function (settings, json) {
+        //    dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
+        //},
+        //stateSaveParams: function (settings, data) {
+        //    dart.dataTables.saveFilterToData(data);
+        //},
+        //stateLoadParams: function (settings, data) {
+        //    dart.dataTables.loadFilterFromData(data);
+        //},
         order: [[1, "desc"]],
         columns: [
             { data: 'Referencia', },

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Web.Backoffice.Helpers;
@@ -97,6 +98,32 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsFiltered = _registrosFiltrados,
                 Data = Mapper.Map<IEnumerable<ProdutoSearchModalItemViewModel>>(result)
             });
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Produto.Editar)]
+        public ActionResult EditarProduto(long id)
+        {
+            ProdutoEstoque produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(id, IdEmpresa);
+
+            var viewModel = new ProdutoEditarViewModel
+            {
+                IdProduto = produtoEstoque.IdProduto
+            };
+
+            if (produtoEstoque.IdEnderecoArmazenagem != null)
+            {
+                EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(produtoEstoque.IdEnderecoArmazenagem.Value);
+               
+                viewModel.IdEnderecoArmazenagem = enderecoArmazenagem.IdEnderecoArmazenagem;
+                viewModel.CodigoEnderecoArmazenagem = enderecoArmazenagem.Codigo;
+                viewModel.IdNivelArmazenagem = enderecoArmazenagem.IdNivelArmazenagem;
+                viewModel.DescricaoNivelArmazenagem = enderecoArmazenagem.NivelArmazenagem.Descricao;
+                viewModel.IdPontoArmazenagem = enderecoArmazenagem.IdPontoArmazenagem;
+                viewModel.DescricaoPontoArmazenagem = enderecoArmazenagem.PontoArmazenagem.Descricao;
+            }
+
+            return View(viewModel);
         }
     }
 }

@@ -340,6 +340,7 @@
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemEditarViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemPesquisaModalViewModel.cs" />
+    <Compile Include="Models\ProdutoCtx\ProdutoEditarViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoListaViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoSearchModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\RecebimentoEtiquetaViewModel.cs" />
@@ -526,6 +527,7 @@
     <Content Include="Scripts\Views\PontoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\index.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\pesquisaModal.js" />
+    <Content Include="Scripts\Views\Produto\editarProduto.js" />
     <Content Include="Scripts\Views\Produto\index.js" />
     <Content Include="Scripts\Views\Produto\searchModal.js" />
     <Content Include="Scripts\Views\RecebimentoEtiquetaIndividualPersonalizada\index.js" />
@@ -599,6 +601,7 @@
     <Content Include="Views\Garantia\EntradaConferenciaGarantia.cshtml" />
     <Content Include="Views\Produto\Index.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\PesquisaModal.cshtml" />
+    <Content Include="Views\Produto\EditarProduto.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

@@ -10,10 +10,10 @@
     @BundleHelper.RenderViewScript(
         new
         {
-            detailsUrl = Url.Action("DetalhesEntradaConferencia"),
-            detailsVisible = User.HasPermission(Permissions.Produto.Listar),
-            editVisible = User.HasPermission(Permissions.Produto.Editar),
-            editarMotivoLaudo = Url.Action("ExibirModalMotivoLaudo"),
+            detalhesProdutoUrl = Url.Action("DetalhesProduto"),
+            detalhesVisivel = User.HasPermission(Permissions.Produto.Listar),
+            edicaoEInsercaoVisivel = User.HasPermission(Permissions.Produto.Editar),
+            editarProdutoUrl = Url.Action("EditarProduto"),
             pageDataUrl = Url.Action("PageData")
         }
     )
@@ -29,7 +29,7 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                @Html.HiddenFor(m => m.Itens.IdProduto, new { data_field = "IdNotaFiscal" })
+                @Html.HiddenFor(m => m.Itens.IdProduto, new { data_field = "IdProduto" })
                 <div class="col-xs-12 col-md-2 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filtros.Referencia)
                     @Html.TextBoxFor(m => m.Filtros.Referencia, new { @class = "form-control onlyNumber", data_field = "Referencia" })
