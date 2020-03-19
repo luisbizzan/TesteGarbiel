@@ -423,6 +423,7 @@ namespace FWLog.Web.Api.Controllers
                     IdEmpresa = detalhesEnderecoArmazenagem.IdEmpresa,
                     IdLote = detalhesEnderecoArmazenagem.IdLote,
                     IdProduto = detalhesEnderecoArmazenagem.IdProduto,
+                    ReferenciaProduto = detalhesEnderecoArmazenagem.Produto.Referencia,
                     IdEnderecoArmazenagem = detalhesEnderecoArmazenagem.IdEnderecoArmazenagem,
                     Quantidade = detalhesEnderecoArmazenagem.Quantidade,
                     CodigoUsuarioInstalacao = detalhesEnderecoArmazenagem.AspNetUsers.UserName,
