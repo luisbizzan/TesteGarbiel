@@ -714,5 +714,48 @@ namespace FWLog.Services.Services
                 }
             }
         }
+
+        public async Task AbastecerPicking(long idEnderecoArmazenagem, long idLote, long idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
+        {
+            ValidarEnderecoAbastecer(idEnderecoArmazenagem);
+
+            ValidarLoteAbastecer(idEnderecoArmazenagem, idLote, idProduto);
+
+            ValidarQuantidadeAbastecer(idEnderecoArmazenagem, idLote, idProduto, quantidade);
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(idLote, idProduto);
+
+                loteProduto.Saldo -= quantidade;
+
+                _unitOfWork.LoteProdutoRepository.Update(loteProduto);
+                await _unitOfWork.SaveChangesAsync();
+
+                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+
+                loteProdutoEndereco.Quantidade += quantidade;
+
+                _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
+                await _unitOfWork.SaveChangesAsync();
+
+                var loteMovimentacao = new LoteMovimentacao
+                {
+                    IdEmpresa = idEmpresa,
+                    IdLote = idLote,
+                    IdProduto = idProduto,
+                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = idUsuarioOperacao,
+                    Quantidade = quantidade,
+                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Abastecimento,
+                    DataHora = DateTime.Now
+                };
+
+                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                await _unitOfWork.SaveChangesAsync();
+
+                transacao.Complete();
+            }
+        }
     }
 }

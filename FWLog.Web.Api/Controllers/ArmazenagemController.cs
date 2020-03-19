@@ -484,5 +484,26 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/armazenagem/abastecer")]
+        [HttpPost]
+        public async Task<IHttpActionResult> AbastecerPicking(AbastecerPickingModelRequisicao requisicao)
+        {
+            try
+            {
+                await _armazenagemService.AbastecerPicking(requisicao?.IdEnderecoArmazenagem ?? 0,
+                                                                requisicao?.IdLote ?? 0,
+                                                                requisicao?.IdProduto ?? 0,
+                                                                requisicao?.Quantidade ?? 0,
+                                                                IdEmpresa,
+                                                                IdUsuario);
+            }
+            catch (BusinessException exception)
+            {
+                return ApiBadRequest(exception.Message);
+            }
+
+            return ApiOk();
+        }
     }
 }
