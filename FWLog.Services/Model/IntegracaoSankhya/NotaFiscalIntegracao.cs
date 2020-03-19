@@ -15,7 +15,12 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string Numero { get; set; } 
 
         [TabelaIntegracao(DisplayName = "TGFCAB.SERIENOTA")]
-        public string Serie { get; set; } 
+        public string Serie { get; set; }
+
+
+        [TabelaIntegracao(DisplayName = "TGFITE.AD_QTDDEV")]
+        public string QuantidadeDevolucao { get; set; }
+
 
         [TabelaIntegracao(DisplayName = "TGFCAB.CODEMP")]
         [Required]
@@ -115,6 +120,13 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     {
         [TabelaIntegracao(DisplayName = "TGFCAB.NUNOTA")]
         public string CodigoIntegracao { get; set; }
+    }
+
+    [TabelaIntegracao(DisplayName = "TGFFIN")]
+    public class NotaFiscalDataVencimentoIntegracao
+    {
+        [TabelaIntegracao(DisplayName = "DTVENC")]
+        public string DataVencimento { get; set; }
     }
 }
 

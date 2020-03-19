@@ -6,7 +6,6 @@
     });
 
     var getLanguageUrl = function (culture) {
-        debugger
         return view.logOnUrl + "?l=" + encodeURIComponent(culture);
     };
 

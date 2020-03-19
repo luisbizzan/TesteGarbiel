@@ -15,8 +15,9 @@ namespace FWLog.Services.Services
     public class EmpresaService : BaseService
     {
         private UnitOfWork _unitOfWork;
+        private readonly IntegracaoLogService _integracaoLogService;
 
-        public EmpresaService(UnitOfWork uow)
+        public EmpresaService(UnitOfWork uow, IntegracaoLogService _integracaoLogService)
         {
             _unitOfWork = uow;
         }
@@ -37,15 +38,14 @@ namespace FWLog.Services.Services
 
             StringBuilder where = new StringBuilder();
             inner.Append(" WHERE TSIEMP.AD_FILIAL IS NOT NULL ");
-            inner.Append("AND TSIEMP.AD_NOMEFILIAL IS NOT NULL ");
+            inner.Append("AND TSIEMP.NOMEFANTASIA IS NOT NULL ");
             inner.Append("AND TSIEMP.AD_INTEGRARFWLOG = '1' ");
             inner.Append("AND TGFEMP.AD_FONE_SAC IS NOT NULL ");
-            inner.Append("AND TSIEMP.AD_FILIAL IS NOT NULL ");
-            inner.Append("AND TSIEMP.AD_NOMEFILIAL IS NOT NULL ");
             inner.Append("ORDER BY TSIEMP.CODEMP ASC ");
+			
+			List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString());
 
-            List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString());
-            empresasIntegracao = empresasIntegracao.OrderBy("CodigoIntegracao", "ASC").ToList();
+			empresasIntegracao = empresasIntegracao.OrderBy("CodigoIntegracao", "ASC").ToList();
 
             foreach (var empInt in empresasIntegracao)
             {
@@ -84,10 +84,6 @@ namespace FWLog.Services.Services
                     empresaConfig.Empresa.TelefoneSAC = empInt.TelefoneSAC;
                     empresaConfig.IdEmpresaTipo = empInt.EmpresaMatriz == empInt.CodigoIntegracao ? EmpresaTipoEnum.Matriz : EmpresaTipoEnum.Filial;
 
-                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODEMP", codEmp.ToString() } };
-
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", campoChave, "AD_INTEGRARFWLOG", '0');
-
                     if (empresaNova)
                     {
                         _unitOfWork.EmpresaConfigRepository.Add(empresaConfig);
@@ -99,6 +95,7 @@ namespace FWLog.Services.Services
                     }
 
                     _unitOfWork.SaveChanges();
+
 
                     if (!string.IsNullOrEmpty(empInt.EmpresaMatriz) && !empInt.EmpresaMatriz.Equals(codEmp.ToString()))
                     {

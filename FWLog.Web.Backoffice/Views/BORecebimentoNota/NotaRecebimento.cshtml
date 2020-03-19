@@ -1,0 +1,55 @@
+﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.BONotaRecebimentoViewModel
+@{
+    Layout = null;
+
+    @BundleHelper.RenderViewScriptModal()
+}
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"> 
+                <span aria-hidden="true">×</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Registro de Nota Fiscal</h4>
+        </div>
+        <div class="modal-body">
+            <div class="x_panel">
+                <div class="x_content">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-lg-6">
+                            <div class="form-group">
+                                @Html.Label("Chave Acesso")
+                                @Html.TextBoxFor(m => m.ChaveAcesso, new { @class = "form-control onlyNumber" , maxlength = 44})
+                                @Html.ValidationMessageFor(m => m.ChaveAcesso)
+                            </div>
+                            <span class="text-danger validacaoChaveAcesso"></span>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-lg-6 form-group">
+                            @Html.Label("Fornecedor")
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.NomeFornecedor, null, new { @class = "form-control", @readonly = "true" })
+                                <span class="input-group-btn">
+                                    <a id="pesquisarFornecedorModal" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                                    <a id="limparFornecedorNotaRecebimento" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                                </span>
+                            </div>
+                            @Html.HiddenFor(m => m.IdFornecedor, new { data_field = "IdFornecedorNotaRecebimento" })
+                        </div>
+                        <div id="NotaRecebimentoDetalhes">
+                            @Html.Partial("NotaRecebimentoDetalhes", Model)
+                        </div>
+                    </div>
+                    <div class="row navbar-right">
+                        <div class="col-sm-12 col-lg-12">
+                            <span class="text-danger validacaoConfirmar"></span>
+                            <button type="button" id="RegistrarNotaRecebimento" class="btn btn-primary"><i class="fa fa-fw fa-floppy-o"></i> Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modalFornecedorNotaRecebimento" data-toggle="modal" data-myvalue="2"></div>

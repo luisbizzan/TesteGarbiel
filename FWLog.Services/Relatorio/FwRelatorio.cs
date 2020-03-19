@@ -177,7 +177,7 @@ namespace FWLog.Services.Relatorio
             data.AddFormattedText(string.Concat("Data: ", _dataSource.DataCriacao.ToString("dd/MM/yyyy HH:mm"), Environment.NewLine, _dataSource.NomeEmpresa), new Font("Verdana", 8));
 
             var name = rowHeader.Cells[1].AddParagraph();
-            name.AddFormattedText(_dataSource.NomeUsuario, new Font("Verdana", 8));
+            //name.AddFormattedText(_dataSource., new Font("Verdana", 8));
 
             Paragraph cabecalhoHr = header.AddParagraph();
             cabecalhoHr.Format.Borders.Bottom = new Border

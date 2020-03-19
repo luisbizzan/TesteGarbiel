@@ -1,6 +1,5 @@
 ﻿(function () {
     $('.onlyNumber').mask('0#');
-
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
             {
@@ -13,7 +12,7 @@
                 text: "Emitir Termo de Responsabilidade",
                 attrs: { 'data-id': full.IdQuarentena, 'action': 'termoResponsabilidade' },
                 icon: 'fa fa-file-text',
-                visible: full.IdQuarentenaStatus === 1 || full.IdQuarentenaStatus === 2 ? true : false
+                visible: (full.IdQuarentenaStatus === 1 || full.IdQuarentenaStatus === 2) ? true : false
             },
             {
                 text: "Histórico da Quarentena",

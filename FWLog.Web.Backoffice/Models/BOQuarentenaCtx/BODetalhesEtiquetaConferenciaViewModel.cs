@@ -15,7 +15,7 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
         [Display(Name = "Lote")]
         public string Lote { get; set; }
 
-        [Display(Name = "Status")]
+        [Display(Name = "Status Lote")]
         public string LoteStatus { get; set; }
 
         [Display(Name = "Data de Abertura")]
@@ -24,7 +24,7 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
         [Display(Name = "Data de Encerramento")]
         public string DataEncerramento { get; set; }
 
-        [Display(Name = "Status")]
+        [Display(Name = "Status Quarentena")]
         public QuarentenaStatusEnum IdStatus { get; set; }
 
         [Display(Name = "Observação")]
@@ -32,7 +32,10 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
 
         [Display(Name = "Código Termo Responsabilidade")]
         public string CodigoConfirmacao { get; set; }
-        
+
+        [Display(Name = "Chave de Acesso")]
+        public string ChaveAcesso { get; set; }
+
         [Display(Name = "Observação")]
         public string ObservacaoDivergencia { get; set; }
 
@@ -58,6 +61,9 @@ namespace FWLog.Web.Backoffice.Models.BOQuarentenaCtx
 
         [Display(Name = "Qtd. Nota Fiscal")]
         public int QuantidadeNotaFiscal { get; set; }
+
+        [Display(Name = "Qtde. Devolução")]
+        public int? QuantidadeDevolucao { get; set; }
 
         [Display(Name = "Qtd. Conferência")]
         public int QuantidadeConferencia { get; set; }

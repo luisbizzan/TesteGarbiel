@@ -5,12 +5,13 @@ namespace FWLog.Data.Models
 {
     public enum TipoEtiquetagemEnum
     {
-        Individual    = 1,
-        Personalizada = 2,
-        Lote          = 3,
-        Avulso        = 4,
-        Devolucao     = 5,
-        Recebimento   = 6
+        Individual         = 1,
+        Personalizada      = 2,
+        Lote               = 3,
+        Avulso             = 4,
+        Devolucao          = 5,
+        Recebimento        = 6,
+        RecebimentoSemNota = 7
     }
 
     public class TipoEtiquetagem

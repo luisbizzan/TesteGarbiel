@@ -9,6 +9,7 @@
         new MenuItem { Text = Res.HomeMenuItem, Icon = "fa fa-home", Url = Url.Action("Index", "BOHome") },
         new MenuGroup(Res.MenuRecebimento, "fa fa-truck").SetItems(
             new MenuItem { Text = Res.MenuRecebimentoNotas, Url = Url.Action("Index", "BORecebimentoNota"), RequirePermission = Permissions.Recebimento.List },
+            new MenuItem { Text = "Mercadorias sem Nota" , Url = Url.Action("NotaRecebimentoList", "BORecebimentoNota"), RequirePermission = Permissions.Recebimento.List },
             new MenuItem { Text = Res.MenuRecebimentoQuarentena, Url = Url.Action("Index", "BOQuarentena"), RequirePermission = Permissions.RecebimentoQuarentena.Listar },
             new MenuItem { Text = "Etiqueta - Lote", Url = Url.Action("Lote", "Etiqueta"), RequirePermission = Permissions.Recebimento.ImprimirEtiquetaLote },
             new MenuItem { Text = "Etiqueta - Recebimento", Url = Url.Action("Recebimento", "Etiqueta"), RequirePermission = Permissions.Recebimento.ImprimirEtiquetaLote },

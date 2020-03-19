@@ -18,6 +18,7 @@
     let $tipoConferencia = $("#TipoConferencia");
     let $validarAcessoCoordenador = $("#validarAcessoCoordenador");
     let $validarAcessoCoordenadorTipoConferencia = $("#validarAcessoCoordenadorTipoConferencia");
+    let $descricaoReferencia = $("#DescricaoReferencia");
 
     $('.onlyNumber').mask('0#');
 
@@ -79,7 +80,7 @@
                         PNotify.warning({ text: 'Referência inválida, não corresponde à referência iniciada!' });
                     } else {
                         //Altera a cor de fundo do campo para dar um destaque.
-                        setTimeout(alterarBackgroundInput, 400);
+                        setTimeout(alterarBackgroundInput, 100);
 
                         //Captura o valor da quantidade por Caixa.
                         var contador = Number($quantidadePorCaixa.val()) + (iQuatity * multiplo);
@@ -182,7 +183,7 @@
                         $("#msgEnviarPicking").removeClass("hidden");
                     }
 
-                    if (result.Message != "") {
+                    if (result.Message != "" && result.Message != null) {
                         PNotify.warning({ text: result.Message });
                     }
 
@@ -264,7 +265,7 @@
 
     function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia) {
         overlay(true);
-        
+
         if (quantidadePorCaixa === '')
             quantidadePorCaixa = 0;
 
@@ -285,7 +286,7 @@
                 multiplo: multiplo,
                 idTipoConferencia: idTipoConferencia
             },
-            success: function (result) {               
+            success: function (result) {
                 if (result.Success) {
                     permiteRegistrar = false;
 
@@ -306,6 +307,9 @@
 
                     overlay(false);
                 }
+            },
+            error: function (request, status, error) {
+                PNotify.error({ text: request.Message });
             }
         });
     }
@@ -345,7 +349,7 @@
         if (e.keyCode == 9) {
             if (!e.target.value) {
             } else {
-                $referencia.focus();
+                $confirmarConferencia.focus();
             }
 
             return false;
@@ -410,12 +414,13 @@
                     return;
                 else {
                     $('#modalRegistrarConferencia').modal('show');
+                    var total = $quantidadePorCaixa.val() * $quantidadeCaixa.val();
 
-                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, a etiqueta de volume será impressas.');
+                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + total + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
 
                     $('#MensagemPecasHaMais').text('');
                     if (qtdePecasHaMais > 0)
-                        $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+. A etiqueta PC A+ será impressa.');
+                        $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+. As etiquetas de PC A serão impressas.');
                 }
             });
         }
@@ -458,14 +463,14 @@
                     $("#Usuario").val('');
                     $("#Senha").val('');
 
-                    $referencia.focus();
+                    $("#Referencia").focus();
                 }
                 else {
                     PNotify.warning({ text: result.Message });
                 }
             },
             error: function (request, status, error) {
-                PNotify.warning({ text: result.Message });
+                PNotify.error({ text: request.Message });
             }
         });
     }
@@ -505,7 +510,7 @@
                 }
             },
             error: function (request, status, error) {
-                PNotify.warning({ text: result.Message });
+                PNotify.error({ text: request.Message });
             }
         });
     }
@@ -523,25 +528,26 @@
                             //Se o tipo da conferência é 100%.
                             //Caso seja, solicita confirmação do usuário. 
                             //Caso contrário, chama o método para validar o múltiplo da conferência e posteriormente o registro da conferência.
-                            if ($tipoConferencia.text() != "Por Quantidade") {
-                                $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {
-                                    if (!qtdePecasHaMais)
-                                        return;
-                                    else {
-                                        $('#modalRegistrarConferencia').modal('show');
-
-                                        $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + $quantidadePorCaixa.val() + '? É importante saber que após a confirmação, as etiquetas de volume e PC A+ serão impressas.');
-
-                                        $('#MensagemPecasHaMais').text('');
-                                        if (qtdePecasHaMais > 0) {
-                                            $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+.');
-                                        }
+                            $.when(consultarPecasHaMaisConferencia()).then(function (qtdePecasHaMais) {
+                                if (!qtdePecasHaMais)
+                                    return;
+                                else {
+                                    $('#MensagemPecasHaMais').text('');
+                                    if (qtdePecasHaMais > 0) {
+                                        $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+. A etiqueta de PC A+ será impressa.');
                                     }
-                                });
-                            }
-                            else {
-                                validarDiferencaMultiploConferencia();
-                            }
+                                }
+
+                                if ($tipoConferencia.text() != "Por Quantidade" || ($tipoConferencia.text() == "Por Quantidade" && qtdePecasHaMais > 0 && $quantidadeCaixa > 0)) {
+                                    $('#modalRegistrarConferencia').modal('show');
+
+                                    var total = $quantidadePorCaixa.val() * $quantidadeCaixa.val();
+                                    $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + total + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
+                                }
+                                else {
+                                    validarDiferencaMultiploConferencia();
+                                }
+                            });
 
                             break;
                         }
@@ -652,6 +658,7 @@ function resetarCamposConferencia(limpaReferencia = true) {
 function consultarPecasHaMaisConferencia() {
     let referencia = $("#Referencia").val();
     let quantidadePorCaixa = $("#QuantidadePorCaixa").val() || 0;
+    let quantidadeCaixa = $("#QuantidadeCaixa").val() || 0;
     let idLote = $("#IdLote").val();
     let retorno = 0;
 
@@ -664,7 +671,8 @@ function consultarPecasHaMaisConferencia() {
         data: {
             codigoBarrasOuReferencia: referencia,
             idLote: idLote,
-            quantidadePorCaixa: quantidadePorCaixa
+            quantidadePorCaixa: quantidadePorCaixa,
+            quantidadeCaixa: quantidadeCaixa
         },
         success: function (result) {
             if (result.Success) {
@@ -676,7 +684,7 @@ function consultarPecasHaMaisConferencia() {
             }
         },
         error: function (request, status, error) {
-            PNotify.warning({ text: result.Message });
+            PNotify.error({ text: request.Message });
         }
     });
 

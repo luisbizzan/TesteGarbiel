@@ -134,6 +134,8 @@
     <Compile Include="Models\LoteProdutoEndereco.cs" />
     <Compile Include="Models\LoteProduto.cs" />
     <Compile Include="Models\MotivoLaudo.cs" />
+    <Compile Include="Models\IntegracaoLog.cs" />
+    <Compile Include="Models\NotaFiscalRecebimento.cs" />
     <Compile Include="Models\PerfilImpressora.cs" />
     <Compile Include="Models\PerfilImpressoraItem.cs" />
     <Compile Include="Models\BOLogSystem.cs" />
@@ -170,6 +172,7 @@
     <Compile Include="Models\ProdutoEstoqueStatus.cs" />
     <Compile Include="Models\QuarentenaHistorico.cs" />
     <Compile Include="Models\Representante.cs" />
+    <Compile Include="Models\NotaRecebimentoStatus.cs" />
     <Compile Include="Models\TipoConferencia.cs" />
     <Compile Include="Models\EmpresaTipo.cs" />
     <Compile Include="Models\EnderecoArmazenagem.cs" />
@@ -240,6 +243,10 @@
     <Compile Include="Repository\GeneralCtx\LoteProdutoEnderecoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\LoteProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\MotivoLaudoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\IntegracaoLogRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\NotaFiscalRecebimentoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\NotaRecebimentoStatusRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\ProdutoEnderecoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterRepository.cs" />
     <Compile Include="Repository\GeneralCtx\BOPrinterTypeRepository.cs" />
     <Compile Include="Repository\GeneralCtx\EmpresaConfigRepository.cs" />
@@ -299,6 +306,11 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="bin\Debug\FWLog.Data.dll.config" />
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="obj\Debug\FWLog.Data.csproj.CopyComplete" />
+    <None Include="obj\Debug\FWLog.Data.csproj.GenerateResource.cache" />
+    <None Include="obj\Debug\FWLog.Data.csprojAssemblyReference.cache" />
     <None Include="Resources\RecoverPassword.html" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -326,6 +338,12 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>MailStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="obj\Debug\FWLog.Data.GlobalResources.Entity.EntityStrings.resources" />
+    <EmbeddedResource Include="obj\Debug\FWLog.Data.GlobalResources.General.GeneralStrings.resources" />
+    <EmbeddedResource Include="obj\Debug\FWLog.Data.GlobalResources.Mail.MailStrings.en.resources" />
+    <EmbeddedResource Include="obj\Debug\FWLog.Data.GlobalResources.Mail.MailStrings.resources" />
+    <EmbeddedResource Include="obj\Debug\FWLog.Data.Resources.ImagensResource.resources" />
+    <EmbeddedResource Include="obj\Debug\FWLog.Data.Resources.Mail.MailResource.resources" />
     <EmbeddedResource Include="Resources\ImagensResource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ImagensResource.Designer.cs</LastGenOutput>
@@ -337,8 +355,33 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Attributes\" />
+    <Folder Include="bin\Release\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Debug\Dapper.dll" />
+    <Content Include="bin\Debug\Dapper.xml" />
+    <Content Include="bin\Debug\Dart-Library.CORE.dll" />
+    <Content Include="bin\Debug\EntityFramework.dll" />
+    <Content Include="bin\Debug\EntityFramework.SqlServer.dll" />
+    <Content Include="bin\Debug\EntityFramework.SqlServer.xml" />
+    <Content Include="bin\Debug\EntityFramework.xml" />
+    <Content Include="bin\Debug\en\FWLog.Data.resources.dll" />
+    <Content Include="bin\Debug\FWLog.Data.dll" />
+    <Content Include="bin\Debug\FWLog.Data.pdb" />
+    <Content Include="bin\Debug\Newtonsoft.Json.dll" />
+    <Content Include="bin\Debug\Newtonsoft.Json.xml" />
+    <Content Include="bin\Debug\Oracle.ManagedDataAccess.dll" />
+    <Content Include="bin\Debug\Oracle.ManagedDataAccess.EntityFramework.dll" />
+    <Content Include="obj\Debug\en\FWLog.Data.resources.dll" />
+    <Content Include="obj\Debug\FWLog.Data.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Debug\FWLog.Data.dll" />
+    <Content Include="obj\Debug\FWLog.Data.pdb" />
+    <Content Include="obj\Debug\TempPE\GlobalResources.Entity.EntityStrings.Designer.cs.dll" />
+    <Content Include="obj\Debug\TempPE\GlobalResources.General.GeneralStrings.Designer.cs.dll" />
+    <Content Include="obj\Debug\TempPE\GlobalResources.Mail.MailStrings.Designer.cs.dll" />
+    <Content Include="obj\Debug\TempPE\GlobalResources.Mail.MailStrings.en.Designer.cs.dll" />
+    <Content Include="obj\Debug\TempPE\Resources.ImagensResource.Designer.cs.dll" />
+    <Content Include="obj\Debug\TempPE\Resources.Mail.MailResource.Designer.cs.dll" />
     <Content Include="Resources\LogoFuracaoRelatorio.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -15,90 +15,61 @@ namespace FWLog.Data.Models
         [Key]
         [Required]
         public long IdNotaFiscal { get; set; }
-
         [Index]
         [Required]
         public long IdEmpresa { get; set; }
-
         [Index]
         public long? IdFornecedor { get; set; }
-
         [Index]
         public long? IdCliente { get; set; }
-
         [Index]
         [Required]
         public int Numero { get; set; }
-
         [Index]
         public long? IdFreteTipo { get; set; }
-
         [Index]
         [Required]
         public NotaFiscalStatusEnum IdNotaFiscalStatus { get; set; }
-
         [Index]
         [Required]
         public long CodigoIntegracao { get; set; }
-
         [Index]
         [Required]
         public long IdTransportadora { get; set; }
-
         public long? NumeroConhecimento { get; set; }
-
         [Required]
         public int Quantidade { get; set; }
-
         [Index]
         [StringLength(3)]
         public string Serie { get; set; }
-
         [Index]
         public string ChaveAcesso { get; set; }
-
         [Required]
         [StringLength(1)]
         public string StatusIntegracao { get; set; }
-
         public string Especie { get; set; }
-
         [StringLength(20)]
         public string NumeroFicticioNF { get; set; }
-
         public DateTime DataEmissao { get; set; }
-
         public DateTime PrazoEntregaFornecedor { get; set; }
-
         [Required]
         public decimal ValorTotal { get; set; }
-
         [Required]
         public decimal ValorFrete { get; set; }
-
         public decimal? PesoBruto { get; set; }
-
         [Required]
         public int CodigoIntegracaoVendedor { get; set; }
-
         public long? CodigoIntegracaoNFDevolucao { get; set; }
-
         [Required]
         public NotaFiscalTipoEnum IdNotaFiscalTipo { get; set; }
-
         public bool NFDevolucaoConfirmada { get; set; }
-
         public decimal? BaseICMS { get; set; }
-
         public decimal? ValorICMS { get; set; }
-        
         public decimal? BaseST { get; set; }
-
         public decimal? ValorST { get; set; }
-
         public decimal? ValorIPI { get; set; }
-
         public decimal? ValorSeguro { get; set; }
+        public DateTime? DataVencimento { get; set; }
 
         [ForeignKey(nameof(IdFornecedor))]
         public virtual Fornecedor Fornecedor { get; set; }

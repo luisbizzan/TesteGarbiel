@@ -20,7 +20,7 @@
                 dart.dataTables.saveFilterToData(data, $("#form-datatable-modal"));
             }
         },
-        lengthChange: false,
+        lengthChange: false, 
         initComplete: function (settings, json) {
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTableModalUsu'));
 

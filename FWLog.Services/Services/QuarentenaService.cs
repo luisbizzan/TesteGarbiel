@@ -58,7 +58,7 @@ namespace FWLog.Services.Services
             _request = request;
 
             _Quarentena = _uow.QuarentenaRepository.All().First(x => x.IdQuarentena == request.IdQuarentena);
-            _OldQuarentena = _uow.QuarentenaRepository.All().AsNoTracking().First(x => x.IdQuarentena == request.IdQuarentena);
+            _OldQuarentena = _uow.QuarentenaRepository.All().First(x => x.IdQuarentena == request.IdQuarentena);
 
             GeraCodConfirmacao();
 

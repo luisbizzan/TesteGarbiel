@@ -313,15 +313,29 @@ namespace FWLog.Web.Backoffice.Controllers
                     PerfilImpressora = PerfilImpressorasList(empresa, usuarioEmpresa?.IdPerfilImpressoraPadrao)
                 };
 
-                List<string> gruposPermissoesUsuario = (await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), empresa).ConfigureAwait(false)).OrderBy(x => x).ToList();
+                List<string> gruposPermissoesUsuarioEdicao = (await UserManager.GetUserRolesByIdEmpresa(user.Id, empresa).ConfigureAwait(false)).OrderBy(x => x).ToList();
+                List<string> gruposPermissoesUsuarioLogado = (await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), empresa).ConfigureAwait(false)).OrderBy(x => x).ToList();
 
-                if (gruposPermissoesUsuario.Contains("Administrador"))
+                if (gruposPermissoesUsuarioLogado.Contains("Administrador"))
                 {
                     List<string> todosGrupos = RoleManager.Roles.OrderBy(x => x.Name).Select(x => x.Name).ToList();
 
-                    var nomeGruposFaltantes = todosGrupos.Where(x => !gruposPermissoesUsuario.Contains(x)).ToList();
+                    foreach (var grupoPermissaoUsuario in todosGrupos)
+                    {
+                        var groupItemViewModel = new GroupItemViewModel
+                        {
+                            IsSelected = gruposPermissoesUsuarioEdicao.Any(x => x == grupoPermissaoUsuario),
+                            Name = grupoPermissaoUsuario
+                        };
 
-                    foreach (var grupoPermissaoUsuario in gruposPermissoesUsuario)
+                        empGrupos.Grupos.Add(groupItemViewModel);
+                    }
+                }
+                else
+                {
+                    var gruposPermissoesSemelhantes = gruposPermissoesUsuarioEdicao.Where(x => gruposPermissoesUsuarioLogado.Contains(x)).ToList();
+
+                    foreach (var grupoPermissaoUsuario in gruposPermissoesSemelhantes)
                     {
                         var groupItemViewModel = new GroupItemViewModel
                         {
@@ -330,37 +344,6 @@ namespace FWLog.Web.Backoffice.Controllers
                         };
 
                         empGrupos.Grupos.Add(groupItemViewModel);
-                    }
-
-                    foreach (var nome in nomeGruposFaltantes)
-                    {
-                        var groupItemViewModel = new GroupItemViewModel
-                        {
-                            IsSelected = false,
-                            Name = nome
-                        };
-
-                        empGrupos.Grupos.Add(groupItemViewModel);
-                    }
-                }
-                else
-                {
-                    foreach (string nomeGrupoPermissao in gruposPermissoesUsuario)
-                    {
-                        var groupItemViewModel = new GroupItemViewModel
-                        {
-                            IsSelected = false,
-                            Name = nomeGrupoPermissao
-                        };
-
-                        empGrupos.Grupos.Add(groupItemViewModel);
-                    }
-
-                    IList<string> selectedRoles = await UserManager.GetUserRolesByIdEmpresa(user.Id, empresa).ConfigureAwait(false);
-
-                    foreach (GroupItemViewModel group in empGrupos.Grupos.Where(x => selectedRoles.Contains(x.Name)))
-                    {
-                        group.IsSelected = true;
                     }
                 }
 
@@ -457,12 +440,11 @@ namespace FWLog.Web.Backoffice.Controllers
                 IEnumerable<string> selectedRoles = item.Grupos.Where(x => x.IsSelected).Select(x => x.Name);
                 IList<string> rolesUsuarioEdicao = await UserManager.GetUserRolesByIdEmpresa(user.Id, item.IdEmpresa).ConfigureAwait(false);
                 IList<string> rolesUsuarioLogado = await UserManager.GetUserRolesByIdEmpresa(User.Identity.GetUserId(), item.IdEmpresa).ConfigureAwait(false);
-                IEnumerable<string> rolesIgnorar = rolesUsuarioEdicao.Where(x => !rolesUsuarioLogado.Any(y => y == x));
+                IEnumerable<string> rolesIgnorar = rolesUsuarioEdicao.Where(x => !rolesUsuarioLogado.Any(y => y == x) && !rolesUsuarioLogado.Contains("Administrador"));
 
 
                 empresasGruposNew.AppendLine(string.Format("{0}: {1}", item.Nome, string.Join(", ", selectedRoles.ToArray())));
                 empresasGruposNew.AppendLine(" || ");
-
                 IdentityResult result = await UserManager.UpdateAsync(user, selectedRoles, rolesIgnorar, item.IdEmpresa).ConfigureAwait(false);
 
                 if (!result.Succeeded)
@@ -719,7 +701,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             }
 
-            CookieSalvarEmpresa(0, applicationUser.Id, true);
             CookieLogoff();
 
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);

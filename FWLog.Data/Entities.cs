@@ -35,12 +35,14 @@ namespace FWLog.Data
         public virtual DbSet<LoteStatus> LoteStatus { get; set; }
         public virtual DbSet<NotaFiscal> NotaFiscal { get; set; }
         public virtual DbSet<NotaFiscalItem> NotaFiscalItem { get; set; }
+        public virtual DbSet<NotaFiscalRecebimento> NotaFiscalRecebimento { get; set; }
         public virtual DbSet<Produto> Produto { get; set; }
         public virtual DbSet<Transportadora> Transportadora { get; set; }
         public virtual DbSet<UnidadeMedida> UnidadeMedida { get; set; }
         public virtual DbSet<Quarentena> Quarentena { get; set; }
         public virtual DbSet<QuarentenaStatus> QuarentenaStatus { get; set; }
         public virtual DbSet<NotaFiscalStatus> NotaFiscalStatus { get; set; }
+        public virtual DbSet<NotaRecebimentoStatus> NotaRecebimentoStatus { get; set; }
         public virtual DbSet<NivelArmazenagem> NivelArmazenagem { get; set; }
         public virtual DbSet<PontoArmazenagem> PontoArmazenagem { get; set; }
         public virtual DbSet<TipoMovimentacao> TipoMovimentacao { get; set; }
@@ -70,12 +72,12 @@ namespace FWLog.Data
         public virtual DbSet<GarantiaProduto> GarantiaProduto { get; set; }
         public virtual DbSet<GarantiaQuarentena> GarantiaQuarentena { get; set; }
         public virtual DbSet<GarantiaQuarentenaHis> GarantiaQuarentenaHist { get; set; }
-        //public virtual DbSet<GarantiaQuarentenaProduto> GarantiaQuarentenaProduto { get; set; }
         public virtual DbSet<GarantiaQuarentenaStatus> GarantiaQuarentenaStatus { get; set; }
         public virtual DbSet<GarantiaStatus> GarantiaStatus { get; set; }
         public virtual DbSet<MotivoLaudo> MotivoLaudo { get; set; }
         public virtual DbSet<Representante> Representante { get; set; }
         public virtual DbSet<LoteProdutoEndereco> LoteProdutoEndereco { get; set; }
+        public virtual DbSet<IntegracaoLog> IntegracaoLog { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 

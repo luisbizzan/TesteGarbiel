@@ -4,7 +4,7 @@
             {
                 action: 'select',
                 visible: true,
-                attrs: { 'data-select': full.IdPontoArmazenagem, 'name-select': full.PontoArmazenagem }
+                attrs: { 'data-select': full.IdPontoArmazenagem, 'name-select': full.PontoArmazenagem, 'status-select': full.Status }
             }
         ];
     });
@@ -33,7 +33,12 @@
     });
 
     $('#dataTableModal').on('click', '[data-select]', function () {
-        selecionarPontoArmazenagem($(this).attr('data-select'), $(this).attr("name-select"));
+        let status = $(this).attr('status-select');
+
+        if (status != "Ativo")
+            PNotify.warning({ text: "O ponto de armazenagem selecionado está inativo." });
+        else
+            selecionarPontoArmazenagem($(this).attr('data-select'), $(this).attr("name-select"));
     });
 
     dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));

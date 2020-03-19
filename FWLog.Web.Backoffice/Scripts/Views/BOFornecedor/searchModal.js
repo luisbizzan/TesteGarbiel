@@ -1,5 +1,12 @@
 ﻿(function () {
-    $("#Filter_CNPJ").mask("99.999.999/9999-99");
+    var options = {
+        onKeyPress: function (cpf, ev, el, op) {
+            var masks = ['000.000.000-000', '00.000.000/0000-00'];
+            $('#Filter_CNPJ').mask((cpf.length > 14) ? masks[1] : masks[0], op);
+        }
+    }
+
+    $('#Filter_CNPJ').length > 11 ? $('#Filter_CNPJ').mask('00.000.000/0000-00', options) : $('#Filter_CNPJ').mask('000.000.000-00#', options);
 
     let actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
@@ -11,7 +18,7 @@
         ];
     });
 
-    $('#dataTableModal').DataTable({
+    $('#dataTableModal').DataTable({ 
        // destroy: true,
         ajax: {
             "url": view_modal.pageDataUrl,
@@ -36,7 +43,7 @@
     });
 
     $('#dataTableModal').on('click', '[data-select]', function () {
-        setFornecedor($(this).attr('data-select'), $(this).attr("name-select"));
+        setFornecedor($(this).attr('data-select'), $(this).attr("name-select"), view_modal.origem);
     });
 
     dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));

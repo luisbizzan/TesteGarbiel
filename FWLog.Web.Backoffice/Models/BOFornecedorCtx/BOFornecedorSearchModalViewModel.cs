@@ -12,6 +12,8 @@ namespace FWLog.Web.Backoffice.Models.BOFornecedorCtx
             EmptyItem = new BOFornecedorSearchModalItemViewModel();
             Filter = new BOFornecedorSearchModalFilterViewModel();
         }
+
+        public string Origem { get; set; }
     }
 
     public class BOFornecedorSearchModalItemViewModel
@@ -27,7 +29,7 @@ namespace FWLog.Web.Backoffice.Models.BOFornecedorCtx
         [Display(Name = "Nome Fantasia")]
         public string NomeFantasia { get; set; }
 
-        [Display(Name = "CNPJ")]
+        [Display(Name = "CNPJ/CPF")]
         public string CNPJ { get; set; }
     }
 
@@ -42,7 +44,7 @@ namespace FWLog.Web.Backoffice.Models.BOFornecedorCtx
         [Display(Name = "Nome Fantasia")]
         public string NomeFantasia { get; set; }
 
-        [Display(Name = "CNPJ")]
+        [Display(Name = "CNPJ/CPF")]
         public string CNPJ { get; set; }
     }
 }
