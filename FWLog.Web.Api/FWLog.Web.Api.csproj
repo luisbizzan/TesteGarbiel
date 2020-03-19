@@ -239,6 +239,7 @@
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaPickingRequisicao.cs" />
     <Compile Include="Models\Impressora\ImpressoraResposta.cs" />
     <Compile Include="Models\Impressora\ImpressorasResposta.cs" />
+    <Compile Include="Models\Lote\BuscaProdutoNoLoteResposta.cs" />
     <Compile Include="Models\Lote\BuscarLotePorIdResposta.cs" />
     <Compile Include="Models\Produto\PesquisarPorCodigoBarrasReferenciaResposta.cs" />
     <Compile Include="Models\Produto\ProdutoReservadoModelRequest.cs" />

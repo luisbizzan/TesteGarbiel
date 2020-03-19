@@ -33,14 +33,14 @@ namespace FWLog.Web.Api.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> BuscarPorId(long id)
         {
-            if(id <= 0)
+            if (id <= 0)
             {
                 return ApiBadRequest("O lote deve ser informado.");
             }
 
             Lote lote = _unitOfWork.LoteRepository.GetById(id);
 
-            if(lote == null)
+            if (lote == null)
             {
                 return ApiNotFound("O lote não foi encontrado");
             }
@@ -48,6 +48,24 @@ namespace FWLog.Web.Api.Controllers
             var loteResposta = Mapper.Map<BuscarLotePorIdResposta>(lote);
 
             return ApiOk(loteResposta);
+        }
+
+        [Route("api/v1/lote/{idLote}/produto/{idProduto}")]
+        [HttpGet]
+        public IHttpActionResult BuscaProdutoNoLote(long idLote, long idProduto)
+        {
+            try
+            {
+                var produtoLote = _loteService.BuscaProdutoNoLote(idLote, idProduto);
+
+                var produtoLoteResposta = Mapper.Map<BuscaProdutoNoLoteResposta>(produtoLote);
+
+                return ApiOk(produtoLoteResposta);
+            }
+            catch (BusinessException exception)
+            {
+                return ApiBadRequest(exception.Message);
+            }
         }
     }
 }
