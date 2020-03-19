@@ -448,7 +448,30 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                _armazenagemService.ValidateLoteAbastecer(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0);
+                _armazenagemService.ValidarLoteAbastecer(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/abastecer/validar-quantidade")]
+        [HttpPost]
+        public IHttpActionResult ValidarQuantidadeAbastecer(ValidarQuantidadeeAbastecerModelRequisicao requisicao)
+        {
+            try
+            {
+                _armazenagemService.ValidarQuantidadeAbastecer(requisicao?.IdEnderecoArmazenagem ?? 0,
+                                                                requisicao?.IdLote ?? 0,
+                                                                requisicao?.IdProduto ?? 0,
+                                                                requisicao?.Quantidade ?? 0);
             }
             catch (BusinessException ex)
             {

@@ -629,7 +629,7 @@ namespace FWLog.Services.Services
             return loteProdutoEndereco;
         }
 
-        public void ValidateLoteAbastecer(long idEnderecoArmazenagem, long idLote, long idProduto)
+        public void ValidarLoteAbastecer(long idEnderecoArmazenagem, long idLote, long idProduto)
         {
             ValidarEnderecoAbastecer(idEnderecoArmazenagem);
 
@@ -678,6 +678,39 @@ namespace FWLog.Services.Services
                 if (loteMaisAntigo.IdLote != idLote)
                 {
                     throw new BusinessException("Endereço controla FIFO. Lote informado não é o mais antigo.");
+                }
+            }
+        }
+
+        public void ValidarQuantidadeAbastecer(long idEnderecoArmazenagem, long idLote, long idProduto, int quantidade)
+        {
+            ValidarEnderecoAbastecer(idEnderecoArmazenagem);
+
+            ValidarLoteAbastecer(idEnderecoArmazenagem, idLote, idProduto);
+
+            if (quantidade <= 0)
+            {
+                throw new BusinessException("Quantidade deve ser maior que zero.");
+            }
+
+            var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(idLote, idProduto);
+
+            if (quantidade > loteProduto.Saldo)
+            {
+                throw new BusinessException("Quantidade deve ser menor que o saldo disponível.");
+            }
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (enderecoArmazenagem.EstoqueMaximo.HasValue)
+            {
+                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+
+                var quantidadeAposAbastecer = quantidade + loteProdutoEndereco.Quantidade;
+
+                if (quantidadeAposAbastecer > enderecoArmazenagem.EstoqueMaximo)
+                {
+                    throw new BusinessException("Quantidade informada e instalada devem ser menores que o estoque máximo do endereço.");
                 }
             }
         }
