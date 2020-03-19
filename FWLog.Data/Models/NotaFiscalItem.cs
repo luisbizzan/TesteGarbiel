@@ -25,6 +25,9 @@ namespace FWLog.Data.Models
         public int Quantidade { get; set; }
 
         [Required]
+        public int QuantidadeDevolucao { get; set; }
+
+        [Required]
         public decimal ValorUnitario { get; set; }
 
         [Required]

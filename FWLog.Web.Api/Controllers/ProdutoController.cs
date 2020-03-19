@@ -28,11 +28,38 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/produto-empresa/integrar")]
+        [Route("api/v1/produto/limpar-integracao")]
+        [HttpPost]
+        public async Task<IHttpActionResult> LimparIntegracao()
+        {
+            await _produtoService.LimparIntegracao();
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/produto-prazo-entrega/limpar-integracao")]
+        [HttpPost]
+        public async Task<IHttpActionResult> LimparIntegracaoPrazoEntrega()
+        {
+            await _produtoService.LimparIntegracaoMediaVenda();
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/produto-prazo-entrega/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarProdutoPrazoEntrega()
         {
             await _produtoService.ConsultarProdutoPrazoEntrega();
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/produto-media-venda/limpar-integracao")]
+        [HttpPost]
+        public async Task<IHttpActionResult> LimparIntegracaoMediaVenda()
+        {
+            await _produtoService.LimparIntegracaoMediaVenda();
 
             return ApiOk();
         }

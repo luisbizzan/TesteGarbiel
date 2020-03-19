@@ -50,12 +50,12 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public List<Printer> ObterPorEmpresa(long idEmpresa)
         {
-            return Entities.Printer.Where(w => w.CompanyId == idEmpresa).OrderBy(o => o.Name).ToList();
+            return Entities.Printer.Where(w => w.CompanyId == idEmpresa && w.Ativa == true).OrderBy(o => o.Name).ToList();
         }
 
         public List<Printer> ObterPorPerfil(long idPerfilImpressora, ImpressaoItemEnum impressaoItem)
         {
-            return Entities.PerfilImpressoraItem.Where(w => w.IdPerfilImpressora == idPerfilImpressora && w.IdImpressaoItem == impressaoItem).Select(s => s.Impressora).ToList();
+            return Entities.PerfilImpressoraItem.Where(w => w.IdPerfilImpressora == idPerfilImpressora && w.IdImpressaoItem == impressaoItem && w.PerfilImpressora.Ativo == true).Select(s => s.Impressora).ToList();
         }
     }
 }

@@ -19,7 +19,32 @@ namespace FWLog.Services.Services
 
         public NotaFiscalService(UnitOfWork uow)
         {
-            _uow = uow;           
+            _uow = uow;
+        }
+
+        public async Task LimparIntegracao()
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            var where = " WHERE TGFCAB.TIPMOV = 'C' AND TGFCAB.STATUSNOTA <> 'L' AND (TGFCAB.AD_STATUSREC <> 0 OR TGFCAB.AD_STATUSREC <> NULL)";
+            var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
+            List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalIntegracao>(where, inner);
+
+            List<FreteTipo> tiposFrete = _uow.FreteTipoRepository.RetornarTodos();
+            IQueryable<Empresa> empresas = _uow.EmpresaRepository.Tabela();
+            var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
+
+            Dictionary<string, List<NotaFiscalIntegracao>> notasIntegracaoGrp = notasIntegracao.GroupBy(g => g.CodigoIntegracao).ToDictionary(d => d.Key, d => d.ToList());
+
+            foreach (var notasInt in notasIntegracaoGrp)
+            {
+                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", notasInt.Value.First().CodigoIntegracao.ToString() } };
+
+                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", "0");
+            }
         }
 
         public async Task ConsultaNotaFiscalCompra()
@@ -30,7 +55,8 @@ namespace FWLog.Services.Services
             }
 
             var where = " WHERE TGFCAB.TIPMOV = 'C' AND TGFCAB.STATUSNOTA <> 'L' AND (TGFCAB.AD_STATUSREC = 0 OR TGFCAB.AD_STATUSREC IS NULL)";
-            var inner = "INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
+            var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
+
             List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalIntegracao>(where, inner);
 
             List<FreteTipo> tiposFrete = _uow.FreteTipoRepository.RetornarTodos();
@@ -66,6 +92,17 @@ namespace FWLog.Services.Services
                     if (fornecedor == null)
                     {
                         throw new Exception(string.Format("Código da Fornecedor (CODPARC: {0}) inválido", notafiscalIntegracao.CodigoIntegracaoFornecedor));
+                    }
+
+                    DateTime dataVencimento;
+
+                    try
+                    {
+                        dataVencimento = await ConsultarDataVencimento(notafiscalIntegracao.CodigoIntegracao);
+                    }
+                    catch (Exception)
+                    {
+                        throw new Exception(string.Format("Data de Vencimento inválida (NUMNOTA: {0})", notafiscalIntegracao.CodigoIntegracao));
                     }
 
                     bool notaNova = true;
@@ -109,6 +146,7 @@ namespace FWLog.Services.Services
                     notafiscal.CodigoIntegracaoVendedor = Convert.ToInt32(notafiscalIntegracao.CodigoIntegracaoVendedor);
                     notafiscal.IdNotaFiscalTipo = NotaFiscalTipoEnum.Compra;
                     notafiscal.NumeroFicticioNF = notafiscalIntegracao.NumeroFicticioNF;
+                    notafiscal.DataVencimento = dataVencimento;
 
                     FreteTipo freteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notafiscalIntegracao.FreteTipo);
                     if (freteTipo != null)
@@ -116,7 +154,7 @@ namespace FWLog.Services.Services
                         notafiscal.IdFreteTipo = freteTipo.IdFreteTipo;
                     }
 
-                    var notafiscalItens = notasInt.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.UnidadeMedida, s.Quantidade, s.ValorUnitarioItem, s.ValorTotal, s.Sequencia }).ToList();
+                    var notafiscalItens = notasInt.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.UnidadeMedida, s.Quantidade, s.ValorUnitarioItem, s.ValorTotal, s.Sequencia, s.QuantidadeDevolucao }).ToList();
 
                     List<NotaFiscalItem> itemsNotaFsical = new List<NotaFiscalItem>();
 
@@ -124,8 +162,8 @@ namespace FWLog.Services.Services
                     {
                         var codProduto = Convert.ToInt64(item.CodigoIntegracaoProduto);
                         var qtdNeg = Convert.ToInt32(item.Quantidade);
-                        Produto produto = _uow.ProdutoRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codProduto);
 
+                        Produto produto = _uow.ProdutoRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codProduto);
                         if (produto == null)
                         {
                             throw new Exception(string.Format("Código da Produto (CODPROD: {0}) inválido", item.CodigoIntegracaoProduto));
@@ -155,6 +193,8 @@ namespace FWLog.Services.Services
                         notaFiscalItem.ValorTotal = Convert.ToDecimal(item.ValorTotal.Replace(".", ","));
                         notaFiscalItem.CodigoNotaFiscal = codNota;
                         notaFiscalItem.Sequencia = Convert.ToInt32(item.Sequencia);
+                        notaFiscalItem.QuantidadeDevolucao = item.QuantidadeDevolucao.NullOrEmpty() ? 0 : Convert.ToInt32(item.QuantidadeDevolucao);
+
 
                         if (itemNovo)
                         {
@@ -164,11 +204,7 @@ namespace FWLog.Services.Services
                         }
                     }
 
-                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", notafiscal.CodigoIntegracao.ToString() } };
-
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode());
-
-                    int diasPrazoEntrega = _uow.ProdutoEstoqueRepository.ObterDiasPrazoEntrega(notafiscal.IdEmpresa, notafiscal.NotaFiscalItens.Select(s => s.IdProduto).ToList());
+                    int diasPrazoEntrega = 0;
 
                     notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento;
                     notafiscal.PrazoEntregaFornecedor = notafiscal.DataEmissao.AddDays(diasPrazoEntrega);
@@ -178,7 +214,21 @@ namespace FWLog.Services.Services
                         _uow.NotaFiscalRepository.Add(notafiscal);
                     }
 
+                    try
+                    {
+                        await AtualizarNotaFiscalRecebimento(notafiscal.ChaveAcesso).ConfigureAwait(false);
+                    }
+                    catch (Exception)
+                    {
+                        throw new Exception(string.Format("Erro ao atualizar a nota fiscal de recebimento de sequinte chave de acesso: {0}.", notafiscal.ChaveAcesso));
+                    }
+
                     _uow.SaveChanges();
+
+                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", notafiscal.CodigoIntegracao.ToString() } };
+
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode());
+
                 }
                 catch (Exception ex)
                 {
@@ -187,6 +237,28 @@ namespace FWLog.Services.Services
 
                     continue;
                 }
+            }
+        }
+
+        public async Task AtualizarNotaFiscalRecebimento(string chaveAcesso)
+        {
+            try
+            {
+                //Verificar se NF já cadastrada no sistema e não sincronizada.
+                var notafiscalRecebimento = _uow.NotaFiscalRecebimentoRepository.ObterNotaFiscalRecebimentoRegistrada(chaveAcesso);
+
+                if (notafiscalRecebimento != null)
+                {
+                    notafiscalRecebimento.DataHoraSincronismo = DateTime.Now;
+                    notafiscalRecebimento.IdNotaRecebimentoStatus = NotaRecebimentoStatusEnum.Sincronizado;
+
+                    _uow.NotaFiscalRecebimentoRepository.Update(notafiscalRecebimento);
+                    _uow.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 
@@ -237,24 +309,25 @@ namespace FWLog.Services.Services
         public async Task RegistrarRecebimentoNotaFiscal(long idNotaFiscal, string userId, DateTime dataRecebimento, int? qtdVolumes = null)
         {
             var loteService = new LoteService(_uow);
+
+            var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
+
+            await VerificarNotaFiscalCancelada(notafiscal.CodigoIntegracao);
+
+            Lote lote = _uow.LoteRepository.GetById(idNotaFiscal);
+
+            if (lote != null)
+            {
+                throw new BusinessException(string.Format("Já existe um lote criado para a Nota Fiscal {0}, portanto o recebimento não pode ser efetuado", idNotaFiscal));
+            }
+
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
+            {
+                await AtualizarNotaFiscalIntegracao(notafiscal, LoteStatusEnum.Recebido);
+            }
+
             using (TransactionScope transactionScope = _uow.CreateTransactionScope())
             {
-                var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
-
-                await VerificarNotaFiscalCancelada(notafiscal.CodigoIntegracao);
-
-                Lote lote = _uow.LoteRepository.GetById(idNotaFiscal);
-
-                if (lote != null)
-                {
-                    throw new BusinessException(string.Format("Já existe um lote criado para a Nota Fiscal {0}, portanto o recebimento não pode ser efetuado", idNotaFiscal));
-                }
-
-                if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
-                {
-                    await AtualizarNotaFiscalIntegracao(notafiscal, LoteStatusEnum.Recebido);
-                }
-
                 loteService.CriarLoteRecebimento(notafiscal, userId, dataRecebimento, qtdVolumes);
 
                 notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.Recebida;
@@ -294,6 +367,42 @@ namespace FWLog.Services.Services
             }
         }
 
+        public async Task<long> RegistrarRecebimentoNotaFiscalDiv(long idEmpresa,
+                                                            string idUsuarioRecebimento,
+                                                            string chaveAcesso,
+                                                            long idFornecedor,
+                                                            int numeroNf,
+                                                            string serie,
+                                                            decimal valor,
+                                                            int? quantidadeVolumes = null)
+        {
+            long idNotaFiscalRecebimento = 0;
+
+            using (TransactionScope transactionScope = _uow.CreateTransactionScope())
+            {
+                var _notaFiscalRecebimento = new NotaFiscalRecebimento
+                {
+                    IdEmpresa = idEmpresa,
+                    IdUsuarioRecebimento = idUsuarioRecebimento,
+                    ChaveAcesso = chaveAcesso,
+                    IdFornecedor = idFornecedor,
+                    NumeroNF = numeroNf,
+                    Serie = serie,
+                    Valor = valor,
+                    QuantidadeVolumes = quantidadeVolumes,
+                    DataHoraRegistro = DateTime.Now,
+                    IdNotaRecebimentoStatus = NotaRecebimentoStatusEnum.Registrado,
+                };
+
+                _uow.NotaFiscalRecebimentoRepository.Add(_notaFiscalRecebimento);
+                _uow.SaveChanges();
+                idNotaFiscalRecebimento = _notaFiscalRecebimento.IdNotaFiscalRecebimento;
+                transactionScope.Complete();
+
+                return idNotaFiscalRecebimento;
+            }
+        }
+
         public async Task ReceberNotaFiscalAutomatico(string userId)
         {
             List<NotaFiscal> notasfiscais = await _uow.NotaFiscalRepository.ConsultarProcessamentoAutomatico();
@@ -310,6 +419,33 @@ namespace FWLog.Services.Services
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro no recebimento automático nota fiscal - IdNotaFiscal: {0}.", notafiscal.IdNotaFiscal));
                 }
             }
+        }
+
+        public async Task<DateTime> ConsultarDataVencimento(string codigoIntegracao)
+        {
+            DateTime dataVencimento;
+
+            string where = string.Format("WHERE NUNOTA = {0} ", codigoIntegracao);
+
+            try
+            {
+                List<NotaFiscalDataVencimentoIntegracao> nfDataVencimentoIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalDataVencimentoIntegracao>(where);
+
+                List<DateTime> listaDataVencimento = new List<DateTime>();
+
+                foreach (var item in nfDataVencimentoIntegracao)
+                {
+                    listaDataVencimento.Add(DateTime.ParseExact(item.DataVencimento, "ddMMyyyy HH:mm:ss", CultureInfo.InvariantCulture));
+                }
+
+                dataVencimento = listaDataVencimento.Min();
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+            return dataVencimento;
         }
     }
 }

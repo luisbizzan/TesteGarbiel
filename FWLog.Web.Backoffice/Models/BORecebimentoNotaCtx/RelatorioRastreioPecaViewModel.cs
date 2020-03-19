@@ -31,8 +31,11 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         [Display(Name = "Número Nota")]
         public int NroNota { get; set; }
 
-        [Display(Name = "Referência do Produto")]
-        public string ReferenciaPronduto { get; set; }
+        [Display(Name = "Referência")]
+        public string ReferenciaProduto { get; set; }
+
+        [Display(Name = "Descrição")]
+        public string DescricaoProduto { get; set; }
 
         [Display(Name = "Recebimento")]
         public string DataRecebimento { get; set; }

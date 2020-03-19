@@ -16,11 +16,21 @@ namespace FWLog.Web.Api.Controllers
             _fornecedorService = fornecedorService;
         }
 
+        [AllowAnonymous]
         [Route("api/v1/fornecedor/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarFornecedor()
         {
             await _fornecedorService.ConsultarFornecedor();
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/fornecedor/limpar-integracao")]
+        [HttpPost]
+        public async Task<IHttpActionResult> LimparIntegracao()
+        {
+            await _fornecedorService.LimparIntegracao();
 
             return ApiOk();
         }

@@ -130,14 +130,16 @@ namespace FWLog.Web.Backoffice.Controllers
             IEnumerable<BOQuarentenaListItemViewModel> list = query.ToList()
                 .Select(x => new BOQuarentenaListItemViewModel
                 {
-                    IdQuarentena = x.IdQuarentena,
-                    Lote = x.IdLote,
-                    Nota = x.Lote.NotaFiscal.Numero,
-                    Fornecedor = x.Lote.NotaFiscal.Fornecedor.NomeFantasia,
-                    DataAbertura = x.DataAbertura.ToString("dd/MM/yyyy"),
-                    DataEncerramento = x.DataEncerramento.HasValue ? x.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
-                    Atraso = x.DataAbertura.Subtract(x.DataEncerramento ?? DateTime.Now).Days,
-                    Status = x.QuarentenaStatus.Descricao,
+                    IdQuarentena       = x.IdQuarentena,
+                    Lote               = x.IdLote,
+                    ChaveAcesso        = x.Lote.NotaFiscal.ChaveAcesso,
+                    Nota               = x.Lote.NotaFiscal.Numero,
+                    Fornecedor         = x.Lote.NotaFiscal.Fornecedor.NomeFantasia,
+                    DataAbertura       = x.DataAbertura.ToString("dd/MM/yyyy"),
+                    DataEncerramento   = x.DataEncerramento.HasValue ? x.DataEncerramento.Value.ToString("dd/MM/yyyy") : string.Empty,
+                    Atraso             = x.DataAbertura.Subtract(x.DataEncerramento ?? DateTime.Now).Days,
+                    Status             = x.QuarentenaStatus.Descricao,
+                    LoteStatus         = x.Lote.IdLoteStatus.ToString(),
                     IdQuarentenaStatus = (int)x.IdQuarentenaStatus
                 });
 
@@ -181,6 +183,62 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [HttpPost]
+        public JsonResult ValidarChaveAcessoIgualDaNFe(DetalhesQuarentenaViewModel model)
+        {
+            bool chaveNfeIgual = false;
+            //bool existe = _uow.QuarentenaRepository.Any(x => x.Lote.NotaFiscal.ChaveAcesso == chaveAcesso);
+
+            Quarentena quarentena = _uow.QuarentenaRepository.GetById(model.IdQuarentena);
+            Lote       lote       = _uow.LoteRepository.GetById(quarentena.IdLote);
+
+
+            if (lote.IdLoteStatus.GetHashCode() == 12)
+            {
+                //Valida chave de cesso
+                var chaveValida = false;
+
+                if (string.IsNullOrWhiteSpace(model.ChaveAcesso))
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Informe a chave de acesso da NF-e.",
+                    });
+                }
+
+                if (model.ChaveAcesso.Length != 44)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Chave de acesso não possui 44 digitos.",
+                    });
+                }
+
+
+                if (lote.NotaFiscal.ChaveAcesso == model.ChaveAcesso)
+                    chaveNfeIgual = true;
+                else
+                    chaveNfeIgual = false;
+
+                if (!chaveNfeIgual)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "A chave de acesso informada não confere com a chave Nota Fiscal."
+                    });
+                }
+            }
+
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+        }
+
         [HttpGet]
         public ActionResult DetalhesQuarentena(long id)
         {
@@ -211,6 +269,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Descricao = divergencia.Produto.Descricao,
                     Referencia = divergencia.Produto.Referencia,
+                    QuantidadeDevolucao = divergencia.QuantidadeDevolucao,
                     QuantidadeConferencia = divergencia.QuantidadeConferencia,
                     QuantidadeMais = divergencia.QuantidadeConferenciaMais.GetValueOrDefault(),
                     QuantidadeMenos = divergencia.QuantidadeConferenciaMenos.GetValueOrDefault(),
@@ -229,11 +288,8 @@ namespace FWLog.Web.Backoffice.Controllers
         public JsonResult DetalhesQuarentena(DetalhesQuarentenaViewModel model)
         {
             ValidateModel(model);
-
             string mensagemErro = null;
 
-            //Verifica se o status da quarentena é Retirado.
-            //Caso seja, valida o código de confirmação pois, sem ele, o sistema não deve permitir alterar o status para retirado.
             if (model.IdStatus == QuarentenaStatusEnum.Retirado)
             {
                 if (string.IsNullOrEmpty(model.CodigoConfirmacao))
@@ -280,9 +336,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 //Verifica se o status anterior era Encaminhado para Auditoria e o atual Aberto.
                 //Caso seja, informa o usuário que a ação não é permitida.
-                if (old.IdQuarentenaStatus == QuarentenaStatusEnum.EncaminhadoAuditoria && model.IdStatus == QuarentenaStatusEnum.Aberto)
+                if (old.IdQuarentenaStatus == QuarentenaStatusEnum.EncaminhadoAuditoria && (model.IdStatus == QuarentenaStatusEnum.Aberto || model.IdStatus == QuarentenaStatusEnum.Retirado))
                 {
-                    ModelState.AddModelError(nameof(model.IdStatus), (mensagemErro = "A quarentena foi encaminhada para Auditoria. Não é permitido atualizar o status para Aberto."));
+                    ModelState.AddModelError(nameof(model.IdStatus), (mensagemErro = "A quarentena foi encaminhada para Auditoria. Não é permitido atualizar o status para " + model.IdStatus.ToString() + "."));
 
                     return Json(new AjaxGenericResultModel
                     {
@@ -384,6 +440,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 NotaSerie = entidade.Lote.NotaFiscal.Numero + " - " + entidade.Lote.NotaFiscal.Serie,
                 Lote = entidade.IdLote.ToString(),
+                ChaveAcesso = entidade.Lote.NotaFiscal.ChaveAcesso,
                 LoteStatus = entidade.Lote.LoteStatus.Descricao,
                 IdQuarentena = entidade.IdQuarentena,
                 IdStatus = entidade.QuarentenaStatus.IdQuarentenaStatus,

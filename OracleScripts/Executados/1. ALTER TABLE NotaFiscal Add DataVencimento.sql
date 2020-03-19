@@ -1,0 +1,1 @@
+ALTER TABLE "NotaFiscal" ADD "DataVencimento" TIMESTAMP(6) NULL

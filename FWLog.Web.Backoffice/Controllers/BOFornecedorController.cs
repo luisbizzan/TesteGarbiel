@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ExtensionMethods.String;
 using FWLog.Data;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Web.Backoffice.Helpers;
@@ -28,9 +29,13 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         //[ApplicationAuthorize]
-        public ActionResult SearchModal()
+        public ActionResult SearchModal(string id)
         {
-            var model = new BOFornecedorSearchModalViewModel();
+            var model = new BOFornecedorSearchModalViewModel()
+            {
+                Origem = id
+            };
+
             return View(model);
         }
 
@@ -65,7 +70,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     CodigoIntegracao = item.CodigoIntegracao,
                     RazaoSocial = item.RazaoSocial,
                     NomeFantasia = item.NomeFantasia,
-                    CNPJ = item.CNPJ.Length == 14 ? item.CNPJ.Substring(0, 2) + "." + item.CNPJ.Substring(2, 3) + "." + item.CNPJ.Substring(5, 3) + "/" + item.CNPJ.Substring(8, 4) + "-" + item.CNPJ.Substring(12, 2) : item.CNPJ
+                    CNPJ = StringExtension.CnpjOuCpf(item.CNPJ)
                 });
             }
 

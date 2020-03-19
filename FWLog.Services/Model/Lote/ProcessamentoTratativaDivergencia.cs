@@ -11,5 +11,6 @@
         public bool AutorizaçãoNFDevolucaoSefaz { get; set; }
 
         public bool ProcessamentoErro { get; set; }
+        public string ProcessamentoErroMensagem { get; set; }
     }
 }

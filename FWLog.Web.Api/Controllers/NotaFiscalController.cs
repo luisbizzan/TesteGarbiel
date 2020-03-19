@@ -17,6 +17,16 @@ namespace FWLog.Web.Api.Controllers
             _notaFiscalService = notaFiscalService;
         }
 
+        [Route("api/v1/nota-fiscal/limpar-integracao")]
+        [HttpPost]
+        public async Task<IHttpActionResult> LimparIntegracao()
+        {
+            await _notaFiscalService.LimparIntegracao();
+
+            return ApiOk();
+        }
+
+        [AllowAnonymous]
         [Route("api/v1/nota-fiscal/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultaNota()
@@ -31,6 +41,16 @@ namespace FWLog.Web.Api.Controllers
         public async Task<IHttpActionResult> ReceberNotaFiscalAutomatico()
         {
             await _notaFiscalService.ReceberNotaFiscalAutomatico(User.Identity.GetUserId());
+
+            return ApiOk();
+        }
+
+        [AllowAnonymous]
+        [Route("api/v1/nota-fiscal/consultar/data-vencimento")]
+        [HttpPost]
+        public async Task<IHttpActionResult> ConsultarDataVencimento()
+        {
+            await _notaFiscalService.ConsultarDataVencimento("2");
 
             return ApiOk();
         }

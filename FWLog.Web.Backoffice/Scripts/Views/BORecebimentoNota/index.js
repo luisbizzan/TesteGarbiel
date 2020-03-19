@@ -236,6 +236,7 @@
             { data: 'RecebidoEm' },
             { data: 'Atraso' },
             { data: 'Prazo' },
+            { data: 'DataVencimento', width: '30px' },
             { data: 'Fornecedor' },
             { data: 'Status' },
             { data: 'Fornecedor' },
@@ -303,10 +304,17 @@
         $("#modalUsuarioRecebimento").text('');
     });
 
+    $("#exibirModalNotaRecebimento").click(function () {
+        $("#modalNotaRecebimento").load(HOST_URL + "BORecebimentoNota/NotaRecebimento", function () {
+            $("#modalNotaRecebimento").modal();
+        });
+    });
+
     function limparUsuarioConferencia() {
         $("#Filter_UserNameConferencia").val("");
         $("#Filter_IdUsuarioConferencia").val("");
     }
+
 
     $("#limparUsuarioConferencia").click(function () {
         limparUsuarioConferencia();
@@ -375,6 +383,21 @@ function imprimir(acao, id) {
                 }
             });
             break;
+        case 'etqrecebimentosemnota':
+            $.ajax({
+                url: "/BORecebimentoNota/ImprimirEtiquetaNotaRecebimento",
+                method: "POST",
+                data: {
+                    IdImpressora: $("#IdImpressora").val(),
+                    IdNotaFiscalRecebimento: id
+                },
+                success: function (result) {
+                    mensagemImpressao(result);
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
+                }
+            });
+            break;
     }
 }
 
@@ -394,6 +417,7 @@ function detalhesNota() {
         $modalDetalhesEntradaConferencia.modal();
     });
 }
+
 
 function registrarRecebimento() {
     let id = $(this).data("id");
@@ -424,6 +448,9 @@ function registrarRecebimento() {
         }
     });
 }
+
+
+
 
 function BuscarNotaFiscal() {
     var keycode = event.keyCode || event.which;
@@ -505,11 +532,18 @@ function RegistrarNotaFiscal() {
     });
 }
 
-function setFornecedor(idFornecedor, nomeFantasia) {
-    $("#Filter_NomeFantasiaFornecedor").val(nomeFantasia);
-    $("#Filter_IdFornecedor").val(idFornecedor);
-    $("#modalFornecedor").modal("hide");
-    $("#modalFornecedor").empty();
+function setFornecedor(idFornecedor, nomeFantasia, origem) {
+    if (origem === "NotaRecebimentoDiv") {
+        $("#NomeFornecedor").val(nomeFantasia);
+        $("#IdFornecedor").val(idFornecedor);
+        $("#modalFornecedorNotaRecebimento").modal("hide");
+        $("#modalFornecedorNotaRecebimento").empty();
+    } else {
+        $("#Filter_NomeFantasiaFornecedor").val(nomeFantasia);
+        $("#Filter_IdFornecedor").val(idFornecedor);
+        $("#modalFornecedor").modal("hide");
+        $("#modalFornecedor").empty();
+    }
 }
 
 function setUsuario(idUsuario, nomeUsuario, origem) {
@@ -527,8 +561,9 @@ function setUsuario(idUsuario, nomeUsuario, origem) {
 }
 
 function conferirNota() {
-    let id = $(this).data("id");
-    let $modal = $("#modalConferencia");
+    let id        = $(this).data("id");
+    let $modal    = $("#modalConferencia");
+    let $modalDev = $("#modalDevolucaoTotal");
 
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ValidarInicioConferencia/" + id,
@@ -536,10 +571,30 @@ function conferirNota() {
         method: "POST",
         success: function (result) {
             if (result.Success) {
-                $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
-                    $modal.modal();
-                    $("#Referencia").focus();
-                });
+                $.ajax({
+                    url: HOST_URL + CONTROLLER_PATH + "VerificarDevolucaoTotal/" + id,
+                    cache: false,
+                    method: "POST",
+                    data: {
+                        idNota: id
+                    },
+                    success: function (result) {
+                        if (result.Success) {
+                            $modalDev.load(HOST_URL + CONTROLLER_PATH + "DevolucaoTotal/" + id, function (result) {
+                                $modalDev.modal();
+                            });
+                            $(".close").click();
+                            $("#dataTable").DataTable().ajax.reload();
+                        }
+                        else {
+                            //Chama a tela de conferência
+                            $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferencia/" + id, function (result) {
+                                $modal.modal();
+                                $("#Referencia").focus();
+                            });
+                        }
+                    }
+                }); 
             } else {
                 PNotify.warning({ text: result.Message });
             }
@@ -554,6 +609,8 @@ function conferirNota() {
         }
     });
 }
+
+
 
 //function validarConferenciaAutomatica(idNotaFiscal) {
 //    var retorno = false;

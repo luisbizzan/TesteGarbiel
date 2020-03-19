@@ -45,15 +45,49 @@ namespace FWLog.Services.Services
             etiquetaImprimir.Append("^FO16,20^GB710,880^FS");
             etiquetaImprimir.Append("^BY3,8,120");
             etiquetaImprimir.Append($"^FO280,90^BC^FD{idLote.ToString().PadLeft(10, '0')}^FS");
-            etiquetaImprimir.Append("^FO50,90^FB470,3,0,C,0^A0,230,100^FD");
+            etiquetaImprimir.Append("^FO50,90^FB470,4,0,C,0^A0,230,100^FD");
             etiquetaImprimir.Append($"FOR.{lote.NotaFiscal.Fornecedor.IdFornecedor}");
             etiquetaImprimir.Append(@"\&\&");
             etiquetaImprimir.Append($"NF.{lote.NotaFiscal.Numero}");
+            etiquetaImprimir.Append(@"\&");
+            etiquetaImprimir.Append($"{lote.DataRecebimento.ToString("dd/MM/yyyy")}");
             etiquetaImprimir.Append("^FS");
 
             etiquetaImprimir.Append("^XZ");
 
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaImprimir.ToString());
+
+            _impressoraService.Imprimir(etiqueta, idImpressora);
+        }
+
+        public void ImprimirEtiquetaNotaRecebimento(long idNotaFiscalRecebimento, long idImpressora, int? quantidade = null)
+        {
+            NotaFiscalRecebimento notaFiscalRecebimento = _unitOfWork.NotaFiscalRecebimentoRepository.GetById(idNotaFiscalRecebimento);
+
+            int? _quantidade = quantidade ?? notaFiscalRecebimento.QuantidadeVolumes;
+
+            var etiquetaImprimir = new StringBuilder();
+
+            etiquetaImprimir.Append("^XA");
+
+            // Define quantidade de etiquetas a imprimir
+            etiquetaImprimir.Append($"^PQ{_quantidade}^FS");
+
+            etiquetaImprimir.Append("^FWB");
+            etiquetaImprimir.Append("^FO16,20^GB710,880^FS");
+            etiquetaImprimir.Append("^FO50,50^FB470,4,0,C,0^A0,170,100^FD");
+            etiquetaImprimir.Append($"NF.{notaFiscalRecebimento.NumeroNF}");
+            etiquetaImprimir.Append(@"\&");
+            etiquetaImprimir.Append($"FOR.{notaFiscalRecebimento.Fornecedor.IdFornecedor}");
+            etiquetaImprimir.Append(@"\&");
+            etiquetaImprimir.Append($"{DateTime.Now.ToString("dd/MM/yyyy")}");
+            etiquetaImprimir.Append(@"\&");
+            etiquetaImprimir.Append($"VOL.{_quantidade}");
+
+            etiquetaImprimir.Append("^XZ");
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaImprimir.ToString());
+            //var teste = etiquetaImprimir.ToString();
 
             _impressoraService.Imprimir(etiqueta, idImpressora);
         }
@@ -109,6 +143,7 @@ namespace FWLog.Services.Services
             // Nome do Colaborador [5 Linha]
             int tamanhoNome = 13;
             string usuario = request.Usuario.Length > tamanhoNome ? request.Usuario.Substring(0, tamanhoNome) : request.Usuario;
+            usuario = usuario.Normalizar();
             etiquetaImprimir.Append($"^FO610,220^FB330,2,100,C,0^A0B,95,40^FD{usuario}^FS");
 
             // Endereço Picking [5 Linha]
@@ -302,10 +337,11 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaDevolucao(ImprimirEtiquetaDevolucaoRequest request)
         {
-            string linha1 = request.Linha1?.Normalizar();
-            string linha2 = request.Linha2?.Normalizar();
-            string linha3 = request.Linha3?.Normalizar();
-
+            string linha1  = request.Linha1?.Normalizar();
+            string linha2  = request.Linha2?.Normalizar();
+            string linha3  = request.Linha3?.Normalizar();
+            string linha4  = request.Linha4?.Normalizar();
+            
             var etiquetaZpl = new StringBuilder();
 
             etiquetaZpl.Append("^XA");
@@ -317,8 +353,69 @@ namespace FWLog.Services.Services
             etiquetaZpl.Append("^FO10,10^GB700,540,270^FS");
 
             // Texto da etiqueta
-            etiquetaZpl.Append($@"^FO50,15^FB530,3,0,C,0^A0B,230,65^FR^FD{linha1}\&{linha2}\&{linha3}^FS");
+            etiquetaZpl.Append($@"^FO50,15^FB530,4,0,C,0^A0B,230,65^FR^FD{linha1}\&{linha2}\&{linha3}\&{linha4}^FS");
 
+            etiquetaZpl.Append("^XZ");
+
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+        }
+
+        public void ImprimirEtiquetaDevolucaoTotal(ImprimirEtiquetaDevolucaoTotalRequest request)
+        {
+            string nomeFornecedor        = request.NomeFornecedor?.Normalizar();
+            string endFornecedor         = request.EnderecoFornecedor?.Normalizar();
+            string cepFornecedor         = Convert.ToUInt64(request.CepFornecedor).ToString(@"00000\-000");
+            string cidadeFornecedor      = request.CidadeFornecedor?.Normalizar();
+            string estadoFornecedor      = request.EstadoFornecedor?.Normalizar();
+            string telefoneFornecedor    = string.Format("{0:(##) #####-####}", request.TelefoneFornecedor);
+            string numeroFornecedor      = request.NumeroFornecedor?.Normalizar();
+            string complementoFornecedor = request.ComplementoFornecedor?.Normalizar();
+            string bairroFornecedor      = request.BairroFornecedor?.Normalizar();
+            string idFornecedor          = request.IdFornecedor?.Normalizar();
+            string siglaTransportador    = request.SiglaTransportador?.Normalizar();
+            string idTransportadora      = request.IdTransportadora?.Normalizar();
+            string nomeTransportadora    = request.NomeTransportadora?.Normalizar();
+            string idLote                = request.IdLote?.Normalizar();
+            string quantidadeVolumes     = request.QuantidadeVolumes?.Normalizar();
+            string quantidadeEtiquetas   = request.QuantidadeEtiquetas.ToString(); 
+
+            var etiquetaZpl = new StringBuilder();
+
+            etiquetaZpl.Append("^XA");
+
+            //Logo Furacão
+            etiquetaZpl.Append("^FO50,50^GFA,8712,8712,18,,::::::::::::::Q01C,,:P012,P01,,:P01,:,::U01FF,U01FFC,U07IFE,U07KF,U07KF8,U07LFE,U07MFC,U07NF8,U07OFE,U07PF8,U07PFE,U07QF8,U07QFC,U07QFE,U07FF003MF,U07FE001MF,U07FCI01LF8,U07F8K07JF8,U07F8K03JF8,U07F8L03IF8,U07F8M0IF8,U07F8M07FF8,U07F8M01FF8,:U07F8N0FF8,:U07F8N07F8,:U07F8N03F8,:::U07FCN03F8,:U07FEN03F8,:U07FFN03F8,U07FFCM03F8,U07FFEM03F8,U07IF8L03F8,U07JF8K07F8,U07JFEK0FF8,U07LFJ0FF8,U03MF001FF8,U03MFC03FF8,U01RF8,V0RF8,V07QF8,V01QF8,X0PF8,X07OF8,Y01NF8,g03MF8,R0EN07LF8,R078N03KF8,R078O0KF8,R07807EM0JF,R07807FFM03FE,R07C07FFCM0FC,R03C07IFE,R03E07KF,R03E07KFC,R03E07LFE,R03E07NF,R01E07NFC,R01E07PF,R01F07QF,S0F07QFC,S0F07RF8,S0F07F8PF8,S0F07F83OF8,R01E07F800NF8,R03807F8I0MF8,R07807F8I03LF8,R07007F8K0KF8,R07807F8K01JF8,R07807F8L03IF8,R07807F8I01FI0FF8,R07807F8I01F8003F8,R07807F8I01FEI038,R07C07F8I01FE,:R03E07F8I01FE,:::R03E07FCI01FE,R01E07FCI01FE,R01F07FEI01FE,S0F07FFI01FE,S0F07FF8001FE,S0707FFE001FE,U07IFI07E,U07IFE001E,U07KF,U07KFC,U03LFE,U01NF8,U01NFC,V0PF,V03PF8,V03PFE,W07PF8,X01OF8,Y07NF8,g03MF8,gG01LF8,gH07KF8,U07EL01JF8,U07F8M0IF8,U07F8M07FF8,U07F8N01F8,U07F8P08,U07F8,:::::U07F8N03F,U07F8N03F8,:::::::::::::::::U07FCN03F8,:U07FEN03F8,U07FFN03F8,U07FF8M03F8,U07FFCM03F8,U07FFEM03F8,U07IFCL07F8,U07JFEK0FF8,U07KFK0FF8,U07LFCI0FF8,U01MFE03FF8,U01NF07FF8,V0RF8,V07QF8,V03QF8,W07PF8,X07OF8,X01OF8,g07MF8,gG0MF8,gG01LF8,U06M0KF8,U07M03JF8,U07F8L03IF,U07FFEM0FC,U07IFM038,U07JF8,U07KFE,U07LF8,U07MFC,U07NFE,U07OF8,U07PFC,U07QFC,U07RF8,:U07F81OF8,U07F807NF8,U07F8003MF8,U07F8I03LF8,U07F8J07KF8,U07F8K01JF8,U07F8L07IF8,U07F8J08007FF8,U07F8I01FC001F8,U07F8I01FEI078,U07F8I01FE,:::::U07FCI01FE,:U07FEI01FE,U07FFI01FE,U07FF8001FE,U07FFC001FE,U07IFI0FE,U07IFCI0E,U07JF8,U07KFE,U07LF8,U01MFC,U01OF,V0OF8,V0PFC,V01QF,W0QF8,X0PF8,Y03NF8,Y01NF8,gG0MF8,gH03KF8,gI0KF8,gJ07IF8,V0FEM03FF8,U01FF8M0FF8,U07IFCM078,U07JF8,U07KF,U07LF,U07LF8L03,U07LFEL07F8,U07MFL0IFC,U07MFK01IFC,U07MF8J03IF8,U07MF8J07IF,U07MFCJ0IFE,U07FC0JFEI01IFC,U07F8007FFEI07IF,U07F8001FFEI07IF,U07F8I0FFE001IFE,U07F8I03FE003IF8,:U07F8I03FE00JF,U07F8I01FE01IFC,:U07F8I01FE07IF,U07F8I01FE0IFE,U07F8I01FE1IFE,U07F8I01FE3IF8,U07F8I01FE7IF,U07F8I01LF,U07F8I01KFC,U07F8I01KF8,U07F8I01KF,U07F8I01JFE,U07F8I01JFC,U07F8I01JF8,U07F8I01JF,U07F8J0IFE,U07FCK0FFC,U07IFK038,U07IF8,U07JFE,U07LF,U07LFC,U07MFE,U07OF,U07OFC,U07QF,V0QFE,V03QF8,X0PF8,X01OF8,Y03NF8,gG0MF8,gG03LF8,gH03KF8,U07CM0JF8,U07EM03IF8,U07FFM01FF8,U07IFCM078,U07IFEM038,U07KF,U07LF8,U07LFE,U07NF8,U07OF8,U07OFE,U07QF8,V07QF,V01QF8,X07OF8,Y0OF8,Y01NF8,gG07LF8,gG01LF8,gH01KF8,gJ07IF8,gJ03IF8,gK01FF8,gL07F8,gL03F8,:::::::::::U07CO03F8,U07FFN03F8,U07FF8M03F8,U07IFCL07F8,U07JFEK0FF8,U07KF8J0FF8,U07LFC001FF8,U07MFE07FF8,U07NF8IF8,U07RF8,:U01RF8,V01QF8,X07OF8,X01OF8,g0NF8,gG07LF8,S01M01LF8,S0107CL0KF8,S0307FM0JF,S0707F8L01IF,S0707F8N0FC,S0F07F8,:R01F07F8,R03F07F8,:R07F07F8,:R0FF07F8,Q01FF07F8,::Q03FF07F8,:Q07FF07F8,Q0IF07F8,Q0IF07F8I01C,Q0FFE07F8I01FE,P01FFE07F8I01FE,::P03FFE07F8I01FE,P07FFC07F8I01FE,:P07FF807F8I01FE,P0IF807F8I01FE,:P0IF807FCI01FE,O01IF007FCI01FE,O03IF007FEI01FE,O03IF007FFI01FE,:O03IF007FF8001FE,O07FFE007FFE001FE,O07FFC007IF801FE,O07FFC007JF81FE,O0IFC007JFE1FE,O0IFC007MFE,N01IFC003MFE,N01IF8001MFE,N01IF8I0OF,N01IF8I0OFC,N03IF80203OFC,N03IF80301QF,N03IF007807PF8,N07IF007C007OF8,N07FFE007FI01NF8,N0IFE007FJ0NF8,N0IFE007FEJ07LF8,N0IFE00IF8J03KF8,N0IFE00IF8K0KF8,N0IFC01IF80CJ07IF8,M01IFC01IF80FEJ03FF8,M01IFC01IF81FF8J0FF8,M03IFC01IF01FFEK078,M03IFC01FFE01FFEN03,M03IFC01FFE01FFE03L078,M07IF801FFE01FFE03FCJ0FC,M07IF803FFE01FFE03FCJ0EC,M07IF003FFE01FFE07FE2I0CC,M07IF003FFE03FFE07FE21818E,M07IF003FFC03FFE07FE23E386,M07IF007FFC03FFE07FE43E386,M0JF007FFC07FFC07FEC3E382,M0JF007FFC07FFC07FEC3E302,L01IFE007FFC07FFC07FEC3E702,L01IFE007FFC07FFC07FEC3EF02,L01IFE007FF807FFC07FEC3EE02,L01IFE00IF807FFC0FFEC3EE,L01IFE00IF00IFC0IF83EE018,L03IFE00IF00IFC0IF03FC,L03IFC00IF00IFC0IF03FC,:L03IF800IF00IFC0IF03FC,L03IF800IF00IF80IF03FC,:L03IF800FFE00IF80IF03F8,L03IF800FFE00IF00IF01F,L07IF801FFE00IF00IF01F,L07IF801FFE80IF00FFE01F,L0JF001FFE01IF00FFE00F,L0JF001IF01IF00FFC006,L0JF003IF01IF00FFC,:L0JF003FFE01IF00FFC,L0JF003FFE03IF00FFC,L0JF003FFE03IF20FFC,L0IFE003FFC03IF20FFC,L0IFE003FFC03IF00FFC,L0IFE003FF803IFC0FF8,L0IFC003FF803IFC0FF8,:L0IFC003FF803IFC07F8,K01IFC003FF803IF803F,K01IFC003FF003IF,:K01IFC003FF001IF,K01IFC003FFI0IF,::K01IFC003FFI0FFE,K01IFC003FFI07FE,K01IFC001FF0203FE,K01IFC001FF0201FC,K01IFC001FF02003,K01IFC001FE0C,K01IF8003FE1C,L0IF8007FE18,L0IF8007FF3,L0IF801IF7,L0IF801JF,L0IF803F3FE,L0IFC07C1F8,L0IFC0FC0F8,L0IFC1FC,L07FFC3F8,L03FFC7F8,L03FFCFF,L03FFDFE,L01JFE,L01JFC,M07IF,:M01FFE,N07F8,N01E,,::::^FS");
+
+            etiquetaZpl.Append("^LL860");
+
+            // Define quantidade de etiquetas a imprimir
+            etiquetaZpl.Append($@"^PQ{quantidadeEtiquetas}^FS");
+
+            // Texto da etiqueta            
+            etiquetaZpl.Append($@"^FO196,50^FB510,4,0,L,0^A0B,32,25^FD{nomeFornecedor}\&{endFornecedor}-{numeroFornecedor}\&{cepFornecedor}-{cidadeFornecedor}-{estadoFornecedor}\&Tel.:{telefoneFornecedor}^FS");
+            etiquetaZpl.Append("^FO354,70^A0B,70,60^FDDEVOLUCAO TOTAL^FS");
+            etiquetaZpl.Append("^FO425,425^GB,145,120,4^FS");
+            etiquetaZpl.Append($@"^FO445,437^A0B,100,70^FR^FD{siglaTransportador}^FS");
+            etiquetaZpl.Append($@"^FO440,30^FB390,4,0,L,0^A0B,30,20^FD{idTransportadora}\&{nomeTransportadora}^FS");
+            etiquetaZpl.Append("^FO550,520^A0B,20,20^FDLOTE^FS");
+            etiquetaZpl.Append($@"^FO570,375^A0B,80,80^FR^FD{idLote}^FS");
+            etiquetaZpl.Append("^FO550,230^A0B,20,20^FDVOLUME^FS");
+            etiquetaZpl.Append($@"^FO565,100^A0B,80,80^FD{quantidadeVolumes}^FS");
+            etiquetaZpl.Append("^FO75,75^XGLOGO.GRF,1,1^FS");
+            etiquetaZpl.Append("^FO75,75^XGLOGO.GRF,1,1^FS");
+
+            // Linhas Horizontais
+            etiquetaZpl.Append("^FO184,40^GBO,860,2^FS");
+            etiquetaZpl.Append("^FO344,40^GBO,860,2^FS");
+            etiquetaZpl.Append("^FO424,40^GBO,860,2^FS");
+            etiquetaZpl.Append("^FO544,40^GBO,860,2^FS");
+            etiquetaZpl.Append("^FO635,40^GBO,860,2^FS");
+
+            // Linhas Verticais
+            etiquetaZpl.Append("^ FO545,310^GB90,0,2^FS");
             etiquetaZpl.Append("^XZ");
 
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());

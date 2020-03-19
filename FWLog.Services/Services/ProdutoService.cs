@@ -22,6 +22,30 @@ namespace FWLog.Services.Services
             _uow = uow;
         }
 
+        public async Task LimparIntegracao()
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            StringBuilder where = new StringBuilder();
+
+            where.Append("WHERE DESCRPROD IS NOT NULL ");
+            where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
+            where.Append("AND AD_INTEGRARFWLOG = '0' ");
+            where.Append("ORDER BY CODPROD OFFSET 0 ROWS FETCH NEXT 5000 ROWS ONLY ");
+
+            List<Model.IntegracaoSankhya.ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoIntegracao>(where: where.ToString());
+
+            foreach (var produtoInt in produtosIntegracao)
+            {
+                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPROD", produtoInt.CodigoIntegracao.ToString() } };
+
+                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", campoChave, "AD_INTEGRARFWLOG", "1");
+            }
+        }
+
         public async Task ConsultarProdutoIntegracao()
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
@@ -91,21 +115,21 @@ namespace FWLog.Services.Services
                     {
                         _uow.ProdutoRepository.Add(produto);
 
-                        List<Empresa> empresas = _uow.EmpresaRepository.Tabela().ToList();
+                        //List<Empresa> empresas = _uow.EmpresaRepository.Tabela().ToList();
 
-                        foreach (Empresa empresa in empresas)
-                        {
-                            var produtoEstoque = new ProdutoEstoque
-                            {
-                                IdProduto = produto.IdProduto,
-                                IdEmpresa = empresa.IdEmpresa,
-                                Saldo = 0,
-                                IdProdutoEstoqueStatus = ProdutoEstoqueStatusEnum.Ativo,
-                                DiasPrazoEntrega = 10
-                            };
+                        //foreach (Empresa empresa in empresas)
+                        //{
+                        //    var produtoEstoque = new ProdutoEstoque
+                        //    {
+                        //        IdProduto = produto.IdProduto,
+                        //        IdEmpresa = empresa.IdEmpresa,
+                        //        Saldo = 0,
+                        //        IdProdutoEstoqueStatus = ProdutoEstoqueStatusEnum.Ativo,
+                        //        DiasPrazoEntrega = 10
+                        //    };
 
-                            _uow.ProdutoEstoqueRepository.Add(produtoEstoque);
-                        }
+                        //    _uow.ProdutoEstoqueRepository.Add(produtoEstoque);
+                        //}
                     }
                     else
                     {
@@ -119,6 +143,25 @@ namespace FWLog.Services.Services
                     var applicationLogService = new ApplicationLogService(_uow);
                     applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do Produto: {0}.", produtoInt.CodigoIntegracao));
                 }
+            }
+        }
+
+        public async Task LimparIntegracaoPrazoEntrega()
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            string where = "WHERE AD_INTEGRARFWLOG = '0' ";
+
+            List<ProdutoEstoqueIntegracao> produtoPrazoEntregaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoEstoqueIntegracao>(where);
+
+            foreach (var produtoInt in produtoPrazoEntregaIntegracao)
+            {
+                Dictionary<string, string> chaves = new Dictionary<string, string> { { "CODPROD", produtoInt.CodigoIntegracaoProduto.ToString() }, { "CODEMP", produtoInt.CodigoIntegracaoEmpresa.ToString() } };
+
+                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("EmpresaProdutoImpostos", chaves, "AD_INTEGRARFWLOG", "0");
             }
         }
 
@@ -162,16 +205,16 @@ namespace FWLog.Services.Services
                     produtoEstoque.DiasPrazoEntrega = Convert.ToInt32(produtoInt.DiasPrazoEntrega);
                     produtoEstoque.IdProdutoEstoqueStatus = (ProdutoEstoqueStatusEnum)Convert.ToInt32(produtoInt.Status);
 
-                    Dictionary<string, string> chaves = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() }, { "CODEMP", empresa.CodigoIntegracao.ToString() } };
-
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("EmpresaProdutoImpostos", chaves, "AD_INTEGRARFWLOG", "0");
-
                     if (produtoEstoqueNovo)
                     {
                         _uow.ProdutoEstoqueRepository.Add(produtoEstoque);
                     }
 
                     await _uow.SaveChangesAsync();
+
+                    Dictionary<string, string> chaves = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() }, { "CODEMP", empresa.CodigoIntegracao.ToString() } };
+
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("EmpresaProdutoImpostos", chaves, "AD_INTEGRARFWLOG", "0");
                 }
                 catch (Exception ex)
                 {
@@ -180,6 +223,25 @@ namespace FWLog.Services.Services
 
                     continue;
                 }
+            }
+        }
+
+        public async Task LimparIntegracaoMediaVenda()
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            string where = "WHERE AD_INTEGRARFWLOG = '0' ";
+
+            List<ProdutoEstoqueIntegracao> produtoPrazoEntregaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoEstoqueIntegracao>(where);
+
+            foreach (var produtoInt in produtoPrazoEntregaIntegracao)
+            {
+                Dictionary<string, string> chaves = new Dictionary<string, string> { { "CODPROD", produtoInt.CodigoIntegracaoProduto.ToString() }, { "CODEMP", produtoInt.CodigoIntegracaoEmpresa.ToString() } };
+
+                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("EmpresaProdutoImpostos", chaves, "AD_INTEGRARFWLOG", "1");
             }
         }
 
@@ -221,11 +283,11 @@ namespace FWLog.Services.Services
                             produtoEstoque.MediaVenda = null;
                     }
 
+                    await _uow.SaveChangesAsync();
+
                     Dictionary<string, string> chaves = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() }, { "CODEMP", empresa.CodigoIntegracao.ToString() } };
 
                     await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("AD_MEDVENDPRO", chaves, "AD_INTEGRARFWLOG", "0");
-
-                    await _uow.SaveChangesAsync();
                 }
                 catch (Exception ex)
                 {
@@ -244,7 +306,7 @@ namespace FWLog.Services.Services
             
             long quantidadeReservada = 0;
 
-            Empresa empresa = _uow.EmpresaRepository.GetById(idEmpresa);
+            Empresa empresa = _uow.EmpresaRepository.ConsultaPorId(idEmpresa);
             Produto produto = _uow.ProdutoRepository.GetById(idProduto);
 
             if (empresa != null && produto != null)

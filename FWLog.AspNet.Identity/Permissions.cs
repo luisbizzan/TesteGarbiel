@@ -88,6 +88,7 @@ namespace FWLog.AspNet.Identity
             public const string ImprimirEtiquetaLote = "ImprimirEtiquetaLote";
             public const string Imprimir = "EtiquetaIndividualEPersonalizadaImprimir";
             public const string PermitirConferenciaManual = "PermitirConferenciaManual";
+            public const string DevolucaoTotal = "PermitirDevolucaoTotal";
 
             public Recebimento() : base(Display.FromString("Recebimento de Notas Fiscais"))
             {
@@ -102,6 +103,7 @@ namespace FWLog.AspNet.Identity
                 Register(ImprimirEtiquetaLote, Display.FromString("Imprimir Etiqueta de Lote"));
                 Register(Imprimir, Display.FromString("Imprimir Etiqueta Individual e Personalizada"));
                 Register(PermitirConferenciaManual, Display.FromString("Permitir Conferência Manual"));
+                Register(DevolucaoTotal, Display.FromString("Permitir Devolução Total"));
             }
         }
 

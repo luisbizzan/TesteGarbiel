@@ -80,7 +80,8 @@
             data: {
                 IdLote: $("#Filter_IdLote").val(),
                 NroNota: $("#Filter_NroNota").val(),
-                ReferenciaPronduto: $("#Filter_ReferenciaPronduto").val(),
+                IdProduto: $("#Filter_IdProduto").val(),
+                ReferenciaPronduto: $("#Filter_DescricaoProduto").val(),
                 DataCompraMinima: $("#Filter_DataCompraMinima").val(),
                 DataCompraMaxima: $("#Filter_DataCompraMaxima").val(),
                 DataRecebimentoMinima: $("#Filter_DataRecebimentoMinima").val(),
@@ -169,7 +170,8 @@
         columns: [
             { data: 'IdLote' },
             { data: 'NroNota' },
-            { data: 'ReferenciaPronduto' },
+            { data: 'ReferenciaProduto' },
+            { data: 'DescricaoProduto' },
             { data: 'DataRecebimento', width: 100 },
             { data: 'QtdCompra', width: 100 },
             { data: 'QtdRecebida', width: 100 }

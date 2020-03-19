@@ -3,7 +3,9 @@ using DartDigital.Library.Web.IO;
 using DartDigital.Library.Web.ModelValidation;
 using DartDigital.Library.Web.ModelValidation.Adapters;
 using FWLog.AspNet.Identity;
+using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
+using FWLog.Data.Models;
 using FWLog.Web.Backoffice.App_Start;
 using FWLog.Web.Backoffice.EnumsAndConsts;
 using log4net;
@@ -163,13 +165,19 @@ namespace FWLog.Web.Backoffice
 
             var userManager = HttpContext.Current.GetOwinContext().GetUserManager<BackofficeUserManager>();
             var user = (ClaimsPrincipal)User;
-
-            int idEmpresa = 0;
-            HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName];
-
-            if (cookie != null && !string.IsNullOrEmpty(cookie[EmpresaCookie.IdEmpresa]))
+            var applicationUser = userManager.FindById(User.Identity.GetUserId());
+            
+            long idEmpresa = 0;
+            if (applicationUser != null)
             {
-                idEmpresa = Convert.ToInt32(cookie[EmpresaCookie.IdEmpresa]);
+                var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
+
+                ApplicationSession applicationSession = uow.ApplicationSessionRepository.GetById(applicationUser.IdApplicationSession.Value);
+                
+                if (applicationSession != null && applicationSession.IdEmpresa.HasValue)
+                {
+                    idEmpresa = applicationSession.IdEmpresa.Value;
+                }
             }
 
             string userId = user.Identity.GetUserId();

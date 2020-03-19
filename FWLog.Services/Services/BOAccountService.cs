@@ -56,7 +56,6 @@ namespace FWLog.Services.Services
         public void EditPerfilUsuario(PerfilUsuario perfilModel)
         {
             var perfil = _uow.PerfilUsuarioRepository.GetById(perfilModel.PerfilUsuarioId);
-
             perfil.Departamento = perfilModel.Departamento;
             perfil.Cargo = perfilModel.Cargo;
             perfil.DataNascimento = perfilModel.DataNascimento;

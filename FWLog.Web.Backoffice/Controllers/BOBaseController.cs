@@ -2,10 +2,12 @@
 using DartDigital.Library.Web.IO;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Data.Models.GeneralCtx;
 using FWLog.Web.Backoffice.App_Start;
 using FWLog.Web.Backoffice.EnumsAndConsts;
 using FWLog.Web.Backoffice.Helpers;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
@@ -62,30 +64,6 @@ namespace FWLog.Web.Backoffice.Controllers
             return base.BeginExecuteCore(callback, state);
         }
 
-        public void CookieSalvarEmpresa(long idEmpresa, string userId, bool logoff = false)
-        {
-            HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName];
-
-            if (idEmpresa == 0)
-            {
-                if (cookie == null)
-                {
-                    return;
-                }
-
-                cookie[EmpresaCookie.IdEmpresa] = string.Empty;
-                Response.Cookies.Add(cookie);
-
-                return;
-            }
-
-            cookie = cookie ?? new HttpCookie(EmpresaCookie.CookieName);
-
-            cookie.Values[EmpresaCookie.IdEmpresa] = idEmpresa.ToString();
-            cookie.Expires = DateTime.MaxValue;
-            Response.Cookies.Add(cookie);
-        }
-
         protected void CookieLogoff()
         {
             HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName] ?? new HttpCookie(EmpresaCookie.CookieName);
@@ -99,16 +77,18 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             get
             {
-                HttpCookie cookie = Request.Cookies[EmpresaCookie.CookieName];
+                ApplicationUser applicationUser = UserManager.FindById(User.Identity.GetUserId());
+                var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
 
-                if (cookie != null && cookie[EmpresaCookie.IdEmpresa] != null && !string.IsNullOrEmpty(cookie[EmpresaCookie.IdEmpresa]))
+                ApplicationSession applicationSession = uow.ApplicationSessionRepository.GetById(applicationUser.IdApplicationSession.Value);
+
+                if (applicationSession.IdEmpresa.HasValue)
                 {
-                    return Convert.ToInt64(cookie[EmpresaCookie.IdEmpresa].ToString());
+                    return applicationSession.IdEmpresa.Value;
+
                 }
-                else
-                {
-                    return 0;
-                }
+
+                return 0;
             }
         }
 

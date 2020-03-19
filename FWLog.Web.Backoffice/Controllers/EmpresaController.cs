@@ -8,6 +8,9 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.EmpresaCtx;
+using log4net;
+using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -17,15 +20,17 @@ namespace FWLog.Web.Backoffice.Controllers
 {
     public class EmpresaController : BOBaseController
     {
+        private readonly ILog _log;
         private readonly UnitOfWork _unitOfWork;
         private readonly EmpresaService _empresaService;
 
-        public EmpresaController(
+        public EmpresaController(ILog log,
             UnitOfWork unitOfWork,
             EmpresaService empresaService)
         {
             _unitOfWork = unitOfWork;
             _empresaService = empresaService;
+            _log = log;
         }
 
         public ActionResult BuscarEmpresas()
@@ -36,8 +41,28 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public JsonResult MudarEmpresa(int id)
         {
-            var userInfo = new BackOfficeUserInfo();
-            CookieSalvarEmpresa(id, userInfo.UserId.ToString());
+            try
+            {
+                ApplicationUser applicationUser = UserManager.FindById(User.Identity.GetUserId());
+
+                ApplicationSession applicationSession = _unitOfWork.ApplicationSessionRepository.GetById(applicationUser.IdApplicationSession.Value);
+
+                applicationSession.IdEmpresa = id;
+
+                _unitOfWork.ApplicationSessionRepository.Update(applicationSession);
+                _unitOfWork.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro ao trocar a empresa.",
+                    Data = Url.Action("Index", "BOHome")
+                }, JsonRequestBehavior.DenyGet);
+            }
 
             return Json(new AjaxGenericResultModel
             {
@@ -145,13 +170,19 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Empresa.EditarConfiguracao)]
         public ActionResult Editar(EmpresaConfigEditarViewModel model)
         {
+            var empresaConfigGarantia = _unitOfWork.EmpresaConfigRepository.ConsultarPorIdEmpresa(model.IdEmpresaGarantia);
+
+            if (empresaConfigGarantia == null)
+            {
+                ModelState.AddModelError(nameof(model.IdEmpresaGarantia), "Empresa Garantia não encontrada.");
+            }
+
             if (model.IdEmpresa == model.IdEmpresaGarantia && !model.EmpresaFazGarantia)
             {
                 ModelState.AddModelError(nameof(model.EmpresaFazGarantia), "A empresa editada não pode ser selecionada para Garantia, se não estiver marcada para fazer garantia.");
             }
 
-            var empresaConfigGarantia = _unitOfWork.EmpresaConfigRepository.ConsultarPorIdEmpresa(model.IdEmpresaGarantia);
-            if (!empresaConfigGarantia.EmpresaFazGarantia)
+            if (empresaConfigGarantia?.EmpresaFazGarantia == false)
             {
                 ModelState.AddModelError(nameof(model.IdEmpresaGarantia), string.Format("A Empresa '{0}' não pode ser selecionada para Garantia, se não estiver marcada para fazer garantia.", model.NomeFantasiaEmpresaGarantia));
             }

@@ -87,7 +87,7 @@ namespace FWLog.Services.Services
             }
 
             //Valida se a largura, altura e comprimento do produto.
-            if (!(produto.Largura.HasValue || produto.Altura.HasValue || produto.Comprimento.HasValue))
+            if (((produto.Altura ?? 0) <= 0) | ((produto.Largura ?? 0) <= 0) | ((produto.Comprimento ?? 0) <= 0))
             {
                 conferenciaResponse.Sucesso = false;
                 conferenciaResponse.Mensagem = "Referência sem cubicagem. Por favor, tente novamente!";

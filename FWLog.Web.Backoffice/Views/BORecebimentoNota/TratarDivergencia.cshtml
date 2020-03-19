@@ -51,6 +51,7 @@
                                     <th>Descrição</th>
                                     <th style="width:100px; text-align:center">Qtd. NF</th>
                                     <th style="width:100px; text-align:center">Qtd. Conferido</th>
+                                    <th style="width:100px; text-align:center">Qtd. Devolução</th>
                                     <th style="width:100px; text-align:center">A+</th>
                                     <th style="width:100px; text-align:center">A-</th>
                                     <th style="width:100px;">Qtd. A+</th>
@@ -62,24 +63,25 @@
                                 {
                                     for (int i = 0; i < Model.Divergencias.Count(); i++)
                                     {
-                                        <tr class="linha-tratarDivergencia">
-                                            <td>
-                                                @Model.Divergencias[i].Referencia
-                                                @Html.Hidden(string.Format("Divergencias[{0}].IdLoteDivergencia", i), Model.Divergencias[i].IdLoteDivergencia)
-                                            </td>
-                                            <td>
-                                                @Model.Divergencias[i].DescricaoProduto
-                                            </td>
-                                            <td style="text-align:center">
-                                                @Model.Divergencias[i].QuantidadeNotaFiscal
-                                                @Html.Hidden(string.Format("Divergencias[{0}].QuantidadeNotaFiscal", i), Model.Divergencias[i].QuantidadeNotaFiscal, new { @class = "quantidade-nota" })
-                                            </td>
-                                            <td style="text-align:center">@Model.Divergencias[i].QuantidadeConferencia</td>
-                                            <td style="text-align:center">@Model.Divergencias[i].QuantidadeMais</td>
-                                            <td style="text-align:center">@Model.Divergencias[i].QuantidadeMenos</td>
-                                            <td>@Html.TextBox(string.Format("Divergencias[{0}].QuantidadeMaisTratado", i), Model.Divergencias[i].QuantidadeMaisTratado, new { @class = "form-control onlyNumber quantidade-mais" })</td>
-                                            <td>@Html.TextBox(string.Format("Divergencias[{0}].QuantidadeMenosTratado", i), Model.Divergencias[i].QuantidadeMenosTratado, new { @class = "form-control onlyNumber quantidade-menos" })</td>
-                                        </tr>
+                                <tr class="linha-tratarDivergencia">
+                                    <td>
+                                        @Model.Divergencias[i].Referencia
+                                        @Html.Hidden(string.Format("Divergencias[{0}].IdLoteDivergencia", i), Model.Divergencias[i].IdLoteDivergencia)
+                                    </td>
+                                    <td>
+                                        @Model.Divergencias[i].DescricaoProduto
+                                    </td>
+                                    <td style="text-align:center">
+                                        @Model.Divergencias[i].QuantidadeNotaFiscal
+                                        @Html.Hidden(string.Format("Divergencias[{0}].QuantidadeNotaFiscal", i), Model.Divergencias[i].QuantidadeNotaFiscal, new { @class = "quantidade-nota" })
+                                    </td>
+                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeConferencia</td>
+                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeDevolucao</td>
+                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeMais</td>
+                                    <td style="text-align:center">@Model.Divergencias[i].QuantidadeMenos</td>
+                                    <td>@Html.TextBox(string.Format("Divergencias[{0}].QuantidadeMaisTratado", i), Model.Divergencias[i].QuantidadeMaisTratado, new { @class = "form-control onlyNumber quantidade-mais" })</td>
+                                    <td>@Html.TextBox(string.Format("Divergencias[{0}].QuantidadeMenosTratado", i), Model.Divergencias[i].QuantidadeMenosTratado, new { @class = "form-control onlyNumber quantidade-menos" })</td>
+                                </tr>
                                     }
                                 }
                                 else

@@ -253,8 +253,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 applicationUser.IdApplicationSession = applicationSession.IdApplicationSession;
 
-                CookieSalvarEmpresa(idEmpresa, applicationUser.Id);
-
                 UserManager.Update(applicationUser);
             }
             catch (Exception) { }
