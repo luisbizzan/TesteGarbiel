@@ -87,5 +87,10 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return query.ToList();
         }
+
+        public List<EnderecoArmazenagem> PesquisarPorCodigo(string codigo, long idEmpresa)
+        {
+            return Entities.EnderecoArmazenagem.Where(w => w.Codigo.Equals(codigo) && w.IdEmpresa == idEmpresa).ToList();
+        }
     }
 }

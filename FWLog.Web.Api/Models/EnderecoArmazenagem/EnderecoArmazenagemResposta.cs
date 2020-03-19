@@ -6,5 +6,6 @@
         public string Codigo { get; set; }
         public string DescricaoNivel { get; set; }
         public string DescricaoPonto { get; set; }
+        public bool IsPontoSeparacao { get; set; }
     }
 }

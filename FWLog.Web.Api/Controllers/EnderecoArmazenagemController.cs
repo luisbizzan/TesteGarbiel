@@ -2,8 +2,7 @@
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Web.Api.Models.EnderecoArmazenagem;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
@@ -18,33 +17,64 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [HttpGet]
-        [Route("api/v1/enderecos")]
-        public IHttpActionResult ImprimirEtiquetaEndereco([FromUri] string identificacao)
+        [Route("api/v1/endereco/pesquisar/")]
+        public IHttpActionResult Perquisar(string idCod)
         {
-            if (string.IsNullOrWhiteSpace(identificacao))
+            if (string.IsNullOrEmpty(idCod))
             {
-                return ApiBadRequest($"{nameof(identificacao)} cannot be null.");
+                return ApiBadRequest("Informe o código de barras ou o código do endereço.");
             }
 
-            _ = long.TryParse(identificacao, out long _identificacao);
+            var resposta = new EnderecosArmazenagemResposta { Lista = new List<EnderecoArmazenagemResposta>() };
 
-            var lista = _unitOfWork.EnderecoArmazenagemRepository.Tabela().Where(x => x.IdEmpresa == IdEmpresa && x.Ativo && (x.Codigo == identificacao || x.IdEnderecoArmazenagem == _identificacao))
-                .Select(x => new EnderecoArmazenagemResposta
+            if(long.TryParse(idCod, out long idEnderecoArmazenagem))
+            {
+                EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+                if (enderecoArmazenagem != null)
                 {
-                    Codigo = x.Codigo,
-                    IdEnderecoArmazenagem = x.IdEnderecoArmazenagem,
-                    DescricaoNivel = x.NivelArmazenagem.Descricao,
-                    DescricaoPonto = x.PontoArmazenagem.Descricao
-                }).ToList();
+                    var itemResposta = new EnderecoArmazenagemResposta
+                    {
+                        Codigo = enderecoArmazenagem.Codigo,
+                        IdEnderecoArmazenagem = enderecoArmazenagem.IdEnderecoArmazenagem,
+                        DescricaoNivel = enderecoArmazenagem.NivelArmazenagem.Descricao,
+                        DescricaoPonto = enderecoArmazenagem.PontoArmazenagem.Descricao,
+                        IsPontoSeparacao = enderecoArmazenagem.IsPontoSeparacao
+                    };
 
-            var rtn = new EnderecosArmazenagemResposta { Lista = lista };
+                    resposta.Lista.Add(itemResposta);
 
-            return ApiOk(rtn);
+                    return ApiOk(resposta);
+                }
+            }
+
+            List<EnderecoArmazenagem> enderecosArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPorCodigo(idCod, IdEmpresa);
+
+            if (enderecosArmazenagem.Count == 0)
+            {
+                return ApiNotFound("Nenhum endereço foi encontrado.");
+            }
+
+            foreach (EnderecoArmazenagem enderecoArmazenagem in enderecosArmazenagem)
+            {
+                var itemResposta = new EnderecoArmazenagemResposta
+                {
+                    Codigo = enderecoArmazenagem.Codigo,
+                    IdEnderecoArmazenagem = enderecoArmazenagem.IdEnderecoArmazenagem,
+                    DescricaoNivel = enderecoArmazenagem.NivelArmazenagem.Descricao,
+                    DescricaoPonto = enderecoArmazenagem.PontoArmazenagem.Descricao,
+                    IsPontoSeparacao = enderecoArmazenagem.IsPontoSeparacao
+                };
+
+                resposta.Lista.Add(itemResposta);
+            }
+
+            return ApiOk(resposta);
         }
 
         [HttpGet]
         [Route("api/v1/endereco/{id}")]
-        public async Task<IHttpActionResult> Pesquisar(long id)
+        public IHttpActionResult PesquisarPorId(long id)
         {
             if (id <= 0)
             {
