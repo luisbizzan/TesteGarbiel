@@ -71,7 +71,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                      !(from p in Entities.ProdutoEstoque where p.IdEnderecoArmazenagem == e.IdEnderecoArmazenagem select p.IdEnderecoArmazenagem).Any()
                      select new EnderecoArmazenagemPesquisaModalListaLinhaTabela
                      {
-                         IdEmpresaArmazenagem = e.IdEnderecoArmazenagem,
+                         IdEnderecoArmazenagem = e.IdEnderecoArmazenagem,
                          Codigo = e.Codigo,
                          EstoqueMaximo = e.EstoqueMaximo,
                          EstoqueMinimo = e.EstoqueMinimo,

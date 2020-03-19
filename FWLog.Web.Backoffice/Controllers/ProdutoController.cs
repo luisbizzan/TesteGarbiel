@@ -8,17 +8,24 @@ using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.ProdutoCtx;
 using System.Collections.Generic;
+using System;
 using System.Web.Mvc;
+using FWLog.Services.Services;
+using FWLog.Data.EnumsAndConsts;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
     public class ProdutoController : BOBaseController
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly ProdutoEstoqueService _produtoEstoqueService;
+        private readonly ApplicationLogService _applicationLogService;
 
-        public ProdutoController(UnitOfWork unitOfWork)
+        public ProdutoController(UnitOfWork unitOfWork, ProdutoEstoqueService produtoEstoqueService, ApplicationLogService applicationLogService)
         {
             _unitOfWork = unitOfWork;
+            _produtoEstoqueService = produtoEstoqueService;
+            _applicationLogService = applicationLogService;
         }
 
         [HttpPost]
@@ -124,6 +131,37 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             return View(viewModel);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Produto.Editar)]
+        public ActionResult EditarProduto(ProdutoEditarViewModel viewModel)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(viewModel);
+                }
+
+                ProdutoEstoque produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(viewModel.IdProduto, IdEmpresa);
+
+                if (produtoEstoque == null)
+                {
+                    Notify.Error("Produto não localizado!");
+                }
+
+                _produtoEstoqueService.AtualizarOuInserirEnderecoArmazenagem(produtoEstoque, viewModel.IdEnderecoArmazenagem);
+
+                Notify.Success("Endereço de Armazenagem editado com sucesso.");
+                return RedirectToAction("Index");
+            }
+            catch (Exception e)
+            {
+                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                Notify.Error("Algo inesperado ocorreu!");
+                return RedirectToAction("Index");
+            }
         }
     }
 }
