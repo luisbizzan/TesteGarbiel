@@ -1,4 +1,5 @@
-﻿using FWLog.Data;
+﻿using AutoMapper;
+using FWLog.Data;
 using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Etiqueta;
@@ -78,6 +79,40 @@ namespace FWLog.Web.Api.Controllers
             catch
             {
                 throw;
+            }
+        }
+
+        [HttpPost]
+        [Route("api/v1/etiqueta/lote/imprimir")]
+        public IHttpActionResult ImprimirEtiquetaLote(ImprimirEtiquetaLoteRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+            else
+            {
+                try
+                {
+                    var request = new ImprimirEtiquetaLoteRequest
+                    {
+                        IdLote = requisicao.IdLote,
+                        IdProduto = requisicao.IdProduto,
+                        IdImpressora = requisicao.IdImpressora,
+                        QuantidadeProdutos = requisicao.QuantidadeProdutos,
+                        QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas,
+                        IdUsuario = IdUsuario,
+                        IdEmpresa = IdEmpresa
+                    };
+
+                    _etiquetaService.ValidarEImprimirEtiquetaLote(request);
+
+                    return ApiOk();
+                }
+                catch (BusinessException ex)
+                {
+                    return ApiBadRequest(ex.Message);
+                }
             }
         }
     }
