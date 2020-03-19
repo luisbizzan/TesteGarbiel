@@ -1,5 +1,6 @@
 ﻿(function () {
     let actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
+        debugger
         return [
             {
                 action: 'select',
@@ -9,8 +10,7 @@
         ];
     });
 
-    $('.dataTableModal').DataTable({
-        destroy: true,
+    $('#dataTableModal').DataTable({
         ajax: {
             "url": view_modal.pageDataUrl,
             "type": "POST",
@@ -20,7 +20,7 @@
         },
         lengthChange: false,
         initComplete: function (settings, json) {
-            dart.dataTables.addEventsForDropdownAutoposition($('.dataTableModal'));
+            dart.dataTables.addEventsForDropdownAutoposition($('#dataTableModal'));
 
         },
         columns: [
@@ -34,14 +34,16 @@
         "bInfo": false
     });
 
-    function selecionarEnderecoArmazenagem_Click() {
+
+    $('#dataTableModal').on('click', '[data-select]', function () {
         debugger
         selecionarEnderecoArmazenagem($(this).attr('data-select'), $(this).attr("name-select"));
-    }
-
-    $('.dataTableModal').off('click', '[data-select]', selecionarEnderecoArmazenagem_Click);
-    $('.dataTableModal').on('click', '[data-select]', selecionarEnderecoArmazenagem_Click);
+    });
 
     dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));
+
+    var validator = $("#form-datatable-modal").validate({
+        ignore: ".ignore"
+    });
  
 })();

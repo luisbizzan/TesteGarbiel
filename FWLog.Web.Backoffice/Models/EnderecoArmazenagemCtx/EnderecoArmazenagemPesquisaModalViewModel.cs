@@ -16,6 +16,7 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
 
     public class EnderecoArmazenagemPesquisaModalItemViewModel
     {
+        public long IdEnderecoArmazenagem { get; set; }
         [Display(Name = "Código")]
         public string Codigo { get; set; }
         [Display(Name = "Limite de Peso")]

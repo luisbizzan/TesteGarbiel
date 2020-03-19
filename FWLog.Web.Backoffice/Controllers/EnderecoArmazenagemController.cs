@@ -254,6 +254,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [ApplicationAuthorize]
         public ActionResult EnderecoArmazenagemPesquisaModalDadosLista(DataTableFilter<EnderecoArmazenagemPesquisaModalFiltroViewModel> model)
         {
             var filtros = Mapper.Map<DataTableFilter<EnderecoArmazenagemPesquisaModalFiltro>>(model);
