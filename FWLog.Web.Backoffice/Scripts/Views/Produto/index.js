@@ -2,13 +2,12 @@
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
-            //{
-            //    text: "Detalhes",
-            //    icon: 'fa fa-eye',
-            //    action: 'details',
-            //    href: view.detalhesProdutoUrl + '/' + full.IdProduto,
-            //    visible: view.detalhesVisivel
-            //},
+            {
+                text: "Detalhes",
+                attrs: { 'data-id': full.IdProduto, 'action': 'detailsUrl' },
+                icon: 'fa fa-eye',
+                visible: view.detalhesVisivel
+            },
             {
                 text: "Inserir/Editar",
                 action: 'edit',
@@ -17,6 +16,8 @@
             },
         ];
     });
+
+    $("#dataTable").on('click', "[action='detailsUrl']", detalhesEntradaConferencia);
 
     $('#dataTable').DataTable({
         ajax: {
@@ -54,3 +55,12 @@
     dart.dataTables.loadFormFilterEvents();
 
 })();
+
+function detalhesEntradaConferencia() {
+    var id = $(this).data("id");
+    let modalDetalhesProduto = $("#modalDetalhesProduto");
+
+    modalDetalhesProduto.load(CONTROLLER_PATH + "DetalhesProduto/" + id, function () {
+        modalDetalhesProduto.modal();
+    });
+}

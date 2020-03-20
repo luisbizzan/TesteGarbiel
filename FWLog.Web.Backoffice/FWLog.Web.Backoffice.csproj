@@ -346,6 +346,7 @@
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemEditarViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemPesquisaModalViewModel.cs" />
+    <Compile Include="Models\ProdutoCtx\ProdutoDetalhesViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoEditarViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoListaViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoSearchModalViewModel.cs" />
@@ -707,6 +708,7 @@
     <Content Include="Views\BORecebimentoNota\NotaRecebimento.cshtml" />
     <Content Include="Views\BORecebimentoNota\NotaRecebimentoList.cshtml" />
     <Content Include="Views\BORecebimentoNota\DevolucaoTotal.cshtml" />
+    <Content Include="Views\Produto\DetalhesProduto.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

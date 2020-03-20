@@ -108,6 +108,27 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Produto.Visualizar)]
+        public ActionResult DetalhesProduto(long id)
+        {
+            ProdutoEstoque produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(id, IdEmpresa);
+
+            var viewModel = new ProdutoDetalhesViewModel
+            {
+                 EnderecoArmazenagem = produtoEstoque.EnderecoArmazenagem.Codigo,
+                 Comprimento = produtoEstoque.Produto.Comprimento?.ToString("n2"),
+                 Altura = produtoEstoque.Produto.Altura?.ToString("n2"),
+                 Descricao = produtoEstoque.Produto.Descricao,
+                 Largura = produtoEstoque.Produto.Largura?.ToString("n2"),
+                 Peso = produtoEstoque.Produto.PesoBruto.ToString("n2"),
+                 Referencia = produtoEstoque.Produto.Referencia,
+                 ImagemSrc = produtoEstoque.Produto.EnderecoImagem
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Produto.Editar)]
         public ActionResult EditarProduto(long id)
         {

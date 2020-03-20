@@ -11,7 +11,7 @@
         new
         {
             detalhesProdutoUrl = Url.Action("DetalhesProduto"),
-            detalhesVisivel = User.HasPermission(Permissions.Produto.Listar),
+            detalhesVisivel = User.HasPermission(Permissions.Produto.Visualizar),
             edicaoEInsercaoVisivel = User.HasPermission(Permissions.Produto.Editar),
             editarProdutoUrl = Url.Action("EditarProduto"),
             pageDataUrl = Url.Action("PageData")
@@ -86,3 +86,4 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modalDetalhesProduto" data-backdrop="static" data-toggle="modal"></div>
