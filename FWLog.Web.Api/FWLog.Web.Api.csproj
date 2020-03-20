@@ -215,6 +215,7 @@
     </Compile>
     <Compile Include="Helpers\ApiErrorBuilder.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
+    <Compile Include="Mapping\ProdutoModelResponseProfile.cs" />
     <Compile Include="Models\Armazenagem\AjustarVolumeLoteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ConsultaDetalhesEnderecoArmazenagemResposta.cs" />
     <Compile Include="Models\Armazenagem\ConsultaDetalhesVolumeInformadoResposta.cs" />
