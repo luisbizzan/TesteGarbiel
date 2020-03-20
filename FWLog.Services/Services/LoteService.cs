@@ -850,5 +850,41 @@ namespace FWLog.Services.Services
 
             await FinalizarConferencia(lote.IdLote, userId);
         }
+
+        public LoteProduto BuscaProdutoNoLote(long idLote, long idProduto)
+        {
+            if (idLote <= 0)
+            {
+                throw new BusinessException("O lote deve ser informado.");
+            }
+
+            var lote = _uow.LoteRepository.GetById(idLote);
+
+            if (lote == null)
+            {
+                throw new BusinessException("O lote não foi encontrado.");
+            }
+
+            if (idProduto <= 0)
+            {
+                throw new BusinessException("O produto deve ser informado.");
+            }
+
+            var produto = _uow.ProdutoRepository.GetById(idProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("O produto não foi encontrado.");
+            }
+
+            var produtoLote = _uow.LoteProdutoRepository.ConsultarPorLoteProduto(idLote, idProduto);
+
+            if (produtoLote == null)
+            {
+                throw new BusinessException("O produto não foi encontrado no lote.");
+            }
+
+            return produtoLote;
+        }
     }
 }

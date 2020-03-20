@@ -493,6 +493,56 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
 
+        public void ValidarEImprimirEtiquetaLote(ImprimirEtiquetaLoteRequest requisicao)
+        {
+            if (requisicao.IdLote <= 0)
+            {
+                throw new BusinessException("O lote deve ser informado.");
+            }
+
+            var lote = _unitOfWork.LoteRepository.GetById(requisicao.IdLote);
+
+            if (lote == null)
+            {
+                throw new BusinessException("O lote não foi encontrado.");
+            }
+
+            if (requisicao.IdProduto <= 0)
+            {
+                throw new BusinessException("O produto deve ser informado.");
+            }
+
+            var produto = _unitOfWork.ProdutoRepository.GetById(requisicao.IdProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("O produto não foi encontrado.");
+            }
+
+            var loteProduto = _unitOfWork.LoteProdutoRepository.PesquisarProdutoNoLote(requisicao.IdEmpresa, requisicao.IdLote, requisicao.IdProduto);
+
+            if (loteProduto == null)
+            {
+                throw new BusinessException("O produto não pertence ao lote.");
+            }
+
+            if (requisicao.QuantidadeProdutos > loteProduto.Saldo)
+            {
+                throw new BusinessException("Saldo do produto no lote insuficiente.");
+            }
+
+            ImprimirEtiquetaArmazenagemVolume(new ImprimirEtiquetaArmazenagemVolume()
+            {
+                NroLote = requisicao.IdLote,
+                ReferenciaProduto = produto.Referencia,
+                QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas,
+                QuantidadePorCaixa = requisicao.QuantidadeProdutos,
+                Usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(requisicao.IdUsuario)?.Nome,
+                IdImpressora = requisicao.IdImpressora,
+                IdEmpresa = requisicao.IdEmpresa
+            });
+        }
+
         private class CelulaEtiqueta
         {
             internal CelulaEtiqueta(int x, int y = 0)
