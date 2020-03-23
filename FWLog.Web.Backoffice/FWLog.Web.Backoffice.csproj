@@ -348,6 +348,7 @@
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoDetalhesViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoEditarViewModel.cs" />
+    <Compile Include="Models\ProdutoCtx\ProdutoImprimirDetalhes.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoListaViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoSearchModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\RecebimentoEtiquetaViewModel.cs" />
@@ -629,6 +630,7 @@
     <Content Include="Scripts\Views\PontoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\index.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\pesquisaModal.js" />
+    <Content Include="Scripts\Views\Produto\detalhesProduto.js" />
     <Content Include="Scripts\Views\Produto\editarProduto.js" />
     <Content Include="Scripts\Views\Produto\index.js" />
     <Content Include="Scripts\Views\Produto\searchModal.js" />

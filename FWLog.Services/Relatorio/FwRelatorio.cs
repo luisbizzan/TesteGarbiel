@@ -250,5 +250,16 @@ namespace FWLog.Services.Relatorio
             imagem.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
             return ms.ToArray();
         }
+
+         public string BaixarImagem(string fromUrl)
+        {
+            using (System.Net.WebClient webClient = new System.Net.WebClient())
+            {
+                using (Stream stream = webClient.OpenRead(fromUrl))
+                {
+                    return ImagemBase64(System.Drawing.Image.FromStream(stream));
+                }
+            }
+        }
     }
 }

@@ -12,6 +12,8 @@ using System;
 using System.Web.Mvc;
 using FWLog.Services.Services;
 using FWLog.Data.EnumsAndConsts;
+using FWLog.Services.Model.Relatorios;
+using log4net;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -20,12 +22,21 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly UnitOfWork _unitOfWork;
         private readonly ProdutoEstoqueService _produtoEstoqueService;
         private readonly ApplicationLogService _applicationLogService;
+        private readonly RelatorioService _relatorioService;
+        private readonly ILog _log;
 
-        public ProdutoController(UnitOfWork unitOfWork, ProdutoEstoqueService produtoEstoqueService, ApplicationLogService applicationLogService)
+        public ProdutoController(
+            UnitOfWork unitOfWork, 
+            ProdutoEstoqueService produtoEstoqueService, 
+            ApplicationLogService applicationLogService,
+            RelatorioService relatorioService,
+            ILog ilog)
         {
             _unitOfWork = unitOfWork;
             _produtoEstoqueService = produtoEstoqueService;
             _applicationLogService = applicationLogService;
+            _relatorioService = relatorioService;
+            _log = ilog;
         }
 
         [HttpPost]
@@ -115,6 +126,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var viewModel = new ProdutoDetalhesViewModel
             {
+                 IdProduto = produtoEstoque.IdProduto,
                  EnderecoArmazenagem = produtoEstoque.EnderecoArmazenagem.Codigo,
                  Comprimento = produtoEstoque.Produto.Comprimento?.ToString("n2"),
                  Altura = produtoEstoque.Produto.Altura?.ToString("n2"),
@@ -122,7 +134,7 @@ namespace FWLog.Web.Backoffice.Controllers
                  Largura = produtoEstoque.Produto.Largura?.ToString("n2"),
                  Peso = produtoEstoque.Produto.PesoBruto.ToString("n2"),
                  Referencia = produtoEstoque.Produto.Referencia,
-                 ImagemSrc = produtoEstoque.Produto.EnderecoImagem
+                 ImagemSrc = produtoEstoque.Produto.EnderecoImagem != "0" ? produtoEstoque.Produto.EnderecoImagem : null,
             };
 
             return View(viewModel);
@@ -182,6 +194,62 @@ namespace FWLog.Web.Backoffice.Controllers
                 _applicationLogService.Error(ApplicationEnum.BackOffice, e);
                 Notify.Error("Algo inesperado ocorreu!");
                 return RedirectToAction("Index");
+            }
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Produto.Listar)]
+        public ActionResult DownloadDetalhesProduto(long id)
+        {
+            var produto = _unitOfWork.ProdutoRepository.GetById(id);
+        
+            var relatorioRequest = new DetalhesProdutoRequest
+            {
+                IdEmpresa = IdEmpresa,
+                NomeUsuario = LabelUsuario,
+                IdProduto = id,
+                EnderecoImagem = produto.EnderecoImagem != "0" ? produto.EnderecoImagem : null,
+            };
+
+            byte[] relatorio = _relatorioService.GerarDetalhesProduto(relatorioRequest);
+
+            return File(relatorio, "application/pdf", "Detalhes .pdf");
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Produto.Listar)]
+        public JsonResult ImprimirDetalhesProduto(ProdutoImprimirDetalhes viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                var relatorioRequest = new ImprimriDetalhesProdutoRequest
+                {
+                    IdEmpresa = IdEmpresa,
+                    NomeUsuario = LabelUsuario,
+                    IdProduto = viewModel.IdProduto,
+                    IdImpressora = viewModel.IdImpressora
+                };
+
+                _relatorioService.ImprimirDetalhesProduto(relatorioRequest);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.DenyGet);
+
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.DenyGet);
             }
         }
     }

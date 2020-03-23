@@ -1,6 +1,5 @@
 ﻿(function () {
     let actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        debugger
         return [
             {
                 action: 'select',
@@ -36,7 +35,6 @@
 
 
     $('#dataTableModal').on('click', '[data-select]', function () {
-        debugger
         selecionarEnderecoArmazenagem($(this).attr('data-select'), $(this).attr("name-select"));
     });
 

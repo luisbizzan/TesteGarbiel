@@ -51,8 +51,10 @@
             actionsColumn
         ]
     });
-   
+
     dart.dataTables.loadFormFilterEvents();
+
+
 
 })();
 
@@ -63,4 +65,24 @@ function detalhesEntradaConferencia() {
     modalDetalhesProduto.load(CONTROLLER_PATH + "DetalhesProduto/" + id, function () {
         modalDetalhesProduto.modal();
     });
+}
+
+function imprimir(acao, id) {
+    switch (acao) {
+        case 'detalheproduto':
+            $.ajax({
+                url: "/Produto/ImprimirDetalhesProduto",
+                method: "POST",
+                data: {
+                    IdImpressora: $("#IdImpressora").val(),
+                    IdProduto: id
+                },
+                success: function (result) {
+                    mensagemImpressao(result);
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
+                }
+            });
+            break;
+    }
 }
