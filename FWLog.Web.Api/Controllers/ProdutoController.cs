@@ -93,19 +93,31 @@ namespace FWLog.Web.Api.Controllers
 
             Produto produto = _unitOfWork.ProdutoRepository.PesquisarPorCodigoBarras(codref);
 
-            if(produto == null)
+            if (produto == null)
             {
                 produto = _unitOfWork.ProdutoRepository.PesquisarPorReferencia(codref);
             }
 
-            if(produto == null)
+            if (produto == null)
             {
                 return ApiNotFound("Nenhum produto foi encontrado.");
             }
 
             var produtoResposta = Mapper.Map<PesquisarPorCodigoBarrasReferenciaResposta>(produto);
 
+            LoadCodigoEnderecoPicking(produto, produtoResposta);
+
             return ApiOk(produtoResposta);
+        }
+
+        private void LoadCodigoEnderecoPicking(Produto produto, PesquisarPorCodigoBarrasReferenciaResposta produtoResposta)
+        {
+            var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, IdEmpresa);
+
+            if (produtoEstoque != null && produtoEstoque.EnderecoArmazenagem != null)
+            {
+                produtoResposta.CodigoEnderecoPicking = produtoEstoque.EnderecoArmazenagem.Codigo;
+            }
         }
 
         [HttpGet]
@@ -120,6 +132,8 @@ namespace FWLog.Web.Api.Controllers
             }
 
             var produtoResposta = Mapper.Map<PesquisarPorCodigoBarrasReferenciaResposta>(produto);
+
+            LoadCodigoEnderecoPicking(produto, produtoResposta);
 
             return ApiOk(produtoResposta);
         }

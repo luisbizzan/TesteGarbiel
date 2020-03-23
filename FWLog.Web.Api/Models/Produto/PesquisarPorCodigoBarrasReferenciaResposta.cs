@@ -15,5 +15,6 @@
         public decimal? Comprimento { get; set; }
         public decimal MultiploVenda { get; set; }
         public bool Ativo { get; set; }
+        public string CodigoEnderecoPicking { get; internal set; }
     }
 }
