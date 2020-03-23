@@ -51,7 +51,6 @@ function selecionarPontoArmazenagem(idPontoArmazenagem, descricao) {
 }
 
 function selecionarEnderecoArmazenagem(IdEnderecoArmazenagem, codigo) {
-    debugger
     $("#CodigoEnderecoArmazenagem").val(codigo);
     $("#IdEnderecoArmazenagem").val(IdEnderecoArmazenagem);
     $("#modalPesquisaEnderecoArmazenagem").modal("hide");

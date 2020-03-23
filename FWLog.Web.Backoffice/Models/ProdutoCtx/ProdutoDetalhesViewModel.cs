@@ -4,6 +4,7 @@ namespace FWLog.Web.Backoffice.Models.ProdutoCtx
 {
     public class ProdutoDetalhesViewModel
     {
+        public long IdProduto { get; set; }
         [Display(Name = "Referência")]
         public string Referencia { get; set; }
         [Display(Name = "Descrição")]

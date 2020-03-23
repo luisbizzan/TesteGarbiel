@@ -1,4 +1,5 @@
-﻿using FWLog.Data;
+﻿using ExtensionMethods.String;
+using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Relatorios;
@@ -60,18 +61,18 @@ namespace FWLog.Services.Services
         {
             var relatorioRequest = new RelatorioNotasRecebimentoRequest
             {
-                NumeroNF               = request.NumeroNF,
-                ChaveAcesso            = request.ChaveAcesso,
-                IdStatus               = request.IdStatus,
-                DataRegistroInicial    = request.DataRegistroInicial,
-                DataRegistroFinal      = request.DataRegistroFinal,
+                NumeroNF = request.NumeroNF,
+                ChaveAcesso = request.ChaveAcesso,
+                IdStatus = request.IdStatus,
+                DataRegistroInicial = request.DataRegistroInicial,
+                DataRegistroFinal = request.DataRegistroFinal,
                 DataSincronismoInicial = request.DataSincronismoInicial,
-                DataSincronismoFinal   = request.DataSincronismoFinal,
-                IdFornecedor           = request.IdFornecedor,
-                DiasAguardando         = request.DiasAguardando,
-                QuantidadeVolumes      = request.QuantidadeVolumes,
-                IdUsuarioRecebimento   = request.IdUsuarioRecebimento,
-                NomeUsuario            = request.NomeUsuario,
+                DataSincronismoFinal = request.DataSincronismoFinal,
+                IdFornecedor = request.IdFornecedor,
+                DiasAguardando = request.DiasAguardando,
+                QuantidadeVolumes = request.QuantidadeVolumes,
+                IdUsuarioRecebimento = request.IdUsuarioRecebimento,
+                NomeUsuario = request.NomeUsuario,
             };
 
             byte[] relatorio = GerarRelatorioNotasRecebimento(relatorioRequest);
@@ -156,7 +157,7 @@ namespace FWLog.Services.Services
                 query = query.Where(x => conferencias.Contains(x.IdLote));
             }
 
-            if(request.TempoInicial.HasValue)
+            if (request.TempoInicial.HasValue)
             {
                 int hora = request.TempoInicial.Value.Hours;
                 int minutos = request.TempoInicial.Value.Minutes;
@@ -338,14 +339,14 @@ namespace FWLog.Services.Services
 
                     var recebimentoNotas = new NotasRecebimento
                     {
-                        Fornecedor          = item.Fornecedor.NomeFantasia,
-                        Usuario             = usuarios.Where(x => x.UsuarioId.Equals(item.IdUsuarioRecebimento)).FirstOrDefault()?.Nome,
-                        NumeroNF            = item.NumeroNF == 0 ? "/" : string.Concat(item.NumeroNF.ToString(), "-", item.Serie),
-                        DiasAguardando      = diasAguardando.ToString() + " Dias",
-                        DataHoraRegistro    = item.DataHoraRegistro.ToString(),
+                        Fornecedor = item.Fornecedor.NomeFantasia,
+                        Usuario = usuarios.Where(x => x.UsuarioId.Equals(item.IdUsuarioRecebimento)).FirstOrDefault()?.Nome,
+                        NumeroNF = item.NumeroNF == 0 ? "/" : string.Concat(item.NumeroNF.ToString(), "-", item.Serie),
+                        DiasAguardando = diasAguardando.ToString() + " Dias",
+                        DataHoraRegistro = item.DataHoraRegistro.ToString(),
                         DataHoraSincronismo = item.DataHoraSincronismo.ToString(),
-                        Status              = item.NotaRecebimentoStatus.Descricao,
-                        QuantidadeVolumes   = item.QuantidadeVolumes,
+                        Status = item.NotaRecebimentoStatus.Descricao,
+                        QuantidadeVolumes = item.QuantidadeVolumes,
 
                     };
 
@@ -394,7 +395,7 @@ namespace FWLog.Services.Services
             Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
             NotaFiscal notaFiscal = _unitiOfWork.NotaFiscalRepository.GetById(request.IdNotaFiscal);
             Lote lote = _unitiOfWork.LoteRepository.ObterLoteNota(notaFiscal.IdNotaFiscal);
-            
+
 
             bool IsNotaRecebida = lote != null;
 
@@ -469,7 +470,7 @@ namespace FWLog.Services.Services
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("CNPJ: ", TextFormat.Bold);
-            paragraph.AddText(notaFiscal.Fornecedor.CNPJ.Substring(0, 2) + "." + notaFiscal.Fornecedor.CNPJ.Substring(2, 3) + "." + notaFiscal.Fornecedor.CNPJ.Substring(5, 3) + "/" + notaFiscal.Fornecedor.CNPJ.Substring(8, 4) + "-" + notaFiscal.Fornecedor.CNPJ.Substring(12, 2));
+            paragraph.AddText(notaFiscal.Fornecedor.CNPJ.CnpjOuCpf());
 
             row = tabela.AddRow();
             paragraph = row.Cells[0].AddParagraph();
@@ -522,7 +523,7 @@ namespace FWLog.Services.Services
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Peso: ", TextFormat.Bold);
 
-            if (notaFiscal.PesoBruto.HasValue)      
+            if (notaFiscal.PesoBruto.HasValue)
             {
                 paragraph.AddText(notaFiscal.PesoBruto.Value.ToString("F"));
             }
@@ -545,7 +546,7 @@ namespace FWLog.Services.Services
             {
                 var usuario = _unitiOfWork.PerfilUsuarioRepository.GetByUserId(lote.UsuarioRecebimento.Id);
 
-                paragraph.AddText(string.Concat(usuario.Usuario.UserName, " - ", usuario.Nome)) ;
+                paragraph.AddText(string.Concat(usuario.Usuario.UserName, " - ", usuario.Nome));
             }
             else
             {
@@ -754,6 +755,104 @@ namespace FWLog.Services.Services
             var fwRelatorio = new FwRelatorio();
 
             return fwRelatorio.Gerar(fwRelatorioDados);
+        }
+
+        public void ImprimirDetalhesProduto(ImprimriDetalhesProdutoRequest request)
+        {
+            var relatorioRequest = new DetalhesProdutoRequest
+            {
+                IdEmpresa = request.IdEmpresa,
+                IdProduto = request.IdProduto,
+                NomeUsuario = request.NomeUsuario
+            };
+
+            byte[] relatorio = GerarDetalhesProduto(relatorioRequest);
+
+            _impressoraService.Imprimir(relatorio, request.IdImpressora);
+        }
+
+        public byte[] GerarDetalhesProduto(DetalhesProdutoRequest request)
+        {
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(request.IdEmpresa);
+            ProdutoEstoque produtoEstoque = _unitiOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(request.IdProduto, request.IdEmpresa);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = request.NomeUsuario,
+                Orientacao = Orientation.Portrait,
+                Titulo = "Detalhes do Produto",
+                Filtros = null
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            Document document = fwRelatorio.Customizar(fwRelatorioDados);
+
+            Paragraph paragraph = document.Sections[0].AddParagraph();
+            paragraph.Format.SpaceAfter = 20;
+            paragraph.Format.Font = new Font("Verdana", new Unit(12))
+            {
+                Bold = true
+            };
+            paragraph.AddText("Produto");
+
+            Table tabela = document.Sections[0].AddTable();
+            tabela.Format.Font = new Font("Verdana", new Unit(9));
+            tabela.Rows.HeightRule = RowHeightRule.Exactly;
+            tabela.Rows.Height = 20;
+
+            tabela.AddColumn(new Unit(132));
+            tabela.AddColumn(new Unit(132));
+            tabela.AddColumn(new Unit(132));
+            tabela.AddColumn(new Unit(132));
+
+            Row row = tabela.AddRow();
+            row.Cells[0].MergeRight = 1;
+            paragraph = row.Cells[0].AddParagraph();
+            paragraph.AddFormattedText("Referência: ", TextFormat.Bold);
+            paragraph.AddText(produtoEstoque.Produto.Referencia);
+
+            row.Cells[2].MergeRight = 1;
+            paragraph = row.Cells[2].AddParagraph();
+            paragraph.AddFormattedText("Descrição: ", TextFormat.Bold);
+            paragraph.AddText(produtoEstoque.Produto.Descricao);
+
+            row = tabela.AddRow();
+            row.Cells[0].MergeRight = 1;
+            paragraph = row.Cells[0].AddParagraph();
+            paragraph.AddFormattedText("Endereço Armazenagem: ", TextFormat.Bold);
+            paragraph.AddText(produtoEstoque.EnderecoArmazenagem.Codigo);
+            row.Cells[2].MergeRight = 1;
+            paragraph = row.Cells[2].AddParagraph();
+            paragraph.AddFormattedText("Comprimento: ", TextFormat.Bold);
+            paragraph.AddText(produtoEstoque.Produto.Comprimento?.ToString("n2"));
+
+            row = tabela.AddRow();
+            row.Cells[0].MergeRight = 1;
+            paragraph = row.Cells[0].AddParagraph();
+            paragraph.AddFormattedText("Peso: ", TextFormat.Bold);
+            paragraph.AddText(produtoEstoque.Produto.PesoBruto.ToString("n2"));
+
+            row.Cells[2].MergeRight = 1;
+            paragraph = row.Cells[2].AddParagraph();
+            paragraph.AddFormattedText("Largura: ", TextFormat.Bold);
+            paragraph.AddText(produtoEstoque.Produto.Largura?.ToString("n2"));
+
+            if(request.EnderecoImagem != null)
+            {
+                row = tabela.AddRow();
+                row.Cells[0].MergeRight = 1;
+
+                var pImagem = row.Cells[0].AddParagraph();
+                var imagem = pImagem.AddImage(fwRelatorio.BaixarImagem(request.EnderecoImagem));
+
+                imagem.Height = new Unit(30, UnitType.Point);
+                imagem.LockAspectRatio = true;
+            }
+
+            return fwRelatorio.GerarCustomizado();
         }
     }
 }

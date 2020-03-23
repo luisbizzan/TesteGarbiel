@@ -3,6 +3,7 @@
     Layout = null;
     @BundleHelper.RenderViewScriptModal(new
     {
+         idProduto = Model.IdProduto
     })
 }
 
@@ -17,7 +18,7 @@
         <div class="modal-body" style="overflow: auto; max-height: calc(100vh - 150px);">
             <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
                 <li class="nav-item active">
-                    <a class="nav-link" id="produtoTab" data-toggle="tab" href="#entradaConferencia" role="tab" aria-controls="entradaConferencia" aria-selected="true">Produto</a>
+                    <a class="nav-link" id="produtoTab" data-toggle="tab" href="#detalheProduto" role="tab" aria-controls="detalheProduto" aria-selected="true">Produto</a>
                 </li>
                 @*<li class="nav-item">
                         <a class="nav-link" id="divergenciasTab" data-toggle="tab" href="#divergencias" role="tab" aria-controls="divergencias" aria-selected="false">Divergências</a>
@@ -63,8 +64,8 @@
                 <div class="modal-footer">
                     <div class="col-sm-6 col-lg-6">
                         <div class="nav navbar-left impressao">
-                            <a id="downloadDetalhesNotaEntradaConferencia" data-toggle="tooltip" title="Download Detalhes do Produto" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
-                            <a id="imprimirDetalhesNotaEntradaConferencia" data-toggle="tooltip" title="Imprimir Detalhes do Produto" class="btn btn-default"><i class="fa fa-fw fa-print"></i></a>
+                            <a id="downloadDetalhesProduto" data-toggle="tooltip" title="Download Detalhes do Produto" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
+                            <a id="imprimirDetalhesProduto" data-toggle="tooltip" title="Imprimir Detalhes do Produto" class="btn btn-default"><i class="fa fa-fw fa-print"></i></a>
                         </div>
                     </div>
                 </div>

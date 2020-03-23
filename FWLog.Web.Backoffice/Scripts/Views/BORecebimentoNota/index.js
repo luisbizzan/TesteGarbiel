@@ -6,7 +6,7 @@
 
     $.validator.addMethod('validateDateOrPrazoInicial', function (value, ele) {
         var dataInicial = $("#Filter_DataInicial").val();
-
+        
         if (value != "")
             return true
         else if (dataInicial != "")
