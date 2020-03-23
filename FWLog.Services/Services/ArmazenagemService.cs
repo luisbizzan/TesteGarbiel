@@ -757,5 +757,27 @@ namespace FWLog.Services.Services
                 transacao.Complete();
             }
         }
+
+        public LoteInstaladoProdutoResposta PesquisaLotesInstaladosProduto(long idProduto)
+        {
+            if (idProduto <= 0)
+            {
+                throw new BusinessException("O produto deve ser informado.");
+            }
+
+            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("O produto não foi encontrado.");
+            }
+
+            return new LoteInstaladoProdutoResposta
+            {
+                IdProduto = produto.IdProduto,
+                ReferenciaProduto = produto.Referencia,
+                CodigoBarrasProduto = produto.CodigoBarras
+            };
+        }
     }
 }

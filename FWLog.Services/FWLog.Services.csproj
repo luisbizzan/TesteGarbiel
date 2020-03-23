@@ -119,6 +119,7 @@
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
     <Compile Include="Model\Armazenagem\AjustarVolumeLoteRequisicao.cs" />
     <Compile Include="Model\Armazenagem\InstalarVolumeLoteRequisicao.cs" />
+    <Compile Include="Model\Armazenagem\LoteInstaladoProdutoResposta.cs" />
     <Compile Include="Model\Armazenagem\ValidarEnderecoAjusteRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarEnderecoInstalacaoRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarLoteProdutoAjusteRequisicao.cs" />
