@@ -49,5 +49,7 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         public int EstoqueMinimo { get; set; }
         [Display(Name = "Status")]
         public string Status { get; set; }
+        [Display(Name = "Quantidade")]
+        public int Quantidade { get; set; }
     }
 }

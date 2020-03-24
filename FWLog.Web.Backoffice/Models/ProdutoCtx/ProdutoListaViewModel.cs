@@ -52,6 +52,6 @@ namespace FWLog.Web.Backoffice.Models.ProdutoCtx
         [Display(Name = "Cód. Barras")]
         public string CodigoDeBarras { get; set; }
         [Display(Name = "Status")]
-        public string ProdutoStatus { get; set; }
+        public int? ProdutoStatus { get; set; }
     }
 }

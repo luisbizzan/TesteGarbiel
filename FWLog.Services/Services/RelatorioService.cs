@@ -757,6 +757,111 @@ namespace FWLog.Services.Services
             return fwRelatorio.Gerar(fwRelatorioDados);
         }
 
+        public void ImprimirRelatorioProdutos(ImprimirRelatorioProdutosRequest request)
+        {
+            var relatorioRequest = new RelatorioProdutosRequest
+            {
+                CodigoDeBarras = request.CodigoDeBarras,
+                Descricao = request.Descricao,
+                IdEmpresa = request.IdEmpresa,
+                NomeUsuario = request.NomeUsuario,
+                ProdutoStatus = request.ProdutoStatus,
+                Referencia = request.Referencia
+            };
+
+            byte[] relatorio = GerarRelatorioProdutos(relatorioRequest);
+
+            _impressoraService.Imprimir(relatorio, request.IdImpressora);
+        }
+
+        public byte[] GerarRelatorioProdutos(RelatorioProdutosRequest filter)
+        {
+            IQueryable<ProdutoEstoque> query = _unitiOfWork.ProdutoEstoqueRepository.ObterProdutoEstoquePorEmpresa(filter.IdEmpresa.Value)
+                .AsQueryable()
+                .OrderByDescending(x => x.IdProduto);
+
+            if (!string.IsNullOrEmpty(filter.Referencia))
+            {
+                query = query.Where(x => x.Produto.Referencia == filter.Referencia);
+            }
+
+            if (!string.IsNullOrEmpty(filter.CodigoDeBarras))
+            {
+                query = query.Where(x => x.Produto.CodigoBarras == filter.CodigoDeBarras);
+            }
+
+            if (!string.IsNullOrEmpty(filter.Descricao))
+            {
+                query = query.Where(x => x.Produto.Descricao == filter.Descricao);
+            }
+
+            if (filter.ProdutoStatus.HasValue)
+            {
+                //Sem Locação
+                if (filter.ProdutoStatus == 2)
+                {
+                    query = query.Where(x => x.EnderecoArmazenagem == null);
+                }
+                //Ativo
+                else if (filter.ProdutoStatus == 1)
+                {
+                    query = query.Where(x => x.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.Ativo);
+                }
+                //Todos(Inativo)
+                else
+                {
+                    query = query.Where(x => x.IdProdutoEstoqueStatus != ProdutoEstoqueStatusEnum.Ativo);
+                }
+            }
+
+            var listaProdutos = new List<IFwRelatorioDados>();
+
+            if (query.Any())
+            {
+                foreach (var item in query)
+                {
+                    var recebimentoNotas = new RelatorioProdutos
+                    {
+                        Referencia = item.Produto?.Referencia,
+                        Descricao = item.Produto.Descricao,
+                        LarguraAlturaComprimento = string.Concat(item.Produto.Largura?.ToString("n2"),
+                            " / ", item.Produto.Altura?.ToString("n2"),
+                            " / ", item.Produto.Comprimento?.ToString("n2")),
+                        Endereco = item.EnderecoArmazenagem?.Codigo,
+                        Multiplo = item.Produto.MultiploVenda.ToString(),
+                        Peso = item.Produto.PesoBruto.ToString("n2"),
+                        Status = item.IdProdutoEstoqueStatus.ToString(),
+                        UnidadeMedida = item.Produto.UnidadeMedida.Sigla,
+                    };
+
+                    listaProdutos.Add(recebimentoNotas);
+                }
+            }
+
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filter.IdEmpresa.Value);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = filter.NomeUsuario,
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório de Produtos",
+                Filtros = new FwRelatorioDadosFiltro
+                {
+                   Status = filter.ProdutoStatus.ToString(),
+                   CodigoDeBarras = filter.CodigoDeBarras,
+                   Referencia = filter.Referencia,
+                   Descricao = filter.Descricao
+                },
+                Dados = listaProdutos
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            return fwRelatorio.Gerar(fwRelatorioDados);
+        }
+
         public void ImprimirDetalhesProduto(ImprimriDetalhesProdutoRequest request)
         {
             var relatorioRequest = new DetalhesProdutoRequest
