@@ -112,7 +112,6 @@
     <Compile Include="Models\DataTablesCtx\ProdutoListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\QuarentenaHistoricoListRow.cs" />
     <Compile Include="Models\DataTablesCtx\TransportadoraPesquisaModalLinhaTabela.cs" />
-    <Compile Include="Models\DetalhesEnderecoArmazenagem.cs" />
     <Compile Include="Models\FilterCtx\EnderecoArmazenagemPesquisaModalFiltro.cs" />
     <Compile Include="Models\FilterCtx\GarantiaFilter.cs" />
     <Compile Include="Models\FilterCtx\ClientePesquisaModalFiltro.cs" />
