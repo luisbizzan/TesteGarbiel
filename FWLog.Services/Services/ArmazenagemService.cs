@@ -757,5 +757,86 @@ namespace FWLog.Services.Services
                 transacao.Complete();
             }
         }
+
+        public LoteInstaladoProdutoResposta PesquisaLotesInstaladosProduto(long idProduto)
+        {
+            if (idProduto <= 0)
+            {
+                throw new BusinessException("O produto deve ser informado.");
+            }
+
+            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("O produto não foi encontrado.");
+            }
+
+            var resposta = new LoteInstaladoProdutoResposta
+            {
+                IdProduto = produto.IdProduto,
+                ReferenciaProduto = produto.Referencia,
+                CodigoBarrasProduto = produto.CodigoBarras
+            };
+
+            resposta.ListaDatasUsuarios = new List<LoteInstaladoProdutoDataUsuario>();
+
+            var listaLoteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorProdutoComLote(idProduto);
+
+            var agrupamentoDataUsuario = listaLoteProdutoEndereco.GroupBy(g => new { g.DataHoraInstalacao, g.AspNetUsers }).ToList();
+
+            foreach (var itemDataUsuario in agrupamentoDataUsuario)
+            {
+                var dataUsuario = new LoteInstaladoProdutoDataUsuario();
+
+                dataUsuario.DataHoraInstalacao = itemDataUsuario.Key.DataHoraInstalacao;
+                dataUsuario.CodigoUsuario = itemDataUsuario.Key.AspNetUsers.UserName;
+
+                var agrupamentoLoteNivelPonto = itemDataUsuario.ToList().GroupBy(g => new
+                {
+                    IdLote = g.IdLote.Value,
+                    g.EnderecoArmazenagem.IdNivelArmazenagem,
+                    NivelArmazenagemDescricao = g.EnderecoArmazenagem.NivelArmazenagem.Descricao,
+                    g.EnderecoArmazenagem.IdPontoArmazenagem,
+                    PontoArmazenagemDescricao = g.EnderecoArmazenagem.PontoArmazenagem.Descricao
+                }).ToList();
+
+                dataUsuario.ListaLotes = new List<LoteInstaladoProdutoLoteNivelPonto>();
+
+                foreach (var itemLoteNivelPonto in agrupamentoLoteNivelPonto)
+                {
+                    var loteNivelPonto = new LoteInstaladoProdutoLoteNivelPonto();
+
+                    loteNivelPonto.IdLote = itemLoteNivelPonto.Key.IdLote;
+                    loteNivelPonto.IdNivelArmazenagem = itemLoteNivelPonto.Key.IdNivelArmazenagem;
+                    loteNivelPonto.DescricaoNivelArmazenagem = itemLoteNivelPonto.Key.NivelArmazenagemDescricao;
+                    loteNivelPonto.IdPontoArmazenagem = itemLoteNivelPonto.Key.IdPontoArmazenagem;
+                    loteNivelPonto.DescricaoPontoArmazenagem = itemLoteNivelPonto.Key.PontoArmazenagemDescricao;
+
+                    loteNivelPonto.ListaEnderecos = new List<LoteInstaladoProdutoLoteNivelPontoEndereco>();
+
+                    foreach (var itemEnderecoQuantidade in itemLoteNivelPonto.Select(ilnp => new
+                    {
+                        ilnp.EnderecoArmazenagem.IdEnderecoArmazenagem,
+                        ilnp.EnderecoArmazenagem.Codigo,
+                        ilnp.Quantidade
+                    }).ToList())
+                    {
+                        loteNivelPonto.ListaEnderecos.Add(new LoteInstaladoProdutoLoteNivelPontoEndereco()
+                        {
+                            IdEnderecoArmazenagem = itemEnderecoQuantidade.IdEnderecoArmazenagem,
+                            CodigoEnderecoArmazenagem = itemEnderecoQuantidade.Codigo,
+                            Quantidade = itemEnderecoQuantidade.Quantidade
+                        });
+                    }
+
+                    dataUsuario.ListaLotes.Add(loteNivelPonto);
+                }
+
+                resposta.ListaDatasUsuarios.Add(dataUsuario);
+            }
+
+            return resposta;
+        }
     }
 }

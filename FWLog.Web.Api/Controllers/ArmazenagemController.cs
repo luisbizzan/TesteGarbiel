@@ -506,5 +506,22 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/armazenagem/lote/produto/{idProduto}")]
+        [HttpGet]
+        public async Task<IHttpActionResult> PesquisaLotesInstaladosProduto(long idProduto)
+        {
+            try
+            {
+                var loteInstaladoProdutoResposta = _armazenagemService.PesquisaLotesInstaladosProduto(idProduto);
+
+                return ApiOk(loteInstaladoProdutoResposta);
+            }
+            catch (BusinessException exception)
+            {
+                return ApiBadRequest(exception.Message);
+            }
+        }
+
     }
 }
