@@ -47,7 +47,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
             filter.CustomFilter.IdEmpresa = IdEmpresa;
 
-            IEnumerable<ProdutoListaLinhaTabela> result = _unitOfWork.ProdutoRepository.ObterDadosParaDataTable(filter, out int recordsFiltered, out int totalRecords);
+            var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ObterProdutoEstoquePorEmpresa(IdEmpresa);
+
+            IEnumerable<ProdutoListaLinhaTabela> result = _unitOfWork.ProdutoRepository.FormatarDadosParaDataTable(filter, out int recordsFiltered, out int totalRecords, produtoEstoque);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
@@ -62,7 +64,11 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             SetViewBags();
 
-            return View();
+            var model = new ProdutoListaViewModel();
+
+            model.Filtros.ProdutoStatus = 2;
+            
+            return View(model);
         }
 
         [ApplicationAuthorize]
@@ -127,7 +133,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var viewModel = new ProdutoDetalhesViewModel
             {
                  IdProduto = produtoEstoque.IdProduto,
-                 EnderecoArmazenagem = produtoEstoque.EnderecoArmazenagem.Codigo,
+                 EnderecoArmazenagem = produtoEstoque.EnderecoArmazenagem?.Codigo,
                  Comprimento = produtoEstoque.Produto.Comprimento?.ToString("n2"),
                  Altura = produtoEstoque.Produto.Altura?.ToString("n2"),
                  Descricao = produtoEstoque.Produto.Descricao,
@@ -194,6 +200,47 @@ namespace FWLog.Web.Backoffice.Controllers
                 _applicationLogService.Error(ApplicationEnum.BackOffice, e);
                 Notify.Error("Algo inesperado ocorreu!");
                 return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Produto.Listar)]
+        public ActionResult DownloadRelatorioProduto(RelatorioProdutosRequest model)
+        {
+            model.IdEmpresa = IdEmpresa;
+            model.NomeUsuario = LabelUsuario;
+          
+            byte[] relatorio = _relatorioService.GerarRelatorioProdutos(model);
+
+            return File(relatorio, "application/pdf", "Relatório De Produtos.pdf");
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Produto.Listar)]
+        public JsonResult ImprimirRelatorioProdutos(ImprimirRelatorioProdutosRequest model)
+        {
+            try
+            {
+                model.IdEmpresa = IdEmpresa;
+                model.NomeUsuario = LabelUsuario;
+
+                _relatorioService.ImprimirRelatorioProdutos(model);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.AllowGet);
             }
         }
 

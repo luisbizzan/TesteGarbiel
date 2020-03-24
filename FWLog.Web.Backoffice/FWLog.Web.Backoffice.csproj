@@ -282,6 +282,7 @@
     <Compile Include="Mapping\EnderecoArmazenagemProfile.cs" />
     <Compile Include="Mapping\NivelArmazenagemProfile.cs" />
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
+    <Compile Include="Mapping\ProdutoProfile.cs" />
     <Compile Include="Mapping\TransportadoraProfile.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />

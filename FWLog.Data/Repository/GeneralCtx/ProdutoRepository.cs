@@ -81,55 +81,110 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.Produto.Where(w => w.Referencia.Equals(referencia)).FirstOrDefault();
         }
 
-        public IEnumerable<ProdutoListaLinhaTabela> ObterDadosParaDataTable(DataTableFilter<ProdutoListaFiltro> filter, out int totalRecordsFiltered, out int totalRecords)
+        //public IEnumerable<ProdutoListaLinhaTabela> ObterDadosParaDataTable(DataTableFilter<ProdutoListaFiltro> filter, out int totalRecordsFiltered, out int totalRecords)
+        //{
+        //    IEnumerable<ProdutoEstoque> produto = null;
+
+        //    using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+        //    {
+        //        conn.Open();
+
+        //        if (conn.State == System.Data.ConnectionState.Open)
+        //        {
+        //            produto = conn.Query<ProdutoEstoque, Produto, UnidadeMedida, EnderecoArmazenagem, ProdutoEstoqueStatus, ProdutoEstoque>(
+        //            "SELECT " +
+        //                "produtoestoque.\"IdProduto\"," +
+        //                "produto.\"Descricao\",	" +
+        //                "produto.\"Referencia\",	" +
+        //                "produto.\"PesoBruto\", " +
+        //                "produto.\"Largura\"," +
+        //                "produto.\"Altura\"," +
+        //                "produto.\"Comprimento\"," +
+        //                "unidademedida.\"IdUnidadeMedida\"," +
+        //                "unidademedida.\"Sigla\"," +
+        //                "enderecoarmazenagem.\"IdEnderecoArmazenagem\"," +
+        //                "enderecoarmazenagem.\"Codigo\", " +
+        //                "produtoestoquestatus.\"IdProdutoEstoqueStatus\"," +
+        //                "produtoestoquestatus.\"Descricao\"" +
+        //            "FROM \"ProdutoEstoque\" produtoestoque " +
+        //            "INNER JOIN \"Produto\" produto ON produto.\"IdProduto\" = produtoestoque.\"IdProduto\" " +
+        //            "INNER JOIN \"UnidadeMedida\" unidademedida ON unidademedida.\"IdUnidadeMedida\" = produto.\"IdUnidadeMedida\" " +
+        //            "LEFT JOIN \"EnderecoArmazenagem\" enderecoarmazenagem ON enderecoarmazenagem.\"IdEnderecoArmazenagem\" = produtoestoque.\"IdEnderecoArmazenagem\" " +
+        //            "LEFT JOIN \"ProdutoEstoqueStatus\" produtoestoquestatus ON produtoestoquestatus.\"IdProdutoEstoqueStatus\" = produtoestoque.\"IdProdutoEstoqueStatus\" " +
+        //            "WHERE produtoestoque.\"IdEmpresa\" = " + filter.CustomFilter.IdEmpresa,
+        //            map: (pe, p, un, ea, pes) =>
+        //            {
+        //                pe.Produto = p;
+        //                pe.Produto.UnidadeMedida = un;
+        //                pe.EnderecoArmazenagem = ea;
+        //                pe.IdProdutoEstoqueStatus = pes.IdProdutoEstoqueStatus;
+        //                return pe;
+        //            },
+        //            splitOn: "IdProduto,Descricao,IdUnidadeMedida,IdEnderecoArmazenagem,IdProdutoEstoqueStatus"
+        //            );
+        //        }
+
+        //        conn.Close();
+        //    }
+
+        //    totalRecords = produto.Count();
+
+        //    var query = produto.Where(x =>
+        //       (string.IsNullOrEmpty(filter.CustomFilter.Referencia) == true || x.Produto.Referencia == filter.CustomFilter.Referencia) &&
+        //       (string.IsNullOrEmpty(filter.CustomFilter.Descricao) == true || x.Produto.Descricao == filter.CustomFilter.Descricao) &&
+        //       (string.IsNullOrEmpty(filter.CustomFilter.CodigoDeBarras) == true || x.Produto.CodigoBarras == filter.CustomFilter.CodigoDeBarras)
+        //    );
+
+        //    if (filter.CustomFilter.ProdutoStatus.HasValue)
+        //    {
+
+        //        //Sem Locação
+        //        if (filter.CustomFilter.ProdutoStatus == 2)
+        //        {
+        //            query = query.Where(x => x.EnderecoArmazenagem == null);
+        //        }
+        //        //Ativo
+        //        else if (filter.CustomFilter.ProdutoStatus == 1)
+        //        {
+        //            query = query.Where(x => x.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.Ativo);
+        //        }
+        //        //Todos(Inativo)
+        //        else
+        //        {
+        //            query = query.Where(x => x.IdProdutoEstoqueStatus != ProdutoEstoqueStatusEnum.Ativo);
+        //        }
+        //    }
+
+        //    IEnumerable<ProdutoListaLinhaTabela> queryResult = query.Select(e => new ProdutoListaLinhaTabela
+        //    {
+        //        IdProduto = e.IdProduto == 0 ? (long?)null : e.IdProduto,
+        //        Referencia = e.Produto.Referencia,
+        //        Descricao = e.Produto.Descricao,
+        //        Peso = e.Produto.PesoBruto.ToString("n2"),
+        //        Largura = e.Produto.Largura?.ToString("n2"),
+        //        Altura = e.Produto.Altura?.ToString("n2"),
+        //        Comprimento = e.Produto.Comprimento?.ToString("n2"),
+        //        Unidade = e.Produto.UnidadeMedida.Sigla,
+        //        Endereco = e.EnderecoArmazenagem?.Codigo,
+        //        Multiplo = e.Produto.MultiploVenda.ToString(),
+        //        Status = e.IdProdutoEstoqueStatus.ToString()
+        //    });
+
+        //    totalRecordsFiltered = queryResult.Count();
+
+        //    queryResult = queryResult
+        //        .OrderBy(filter.OrderByColumn, filter.OrderByDirection)
+        //        .Skip(filter.Start)
+        //        .Take(filter.Length);
+
+        //    return queryResult.ToList();
+        //}
+
+        public IEnumerable<ProdutoListaLinhaTabela> FormatarDadosParaDataTable(DataTableFilter<ProdutoListaFiltro> filter, out int totalRecordsFiltered, out int totalRecords, IEnumerable<ProdutoEstoque> produtoEstoque)
         {
-            IEnumerable<ProdutoEstoque> produto = null;
+            totalRecords = produtoEstoque.Count();
 
-            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
-            {
-                conn.Open();
-
-                if (conn.State == System.Data.ConnectionState.Open)
-                {
-                    produto = conn.Query<ProdutoEstoque, Produto, UnidadeMedida, EnderecoArmazenagem, ProdutoEstoqueStatus, ProdutoEstoque>(
-                    "SELECT " +
-                        "produtoestoque.\"IdProduto\"," +
-                        "produto.\"Descricao\",	" +
-                        "produto.\"Referencia\",	" +
-                        "produto.\"PesoBruto\", " +
-                        "produto.\"Largura\"," +
-                        "produto.\"Altura\"," +
-                        "produto.\"Comprimento\"," +
-                        "unidademedida.\"IdUnidadeMedida\"," +
-                        "unidademedida.\"Sigla\"," +
-                        "enderecoarmazenagem.\"IdEnderecoArmazenagem\"," +
-                        "enderecoarmazenagem.\"Codigo\", " +
-                        "produtoestoquestatus.\"IdProdutoEstoqueStatus\"," +
-                        "produtoestoquestatus.\"Descricao\"" +
-                    "FROM \"ProdutoEstoque\" produtoestoque " +
-                    "INNER JOIN \"Produto\" produto ON produto.\"IdProduto\" = produtoestoque.\"IdProduto\" " +
-                    "INNER JOIN \"UnidadeMedida\" unidademedida ON unidademedida.\"IdUnidadeMedida\" = produto.\"IdUnidadeMedida\" " +
-                    "LEFT JOIN \"EnderecoArmazenagem\" enderecoarmazenagem ON enderecoarmazenagem.\"IdEnderecoArmazenagem\" = produtoestoque.\"IdEnderecoArmazenagem\" " +
-                    "LEFT JOIN \"ProdutoEstoqueStatus\" produtoestoquestatus ON produtoestoquestatus.\"IdProdutoEstoqueStatus\" = produtoestoque.\"IdProdutoEstoqueStatus\" " +
-                    "WHERE produtoestoque.\"IdEmpresa\" = " + filter.CustomFilter.IdEmpresa,
-                    map: (pe, p, un, ea, pes) =>
-                    {
-                        pe.Produto = p;
-                        pe.Produto.UnidadeMedida = un;
-                        pe.EnderecoArmazenagem = ea;
-                        pe.IdProdutoEstoqueStatus = pes.IdProdutoEstoqueStatus;
-                        return pe;
-                    },
-                    splitOn: "IdProduto,Descricao,IdUnidadeMedida,IdEnderecoArmazenagem,IdProdutoEstoqueStatus"
-                    );
-                }
-
-                conn.Close();
-            }
-
-            totalRecords = produto.Count();
-
-            var query = produto.Where(x =>
+            var query = produtoEstoque.Where(x =>
                (string.IsNullOrEmpty(filter.CustomFilter.Referencia) == true || x.Produto.Referencia == filter.CustomFilter.Referencia) &&
                (string.IsNullOrEmpty(filter.CustomFilter.Descricao) == true || x.Produto.Descricao == filter.CustomFilter.Descricao) &&
                (string.IsNullOrEmpty(filter.CustomFilter.CodigoDeBarras) == true || x.Produto.CodigoBarras == filter.CustomFilter.CodigoDeBarras)
@@ -137,7 +192,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             if (filter.CustomFilter.ProdutoStatus.HasValue)
             {
-                
+
                 //Sem Locação
                 if (filter.CustomFilter.ProdutoStatus == 2)
                 {

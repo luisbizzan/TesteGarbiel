@@ -163,8 +163,10 @@
     <Compile Include="Model\Relatorios\DetalhesProdutoRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirDetalhesNotaEntradaConferenciaRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirNotasRecebimentoRequest.cs" />
+    <Compile Include="Model\Relatorios\ImprimirRelatorioProdutosRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirRelatorioRecebimentoNotasRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimriDetalhesProdutoRequest.cs" />
+    <Compile Include="Model\Relatorios\RelatorioProdutosRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioRastreioPecaRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioNotasRecebimentoRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioRecebimentoNotasRequest.cs" />
@@ -183,6 +185,7 @@
     <Compile Include="Relatorio\Model\RastreioPeca.cs" />
     <Compile Include="Relatorio\Model\NotasRecebimento.cs" />
     <Compile Include="Relatorio\Model\RecebimentoNotas.cs" />
+    <Compile Include="Relatorio\Model\RelatorioProdutos.cs" />
     <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ApplicationLogService.cs" />

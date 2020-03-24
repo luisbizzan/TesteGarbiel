@@ -52,10 +52,44 @@
         ]
     });
 
+    $("#downloadRelatorioProduto").click(function () {
+        debugger
+        var bla = $("#Filtros_Referencia").val();
+        var teste = $("#Filtros_ProdutoStatus").val();
+        $.ajax({
+            url: "/Produto/DownloadRelatorioProduto",
+            method: "POST",
+            data: {
+                Referencia: $("#Filtros_Referencia").val(),
+                Descricao: $("#Filtros_Descricao").val(),
+                CodigoDeBarras: $("#Filtros_CodigoDeBarras").val(),
+                ProdutoStatus: $("#Filtros_ProdutoStatus").val()
+            },
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (data) {
+                var a = document.createElement('a');
+                var url = window.URL.createObjectURL(data);
+
+                a.href = url;
+                a.download = 'Relatório de Produtos.pdf';
+                document.body.append(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            }
+        });
+    });
+
+    $("#imprimirRelatorioProduto").click(function () {
+        debugger
+        $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=1&acao=produtos", function () {
+            $("#modalImpressoras").modal();
+        });
+    });
+
     dart.dataTables.loadFormFilterEvents();
-
-
-
 })();
 
 function detalhesEntradaConferencia() {
@@ -69,6 +103,24 @@ function detalhesEntradaConferencia() {
 
 function imprimir(acao, id) {
     switch (acao) {
+        case 'produtos':
+            $.ajax({
+                url: "/Produto/ImprimirRelatorioProdutos",
+                method: "POST",
+                data: {
+                    IdImpressora: $("#IdImpressora").val(),
+                    Referencia: $("#Filtros_Referencia").val(),
+                    Descricao: $("#Filtros_Descricao").val(),
+                    CodigoDeBarras: $("#Filtros_CodigoDeBarras").val(),
+                    ProdutoStatus: $("#Filtros_ProdutoStatus").val()
+                },
+                success: function (result) {
+                    mensagemImpressao(result);
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
+                }
+            });
+            break;
         case 'detalheproduto':
             $.ajax({
                 url: "/Produto/ImprimirDetalhesProduto",
@@ -84,5 +136,13 @@ function imprimir(acao, id) {
                 }
             });
             break;
+    }
+}
+
+function mensagemImpressao(result) {
+    if (result.Success) {
+        PNotify.success({ text: result.Message });
+    } else {
+        PNotify.error({ text: result.Message });
     }
 }
