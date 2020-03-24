@@ -195,6 +195,44 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var viewModel = Mapper.Map<EnderecoArmazenagemDetalhesViewModel>(enderecoArmazenagem);
 
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarRegistrosPorEndereco(viewModel.IdEnderecoArmazenagem);
+            
+            // Popula Itens na lista de produtos do Endereço Armazenagem
+            loteProdutoEndereco.ForEach(lpe => {
+                if(lpe.EnderecoArmazenagem.PontoArmazenagem.Descricao != "Picking")
+                {
+                    var item = new ProdutoItem
+                    {
+                        NumeroLote = lpe.Lote.IdLote.ToString(),
+                        NumeroNf = lpe.Lote.NotaFiscal.Numero.ToString(),
+                        CodigoReferencia = lpe.Produto.Referencia,
+                        DataInstalacao = lpe.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss"),
+                        Descricao = lpe.Produto.Descricao,
+                        Multiplo = lpe.Produto.MultiploVenda.ToString(),
+                        Peso = lpe.Produto.PesoBruto.ToString("n2"),
+                        QuantidadeInstalada = lpe.Quantidade.ToString(),
+                        UsuarioResponsavel = _unitOfWork.PerfilUsuarioRepository.GetByUserId(lpe.AspNetUsers.Id).Nome
+                };
+
+                    viewModel.Items.Add(item);
+                }
+                else
+                {
+                    var item = new ProdutoItem
+                    {
+                        CodigoReferencia = lpe.Produto.Referencia,
+                        DataInstalacao = lpe.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss"),
+                        Descricao = lpe.Produto.Descricao,
+                        Multiplo = lpe.Produto.MultiploVenda.ToString("n2"),
+                        Peso = lpe.Produto.PesoBruto.ToString("n2"),
+                        QuantidadeInstalada = lpe.Quantidade.ToString(),
+                        UsuarioResponsavel = _unitOfWork.PerfilUsuarioRepository.GetByUserId(lpe.AspNetUsers.Id).Nome
+                    };
+
+                    viewModel.Items.Add(item);
+                }
+            });
+
             return View(viewModel);
         }
 
