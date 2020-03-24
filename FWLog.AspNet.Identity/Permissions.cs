@@ -211,6 +211,7 @@ namespace FWLog.AspNet.Identity
             public const string ImprimirEtiquetaLote = "RFImprimirEtiquetaLote";
             public const string ImprimirEtiquetaEndereco = "RFImprimirEtiquetaEndereco";
             public const string ImprimirEtiquetaPicking = "RFImprimirEtiquetaPicking";
+            public const string Etiquetas = "RFArmazenagemEtiquetas";
 
             public RFArmazenagem() : base(Display.FromString("Coletor - Armazenagem"))
             {
@@ -223,6 +224,23 @@ namespace FWLog.AspNet.Identity
                 Register(ImprimirEtiquetaLote, Display.FromString("Imprimir Etiqueta Lote"));
                 Register(ImprimirEtiquetaEndereco, Display.FromString("Imprimir Etiqueta Endereço"));
                 Register(ImprimirEtiquetaPicking, Display.FromString("Impr. Etiq. Picking"));
+                Register(Etiquetas, Display.FromString("Etiquetas"));
+            }
+        }
+
+        public class RFEtiquetas : PermissionGroupBuildItem
+        {
+            public const string EtiquetaEndereco = "RFImprimirEtiquetaEndereco";
+            public const string EtiquetaLote = "RFImprimirEtiquetaLote";
+            public const string EtiquetaPicking = "RFImprimirEtiquetaPicking";
+            public const string EtiquetasProduto = "RFImprimirEtiquetasProduto";
+
+            public RFEtiquetas() : base(Display.FromString("Coletor - Etiquetas"))
+            {
+                Register(EtiquetaEndereco, Display.FromString("Etiqueta Endereço"));
+                Register(EtiquetaLote, Display.FromString("Etiqueta Lote"));
+                Register(EtiquetaPicking, Display.FromString("Etiqueta Picking"));
+                Register(EtiquetasProduto, Display.FromString("Etiquetas Produto"));
             }
         }
 
