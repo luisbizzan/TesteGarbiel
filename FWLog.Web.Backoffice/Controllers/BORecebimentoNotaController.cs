@@ -2086,7 +2086,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.VisualizarDivergenciaConferencia)]
         public ActionResult ExibirDivergencia(long id)
         {
             NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);

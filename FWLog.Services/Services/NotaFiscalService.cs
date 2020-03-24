@@ -239,6 +239,31 @@ namespace FWLog.Services.Services
             }
         }
 
+        public async Task AtualizarNotaFiscalCancelada(long codigoIntegracao)
+        {
+            if (!(Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"])))//TODO Temporário
+            {
+                return;
+            }
+
+            string union = string.Format(" UNION SELECT NUNOTA FROM TGFCAB_EXC ", codigoIntegracao);
+            List<NotaFiscalCanceladaIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalCanceladaIntegracao>(inner: union);
+
+            foreach (var notasInt in notasIntegracao)
+            {
+                var codNota = Convert.ToInt64(notasInt.NUNOTA);
+
+                NotaFiscal notaFiscal = _uow.NotaFiscalRepository.ObterPorCodigoIntegracao(codNota);
+
+                if (notaFiscal != null && notaFiscal.NotaFiscalStatus.IdNotaFiscalStatus == NotaFiscalStatusEnum.AguardandoRecebimento)
+                {
+                    notaFiscal.NotaFiscalStatus.IdNotaFiscalStatus = NotaFiscalStatusEnum.Cancelada;
+                    _uow.NotaFiscalRepository.Update(notaFiscal);
+                    _uow.SaveChanges();
+                }
+            }
+        }
+
         public async Task AtualizarNotaFiscalRecebimento(string chaveAcesso)
         {
             try

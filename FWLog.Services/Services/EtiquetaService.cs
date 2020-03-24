@@ -37,22 +37,18 @@ namespace FWLog.Services.Services
             var etiquetaImprimir = new StringBuilder();
 
             etiquetaImprimir.Append("^XA");
-
             // Define quantidade de etiquetas a imprimir
             etiquetaImprimir.Append($"^PQ{_quantidade}^FS");
-
-            etiquetaImprimir.Append("^FWB");
-            etiquetaImprimir.Append("^FO16,20^GB710,880^FS");
-            etiquetaImprimir.Append("^BY3,8,120");
-            etiquetaImprimir.Append($"^FO280,90^BC^FD{idLote.ToString().PadLeft(10, '0')}^FS");
-            etiquetaImprimir.Append("^FO50,90^FB470,4,0,C,0^A0,230,100^FD");
-            etiquetaImprimir.Append($"FOR.{lote.NotaFiscal.Fornecedor.IdFornecedor}");
-            etiquetaImprimir.Append(@"\&\&");
-            etiquetaImprimir.Append($"NF.{lote.NotaFiscal.Numero}");
-            etiquetaImprimir.Append(@"\&");
-            etiquetaImprimir.Append($"{lote.DataRecebimento.ToString("dd/MM/yyyy")}");
-            etiquetaImprimir.Append("^FS");
-
+            // Contorno da etiqueta
+            etiquetaImprimir.Append("^FO15,20^GB690,520^FS");
+            // Linha de Fornecedor
+            etiquetaImprimir.Append($"^FO30,30^FB510,1,0,C,0^A0B,200,70^FDFOR.{lote.NotaFiscal.Fornecedor.IdFornecedor}^FS");
+            // Linha de Barcode
+            etiquetaImprimir.Append($"^FO210,70^FWB^BY3,8,120^BC^FD{idLote.ToString().PadLeft(10, '0')}^FS");
+            // Linha da Nota Fiscal
+            etiquetaImprimir.Append($"^FO390,30^FB510,1,0,C,0^A0B,200,80^FDNF.{lote.NotaFiscal.Numero}^FS");
+            // Linha da Data de recebimento
+            etiquetaImprimir.Append($"^FO580,30^FB510,1,0,C,0^A0B,150,100^FD{lote.DataRecebimento.ToString("dd/MM/yyyy")}^FS");
             etiquetaImprimir.Append("^XZ");
 
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaImprimir.ToString());

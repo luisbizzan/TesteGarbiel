@@ -12,7 +12,8 @@ namespace FWLog.Data.Models
         ConferidaDivergencia = 4,
         Confirmada = 5,
         NotaDevolucaoCriada = 6,
-        NotaDevolucaoAutorizada = 7
+        NotaDevolucaoAutorizada = 7,
+        Cancelada = 8
     }
 
     public class NotaFiscalStatus
