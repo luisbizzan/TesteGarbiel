@@ -208,9 +208,6 @@ namespace FWLog.AspNet.Identity
             public const string Rastreamento = "RFRastreamento";
             public const string ConferenciaAlas = "RFConferenciaAlas";
             public const string AbastecerPicking = "RFAbastecerPicking";
-            public const string ImprimirEtiquetaLote = "RFImprimirEtiquetaLote";
-            public const string ImprimirEtiquetaEndereco = "RFImprimirEtiquetaEndereco";
-            public const string ImprimirEtiquetaPicking = "RFImprimirEtiquetaPicking";
             public const string Etiquetas = "RFArmazenagemEtiquetas";
 
             public RFArmazenagem() : base(Display.FromString("Coletor - Armazenagem"))
@@ -221,9 +218,6 @@ namespace FWLog.AspNet.Identity
                 Register(Rastreamento, Display.FromString("Rastreamento"));
                 Register(ConferenciaAlas, Display.FromString("Conferência Alas"));
                 Register(AbastecerPicking, Display.FromString("Abastecer Picking"));
-                Register(ImprimirEtiquetaLote, Display.FromString("Imprimir Etiqueta Lote"));
-                Register(ImprimirEtiquetaEndereco, Display.FromString("Imprimir Etiqueta Endereço"));
-                Register(ImprimirEtiquetaPicking, Display.FromString("Impr. Etiq. Picking"));
                 Register(Etiquetas, Display.FromString("Etiquetas"));
             }
         }
