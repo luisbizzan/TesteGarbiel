@@ -53,9 +53,6 @@
     });
 
     $("#downloadRelatorioProduto").click(function () {
-        debugger
-        var bla = $("#Filtros_Referencia").val();
-        var teste = $("#Filtros_ProdutoStatus").val();
         $.ajax({
             url: "/Produto/DownloadRelatorioProduto",
             method: "POST",
@@ -83,7 +80,6 @@
     });
 
     $("#imprimirRelatorioProduto").click(function () {
-        debugger
         $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=1&acao=produtos", function () {
             $("#modalImpressoras").modal();
         });
