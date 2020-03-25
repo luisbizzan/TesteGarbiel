@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using FWLog.Data;
+﻿using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Etiqueta;
@@ -106,6 +106,64 @@ namespace FWLog.Web.Api.Controllers
                     };
 
                     _etiquetaService.ValidarEImprimirEtiquetaLote(request);
+
+                    return ApiOk();
+                }
+                catch (BusinessException ex)
+                {
+                    return ApiBadRequest(ex.Message);
+                }
+            }
+        }
+
+        [HttpPost]
+        [Route("api/v1/etiqueta/produto/imprimir")]
+        public IHttpActionResult ImprimirEtiquetaProduto(ImprimirEtiquetaProdutoRequisicao requisicao)
+        {
+            if (requisicao.IdImpressaoItem == (int)ImpressaoItemEnum.EtiquetaAvulso)
+            {
+                ModelState.Remove(nameof(requisicao.ReferenciaProduto));
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+            else
+            {
+                try
+                {
+                    switch (requisicao.IdImpressaoItem)
+                    {
+                        case (int)ImpressaoItemEnum.EtiquetaAvulso:
+                            _etiquetaService.ImprimirEtiquetaAvulso(new ImprimirEtiquetaAvulsoRequest
+                            {
+                                IdEmpresa = IdEmpresa,
+                                IdImpressora = requisicao.IdImpressora,
+                                QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas
+                            });
+                            break;
+                        case (int)ImpressaoItemEnum.EtiquetaIndividual:
+                            _etiquetaService.ImprimirEtiquetaPeca(new ImprimirEtiquetaProdutoBase
+                            {
+                                IdEmpresa = IdEmpresa,
+                                IdImpressora = requisicao.IdImpressora,
+                                ReferenciaProduto = requisicao.ReferenciaProduto,
+                                QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas
+                            });
+                            break;
+                        case (int)ImpressaoItemEnum.EtiquetaPersonalizada:
+                            _etiquetaService.ImprimirEtiquetaPersonalizada(new ImprimirEtiquetaProdutoBase
+                            {
+                                IdEmpresa = IdEmpresa,
+                                IdImpressora = requisicao.IdImpressora,
+                                ReferenciaProduto = requisicao.ReferenciaProduto,
+                                QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas
+                            });
+                            break;
+                        default:
+                            return ApiBadRequest("Tipo da impressão não existe.");
+                    }
 
                     return ApiOk();
                 }

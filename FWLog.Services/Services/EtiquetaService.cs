@@ -164,6 +164,11 @@ namespace FWLog.Services.Services
             Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
             ProdutoEstoque empresaProduto = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, request.IdEmpresa);
 
+            if (produto == null || empresaProduto == null)
+            {
+                throw new BusinessException("Produto não encontrado.");
+            }
+
             string endereco = empresaProduto?.EnderecoArmazenagem?.Codigo ?? string.Empty;
             string unidade = produto.UnidadeMedida?.Sigla ?? string.Empty;
 
@@ -337,11 +342,11 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaDevolucao(ImprimirEtiquetaDevolucaoRequest request)
         {
-            string linha1  = request.Linha1?.Normalizar();
-            string linha2  = request.Linha2?.Normalizar();
-            string linha3  = request.Linha3?.Normalizar();
-            string linha4  = request.Linha4?.Normalizar();
-            
+            string linha1 = request.Linha1?.Normalizar();
+            string linha2 = request.Linha2?.Normalizar();
+            string linha3 = request.Linha3?.Normalizar();
+            string linha4 = request.Linha4?.Normalizar();
+
             var etiquetaZpl = new StringBuilder();
 
             etiquetaZpl.Append("^XA");
@@ -365,22 +370,22 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaDevolucaoTotal(ImprimirEtiquetaDevolucaoTotalRequest request)
         {
-            string nomeFornecedor        = request.NomeFornecedor?.Normalizar();
-            string endFornecedor         = request.EnderecoFornecedor?.Normalizar();
-            string cepFornecedor         = Convert.ToUInt64(request.CepFornecedor).ToString(@"00000\-000");
-            string cidadeFornecedor      = request.CidadeFornecedor?.Normalizar();
-            string estadoFornecedor      = request.EstadoFornecedor?.Normalizar();
-            string telefoneFornecedor    = string.Format("{0:(##) #####-####}", request.TelefoneFornecedor);
-            string numeroFornecedor      = request.NumeroFornecedor?.Normalizar();
+            string nomeFornecedor = request.NomeFornecedor?.Normalizar();
+            string endFornecedor = request.EnderecoFornecedor?.Normalizar();
+            string cepFornecedor = Convert.ToUInt64(request.CepFornecedor).ToString(@"00000\-000");
+            string cidadeFornecedor = request.CidadeFornecedor?.Normalizar();
+            string estadoFornecedor = request.EstadoFornecedor?.Normalizar();
+            string telefoneFornecedor = string.Format("{0:(##) #####-####}", request.TelefoneFornecedor);
+            string numeroFornecedor = request.NumeroFornecedor?.Normalizar();
             string complementoFornecedor = request.ComplementoFornecedor?.Normalizar();
-            string bairroFornecedor      = request.BairroFornecedor?.Normalizar();
-            string idFornecedor          = request.IdFornecedor?.Normalizar();
-            string siglaTransportador    = request.SiglaTransportador?.Normalizar();
-            string idTransportadora      = request.IdTransportadora?.Normalizar();
-            string nomeTransportadora    = request.NomeTransportadora?.Normalizar();
-            string idLote                = request.IdLote?.Normalizar();
-            string quantidadeVolumes     = request.QuantidadeVolumes?.Normalizar();
-            string quantidadeEtiquetas   = request.QuantidadeEtiquetas.ToString(); 
+            string bairroFornecedor = request.BairroFornecedor?.Normalizar();
+            string idFornecedor = request.IdFornecedor?.Normalizar();
+            string siglaTransportador = request.SiglaTransportador?.Normalizar();
+            string idTransportadora = request.IdTransportadora?.Normalizar();
+            string nomeTransportadora = request.NomeTransportadora?.Normalizar();
+            string idLote = request.IdLote?.Normalizar();
+            string quantidadeVolumes = request.QuantidadeVolumes?.Normalizar();
+            string quantidadeEtiquetas = request.QuantidadeEtiquetas.ToString();
 
             var etiquetaZpl = new StringBuilder();
 
