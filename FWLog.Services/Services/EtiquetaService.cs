@@ -548,6 +548,33 @@ namespace FWLog.Services.Services
             });
         }
 
+        public void ValidarEnderecoPicking(ValidarEnderecoPickingRequest requisicao)
+        {
+            if (requisicao.IdEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("O Endereço deve ser informado.");
+            }
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(requisicao.IdEnderecoArmazenagem);
+
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("O endereço não foi encontrado.");
+            }
+
+            if (!enderecoArmazenagem.IsPontoSeparacao)
+            {
+                throw new BusinessException("O endereço informado não é um ponto de separação.");
+            }
+
+            var pontoArmazenagem = _unitOfWork.PontoArmazenagemRepository.GetById(enderecoArmazenagem.IdPontoArmazenagem);
+
+            if(pontoArmazenagem.Descricao != "Picking")
+            {
+                throw new BusinessException("O endereço informado não é endereço de Picking.");
+            }
+        }
+
         private class CelulaEtiqueta
         {
             internal CelulaEtiqueta(int x, int y = 0)

@@ -4,6 +4,7 @@ using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Etiqueta;
 using System;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
@@ -170,6 +171,39 @@ namespace FWLog.Web.Api.Controllers
                 catch (BusinessException ex)
                 {
                     return ApiBadRequest(ex.Message);
+                }
+            }
+        }
+
+        [HttpPost]
+        [Route("api/v1/etiqueta/picking/validar-endereco")]
+        public IHttpActionResult ValidarEnderecoPicking(ValidarEnderecoPickingRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+            else
+            {
+                try
+                {
+                    var request = new ValidarEnderecoPickingRequest
+                    {
+                        IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    };
+
+                    _etiquetaService.ValidarEnderecoPicking(request);
+
+                    return ApiOk();
+
+                }
+                catch (BusinessException ex)
+                {
+                    return ApiBadRequest(ex.Message);
+                }
+                catch
+                {
+                    throw;
                 }
             }
         }

@@ -240,6 +240,7 @@
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaLoteRequisicao.cs" />
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaPickingRequisicao.cs" />
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaProdutoRequisicao.cs" />
+    <Compile Include="Models\Etiqueta\ValidarEnderecoPickingRequisicao.cs" />
     <Compile Include="Models\Impressora\ImpressoraResposta.cs" />
     <Compile Include="Models\Impressora\ImpressorasResposta.cs" />
     <Compile Include="Models\Lote\BuscaProdutoNoLoteResposta.cs" />
