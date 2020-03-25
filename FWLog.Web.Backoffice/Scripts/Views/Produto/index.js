@@ -60,7 +60,11 @@
                 Referencia: $("#Filtros_Referencia").val(),
                 Descricao: $("#Filtros_Descricao").val(),
                 CodigoDeBarras: $("#Filtros_CodigoDeBarras").val(),
-                ProdutoStatus: $("#Filtros_ProdutoStatus").val()
+                ProdutoStatusId: $("#Filtros_ProdutoStatus").val(),
+                ProdutoStatus: $("#Filtros_ProdutoStatus option:selected").text(),
+                IdPontoArmazenagem: $("#Filtros_IdPontoArmazenagem").val(),
+                IdNivelArmazenagem: $("#Filtros_IdNivelArmazenagem").val(),
+                IdEnderecoArmazenagem: $("#Filtros_IdEnderecoArmazenagem").val()
             },
             xhrFields: {
                 responseType: 'blob'
@@ -143,7 +147,8 @@ function imprimir(acao, id) {
                     Referencia: $("#Filtros_Referencia").val(),
                     Descricao: $("#Filtros_Descricao").val(),
                     CodigoDeBarras: $("#Filtros_CodigoDeBarras").val(),
-                    ProdutoStatus: $("#Filtros_ProdutoStatus").val(),
+                    ProdutoStatusId: $("#Filtros_ProdutoStatus").val(),
+                    ProdutoStatus: $("#Filtros_ProdutoStatus option:selected").text(),
                     IdPontoArmazenagem: $("#Filtros_IdPontoArmazenagem").val(),
                     IdNivelArmazenagem: $("#Filtros_IdNivelArmazenagem").val(),
                     IdEnderecoArmazenagem: $("#Filtros_IdEnderecoArmazenagem").val()

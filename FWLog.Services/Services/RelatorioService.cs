@@ -765,7 +765,7 @@ namespace FWLog.Services.Services
                 Descricao = request.Descricao,
                 IdEmpresa = request.IdEmpresa,
                 NomeUsuario = request.NomeUsuario,
-                ProdutoStatus = request.ProdutoStatus,
+                ProdutoStatusId = request.ProdutoStatus,
                 Referencia = request.Referencia,
                 IdEnderecoArmazenagem = request.IdEnderecoArmazenagem,
                 IdNivelArmazenagem = request.IdNivelArmazenagem,
@@ -798,15 +798,15 @@ namespace FWLog.Services.Services
                 query = query.Where(x => x.Produto.Descricao == filter.Descricao);
             }
 
-            if (filter.ProdutoStatus.HasValue)
+            if (filter.ProdutoStatusId.HasValue)
             {
                 //Sem Locação
-                if (filter.ProdutoStatus == 2)
+                if (filter.ProdutoStatusId == 2)
                 {
                     query = query.Where(x => x.EnderecoArmazenagem == null);
                 }
                 //Ativo
-                else if (filter.ProdutoStatus == 1)
+                else if (filter.ProdutoStatusId == 1)
                 {
                     query = query.Where(x => x.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.Ativo);
                 }
@@ -867,7 +867,7 @@ namespace FWLog.Services.Services
                 Titulo = "Relatório de Produtos",
                 Filtros = new FwRelatorioDadosFiltro
                 {
-                   Status = filter.ProdutoStatus.ToString(),
+                   Status = filter.ProdutoStatus,
                    CodigoDeBarras = filter.CodigoDeBarras,
                    Referencia = filter.Referencia,
                    Descricao = filter.Descricao
