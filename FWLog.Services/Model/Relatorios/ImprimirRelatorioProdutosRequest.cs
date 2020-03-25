@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FWLog.Services.Model.Relatorios
+﻿namespace FWLog.Services.Model.Relatorios
 {
     public class ImprimirRelatorioProdutosRequest
     {
@@ -15,5 +9,8 @@ namespace FWLog.Services.Model.Relatorios
         public string Descricao { get; set; }
         public string CodigoDeBarras { get; set; }
         public int? ProdutoStatus { get; set; }
+        public long? IdPontoArmazenagem { get; set; }
+        public long? IdNivelArmazenagem { get; set; }
+        public long? IdEnderecoArmazenagem { get; set; }
     }
 }

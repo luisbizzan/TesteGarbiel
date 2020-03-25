@@ -210,6 +210,21 @@ namespace FWLog.Data.Repository.GeneralCtx
                 }
             }
 
+            if (filter.CustomFilter.IdEnderecoArmazenagem.HasValue)
+            {
+                query = query.Where(x => x.IdEnderecoArmazenagem == filter.CustomFilter.IdEnderecoArmazenagem);
+            }
+
+            if (filter.CustomFilter.IdPontoArmazenagem.HasValue)
+            {
+                query = query.Where(x => x.EnderecoArmazenagem.IdPontoArmazenagem == filter.CustomFilter.IdPontoArmazenagem);
+            }
+
+            if (filter.CustomFilter.IdNivelArmazenagem.HasValue)
+            {
+                query = query.Where(x => x.EnderecoArmazenagem.IdNivelArmazenagem == filter.CustomFilter.IdNivelArmazenagem);
+            }
+
             IEnumerable<ProdutoListaLinhaTabela> queryResult = query.Select(e => new ProdutoListaLinhaTabela
             {
                 IdProduto = e.IdProduto == 0 ? (long?)null : e.IdProduto,

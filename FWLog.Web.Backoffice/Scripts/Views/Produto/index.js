@@ -85,6 +85,41 @@
         });
     });
 
+    $("#pesquisarEnderecoArmazenagem").click(function () {
+        let id = $("#Filtros_IdPontoArmazenagem").val();
+        $("#modalPesquisaEnderecoArmazenagem").load(HOST_URL + "EnderecoArmazenagem/PesquisaModal/" + id, function () {
+            $("#modalPesquisaEnderecoArmazenagem").modal();
+        });
+    });
+
+    $("#limparEnderecoArmazenagem").click(function () {
+        $("#Filtros_CodigoEnderecoArmazenagem").val("");
+        $("#Filtros_IdEnderecoArmazenagem").val("");
+    });
+
+    $("#pesquisarNivelArmazenagem").click(function () {
+        $("#modalPesquisaNivelArmazenagem").load(HOST_URL + "NivelArmazenagem/PesquisaModal", function () {
+            $("#modalPesquisaNivelArmazenagem").modal();
+        });
+    });
+
+    $("#limparNivelArmazenagem").click(function () {
+        $("#Filtros_DescricaoNivelArmazenagem").val("");
+        $("#Filtros_IdNivelArmazenagem").val("");
+    });
+
+    $("#pesquisarPontoArmazenagem").click(function () {
+        let id = $("#Filtros_IdNivelArmazenagem").val();
+        $("#modalPesquisaPontoArmazenagem").load(HOST_URL + "PontoArmazenagem/PesquisaModal/" + id, function () {
+            $("#modalPesquisaPontoArmazenagem").modal();
+        });
+    });
+
+    $("#limparPontoArmazenagem").click(function () {
+        $("#Filtros_DescricaoPontoArmazenagem").val("");
+        $("#Filtros_IdPontoArmazenagem").val("");
+    });
+
     dart.dataTables.loadFormFilterEvents();
 })();
 
@@ -108,7 +143,10 @@ function imprimir(acao, id) {
                     Referencia: $("#Filtros_Referencia").val(),
                     Descricao: $("#Filtros_Descricao").val(),
                     CodigoDeBarras: $("#Filtros_CodigoDeBarras").val(),
-                    ProdutoStatus: $("#Filtros_ProdutoStatus").val()
+                    ProdutoStatus: $("#Filtros_ProdutoStatus").val(),
+                    IdPontoArmazenagem: $("#Filtros_IdPontoArmazenagem").val(),
+                    IdNivelArmazenagem: $("#Filtros_IdNivelArmazenagem").val(),
+                    IdEnderecoArmazenagem: $("#Filtros_IdEnderecoArmazenagem").val()
                 },
                 success: function (result) {
                     mensagemImpressao(result);
@@ -141,4 +179,25 @@ function mensagemImpressao(result) {
     } else {
         PNotify.error({ text: result.Message });
     }
+}
+
+function selecionarNivelArmazenagem(idNivelArmazenagem, descricao) {
+    $("#Filtros_DescricaoNivelArmazenagem").val(descricao);
+    $("#Filtros_IdNivelArmazenagem").val(idNivelArmazenagem);
+    $("#modalPesquisaNivelArmazenagem").modal("hide");
+    $("#modalPesquisaNivelArmazenagem").empty();
+}
+
+function selecionarPontoArmazenagem(idPontoArmazenagem, descricao) {
+    $("#Filtros_DescricaoPontoArmazenagem").val(descricao);
+    $("#Filtros_IdPontoArmazenagem").val(idPontoArmazenagem);
+    $("#modalPesquisaPontoArmazenagem").modal("hide");
+    $("#modalPesquisaPontoArmazenagem").empty();
+}
+
+function selecionarEnderecoArmazenagem(IdEnderecoArmazenagem, codigo) {
+    $("#Filtros_CodigoEnderecoArmazenagem").val(codigo);
+    $("#Filtros_IdEnderecoArmazenagem").val(IdEnderecoArmazenagem);
+    $("#modalPesquisaEnderecoArmazenagem").modal("hide");
+    $("#modalPesquisaEnderecoArmazenagem").empty();
 }

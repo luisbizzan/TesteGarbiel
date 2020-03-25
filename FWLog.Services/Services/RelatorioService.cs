@@ -766,7 +766,10 @@ namespace FWLog.Services.Services
                 IdEmpresa = request.IdEmpresa,
                 NomeUsuario = request.NomeUsuario,
                 ProdutoStatus = request.ProdutoStatus,
-                Referencia = request.Referencia
+                Referencia = request.Referencia,
+                IdEnderecoArmazenagem = request.IdEnderecoArmazenagem,
+                IdNivelArmazenagem = request.IdNivelArmazenagem,
+                IdPontoArmazenagem = request.IdPontoArmazenagem
             };
 
             byte[] relatorio = GerarRelatorioProdutos(relatorioRequest);
@@ -812,6 +815,21 @@ namespace FWLog.Services.Services
                 {
                     query = query.Where(x => x.IdProdutoEstoqueStatus != ProdutoEstoqueStatusEnum.Ativo);
                 }
+            }
+
+            if (filter.IdEnderecoArmazenagem.HasValue)
+            {
+                query = query.Where(x => x.IdEnderecoArmazenagem == filter.IdEnderecoArmazenagem);
+            }
+
+            if (filter.IdPontoArmazenagem.HasValue)
+            {
+                query = query.Where(x => x.EnderecoArmazenagem.IdPontoArmazenagem == filter.IdPontoArmazenagem);
+            }
+
+            if (filter.IdNivelArmazenagem.HasValue)
+            {
+                query = query.Where(x => x.EnderecoArmazenagem.IdNivelArmazenagem == filter.IdNivelArmazenagem);
             }
 
             var listaProdutos = new List<IFwRelatorioDados>();
