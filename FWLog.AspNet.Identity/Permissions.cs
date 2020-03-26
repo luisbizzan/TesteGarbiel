@@ -220,7 +220,7 @@ namespace FWLog.AspNet.Identity
                 Register(ConferenciaAlas, Display.FromString("Conferência Alas"));
                 Register(AbastecerPicking, Display.FromString("Abastecer Picking"));
                 Register(Etiquetas, Display.FromString("Etiquetas"));
-                Register(ConferenciaGaiola, Display.FromString("Conferência Gaiola"));
+                Register(ConferenciaGaiola, Display.FromString("Conferência"));
             }
         }
 
