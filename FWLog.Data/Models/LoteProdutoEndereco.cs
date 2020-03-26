@@ -37,9 +37,6 @@ namespace FWLog.Data.Models
         [Required]
         public decimal PesoTotal { get; set; }
 
-        [Required]
-        public bool AguardandoConferencia { get; set; }
-
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
 

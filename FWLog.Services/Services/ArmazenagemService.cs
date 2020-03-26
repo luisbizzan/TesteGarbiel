@@ -33,8 +33,6 @@ namespace FWLog.Services.Services
             Produto produto = _unitOfWork.ProdutoRepository.GetById(requisicao.IdProduto);
             decimal pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * requisicao.Quantidade;
 
-            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(requisicao.IdEnderecoArmazenagem);
-
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
                 var loteProdutoEndereco = new LoteProdutoEndereco
@@ -46,8 +44,7 @@ namespace FWLog.Services.Services
                     IdProduto = requisicao.IdProduto,
                     IdUsuarioInstalacao = requisicao.IdUsuarioInstalacao,
                     Quantidade = requisicao.Quantidade,
-                    PesoTotal = pesoInstalacao,
-                    AguardandoConferencia = enderecoArmazenagem.PontoArmazenagem.IdTipoMovimentacao == TipoMovimentacaoEnum.Conferencia
+                    PesoTotal = pesoInstalacao
                 };
 
                 _unitOfWork.LoteProdutoEnderecoRepository.Add(loteProdutoEndereco);
@@ -856,7 +853,10 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O endereço não foi encontrado.");
             }
 
-            //TODO: Validar se endereço é ponto de conferência
+            if (enderecoArmazenagem.PontoArmazenagem.IdTipoMovimentacao != TipoMovimentacaoEnum.Conferencia)
+            {
+                throw new BusinessException("Endereço não é um ponto de conferência.");
+            }
 
             var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
 
@@ -865,10 +865,6 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Nenhum volume instalado no endereço.");
             }
 
-            if (loteProdutoEndereco.AguardandoConferencia == false)
-            {
-                throw new BusinessException("Volume não está disponível para conferência.");
-            }
         }
     }
 }
