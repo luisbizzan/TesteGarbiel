@@ -33,6 +33,8 @@ namespace FWLog.Services.Services
             Produto produto = _unitOfWork.ProdutoRepository.GetById(requisicao.IdProduto);
             decimal pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * requisicao.Quantidade;
 
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(requisicao.IdEnderecoArmazenagem);
+
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
                 var loteProdutoEndereco = new LoteProdutoEndereco
@@ -44,7 +46,8 @@ namespace FWLog.Services.Services
                     IdProduto = requisicao.IdProduto,
                     IdUsuarioInstalacao = requisicao.IdUsuarioInstalacao,
                     Quantidade = requisicao.Quantidade,
-                    PesoTotal = pesoInstalacao
+                    PesoTotal = pesoInstalacao,
+                    AguardandoConferencia = enderecoArmazenagem.PontoArmazenagem.IdTipoMovimentacao == TipoMovimentacaoEnum.Conferencia
                 };
 
                 _unitOfWork.LoteProdutoEnderecoRepository.Add(loteProdutoEndereco);
