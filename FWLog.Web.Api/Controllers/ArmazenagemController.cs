@@ -522,5 +522,21 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(exception.Message);
             }
         }
+
+        [Route("api/v1/armazenagem/conferir/validar-endereco/{idEnderecoArmazenagem}")]
+        [HttpPost]
+        public IHttpActionResult ValidarEnderecoConferir(long idEnderecoArmazenagem)
+        {
+            try
+            {
+                _armazenagemService.ValidarEnderecoConferir(idEnderecoArmazenagem);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+
+            return ApiOk();
+        }
     }
 }

@@ -841,5 +841,34 @@ namespace FWLog.Services.Services
 
             return resposta;
         }
+
+        public void ValidarEnderecoConferir(long idEnderecoArmazenagem)
+        {
+            if (idEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("O endereço deve ser informado.");
+            }
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("O endereço não foi encontrado.");
+            }
+
+            //TODO: Validar se endereço é ponto de conferência
+
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+
+            if (loteProdutoEndereco == null)
+            {
+                throw new BusinessException("Nenhum volume instalado no endereço.");
+            }
+
+            if (loteProdutoEndereco.AguardandoConferencia == false)
+            {
+                throw new BusinessException("Volume não está disponível para conferência.");
+            }
+        }
     }
 }
