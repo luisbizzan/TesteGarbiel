@@ -29,6 +29,9 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         [Display(Name = "Estoque Máximo")]
         public int? EstoqueMaximo { get; set; }
         [Required]
+        [Display(Name = "Entrada?")]
+        public bool IsEntrada { get; set; }
+        [Required]
         [Display(Name = "Ativo?")]
         public bool Ativo { get; set; }
 
