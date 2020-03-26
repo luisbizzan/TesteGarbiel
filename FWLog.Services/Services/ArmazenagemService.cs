@@ -853,6 +853,11 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O endereço não foi encontrado.");
             }
 
+            if (!enderecoArmazenagem.IsEntrada)
+            {
+                throw new BusinessException("O endereço não é um ponto de entrada.");
+            }
+
             if (enderecoArmazenagem.PontoArmazenagem.IdTipoMovimentacao != TipoMovimentacaoEnum.Conferencia)
             {
                 throw new BusinessException("Endereço não é um ponto de conferência.");
