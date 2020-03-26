@@ -509,7 +509,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/armazenagem/lote/produto/{idProduto}")]
         [HttpGet]
-        public async Task<IHttpActionResult> PesquisaLotesInstaladosProduto(long idProduto)
+        public IHttpActionResult PesquisaLotesInstaladosProduto(long idProduto)
         {
             try
             {
@@ -522,6 +522,5 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(exception.Message);
             }
         }
-
     }
 }
