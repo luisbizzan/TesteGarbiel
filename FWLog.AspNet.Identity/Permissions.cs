@@ -300,5 +300,17 @@ namespace FWLog.AspNet.Identity
             }
         }
 
+        public class RelatoriosArmazenagem : PermissionGroupBuildItem
+        {
+            public const string RelatorioRastreabilidadeLote = "RelatorioRastreabilidadeLote";
+            public const string RelatorioLoteMovimentacao = "RelatorioLoteMovimentacao";
+
+            public RelatoriosArmazenagem() : base(Display.FromString("Armazenagem - Relatórios"))
+            {
+                Register(RelatorioRastreabilidadeLote, Display.FromString("Rastreabilidade de Lotes"));
+                Register(RelatorioLoteMovimentacao, Display.FromString("Movimentações de Lotes"));
+            }
+        }
+
     }
 }
