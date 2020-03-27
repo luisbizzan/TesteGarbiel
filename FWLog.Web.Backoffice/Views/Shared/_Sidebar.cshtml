@@ -31,7 +31,8 @@
         ),
         new MenuGroup(text: Res.UserMenuGroup, icon: "fa fa-user").SetItems(
             new MenuItem { Text = "Usuários", Url = Url.Action("Index", "BOAccount"), RequirePermission = Permissions.BOAccount.List },
-            new MenuItem { Text = "Grupos de Usuários", Url = Url.Action("Index", "BOGroup"), RequirePermission = Permissions.Role.List }
+            new MenuItem { Text = "Grupos de Usuários", Url = Url.Action("Index", "BOGroup"), RequirePermission = Permissions.Role.List },
+            new MenuItem { Text = "Histórico de Acções", Url = Url.Action("HistoricoAcoes", "BOAccount"), RequirePermission = Permissions.Role.List }
         ),
         new MenuGroup(text: Res.ConfigurationMenuGroup, icon: "fa fa-cog").SetItems(
             new MenuItem { Text = "Empresa", Url = Url.Action("Editar", "Empresa"), RequirePermission = Permissions.Empresa.EditarConfiguracao },
