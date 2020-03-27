@@ -712,6 +712,7 @@
     <Content Include="Views\BORecebimentoNota\NotaRecebimentoList.cshtml" />
     <Content Include="Views\BORecebimentoNota\DevolucaoTotal.cshtml" />
     <Content Include="Views\Produto\DetalhesProduto.cshtml" />
+    <Content Include="Views\BOAccount\HistoricoAcoes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
