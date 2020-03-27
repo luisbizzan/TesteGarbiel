@@ -925,6 +925,8 @@ namespace FWLog.Services.Services
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
                 var idLote = volume.IdLote.GetValueOrDefault();
+                var referenciaProduto = volume.Produto.Referencia;
+                var codigoEndereco = volume.EnderecoArmazenagem.Codigo;
 
                 await RetirarVolumeEndereco(idEnderecoArmazenagem, idLote, idProduto, idEmpresa, idUsuarioOperacao);
 
@@ -948,12 +950,12 @@ namespace FWLog.Services.Services
                     IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                     IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ConferirEndereco,
                     DataHora = DateTime.Now,
-                    Descricao = $"Retirou o produto {volume.Produto.Referencia} do lote {volume.IdLote} do endereço {volume.EnderecoArmazenagem.Codigo} após conferência",
+                    Descricao = $"Retirou o produto {referenciaProduto} do lote {idLote} do endereço {codigoEndereco} após conferência",
                     IdEmpresa = idEmpresa,
                     IdUsuario = idUsuarioOperacao
                 };
 
-                //_unitOfWork.ColetorHistoricoTipoRepository.GravarHistorico(coletorHistorico);
+                _unitOfWork.ColetorHistoricoTipoRepository.GravarHistorico(coletorHistorico);
 
                 transacao.Complete();
             }
