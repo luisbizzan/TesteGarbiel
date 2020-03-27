@@ -132,12 +132,12 @@ namespace FWLog.Web.Api.Controllers
 
             if (usuarioPermissoes.Any(w => w.Equals(Permissions.ColetorAcesso.AcessarRFExpedicao, StringComparison.OrdinalIgnoreCase)))
                 gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Expedicao;
-            else if(usuarioPermissoes.Any(w => w.Equals(Permissions.ColetorAcesso.AcessarRFSeparacao, StringComparison.OrdinalIgnoreCase)))
+            else if (usuarioPermissoes.Any(w => w.Equals(Permissions.ColetorAcesso.AcessarRFSeparacao, StringComparison.OrdinalIgnoreCase)))
                 gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Separacao;
-            else if(usuarioPermissoes.Any(w => w.Equals(Permissions.ColetorAcesso.AcessarRFArmazenagem, StringComparison.OrdinalIgnoreCase)))
+            else if (usuarioPermissoes.Any(w => w.Equals(Permissions.ColetorAcesso.AcessarRFArmazenagem, StringComparison.OrdinalIgnoreCase)))
                 gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem;
 
-            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+            //_coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
 
             GerarTokenAcessoColetorResponse tokenResposta = await _accountService.GerarTokenAcessoColetor(requisicao.Codigo, requisicao.Senha, usuarioAplicacao.Id);
 
