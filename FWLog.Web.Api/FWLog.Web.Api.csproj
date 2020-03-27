@@ -216,10 +216,13 @@
     <Compile Include="Helpers\ApiErrorBuilder.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
     <Compile Include="Mapping\ProdutoModelResponseProfile.cs" />
+    <Compile Include="Models\Armazenagem\FinalizarConferenciaModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidarProdutoConferirModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\AjustarVolumeLoteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ConsultaDetalhesEnderecoArmazenagemResposta.cs" />
     <Compile Include="Models\Armazenagem\ConsultaDetalhesVolumeInformadoResposta.cs" />
     <Compile Include="Models\Armazenagem\InstalarVolumeLoteModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\NiveisPontosArmazenagemPorCorredorResposta.cs" />
     <Compile Include="Models\Armazenagem\RetirarVolumeEnderecoModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarEnderecoAbastecerModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarEnderecoAjusteModelRequisicao.cs" />
@@ -233,6 +236,7 @@
     <Compile Include="Models\Armazenagem\ValidarEnderecoInstalacaoModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarLoteProdutoInstalacaoModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarQuantidadeInstalacaoModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\NivelPontoArmazenagemPorCorredorResposta.cs" />
     <Compile Include="Models\EnderecoArmazenagem\EnderecoArmazenagemResposta.cs" />
     <Compile Include="Models\EnderecoArmazenagem\EnderecosArmazenagemResposta.cs" />
     <Compile Include="Models\EnderecoArmazenagem\PesquisarEnderecoArmazenagemPorIdResposta.cs" />

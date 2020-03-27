@@ -559,7 +559,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/armazenagem/lote/produto/{idProduto}")]
         [HttpGet]
-        public async Task<IHttpActionResult> PesquisaLotesInstaladosProduto(long idProduto)
+        public IHttpActionResult PesquisaLotesInstaladosProduto(long idProduto)
         {
             try
             {
@@ -573,5 +573,62 @@ namespace FWLog.Web.Api.Controllers
             }
         }
 
+        [Route("api/v1/armazenagem/conferir/validar-endereco/{idEnderecoArmazenagem}")]
+        [HttpPost]
+        public IHttpActionResult ValidarEnderecoConferir(long idEnderecoArmazenagem)
+        {
+            try
+            {
+                _armazenagemService.ValidarEnderecoConferir(idEnderecoArmazenagem);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/conferir/validar-produto")]
+        [HttpPost]
+        public IHttpActionResult ValidarProdutoConferir(ValidarProdutoConferirModelRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _armazenagemService.ValidarProdutoConferir(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/conferir")]
+        [HttpPost]
+        public async Task<IHttpActionResult> FinalizarConferencia(FinalizarConferenciaModelRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                await _armazenagemService.FinalizarConferencia(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0, requisicao?.Quantidade ?? 0, IdEmpresa, IdUsuario);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+
+            return ApiOk();
+        }
     }
 }
