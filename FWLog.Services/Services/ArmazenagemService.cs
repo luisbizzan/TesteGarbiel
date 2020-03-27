@@ -67,7 +67,7 @@ namespace FWLog.Services.Services
                 await _unitOfWork.SaveChangesAsync();
                 transacao.Complete();
 
-                return new InstalarVolumeLoteResponse { EnderecoArmazenagem = enderecoArmazenagem, Produto = produto};
+                return new InstalarVolumeLoteResponse { EnderecoArmazenagem = enderecoArmazenagem, Produto = produto };
             }
         }
 
@@ -587,7 +587,7 @@ namespace FWLog.Services.Services
                 _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
                 await _unitOfWork.SaveChangesAsync();
                 transacao.Complete();
-                
+
                 ajustarVolumeLoteResposta.LoteProdutoEndereco = produtoEndereco;
 
                 return ajustarVolumeLoteResposta;
@@ -943,7 +943,17 @@ namespace FWLog.Services.Services
                 _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
                 await _unitOfWork.SaveChangesAsync();
 
-                //TODO: gravar log de atividade do usuário(ColetorHistorico) Tipo = Conferência
+                var coletorHistorico = new ColetorHistorico
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ConferirEndereco,
+                    DataHora = DateTime.Now,
+                    Descricao = $"Retirou o produto {volume.Produto.Referencia} do lote {volume.IdLote} do endereço {volume.EnderecoArmazenagem.Codigo} após conferência",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuarioOperacao
+                };
+
+                //_unitOfWork.ColetorHistoricoTipoRepository.GravarHistorico(coletorHistorico);
 
                 transacao.Complete();
             }
