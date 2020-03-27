@@ -134,7 +134,7 @@ namespace FWLog.Web.Api.Controllers
                 gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Expedicao;
             else if(usuarioPermissoes.Any(w => w.Equals(Permissions.ColetorAcesso.AcessarRFSeparacao, StringComparison.OrdinalIgnoreCase)))
                 gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Separacao;
-            else
+            else if(usuarioPermissoes.Any(w => w.Equals(Permissions.ColetorAcesso.AcessarRFArmazenagem, StringComparison.OrdinalIgnoreCase)))
                 gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem;
 
             _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
@@ -197,7 +197,7 @@ namespace FWLog.Web.Api.Controllers
                         gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Expedicao;
                     else if (usuarioPermissoes.Any(w => w.Equals(Permissions.ColetorAcesso.AcessarRFSeparacao, StringComparison.OrdinalIgnoreCase)))
                         gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Separacao;
-                    else
+                    else if (usuarioPermissoes.Any(w => w.Equals(Permissions.ColetorAcesso.AcessarRFArmazenagem, StringComparison.OrdinalIgnoreCase)))
                         gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem;
 
                     _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);

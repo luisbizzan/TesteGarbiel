@@ -285,6 +285,7 @@
     <Compile Include="Mapping\ProdutoProfile.cs" />
     <Compile Include="Mapping\TransportadoraProfile.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
+    <Compile Include="Models\BOAccountCtx\HistoricoDeAcoesViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\HistoricoQuarentenaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODownloadNotasRecebimentoViewModel.cs" />

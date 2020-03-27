@@ -126,7 +126,7 @@ namespace FWLog.Web.Api.Controllers
                     {
                         IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
                         IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
-                        Descricao = $"Imprimiu a etiqueta do produto {imprimirEtiquetaLoteReponse.Produto.Referencia} do lote {request.IdLote}",
+                        Descricao = $"Imprimiu a etiqueta do lote {request.IdLote} do(s) produto() {imprimirEtiquetaLoteReponse.Produto.Referencia}",
                         IdEmpresa = IdEmpresa,
                         IdUsuario = IdUsuario
                     };
@@ -159,6 +159,14 @@ namespace FWLog.Web.Api.Controllers
             {
                 try
                 {
+                    var gravarHistoricoColetorRequisciao = new GravarHistoricoColetorRequisicao
+                    {
+                        IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                        IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
+                        IdEmpresa = IdEmpresa,
+                        IdUsuario = IdUsuario
+                    };
+
                     switch (requisicao.IdImpressaoItem)
                     {
                         case (int)ImpressaoItemEnum.EtiquetaAvulso:
@@ -168,6 +176,8 @@ namespace FWLog.Web.Api.Controllers
                                 IdImpressora = requisicao.IdImpressora,
                                 QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas
                             });
+                            gravarHistoricoColetorRequisciao.Descricao = $"Imprimiu {requisicao.QuantidadeEtiquetas} etiqueta(s) avulsa(s) do produto {requisicao.ReferenciaProduto}";
+                            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
                             break;
                         case (int)ImpressaoItemEnum.EtiquetaIndividual:
                             _etiquetaService.ImprimirEtiquetaPeca(new ImprimirEtiquetaProdutoBase
@@ -177,6 +187,8 @@ namespace FWLog.Web.Api.Controllers
                                 ReferenciaProduto = requisicao.ReferenciaProduto,
                                 QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas
                             });
+                            gravarHistoricoColetorRequisciao.Descricao = $"Imprimiu {requisicao.QuantidadeEtiquetas} etiqueta(s) individual(ais) do produto {requisicao.ReferenciaProduto}";
+                            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
                             break;
                         case (int)ImpressaoItemEnum.EtiquetaPersonalizada:
                             _etiquetaService.ImprimirEtiquetaPersonalizada(new ImprimirEtiquetaProdutoBase
@@ -186,6 +198,8 @@ namespace FWLog.Web.Api.Controllers
                                 ReferenciaProduto = requisicao.ReferenciaProduto,
                                 QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas
                             });
+                            gravarHistoricoColetorRequisciao.Descricao = $"Imprimiu {requisicao.QuantidadeEtiquetas} etiqueta(s) personalizada(s) do produto {requisicao.ReferenciaProduto}";
+                            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
                             break;
                         default:
                             return ApiBadRequest("Tipo da impressão não existe.");
