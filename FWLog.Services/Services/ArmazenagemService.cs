@@ -17,7 +17,7 @@ namespace FWLog.Services.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task InstalarVolumeLote(InstalarVolumeLoteRequisicao requisicao)
+        public async Task<InstalarVolumeLoteResponse> InstalarVolumeLote(InstalarVolumeLoteRequisicao requisicao)
         {
             var validarEnderecoInstalacaoRequisicao = new ValidarEnderecoInstalacaoRequisicao
             {
@@ -31,6 +31,7 @@ namespace FWLog.Services.Services
             ValidarEnderecoInstalacao(validarEnderecoInstalacaoRequisicao);
 
             Produto produto = _unitOfWork.ProdutoRepository.GetById(requisicao.IdProduto);
+            EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(requisicao.IdEnderecoArmazenagem);
             decimal pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * requisicao.Quantidade;
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
@@ -65,6 +66,8 @@ namespace FWLog.Services.Services
                 _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
                 await _unitOfWork.SaveChangesAsync();
                 transacao.Complete();
+
+                return new InstalarVolumeLoteResponse { EnderecoArmazenagem = enderecoArmazenagem, Produto = produto};
             }
         }
 
@@ -347,7 +350,7 @@ namespace FWLog.Services.Services
             return produtoEndereco;
         }
 
-        public async Task RetirarVolumeEndereco(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa, string idUsuarioInstalacao)
+        public async Task<RetirarVolumeEnderecoResponse> RetirarVolumeEndereco(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa, string idUsuarioInstalacao)
         {
             ValidarProdutoRetirar(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
 
@@ -373,6 +376,8 @@ namespace FWLog.Services.Services
                 _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
                 await _unitOfWork.SaveChangesAsync();
                 transacao.Complete();
+
+                return new RetirarVolumeEnderecoResponse { LoteProdutoEndereco = volume };
             }
         }
 
@@ -529,7 +534,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task AjustarVolumeLote(AjustarVolumeLoteRequisicao requisicao)
+        public async Task<AjustarVolumeLoteResposta> AjustarVolumeLote(AjustarVolumeLoteRequisicao requisicao)
         {
             var validarEnderecoInstalacaoRequisicao = new ValidarEnderecoAjusteRequisicao
             {
@@ -556,6 +561,11 @@ namespace FWLog.Services.Services
             {
                 LoteProdutoEndereco produtoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(requisicao.IdEnderecoArmazenagem);
 
+                var ajustarVolumeLoteResposta = new AjustarVolumeLoteResposta
+                {
+                    QuantidadeAnterior = produtoEndereco.Quantidade
+                };
+
                 produtoEndereco.Quantidade = requisicao.Quantidade;
                 produtoEndereco.PesoTotal = pesoInstalacao;
 
@@ -577,6 +587,10 @@ namespace FWLog.Services.Services
                 _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
                 await _unitOfWork.SaveChangesAsync();
                 transacao.Complete();
+                
+                ajustarVolumeLoteResposta.LoteProdutoEndereco = produtoEndereco;
+
+                return ajustarVolumeLoteResposta;
             }
         }
 
@@ -715,7 +729,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task AbastecerPicking(long idEnderecoArmazenagem, long idLote, long idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
+        public async Task<AbastecerPickingResponse> AbastecerPicking(long idEnderecoArmazenagem, long idLote, long idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
         {
             ValidarEnderecoAbastecer(idEnderecoArmazenagem);
 
@@ -755,6 +769,8 @@ namespace FWLog.Services.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 transacao.Complete();
+
+                return new AbastecerPickingResponse { LoteProduto = loteProduto, EnderecoArmazenagem = loteProdutoEndereco.EnderecoArmazenagem };
             }
         }
 

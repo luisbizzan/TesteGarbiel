@@ -1,5 +1,6 @@
 ﻿using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Services.Model.Coletor;
 using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Etiqueta;
@@ -13,11 +14,13 @@ namespace FWLog.Web.Api.Controllers
     {
         private readonly EtiquetaService _etiquetaService;
         private readonly UnitOfWork _unitOfWork;
+        private readonly ColetorHistoricoService _coletorHistoricoService;
 
-        public EtiquetaController(UnitOfWork unitOfWork, EtiquetaService etiquetaService)
+        public EtiquetaController(UnitOfWork unitOfWork, EtiquetaService etiquetaService, ColetorHistoricoService coletorHistoricoService)
         {
             _unitOfWork = unitOfWork;
             _etiquetaService = etiquetaService;
+            _coletorHistoricoService = coletorHistoricoService;
         }
 
         [HttpPost]
@@ -37,7 +40,18 @@ namespace FWLog.Web.Api.Controllers
                     IdImpressora = requisicao.IdImpressora
                 };
 
-                _etiquetaService.ImprimirEtiquetaEndereco(requisicaoServico);
+                var imprimriEtiquetaEnderecoResponse = _etiquetaService.ImprimirEtiquetaEndereco(requisicaoServico);
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.InstalarProduto,
+                    Descricao = $"Iprimiu a etiqueita de endereço com o código {imprimriEtiquetaEnderecoResponse.EnderecoArmazenagem.Codigo}",
+                    IdEmpresa = IdEmpresa,
+                    IdUsuario = IdUsuario
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
 
                 return ApiOk();
             }
@@ -106,7 +120,18 @@ namespace FWLog.Web.Api.Controllers
                         IdEmpresa = IdEmpresa
                     };
 
-                    _etiquetaService.ValidarEImprimirEtiquetaLote(request);
+                    var imprimirEtiquetaLoteReponse = _etiquetaService.ValidarEImprimirEtiquetaLote(request);
+
+                    var gravarHistoricoColetorRequisciao = new GravarHistoricoColetorRequisicao
+                    {
+                        IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                        IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
+                        Descricao = $"Imprimiu a etiqueta do produto {imprimirEtiquetaLoteReponse.Produto.Referencia} do lote {request.IdLote}",
+                        IdEmpresa = IdEmpresa,
+                        IdUsuario = IdUsuario
+                    };
+
+                    _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
 
                     return ApiOk();
                 }

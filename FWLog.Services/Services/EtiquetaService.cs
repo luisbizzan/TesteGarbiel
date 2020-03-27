@@ -428,7 +428,7 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
 
-        public void ImprimirEtiquetaEndereco(ImprimirEtiquetaEnderecoRequest request)
+        public ImprimirEtiquetaEnderecoResponse ImprimirEtiquetaEndereco(ImprimirEtiquetaEnderecoRequest request)
         {
             EnderecoArmazenagem endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(request.IdEnderecoArmazenagem);
 
@@ -461,6 +461,8 @@ namespace FWLog.Services.Services
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
 
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+
+            return new ImprimirEtiquetaEnderecoResponse { EnderecoArmazenagem = endereco };
         }
 
         public void ImprimirEtiquetaPicking(ImprimirEtiquetaPickingRequest request)
@@ -498,7 +500,7 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
 
-        public void ValidarEImprimirEtiquetaLote(ImprimirEtiquetaLoteRequest requisicao)
+        public ImprimirEtiquetaLoteReponse ValidarEImprimirEtiquetaLote(ImprimirEtiquetaLoteRequest requisicao)
         {
             if (requisicao.IdLote <= 0)
             {
@@ -546,6 +548,8 @@ namespace FWLog.Services.Services
                 IdImpressora = requisicao.IdImpressora,
                 IdEmpresa = requisicao.IdEmpresa
             });
+
+            return new ImprimirEtiquetaLoteReponse { Produto = produto };
         }
 
         public void ValidarEnderecoPicking(ValidarEnderecoPickingRequest requisicao)

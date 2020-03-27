@@ -2,6 +2,7 @@
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Services.Model.Coletor;
 using FWLog.Services.Model.Usuario;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Usuario;
@@ -19,11 +20,13 @@ namespace FWLog.Web.Api.Controllers
     {
         private readonly AccountService _accountService;
         private readonly UnitOfWork _unitOfWork;
+        private readonly ColetorHistoricoService _coletorHistoricoService;
 
-        public UsuarioController(UnitOfWork unitOfWork, AccountService accountService)
+        public UsuarioController(UnitOfWork unitOfWork, AccountService accountService, ColetorHistoricoService coletorHistoricoService)
         {
             _unitOfWork = unitOfWork;
             _accountService = accountService;
+            _coletorHistoricoService = coletorHistoricoService;
         }
 
         [HttpPost]
@@ -119,6 +122,23 @@ namespace FWLog.Web.Api.Controllers
                 return ApiForbidden("Usuário sem permissão.", requisicao.Codigo);
             }
 
+            var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+            {
+                IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.Login,
+                Descricao = $"Login do usuário {requisicao.Codigo} ",
+                IdEmpresa = IdEmpresa,
+                IdUsuario = IdUsuario
+            };
+
+            if (usuarioPermissoes.Any(w => w.Equals(Permissions.ColetorAcesso.AcessarRFExpedicao, StringComparison.OrdinalIgnoreCase)))
+                gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Expedicao;
+            else if(usuarioPermissoes.Any(w => w.Equals(Permissions.ColetorAcesso.AcessarRFSeparacao, StringComparison.OrdinalIgnoreCase)))
+                gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Separacao;
+            else
+                gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem;
+
+            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+
             GerarTokenAcessoColetorResponse tokenResposta = await _accountService.GerarTokenAcessoColetor(requisicao.Codigo, requisicao.Senha, usuarioAplicacao.Id);
 
             usuarioAplicacao.IdApplicationSession = tokenResposta.ApplicationSession.IdApplicationSession;
@@ -150,6 +170,8 @@ namespace FWLog.Web.Api.Controllers
 
             if (usuarioAplicacao != null)
             {
+                IList<string> usuarioPermissoes = await UserManager.GetPermissionsAsync(usuarioAplicacao.Id);
+
                 if (usuarioAplicacao.IdApplicationSession.HasValue)
                 {
                     ApplicationSession usuarioSessao = _unitOfWork.ApplicationSessionRepository.GetById(usuarioAplicacao.IdApplicationSession.Value);
@@ -162,6 +184,23 @@ namespace FWLog.Web.Api.Controllers
 
                     usuarioAplicacao.IdApplicationSession = null;
                     UserManager.Update(usuarioAplicacao);
+
+                    var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                    {
+                        IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.Logout,
+                        Descricao = $"Logout do usuário {usuarioAplicacao.UserName} ",
+                        IdEmpresa = IdEmpresa,
+                        IdUsuario = IdUsuario
+                    };
+
+                    if (usuarioPermissoes.Any(w => w.Equals(Permissions.ColetorAcesso.AcessarRFExpedicao, StringComparison.OrdinalIgnoreCase)))
+                        gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Expedicao;
+                    else if (usuarioPermissoes.Any(w => w.Equals(Permissions.ColetorAcesso.AcessarRFSeparacao, StringComparison.OrdinalIgnoreCase)))
+                        gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Separacao;
+                    else
+                        gravarHistoricoColetorRequisicao.IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem;
+
+                    _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
                 }
             }
 
