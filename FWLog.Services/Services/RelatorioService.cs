@@ -80,6 +80,11 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
 
+        public void GerarRelatorioRastreabilidadeLote()
+        {
+
+        }
+
         public byte[] GerarRelatorioRecebimentoNotas(RelatorioRecebimentoNotasRequest request)
         {
             IQueryable<Lote> query = _unitiOfWork.LoteRepository.Obter(request.IdEmpresa, NotaFiscalTipoEnum.Compra)

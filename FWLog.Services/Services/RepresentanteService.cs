@@ -32,9 +32,10 @@ namespace FWLog.Services.Services
             where.Append("TGFPAR.RAZAOSOCIAL IS NOT NULL ");
             where.Append("AND TGFPAR.VENDEDOR = 'S' ");
             where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
+
             var inner = "INNER JOIN TGFVEN ON TGFVEN.CODPARC = TGFPAR.CODPARC";
 
-            List<RepresentanteIntegracao> representantesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<RepresentanteIntegracao>(where: where.ToString(), inner);
+            List<RepresentanteIntegracao> representantesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<RepresentanteIntegracao>(where: where.ToString(), inner:inner.ToString());
 
             foreach (var representanteInt in representantesIntegracao)
             {

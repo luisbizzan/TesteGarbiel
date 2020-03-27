@@ -39,7 +39,7 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdProduto))]
         public virtual Produto Produto { get; set; }
 
-        [ForeignKey(nameof(IdProduto))]
+        [ForeignKey(nameof(IdEnderecoArmazenagem))]
         public virtual EnderecoArmazenagem EnderecoArmazenagem { get; set; }
 
         [ForeignKey(nameof(IdUsuarioMovimentacao))]
