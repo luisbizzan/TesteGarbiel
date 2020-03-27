@@ -98,8 +98,8 @@ namespace FWLog.Data.Repository.GeneralCtx
         }
 
         public List<EnderecoArmazenagem> PesquisarPorCorredor(int corredor, long idEmpresa)
-        {
-            return Entities.EnderecoArmazenagem.Where(w => w.Corredor.Equals(corredor) && w.IdEmpresa == idEmpresa).ToList();
+        {            
+            return Entities.EnderecoArmazenagem.Where(w => w.Corredor.Equals(corredor) && w.IdEmpresa == idEmpresa && !w.IsPontoSeparacao).ToList();
         }
     }
 }

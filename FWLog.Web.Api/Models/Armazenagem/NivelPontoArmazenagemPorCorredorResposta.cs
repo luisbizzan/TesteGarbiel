@@ -2,7 +2,8 @@
 {
     public class NivelPontoArmazenagemPorCorredorResposta
     {
-        public long IdEnderecoArmazenagem { get; set; } 
+        public long IdNivelArmazenagem { get; set; }
+        public long IdPontoArmazenagem { get; set; }
         public string NivelArmazenagemDescricao { get; set; }
         public string PontoArmazenagemDescricao { get; set; }
     }

@@ -4,6 +4,7 @@ using FWLog.Data.Models;
 using FWLog.Web.Api.Models.Armazenagem;
 using FWLog.Web.Api.Models.EnderecoArmazenagem;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
@@ -112,12 +113,15 @@ namespace FWLog.Web.Api.Controllers
 
             var resposta = new NiveisPontosArmazenagemPorCorredorResposta { Lista = new List<NivelPontoArmazenagemPorCorredorResposta>() };
 
-            foreach (EnderecoArmazenagem enderecoArmazenagem in enderecosArmazenagem)
+            var pontos = enderecosArmazenagem.Select(s => s.PontoArmazenagem).Distinct().ToList();
+
+            foreach (var enderecoArmazenagem in pontos)
             {
                 var itemResposta = new NivelPontoArmazenagemPorCorredorResposta
                 {
-                    IdEnderecoArmazenagem = enderecoArmazenagem.IdEnderecoArmazenagem,
-                    PontoArmazenagemDescricao = enderecoArmazenagem.PontoArmazenagem.Descricao,
+                    IdNivelArmazenagem = enderecoArmazenagem.IdNivelArmazenagem,
+                    IdPontoArmazenagem = enderecoArmazenagem.IdPontoArmazenagem,
+                    PontoArmazenagemDescricao = enderecoArmazenagem.Descricao,
                     NivelArmazenagemDescricao = enderecoArmazenagem.NivelArmazenagem.Descricao,
                 };
 
