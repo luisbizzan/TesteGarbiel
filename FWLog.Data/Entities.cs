@@ -78,6 +78,9 @@ namespace FWLog.Data
         public virtual DbSet<Representante> Representante { get; set; }
         public virtual DbSet<LoteProdutoEndereco> LoteProdutoEndereco { get; set; }
         public virtual DbSet<IntegracaoLog> IntegracaoLog { get; set; }
+        public virtual DbSet<ColetorAplicacao> ColetorAplicacao { get; set; }
+        public virtual DbSet<ColetorHistoricoTipo> ColetorHistoricoTipo { get; set; }
+        public virtual DbSet<ColetorHistorico> ColetorHistorico { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 

@@ -285,6 +285,7 @@
     <Compile Include="Mapping\ProdutoProfile.cs" />
     <Compile Include="Mapping\TransportadoraProfile.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
+    <Compile Include="Models\BOAccountCtx\HistoricoDeAcoesViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\HistoricoQuarentenaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODownloadNotasRecebimentoViewModel.cs" />
@@ -712,6 +713,7 @@
     <Content Include="Views\BORecebimentoNota\NotaRecebimentoList.cshtml" />
     <Content Include="Views\BORecebimentoNota\DevolucaoTotal.cshtml" />
     <Content Include="Views\Produto\DetalhesProduto.cshtml" />
+    <Content Include="Views\BOAccount\HistoricoAcoes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

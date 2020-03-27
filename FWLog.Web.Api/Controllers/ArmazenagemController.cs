@@ -1,4 +1,6 @@
-﻿using FWLog.Services.Model.Armazenagem;
+﻿using FWLog.Data.Models;
+using FWLog.Services.Model.Armazenagem;
+using FWLog.Services.Model.Coletor;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Armazenagem;
 using System;
@@ -10,10 +12,12 @@ namespace FWLog.Web.Api.Controllers
     public class ArmazenagemController : ApiBaseController
     {
         private readonly ArmazenagemService _armazenagemService;
+        private readonly ColetorHistoricoService _coletorHistoricoService;
 
-        public ArmazenagemController(ArmazenagemService armazenagemService)
+        public ArmazenagemController(ArmazenagemService armazenagemService, ColetorHistoricoService coletorHistoricoService)
         {
             _armazenagemService = armazenagemService;
+            _coletorHistoricoService = coletorHistoricoService;
         }
 
         [Route("api/v1/armazenagem/instalar/validar-lote/{idLote}")]
@@ -142,7 +146,19 @@ namespace FWLog.Web.Api.Controllers
                     IdUsuarioInstalacao = IdUsuario
                 };
 
-                await _armazenagemService.InstalarVolumeLote(instalarVolumeLoteRequisicao);
+                var instalarVolumeLoteResponse =  await _armazenagemService.InstalarVolumeLote(instalarVolumeLoteRequisicao);
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.InstalarProduto,
+                    Descricao = $"Instalou o produto {instalarVolumeLoteResponse.Produto.Referencia} do lote {instalarVolumeLoteRequisicao.IdLote} no endereço {instalarVolumeLoteResponse.EnderecoArmazenagem.Codigo}",
+                    IdEmpresa = IdEmpresa,
+                    IdUsuario = IdUsuario
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+
             }
             catch (BusinessException ex)
             {
@@ -251,7 +267,19 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                await _armazenagemService.RetirarVolumeEndereco(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa, IdUsuario);
+               var retirarVolumeEnderecoResponse =  await _armazenagemService.RetirarVolumeEndereco(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa, IdUsuario);
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.RetirarProduto,
+                    Descricao = $"Retirou o produto {retirarVolumeEnderecoResponse.LoteProdutoEndereco.Produto.Referencia} do lote {retirarVolumeEnderecoResponse.LoteProdutoEndereco.IdLote} do endereço {retirarVolumeEnderecoResponse.LoteProdutoEndereco.EnderecoArmazenagem.Codigo}",
+                    IdEmpresa = IdEmpresa,
+                    IdUsuario = IdUsuario
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+
             }
             catch (BusinessException ex)
             {
@@ -375,7 +403,18 @@ namespace FWLog.Web.Api.Controllers
                     IdUsuarioAjuste = IdUsuario
                 };
 
-                await _armazenagemService.AjustarVolumeLote(instalarVolumeLoteRequisicao);
+                var ajustarVolumeLoteResposta = await _armazenagemService.AjustarVolumeLote(instalarVolumeLoteRequisicao);
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade,
+                    Descricao = $"Ajustou a quantidade de {ajustarVolumeLoteResposta.QuantidadeAnterior} para {ajustarVolumeLoteResposta.LoteProdutoEndereco.Quantidade} do produto {ajustarVolumeLoteResposta.LoteProdutoEndereco.Produto.Referencia} do lote {ajustarVolumeLoteResposta.LoteProdutoEndereco.IdLote} do endereço {ajustarVolumeLoteResposta.LoteProdutoEndereco.EnderecoArmazenagem.Codigo}",
+                    IdEmpresa = IdEmpresa,
+                    IdUsuario = IdUsuario
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
             }
             catch (BusinessException ex)
             {
@@ -492,12 +531,23 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                await _armazenagemService.AbastecerPicking(requisicao?.IdEnderecoArmazenagem ?? 0,
+                var abastecerPickingResponse = await _armazenagemService.AbastecerPicking(requisicao?.IdEnderecoArmazenagem ?? 0,
                                                                 requisicao?.IdLote ?? 0,
                                                                 requisicao?.IdProduto ?? 0,
                                                                 requisicao?.Quantidade ?? 0,
                                                                 IdEmpresa,
                                                                 IdUsuario);
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade,
+                    Descricao = $"Abasteceu o produto {abastecerPickingResponse.LoteProduto.Produto.Referencia} do lote {abastecerPickingResponse.LoteProduto.IdLote} no endereço de picking {abastecerPickingResponse.EnderecoArmazenagem.Codigo}",
+                    IdEmpresa = IdEmpresa,
+                    IdUsuario = IdUsuario
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
             }
             catch (BusinessException exception)
             {
@@ -509,7 +559,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/armazenagem/lote/produto/{idProduto}")]
         [HttpGet]
-        public async Task<IHttpActionResult> PesquisaLotesInstaladosProduto(long idProduto)
+        public IHttpActionResult PesquisaLotesInstaladosProduto(long idProduto)
         {
             try
             {
@@ -523,5 +573,62 @@ namespace FWLog.Web.Api.Controllers
             }
         }
 
+        [Route("api/v1/armazenagem/conferir/validar-endereco/{idEnderecoArmazenagem}")]
+        [HttpPost]
+        public IHttpActionResult ValidarEnderecoConferir(long idEnderecoArmazenagem)
+        {
+            try
+            {
+                _armazenagemService.ValidarEnderecoConferir(idEnderecoArmazenagem);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/conferir/validar-produto")]
+        [HttpPost]
+        public IHttpActionResult ValidarProdutoConferir(ValidarProdutoConferirModelRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _armazenagemService.ValidarProdutoConferir(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/conferir")]
+        [HttpPost]
+        public async Task<IHttpActionResult> FinalizarConferencia(FinalizarConferenciaModelRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                await _armazenagemService.FinalizarConferencia(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0, requisicao?.Quantidade ?? 0, IdEmpresa, IdUsuario);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+
+            return ApiOk();
+        }
     }
 }
