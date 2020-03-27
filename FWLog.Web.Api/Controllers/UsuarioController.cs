@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿﻿using AutoMapper;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models;
@@ -37,6 +37,7 @@ namespace FWLog.Web.Api.Controllers
             if (!ModelState.IsValid)
             {
                 return ApiBadRequest(ModelState);
+                //testebizzan
             }
 
             ApplicationUser usuarioAplicacao = await UserManager.FindByNameAsync(requisicao.Codigo);
