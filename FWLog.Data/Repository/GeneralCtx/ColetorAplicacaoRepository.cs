@@ -11,5 +11,10 @@ namespace FWLog.Data.Repository.GeneralCtx
     public class ColetorAplicacaoRepository : GenericRepository<ColetorAplicacao>
     {
         public ColetorAplicacaoRepository(Entities entities) : base(entities) { }
+
+        public IEnumerable<ColetorAplicacao> Todos()
+        {
+            return Entities.ColetorAplicacao;
+        }
     }
 }
