@@ -2,6 +2,7 @@
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Services.Model.Coletor;
 using FWLog.Services.Model.Usuario;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Usuario;
@@ -19,11 +20,13 @@ namespace FWLog.Web.Api.Controllers
     {
         private readonly AccountService _accountService;
         private readonly UnitOfWork _unitOfWork;
+        private readonly ColetorHistoricoService _coletorHistoricoService;
 
-        public UsuarioController(UnitOfWork unitOfWork, AccountService accountService)
+        public UsuarioController(UnitOfWork unitOfWork, AccountService accountService, ColetorHistoricoService coletorHistoricoService)
         {
             _unitOfWork = unitOfWork;
             _accountService = accountService;
+            _coletorHistoricoService = coletorHistoricoService;
         }
 
         [HttpPost]

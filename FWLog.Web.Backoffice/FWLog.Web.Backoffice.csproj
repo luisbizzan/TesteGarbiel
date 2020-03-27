@@ -235,6 +235,7 @@
     <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\GarantiaController.cs" />
+    <Compile Include="Controllers\HistoricoAcaoUsuarioController.cs" />
     <Compile Include="Controllers\MotivoLaudoController.cs" />
     <Compile Include="Controllers\NivelArmazenagemController.cs" />
     <Compile Include="Controllers\PerfilImpressoraController.cs" />
@@ -290,6 +291,7 @@
     <Compile Include="Models\ArmazenagemCtx\RelatorioRastreabilidadeLoteProdutoViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\RelatorioRastreabilidadeLoteViewModel.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
+    <Compile Include="Models\BOAccountCtx\HistoricoDeAcoesViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\HistoricoQuarentenaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODownloadNotasRecebimentoViewModel.cs" />
@@ -630,6 +632,7 @@
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
+    <Content Include="Scripts\Views\HistoricoAcaosUsuario\index.js" />
     <Content Include="Scripts\Views\MotivoLaudo\motivoLaudo.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\pesquisaModal.js" />
@@ -725,6 +728,7 @@
     <Content Include="Views\Armazenagem\RelatorioRastreabilidadeLoteProduto.cshtml" />
     <Content Include="Views\Armazenagem\RelatorioRastreabilidadeLoteMovimentacao.cshtml" />
     <Content Include="Views\Armazenagem\RelatorioLoteMovimentacao.cshtml" />
+    <Content Include="Views\HistoricoAcaoUsuario\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

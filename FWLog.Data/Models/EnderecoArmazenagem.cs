@@ -39,6 +39,8 @@ namespace FWLog.Data.Models
         public int? EstoqueMaximo { get; set; }
         [Required]
         public bool Ativo { get; set; }
+        [Required]
+        public bool IsEntrada { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }

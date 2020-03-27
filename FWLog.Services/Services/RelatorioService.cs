@@ -770,8 +770,11 @@ namespace FWLog.Services.Services
                 Descricao = request.Descricao,
                 IdEmpresa = request.IdEmpresa,
                 NomeUsuario = request.NomeUsuario,
-                ProdutoStatus = request.ProdutoStatus,
-                Referencia = request.Referencia
+                ProdutoStatusId = request.ProdutoStatus,
+                Referencia = request.Referencia,
+                IdEnderecoArmazenagem = request.IdEnderecoArmazenagem,
+                IdNivelArmazenagem = request.IdNivelArmazenagem,
+                IdPontoArmazenagem = request.IdPontoArmazenagem
             };
 
             byte[] relatorio = GerarRelatorioProdutos(relatorioRequest);
@@ -800,15 +803,15 @@ namespace FWLog.Services.Services
                 query = query.Where(x => x.Produto.Descricao == filter.Descricao);
             }
 
-            if (filter.ProdutoStatus.HasValue)
+            if (filter.ProdutoStatusId.HasValue)
             {
                 //Sem Locação
-                if (filter.ProdutoStatus == 2)
+                if (filter.ProdutoStatusId == 2)
                 {
                     query = query.Where(x => x.EnderecoArmazenagem == null);
                 }
                 //Ativo
-                else if (filter.ProdutoStatus == 1)
+                else if (filter.ProdutoStatusId == 1)
                 {
                     query = query.Where(x => x.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.Ativo);
                 }
@@ -817,6 +820,21 @@ namespace FWLog.Services.Services
                 {
                     query = query.Where(x => x.IdProdutoEstoqueStatus != ProdutoEstoqueStatusEnum.Ativo);
                 }
+            }
+
+            if (filter.IdEnderecoArmazenagem.HasValue)
+            {
+                query = query.Where(x => x.IdEnderecoArmazenagem == filter.IdEnderecoArmazenagem);
+            }
+
+            if (filter.IdPontoArmazenagem.HasValue)
+            {
+                query = query.Where(x => x.EnderecoArmazenagem.IdPontoArmazenagem == filter.IdPontoArmazenagem);
+            }
+
+            if (filter.IdNivelArmazenagem.HasValue)
+            {
+                query = query.Where(x => x.EnderecoArmazenagem.IdNivelArmazenagem == filter.IdNivelArmazenagem);
             }
 
             var listaProdutos = new List<IFwRelatorioDados>();
@@ -854,7 +872,7 @@ namespace FWLog.Services.Services
                 Titulo = "Relatório de Produtos",
                 Filtros = new FwRelatorioDadosFiltro
                 {
-                   Status = filter.ProdutoStatus.ToString(),
+                   Status = filter.ProdutoStatus,
                    CodigoDeBarras = filter.CodigoDeBarras,
                    Referencia = filter.Referencia,
                    Descricao = filter.Descricao

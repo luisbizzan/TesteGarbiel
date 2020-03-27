@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Web.Api.Models.Armazenagem;
 using FWLog.Web.Api.Models.EnderecoArmazenagem;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
@@ -27,7 +29,7 @@ namespace FWLog.Web.Api.Controllers
 
             var resposta = new EnderecosArmazenagemResposta { Lista = new List<EnderecoArmazenagemResposta>() };
 
-            if(long.TryParse(idCod, out long idEnderecoArmazenagem))
+            if (long.TryParse(idCod, out long idEnderecoArmazenagem))
             {
                 EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
 
@@ -91,6 +93,42 @@ namespace FWLog.Web.Api.Controllers
             var enderecoArmazenagemResposta = Mapper.Map<PesquisarEnderecoArmazenagemPorIdResposta>(enderecoArmazenagem);
 
             return ApiOk(enderecoArmazenagemResposta);
+        }
+
+        [HttpGet]
+        [Route("api/v1/endereco/pesquisar/")]
+        public IHttpActionResult PesquisarPorCorredor(int corredor)
+        {
+            if (corredor <= 0)
+            {
+                return ApiBadRequest("O corredor deve ser informado.");
+            }
+
+            List<EnderecoArmazenagem> enderecosArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPorCorredor(corredor, IdEmpresa);
+
+            if (enderecosArmazenagem == null)
+            {
+                return ApiNotFound("O corredor não foi encontrado.");
+            }
+
+            var resposta = new NiveisPontosArmazenagemPorCorredorResposta { Lista = new List<NivelPontoArmazenagemPorCorredorResposta>() };
+
+            var pontos = enderecosArmazenagem.Select(s => s.PontoArmazenagem).Distinct().ToList();
+
+            foreach (var enderecoArmazenagem in pontos)
+            {
+                var itemResposta = new NivelPontoArmazenagemPorCorredorResposta
+                {
+                    IdNivelArmazenagem = enderecoArmazenagem.IdNivelArmazenagem,
+                    IdPontoArmazenagem = enderecoArmazenagem.IdPontoArmazenagem,
+                    PontoArmazenagemDescricao = enderecoArmazenagem.Descricao,
+                    NivelArmazenagemDescricao = enderecoArmazenagem.NivelArmazenagem.Descricao,
+                };
+
+                resposta.Lista.Add(itemResposta);
+            }
+
+            return ApiOk(resposta);
         }
     }
 }

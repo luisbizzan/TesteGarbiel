@@ -134,17 +134,46 @@ namespace FWLog.Services.Relatorio
 
             if(_dataSource.Filtros != null)
             {
-                var status = rowHeader.Cells[0].AddParagraph();
-                status.AddFormattedText("Status: ", TextFormat.Bold);
-                status.AddFormattedText(new Font("Verdana", 10));
-                status.AddText(_dataSource.Filtros.Status);
+                if(_dataSource.Filtros.Status != null)
+                {
+                    var status = rowHeader.Cells[0].AddParagraph();
+                    status.AddFormattedText("Status: ", TextFormat.Bold);
+                    status.AddFormattedText(new Font("Verdana", 10));
+                    status.AddText(_dataSource.Filtros.Status);
+                }
+                if(_dataSource.Filtros.PrazoDeEntregaFinal != null && _dataSource.Filtros.PrazoDeEntregaInicial != null)
+                {
+                    var prazo = rowHeader.Cells[0].AddParagraph();
+                    prazo.AddFormattedText("Prazo de Entrega: ", TextFormat.Bold);
+                    prazo.AddFormattedText(new Font("Verdana", 10));
+                    prazo.AddText(string.Concat(_dataSource.Filtros
+                        .PrazoDeEntregaInicial?.ToString("dd/MM/yyyy"), " à ",
+                        _dataSource.Filtros.PrazoDeEntregaFinal?.ToString("dd/MM/yyyy")));
+                }
+                
+                if(_dataSource.Filtros.Referencia != null)
+                {
+                    var referencia = rowHeader.Cells[0].AddParagraph();
+                    referencia.AddFormattedText("Referência: ", TextFormat.Bold);
+                    referencia.AddFormattedText(new Font("Verdana", 10));
+                    referencia.AddText(_dataSource.Filtros.Referencia);
+                }
 
-                var prazo = rowHeader.Cells[0].AddParagraph();
-                prazo.AddFormattedText("Prazo de Entrega: ", TextFormat.Bold);
-                prazo.AddFormattedText(new Font("Verdana", 10));
-                prazo.AddText(string.Concat(_dataSource.Filtros
-                    .PrazoDeEntregaInicial?.ToString("dd/MM/yyyy"), " à ", 
-                    _dataSource.Filtros.PrazoDeEntregaFinal?.ToString("dd/MM/yyyy")));
+                if (_dataSource.Filtros.CodigoDeBarras != null)
+                {
+                    var codigoDeBarras = rowHeader.Cells[0].AddParagraph();
+                    codigoDeBarras.AddFormattedText("Referência: ", TextFormat.Bold);
+                    codigoDeBarras.AddFormattedText(new Font("Verdana", 10));
+                    codigoDeBarras.AddText(_dataSource.Filtros.CodigoDeBarras);
+                }
+
+                if (_dataSource.Filtros.Descricao != null)
+                {
+                    var descricao = rowHeader.Cells[0].AddParagraph();
+                    descricao.AddFormattedText("Referência: ", TextFormat.Bold);
+                    descricao.AddFormattedText(new Font("Verdana", 10));
+                    descricao.AddText(_dataSource.Filtros.Descricao);
+                }
 
                 var dataRecebimento = rowHeader.Cells[0].AddParagraph();
                 dataRecebimento.AddFormattedText(new Font("Verdana", 10));

@@ -73,6 +73,9 @@ namespace FWLog.Data
         private IntegracaoLogRepository _integracaoLogRepository;
         private NotaFiscalRecebimentoRepository _notaFiscalRecebimentoRepository;
         private NotaRecebimentoStatusRepository _notaRecebimentoStatusRepository;
+        private ColetorAplicacaoRepository _coletorAplicacaoRepository;
+        private ColetorHistoricoRepository _coletorHistoricoRepository;
+        private ColetorHistoricoTipoRepository _coletorHistoricoTipoRepository;
 
         public LoteProdutoEnderecoRepository LoteProdutoEnderecoRepository
         {
@@ -353,11 +356,27 @@ namespace FWLog.Data
         {
             get => _notaFiscalRecebimentoRepository ?? (_notaFiscalRecebimentoRepository = new NotaFiscalRecebimentoRepository(_context));
         }
+
         public NotaRecebimentoStatusRepository NotaRecebimentoStatusRepository
         {
             get => _notaRecebimentoStatusRepository ?? (_notaRecebimentoStatusRepository = new NotaRecebimentoStatusRepository(_context));
         }
-		
+
+        public ColetorAplicacaoRepository ColetorAplicacaoRepository
+        {
+            get => _coletorAplicacaoRepository ?? (_coletorAplicacaoRepository = new ColetorAplicacaoRepository(_context));
+        }
+
+        public ColetorHistoricoRepository ColetorHistoricoRepository
+        {
+            get => _coletorHistoricoRepository ?? (_coletorHistoricoRepository = new ColetorHistoricoRepository(_context));
+        }
+
+        public ColetorHistoricoTipoRepository ColetorHistoricoTipoRepository
+        {
+            get => _coletorHistoricoTipoRepository ?? (_coletorHistoricoTipoRepository = new ColetorHistoricoTipoRepository(_context));
+        }
+
         public TransactionScope CreateTransactionScope()
         {
             return CreateTransactionScope(IsolationLevel.ReadCommitted);

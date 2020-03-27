@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FWLog.Data.Models;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
 {
@@ -24,5 +26,25 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         public string Fifo { get; set; }
         [Display(Name = "Status")]
         public string Status { get; set; }
+
+        public List<ProdutoItem> Items { get; set; }
+
+        public EnderecoArmazenagemDetalhesViewModel()
+        {
+            Items = new List<ProdutoItem>();
+        }
+    }
+
+    public class ProdutoItem
+    {
+        public string NumeroNf { get; set; }
+        public string NumeroLote { get; set; }
+        public string CodigoReferencia { get; set; }
+        public string Descricao { get; set; }
+        public string Multiplo { get; set; }
+        public string QuantidadeInstalada { get; set; }
+        public string Peso { get; set; }
+        public string DataInstalacao { get; set; }
+        public string UsuarioResponsavel { get; set; }
     }
 }

@@ -80,9 +80,5 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return produtoEstoque.OrderByDescending(x => x.IdProduto);
         }
-
-
-
-
     }
 }

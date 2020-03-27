@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
-
 namespace FWLog.Web.Backoffice.Controllers
 {
     public class EnderecoArmazenagemController : BOBaseController
@@ -159,8 +158,8 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!enderecoArmazenagem.Codigo.Equals(viewModel.Codigo, StringComparison.OrdinalIgnoreCase))
             {
                 List<EnderecoArmazenagem> enderecosPontoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPorPontoArmazenagem(viewModel.IdPontoArmazenagem.Value);
-                int numeroEnderecos = enderecosPontoArmazenagem.Where(w => 
-                    w.IdEnderecoArmazenagem != viewModel.IdEnderecoArmazenagem && 
+                int numeroEnderecos = enderecosPontoArmazenagem.Where(w =>
+                    w.IdEnderecoArmazenagem != viewModel.IdEnderecoArmazenagem &&
                     w.Codigo.Equals(viewModel.Codigo, StringComparison.OrdinalIgnoreCase)).Count();
 
                 if (numeroEnderecos > 0)
@@ -171,6 +170,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             enderecoArmazenagem.Ativo = viewModel.Ativo;
+            enderecoArmazenagem.IsEntrada = viewModel.IsEntrada;
             enderecoArmazenagem.Codigo = viewModel.Codigo;
             enderecoArmazenagem.EstoqueMaximo = viewModel.EstoqueMaximo;
             enderecoArmazenagem.EstoqueMinimo = viewModel.EstoqueMinimo;
@@ -194,6 +194,45 @@ namespace FWLog.Web.Backoffice.Controllers
             EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(id);
 
             var viewModel = Mapper.Map<EnderecoArmazenagemDetalhesViewModel>(enderecoArmazenagem);
+
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarRegistrosPorEndereco(viewModel.IdEnderecoArmazenagem);
+
+            // Popula Itens na lista de produtos do Endereço Armazenagem
+            loteProdutoEndereco.ForEach(lpe =>
+            {
+                if (lpe.EnderecoArmazenagem.PontoArmazenagem.Descricao != "Picking")
+                {
+                    var item = new ProdutoItem
+                    {
+                        NumeroLote = lpe.Lote.IdLote.ToString(),
+                        NumeroNf = lpe.Lote.NotaFiscal.Numero.ToString(),
+                        CodigoReferencia = lpe.Produto.Referencia,
+                        DataInstalacao = lpe.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss"),
+                        Descricao = lpe.Produto.Descricao,
+                        Multiplo = lpe.Produto.MultiploVenda.ToString(),
+                        Peso = lpe.Produto.PesoBruto.ToString("n2"),
+                        QuantidadeInstalada = lpe.Quantidade.ToString(),
+                        UsuarioResponsavel = _unitOfWork.PerfilUsuarioRepository.GetByUserId(lpe.AspNetUsers.Id).Nome
+                    };
+
+                    viewModel.Items.Add(item);
+                }
+                else
+                {
+                    var item = new ProdutoItem
+                    {
+                        CodigoReferencia = lpe.Produto.Referencia,
+                        DataInstalacao = lpe.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss"),
+                        Descricao = lpe.Produto.Descricao,
+                        Multiplo = lpe.Produto.MultiploVenda.ToString("n2"),
+                        Peso = lpe.Produto.PesoBruto.ToString("n2"),
+                        QuantidadeInstalada = lpe.Quantidade.ToString(),
+                        UsuarioResponsavel = _unitOfWork.PerfilUsuarioRepository.GetByUserId(lpe.AspNetUsers.Id).Nome
+                    };
+
+                    viewModel.Items.Add(item);
+                }
+            });
 
             return View(viewModel);
         }
