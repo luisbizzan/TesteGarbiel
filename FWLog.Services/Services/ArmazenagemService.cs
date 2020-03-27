@@ -347,7 +347,7 @@ namespace FWLog.Services.Services
             return produtoEndereco;
         }
 
-        public async Task RetirarVolumeEndereco(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa, string idUsuarioInstalacao)
+        public async Task RetirarVolumeEndereco(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa, string idUsuarioRetirada)
         {
             ValidarProdutoRetirar(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
 
@@ -364,7 +364,7 @@ namespace FWLog.Services.Services
                     IdLote = idLote,
                     IdProduto = idProduto,
                     IdEnderecoArmazenagem = idEnderecoArmazenagem,
-                    IdUsuarioMovimentacao = idUsuarioInstalacao,
+                    IdUsuarioMovimentacao = idUsuarioRetirada,
                     Quantidade = volume.Quantidade,
                     IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Saida,
                     DataHora = DateTime.Now
@@ -894,6 +894,44 @@ namespace FWLog.Services.Services
             if (produtoNoLote == null)
             {
                 throw new BusinessException("O produto não pertence ao lote instalado.");
+            }
+        }
+
+        public async Task FinalizarConferencia(long idEnderecoArmazenagem, long idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
+        {
+            var volume = ValidarEnderecoConferir(idEnderecoArmazenagem);
+
+            ValidarProdutoConferir(idEnderecoArmazenagem, idProduto);
+
+            if (quantidade != volume.Quantidade)
+            {
+                throw new BusinessException("Quantidade de produtos informada diverge da quantidade instalada.");
+            }
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                var idLote = volume.IdLote.GetValueOrDefault();
+
+                await RetirarVolumeEndereco(idEnderecoArmazenagem, idLote, idProduto, idEmpresa, idUsuarioOperacao);
+
+                var loteMovimentacao = new LoteMovimentacao
+                {
+                    IdEmpresa = idEmpresa,
+                    IdLote = idLote,
+                    IdProduto = idProduto,
+                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = idUsuarioOperacao,
+                    Quantidade = quantidade,
+                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Conferencia,
+                    DataHora = DateTime.Now
+                };
+
+                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                await _unitOfWork.SaveChangesAsync();
+
+                //TODO: gravar log de atividade do usuário(ColetorHistorico) Tipo = Conferência
+
+                transacao.Complete();
             }
         }
     }
