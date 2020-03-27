@@ -889,9 +889,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O produto não foi encontrado.");
             }
 
-            var produtoNoLote = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(volumeInstalado.IdLote.GetValueOrDefault(), idProduto);
-
-            if (produtoNoLote == null)
+            if (volumeInstalado.IdProduto != idProduto)
             {
                 throw new BusinessException("O produto não pertence ao lote instalado.");
             }
