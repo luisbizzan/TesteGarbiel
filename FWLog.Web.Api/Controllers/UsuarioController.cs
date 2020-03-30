@@ -199,7 +199,7 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/v1/usuario/valida-permissao")]
+        [Route("api/v1/usuario/validar-permissao")]
         public async Task<IHttpActionResult> ValidaPermissao(ValidarPermissaoRequisicao requisicao)
         {
             if (!ModelState.IsValid)
