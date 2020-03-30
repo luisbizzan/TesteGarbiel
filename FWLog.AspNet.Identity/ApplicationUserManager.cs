@@ -63,5 +63,10 @@ namespace FWLog.AspNet.Identity
         {
             return _appUserStore.GetUserRolesByIdEmpresa(new ApplicationUser { Id = userId }, idEmpresa);
         }
+
+        public Task<bool> ValidatePermissionByIdEmpresaAsync(string userId, long idEmpresa, string permission)
+        {
+            return _appUserStore.ValidatePermissionByIdEmpresaAsync(new ApplicationUser { Id = userId }, idEmpresa, permission);
+        }
     }
 }

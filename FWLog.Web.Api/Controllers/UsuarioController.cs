@@ -216,7 +216,12 @@ namespace FWLog.Web.Api.Controllers
                 return respostaAPI;
             }
 
-            //TODO: Validar permissão
+            var usuarioTemPermissao = await UserManager.ValidatePermissionByIdEmpresaAsync(IdUsuario, IdEmpresa, requisicao.Permissao);
+
+            if (!usuarioTemPermissao)
+            {
+                return ApiForbidden("Usuário sem permissão.", requisicao.Codigo);
+            }
 
             return ApiOk();
         }
