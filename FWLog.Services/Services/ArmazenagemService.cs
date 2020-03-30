@@ -67,7 +67,7 @@ namespace FWLog.Services.Services
                 await _unitOfWork.SaveChangesAsync();
                 transacao.Complete();
 
-                return new InstalarVolumeLoteResponse { EnderecoArmazenagem = enderecoArmazenagem, Produto = produto};
+                return new InstalarVolumeLoteResponse { EnderecoArmazenagem = enderecoArmazenagem, Produto = produto };
             }
         }
 
@@ -587,7 +587,7 @@ namespace FWLog.Services.Services
                 _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
                 await _unitOfWork.SaveChangesAsync();
                 transacao.Complete();
-                
+
                 ajustarVolumeLoteResposta.LoteProdutoEndereco = produtoEndereco;
 
                 return ajustarVolumeLoteResposta;
@@ -925,6 +925,8 @@ namespace FWLog.Services.Services
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
                 var idLote = volume.IdLote.GetValueOrDefault();
+                var referenciaProduto = volume.Produto.Referencia;
+                var codigoEndereco = volume.EnderecoArmazenagem.Codigo;
 
                 await RetirarVolumeEndereco(idEnderecoArmazenagem, idLote, idProduto, idEmpresa, idUsuarioOperacao);
 
@@ -943,7 +945,17 @@ namespace FWLog.Services.Services
                 _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
                 await _unitOfWork.SaveChangesAsync();
 
-                //TODO: gravar log de atividade do usuário(ColetorHistorico) Tipo = Conferência
+                var coletorHistorico = new ColetorHistorico
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ConferirEndereco,
+                    DataHora = DateTime.Now,
+                    Descricao = $"Retirou o produto {referenciaProduto} do lote {idLote} do endereço {codigoEndereco} após conferência",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuarioOperacao
+                };
+
+                _unitOfWork.ColetorHistoricoTipoRepository.GravarHistorico(coletorHistorico);
 
                 transacao.Complete();
             }

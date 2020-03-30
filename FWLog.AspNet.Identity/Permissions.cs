@@ -210,6 +210,7 @@ namespace FWLog.AspNet.Identity
             public const string AbastecerPicking = "RFAbastecerPicking";
             public const string Etiquetas = "RFArmazenagemEtiquetas";
             public const string ConferenciaGaiola = "RFConferenciaGaiola";
+            public const string ConferenciaGaiolaManual = "RFConferenciaGaiolaManual";
 
             public RFArmazenagem() : base(Display.FromString("Coletor - Armazenagem"))
             {
@@ -221,6 +222,7 @@ namespace FWLog.AspNet.Identity
                 Register(AbastecerPicking, Display.FromString("Abastecer Picking"));
                 Register(Etiquetas, Display.FromString("Etiquetas"));
                 Register(ConferenciaGaiola, Display.FromString("Conferência"));
+                Register(ConferenciaGaiolaManual, Display.FromString("Conferência - Manual"));
             }
         }
 
@@ -297,6 +299,18 @@ namespace FWLog.AspNet.Identity
                 Register(Listar, Display.FromString("Listar produto"));
                 Register(Visualizar, Display.FromString("Visualizar produto"));
                 Register(Editar, Display.FromString("Editar produto"));
+            }
+        }
+
+        public class RelatoriosArmazenagem : PermissionGroupBuildItem
+        {
+            public const string RelatorioRastreabilidadeLote = "RelatorioRastreabilidadeLote";
+            public const string RelatorioLoteMovimentacao = "RelatorioLoteMovimentacao";
+
+            public RelatoriosArmazenagem() : base(Display.FromString("Armazenagem - Relatórios"))
+            {
+                Register(RelatorioRastreabilidadeLote, Display.FromString("Rastreabilidade de Lotes"));
+                Register(RelatorioLoteMovimentacao, Display.FromString("Movimentações de Lotes"));
             }
         }
 

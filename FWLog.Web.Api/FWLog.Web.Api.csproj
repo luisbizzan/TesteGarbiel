@@ -252,6 +252,7 @@
     <Compile Include="Models\Produto\PesquisarPorCodigoBarrasReferenciaResposta.cs" />
     <Compile Include="Models\Produto\ProdutoReservadoModelRequest.cs" />
     <Compile Include="Models\Usuario\BuscarPermissoesResposta.cs" />
+    <Compile Include="Models\Usuario\ValidarPermissaoRequisicao.cs" />
     <Compile Include="Models\Usuario\RecoverPasswordModelRequest.cs" />
     <Compile Include="Models\Usuario\LoginResposta.cs" />
     <Compile Include="Models\Usuario\LoginRequisicao.cs" />
