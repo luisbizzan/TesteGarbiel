@@ -230,10 +230,12 @@
     <Compile Include="App_Start\NinjectModules\GeneralModule.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
+    <Compile Include="Controllers\ArmazenagemController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\GarantiaController.cs" />
+    <Compile Include="Controllers\HistoricoAcaoUsuarioController.cs" />
     <Compile Include="Controllers\MotivoLaudoController.cs" />
     <Compile Include="Controllers\NivelArmazenagemController.cs" />
     <Compile Include="Controllers\PerfilImpressoraController.cs" />
@@ -284,6 +286,10 @@
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
     <Compile Include="Mapping\ProdutoProfile.cs" />
     <Compile Include="Mapping\TransportadoraProfile.cs" />
+    <Compile Include="Models\ArmazenagemCtx\RelatorioLoteMovimentacaoViewModel.cs" />
+    <Compile Include="Models\ArmazenagemCtx\RelatorioRastreabilidadeLoteMovimentacaoViewModel.cs" />
+    <Compile Include="Models\ArmazenagemCtx\RelatorioRastreabilidadeLoteProdutoViewModel.cs" />
+    <Compile Include="Models\ArmazenagemCtx\RelatorioRastreabilidadeLoteViewModel.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
     <Compile Include="Models\BOAccountCtx\HistoricoDeAcoesViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
@@ -589,6 +595,10 @@
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Scripts\vendors\onScan\onscan.js" />
     <Content Include="Scripts\vendors\onScan\onscan.min.js" />
+    <Content Include="Scripts\Views\Armazenagem\relatorioLoteMovimentacao.js" />
+    <Content Include="Scripts\Views\Armazenagem\relatorioRastreabilidadeLote.js" />
+    <Content Include="Scripts\Views\Armazenagem\relatorioRastreabilidadeLoteMovimentacao.js" />
+    <Content Include="Scripts\Views\Armazenagem\relatorioRastreabilidadeLoteProduto.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\devolucaoTotal.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\notaRecebimentoList.js" />
@@ -622,6 +632,7 @@
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
+    <Content Include="Scripts\Views\HistoricoAcaoUsuario\index.js" />
     <Content Include="Scripts\Views\MotivoLaudo\motivoLaudo.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\pesquisaModal.js" />
@@ -713,7 +724,11 @@
     <Content Include="Views\BORecebimentoNota\NotaRecebimentoList.cshtml" />
     <Content Include="Views\BORecebimentoNota\DevolucaoTotal.cshtml" />
     <Content Include="Views\Produto\DetalhesProduto.cshtml" />
-    <Content Include="Views\BOAccount\HistoricoAcoes.cshtml" />
+    <Content Include="Views\Armazenagem\RelatorioRastreabilidadeLote.cshtml" />
+    <Content Include="Views\Armazenagem\RelatorioRastreabilidadeLoteProduto.cshtml" />
+    <Content Include="Views\Armazenagem\RelatorioRastreabilidadeLoteMovimentacao.cshtml" />
+    <Content Include="Views\Armazenagem\RelatorioLoteMovimentacao.cshtml" />
+    <Content Include="Views\HistoricoAcaoUsuario\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

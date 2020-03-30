@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
@@ -48,5 +49,7 @@ namespace FWLog.Data.Models
         public virtual NivelArmazenagem NivelArmazenagem { get; set; }
         [ForeignKey(nameof(IdPontoArmazenagem))]
         public virtual PontoArmazenagem PontoArmazenagem { get; set; }
+
+        public virtual List<LoteProdutoEndereco> LoteProdutoEndereco { get; set; }
     }
 }

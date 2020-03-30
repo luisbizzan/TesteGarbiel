@@ -21,24 +21,24 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRecords = Entities.EnderecoArmazenagem.Where(w => w.IdEmpresa == model.CustomFilter.IdEmpresa).Count();
 
             IQueryable<EnderecoArmazenagemListaLinhaTabela> query =
-                Entities.LoteProdutoEndereco.AsNoTracking().Where(w => w.IdEmpresa == model.CustomFilter.IdEmpresa &&
-                    (model.CustomFilter.Status.HasValue == false || w.EnderecoArmazenagem.Ativo == model.CustomFilter.Status) &&
-                    (model.CustomFilter.Codigo.Equals(string.Empty) || w.EnderecoArmazenagem.Codigo.Contains(model.CustomFilter.Codigo)) &&
-                    (model.CustomFilter.IdNivelArmazenagem.HasValue == false || w.EnderecoArmazenagem.IdNivelArmazenagem == model.CustomFilter.IdNivelArmazenagem.Value) &&
-                    (model.CustomFilter.IdPontoArmazenagem.HasValue == false || w.EnderecoArmazenagem.IdPontoArmazenagem == model.CustomFilter.IdPontoArmazenagem.Value) &&
-                    (model.CustomFilter.Status.HasValue == false || w.EnderecoArmazenagem.Ativo == model.CustomFilter.Status))
+                Entities.EnderecoArmazenagem.AsNoTracking().Where(w => w.IdEmpresa == model.CustomFilter.IdEmpresa &&
+                    (model.CustomFilter.Status.HasValue == false || w.Ativo == model.CustomFilter.Status) &&
+                    (model.CustomFilter.Codigo.Equals(string.Empty) || w.Codigo.Contains(model.CustomFilter.Codigo)) &&
+                    (model.CustomFilter.IdNivelArmazenagem.HasValue == false || w.IdNivelArmazenagem == model.CustomFilter.IdNivelArmazenagem.Value) &&
+                    (model.CustomFilter.IdPontoArmazenagem.HasValue == false || w.IdPontoArmazenagem == model.CustomFilter.IdPontoArmazenagem.Value) &&
+                    (model.CustomFilter.Status.HasValue == false || w.Ativo == model.CustomFilter.Status))
                 .Select(s => new EnderecoArmazenagemListaLinhaTabela
                 {
-
-                    IdEnderecoArmazenagem = s.EnderecoArmazenagem.IdEnderecoArmazenagem.ToString() ?? "-",
-                    NivelArmazenagem = s.EnderecoArmazenagem.NivelArmazenagem.Descricao ?? "-",
-                    PontoArmazenagem = s.EnderecoArmazenagem.PontoArmazenagem.Descricao ?? "-",
-                    Codigo = s.EnderecoArmazenagem.Codigo ?? "-",
-                    Fifo = s.EnderecoArmazenagem.IsFifo ? "Sim" : "Não",
-                    PontoSeparacao = s.EnderecoArmazenagem.IsPontoSeparacao ? "Sim" : "Não",
-                    EstoqueMinimo = s.EnderecoArmazenagem.EstoqueMinimo ?? 0,
-                    Status = s.EnderecoArmazenagem.Ativo ? "Ativo" : "Inativo",
-                    Quantidade = s.Quantidade.ToString() ?? "-"
+                    
+                    IdEnderecoArmazenagem = s.IdEnderecoArmazenagem.ToString() ?? "-",
+                    NivelArmazenagem = s.NivelArmazenagem.Descricao ?? "-",
+                    PontoArmazenagem = s.PontoArmazenagem.Descricao ?? "-",
+                    Codigo = s.Codigo ?? "-",
+                    Fifo = s.IsFifo ? "Sim" : "Não",
+                    PontoSeparacao = s.IsPontoSeparacao ? "Sim" : "Não",
+                    EstoqueMinimo = s.EstoqueMinimo ?? 0,
+                    Status = s.Ativo ? "Ativo" : "Inativo",
+                    Quantidade = s.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == s.IdEnderecoArmazenagem).FirstOrDefault().Quantidade
                 });
 
             totalRecordsFiltered = query.Count();
