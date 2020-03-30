@@ -34,7 +34,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult Index()
         {
 
-            var model = new HistoricoAcoesUsuarioViewModel
+            var model = new HistoricoAcaoUsuarioViewModel
             {
                 Filter = new HistoricoDeAcoesFilterViewModel()
                 {
