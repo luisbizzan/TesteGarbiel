@@ -314,5 +314,15 @@ namespace FWLog.AspNet.Identity
             }
         }
 
+        public class HistoricoAcaoUsuario : PermissionGroupBuildItem
+        {
+            public const string Listar = "HistoricoAcaoUsuarioListar";
+
+            public HistoricoAcaoUsuario() : base(Display.FromString("Histórico de Ações do Usuário"))
+            {
+                Register(Listar, Display.FromString("Listar Histórico"));
+            }
+        }
+
     }
 }
