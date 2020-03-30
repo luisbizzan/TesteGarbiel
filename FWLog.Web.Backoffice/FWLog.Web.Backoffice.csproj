@@ -623,7 +623,7 @@
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
-    <Content Include="Scripts\Views\HistoricoAcaosUsuario\index.js" />
+    <Content Include="Scripts\Views\HistoricoAcaoUsuario\index.js" />
     <Content Include="Scripts\Views\MotivoLaudo\motivoLaudo.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\pesquisaModal.js" />

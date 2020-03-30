@@ -92,20 +92,17 @@ INSERT INTO DART."ColetorAplicacao"("IdColetorAplicacao","Descricao") VALUES
 
 
 
+
 INSERT INTO DART."ColetorHistoricoTipo"("IdColetorHistoricoTipo","Descricao") VALUES 
-(1,'Login');
+(1,'Instalar Produto');
 INSERT INTO DART."ColetorHistoricoTipo"("IdColetorHistoricoTipo","Descricao") VALUES 
-(2,'Logout');
+(2,'Retirar Produto');
 INSERT INTO DART."ColetorHistoricoTipo"("IdColetorHistoricoTipo","Descricao") VALUES 
-(3,'Instalar Produto');
+(3,'Ajustar Quantidade');
 INSERT INTO DART."ColetorHistoricoTipo"("IdColetorHistoricoTipo","Descricao") VALUES 
-(4,'Retirar Produto');
+(4,'Conferir Endereço');
 INSERT INTO DART."ColetorHistoricoTipo"("IdColetorHistoricoTipo","Descricao") VALUES 
-(5,'Ajustar Quantidade');
-INSERT INTO DART."ColetorHistoricoTipo"("IdColetorHistoricoTipo","Descricao") VALUES 
-(6,'Conferir Endereço');
-INSERT INTO DART."ColetorHistoricoTipo"("IdColetorHistoricoTipo","Descricao") VALUES 
-(7,'Imprimir Etiqueta');
+(5,'Imprimir Etiqueta');
 
 
 
