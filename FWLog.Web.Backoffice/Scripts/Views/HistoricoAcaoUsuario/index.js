@@ -47,7 +47,6 @@
     dart.dataTables.loadFormFilterEvents();
 
     $("#pesquisarUsuario").click(function () {
-        debugger
         $("#modalUsuario").load(HOST_URL + "BOAccount/SearchModal/Usuario", function () {
             $("#modalUsuario").modal();
         });
