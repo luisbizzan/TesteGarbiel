@@ -342,7 +342,7 @@
     <Compile Include="Models\GarantiaCtx\GarantiaListViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaRegistroRecebimentoViewModel.cs" />
     <Compile Include="Models\HistoricoAcaoUsuarioCtx\DownloadHistoricoAcaoUsuarioViewModel.cs" />
-    <Compile Include="Models\HistoricoAcaoUsuarioCtx\HistoricoDeAcoesViewModel.cs" />
+    <Compile Include="Models\HistoricoAcaoUsuarioCtx\HistoricoAcaoUsuarioViewModel.cs" />
     <Compile Include="Models\HistoricoAcaoUsuarioCtx\ImprimirHistoricoAcaoUsuarioViewModel.cs" />
     <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoCreateViewModel.cs" />
     <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoListViewModel.cs" />
