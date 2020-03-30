@@ -38,7 +38,7 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
         [Display(Name = "Aplicação")]
         public int? IdColetorAplicacao { get; set; }
         public SelectList ListaColetorAplicacao { get; set; }
-        [Display(Name = "Tipo")]
+        [Display(Name = "Tipo Histórico")]
         public int? IdHistoricoColetorTipo { get; set; }
         public SelectList ListaHistoricoColetorTipo { get; set; }
         [Required]
