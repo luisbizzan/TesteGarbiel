@@ -4,6 +4,7 @@ using FWLog.Services.Model.Coletor;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Armazenagem;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -146,7 +147,7 @@ namespace FWLog.Web.Api.Controllers
                     IdUsuarioInstalacao = IdUsuario
                 };
 
-                var instalarVolumeLoteResponse =  await _armazenagemService.InstalarVolumeLote(instalarVolumeLoteRequisicao);
+                var instalarVolumeLoteResponse = await _armazenagemService.InstalarVolumeLote(instalarVolumeLoteRequisicao);
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                 {
@@ -267,7 +268,7 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-               var retirarVolumeEnderecoResponse =  await _armazenagemService.RetirarVolumeEndereco(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa, IdUsuario);
+                var retirarVolumeEnderecoResponse = await _armazenagemService.RetirarVolumeEndereco(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa, IdUsuario);
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                 {
@@ -629,6 +630,59 @@ namespace FWLog.Web.Api.Controllers
             }
 
             return ApiOk();
+        }
+
+        [HttpGet]
+        [Route("api/v1/armazenagem/pesquisar/")]
+        public IHttpActionResult PesquisarPorCorredor(int corredor)
+        {
+            if (corredor <= 0)
+            {
+                return ApiBadRequest("O corredor deve ser informado.");
+            }
+
+            var pontos = _armazenagemService.PesquisarPorCorredor(corredor, IdEmpresa);
+
+            var resposta = new NiveisPontosArmazenagemPorCorredorResposta { Lista = new List<NivelPontoArmazenagemPorCorredorResposta>() };
+
+            foreach (var enderecoArmazenagem in pontos)
+            {
+                var itemResposta = new NivelPontoArmazenagemPorCorredorResposta
+                {
+                    IdNivelArmazenagem = enderecoArmazenagem.IdNivelArmazenagem,
+                    IdPontoArmazenagem = enderecoArmazenagem.IdPontoArmazenagem,
+                    PontoArmazenagemDescricao = enderecoArmazenagem.Descricao,
+                    NivelArmazenagemDescricao = enderecoArmazenagem.NivelArmazenagem.Descricao,
+                };
+
+                resposta.Lista.Add(itemResposta);
+            }
+
+            return ApiOk(resposta);
+        }
+
+        [HttpGet]
+        [Route("api/v1/armazenagem/pesquisar/{idPontoArmazenagem}/{corredor}")]
+        public IHttpActionResult PesquisarNivelPontoCorredor(long idPontoArmazenagem, int corredor)
+        {
+            if (idPontoArmazenagem <= 0)
+            {
+                return ApiBadRequest("O idPontoArmazenagem deve ser informado.");
+            }
+
+            if (corredor <= 0)
+            {
+                return ApiBadRequest("O corredor deve ser informado.");
+            }
+
+            var enderecosArmazenagem = _armazenagemService.PesquisarNivelPontoCorredor(idPontoArmazenagem, corredor, IdEmpresa);
+
+            var resposta = new EnderecosProdutosResposta()
+            {
+                Lista = enderecosArmazenagem
+            };
+
+            return ApiOk(resposta);
         }
     }
 }
