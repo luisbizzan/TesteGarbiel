@@ -146,7 +146,7 @@ namespace FWLog.Web.Api.Controllers
                     IdUsuarioInstalacao = IdUsuario
                 };
 
-                var instalarVolumeLoteResponse =  await _armazenagemService.InstalarVolumeLote(instalarVolumeLoteRequisicao);
+                var instalarVolumeLoteResponse = await _armazenagemService.InstalarVolumeLote(instalarVolumeLoteRequisicao);
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                 {
@@ -267,7 +267,7 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-               var retirarVolumeEnderecoResponse =  await _armazenagemService.RetirarVolumeEndereco(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa, IdUsuario);
+                var retirarVolumeEnderecoResponse = await _armazenagemService.RetirarVolumeEndereco(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa, IdUsuario);
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                 {
@@ -621,7 +621,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                await _armazenagemService.FinalizarConferencia(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0, requisicao?.Quantidade ?? 0, IdEmpresa, IdUsuario);
+                await _armazenagemService.FinalizarConferencia(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto, requisicao?.Quantidade ?? 0, IdEmpresa, IdUsuario);
             }
             catch (BusinessException ex)
             {

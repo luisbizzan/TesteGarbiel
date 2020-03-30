@@ -911,11 +911,14 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task FinalizarConferencia(long idEnderecoArmazenagem, long idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
+        public async Task FinalizarConferencia(long idEnderecoArmazenagem, long? idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
         {
             var volume = ValidarEnderecoConferir(idEnderecoArmazenagem);
 
-            ValidarProdutoConferir(idEnderecoArmazenagem, idProduto);
+            if (idProduto != null)
+            {
+                ValidarProdutoConferir(idEnderecoArmazenagem, idProduto.Value);
+            }
 
             if (quantidade != volume.Quantidade)
             {
@@ -928,13 +931,13 @@ namespace FWLog.Services.Services
                 var referenciaProduto = volume.Produto.Referencia;
                 var codigoEndereco = volume.EnderecoArmazenagem.Codigo;
 
-                await RetirarVolumeEndereco(idEnderecoArmazenagem, idLote, idProduto, idEmpresa, idUsuarioOperacao);
+                await RetirarVolumeEndereco(idEnderecoArmazenagem, idLote, volume.IdProduto, idEmpresa, idUsuarioOperacao);
 
                 var loteMovimentacao = new LoteMovimentacao
                 {
                     IdEmpresa = idEmpresa,
                     IdLote = idLote,
-                    IdProduto = idProduto,
+                    IdProduto = volume.IdProduto,
                     IdEnderecoArmazenagem = idEnderecoArmazenagem,
                     IdUsuarioMovimentacao = idUsuarioOperacao,
                     Quantidade = quantidade,
