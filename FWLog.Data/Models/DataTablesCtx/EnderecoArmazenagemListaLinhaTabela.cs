@@ -10,6 +10,6 @@
         public string PontoSeparacao { get; set; } 
         public int EstoqueMinimo { get; set; }
         public string Status { get; set; }
-        public string Quantidade { get; set; } = null;
+        public int? Quantidade { get; set; }
     }
 }
