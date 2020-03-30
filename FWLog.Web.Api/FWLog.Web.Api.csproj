@@ -217,6 +217,7 @@
     <Compile Include="Helpers\LogHelper.cs" />
     <Compile Include="Mapping\ProdutoModelResponseProfile.cs" />
     <Compile Include="Models\Armazenagem\FinalizarConferenciaModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\EnderecosProdutosResposta.cs" />
     <Compile Include="Models\Armazenagem\ValidarProdutoConferirModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\AjustarVolumeLoteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ConsultaDetalhesEnderecoArmazenagemResposta.cs" />

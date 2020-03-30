@@ -1,5 +1,6 @@
 ﻿using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Services.Model.Armazenagem;
 using System;
 using System.Collections.Generic;
@@ -911,11 +912,14 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task FinalizarConferencia(long idEnderecoArmazenagem, long idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
+        public async Task FinalizarConferencia(long idEnderecoArmazenagem, long? idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
         {
             var volume = ValidarEnderecoConferir(idEnderecoArmazenagem);
 
-            ValidarProdutoConferir(idEnderecoArmazenagem, idProduto);
+            if (idProduto != null)
+            {
+                ValidarProdutoConferir(idEnderecoArmazenagem, idProduto.Value);
+            }
 
             if (quantidade != volume.Quantidade)
             {
@@ -928,13 +932,13 @@ namespace FWLog.Services.Services
                 var referenciaProduto = volume.Produto.Referencia;
                 var codigoEndereco = volume.EnderecoArmazenagem.Codigo;
 
-                await RetirarVolumeEndereco(idEnderecoArmazenagem, idLote, idProduto, idEmpresa, idUsuarioOperacao);
+                await RetirarVolumeEndereco(idEnderecoArmazenagem, idLote, volume.IdProduto, idEmpresa, idUsuarioOperacao);
 
                 var loteMovimentacao = new LoteMovimentacao
                 {
                     IdEmpresa = idEmpresa,
                     IdLote = idLote,
-                    IdProduto = idProduto,
+                    IdProduto = volume.IdProduto,
                     IdEnderecoArmazenagem = idEnderecoArmazenagem,
                     IdUsuarioMovimentacao = idUsuarioOperacao,
                     Quantidade = quantidade,
@@ -959,6 +963,32 @@ namespace FWLog.Services.Services
 
                 transacao.Complete();
             }
+        }
+
+        public List<EnderecoProdutoListaLinhaTabela> PesquisarNivelPontoCorredor(long idPontoArmazenagem, int corredor, long idEmpresa)
+        {
+            var enderecosArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarNivelPontoCorredor(corredor, idPontoArmazenagem, idEmpresa);
+
+            if (enderecosArmazenagem == null)
+            {
+                throw new BusinessException("O corredor não foi encontrado.");
+            }
+
+            return enderecosArmazenagem;
+        }
+
+        public List<PontoArmazenagem> PesquisarPorCorredor(int corredor, long idEmpresa)
+        {
+            List<EnderecoArmazenagem> enderecosArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPorCorredor(corredor, idEmpresa);
+
+            if (enderecosArmazenagem == null)
+            {
+                throw new BusinessException("O corredor não foi encontrado.");
+            }
+
+            List<PontoArmazenagem> pontos = enderecosArmazenagem.Select(s => s.PontoArmazenagem).Distinct().ToList();
+
+            return pontos;
         }
     }
 }
