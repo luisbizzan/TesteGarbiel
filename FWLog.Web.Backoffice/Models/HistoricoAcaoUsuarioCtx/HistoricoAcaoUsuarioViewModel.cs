@@ -2,11 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
-namespace FWLog.Web.Backoffice.Models.BOAccountCtx
+namespace FWLog.Web.Backoffice.Models.HistoricoAcaoUsuarioCtx
 {
-    public class HistoricoDeAcoesViewModel
+    public class HistoricoAcaoUsuarioViewModel
     {
-        public HistoricoDeAcoesViewModel()
+        public HistoricoAcaoUsuarioViewModel()
         {
             EmptyItem = new HistoricoDeAcoesListItemViewModel();
             Filter = new HistoricoDeAcoesFilterViewModel();
@@ -26,7 +26,7 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
         public string ColetorAplicacaoDescricao { get; set; }
         public int IdColetorAplicacao { get; set; }
         [Display(Name = "Tipo")]
-        public string HistoricoColetorTipoDescricao{ get; set; }
+        public string HistoricoColetorTipoDescricao { get; set; }
         public int IdHistoricoColetorTipo { get; set; }
         [Display(Name = "Data")]
         public string DataHora { get; set; }
@@ -34,7 +34,6 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
 
     public class HistoricoDeAcoesFilterViewModel
     {
-       
         [Display(Name = "Aplicação")]
         public int? IdColetorAplicacao { get; set; }
         public SelectList ListaColetorAplicacao { get; set; }
@@ -50,6 +49,5 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
         [Display(Name = "Usuário")]
         public string IdUsuario { get; set; }
         public string UserNameUsuario { get; set; }
-        
     }
 }

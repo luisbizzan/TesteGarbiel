@@ -13,7 +13,7 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public ColetorHistoricoRepository(Entities entities) : base(entities) { }
 
-        public IEnumerable<HistoricoAcaoUsuarioLinhaTabela> ObterDadosParaDataTable(DataTableFilter<HistoricoAcaoUsuarioFilter> filter, out int totalRecordsFiltered, out int totalRecords)
+        public IEnumerable<HistoricoAcaoUsuarioLinhaTabela> ObterDados(DataTableFilter<HistoricoAcaoUsuarioFilter> filter, out int totalRecordsFiltered, out int totalRecords)
         {
             totalRecords = Entities.ColetorHistorico.Count();
 
@@ -25,8 +25,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                     ColetorAplicacaoDescricao = e.ColetorAplicacao.Descricao,
                     DataHora = e.DataHora,
                     Descricao = e.Descricao,
+                    Usuario = e.IdUsuario,
                     HistoricoColetorTipoDescricao = e.ColetorHistoricoTipo.Descricao,
-                    Usuario = e.Usuario.Email,
                     IdColetorAplicacao = e.IdColetorAplicacao.GetHashCode(),
                     IdHistoricoColetorTipo = e.IdColetorHistoricoTipo.GetHashCode()
                 }).AsQueryable();
@@ -50,6 +50,15 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRecordsFiltered = query.Count();
 
             return query.PaginationResult(filter);
+        }
+
+        public IEnumerable<ColetorHistorico> ObterDadosPorEmpresa(long IdEmpresa)
+        {
+            IEnumerable<ColetorHistorico> query = Entities.ColetorHistorico.AsNoTracking()
+               .Where(x => x.IdEmpresa == IdEmpresa).OrderByDescending(x => x.IdUsuario).ToList();
+
+            return query;
+
         }
     }
 }
