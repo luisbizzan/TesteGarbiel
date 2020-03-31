@@ -19,7 +19,8 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             IQueryable<HistoricoAcaoUsuarioLinhaTabela> query = Entities.ColetorHistorico.AsNoTracking()
                 .Where(x => x.IdEmpresa == filter.CustomFilter.IdEmpresa &&
-                (string.IsNullOrEmpty(filter.CustomFilter.IdUsuario) == true || x.IdUsuario == filter.CustomFilter.IdUsuario)).ToList()
+                (string.IsNullOrEmpty(filter.CustomFilter.IdUsuario) == true || x.IdUsuario == filter.CustomFilter.IdUsuario))
+                .OrderByDescending(x => x.IdUsuario).ThenByDescending(x => x.DataHora).ToList()
                 .Select(e => new HistoricoAcaoUsuarioLinhaTabela
                 {
                     ColetorAplicacaoDescricao = e.ColetorAplicacao.Descricao,
@@ -55,7 +56,7 @@ namespace FWLog.Data.Repository.GeneralCtx
         public IEnumerable<ColetorHistorico> ObterDadosPorEmpresa(long IdEmpresa)
         {
             IEnumerable<ColetorHistorico> query = Entities.ColetorHistorico.AsNoTracking()
-               .Where(x => x.IdEmpresa == IdEmpresa).OrderByDescending(x => x.IdUsuario).ToList();
+               .Where(x => x.IdEmpresa == IdEmpresa).OrderByDescending(x => x.IdUsuario).ThenByDescending(x => x.DataHora).ToList();
 
             return query;
 
