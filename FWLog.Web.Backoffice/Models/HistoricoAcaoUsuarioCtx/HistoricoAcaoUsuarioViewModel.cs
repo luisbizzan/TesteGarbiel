@@ -25,7 +25,7 @@ namespace FWLog.Web.Backoffice.Models.HistoricoAcaoUsuarioCtx
         [Display(Name = "Aplicação")]
         public string ColetorAplicacaoDescricao { get; set; }
         public int IdColetorAplicacao { get; set; }
-        [Display(Name = "Tipo")]
+        [Display(Name = "Tipo Histórico")]
         public string HistoricoColetorTipoDescricao { get; set; }
         public int IdHistoricoColetorTipo { get; set; }
         [Display(Name = "Data")]
