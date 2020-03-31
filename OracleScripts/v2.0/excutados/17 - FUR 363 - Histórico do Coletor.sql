@@ -35,7 +35,7 @@ CREATE TABLE "ColetorHistorico"
   "IdColetorHistorico" NUMBER(19) NOT NULL 
 , "IdEmpresa" NUMBER(19) NOT NULL 
 , "IdColetorAplicacao" NUMBER(10) NOT NULL 
-, "IdColetorHistoricoTipo " NUMBER(10) NOT NULL 
+, "IdColetorHistoricoTipo" NUMBER(10) NOT NULL 
 , "IdUsuario" VARCHAR2(128) NOT NULL 
 , "Descricao" VARCHAR2(500) NOT NULL
 , "DataHora" TIMESTAMP NOT NULL
