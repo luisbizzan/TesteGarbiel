@@ -1,4 +1,4 @@
-﻿@model FWLog.Web.Backoffice.Models.BOAccountCtx.HistoricoDeAcoesViewModel
+﻿@model FWLog.Web.Backoffice.Models.HistoricoAcaoUsuarioCtx.HistoricoAcaoUsuarioViewModel
 
 @{
     /**/
@@ -11,13 +11,7 @@
     @FWLog.Web.Backoffice.Helpers.Bundling.BundleHelper.RenderViewScript(
             new
             {
-                //detalhesEntradaConferencia = Url.Action("DetalhesEntradaConferencia"),
-                //detailsVisible = User.HasPermission(Permissions.Recebimento.List),
                 pageDataUrl = Url.Action("PageData"),
-                //registrarRecebimento = User.HasPermission(Permissions.Recebimento.RegistrarRecebimento),
-                //registrarRecebimentoUrl = Url.Action("ExibirModalRegistroRecebimento"),
-                //tratarDivergencias = User.HasPermission(Permissions.Recebimento.TratarDivergencia),
-                //conferirLote = User.HasPermission(Permissions.Recebimento.ConferirLote)
             }
             )
 }
@@ -85,29 +79,36 @@
     </div>
 </form>
 <div class="row">
-        <div class="col-xs-12">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2>Histórico Ações do Usuário</h2>
-                    <div class="clearfix"></div>
+    <div class="col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Histórico Ações do Usuário</h2>
+                <div class="nav navbar-right">
+                    <div class="col-xs-12">
+                        <a id="downloadHistoricoAcaoUsuario" data-toggle="tooltip" title="Download Histórico" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
+                        <a id="imprimirHistoricoAcaoUsuario" data-toggle="tooltip" title="Imprimir Histórico" class="btn btn-default"><i class="fa fa-fw fa-print"></i></a>
+                    </div>
                 </div>
-                <div class="x_content">
-                    <table id="dataTable" class="table table-striped table-bordered dt-responsive" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>@Html.DisplayNameFor(m => m.EmptyItem.Usuario)</th>
-                                <th>@Html.DisplayNameFor(m => m.EmptyItem.Descricao)</th>
-                                <th>@Html.DisplayNameFor(m => m.EmptyItem.ColetorAplicacaoDescricao)</th>
-                                <th>@Html.DisplayNameFor(m => m.EmptyItem.HistoricoColetorTipoDescricao)</th>
-                                <th>@Html.DisplayNameFor(m => m.EmptyItem.DataHora)</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table id="dataTable" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Usuario)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Descricao)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.ColetorAplicacaoDescricao)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.HistoricoColetorTipoDescricao)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataHora)</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
+</div>
 <div class="modal" id="modalUsuario"></div>
-    
-    @*<div class="modal fade" id="modalImpressoras" data-backdrop="static"></div>*@
-    
+<div class="modal fade" id="modalImpressoras" data-backdrop="static"></div>
+
+
+

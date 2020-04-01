@@ -278,6 +278,7 @@
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
     <Compile Include="Mapping\GarantiaProfile.cs" />
     <Compile Include="Mapping\ClienteProfile.cs" />
+    <Compile Include="Mapping\HistoricoAcaoUsuarioProfile.cs" />
     <Compile Include="Mapping\MotivoLaudoProfile.cs" />
     <Compile Include="Mapping\PerfilImpressoraProfile.cs" />
     <Compile Include="Mapping\EmpresaProfile.cs" />
@@ -291,7 +292,6 @@
     <Compile Include="Models\ArmazenagemCtx\RelatorioRastreabilidadeLoteProdutoViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\RelatorioRastreabilidadeLoteViewModel.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
-    <Compile Include="Models\BOAccountCtx\HistoricoDeAcoesViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\HistoricoQuarentenaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BODownloadNotasRecebimentoViewModel.cs" />
@@ -341,6 +341,9 @@
     <Compile Include="Models\GarantiaCtx\GarantiaEntradaConferenciaViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaListViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaRegistroRecebimentoViewModel.cs" />
+    <Compile Include="Models\HistoricoAcaoUsuarioCtx\DownloadHistoricoAcaoUsuarioViewModel.cs" />
+    <Compile Include="Models\HistoricoAcaoUsuarioCtx\HistoricoAcaoUsuarioViewModel.cs" />
+    <Compile Include="Models\HistoricoAcaoUsuarioCtx\ImprimirHistoricoAcaoUsuarioViewModel.cs" />
     <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoCreateViewModel.cs" />
     <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoListViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemCreateViewModel.cs" />

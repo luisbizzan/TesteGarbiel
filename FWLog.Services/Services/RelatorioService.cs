@@ -872,10 +872,10 @@ namespace FWLog.Services.Services
                 Titulo = "Relatório de Produtos",
                 Filtros = new FwRelatorioDadosFiltro
                 {
-                   Status = filter.ProdutoStatus,
-                   CodigoDeBarras = filter.CodigoDeBarras,
-                   Referencia = filter.Referencia,
-                   Descricao = filter.Descricao
+                    Status = filter.ProdutoStatus,
+                    CodigoDeBarras = filter.CodigoDeBarras,
+                    Referencia = filter.Referencia,
+                    Descricao = filter.Descricao
                 },
                 Dados = listaProdutos
             };
@@ -968,7 +968,7 @@ namespace FWLog.Services.Services
             paragraph.AddFormattedText("Largura: ", TextFormat.Bold);
             paragraph.AddText(produtoEstoque.Produto.Largura?.ToString("n2"));
 
-            if(request.EnderecoImagem != null)
+            if (request.EnderecoImagem != null)
             {
                 row = tabela.AddRow();
                 row.Cells[0].MergeRight = 1;
@@ -981,6 +981,99 @@ namespace FWLog.Services.Services
             }
 
             return fwRelatorio.GerarCustomizado();
+        }
+
+        public byte[] GerarRelatorioHistoricoAcaoUsuario(RelatorioHistoricoAcaoUsuarioRequest filter)
+        {
+            IQueryable<ColetorHistorico> query = _unitiOfWork.ColetorHistoricoRepository.ObterDadosPorEmpresa(filter.IdEmpresa.Value)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(filter.IdUsuario))
+            {
+                query = query.Where(x => x.IdUsuario == filter.IdUsuario);
+            }
+
+            if (filter.IdHistoricoColetorTipo.HasValue)
+            {
+                query = query.Where(x => x.IdColetorHistoricoTipo.GetHashCode() == filter.IdHistoricoColetorTipo);
+            }
+
+            if (filter.IdColetorAplicacao.HasValue)
+            {
+                query = query.Where(x => x.IdColetorAplicacao.GetHashCode() == filter.IdColetorAplicacao);
+            }
+
+            DateTime dataInicial = new DateTime(filter.DataInicial.Year, filter.DataInicial.Month, filter.DataInicial.Day, 00, 00, 00);
+            query = query.Where(x => x.DataHora >= dataInicial);
+
+            DateTime dataFinal = new DateTime(filter.DataFinal.Year, filter.DataFinal.Month, filter.DataFinal.Day, 23, 59, 59);
+            query = query.Where(x => x.DataHora <= dataFinal);
+
+
+            var listaHistorico = new List<IFwRelatorioDados>();
+
+
+            if (query.Any())
+            {
+                foreach (var item in query)
+                {
+                    var recebimentoNotas = new RelatorioHistoricoColetor
+                    {
+                        Aplicacao = item.ColetorAplicacao.Descricao,
+                        Descricao = item.Descricao,
+                        Data = item.DataHora.ToString("dd/MM/yyyy HH:mm:ss"),
+                        Tipo = item.ColetorHistoricoTipo.Descricao,
+                        Usuario = _unitiOfWork.PerfilUsuarioRepository.GetByUserId(item.IdUsuario).Nome
+                    };
+
+                    listaHistorico.Add(recebimentoNotas);
+                }
+            }
+
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filter.IdEmpresa.Value);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = filter.NomeUsuarioRequisicao,
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório Histórico do Usuário",
+                Filtros = new FwRelatorioDadosFiltro
+                {
+                    DataInicial = filter.DataInicial,
+                    DataFinal = filter.DataFinal,
+                    Usuario = filter.UsuarioSelecionado,
+                    Aplicacao = filter.ColetorAplicacao,
+                    HistoricoTipo = filter.HistoricoColetorTipo
+                },
+                Dados = listaHistorico
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            return fwRelatorio.Gerar(fwRelatorioDados);
+        }
+
+        public void ImprimirRelatorioHistoricoAcaoUsuario(ImprimirRelatorioHistoricoAcaoUsuarioRequest request)
+        {
+            var relatorioRequest = new RelatorioHistoricoAcaoUsuarioRequest
+            {
+               ColetorAplicacao = request.ColetorAplicacao,
+               IdColetorAplicacao = request.IdColetorAplicacao,
+               HistoricoColetorTipo = request.HistoricoColetorTipo,
+               IdHistoricoColetorTipo = request.IdHistoricoColetorTipo,
+               NomeUsuarioRequisicao = request.NomeUsuarioRequisicao,
+               DataInicial = request.DataInicial,
+               DataFinal = request.DataFinal,
+               IdEmpresa = request.IdEmpresa,
+               IdUsuario = request.IdUsuario,
+               UsuarioSelecionado = request.UsuarioSelecionado
+            };
+
+            byte[] relatorio = GerarRelatorioHistoricoAcaoUsuario(relatorioRequest);
+
+            _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
     }
 }
