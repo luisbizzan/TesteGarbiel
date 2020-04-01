@@ -659,35 +659,5 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk(resposta);
         }
-
-        [Route("api/v1/armazenagem/gravar-historico")]
-        [HttpPost]
-        public IHttpActionResult GravarHistorico(GravarHistoricoRequisicao historico)
-        {
-            try
-            {
-                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
-                {
-                    IdColetorAplicacao = (ColetorAplicacaoEnum)historico.IdColetorAplicacao,
-                    IdColetorHistoricoTipo = (ColetorHistoricoTipoEnum)historico.IdColetorHistoricoTipo,
-                    Descricao = historico.Descricao,
-                    IdEmpresa = IdEmpresa,
-                    IdUsuario = IdUsuario
-                };
-
-                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
-
-            }
-            catch (BusinessException ex)
-            {
-                return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
-            }
-
-            return ApiOk();
-        }
     }
 }
