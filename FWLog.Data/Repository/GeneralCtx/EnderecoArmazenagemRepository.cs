@@ -113,6 +113,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                          join l in Entities.LoteProdutoEndereco on e.IdEnderecoArmazenagem equals l.IdEnderecoArmazenagem
                          join p in Entities.Produto on l.IdProduto equals p.IdProduto
                          where e.IdPontoArmazenagem == ponto && e.Corredor.Equals(corredor) && l.IdEmpresa == idEmpresa
+                         orderby e.Codigo, e.Horizontal, e.Vertical, e.Divisao
                          select new EnderecoProdutoListaLinhaTabela
                          {
                              IdLote = l.IdLote,

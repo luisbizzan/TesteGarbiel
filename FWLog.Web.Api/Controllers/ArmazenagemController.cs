@@ -5,6 +5,7 @@ using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Armazenagem;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -151,7 +152,7 @@ namespace FWLog.Web.Api.Controllers
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                 {
-                    IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                     IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.InstalarProduto,
                     Descricao = $"Instalou o produto {instalarVolumeLoteResponse.Produto.Referencia} do lote {instalarVolumeLoteRequisicao.IdLote} no endereço {instalarVolumeLoteResponse.EnderecoArmazenagem.Codigo}",
                     IdEmpresa = IdEmpresa,
@@ -272,7 +273,7 @@ namespace FWLog.Web.Api.Controllers
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                 {
-                    IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                     IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.RetirarProduto,
                     Descricao = $"Retirou o produto {retirarVolumeEnderecoResponse.LoteProdutoEndereco.Produto.Referencia} do lote {retirarVolumeEnderecoResponse.LoteProdutoEndereco.IdLote} do endereço {retirarVolumeEnderecoResponse.LoteProdutoEndereco.EnderecoArmazenagem.Codigo}",
                     IdEmpresa = IdEmpresa,
@@ -408,7 +409,7 @@ namespace FWLog.Web.Api.Controllers
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                 {
-                    IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                     IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade,
                     Descricao = $"Ajustou a quantidade de {ajustarVolumeLoteResposta.QuantidadeAnterior} para {ajustarVolumeLoteResposta.LoteProdutoEndereco.Quantidade} do produto {ajustarVolumeLoteResposta.LoteProdutoEndereco.Produto.Referencia} do lote {ajustarVolumeLoteResposta.LoteProdutoEndereco.IdLote} do endereço {ajustarVolumeLoteResposta.LoteProdutoEndereco.EnderecoArmazenagem.Codigo}",
                     IdEmpresa = IdEmpresa,
@@ -541,7 +542,7 @@ namespace FWLog.Web.Api.Controllers
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                 {
-                    IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                     IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade,
                     Descricao = $"Abasteceu o produto {abastecerPickingResponse.LoteProduto.Produto.Referencia} do lote {abastecerPickingResponse.LoteProduto.IdLote} no endereço de picking {abastecerPickingResponse.EnderecoArmazenagem.Codigo}",
                     IdEmpresa = IdEmpresa,
@@ -658,6 +659,8 @@ namespace FWLog.Web.Api.Controllers
                 resposta.Lista.Add(itemResposta);
             }
 
+            resposta.Lista = resposta.Lista.OrderBy(o => o.NivelArmazenagemDescricao).ThenBy(t => t.PontoArmazenagemDescricao).ToList();
+
             return ApiOk(resposta);
         }
 
@@ -683,6 +686,36 @@ namespace FWLog.Web.Api.Controllers
             };
 
             return ApiOk(resposta);
+        }
+
+        [Route("api/v1/armazenagem/gravar-historico")]
+        [HttpPost]
+        public IHttpActionResult GravarHistorico(GravarHistoricoRequisicao historico)
+        {
+            try
+            {
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = (ColetorAplicacaoEnum)historico.IdColetorAplicacao,
+                    IdColetorHistoricoTipo = (ColetorHistoricoTipoEnum)historico.IdColetorHistoricoTipo,
+                    Descricao = historico.Descricao,
+                    IdEmpresa = IdEmpresa,
+                    IdUsuario = IdUsuario
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
         }
     }
 }

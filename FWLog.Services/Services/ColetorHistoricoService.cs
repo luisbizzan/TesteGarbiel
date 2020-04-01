@@ -18,7 +18,7 @@ namespace FWLog.Services.Services
         {
             var coletorHistorico = new ColetorHistorico
             {
-                IdColetorAplicacao = gravarHistoricoColetorRequisicao.IdColetorAplocacao,
+                IdColetorAplicacao = gravarHistoricoColetorRequisicao.IdColetorAplicacao,
                 IdColetorHistoricoTipo = gravarHistoricoColetorRequisicao.IdColetorHistoricoTipo,
                 DataHora = DateTime.Now,
                 Descricao = gravarHistoricoColetorRequisicao.Descricao,

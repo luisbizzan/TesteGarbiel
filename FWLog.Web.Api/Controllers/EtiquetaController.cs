@@ -44,7 +44,7 @@ namespace FWLog.Web.Api.Controllers
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                 {
-                    IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                     IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.InstalarProduto,
                     Descricao = $"Iprimiu a etiqueita de endereço com o código {imprimriEtiquetaEnderecoResponse.EnderecoArmazenagem.Codigo}",
                     IdEmpresa = IdEmpresa,
@@ -124,7 +124,7 @@ namespace FWLog.Web.Api.Controllers
 
                     var gravarHistoricoColetorRequisciao = new GravarHistoricoColetorRequisicao
                     {
-                        IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                        IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                         IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
                         Descricao = $"Imprimiu a etiqueta do lote {request.IdLote} do(s) produto() {imprimirEtiquetaLoteReponse.Produto.Referencia}",
                         IdEmpresa = IdEmpresa,
@@ -161,7 +161,7 @@ namespace FWLog.Web.Api.Controllers
                 {
                     var gravarHistoricoColetorRequisciao = new GravarHistoricoColetorRequisicao
                     {
-                        IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
+                        IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                         IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
                         IdEmpresa = IdEmpresa,
                         IdUsuario = IdUsuario
