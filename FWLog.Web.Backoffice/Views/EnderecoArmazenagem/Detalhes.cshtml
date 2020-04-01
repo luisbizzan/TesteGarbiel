@@ -16,84 +16,136 @@
         </div>
         <div class="x_content">
             <div class="row">
-                <div class="col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.IdEnderecoArmazenagem):
+                <div class="col-sm-4 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.IdEnderecoArmazenagem): @Model.IdEnderecoArmazenagem
                 </div>
-                <div class="col-sm-4 col-xs-12">
-                    @Model.IdEnderecoArmazenagem
+                <div class="col-sm-4 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.NivelArmazenagem):  @Model.NivelArmazenagem
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.NivelArmazenagem):
-                </div>
-                <div class="col-sm-4 col-xs-12">
-                    @Model.NivelArmazenagem
+                <div class="col-sm-4 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.PontoArmazenagem): @Model.PontoArmazenagem
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.PontoArmazenagem):
+                <div class="col-sm-4 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.Codigo): @Model.Codigo
                 </div>
-                <div class="col-sm-4 col-xs-12">
-                    @Model.PontoArmazenagem
+                <div class="col-sm-4 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.EstoqueMinimo): @Model.EstoqueMinimo
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.Codigo):
-                </div>
-                <div class="col-sm-4 col-xs-12">
-                    @Model.Codigo
+                <div class="col-sm-4 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.EstoqueMaximo): @Model.EstoqueMaximo
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.EstoqueMinimo):
+                <div class="col-sm-4 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.LimitePeso): @Model.LimitePeso
                 </div>
-                <div class="col-sm-3 col-xs-12">
-                    @Model.EstoqueMinimo
+                <div class="col-sm-4 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.Fifo): @Model.Fifo
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.EstoqueMaximo):
+                <div class="col-sm-4 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.PontoSeparacao): @Model.PontoSeparacao
                 </div>
-                <div class="col-sm-4 col-xs-12">
-                    @Model.EstoqueMaximo
+                <div class="col-sm-2 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.Status): @Model.Status
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.LimitePeso):
+                <div class="col-sm-12 col-lg-12">
+                    <h4 style="margin-top: 15px; margin-bottom: 0px;">Produto(s)</h4>
+                    <div class="ln_solid" style="margin-bottom: 15px; margin-top: 0px;"></div>
                 </div>
-                <div class="col-sm-4 col-xs-12">
-                    @Model.LimitePeso
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.Fifo):
-                </div>
-                <div class="col-sm-4 col-xs-12">
-                    @Model.Fifo
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.PontoSeparacao):
-                </div>
-                <div class="col-sm-3 col-xs-12">
-                    @Model.PontoSeparacao
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-3 col-xs-12">
-                    @Html.LabelFor(m => m.Status):
-                </div>
-                <div class="col-sm-4 col-xs-12">
-                    @Model.Status
-                </div>
+                @if (Model.PontoArmazenagem != "Picking")
+                {
+                    <div class="row" style="margin-top: 15px; overflow-y: auto; height: 300px">
+                        <div class="col-sm-12 col-lg-12">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Nº NF</th>
+                                        <th>Nº Lote</th>
+                                        <th>Cód. Referência</th>
+                                        <th>Descrição</th>
+                                        <th>Múltiplo</th>
+                                        <th>Quantidade</th>
+                                        <th>Peso</th>
+                                        <th>Data Instalação</th>
+                                        <th>Usuário</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Items.Count > 0)
+                                    {
+                                        foreach (var item in Model.Items)
+                                        {
+                                            <tr>
+                                                <td>@item.NumeroNf</td>
+                                                <td>@item.NumeroLote</td>
+                                                <td>@item.CodigoReferencia</td>
+                                                <td>@item.Descricao</td>
+                                                <td>@item.Multiplo</td>
+                                                <td>@item.QuantidadeInstalada</td>
+                                                <td>@item.Peso</td>
+                                                <td>@item.DataInstalacao</td>
+                                                <td>@item.UsuarioResponsavel</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr class="even">
+                                            <td colspan="6" class="text-center">Nenhum registro.</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row" style="margin-top: 15px; overflow-y: auto; height: 300px">
+                        <div class="col-sm-12 col-lg-12">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Cód. Referência</th>
+                                        <th>Descrição</th>
+                                        <th>Múltiplo de Venda</th>
+                                        <th>Quantidade Instalada</th>
+                                        <th>Peso</th>
+                                        <th>Data Instalação</th>
+                                        <th>Usuário Responsável</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.Items.Count > 0)
+                                    {
+                                        foreach (var item in Model.Items)
+                                        {
+                                            <tr>
+                                                <td>@item.CodigoReferencia</td>
+                                                <td>@item.Descricao</td>
+                                                <td>@item.Multiplo</td>
+                                                <td>@item.QuantidadeInstalada</td>
+                                                <td>@item.Peso</td>
+                                                <td>@item.DataInstalacao</td>
+                                                <td>@item.UsuarioResponsavel</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr class="even">
+                                            <td colspan="6" class="text-center">Nenhum registro.</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
             </div>
             <div class="ln_solid"></div>
             <div class="row col-xs-12 form-buttons">

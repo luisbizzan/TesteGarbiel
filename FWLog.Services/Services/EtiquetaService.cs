@@ -160,6 +160,11 @@ namespace FWLog.Services.Services
             Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
             ProdutoEstoque empresaProduto = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, request.IdEmpresa);
 
+            if (produto == null || empresaProduto == null)
+            {
+                throw new BusinessException("Produto não encontrado.");
+            }
+
             string endereco = empresaProduto?.EnderecoArmazenagem?.Codigo ?? string.Empty;
             string unidade = produto.UnidadeMedida?.Sigla ?? string.Empty;
 
@@ -333,11 +338,11 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaDevolucao(ImprimirEtiquetaDevolucaoRequest request)
         {
-            string linha1  = request.Linha1?.Normalizar();
-            string linha2  = request.Linha2?.Normalizar();
-            string linha3  = request.Linha3?.Normalizar();
-            string linha4  = request.Linha4?.Normalizar();
-            
+            string linha1 = request.Linha1?.Normalizar();
+            string linha2 = request.Linha2?.Normalizar();
+            string linha3 = request.Linha3?.Normalizar();
+            string linha4 = request.Linha4?.Normalizar();
+
             var etiquetaZpl = new StringBuilder();
 
             etiquetaZpl.Append("^XA");
@@ -361,22 +366,22 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaDevolucaoTotal(ImprimirEtiquetaDevolucaoTotalRequest request)
         {
-            string nomeFornecedor        = request.NomeFornecedor?.Normalizar();
-            string endFornecedor         = request.EnderecoFornecedor?.Normalizar();
-            string cepFornecedor         = Convert.ToUInt64(request.CepFornecedor).ToString(@"00000\-000");
-            string cidadeFornecedor      = request.CidadeFornecedor?.Normalizar();
-            string estadoFornecedor      = request.EstadoFornecedor?.Normalizar();
-            string telefoneFornecedor    = string.Format("{0:(##) #####-####}", request.TelefoneFornecedor);
-            string numeroFornecedor      = request.NumeroFornecedor?.Normalizar();
+            string nomeFornecedor = request.NomeFornecedor?.Normalizar();
+            string endFornecedor = request.EnderecoFornecedor?.Normalizar();
+            string cepFornecedor = Convert.ToUInt64(request.CepFornecedor).ToString(@"00000\-000");
+            string cidadeFornecedor = request.CidadeFornecedor?.Normalizar();
+            string estadoFornecedor = request.EstadoFornecedor?.Normalizar();
+            string telefoneFornecedor = string.Format("{0:(##) #####-####}", request.TelefoneFornecedor);
+            string numeroFornecedor = request.NumeroFornecedor?.Normalizar();
             string complementoFornecedor = request.ComplementoFornecedor?.Normalizar();
-            string bairroFornecedor      = request.BairroFornecedor?.Normalizar();
-            string idFornecedor          = request.IdFornecedor?.Normalizar();
-            string siglaTransportador    = request.SiglaTransportador?.Normalizar();
-            string idTransportadora      = request.IdTransportadora?.Normalizar();
-            string nomeTransportadora    = request.NomeTransportadora?.Normalizar();
-            string idLote                = request.IdLote?.Normalizar();
-            string quantidadeVolumes     = request.QuantidadeVolumes?.Normalizar();
-            string quantidadeEtiquetas   = request.QuantidadeEtiquetas.ToString(); 
+            string bairroFornecedor = request.BairroFornecedor?.Normalizar();
+            string idFornecedor = request.IdFornecedor?.Normalizar();
+            string siglaTransportador = request.SiglaTransportador?.Normalizar();
+            string idTransportadora = request.IdTransportadora?.Normalizar();
+            string nomeTransportadora = request.NomeTransportadora?.Normalizar();
+            string idLote = request.IdLote?.Normalizar();
+            string quantidadeVolumes = request.QuantidadeVolumes?.Normalizar();
+            string quantidadeEtiquetas = request.QuantidadeEtiquetas.ToString();
 
             var etiquetaZpl = new StringBuilder();
 
@@ -417,6 +422,157 @@ namespace FWLog.Services.Services
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
 
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+        }
+
+        public ImprimirEtiquetaEnderecoResponse ImprimirEtiquetaEndereco(ImprimirEtiquetaEnderecoRequest request)
+        {
+            EnderecoArmazenagem endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(request.IdEnderecoArmazenagem);
+
+            string textoEndereco = endereco.Codigo ?? string.Empty;
+            string codEndereco = endereco.IdEnderecoArmazenagem.ToString().PadLeft(7, '0');
+
+            var etiquetaZpl = new StringBuilder();
+
+            etiquetaZpl.Append("^XA");
+
+            etiquetaZpl.Append("^LL176");
+
+            // Define quantidade de etiquetas a imprimir
+            etiquetaZpl.Append($"^PQ{request.QuantidadeEtiquetas}^FS");
+
+            // Contorno da etiqueta
+            etiquetaZpl.Append("^FO5,10^GB900,180,8^FS");
+
+            // Fundo do texto de endereço
+            etiquetaZpl.Append("^FO5,10^GB380,180,170^FS");
+
+            // Texto do endereço
+            etiquetaZpl.Append($"^FO5,20^FB380,1,0,C,0^A0N,200,85^FR^FD{textoEndereco}^FS");
+
+            // Código de barras do endereço
+            etiquetaZpl.Append($"^FO415,35^BY3,,110^BCN,,Y,N^FD{codEndereco}^FS");
+
+            etiquetaZpl.Append("^XZ");
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+
+            return new ImprimirEtiquetaEnderecoResponse { EnderecoArmazenagem = endereco };
+        }
+
+        public void ImprimirEtiquetaPicking(ImprimirEtiquetaPickingRequest request)
+        {
+            Produto produto = _unitOfWork.ProdutoRepository.GetById(request.IdProduto);
+            EnderecoArmazenagem endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(request.IdEnderecoArmazenagem);
+
+            string refProduto = produto.Referencia;
+            string textoEndereco = endereco.Codigo ?? string.Empty;
+            string codEndereco = endereco.IdEnderecoArmazenagem.ToString().PadLeft(7, '0');
+
+            var etiquetaZpl = new StringBuilder();
+
+            etiquetaZpl.Append("^XA");
+
+            // Define quantidade de etiquetas a imprimir
+            etiquetaZpl.Append($"^PQ{request.QuantidadeEtiquetas}^FS");
+
+            etiquetaZpl.Append("^LL880");
+
+            // Fundo e texto da referência do produto
+            etiquetaZpl.Append("^FO15,20^GB270,760,150^FS");
+            etiquetaZpl.Append($"^FO55,15^FB760,1,0,C,0^A0B,250,120^FR^FD{refProduto}^FS");
+
+            // Texto do endereço de armazenagem
+            etiquetaZpl.Append($"^FO440,15^FB760,1,0,C,0^A0B,180,150^FD0{textoEndereco}^FS");
+
+            // Barcode do endereço de armazenagem
+            etiquetaZpl.Append($"^FO600,250^BCR,85,N,N^FD{codEndereco}^FS");
+
+            etiquetaZpl.Append("^XZ");
+
+            byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+        }
+
+        public ImprimirEtiquetaLoteReponse ValidarEImprimirEtiquetaLote(ImprimirEtiquetaLoteRequest requisicao)
+        {
+            if (requisicao.IdLote <= 0)
+            {
+                throw new BusinessException("O lote deve ser informado.");
+            }
+
+            var lote = _unitOfWork.LoteRepository.GetById(requisicao.IdLote);
+
+            if (lote == null)
+            {
+                throw new BusinessException("O lote não foi encontrado.");
+            }
+
+            if (requisicao.IdProduto <= 0)
+            {
+                throw new BusinessException("O produto deve ser informado.");
+            }
+
+            var produto = _unitOfWork.ProdutoRepository.GetById(requisicao.IdProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("O produto não foi encontrado.");
+            }
+
+            var loteProduto = _unitOfWork.LoteProdutoRepository.PesquisarProdutoNoLote(requisicao.IdEmpresa, requisicao.IdLote, requisicao.IdProduto);
+
+            if (loteProduto == null)
+            {
+                throw new BusinessException("O produto não pertence ao lote.");
+            }
+
+            if (requisicao.QuantidadeProdutos > loteProduto.Saldo)
+            {
+                throw new BusinessException("Saldo do produto no lote insuficiente.");
+            }
+
+            ImprimirEtiquetaArmazenagemVolume(new ImprimirEtiquetaArmazenagemVolume()
+            {
+                NroLote = requisicao.IdLote,
+                ReferenciaProduto = produto.Referencia,
+                QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas,
+                QuantidadePorCaixa = requisicao.QuantidadeProdutos,
+                Usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(requisicao.IdUsuario)?.Nome,
+                IdImpressora = requisicao.IdImpressora,
+                IdEmpresa = requisicao.IdEmpresa
+            });
+
+            return new ImprimirEtiquetaLoteReponse { Produto = produto };
+        }
+
+        public void ValidarEnderecoPicking(ValidarEnderecoPickingRequest requisicao)
+        {
+            if (requisicao.IdEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("O Endereço deve ser informado.");
+            }
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(requisicao.IdEnderecoArmazenagem);
+
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("O endereço não foi encontrado.");
+            }
+
+            if (!enderecoArmazenagem.IsPontoSeparacao)
+            {
+                throw new BusinessException("O endereço informado não é um ponto de separação.");
+            }
+
+            var pontoArmazenagem = _unitOfWork.PontoArmazenagemRepository.GetById(enderecoArmazenagem.IdPontoArmazenagem);
+
+            if(pontoArmazenagem.Descricao != "Picking")
+            {
+                throw new BusinessException("O endereço informado não é endereço de Picking.");
+            }
         }
 
         private class CelulaEtiqueta

@@ -8,34 +8,19 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FWLog.Services.Model;
+using FWLog.Services.Model.Usuario;
+using FWLog.Data.Models;
+using FWLog.Data;
 
 namespace FWLog.Services.Services
 {
     public class AccountService
     {
-        public async Task<TokenResponse> Token(string userName, string password)
+        private readonly UnitOfWork _uow;
+
+        public AccountService(UnitOfWork uow)
         {
-            string oauthServer = ConfigurationManager.AppSettings["OauthServer"];
-
-            var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri(oauthServer)
-            };
-
-            var contentString = "grant_type=password&username={0}&password={1}";
-            var content = new StringContent(string.Format(contentString, userName, password), Encoding.UTF8, "application/x-www-form-urlencoded");
-            HttpResponseMessage syncResponse = await httpClient.PostAsync("/api/v1/token", content);
-            string responseString = await syncResponse.Content.ReadAsStringAsync();
-
-            if (!syncResponse.IsSuccessStatusCode)
-            {
-                var tokenErrorContent = JsonConvert.DeserializeObject<TokenErrrorResponse>(responseString);
-                throw new Exception(string.Format("{0}: {1}", tokenErrorContent.Description, tokenErrorContent.Error));
-            }
-
-            var token = JsonConvert.DeserializeObject<TokenResponse>(responseString);
-
-            return token;
+            _uow = uow;
         }
 
         public async Task SendRedefinePasswordEmail(SendRedefinePasswordEmailRequest request)
@@ -60,6 +45,52 @@ namespace FWLog.Services.Services
 
             var client = new MailClient();
             await client.SendMailAsync(mailParams);
+        }
+
+        public async Task<GerarTokenAcessoColetorResponse> GerarTokenAcessoColetor(string usuario, string senha, string idUsuario)
+        {
+            var applicationSession = new ApplicationSession
+            {
+                DataLogin = DateTime.Now,
+                DataUltimaAcao = DateTime.Now,
+                IdApplication = 2,
+                IdAspNetUsers = idUsuario
+            };
+
+            _uow.ApplicationSessionRepository.Add(applicationSession);
+            _uow.SaveChanges();
+
+            return new GerarTokenAcessoColetorResponse
+            {
+                Token = await Token(usuario, senha),
+                ApplicationSession = applicationSession,
+                EmpresasUsuario = _uow.UsuarioEmpresaRepository.RetornaAtivaPorUsuario(idUsuario)
+            };
+        }
+
+        private async Task<TokenResponse> Token(string userName, string password)
+        {
+            string oauthServer = ConfigurationManager.AppSettings["OauthServer"];
+
+            var httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(oauthServer)
+            };
+
+            var contentString = "grant_type=password&username={0}&password={1}";
+            var content = new StringContent(string.Format(contentString, userName, password), Encoding.UTF8, "application/x-www-form-urlencoded");
+            HttpResponseMessage syncResponse = await httpClient.PostAsync("/api/v1/token", content);
+            string responseString = await syncResponse.Content.ReadAsStringAsync();
+
+            if (!syncResponse.IsSuccessStatusCode)
+            {
+                var tokenErrorContent = JsonConvert.DeserializeObject<TokenErrrorResponse>(responseString);
+                throw new Exception(string.Format("{0}: {1}", tokenErrorContent.Description, tokenErrorContent.Error));
+            }
+
+            var token = JsonConvert.DeserializeObject<TokenResponse>(responseString);
+
+            return token;
         }
     }
 }

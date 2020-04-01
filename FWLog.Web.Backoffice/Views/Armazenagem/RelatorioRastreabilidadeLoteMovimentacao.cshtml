@@ -1,0 +1,127 @@
+﻿@model FWLog.Web.Backoffice.Models.ArmazenagemCtx.RelatorioRastreabilidadeLoteMovimentacaoViewModel
+@{
+    ViewBag.Title = "Relatório - Rastreabilidade de Lotes (Movimentação)";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+            pageDataUrl = Url.Action("RelatorioRastreabilidadeLoteMovimentacaoPageData")
+        })
+}
+<!-- filter -->
+<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2 class="collapse-link">
+                <i class="fa fa-chevron-down fa-fw"></i> @Resources.CommonStrings.FilterHeader
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content" style="display: block;">
+            @Html.HiddenFor(m => m.Filter.IdLote, new { data_field = "IdLote" })
+            @Html.HiddenFor(m => m.Filter.IdProduto, new { data_field = "IdProduto" })
+            <div class="row">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdUsuarioMovimentacao, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.UserNameMovimentacao, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarUsuarioMovimentacao" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparUsuarioMovimentacao" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdUsuarioMovimentacao, new { data_field = "IdUsuarioMovimentacao" })
+                </div>
+                <div class="form-group col-xs-12 col-md-3 col-lg-3">
+                    @Html.LabelFor(m => m.Filter.IdLoteMovimentacaoTipo)
+                    @Html.DropDownListFor(m => m.Filter.IdLoteMovimentacaoTipo, Model.Filter.ListaLoteMovimentacaoTipo, "Todos", new { @class = "form-control", data_field = "IdLoteMovimentacaoTipo" })
+                </div>
+                <div class="form-group col-xs-12 col-md-5 col-lg-3">
+                    @Html.LabelFor(m => m.Filter.QuantidadeInicial)
+                    @Html.TextBoxFor(m => m.Filter.QuantidadeInicial, new { @class = "form-control onlyNumber", data_field = "QuantidadeInicial" })
+                </div>
+                <div class="form-group col-xs-12 col-md-5 col-lg-3">
+                    @Html.LabelFor(m => m.Filter.QuantidadeFinal)
+                    @Html.TextBoxFor(m => m.Filter.QuantidadeFinal, new { @class = "form-control onlyNumber validateQtdFinal", data_field = "QuantidadeFinal" })
+                    @Html.ValidationMessageFor(m => m.Filter.QuantidadeFinal)
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.DataHoraInicial)
+                    <div class='input-group date'>
+                        @Html.TextBoxFor(m => m.Filter.DataHoraInicial, new { @class = "form-control dateFormat", data_field = "DataHoraInicial" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.DataHoraFinal)
+                    <div class='input-group date'>
+                        @Html.TextBoxFor(m => m.Filter.DataHoraFinal, new { @class = "form-control dateFormat", data_field = "DataHoraFinal" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 form-buttons">
+                    <button type="button" class="btn btn-default" id="limparFiltros">@Resources.CommonStrings.ClearAction</button>
+                    <button type="button" id="pesquisar" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- /filter -->
+<!-- table -->
+<div id="tabela" class="row">
+    <div class="col-xs-12">
+        <div class="x_panel">
+            <!-- panel-title -->
+            <div class="x_title">
+                <div class="col-lg-6">
+                    <h2>Movimentações do Produto @Html.ValueFor(m => m.Filter.DescricaoProduto) do Lote @Html.ValueFor(m => m.Filter.IdLote) </h2>
+                </div>
+                <div class="col-lg-5">
+                    <div class="nav navbar-right" style="margin-top: 6px;">
+                        <span class="legenda"><i class="fa fa-circle icon-green" title="" data-toggle="tooltip"></i> Entrada</span>
+                        <span class="legenda"><i class="fa fa-circle icon-red" title="" data-toggle="tooltip"></i> Saída</span>
+                        <span class="legenda"><i class="fa fa-circle icon-purple" title="" data-toggle="tooltip"></i> Ajuste</span>
+                        <span class="legenda"><i class="fa fa-circle icon-dark-green" title="" data-toggle="tooltip"></i> Abastecimento</span>
+                    </div>
+                </div>
+                <div class="col-lg-1">
+                    <div class="nav navbar-right">
+                        <a id="downloadRelatorio" data-toggle="tooltip" title="Download Relatório" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <!-- /panel-title -->
+            <!-- panel-content -->
+            <div class="x_content">
+                <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.ReferenciaProduto)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DescricaoProduto)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Tipo)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Quantidade)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Endereco)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataHora)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.UsuarioMovimentacao)</th>
+
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <!-- /panel-content -->
+        </div>
+    </div>
+</div>
+<div class="modal" id="modalUsuarioMovimentacao" data-toggle="modal" data-myvalue="1"></div>
+<!-- /table -->

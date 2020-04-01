@@ -8,7 +8,7 @@ namespace FWLog.Web.Api
 {
     public class NinjectDependencyResolver : IDependencyResolver
     {
-        private IKernel _kernel;
+        private readonly IKernel _kernel;
 
         public NinjectDependencyResolver()
         {

@@ -1,0 +1,186 @@
+﻿@model FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaListViewModel
+@using FWLog.AspNet.Identity
+
+@{
+    ViewBag.Title = "Lista de Garantia";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+            detailsUrl = Url.Action("DetalhesEntradaConferencia"),
+            detailsVisible = User.HasPermission(Permissions.Garantia.Listar),
+            registrarRecebimento = User.HasPermission(Permissions.Garantia.RegistrarRecebimento),
+            registrarRecebimentoUrl = Url.Action("ExibirModalRegistroRecebimento"),
+            conferirGarantia= User.HasPermission(Permissions.Garantia.ConferirGarantia),
+            pageDataUrl = Url.Action("PageData")
+        }
+    )
+}
+
+<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2 class="collapse-link">
+                <i class="fa fa-chevron-down fa-fw"></i> @Resources.CommonStrings.FilterHeader
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content" style="display: block;">
+            <div class="row">
+                <div class="col-xs-12 col-md-2 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.IdGarantia)
+                    @Html.TextBoxFor(m => m.Filter.IdGarantia, new { @class = "form-control onlyNumber", data_field = "IdGarantia" })
+                </div>
+                <div class="col-xs-12 col-md-2 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.NumeroNF)
+                    @Html.TextBoxFor(m => m.Filter.NumeroNF, new { @class = "form-control onlyNumber", data_field = "NumeroNF" })
+                    @Html.HiddenFor(m => m.EmptyItem.IdNotaFiscal, new { data_field = "IdNotaFiscal" })
+                </div>
+                <div class="col-xs-12 col-md-5 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.ChaveAcesso)
+                    @Html.TextBoxFor(m => m.Filter.ChaveAcesso, new { @class = "form-control onlyNumber", data_field = "ChaveAcesso" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.IdGarantiaStatus)
+                    @Html.DropDownListFor(m => m.Filter.IdGarantiaStatus, Model.Filter.ListaStatus, "Todos", new { @class = "form-control", data_field = "IdGarantiaStatus" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdCliente, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.RazaoSocialCliente, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarCliente" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparCliente" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdCliente, new { data_field = "IdCliente" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdTransportadora, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.RazaoSocialTransportadora, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarTransportadora" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparTransportadora" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdTransportadora, new { data_field = "IdTransportadora" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.DataEmissaoInicial)
+                    <div class='input-group date'>
+                        @Html.TextBoxFor(m => m.Filter.DataEmissaoInicial, new { @class = "form-control dateFormat validateDateOrPrazoInicial", data_field = "DataEmissaoInicial" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Filter.DataEmissaoInicial)
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.DataEmissaoFinal)
+                    <div class='input-group date'>
+                        @Html.TextBoxFor(m => m.Filter.DataEmissaoFinal, new { @class = "form-control dateFormat validateDateOrPrazoInicial", data_field = "DataEmissaoFinal" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Filter.DataEmissaoFinal)
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.DataRecebimentoInicial)
+                    <div class='input-group date'>
+                        @Html.TextBoxFor(m => m.Filter.DataRecebimentoInicial, new { @class = "form-control dateFormat", data_field = "DataRecebimentoInicial" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.DataRecebimentoFinal)
+                    <div class='input-group date'>
+                        @Html.TextBoxFor(m => m.Filter.DataRecebimentoFinal, new { @class = "form-control dateFormat", data_field = "DataRecebimentoFinal" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.NumeroFicticioNF)
+                    @Html.TextBoxFor(m => m.Filter.NumeroFicticioNF, new { @class = "form-control onlyNumber", data_field = "NumeroFicticioNF" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filter.NumeroNFOrigem)
+                    @Html.TextBoxFor(m => m.Filter.NumeroNFOrigem, new { @class = "form-control onlyNumber", data_field = "NumeroNFOrigem" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdUsuarioConferencia, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.UserNameConferencia, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarUsuarioConferencia" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparUsuarioConferencia" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(model => model.Filter.IdUsuarioConferencia, new { data_field = "IdUsuarioConferencia" })
+                </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(model => model.Filter.IdFornecedor, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.NomeFantasiaFornecedor, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarFornecedor" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparFornecedor" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdFornecedor, new { data_field = "IdFornecedor" })
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 form-buttons">
+                <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
+                <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Solicitações de Garantia</h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table id="dataTable" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.IdGarantia)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Cliente)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Fornecedor)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.NumeroNF)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.NumeroFicticioNF)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataEmissao)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataRecebimento)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.GarantiaStatus)</th>
+                            <th>@Resources.CommonStrings.ActionsLabel</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modalCliente"></div>
+<div class="modal" id="modalTransportadora"></div>
+<div class="modal" id="modalFornecedor"></div>
+<div class="modal fade" id="modalImpressoras" data-backdrop="static"></div>
+<div class="modal" id="modalUsuarioRecebimento" data-toggle="modal" data-myvalue="1"></div>
+<div class="modal" id="modalUsuarioConferencia" data-toggle="modal" data-myvalue="2"></div>
+<div class="modal" id="modalDetalhesEntradaConferencia"></div>
+<div class="modal" id="modalRegistroRecebimento"></div>
+<div class="modal" id="modalConferenciaGarantia" data-backdrop="static"></div>
+<!-- /table -->

@@ -1,4 +1,4 @@
-﻿.body{
+﻿.body {
     overflow: initial;
     max-height: 100vh;
 }
@@ -39,7 +39,6 @@
 }
 
 .main_menu span.fa {
-   
 }
 
 .nav-md ul.nav.child_menu li:before {
@@ -143,7 +142,7 @@ footer {
 
 @media (max-width: 667px) {
     .nav > li > a {
-        padding: 5px 15px 5px !important;        
+        padding: 5px 15px 5px !important;
     }
 
     .navbar-nav > li > a {
@@ -172,6 +171,54 @@ footer {
     margin: 0 auto;
 }
 
+.row-red {
+    background-color: #febebd !important;
+}
+
+.row-green {
+    background-color: #c6ffc6 !important;
+}
+
+.row-purple {
+    background-color: #c6c7ff !important;
+}
+
+.row-dark-green {
+    background-color: #85e085 !important;
+}
+
+.icon-red {
+    color: #febebd !important;
+}
+
+.icon-green {
+    color: #c6ffc6 !important;
+}
+
+.icon-purple {
+    color: #c6c7ff !important;
+}
+
+.icon-dark-green {
+    color: #85e085 !important;
+}
+
+.legenda {
+    margin: 5px 0 6px;
+    padding-left: 30px;
+    font-weight: 400;
+    color: #333333db !important;
+}
+
+.btn-secondary-selected {
+    color: white !important;
+    background-color: darkblue;
+    
+}
+   
+.btn-secondary-selected:hover {
+    color: white;
+
 @media (max-width: 1024px) 
 {
     .table > thead > tr > th,
@@ -183,3 +230,4 @@ footer {
         padding: 6px !important;
     }
 }
+

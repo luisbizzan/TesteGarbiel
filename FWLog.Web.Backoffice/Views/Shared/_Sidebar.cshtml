@@ -21,11 +21,20 @@
         new MenuGroup("Armazenagem", "fa fa-cubes").SetItems(
             new MenuItem { Text = "Níveis de Armazenagem", Url = Url.Action("Index", "NivelArmazenagem"), RequirePermission = Permissions.NivelArmazenagem.Listar },
             new MenuItem { Text = "Pontos de Armazenagem", Url = Url.Action("Index", "PontoArmazenagem"), RequirePermission = Permissions.PontoArmazenagem.Listar },
-            new MenuItem { Text = "Endereços de Armazenagem", Url = Url.Action("Index", "EnderecoArmazenagem"), RequirePermission = Permissions.EnderecoArmazenagem.Listar }
+            new MenuItem { Text = "Endereços de Armazenagem", Url = Url.Action("Index", "EnderecoArmazenagem"), RequirePermission = Permissions.EnderecoArmazenagem.Listar },
+            new MenuItem { Text = "Listagem de Produto", Url = Url.Action("Index", "Produto"), RequirePermission = Permissions.Produto.Listar },
+            new MenuItem { Text = "Relatório - Rastreabilidade de Lotes", Url = Url.Action("RelatorioRastreabilidadeLote", "Armazenagem"), RequirePermission = Permissions.RelatoriosArmazenagem.RelatorioRastreabilidadeLote },
+            new MenuItem { Text = "Relatório - Movimentações de Lotes", Url = Url.Action("RelatorioLoteMovimentacao", "Armazenagem"), RequirePermission = Permissions.RelatoriosArmazenagem.RelatorioLoteMovimentacao }
+        ),
+          new MenuGroup(text: Res.GarantiaMenuItem, icon: "fa fa-shield").SetItems(
+            new MenuItem { Text = "Solicitação de Garantia", Url = Url.Action("Index", "Garantia"), RequirePermission = Permissions.Garantia.Listar },
+            new MenuItem { Text = "Motivo do Laudo", Url = Url.Action("MotivoLaudo", "MotivoLaudo"), RequirePermission = Permissions.MotivoLaudo.Listar }
+
         ),
         new MenuGroup(text: Res.UserMenuGroup, icon: "fa fa-user").SetItems(
             new MenuItem { Text = "Usuários", Url = Url.Action("Index", "BOAccount"), RequirePermission = Permissions.BOAccount.List },
-            new MenuItem { Text = "Grupos de Usuários", Url = Url.Action("Index", "BOGroup"), RequirePermission = Permissions.Role.List }
+            new MenuItem { Text = "Grupos de Usuários", Url = Url.Action("Index", "BOGroup"), RequirePermission = Permissions.Role.List },
+            new MenuItem { Text = "Histórico de Ações", Url = Url.Action("Index", "HistoricoAcaoUsuario"), RequirePermission = Permissions.HistoricoAcaoUsuario.Listar }
         ),
         new MenuGroup(text: Res.ConfigurationMenuGroup, icon: "fa fa-cog").SetItems(
             new MenuItem { Text = "Empresa", Url = Url.Action("Editar", "Empresa"), RequirePermission = Permissions.Empresa.EditarConfiguracao },

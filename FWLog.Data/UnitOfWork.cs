@@ -48,7 +48,6 @@ namespace FWLog.Data
         private TipoConferenciaRepository _tipoConferenciaRepository;
         private LoteConferenciaRepository _loteConferenciaRepository;
         private LogEtiquetagemRepository _loteEtiquetagemRepository;
-        private ProdutoEnderecoRepository _produtoEnderecoRepository;
         private ProdutoEstoqueRepository _produtoEstoqueRepository;
         private QuarentenaHistoricoRepository _quarentenaHistoricoRepository;
         private ImpressaoItemRepository _impressaoItemRepository;
@@ -58,10 +57,40 @@ namespace FWLog.Data
         private LoteProdutoRepository _loteProdutoRepository;
         private IntegracaoTipoRepository     _integracaoTipoRepository;
         private IntegracaoEntidadeRepository _integracaoEntidadeRepository;
+        private LoteMovimentacaoRepository _loteMovimentacaoRepository;
+        private LoteMovimentacaoTipoRepository _loteMovimentacaoTipoRepository;
+        private ClienteRepository _clienteRepository;
+        private GarantiaRepository _garantiaRepository;
+        private GarantiaConferenciaTipoRepository _garantiaConferenciaTipoRepository;
+        private GarantiaProdutoRepository _garantiaProdutoRepository;
+        private GarantiaQuarentenaRepository _garantiaQuarentenaRepository;
+        private GarantiaQuarentenaHisRepository _garantiaQuarentenaHisRepository;
+        private GarantiaQuarentenaStatusRepository _garantiaQuarentenaStatusRepository;
+        private GarantiaStatusRepository _garantiaStatusRepository;
+        private MotivoLaudoRepository _motivoLaudoRepository;
+        private RepresentanteRepository _representanteRepository;
+        private LoteProdutoEnderecoRepository _loteProdutoEnderecoRepository;		
         private IntegracaoLogRepository _integracaoLogRepository;
         private NotaFiscalRecebimentoRepository _notaFiscalRecebimentoRepository;
         private NotaRecebimentoStatusRepository _notaRecebimentoStatusRepository;
+        private ColetorAplicacaoRepository _coletorAplicacaoRepository;
+        private ColetorHistoricoRepository _coletorHistoricoRepository;
+        private ColetorHistoricoTipoRepository _coletorHistoricoTipoRepository;
 
+        public LoteProdutoEnderecoRepository LoteProdutoEnderecoRepository
+        {
+            get => _loteProdutoEnderecoRepository ?? (_loteProdutoEnderecoRepository = new LoteProdutoEnderecoRepository(_context));
+        }
+
+        public LoteMovimentacaoTipoRepository LoteMovimentacaoTipoRepository
+        {
+            get => _loteMovimentacaoTipoRepository ?? (_loteMovimentacaoTipoRepository = new LoteMovimentacaoTipoRepository(_context));
+        }
+
+        public LoteMovimentacaoRepository LoteMovimentacaoRepository
+        {
+            get => _loteMovimentacaoRepository ?? (_loteMovimentacaoRepository = new LoteMovimentacaoRepository(_context));
+        }
 
         public TipoEtiquetagemRepository TipoEtiquetagemRepository
         {
@@ -101,11 +130,6 @@ namespace FWLog.Data
         public QuarentenaHistoricoRepository QuarentenaHistoricoRepository
         {
             get => _quarentenaHistoricoRepository ?? (_quarentenaHistoricoRepository = new QuarentenaHistoricoRepository(_context));
-        }
-
-        public ProdutoEnderecoRepository ProdutoEnderecoRepository
-        {
-            get => _produtoEnderecoRepository ?? (_produtoEnderecoRepository = new ProdutoEnderecoRepository(_context));
         }
 
         public LogEtiquetagemRepository LogEtiquetagemRepository
@@ -278,13 +302,79 @@ namespace FWLog.Data
             get => _loteProdutoRepository ?? (_loteProdutoRepository = new LoteProdutoRepository(_context));
         }
 
+        public ClienteRepository ClienteRepository
+        {
+            get => _clienteRepository ?? (_clienteRepository = new ClienteRepository(_context));
+        }
+
+        public GarantiaRepository GarantiaRepository
+        {
+            get => _garantiaRepository ?? (_garantiaRepository = new GarantiaRepository(_context));
+        }
+
+        public GarantiaConferenciaTipoRepository GarantiaConferenciaTipoRepository
+        {
+            get => _garantiaConferenciaTipoRepository ?? (_garantiaConferenciaTipoRepository = new GarantiaConferenciaTipoRepository(_context));
+        }
+
+        public GarantiaProdutoRepository GarantiaProdutoRepository
+        {
+            get => _garantiaProdutoRepository ?? (_garantiaProdutoRepository = new GarantiaProdutoRepository(_context));
+        }
+
+        public GarantiaQuarentenaRepository GarantiaQuarentenaRepository
+        {
+            get => _garantiaQuarentenaRepository ?? (_garantiaQuarentenaRepository = new GarantiaQuarentenaRepository(_context));
+        }
+
+        public GarantiaQuarentenaHisRepository GarantiaQuarentenaHisRepository
+        {
+            get => _garantiaQuarentenaHisRepository ?? (_garantiaQuarentenaHisRepository = new GarantiaQuarentenaHisRepository(_context));
+        }
+
+        public GarantiaQuarentenaStatusRepository GarantiaQuarentenaStatusRepository
+        {
+            get => _garantiaQuarentenaStatusRepository ?? (_garantiaQuarentenaStatusRepository = new GarantiaQuarentenaStatusRepository(_context));
+        }
+
+        public GarantiaStatusRepository GarantiaStatusRepository
+        {
+            get => _garantiaStatusRepository ?? (_garantiaStatusRepository = new GarantiaStatusRepository(_context));
+        }
+
+        public MotivoLaudoRepository MotivoLaudoRepository
+        {
+            get => _motivoLaudoRepository ?? (_motivoLaudoRepository = new MotivoLaudoRepository(_context));
+        }
+
+        public RepresentanteRepository RepresentanteRepository
+        {
+            get => _representanteRepository ?? (_representanteRepository = new RepresentanteRepository(_context));
+        }
+
         public NotaFiscalRecebimentoRepository NotaFiscalRecebimentoRepository
         {
             get => _notaFiscalRecebimentoRepository ?? (_notaFiscalRecebimentoRepository = new NotaFiscalRecebimentoRepository(_context));
         }
+
         public NotaRecebimentoStatusRepository NotaRecebimentoStatusRepository
         {
             get => _notaRecebimentoStatusRepository ?? (_notaRecebimentoStatusRepository = new NotaRecebimentoStatusRepository(_context));
+        }
+
+        public ColetorAplicacaoRepository ColetorAplicacaoRepository
+        {
+            get => _coletorAplicacaoRepository ?? (_coletorAplicacaoRepository = new ColetorAplicacaoRepository(_context));
+        }
+
+        public ColetorHistoricoRepository ColetorHistoricoRepository
+        {
+            get => _coletorHistoricoRepository ?? (_coletorHistoricoRepository = new ColetorHistoricoRepository(_context));
+        }
+
+        public ColetorHistoricoTipoRepository ColetorHistoricoTipoRepository
+        {
+            get => _coletorHistoricoTipoRepository ?? (_coletorHistoricoTipoRepository = new ColetorHistoricoTipoRepository(_context));
         }
 
         public TransactionScope CreateTransactionScope()

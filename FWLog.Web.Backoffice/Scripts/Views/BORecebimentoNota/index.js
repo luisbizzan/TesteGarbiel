@@ -6,7 +6,7 @@
 
     $.validator.addMethod('validateDateOrPrazoInicial', function (value, ele) {
         var dataInicial = $("#Filter_DataInicial").val();
-
+        
         if (value != "")
             return true
         else if (dataInicial != "")
@@ -237,6 +237,8 @@
             { data: 'Atraso' },
             { data: 'Prazo' },
             { data: 'DataVencimento', width: '30px' },
+            { data: 'Fornecedor' },
+            { data: 'Status' },
             { data: 'Fornecedor' },
             { data: 'Status' },
             actionsColumn

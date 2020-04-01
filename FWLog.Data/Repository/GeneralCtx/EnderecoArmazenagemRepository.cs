@@ -11,26 +11,34 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public EnderecoArmazenagemRepository(Entities entities) : base(entities) { }
 
+        public IQueryable<EnderecoArmazenagem> Tabela()
+        {
+            return Entities.EnderecoArmazenagem;
+        }
+
         public List<EnderecoArmazenagemListaLinhaTabela> BuscarLista(DataTableFilter<EnderecoArmazenagemListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
         {
             totalRecords = Entities.EnderecoArmazenagem.Where(w => w.IdEmpresa == model.CustomFilter.IdEmpresa).Count();
 
             IQueryable<EnderecoArmazenagemListaLinhaTabela> query =
                 Entities.EnderecoArmazenagem.AsNoTracking().Where(w => w.IdEmpresa == model.CustomFilter.IdEmpresa &&
+                    (model.CustomFilter.Status.HasValue == false || w.Ativo == model.CustomFilter.Status) &&
                     (model.CustomFilter.Codigo.Equals(string.Empty) || w.Codigo.Contains(model.CustomFilter.Codigo)) &&
                     (model.CustomFilter.IdNivelArmazenagem.HasValue == false || w.IdNivelArmazenagem == model.CustomFilter.IdNivelArmazenagem.Value) &&
                     (model.CustomFilter.IdPontoArmazenagem.HasValue == false || w.IdPontoArmazenagem == model.CustomFilter.IdPontoArmazenagem.Value) &&
                     (model.CustomFilter.Status.HasValue == false || w.Ativo == model.CustomFilter.Status))
                 .Select(s => new EnderecoArmazenagemListaLinhaTabela
                 {
-                    IdEnderecoArmazenagem = s.IdEnderecoArmazenagem,
-                    NivelArmazenagem = s.NivelArmazenagem.Descricao,
-                    PontoArmazenagem = s.PontoArmazenagem.Descricao,
-                    Codigo = s.Codigo,
+                    
+                    IdEnderecoArmazenagem = s.IdEnderecoArmazenagem.ToString() ?? "-",
+                    NivelArmazenagem = s.NivelArmazenagem.Descricao ?? "-",
+                    PontoArmazenagem = s.PontoArmazenagem.Descricao ?? "-",
+                    Codigo = s.Codigo ?? "-",
                     Fifo = s.IsFifo ? "Sim" : "Não",
                     PontoSeparacao = s.IsPontoSeparacao ? "Sim" : "Não",
                     EstoqueMinimo = s.EstoqueMinimo ?? 0,
-                    Status = s.Ativo ? "Ativo" : "Inativo"
+                    Status = s.Ativo ? "Ativo" : "Inativo",
+                    Quantidade = s.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == s.IdEnderecoArmazenagem).FirstOrDefault().Quantidade
                 });
 
             totalRecordsFiltered = query.Count();
@@ -46,6 +54,75 @@ namespace FWLog.Data.Repository.GeneralCtx
         public EnderecoArmazenagem ConsultarPorNivelEPontoArmazenagem(long? nivel, long? pontoarmazenagem, long idEmpresa)
         {
             return Entities.EnderecoArmazenagem.FirstOrDefault(f => f.IdNivelArmazenagem == nivel && f.IdPontoArmazenagem == pontoarmazenagem && f.IdEmpresa == idEmpresa);
+        }
+
+        public List<EnderecoArmazenagem> PesquisarPorPontoArmazenagem(long idPontoArmazenagem)
+        {
+            return Entities.EnderecoArmazenagem.Where(w => w.IdPontoArmazenagem == idPontoArmazenagem).ToList();
+        }
+
+        public IList<EnderecoArmazenagemPesquisaModalListaLinhaTabela> BuscarListaModal(DataTableFilter<EnderecoArmazenagemPesquisaModalFiltro> filtros, out int registrosFiltrados, out int totalRegistros)
+        {
+            totalRegistros = Entities.EnderecoArmazenagem.Count(w => w.IdEmpresa == filtros.CustomFilter.IdEmpresa);
+
+            var query = (from e in Entities.EnderecoArmazenagem
+                         where e.IdEmpresa == filtros.CustomFilter.IdEmpresa &&
+                         (filtros.CustomFilter.Codigo.Equals(string.Empty) || e.Codigo.Contains(filtros.CustomFilter.Codigo)) &&
+                         (filtros.CustomFilter.IdPontoArmazenagem.HasValue == false || e.IdPontoArmazenagem == filtros.CustomFilter.IdPontoArmazenagem) &&
+                         e.Ativo == true &&
+                         e.IsPontoSeparacao == true &&
+                         !(from p in Entities.ProdutoEstoque where p.IdEnderecoArmazenagem == e.IdEnderecoArmazenagem select p.IdEnderecoArmazenagem).Any()
+                         select new EnderecoArmazenagemPesquisaModalListaLinhaTabela
+                         {
+                             IdEnderecoArmazenagem = e.IdEnderecoArmazenagem,
+                             Codigo = e.Codigo,
+                             EstoqueMaximo = e.EstoqueMaximo,
+                             EstoqueMinimo = e.EstoqueMinimo,
+                             Fifo = e.IsFifo ? "Sim" : "Não",
+                             LimitePeso = e.LimitePeso
+                         });
+
+            registrosFiltrados = query.Count();
+
+            query = query
+                .OrderBy(filtros.OrderByColumn, filtros.OrderByDirection)
+                .Skip(filtros.Start)
+                .Take(filtros.Length);
+
+            return query.ToList();
+        }
+
+        public List<EnderecoArmazenagem> PesquisarPorCodigo(string codigo, long idEmpresa)
+        {
+            return Entities.EnderecoArmazenagem.Where(w => w.Codigo.Equals(codigo) && w.IdEmpresa == idEmpresa).ToList();
+        }
+
+        public List<EnderecoArmazenagem> PesquisarPorCorredor(int corredor, long idEmpresa)
+        {
+            var query = (from e in Entities.EnderecoArmazenagem
+                         join l in Entities.LoteProdutoEndereco on e.IdEnderecoArmazenagem equals l.IdEnderecoArmazenagem
+                         where  e.Corredor.Equals(corredor) && e.IdEmpresa == idEmpresa && !e.IsPontoSeparacao
+                         select e);
+
+            return query.ToList();
+        }
+
+        public List<EnderecoProdutoListaLinhaTabela> PesquisarNivelPontoCorredor(int corredor, long ponto, long idEmpresa)
+        {
+            var query = (from e in Entities.EnderecoArmazenagem
+                         join l in Entities.LoteProdutoEndereco on e.IdEnderecoArmazenagem equals l.IdEnderecoArmazenagem
+                         join p in Entities.Produto on l.IdProduto equals p.IdProduto
+                         where e.IdPontoArmazenagem == ponto && e.Corredor.Equals(corredor) && l.IdEmpresa == idEmpresa
+                         select new EnderecoProdutoListaLinhaTabela
+                         {
+                             IdLote = l.IdLote,
+                             IdEnderecoArmazenagem = e.IdEnderecoArmazenagem,
+                             IdProduto = p.IdProduto,
+                             Referencia = p.Referencia,
+                             Codigo = e.Codigo,
+                         });
+
+            return query.ToList();
         }
     }
 }

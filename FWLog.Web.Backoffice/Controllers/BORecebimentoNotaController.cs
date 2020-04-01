@@ -1744,7 +1744,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 //Registrar conferência.
-                var conferenciaRegistro = await _conferenciaService.RegistrarConferencia(conferencia.Lote, conferencia.Produto, IdUsuario, inicioConferencia, idTipoConferencia, quantidadePorCaixa, quantidadeCaixa);
+                var conferenciaRegistro = await _conferenciaService.RegistrarConferencia(conferencia.Lote, conferencia.Produto, IdUsuario, inicioConferencia, idTipoConferencia, quantidadePorCaixa, quantidadeCaixa).ConfigureAwait(false);
 
                 #region Impressão Automática de Etiquetas
 

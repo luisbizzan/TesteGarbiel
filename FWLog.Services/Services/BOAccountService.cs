@@ -3,10 +3,14 @@ using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.GeneralCtx;
 using FWLog.Services.Interfaces;
+using FWLog.Services.Model;
+using FWLog.Services.Model.Usuario;
 using FWLog.Services.Templates;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Res = FWLog.Services.GlobalResources.General.GeneralStrings;
 
 namespace FWLog.Services.Services
@@ -16,13 +20,17 @@ namespace FWLog.Services.Services
     /// </summary>
     public class BOAccountService
     {
-        private IBOAccountContentProvider _boAccountContentProvider;
-        private UnitOfWork _uow;
+        private readonly IBOAccountContentProvider _boAccountContentProvider;
+        private readonly UnitOfWork _uow;
+        private readonly AccountService _accountService;
 
-        public BOAccountService(UnitOfWork uow, IBOAccountContentProvider contentProvider)
+        public BOAccountService(UnitOfWork uow, 
+            IBOAccountContentProvider contentProvider,
+            AccountService accountService)
         {
             _uow = uow;
             _boAccountContentProvider = contentProvider;
+            _accountService = accountService;
         }
 
         public void SendRecoverPasswordMail(string emailFrom, string emailTo, string url)

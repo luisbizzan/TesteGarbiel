@@ -25,7 +25,7 @@ namespace FWLog.Data.Models
         public long QuantidadeRecebida { get; set; }
 
         [Required]
-        public long Saldo { get; set; }
+        public int Saldo { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }

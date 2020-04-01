@@ -1,135 +1,228 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.Models;
+using FWLog.Services.Model.Usuario;
 using FWLog.Services.Services;
-using FWLog.Web.Api.GlobalResources;
-using Microsoft.AspNet.Identity.Owin;
+using FWLog.Web.Api.Models.Usuario;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Linq;
-using System;
-using FWLog.Web.Api.Models.Usuario;
-using FWLog.Data.Models;
-using FWLog.Web.Api.Helpers;
-using FWLog.Web.Api.Models;
+using System.Web.Http.Results;
 
 namespace FWLog.Web.Api.Controllers
 {
     public class UsuarioController : ApiBaseController
     {
-        private AccountService _accountService;
-        private UnitOfWork _unitOfWork;
+        private readonly AccountService _accountService;
+        private readonly UnitOfWork _unitOfWork;
+        private readonly ColetorHistoricoService _coletorHistoricoService;
 
-        public UsuarioController(UnitOfWork unitOfWork, AccountService accountService)
+        public UsuarioController(UnitOfWork unitOfWork, AccountService accountService, ColetorHistoricoService coletorHistoricoService)
         {
             _unitOfWork = unitOfWork;
             _accountService = accountService;
+            _coletorHistoricoService = coletorHistoricoService;
         }
 
-        [AllowAnonymous]
         [HttpPost]
-        [Route("api/v1/usuario/login")]
-        public async Task<IHttpActionResult> Login(LoginModelRequest loginRequest)
+        [AllowAnonymous]
+        [Route("api/v1/usuario/validar")]
+        public async Task<IHttpActionResult> ValidarUsuario(ValidarUsuarioRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
                 return ApiBadRequest(ModelState);
             }
 
-            SignInStatus signInResult = await SignInManager.PasswordSignInAsync(loginRequest.Usuario, loginRequest.Senha, false, shouldLockout: true);
+            ApplicationUser usuarioAplicacao = await UserManager.FindByNameAsync(requisicao.Codigo);
 
-            if (signInResult == SignInStatus.Failure)
+            if (usuarioAplicacao == null)
             {
-                return ApiBadRequest(AccountResource.InvalidUserOrPassword, loginRequest.Usuario);
+                return ApiNotFound("Usuário não cadastrado.");
             }
 
-            if (signInResult == SignInStatus.LockedOut)
+            PerfilUsuario usuarioPerfil = _unitOfWork.PerfilUsuarioRepository.GetByUserId(usuarioAplicacao.Id);
+
+            if (usuarioPerfil == null)
             {
-                return ApiForbidden(AccountResource.UserLockedOut, loginRequest.Usuario);
+                return ApiNotFound("Usuário não cadastrado.");
             }
 
-            ApplicationUser applicationUser = await UserManager.FindByNameAsync(loginRequest.Usuario);
-            IList<string> userPermissions = await UserManager.GetPermissionsAsync(applicationUser.Id);
-
-            if (userPermissions == null || !userPermissions.Any(w => w.Equals("RFAcessoLogin", StringComparison.OrdinalIgnoreCase)))
+            if (usuarioPerfil.Ativo == false)
             {
-                return ApiForbidden(AccountResource.UserPermissionDenied, loginRequest.Usuario);
+                return ApiForbidden("Usuário inativo.");
             }
 
-            var token = await _accountService.Token(loginRequest.Usuario, loginRequest.Senha);
-            var response = Mapper.Map<LoginModelResponse>(token);
-
-            var applicationSession = new ApplicationSession
+            if (usuarioPerfil.UsuarioEmpresas.Count == 0)
             {
-                DataLogin = DateTime.Now,
-                DataUltimaAcao = DateTime.Now,
-                IdApplication = 2,
-                IdAspNetUsers = applicationUser.Id
+                return ApiForbidden("Usuário sem empresa.");
+            }
+
+            return ApiOk();
+        }
+
+        private async Task<IHttpActionResult> ValidaLogin(LoginRequisicao requisicao, ApplicationUser usuarioAplicacao)
+        {
+            if (usuarioAplicacao == null)
+            {
+                return ApiNotFound("Usuário não cadastrado.");
+            }
+
+            PerfilUsuario usuarioPerfil = _unitOfWork.PerfilUsuarioRepository.GetByUserId(usuarioAplicacao.Id);
+
+            if (usuarioPerfil == null)
+            {
+                return ApiNotFound("Usuário não cadastrado.");
+            }
+
+            if (usuarioPerfil.Ativo == false)
+            {
+                return ApiForbidden("Usuário inativo.", requisicao.Codigo);
+            }
+
+            if (usuarioPerfil.UsuarioEmpresas.Count == 0)
+            {
+                return ApiForbidden("Usuário sem empresa.", requisicao.Codigo);
+            }
+
+            SignInStatus resultadoLogin = await SignInManager.PasswordSignInAsync(requisicao.Codigo, requisicao.Senha, false, shouldLockout: true);
+
+            if (resultadoLogin == SignInStatus.Failure)
+            {
+                return ApiBadRequest("Senha inválida.", requisicao.Codigo);
+            }
+
+            if (resultadoLogin == SignInStatus.LockedOut)
+            {
+                return ApiForbidden("Usuário bloqueado.", requisicao.Codigo);
+            }
+
+            IList<string> usuarioPermissoes = await UserManager.GetPermissionsAsync(usuarioAplicacao.Id);
+
+            if (usuarioPermissoes == null || !usuarioPermissoes.Any(w =>
+                w.Equals(Permissions.ColetorAcesso.AcessarRFArmazenagem, StringComparison.OrdinalIgnoreCase) ||
+                w.Equals(Permissions.ColetorAcesso.AcessarRFSeparacao, StringComparison.OrdinalIgnoreCase) ||
+                w.Equals(Permissions.ColetorAcesso.AcessarRFExpedicao, StringComparison.OrdinalIgnoreCase)))
+            {
+                return ApiForbidden("Usuário sem permissão.", requisicao.Codigo);
+            }
+
+            return ApiOk();
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("api/v1/usuario/login")]
+        public async Task<IHttpActionResult> Login(LoginRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            var usuarioAplicacao = await UserManager.FindByNameAsync(requisicao.Codigo);
+
+            var respostaAPI = await ValidaLogin(requisicao, usuarioAplicacao);
+
+            if (!(respostaAPI is OkResult))
+            {
+                return respostaAPI;
+            }
+
+            GerarTokenAcessoColetorResponse tokenResposta = await _accountService.GerarTokenAcessoColetor(requisicao.Codigo, requisicao.Senha, usuarioAplicacao.Id);
+
+            usuarioAplicacao.IdApplicationSession = tokenResposta.ApplicationSession.IdApplicationSession;
+            UserManager.Update(usuarioAplicacao);
+
+            var empresasUsuario = Mapper.Map<List<EmpresaModelResponse>>(tokenResposta.EmpresasUsuario);
+
+            var response = new LoginResposta
+            {
+                AccessToken = tokenResposta.Token.AccessToken,
+                TokenType = tokenResposta.Token.TokenType,
+                Empresas = empresasUsuario.OrderBy(o => o.Sigla).ToList()
             };
-
-            _unitOfWork.ApplicationSessionRepository.Add(applicationSession);
-            _unitOfWork.SaveChanges();
-
-            applicationUser.IdApplicationSession = applicationSession.IdApplicationSession;
-
-            UserManager.Update(applicationUser);
 
             return ApiOk(response);
         }
 
-        [HttpGet]
-        [Route("api/v1/account/permissions")]
-        public async Task<IHttpActionResult> UserPermissions(int idEmpresa)
-        {
-            IList<string> permissions = await UserManager.GetPermissionsAsync(User.Identity.GetUserId());
-
-            var permissionsResponse = new PermissionsModelResponse
-            {
-                Permissions = new List<string>(permissions)
-            };
-
-            return ApiOk(permissionsResponse);
-        }
-
-        [HttpGet]
-        [Route("api/v1/usuario/empresa")]
-        [ApplicationAuthorize(Permissions = Permissions.ColetorAcesso.Login)]
-        public async Task<IHttpActionResult> ObterEmpresas()
-        {
-            ICollection<Empresa> empresas = await _unitOfWork.EmpresaRepository.EmpresasPorUsuario(User.Identity.GetUserId()).ConfigureAwait(false);
-
-            var empresaResposta = Mapper.Map<ICollection<Empresa>, List<EmpresaResposta>>(empresas);
-           
-            return ApiOk(empresaResposta);
-        }
-
         [HttpPost]
-        [AllowAnonymous]
-        [Route("api/v1/account/logout")]
+        [Route("api/v1/usuario/logout")]
         public async Task<IHttpActionResult> Logout()
         {
-            ApplicationUser applicationUser = await UserManager.FindByNameAsync(User.Identity.Name);
-
-            if (applicationUser != null)
+            if (string.IsNullOrWhiteSpace(IdUsuario))
             {
-                if (applicationUser.IdApplicationSession.HasValue)
+                AuthenticationManager.SignOut();
+                return ApiOk();
+            }
+
+            ApplicationUser usuarioAplicacao = UserManager.FindById(IdUsuario);
+
+            if (usuarioAplicacao != null)
+            {
+                if (usuarioAplicacao.IdApplicationSession.HasValue)
                 {
-                    ApplicationSession applicationSession = _unitOfWork.ApplicationSessionRepository.GetById(applicationUser.IdApplicationSession.Value);
+                    ApplicationSession usuarioSessao = _unitOfWork.ApplicationSessionRepository.GetById(usuarioAplicacao.IdApplicationSession.Value);
 
-                    applicationSession.DataLogout = DateTime.Now;
-                    applicationSession.DataUltimaAcao = DateTime.Now;
+                    usuarioSessao.DataLogout = DateTime.Now;
+                    usuarioSessao.DataUltimaAcao = DateTime.Now;
 
-                    _unitOfWork.ApplicationSessionRepository.Update(applicationSession);
-                    _unitOfWork.SaveChanges();
+                    _unitOfWork.ApplicationSessionRepository.Update(usuarioSessao);
+                    await _unitOfWork.SaveChangesAsync();
 
-                    applicationUser.IdApplicationSession = null;
-                    UserManager.Update(applicationUser);
+                    usuarioAplicacao.IdApplicationSession = null;
+                    UserManager.Update(usuarioAplicacao);
                 }
             }
 
             AuthenticationManager.SignOut();
+            return ApiOk();
+        }
+
+        [HttpGet]
+        [Route("api/v1/usuario/permissao")]
+        public async Task<IHttpActionResult> BuscarPermissoes()
+        {
+            var resposta = new BuscarPermissoesResposta
+            {
+                IdUsuario = IdUsuario,
+                IdEmpresa = IdEmpresa,
+                Permissoes = await UserManager.GetPermissionsByIdEmpresaAsync(IdUsuario, IdEmpresa)
+            };
+
+            return ApiOk(resposta);
+        }
+
+        [HttpPost]
+        [Route("api/v1/usuario/validar-permissao")]
+        public async Task<IHttpActionResult> ValidaPermissao(ValidarPermissaoRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            var usuarioAplicacao = await UserManager.FindByNameAsync(requisicao.Codigo);
+
+            var respostaAPI = await ValidaLogin(requisicao, usuarioAplicacao);
+
+            if (!(respostaAPI is OkResult))
+            {
+                return respostaAPI;
+            }
+
+            var usuarioTemPermissao = await UserManager.ValidatePermissionByIdEmpresaAsync(usuarioAplicacao.Id, IdEmpresa, requisicao.Permissao);
+
+            if (!usuarioTemPermissao)
+            {
+                return ApiForbidden("Usuário sem permissão.", requisicao.Codigo);
+            }
+
             return ApiOk();
         }
     }

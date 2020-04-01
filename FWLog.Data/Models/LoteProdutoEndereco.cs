@@ -15,8 +15,7 @@ namespace FWLog.Data.Models
         public long IdEmpresa { get; set; }
 
         [Index]
-        [Required]
-        public long IdLote { get; set; }
+        public long? IdLote { get; set; }
 
         [Index]
         [Required]
@@ -27,7 +26,7 @@ namespace FWLog.Data.Models
         public long IdEnderecoArmazenagem { get; set; }
 
         [Required]
-        public long Quantidade { get; set; }
+        public int Quantidade { get; set; }
 
         [Required]
         public string IdUsuarioInstalacao { get; set; }
@@ -36,7 +35,7 @@ namespace FWLog.Data.Models
         public DateTime DataHoraInstalacao { get; set; }
 
         [Required]
-        public decimal Peso { get; set; }
+        public decimal PesoTotal { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
@@ -47,7 +46,10 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdProduto))]
         public virtual Produto Produto { get; set; }
 
-        [ForeignKey(nameof(IdProduto))]
+        [ForeignKey(nameof(IdEnderecoArmazenagem))]
         public virtual EnderecoArmazenagem EnderecoArmazenagem { get; set; }
+
+        [ForeignKey(nameof(IdUsuarioInstalacao))]
+        public virtual AspNetUsers AspNetUsers { get; set; }
     }
 }

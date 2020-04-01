@@ -165,6 +165,7 @@ namespace FWLog.AspNet.Identity
             public const string Editar = "EnderecoArmazenagemEditar";
             public const string Excluir = "EnderecoArmazenagemExcluir";
             public const string Visualizar = "EnderecoArmazenagemVisualizar";
+            public const string Imprimir = "EnderecoArmazenagemVisualizar";
 
             public EnderecoArmazenagem() : base(Display.FromString("Endereços de Armazenagem"))
             {
@@ -173,6 +174,7 @@ namespace FWLog.AspNet.Identity
                 Register(Editar, Display.FromString("Editar Endereço"));
                 Register(Excluir, Display.FromString("Excluir Endereço"));
                 Register(Visualizar, Display.FromString("Visualizar Endereço"));
+                Register(Imprimir, Display.FromString("Imprimir Endereço"));
             }
         }
 
@@ -186,13 +188,59 @@ namespace FWLog.AspNet.Identity
             }
         }
 
-        public class ColetorAcesso: PermissionGroupBuildItem
+        public class ColetorAcesso : PermissionGroupBuildItem
         {
-            public const string Login = "RFAcessoLogin";
+            public const string AcessarRFArmazenagem = "RFAcessoArmazenagem";
+            public const string AcessarRFSeparacao = "RFAcessoSeparacao";
+            public const string AcessarRFExpedicao = "RFAcessoExpedicao";
 
-            public ColetorAcesso() : base(Display.FromString("Acesso - Coletor"))
+            public ColetorAcesso() : base(Display.FromString("Coletor - Acesso"))
             {
-                Register(Login, Display.FromString("Acessar Coletor"));
+                Register(AcessarRFArmazenagem, Display.FromString("Acessar Armazenagem"));
+                Register(AcessarRFSeparacao, Display.FromString("Acessar Separação"));
+                Register(AcessarRFExpedicao, Display.FromString("Acessar Expedição"));
+            }
+        }
+
+        public class RFArmazenagem : PermissionGroupBuildItem
+        {
+            public const string InstalarProduto = "RFInstalarProduto";
+            public const string AjustarQuantidade = "RFAjustarQuantidade";
+            public const string RetirarApoio = "RFRetirarApoio";
+            public const string Rastreamento = "RFRastreamento";
+            public const string ConferenciaAlas = "RFConferenciaAlas";
+            public const string AbastecerPicking = "RFAbastecerPicking";
+            public const string Etiquetas = "RFArmazenagemEtiquetas";
+            public const string ConferenciaGaiola = "RFConferenciaGaiola";
+            public const string ConferenciaGaiolaManual = "RFConferenciaGaiolaManual";
+
+            public RFArmazenagem() : base(Display.FromString("Coletor - Armazenagem"))
+            {
+                Register(InstalarProduto, Display.FromString("Instalar Produto"));
+                Register(AjustarQuantidade, Display.FromString("Ajustar Quantidade"));
+                Register(RetirarApoio, Display.FromString("Retirar Produto"));
+                Register(Rastreamento, Display.FromString("Rastreamento"));
+                Register(ConferenciaAlas, Display.FromString("Conferência Alas"));
+                Register(AbastecerPicking, Display.FromString("Abastecer Picking"));
+                Register(Etiquetas, Display.FromString("Etiquetas"));
+                Register(ConferenciaGaiola, Display.FromString("Conferência"));
+                Register(ConferenciaGaiolaManual, Display.FromString("Conferência - Manual"));
+            }
+        }
+
+        public class RFEtiquetas : PermissionGroupBuildItem
+        {
+            public const string EtiquetaEndereco = "RFImprimirEtiquetaEndereco";
+            public const string EtiquetaLote = "RFImprimirEtiquetaLote";
+            public const string EtiquetaPicking = "RFImprimirEtiquetaPicking";
+            public const string EtiquetasProduto = "RFImprimirEtiquetasProduto";
+
+            public RFEtiquetas() : base(Display.FromString("Coletor - Etiquetas"))
+            {
+                Register(EtiquetaEndereco, Display.FromString("Etiqueta Endereço"));
+                Register(EtiquetaLote, Display.FromString("Etiqueta Lote"));
+                Register(EtiquetaPicking, Display.FromString("Etiqueta Picking"));
+                Register(EtiquetasProduto, Display.FromString("Etiquetas Produto"));
             }
         }
 
@@ -211,5 +259,72 @@ namespace FWLog.AspNet.Identity
                 Register(Excluir, Display.FromString("Excluir Perfil de Impressora"));
             }
         }
+
+        public class MotivoLaudo : PermissionGroupBuildItem
+        {
+            public const string Listar = "MotivoLaudoList";
+            public const string Cadastrar = "MotivoLaudoCreate";
+            public const string Editar = "MotivoLaudoEdit";
+
+            public MotivoLaudo() : base(Display.FromString("Motivo do Laudo"))
+            {
+                Register(Listar, Display.FromString("Listar Motivos do Laudo"));
+                Register(Cadastrar, Display.FromString("Cadastrar Motivos do Laudo"));
+                Register(Editar, Display.FromString("Editar Motivos do Laudo"));
+            }
+        }
+
+        public class Garantia : PermissionGroupBuildItem
+        {
+            public const string Listar = "GarantiaList";
+            public const string RegistrarRecebimento = "RecebimentoRegistrar";
+            //public const string Editar = "GarantiaEdit";
+            public const string ConferirGarantia = "ConferirGarantia";
+
+            public Garantia() : base(Display.FromString("Solicitação de Garantia"))
+            {
+                Register(Listar, Display.FromString("Listar Solicitações de Garantia"));
+                Register(RegistrarRecebimento, Display.FromString("Registrar Recebimento"));
+                Register(ConferirGarantia, Display.FromString("Conferir Garantia"));
+                //Register(Editar, Display.FromString("Editar Solicitações de Garantia"));
+            }
+        }
+
+        public class Produto : PermissionGroupBuildItem
+        {
+            public const string Listar = "ProdutoListar";
+            public const string Visualizar = "ProdutoVisualizar";
+            public const string Editar = "ProdutoEditar";
+
+            public Produto() : base(Display.FromString("Produtos"))
+            {
+                Register(Listar, Display.FromString("Listar produto"));
+                Register(Visualizar, Display.FromString("Visualizar produto"));
+                Register(Editar, Display.FromString("Editar produto"));
+            }
+        }
+
+        public class RelatoriosArmazenagem : PermissionGroupBuildItem
+        {
+            public const string RelatorioRastreabilidadeLote = "RelatorioRastreabilidadeLote";
+            public const string RelatorioLoteMovimentacao = "RelatorioLoteMovimentacao";
+
+            public RelatoriosArmazenagem() : base(Display.FromString("Armazenagem - Relatórios"))
+            {
+                Register(RelatorioRastreabilidadeLote, Display.FromString("Rastreabilidade de Lotes"));
+                Register(RelatorioLoteMovimentacao, Display.FromString("Movimentações de Lotes"));
+            }
+        }
+
+        public class HistoricoAcaoUsuario : PermissionGroupBuildItem
+        {
+            public const string Listar = "HistoricoAcaoUsuarioListar";
+
+            public HistoricoAcaoUsuario() : base(Display.FromString("Histórico de Ações do Usuário"))
+            {
+                Register(Listar, Display.FromString("Listar Histórico"));
+            }
+        }
+
     }
 }

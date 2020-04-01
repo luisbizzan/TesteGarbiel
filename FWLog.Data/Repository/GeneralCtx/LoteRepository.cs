@@ -134,5 +134,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                        w.NotaFiscal.Empresa.EmpresaConfig.CNPJConferenciaAutomatica == w.NotaFiscal.Fornecedor.CNPJ)
                 .ToListAsync();
         }
+
+        public Lote PesquisarPorLoteEmpresa(long idLote, long idEmpresa)
+        {
+            return Entities.Lote.Where(w => w.IdLote == idLote && w.NotaFiscal.IdEmpresa == idEmpresa).FirstOrDefault();
+        }
     }
 }

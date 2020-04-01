@@ -1,6 +1,13 @@
-﻿(function () {    
+﻿(function () {
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
+            {
+                action: 'imprimir',
+                icon: 'fa fa-print',
+                text: "Imprimir Etiqueta Endereço",
+                attrs: { 'data-id': full.IdEnderecoArmazenagem, 'action': 'imprimir' },
+                visible: view.imprimirVisivel
+            },
             {
                 action: 'details',
                 href: view.urlDetalhes + '/' + full.IdEnderecoArmazenagem,
@@ -18,6 +25,28 @@
             }
         ];
     });
+
+    var iconeStatus = function (data, type, row) {
+        if (type === 'display') {
+            var nomeCor,
+                codigo = row.Codigo || '',
+                tooltipText;
+
+            if (row.Quantidade === 0) {
+                nomeCor = 'verde';
+                tooltipText = 'Enderço disponível';
+            }
+            else {
+                nomeCor = 'vermelho',
+                codigo = row.Codigo || '',
+                tooltipText = 'Endereço Ocupado';
+            }
+
+            return `<i class="fa fa-circle icone-status-${nomeCor}" title = "${tooltipText}" data-toggle = "tooltip"></i>${codigo}`;
+        }
+
+        return data;
+    };
 
     var options = {
         ajax: {
@@ -40,10 +69,11 @@
         columns: [
             { data: 'NivelArmazenagem' },
             { data: 'PontoArmazenagem' },
-            { data: 'Codigo' },
+            { data: 'Codigo', render: iconeStatus  },
             { data: 'Fifo' },
-            { data: 'PontoSeparacao' },
+            { data: 'PontoSeparacao' }, 
             { data: 'EstoqueMinimo' },
+            { data: 'Quantidade' },
             { data: 'Status' },
             actionsColumn
         ]
@@ -86,7 +116,20 @@
         $("#Filtros_DescricaoPontoArmazenagem").val("");
         $("#Filtros_IdPontoArmazenagem").val("");
     });
-})();
+
+    $("#dataTable").on('click', "[action='imprimir']", imprimirEtiquetaEndereco);
+
+    function imprimirEtiquetaEndereco() {
+        let id = $(this).data("id");
+
+        let $modal = $("#confirmarImpressao");
+
+        $modal.load(HOST_URL + CONTROLLER_PATH + "ConfirmarImpressao?IdEnderecoArmazenagem=" + id, function () {
+            $modal.modal();
+        });
+    }
+
+}) ();
 
 function selecionarNivelArmazenagem(idNivelArmazenagem, descricao) {
     $("#Filtros_DescricaoNivelArmazenagem").val(descricao);
@@ -100,4 +143,42 @@ function selecionarPontoArmazenagem(idPontoArmazenagem, descricao) {
     $("#Filtros_IdPontoArmazenagem").val(idPontoArmazenagem);
     $("#modalPesquisaPontoArmazenagem").modal("hide");
     $("#modalPesquisaPontoArmazenagem").empty();
+}
+
+//Recebendo o id do endereço no parâmetro 'acao'.
+function imprimir(acao, id) {
+    var idImpressora = $("#IdImpressora").val();
+
+    var dados = $("#recebimentoEtiquetaIndividualPersonalizada").serializeArray();
+    dados.push({ name: "IdImpressora", value: idImpressora });
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "ImprimirEtiqueta",
+        method: "POST",
+        cache: false,
+        data: {
+            IdImpressora: idImpressora,
+            IdEnderecoArmazenagem: acao
+        },
+        success: function (result) {
+            if (result.Success) {
+                PNotify.success({ text: result.Message });
+
+                fechaModal();
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+        },
+        error: function (data) {
+            PNotify.error({ text: "Ocorreu um erro na impressão." });
+            NProgress.done();
+        }
+    });
+}
+
+function fechaModal() {
+    var $modal = $("#modalImpressoras");
+
+    $modal.modal("hide");
+    $modal.empty();
 }

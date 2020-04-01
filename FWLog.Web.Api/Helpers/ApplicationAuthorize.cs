@@ -24,14 +24,14 @@ namespace FWLog.Web.Api.Helpers
 
         protected override void HandleUnauthorizedRequest(HttpActionContext actionContext)
         {
-            var apiError = new ApiError
+            var apiError = new ApiErro
             {
-                Message = GeneralStrings.AuthorizationDenied
+                Mensagem = GeneralStrings.AuthorizationDenied
             };
 
-            var apiErrorResponse = new ApiErrorModelResponse
+            var apiErrorResponse = new ApiErroResposta
             {
-                Errors = new List<ApiError> { apiError }
+                Erros = new List<ApiErro> { apiError }
             };
 
             var httpResponseMessage = new HttpResponseMessage
@@ -41,10 +41,9 @@ namespace FWLog.Web.Api.Helpers
             };
 
             httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
             actionContext.Response = httpResponseMessage;
 
-            var logWarnMessage = string.Format("{0}: {1}", apiError.Message, actionContext.Request.ToString());
+            var logWarnMessage = string.Format("{0}: {1}", apiError.Mensagem, actionContext.Request.ToString());
             LogHelper.Warn(logWarnMessage);
         }
 
@@ -57,29 +56,28 @@ namespace FWLog.Web.Api.Helpers
                 return false;
             }
 
-            SetPrincipal(actionContext);
-
-            return AuthorizeValidationHelper.UserHasPermission(actionContext, Permissions);
-        }
-
-        private void SetPrincipal(HttpActionContext actionContext)
-        {
             IPrincipal user = actionContext.ControllerContext.RequestContext.Principal;
 
             if (user is ClaimsPrincipal == false)
             {
-                return;
+                return false;
             }
 
             string userId = user.Identity.GetUserId();
-
             var userManager = actionContext.Request.GetOwinContext().GetUserManager<WebApiUserManager>();
+            ApplicationUser usuarioAplicacao = userManager.FindById(userId);
+
+            if(usuarioAplicacao.IdApplicationSession.HasValue == false)
+            {
+                return false;
+            }
+
             IList<string> permissions = userManager.GetPermissions(userId);
-
             var customUser = new ApplicationClaimsPrincipal((ClaimsPrincipal)user, permissions);
-
             actionContext.ControllerContext.RequestContext.Principal = customUser;
             Thread.CurrentPrincipal = customUser;
+
+            return AuthorizeValidationHelper.UserHasPermission(actionContext, Permissions);
         }
     }
 }

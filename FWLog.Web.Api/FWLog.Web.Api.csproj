@@ -192,7 +192,13 @@
     <Compile Include="App_Start\NinjectDependencyResolver.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\ApiBaseController.cs" />
+    <Compile Include="Controllers\ArmazenagemController.cs" />
+    <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
+    <Compile Include="Controllers\EtiquetaController.cs" />
+    <Compile Include="Controllers\ClienteController.cs" />
+    <Compile Include="Controllers\ImpressoraController.cs" />
     <Compile Include="Controllers\LoteController.cs" />
+    <Compile Include="Controllers\RepresentanteController.cs" />
     <Compile Include="Controllers\UnidadeMedidaController.cs" />
     <Compile Include="Controllers\FreteTipoController.cs" />
     <Compile Include="Controllers\ProdutoController.cs" />
@@ -209,13 +215,51 @@
     </Compile>
     <Compile Include="Helpers\ApiErrorBuilder.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
-    <Compile Include="Models\EmpresaResposta.cs" />
+    <Compile Include="Mapping\ProdutoModelResponseProfile.cs" />
+    <Compile Include="Models\Armazenagem\FinalizarConferenciaModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\EnderecosProdutosResposta.cs" />
+    <Compile Include="Models\Armazenagem\ValidarProdutoConferirModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\AjustarVolumeLoteModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ConsultaDetalhesEnderecoArmazenagemResposta.cs" />
+    <Compile Include="Models\Armazenagem\ConsultaDetalhesVolumeInformadoResposta.cs" />
+    <Compile Include="Models\Armazenagem\InstalarVolumeLoteModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\NiveisPontosArmazenagemPorCorredorResposta.cs" />
+    <Compile Include="Models\Armazenagem\RetirarVolumeEnderecoModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidarEnderecoAbastecerModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidarEnderecoAjusteModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidarProdutoAjusteModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidarProdutoRetirarModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\AbastecerPickingModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidarQuantidadeeAbastecerModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidateLoteAbastecerModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidateLoteAjusteModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidateLoteRetirarModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidarEnderecoInstalacaoModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidarLoteProdutoInstalacaoModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\ValidarQuantidadeInstalacaoModelRequisicao.cs" />
+    <Compile Include="Models\Armazenagem\NivelPontoArmazenagemPorCorredorResposta.cs" />
+    <Compile Include="Models\EnderecoArmazenagem\EnderecoArmazenagemResposta.cs" />
+    <Compile Include="Models\EnderecoArmazenagem\EnderecosArmazenagemResposta.cs" />
+    <Compile Include="Models\EnderecoArmazenagem\PesquisarEnderecoArmazenagemPorIdResposta.cs" />
+    <Compile Include="Models\Etiqueta\ImprimirEtiquetaEnderecoRequisicao.cs" />
+    <Compile Include="Models\Etiqueta\ImprimirEtiquetaLoteRequisicao.cs" />
+    <Compile Include="Models\Etiqueta\ImprimirEtiquetaPickingRequisicao.cs" />
+    <Compile Include="Models\Etiqueta\ImprimirEtiquetaProdutoRequisicao.cs" />
+    <Compile Include="Models\Etiqueta\ValidarEnderecoPickingRequisicao.cs" />
+    <Compile Include="Models\Impressora\ImpressoraResposta.cs" />
+    <Compile Include="Models\Impressora\ImpressorasResposta.cs" />
+    <Compile Include="Models\Lote\BuscaProdutoNoLoteResposta.cs" />
+    <Compile Include="Models\Lote\BuscarLotePorIdResposta.cs" />
+    <Compile Include="Models\Produto\PesquisarPorCodigoBarrasReferenciaResposta.cs" />
     <Compile Include="Models\Produto\ProdutoReservadoModelRequest.cs" />
-    <Compile Include="Models\Usuario\PermissionsModelResponse.cs" />
+    <Compile Include="Models\Usuario\BuscarPermissoesResposta.cs" />
+    <Compile Include="Models\Usuario\ValidarPermissaoRequisicao.cs" />
     <Compile Include="Models\Usuario\RecoverPasswordModelRequest.cs" />
-    <Compile Include="Models\Usuario\LoginModelResponse.cs" />
-    <Compile Include="Models\Usuario\LoginModelRequest.cs" />
-    <Compile Include="Models\ApiErrorModelResponse.cs" />
+    <Compile Include="Models\Usuario\LoginResposta.cs" />
+    <Compile Include="Models\Usuario\LoginRequisicao.cs" />
+    <Compile Include="Models\ApiErroResposta.cs" />
+    <Compile Include="Models\Usuario\ValidarUsuarioRequisicao.cs" />
+    <Compile Include="Models\Usuario\ValidarUsuarioResposta.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Helpers\ApplicationAuthorize.cs" />
     <Compile Include="App_Start\AutoMapperConfig.cs" />
@@ -236,7 +280,6 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\web.config" />
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Web.Debug.config">
@@ -248,11 +291,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Security\" />
-    <Folder Include="Views\FreteTipo\" />
-    <Folder Include="Views\Lote\" />
-    <Folder Include="Views\ProdutoEmpresa\" />
-    <Folder Include="Views\Teste\" />
+    <Folder Include="Models\Coletor\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GlobalResources\AccountResource.resx">

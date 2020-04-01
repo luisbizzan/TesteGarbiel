@@ -261,4 +261,7 @@
   <data name="RelatoriosMenuItem" xml:space="preserve">
     <value>Relatórios</value>
   </data>
+  <data name="GarantiaMenuItem" xml:space="preserve">
+    <value>Garantia</value>
+  </data>
 </root>

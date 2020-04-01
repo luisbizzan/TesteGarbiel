@@ -91,7 +91,11 @@ namespace FWLog.Services.Services
                     {
                         _uow.TransportadoraRepository.Add(transportadora);
                     }
-
+                    else
+                    {
+                        _uow.TransportadoraRepository.Update(transportadora);
+                    }
+                
                     _uow.SaveChanges();
                 }
                 catch (Exception ex)

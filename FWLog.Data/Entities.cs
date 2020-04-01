@@ -55,7 +55,6 @@ namespace FWLog.Data
         public virtual DbSet<LoteDivergenciaStatus> LoteDivergenciaStatus { get; set; }
         public virtual DbSet<LoteConferencia> LoteConferencia { get; set; }
         public virtual DbSet<LogEtiquetagem> LogEtiquetagem { get; set; }
-        public virtual DbSet<ProdutoEndereco> ProdutoEndereco { get; set; }
         public virtual DbSet<ProdutoEstoque> ProdutoEstoque { get; set; }
         public virtual DbSet<QuarentenaHistorico> QuarentenaHistorico { get; set; }
         public virtual DbSet<ImpressaoItem> ImpressaoItem { get; set; }
@@ -65,7 +64,23 @@ namespace FWLog.Data
         public virtual DbSet<IntegracaoTipo> IntegracaoTipo { get; set; }
         public virtual DbSet<IntegracaoEntidade> IntegracaoEntidade { get; set; }
         public virtual DbSet<LoteProduto> LoteProduto { get; set; }
+        public virtual DbSet<LoteMovimentacao> LoteMovimentacao { get; set; }
+        public virtual DbSet<LoteMovimentacaoTipo> LoteMovimentacaoTipo { get; set; }
+        public virtual DbSet<Cliente> Cliente { get; set; }
+        public virtual DbSet<Garantia> Garantia { get; set; }
+        public virtual DbSet<GarantiaConferenciaTipo> GarantiaConferenciaTipo { get; set; }
+        public virtual DbSet<GarantiaProduto> GarantiaProduto { get; set; }
+        public virtual DbSet<GarantiaQuarentena> GarantiaQuarentena { get; set; }
+        public virtual DbSet<GarantiaQuarentenaHis> GarantiaQuarentenaHist { get; set; }
+        public virtual DbSet<GarantiaQuarentenaStatus> GarantiaQuarentenaStatus { get; set; }
+        public virtual DbSet<GarantiaStatus> GarantiaStatus { get; set; }
+        public virtual DbSet<MotivoLaudo> MotivoLaudo { get; set; }
+        public virtual DbSet<Representante> Representante { get; set; }
+        public virtual DbSet<LoteProdutoEndereco> LoteProdutoEndereco { get; set; }
         public virtual DbSet<IntegracaoLog> IntegracaoLog { get; set; }
+        public virtual DbSet<ColetorAplicacao> ColetorAplicacao { get; set; }
+        public virtual DbSet<ColetorHistoricoTipo> ColetorHistoricoTipo { get; set; }
+        public virtual DbSet<ColetorHistorico> ColetorHistorico { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 

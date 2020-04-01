@@ -582,7 +582,6 @@ namespace FWLog.AspNet.Identity
             return this.db.SaveChangesAsync();
         }
 
-
         private void ValidateRoles(IEnumerable<string> roles)
         {
             if (!roles.Any())
@@ -596,6 +595,30 @@ namespace FWLog.AspNet.Identity
             {
                 throw new ArgumentException("One or more roles do not belong to the current application.", nameof(roles));
             }
+        }
+
+        public async Task<bool> ValidatePermissionByIdEmpresaAsync(ApplicationUser user, long idEmpresa, string permission)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            IList<string> roleIds = db.UserRoles.Where(x => x.UserId == user.Id && x.CompanyId == idEmpresa).Select(s => s.RoleId).ToList();
+
+            var query = db.Users
+                .Where(x => x.Id == user.Id && x.ApplicationId == this.appId)
+                .SelectMany(x => x.Permissions.Select(y => y.Permission.Name))
+                .Union(
+                    db.Roles
+                    .Where(w => roleIds.Contains(w.Id))
+                    .SelectMany(x => x.RolePermissions.Select(y => y.Permission.Name))
+                )
+                .Where(a => a == permission);
+
+            var userPermission = await query.FirstOrDefaultAsync();
+
+            return userPermission != null;
         }
     }
 }

@@ -56,6 +56,7 @@ namespace FWLog.Services.Services
 
             var where = " WHERE TGFCAB.TIPMOV = 'C' AND TGFCAB.STATUSNOTA <> 'L' AND (TGFCAB.AD_STATUSREC = 0 OR TGFCAB.AD_STATUSREC IS NULL)";
             var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
+
             List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalIntegracao>(where, inner);
 
             List<FreteTipo> tiposFrete = _uow.FreteTipoRepository.RetornarTodos();
@@ -361,6 +362,36 @@ namespace FWLog.Services.Services
             }
         }
 
+        public async Task RegistrarRecebimentoNotaFiscalGarantia(long idNotaFiscal, string userId, string observacao, string informacaoTransportadora)
+        {
+            var garantiaService = new GarantiaService(_uow);
+            using (TransactionScope transactionScope = _uow.CreateTransactionScope())
+            {
+                var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
+
+                await VerificarNotaFiscalCancelada(notafiscal.CodigoIntegracao);
+
+                Garantia garantia = _uow.GarantiaRepository.BuscarGarantiaPorIdNotaFiscal(idNotaFiscal);
+
+                if (garantia != null)
+                {
+                    throw new BusinessException(string.Format("Já existe uma garantia criada para a Nota Fiscal {0}, portanto o recebimento não pode ser efetuado", idNotaFiscal));
+                }
+
+                if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
+                {
+                    await AtualizarNotaFiscalIntegracao(notafiscal, LoteStatusEnum.Recebido);
+                }
+
+                garantiaService.CriarRecebimentoGarantia(idNotaFiscal, userId, observacao, informacaoTransportadora);
+
+                notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.Recebida;
+
+                _uow.SaveChanges();
+                transactionScope.Complete();
+            }
+        }
+
         public async Task<long> RegistrarRecebimentoNotaFiscalDiv(long idEmpresa,
                                                             string idUsuarioRecebimento,
                                                             string chaveAcesso,
@@ -396,6 +427,7 @@ namespace FWLog.Services.Services
                 return idNotaFiscalRecebimento;
             }
         }
+
         public async Task ReceberNotaFiscalAutomatico(string userId)
         {
             List<NotaFiscal> notasfiscais = await _uow.NotaFiscalRepository.ConsultarProcessamentoAutomatico();

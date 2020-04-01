@@ -53,7 +53,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.Printer.Where(w => w.CompanyId == idEmpresa && w.Ativa == true).OrderBy(o => o.Name).ToList();
         }
 
-        public List<Printer> ObterPorPerfil (long idPerfilImpressora, ImpressaoItemEnum impressaoItem)
+        public List<Printer> ObterPorPerfil(long idPerfilImpressora, ImpressaoItemEnum impressaoItem)
         {
             return Entities.PerfilImpressoraItem.Where(w => w.IdPerfilImpressora == idPerfilImpressora && w.IdImpressaoItem == impressaoItem && w.PerfilImpressora.Ativo == true).Select(s => s.Impressora).ToList();
         }
