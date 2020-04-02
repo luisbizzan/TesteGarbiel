@@ -974,14 +974,11 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task FinalizarConferencia(long idEnderecoArmazenagem, long? idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
+        public async Task FinalizarConferencia(long idEnderecoArmazenagem, long idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
         {
             var volume = ValidarEnderecoConferir(idEnderecoArmazenagem);
 
-            if (idProduto != null)
-            {
-                ValidarProdutoConferir(idEnderecoArmazenagem, idProduto.Value);
-            }
+            ValidarProdutoConferir(idEnderecoArmazenagem, idProduto);
 
             if (quantidade != volume.Quantidade)
             {

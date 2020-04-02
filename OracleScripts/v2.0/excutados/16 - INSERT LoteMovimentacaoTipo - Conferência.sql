@@ -4,3 +4,5 @@ ALTER TABLE "LoteMovimentacaoTipo" ENABLE ALL TRIGGERS;
 COMMIT;
 
 SELECT * FROM "LoteMovimentacaoTipo";
+
+-- Remover TRIGGER e SEQUENCE

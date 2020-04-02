@@ -6,6 +6,7 @@ using FWLog.Web.Api.Models.Armazenagem;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -172,10 +173,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -192,10 +189,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -211,10 +204,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
 
             return ApiOk();
@@ -243,10 +232,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
         }
 
         [Route("api/v1/armazenagem/retirar")]
@@ -260,10 +245,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
 
             return ApiOk();
@@ -459,10 +440,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -481,10 +458,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
 
             return ApiOk();
@@ -581,7 +554,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                await _armazenagemService.FinalizarConferencia(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto, requisicao?.Quantidade ?? 0, IdEmpresa, IdUsuario);
+                await _armazenagemService.FinalizarConferencia(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0, requisicao?.Quantidade ?? 0, IdEmpresa, IdUsuario);
             }
             catch (BusinessException ex)
             {
@@ -616,6 +589,8 @@ namespace FWLog.Web.Api.Controllers
 
                 resposta.Lista.Add(itemResposta);
             }
+
+            resposta.Lista = resposta.Lista.OrderBy(o => o.NivelArmazenagemDescricao).ThenBy(t => t.PontoArmazenagemDescricao).ToList();
 
             return ApiOk(resposta);
         }
