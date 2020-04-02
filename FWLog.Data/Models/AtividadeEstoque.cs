@@ -17,6 +17,9 @@ namespace FWLog.Data.Models
         public long IdEnderecoArmazenagem { get; set; }
         [Index]
         [Required]
+        public long IdProduto { get; set; }
+        [Index]
+        [Required]
         public AtividadeEstoqueTipoEnum IdAtividadeEstoqueTipo { get; set; }
         public int QuantidadeInicial { get; set; }
         public int QuantidadeFinal { get; set; }
@@ -30,6 +33,9 @@ namespace FWLog.Data.Models
         [Index]
         [Required]
         public bool Finalizado { get; set; }
+
+        [ForeignKey(nameof(IdProduto))]
+        public virtual Produto Produto { get; set; }
 
         [ForeignKey(nameof(IdEnderecoArmazenagem))]
         public virtual EnderecoArmazenagem EnderecoArmazenagem { get; set; }
