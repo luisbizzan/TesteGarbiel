@@ -107,6 +107,17 @@ namespace FWLog.Data.Repository.GeneralCtx
             return query.ToList();
         }
 
+        public List<long> BuscarIdsPorCorredorInicialEFinal(int corredorInicial, int  corredorFinal, long idEmpresa)
+        {
+            var range = Enumerable.Range(corredorInicial, corredorFinal);
+
+            var query = (from e in Entities.EnderecoArmazenagem
+                         where range.Contains(e.Corredor) && e.IdEmpresa == idEmpresa && !e.IsPontoSeparacao
+                         select e.IdEnderecoArmazenagem).ToList();
+
+            return query;
+        }
+
         public List<EnderecoProdutoListaLinhaTabela> PesquisarNivelPontoCorredor(int corredor, long ponto, long idEmpresa)
         {
             var query = (from e in Entities.EnderecoArmazenagem

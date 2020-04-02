@@ -197,6 +197,7 @@
     <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\ImpressoraController.cs" />
+    <Compile Include="Controllers\AtividadeEstoqueController.cs" />
     <Compile Include="Controllers\LoteController.cs" />
     <Compile Include="Controllers\RepresentanteController.cs" />
     <Compile Include="Controllers\HistoricoColetorController.cs" />

@@ -3,21 +3,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
 {
-    public enum ColetorHistoricoTipoEnum
+    public enum AtividadeEstoqueTipoEnum
     {
-        InstalarProduto = 1,
-        RetirarProduto = 2,
-        AjustarQuantidade = 3,
-        ConferirEndereco = 4,
-        ImprimirEtiqueta = 5,
+        Desconhecido = 0,
+        ConferenciaEndereco = 1,
+        ConferenciaProdutoForaLinha = 2,
+        AbastecerPicking = 3,
     }
 
-    public class ColetorHistoricoTipo
+    public class AtividadeEstoqueTipo
     {
         [Key]
         [Index(IsUnique = true)]
         [Required]
-        public ColetorHistoricoTipoEnum IdColetorHistoricoTipo { get; set; }
+        public AtividadeEstoqueTipoEnum IdAtividadeEstoqueTipo { get; set; }
+
         [StringLength(50)]
         [Index(IsUnique = true)]
         [Required]
