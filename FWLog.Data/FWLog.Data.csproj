@@ -133,6 +133,7 @@
     <Compile Include="Models\FilterCtx\RastreabilidadeLoteProdutoListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\RelatorioTotalizacaoAlasListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\TransportadoraPesquisaModalFiltro.cs" />
+    <Compile Include="Models\AtividadeEstoqueTipo.cs" />
     <Compile Include="Models\Garantia.cs" />
     <Compile Include="Models\GarantiaConferenciaTipo.cs" />
     <Compile Include="Models\GarantiaProduto.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="Models\LoteProduto.cs" />
     <Compile Include="Models\MotivoLaudo.cs" />
     <Compile Include="Models\IntegracaoLog.cs" />
+    <Compile Include="Models\AtividadeEstoque.cs" />
     <Compile Include="Models\NotaFiscalRecebimento.cs" />
     <Compile Include="Models\PerfilImpressora.cs" />
     <Compile Include="Models\PerfilImpressoraItem.cs" />
@@ -246,6 +248,8 @@
     <Compile Include="Repository\GeneralCtx\ColetorAplicacaoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ColetorHistoricoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ColetorHistoricoTipoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\AtividadeEstoqueRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\AtividadeEstoqueTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaConferenciaTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaQuarentenaHisRepository.cs" />
