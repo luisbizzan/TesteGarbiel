@@ -7,6 +7,7 @@ using FWLog.Data.Repository.CommonCtx;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx
@@ -150,6 +151,27 @@ namespace FWLog.Data.Repository.GeneralCtx
         public Garantia BuscarGarantiaPorIdNotaFiscal(long idNotaFiscal)
         {
             return Entities.Garantia.FirstOrDefault(x => x.IdNotaFiscal == idNotaFiscal);
+        }
+
+        public void TestSankya()
+        {
+            int garantia = 0;
+
+            using (var conn = new OracleConnection(ConfigurationManager.ConnectionStrings["Sankya"].ToString()))
+            {
+               
+                    conn.Open();
+
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    select COUNT(1) from tgfite
+                    ";
+                    garantia = conn.QuerySingle<int>(sQuery, new { });
+                }
+
+                //conn.Close();
+            }
         }
     }
 }

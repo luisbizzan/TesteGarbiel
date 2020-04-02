@@ -22,7 +22,7 @@ using Newtonsoft.Json;
 namespace FWLog.Web.Backoffice.Controllers
 {
     public class GarantiaController : BOBaseController
-    { 
+    {
         private readonly UnitOfWork _uow;
         private readonly GarantiaService _garantiaService;
         private readonly NotaFiscalService _notaFiscalService;
@@ -30,9 +30,9 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly ConferenciaService _conferenciaService;
 
         public GarantiaController(
-            UnitOfWork uow, 
-            GarantiaService garantiaService, 
-            NotaFiscalService notaFiscalService, 
+            UnitOfWork uow,
+            GarantiaService garantiaService,
+            NotaFiscalService notaFiscalService,
             ApplicationLogService applicationLogService,
             ConferenciaService conferenciaService)
         {
@@ -46,6 +46,9 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Garantia.Listar)]
         public ActionResult Index()
         {
+            //TESTE
+            _uow.GarantiaRepository.TestSankya();
+
             var model = new GarantiaListViewModel
             {
                 Filter = new GarantiaFilterViewModel()
@@ -360,7 +363,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,
-                    Message =  mensagem
+                    Message = mensagem
                 });
             }
             catch (Exception e)
@@ -385,7 +388,6 @@ namespace FWLog.Web.Backoffice.Controllers
             //Valida o Garantia.
             if (garantia == null)
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Garantia não encontrado. Por favor, tente novamente!");
-
 
             //Captura o Usuário que está iniciando a conferência.
             var usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId());
@@ -436,7 +438,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public async Task<ActionResult> ObterDadosReferenciaConferenciaGarantia(string codigoBarrasOuReferencia, long idGarantia, long idNotaFiscal)
         {
             //Validações do produto.
-            var conferencia = _conferenciaService.ValidarProdutoGarantia(idGarantia,idNotaFiscal, codigoBarrasOuReferencia, IdEmpresa);
+            var conferencia = _conferenciaService.ValidarProdutoGarantia(idGarantia, idNotaFiscal, codigoBarrasOuReferencia, IdEmpresa);
 
             if (!conferencia.Sucesso)
             {
@@ -458,7 +460,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var model = new GarantiaEntradaConferenciaViewModel
             {
-
                 Descricao = conferencia.Produto.Descricao,
                 Fabricante = conferencia.Produto.NomeFabricante,
                 Unidade = conferencia.Produto.UnidadeMedida.Sigla
