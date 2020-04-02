@@ -113,8 +113,10 @@ namespace FWLog.AspNet.Identity
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema(ConfigurationManager.AppSettings["DatabaseSchema"]);
-            modelBuilder.Entity<UserRole>().HasKey(k => new { k.UserId, k.RoleId, k.CompanyId });
+            
             base.OnModelCreating(modelBuilder);
+            
+            modelBuilder.Entity<UserRole>().HasKey(k => new { k.UserId, k.RoleId, k.CompanyId });
         }
 
         static ApplicationDbContext()
