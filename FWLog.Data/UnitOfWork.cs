@@ -76,6 +76,18 @@ namespace FWLog.Data
         private ColetorAplicacaoRepository _coletorAplicacaoRepository;
         private ColetorHistoricoRepository _coletorHistoricoRepository;
         private ColetorHistoricoTipoRepository _coletorHistoricoTipoRepository;
+        private AtividadeEstoqueRepository _atividadeEstoqueRepository;
+        private AtividadeEstoqueTipoRepository _atividadeEstoqueTipoRepository;
+
+        public AtividadeEstoqueTipoRepository AtividadeEstoqueTipoRepository
+        {
+            get => _atividadeEstoqueTipoRepository ?? (_atividadeEstoqueTipoRepository = new AtividadeEstoqueTipoRepository(_context));
+        }
+
+        public AtividadeEstoqueRepository AtividadeEstoqueRepository
+        {
+            get => _atividadeEstoqueRepository ?? (_atividadeEstoqueRepository = new AtividadeEstoqueRepository(_context));
+        }
 
         public LoteProdutoEnderecoRepository LoteProdutoEnderecoRepository
         {
