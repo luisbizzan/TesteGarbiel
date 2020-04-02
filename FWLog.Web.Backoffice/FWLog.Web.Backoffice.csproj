@@ -291,6 +291,7 @@
     <Compile Include="Models\ArmazenagemCtx\RelatorioRastreabilidadeLoteMovimentacaoViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\RelatorioRastreabilidadeLoteProdutoViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\RelatorioRastreabilidadeLoteViewModel.cs" />
+    <Compile Include="Models\ArmazenagemCtx\RelatorioTotalizacaoAlasViewModel.cs" />
     <Compile Include="Models\BOAccountCtx\BOPerfilUsuarioSearchModalFilterViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\BOImprimirTermoResponsabilidadeViewModel.cs" />
     <Compile Include="Models\BOQuarentenaCtx\HistoricoQuarentenaViewModel.cs" />
@@ -602,6 +603,7 @@
     <Content Include="Scripts\Views\Armazenagem\relatorioRastreabilidadeLote.js" />
     <Content Include="Scripts\Views\Armazenagem\relatorioRastreabilidadeLoteMovimentacao.js" />
     <Content Include="Scripts\Views\Armazenagem\relatorioRastreabilidadeLoteProduto.js" />
+    <Content Include="Scripts\Views\Armazenagem\relatorioTotalizacaoAlas.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\devolucaoTotal.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\notaRecebimentoList.js" />
@@ -732,6 +734,7 @@
     <Content Include="Views\Armazenagem\RelatorioRastreabilidadeLoteMovimentacao.cshtml" />
     <Content Include="Views\Armazenagem\RelatorioLoteMovimentacao.cshtml" />
     <Content Include="Views\HistoricoAcaoUsuario\Index.cshtml" />
+    <Content Include="Views\Armazenagem\RelatorioTotalizacaoAlas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

@@ -2,6 +2,7 @@
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Services.Model.Armazenagem;
+using FWLog.Services.Model.Coletor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,15 @@ namespace FWLog.Services.Services
     public class ArmazenagemService
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly ColetorHistoricoService _coletorHistoricoService;
 
-        public ArmazenagemService(UnitOfWork unitOfWork)
+        public ArmazenagemService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService)
         {
             _unitOfWork = unitOfWork;
+            _coletorHistoricoService = coletorHistoricoService;
         }
 
-        public async Task<InstalarVolumeLoteResponse> InstalarVolumeLote(InstalarVolumeLoteRequisicao requisicao)
+        public async Task InstalarVolumeLote(InstalarVolumeLoteRequisicao requisicao)
         {
             var validarEnderecoInstalacaoRequisicao = new ValidarEnderecoInstalacaoRequisicao
             {
@@ -35,40 +38,56 @@ namespace FWLog.Services.Services
             EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(requisicao.IdEnderecoArmazenagem);
             decimal pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * requisicao.Quantidade;
 
-            using (var transacao = _unitOfWork.CreateTransactionScope())
+            try
             {
-                var loteProdutoEndereco = new LoteProdutoEndereco
+                using (var transacao = _unitOfWork.CreateTransactionScope())
                 {
+                    var loteProdutoEndereco = new LoteProdutoEndereco
+                    {
+                        IdEmpresa = requisicao.IdEmpresa,
+                        DataHoraInstalacao = DateTime.Now,
+                        IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                        IdLote = requisicao.IdLote,
+                        IdProduto = requisicao.IdProduto,
+                        IdUsuarioInstalacao = requisicao.IdUsuarioInstalacao,
+                        Quantidade = requisicao.Quantidade,
+                        PesoTotal = pesoInstalacao
+                    };
+
+                    _unitOfWork.LoteProdutoEnderecoRepository.Add(loteProdutoEndereco);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    var loteMovimentacao = new LoteMovimentacao
+                    {
+                        IdEmpresa = requisicao.IdEmpresa,
+                        IdLote = requisicao.IdLote,
+                        IdProduto = requisicao.IdProduto,
+                        IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                        IdUsuarioMovimentacao = requisicao.IdUsuarioInstalacao,
+                        Quantidade = requisicao.Quantidade,
+                        IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Entrada,
+                        DataHora = DateTime.Now
+                    };
+
+                    _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                    await _unitOfWork.SaveChangesAsync();
+                    transacao.Complete();
+                }
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.InstalarProduto,
+                    Descricao = $"Instalou o produto {produto.Referencia} do lote {requisicao.IdLote} no endereço {enderecoArmazenagem.Codigo}",
                     IdEmpresa = requisicao.IdEmpresa,
-                    DataHoraInstalacao = DateTime.Now,
-                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
-                    IdLote = requisicao.IdLote,
-                    IdProduto = requisicao.IdProduto,
-                    IdUsuarioInstalacao = requisicao.IdUsuarioInstalacao,
-                    Quantidade = requisicao.Quantidade,
-                    PesoTotal = pesoInstalacao
+                    IdUsuario = requisicao.IdUsuarioInstalacao
                 };
 
-                _unitOfWork.LoteProdutoEnderecoRepository.Add(loteProdutoEndereco);
-                await _unitOfWork.SaveChangesAsync();
-
-                var loteMovimentacao = new LoteMovimentacao
-                {
-                    IdEmpresa = requisicao.IdEmpresa,
-                    IdLote = requisicao.IdLote,
-                    IdProduto = requisicao.IdProduto,
-                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
-                    IdUsuarioMovimentacao = requisicao.IdUsuarioInstalacao,
-                    Quantidade = requisicao.Quantidade,
-                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Entrada,
-                    DataHora = DateTime.Now
-                };
-
-                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
-                await _unitOfWork.SaveChangesAsync();
-                transacao.Complete();
-
-                return new InstalarVolumeLoteResponse { EnderecoArmazenagem = enderecoArmazenagem, Produto = produto };
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+            }
+            catch
+            {
+                throw new BusinessException($"Erro ao instalar o produto {produto.Referencia} do lote {requisicao.IdLote} no endereço {enderecoArmazenagem.Codigo}");
             }
         }
 
@@ -351,34 +370,50 @@ namespace FWLog.Services.Services
             return produtoEndereco;
         }
 
-        public async Task<RetirarVolumeEnderecoResponse> RetirarVolumeEndereco(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa, string idUsuarioRetirada)
+        public async Task RetirarVolumeEndereco(long idEnderecoArmazenagem, long idLote, long idProduto, long idEmpresa, string idUsuarioRetirada)
         {
             ValidarProdutoRetirar(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
 
-            using (var transacao = _unitOfWork.CreateTransactionScope())
+            var volume = ConsultaDetalhesVolumeInformado(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
+
+            try
             {
-                var volume = ConsultaDetalhesVolumeInformado(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
-
-                _unitOfWork.LoteProdutoEnderecoRepository.Delete(volume);
-                await _unitOfWork.SaveChangesAsync();
-
-                var loteMovimentacao = new LoteMovimentacao
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                 {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.RetirarProduto,
+                    Descricao = $"Retirou o produto {volume.Produto.Referencia} do lote {volume.Lote.IdLote} do endereço {volume.EnderecoArmazenagem.Codigo}",
                     IdEmpresa = idEmpresa,
-                    IdLote = idLote,
-                    IdProduto = idProduto,
-                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
-                    IdUsuarioMovimentacao = idUsuarioRetirada,
-                    Quantidade = volume.Quantidade,
-                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Saida,
-                    DataHora = DateTime.Now
+                    IdUsuario = idUsuarioRetirada
                 };
 
-                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
-                await _unitOfWork.SaveChangesAsync();
-                transacao.Complete();
+                using (var transacao = _unitOfWork.CreateTransactionScope())
+                {
+                    _unitOfWork.LoteProdutoEnderecoRepository.Delete(volume);
+                    await _unitOfWork.SaveChangesAsync();
 
-                return new RetirarVolumeEnderecoResponse { LoteProdutoEndereco = volume };
+                    var loteMovimentacao = new LoteMovimentacao
+                    {
+                        IdEmpresa = idEmpresa,
+                        IdLote = idLote,
+                        IdProduto = idProduto,
+                        IdEnderecoArmazenagem = idEnderecoArmazenagem,
+                        IdUsuarioMovimentacao = idUsuarioRetirada,
+                        Quantidade = volume.Quantidade,
+                        IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Saida,
+                        DataHora = DateTime.Now
+                    };
+
+                    _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                    await _unitOfWork.SaveChangesAsync();
+                    transacao.Complete();
+                }
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+            }
+            catch
+            {
+                throw new BusinessException($"Erro ao retirar o produto {volume.Produto.Referencia} do lote {volume.Lote.IdLote} e do endereco {volume.EnderecoArmazenagem.Codigo}.");
             }
         }
 
@@ -535,7 +570,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task<AjustarVolumeLoteResposta> AjustarVolumeLote(AjustarVolumeLoteRequisicao requisicao)
+        public async Task AjustarVolumeLote(AjustarVolumeLoteRequisicao requisicao)
         {
             var validarEnderecoInstalacaoRequisicao = new ValidarEnderecoAjusteRequisicao
             {
@@ -556,42 +591,53 @@ namespace FWLog.Services.Services
             });
 
             Produto produto = _unitOfWork.ProdutoRepository.GetById(requisicao.IdProduto);
+            LoteProdutoEndereco produtoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(requisicao.IdEnderecoArmazenagem);
             decimal pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * requisicao.Quantidade;
+            int quantidadeAnterior;
 
-            using (var transacao = _unitOfWork.CreateTransactionScope())
+            try
             {
-                LoteProdutoEndereco produtoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(requisicao.IdEnderecoArmazenagem);
-
-                var ajustarVolumeLoteResposta = new AjustarVolumeLoteResposta
+                using (var transacao = _unitOfWork.CreateTransactionScope())
                 {
-                    QuantidadeAnterior = produtoEndereco.Quantidade
-                };
+                    quantidadeAnterior = produtoEndereco.Quantidade;
 
-                produtoEndereco.Quantidade = requisicao.Quantidade;
-                produtoEndereco.PesoTotal = pesoInstalacao;
+                    produtoEndereco.Quantidade = requisicao.Quantidade;
+                    produtoEndereco.PesoTotal = pesoInstalacao;
 
-                _unitOfWork.LoteProdutoEnderecoRepository.Update(produtoEndereco);
-                await _unitOfWork.SaveChangesAsync();
+                    _unitOfWork.LoteProdutoEnderecoRepository.Update(produtoEndereco);
+                    await _unitOfWork.SaveChangesAsync();
 
-                var loteMovimentacao = new LoteMovimentacao
+                    var loteMovimentacao = new LoteMovimentacao
+                    {
+                        IdEmpresa = requisicao.IdEmpresa,
+                        IdLote = requisicao.IdLote,
+                        IdProduto = requisicao.IdProduto,
+                        IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                        IdUsuarioMovimentacao = requisicao.IdUsuarioAjuste,
+                        Quantidade = requisicao.Quantidade,
+                        IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Ajuste,
+                        DataHora = DateTime.Now
+                    };
+
+                    _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                    await _unitOfWork.SaveChangesAsync();
+                    transacao.Complete();
+                }
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                 {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade,
+                    Descricao = $"Ajustou a quantidade de {quantidadeAnterior} para {produtoEndereco.Quantidade} unidade(s) do produto {produtoEndereco.Produto.Referencia} do lote {produtoEndereco.Lote.IdLote} do endereço {produtoEndereco.EnderecoArmazenagem.Codigo}",
                     IdEmpresa = requisicao.IdEmpresa,
-                    IdLote = requisicao.IdLote,
-                    IdProduto = requisicao.IdProduto,
-                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
-                    IdUsuarioMovimentacao = requisicao.IdUsuarioAjuste,
-                    Quantidade = requisicao.Quantidade,
-                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Ajuste,
-                    DataHora = DateTime.Now
+                    IdUsuario = requisicao.IdUsuarioAjuste
                 };
 
-                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
-                await _unitOfWork.SaveChangesAsync();
-                transacao.Complete();
-
-                ajustarVolumeLoteResposta.LoteProdutoEndereco = produtoEndereco;
-
-                return ajustarVolumeLoteResposta;
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+            }
+            catch
+            {
+                throw new BusinessException($"Erro ao ajustar a quantidade do produto {produto.Referencia} do lote {produtoEndereco.Lote.IdLote} e do endereço {produtoEndereco.EnderecoArmazenagem.Codigo}");
             }
         }
 
@@ -730,7 +776,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task<AbastecerPickingResponse> AbastecerPicking(long idEnderecoArmazenagem, long idLote, long idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
+        public async Task AbastecerPicking(long idEnderecoArmazenagem, long idLote, long idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
         {
             ValidarEnderecoAbastecer(idEnderecoArmazenagem);
 
@@ -738,40 +784,56 @@ namespace FWLog.Services.Services
 
             ValidarQuantidadeAbastecer(idEnderecoArmazenagem, idLote, idProduto, quantidade);
 
-            using (var transacao = _unitOfWork.CreateTransactionScope())
+            var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(idLote, idProduto);
+
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+
+            try
             {
-                var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(idLote, idProduto);
-
-                loteProduto.Saldo -= quantidade;
-
-                _unitOfWork.LoteProdutoRepository.Update(loteProduto);
-                await _unitOfWork.SaveChangesAsync();
-
-                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
-
-                loteProdutoEndereco.Quantidade += quantidade;
-
-                _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
-                await _unitOfWork.SaveChangesAsync();
-
-                var loteMovimentacao = new LoteMovimentacao
+                using (var transacao = _unitOfWork.CreateTransactionScope())
                 {
+                    loteProduto.Saldo -= quantidade;
+
+                    _unitOfWork.LoteProdutoRepository.Update(loteProduto);
+                    await _unitOfWork.SaveChangesAsync();
+                   
+                    loteProdutoEndereco.Quantidade += quantidade;
+
+                    _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    var loteMovimentacao = new LoteMovimentacao
+                    {
+                        IdEmpresa = idEmpresa,
+                        IdLote = idLote,
+                        IdProduto = idProduto,
+                        IdEnderecoArmazenagem = idEnderecoArmazenagem,
+                        IdUsuarioMovimentacao = idUsuarioOperacao,
+                        Quantidade = quantidade,
+                        IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Abastecimento,
+                        DataHora = DateTime.Now
+                    };
+
+                    _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    transacao.Complete();
+                }
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade,
+                    Descricao = $"Abasteceu o produto {loteProdutoEndereco.Produto.Referencia} do lote {loteProduto.Lote.IdLote} no endereço de picking {loteProdutoEndereco.EnderecoArmazenagem.Codigo}",
                     IdEmpresa = idEmpresa,
-                    IdLote = idLote,
-                    IdProduto = idProduto,
-                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
-                    IdUsuarioMovimentacao = idUsuarioOperacao,
-                    Quantidade = quantidade,
-                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Abastecimento,
-                    DataHora = DateTime.Now
+                    IdUsuario = idUsuarioOperacao
                 };
 
-                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
-                await _unitOfWork.SaveChangesAsync();
-
-                transacao.Complete();
-
-                return new AbastecerPickingResponse { LoteProduto = loteProduto, EnderecoArmazenagem = loteProdutoEndereco.EnderecoArmazenagem };
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+            }
+            catch
+            {
+                throw new BusinessException($"Erro ao abastecer o picking com o produto {loteProduto.Produto.Referencia} do lote {loteProduto.Lote.IdLote}");
             }
         }
 

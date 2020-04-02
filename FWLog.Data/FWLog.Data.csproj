@@ -131,6 +131,7 @@
     <Compile Include="Models\FilterCtx\RastreabilidadeLoteListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\RastreabilidadeLoteMovimentacaoListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\RastreabilidadeLoteProdutoListaFiltro.cs" />
+    <Compile Include="Models\FilterCtx\RelatorioTotalizacaoAlasListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\TransportadoraPesquisaModalFiltro.cs" />
     <Compile Include="Models\AtividadeEstoqueTipo.cs" />
     <Compile Include="Models\Garantia.cs" />
