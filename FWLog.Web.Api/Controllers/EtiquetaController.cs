@@ -37,23 +37,12 @@ namespace FWLog.Web.Api.Controllers
                 var requisicaoServico = new ImprimirEtiquetaEnderecoRequest
                 {
                     IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
-                    IdImpressora = requisicao.IdImpressora
+                    IdImpressora = requisicao.IdImpressora,
+                    IdUsuario = IdUsuario,
+                    IdEmpresa = IdEmpresa
                 };
 
-                var imprimriEtiquetaEnderecoResponse = _etiquetaService.ImprimirEtiquetaEndereco(requisicaoServico);
-
-                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
-                {
-                    IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
-                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
-                    Descricao = $"Iprimiu a etiqueita de endereço com o código {imprimriEtiquetaEnderecoResponse.EnderecoArmazenagem.Codigo}",
-                    IdEmpresa = IdEmpresa,
-                    IdUsuario = IdUsuario
-                };
-
-                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
-
-                return ApiOk();
+                _etiquetaService.ImprimirEtiquetaEndereco(requisicaoServico);
             }
             catch (BusinessException ex)
             {
@@ -63,6 +52,8 @@ namespace FWLog.Web.Api.Controllers
             {
                 throw;
             }
+
+            return ApiOk();
         }
 
         [HttpPost]
@@ -120,25 +111,18 @@ namespace FWLog.Web.Api.Controllers
                         IdEmpresa = IdEmpresa
                     };
 
-                    var imprimirEtiquetaLoteReponse = _etiquetaService.ValidarEImprimirEtiquetaLote(request);
-
-                    var gravarHistoricoColetorRequisciao = new GravarHistoricoColetorRequisicao
-                    {
-                        IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
-                        IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
-                        Descricao = $"Imprimiu a etiqueta do lote {request.IdLote} do(s) produto() {imprimirEtiquetaLoteReponse.Produto.Referencia}",
-                        IdEmpresa = IdEmpresa,
-                        IdUsuario = IdUsuario
-                    };
-
-                    _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
-
-                    return ApiOk();
+                    _etiquetaService.ValidarEImprimirEtiquetaLote(request);
                 }
                 catch (BusinessException ex)
                 {
                     return ApiBadRequest(ex.Message);
                 }
+                catch
+                {
+                    throw;
+                }
+
+                return ApiOk();
             }
         }
 
@@ -159,14 +143,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 try
                 {
-                    var gravarHistoricoColetorRequisciao = new GravarHistoricoColetorRequisicao
-                    {
-                        IdColetorAplocacao = ColetorAplicacaoEnum.Armazenagem,
-                        IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
-                        IdEmpresa = IdEmpresa,
-                        IdUsuario = IdUsuario
-                    };
-
                     switch (requisicao.IdImpressaoItem)
                     {
                         case (int)ImpressaoItemEnum.EtiquetaAvulso:
@@ -174,10 +150,10 @@ namespace FWLog.Web.Api.Controllers
                             {
                                 IdEmpresa = IdEmpresa,
                                 IdImpressora = requisicao.IdImpressora,
-                                QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas
+                                QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas,
+                                IdUsuario = IdUsuario,
+                                ReferenciaProduto = requisicao.ReferenciaProduto
                             });
-                            gravarHistoricoColetorRequisciao.Descricao = $"Imprimiu {requisicao.QuantidadeEtiquetas} etiqueta(s) avulsa(s) do produto {requisicao.ReferenciaProduto}";
-                            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
                             break;
                         case (int)ImpressaoItemEnum.EtiquetaIndividual:
                             _etiquetaService.ImprimirEtiquetaPeca(new ImprimirEtiquetaProdutoBase
@@ -185,10 +161,9 @@ namespace FWLog.Web.Api.Controllers
                                 IdEmpresa = IdEmpresa,
                                 IdImpressora = requisicao.IdImpressora,
                                 ReferenciaProduto = requisicao.ReferenciaProduto,
-                                QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas
+                                QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas,
+                                IdUsuario = IdUsuario
                             });
-                            gravarHistoricoColetorRequisciao.Descricao = $"Imprimiu {requisicao.QuantidadeEtiquetas} etiqueta(s) individual(ais) do produto {requisicao.ReferenciaProduto}";
-                            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
                             break;
                         case (int)ImpressaoItemEnum.EtiquetaPersonalizada:
                             _etiquetaService.ImprimirEtiquetaPersonalizada(new ImprimirEtiquetaProdutoBase
@@ -196,21 +171,24 @@ namespace FWLog.Web.Api.Controllers
                                 IdEmpresa = IdEmpresa,
                                 IdImpressora = requisicao.IdImpressora,
                                 ReferenciaProduto = requisicao.ReferenciaProduto,
-                                QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas
+                                QuantidadeEtiquetas = requisicao.QuantidadeEtiquetas,
+                                IdUsuario = IdUsuario
                             });
-                            gravarHistoricoColetorRequisciao.Descricao = $"Imprimiu {requisicao.QuantidadeEtiquetas} etiqueta(s) personalizada(s) do produto {requisicao.ReferenciaProduto}";
-                            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
                             break;
                         default:
                             return ApiBadRequest("Tipo da impressão não existe.");
                     }
-
-                    return ApiOk();
                 }
                 catch (BusinessException ex)
                 {
                     return ApiBadRequest(ex.Message);
                 }
+                catch
+                {
+                    throw;
+                }
+
+                return ApiOk();
             }
         }
 

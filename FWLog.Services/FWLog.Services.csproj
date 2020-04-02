@@ -106,6 +106,7 @@
     <Compile Include="Exceptions\BusinessException.cs" />
     <Compile Include="Exceptions\UnauthorizedException.cs" />
     <Compile Include="Exceptions\ConpanyException.cs" />
+    <Compile Include="Exceptions\UserActionHistoricalException.cs" />
     <Compile Include="GlobalResources\General\GeneralStrings.en.Designer.cs">
       <DependentUpon>GeneralStrings.en.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -120,13 +121,9 @@
     <Compile Include="Integracao\Helpers\QueryPropertyAttribute.cs" />
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
-    <Compile Include="Model\Armazenagem\AbastecerPickingResponse.cs" />
     <Compile Include="Model\Armazenagem\AjustarVolumeLoteRequisicao.cs" />
-    <Compile Include="Model\Armazenagem\AjustarVolumeLoteResposta.cs" />
     <Compile Include="Model\Armazenagem\InstalarVolumeLoteRequisicao.cs" />
-    <Compile Include="Model\Armazenagem\InstalarVolumeLoteResponse.cs" />
     <Compile Include="Model\Armazenagem\LoteInstaladoProdutoResposta.cs" />
-    <Compile Include="Model\Armazenagem\RetirarVolumeEnderecoResponse.cs" />
     <Compile Include="Model\Armazenagem\ValidarEnderecoAjusteRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarEnderecoInstalacaoRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarLoteProdutoAjusteRequisicao.cs" />
@@ -140,8 +137,6 @@
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaDevolucaoTotalRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaDevolucaoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaEnderecoRequest.cs" />
-    <Compile Include="Model\Etiquetas\ImprimirEtiquetaEnderecoResponse.cs" />
-    <Compile Include="Model\Etiquetas\ImprimirEtiquetaLoteReponse.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaLoteRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaPickingRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaProdutoBase.cs" />

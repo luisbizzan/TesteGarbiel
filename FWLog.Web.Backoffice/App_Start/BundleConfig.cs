@@ -52,7 +52,8 @@ namespace FWLog.Web.Backoffice
                 "~/Scripts/vendors/datatables/dataTables.select.min.js",
                 "~/Scripts/vendors/datatables/dataTables.bootstrap.js",
                 "~/Scripts/vendors/datatables/responsive.bootstrap.js",
-                "~/Scripts/vendors/datatables/buttons.bootstrap.js"
+                "~/Scripts/vendors/datatables/buttons.bootstrap.js",
+                "~/Scripts/vendors/datatables/dataTables.rowGroup.js"
             ));
 
             bundles.Add(new ScriptBundle("~/script-bundles/vendors/iCheck").Include(

@@ -229,5 +229,54 @@ namespace FWLog.Web.Backoffice.Controllers
                 Data = list
             });
         }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoAlas)]
+        public ActionResult RelatorioTotalizacaoAlas()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoAlas)]
+        public ActionResult RelatorioTotalizacaoAlasPageData(DataTableFilter<RelatorioTotalizacaoAlasFilterViewModel> model)
+        {
+            var filtro = Mapper.Map<DataTableFilter<RelatorioTotalizacaoAlasListaFiltro>>(model);
+            filtro.CustomFilter.IdEmpresa = IdEmpresa;
+            filtro.CustomFilter.CorredorInicial = 1;
+            filtro.CustomFilter.CorredorFinal = 10;
+
+            var listaIdEnderecoArmazenagem = _uow.EnderecoArmazenagemRepository
+                .BuscarIdsPorCorredorInicialEFinal(filtro.CustomFilter.CorredorInicial, filtro.CustomFilter.CorredorFinal, filtro.CustomFilter.IdEmpresa);
+
+            filtro.CustomFilter.ListaIdEnderecoArmazenagem = listaIdEnderecoArmazenagem;
+
+            var loteProdutoEnderecos = _uow.LoteProdutoEnderecoRepository.Teste(filtro, out int totalRecordsFiltered, out int totalRecords);
+
+            var list = new List<RelatorioTotalizacaoAlasListItemViewModel>();
+            List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
+
+            loteProdutoEnderecos.OrderBy(order => order.EnderecoArmazenagem.Corredor).ForEach(lpe =>
+                list.Add(new RelatorioTotalizacaoAlasListItemViewModel
+                {
+                    NumeroCorredor = string.Concat("Corredor: ", lpe.EnderecoArmazenagem.Corredor.ToString()),
+                    CodigoEndereco = lpe.EnderecoArmazenagem.Codigo,
+                    DataInstalacao = lpe.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss"),
+                    IdUsuarioInstalacao = usuarios.Where(x => x.UserId == lpe.IdUsuarioInstalacao).FirstOrDefault()?.PerfilUsuario.Nome,
+                    PesoProduto = lpe.Produto.PesoBruto.ToString("n2"),
+                    QuantidadeProdutoPorEndereco = lpe.Quantidade.ToString(),
+                    ReferenciaProduto = lpe.Produto.Referencia,
+                    PesoTotalDeProduto = lpe.PesoTotal.ToString("n2")
+                })
+            );
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = totalRecordsFiltered,
+                Data = list
+            });
+        }
     }
 }

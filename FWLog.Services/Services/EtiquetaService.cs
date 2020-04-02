@@ -1,12 +1,14 @@
 ﻿using ExtensionMethods.String;
 using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Services.Model.Coletor;
 using FWLog.Services.Model.Etiquetas;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
 {
@@ -14,13 +16,16 @@ namespace FWLog.Services.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly ImpressoraService _impressoraService;
+        private readonly ColetorHistoricoService _coletorHistoricoService;
 
         public EtiquetaService(
             UnitOfWork unitOfWork,
-            ImpressoraService impressoraService)
+            ImpressoraService impressoraService,
+            ColetorHistoricoService coletorHistoricoService)
         {
             _unitOfWork = unitOfWork;
             _impressoraService = impressoraService;
+            _coletorHistoricoService = coletorHistoricoService;
         }
 
         /// <summary>
@@ -227,6 +232,17 @@ namespace FWLog.Services.Services
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
 
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+
+            var gravarHistoricoColetorRequisciao = new GravarHistoricoColetorRequisicao
+            {
+                IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
+                Descricao = $"Imprimiu {request.QuantidadeEtiquetas} etiqueta(s) individual(ais) do produto {request.ReferenciaProduto}",
+                IdEmpresa = request.IdEmpresa,
+                IdUsuario = request.IdUsuario
+            };
+
+            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
         }
 
         public void ImprimirEtiquetaPersonalizada(ImprimirEtiquetaProdutoBase request)
@@ -282,6 +298,17 @@ namespace FWLog.Services.Services
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
 
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+
+            var gravarHistoricoColetorRequisciao = new GravarHistoricoColetorRequisicao
+            {
+                IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
+                Descricao = $"Imprimiu {request.QuantidadeEtiquetas} etiqueta(s) personalizada(s) do produto {request.ReferenciaProduto}",
+                IdEmpresa = request.IdEmpresa,
+                IdUsuario = request.IdUsuario
+            };
+
+            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
         }
 
         public void ImprimirEtiquetaAvulso(ImprimirEtiquetaAvulsoRequest request)
@@ -338,6 +365,17 @@ namespace FWLog.Services.Services
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
 
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
+
+            var gravarHistoricoColetorRequisciao = new GravarHistoricoColetorRequisicao
+            {
+                IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
+                Descricao = $"Imprimiu {request.QuantidadeEtiquetas} etiqueta(s) avulsa(s) do produto {request.ReferenciaProduto}",
+                IdEmpresa = request.IdEmpresa,
+                IdUsuario = request.IdUsuario
+            };
+
+            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
         }
 
         public void ImprimirEtiquetaDevolucao(ImprimirEtiquetaDevolucaoRequest request)
@@ -428,7 +466,7 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
 
-        public ImprimirEtiquetaEnderecoResponse ImprimirEtiquetaEndereco(ImprimirEtiquetaEnderecoRequest request)
+        public void ImprimirEtiquetaEndereco(ImprimirEtiquetaEnderecoRequest request)
         {
             EnderecoArmazenagem endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(request.IdEnderecoArmazenagem);
 
@@ -462,7 +500,16 @@ namespace FWLog.Services.Services
 
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
 
-            return new ImprimirEtiquetaEnderecoResponse { EnderecoArmazenagem = endereco };
+            var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+            {
+                IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
+                Descricao = $"Iprimiu a etiqueita de endereço com o código {endereco.Codigo}",
+                IdEmpresa = request.IdEmpresa,
+                IdUsuario = request.IdUsuario
+            };
+
+            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
         }
 
         public void ImprimirEtiquetaPicking(ImprimirEtiquetaPickingRequest request)
@@ -500,7 +547,7 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(etiqueta, request.IdImpressora);
         }
 
-        public ImprimirEtiquetaLoteReponse ValidarEImprimirEtiquetaLote(ImprimirEtiquetaLoteRequest requisicao)
+        public void ValidarEImprimirEtiquetaLote(ImprimirEtiquetaLoteRequest requisicao)
         {
             if (requisicao.IdLote <= 0)
             {
@@ -549,7 +596,16 @@ namespace FWLog.Services.Services
                 IdEmpresa = requisicao.IdEmpresa
             });
 
-            return new ImprimirEtiquetaLoteReponse { Produto = produto };
+            var gravarHistoricoColetorRequisciao = new GravarHistoricoColetorRequisicao
+            {
+                IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
+                Descricao = $"Imprimiu a etiqueta do lote {requisicao.IdLote} do(s) produto() {produto.Referencia}",
+                IdEmpresa = requisicao.IdEmpresa,
+                IdUsuario = requisicao.IdUsuario
+            };
+
+            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
         }
 
         public void ValidarEnderecoPicking(ValidarEnderecoPickingRequest requisicao)
