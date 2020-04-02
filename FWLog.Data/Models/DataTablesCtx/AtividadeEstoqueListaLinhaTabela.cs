@@ -5,8 +5,8 @@
         public long IdAtividadeEstoque { get; set; }
         public long IdEnderecoArmazenagem { get; set; }
         public long IdProduto { get; set; }
-        public AtividadeEstoqueTipoEnum IdAtividadeEstoqueTipo { get; set; }
-        public int QuantidadeInicial { get; set; }
+        public int IdAtividadeEstoqueTipo { get; set; }
+        public string DescricaoAtividadeEstoqueTipo { get; set; }
         public string Referencia { get; set; }
         public string CodigoEndereco { get; set; }
     }

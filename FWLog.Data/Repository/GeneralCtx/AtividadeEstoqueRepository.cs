@@ -20,11 +20,12 @@ namespace FWLog.Data.Repository.GeneralCtx
                          select new AtividadeEstoqueListaLinhaTabela
                          {
                              IdAtividadeEstoque = a.IdAtividadeEstoque,
-                             IdAtividadeEstoqueTipo = a.AtividadeEstoqueTipo.IdAtividadeEstoqueTipo,
+                             IdAtividadeEstoqueTipo = (int)a.AtividadeEstoqueTipo.IdAtividadeEstoqueTipo,
+                             DescricaoAtividadeEstoqueTipo = a.AtividadeEstoqueTipo.Descricao,
                              IdEnderecoArmazenagem = e.IdEnderecoArmazenagem,
                              IdProduto = p.IdProduto,
                              Referencia = p.Referencia,
-                             CodigoEndereco = e.Codigo,
+                             CodigoEndereco = e.Codigo                             
                          });
 
             return query.ToList();
