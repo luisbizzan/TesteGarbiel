@@ -194,10 +194,9 @@ namespace FWLog.Services.Services
             catch (Exception ex)
             {
                 var applicationLogService = new ApplicationLogService(_unitOfWork);
-                applicationLogService.Error(ApplicationEnum.Api, ex, "Erro na atualização da atividade " + atividadeEstoqueRequisicao.IdAtividadeEstoque); 
+                applicationLogService.Error(ApplicationEnum.Api, ex, "Erro na atualização da atividade " + atividadeEstoqueRequisicao.IdAtividadeEstoque);
             }
-            
-    }
+        }
 
         public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa)
         {
