@@ -10,6 +10,11 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public LoteProdutoEnderecoRepository(Entities entities) : base(entities) { }
 
+        public IQueryable<LoteProdutoEndereco> PesquisarPorEmpresa(long idEmpresa)
+        {
+            return Entities.LoteProdutoEndereco.Include("ProdutoEstoque").Where(w => w.IdEmpresa == idEmpresa);
+        }
+
         public List<LoteProdutoEndereco> PesquisarPorLoteProduto(long idLote, long idProduto)
         {
             return Entities.LoteProdutoEndereco.Where(w => w.IdLote == idLote && w.IdProduto == idProduto).ToList();

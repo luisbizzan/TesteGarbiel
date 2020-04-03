@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -48,6 +49,8 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdEnderecoArmazenagem))]
         public virtual EnderecoArmazenagem EnderecoArmazenagem { get; set; }
+
+        public ProdutoEstoque ProdutoEstoque { get; set; }
 
         [ForeignKey(nameof(IdUsuarioInstalacao))]
         public virtual AspNetUsers AspNetUsers { get; set; }
