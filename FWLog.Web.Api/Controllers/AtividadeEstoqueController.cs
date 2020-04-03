@@ -1,6 +1,8 @@
 ﻿using FWLog.Data;
 using FWLog.Services.Services;
+<<<<<<< HEAD
 using System;
+using FWLog.Web.Api.Models.AtividadeEstoque;
 using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
@@ -81,6 +83,18 @@ namespace FWLog.Web.Api.Controllers
             }
 
             return ApiOk();
+		}
+		
+        [Route("api/v1/atividade-estoque/pesquisar")]
+        [HttpGet]
+        public IHttpActionResult PesquisarAtividade()       
+        {
+            var resposta = new AtividadesEstoqueResposta
+            {
+                Lista = _atividadeEstoqueService.PesquisarAtividade(IdEmpresa)
+            };
+
+            return ApiOk(resposta);
         }
     }
 }

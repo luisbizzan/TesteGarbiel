@@ -1,5 +1,10 @@
 ﻿using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Repository.CommonCtx;
+<<<<<<< HEAD
+=======
+using System.Collections.Generic;
+>>>>>>> 8a1bebf6ca6163553ed670d187402d1ffab2170f
 using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx
@@ -12,6 +17,27 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.AtividadeEstoque.Where(x => x.IdEmpresa == idEmpresa && x.IdAtividadeEstoqueTipo == idAtividadeEstoqueTipo && x.IdEnderecoArmazenagem == x.IdEnderecoArmazenagem &&
             x.IdProduto == idProduto && x.Finalizado == finalizado).FirstOrDefault();
+		}
+
+        public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa)
+        {
+            var query = (from a in Entities.AtividadeEstoque
+                         join e in Entities.EnderecoArmazenagem on a.IdEnderecoArmazenagem equals e.IdEnderecoArmazenagem
+                         join p in Entities.Produto on a.IdProduto equals p.IdProduto
+                         where a.IdEmpresa == idEmpresa
+                         orderby e.Codigo, e.Horizontal, e.Vertical, e.Divisao
+                         select new AtividadeEstoqueListaLinhaTabela
+                         {
+                             IdAtividadeEstoque = a.IdAtividadeEstoque,
+                             IdAtividadeEstoqueTipo = (int)a.AtividadeEstoqueTipo.IdAtividadeEstoqueTipo,
+                             DescricaoAtividadeEstoqueTipo = a.AtividadeEstoqueTipo.Descricao,
+                             IdEnderecoArmazenagem = e.IdEnderecoArmazenagem,
+                             IdProduto = p.IdProduto,
+                             Referencia = p.Referencia,
+                             CodigoEndereco = e.Codigo                             
+                         });
+
+            return query.ToList();
         }
     }
 }

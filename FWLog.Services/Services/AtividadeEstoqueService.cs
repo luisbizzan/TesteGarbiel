@@ -1,9 +1,12 @@
 ﻿using FWLog.Data;
+<<<<<<< HEAD
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Model.AtividadeEstoque;
 using System;
 using System.Linq;
+using FWLog.Data.Models.DataTablesCtx;
+using System.Collections.Generic;
 
 namespace FWLog.Services.Services
 {
@@ -148,6 +151,11 @@ namespace FWLog.Services.Services
                 var applicationLogService = new ApplicationLogService(_unitOfWork);
                 applicationLogService.Error(ApplicationEnum.Api, ex, "Erro na criação das atividades de conferência 399/400.");
             }
+		}
+
+        public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa)
+        {
+            return _unitOfWork.AtividadeEstoqueRepository.PesquisarAtividade(idEmpresa);
         }
     }
 }
