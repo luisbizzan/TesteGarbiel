@@ -701,7 +701,7 @@
     <Content Include="Views\Transportadora\SearchModal.cshtml" />
     <Content Include="Scripts\Views\Transportadora\searchModal.js" />
     <Content Include="Views\MotivoLaudo\Create.cshtml" />
-    <Content Include="Views\MotivoLaudo\Edit.cshtml" />
+    <Content Include="Views\MotivoLaudo\_Form.cshtml" />
     <Content Include="Views\Garantia\RegistroRecebimentoGarantia.cshtml" />
     <Content Include="Views\Garantia\DetalhesEntradaConferenciaGarantia.cshtml" />
     <Content Include="Views\Garantia\EntradaConferenciaGarantia.cshtml" />

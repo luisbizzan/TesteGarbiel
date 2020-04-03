@@ -90,7 +90,7 @@ namespace FWLog.Web.Backoffice
 
             HandleExceptionRedirect(exception);
 
-            // Validação colocada porque erros diferente de 5xx não devem ser logados.      
+            // Validação colocada porque erros diferente de 5xx não devem ser logados.
             if (IsServerError(Response.StatusCode))
             {
                 try
@@ -121,9 +121,11 @@ namespace FWLog.Web.Backoffice
                     case 403:
                         action = "Forbidden";
                         break;
+
                     case 404:
                         action = "NotFound";
                         break;
+
                     default:
                         action = "Index";
                         break;
@@ -166,14 +168,14 @@ namespace FWLog.Web.Backoffice
             var userManager = HttpContext.Current.GetOwinContext().GetUserManager<BackofficeUserManager>();
             var user = (ClaimsPrincipal)User;
             var applicationUser = userManager.FindById(User.Identity.GetUserId());
-            
+
             long idEmpresa = 0;
             if (applicationUser != null)
             {
                 var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
 
                 ApplicationSession applicationSession = uow.ApplicationSessionRepository.GetById(applicationUser.IdApplicationSession.Value);
-                
+
                 if (applicationSession != null && applicationSession.IdEmpresa.HasValue)
                 {
                     idEmpresa = applicationSession.IdEmpresa.Value;

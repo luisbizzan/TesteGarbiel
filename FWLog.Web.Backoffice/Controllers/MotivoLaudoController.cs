@@ -12,6 +12,7 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
@@ -52,69 +53,72 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-        [HttpGet]
-        [ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Cadastrar)]
-        public ActionResult Create()
-        {
-            return View();
-        }
+        //[HttpGet]
+        //[ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Cadastrar)]
+        //public ActionResult Create()
+        //{
+        //    return View();
+        //}
 
-        [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Cadastrar)]
-        public ActionResult Create(MotivoLaudoCreateViewModel model)
-        {
-            Func<ViewResult> errorView = () =>
-            {
-                return View(model);
-            };
+        //[HttpPost]
+        //[ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Cadastrar)]
+        //public ActionResult Create(MotivoLaudoCreateViewModel model)
+        //{
+        //    Func<ViewResult> errorView = () =>
+        //    {
+        //        return View(model);
+        //    };
 
-            if (!ModelState.IsValid)
-            {
-                return errorView();
-            }
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return errorView();
+        //    }
 
-            var motivoLaudo = new MotivoLaudo
-            {
-                Descricao = model.Descricao,
-                Ativo = model.Ativo
-            };
+        //    var motivoLaudo = new MotivoLaudo
+        //    {
+        //        Descricao = model.Descricao,
+        //        Ativo = model.Ativo
+        //    };
 
-            try
-            {
-                _motivoLaudoService.Add(motivoLaudo);
+        //    try
+        //    {
+        //        _motivoLaudoService.Add(motivoLaudo);
 
-                Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
-                return RedirectToAction("MotivoLaudo");
-            }
-            catch (DbUpdateException e)
-            when (e.InnerException?.InnerException is OracleException sqlEx && sqlEx.Number == 1)
-            {
-                Notify.Error("Já existe um motivo cadastrado com este nome.");
+        //        Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
+        //        return RedirectToAction("MotivoLaudo");
+        //    }
+        //    catch (DbUpdateException e)
+        //    when (e.InnerException?.InnerException is OracleException sqlEx && sqlEx.Number == 1)
+        //    {
+        //        Notify.Error("Já existe um motivo cadastrado com este nome.");
 
-                return errorView();
-            }
-            catch (Exception e)
-            {
-                Notify.Error(Resources.CommonStrings.RegisterCreatedErrorMessage);
+        //        return errorView();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Notify.Error(Resources.CommonStrings.RegisterCreatedErrorMessage);
 
-                return errorView();
-            }
-        }
+        //        return errorView();
+        //    }
+        //}
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Editar)]
-        public ActionResult ExibirModalDeEdicaoMotivoLaudo(long id)
+        public ActionResult Selecionar(long id)
         {
-            MotivoLaudo motivoLaudo = _unitOfWork.MotivoLaudoRepository.GetById(id);
+            MotivoLaudo motivoLaudo = new MotivoLaudo();
+
+            if (id != 0)
+                motivoLaudo = _unitOfWork.MotivoLaudoRepository.GetById(id);
 
             var model = Mapper.Map<MotivoLaudoCreateViewModel>(motivoLaudo);
 
-            return PartialView("Edit", model);
+            return PartialView("_Form", model);
         }
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Editar)]
-        public ActionResult Edit(MotivoLaudoCreateViewModel model)
+        public ActionResult Gravar(MotivoLaudoCreateViewModel model)
         {
             Func<ViewResult> errorView = () =>
             {
@@ -123,7 +127,13 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (!ModelState.IsValid)
             {
-                return errorView();
+                var erros = ModelState.Values.Where(x => x.Errors.Count > 0)
+                    .Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />"));
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = erros
+                });
             }
 
             var motivoLaudo = new MotivoLaudo
@@ -135,16 +145,25 @@ namespace FWLog.Web.Backoffice.Controllers
 
             try
             {
-                _motivoLaudoService.Edit(motivoLaudo);
-
-                return Json(new AjaxGenericResultModel
+                if (model.IdMotivoLaudo == 0)
                 {
-                    Success = true,
-                    Message = Resources.CommonStrings.RegisterEditedSuccessMessage
-                });
+                    _motivoLaudoService.Add(motivoLaudo);
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = true,
+                        Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                    });
+                }
+                else
+                {
+                    _motivoLaudoService.Edit(motivoLaudo);
 
-                //Notify.Success();
-                //return RedirectToAction("MotivoLaudo");
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = true,
+                        Message = Resources.CommonStrings.RegisterEditedSuccessMessage
+                    });
+                }
             }
             catch (DbUpdateException e)
             when (e.InnerException?.InnerException is OracleException sqlEx && sqlEx.Number == 1)
@@ -156,19 +175,14 @@ namespace FWLog.Web.Backoffice.Controllers
                     Success = false,
                     Message = "Já existe um motivo cadastrado com este nome."
                 });
-
-                //return errorView();
             }
             catch (Exception)
             {
-
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
                     Message = Resources.CommonStrings.RegisterEditedErrorMessage
                 });
-
-                //return errorView();
             }
         }
     }

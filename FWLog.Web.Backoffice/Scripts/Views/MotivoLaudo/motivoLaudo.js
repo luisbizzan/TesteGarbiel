@@ -1,5 +1,4 @@
 ﻿(function () {
-
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
             {
@@ -9,6 +8,8 @@
             },
         ];
     });
+
+    $("#btAdicionar").on('click', adicionarMotivoLaudo);
 
     $('#dataTable').DataTable({
         ajax: {
@@ -21,12 +22,6 @@
         initComplete: function (settings, json) {
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
         },
-        //stateSaveParams: function (settings, data) {
-        //    dart.dataTables.saveFilterToData(data);
-        //},
-        //stateLoadParams: function (settings, data) {
-        //    dart.dataTables.loadFilterFromData(data);
-        //},
         order: [[1, "desc"]],
         columns: [
             { data: 'IdMotivoLaudo', width: 60 },
@@ -43,38 +38,59 @@
         $("#dataTable").DataTable().ajax.reload();
     })
 
-    dart.dataTables.loadFormFilterEvents
+    dart.dataTables.loadFormFilterEvents();
 
 })();
 
 function editarMotivoLaudo() {
     let id = $(this).data("id");
 
-    $("#modalEditarMotivoLaudo").load(HOST_URL + CONTROLLER_PATH + "ExibirModalDeEdicaoMotivoLaudo/" + id, function () {
+    $("#modalEditarMotivoLaudo").load(HOST_URL + CONTROLLER_PATH + "Selecionar/" + id, function () {
         $("#modalEditarMotivoLaudo").modal();
         $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
         var $confirmarEdicao = $("#confirmarEdicao");
-
         $confirmarEdicao.on('click', function () {
-            var descricao = $("#DescricaoEdicao").val();
-            var ativo = $('#Ativo').is(':checked');  
-
-            $.ajax({
-                url: HOST_URL + CONTROLLER_PATH + "Edit",
-                method: "POST",
-                data: {
-                    descricao: descricao,
-                    ativo: ativo,
-                    idMotivoLaudo: id
-                },
-                success: function (result) {
-                    $("#modalEditarMotivoLaudo").modal('hide');
-                    PNotify.success({ text: result.Message });
-                },
-                error: function (request, status, error) {
-                    PNotify.warning({ text: result.Message });
-                }
-            });
+            gravarMotivoLaudo();
         });
+    });
+}
+
+function adicionarMotivoLaudo() {
+    $("#modalEditarMotivoLaudo").load(HOST_URL + CONTROLLER_PATH + "Selecionar/" + 0, function () {
+        $("#modalEditarMotivoLaudo").modal();
+        $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
+        var $confirmarEdicao = $("#confirmarEdicao");
+        $confirmarEdicao.on('click', function () {
+            gravarMotivoLaudo();
+        });
+    });
+}
+
+function gravarMotivoLaudo() {
+    var descricao = $("#DescricaoEdicao").val();
+    var id = $("#IdMotivoLaudo").val();
+    var ativo = $('#Ativo').is(':checked');
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "Gravar",
+        method: "POST",
+        data: {
+            descricao: descricao,
+            ativo: ativo,
+            idMotivoLaudo: id
+        },
+        success: function (result) {
+
+            if (result.Success) {
+                $("#modalEditarMotivoLaudo").modal('hide');
+                PNotify.success({ text: result.Message });
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+
+        },
+        error: function (request, status, error) {
+            PNotify.warning({ text: result.Message });
+        }
     });
 }

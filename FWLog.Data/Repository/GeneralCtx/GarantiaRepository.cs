@@ -159,8 +159,8 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             using (var conn = new OracleConnection(ConfigurationManager.ConnectionStrings["Sankya"].ToString()))
             {
-               
-                    conn.Open();
+
+                conn.Open();
 
                 if (conn.State == System.Data.ConnectionState.Open)
                 {
@@ -170,7 +170,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     garantia = conn.QuerySingle<int>(sQuery, new { });
                 }
 
-                //conn.Close();
+                conn.Close();
             }
         }
     }

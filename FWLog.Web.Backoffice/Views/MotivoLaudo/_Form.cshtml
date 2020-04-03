@@ -1,13 +1,4 @@
 ﻿@model FWLog.Web.Backoffice.Models.MotivoLaudoCtx.MotivoLaudoCreateViewModel
-@using FWLog.AspNet.Identity
-
-@{
-    Layout = null;
-}
-
-@section Scripts {
-    @BundleHelper.RenderViewScript()
-}
 
 <div class="modal-dialog modal-lg">
     <div class="modal-content vertical-alignment-helper">
@@ -19,6 +10,7 @@
         </div>
         <div class="modal-body">
             <form data-filter="form" data-filter-for="dataTable" class="form-filter" id="form-datatable-modal">
+                @Html.HiddenFor(x => x.IdMotivoLaudo)
                 <div class="row">
                     <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
                         @Html.LabelFor(m => m.Descricao)
@@ -40,4 +32,3 @@
         </div>
     </div>
 </div>
-
