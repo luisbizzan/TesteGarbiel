@@ -57,7 +57,7 @@ namespace FWLog.Services.Services
 
                 if (listaEnderecoSeparacao != null)
                 {
-                    IQueryable<AtividadeEstoqueLista> query = listaEnderecoSeparacao.GroupBy(x => new { x.IdEmpresa, x.IdEnderecoArmazenagem, x.IdProduto, x.EnderecoArmazenagem.EstoqueMinimo, x.Quantidade }).Select(s => new AtividadeEstoqueLista()
+                    var listaAtividadeEstoque = listaEnderecoSeparacao.GroupBy(x => new { x.IdEmpresa, x.IdEnderecoArmazenagem, x.IdProduto, x.EnderecoArmazenagem.EstoqueMinimo, x.Quantidade }).Select(s => new AtividadeEstoqueLista()
                     {
                         IdEmpresa = s.Key.IdEmpresa,
                         IdEnderecoArmazenagem = s.Key.IdEnderecoArmazenagem,
@@ -66,10 +66,8 @@ namespace FWLog.Services.Services
                         EstoqueMinimo = s.Key.EstoqueMinimo
                     });
 
-                    query = query.Where(x => x.Quantidade <= x.EstoqueMinimo);
-
-                    var listaAtividadeEstoque = query.ToList();
-
+                    listaAtividadeEstoque = listaAtividadeEstoque.Where(x => x.Quantidade <= x.EstoqueMinimo);
+                    
                     foreach (var item in listaAtividadeEstoque)
                     {
                         var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(item.IdEmpresa, AtividadeEstoqueTipoEnum.AbastecerPicking, item.IdEnderecoArmazenagem,
@@ -86,6 +84,8 @@ namespace FWLog.Services.Services
                                 DataSolicitacao = new DateTime(),
                                 Finalizado = false
                             });
+
+                            _unitOfWork.SaveChanges();
                         }
                     }
                 }
@@ -124,6 +124,8 @@ namespace FWLog.Services.Services
                                 DataSolicitacao = new DateTime(),
                                 Finalizado = false
                             });
+
+                            _unitOfWork.SaveChanges();
                         }
                     }
                 }
@@ -163,6 +165,8 @@ namespace FWLog.Services.Services
                                 DataSolicitacao = new DateTime(),
                                 Finalizado = false
                             });
+
+                            _unitOfWork.SaveChanges();
                         }
                     }
                 }
