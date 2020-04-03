@@ -1,13 +1,12 @@
 ﻿using FWLog.Data;
-using FWLog.Services.Services;
-using System;
-using FWLog.Web.Api.Models.AtividadeEstoque;
-using System.Web.Http;
 using FWLog.Services.Model.AtividadeEstoque;
+using FWLog.Services.Services;
+using FWLog.Web.Api.Models.AtividadeEstoque;
+using System;
+using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
 {
-    [AllowAnonymous]
     public class AtividadeEstoqueController : ApiBaseController
     {
         private readonly AtividadeEstoqueService _atividadeEstoqueService;
@@ -16,9 +15,10 @@ namespace FWLog.Web.Api.Controllers
         public AtividadeEstoqueController(UnitOfWork unitOfWork, AtividadeEstoqueService atividadeEstoqueService)
         {
             _atividadeEstoqueService = atividadeEstoqueService;
-			_unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
+        [AllowAnonymous]
         [Route("api/v1/atividade-estoque/cadastrar/abastecer-picking")]
         [HttpPost]
         public IHttpActionResult CadastrarAtividadeAbastecerPicking(long idEmpresa)
@@ -41,6 +41,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [AllowAnonymous]
         [Route("api/v1/atividade-estoque/cadastrar/conferencia-endereco")]
         [HttpPost]
         public IHttpActionResult CadastrarAtividadeConferenciaEndereco(long idEmpresa)
@@ -63,6 +64,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [AllowAnonymous]
         [Route("api/v1/atividade-estoque/cadastrar/conferencia-399-400")]
         [HttpPost]
         public IHttpActionResult CadastrarAtividadeConferencia399_400(long idEmpresa)
@@ -83,8 +85,9 @@ namespace FWLog.Web.Api.Controllers
             }
 
             return ApiOk();
-		}
+        }
 
+        [AllowAnonymous]
         [Route("api/v1/atividade-estoque/atualizar")]
         [HttpPost]
         public IHttpActionResult AtualizarAtividade(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao)
@@ -107,9 +110,10 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [AllowAnonymous]
         [Route("api/v1/atividade-estoque/pesquisar")]
         [HttpGet]
-        public IHttpActionResult PesquisarAtividade()       
+        public IHttpActionResult PesquisarAtividade()
         {
             var resposta = new AtividadesEstoqueResposta
             {
@@ -117,6 +121,28 @@ namespace FWLog.Web.Api.Controllers
             };
 
             return ApiOk(resposta);
+        }
+
+        [Authorize]
+        [Route("api/v1/atividade-estoque/conferencia-399-400/validar-produto")]
+        [HttpPost]
+        public IHttpActionResult ValidarProdutoConferenciaProdutoForaLinha(ValidarProdutoConferenciaProdutoForaLinhaRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _atividadeEstoqueService.ValidarProdutoConferenciaProdutoForaLinha(requisicao?.Corredor ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa);
+
+                return ApiOk();
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
         }
     }
 }

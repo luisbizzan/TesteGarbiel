@@ -10,11 +10,11 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public AtividadeEstoqueRepository(Entities entities) : base(entities) { }
 
-        public AtividadeEstoque Pesquisar(long idEmpresa, AtividadeEstoqueTipoEnum idAtividadeEstoqueTipo, long idEnderecoArmazenagem, long idProduto, bool finalizado )
+        public AtividadeEstoque Pesquisar(long idEmpresa, AtividadeEstoqueTipoEnum idAtividadeEstoqueTipo, long idEnderecoArmazenagem, long idProduto, bool finalizado)
         {
-            return Entities.AtividadeEstoque.Where(x => x.IdEmpresa == idEmpresa && x.IdAtividadeEstoqueTipo == idAtividadeEstoqueTipo && x.IdEnderecoArmazenagem == x.IdEnderecoArmazenagem &&
+            return Entities.AtividadeEstoque.Where(x => x.IdEmpresa == idEmpresa && x.IdAtividadeEstoqueTipo == idAtividadeEstoqueTipo && x.IdEnderecoArmazenagem == idEnderecoArmazenagem &&
             x.IdProduto == idProduto && x.Finalizado == finalizado).FirstOrDefault();
-		}
+        }
 
         public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa)
         {
@@ -31,11 +31,19 @@ namespace FWLog.Data.Repository.GeneralCtx
                              IdEnderecoArmazenagem = e.IdEnderecoArmazenagem,
                              IdProduto = p.IdProduto,
                              Referencia = p.Referencia,
-                             CodigoEndereco = e.Codigo,                             
+                             CodigoEndereco = e.Codigo,
                              Corredor = e.Corredor
                          });
 
             return query.ToList();
+        }
+
+        public List<AtividadeEstoque> PesquisarProdutosPendentes(long idEmpresa, AtividadeEstoqueTipoEnum idAtividadeEstoqueTipo, long idProduto)
+        {
+            return Entities.AtividadeEstoque.Where(x => x.IdEmpresa == idEmpresa &&
+                                                            x.IdAtividadeEstoqueTipo == idAtividadeEstoqueTipo &&
+                                                            x.IdProduto == idProduto &&
+                                                            x.Finalizado == false).ToList();
         }
     }
 }

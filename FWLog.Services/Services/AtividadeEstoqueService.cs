@@ -1,11 +1,11 @@
 ﻿using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Services.Model.AtividadeEstoque;
 using System;
-using System.Linq;
-using FWLog.Data.Models.DataTablesCtx;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FWLog.Services.Services
 {
@@ -172,7 +172,7 @@ namespace FWLog.Services.Services
                 var applicationLogService = new ApplicationLogService(_unitOfWork);
                 applicationLogService.Error(ApplicationEnum.Api, ex, "Erro na criação das atividades de conferência 399/400.");
             }
-		}
+        }
 
         public void AtualizarAtividade(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao)
         {
@@ -201,6 +201,38 @@ namespace FWLog.Services.Services
         public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa)
         {
             return _unitOfWork.AtividadeEstoqueRepository.PesquisarAtividade(idEmpresa);
+        }
+
+        public void ValidarProdutoConferenciaProdutoForaLinha(int corredor, long idProduto, long idEmpresa)
+        {
+            if (corredor <= 0)
+            {
+                throw new BusinessException("O corredor deve ser informado.");
+            }
+
+            if (idProduto <= 0)
+            {
+                throw new BusinessException("O produto deve ser informado.");
+            }
+
+            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("O produto informado não foi encontrado.");
+            }
+
+            var listaDeAtividadesEstoque = _unitOfWork.AtividadeEstoqueRepository.PesquisarProdutosPendentes(idEmpresa, AtividadeEstoqueTipoEnum.ConferenciaProdutoForaLinha, idProduto);
+
+            if (listaDeAtividadesEstoque.NullOrEmpty())
+            {
+                throw new BusinessException("Não foi encontrado produto com atividade de estoque pendente.");
+            }
+
+            if (!listaDeAtividadesEstoque.Any(ae => ae.EnderecoArmazenagem.Corredor == corredor))
+            {
+                throw new BusinessException("Produto não encontrado em corredor para conferência.");
+            }
         }
     }
 }

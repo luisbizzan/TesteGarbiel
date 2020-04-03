@@ -21,11 +21,11 @@ namespace FWLog.Data.Models
         [Index]
         [Required]
         public AtividadeEstoqueTipoEnum IdAtividadeEstoqueTipo { get; set; }
-        public int QuantidadeInicial { get; set; }
-        public int QuantidadeFinal { get; set; }
+        public int? QuantidadeInicial { get; set; }
+        public int? QuantidadeFinal { get; set; }
         [Required]
         public DateTime DataSolicitacao { get; set; }
-        public DateTime DataExecucao { get; set; }
+        public DateTime? DataExecucao { get; set; }
         [Index]
         public string IdUsuarioSolicitacao { get; set; }
         [Index]
