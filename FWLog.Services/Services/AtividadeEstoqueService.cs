@@ -262,5 +262,38 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Não foi encontrado produto com atividade de estoque pendente no endereço.");
             }
         }
+
+        public void ValidarQuantidadeConferenciaProdutoForaLinha(int corredor, long idEnderecoArmazenagem, long idProduto, int quantidade, long idEmpresa)
+        {
+            ValidarEnderecoConferenciaProdutoForaLinha(corredor, idEnderecoArmazenagem, idProduto, idEmpresa);
+
+            if (quantidade <= 0)
+            {
+                throw new BusinessException("A quantidade deve ser informada.");
+            }
+
+            var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(idProduto, idEmpresa);
+
+            if (produtoEstoque == null)
+            {
+                throw new BusinessException("A quantidade deve ser informada.");
+            }
+
+            int quantidadeMaxima;
+
+            if (produtoEstoque.Saldo == 0)
+            {
+                quantidadeMaxima = 3;
+            }
+            else
+            {
+                quantidadeMaxima = produtoEstoque.Saldo + ((produtoEstoque.Saldo * 30) / 100);
+            }
+
+            if (quantidade > quantidadeMaxima)
+            {
+                throw new BusinessException("Quantidade digitada maior que o permitido! Procure coordenação.");
+            }
+        }
     }
 }

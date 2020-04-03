@@ -242,6 +242,7 @@
     <Compile Include="Models\Armazenagem\ValidarLoteProdutoInstalacaoModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarQuantidadeInstalacaoModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\NivelPontoArmazenagemPorCorredorResposta.cs" />
+    <Compile Include="Models\AtividadeEstoque\ValidarQuantidadeConferenciaProdutoForaLinhaRequisicao.cs" />
     <Compile Include="Models\AtividadeEstoque\ValidarEnderecoConferenciaProdutoForaLinhaRequisicao.cs" />
     <Compile Include="Models\AtividadeEstoque\ValidarProdutoConferenciaProdutoForaLinhaRequisicao.cs" />
     <Compile Include="Models\EnderecoArmazenagem\EnderecoArmazenagemResposta.cs" />

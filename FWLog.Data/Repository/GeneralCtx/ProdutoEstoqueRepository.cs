@@ -22,7 +22,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             Entities.Database.ExecuteSqlCommand(sql, new OracleParameter(":SALDO", saldo), new OracleParameter(":IDPRODUTO", idProduto), new OracleParameter(":IDEMPRESA", idEmpresa));
         }
 
-        public int ObterDiasPrazoEntrega(long idEmpresa , List<long> listIdProdutos)
+        public int ObterDiasPrazoEntrega(long idEmpresa, List<long> listIdProdutos)
         {
             return Entities.ProdutoEstoque.Where(w => w.IdEmpresa == idEmpresa && listIdProdutos.Contains(w.IdProduto)).Max(m => m.DiasPrazoEntrega);
         }
