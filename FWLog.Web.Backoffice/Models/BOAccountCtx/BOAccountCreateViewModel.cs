@@ -55,6 +55,18 @@ namespace FWLog.Web.Backoffice.Models.BOAccountCtx
         [Display(Name = "Perfil Impressora Padrão")]
         public long? IdPerfilImpressoraPadrao { get; set; }
 
+        [Display(Name = "Corredor Estoque")]
+        public int? CorredorEstoqueInicio { get; set; }
+
+        [Display(Name = "Corredor Estoque Fim")]
+        public int? CorredorEstoqueFim { get; set; }
+
+        [Display(Name = "Corredor Separação")]
+        public int? CorredorSeparacaoInicio { get; set; }
+
+        [Display(Name = "Corredor Separação Fim")]
+        public int? CorredorSeparacaoFim { get; set; }
+
         public List<GroupItemViewModel> Grupos { get; set; } = new List<GroupItemViewModel>();
 
         public System.Web.Mvc.SelectList PerfilImpressora { get; set; }
