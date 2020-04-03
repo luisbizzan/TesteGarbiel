@@ -234,5 +234,33 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Produto não encontrado em corredor para conferência.");
             }
         }
+
+        public void ValidarEnderecoConferenciaProdutoForaLinha(int corredor, long idEnderecoArmazenagem, long idProduto, long idEmpresa)
+        {
+            ValidarProdutoConferenciaProdutoForaLinha(corredor, idProduto, idEmpresa);
+
+            if (idEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("O endereço deve ser informado.");
+            }
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("O endereço informado não foi encontrado.");
+            }
+
+            var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(idEmpresa,
+                                                                                            AtividadeEstoqueTipoEnum.ConferenciaProdutoForaLinha,
+                                                                                            idEnderecoArmazenagem,
+                                                                                            idProduto,
+                                                                                            false);
+
+            if (atividadeEstoque == null)
+            {
+                throw new BusinessException("Não foi encontrado produto com atividade de estoque pendente no endereço.");
+            }
+        }
     }
 }
