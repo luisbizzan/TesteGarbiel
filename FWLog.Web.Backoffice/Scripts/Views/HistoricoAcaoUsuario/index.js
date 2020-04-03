@@ -76,7 +76,6 @@
     });
 
     $("#imprimirHistoricoAcaoUsuario").click(function () {
-        debugger
         $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=1&acao=historico", function () {
             $("#modalImpressoras").modal();
         });
