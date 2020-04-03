@@ -24,23 +24,47 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row" style="margin-bottom: 20px;">
-                <div class="col-xs-12 col-md-4 col-lg-3 form-group">
+                <div class="form-group col-sm-3 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.Filter.IdNivelArmazenagem, new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.DescricaoNivelArmazenagem, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdNivelArmazenagem, new { data_field = "IdNivelArmazenagem" })
+                    @Html.ValidationMessageFor(m => m.Filter.IdNivelArmazenagem)
+                </div>
+                <div class="form-group col-sm-3 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.Filter.IdPontoArmazenagem, new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.DescricaoPontoArmazenagem, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdPontoArmazenagem, new { data_field = "IdPontoArmazenagem" })
+                    @Html.ValidationMessageFor(m => m.Filter.IdPontoArmazenagem)
+                </div>
+                <div class="col-xs-12 col-md-4 col-lg-2">
                     @Html.LabelFor(m => m.Filter.CorredorInicial)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.CorredorInicial, new { @class = "form-control onlyNumber", data_field = "CorredorInicial" })
+                        @Html.TextBoxFor(m => m.Filter.CorredorInicial, new { @class = "form-control onlyNumber validateCorredorInicial", data_field = "CorredorInicial" })
                     </div>
+                    @Html.ValidationMessageFor(m => m.Filter.CorredorInicial)
                 </div>
-                <div class="col-xs-12 col-md-4 col-lg-3 form-group">
-                    @Html.LabelFor(m => m.Filter.CorredorInicial)
+                <div class="col-xs-12 col-md-4 col-lg-2">
+                    @Html.LabelFor(m => m.Filter.CorredorFinal)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.CorredorInicial, new { @class = "form-control onlyNumber", data_field = "CorredorInicial" })
+                        @Html.TextBoxFor(m => m.Filter.CorredorFinal, new { @class = "form-control onlyNumber validateCorredorFinal", data_field = "CorredorFinal" })
                     </div>
+                    @Html.ValidationMessageFor(m => m.Filter.CorredorFinal)
                 </div>
-                <div class="col-xs-12 col-sm-4 col-lg-3 form-group">
+                <div class="col-xs-12 col-sm-4 col-lg-2">
                     @Html.LabelFor(m => m.Filter.ImprimirVazia)
-                    <div>
-                        @Html.CheckBoxFor(m => m.Filter.ImprimirVazia, new { @class = "flat", data_field = "ImprimirVazia" })
-                    </div>
+                    @Html.DropDownListFor(m => m.Filter.ImprimirVazia, (IEnumerable<SelectListItem>)ViewBag.ImprimirVazia, new { @class = "form-control", data_field = "ImprimirVazia" })
                 </div>
             </div>
             <div class="row">
@@ -53,11 +77,11 @@
     </div>
 </form>
 <!-- /table -->
-<div class="row">
+<div id="tabelaTotalPorAlas" class="row" style="display:none;">
     <div class="col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Lista de Produtos</h2>
+                <h2>Lista Endereços Por Corredor</h2>
                 <div class="nav navbar-right">
                     <div class="col-xs-12">
                         <a id="downloadRelatorioProduto" data-toggle="tooltip" title="Download Relatório" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
@@ -79,8 +103,8 @@
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.QuantidadeProdutoPorEndereco)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.PesoTotalDeProduto)</th>
                             @*<th>@Html.DisplayNameFor(m => m.EmptyItem.IdLote)</th>
-        <th>@Html.DisplayNameFor(m => m.Itens.Status)</th>
-        <th>@Resources.CommonStrings.ActionsLabel</th>*@
+                                <th>@Html.DisplayNameFor(m => m.Itens.Status)</th>
+                                <th>@Resources.CommonStrings.ActionsLabel</th>*@
                         </tr>
                     </thead>
                 </table>
@@ -88,4 +112,6 @@
         </div>
     </div>
 </div>
+<div class="modal" id="modalPesquisaNivelArmazenagem"></div>
+<div class="modal" id="modalPesquisaPontoArmazenagem"></div>
 

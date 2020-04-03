@@ -238,5 +238,80 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Produto não encontrado em corredor para conferência.");
             }
         }
+
+        public void ValidarEnderecoConferenciaProdutoForaLinha(int corredor, long idEnderecoArmazenagem, long idProduto, long idEmpresa)
+        {
+            ValidarProdutoConferenciaProdutoForaLinha(corredor, idProduto, idEmpresa);
+
+            if (idEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("O endereço deve ser informado.");
+            }
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("O endereço informado não foi encontrado.");
+            }
+
+            var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(idEmpresa,
+                                                                                            AtividadeEstoqueTipoEnum.ConferenciaProdutoForaLinha,
+                                                                                            idEnderecoArmazenagem,
+                                                                                            idProduto,
+                                                                                            false);
+
+            if (atividadeEstoque == null)
+            {
+                throw new BusinessException("Não foi encontrado produto com atividade de estoque pendente no endereço.");
+            }
+        }
+
+        public void ValidarQuantidadeConferenciaProdutoForaLinha(int corredor, long idEnderecoArmazenagem, long idProduto, int quantidade, long idEmpresa)
+        {
+            ValidarEnderecoConferenciaProdutoForaLinha(corredor, idEnderecoArmazenagem, idProduto, idEmpresa);
+
+            if (quantidade <= 0)
+            {
+                throw new BusinessException("A quantidade deve ser informada.");
+            }
+
+            var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(idProduto, idEmpresa);
+
+            if (produtoEstoque == null)
+            {
+                throw new BusinessException("A quantidade deve ser informada.");
+            }
+
+            int quantidadeMaxima;
+
+            if (produtoEstoque.Saldo == 0)
+            {
+                quantidadeMaxima = 3;
+            }
+            else
+            {
+                quantidadeMaxima = produtoEstoque.Saldo + ((produtoEstoque.Saldo * 30) / 100);
+            }
+
+            if (quantidade > quantidadeMaxima)
+            {
+                throw new BusinessException("Quantidade digitada maior que o permitido! Procure coordenação.");
+            }
+        }
+
+        public void FinalizarConferenciaProdutoForaLinhaRequisicao(int corredor, long idEnderecoArmazenagem, long idProduto, int? quantidade, long idEmpresa)
+        {
+            if (quantidade.HasValue)
+            {
+                ValidarQuantidadeConferenciaProdutoForaLinha(corredor, idEnderecoArmazenagem, idProduto, quantidade.Value, idEmpresa);
+            }
+            else
+            {
+                ValidarEnderecoConferenciaProdutoForaLinha(corredor, idEnderecoArmazenagem, idProduto, idEmpresa);
+            }
+
+            throw new BusinessException("API ainda não implementada em totalidade");
+        }
     }
 }

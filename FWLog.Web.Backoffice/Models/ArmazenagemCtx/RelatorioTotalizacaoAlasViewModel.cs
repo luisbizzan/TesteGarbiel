@@ -57,12 +57,17 @@ namespace FWLog.Web.Backoffice.Models.ArmazenagemCtx
 
         [Display(Name = "Imprimir Vazia?")]
         public bool ImprimirVazia { get; set; }
-        
-        
 
-        //public long? IdProduto { get; set; }
+        [Required]
+        [Display(Name = "Nível de Armazenagem")]
+        public long? IdNivelArmazenagem { get; set; }
+        public string DescricaoNivelArmazenagem { get; set; }
 
-        //public long IdEmpresa { get; set; }
+        [Required]
+        [Display(Name = "Ponto de Armazenagem")]
+        public long? IdPontoArmazenagem { get; set; }
+        public string DescricaoPontoArmazenagem { get; set; }
+
     }
 
     //public class Corredor
