@@ -231,7 +231,22 @@ namespace FWLog.Web.Backoffice.Controllers
             _unitOfWork.PerfilUsuarioRepository.Add(perfilUsuario);
             _unitOfWork.SaveChanges();
 
-            model.EmpresasGrupos.ForEach(f => _unitOfWork.UsuarioEmpresaRepository.Add(new UsuarioEmpresa { UserId = user.Id, IdEmpresa = f.IdEmpresa, PerfilUsuarioId = perfilUsuario.PerfilUsuarioId, IdPerfilImpressoraPadrao = f.IdPerfilImpressoraPadrao }));
+            foreach (var f in model.EmpresasGrupos)
+            {
+                var newUsuarioEmpresa = new UsuarioEmpresa
+                {
+                    UserId = user.Id,
+                    IdEmpresa = f.IdEmpresa,
+                    PerfilUsuarioId = perfilUsuario.PerfilUsuarioId,
+                    IdPerfilImpressoraPadrao = f.IdPerfilImpressoraPadrao,
+                    CorredorEstoqueInicio = f.CorredorEstoqueInicio,
+                    CorredorEstoqueFim = f.CorredorEstoqueFim,
+                    CorredorSeparacaoInicio = f.CorredorSeparacaoInicio,
+                    CorredorSeparacaoFim = f.CorredorSeparacaoFim,
+                };
+                _unitOfWork.UsuarioEmpresaRepository.Add(newUsuarioEmpresa);
+            }
+
             _unitOfWork.SaveChanges();
 
             var empresasGruposNew = new StringBuilder();
@@ -310,7 +325,11 @@ namespace FWLog.Web.Backoffice.Controllers
                     Nome = Empresas.First(f => f.IdEmpresa == empresa).Nome,
                     IsEmpresaPrincipal = perfil.EmpresaId == empresa ? true : false,
                     IdPerfilImpressoraPadrao = usuarioEmpresa?.IdPerfilImpressoraPadrao,
-                    PerfilImpressora = PerfilImpressorasList(empresa, usuarioEmpresa?.IdPerfilImpressoraPadrao)
+                    PerfilImpressora = PerfilImpressorasList(empresa, usuarioEmpresa?.IdPerfilImpressoraPadrao),
+                    CorredorEstoqueInicio = usuarioEmpresa?.CorredorEstoqueInicio,
+                    CorredorEstoqueFim = usuarioEmpresa?.CorredorEstoqueFim,
+                    CorredorSeparacaoInicio= usuarioEmpresa?.CorredorSeparacaoInicio,
+                    CorredorSeparacaoFim = usuarioEmpresa?.CorredorSeparacaoFim,
                 };
 
                 List<string> gruposPermissoesUsuarioEdicao = (await UserManager.GetUserRolesByIdEmpresa(user.Id, empresa).ConfigureAwait(false)).OrderBy(x => x).ToList();
@@ -466,7 +485,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
             _boService.EditPerfilUsuario(perfilUsuario);
 
-            var empresasGrupos = model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Select(s => new BOAccountService.impressorapadrao { IdEmpresa = s.IdEmpresa, IdPerfilImpressoraPadrao = s.IdPerfilImpressoraPadrao }).ToList();
+            var empresasGrupos = model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected))
+                .Select(s => new BOAccountService.UsuarioEmpresaUpdateFields { IdEmpresa = s.IdEmpresa, IdPerfilImpressoraPadrao = s.IdPerfilImpressoraPadrao, CorredorEstoqueInicio = s.CorredorEstoqueInicio, CorredorEstoqueFim = s.CorredorEstoqueFim, CorredorSeparacaoInicio = s.CorredorSeparacaoInicio, CorredorSeparacaoFim = s.CorredorSeparacaoFim }).ToList();
             _boService.EditUsuarioEmpresas(Empresas, empresasGrupos, user.Id, perfilUsuario.PerfilUsuarioId);
 
             var userInfo = new BackOfficeUserInfo();
