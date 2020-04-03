@@ -31,6 +31,9 @@ namespace FWLog.Web.Backoffice.Models.ArmazenagemCtx
         [Display(Name = "Referência")]
         public string ReferenciaProduto { get; set; }
 
+        [Display(Name = "Lote")]
+        public string IdLote { get; set; }
+
         [Display(Name = "Data")]
         public string DataInstalacao { get; set; }
 
@@ -42,7 +45,6 @@ namespace FWLog.Web.Backoffice.Models.ArmazenagemCtx
 
         [Display(Name = "Peso Total")]
         public string PesoTotalDeProduto { get; set; }
-
     }
 
     public class RelatorioTotalizacaoAlasFilterViewModel

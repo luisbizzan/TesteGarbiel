@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FWLog.Data.Models.DataTablesCtx
 {
@@ -14,16 +10,18 @@ namespace FWLog.Data.Models.DataTablesCtx
 
         public int Corredor { get; set; }
 
+        public long? IdLote { get; set; }
+
         public string IdUsuarioInstalacao { get; set; }
 
         public string ReferenciaProduto { get; set; }
 
-        public string DataInstalacao { get; set; }
+        public DateTime? DataInstalacao { get; set; }
 
-        public string PesoProduto { get; set; }
+        public decimal? PesoProduto { get; set; }
 
-        public int QuantidadeProdutoPorEndereco { get; set; }
+        public int? QuantidadeProdutoPorEndereco { get; set; }
 
-        public string PesoTotalDeProduto { get; set; }
+        public decimal? PesoTotalDeProduto { get; set; }
     }
 }

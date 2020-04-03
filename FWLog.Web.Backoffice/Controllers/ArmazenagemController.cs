@@ -250,54 +250,25 @@ namespace FWLog.Web.Backoffice.Controllers
             var listaEnderecoArmazenagem = _uow.EnderecoArmazenagemRepository
                 .BuscarPorNivelEPontoArmazenagem(filtro.CustomFilter.IdNivelArmazenagem, filtro.CustomFilter.IdPontoArmazenagem, filtro.CustomFilter.IdEmpresa);
             
-            filtro.CustomFilter.ListaIdEnderecoArmazenagem = listaEnderecoArmazenagem;
+            filtro.CustomFilter.ListaEnderecoArmazenagem = listaEnderecoArmazenagem;
 
-            var loteProdutoEnderecos = _uow.LoteProdutoEnderecoRepository.TotalDeInstalados(filtro, out int totalRecordsFiltered, out int totalRecords);
-
-            if (filtro.CustomFilter.ImprimirVazia)
-            {
-                var idEnderecoNaoInstalado = listaEnderecoArmazenagem.Select(x => x.IdEnderecoArmazenagem).Except(loteProdutoEnderecos.Select(x => x.IdEnderecoArmazenagem));
-
-                var enderecosDisponiveis = _uow.EnderecoArmazenagemRepository.PesquisarPorIds(idEnderecoNaoInstalado, filtro.CustomFilter.IdEmpresa);
-
-                totalRecords += enderecosDisponiveis.Count;
-
-                enderecosDisponiveis.ForEach(x =>
-                {
-                    var item = new EnderecoArmazenagemTotalPorAlasLinhaTabela
-                    {
-                        CodigoEndereco = x.Codigo,
-                        DataInstalacao = null,
-                        Corredor = x.Corredor,
-                        IdEnderecoArmazenagem = x.IdEnderecoArmazenagem,
-                        IdUsuarioInstalacao = null,
-                        PesoProduto = null,
-                        PesoTotalDeProduto = null,
-                        QuantidadeProdutoPorEndereco = 0,
-                        ReferenciaProduto = null,
-                    };
-
-                    loteProdutoEnderecos.Add(item);
-
-                });
-
-                totalRecordsFiltered = loteProdutoEnderecos.Count;
-            }
+            var loteProdutoEnderecos = _uow.LoteProdutoEnderecoRepository.BuscarDados(filtro, out int totalRecordsFiltered, out int totalRecords);
 
             var list = new List<RelatorioTotalizacaoAlasListItemViewModel>();
             List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
 
-            loteProdutoEnderecos.OrderBy(order => order.Corredor).ThenBy(x => x.CodigoEndereco).ForEach(lpe =>
+            loteProdutoEnderecos.OrderBy(order => order.Corredor).ThenBy(order => order.CodigoEndereco).ForEach(lpe =>
                 list.Add(new RelatorioTotalizacaoAlasListItemViewModel
                 {
                     NumeroCorredor = string.Concat("Corredor: ", lpe.Corredor.ToString("0#")),
                     CodigoEndereco = lpe.CodigoEndereco,
-                    DataInstalacao = lpe.DataInstalacao ?? "-",
+                    DataInstalacao = lpe.DataInstalacao != null ? lpe.DataInstalacao?.ToString("dd/MM/yyyy HH:mm:ss") :  "-",
                     IdUsuarioInstalacao = usuarios.Where(x => x.UserId == lpe.IdUsuarioInstalacao).FirstOrDefault()?.PerfilUsuario.Nome ?? "-",
-                    PesoProduto = lpe.PesoProduto ?? "-",
-                    QuantidadeProdutoPorEndereco = lpe.QuantidadeProdutoPorEndereco.ToString(),
+                    PesoProduto = lpe.PesoProduto != (decimal?)null ? lpe.PesoProduto?.ToString("n2") : "-",
+                    QuantidadeProdutoPorEndereco = lpe.QuantidadeProdutoPorEndereco != (int?)null ? lpe.QuantidadeProdutoPorEndereco?.ToString() : "-",
                     ReferenciaProduto = lpe.ReferenciaProduto ?? "-",
-                    PesoTotalDeProduto = lpe.PesoTotalDeProduto ?? "-"
+                    IdLote = lpe.IdLote != null ? lpe.IdLote.ToString() : "-",
+                    PesoTotalDeProduto = lpe.PesoTotalDeProduto != (decimal?)null ? lpe.PesoTotalDeProduto?.ToString("n2") :  "-"
                 })
             );
 

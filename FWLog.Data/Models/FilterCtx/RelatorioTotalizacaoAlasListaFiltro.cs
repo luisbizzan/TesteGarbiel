@@ -10,6 +10,6 @@ namespace FWLog.Data.Models.FilterCtx
         public bool ImprimirVazia { get; set; }
         public long IdPontoArmazenagem { get; set; }
         public long IdNivelArmazenagem { get; set; }
-        public IEnumerable<EnderecoArmazenagem> ListaIdEnderecoArmazenagem { get; set; }
+        public IEnumerable<EnderecoArmazenagem> ListaEnderecoArmazenagem { get; set; }
     }
 }

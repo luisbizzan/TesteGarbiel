@@ -57,15 +57,16 @@
             { data: 'CodigoEndereco' },
             { data: 'IdUsuarioInstalacao' },
             { data: 'ReferenciaProduto' },
+            { data: 'IdLote' },
             { data: 'DataInstalacao' },
             { data: 'PesoProduto' },
             { data: 'QuantidadeProdutoPorEndereco' },
             { data: 'PesoTotalDeProduto' }
         ],
         order: [[2, 'asc']],
-        //rowGroup: {
-        //    dataSrc: 'NumeroCorredor'
-        //}
+        rowGroup: {
+            dataSrc: 'NumeroCorredor'
+        }
     });
 
     $('#dataTable').dataTable.error = function (settings, helpPage, message) {
