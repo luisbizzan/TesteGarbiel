@@ -15,8 +15,8 @@ namespace FWLog.Web.Api.Controllers
 
         public AtividadeEstoqueController(UnitOfWork unitOfWork, AtividadeEstoqueService atividadeEstoqueService)
         {
-            _unitOfWork = unitOfWork;
             _atividadeEstoqueService = atividadeEstoqueService;
+			_unitOfWork = unitOfWork;
         }
 
         [Route("api/v1/atividade-estoque/cadastrar/abastecer-picking")]
