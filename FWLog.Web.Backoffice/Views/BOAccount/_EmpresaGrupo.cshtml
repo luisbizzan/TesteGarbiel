@@ -48,25 +48,17 @@
             <div class="form-inline col-sm-4 col-xs-4">
                 <div class="form-group">
                     @Html.LabelFor(m => m[i].CorredorEstoqueInicio)
-                    @Html.TextBox(string.Format("EmpresasGrupos[{0}].CorredorEstoqueInicio", i), Model[i].CorredorEstoqueInicio, new { @class = "form-control integer", @style = "width: 60px", maxlength = "2" })
-                    @Html.ValidationMessageFor(m => m[i].CorredorEstoqueInicio)
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m[i].CorredorEstoqueFim, new { @class = "sr-only" })
-                    @Html.TextBox(string.Format("EmpresasGrupos[{0}].CorredorEstoqueFim", i), Model[i].CorredorEstoqueFim, new { @class = "form-control integer", @style = "width: 60px", maxlength = "2" })
-                    @Html.ValidationMessageFor(m => m[i].CorredorEstoqueFim)
+                    @Html.TextBox(string.Format("EmpresasGrupos[{0}].CorredorEstoqueInicio", i), Model[i].CorredorEstoqueInicio, new { title = "Corredor Estoque Início", @class = "form-control integer", @style = "width: 43px", maxlength = "2" })
+                    @Html.TextBox(string.Format("EmpresasGrupos[{0}].CorredorEstoqueFim", i), Model[i].CorredorEstoqueFim, new { title = "Corredor Estoque Fim", @class = "form-control integer", @style = "width: 43px", maxlength = "2" })
+                    <span class="text-danger validationEmpresa" style="display:block!important; margin-top: 3px;">@Html.ValidationMessage("[" + i + "].CorredorEstoque")</span>
                 </div>
             </div>
             <div class="form-inline col-sm-4 col-xs-4">
                 <div class="form-group">
                     @Html.LabelFor(m => m[i].CorredorSeparacaoInicio)
-                    @Html.TextBox(string.Format("EmpresasGrupos[{0}].CorredorSeparacaoInicio", i), Model[i].CorredorSeparacaoInicio, new { @class = "form-control integer", @style = "width: 60px", maxlength = "2" })
-                    @Html.ValidationMessageFor(m => m[i].CorredorSeparacaoInicio)
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m[i].CorredorSeparacaoFim, new { @class = "sr-only" })
-                    @Html.TextBox(string.Format("EmpresasGrupos[{0}].CorredorSeparacaoFim", i), Model[i].CorredorSeparacaoFim, new { @class = "form-control integer", @style = "width: 60px", maxlength = "2" })
-                    @Html.ValidationMessageFor(m => m[i].CorredorSeparacaoFim)
+                    @Html.TextBox(string.Format("EmpresasGrupos[{0}].CorredorSeparacaoInicio", i), Model[i].CorredorSeparacaoInicio, new { title = "Corredor Separação Início", @class = "form-control integer", @style = "width: 43px", maxlength = "2" })
+                    @Html.TextBox(string.Format("EmpresasGrupos[{0}].CorredorSeparacaoFim", i), Model[i].CorredorSeparacaoFim, new { title = "Corredor Separação Início", @class = "form-control integer", @style = "width: 43px", maxlength = "2" })
+                    <span class="text-danger validationEmpresa" style="display:block!important; margin-top: 3px;">@Html.ValidationMessage("[" + i + "].CorredorSeparacao")</span>
                 </div>
             </div>
 

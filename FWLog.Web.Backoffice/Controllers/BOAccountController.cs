@@ -203,6 +203,45 @@ namespace FWLog.Web.Backoffice.Controllers
                 return errorView(null);
             }
 
+            for (int i = 0; i < model.EmpresasGrupos.Count; i++)
+            {
+                if (model.EmpresasGrupos[0].CorredorEstoqueInicio == null && model.EmpresasGrupos[0].CorredorEstoqueFim != null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorEstoque", "Preencha o valor inicial do Corredor Estoque");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorEstoqueInicio != null && model.EmpresasGrupos[0].CorredorEstoqueFim == null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorEstoque", "Preencha o valor final do Corredor Estoque");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorEstoqueInicio.HasValue && model.EmpresasGrupos[0].CorredorEstoqueFim.HasValue)
+                {
+                    if (model.EmpresasGrupos[0].CorredorEstoqueInicio.Value > model.EmpresasGrupos[0].CorredorEstoqueFim.Value)
+                    {
+                        ModelState.AddModelError($"[{i}].CorredorEstoque", "O valor inicial do Corredor Estoque não pode ser maior do que o final");
+                    }
+                }
+
+                if (model.EmpresasGrupos[0].CorredorSeparacaoInicio == null && model.EmpresasGrupos[0].CorredorSeparacaoFim != null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorSeparacao", "Preencha o valor inicial do Corredor Separação");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorSeparacaoInicio != null && model.EmpresasGrupos[0].CorredorSeparacaoFim == null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorSeparacao", "Preencha o valor final do Corredor Separação");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorSeparacaoInicio.HasValue && model.EmpresasGrupos[0].CorredorSeparacaoFim.HasValue)
+                {
+                    if (model.EmpresasGrupos[0].CorredorSeparacaoInicio.Value > model.EmpresasGrupos[0].CorredorSeparacaoFim.Value)
+                    {
+                        ModelState.AddModelError($"[{i}].CorredorSeparacao", "O valor inicial do Corredor Separação não pode ser maior do que o final");
+                    }
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 return errorView(null);
@@ -431,6 +470,50 @@ namespace FWLog.Web.Backoffice.Controllers
             if (!model.EmpresasGrupos.Any(w => w.IsEmpresaPrincipal))
             {
                 ModelState.AddModelError(nameof(model.EmpresasGrupos), "Selecione a empresa principal do usuário.");
+                return errorView();
+            }
+
+            for (int i = 0; i < model.EmpresasGrupos.Count; i++)
+            {
+                if (model.EmpresasGrupos[0].CorredorEstoqueInicio == null && model.EmpresasGrupos[0].CorredorEstoqueFim != null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorEstoque", "Preencha o valor inicial do Corredor Estoque");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorEstoqueInicio != null && model.EmpresasGrupos[0].CorredorEstoqueFim == null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorEstoque", "Preencha o valor final do Corredor Estoque");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorEstoqueInicio.HasValue && model.EmpresasGrupos[0].CorredorEstoqueFim.HasValue)
+                {
+                    if (model.EmpresasGrupos[0].CorredorEstoqueInicio.Value > model.EmpresasGrupos[0].CorredorEstoqueFim.Value)
+                    {
+                        ModelState.AddModelError($"[{i}].CorredorEstoque", "O valor inicial do Corredor Estoque não pode ser maior do que o final");
+                    }
+                }
+
+                if (model.EmpresasGrupos[0].CorredorSeparacaoInicio == null && model.EmpresasGrupos[0].CorredorSeparacaoFim != null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorSeparacao", "Preencha o valor inicial do Corredor Separação");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorSeparacaoInicio != null && model.EmpresasGrupos[0].CorredorSeparacaoFim == null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorSeparacao", "Preencha o valor final do Corredor Separação");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorSeparacaoInicio.HasValue && model.EmpresasGrupos[0].CorredorSeparacaoFim.HasValue)
+                {
+                    if (model.EmpresasGrupos[0].CorredorSeparacaoInicio.Value > model.EmpresasGrupos[0].CorredorSeparacaoFim.Value)
+                    {
+                        ModelState.AddModelError($"[{i}].CorredorSeparacao", "O valor inicial do Corredor Separação não pode ser maior do que o final");
+                    }
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
                 return errorView();
             }
 
