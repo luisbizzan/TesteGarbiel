@@ -1,10 +1,7 @@
 ﻿using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Repository.CommonCtx;
-<<<<<<< HEAD
-=======
 using System.Collections.Generic;
->>>>>>> 8a1bebf6ca6163553ed670d187402d1ffab2170f
 using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx

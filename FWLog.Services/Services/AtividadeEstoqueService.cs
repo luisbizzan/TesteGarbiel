@@ -1,5 +1,4 @@
 ﻿using FWLog.Data;
-<<<<<<< HEAD
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Model.AtividadeEstoque;
@@ -24,6 +23,28 @@ namespace FWLog.Services.Services
             if (idEmpresa <= 0)
             {
                 throw new BusinessException("A empresa deve ser informada.");
+            }
+        }
+
+        public void ValidarAtualizacaoAtividade(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao)
+        {
+            if (atividadeEstoqueRequisicao.IdAtividadeEstoque <= 0)
+            {
+                throw new BusinessException("A atividade informada é inválida.");
+            }
+
+            var atividade = _unitOfWork.AtividadeEstoqueRepository.GetById(atividadeEstoqueRequisicao.IdAtividadeEstoque);
+
+            if (atividade == null)
+            {
+                throw new BusinessException("A atividade informada não foi encontrada.");
+            }
+
+            var usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(atividadeEstoqueRequisicao.IdUsuarioExecucao);
+
+            if (usuario == null)
+            {
+                throw new BusinessException("O usuário informando nao foi encontrado.");
             }
         }
 
@@ -56,7 +77,7 @@ namespace FWLog.Services.Services
 
                         if (atividadeEstoque == null)
                         {
-                            _unitOfWork.AtividadeEstoqueRepository.Add(new Data.Models.AtividadeEstoque()
+                            _unitOfWork.AtividadeEstoqueRepository.Add(new AtividadeEstoque()
                             {
                                 IdEmpresa = item.IdEmpresa,
                                 IdAtividadeEstoqueTipo = AtividadeEstoqueTipoEnum.AbastecerPicking,
@@ -114,7 +135,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void CadastrarrAtividadeConferecia399_400(long idEmpresa)
+        public void CadastrarAtividadeConferecia399_400(long idEmpresa)
         {
             try
             {
@@ -133,7 +154,7 @@ namespace FWLog.Services.Services
 
                         if (atividadeEstoque == null)
                         {
-                            _unitOfWork.AtividadeEstoqueRepository.Add(new Data.Models.AtividadeEstoque()
+                            _unitOfWork.AtividadeEstoqueRepository.Add(new AtividadeEstoque()
                             {
                                 IdEmpresa = item.IdEmpresa,
                                 IdAtividadeEstoqueTipo = AtividadeEstoqueTipoEnum.ConferenciaProdutoForaLinha,
@@ -152,6 +173,31 @@ namespace FWLog.Services.Services
                 applicationLogService.Error(ApplicationEnum.Api, ex, "Erro na criação das atividades de conferência 399/400.");
             }
 		}
+
+        public void AtualizarAtividade(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao)
+        {
+            try
+            {
+                var atividade = _unitOfWork.AtividadeEstoqueRepository.GetById(atividadeEstoqueRequisicao.IdAtividadeEstoque);
+
+                if (atividade != null)
+                {
+                    atividade.QuantidadeInicial = atividadeEstoqueRequisicao.QuantidadeInicial;
+                    atividade.QuantidadeFinal = atividadeEstoqueRequisicao.QuantidadeFinal;
+                    atividade.IdUsuarioExecucao = atividadeEstoqueRequisicao.IdUsuarioExecucao;
+                    atividade.DataExecucao = DateTime.Now;
+                    atividade.Finalizado = true;
+
+                    _unitOfWork.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                var applicationLogService = new ApplicationLogService(_unitOfWork);
+                applicationLogService.Error(ApplicationEnum.Api, ex, "Erro na atualização da atividade " + atividadeEstoqueRequisicao.IdAtividadeEstoque); 
+            }
+            
+    }
 
         public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa)
         {

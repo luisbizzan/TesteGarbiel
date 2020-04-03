@@ -20,9 +20,6 @@ namespace FWLog.Data.Models
         public long IdEnderecoArmazenagem { get; set; }
         [Index]
         [Required]
-        public long IdProduto { get; set; }
-        [Index]
-        [Required]
         public AtividadeEstoqueTipoEnum IdAtividadeEstoqueTipo { get; set; }
         public int QuantidadeInicial { get; set; }
         public int QuantidadeFinal { get; set; }
@@ -48,9 +45,6 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
-
-        [ForeignKey(nameof(IdProduto))]
-        public virtual Produto Produto { get; set; }
 
         [ForeignKey(nameof(IdUsuarioSolicitacao))]
         public virtual AspNetUsers UsuarioSolicitacao { get; set; }

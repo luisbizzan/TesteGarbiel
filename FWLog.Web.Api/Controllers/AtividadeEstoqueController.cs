@@ -1,9 +1,9 @@
 ﻿using FWLog.Data;
 using FWLog.Services.Services;
-<<<<<<< HEAD
 using System;
 using FWLog.Web.Api.Models.AtividadeEstoque;
 using System.Web.Http;
+using FWLog.Services.Model.AtividadeEstoque;
 
 namespace FWLog.Web.Api.Controllers
 {
@@ -19,7 +19,7 @@ namespace FWLog.Web.Api.Controllers
             _atividadeEstoqueService = atividadeEstoqueService;
         }
 
-        [Route("api/v1/atividade/cadastrar/abastecer-picking")]
+        [Route("api/v1/atividade-estoque/cadastrar/abastecer-picking")]
         [HttpPost]
         public IHttpActionResult CadastrarAtividadeAbastecerPicking(long idEmpresa)
         {
@@ -41,7 +41,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/atividade/cadastrar/conferencia-endereco")]
+        [Route("api/v1/atividade-estoque/cadastrar/conferencia-endereco")]
         [HttpPost]
         public IHttpActionResult CadastrarAtividadeConferenciaEndereco(long idEmpresa)
         {
@@ -63,7 +63,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/atividade/cadastrar/conferencia-399-400")]
+        [Route("api/v1/atividade-estoque/cadastrar/conferencia-399-400")]
         [HttpPost]
         public IHttpActionResult CadastrarAtividadeConferencia399_400(long idEmpresa)
         {
@@ -71,7 +71,7 @@ namespace FWLog.Web.Api.Controllers
             {
                 _atividadeEstoqueService.ValidarCadastroAtividade(idEmpresa);
 
-                _atividadeEstoqueService.CadastrarrAtividadeConferecia399_400(idEmpresa);
+                _atividadeEstoqueService.CadastrarAtividadeConferecia399_400(idEmpresa);
             }
             catch (BusinessException ex)
             {
@@ -84,7 +84,29 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
 		}
-		
+
+        [Route("api/v1/atividade-estoque/atualizar")]
+        [HttpPost]
+        public IHttpActionResult AtualizarAtividade(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao)
+        {
+            try
+            {
+                _atividadeEstoqueService.ValidarAtualizacaoAtividade(atividadeEstoqueRequisicao);
+
+                _atividadeEstoqueService.AtualizarAtividade(atividadeEstoqueRequisicao);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return ApiOk();
+        }
+
         [Route("api/v1/atividade-estoque/pesquisar")]
         [HttpGet]
         public IHttpActionResult PesquisarAtividade()       
