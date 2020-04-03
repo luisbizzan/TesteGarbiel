@@ -15,7 +15,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             var query = (from a in Entities.AtividadeEstoque
                          join e in Entities.EnderecoArmazenagem on a.IdEnderecoArmazenagem equals e.IdEnderecoArmazenagem
                          join p in Entities.Produto on a.IdProduto equals p.IdProduto
-                         where a.IdEmpresa == idEmpresa
+                         where a.IdEmpresa == idEmpresa && !a.Finalizado
                          orderby e.Codigo, e.Horizontal, e.Vertical, e.Divisao
                          select new AtividadeEstoqueListaLinhaTabela
                          {
@@ -25,7 +25,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                              IdEnderecoArmazenagem = e.IdEnderecoArmazenagem,
                              IdProduto = p.IdProduto,
                              Referencia = p.Referencia,
-                             CodigoEndereco = e.Codigo                             
+                             CodigoEndereco = e.Codigo,                             
+                             Corredor = e.Corredor
                          });
 
             return query.ToList();

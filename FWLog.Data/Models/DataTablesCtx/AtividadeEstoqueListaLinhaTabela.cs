@@ -6,6 +6,7 @@
         public long IdEnderecoArmazenagem { get; set; }
         public long IdProduto { get; set; }
         public int IdAtividadeEstoqueTipo { get; set; }
+        public int Corredor { get; set; }
         public string DescricaoAtividadeEstoqueTipo { get; set; }
         public string Referencia { get; set; }
         public string CodigoEndereco { get; set; }
