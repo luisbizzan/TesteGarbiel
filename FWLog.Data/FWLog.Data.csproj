@@ -107,6 +107,7 @@
     <Compile Include="Models\ColetorAplicacao.cs" />
     <Compile Include="Models\ColetorHistorico.cs" />
     <Compile Include="Models\ColetorHistoricoTipo.cs" />
+    <Compile Include="Models\DataTablesCtx\AtividadeEstoqueListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemTotalPorAlasLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoProdutoListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemPesquisaModalListaLinhaTabela.cs" />

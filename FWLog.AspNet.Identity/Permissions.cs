@@ -211,6 +211,7 @@ namespace FWLog.AspNet.Identity
             public const string Etiquetas = "RFArmazenagemEtiquetas";
             public const string ConferenciaGaiola = "RFConferenciaGaiola";
             public const string ConferenciaGaiolaManual = "RFConferenciaGaiolaManual";
+            public const string AtividadeEstoque = "RFAtividadeEstoque";
 
             public RFArmazenagem() : base(Display.FromString("Coletor - Armazenagem"))
             {
@@ -223,6 +224,7 @@ namespace FWLog.AspNet.Identity
                 Register(Etiquetas, Display.FromString("Etiquetas"));
                 Register(ConferenciaGaiola, Display.FromString("Conferência"));
                 Register(ConferenciaGaiolaManual, Display.FromString("Conferência - Manual"));
+                Register(AtividadeEstoque, Display.FromString("Atividade de Estoque"));
             }
         }
 

@@ -197,6 +197,7 @@
     <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\ImpressoraController.cs" />
+    <Compile Include="Controllers\AtividadeEstoqueController.cs" />
     <Compile Include="Controllers\LoteController.cs" />
     <Compile Include="Controllers\RepresentanteController.cs" />
     <Compile Include="Controllers\HistoricoColetorController.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="Models\Armazenagem\FinalizarConferenciaModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\EnderecosProdutosResposta.cs" />
     <Compile Include="Models\Armazenagem\GravarHistoricoRequisicao.cs" />
+    <Compile Include="Models\AtividadeEstoque\AtividadesEstoqueResposta.cs" />
     <Compile Include="Models\Armazenagem\ValidarProdutoConferirModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\AjustarVolumeLoteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ConsultaDetalhesEnderecoArmazenagemResposta.cs" />
@@ -240,6 +242,7 @@
     <Compile Include="Models\Armazenagem\ValidarLoteProdutoInstalacaoModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarQuantidadeInstalacaoModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\NivelPontoArmazenagemPorCorredorResposta.cs" />
+    <Compile Include="Models\AtividadeEstoque\ValidarProdutoConferenciaProdutoForaLinhaRequisicao.cs" />
     <Compile Include="Models\EnderecoArmazenagem\EnderecoArmazenagemResposta.cs" />
     <Compile Include="Models\EnderecoArmazenagem\EnderecosArmazenagemResposta.cs" />
     <Compile Include="Models\EnderecoArmazenagem\PesquisarEnderecoArmazenagemPorIdResposta.cs" />
