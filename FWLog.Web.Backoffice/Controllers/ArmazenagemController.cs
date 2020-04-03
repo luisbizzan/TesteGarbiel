@@ -2,6 +2,7 @@
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
@@ -234,6 +235,8 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoAlas)]
         public ActionResult RelatorioTotalizacaoAlas()
         {
+            SetViewBags();
+
             return View();
         }
 
@@ -243,30 +246,58 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var filtro = Mapper.Map<DataTableFilter<RelatorioTotalizacaoAlasListaFiltro>>(model);
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
-            filtro.CustomFilter.CorredorInicial = 1;
-            filtro.CustomFilter.CorredorFinal = 10;
 
-            var listaIdEnderecoArmazenagem = _uow.EnderecoArmazenagemRepository
-                .BuscarIdsPorCorredorInicialEFinal(filtro.CustomFilter.CorredorInicial, filtro.CustomFilter.CorredorFinal, filtro.CustomFilter.IdEmpresa);
+            var listaEnderecoArmazenagem = _uow.EnderecoArmazenagemRepository
+                .BuscarPorNivelEPontoArmazenagem(filtro.CustomFilter.IdNivelArmazenagem, filtro.CustomFilter.IdPontoArmazenagem, filtro.CustomFilter.IdEmpresa);
+            
+            filtro.CustomFilter.ListaIdEnderecoArmazenagem = listaEnderecoArmazenagem;
 
-            filtro.CustomFilter.ListaIdEnderecoArmazenagem = listaIdEnderecoArmazenagem;
+            var loteProdutoEnderecos = _uow.LoteProdutoEnderecoRepository.TotalDeInstalados(filtro, out int totalRecordsFiltered, out int totalRecords);
 
-            var loteProdutoEnderecos = _uow.LoteProdutoEnderecoRepository.Teste(filtro, out int totalRecordsFiltered, out int totalRecords);
+            if (filtro.CustomFilter.ImprimirVazia)
+            {
+                var idEnderecoNaoInstalado = listaEnderecoArmazenagem.Select(x => x.IdEnderecoArmazenagem).Except(loteProdutoEnderecos.Select(x => x.IdEnderecoArmazenagem));
+
+                var enderecosDisponiveis = _uow.EnderecoArmazenagemRepository.PesquisarPorIds(idEnderecoNaoInstalado, filtro.CustomFilter.IdEmpresa);
+
+                totalRecords += enderecosDisponiveis.Count;
+
+                enderecosDisponiveis.ForEach(x =>
+                {
+                    var item = new EnderecoArmazenagemTotalPorAlasLinhaTabela
+                    {
+                        CodigoEndereco = x.Codigo,
+                        DataInstalacao = null,
+                        Corredor = x.Corredor,
+                        IdEnderecoArmazenagem = x.IdEnderecoArmazenagem,
+                        IdUsuarioInstalacao = null,
+                        PesoProduto = null,
+                        PesoTotalDeProduto = null,
+                        QuantidadeProdutoPorEndereco = 0,
+                        ReferenciaProduto = null,
+                    };
+
+                    loteProdutoEnderecos.Add(item);
+
+                });
+
+                totalRecordsFiltered = loteProdutoEnderecos.Count;
+            }
 
             var list = new List<RelatorioTotalizacaoAlasListItemViewModel>();
             List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
 
-            loteProdutoEnderecos.OrderBy(order => order.EnderecoArmazenagem.Corredor).ForEach(lpe =>
+            loteProdutoEnderecos.OrderBy(order => order.Corredor).ThenBy(x => x.CodigoEndereco).ForEach(lpe =>
                 list.Add(new RelatorioTotalizacaoAlasListItemViewModel
                 {
-                    NumeroCorredor = string.Concat("Corredor: ", lpe.EnderecoArmazenagem.Corredor.ToString()),
-                    CodigoEndereco = lpe.EnderecoArmazenagem.Codigo,
-                    DataInstalacao = lpe.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss"),
-                    IdUsuarioInstalacao = usuarios.Where(x => x.UserId == lpe.IdUsuarioInstalacao).FirstOrDefault()?.PerfilUsuario.Nome,
-                    PesoProduto = lpe.Produto.PesoBruto.ToString("n2"),
-                    QuantidadeProdutoPorEndereco = lpe.Quantidade.ToString(),
-                    ReferenciaProduto = lpe.Produto.Referencia,
-                    PesoTotalDeProduto = lpe.PesoTotal.ToString("n2")
+                    NumeroCorredor = string.Concat("Corredor: ", lpe.Corredor.ToString("0#")),
+                    CodigoEndereco = lpe.CodigoEndereco,
+                    DataInstalacao = lpe.DataInstalacao ?? "-",
+                    IdUsuarioInstalacao = usuarios.Where(x => x.UserId == lpe.IdUsuarioInstalacao).FirstOrDefault()?.PerfilUsuario.Nome ?? "-",
+                    PesoProduto = lpe.PesoProduto ?? "-",
+                    QuantidadeProdutoPorEndereco = lpe.QuantidadeProdutoPorEndereco.ToString(),
+                    ReferenciaProduto = lpe.ReferenciaProduto ?? "-",
+                    PesoTotalDeProduto = lpe.PesoTotalDeProduto ?? "-"
                 })
             );
 

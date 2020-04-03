@@ -107,15 +107,20 @@ namespace FWLog.Data.Repository.GeneralCtx
             return query.ToList();
         }
 
-        public List<long> BuscarIdsPorCorredorInicialEFinal(int corredorInicial, int  corredorFinal, long idEmpresa)
+        public List<EnderecoArmazenagem> BuscarPorCorredorInicialEFinal(int corredorInicial, int  corredorFinal, long idEmpresa)
         {
             var range = Enumerable.Range(corredorInicial, corredorFinal);
 
             var query = (from e in Entities.EnderecoArmazenagem
                          where range.Contains(e.Corredor) && e.IdEmpresa == idEmpresa && !e.IsPontoSeparacao
-                         select e.IdEnderecoArmazenagem).ToList();
+                         select e).ToList();
 
             return query;
+        }
+
+        public List<EnderecoArmazenagem> BuscarPorNivelEPontoArmazenagem(long nivel, long pontoarmazenagem, long idEmpresa)
+        {
+            return Entities.EnderecoArmazenagem.Where(f => f.IdNivelArmazenagem == nivel && f.IdPontoArmazenagem == pontoarmazenagem && f.IdEmpresa == idEmpresa && !f.IsPontoSeparacao).ToList();
         }
 
         public List<EnderecoProdutoListaLinhaTabela> PesquisarNivelPontoCorredor(int corredor, long ponto, long idEmpresa)
@@ -135,6 +140,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                          });
 
             return query.ToList();
+        }
+
+        public List<EnderecoArmazenagem> PesquisarPorIds(IEnumerable<long> id, long IdEmpresa) 
+        {
+            return Entities.EnderecoArmazenagem.Where(w => id.Contains(w.IdEnderecoArmazenagem) && w.IdEmpresa == IdEmpresa).ToList();
         }
     }
 }

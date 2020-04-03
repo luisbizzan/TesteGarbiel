@@ -1,4 +1,5 @@
 ﻿using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
 using System.Collections.Generic;
@@ -48,20 +49,62 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.LoteProdutoEndereco.Where(loteProdutoEndereco => loteProdutoEndereco.IdProduto == idProduto && loteProdutoEndereco.IdLote != null).ToList();
         }
 
-        public IEnumerable<LoteProdutoEndereco> Teste(DataTableFilter<RelatorioTotalizacaoAlasListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
+        public List<EnderecoArmazenagemTotalPorAlasLinhaTabela> TotalDeInstalados(DataTableFilter<RelatorioTotalizacaoAlasListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
         {
-            totalRecords = Entities.LoteProdutoEndereco.Where(x => x.IdEmpresa == model.CustomFilter.IdEmpresa && model.CustomFilter.ListaIdEnderecoArmazenagem.Contains(x.IdEnderecoArmazenagem)).Count();
+            var enderecoArmazenagemIds = model.CustomFilter.ListaIdEnderecoArmazenagem.Select(x => x.IdEnderecoArmazenagem).ToList();
 
-            IQueryable<LoteProdutoEndereco> query =
+
+            totalRecords = Entities.LoteProdutoEndereco.Where(x => x.IdEmpresa == model.CustomFilter.IdEmpresa).Count();
+
+            IQueryable<EnderecoArmazenagemTotalPorAlasLinhaTabela> query =
                 Entities.LoteProdutoEndereco.AsNoTracking().Where(
-                    w => w.IdEmpresa == model.CustomFilter.IdEmpresa &&
-                    model.CustomFilter.ListaIdEnderecoArmazenagem.Contains(w.IdEnderecoArmazenagem));
+                    lpe => lpe.IdEmpresa == model.CustomFilter.IdEmpresa &&
+                    enderecoArmazenagemIds.Contains(lpe.IdEnderecoArmazenagem) &&
+                    model.CustomFilter.IdNivelArmazenagem == lpe.EnderecoArmazenagem.IdNivelArmazenagem &&
+                    model.CustomFilter.IdPontoArmazenagem == lpe.EnderecoArmazenagem.IdPontoArmazenagem).ToList()
+                 .Select(s => new EnderecoArmazenagemTotalPorAlasLinhaTabela
+                 {
+                     IdEnderecoArmazenagem = s.IdEnderecoArmazenagem,
+                     CodigoEndereco = s.EnderecoArmazenagem.Codigo,
+                     DataInstalacao = s.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss"),
+                     IdUsuarioInstalacao = s.IdUsuarioInstalacao,
+                     PesoProduto = s.Produto.PesoBruto.ToString("n2"),
+                     PesoTotalDeProduto = s.PesoTotal.ToString("n2"),
+                     QuantidadeProdutoPorEndereco = s.Quantidade,
+                     ReferenciaProduto = s.Produto.Referencia,
+                     Corredor = s.EnderecoArmazenagem.Corredor
+                 }).AsQueryable();
 
 
-            if (!model.CustomFilter.ImprimirVazia)
+            if (model.CustomFilter.CorredorInicial > 0 && model.CustomFilter.CorredorFinal > 0)
             {
-                query = query.Where(x => x.Quantidade > 0);
+                var range = Enumerable.Range(model.CustomFilter.CorredorInicial, model.CustomFilter.CorredorFinal);
+
+                query = query.Where(y => range.Contains(y.Corredor));
             }
+
+            //if (model.CustomFilter.ImprimirVazia)
+            //{
+            //    query = (from end in Entities.EnderecoArmazenagem
+            //             join lpe in Entities.LoteProdutoEndereco on end.IdEnderecoArmazenagem equals lpe.IdEnderecoArmazenagem into a
+            //             from lpe in a.DefaultIfEmpty()
+            //             select new EnderecoArmazenagemTotalPorAlasLinhaTabela
+            //             {
+            //                 IdEnderecoArmazenagem = end.IdEnderecoArmazenagem,
+            //                 CodigoEndereco = end.Codigo,
+            //                 Corredor = end.Corredor,
+            //                 DataInstalacao = lpe.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss") ?? null,
+            //                 IdUsuarioInstalacao = lpe.IdUsuarioInstalacao ?? null,
+            //                 PesoProduto = lpe.Produto.PesoBruto.ToString("n2") ?? null,
+            //                 PesoTotalDeProduto = lpe.PesoTotal.ToString("n2") ?? null,
+            //                 QuantidadeProdutoPorEndereco = lpe.Quantidade != null ? lpe.Quantidade : 0,
+            //                 ReferenciaProduto = lpe.Produto.Referencia ?? "-",
+
+
+
+            //             });
+            //}
+
 
             totalRecordsFiltered = query.Count();
 
