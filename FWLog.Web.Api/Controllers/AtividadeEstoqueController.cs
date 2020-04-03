@@ -195,5 +195,31 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(ex.Message);
             }
         }
+
+        [Authorize]
+        [Route("api/v1/atividade-estoque/conferencia-399-400")]
+        [HttpPost]
+        public IHttpActionResult FinalizarConferenciaProdutoForaLinha(FinalizarConferenciaProdutoForaLinhaRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _atividadeEstoqueService.FinalizarConferenciaProdutoForaLinhaRequisicao(requisicao?.Corredor ?? 0,
+                                                                                    requisicao?.IdEnderecoArmazenagem ?? 0,
+                                                                                    requisicao?.IdProduto ?? 0,
+                                                                                    requisicao?.Quantidade,
+                                                                                    IdEmpresa);
+
+                return ApiOk();
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+        }
     }
 }

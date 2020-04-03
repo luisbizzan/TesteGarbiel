@@ -295,5 +295,19 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Quantidade digitada maior que o permitido! Procure coordenação.");
             }
         }
+
+        public void FinalizarConferenciaProdutoForaLinhaRequisicao(int corredor, long idEnderecoArmazenagem, long idProduto, int? quantidade, long idEmpresa)
+        {
+            if (quantidade.HasValue)
+            {
+                ValidarQuantidadeConferenciaProdutoForaLinha(corredor, idEnderecoArmazenagem, idProduto, quantidade.Value, idEmpresa);
+            }
+            else
+            {
+                ValidarEnderecoConferenciaProdutoForaLinha(corredor, idEnderecoArmazenagem, idProduto, idEmpresa);
+            }
+
+            throw new BusinessException("API ainda não implementada em totalidade");
+        }
     }
 }
