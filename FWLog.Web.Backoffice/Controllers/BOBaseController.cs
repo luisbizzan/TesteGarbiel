@@ -200,6 +200,12 @@ namespace FWLog.Web.Backoffice.Controllers
                             new SelectListItem { Text = "Inativo", Value = "0"},
                             new SelectListItem { Text = "Sem Locação", Value = "2"}
                         }, "Value", "Text");
+
+            ViewBag.ImprimirVazia = new SelectList(new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "Não", Value = "false"},
+                            new SelectListItem { Text = "Sim", Value = "true"},
+                        }, "Value", "Text");
         }
     }
 }
