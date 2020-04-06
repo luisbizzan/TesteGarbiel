@@ -117,7 +117,7 @@ namespace FWLog.Web.Api.Controllers
         {
             var resposta = new AtividadesEstoqueResposta
             {
-                Lista = _atividadeEstoqueService.PesquisarAtividade(IdEmpresa)
+                Lista = _atividadeEstoqueService.PesquisarAtividade(IdEmpresa, IdUsuario)
             };
 
             return ApiOk(resposta);

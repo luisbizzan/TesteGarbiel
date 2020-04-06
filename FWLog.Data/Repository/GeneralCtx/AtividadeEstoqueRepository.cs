@@ -1,4 +1,5 @@
-﻿using FWLog.Data.Models;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Repository.CommonCtx;
 using System.Collections.Generic;
@@ -16,12 +17,24 @@ namespace FWLog.Data.Repository.GeneralCtx
             x.IdProduto == idProduto && x.Finalizado == finalizado).FirstOrDefault();
         }
 
-        public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa)
+        public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa, string idUsuario)
         {
+            UsuarioEmpresa empresaUsuario = Entities.UsuarioEmpresa.Where(w => w.IdEmpresa == idEmpresa && w.UserId == idUsuario).FirstOrDefault();
+
+            if (empresaUsuario == null)
+            {
+                throw new BusinessException("O usuário não tem configuração de empresa.");
+            }
+
+            if (!empresaUsuario.CorredorEstoqueInicio.HasValue || !empresaUsuario.CorredorEstoqueFim.HasValue)
+            {
+                throw new BusinessException("O usuário não tem configuração de corredor para esta empresa.");
+            }
+
             var query = (from a in Entities.AtividadeEstoque
                          join e in Entities.EnderecoArmazenagem on a.IdEnderecoArmazenagem equals e.IdEnderecoArmazenagem
                          join p in Entities.Produto on a.IdProduto equals p.IdProduto
-                         where a.IdEmpresa == idEmpresa && !a.Finalizado
+                         where a.IdEmpresa == idEmpresa && !a.Finalizado && e.Corredor >= empresaUsuario.CorredorEstoqueInicio && e.Corredor <= empresaUsuario.CorredorEstoqueFim
                          orderby e.Codigo, e.Horizontal, e.Vertical, e.Divisao
                          select new AtividadeEstoqueListaLinhaTabela
                          {
