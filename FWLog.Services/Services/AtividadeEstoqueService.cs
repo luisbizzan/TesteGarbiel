@@ -67,7 +67,7 @@ namespace FWLog.Services.Services
                     });
 
                     listaAtividadeEstoque = listaAtividadeEstoque.Where(x => x.Quantidade <= x.EstoqueMinimo);
-                    
+
                     foreach (var item in listaAtividadeEstoque)
                     {
                         var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(item.IdEmpresa, AtividadeEstoqueTipoEnum.AbastecerPicking, item.IdEnderecoArmazenagem,
@@ -230,7 +230,7 @@ namespace FWLog.Services.Services
 
             if (listaDeAtividadesEstoque.NullOrEmpty())
             {
-                throw new BusinessException("Não foi encontrado produto com atividade de estoque pendente.");
+                throw new BusinessException("Não foi encontrada atividade de estoque pendente para produto.");
             }
 
             if (!listaDeAtividadesEstoque.Any(ae => ae.EnderecoArmazenagem.Corredor == corredor))
