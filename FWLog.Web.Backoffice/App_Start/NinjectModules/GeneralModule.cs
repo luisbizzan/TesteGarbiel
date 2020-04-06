@@ -12,7 +12,6 @@ namespace FWLog.Web.Backoffice.App_Start.NinjectModules
     {
         public override void Load()
         {
-            Bind<IAuditLog>().To<BackOfficeAuditLog>();
             Bind<IBackOfficeUserInfo>().To<BackOfficeUserInfo>();
             Bind<ILog>().ToMethod(ctx => LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType));
             Bind<IBOAccountContentProvider>().To<BOAccountContentProvider>();

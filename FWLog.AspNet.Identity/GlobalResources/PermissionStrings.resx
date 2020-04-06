@@ -138,12 +138,6 @@
   <data name="BOAccountList" xml:space="preserve">
     <value>Listagem</value>
   </data>
-  <data name="BOLogSystem" xml:space="preserve">
-    <value>Log de Auditoria</value>
-  </data>
-  <data name="BOLogSystemList" xml:space="preserve">
-    <value>Listagem</value>
-  </data>
   <data name="Create" xml:space="preserve">
     <value>Criação</value>
   </data>

@@ -28,12 +28,10 @@ namespace FWLog.Web.Backoffice.Controllers
     public class BOGroupController : BOBaseController
     {
         UnitOfWork _uow;
-        BOLogSystemService _boLogSystemService;
 
-        public BOGroupController(UnitOfWork uow, BOLogSystemService boLogSystemService)
+        public BOGroupController(UnitOfWork uow)
         {
             _uow = uow;
-            _boLogSystemService = boLogSystemService;
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Role.List)]
@@ -123,15 +121,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             var userInfo = new BackOfficeUserInfo();
-            _boLogSystemService.Add(new BOLogSystemCreation
-            {
-                ActionType = ActionTypeNames.Add,
-                IP = userInfo.IP,
-                UserId = userInfo.UserId,
-                EntityName = nameof(AspNetRoles),
-                NewEntity = new AspNetRolesLogSerializeModel(role.Name)
-            });
-
+            
             Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
             return RedirectToAction("Index");
         }
@@ -216,15 +206,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             var userInfo = new BackOfficeUserInfo();
-            _boLogSystemService.Add(new BOLogSystemCreation
-            {
-                ActionType = ActionTypeNames.Edit,
-                IP = userInfo.IP,
-                UserId = userInfo.UserId,
-                EntityName = nameof(AspNetRoles),
-                OldEntity = new AspNetRolesLogSerializeModel(oldRole.Name),
-                NewEntity = new AspNetRolesLogSerializeModel(role.Name)
-            });
 
             Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
             return RedirectToAction("Index");

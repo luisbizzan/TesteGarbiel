@@ -189,36 +189,6 @@
   <data name="BOGroup_Name" xml:space="preserve">
     <value>Nome</value>
   </data>
-  <data name="BOLogSystem" xml:space="preserve">
-    <value>Log</value>
-  </data>
-  <data name="BOLogSystem_ActionType" xml:space="preserve">
-    <value>Tipo de Ação</value>
-  </data>
-  <data name="BOLogSystem_Description" xml:space="preserve">
-    <value>Descrição</value>
-  </data>
-  <data name="BOLogSystem_Entity" xml:space="preserve">
-    <value>Entidade</value>
-  </data>
-  <data name="BOLogSystem_ExecutionDate" xml:space="preserve">
-    <value>Data de Execução</value>
-  </data>
-  <data name="BOLogSystem_IdBOLogSistem" xml:space="preserve">
-    <value>Identificador</value>
-  </data>
-  <data name="BOLogSystem_IP" xml:space="preserve">
-    <value>IP</value>
-  </data>
-  <data name="BOLogSystem_NewEntity" xml:space="preserve">
-    <value>Nova Entidade</value>
-  </data>
-  <data name="BOLogSystem_OldEntity" xml:space="preserve">
-    <value>Entidade Antiga</value>
-  </data>
-  <data name="BOLogSystem_UserId" xml:space="preserve">
-    <value>Identificador do Usuário</value>
-  </data>
   <data name="BORecoveryPassword" xml:space="preserve">
     <value>Recuperação de Senha BackOffice</value>
   </data>
