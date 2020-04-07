@@ -1,5 +1,4 @@
-﻿using FWLog.Data.Logging;
-using FWLog.Data.Models;
+﻿using FWLog.Data.Models;
 using System.Configuration;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
@@ -21,7 +20,6 @@ namespace FWLog.Data
         public virtual DbSet<ApplicationLanguage> ApplicationLanguage { get; set; }
         public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
-        public virtual DbSet<BOLogSystem> BOLogSystem { get; set; }
         public virtual DbSet<ApplicationSession> ApplicationSession { get; set; }
         public virtual DbSet<ApplicationLog> ApplicationLog { get; set; }
         public virtual DbSet<Empresa> Empresa { get; set; }
@@ -83,20 +81,6 @@ namespace FWLog.Data
         public virtual DbSet<ColetorHistorico> ColetorHistorico { get; set; }
         public virtual DbSet<AtividadeEstoque> AtividadeEstoque { get; set; }
         public virtual DbSet<AtividadeEstoqueTipo> AtividadeEstoqueTipo { get; set; }
-
-        public IAuditLog AuditLog { get; private set; }
-
-        public Entities(IAuditLog auditLog)
-        {
-            AuditLog = auditLog;
-        }
-
-        public override int SaveChanges()
-        {
-            AuditLog.AddLogsToContextAndSaveChanges(this, out int nonLogChanges);
-
-            return nonLogChanges;
-        }
 
         public int SaveChangesWithoutLog()
         {

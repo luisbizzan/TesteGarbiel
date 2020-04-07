@@ -21,14 +21,12 @@ namespace FWLog.Web.Backoffice.Controllers
     public class BOQuarentenaController : BOBaseController
     {
         private readonly UnitOfWork _uow;
-        private readonly BOLogSystemService _boLogSystemService;
         private readonly ApplicationLogService _applicationLogService;
         private readonly QuarentenaService _quarentenaService;
 
-        public BOQuarentenaController(UnitOfWork uow, BOLogSystemService boLogSystemService, QuarentenaService quarentenaService, ApplicationLogService applicationLogService)
+        public BOQuarentenaController(UnitOfWork uow, QuarentenaService quarentenaService, ApplicationLogService applicationLogService)
         {
             _uow = uow;
-            _boLogSystemService = boLogSystemService;
             _quarentenaService = quarentenaService;
             _applicationLogService = applicationLogService;
         }
@@ -361,16 +359,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 _uow.QuarentenaRepository.Update(entidade, IdUsuario);
 
                 var userInfo = new BackOfficeUserInfo();
-                _boLogSystemService.Add(new BOLogSystemCreation
-                {
-                    ActionType = ActionTypeNames.Edit,
-                    IP = userInfo.IP,
-                    UserId = userInfo.UserId,
-                    EntityName = nameof(Quarentena),
-                    OldEntity = old,
-                    NewEntity = entidade
-                });
-
+                
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,

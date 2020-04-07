@@ -28,18 +28,15 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly BOAccountService _boService;
-        private readonly BOLogSystemService _boLogSystemService;
         private readonly PasswordService _passwordService;
 
         public BOAccountController(
             UnitOfWork uow,
             BOAccountService boService,
-            BOLogSystemService boLogSystemService,
             PasswordService passwordService)
         {
             _unitOfWork = uow;
             _boService = boService;
-            _boLogSystemService = boLogSystemService;
             _passwordService = passwordService;
         }
 
@@ -308,14 +305,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             var userInfo = new BackOfficeUserInfo();
-            _boLogSystemService.Add(new BOLogSystemCreation
-            {
-                ActionType = ActionTypeNames.Add,
-                IP = userInfo.IP,
-                UserId = userInfo.UserId,
-                EntityName = nameof(AspNetUsers),
-                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, perfilUsuario, empresasGruposNew.ToString())
-            });
 
             Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
             return RedirectToAction("Index");
@@ -556,7 +545,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             var oldPerfil = _unitOfWork.PerfilUsuarioRepository.GetById(model.PerfilUsuarioId);
-            var log = new AspNetUsersLogSerializeModel(oldUser.UserName, oldPerfil, empresasGruposOld.ToString());
 
             var perfilUsuario = _unitOfWork.PerfilUsuarioRepository.GetById(model.PerfilUsuarioId);
             perfilUsuario.Nome = model.Nome;
@@ -573,16 +561,7 @@ namespace FWLog.Web.Backoffice.Controllers
             _boService.EditUsuarioEmpresas(Empresas, empresasGrupos, user.Id, perfilUsuario.PerfilUsuarioId);
 
             var userInfo = new BackOfficeUserInfo();
-            _boLogSystemService.Add(new BOLogSystemCreation
-            {
-                ActionType = ActionTypeNames.Edit,
-                IP = userInfo.IP,
-                UserId = userInfo.UserId,
-                EntityName = nameof(AspNetUsers),
-                OldEntity = log,
-                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, perfilUsuario, empresasGruposNew.ToString())
-            });
-
+            
             Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
             return RedirectToAction("Index");
         }
@@ -635,14 +614,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 var userInfo = new BackOfficeUserInfo();
-                _boLogSystemService.Add(new BOLogSystemCreation
-                {
-                    ActionType = ActionTypeNames.Delete,
-                    IP = userInfo.IP,
-                    UserId = userInfo.UserId,
-                    EntityName = nameof(AspNetUsers),
-                    NewEntity = new AspNetUsersLogSerializeModel(user.UserName, null, string.Empty)
-                });
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -684,15 +655,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 var userInfo = new BackOfficeUserInfo();
-                _boLogSystemService.Add(new BOLogSystemCreation
-                {
-                    ActionType = ActionTypeNames.Edit,
-                    IP = userInfo.IP,
-                    UserId = userInfo.UserId,
-                    EntityName = nameof(AspNetUsers),
-                    OldEntity = new AspNetUsersLogSerializeModel(oldUser.UserName, null, string.Empty),
-                    NewEntity = new AspNetUsersLogSerializeModel(user.UserName, null, string.Empty)
-                });
 
                 return Json(new AjaxGenericResultModel
                 {
