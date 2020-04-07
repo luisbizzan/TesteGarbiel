@@ -129,9 +129,6 @@
   <data name="BOAccountMenuItem" xml:space="preserve">
     <value>Usuário</value>
   </data>
-  <data name="BOLogSystemMenuItem" xml:space="preserve">
-    <value>Log de Auditoria</value>
-  </data>
   <data name="ClearAction" xml:space="preserve">
     <value>Limpar</value>
   </data>

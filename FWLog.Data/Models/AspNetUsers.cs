@@ -1,5 +1,4 @@
-﻿using FWLog.Data.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,7 +6,6 @@ using ResEnt = Resources.EntityStrings;
 
 namespace FWLog.Data.Models
 {
-    [Log(DisplayName = nameof(ResEnt.AspNetUsers), ResourceType = typeof(ResEnt))]
     public class AspNetUsers
     {
         public AspNetUsers()
@@ -16,13 +14,10 @@ namespace FWLog.Data.Models
         }
 
         [Key]
-        [Log(DisplayName = nameof(ResEnt.UserId), ResourceType = typeof(ResEnt))]
         public string Id { get; set; }
 
-        [Log(DisplayName = nameof(ResEnt.UserName), ResourceType = typeof(ResEnt))]
         public string UserName { get; set; }
 
-        [Log(DisplayName = nameof(ResEnt.Email), ResourceType = typeof(ResEnt))]
         public string Email { get; set; }
         public bool EmailConfirmed { get; set; }
         public string PasswordHash { get; set; }

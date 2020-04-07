@@ -124,24 +124,6 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Log de Auditoria.
-        /// </summary>
-        public static string BOLogSystem {
-            get {
-                return ResourceManager.GetString("BOLogSystem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Listagem.
-        /// </summary>
-        public static string BOLogSystemList {
-            get {
-                return ResourceManager.GetString("BOLogSystemList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Criação.
         /// </summary>
         public static string Create {

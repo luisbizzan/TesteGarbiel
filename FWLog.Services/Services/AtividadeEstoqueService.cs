@@ -300,7 +300,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void FinalizarConferenciaProdutoForaLinhaRequisicao(int corredor, long idEnderecoArmazenagem, long idProduto, int? quantidade, long idEmpresa)
+        public void FinalizarConferenciaProdutoForaLinhaRequisicao(int corredor, long idEnderecoArmazenagem, long idProduto, int? quantidade, long idEmpresa, string idUsuarioExecucao)
         {
             if (quantidade.HasValue)
             {
@@ -311,7 +311,97 @@ namespace FWLog.Services.Services
                 ValidarEnderecoConferenciaProdutoForaLinha(corredor, idEnderecoArmazenagem, idProduto, idEmpresa);
             }
 
-            throw new BusinessException("API ainda não implementada em totalidade");
+            var adicionaLogAuditoria = true;
+            var adicionaMoves = true;
+
+            var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(idProduto, idEmpresa);
+
+            if (quantidade != null)
+            {
+                //TODO:
+                //Se Empresa = Furacao
+                //-- Se ProdutoEstoque.Status = 399
+                //
+                //-- Se ProdutoEstoque.Status = 400
+                //
+                //Se "Manaus":
+                //
+                //Se "Kurokawa" ou "KurokaZN" ou "KurokaZL" ou "Minas" ou "SantoAndre" ou "NovoMundo" ou "Osasco" ou "ZonaSul" ou
+                //"BeloHorizonte" ou "Uberlandia" ou "Recife" ou "Rio" ou “RioSul" ou "MatoSul" ou "Socorro" ou "Bauru" " +
+                //"ou "Parana" ou “Bahia" ou "Goias" ou "Floripa":
+                /*
+                        Se "AtividadeEstoque".QuantidadeInicial <> "AtividadeEstoque".QuantidadeFinal
+
+                        Adiciona “Log de Auditoria”
+
+                            Quantidade: ABS(QuantidadeInicial - QuantidadeFinal)
+
+                        Cria/atualiza “moves”
+
+                            Quantidade: ABS(QuantidadeInicial - QuantidadeFinal)
+
+                            Se QuantidadeInicial > QuantidadeFinal
+
+                                Tipo: “B”
+
+                            Senão
+
+                                Tipo: “D”
+                 */
+            }
+            else
+            {
+                if (produtoEstoque.Saldo == 0)
+                {
+                    adicionaLogAuditoria = false;
+                }
+            }
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(idEmpresa,
+                                                                                        AtividadeEstoqueTipoEnum.ConferenciaProdutoForaLinha,
+                                                                                        idEnderecoArmazenagem,
+                                                                                        idProduto,
+                                                                                        false);
+
+                atividadeEstoque.QuantidadeInicial = produtoEstoque.Saldo;
+                atividadeEstoque.QuantidadeFinal = quantidade ?? 0;
+                atividadeEstoque.IdUsuarioExecucao = idUsuarioExecucao;
+                atividadeEstoque.DataExecucao = DateTime.Now;
+                atividadeEstoque.Finalizado = true;
+
+                _unitOfWork.SaveChanges();
+
+                produtoEstoque.Saldo = quantidade ?? 0;
+
+                //TODO: Atualizar saldo de estoque no Sankhya
+
+                _unitOfWork.SaveChanges();
+
+                if (adicionaLogAuditoria)
+                {
+                    _unitOfWork.ColetorHistoricoRepository.Add(new ColetorHistorico()
+                    {
+                        IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                        IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ConferirProdutoForaLinha,
+                        DataHora = DateTime.Now,
+                        Descricao = $"Conferiu 399/400 o produto {atividadeEstoque.Produto.Referencia} no endereço {atividadeEstoque.EnderecoArmazenagem.Codigo}," +
+                        $" quantidade foi de {atividadeEstoque.QuantidadeInicial} para {atividadeEstoque.QuantidadeFinal}",
+                        IdEmpresa = idEmpresa,
+                        IdUsuario = idUsuarioExecucao
+                    });
+                }
+
+                if (adicionaMoves)
+                {
+                    //TODO: Salvar conteúdo de 'moves'
+                }
+
+                //TODO: transacao.Complete();
+
+                throw new BusinessException("API ainda não implementada em totalidade");
+            }
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class PermissionStrings {
@@ -120,24 +120,6 @@ namespace Resources {
         public static string BOAccountList {
             get {
                 return ResourceManager.GetString("BOAccountList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Log de Auditoria.
-        /// </summary>
-        public static string BOLogSystem {
-            get {
-                return ResourceManager.GetString("BOLogSystem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Listagem.
-        /// </summary>
-        public static string BOLogSystemList {
-            get {
-                return ResourceManager.GetString("BOLogSystemList", resourceCulture);
             }
         }
         

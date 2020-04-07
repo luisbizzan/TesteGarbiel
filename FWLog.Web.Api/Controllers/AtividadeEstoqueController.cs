@@ -212,7 +212,8 @@ namespace FWLog.Web.Api.Controllers
                                                                                     requisicao?.IdEnderecoArmazenagem ?? 0,
                                                                                     requisicao?.IdProduto ?? 0,
                                                                                     requisicao?.Quantidade,
-                                                                                    IdEmpresa);
+                                                                                    IdEmpresa,
+                                                                                    IdUsuario);
 
                 return ApiOk();
             }

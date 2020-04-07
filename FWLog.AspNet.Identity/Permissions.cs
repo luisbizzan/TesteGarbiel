@@ -32,17 +32,7 @@ namespace FWLog.AspNet.Identity
                 Register(Delete, Display.FromString("Excluir Grupo"));
             }
         }
-
-        public class BOLogSystem : PermissionGroupBuildItem
-        {
-            public const string List = "BOLogSystemList";
-
-            public BOLogSystem() : base(Display.FromResource(nameof(Res.BOLogSystem)))
-            {
-                Register(List, Display.FromString("Relatório de Auditoria"));
-            }
-        }
-
+        
         public class BOAccount : PermissionGroupBuildItem
         {
             public const string List = "BOAccountList";
