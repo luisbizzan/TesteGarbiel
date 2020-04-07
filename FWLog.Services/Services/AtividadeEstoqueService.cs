@@ -6,6 +6,7 @@ using FWLog.Services.Model.AtividadeEstoque;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
 {
@@ -67,7 +68,7 @@ namespace FWLog.Services.Services
                     });
 
                     listaAtividadeEstoque = listaAtividadeEstoque.Where(x => x.Quantidade <= x.EstoqueMinimo);
-                    
+
                     foreach (var item in listaAtividadeEstoque)
                     {
                         var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(item.IdEmpresa, AtividadeEstoqueTipoEnum.AbastecerPicking, item.IdEnderecoArmazenagem,
@@ -202,9 +203,9 @@ namespace FWLog.Services.Services
             }
         }
 
-        public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa)
+        public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa, string idUsuario, int idAtividadeEstoqueTipo)
         {
-            return _unitOfWork.AtividadeEstoqueRepository.PesquisarAtividade(idEmpresa);
+            return _unitOfWork.AtividadeEstoqueRepository.PesquisarAtividade(idEmpresa, idUsuario, idAtividadeEstoqueTipo);
         }
 
         public void ValidarProdutoConferenciaProdutoForaLinha(int corredor, long idProduto, long idEmpresa)
@@ -230,7 +231,7 @@ namespace FWLog.Services.Services
 
             if (listaDeAtividadesEstoque.NullOrEmpty())
             {
-                throw new BusinessException("Não foi encontrado produto com atividade de estoque pendente.");
+                throw new BusinessException("Não foi encontrada atividade de estoque pendente para produto.");
             }
 
             if (!listaDeAtividadesEstoque.Any(ae => ae.EnderecoArmazenagem.Corredor == corredor))
@@ -300,7 +301,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void FinalizarConferenciaProdutoForaLinhaRequisicao(int corredor, long idEnderecoArmazenagem, long idProduto, int? quantidade, long idEmpresa)
+        public async Task FinalizarConferenciaProdutoForaLinhaRequisicao(int corredor, long idEnderecoArmazenagem, long idProduto, int? quantidade, long idEmpresa, string idUsuarioExecucao)
         {
             if (quantidade.HasValue)
             {
@@ -311,7 +312,78 @@ namespace FWLog.Services.Services
                 ValidarEnderecoConferenciaProdutoForaLinha(corredor, idEnderecoArmazenagem, idProduto, idEmpresa);
             }
 
-            throw new BusinessException("API ainda não implementada em totalidade");
+            var adicionaLogAuditoria = true;
+
+            if (quantidade == null)
+            {
+                var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(idProduto, idEmpresa);
+
+                if (produtoEstoque.Saldo == 0)
+                {
+                    adicionaLogAuditoria = false;
+                }
+            }
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(idEmpresa,
+                                                                                            AtividadeEstoqueTipoEnum.ConferenciaProdutoForaLinha,
+                                                                                            idEnderecoArmazenagem,
+                                                                                            idProduto,
+                                                                                            false);
+
+                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+
+                var quantidadeFinal = quantidade ?? 0;
+
+                atividadeEstoque.QuantidadeInicial = loteProdutoEndereco.Quantidade;
+                atividadeEstoque.QuantidadeFinal = quantidadeFinal;
+                atividadeEstoque.IdUsuarioExecucao = idUsuarioExecucao;
+                atividadeEstoque.DataExecucao = DateTime.Now;
+                atividadeEstoque.Finalizado = true;
+
+                await _unitOfWork.SaveChangesAsync();
+
+                //Aqui deve ser feito a solicitação de contagem
+
+                loteProdutoEndereco.Quantidade = quantidadeFinal;
+
+                await _unitOfWork.SaveChangesAsync();
+
+                var loteMovimentacao = new LoteMovimentacao
+                {
+                    IdEmpresa = idEmpresa,
+                    IdLote = loteProdutoEndereco.IdLote.GetValueOrDefault(),
+                    IdProduto = idProduto,
+                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = idUsuarioExecucao,
+                    Quantidade = quantidadeFinal,
+                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.ConferirProdutoForaLinha,
+                    DataHora = DateTime.Now
+                };
+
+                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                if (adicionaLogAuditoria)
+                {
+                    _unitOfWork.ColetorHistoricoRepository.Add(new ColetorHistorico()
+                    {
+                        IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                        IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ConferirProdutoForaLinha,
+                        DataHora = DateTime.Now,
+                        Descricao = $"Conferiu 399/400 o produto {atividadeEstoque.Produto.Referencia} no endereço {atividadeEstoque.EnderecoArmazenagem.Codigo}," +
+                        $" quantidade foi de {atividadeEstoque.QuantidadeInicial} para {atividadeEstoque.QuantidadeFinal}",
+                        IdEmpresa = idEmpresa,
+                        IdUsuario = idUsuarioExecucao
+                    });
+
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+                transacao.Complete();
+            }
         }
     }
 }

@@ -28,7 +28,7 @@ CREATE TABLE "AtividadeEstoque"
 , "IdUsuarioSolicitacao" VARCHAR2(128) 
 , "QuantidadeConferida" NUMBER(10) 
 , "DataExecucao" DATE 
-, "IdUsuarioExecucao" VARCHAR2(20) 
+, "IdUsuarioExecucao" VARCHAR2(128) 
 , "Finalizado" NUMBER(1) NOT NULL 
 , CONSTRAINT "AtividadeEstoque_PK" PRIMARY KEY 
   (

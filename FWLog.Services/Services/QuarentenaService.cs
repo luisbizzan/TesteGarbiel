@@ -29,7 +29,6 @@ namespace FWLog.Services.Services
     {
         private readonly UnitOfWork _uow;
         private readonly ImpressoraService _impressoraService;
-        private readonly BOLogSystemService _boLogSystemService;
 
         private Document _document;
 
@@ -38,11 +37,10 @@ namespace FWLog.Services.Services
         private Quarentena _Quarentena;
         private Quarentena _OldQuarentena;
 
-        public QuarentenaService(UnitOfWork uow, ImpressoraService impressoraService, BOLogSystemService boLogSystemService)
+        public QuarentenaService(UnitOfWork uow, ImpressoraService impressoraService)
         {
             _uow = uow;
             _impressoraService = impressoraService;
-            _boLogSystemService = boLogSystemService;
         }
 
         public void ImprimirTermoResponsabilidade(TermoResponsabilidadeRequest request)
@@ -99,17 +97,7 @@ namespace FWLog.Services.Services
         private void AtualizaCodConfirmacaoQuarentena()
         {
             _uow.QuarentenaRepository.Update(_Quarentena, _request.UserLog.UserId, "Impressão do Termo de Responsabilidade.");
-
-            _boLogSystemService.Add(new BOLogSystemCreation
-            {
-                ActionType = ActionTypeNames.Edit,
-                IP = _request.UserLog.IP,
-                UserId = _request.UserLog.UserId,
-                EntityName = nameof(Quarentena),
-                OldEntity = _OldQuarentena,
-                NewEntity = _Quarentena
-            });
-
+            
             _uow.SaveChanges();
         }
 

@@ -1,6 +1,4 @@
-﻿using FWLog.Data.Logging;
-using FWLog.Data.Repository.BackofficeCtx;
-using FWLog.Data.Repository.GeneralCtx;
+﻿using FWLog.Data.Repository.GeneralCtx;
 using System;
 using System.Configuration;
 using System.Data.Entity.Validation;
@@ -16,7 +14,6 @@ namespace FWLog.Data
         private bool _disposed = false;
         private readonly Entities _context;
 
-        private BOLogSystemRepository _boLogSystemRepository;
         private ApplicationLanguageRepository _applicationLanguageRepository;
         private ApplicationLogRepository _applicationLogRepository;
         private ApplicationSessionRepository _applicationSessionRepository;
@@ -78,6 +75,11 @@ namespace FWLog.Data
         private ColetorHistoricoTipoRepository _coletorHistoricoTipoRepository;
         private AtividadeEstoqueRepository _atividadeEstoqueRepository;
         private AtividadeEstoqueTipoRepository _atividadeEstoqueTipoRepository;
+
+        public UnitOfWork()
+        {
+            _context = new Entities();
+        }
 
         public AtividadeEstoqueTipoRepository AtividadeEstoqueTipoRepository
         {
@@ -274,11 +276,6 @@ namespace FWLog.Data
             get => _empresaRepository ?? (_empresaRepository = new EmpresaRepository(_context));
         }
 
-        public BOLogSystemRepository BOLogSystemRepository
-        {
-            get => _boLogSystemRepository ?? (_boLogSystemRepository = new BOLogSystemRepository(_context));
-        }
-
         public ApplicationLanguageRepository ApplicationLanguageRepository
         {
             get => _applicationLanguageRepository ?? (_applicationLanguageRepository = new ApplicationLanguageRepository(_context));
@@ -449,11 +446,6 @@ namespace FWLog.Data
         public int CommitWithoutLog()
         {
             return _context.SaveChangesWithoutLog();
-        }
-
-        public UnitOfWork(IAuditLog auditLog)
-        {
-            _context = new Entities(auditLog);
         }
 
         protected virtual void Dispose(bool disposing)

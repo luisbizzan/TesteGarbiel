@@ -1,5 +1,4 @@
-﻿using FWLog.Data.Logging;
-using FWLog.Data.Models.DataTablesCtx;
+﻿using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Models;
 using FWLog.Data.Repository.CommonCtx;

@@ -3,6 +3,7 @@ using FWLog.Services.Model.AtividadeEstoque;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.AtividadeEstoque;
 using System;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
@@ -111,16 +112,36 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [AllowAnonymous]
-        [Route("api/v1/atividade-estoque/pesquisar")]
+        [Route("api/v1/atividade-estoque/pesquisar/{idAtividadeEstoqueTipo}")]
         [HttpGet]
-        public IHttpActionResult PesquisarAtividade()
+        public IHttpActionResult PesquisarAtividade(int idAtividadeEstoqueTipo)
         {
-            var resposta = new AtividadesEstoqueResposta
+            try
             {
-                Lista = _atividadeEstoqueService.PesquisarAtividade(IdEmpresa)
-            };
+                var empresaUsuario = _unitOfWork.UsuarioEmpresaRepository.Obter(IdEmpresa, IdUsuario);
 
-            return ApiOk(resposta);
+                if (empresaUsuario == null)
+                {
+                    throw new BusinessException("O usuário não tem configuração para esta empresa");
+                }
+
+                var resposta = new AtividadesEstoqueResposta
+                {
+                    CorredorInicio = empresaUsuario.CorredorEstoqueInicio.HasValue ? empresaUsuario.CorredorEstoqueInicio.Value : 0,
+                    CorredorFim = empresaUsuario.CorredorEstoqueFim.HasValue ? empresaUsuario.CorredorEstoqueFim.Value : 0,
+                    Lista = _atividadeEstoqueService.PesquisarAtividade(IdEmpresa, IdUsuario, idAtividadeEstoqueTipo)
+                };
+
+                return ApiOk(resposta);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         [Authorize]
@@ -199,7 +220,7 @@ namespace FWLog.Web.Api.Controllers
         [Authorize]
         [Route("api/v1/atividade-estoque/conferencia-399-400")]
         [HttpPost]
-        public IHttpActionResult FinalizarConferenciaProdutoForaLinha(FinalizarConferenciaProdutoForaLinhaRequisicao requisicao)
+        public async Task<IHttpActionResult> FinalizarConferenciaProdutoForaLinha(FinalizarConferenciaProdutoForaLinhaRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
@@ -208,11 +229,12 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _atividadeEstoqueService.FinalizarConferenciaProdutoForaLinhaRequisicao(requisicao?.Corredor ?? 0,
+                await _atividadeEstoqueService.FinalizarConferenciaProdutoForaLinhaRequisicao(requisicao?.Corredor ?? 0,
                                                                                     requisicao?.IdEnderecoArmazenagem ?? 0,
                                                                                     requisicao?.IdProduto ?? 0,
                                                                                     requisicao?.Quantidade,
-                                                                                    IdEmpresa);
+                                                                                    IdEmpresa,
+                                                                                    IdUsuario);
 
                 return ApiOk();
             }

@@ -477,7 +477,6 @@
     <EmbeddedResource Include="obj\Debug\FWLog.Web.Backoffice.GlobalResources.BOAccountBase.BOAccountBaseStrings.en-US.resources" />
     <EmbeddedResource Include="obj\Debug\FWLog.Web.Backoffice.GlobalResources.BOAccountBase.BOAccountBaseStrings.resources" />
     <EmbeddedResource Include="obj\Debug\FWLog.Web.Backoffice.GlobalResources.BOGroup.BOGroupStrings.resources" />
-    <EmbeddedResource Include="obj\Debug\FWLog.Web.Backoffice.GlobalResources.BOLogSystem.BOLogSystemStrings.resources" />
     <EmbeddedResource Include="obj\Debug\FWLog.Web.Backoffice.GlobalResources.BOPrinter.BOPrinterStrings.resources" />
     <EmbeddedResource Include="obj\Debug\FWLog.Web.Backoffice.GlobalResources.BORecebimentoNota.BORecebimentoNotaStrings.resources" />
     <EmbeddedResource Include="obj\Debug\FWLog.Web.Backoffice.GlobalResources.Common.CommonStrings.resources" />
@@ -494,7 +493,6 @@
     <Compile Include="Controllers\BOAccountController.cs" />
     <Compile Include="Controllers\BOBaseController.cs" />
     <Compile Include="Controllers\BOHomeController.cs" />
-    <Compile Include="Controllers\BOLogSystemController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\BOGroupController.cs" />
     <Compile Include="EnumsAndConsts\FileUploadDefinitions.cs" />
@@ -526,11 +524,6 @@
     </Compile>
     <Compile Include="GlobalResources\BOGroup\BOGroupStrings.Designer.cs">
       <DependentUpon>BOGroupStrings.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="GlobalResources\BOLogSystem\BOLogSystemStrings.Designer.cs">
-      <DependentUpon>BOLogSystemStrings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
@@ -567,7 +560,6 @@
     <Compile Include="Helpers\SidebarMenu.cs" />
     <Compile Include="Mapping\ApplicationLogProfile.cs" />
     <Compile Include="Mapping\BOAccountProfile.cs" />
-    <Compile Include="Mapping\BOLogSystemProfile.cs" />
     <Compile Include="Mapping\BOGroupProfile.cs" />
     <Compile Include="Models\ApplicationLogCtx\ApplicationLogDetailsViewModel.cs" />
     <Compile Include="Models\ApplicationLogCtx\ApplicationLogListViewModel.cs" />
@@ -581,9 +573,6 @@
     <Compile Include="Models\BOAccountCtx\ChangePasswordViewModel.cs" />
     <Compile Include="Models\BOAccountCtx\GroupItemViewModel.cs" />
     <Compile Include="Models\BOAccountCtx\GroupViewModel.cs" />
-    <Compile Include="Models\BOLogSystemCtx\BOLogSystemDetailsViewModel.cs" />
-    <Compile Include="Models\BOLogSystemCtx\BOLogSystemListViewModel.cs" />
-    <Compile Include="Models\BOLogSystemCtx\ColumnChangesViewModel.cs" />
     <Compile Include="Models\CommonCtx\AjaxGenericResultModel.cs" />
     <Compile Include="Models\CommonCtx\AuotoCompleteResponseModel.cs" />
     <Compile Include="Models\CommonCtx\DataTableResponseModel.cs" />
@@ -943,7 +932,6 @@
     <Content Include="Scripts\Views\BOAccount\edit.js" />
     <Content Include="Scripts\Views\BOAccount\create.js" />
     <Content Include="Scripts\Views\BOAccount\index.js" />
-    <Content Include="Scripts\Views\BOLogSystem\index.js" />
     <Content Include="Scripts\Views\BOGroup\create.js" />
     <Content Include="Scripts\Views\BOGroup\edit.js" />
     <Content Include="Scripts\Views\BOGroup\index.js" />
@@ -978,8 +966,6 @@
     <Content Include="Views\BOGroup\Edit.cshtml" />
     <Content Include="Views\ApplicationLog\Index.cshtml" />
     <Content Include="Views\ApplicationLog\Details.cshtml" />
-    <Content Include="Views\BOLogSystem\Index.cshtml" />
-    <Content Include="Views\BOLogSystem\Details.cshtml" />
     <Content Include="Views\Shared\_Notify.cshtml" />
     <Content Include="Scripts\vendors\datatables\languages\datatables-pt-br.json" />
     <Content Include="Views\Shared\_ScriptGlobalOptions.cshtml" />
@@ -1005,6 +991,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ApplicationLogStrings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GlobalResources\BOAccountBase\BOAccountBaseStrings.en-US.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -1029,11 +1016,6 @@
     <EmbeddedResource Include="GlobalResources\BOGroup\BOGroupStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>BOGroupStrings.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Resources</CustomToolNamespace>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GlobalResources\BOLogSystem\BOLogSystemStrings.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>BOLogSystemStrings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Resources</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Include="GlobalResources\BORecebimentoNota\BORecebimentoNotaStrings.resx">

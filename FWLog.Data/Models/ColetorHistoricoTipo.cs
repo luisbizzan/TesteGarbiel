@@ -10,6 +10,7 @@ namespace FWLog.Data.Models
         AjustarQuantidade = 3,
         ConferirEndereco = 4,
         ImprimirEtiqueta = 5,
+        ConferirProdutoForaLinha = 6,
     }
 
     public class ColetorHistoricoTipo

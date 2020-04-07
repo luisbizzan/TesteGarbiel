@@ -224,7 +224,6 @@
     <Compile Include="Services\NotaFiscalService.cs" />
     <Compile Include="Services\PasswordService.cs" />
     <Compile Include="Services\BOAccountService.cs" />
-    <Compile Include="Services\BOLogSystemService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\PerfilUsuarioService.cs" />
     <Compile Include="Services\PontoArmazenagemService.cs" />

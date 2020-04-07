@@ -97,15 +97,6 @@ namespace Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Log de Auditoria.
-        /// </summary>
-        public static string BOLogSystemMenuItem {
-            get {
-                return ResourceManager.GetString("BOLogSystemMenuItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cancelar.
         /// </summary>
         public static string CancelAction {
@@ -302,7 +293,7 @@ namespace Resources {
                 return ResourceManager.GetString("MenuRecebimento", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Etiquetas.
         /// </summary>
