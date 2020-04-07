@@ -234,6 +234,7 @@
     <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\GarantiaController.cs" />
+    <Compile Include="Controllers\GeralController.cs" />
     <Compile Include="Controllers\MotivoLaudoController.cs" />
     <Compile Include="Controllers\NivelArmazenagemController.cs" />
     <Compile Include="Controllers\PerfilImpressoraController.cs" />
@@ -335,6 +336,7 @@
     <Compile Include="Models\GarantiaCtx\GarantiaEntradaConferenciaViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaListViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaRegistroRecebimentoViewModel.cs" />
+    <Compile Include="Models\GeralCtx\GeralHistoricoViewModel.cs" />
     <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoCreateViewModel.cs" />
     <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoListViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemCreateViewModel.cs" />
@@ -622,6 +624,7 @@
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
+    <Content Include="Scripts\Views\Geral\FormGeralHistoricos.js" />
     <Content Include="Scripts\Views\MotivoLaudo\motivoLaudo.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\pesquisaModal.js" />
@@ -700,7 +703,6 @@
     <Content Include="Views\Garantia\Index.cshtml" />
     <Content Include="Views\Transportadora\SearchModal.cshtml" />
     <Content Include="Scripts\Views\Transportadora\searchModal.js" />
-    <Content Include="Views\MotivoLaudo\Create.cshtml" />
     <Content Include="Views\MotivoLaudo\_Form.cshtml" />
     <Content Include="Views\Garantia\RegistroRecebimentoGarantia.cshtml" />
     <Content Include="Views\Garantia\DetalhesEntradaConferenciaGarantia.cshtml" />
@@ -714,6 +716,7 @@
     <Content Include="Views\BORecebimentoNota\DevolucaoTotal.cshtml" />
     <Content Include="Views\Produto\DetalhesProduto.cshtml" />
     <Content Include="Views\BOAccount\HistoricoAcoes.cshtml" />
+    <Content Include="Views\Geral\_FormHistoricos.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

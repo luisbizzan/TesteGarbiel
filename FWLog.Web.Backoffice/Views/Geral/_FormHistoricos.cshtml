@@ -1,0 +1,84 @@
+﻿@model  FWLog.Web.Backoffice.Models.GeralCtx.GeralHistoricoViewModel
+<div class="modal-dialog modal-lg">
+    <div class="modal-content vertical-alignment-helper">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">×</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Form</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="x_panel">
+                        <div class="x_content">
+
+                            <form id="formHist">
+                                @Html.HiddenFor(x => x.Id_Ref)
+                                @Html.HiddenFor(x => x.Id_Categoria)
+                                <div class="row">
+
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label class="control-label" for="Historico">Histórico</label>
+                                            <textarea class="form-control" cols="20" data-val="true" data-val-required="O campo Histórico é obrigatório" id="Historico" name="Historico" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary right"><i class="fa fa-save"></i> Gravar</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Históricos</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content" style="max-height:300px; overflow:auto;">
+                    @if (Model.Lista_Historicos.Any())
+                    {
+                        <ul class="list-unstyled timeline">
+                            @foreach (var item in Model.Lista_Historicos)
+                            {
+                                <li>
+                                    <div class="block">
+
+                                        <div class="block_content">
+                                            <h2 class="title">
+                                                @item.Usuario
+                                            </h2>
+                                            <div class="byline">
+                                                @String.Format("{0:dd/MM/yyyy HH:mm}", item.Dt_Cad)
+                                            </div>
+                                            <p class="excerpt">
+                                                @item.Historico
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger alert-dismissible " role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <strong>Atenção!</strong> Não há itens.
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="@Url.Content("~/Scripts/Views/Geral/FormGeralHistoricos.js")"></script>

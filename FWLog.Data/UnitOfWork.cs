@@ -12,7 +12,6 @@ namespace FWLog.Data
 {
     public class UnitOfWork : IDisposable
     {
-
         private bool _disposed = false;
         private readonly Entities _context;
 
@@ -37,7 +36,7 @@ namespace FWLog.Data
         private QuarentenaRepository _quarentenaRepository;
         private QuarentenaStatusRepository _quarentenaStatusRepository;
         private NotaFiscalStatusRepository _notaFiscalStatusRepository;
-		private NivelArmazenagemRepository _nivelArmazenagemRepository;
+        private NivelArmazenagemRepository _nivelArmazenagemRepository;
         private PontoArmazenagemRepository _pontoArmazenagemRepository;
         private TipoMovimentacaoRepository _tipoMovimentacaoRepository;
         private TipoArmazenagemRepository _tipoArmazenagemRepository;
@@ -55,7 +54,7 @@ namespace FWLog.Data
         private PerfilImpressoraRepository _perfilImpressoraRepository;
         private TipoEtiquetagemRepository _tipoEtiquetagemRepository;
         private LoteProdutoRepository _loteProdutoRepository;
-        private IntegracaoTipoRepository     _integracaoTipoRepository;
+        private IntegracaoTipoRepository _integracaoTipoRepository;
         private IntegracaoEntidadeRepository _integracaoEntidadeRepository;
         private LoteMovimentacaoRepository _loteMovimentacaoRepository;
         private LoteMovimentacaoTipoRepository _loteMovimentacaoTipoRepository;
@@ -69,10 +68,16 @@ namespace FWLog.Data
         private GarantiaStatusRepository _garantiaStatusRepository;
         private MotivoLaudoRepository _motivoLaudoRepository;
         private RepresentanteRepository _representanteRepository;
-        private LoteProdutoEnderecoRepository _loteProdutoEnderecoRepository;		
+        private LoteProdutoEnderecoRepository _loteProdutoEnderecoRepository;
         private IntegracaoLogRepository _integracaoLogRepository;
         private NotaFiscalRecebimentoRepository _notaFiscalRecebimentoRepository;
         private NotaRecebimentoStatusRepository _notaRecebimentoStatusRepository;
+        private GeralRepository _geralRepository;
+
+        public GeralRepository GeralRepository
+        {
+            get => _geralRepository ?? (_geralRepository = new GeralRepository(_context));
+        }
 
         public LoteProdutoEnderecoRepository LoteProdutoEnderecoRepository
         {
@@ -177,7 +182,7 @@ namespace FWLog.Data
         public TipoMovimentacaoRepository TipoMovimentacaoRepository
         {
             get => _tipoMovimentacaoRepository ?? (_tipoMovimentacaoRepository = new TipoMovimentacaoRepository(_context));
-		}
+        }
 
         public NivelArmazenagemRepository NivelArmazenagemRepository
         {
@@ -353,11 +358,12 @@ namespace FWLog.Data
         {
             get => _notaFiscalRecebimentoRepository ?? (_notaFiscalRecebimentoRepository = new NotaFiscalRecebimentoRepository(_context));
         }
+
         public NotaRecebimentoStatusRepository NotaRecebimentoStatusRepository
         {
             get => _notaRecebimentoStatusRepository ?? (_notaRecebimentoStatusRepository = new NotaRecebimentoStatusRepository(_context));
         }
-		
+
         public TransactionScope CreateTransactionScope()
         {
             return CreateTransactionScope(IsolationLevel.ReadCommitted);

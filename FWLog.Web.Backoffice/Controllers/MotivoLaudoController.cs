@@ -53,55 +53,6 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-        //[HttpGet]
-        //[ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Cadastrar)]
-        //public ActionResult Create()
-        //{
-        //    return View();
-        //}
-
-        //[HttpPost]
-        //[ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Cadastrar)]
-        //public ActionResult Create(MotivoLaudoCreateViewModel model)
-        //{
-        //    Func<ViewResult> errorView = () =>
-        //    {
-        //        return View(model);
-        //    };
-
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return errorView();
-        //    }
-
-        //    var motivoLaudo = new MotivoLaudo
-        //    {
-        //        Descricao = model.Descricao,
-        //        Ativo = model.Ativo
-        //    };
-
-        //    try
-        //    {
-        //        _motivoLaudoService.Add(motivoLaudo);
-
-        //        Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
-        //        return RedirectToAction("MotivoLaudo");
-        //    }
-        //    catch (DbUpdateException e)
-        //    when (e.InnerException?.InnerException is OracleException sqlEx && sqlEx.Number == 1)
-        //    {
-        //        Notify.Error("Já existe um motivo cadastrado com este nome.");
-
-        //        return errorView();
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Notify.Error(Resources.CommonStrings.RegisterCreatedErrorMessage);
-
-        //        return errorView();
-        //    }
-        //}
-
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.MotivoLaudo.Editar)]
         public ActionResult Selecionar(long id)

@@ -8,7 +8,9 @@ namespace FWLog.Data
 {
     public class Entities : DbContext
     {
-        public Entities() : base("name=Entities") { }
+        public Entities() : base("name=Entities")
+        {
+        }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -81,6 +83,7 @@ namespace FWLog.Data
         public virtual DbSet<ColetorAplicacao> ColetorAplicacao { get; set; }
         public virtual DbSet<ColetorHistoricoTipo> ColetorHistoricoTipo { get; set; }
         public virtual DbSet<ColetorHistorico> ColetorHistorico { get; set; }
+        public virtual DbSet<GeralHistorico> GeralHistorico { get; set; }
 
         public IAuditLog AuditLog { get; private set; }
 

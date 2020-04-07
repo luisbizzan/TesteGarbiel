@@ -105,6 +105,7 @@
     <Compile Include="Models\ApplicationSession.cs" />
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\ColetorAplicacao.cs" />
+    <Compile Include="Models\GeralHistorico.cs" />
     <Compile Include="Models\ColetorHistorico.cs" />
     <Compile Include="Models\ColetorHistoricoTipo.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemPesquisaModalListaLinhaTabela.cs" />
@@ -241,6 +242,7 @@
     <Compile Include="Repository\GeneralCtx\GarantiaQuarentenaProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaQuarentenaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaQuarentenaStatusRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\GeralRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\IntegracaoEntidadeRepository.cs" />
