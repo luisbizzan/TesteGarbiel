@@ -17,7 +17,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             x.IdProduto == idProduto && x.Finalizado == finalizado).FirstOrDefault();
         }
 
-        public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa, string idUsuario)
+        public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa, string idUsuario, int? idAtividadeEstoqueTipo)
         {
             UsuarioEmpresa empresaUsuario = Entities.UsuarioEmpresa.Where(w => w.IdEmpresa == idEmpresa && w.UserId == idUsuario).FirstOrDefault();
 
@@ -34,7 +34,12 @@ namespace FWLog.Data.Repository.GeneralCtx
             var query = (from a in Entities.AtividadeEstoque
                          join e in Entities.EnderecoArmazenagem on a.IdEnderecoArmazenagem equals e.IdEnderecoArmazenagem
                          join p in Entities.Produto on a.IdProduto equals p.IdProduto
-                         where a.IdEmpresa == idEmpresa && !a.Finalizado && e.Corredor >= empresaUsuario.CorredorEstoqueInicio && e.Corredor <= empresaUsuario.CorredorEstoqueFim
+                         where
+                            a.IdEmpresa == idEmpresa &&
+                            !a.Finalizado &&
+                            e.Corredor >= empresaUsuario.CorredorEstoqueInicio &&
+                            e.Corredor <= empresaUsuario.CorredorEstoqueFim &&
+                            (idAtividadeEstoqueTipo.Value == 0 || (int)a.IdAtividadeEstoqueTipo == idAtividadeEstoqueTipo.Value)
                          orderby e.Codigo, e.Horizontal, e.Vertical, e.Divisao
                          select new AtividadeEstoqueListaLinhaTabela
                          {
@@ -45,7 +50,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                              IdProduto = p.IdProduto,
                              Referencia = p.Referencia,
                              CodigoEndereco = e.Codigo,
-                             Corredor = e.Corredor
+                             Corredor = e.Corredor,
+                             Finalizado = a.Finalizado
                          });
 
             return query.ToList();

@@ -11,6 +11,7 @@
         public bool IsPontoSeparacao { get; set; }
         public int? EstoqueMinimo { get; set; }
         public int? EstoqueMaximo { get; set; }
+        public int Corredor { get; set; }
         public bool Ativo { get; set; }
     }
 }

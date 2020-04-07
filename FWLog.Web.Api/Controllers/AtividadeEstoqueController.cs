@@ -111,13 +111,13 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [AllowAnonymous]
-        [Route("api/v1/atividade-estoque/pesquisar")]
+        [Route("api/v1/atividade-estoque/pesquisar/{idAtividadeEstoqueTipo}")]
         [HttpGet]
-        public IHttpActionResult PesquisarAtividade()
+        public IHttpActionResult PesquisarAtividade(int idAtividadeEstoqueTipo)
         {
             var resposta = new AtividadesEstoqueResposta
             {
-                Lista = _atividadeEstoqueService.PesquisarAtividade(IdEmpresa, IdUsuario)
+                Lista = _atividadeEstoqueService.PesquisarAtividade(IdEmpresa, IdUsuario, idAtividadeEstoqueTipo)
             };
 
             return ApiOk(resposta);
