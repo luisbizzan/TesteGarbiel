@@ -6,6 +6,7 @@ using FWLog.Services.Model.AtividadeEstoque;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
 {
@@ -300,7 +301,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void FinalizarConferenciaProdutoForaLinhaRequisicao(int corredor, long idEnderecoArmazenagem, long idProduto, int? quantidade, long idEmpresa, string idUsuarioExecucao)
+        public async Task FinalizarConferenciaProdutoForaLinhaRequisicao(int corredor, long idEnderecoArmazenagem, long idProduto, int? quantidade, long idEmpresa, string idUsuarioExecucao)
         {
             if (quantidade.HasValue)
             {
@@ -312,45 +313,11 @@ namespace FWLog.Services.Services
             }
 
             var adicionaLogAuditoria = true;
-            var adicionaMoves = true;
 
-            var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(idProduto, idEmpresa);
-
-            if (quantidade != null)
+            if (quantidade == null)
             {
-                //TODO:
-                //Se Empresa = Furacao
-                //-- Se ProdutoEstoque.Status = 399
-                //
-                //-- Se ProdutoEstoque.Status = 400
-                //
-                //Se "Manaus":
-                //
-                //Se "Kurokawa" ou "KurokaZN" ou "KurokaZL" ou "Minas" ou "SantoAndre" ou "NovoMundo" ou "Osasco" ou "ZonaSul" ou
-                //"BeloHorizonte" ou "Uberlandia" ou "Recife" ou "Rio" ou “RioSul" ou "MatoSul" ou "Socorro" ou "Bauru" " +
-                //"ou "Parana" ou “Bahia" ou "Goias" ou "Floripa":
-                /*
-                        Se "AtividadeEstoque".QuantidadeInicial <> "AtividadeEstoque".QuantidadeFinal
+                var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(idProduto, idEmpresa);
 
-                        Adiciona “Log de Auditoria”
-
-                            Quantidade: ABS(QuantidadeInicial - QuantidadeFinal)
-
-                        Cria/atualiza “moves”
-
-                            Quantidade: ABS(QuantidadeInicial - QuantidadeFinal)
-
-                            Se QuantidadeInicial > QuantidadeFinal
-
-                                Tipo: “B”
-
-                            Senão
-
-                                Tipo: “D”
-                 */
-            }
-            else
-            {
                 if (produtoEstoque.Saldo == 0)
                 {
                     adicionaLogAuditoria = false;
@@ -360,24 +327,44 @@ namespace FWLog.Services.Services
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
                 var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(idEmpresa,
-                                                                                        AtividadeEstoqueTipoEnum.ConferenciaProdutoForaLinha,
-                                                                                        idEnderecoArmazenagem,
-                                                                                        idProduto,
-                                                                                        false);
+                                                                                            AtividadeEstoqueTipoEnum.ConferenciaProdutoForaLinha,
+                                                                                            idEnderecoArmazenagem,
+                                                                                            idProduto,
+                                                                                            false);
 
-                atividadeEstoque.QuantidadeInicial = produtoEstoque.Saldo;
-                atividadeEstoque.QuantidadeFinal = quantidade ?? 0;
+                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+
+                var quantidadeFinal = quantidade ?? 0;
+
+                atividadeEstoque.QuantidadeInicial = loteProdutoEndereco.Quantidade;
+                atividadeEstoque.QuantidadeFinal = quantidadeFinal;
                 atividadeEstoque.IdUsuarioExecucao = idUsuarioExecucao;
                 atividadeEstoque.DataExecucao = DateTime.Now;
                 atividadeEstoque.Finalizado = true;
 
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.SaveChangesAsync();
 
-                produtoEstoque.Saldo = quantidade ?? 0;
+                //Aqui deve ser feito a solicitação de contagem
 
-                //TODO: Atualizar saldo de estoque no Sankhya
+                loteProdutoEndereco.Quantidade = quantidadeFinal;
 
-                _unitOfWork.SaveChanges();
+                await _unitOfWork.SaveChangesAsync();
+
+                var loteMovimentacao = new LoteMovimentacao
+                {
+                    IdEmpresa = idEmpresa,
+                    IdLote = loteProdutoEndereco.IdLote.GetValueOrDefault(),
+                    IdProduto = idProduto,
+                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = idUsuarioExecucao,
+                    Quantidade = quantidadeFinal,
+                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.ConferirProdutoForaLinha,
+                    DataHora = DateTime.Now
+                };
+
+                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+
+                await _unitOfWork.SaveChangesAsync();
 
                 if (adicionaLogAuditoria)
                 {
@@ -391,16 +378,11 @@ namespace FWLog.Services.Services
                         IdEmpresa = idEmpresa,
                         IdUsuario = idUsuarioExecucao
                     });
+
+                    await _unitOfWork.SaveChangesAsync();
                 }
 
-                if (adicionaMoves)
-                {
-                    //TODO: Salvar conteúdo de 'moves'
-                }
-
-                //TODO: transacao.Complete();
-
-                throw new BusinessException("API ainda não implementada em totalidade");
+                transacao.Complete();
             }
         }
     }
