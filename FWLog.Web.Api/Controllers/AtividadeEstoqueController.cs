@@ -3,6 +3,7 @@ using FWLog.Services.Model.AtividadeEstoque;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.AtividadeEstoque;
 using System;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
@@ -199,7 +200,7 @@ namespace FWLog.Web.Api.Controllers
         [Authorize]
         [Route("api/v1/atividade-estoque/conferencia-399-400")]
         [HttpPost]
-        public IHttpActionResult FinalizarConferenciaProdutoForaLinha(FinalizarConferenciaProdutoForaLinhaRequisicao requisicao)
+        public async Task<IHttpActionResult> FinalizarConferenciaProdutoForaLinha(FinalizarConferenciaProdutoForaLinhaRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
@@ -208,7 +209,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _atividadeEstoqueService.FinalizarConferenciaProdutoForaLinhaRequisicao(requisicao?.Corredor ?? 0,
+                await _atividadeEstoqueService.FinalizarConferenciaProdutoForaLinhaRequisicao(requisicao?.Corredor ?? 0,
                                                                                     requisicao?.IdEnderecoArmazenagem ?? 0,
                                                                                     requisicao?.IdProduto ?? 0,
                                                                                     requisicao?.Quantidade,
