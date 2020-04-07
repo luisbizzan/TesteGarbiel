@@ -115,12 +115,32 @@ namespace FWLog.Web.Api.Controllers
         [HttpGet]
         public IHttpActionResult PesquisarAtividade(int idAtividadeEstoqueTipo)
         {
-            var resposta = new AtividadesEstoqueResposta
+            try
             {
-                Lista = _atividadeEstoqueService.PesquisarAtividade(IdEmpresa, IdUsuario, idAtividadeEstoqueTipo)
-            };
+                var empresaUsuario = _unitOfWork.UsuarioEmpresaRepository.Obter(IdEmpresa, IdUsuario);
 
-            return ApiOk(resposta);
+                if (empresaUsuario == null)
+                {
+                    throw new BusinessException("O usuário não tem configuração para esta empresa");
+                }
+
+                var resposta = new AtividadesEstoqueResposta
+                {
+                    CorredorInicio = empresaUsuario.CorredorEstoqueInicio.HasValue ? empresaUsuario.CorredorEstoqueInicio.Value : 0,
+                    CorredorFim = empresaUsuario.CorredorEstoqueFim.HasValue ? empresaUsuario.CorredorEstoqueFim.Value : 0,
+                    Lista = _atividadeEstoqueService.PesquisarAtividade(IdEmpresa, IdUsuario, idAtividadeEstoqueTipo)
+                };
+
+                return ApiOk(resposta);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         [Authorize]
