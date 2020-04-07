@@ -117,7 +117,7 @@
                 var url = window.URL.createObjectURL(data);
 
                 a.href = url;
-                a.download = 'Primeiro teste.pdf';
+                a.download = 'Relatório total por alas.pdf';
                 document.body.append(a);
                 a.click();
                 a.remove();
