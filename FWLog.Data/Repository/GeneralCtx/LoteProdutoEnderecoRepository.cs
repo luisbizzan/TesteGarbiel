@@ -121,7 +121,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRecordsFiltered = query.Count();
 
             query = query
-                .OrderBy(model.OrderByColumn, model.OrderByDirection)
+                .OrderBy(model.OrderByColumn, model.OrderByDirection).ThenBy(x => x.Corredor)
                 .Skip(model.Start)
                 .Take(model.Length);
 

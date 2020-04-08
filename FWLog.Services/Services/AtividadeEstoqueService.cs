@@ -1,9 +1,11 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
+using FWLog.Services.Model.Armazenagem;
 using FWLog.Services.Model.AtividadeEstoque;
+using FWLog.Services.Model.Coletor;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +16,16 @@ namespace FWLog.Services.Services
     public class AtividadeEstoqueService : BaseService
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly ILog _log;
+        private readonly ColetorHistoricoService _coletorHistoricoService;
+        private readonly ArmazenagemService _armazenagemService;
 
-        public AtividadeEstoqueService(UnitOfWork unitOfWork)
+        public AtividadeEstoqueService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService, ILog log, ArmazenagemService armazenagemService)
         {
             _unitOfWork = unitOfWork;
+            _coletorHistoricoService = coletorHistoricoService;
+            _log = log;
+            _armazenagemService = armazenagemService;
         }
 
         public void ValidarCadastroAtividade(long idEmpresa)
@@ -94,8 +102,7 @@ namespace FWLog.Services.Services
             }
             catch (Exception ex)
             {
-                var applicationLogService = new ApplicationLogService(_unitOfWork);
-                applicationLogService.Error(ApplicationEnum.Api, ex, "Erro na criação das atividaes de abastecimento do picking.");
+                _log.Error("Erro na criação das atividaes de abastecimento do picking.", ex);
             }
         }
 
@@ -134,8 +141,7 @@ namespace FWLog.Services.Services
             }
             catch (Exception ex)
             {
-                var applicationLogService = new ApplicationLogService(_unitOfWork);
-                applicationLogService.Error(ApplicationEnum.Api, ex, "Erro na criação das atividades de conferência de endereço.");
+                _log.Error("Erro na criação das atividades de conferência de endereço.", ex);
             }
         }
 
@@ -175,8 +181,7 @@ namespace FWLog.Services.Services
             }
             catch (Exception ex)
             {
-                var applicationLogService = new ApplicationLogService(_unitOfWork);
-                applicationLogService.Error(ApplicationEnum.Api, ex, "Erro na criação das atividades de conferência 399/400.");
+                _log.Error("Erro na criação das atividades de conferência 399/400.", ex);
             }
         }
 
@@ -199,8 +204,7 @@ namespace FWLog.Services.Services
             }
             catch (Exception ex)
             {
-                var applicationLogService = new ApplicationLogService(_unitOfWork);
-                applicationLogService.Error(ApplicationEnum.Api, ex, "Erro na atualização da atividade " + atividadeEstoqueRequisicao.IdAtividadeEstoque);
+                _log.Error($"Erro na atualização da atividade {atividadeEstoqueRequisicao.IdAtividadeEstoque}", ex);
             }
         }
 
@@ -382,6 +386,60 @@ namespace FWLog.Services.Services
 
                     await _unitOfWork.SaveChangesAsync();
                 }
+
+                transacao.Complete();
+            }
+        }
+
+        public async Task FinalizarConferenciaEnderecoRequisicao(FinalizarConferenciaEnderecoRequisicao requisicao, long idEmpresa, string idUsuarioExecucao)
+        {
+            _armazenagemService.ValidarQuantidadeAjuste(new ValidarQuantidadeAjusteRequisicao
+            {
+                IdEmpresa = idEmpresa,
+                IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                IdLote = requisicao.IdLote,
+                IdProduto = requisicao.IdProduto,
+                Quantidade = requisicao.QuantidadeFinal
+            });
+
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(requisicao.IdEnderecoArmazenagem);
+
+                await _armazenagemService.AjustarVolumeLote(new AjustarVolumeLoteRequisicao
+                {
+                    IdEmpresa = idEmpresa,
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    IdLote = requisicao.IdLote,
+                    IdProduto = requisicao.IdProduto,
+                    IdUsuarioAjuste = idUsuarioExecucao,
+                    Quantidade = requisicao.QuantidadeFinal
+                }); ;
+
+                await _unitOfWork.SaveChangesAsync();
+
+                var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.GetById(requisicao.IdAtividadeEstoque);
+
+                atividadeEstoque.QuantidadeInicial = loteProdutoEndereco.Quantidade;
+                atividadeEstoque.QuantidadeFinal = requisicao.QuantidadeFinal;
+                atividadeEstoque.IdUsuarioExecucao = idUsuarioExecucao;
+                atividadeEstoque.DataExecucao = DateTime.Now;
+                atividadeEstoque.Finalizado = true;
+
+                await _unitOfWork.SaveChangesAsync();
+
+                _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ConferirEndereco,
+                    Descricao = $"Conferiu o produto {atividadeEstoque.Produto.Referencia} no endereço {atividadeEstoque.EnderecoArmazenagem.Codigo}," +
+                       $" quantidade foi de {atividadeEstoque.QuantidadeInicial} para {atividadeEstoque.QuantidadeFinal}",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuarioExecucao
+                });
+
+                await _unitOfWork.SaveChangesAsync();
 
                 transacao.Complete();
             }
