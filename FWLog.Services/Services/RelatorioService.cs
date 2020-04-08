@@ -1157,7 +1157,7 @@ namespace FWLog.Services.Services
                     row.Cells[7].AddParagraph("Peso Total");
                     row.Cells[7].Format.Font.Bold = true;
 
-                    var itens = query.Where(x => x.Corredor == corredor).Select(y => y).ToList();
+                    var itens = query.Where(x => x.Corredor == corredor).Select(y => y).OrderBy(x => x.Codigo).ToList();
                     var totalArmazenado = itens.Where(x => x.LoteProdutoEndereco.Any()).Sum(x => x.LoteProdutoEndereco.First().Produto.PesoBruto);
                     var qtdeTotal = itens.Where(x => x.LoteProdutoEndereco.Any()).Sum(x => x.LoteProdutoEndereco.First().Quantidade);
 
