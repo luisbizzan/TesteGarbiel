@@ -2,7 +2,6 @@
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models;
-using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
