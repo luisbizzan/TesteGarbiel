@@ -331,5 +331,59 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioPosicaoInventario)]
+        public ActionResult RelatorioPosicaoInventario()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioPosicaoInventario)]
+        public JsonResult ValidarPesquisaRelatorioPosicaoInventario(long? idProduto, long? idNivelArmazenagem, long? idPontoArmazenagem)
+        {
+            if (idProduto == null && idNivelArmazenagem == null && idPontoArmazenagem == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Por favor, preencher pelo menos um dos filtros.",
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoAlas)]
+        public ActionResult RelatorioPosicaoInventarioPageData(DataTableFilter<RelatorioPosicaoInventarioFilterViewModel> model)
+        {
+            var filtro = Mapper.Map<DataTableFilter<RelatorioPosicaoInventarioListaFiltro>>(model);
+            filtro.CustomFilter.IdEmpresa = IdEmpresa;
+
+            var loteProdutoEnderecos = _uow.LoteProdutoEnderecoRepository.BuscarDadosPosicaoInventario(filtro, out int totalRecordsFiltered, out int totalRecords);
+
+            var list = new List<RelatorioPosicaoInventarioListItemViewModel>();
+            loteProdutoEnderecos.OrderBy(x => x.Referencia).ThenBy(x => x.Codigo).ForEach(lpe => list.Add(new RelatorioPosicaoInventarioListItemViewModel
+            {
+                Codigo = lpe.Codigo,
+                IdLote = lpe.IdLote.ToString(),
+                QuantidadeProdutoPorEndereco = lpe.QuantidadeProdutoPorEndereco.ToString(),
+                Referencia = string.Concat(lpe.Referencia," - ",lpe.DescricaoProduto)
+
+            }));
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = totalRecordsFiltered,
+                Data = list
+            });
+        }
     }
 }

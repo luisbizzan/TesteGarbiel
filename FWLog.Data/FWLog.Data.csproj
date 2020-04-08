@@ -116,6 +116,7 @@
     <Compile Include="Models\DataTablesCtx\HistoricoAcaoUsuarioLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\MotivoLaudoLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\PerfilImpressoraTableRow.cs" />
+    <Compile Include="Models\DataTablesCtx\PosicaoInventarioListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\ProdutoListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\QuarentenaHistoricoListRow.cs" />
     <Compile Include="Models\DataTablesCtx\RastreabilidadeLoteListaLinhaTabela.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Models\FilterCtx\RastreabilidadeLoteListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\RastreabilidadeLoteMovimentacaoListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\RastreabilidadeLoteProdutoListaFiltro.cs" />
+    <Compile Include="Models\FilterCtx\RelatorioPosicaoInventarioListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\RelatorioTotalizacaoAlasListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\TransportadoraPesquisaModalFiltro.cs" />
     <Compile Include="Models\AtividadeEstoqueTipo.cs" />

@@ -71,34 +71,4 @@ namespace FWLog.Web.Backoffice.Models.ArmazenagemCtx
         public string DescricaoPontoArmazenagem { get; set; }
 
     }
-
-    //public class Corredor
-    //{
-    //    [Display(Name = "")]
-    //    public string NumeroCorredor { get; set; }
-
-    //    [Display(Name = "Endereço")]
-    //    public string CodigoEndereco { get; set; }
-
-    //    [Display(Name = "Usuário")]
-    //    public string NomeUsuario { get; set; }
-
-    //    [Display(Name = "Referência")]
-    //    public string ReferenciaProduto { get; set; }
-
-    //    [Display(Name = "Data")]
-    //    public string DataInstalacao { get; set; }
-
-    //    [Display(Name = "Peso")]
-    //    public string PesoProduto { get; set; }
-
-    //    [Display(Name = "Quantidade")]
-    //    public string QuantidadeProdutoPorEndereco { get; set; }
-
-    //    [Display(Name = "Peso Total")]
-    //    public string PesoTotalDeProduto { get; set; }
-
-    //    //[Display(Name = "Lote")]
-    //    //public long IdLote { get; set; }
-    //}
 }
