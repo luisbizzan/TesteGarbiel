@@ -1,4 +1,5 @@
-﻿using FWLog.Data;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Services.Model.Armazenagem;
@@ -796,7 +797,7 @@ namespace FWLog.Services.Services
 
                     _unitOfWork.LoteProdutoRepository.Update(loteProduto);
                     await _unitOfWork.SaveChangesAsync();
-                   
+
                     loteProdutoEndereco.Quantidade += quantidade;
 
                     _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);

@@ -1,4 +1,5 @@
-﻿using FWLog.Data;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Services.Model.Armazenagem;
@@ -400,7 +401,7 @@ namespace FWLog.Services.Services
                 IdProduto = requisicao.IdProduto,
                 Quantidade = requisicao.QuantidadeFinal
             });
-                        
+
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
@@ -431,7 +432,7 @@ namespace FWLog.Services.Services
                 _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
                 {
                     IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
-                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ConferirEndereco,                    
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ConferirEndereco,
                     Descricao = $"Conferiu o produto {atividadeEstoque.Produto.Referencia} no endereço {atividadeEstoque.EnderecoArmazenagem.Codigo}," +
                        $" quantidade foi de {atividadeEstoque.QuantidadeInicial} para {atividadeEstoque.QuantidadeFinal}",
                     IdEmpresa = idEmpresa,

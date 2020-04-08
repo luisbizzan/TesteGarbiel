@@ -1,4 +1,5 @@
-﻿using ExtensionMethods.String;
+﻿using DartDigital.Library.Exceptions;
+using ExtensionMethods.String;
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Model.Coletor;
@@ -8,7 +9,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
 {
@@ -629,7 +629,7 @@ namespace FWLog.Services.Services
 
             var pontoArmazenagem = _unitOfWork.PontoArmazenagemRepository.GetById(enderecoArmazenagem.IdPontoArmazenagem);
 
-            if(pontoArmazenagem.Descricao != "Picking")
+            if (pontoArmazenagem.Descricao != "Picking")
             {
                 throw new BusinessException("O endereço informado não é endereço de Picking.");
             }
