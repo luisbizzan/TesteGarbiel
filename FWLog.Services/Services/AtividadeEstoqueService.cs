@@ -392,19 +392,11 @@ namespace FWLog.Services.Services
 
         public async Task FinalizarConferenciaEnderecoRequisicao(FinalizarConferenciaEnderecoRequisicao requisicao, long idEmpresa, string idUsuarioExecucao)
         {
-            _armazenagemService.ValidarQuantidadeAjuste(new ValidarQuantidadeAjusteRequisicao
-            {
-                IdEmpresa = idEmpresa,
-                IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
-                IdLote = requisicao.IdLote,
-                IdProduto = requisicao.IdProduto,
-                Quantidade = requisicao.QuantidadeFinal
-            });
-                        
-
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
                 var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(requisicao.IdEnderecoArmazenagem);
+
+                var qtdAnterior = loteProdutoEndereco.Quantidade;
 
                 await _armazenagemService.AjustarVolumeLote(new AjustarVolumeLoteRequisicao
                 {
@@ -414,13 +406,13 @@ namespace FWLog.Services.Services
                     IdProduto = requisicao.IdProduto,
                     IdUsuarioAjuste = idUsuarioExecucao,
                     Quantidade = requisicao.QuantidadeFinal
-                }); ;
+                });
 
                 await _unitOfWork.SaveChangesAsync();
 
                 var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.GetById(requisicao.IdAtividadeEstoque);
 
-                atividadeEstoque.QuantidadeInicial = loteProdutoEndereco.Quantidade;
+                atividadeEstoque.QuantidadeInicial = qtdAnterior;
                 atividadeEstoque.QuantidadeFinal = requisicao.QuantidadeFinal;
                 atividadeEstoque.IdUsuarioExecucao = idUsuarioExecucao;
                 atividadeEstoque.DataExecucao = DateTime.Now;
