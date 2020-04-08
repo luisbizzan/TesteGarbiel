@@ -1,8 +1,6 @@
-﻿using FWLog.Data;
-using FWLog.Data.Models;
+﻿using DartDigital.Library.Exceptions;
 using FWLog.Services.Integracao.Helpers;
 using FWLog.Services.Model.IntegracaoSankhya;
-using FWLog.Services.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -184,10 +182,10 @@ namespace FWLog.Services.Integracao
             //Dados para primeira parte do log de integração(Requisição)
             var logEtiquetagem = new FWLog.Services.Model.IntegracaoLog.IntegracaoLog
             {
-                IdIntegracaoTipo     = idIntegracaoTipo,
+                IdIntegracaoTipo = idIntegracaoTipo,
                 IdIntegracaoEntidade = idIntegracaoEntidade,
-                HttpVerbo            = httpVerbo,
-                DataRequisicao       = DateTime.Now
+                HttpVerbo = httpVerbo,
+                DataRequisicao = DateTime.Now
             };
 
             //var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
@@ -356,7 +354,7 @@ namespace FWLog.Services.Integracao
                 throw new BusinessException(string.Format("Ocorreu um erro na confirmação da nota fiscal número único {0}. Mensagem de Erro {1}", condigoIntegracao, decodedString));
             }
         }
-             
+
         public async Task<long> GerarNotaFiscalDevolucao(long codigoIntegracao, List<ElementoItemDetalhes> itensDevolucao)
         {
             string codTipOper = ConfigurationManager.AppSettings["IntegracaoSankhya_CodigoDevolucaoCompra"];
