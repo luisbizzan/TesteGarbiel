@@ -4,10 +4,13 @@ using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.ArmazenagemCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -18,11 +21,13 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly UnitOfWork _uow;
         private readonly RelatorioService _relatorioService;
+        private readonly ILog _log;
 
-        public ArmazenagemController(UnitOfWork uow, RelatorioService relatorioService)
+        public ArmazenagemController(UnitOfWork uow, RelatorioService relatorioService, ILog log)
         {
             _uow = uow;
             _relatorioService = relatorioService;
+            _log = log;
         }
 
         [HttpGet]
@@ -279,6 +284,53 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsFiltered = totalRecordsFiltered,
                 Data = list
             });
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoAlas)]
+        public ActionResult DownloadRelatorioTotalPorAla(DownloadRelatorioTotalPorAlaViewModel viewModel)
+        {
+            ValidateModel(viewModel);
+
+            var relatorioRequest = Mapper.Map<RelatorioTotalPorAlaRequest>(viewModel);
+            relatorioRequest.IdEmpresa = IdEmpresa;
+            relatorioRequest.NomeUsuarioRequisicao = LabelUsuario;
+            byte[] relatorio = _relatorioService.GerarRelatorioTotalEnderecoPorAla(relatorioRequest);
+
+            return File(relatorio, "application/pdf", "Relatório total por alas.pdf");
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoAlas)]
+        public JsonResult ImprimirRelatorioTotalPorAla(ImprimirRelatorioTotalPorAlaViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                var request = Mapper.Map<ImprimirRelatorioTotalPorAlaRequest>(viewModel);
+
+                request.IdEmpresa = IdEmpresa;
+                request.NomeUsuarioRequisicao = LabelUsuario;
+
+                _relatorioService.ImprimirRelatorioTotalEnderecoPorAla(request);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

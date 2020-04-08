@@ -274,6 +274,7 @@
     </Compile>
     <Compile Include="Helpers\ApplicationAuthorize.cs" />
     <Compile Include="Helpers\HtmlRequestHelper.cs" />
+    <Compile Include="Mapping\ArmazenagemProfile.cs" />
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
     <Compile Include="Mapping\GarantiaProfile.cs" />
@@ -287,6 +288,8 @@
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
     <Compile Include="Mapping\ProdutoProfile.cs" />
     <Compile Include="Mapping\TransportadoraProfile.cs" />
+    <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioTotalPorAlaViewModel.cs" />
+    <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioTotalPorAlaViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\RelatorioLoteMovimentacaoViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\RelatorioRastreabilidadeLoteMovimentacaoViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\RelatorioRastreabilidadeLoteProdutoViewModel.cs" />
