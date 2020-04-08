@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
+using DartDigital.Library.Exceptions;
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Lote;
 using Microsoft.AspNet.Identity;
-using System;
 using System.Threading.Tasks;
 using System.Web.Http;
 

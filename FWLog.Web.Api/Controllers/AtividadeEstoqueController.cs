@@ -1,8 +1,8 @@
-﻿using FWLog.Data;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Data;
 using FWLog.Services.Model.AtividadeEstoque;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.AtividadeEstoque;
-using System;
 using System.Threading.Tasks;
 using System.Web.Http;
 
