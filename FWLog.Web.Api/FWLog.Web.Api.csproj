@@ -218,6 +218,7 @@
     <Compile Include="Helpers\ApiErrorBuilder.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
     <Compile Include="Mapping\ProdutoModelResponseProfile.cs" />
+    <Compile Include="Models\Armazenagem\EnderecoProdutoQuantidadesResposta.cs" />
     <Compile Include="Models\Armazenagem\FinalizarConferenciaModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\EnderecosProdutosResposta.cs" />
     <Compile Include="Models\Armazenagem\GravarHistoricoRequisicao.cs" />
