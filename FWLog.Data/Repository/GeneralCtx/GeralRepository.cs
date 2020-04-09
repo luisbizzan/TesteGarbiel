@@ -75,5 +75,92 @@ namespace FWLog.Data.Repository.GeneralCtx
                 conn.Close();
             }
         }
+
+        public List<GeralUpload> TodosUploadsDaCategoria(long Id_Categoria, long Id_Ref)
+        {
+            List<GeralUpload> retorno = new List<GeralUpload>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        GU.id,
+                        GU.id_categoria,
+                        GU.id_ref,
+                        GU.id_usr,
+                        GU.dt_cad,
+                        U.""UserName"" AS usuario,
+                        GU.arquivo,
+                        GU.arquivo_tipo
+                    FROM
+                        geral_upload GU
+                        INNER JOIN ""AspNetUsers"" U ON U.""Id"" =  GU.id_usr
+                    WHERE
+                        GU.id_ref = :Id_Ref
+                        AND GU.id_categoria = :Id_Categoria
+                    ";
+                    retorno = conn.Query<GeralUpload>(sQuery, new { Id_Ref, Id_Categoria }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
+        public GeralUploadCategoria SelecionaUploadCategoria(long Id_Categoria)
+        {
+            GeralUploadCategoria retorno = new GeralUploadCategoria();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        tabela,
+                        categoria,
+                        formatos
+                    FROM
+                        geral_upload_categoria
+                    WHERE
+                        id = :Id_Categoria
+                    ";
+                    retorno = conn.Query<GeralUploadCategoria>(sQuery, new { Id_Categoria }).SingleOrDefault();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
+        public void InserirUpload(GeralUpload item)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    INSERT INTO geral_upload
+	                    ( Id_Categoria, Id_Ref, Id_Usr, Arquivo, Arquivo_Tipo, Dt_Cad )
+                    VALUES
+	                    ( :Id_Categoria, :Id_Ref, :Id_Usr, :Arquivo, :Arquivo_Tipo, SYSDATE )
+                    ";
+                    conn.Query<GeralUpload>(sQuery, new
+                    {
+                        item.Id_Categoria,
+                        item.Id_Ref,
+                        item.Id_Usr,
+                        item.Arquivo,
+                        item.Arquivo_Tipo,
+                    });
+                }
+                conn.Close();
+            }
+        }
     }
 }

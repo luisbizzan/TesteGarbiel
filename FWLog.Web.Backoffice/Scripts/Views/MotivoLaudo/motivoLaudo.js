@@ -103,7 +103,7 @@ function teste() {
     let Id_Categoria = 1;
     let Id_Ref = $(this).data("id");
 
-    $("#modalPadrao").load("/Geral/ListarHistoricos", {
+    $("#modalPadrao").load("/Geral/ListarUploads", {
         Id_Categoria: Id_Categoria,
         Id_Ref: Id_Ref,
     }, function () {

@@ -13,6 +13,7 @@ using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web;
@@ -85,7 +86,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 if (applicationSession.IdEmpresa.HasValue)
                 {
                     return applicationSession.IdEmpresa.Value;
-
                 }
 
                 return 0;
@@ -193,13 +193,29 @@ namespace FWLog.Web.Backoffice.Controllers
                             new SelectListItem { Text = "Inativo", Value = "false"}
                         }, "Value", "Text");
 
-
             ViewBag.ProdutoStatus = new SelectList(new List<SelectListItem>
                         {
                             new SelectListItem { Text = "Ativo", Value = "1"},
                             new SelectListItem { Text = "Inativo", Value = "0"},
                             new SelectListItem { Text = "Sem Locação", Value = "2"}
                         }, "Value", "Text");
+        }
+
+        protected bool CriarDiretorioSeNecessario(string path)
+        {
+            bool result = true;
+            if (!Directory.Exists(path))
+            {
+                try
+                {
+                    Directory.CreateDirectory(path);
+                }
+                catch (Exception)
+                {
+                    result = false;
+                }
+            }
+            return result;
         }
     }
 }

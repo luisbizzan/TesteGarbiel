@@ -98,6 +98,10 @@ namespace FWLog.Web.Backoffice
             bundles.Add(new ScriptBundle("~/script-bundles/vendors/onscan").Include(
                "~/Scripts/vendors/onScan/onscan.js"
             ));
+
+            bundles.Add(new ScriptBundle("~/script-bundles/vendors/jquery-confirm").Include(
+                 "~/Scripts/vendors/jquery-confirm/jquery-confirm.js"
+            ));
         }
 
         private static void RegisterStyles(BundleCollection bundles)
@@ -145,6 +149,10 @@ namespace FWLog.Web.Backoffice
 
             bundles.Add(new StyleBundle("~/style-bundles/vendors/cropper").Include(
                "~/Content/vendors/croppper/cropper.css"
+            ));
+
+            bundles.Add(new StyleBundle("~/style-bundles/vendors/jquery-confirm").Include(
+               "~/Content/vendors/jquery-confirm/jquery-confirm.css"
             ));
         }
 
@@ -205,8 +213,7 @@ namespace FWLog.Web.Backoffice
         }
     }
 
-
-    class AsIsBundleOrderer : IBundleOrderer
+    internal class AsIsBundleOrderer : IBundleOrderer
     {
         public IEnumerable<BundleFile> OrderFiles(BundleContext context, IEnumerable<BundleFile> files)
         {
@@ -214,7 +221,7 @@ namespace FWLog.Web.Backoffice
         }
     }
 
-    class CssRewriteUrlTransformWrapper : IItemTransform
+    internal class CssRewriteUrlTransformWrapper : IItemTransform
     {
         public string Process(string includedVirtualPath, string input)
         {

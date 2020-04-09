@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@ViewBag.Title</title>
-    @Styles.Render("~/style-bundles/vendors/nprogress")    
+    @Styles.Render("~/style-bundles/vendors/nprogress")
     @Styles.Render("~/style-bundles/bootstrap")
     @Styles.Render("~/style-bundles/vendors/pnotify")
     @Styles.Render("~/style-bundles/vendors/datatables")
@@ -13,11 +13,12 @@
     @Styles.Render("~/style-bundles/vendors/datetimepicker")
     @Styles.Render("~/style-bundles/vendors/dropzone")
     @Styles.Render("~/style-bundles/vendors/bootstrap-select")
+    @Styles.Render("~/style-bundles/vendors/jquery-confirm")
 
 </head>
 <body class="nav-md login">
     <div class="container body">
-        <div class="main_container">                        
+        <div class="main_container">
             @RenderBody()
         </div>
     </div>
@@ -34,6 +35,7 @@
     @Scripts.Render("~/script-bundles/vendors/mask")
     @Scripts.Render("~/script-bundles/vendors/dropzone")
     @Scripts.Render("~/script-bundles/vendors/bootstrap-select")
+    @Scripts.Render("~/script-bundles/vendors/jquery-confirm")
     @Html.Partial("_ScriptGlobalOptions")
     @Scripts.Render("~/script-bundles/dart")
     @Html.Partial("_Notify")

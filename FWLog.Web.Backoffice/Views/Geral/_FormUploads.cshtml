@@ -1,0 +1,85 @@
+﻿@model  FWLog.Web.Backoffice.Models.GeralCtx.GeralUploadVM
+<div class="modal-dialog modal-lg">
+    <div class="modal-content vertical-alignment-helper">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">×</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Form</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="x_panel">
+                        <div class="x_content">
+
+                            <form id="formHist">
+                                @Html.HiddenFor(x => x.Id_Ref)
+                                @Html.HiddenFor(x => x.Id_Categoria)
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label class="control-label" for="Arquivo">Formatos Aceitos</label>
+                                            <p>@Model.Formatos</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            @Html.LabelFor(x => x.Arquivo, new { @class = "control-label" })
+                                            @Html.TextBoxFor(x => x.Arquivo, new { type = "file", @class = "form-control", @multiple = "multiple" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Arquivos</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content" style="max-height:300px; overflow:auto;">
+                    @if (Model.Lista_Uploads.Any())
+                    {
+                        <div id="listaUploads">
+                            @foreach (var item in Model.Lista_Uploads)
+                            {
+                                <div class="col-md-4">
+                                    <div class="panel panel-default">
+                                        <div class="box-body text-center" style="padding:10px;">
+                                            <p>@item.Arquivo</p>
+                                            <i class="fa fa-file fa-4x"></i>
+                                        </div>
+                                        <div class="panel-footer">
+                                            <p>@String.Format("{0:dd/MM/yyyy HH:mm}", item.Dt_Cad) <span class="label label-primary">@item.Arquivo_Tipo</span></p>
+                                            <p>
+                                                <div class="btn-group btn-group-justified" role="group">
+                                                    <a class="btn btn-sm btn-primary" target="blank" href="@Request.Url.GetLeftPart(UriPartial.Authority)/Uploads/@Model.Tabela/@Model.Id_Ref/@item.Arquivo"><i class=" fa fa-file-image-o"></i> Abrir</a>
+                                                    <a class="btn btn-sm btn-danger btn-excluir-upload" data-id="@item.Id" data-arquivo="@item.Arquivo"><i class="fa fa-trash"></i> Excluir</a>
+                                                </div>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger alert-dismissible " role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <strong>Atenção!</strong> Não há itens.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="@Url.Content("~/Scripts/Views/Geral/formGeralUploads.js")"></script>

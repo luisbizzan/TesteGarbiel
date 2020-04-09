@@ -22,5 +22,20 @@ namespace FWLog.Services.Services
         {
             return _uow.GeralRepository.TodosHistoricosDaCategoria(Id_Categoria, Id_Ref);
         }
+
+        public void InserirUpload(GeralUpload item)
+        {
+            _uow.GeralRepository.InserirUpload(item);
+        }
+
+        public List<GeralUpload> TodosUploadsDaCategoria(long Id_Categoria, long Id_Ref)
+        {
+            return _uow.GeralRepository.TodosUploadsDaCategoria(Id_Categoria, Id_Ref);
+        }
+
+        public GeralUploadCategoria SelecionaUploadCategoria(long Id_Categoria)
+        {
+            return _uow.GeralRepository.SelecionaUploadCategoria(Id_Categoria);
+        }
     }
 }
