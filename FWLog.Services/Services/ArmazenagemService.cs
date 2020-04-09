@@ -522,7 +522,7 @@ namespace FWLog.Services.Services
             LoteProduto loteProduto = _unitOfWork.LoteProdutoRepository.PesquisarProdutoNoLote(requisicao.IdEmpresa, requisicao.IdLote, requisicao.IdProduto);
 
             int saldoLote = loteProduto.Saldo;
-            int totalInstalado = listaEnderecosLoteProduto.Sum(s => s.Quantidade);
+            int totalInstalado = listaEnderecosLoteProduto.Where(w => w.IdEnderecoArmazenagem != requisicao.IdEnderecoArmazenagem).Sum(s => s.Quantidade);
 
             if ((totalInstalado + requisicao.Quantidade) > saldoLote)
             {
@@ -1049,6 +1049,35 @@ namespace FWLog.Services.Services
             List<PontoArmazenagem> pontos = enderecosArmazenagem.Select(s => s.PontoArmazenagem).Distinct().ToList();
 
             return pontos;
+        }
+
+        public EnderecoProdutoQuantidades ConsultarQuantidadesPorAtividadeEstoque(long idAtividadeEstoque)
+        {
+            EnderecoProdutoQuantidades enderecoProdutoQuantidades = new EnderecoProdutoQuantidades();
+
+            var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.GetById(idAtividadeEstoque);
+
+            if (atividadeEstoque != null)
+            {
+                var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(atividadeEstoque.IdEnderecoArmazenagem);
+
+                if (enderecoArmazenagem != null)
+                {
+                    enderecoProdutoQuantidades.EstoqueMinimo = enderecoArmazenagem.EstoqueMinimo ?? 0;
+                    enderecoProdutoQuantidades.EstoqueMaximo = enderecoArmazenagem.EstoqueMaximo ?? 0;
+                    enderecoProdutoQuantidades.QuantidadeAtual = enderecoArmazenagem.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == enderecoArmazenagem.IdEnderecoArmazenagem).FirstOrDefault().Quantidade;
+                }
+                else
+                {
+                    throw new BusinessException("O endereço não foi encontrado.");
+                }
+            }
+            else
+            {
+                throw new BusinessException("A atividade não foi encontrada.");
+            }
+
+            return enderecoProdutoQuantidades;
         }
     }
 }

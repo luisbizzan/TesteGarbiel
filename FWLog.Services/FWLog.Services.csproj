@@ -121,6 +121,7 @@
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
     <Compile Include="Model\Armazenagem\AjustarVolumeLoteRequisicao.cs" />
+    <Compile Include="Model\Armazenagem\EnderecoProdutoQuantidades.cs" />
     <Compile Include="Model\Armazenagem\InstalarVolumeLoteRequisicao.cs" />
     <Compile Include="Model\Armazenagem\LoteInstaladoProdutoResposta.cs" />
     <Compile Include="Model\Armazenagem\ValidarEnderecoAjusteRequisicao.cs" />
@@ -262,6 +263,7 @@
       <Name>FWLog.Data</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
