@@ -618,5 +618,28 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk(resposta);
         }
+
+        [HttpGet]
+        [Route("api/v1/armazenagem/consultar-quantidades/{idAtividadeEstoque}")]
+        public IHttpActionResult ConsultarQuantidadesPorAtividadeEstoque(long idAtividadeEstoque)
+        {
+            try
+            {
+                var enderecoProdutoQuantidade = _armazenagemService.ConsultarQuantidadesPorAtividadeEstoque(idAtividadeEstoque);
+
+                var resposta = new EnderecoProdutoQuantidadesResposta()
+                {
+                    QuantidadeAtual = enderecoProdutoQuantidade.QuantidadeAtual,
+                    EstoqueMinimo = enderecoProdutoQuantidade.EstoqueMinimo,
+                    EstoqueMaximo = enderecoProdutoQuantidade.EstoqueMaximo
+                };
+
+                return ApiOk(resposta);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+        }
     }
 }

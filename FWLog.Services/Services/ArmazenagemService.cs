@@ -1049,5 +1049,34 @@ namespace FWLog.Services.Services
 
             return pontos;
         }
+
+        public EnderecoProdutoQuantidades ConsultarQuantidadesPorAtividadeEstoque(long idAtividadeEstoque)
+        {
+            EnderecoProdutoQuantidades enderecoProdutoQuantidades = new EnderecoProdutoQuantidades();
+
+            var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.GetById(idAtividadeEstoque);
+
+            if (atividadeEstoque != null)
+            {
+                var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(atividadeEstoque.IdEnderecoArmazenagem);
+
+                if (enderecoArmazenagem != null)
+                {
+                    enderecoProdutoQuantidades.EstoqueMinimo = enderecoArmazenagem.EstoqueMinimo ?? 0;
+                    enderecoProdutoQuantidades.EstoqueMaximo = enderecoArmazenagem.EstoqueMaximo ?? 0;
+                    enderecoProdutoQuantidades.QuantidadeAtual = enderecoArmazenagem.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == enderecoArmazenagem.IdEnderecoArmazenagem).FirstOrDefault().Quantidade;
+                }
+                else
+                {
+                    throw new BusinessException("O endereço não foi encontrado.");
+                }
+            }
+            else
+            {
+                throw new BusinessException("A atividade não foi encontrada.");
+            }
+
+            return enderecoProdutoQuantidades;
+        }
     }
 }
