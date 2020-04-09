@@ -59,7 +59,7 @@
                                             <p>
                                                 <div class="btn-group btn-group-justified" role="group">
                                                     <a class="btn btn-sm btn-primary" target="blank" href="@Request.Url.GetLeftPart(UriPartial.Authority)/Uploads/@Model.Tabela/@Model.Id_Ref/@item.Arquivo"><i class=" fa fa-file-image-o"></i> Abrir</a>
-                                                    <a class="btn btn-sm btn-danger btn-excluir-upload" data-id="@item.Id" data-arquivo="@item.Arquivo"><i class="fa fa-trash"></i> Excluir</a>
+                                                    <a class="btn btn-sm btn-danger btn-excluir-upload" data-id="@item.Id" data-arquivo="@item.Arquivo" data-tabela="@Model.Tabela"><i class="fa fa-trash"></i> Excluir</a>
                                                 </div>
                                             </p>
                                         </div>

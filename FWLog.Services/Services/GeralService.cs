@@ -28,6 +28,11 @@ namespace FWLog.Services.Services
             _uow.GeralRepository.InserirUpload(item);
         }
 
+        public void ExcluirUpload(long id)
+        {
+            _uow.GeralRepository.ExcluirUpload(id);
+        }
+
         public List<GeralUpload> TodosUploadsDaCategoria(long Id_Categoria, long Id_Ref)
         {
             return _uow.GeralRepository.TodosUploadsDaCategoria(Id_Categoria, Id_Ref);

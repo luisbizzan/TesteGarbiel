@@ -647,7 +647,6 @@
     <Content Include="Scripts\Views\Produto\searchModal.js" />
     <Content Include="Scripts\Views\RecebimentoEtiquetaIndividualPersonalizada\index.js" />
     <Content Include="Scripts\Views\Etiqueta\lote.js" />
-    <Content Include="Uploads\TESTE\21\tiger_sitting_majestic-wallpaper-1920x1200.jpg" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
     <Content Include="Views\Shared\_MudarEmpresa.cshtml" />
@@ -725,7 +724,6 @@
     <Content Include="Views\BOAccount\HistoricoAcoes.cshtml" />
     <Content Include="Views\Geral\_FormHistoricos.cshtml" />
     <Content Include="Views\Geral\_FormUploads.cshtml" />
-    <Content Include="Uploads\TESTE\21\DIT.pdf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

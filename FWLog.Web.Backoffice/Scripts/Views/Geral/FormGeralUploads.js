@@ -37,7 +37,32 @@
     });
 
     $('.btn-excluir-upload').on('click', function (e) {
-        ExcluirUpload($(this).attr("data-id"), $(this).attr("data-arquivo"));
+        let id = $(this).attr("data-id");
+        let arquivo = $(this).attr("data-arquivo");
+        let tabela = $(this).attr("data-tabela");
+
+        $.confirm({
+            type: 'red',
+            theme: 'material',
+            title: 'Excluir',
+            content: 'Tem Certeza?',
+            typeAnimated: true,
+            autoClose: 'cancelar|10000',
+            buttons: {
+                confirmar: {
+                    text: 'Excluir',
+                    btnClass: 'btn-red',
+                    action: function () {
+                        ExcluirUpload(id, arquivo, tabela);
+                    }
+                },
+                cancelar: {
+                    text: 'Cancelar',
+                    action: function () {
+                    }
+                }
+            }
+        });
     });
 })();
 
@@ -50,45 +75,25 @@ function ListarUploads(Id_Categoria, Id_Ref) {
     });
 }
 
-function ExcluirUpload(Id, Arquivo) {
-    $.confirm({
-        type: 'red',
-        title: 'Excluir',
-        content: 'Tem Certeza?',
-        typeAnimated: true,
-        buttons: {
-            confim: {
-                text: 'Excluir',
-                btnClass: 'btn-red',
-                action: function () {
-                }
-            },
-            cancelar: {
-                text: 'Cancelar',
-                action: function () {
-                }
+function ExcluirUpload(Id, Arquivo, Tabela) {
+    $.ajax({
+        url: "/Geral/ExcluirUpload",
+        type: "POST",
+        data: {
+            Id: Id,
+            Arquivo: Arquivo,
+            Id_Categoria: $("#Id_Categoria").val(),
+            Tabela: Tabela,
+            Id_Ref: $("#Id_Ref").val()
+        },
+        success: function (result) {
+            if (result.Success) {
+                PNotify.success({ text: result.Message });
+                ListarUploads($("#Id_Categoria").val(), $("#Id_Ref").val());
             }
+        },
+        error: function (result) {
+            PNotify.warning({ text: result.Message });
         }
     });
-
-    //$.ajax({
-    //    url: "/Geral/ExcluirUpload",
-    //    type: "GET",
-    //    data: {
-    //        Id: Id,
-    //        Arquivo: Arquivo
-    //        Id_Categoria: $("#Id_Categoria").val(),
-    //        Id_Ref: $("#Id_Ref").val()
-    //    },
-    //    success: function (result) {
-    //        if (result.success == true) {
-    //            PNotify.success({ text: "Item excluido com sucesso!" });
-    //            ListarUploads($("#Id_Categoria").val(), $("#Id_Ref").val());
-    //        }
-
-    //    },
-    //    error: function (data) {
-    //        $.toaster({ priority: "danger", title: "Erro", message: "Falha ao salvar!" });
-    //    }
-    //});
 }
