@@ -233,6 +233,7 @@
     <Compile Include="Controllers\ClienteController.cs" />
     <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\EtiquetaController.cs" />
+    <Compile Include="Controllers\GarantiaConfiguracaoController.cs" />
     <Compile Include="Controllers\GarantiaController.cs" />
     <Compile Include="Controllers\GeralController.cs" />
     <Compile Include="Controllers\MotivoLaudoController.cs" />
@@ -330,6 +331,7 @@
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\LoteEtiquetaViewModel.cs" />
+    <Compile Include="Models\GarantiaConfiguracaoCtx\GarantiaConfiguracaoViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaDetailsViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaCreateViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaDetalhesEntradaConferenciaViewModel.cs" />
@@ -971,6 +973,7 @@
     <Folder Include="Areas\" />
     <Folder Include="bin\bin\en-US\" />
     <Folder Include="obj\Debug\TempPE\" />
+    <Folder Include="Views\GarantiaConfiguracao\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

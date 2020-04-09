@@ -73,6 +73,12 @@ namespace FWLog.Data
         private NotaFiscalRecebimentoRepository _notaFiscalRecebimentoRepository;
         private NotaRecebimentoStatusRepository _notaRecebimentoStatusRepository;
         private GeralRepository _geralRepository;
+        private GarantiaConfiguracaoRepository _garantiaConfiguracaoRepository;
+
+        public GarantiaConfiguracaoRepository GarantiaConfiguracaoRepository
+        {
+            get => _garantiaConfiguracaoRepository ?? (_garantiaConfiguracaoRepository = new GarantiaConfiguracaoRepository(_context));
+        }
 
         public GeralRepository GeralRepository
         {
