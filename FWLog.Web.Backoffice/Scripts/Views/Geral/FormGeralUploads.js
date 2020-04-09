@@ -52,21 +52,20 @@ function ListarUploads(Id_Categoria, Id_Ref) {
 
 function ExcluirUpload(Id, Arquivo) {
     $.confirm({
-        title: 'Confirm!',
-        content: 'Simple confirm!',
+        type: 'red',
+        title: 'Excluir',
+        content: 'Tem Certeza?',
+        typeAnimated: true,
         buttons: {
-            confirm: function () {
-                $.alert('Confirmed!');
-            },
-            cancel: function () {
-                $.alert('Canceled!');
-            },
-            somethingElse: {
-                text: 'Something else',
-                btnClass: 'btn-blue',
-                keys: ['enter', 'shift'],
+            confim: {
+                text: 'Excluir',
+                btnClass: 'btn-red',
                 action: function () {
-                    $.alert('Something else?');
+                }
+            },
+            cancelar: {
+                text: 'Cancelar',
+                action: function () {
                 }
             }
         }
