@@ -1257,5 +1257,128 @@ namespace FWLog.Services.Services
 
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
+
+        public byte[] GerarRelatorioPosicaoParaInventario(RelatorioPosicaoInventarioRequest filter)
+        {
+            IQueryable<LoteProdutoEndereco> query = _unitiOfWork.LoteProdutoEnderecoRepository.PesquisarPorEmpresa(filter.IdEmpresa)
+            .AsQueryable();
+
+            if (filter.IdNivelArmazenagem.HasValue)
+            {
+                query = query.Where(x => x.EnderecoArmazenagem.IdNivelArmazenagem == filter.IdNivelArmazenagem);
+            }
+
+            if (filter.IdPontoArmazenagem.HasValue)
+            {
+                query = query.Where(x => x.EnderecoArmazenagem.IdPontoArmazenagem == filter.IdPontoArmazenagem);
+            }
+
+            if (filter.IdProduto.HasValue)
+            {
+                query = query.Where(x => x.IdProduto == filter.IdProduto);
+            }
+
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filter.IdEmpresa);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = filter.NomeUsuarioRequisicao,
+                Orientacao = Orientation.Portrait,
+                Titulo = "Relatório Posição Para Inventário",
+                Filtros = null
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            Document document = fwRelatorio.Customizar(fwRelatorioDados);
+
+            if (query.Any())
+            {
+                var produtos = query.Select(x => x.Produto).Distinct().OrderBy(x => x.IdProduto).ToList();
+
+                Paragraph paragraph = document.Sections[0].AddParagraph();
+                Table tabela = document.Sections[0].AddTable();
+
+                tabela.Format.Font = new Font("Verdana", new Unit(9));
+                tabela.AddColumn(new Unit(185));
+                tabela.AddColumn(new Unit(185));
+                tabela.AddColumn(new Unit(185));
+
+                Row row = tabela.AddRow();
+
+                foreach (var produto in produtos)
+                {
+                    row = tabela.AddRow();
+
+                    paragraph.Format.SpaceAfter = 20;
+                    paragraph.Format.Font = new Font("Verdana", new Unit(12))
+                    {
+                        Bold = true
+                    };
+                    paragraph.AddText(string.Concat(produto.Referencia, " - ",produto.Descricao));
+
+                    row.Cells[0].AddParagraph("Endereço");
+                    row.Cells[0].Format.Font.Bold = true;
+                    row.Cells[1].AddParagraph("Lote");
+                    row.Cells[1].Format.Font.Bold = true;
+                    row.Cells[2].AddParagraph("Quantidade");
+                    row.Cells[2].Format.Font.Bold = true;
+
+                    var endereçosInstalados = query.Where(x => x.IdProduto == produto.IdProduto).Select(y => y).OrderBy(x => x.EnderecoArmazenagem.Codigo).ToList();
+                    var qtdeTotal = endereçosInstalados.Sum(x => x.Quantidade);
+
+                    foreach (var endereco in endereçosInstalados)
+                    {
+                        row = tabela.AddRow();
+                        paragraph = row.Cells[0].AddParagraph();
+                        paragraph.AddText(endereco.EnderecoArmazenagem.Codigo);
+                        paragraph = row.Cells[1].AddParagraph();
+                        paragraph.AddText(endereco.IdLote.ToString());
+                        paragraph = row.Cells[2].AddParagraph();
+                        paragraph.AddText(endereco.Quantidade.ToString());
+                    }
+
+                    row = tabela.AddRow();
+                    row = tabela.AddRow();
+                    paragraph = row.Cells[0].AddParagraph(string.Concat("Saldo: "));
+                    paragraph.Format.Font.Bold = true;
+                    paragraph = row.Cells[2].AddParagraph(qtdeTotal.ToString());
+                    paragraph.Format.Font.Bold = true;
+
+                    row = tabela.AddRow();
+                    row = tabela.AddRow();
+
+                    paragraph = document.Sections[0].AddParagraph();
+                    tabela = document.Sections[0].AddTable();
+                    tabela.Format.Font = new Font("Verdana", new Unit(9));
+
+                    tabela.AddColumn(new Unit(185));
+                    tabela.AddColumn(new Unit(185));
+                    tabela.AddColumn(new Unit(185));
+
+                    row = tabela.AddRow();
+                }
+            }
+
+            return fwRelatorio.GerarCustomizado();
+        }
+
+        public void ImprimirRelatorioPosicaoParaInventario(ImprimirRelatorioPosicaoInventarioRequest request)
+        {
+            var relatorioRequest = new RelatorioPosicaoInventarioRequest
+            {
+                IdEmpresa = request.IdEmpresa.Value,
+                IdProduto = request.IdProduto,
+                IdNivelArmazenagem = request.IdNivelArmazenagem,
+                IdPontoArmazenagem = request.IdPontoArmazenagem,
+                NomeUsuarioRequisicao = request.NomeUsuarioRequisicao
+            };
+
+            byte[] relatorio = GerarRelatorioPosicaoParaInventario(relatorioRequest);
+
+            _impressoraService.Imprimir(relatorio, request.IdImpressora);
+        }
     }
 }

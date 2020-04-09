@@ -2,8 +2,15 @@
     $('.onlyNumber').mask('0#');
 
     $(document.body).on('click', "#pesquisar", function () {
-        validarOsFiltros();
+        validarOsFiltrosParaPesquisa();
     });
+
+    $(document.body).on('click', "#limparFiltros", function () {
+        limparProduto();
+
+    });
+
+   
 
     $('#dataTable').DataTable({
         ajax: {
@@ -85,6 +92,45 @@
         $("#Filter_DescricaoProduto").val("");
     }
 
+    $("#downloadRelatorioPosicaoInventario").click(function () {
+        $.when(validarOsFiltrosParaDownloadOuImpressao()).then(function (success) {
+            if (success) {
+                $.ajax({
+                    url: "/Armazenagem/DownloadRelatorioPosicaoInventario",
+                    method: "POST",
+                    data: {
+                        IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
+                        IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
+                        IdProduto: $("#Filter_IdProduto").val(),
+                    },
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    success: function (data) {
+                        var a = document.createElement('a');
+                        var url = window.URL.createObjectURL(data);
+
+                        a.href = url;
+                        a.download = 'Relatório - Posição para Inventário.pdf';
+                        document.body.append(a);
+                        a.click();
+                        a.remove();
+                        window.URL.revokeObjectURL(url);
+                    }
+                });
+            }
+        });
+    });
+
+    $("#imprimirRelatorioPosicaoInventario").click(function () {
+        $.when(validarOsFiltrosParaDownloadOuImpressao()).then(function (success) {
+            if (success) {
+                $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=posicaoInventario", function () {
+                    $("#modalImpressoras").modal();
+                });
+            }
+        });
+    });
 
 })();
 
@@ -109,8 +155,7 @@ function setProduto(idProduto, descricao) {
     $("#modalProduto").empty();
 }
 
-function validarOsFiltros() {
-
+function validarOsFiltrosParaPesquisa() {
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ValidarPesquisaRelatorioPosicaoInventario",
         global: false,
@@ -133,28 +178,54 @@ function validarOsFiltros() {
     });
 }
 
+function validarOsFiltrosParaDownloadOuImpressao() {
 
-//function imprimir(acao, id) {
-//    switch (acao) {
-//        case 'totaPorlAla':
-//            $.ajax({
-//                url: "/Armazenagem/ImprimirRelatorioTotalPorAla",
-//                method: "POST",
-//                data: {
-//                    IdImpressora: $("#IdImpressora").val(),
-//                    IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
-//                    IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
-//                    CorredorInicial: $("#Filter_CorredorInicial").val(),
-//                    CorredorFinal: $("#Filter_CorredorFinal").val(),
-//                    ImprimirVazia: $("#Filter_ImprimirVazia").val(),
-//                },
-//                success: function (result) {
-//                    mensagemImpressao(result);
-//                    $('#modalImpressoras').modal('toggle');
-//                    waitingDialog.hide();
-//                }
-//            });
-//            break;
-//    }
-//}
+    let success = true;
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "ValidarDownloadOuImpressaoPosicaoInventario",
+        global: false,
+        async: false,
+        cache: false,
+        method: "POST",
+        data: {
+            idProduto: $("#Filter_IdProduto").val(),
+            idNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
+            idPontoArmazenagem: $("#Filter_PontoArmazenagem").val()
+        },
+        success: function (result) {
+            if (!result.Success) {
+                PNotify.warning({ text: result.Message });
+                success = false;
+            }
+        },
+        error: function () {
+            PNotify.warning({ text: 'Não foi validar os filtros. Por favor, tente novamente!' });
+        }
+    });
+
+    return success;
+}
+
+function imprimir(acao, id) {
+    switch (acao) {
+        case 'posicaoInventario':
+            $.ajax({
+                url: "/Armazenagem/ImprimirRelatorioPosicaoInventario",
+                method: "POST",
+                data: {
+                    IdImpressora: $("#IdImpressora").val(),
+                    IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
+                    IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
+                    IdProduto: $("#Filter_IdProduto").val(),
+                },
+                success: function (result) {
+                    mensagemImpressao(result);
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
+                }
+            });
+            break;
+    }
+}
 
