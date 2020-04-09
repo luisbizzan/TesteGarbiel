@@ -1,6 +1,8 @@
 ﻿@model FWLog.Web.Backoffice.Models.GarantiaConfiguracaoCtx.GarantiaConfiguracaoViewModel
 @using FWLog.AspNet.Identity
 
+@section Scripts { @BundleHelper.RenderViewScript() }
+
 <div class="x_panel">
     <div class="x_title">
         <h2>Configuração</h2>
@@ -24,4 +26,3 @@
         </div>
     </div>
 </div>
-<script src="@Url.Content("~/Scripts/Views/GarantiaConfiguracao/fornecedorQuebra.js")"></script>

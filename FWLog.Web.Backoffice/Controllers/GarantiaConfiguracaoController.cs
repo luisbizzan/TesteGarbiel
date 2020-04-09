@@ -15,12 +15,12 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         #region variáveis sessão
         private readonly UnitOfWork _unitOfWork;
-        private readonly GeralService _geralService;
+        private readonly GarantiaConfiguracaoService _garantiaConfigService;
 
-        public GarantiaConfiguracaoController(UnitOfWork unitOfWork, GeralService geralService)
+        public GarantiaConfiguracaoController(UnitOfWork unitOfWork, GarantiaConfiguracaoService garantiaConfigService)
         {
             _unitOfWork = unitOfWork;
-            _geralService = geralService;
+            _garantiaConfigService = garantiaConfigService;
         }
         #endregion
 
@@ -33,32 +33,17 @@ namespace FWLog.Web.Backoffice.Controllers
 
         #region Fornecedor Quebra
         [HttpPost]
-        public ActionResult IncluirFornecedorQuebra(GarantiaConfiguracaoViewModel model)
+        public ActionResult IncluirFornecedorQuebra(GarantiaConfiguracaoViewModel fornecedor)
         {
-            Func<ViewResult> errorView = () =>
-            {
-                return View(model);
-            };
-
-            if (!ModelState.IsValid)
-            {
-                var erros = ModelState.Values.Where(x => x.Errors.Count > 0).Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />"));
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = erros
-                });
-            }
-
-            var _fornecedor = new GarantiaConfiguracao
-            {
-                Id = model.Id,
-                Cod_Fornecedor = model.Cod_Fornecedor
-            };
-
             try
             {
-                //_geralService.InserirHistorico(item);
+                Func<ViewResult> errorView = () => { return View(fornecedor); };
+
+                if (!ModelState.IsValid)
+                    throw new Exception(ModelState.Values.Where(x => x.Errors.Count > 0).Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />")));
+
+                _garantiaConfigService.IncluirFornecedorQuebra(new GarantiaConfiguracao() { Id = fornecedor.Id, Cod_Fornecedor = fornecedor.Cod_Fornecedor.ToUpper().Trim() });
+
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,

@@ -18,27 +18,54 @@ namespace FWLog.Data.Repository.GeneralCtx
         public GarantiaConfiguracaoRepository(Entities entities) : base(entities) { }
         #endregion
 
-        #region [Fornecedor Quebra] - Inclusão
-        public void IncluirFornecedorQuebra(GarantiaConfiguracao item)
+        #region [Fornecedor Quebra] - Validar se código de fornecedor já esta cadastrado
+        private bool FornecedorQuebraPodeSerCadastrado(GarantiaConfiguracao fornecedor)
         {
-            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            try
             {
-                conn.Open();
-                if (conn.State == System.Data.ConnectionState.Open)
+                var _processamento = 0;
+                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
                 {
-                    string sQuery = @"
-                    INSERT INTO geral_historico
-	                    ( Id_Categoria, Id_Ref, Id_Usr, Historico, Dt_Cad )
-                    VALUES
-	                    ( :Id_Categoria, :Id_Ref, :Id_Usr, :Historico, SYSDATE )
-                    ";
-                    conn.Query<GarantiaConfiguracao>(sQuery, new
+                    conn.Open();
+                    if (conn.State == System.Data.ConnectionState.Open)
                     {
-                        item.Id,
-                        item.Cod_Fornecedor
-                    });
+                        string cmdSQL = String.Format("SELECT COUNT(1) V FROM gar_forn_quebra WHERE cod_fornecedor='{0}'", fornecedor.Cod_Fornecedor);
+                       _processamento =  conn.ExecuteScalar<Int32>(cmdSQL);
+                    }
+                    conn.Close();
                 }
-                conn.Close();
+
+                return _processamento.Equals(0) ? true : false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        #endregion
+
+        #region [Fornecedor Quebra] - Inclusão
+        public void IncluirFornecedorQuebra(GarantiaConfiguracao fornecedor)
+        {
+            try
+            {
+                if (!FornecedorQuebraPodeSerCadastrado(fornecedor))
+                    throw new Exception(String.Format("Já existe o código de fornecedor [{0}] cadastrado no sistema!", fornecedor.Cod_Fornecedor));
+
+                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                {
+                    conn.Open();
+                    if (conn.State == System.Data.ConnectionState.Open)
+                    {
+                        string cmdSQL = String.Format("INSERT INTO gar_forn_quebra(Cod_Fornecedor) VALUES('{0}')", fornecedor.Cod_Fornecedor);
+                        conn.ExecuteScalar(cmdSQL);
+                    }
+                    conn.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
         #endregion
