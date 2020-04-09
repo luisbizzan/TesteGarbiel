@@ -351,25 +351,27 @@ namespace FWLog.Services.Services
 
                 //Aqui deve ser feito a solicitação de contagem
 
-                loteProdutoEndereco.Quantidade = quantidadeFinal;
-
-                await _unitOfWork.SaveChangesAsync();
-
-                var loteMovimentacao = new LoteMovimentacao
+                if (quantidade.HasValue)
                 {
-                    IdEmpresa = idEmpresa,
-                    IdLote = loteProdutoEndereco.IdLote.GetValueOrDefault(),
-                    IdProduto = idProduto,
-                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
-                    IdUsuarioMovimentacao = idUsuarioExecucao,
-                    Quantidade = quantidadeFinal,
-                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.ConferirProdutoForaLinha,
-                    DataHora = DateTime.Now
-                };
+                    if (loteProdutoEndereco.IdLote == null)
+                    {
+                        loteProdutoEndereco.Quantidade = quantidadeFinal;
 
-                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
-
-                await _unitOfWork.SaveChangesAsync();
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        await _armazenagemService.AjustarVolumeLote(new AjustarVolumeLoteRequisicao()
+                        {
+                            IdEmpresa = idEmpresa,
+                            IdEnderecoArmazenagem = idEnderecoArmazenagem,
+                            IdLote = loteProdutoEndereco.IdLote.Value,
+                            IdProduto = idProduto,
+                            IdUsuarioAjuste = idUsuarioExecucao,
+                            Quantidade = quantidadeFinal
+                        });
+                    }
+                }
 
                 if (adicionaLogAuditoria)
                 {
