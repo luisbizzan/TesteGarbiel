@@ -253,7 +253,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var listaEnderecoArmazenagem = _uow.EnderecoArmazenagemRepository
                 .BuscarPorNivelEPontoArmazenagem(filtro.CustomFilter.IdNivelArmazenagem, filtro.CustomFilter.IdPontoArmazenagem, filtro.CustomFilter.IdEmpresa);
-            
+
             filtro.CustomFilter.ListaEnderecoArmazenagem = listaEnderecoArmazenagem;
 
             var loteProdutoEnderecos = _uow.LoteProdutoEnderecoRepository.BuscarDados(filtro, out int totalRecordsFiltered, out int totalRecords);
@@ -266,13 +266,13 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     NumeroCorredor = string.Concat("Corredor: ", lpe.Corredor.ToString("0#")),
                     CodigoEndereco = lpe.CodigoEndereco,
-                    DataInstalacao = lpe.DataInstalacao != null ? lpe.DataInstalacao?.ToString("dd/MM/yyyy HH:mm:ss") :  "-",
+                    DataInstalacao = lpe.DataInstalacao != null ? lpe.DataInstalacao?.ToString("dd/MM/yyyy HH:mm:ss") : "-",
                     IdUsuarioInstalacao = usuarios.Where(x => x.UserId == lpe.IdUsuarioInstalacao).FirstOrDefault()?.PerfilUsuario.Nome ?? "-",
                     PesoProduto = lpe.PesoProduto != (decimal?)null ? lpe.PesoProduto?.ToString("n2") : "-",
                     QuantidadeProdutoPorEndereco = lpe.QuantidadeProdutoPorEndereco != (int?)null ? lpe.QuantidadeProdutoPorEndereco?.ToString() : "-",
                     ReferenciaProduto = lpe.ReferenciaProduto ?? "-",
                     IdLote = lpe.IdLote != null ? lpe.IdLote.ToString() : "-",
-                    PesoTotalDeProduto = lpe.PesoTotalDeProduto != (decimal?)null ? lpe.PesoTotalDeProduto?.ToString("n2") :  "-"
+                    PesoTotalDeProduto = lpe.PesoTotalDeProduto != (decimal?)null ? lpe.PesoTotalDeProduto?.ToString("n2") : "-"
                 })
             );
 
@@ -374,18 +374,18 @@ namespace FWLog.Web.Backoffice.Controllers
                     Data = list
                 });
             }
-            
+
             var filtro = Mapper.Map<DataTableFilter<RelatorioPosicaoInventarioListaFiltro>>(model);
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
 
             var loteProdutoEnderecos = _uow.LoteProdutoEnderecoRepository.BuscarDadosPosicaoInventario(filtro, out int totalRecordsFiltered, out int totalRecords);
-           
+
             loteProdutoEnderecos.OrderBy(x => x.Referencia).ThenBy(x => x.Codigo).ForEach(lpe => list.Add(new RelatorioPosicaoInventarioListItemViewModel
             {
                 Codigo = lpe.Codigo,
                 IdLote = lpe.IdLote.ToString(),
                 QuantidadeProdutoPorEndereco = lpe.QuantidadeProdutoPorEndereco.ToString(),
-                Referencia = string.Concat(lpe.Referencia," - ",lpe.DescricaoProduto)
+                Referencia = string.Concat(lpe.Referencia, " - ", lpe.DescricaoProduto)
 
             }));
 
@@ -396,6 +396,70 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsFiltered = totalRecordsFiltered,
                 Data = list
             });
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioPosicaoInventario)]
+        public JsonResult ValidarDownloadOuImpressaoPosicaoInventario(long? idProduto, long? idNivelArmazenagem, long? idPontoArmazenagem)
+        {
+            if (idProduto == null && idNivelArmazenagem == null && idPontoArmazenagem == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Nenhum registro encontrado para download ou para impressão.",
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioPosicaoInventario)]
+        public ActionResult DownloadRelatorioPosicaoInventario(DownloadRelatorioPosicaoInventarioViewModel viewModel)
+        {
+            var relatorioRequest = Mapper.Map<RelatorioPosicaoInventarioRequest>(viewModel);
+            relatorioRequest.IdEmpresa = IdEmpresa;
+            relatorioRequest.NomeUsuarioRequisicao = LabelUsuario;
+            byte[] relatorio = _relatorioService.GerarRelatorioPosicaoParaInventario(relatorioRequest);
+
+            return File(relatorio, "application/pdf", "Relatório - Posição para Inventário.pdf");
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioPosicaoInventario)]
+        public JsonResult ImprimirRelatorioPosicaoInventario(ImprimirRelatorioPosicaoInventarioViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                var request = Mapper.Map<ImprimirRelatorioPosicaoInventarioRequest>(viewModel);
+
+                request.IdEmpresa = IdEmpresa;
+                request.NomeUsuarioRequisicao = LabelUsuario;
+
+                _relatorioService.ImprimirRelatorioPosicaoParaInventario(request);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }
