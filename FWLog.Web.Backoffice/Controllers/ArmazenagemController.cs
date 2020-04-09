@@ -362,12 +362,24 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoAlas)]
         public ActionResult RelatorioPosicaoInventarioPageData(DataTableFilter<RelatorioPosicaoInventarioFilterViewModel> model)
         {
+            var list = new List<RelatorioPosicaoInventarioListItemViewModel>();
+
+            if (!model.CustomFilter.IdNivelArmazenagem.HasValue && !model.CustomFilter.IdPontoArmazenagem.HasValue && !model.CustomFilter.IdProduto.HasValue)
+            {
+                return DataTableResult.FromModel(new DataTableResponseModel
+                {
+                    Draw = model.Draw,
+                    RecordsTotal = 0,
+                    RecordsFiltered = 0,
+                    Data = list
+                });
+            }
+            
             var filtro = Mapper.Map<DataTableFilter<RelatorioPosicaoInventarioListaFiltro>>(model);
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
 
             var loteProdutoEnderecos = _uow.LoteProdutoEnderecoRepository.BuscarDadosPosicaoInventario(filtro, out int totalRecordsFiltered, out int totalRecords);
-
-            var list = new List<RelatorioPosicaoInventarioListItemViewModel>();
+           
             loteProdutoEnderecos.OrderBy(x => x.Referencia).ThenBy(x => x.Codigo).ForEach(lpe => list.Add(new RelatorioPosicaoInventarioListItemViewModel
             {
                 Codigo = lpe.Codigo,

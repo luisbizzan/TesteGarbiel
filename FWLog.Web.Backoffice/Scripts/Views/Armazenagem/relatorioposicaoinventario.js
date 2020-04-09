@@ -2,50 +2,46 @@
     $('.onlyNumber').mask('0#');
 
     $(document.body).on('click', "#pesquisar", function () {
-        $.when(validarOsFiltros()).then(function (success) {
-            if (success) {
-                $("#tabelaPosicaoInventario").show();
-            }
-        });
+        validarOsFiltros();
+    });
 
-        $('#dataTable').DataTable({
-            ajax: {
-                "url": view.pageDataUrl,
-                "type": "POST",
-                "data": function (data) {
-                    dart.dataTables.saveFilterToData(data);
-                },
-                "error": function (data) {
-                    if (!!(data.statusText)) {
-                        NProgress.done();
-                    }
-                }
-            },
-            deferLoading: 0,
-            initComplete: function (settings, json) {
-                dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
-            },
-            stateSaveParams: function (settings, data) {
+    $('#dataTable').DataTable({
+        ajax: {
+            "url": view.pageDataUrl,
+            "type": "POST",
+            "data": function (data) {
                 dart.dataTables.saveFilterToData(data);
             },
-            columns: [
-                { "defaultContent": "" },
-                { data: 'Codigo', width: '30px' },
-                { data: 'IdLote', width: '30px' },
-                { data: 'QuantidadeProdutoPorEndereco', width: '30px' },
-            ],
-            order: [[2, 'asc']],
-            rowGroup: {
-                dataSrc: ['Referencia']
+            "error": function (data) {
+                if (!!(data.statusText)) {
+                    NProgress.done();
+                }
             }
-        });
-
-        $('#dataTable').dataTable.error = function (settings, helpPage, message) {
-            console.log(message)
-        };
-
-        dart.dataTables.loadFormFilterEvents();
+        },
+        deferLoading: 0,
+        initComplete: function (settings, json) {
+            dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
+        },
+        stateSaveParams: function (settings, data) {
+            dart.dataTables.saveFilterToData(data);
+        },
+        columns: [
+            { "defaultContent": "", width:'40%'},
+            { data: 'Codigo'},
+            { data: 'IdLote'},
+            { data: 'QuantidadeProdutoPorEndereco'}
+        ],
+        order: [[2, 'asc']],
+        rowGroup: {
+            dataSrc: ['Referencia']
+        }
     });
+
+    dart.dataTables.loadFormFilterEvents();
+
+    $('#dataTable').dataTable.error = function (settings, helpPage, message) {
+        console.log(message)
+    };
 
     $("#pesquisarNivelArmazenagem").click(function () {
         $("#modalPesquisaNivelArmazenagem").load(HOST_URL + "NivelArmazenagem/PesquisaModal", function () {
@@ -89,39 +85,6 @@
         $("#Filter_DescricaoProduto").val("");
     }
 
-    //$("#downloadRelatorioTotalEnderecoPorAla").click(function () {
-    //    $.ajax({
-    //        url: "/Armazenagem/DownloadRelatorioTotalPorAla",
-    //        method: "POST",
-    //        data: {
-    //            IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
-    //            IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
-    //            CorredorInicial: $("#Filter_CorredorInicial").val(),
-    //            CorredorFinal: $("#Filter_CorredorFinal").val(),
-    //            ImprimirVazia: $("#Filter_ImprimirVazia").val(),
-    //        },
-    //        xhrFields: {
-    //            responseType: 'blob'
-    //        },
-    //        success: function (data) {
-    //            var a = document.createElement('a');
-    //            var url = window.URL.createObjectURL(data);
-
-    //            a.href = url;
-    //            a.download = 'Relatório total por alas.pdf';
-    //            document.body.append(a);
-    //            a.click();
-    //            a.remove();
-    //            window.URL.revokeObjectURL(url);
-    //        }
-    //    });
-    //});
-
-    //$("#imprimirRelatorioTotalEnderecoPorAla").click(function () {
-    //    $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=totaPorlAla", function () {
-    //        $("#modalImpressoras").modal();
-    //    });
-    //});
 
 })();
 
@@ -148,8 +111,6 @@ function setProduto(idProduto, descricao) {
 
 function validarOsFiltros() {
 
-    let success = true;
-
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ValidarPesquisaRelatorioPosicaoInventario",
         global: false,
@@ -164,15 +125,12 @@ function validarOsFiltros() {
         success: function (result) {
             if (!result.Success) {
                 PNotify.warning({ text: result.Message });
-                success = result.Success;
             }
         },
         error: function () {
             PNotify.warning({ text: 'Não foi validar os filtros. Por favor, tente novamente!' });
         }
     });
-
-    return success;
 }
 
 

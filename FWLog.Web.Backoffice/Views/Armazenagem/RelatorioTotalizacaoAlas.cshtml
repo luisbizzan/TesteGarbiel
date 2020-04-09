@@ -22,7 +22,7 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row" style="margin-bottom: 20px;">
-                <div class="form-group col-sm-3 col-xs-12 col-lg-3">
+                <div class="form-group col-sm-3 col-xs-12 col-lg-3 col-md-3">
                     @Html.LabelFor(m => m.Filter.IdNivelArmazenagem, new { @class = "control-label" })
                     <div class="input-group">
                         @Html.TextBoxFor(m => m.Filter.DescricaoNivelArmazenagem, null, new { @class = "form-control", @readonly = "true" })
@@ -34,7 +34,7 @@
                     @Html.HiddenFor(m => m.Filter.IdNivelArmazenagem, new { data_field = "IdNivelArmazenagem" })
                     @Html.ValidationMessageFor(m => m.Filter.IdNivelArmazenagem)
                 </div>
-                <div class="form-group col-sm-3 col-xs-12 col-lg-3">
+                <div class="form-group col-sm-3 col-xs-12 col-lg-3 col-md-3">
                     @Html.LabelFor(m => m.Filter.IdPontoArmazenagem, new { @class = "control-label" })
                     <div class="input-group">
                         @Html.TextBoxFor(m => m.Filter.DescricaoPontoArmazenagem, null, new { @class = "form-control", @readonly = "true" })
@@ -46,21 +46,21 @@
                     @Html.HiddenFor(m => m.Filter.IdPontoArmazenagem, new { data_field = "IdPontoArmazenagem" })
                     @Html.ValidationMessageFor(m => m.Filter.IdPontoArmazenagem)
                 </div>
-                <div class="col-xs-12 col-md-4 col-lg-2">
+                <div class="col-xs-12 col-md-2 col-lg-2">
                     @Html.LabelFor(m => m.Filter.CorredorInicial)
                     <div class='input-group date'>
                         @Html.TextBoxFor(m => m.Filter.CorredorInicial, new { @class = "form-control onlyNumber validateCorredorInicial", data_field = "CorredorInicial" })
                     </div>
                     @Html.ValidationMessageFor(m => m.Filter.CorredorInicial)
                 </div>
-                <div class="col-xs-12 col-md-4 col-lg-2">
+                <div class="col-xs-12 col-md-2 col-lg-2">
                     @Html.LabelFor(m => m.Filter.CorredorFinal)
                     <div class='input-group date'>
                         @Html.TextBoxFor(m => m.Filter.CorredorFinal, new { @class = "form-control onlyNumber validateCorredorFinal", data_field = "CorredorFinal" })
                     </div>
                     @Html.ValidationMessageFor(m => m.Filter.CorredorFinal)
                 </div>
-                <div class="col-xs-12 col-sm-4 col-lg-2">
+                <div class="col-xs-12 col-sm-4 col-lg-2 col-md-2 ">
                     @Html.LabelFor(m => m.Filter.ImprimirVazia)
                     @Html.DropDownListFor(m => m.Filter.ImprimirVazia, (IEnumerable<SelectListItem>)ViewBag.ImprimirVazia, new { @class = "form-control", data_field = "ImprimirVazia" })
                 </div>
@@ -75,7 +75,7 @@
     </div>
 </form>
 <!-- /table -->
-<div id="tabelaTotalPorAlas" class="row" style="display:none;">
+<div id="tabelaTotalPorAlas" class="row">
     <div class="col-xs-12">
         <div class="x_panel">
             <div class="x_title">
