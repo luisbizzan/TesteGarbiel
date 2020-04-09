@@ -39,8 +39,8 @@ namespace FWLog.Web.Backoffice.App_Start
             };
 
             manager.UserLockoutEnabledByDefault = false;
-            manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            manager.MaxFailedAccessAttemptsBeforeLockout = 5;
+            manager.DefaultAccountLockoutTimeSpan = TimeSpan.MinValue;
+            manager.MaxFailedAccessAttemptsBeforeLockout = int.MaxValue;
 
             manager.RegisterTwoFactorProvider("PhoneCode", new PhoneNumberTokenProvider<ApplicationUser>
             {
