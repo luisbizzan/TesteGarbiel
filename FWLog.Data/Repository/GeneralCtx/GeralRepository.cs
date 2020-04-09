@@ -162,5 +162,21 @@ namespace FWLog.Data.Repository.GeneralCtx
                 conn.Close();
             }
         }
+
+        public void ExcluirUpload(long id)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    DELETE FROM geral_upload WHERE id = :id
+                    ";
+                    conn.Query<GeralUpload>(sQuery, new { id });
+                }
+                conn.Close();
+            }
+        }
     }
 }

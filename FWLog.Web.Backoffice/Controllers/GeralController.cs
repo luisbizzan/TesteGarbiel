@@ -47,6 +47,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Lista_Uploads = _geralService.TodosUploadsDaCategoria(Id_Categoria, Id_Ref)
                     .Select(x => new GeralUploadVM
                     {
+                        Id = x.Id,
                         Arquivo = x.Arquivo,
                         Arquivo_Tipo = x.Arquivo_Tipo,
                         Id_Usr = x.Id_Usr,
@@ -109,6 +110,37 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             return Json(new { isUploaded = isUploaded, message = msgArr }, "text/html");
+        }
+
+        [HttpPost]
+        public ActionResult ExcluirUpload(GeralUploadVM model)
+        {
+            try
+            {
+                if (model.Id != 0)
+                {
+                    var caminhoArquivo = string.Format("{0}/{1}/{2}/{3}", Server.MapPath("~/Uploads"), model.Tabela, model.Id_Ref, model.Arquivo);
+
+                    if (System.IO.File.Exists(caminhoArquivo))
+                        System.IO.File.Delete(caminhoArquivo);
+
+                    _geralService.ExcluirUpload(model.Id);
+                }
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                });
+            }
+            catch (Exception)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = Resources.CommonStrings.RegisterEditedErrorMessage
+                });
+            }
         }
 
         public ActionResult ListarHistoricos(long Id_Categoria, long Id_Ref)
