@@ -1157,7 +1157,7 @@ namespace FWLog.Services.Services
                     row.Cells[7].AddParagraph("Peso Total");
                     row.Cells[7].Format.Font.Bold = true;
 
-                    var itens = query.Where(x => x.Corredor == corredor).Select(y => y).ToList();
+                    var itens = query.Where(x => x.Corredor == corredor).Select(y => y).OrderBy(x => x.Codigo).ToList();
                     var totalArmazenado = itens.Where(x => x.LoteProdutoEndereco.Any()).Sum(x => x.LoteProdutoEndereco.First().Produto.PesoBruto);
                     var qtdeTotal = itens.Where(x => x.LoteProdutoEndereco.Any()).Sum(x => x.LoteProdutoEndereco.First().Quantidade);
 
@@ -1169,17 +1169,17 @@ namespace FWLog.Services.Services
                         paragraph = row.Cells[1].AddParagraph();
                         paragraph.AddText(usuarios.Where(x => x.UserId == item.LoteProdutoEndereco.Where(y => y.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.IdUsuarioInstalacao).FirstOrDefault()?.PerfilUsuario?.Nome ?? "-");
                         paragraph = row.Cells[2].AddParagraph();
-                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.Produto?.Referencia ?? "-");
+                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.Produto.Referencia ?? "-");
                         paragraph = row.Cells[3].AddParagraph();
-                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem)?.FirstOrDefault()?.Lote?.IdLote.ToString() ?? "-");
+                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.Lote.IdLote.ToString() ?? "-");
                         paragraph = row.Cells[4].AddParagraph();
-                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem)?.FirstOrDefault()?.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss") ?? "-");
+                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss") ?? "-");
                         paragraph = row.Cells[5].AddParagraph();
-                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem)?.FirstOrDefault()?.Produto?.PesoBruto.ToString("n2") ?? "-");
+                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.Produto.PesoBruto.ToString("n2") ?? "-");
                         paragraph = row.Cells[6].AddParagraph();
-                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem)?.FirstOrDefault()?.Quantidade.ToString() ?? "-");
+                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.Quantidade.ToString() ?? "-");
                         paragraph = row.Cells[7].AddParagraph();
-                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem)?.FirstOrDefault()?.PesoTotal.ToString("n2") ?? "-");
+                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.PesoTotal.ToString("n2") ?? "-");
 
                     }
 

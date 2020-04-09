@@ -1,8 +1,8 @@
-﻿using FWLog.Data;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Data;
 using FWLog.Services.Model.AtividadeEstoque;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.AtividadeEstoque;
-using System;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -243,5 +243,28 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(ex.Message);
             }
         }
+
+        [Authorize]
+        [Route("api/v1/atividade-estoque/conferencia-endereco")]
+        [HttpPost]
+        public async Task<IHttpActionResult> FinalizarConferenciaEndereco(FinalizarConferenciaEnderecoRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                await _atividadeEstoqueService.FinalizarConferenciaEnderecoRequisicao(requisicao, IdEmpresa, IdUsuario);
+
+                return ApiOk();
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+        }
+
     }
 }

@@ -1,10 +1,7 @@
-﻿using FWLog.Data.Models;
+﻿using DartDigital.Library.Exceptions;
 using FWLog.Services.Model.Armazenagem;
-using FWLog.Services.Model.Coletor;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Armazenagem;
-using log4net;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -240,7 +237,7 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                 await _armazenagemService.RetirarVolumeEndereco(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa, IdUsuario);
+                await _armazenagemService.RetirarVolumeEndereco(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdLote ?? 0, requisicao?.IdProduto ?? 0, IdEmpresa, IdUsuario);
             }
             catch (BusinessException ex)
             {
@@ -360,7 +357,7 @@ namespace FWLog.Web.Api.Controllers
                     IdUsuarioAjuste = IdUsuario
                 };
 
-               await _armazenagemService.AjustarVolumeLote(instalarVolumeLoteRequisicao);
+                await _armazenagemService.AjustarVolumeLote(instalarVolumeLoteRequisicao);
             }
             catch (BusinessException ex)
             {
@@ -469,14 +466,14 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                 await _armazenagemService.AbastecerPicking(requisicao?.IdEnderecoArmazenagem ?? 0,
-                                                            requisicao?.IdLote ?? 0,
-                                                            requisicao?.IdProduto ?? 0,
-                                                            requisicao?.Quantidade ?? 0,
-                                                            IdEmpresa,
-                                                            IdUsuario);
+                await _armazenagemService.AbastecerPicking(requisicao?.IdEnderecoArmazenagem ?? 0,
+                                                           requisicao?.IdLote ?? 0,
+                                                           requisicao?.IdProduto ?? 0,
+                                                           requisicao?.Quantidade ?? 0,
+                                                           IdEmpresa,
+                                                           IdUsuario);
 
-                
+
             }
             catch (BusinessException exception)
             {

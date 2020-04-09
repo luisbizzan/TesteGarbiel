@@ -53,12 +53,12 @@
             dart.dataTables.saveFilterToData(data);
         },
         columns: [
-            { "defaultContent": "" },
+            { "defaultContent": "", width:'10%'},
             { data: 'CodigoEndereco' },
-            { data: 'IdUsuarioInstalacao' },
+            { data: 'IdUsuarioInstalacao', width: '15%' },
             { data: 'ReferenciaProduto' },
             { data: 'IdLote' },
-            { data: 'DataInstalacao' },
+            { data: 'DataInstalacao', width: '10%' },
             { data: 'PesoProduto' },
             { data: 'QuantidadeProdutoPorEndereco' },
             { data: 'PesoTotalDeProduto' }

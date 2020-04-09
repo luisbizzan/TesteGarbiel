@@ -103,9 +103,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Exceptions\BusinessException.cs" />
     <Compile Include="Exceptions\UnauthorizedException.cs" />
-    <Compile Include="Exceptions\ConpanyException.cs" />
+    <Compile Include="Exceptions\CompanyException.cs" />
     <Compile Include="Exceptions\UserActionHistoricalException.cs" />
     <Compile Include="GlobalResources\General\GeneralStrings.en.Designer.cs">
       <DependentUpon>GeneralStrings.en.resx</DependentUpon>
@@ -134,6 +133,7 @@
     <Compile Include="Model\Armazenagem\ValidarQuantidadeInstalacaoRequisicao.cs" />
     <Compile Include="Model\AtividadeEstoque\AtividadeEstoqueLista.cs" />
     <Compile Include="Model\AtividadeEstoque\AtividadeEstoqueRequisicao.cs" />
+    <Compile Include="Model\AtividadeEstoque\FinalizarConferenciaEnderecoRequisicao.cs" />
     <Compile Include="Model\Coletor\GravarHistoricoColetorRequisicao.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaArmazenagemVolume.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaAvulsoRequest.cs" />
