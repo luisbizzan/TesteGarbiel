@@ -359,7 +359,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoAlas)]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioPosicaoInventario)]
         public ActionResult RelatorioPosicaoInventarioPageData(DataTableFilter<RelatorioPosicaoInventarioFilterViewModel> model)
         {
             var list = new List<RelatorioPosicaoInventarioListItemViewModel>();
