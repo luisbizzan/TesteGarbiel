@@ -336,7 +336,8 @@
     <Compile Include="Models\GarantiaCtx\GarantiaEntradaConferenciaViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaListViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaRegistroRecebimentoViewModel.cs" />
-    <Compile Include="Models\GeralCtx\GeralHistoricoViewModel.cs" />
+    <Compile Include="Models\GeralCtx\GeralUploadVM.cs" />
+    <Compile Include="Models\GeralCtx\GeralHistoricoVM.cs" />
     <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoCreateViewModel.cs" />
     <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoListViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemCreateViewModel.cs" />
@@ -442,6 +443,7 @@
     <Content Include="Content\site.min.css">
       <DependentUpon>site.css</DependentUpon>
     </Content>
+    <Content Include="Content\vendors\jquery-confirm\jquery-confirm.min.css" />
     <Content Include="favicon.ico" />
     <EmbeddedResource Include="GlobalResources\NivelArmazenagem\NivelArmazenagemStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -589,6 +591,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Scripts\dart\HttpService.js" />
     <Content Include="Scripts\dart\waitingDialog.js" />
+    <Content Include="Scripts\vendors\jquery-confirm\jquery-confirm.min.js" />
     <Content Include="Scripts\vendors\onScan\onscan.js" />
     <Content Include="Scripts\vendors\onScan\onscan.min.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
@@ -624,7 +627,8 @@
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
-    <Content Include="Scripts\Views\Geral\FormGeralHistoricos.js" />
+    <Content Include="Scripts\Views\Geral\formGeralUploads.js" />
+    <Content Include="Scripts\Views\Geral\formGeralHistoricos.js" />
     <Content Include="Scripts\Views\MotivoLaudo\motivoLaudo.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\pesquisaModal.js" />
@@ -717,6 +721,7 @@
     <Content Include="Views\Produto\DetalhesProduto.cshtml" />
     <Content Include="Views\BOAccount\HistoricoAcoes.cshtml" />
     <Content Include="Views\Geral\_FormHistoricos.cshtml" />
+    <Content Include="Views\Geral\_FormUploads.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
