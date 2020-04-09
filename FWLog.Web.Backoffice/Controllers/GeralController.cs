@@ -42,7 +42,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 Id_Ref = Id_Ref,
                 Id_Categoria = Id_Categoria,
-                Formatos = categoria.Formatos,
+                Formatos = categoria.Formatos.Split(',').ToList(),
                 Tabela = categoria.Tabela,
                 Lista_Uploads = _geralService.TodosUploadsDaCategoria(Id_Categoria, Id_Ref)
                     .Select(x => new GeralUploadVM
@@ -87,7 +87,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         {
                             try
                             {
-                                var nomeArquivo = meuArquivo.FileName;
+                                string nomeArquivo = string.Format("{0}{1}", DateTime.Now.ToString("yyyyMMddHHmmssfff"), Path.GetExtension(meuArquivo.FileName));
                                 meuArquivo.SaveAs(Path.Combine(caminhoArquivo, nomeArquivo));
 
                                 _geralService.InserirUpload(new GeralUpload
@@ -130,7 +130,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,
-                    Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                    Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
                 });
             }
             catch (Exception)

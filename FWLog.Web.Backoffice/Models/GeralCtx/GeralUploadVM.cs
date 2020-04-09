@@ -15,7 +15,7 @@ namespace FWLog.Web.Backoffice.Models.GeralCtx
 
         public string Categoria { get; set; }
 
-        public string Formatos { get; set; }
+        public List<string> Formatos { get; set; }
 
         [Required]
         public long Id_Ref { get; set; }

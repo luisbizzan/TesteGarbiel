@@ -21,7 +21,12 @@
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <label class="control-label" for="Arquivo">Formatos Aceitos</label>
-                                            <p>@Model.Formatos</p>
+                                            <p>
+                                                @foreach (var item in Model.Formatos)
+                                                {
+                                                    <span class="label label-primary">@item.Split('/')[1].ToUpper()</span>
+                                                }
+                                            </p>
                                         </div>
                                     </div>
                                     <div class="col-sm-12">
