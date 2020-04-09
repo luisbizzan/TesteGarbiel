@@ -504,7 +504,7 @@ namespace FWLog.Services.Services
             {
                 IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                 IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ImprimirEtiqueta,
-                Descricao = $"Iprimiu a etiqueita de endereço com o código {endereco.Codigo}",
+                Descricao = $"Imprimiu a etiqueta de endereço com o código {endereco.Codigo}",
                 IdEmpresa = request.IdEmpresa,
                 IdUsuario = request.IdUsuario
             };

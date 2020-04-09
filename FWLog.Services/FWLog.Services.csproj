@@ -173,11 +173,13 @@
     <Compile Include="Model\Relatorios\DetalhesProdutoRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirDetalhesNotaEntradaConferenciaRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirNotasRecebimentoRequest.cs" />
+    <Compile Include="Model\Relatorios\ImprimirRelatorioPosicaoInventarioRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirRelatorioProdutosRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirRelatorioRecebimentoNotasRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirRelatorioTotalPorAlaRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimriDetalhesProdutoRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioHistoricoAcaoUsuarioRequest.cs" />
+    <Compile Include="Model\Relatorios\RelatorioPosicaoInventarioRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioProdutosRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioRastreioPecaRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioNotasRecebimentoRequest.cs" />

@@ -36,7 +36,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void ValidarAtualizacaoAtividade(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao)
+        public void ValidarAtualizacaoAtividade(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao, string IdUsuario)
         {
             if (atividadeEstoqueRequisicao.IdAtividadeEstoque <= 0)
             {
@@ -50,7 +50,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("A atividade informada não foi encontrada.");
             }
 
-            var usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(atividadeEstoqueRequisicao.IdUsuarioExecucao);
+            var usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(IdUsuario);
 
             if (usuario == null)
             {
@@ -185,26 +185,85 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void AtualizarAtividade(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao)
+        public bool AtualizarAtividadeAbastecerPicking(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao, long IdEmpresa, string IdUsuario)
         {
+            bool finalizouuAtividadeEstoque = false;
+
+            var atividade = _unitOfWork.AtividadeEstoqueRepository.GetById(atividadeEstoqueRequisicao.IdAtividadeEstoque);
+
+            _armazenagemService.ValidarEnderecoAbastecer(atividade.IdEnderecoArmazenagem);
+
+            _armazenagemService.ValidarLoteAbastecer(atividade.IdEnderecoArmazenagem, atividadeEstoqueRequisicao.IdLote, atividade.IdProduto);
+
+            _armazenagemService.ValidarQuantidadeAbastecer(atividade.IdEnderecoArmazenagem, atividadeEstoqueRequisicao.IdLote, atividade.IdProduto, atividadeEstoqueRequisicao.QuantidadeFinal);
+
+            var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(atividadeEstoqueRequisicao.IdLote, atividade.IdProduto);
+
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(atividade.IdEnderecoArmazenagem);
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(atividade.IdEnderecoArmazenagem);
+
             try
             {
-                var atividade = _unitOfWork.AtividadeEstoqueRepository.GetById(atividadeEstoqueRequisicao.IdAtividadeEstoque);
-
-                if (atividade != null)
+                using (var transacao = _unitOfWork.CreateTransactionScope())
                 {
-                    atividade.QuantidadeInicial = atividadeEstoqueRequisicao.QuantidadeInicial;
-                    atividade.QuantidadeFinal = atividadeEstoqueRequisicao.QuantidadeFinal;
-                    atividade.IdUsuarioExecucao = atividadeEstoqueRequisicao.IdUsuarioExecucao;
-                    atividade.DataExecucao = DateTime.Now;
-                    atividade.Finalizado = true;
+                    loteProduto.Saldo -= atividadeEstoqueRequisicao.QuantidadeFinal;
 
+                    _unitOfWork.LoteProdutoRepository.Update(loteProduto);
                     _unitOfWork.SaveChanges();
+
+                    loteProdutoEndereco.Quantidade += atividadeEstoqueRequisicao.QuantidadeFinal;
+
+                    _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
+                    _unitOfWork.SaveChanges();
+
+                    var loteMovimentacao = new LoteMovimentacao
+                    {
+                        IdEmpresa = IdEmpresa,
+                        IdLote = atividadeEstoqueRequisicao.IdLote,
+                        IdProduto = atividade.IdProduto,
+                        IdEnderecoArmazenagem = atividade.IdEnderecoArmazenagem,
+                        IdUsuarioMovimentacao = IdUsuario,
+                        Quantidade = atividadeEstoqueRequisicao.QuantidadeFinal,
+                        IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Abastecimento,
+                        DataHora = DateTime.Now
+                    };
+
+                    _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                    _unitOfWork.SaveChanges();
+
+                    if (loteProdutoEndereco.Quantidade >= enderecoArmazenagem.EstoqueMinimo)
+                    {
+                        atividade.QuantidadeInicial = atividadeEstoqueRequisicao.QuantidadeInicial;
+                        atividade.QuantidadeFinal = atividade.QuantidadeInicial + atividadeEstoqueRequisicao.QuantidadeFinal;
+                        atividade.IdUsuarioExecucao = IdUsuario;
+                        atividade.DataExecucao = DateTime.Now;
+                        atividade.Finalizado = true;
+
+                        _unitOfWork.SaveChanges();
+
+                        finalizouuAtividadeEstoque = true;
+                    }
+
+                    transacao.Complete();
                 }
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade,
+                    Descricao = $"Abasteceu o produto {loteProdutoEndereco.Produto.Referencia} do lote {loteProduto.Lote.IdLote} no endereço de picking {loteProdutoEndereco.EnderecoArmazenagem.Codigo}",
+                    IdEmpresa = IdEmpresa,
+                    IdUsuario = IdUsuario
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+
+                return finalizouuAtividadeEstoque;
             }
-            catch (Exception ex)
+            catch
             {
-                _log.Error($"Erro na atualização da atividade {atividadeEstoqueRequisicao.IdAtividadeEstoque}", ex);
+                throw new BusinessException($"Erro ao abastecer o picking com o produto {loteProduto.Produto.Referencia} do lote {loteProduto.Lote.IdLote}");
             }
         }
 
@@ -351,25 +410,27 @@ namespace FWLog.Services.Services
 
                 //Aqui deve ser feito a solicitação de contagem
 
-                loteProdutoEndereco.Quantidade = quantidadeFinal;
-
-                await _unitOfWork.SaveChangesAsync();
-
-                var loteMovimentacao = new LoteMovimentacao
+                if (quantidade.HasValue)
                 {
-                    IdEmpresa = idEmpresa,
-                    IdLote = loteProdutoEndereco.IdLote.GetValueOrDefault(),
-                    IdProduto = idProduto,
-                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
-                    IdUsuarioMovimentacao = idUsuarioExecucao,
-                    Quantidade = quantidadeFinal,
-                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.ConferirProdutoForaLinha,
-                    DataHora = DateTime.Now
-                };
+                    if (loteProdutoEndereco.IdLote == null)
+                    {
+                        loteProdutoEndereco.Quantidade = quantidadeFinal;
 
-                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
-
-                await _unitOfWork.SaveChangesAsync();
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        await _armazenagemService.AjustarVolumeLote(new AjustarVolumeLoteRequisicao()
+                        {
+                            IdEmpresa = idEmpresa,
+                            IdEnderecoArmazenagem = idEnderecoArmazenagem,
+                            IdLote = loteProdutoEndereco.IdLote.Value,
+                            IdProduto = idProduto,
+                            IdUsuarioAjuste = idUsuarioExecucao,
+                            Quantidade = quantidadeFinal
+                        });
+                    }
+                }
 
                 if (adicionaLogAuditoria)
                 {
