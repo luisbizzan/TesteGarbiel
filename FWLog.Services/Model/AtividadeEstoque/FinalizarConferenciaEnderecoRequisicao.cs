@@ -13,8 +13,6 @@ namespace FWLog.Services.Model.AtividadeEstoque
         [Required(ErrorMessage = "A atividade deve ser informada.")]
         public long IdAtividadeEstoque { get; set; }
 
-        public long IdLote { get; set; }
-
         [Required(ErrorMessage = "A quantidade final deve ser informada.")]
         public int QuantidadeFinal { get; set; }
     }
