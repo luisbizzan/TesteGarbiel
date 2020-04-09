@@ -11,11 +11,13 @@ namespace FWLog.Web.Api.Controllers
     public class AtividadeEstoqueController : ApiBaseController
     {
         private readonly AtividadeEstoqueService _atividadeEstoqueService;
+        private readonly ArmazenagemService _armazenagemService;
         private readonly UnitOfWork _unitOfWork;
 
-        public AtividadeEstoqueController(UnitOfWork unitOfWork, AtividadeEstoqueService atividadeEstoqueService)
+        public AtividadeEstoqueController(UnitOfWork unitOfWork, AtividadeEstoqueService atividadeEstoqueService, ArmazenagemService armazenagemService)
         {
             _atividadeEstoqueService = atividadeEstoqueService;
+            _armazenagemService = armazenagemService;
             _unitOfWork = unitOfWork;
         }
 
@@ -89,15 +91,22 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [AllowAnonymous]
-        [Route("api/v1/atividade-estoque/atualizar")]
+        [Route("api/v1/atividade-estoque/atualizar-abastecer-picking")]
         [HttpPost]
-        public IHttpActionResult AtualizarAtividade(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao)
+        public IHttpActionResult AtualizarAtividadeAbastecerPicking(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao)
         {
             try
             {
-                _atividadeEstoqueService.ValidarAtualizacaoAtividade(atividadeEstoqueRequisicao);
+                _atividadeEstoqueService.ValidarAtualizacaoAtividade(atividadeEstoqueRequisicao, IdUsuario);
 
-                _atividadeEstoqueService.AtualizarAtividade(atividadeEstoqueRequisicao);
+               var atividadeFinalizada = _atividadeEstoqueService.AtualizarAtividadeAbastecerPicking(atividadeEstoqueRequisicao, IdEmpresa, IdUsuario);
+
+                var resposta = new AtualizarAtividadeEstoqueAbastecerPickingResposta()
+                {
+                    AtividadeFinalizada = atividadeFinalizada
+                };
+
+                return ApiOk(resposta);
             }
             catch (BusinessException ex)
             {
@@ -107,8 +116,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 throw;
             }
-
-            return ApiOk();
         }
 
         [AllowAnonymous]
