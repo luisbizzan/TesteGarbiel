@@ -132,6 +132,7 @@
     <Compile Include="Models\GarantiaQuarentenaProduto.cs" />
     <Compile Include="Models\GarantiaQuarentenaStatus.cs" />
     <Compile Include="Models\GarantiaStatus.cs" />
+    <Compile Include="Models\GeralUpload.cs" />
     <Compile Include="Models\ImpressaoItem.cs" />
     <Compile Include="Models\IntegracaoEntidade.cs" />
     <Compile Include="Models\LoteMovimentacao.cs" />
