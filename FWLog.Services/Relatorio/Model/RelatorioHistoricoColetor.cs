@@ -9,7 +9,7 @@ namespace FWLog.Services.Relatorio.Model
         public string Descricao { get; set; }
         [ColunaRelatorio(Nome = "Aplicação", Tamanho = 100)]
         public string Aplicacao { get; set; }
-        [ColunaRelatorio(Nome = "Tipo do Histórico", Tamanho = 100)]
+        [ColunaRelatorio(Nome = "Tipo Histórico", Tamanho = 100)]
         public string Tipo { get; set; }
         [ColunaRelatorio(Nome = "Data", Tamanho = 100)]
         public string Data { get; set; }

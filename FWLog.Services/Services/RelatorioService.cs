@@ -845,16 +845,16 @@ namespace FWLog.Services.Services
                 {
                     var recebimentoNotas = new RelatorioProdutos
                     {
-                        Referencia = item.Produto?.Referencia,
-                        Descricao = item.Produto.Descricao,
+                        Referencia = item.Produto?.Referencia ?? string.Empty,
+                        Descricao = item.Produto.Descricao ?? string.Empty,
                         LarguraAlturaComprimento = string.Concat(item.Produto.Largura?.ToString("n2"),
                             " / ", item.Produto.Altura?.ToString("n2"),
                             " / ", item.Produto.Comprimento?.ToString("n2")),
-                        Endereco = item.EnderecoArmazenagem?.Codigo,
-                        Multiplo = item.Produto.MultiploVenda.ToString(),
-                        Peso = item.Produto.PesoBruto.ToString("n2"),
-                        Status = item.IdProdutoEstoqueStatus.ToString(),
-                        UnidadeMedida = item.Produto.UnidadeMedida.Sigla,
+                        Endereco = item.EnderecoArmazenagem?.Codigo ?? string.Empty,
+                        Multiplo = item.Produto.MultiploVenda.ToString() ?? string.Empty,
+                        Peso = item.Produto.PesoBruto.ToString("n2") ?? string.Empty,
+                        Status = item.IdProdutoEstoqueStatus.ToString() ?? string.Empty,
+                        UnidadeMedida = item.Produto?.UnidadeMedida.Sigla ?? string.Empty,
                     };
 
                     listaProdutos.Add(recebimentoNotas);
@@ -1115,6 +1115,7 @@ namespace FWLog.Services.Services
             if (query.Any())
             {
                 Paragraph paragraph = document.Sections[0].AddParagraph();
+                paragraph.AddLineBreak();
                 Table tabela = document.Sections[0].AddTable();
 
                 tabela.Format.Font = new Font("Verdana", new Unit(9));
@@ -1299,6 +1300,7 @@ namespace FWLog.Services.Services
                 var produtos = query.Select(x => x.Produto).Distinct().OrderBy(x => x.IdProduto).ToList();
 
                 Paragraph paragraph = document.Sections[0].AddParagraph();
+                paragraph.AddLineBreak();
                 Table tabela = document.Sections[0].AddTable();
 
                 tabela.Format.Font = new Font("Verdana", new Unit(9));
