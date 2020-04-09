@@ -100,7 +100,7 @@ namespace FWLog.Web.Backoffice
             ));
 
             bundles.Add(new ScriptBundle("~/script-bundles/vendors/jquery-confirm").Include(
-                 "~/Scripts/vendors/jquery-confirm/jquery-confirm.js"
+                 "~/Scripts/vendors/jquery-confirm/jquery-confirm.min.js"
             ));
         }
 
@@ -152,7 +152,7 @@ namespace FWLog.Web.Backoffice
             ));
 
             bundles.Add(new StyleBundle("~/style-bundles/vendors/jquery-confirm").Include(
-               "~/Content/vendors/jquery-confirm/jquery-confirm.css"
+               "~/Content/vendors/jquery-confirm/jquery-confirm.min.css"
             ));
         }
 
