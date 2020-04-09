@@ -1,0 +1,27 @@
+﻿@model FWLog.Web.Backoffice.Models.GarantiaConfiguracaoCtx.GarantiaConfiguracaoViewModel
+@using FWLog.AspNet.Identity
+
+<div class="x_panel">
+    <div class="x_title">
+        <h2>Configuração</h2>
+        <div class="clearfix"></div>
+    </div>
+
+    <!-- Fornecedor Quebra -->
+    <div class="x_content" style="display: block;">
+        <div class="row">
+            <div class="col-xs-12 col-md-2 col-lg-3 form-group">
+                @Html.LabelFor(m => m.Cod_Fornecedor)
+                @Html.TextBoxFor(m => m.Cod_Fornecedor, new { @class = "form-control", data_field = "Cod_Fornecedor" })
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 form-buttons">
+            <button type="button" class="btn btn-danger">Limpar</button>
+            <button id="btnGravar" type="button" class="btn btn-primary">Gravar</button>
+        </div>
+    </div>
+</div>
+<script src="@Url.Content("~/Scripts/Views/GarantiaConfiguracao/fornecedorQuebra.js")"></script>

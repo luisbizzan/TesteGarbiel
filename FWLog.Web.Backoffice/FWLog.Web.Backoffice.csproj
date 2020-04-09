@@ -627,6 +627,7 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\confirmarImpressao.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
+    <Content Include="Scripts\Views\GarantiaConfiguracao\fornecedorQuebra.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
     <Content Include="Scripts\Views\Geral\formGeralUploads.js" />
@@ -726,6 +727,7 @@
     <Content Include="Views\Geral\_FormHistoricos.cshtml" />
     <Content Include="Views\Geral\_FormUploads.cshtml" />
     <Content Include="Uploads\TESTE\21\DIT.pdf" />
+    <Content Include="Views\GarantiaConfiguracao\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
@@ -980,7 +982,6 @@
     <Folder Include="Areas\" />
     <Folder Include="bin\bin\en-US\" />
     <Folder Include="obj\Debug\TempPE\" />
-    <Folder Include="Views\GarantiaConfiguracao\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
