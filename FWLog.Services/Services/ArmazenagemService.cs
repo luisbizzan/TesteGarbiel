@@ -522,7 +522,7 @@ namespace FWLog.Services.Services
             LoteProduto loteProduto = _unitOfWork.LoteProdutoRepository.PesquisarProdutoNoLote(requisicao.IdEmpresa, requisicao.IdLote, requisicao.IdProduto);
 
             int saldoLote = loteProduto.Saldo;
-            int totalInstalado = listaEnderecosLoteProduto.Sum(s => s.Quantidade);
+            int totalInstalado = listaEnderecosLoteProduto.Where(w => w.IdEnderecoArmazenagem != requisicao.IdEnderecoArmazenagem).Sum(s => s.Quantidade);
 
             if ((totalInstalado + requisicao.Quantidade) > saldoLote)
             {

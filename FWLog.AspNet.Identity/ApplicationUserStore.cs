@@ -406,6 +406,10 @@ namespace FWLog.AspNet.Identity
             return Task.FromResult(user.LockoutEnabled);
         }
 
+        /// <summary>
+        /// Uma premissão do projeto é NÃO haver bloqueio do usuário por causa de senha errada, 
+        /// ou seja, esse método só deve ser utilizado se essa regra de negócio for alterada
+        /// </summary>
         public Task SetLockoutEnabledAsync(ApplicationUser user, bool enabled)
         {
             if (user == null)
