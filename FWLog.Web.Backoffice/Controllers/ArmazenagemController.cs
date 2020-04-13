@@ -461,5 +461,51 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.ReltorioLogisticaCorredor)]
+        public ActionResult RelatorioLogisticaCorredor()
+        {
+            SetViewBags();
+
+            return View();
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.ReltorioLogisticaCorredor)]
+        public ActionResult RelatorioLogisticaCorredorPageData(DataTableFilter<RelatorioLogisticaCorredorFilterViewModel> model)
+        {
+            var list = new List<RelatorioLogisticaCorredorListItemViewModel>();
+
+            var filtro = Mapper.Map<DataTableFilter<RelatorioLogisticaCorredorListaFiltro>>(model);
+            filtro.CustomFilter.IdEmpresa = IdEmpresa;
+
+            var produtos = _uow.LoteProdutoEnderecoRepository.BuscarDadosLogisticaCorredor(filtro, out int totalRecordsFiltered, out int totalRecords);
+
+            produtos.ForEach(lpe => list.Add(new RelatorioLogisticaCorredorListItemViewModel {
+                Altura = lpe.Produto.Altura?.ToString("n2") ?? "-",
+                Codigo = lpe.EnderecoArmazenagem.Codigo ?? "-",
+                Referencia = lpe.Produto.Referencia ?? "-",
+                Tipo = lpe.Produto.UnidadeMedida.Sigla ?? "-",
+                Descricao = lpe.Produto.Descricao ?? "-",
+                Saldo = lpe.ProdutoEstoque?.Saldo.ToString() ?? "-",
+                Cubagem = lpe.Produto.MetroCubico.ToString() ?? "-",
+                Largura = lpe.Produto.Largura?.ToString("n2") ?? "-",
+                Comprimento = lpe.Produto.Comprimento?.ToString() ?? "-",
+                DtRepo = null,
+                DuraDD = null,
+                GiroDD = null,
+                Giro6m = null,
+                ItLoc = null
+            }));
+            
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = totalRecordsFiltered,
+                Data = list
+            });
+        }
     }
 }

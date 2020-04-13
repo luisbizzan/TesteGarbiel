@@ -1,0 +1,144 @@
+﻿@model FWLog.Web.Backoffice.Models.ArmazenagemCtx.RelatorioLogisticaCorredorViewModel
+@{
+    ViewBag.Title = "RelatorioLogisticaCorredor";
+}
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+            pageDataUrl = Url.Action("RelatorioLogisticaCorredorPageData")
+        })
+}
+
+<!-- filter -->
+<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2 class="collapse-link">
+                <i class="fa fa-chevron-down fa-fw"></i> @Resources.CommonStrings.FilterHeader
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content" style="display: block; " margin-bottom: 20px;">
+            <div class="form-group">
+                <div class="row" style="margin-bottom: 20px;">
+                    <div class="col-sm-3 col-xs-12 col-lg-3 col-md-3">
+                        @Html.LabelFor(m => m.Filter.IdNivelArmazenagem, new { @class = "control-label" })
+                        <div class="input-group">
+                            @Html.TextBoxFor(m => m.Filter.DescricaoNivelArmazenagem, null, new { @class = "form-control validateNivelArmazenagem", @readonly = "true" })
+                            <span class="input-group-btn">
+                                <a id="pesquisarNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                                <a id="limparNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                            </span>
+                        </div>
+                        @Html.HiddenFor(m => m.Filter.IdNivelArmazenagem, new { data_field = "IdNivelArmazenagem" })
+                        @Html.ValidationMessageFor(m => m.Filter.DescricaoNivelArmazenagem)
+                    </div>
+                    <div class="col-sm-3 col-xs-12 col-lg-3 col-md-3">
+                        @Html.LabelFor(m => m.Filter.IdPontoArmazenagem, new { @class = "control-label" })
+                        <div class="input-group">
+                            @Html.TextBoxFor(m => m.Filter.DescricaoPontoArmazenagem, null, new { @class = "form-control validatePontoArmazenagem", @readonly = "true" })
+                            <span class="input-group-btn">
+                                <a id="pesquisarPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                                <a id="limparPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                            </span>
+                        </div>
+                        @Html.HiddenFor(m => m.Filter.IdPontoArmazenagem, new { data_field = "IdPontoArmazenagem" })
+                        @Html.ValidationMessageFor(m => m.Filter.DescricaoPontoArmazenagem)
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-lg-3">
+                        @Html.LabelFor(m => m.Filter.DataInicial)
+                        <div class='input-group date'>
+                            @Html.TextBoxFor(m => m.Filter.DataInicial, new { @class = "form-control dateFormat", data_field = "DataInicial" })
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Filter.DataInicial)
+                    </div>
+                    <div class="col-xs-12 col-md-2 col-lg-">
+                        @Html.LabelFor(m => m.Filter.DataFinal)
+                        <div class='input-group date'>
+                            @Html.TextBoxFor(m => m.Filter.DataFinal, new { @class = "form-control dateFormat", data_field = "DataFinal" })
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Filter.DataFinal)
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <div class="row">
+                    <div class="col-xs-12 col-md-2 col-lg-2">
+                        @Html.LabelFor(m => m.Filter.CorredorInicial)
+                        <div class='input-group date'>
+                            @Html.TextBoxFor(m => m.Filter.CorredorInicial, new { @class = "form-control onlyNumber validateCorredorInicial", data_field = "CorredorInicial" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Filter.CorredorInicial)
+                    </div>
+                    <div class="col-xs-12 col-md-2 col-lg-2">
+                        @Html.LabelFor(m => m.Filter.CorredorFinal)
+                        <div class='input-group date'>
+                            @Html.TextBoxFor(m => m.Filter.CorredorFinal, new { @class = "form-control onlyNumber validateCorredorFinal", data_field = "CorredorFinal" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Filter.CorredorFinal)
+                    </div>
+                    <div class="col-xs-12 col-sm-2 col-lg-2 col-md-2 ">
+                        @Html.LabelFor(m => m.Filter.Ordenacao)
+                        @Html.DropDownListFor(m => m.Filter.Ordenacao, (IEnumerable<SelectListItem>)ViewBag.LogisticaCorredorOrdenacao, new { @class = "form-control", data_field = "Ordenacao" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 form-buttons">
+                    <button type="button" id="limparFiltros" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
+                    <button type="button" id="pesquisar" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- /table -->
+<div id="tabelaLogisticaCorredor" class="row">
+    <div class="col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Lista de Produtos</h2>
+                <div class="nav navbar-right">
+                    <div class="col-xs-12">
+                        <a id="downloadRelatorioLogisticaCorredor" data-toggle="tooltip" title="Download Relatório" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
+                        <a id="imprimirRelatorioLogisticaCorredor" data-toggle="tooltip" title="Imprimir Relatório" class="btn btn-default"><i class="fa fa-fw fa-print"></i></a>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table id="dataTable" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Codigo)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Referencia)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Descricao)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Tipo)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Comprimento)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Largura)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Altura)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Cubagem)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Giro6m)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.GiroDD)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.ItLoc)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.Saldo)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DuraDD)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DtRepo)</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modalPesquisaNivelArmazenagem"></div>
+<div class="modal" id="modalPesquisaPontoArmazenagem"></div>
+<div class="modal fade" id="modalImpressoras" data-backdrop="static"></div>
+

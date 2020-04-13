@@ -300,6 +300,7 @@ namespace FWLog.AspNet.Identity
             public const string RelatorioLoteMovimentacao = "RelatorioLoteMovimentacao";
             public const string RelatorioTotalizacaoAlas = "RelatorioTotalizacaoAlas";
             public const string RelatorioPosicaoInventario = "RelatorioPosicaoInventario";
+            public const string ReltorioLogisticaCorredor = "ReltorioLogisticaCorredor";
 
             public RelatoriosArmazenagem() : base(Display.FromString("Armazenagem - Relatórios"))
             {
@@ -307,6 +308,7 @@ namespace FWLog.AspNet.Identity
                 Register(RelatorioLoteMovimentacao, Display.FromString("Movimentações de Lotes"));
                 Register(RelatorioTotalizacaoAlas, Display.FromString("Total por Alas"));
                 Register(RelatorioPosicaoInventario, Display.FromString("Posição para Inventário"));
+                Register(ReltorioLogisticaCorredor, Display.FromString("Logística por Corredor"));
             }
         }
 

@@ -206,6 +206,13 @@ namespace FWLog.Web.Backoffice.Controllers
                             new SelectListItem { Text = "Não", Value = "false"},
                             new SelectListItem { Text = "Sim", Value = "true"},
                         }, "Value", "Text");
+
+            ViewBag.LogisticaCorredorOrdenacao = new SelectList(new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "Corredor", Value = "0"},
+                            new SelectListItem { Text = "Saldo", Value = "1"},
+                            new SelectListItem { Text = "Giro DD", Value = "2"}
+                        }, "Value", "Text");
         }
     }
 }

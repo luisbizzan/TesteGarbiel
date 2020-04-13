@@ -2,6 +2,7 @@
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -152,13 +153,61 @@ namespace FWLog.Data.Repository.GeneralCtx
                     IdProduto = s.IdProduto
                 });
 
-
-            var bla = query.ToList();
-
             totalRecordsFiltered = query.Count();
 
             query = query
                .OrderBy(model.OrderByColumn, model.OrderByDirection)
+               .Skip(model.Start)
+               .Take(model.Length);
+
+            return query.ToList();
+        }
+
+        public IEnumerable<LoteProdutoEndereco> BuscarDadosLogisticaCorredor(DataTableFilter<RelatorioLogisticaCorredorListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
+        {
+            totalRecords = Entities.LoteProdutoEndereco
+               .Where(x => x.IdEmpresa == model.CustomFilter.IdEmpresa).Count();
+
+            IQueryable<LoteProdutoEndereco> query = Entities.LoteProdutoEndereco.Include("ProdutoEstoque").AsNoTracking()
+               .Where(x => x.IdEmpresa == model.CustomFilter.IdEmpresa &&
+               (x.EnderecoArmazenagem.IdNivelArmazenagem == model.CustomFilter.IdNivelArmazenagem) &&
+               (x.EnderecoArmazenagem.IdPontoArmazenagem == model.CustomFilter.IdPontoArmazenagem));
+
+            if (model.CustomFilter.CorredorInicial > 0 && model.CustomFilter.CorredorFinal > 0)
+            {
+                var range = Enumerable.Range(model.CustomFilter.CorredorInicial.Value, model.CustomFilter.CorredorFinal.Value);
+
+                query = query.Where(y => range.Contains(y.EnderecoArmazenagem.Corredor));
+            }
+
+            if (model.CustomFilter.DataInicial.HasValue)
+            {
+                DateTime dataInicial = new DateTime(model.CustomFilter.DataInicial.Value.Year, model.CustomFilter.DataInicial.Value.Month, model.CustomFilter.DataInicial.Value.Day, 00, 00, 00);
+                query = query.Where(x => x.DataHoraInstalacao >= dataInicial);
+            }
+
+            if (model.CustomFilter.DataFinal.HasValue)
+            {
+                DateTime dataFinal = new DateTime(model.CustomFilter.DataFinal.Value.Year, model.CustomFilter.DataFinal.Value.Month, model.CustomFilter.DataFinal.Value.Day, 23, 59, 59);
+                query = query.Where(x => x.DataHoraInstalacao <= dataFinal);
+            }
+
+            if(model.CustomFilter.Ordenacao == 0)
+            {
+                query = query.OrderBy(x => x.EnderecoArmazenagem.Corredor).ThenBy(x => x.EnderecoArmazenagem.Codigo);
+            }
+            else if(model.CustomFilter.Ordenacao == 1)
+            {
+                query = query.OrderBy(x => x.ProdutoEstoque.Saldo).ThenBy(x => x.EnderecoArmazenagem.Codigo);
+            }
+            //else
+            //{
+            //    query = query.OrderBy(x => x.EnderecoArmazenagem)
+            //}
+
+            totalRecordsFiltered = query.Count();
+
+            query = query
                .Skip(model.Start)
                .Take(model.Length);
 

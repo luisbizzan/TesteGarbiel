@@ -5,13 +5,6 @@
         validarOsFiltrosParaPesquisa();
     });
 
-    $(document.body).on('click', "#limparFiltros", function () {
-        limparProduto();
-
-    });
-
-   
-
     $('#dataTable').DataTable({
         ajax: {
             "url": view.pageDataUrl,

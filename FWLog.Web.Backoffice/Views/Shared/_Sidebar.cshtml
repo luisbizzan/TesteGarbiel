@@ -26,7 +26,8 @@
             new MenuItem { Text = "Relatório - Rastreabilidade de Lotes", Url = Url.Action("RelatorioRastreabilidadeLote", "Armazenagem"), RequirePermission = Permissions.RelatoriosArmazenagem.RelatorioRastreabilidadeLote },
             new MenuItem { Text = "Relatório - Movimentações de Lotes", Url = Url.Action("RelatorioLoteMovimentacao", "Armazenagem"), RequirePermission = Permissions.RelatoriosArmazenagem.RelatorioLoteMovimentacao },
             new MenuItem { Text = "Relatório - Total por Alas", Url = Url.Action("RelatorioTotalizacaoAlas", "Armazenagem"), RequirePermission = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoAlas },
-            new MenuItem { Text = "Relatório - Posição para Inventário", Url = Url.Action("RelatorioPosicaoInventario", "Armazenagem"), RequirePermission = Permissions.RelatoriosArmazenagem.RelatorioPosicaoInventario }
+            new MenuItem { Text = "Relatório - Posição para Inventário", Url = Url.Action("RelatorioPosicaoInventario", "Armazenagem"), RequirePermission = Permissions.RelatoriosArmazenagem.RelatorioPosicaoInventario },
+            new MenuItem { Text = "Relatório - Logística por Corredor", Url = Url.Action("RelatorioLogisticaCorredor", "Armazenagem"), RequirePermission = Permissions.RelatoriosArmazenagem.ReltorioLogisticaCorredor }
         ),
           new MenuGroup(text: Res.GarantiaMenuItem, icon: "fa fa-shield").SetItems(
             new MenuItem { Text = "Solicitação de Garantia", Url = Url.Action("Index", "Garantia"), RequirePermission = Permissions.Garantia.Listar },

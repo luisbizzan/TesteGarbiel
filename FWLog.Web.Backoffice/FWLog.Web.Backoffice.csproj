@@ -292,6 +292,7 @@
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioTotalPorAlaViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioPosicaoInventarioViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioTotalPorAlaViewModel.cs" />
+    <Compile Include="Models\ArmazenagemCtx\RelatorioLogisticaCorredorViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\RelatorioLoteMovimentacaoViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\RelatorioPosicaoInventarioViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\RelatorioRastreabilidadeLoteMovimentacaoViewModel.cs" />
@@ -594,6 +595,7 @@
     <Content Include="Scripts\dart\waitingDialog.js" />
     <Content Include="Scripts\vendors\onScan\onscan.js" />
     <Content Include="Scripts\vendors\onScan\onscan.min.js" />
+    <Content Include="Scripts\Views\Armazenagem\relatorioLogisticaCorredor.js" />
     <Content Include="Scripts\Views\Armazenagem\relatorioLoteMovimentacao.js" />
     <Content Include="Scripts\Views\Armazenagem\relatorioPosicaoInventario.js" />
     <Content Include="Scripts\Views\Armazenagem\relatorioRastreabilidadeLote.js" />
@@ -732,6 +734,7 @@
     <Content Include="Views\HistoricoAcaoUsuario\Index.cshtml" />
     <Content Include="Views\Armazenagem\RelatorioTotalizacaoAlas.cshtml" />
     <Content Include="Views\Armazenagem\RelatorioPosicaoInventario.cshtml" />
+    <Content Include="Views\Armazenagem\RelatorioLogisticaCorredor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
