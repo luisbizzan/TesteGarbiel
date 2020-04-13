@@ -60,6 +60,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "FROM \"Fornecedor\" ",
                             "WHERE ROWNUM <= 10 ",
                             "AND \"RazaoSocial\" LIKE '{0}%' ",
+                            "AND cnpj NOT IN (SELECT DISTINCT cod_fornecedor FROM gar_forn_quebra) ",
                             "GROUP BY \"RazaoSocial\", cnpj ",
                             "ORDER BY \"RazaoSocial\""), nome);
 

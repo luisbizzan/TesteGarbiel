@@ -4,25 +4,59 @@
 @section Scripts { @BundleHelper.RenderViewScript() }
 
 <div class="x_panel">
-    <div class="x_title">
-        <h2>Configuração</h2>
-        <div class="clearfix"></div>
-    </div>
 
-    <!-- Fornecedor Quebra -->
-    <div class="x_content" style="display: block;">
-        <div class="row">
-            <div class="col-xs-12 col-md-2 col-lg-3 form-group">
-                @Html.LabelFor(m => m.Cod_Fornecedor)
-                @Html.TextBoxFor(m => m.Cod_Fornecedor, new { @class = "form-control text-uppercase", data_field = "Cod_Fornecedor" })
+    <div class="col-md-12 col-sm-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2><i class="fa fa-bars"></i> Configuração </h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <!-- menu -->
+                <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
+                    <li class="nav-item active">
+                        <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-selected="true" aria-expanded="true">Fornecedor Quebra</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-selected="false">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-selected="false">Contact</a>
+                    </li>
+                </ul>
+                <!-- panels -->
+                <div class="tab-content" id="myTabContent">
+                    <!-- Fornecedor Quebra -->
+                    <div class="tab-pane fade active in" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+                        <div class="col-md-6 col-sm-6">
+                            <div class="col-xs-12 col-md-6 col-lg-5 form-group">
+                                @Html.LabelFor(m => m.Cod_Fornecedor)
+                                @Html.TextBoxFor(m => m.Cod_Fornecedor, new { @class = "form-control text-uppercase", data_field = "Cod_Fornecedor" })
+                            </div>
+                            <div class="col-xs-12 form-buttons">
+                                <button type="button" class="btn btn-danger">Remover Todos</button>
+                                <button id="btnGravar" type="button" class="btn btn-primary">Gravar</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6" style="overflow:visible; height:300px">
+                            <ul id="listaFornecedor" class="to_do"></ul>
+                        </div>
+
+                    </div>
+                    <!-- tab 2 -->
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo
+                        booth letterpress, commodo enim craft beer mlkshk aliquip
+                    </div>
+                    <!-- tab 3 -->
+                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                        xxFood truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo
+                        booth letterpress, commodo enim craft beer mlkshk
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-xs-12 form-buttons">
-            <button type="button" class="btn btn-danger">Limpar</button>
-            <button id="btnGravar" type="button" class="btn btn-primary">Gravar</button>
-        </div>
-    </div>
 </div>
