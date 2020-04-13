@@ -473,20 +473,18 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoLocalizacao)]
         public ActionResult RelatorioTotalizacaoLocalizacaoPageData(DataTableFilter<RelatorioTotalizacaoLocalizacaoFilterViewModel> model)
         {
-            //var filter = Mapper.Map<DataTableFilter<RelatorioTotalizacaoLocalizacaoFilterViewModel>>(model);
+            var filter = Mapper.Map<DataTableFilter<RelatorioTotalizacaoLocalizacaoFiltro>>(model);
 
-            //filter.CustomFilter.IdEmpresa = IdEmpresa;
+            filter.CustomFilter.IdEmpresa = IdEmpresa;
 
-            //IEnumerable<HistoricoAcaoUsuarioLinhaTabela> result = _unitOfWork.ColetorHistoricoRepository.ObterDados(filter, out int recordsFiltered, out int totalRecords);
-
-            //result.ForEach(x => x.Usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(x.Usuario).Nome);
+            var result = _uow.LoteProdutoEnderecoRepository.BuscarDadosTotalizacaoLocalizacao(filter, out int recordsFiltered, out int totalRecords);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
-                //RecordsTotal = totalRecords,
-                //RecordsFiltered = recordsFiltered,
-                //Data = Mapper.Map<IEnumerable<HistoricoDeAcoesListItemViewModel>>(result)
+                RecordsTotal = totalRecords,
+                RecordsFiltered = recordsFiltered,
+                Data = Mapper.Map<IEnumerable<RelatorioTotalizacaoLocalizacaoListItemViewModel>>(result)
             });
         }
     }
