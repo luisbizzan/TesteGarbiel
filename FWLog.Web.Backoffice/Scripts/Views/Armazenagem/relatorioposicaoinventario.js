@@ -193,7 +193,7 @@ function validarOsFiltrosParaDownloadOuImpressao() {
             }
         },
         error: function () {
-            PNotify.warning({ text: 'Não foi validar os filtros. Por favor, tente novamente!' });
+            PNotify.warning({ text: 'Não foi possível validar os filtros. Por favor, tente novamente!' });
         }
     });
 

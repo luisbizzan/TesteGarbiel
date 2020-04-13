@@ -1,5 +1,4 @@
-﻿
-namespace FWLog.Services.Relatorio.Model
+﻿namespace FWLog.Services.Relatorio.Model
 {
     public class RelatorioHistoricoColetor : IFwRelatorioDados
     {

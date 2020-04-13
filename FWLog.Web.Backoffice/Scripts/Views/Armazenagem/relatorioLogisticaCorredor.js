@@ -140,45 +140,49 @@
         $("#Filter_IdPontoArmazenagem").val("");
     });
 
-    //$("#downloadRelatorioPosicaoInventario").click(function () {
-    //    $.when(validarOsFiltrosParaDownloadOuImpressao()).then(function (success) {
-    //        if (success) {
-    //            $.ajax({
-    //                url: "/Armazenagem/DownloadRelatorioPosicaoInventario",
-    //                method: "POST",
-    //                data: {
-    //                    IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
-    //                    IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
-    //                    IdProduto: $("#Filter_IdProduto").val(),
-    //                },
-    //                xhrFields: {
-    //                    responseType: 'blob'
-    //                },
-    //                success: function (data) {
-    //                    var a = document.createElement('a');
-    //                    var url = window.URL.createObjectURL(data);
+    $("#downloadRelatorioLogisticaCorredor").click(function () {
+        $.when(validarOsFiltrosParaDownloadOuImpressao()).then(function (success) {
+            if (success) {
+                $.ajax({
+                    url: "/Armazenagem/DownloadRelatorioLogisticaCorredor",
+                    method: "POST",
+                    data: {
+                        IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
+                        IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
+                        CorredorInicial: $("#Filter_CorredorInicial").val(),
+                        CorredorFinal: $("#Filter_CorredorFinal").val(),
+                        DataInicial: $("#Filter_DataInicial").val(),
+                        DataFinal: $("#Filter_DataFinal").val(),
+                        Ordenacao: $("#Filter_Ordenacao").val()
+                    },
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    success: function (data) {
+                        var a = document.createElement('a');
+                        var url = window.URL.createObjectURL(data);
 
-    //                    a.href = url;
-    //                    a.download = 'Relatório - Posição para Inventário.pdf';
-    //                    document.body.append(a);
-    //                    a.click();
-    //                    a.remove();
-    //                    window.URL.revokeObjectURL(url);
-    //                }
-    //            });
-    //        }
-    //    });
-    //});
+                        a.href = url;
+                        a.download = 'Relatório - Logística por Corredor.pdf';
+                        document.body.append(a);
+                        a.click();
+                        a.remove();
+                        window.URL.revokeObjectURL(url);
+                    }
+                });
+            }
+        });
+    });
 
-    //$("#imprimirRelatorioPosicaoInventario").click(function () {
-    //    $.when(validarOsFiltrosParaDownloadOuImpressao()).then(function (success) {
-    //        if (success) {
-    //            $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=posicaoInventario", function () {
-    //                $("#modalImpressoras").modal();
-    //            });
-    //        }
-    //    });
-    //});
+    $("#imprimirRelatorioLogisticaCorredor").click(function () {
+        $.when(validarOsFiltrosParaDownloadOuImpressao()).then(function (success) {
+            if (success) {
+                $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=logisticaCorredor", function () {
+                    $("#modalImpressoras").modal();
+                });
+            }
+        });
+    });
 
 })();
 
@@ -197,28 +201,60 @@ function selecionarPontoArmazenagem(idPontoArmazenagem, descricao) {
 }
 
 
+function validarOsFiltrosParaDownloadOuImpressao() {
+
+    let success = true;
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "ValidarDownloadOuImpressaoLogisticaCorredor",
+        global: false,
+        async: false,
+        cache: false,
+        method: "POST",
+        data: {
+            idNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
+            idPontoArmazenagem: $("#Filter_PontoArmazenagem").val()
+        },
+        success: function (result) {
+            if (!result.Success) {
+                PNotify.warning({ text: result.Message });
+                success = false;
+            }
+        },
+        error: function () {
+            PNotify.warning({ text: 'Não foi possível validar os filtros. Por favor, tente novamente!' });
+        }
+    });
+
+    return success;
+}
 
 
 
-//function imprimir(acao, id) {
-//    switch (acao) {
-//        case 'posicaoInventario':
-//            $.ajax({
-//                url: "/Armazenagem/ImprimirRelatorioPosicaoInventario",
-//                method: "POST",
-//                data: {
-//                    IdImpressora: $("#IdImpressora").val(),
-//                    IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
-//                    IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
-//                    IdProduto: $("#Filter_IdProduto").val(),
-//                },
-//                success: function (result) {
-//                    mensagemImpressao(result);
-//                    $('#modalImpressoras').modal('toggle');
-//                    waitingDialog.hide();
-//                }
-//            });
-//            break;
-//    }
-//}
+
+function imprimir(acao, id) {
+    switch (acao) {
+        case 'logisticaCorredor':
+            $.ajax({
+                url: "/Armazenagem/ImprimirRelatorioLogisticaCorredor",
+                method: "POST",
+                data: {
+                    IdImpressora: $("#IdImpressora").val(),
+                    IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
+                    IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
+                    CorredorInicial: $("#Filter_CorredorInicial").val(),
+                    CorredorFinal: $("#Filter_CorredorFinal").val(),
+                    DataInicial: $('#Filter_DataInicial').val(),
+                    DataFinal: $('#Filter_DataFinal').val(),
+                    Ordenacao: $("#Filter_Ordenacao").val()
+                },
+                success: function (result) {
+                    mensagemImpressao(result);
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
+                }
+            });
+            break;
+    }
+}
 

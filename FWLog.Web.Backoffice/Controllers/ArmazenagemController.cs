@@ -533,5 +533,70 @@ namespace FWLog.Web.Backoffice.Controllers
                 Data = list
             });
         }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.ReltorioLogisticaCorredor)]
+        public ActionResult DownloadRelatorioLogisticaCorredor(DownloadRelatorioLogisticaCorredorViewModel viewModel)
+        {
+            var relatorioRequest = Mapper.Map<RelatorioLogisticaCorredorRequest>(viewModel);
+
+            relatorioRequest.IdEmpresa = IdEmpresa;
+            relatorioRequest.NomeUsuarioRequisicao = LabelUsuario;
+            byte[] relatorio = _relatorioService.GerarRelatorioLogisticaCorredor(relatorioRequest);
+
+            return File(relatorio, "application/pdf", "Relatório - Logística por Corredor.pdf");
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.ReltorioLogisticaCorredor)]
+        public JsonResult ValidarDownloadOuImpressaoLogisticaCorredor(long? idNivelArmazenagem, long? idPontoArmazenagem)
+        {
+            if (idNivelArmazenagem == null && idPontoArmazenagem == null)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Nenhum registro encontrado para download ou para impressão, verifique os filtros e tente novamente.",
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true
+            });
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.ReltorioLogisticaCorredor)]
+        public JsonResult ImprimirRelatorioLogisticaCorredor(ImprimirRelatorioLogisticaCorredorViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                var request = Mapper.Map<ImprimirRelatorioLogisticaCorredorRequest>(viewModel);
+
+                request.IdEmpresa = IdEmpresa;
+                request.NomeUsuarioRequisicao = LabelUsuario;
+
+                _relatorioService.ImprimirRelatorioLogisticaCorredor(request);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }

@@ -1382,5 +1382,112 @@ namespace FWLog.Services.Services
 
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
+
+        public byte[] GerarRelatorioLogisticaCorredor(RelatorioLogisticaCorredorRequest filter)
+        {
+            IQueryable<LoteProdutoEndereco> query = _unitiOfWork.LoteProdutoEnderecoRepository.PesquisarPorEmpresa(filter.IdEmpresa)
+            .AsQueryable();
+
+            query = query.Where(lpe => lpe.EnderecoArmazenagem.IdNivelArmazenagem == filter.IdNivelArmazenagem);
+
+            query = query.Where(lpe => lpe.EnderecoArmazenagem.IdPontoArmazenagem == filter.IdPontoArmazenagem);
+
+            if (filter.CorredorInicial > 0 && filter.CorredorFinal > 0)
+            {
+                var range = Enumerable.Range(filter.CorredorInicial.Value, filter.CorredorFinal.Value);
+
+                query = query.Where(lpe => range.Contains(lpe.EnderecoArmazenagem.Corredor));
+            }
+
+            if (filter.DataInicial.HasValue)
+            {
+                DateTime dataInicial = new DateTime(filter.DataInicial.Value.Year, filter.DataInicial.Value.Month, filter.DataInicial.Value.Day, 00, 00, 00);
+                query = query.Where(lpe => lpe.DataHoraInstalacao >= dataInicial);
+            }
+
+            if (filter.DataFinal.HasValue)
+            {
+                DateTime dataFinal = new DateTime(filter.DataFinal.Value.Year, filter.DataFinal.Value.Month, filter.DataFinal.Value.Day, 23, 59, 59);
+                query = query.Where(lpe => lpe.DataHoraInstalacao <= dataFinal);
+            }
+
+            if (filter.Ordenacao == 0)
+            {
+                query = query.OrderBy(lpe => lpe.EnderecoArmazenagem.Corredor).ThenBy(lpe => lpe.EnderecoArmazenagem.Codigo);
+            }
+            else if (filter.Ordenacao == 1)
+            {
+                query = query.OrderBy(lpe => lpe.ProdutoEstoque.Saldo).ThenBy(lpe => lpe.EnderecoArmazenagem.Codigo);
+            }
+            //else
+            //{
+            //    query = query.OrderBy(x => x.EnderecoArmazenagem)
+            //}
+
+            var listaHistorico = new List<IFwRelatorioDados>();
+
+            if (query.Any())
+            {
+                foreach (var item in query)
+                {
+                    var recebimentoNotas = new RelatorioLogisticaCorredor
+                    {
+                        Codigo = item.EnderecoArmazenagem.Codigo,
+                        Referencia = item.Produto.Referencia,
+                        Descricao = item.Produto.Descricao,
+                        Unidade = item.Produto.UnidadeMedida.Sigla,
+                        Comprimento = item.Produto.Comprimento?.ToString("n2") ?? "-",
+                        Largura = item.Produto.Largura?.ToString("n2") ?? "-",
+                        Altura = item.Produto.Altura?.ToString("n2") ?? "-",
+                        Cubagem = item.Produto.MetroCubico?.ToString("n2") ?? "-",
+                        Giro6m = "-",
+                        GiroDD = "-",
+                        ItLoc = "-",
+                        Saldo = item.ProdutoEstoque.Saldo.ToString() ?? "-",
+                        DuraDD = "-",
+                        DtRepo = "-"
+                    };
+
+                    listaHistorico.Add(recebimentoNotas);
+                }
+            }
+
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filter.IdEmpresa);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = filter.NomeUsuarioRequisicao,
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório  - Logística por Corredor",
+                Filtros = null,
+                Dados = listaHistorico
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            return fwRelatorio.Gerar(fwRelatorioDados);
+        }
+
+        public void ImprimirRelatorioLogisticaCorredor(ImprimirRelatorioLogisticaCorredorRequest request)
+        {
+            var relatorioRequest = new RelatorioLogisticaCorredorRequest
+            {
+                IdEmpresa = request.IdEmpresa.Value,
+                NomeUsuarioRequisicao = request.NomeUsuarioRequisicao,
+                IdNivelArmazenagem = request.IdNivelArmazenagem,
+                IdPontoArmazenagem = request.IdPontoArmazenagem,
+                CorredorInicial = request.CorredorInicial,
+                CorredorFinal = request.CorredorFinal,
+                DataInicial = request.DataInicial,
+                DataFinal = request.DataFinal,
+                Ordenacao = request.Ordenacao
+            };
+
+            byte[] relatorio = GerarRelatorioLogisticaCorredor(relatorioRequest);
+
+            _impressoraService.Imprimir(relatorio, request.IdImpressora);
+        }
     }
 }

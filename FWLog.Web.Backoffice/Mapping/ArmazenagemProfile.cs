@@ -12,6 +12,8 @@ namespace FWLog.Web.Backoffice.Mapping
             CreateMap<ImprimirRelatorioTotalPorAlaViewModel, ImprimirRelatorioTotalPorAlaRequest>();
             CreateMap<DownloadRelatorioPosicaoInventarioViewModel, RelatorioPosicaoInventarioRequest>();
             CreateMap<ImprimirRelatorioPosicaoInventarioViewModel, ImprimirRelatorioPosicaoInventarioRequest>();
+            CreateMap<DownloadRelatorioLogisticaCorredorViewModel, RelatorioLogisticaCorredorRequest>();
+            CreateMap<ImprimirRelatorioLogisticaCorredorViewModel, ImprimirRelatorioLogisticaCorredorRequest>();
         }
     }
 }
