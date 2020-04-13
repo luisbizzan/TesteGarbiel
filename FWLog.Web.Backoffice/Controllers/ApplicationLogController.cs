@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using log4net;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -21,12 +22,12 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         UnitOfWork _uow;
 
-        ApplicationLogService _applicationLogService;
+        private ILog _log;
 
-        public ApplicationLogController(UnitOfWork uow, ApplicationLogService applicationLogService)
+        public ApplicationLogController(UnitOfWork uow, ILog log)
         {
             _uow = uow;
-            _applicationLogService = applicationLogService;
+            _log = log;
         }
 
         [ApplicationAuthorize(Permissions = Permissions.ApplicationLog.List)]
@@ -88,14 +89,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                _applicationLogService.Add(new ApplicationLog
-                {
-                    Created = DateTime.UtcNow,
-                    Level = "ERROR",
-                    Message = "Erro ao fazer chamada ajax para a URL: " + url,
-                    Exception = "",
-                    IdApplication = ApplicationEnum.BackOffice.GetHashCode()
-                });
+                _log.Error("Erro ao fazer chamada ajax para a URL: " + url);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -105,6 +99,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
+                _log.Error(e.Message, e);
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
