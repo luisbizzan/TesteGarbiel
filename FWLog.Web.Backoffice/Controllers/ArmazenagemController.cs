@@ -466,6 +466,8 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoLocalizacao)]
         public ActionResult RelatorioTotalizacaoLocalizacao()
         {
+            SetViewBags();
+
             return View();
         }
 
@@ -486,6 +488,51 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsFiltered = recordsFiltered,
                 Data = Mapper.Map<IEnumerable<RelatorioTotalizacaoLocalizacaoListItemViewModel>>(result)
             });
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioPosicaoInventario)]
+        public ActionResult DownloadRelatorioRelatorioTotalizacaoLocalizacao(RelatorioTotalizacaoLocalizacaoFilterViewModel viewModel)
+        {
+            var relatorioRequest = Mapper.Map<RelatorioTotalizacaoLocalizacaoFiltro>(viewModel);
+
+            relatorioRequest.IdEmpresa = IdEmpresa;
+
+            byte[] relatorio = _relatorioService.GerarRelatorioTotalizacaoLocalizacao(relatorioRequest, LabelUsuario);
+
+            return File(relatorio, "application/pdf", "Relatório - Totalização por Localização.pdf");
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioPosicaoInventario)]
+        public JsonResult ImprimirRelatorioRelatorioTotalizacaoLocalizacao(RelatorioTotalizacaoLocalizacaoFilterViewModel viewModel, long idImpressora)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                var request = Mapper.Map<RelatorioTotalizacaoLocalizacaoFiltro>(viewModel);
+
+                request.IdEmpresa = IdEmpresa;
+
+                _relatorioService.ImprimirRelatorioTotalizacaoLocalizacao(request, idImpressora, LabelUsuario);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

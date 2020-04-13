@@ -14,7 +14,7 @@
         )
 }
 
-<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+<form id="relatorioTotalizacaoLocalizacaoForm" data-filter="form" data-filter-for="dataTable" class="form-filter">
     <div class="x_panel">
         <div class="x_title">
             <h2 class="collapse-link">
@@ -62,6 +62,10 @@
                     </div>
                     @Html.ValidationMessageFor(m => m.Filter.CorredorFinal)
                 </div>
+                <div class="col-xs-12 col-sm-4 col-lg-2 col-md-2 ">
+                    @Html.LabelFor(m => m.Filter.ImprimirVazia)
+                    @Html.DropDownListFor(m => m.Filter.ImprimirVazia, (IEnumerable<SelectListItem>)ViewBag.ImprimirVazia, new { @class = "form-control", data_field = "ImprimirVazia" })
+                </div>
             </div>
         </div>
         <div class="row">
@@ -77,12 +81,12 @@
         <div class="x_panel">
             <div class="x_title">
                 <h2>Relatório Totalização Por Localização Apoio</h2>
-                @*<div class="nav navbar-right">
-                        <div class="col-xs-12">
-                            <a id="downloadHistoricoAcaoUsuario" data-toggle="tooltip" title="Download Histórico" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
-                            <a id="imprimirHistoricoAcaoUsuario" data-toggle="tooltip" title="Imprimir Histórico" class="btn btn-default"><i class="fa fa-fw fa-print"></i></a>
-                        </div>
-                    </div>*@
+                <div class="nav navbar-right">
+                    <div class="col-xs-12">
+                        <a id="downloadRelatorioTotalizacaoLocalizacao" data-toggle="tooltip" title="Download Relatório" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
+                        <a id="imprimirRelatorioTotalizacaoLocalizacao" data-toggle="tooltip" title="Imprimir Relatório" class="btn btn-default"><i class="fa fa-fw fa-print"></i></a>
+                    </div>
+                </div>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -102,4 +106,4 @@
 </div>
 <div class="modal" id="modalPesquisaNivelArmazenagem"></div>
 <div class="modal" id="modalPesquisaPontoArmazenagem"></div>
-@*<div class="modal fade" id="modalImpressoras" data-backdrop="static"></div>*@
+<div class="modal fade" id="modalImpressoras" data-backdrop="static"></div>

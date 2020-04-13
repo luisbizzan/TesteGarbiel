@@ -48,5 +48,8 @@ namespace FWLog.Web.Backoffice.Models.ArmazenagemCtx
 
         [Display(Name = "Corredor Final")]
         public int? CorredorFinal { get; set; }
+
+        [Display(Name = "Imprimir Vazia?")]
+        public bool ImprimirVazia { get; set; }
     }
 }
