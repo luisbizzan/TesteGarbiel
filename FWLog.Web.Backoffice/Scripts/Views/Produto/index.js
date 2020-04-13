@@ -27,15 +27,15 @@
                 dart.dataTables.saveFilterToData(data);
             }
         },
-        //initComplete: function (settings, json) {
-        //    dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
-        //},
-        //stateSaveParams: function (settings, data) {
-        //    dart.dataTables.saveFilterToData(data);
-        //},
-        //stateLoadParams: function (settings, data) {
-        //    dart.dataTables.loadFilterFromData(data);
-        //},
+        initComplete: function (settings, json) {
+            dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
+        },
+        stateSaveParams: function (settings, data) {
+            dart.dataTables.saveFilterToData(data);
+        },
+        stateLoadParams: function (settings, data) {
+            dart.dataTables.loadFilterFromData(data);
+        },
         order: [[1, "desc"]],
         columns: [
             { data: 'Referencia', },
