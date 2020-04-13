@@ -1065,7 +1065,13 @@ namespace FWLog.Services.Services
                 {
                     enderecoProdutoQuantidades.EstoqueMinimo = enderecoArmazenagem.EstoqueMinimo ?? 0;
                     enderecoProdutoQuantidades.EstoqueMaximo = enderecoArmazenagem.EstoqueMaximo ?? 0;
-                    enderecoProdutoQuantidades.QuantidadeAtual = enderecoArmazenagem.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == enderecoArmazenagem.IdEnderecoArmazenagem).FirstOrDefault().Quantidade;
+
+                    var loteProdutoEndereco = enderecoArmazenagem.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == enderecoArmazenagem.IdEnderecoArmazenagem).FirstOrDefault();
+
+                    if (loteProdutoEndereco != null)
+                    {
+                        enderecoProdutoQuantidades.QuantidadeAtual = loteProdutoEndereco.Quantidade; 
+                    }
                 }
                 else
                 {
