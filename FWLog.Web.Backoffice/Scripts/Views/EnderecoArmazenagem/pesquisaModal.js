@@ -1,4 +1,11 @@
 ﻿(function () {
+
+    var validator = $("#form-datatable-modal").validate({
+        ignore: ".ignore"
+    });
+
+    $("#Filtros_Codigo").mask("#0.S.#0.#0");
+
     let actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
             {
@@ -39,9 +46,5 @@
     });
 
     dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));
-
-    var validator = $("#form-datatable-modal").validate({
-        ignore: ".ignore"
-    });
  
 })();
