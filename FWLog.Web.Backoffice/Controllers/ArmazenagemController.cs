@@ -461,5 +461,33 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoLocalizacao)]
+        public ActionResult RelatorioTotalizacaoLocalizacao()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoLocalizacao)]
+        public ActionResult RelatorioTotalizacaoLocalizacaoPageData(DataTableFilter<RelatorioTotalizacaoLocalizacaoFilterViewModel> model)
+        {
+            //var filter = Mapper.Map<DataTableFilter<RelatorioTotalizacaoLocalizacaoFilterViewModel>>(model);
+
+            //filter.CustomFilter.IdEmpresa = IdEmpresa;
+
+            //IEnumerable<HistoricoAcaoUsuarioLinhaTabela> result = _unitOfWork.ColetorHistoricoRepository.ObterDados(filter, out int recordsFiltered, out int totalRecords);
+
+            //result.ForEach(x => x.Usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(x.Usuario).Nome);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                //RecordsTotal = totalRecords,
+                //RecordsFiltered = recordsFiltered,
+                //Data = Mapper.Map<IEnumerable<HistoricoDeAcoesListItemViewModel>>(result)
+            });
+        }
     }
 }
