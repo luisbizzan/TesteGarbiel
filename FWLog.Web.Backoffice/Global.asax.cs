@@ -22,6 +22,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Linq;
 
 namespace FWLog.Web.Backoffice
 {
@@ -171,8 +172,33 @@ namespace FWLog.Web.Backoffice
             if (applicationUser != null)
             {
                 var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
+                ApplicationSession applicationSession;
 
-                ApplicationSession applicationSession = uow.ApplicationSessionRepository.GetById(applicationUser.IdApplicationSession.Value);
+                if (!applicationUser.IdApplicationSession.HasValue)
+                {
+                    PerfilUsuario perfilUsuario = uow.PerfilUsuarioRepository.GetByUserId(applicationUser.Id);
+                    long idEmpresaPrincipal = perfilUsuario.EmpresaPrincipal.IdEmpresa;
+
+                    applicationSession = new ApplicationSession
+                    {
+                        IdAspNetUsers = applicationUser.Id,
+                        IdApplication = applicationUser.ApplicationId,
+                        DataLogin = DateTime.Now,
+                        DataUltimaAcao = DateTime.Now,
+                        IdEmpresa = idEmpresaPrincipal
+                    };
+
+                    uow.ApplicationSessionRepository.Add(applicationSession);
+                    uow.SaveChanges();
+
+                    applicationUser.IdApplicationSession = applicationSession.IdApplicationSession;
+
+                    userManager.Update(applicationUser);
+                }
+                else
+                {
+                    applicationSession = uow.ApplicationSessionRepository.GetById(applicationUser.IdApplicationSession.Value);
+                }                
                 
                 if (applicationSession != null && applicationSession.IdEmpresa.HasValue)
                 {

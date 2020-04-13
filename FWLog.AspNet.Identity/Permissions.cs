@@ -32,7 +32,7 @@ namespace FWLog.AspNet.Identity
                 Register(Delete, Display.FromString("Excluir Grupo"));
             }
         }
-        
+
         public class BOAccount : PermissionGroupBuildItem
         {
             public const string List = "BOAccountList";
@@ -300,6 +300,7 @@ namespace FWLog.AspNet.Identity
             public const string RelatorioLoteMovimentacao = "RelatorioLoteMovimentacao";
             public const string RelatorioTotalizacaoAlas = "RelatorioTotalizacaoAlas";
             public const string RelatorioPosicaoInventario = "RelatorioPosicaoInventario";
+            public const string RelatorioTotalizacaoLocalizacao = "RelatorioTotalizacaoLocalizacao";
             public const string ReltorioLogisticaCorredor = "ReltorioLogisticaCorredor";
 
             public RelatoriosArmazenagem() : base(Display.FromString("Armazenagem - Relatórios"))
@@ -308,6 +309,7 @@ namespace FWLog.AspNet.Identity
                 Register(RelatorioLoteMovimentacao, Display.FromString("Movimentações de Lotes"));
                 Register(RelatorioTotalizacaoAlas, Display.FromString("Total por Alas"));
                 Register(RelatorioPosicaoInventario, Display.FromString("Posição para Inventário"));
+                Register(RelatorioTotalizacaoLocalizacao, Display.FromString("Totalização Por Localização"));
                 Register(ReltorioLogisticaCorredor, Display.FromString("Logística por Corredor"));
             }
         }
@@ -321,6 +323,5 @@ namespace FWLog.AspNet.Identity
                 Register(Listar, Display.FromString("Listar Histórico"));
             }
         }
-
     }
 }

@@ -163,6 +163,40 @@ namespace FWLog.Data.Repository.GeneralCtx
             return query.ToList();
         }
 
+        public IEnumerable<RelatorioTotalizacaoLocalizacaoItem> BuscarDadosTotalizacaoLocalizacao(DataTableFilter<RelatorioTotalizacaoLocalizacaoFiltro> model, out int totalRecordsFiltered, out int totalRecords)
+        {
+            totalRecords = Entities.LoteProdutoEndereco.Count();
+
+            var baseQuery = Entities.LoteProdutoEndereco.AsNoTracking().Where(lpe =>
+                                                               lpe.IdEmpresa == model.CustomFilter.IdEmpresa &&
+                                                               lpe.EnderecoArmazenagem.IdNivelArmazenagem == model.CustomFilter.IdNivelArmazenagem &&
+                                                               lpe.EnderecoArmazenagem.IdPontoArmazenagem == model.CustomFilter.IdPontoArmazenagem
+                                                            );
+
+            if (model.CustomFilter.CorredorInicial.HasValue && model.CustomFilter.CorredorFinal.HasValue)
+            {
+                var range = Enumerable.Range(model.CustomFilter.CorredorInicial.Value, model.CustomFilter.CorredorFinal.Value).ToList();
+
+                baseQuery = baseQuery.Where(y => range.Contains(y.EnderecoArmazenagem.Corredor));
+            }
+
+            var query = baseQuery.Select(bq => new RelatorioTotalizacaoLocalizacaoItem
+            {
+                CodigoEndereco = bq.EnderecoArmazenagem.Codigo,
+                ReferenciaProduto = bq.Produto.Referencia,
+                Unidade = bq.Produto.UnidadeMedida.Descricao,
+                Quantidade = bq.Quantidade
+            });
+
+            totalRecordsFiltered = query.Count();
+
+            var response = query.OrderBy(model.OrderByColumn, model.OrderByDirection)
+                                .Skip(model.Start)
+                                .Take(model.Length);
+
+            return response.ToList();
+        }
+
         public IEnumerable<LoteProdutoEndereco> BuscarDadosLogisticaCorredor(DataTableFilter<RelatorioLogisticaCorredorListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
         {
             totalRecords = Entities.LoteProdutoEndereco
@@ -192,11 +226,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                 query = query.Where(x => x.DataHoraInstalacao <= dataFinal);
             }
 
-            if(model.CustomFilter.Ordenacao == 0)
+            if (model.CustomFilter.Ordenacao == 0)
             {
                 query = query.OrderBy(x => x.EnderecoArmazenagem.Corredor).ThenBy(x => x.EnderecoArmazenagem.Codigo);
             }
-            else if(model.CustomFilter.Ordenacao == 1)
+            else if (model.CustomFilter.Ordenacao == 1)
             {
                 query = query.OrderBy(x => x.ProdutoEstoque.Saldo).ThenBy(x => x.EnderecoArmazenagem.Codigo);
             }
@@ -214,4 +248,4 @@ namespace FWLog.Data.Repository.GeneralCtx
             return query.ToList();
         }
     }
-} 
+}

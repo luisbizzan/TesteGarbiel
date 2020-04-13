@@ -463,6 +463,32 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoLocalizacao)]
+        public ActionResult RelatorioTotalizacaoLocalizacao()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoLocalizacao)]
+        public ActionResult RelatorioTotalizacaoLocalizacaoPageData(DataTableFilter<RelatorioTotalizacaoLocalizacaoFilterViewModel> model)
+        {
+            var filter = Mapper.Map<DataTableFilter<RelatorioTotalizacaoLocalizacaoFiltro>>(model);
+
+            filter.CustomFilter.IdEmpresa = IdEmpresa;
+
+            var result = _uow.LoteProdutoEnderecoRepository.BuscarDadosTotalizacaoLocalizacao(filter, out int recordsFiltered, out int totalRecords);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = recordsFiltered,
+                Data = Mapper.Map<IEnumerable<RelatorioTotalizacaoLocalizacaoListItemViewModel>>(result)
+            });
+        }
+
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.ReltorioLogisticaCorredor)]
         public ActionResult RelatorioLogisticaCorredor()
         {
