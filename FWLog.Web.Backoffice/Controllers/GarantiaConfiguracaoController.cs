@@ -60,5 +60,25 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
         #endregion
+
+        #region AutoComplete Fornecedor
+        [HttpPost]
+        public JsonResult AutoCompleteFornecedor(string valor)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(valor))
+                    throw new Exception("Fornecedor não pode estar em branco!");
+
+               var _fornecedores = _garantiaConfigService.AutoCompleteFornecedor(valor.ToUpper());
+
+                return Json(new { Success = true, Fornecedores = _fornecedores }, JsonRequestBehavior.AllowGet);
+            }
+            catch(Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }            
+        }
+        #endregion
     }
 }

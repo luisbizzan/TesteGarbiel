@@ -6,5 +6,6 @@ namespace FWLog.Data.Models
     {
         public long Id { get; set; }
         public string Cod_Fornecedor { get; set; }
+        public string Value { get; set; }
     }
 }

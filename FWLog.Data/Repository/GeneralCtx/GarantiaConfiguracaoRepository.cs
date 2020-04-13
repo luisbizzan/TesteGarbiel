@@ -30,7 +30,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     if (conn.State == System.Data.ConnectionState.Open)
                     {
                         string cmdSQL = String.Format("SELECT COUNT(1) V FROM gar_forn_quebra WHERE cod_fornecedor='{0}'", fornecedor.Cod_Fornecedor);
-                       _processamento =  conn.ExecuteScalar<Int32>(cmdSQL);
+                        _processamento = conn.ExecuteScalar<Int32>(cmdSQL);
                     }
                     conn.Close();
                 }
@@ -40,6 +40,38 @@ namespace FWLog.Data.Repository.GeneralCtx
             catch
             {
                 return false;
+            }
+        }
+        #endregion
+
+        #region AutoComplete Fornecedor
+        public List<GarantiaConfiguracao> AutoCompleteFornecedor(string nome)
+        {
+            try
+            {
+                var select = new List<GarantiaConfiguracao>();
+                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                {
+                    conn.Open();
+                    if (conn.State == System.Data.ConnectionState.Open)
+                    {
+                        string cmdSQL = String.Format(String.Concat(
+                            "SELECT cnpj Id, \"RazaoSocial\" Value ",
+                            "FROM \"Fornecedor\" ",
+                            "WHERE ROWNUM <= 10 ",
+                            "AND \"RazaoSocial\" LIKE '{0}%' ",
+                            "GROUP BY \"RazaoSocial\", cnpj ",
+                            "ORDER BY \"RazaoSocial\""), nome);
+
+                        select = conn.Query<GarantiaConfiguracao>(cmdSQL).ToList();
+                    }
+                    conn.Close();
+                }
+                return select;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
         #endregion

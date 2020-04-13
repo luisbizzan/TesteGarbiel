@@ -21,5 +21,14 @@ namespace FWLog.Services.Services
         }
         #endregion
 
+        #region AutoComplete Fornecedor
+        public List<GarantiaConfiguracao> AutoCompleteFornecedor(string nome)
+        {
+            return _uow.GarantiaConfiguracaoRepository.AutoCompleteFornecedor(nome);
+        }
+        #endregion
+
+        
+
     }
 }
