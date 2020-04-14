@@ -99,8 +99,7 @@
                     IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
                     IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
                     CorredorInicial: $("#Filter_CorredorInicial").val(),
-                    CorredorFinal: $("#Filter_CorredorFinal").val(),
-                    ImprimirVazia: $("#Filter_ImprimirVazia").val(),
+                    CorredorFinal: $("#Filter_CorredorFinal").val()
                 },
                 xhrFields: {
                     responseType: 'blob'
@@ -155,11 +154,14 @@ function imprimir(acao, id) {
                     IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
                     IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
                     CorredorInicial: $("#Filter_CorredorInicial").val(),
-                    CorredorFinal: $("#Filter_CorredorFinal").val(),
-                    ImprimirVazia: $("#Filter_ImprimirVazia").val(),
+                    CorredorFinal: $("#Filter_CorredorFinal").val()
                 },
                 success: function (result) {
-                    mensagemImpressao(result);
+                    if (result.Success) {
+                        PNotify.success({ text: result.Message });
+                    } else {
+                        PNotify.error({ text: result.Message });
+                    }
                     $('#modalImpressoras').modal('toggle');
                     waitingDialog.hide();
                 }

@@ -11,7 +11,5 @@
         public int? CorredorInicial { get; set; }
 
         public int? CorredorFinal { get; set; }
-
-        public bool ImprimirVazia { get; set; }
     }
 }
