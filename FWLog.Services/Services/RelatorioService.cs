@@ -1101,7 +1101,13 @@ namespace FWLog.Services.Services
                 NomeUsuario = filter.NomeUsuarioRequisicao,
                 Orientacao = Orientation.Landscape,
                 Titulo = "Relatório Total de Endereço por Ala",
-                Filtros = null
+                Filtros = new FwRelatorioDadosFiltro()
+                {
+                    NivelArmazenagem = _unitiOfWork.NivelArmazenagemRepository.GetById(filter.IdNivelArmazenagem)?.Descricao,
+                    PontoArmazenagem = _unitiOfWork.PontoArmazenagemRepository.GetById(filter.IdPontoArmazenagem)?.Descricao,
+                    CorredorInicial = filter.CorredorInicial,
+                    CorredorFinal = filter.CorredorFinal
+                }
             };
 
             var fwRelatorio = new FwRelatorio();
@@ -1288,10 +1294,15 @@ namespace FWLog.Services.Services
                 NomeUsuario = filter.NomeUsuarioRequisicao,
                 Orientacao = Orientation.Portrait,
                 Titulo = "Relatório Posição Para Inventário",
-                Filtros = null
+                Filtros = new FwRelatorioDadosFiltro()
+                {
+                    NivelArmazenagem = filter.IdNivelArmazenagem.HasValue ?_unitiOfWork.NivelArmazenagemRepository.GetById(filter.IdNivelArmazenagem.Value)?.Descricao : null,
+                    PontoArmazenagem = filter.IdNivelArmazenagem.HasValue ?_unitiOfWork.PontoArmazenagemRepository.GetById(filter.IdPontoArmazenagem.Value)?.Descricao : null,
+                    Referencia = filter.IdProduto.HasValue ?_unitiOfWork.ProdutoRepository.GetById(filter.IdProduto.Value)?.Referencia : null,
+                    Descricao = filter.IdProduto.HasValue ? _unitiOfWork.ProdutoRepository.GetById(filter.IdProduto.Value)?.Descricao : null
+                }
             };
-
-            var fwRelatorio = new FwRelatorio();
+                var fwRelatorio = new FwRelatorio();
 
             Document document = fwRelatorio.Customizar(fwRelatorioDados);
 
@@ -1563,7 +1574,7 @@ namespace FWLog.Services.Services
                 NomeEmpresa = empresa.RazaoSocial,
                 NomeUsuario = filtro.NomeUsuarioRequisicao,
                 Orientacao = Orientation.Landscape,
-                Titulo = "Relatório  - Logística por Corredor",
+                Titulo = "Relatório - Logística por Corredor",
                 Filtros = new FwRelatorioDadosFiltro()
                 {
                     NivelArmazenagem = _unitiOfWork.NivelArmazenagemRepository.GetById(filtro.IdNivelArmazenagem)?.Descricao,

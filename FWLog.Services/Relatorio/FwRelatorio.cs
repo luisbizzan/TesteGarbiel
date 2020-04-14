@@ -169,7 +169,7 @@ namespace FWLog.Services.Relatorio
                 if (_dataSource.Filtros.CodigoDeBarras != null)
                 {
                     var codigoDeBarras = rowHeader.Cells[0].AddParagraph();
-                    codigoDeBarras.AddFormattedText("Referência: ", TextFormat.Bold);
+                    codigoDeBarras.AddFormattedText("Código de Barras: ", TextFormat.Bold);
                     codigoDeBarras.AddFormattedText(new Font("Verdana", 10));
                     codigoDeBarras.AddText(_dataSource.Filtros.CodigoDeBarras);
                 }
@@ -177,7 +177,7 @@ namespace FWLog.Services.Relatorio
                 if (_dataSource.Filtros.Descricao != null)
                 {
                     var descricao = rowHeader.Cells[0].AddParagraph();
-                    descricao.AddFormattedText("Referência: ", TextFormat.Bold);
+                    descricao.AddFormattedText("Descrição: ", TextFormat.Bold);
                     descricao.AddFormattedText(new Font("Verdana", 10));
                     descricao.AddText(_dataSource.Filtros.Descricao);
                 }
