@@ -21,20 +21,17 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly ProdutoEstoqueService _produtoEstoqueService;
-        private readonly ApplicationLogService _applicationLogService;
         private readonly RelatorioService _relatorioService;
         private readonly ILog _log;
 
         public ProdutoController(
             UnitOfWork unitOfWork, 
             ProdutoEstoqueService produtoEstoqueService, 
-            ApplicationLogService applicationLogService,
             RelatorioService relatorioService,
             ILog ilog)
         {
             _unitOfWork = unitOfWork;
             _produtoEstoqueService = produtoEstoqueService;
-            _applicationLogService = applicationLogService;
             _relatorioService = relatorioService;
             _log = ilog;
         }
@@ -197,7 +194,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
                 Notify.Error("Algo inesperado ocorreu!");
                 return RedirectToAction("Index");
             }

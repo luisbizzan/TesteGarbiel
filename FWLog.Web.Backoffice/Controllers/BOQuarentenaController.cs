@@ -15,20 +15,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using log4net;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
     public class BOQuarentenaController : BOBaseController
     {
         private readonly UnitOfWork _uow;
-        private readonly ApplicationLogService _applicationLogService;
+        private ILog _log;
         private readonly QuarentenaService _quarentenaService;
 
-        public BOQuarentenaController(UnitOfWork uow, QuarentenaService quarentenaService, ApplicationLogService applicationLogService)
+        public BOQuarentenaController(UnitOfWork uow, QuarentenaService quarentenaService, ILog log)
         {
             _uow = uow;
             _quarentenaService = quarentenaService;
-            _applicationLogService = applicationLogService;
+            _log = log;
         }
 
         private SelectList Status
@@ -368,7 +369,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception ex)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+                _log.Error(ex.Message, ex);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -411,7 +412,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception ex)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+                _log.Error(ex.Message, ex);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -489,7 +490,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception e)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 return Json(new AjaxGenericResultModel
                 {

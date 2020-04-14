@@ -1,5 +1,4 @@
 ﻿using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
@@ -8,16 +7,19 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 
 namespace FWLog.Services.Services
 {
     public class RepresentanteService : BaseService
     {
         private readonly UnitOfWork _unitOfWork;
-        
-        public RepresentanteService(UnitOfWork unitOfWork) 
+        private ILog _log;
+
+        public RepresentanteService(UnitOfWork unitOfWork, ILog log) 
         {
             _unitOfWork = unitOfWork;
+            _log = log;
         }
 
         public async Task ConsultarRepresentante()
@@ -76,8 +78,7 @@ namespace FWLog.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_unitOfWork);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração da Representante: {0}.", representanteInt.CodigoIntegracao));
+                    _log.Error(string.Format("Erro na integração da Representante: {0}.", representanteInt.CodigoIntegracao), ex);
 
                     continue;
                 }

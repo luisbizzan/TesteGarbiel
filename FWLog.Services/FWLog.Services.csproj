@@ -203,12 +203,12 @@
     <Compile Include="Relatorio\Model\RastreioPeca.cs" />
     <Compile Include="Relatorio\Model\NotasRecebimento.cs" />
     <Compile Include="Relatorio\Model\RecebimentoNotas.cs" />
+    <Compile Include="Relatorio\Model\DadosRelatorioTotalizacaoLocalizacao.cs" />
     <Compile Include="Relatorio\Model\RelatorioHistoricoColetor.cs" />
     <Compile Include="Relatorio\Model\RelatorioLogisticaCorredor.cs" />
     <Compile Include="Relatorio\Model\RelatorioProdutos.cs" />
     <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
     <Compile Include="Services\AccountService.cs" />
-    <Compile Include="Services\ApplicationLogService.cs" />
     <Compile Include="Services\ArmazenagemService.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\AtividadeEstoqueService.cs" />

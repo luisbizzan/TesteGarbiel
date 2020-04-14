@@ -232,6 +232,16 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O endereço não foi encontrado.");
             }
 
+            if (enderecoArmazenagem.IsPontoSeparacao)
+            {
+                throw new BusinessException("Não é possível instalar volume em um endereço de Picking.");
+            }
+
+            if (enderecoArmazenagem.PontoArmazenagem.IdTipoArmazenagem != TipoArmazenagemEnum.Volume)
+            {
+                throw new BusinessException("Tipo de Movimentação inválido.");
+            }
+
             if (enderecoArmazenagem.Ativo == false)
             {
                 throw new BusinessException("O endereço não está ativo.");
