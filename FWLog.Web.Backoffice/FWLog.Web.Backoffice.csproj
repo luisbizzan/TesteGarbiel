@@ -596,6 +596,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Scripts\dart\HttpService.js" />
     <Content Include="Scripts\dart\waitingDialog.js" />
+    <Content Include="Scripts\vendors\datatables\dataTables.rowGroup.js" />
     <Content Include="Scripts\vendors\onScan\onscan.js" />
     <Content Include="Scripts\vendors\onScan\onscan.min.js" />
     <Content Include="Scripts\Views\Armazenagem\relatorioLogisticaCorredor.js" />
