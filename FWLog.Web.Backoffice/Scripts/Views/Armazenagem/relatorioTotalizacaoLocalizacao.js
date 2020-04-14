@@ -110,7 +110,7 @@
                     var url = window.URL.createObjectURL(data);
 
                     a.href = url;
-                    a.download = 'Relatório - Totalização por Localização.pdf';
+                    a.download = 'Relatório Totalização por Localização.pdf';
                     document.body.append(a);
                     a.click();
                     a.remove();

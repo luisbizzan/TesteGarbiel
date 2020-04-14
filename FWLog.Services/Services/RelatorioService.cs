@@ -1385,46 +1385,32 @@ namespace FWLog.Services.Services
 
         public byte[] GerarRelatorioTotalizacaoLocalizacao(RelatorioTotalizacaoLocalizacaoFiltro filtro, string labelUsuario)
         {
-            //IQueryable<LoteProdutoEndereco> query = _unitiOfWork.LoteProdutoEnderecoRepository.BuscarDadosTotalizacaoLocalizacao(filtro.IdEmpresa)
-            //.AsQueryable();
+            var listaLocalizacao = _unitiOfWork.LoteProdutoEnderecoRepository.BuscarDadosTotalizacaoLocalizacao(filtro);
 
-            //if (filtro.IdNivelArmazenagem.HasValue)
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filtro.IdEmpresa);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = labelUsuario,
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório Totalização por Localização",
+                Filtros = new FwRelatorioDadosFiltro()
+                {
+                    NivelArmazenagem = _unitiOfWork.NivelArmazenagemRepository.GetById(filtro.IdNivelArmazenagem)?.Descricao,
+                    PontoArmazenagem = _unitiOfWork.PontoArmazenagemRepository.GetById(filtro.IdPontoArmazenagem)?.Descricao,
+                    CorredorInicial = filtro.CorredorInicial,
+                    CorredorFinal = filtro.CorredorFinal
+                }
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            Document document = fwRelatorio.Customizar(fwRelatorioDados);
+
+            //if (listaLocalizacao.Any())
             //{
-            //    query = query.Where(x => x.EnderecoArmazenagem.IdNivelArmazenagem == filtro.IdNivelArmazenagem);
-            //}
-
-            //if (filtro.IdPontoArmazenagem.HasValue)
-            //{
-            //    query = query.Where(x => x.EnderecoArmazenagem.IdPontoArmazenagem == filtro.IdPontoArmazenagem);
-            //}
-
-            //if (filtro.IdProduto.HasValue)
-            //{
-            //    query = query.Where(x => x.IdProduto == filtro.IdProduto);
-            //}
-
-            return null;
-
-            //Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filtro.IdEmpresa);
-
-            //var fwRelatorioDados = new FwRelatorioDados
-            //{
-            //    DataCriacao = DateTime.Now,
-            //    NomeEmpresa = empresa.RazaoSocial,
-            //    NomeUsuario = labelUsuario,
-            //    Orientacao = Orientation.Landscape,
-            //    Titulo = "Relatório - Totalização por Localização",
-            //    Filtros = null
-            //};
-
-            //var fwRelatorio = new FwRelatorio();
-
-            //Document document = fwRelatorio.Customizar(fwRelatorioDados);
-
-            //if (query.Any())
-            //{
-            //    var produtos = query.Select(x => x.Produto).Distinct().OrderBy(x => x.IdProduto).ToList();
-
             //    Paragraph paragraph = document.Sections[0].AddParagraph();
             //    paragraph.AddLineBreak();
             //    Table tabela = document.Sections[0].AddTable();
@@ -1436,7 +1422,7 @@ namespace FWLog.Services.Services
 
             //    Row row = tabela.AddRow();
 
-            //    foreach (var produto in produtos)
+            //    foreach (var localizacao in listaLocalizacao)
             //    {
             //        row = tabela.AddRow();
 
@@ -1445,7 +1431,7 @@ namespace FWLog.Services.Services
             //        {
             //            Bold = true
             //        };
-            //        paragraph.AddText(string.Concat(produto.Referencia, " - ", produto.Descricao));
+            //        paragraph.AddText(string.Concat(localizacao.Referencia, " - ", localizacao.Descricao));
 
             //        row.Cells[0].AddParagraph("Endereço");
             //        row.Cells[0].Format.Font.Bold = true;
@@ -1454,7 +1440,7 @@ namespace FWLog.Services.Services
             //        row.Cells[2].AddParagraph("Quantidade");
             //        row.Cells[2].Format.Font.Bold = true;
 
-            //        var endereçosInstalados = query.Where(x => x.IdProduto == produto.IdProduto).Select(y => y).OrderBy(x => x.EnderecoArmazenagem.Codigo).ToList();
+            //        var endereçosInstalados = query.Where(x => x.IdProduto == localizacao.IdProduto).Select(y => y).OrderBy(x => x.EnderecoArmazenagem.Codigo).ToList();
             //        var qtdeTotal = endereçosInstalados.Sum(x => x.Quantidade);
 
             //        foreach (var endereco in endereçosInstalados)
@@ -1490,7 +1476,7 @@ namespace FWLog.Services.Services
             //    }
             //}
 
-            //return fwRelatorio.GerarCustomizado();
+            return fwRelatorio.GerarCustomizado();
         }
 
         public void ImprimirRelatorioTotalizacaoLocalizacao(RelatorioTotalizacaoLocalizacaoFiltro filtro, long idImpressora, string labelUsuario)
@@ -1500,39 +1486,39 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(relatorio, idImpressora);
         }
 
-        public byte[] GerarRelatorioLogisticaCorredor(RelatorioLogisticaCorredorRequest filter)
+        public byte[] GerarRelatorioLogisticaCorredor(RelatorioLogisticaCorredorRequest filtro)
         {
-            IQueryable<LoteProdutoEndereco> query = _unitiOfWork.LoteProdutoEnderecoRepository.PesquisarPorEmpresa(filter.IdEmpresa)
+            IQueryable<LoteProdutoEndereco> query = _unitiOfWork.LoteProdutoEnderecoRepository.PesquisarPorEmpresa(filtro.IdEmpresa)
             .AsQueryable();
 
-            query = query.Where(lpe => lpe.EnderecoArmazenagem.IdNivelArmazenagem == filter.IdNivelArmazenagem);
+            query = query.Where(lpe => lpe.EnderecoArmazenagem.IdNivelArmazenagem == filtro.IdNivelArmazenagem);
 
-            query = query.Where(lpe => lpe.EnderecoArmazenagem.IdPontoArmazenagem == filter.IdPontoArmazenagem);
+            query = query.Where(lpe => lpe.EnderecoArmazenagem.IdPontoArmazenagem == filtro.IdPontoArmazenagem);
 
-            if (filter.CorredorInicial > 0 && filter.CorredorFinal > 0)
+            if (filtro.CorredorInicial > 0 && filtro.CorredorFinal > 0)
             {
-                var range = Enumerable.Range(filter.CorredorInicial.Value, filter.CorredorFinal.Value);
+                var range = Enumerable.Range(filtro.CorredorInicial.Value, filtro.CorredorFinal.Value);
 
                 query = query.Where(lpe => range.Contains(lpe.EnderecoArmazenagem.Corredor));
             }
 
-            if (filter.DataInicial.HasValue)
+            if (filtro.DataInicial.HasValue)
             {
-                DateTime dataInicial = new DateTime(filter.DataInicial.Value.Year, filter.DataInicial.Value.Month, filter.DataInicial.Value.Day, 00, 00, 00);
+                DateTime dataInicial = new DateTime(filtro.DataInicial.Value.Year, filtro.DataInicial.Value.Month, filtro.DataInicial.Value.Day, 00, 00, 00);
                 query = query.Where(lpe => lpe.DataHoraInstalacao >= dataInicial);
             }
 
-            if (filter.DataFinal.HasValue)
+            if (filtro.DataFinal.HasValue)
             {
-                DateTime dataFinal = new DateTime(filter.DataFinal.Value.Year, filter.DataFinal.Value.Month, filter.DataFinal.Value.Day, 23, 59, 59);
+                DateTime dataFinal = new DateTime(filtro.DataFinal.Value.Year, filtro.DataFinal.Value.Month, filtro.DataFinal.Value.Day, 23, 59, 59);
                 query = query.Where(lpe => lpe.DataHoraInstalacao <= dataFinal);
             }
 
-            if (filter.Ordenacao == 0)
+            if (filtro.Ordenacao == 0)
             {
                 query = query.OrderBy(lpe => lpe.EnderecoArmazenagem.Corredor).ThenBy(lpe => lpe.EnderecoArmazenagem.Codigo);
             }
-            else if (filter.Ordenacao == 1)
+            else if (filtro.Ordenacao == 1)
             {
                 query = query.OrderBy(lpe => lpe.ProdutoEstoque.Saldo).ThenBy(lpe => lpe.EnderecoArmazenagem.Codigo);
             }
@@ -1569,16 +1555,24 @@ namespace FWLog.Services.Services
                 }
             }
 
-            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filter.IdEmpresa);
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filtro.IdEmpresa);
 
             var fwRelatorioDados = new FwRelatorioDados
             {
                 DataCriacao = DateTime.Now,
                 NomeEmpresa = empresa.RazaoSocial,
-                NomeUsuario = filter.NomeUsuarioRequisicao,
+                NomeUsuario = filtro.NomeUsuarioRequisicao,
                 Orientacao = Orientation.Landscape,
                 Titulo = "Relatório  - Logística por Corredor",
-                Filtros = null,
+                Filtros = new FwRelatorioDadosFiltro()
+                {
+                    NivelArmazenagem = _unitiOfWork.NivelArmazenagemRepository.GetById(filtro.IdNivelArmazenagem)?.Descricao,
+                    PontoArmazenagem = _unitiOfWork.PontoArmazenagemRepository.GetById(filtro.IdPontoArmazenagem)?.Descricao,
+                    CorredorInicial = filtro.CorredorInicial,
+                    CorredorFinal = filtro.CorredorFinal,
+                    DataInicial = filtro.DataInicial,
+                    DataFinal = filtro.DataFinal
+                },
                 Dados = listaHistorico
             };
 

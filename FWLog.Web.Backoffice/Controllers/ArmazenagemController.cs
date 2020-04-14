@@ -498,9 +498,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
             relatorioRequest.IdEmpresa = IdEmpresa;
 
-            byte[] relatorio = _relatorioService.GerarRelatorioTotalizacaoLocalizacao(relatorioRequest, LabelUsuario);
+            var relatorio = _relatorioService.GerarRelatorioTotalizacaoLocalizacao(relatorioRequest, LabelUsuario);
 
-            return File(relatorio, "application/pdf", "Relatório - Totalização por Localização.pdf");
+            return File(relatorio, "application/pdf", "Relatório Totalização por Localização.pdf");
         }
 
         [HttpPost]
@@ -548,12 +548,13 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.ReltorioLogisticaCorredor)]
         public ActionResult RelatorioLogisticaCorredorPageData(DataTableFilter<RelatorioLogisticaCorredorFilterViewModel> model)
         {
-            var list = new List<RelatorioLogisticaCorredorListItemViewModel>();
-
             var filtro = Mapper.Map<DataTableFilter<RelatorioLogisticaCorredorListaFiltro>>(model);
+
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
 
             var produtos = _uow.LoteProdutoEnderecoRepository.BuscarDadosLogisticaCorredor(filtro, out int totalRecordsFiltered, out int totalRecords);
+
+            var list = new List<RelatorioLogisticaCorredorListItemViewModel>();
 
             produtos.ForEach(lpe => list.Add(new RelatorioLogisticaCorredorListItemViewModel {
                 Altura = lpe.Produto.Altura?.ToString("n2") ?? "-",
