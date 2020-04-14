@@ -99,37 +99,41 @@
     });
 
     $("#downloadRelatorioTotalEnderecoPorAla").click(function () {
-        $.ajax({
-            url: "/Armazenagem/DownloadRelatorioTotalPorAla",
-            method: "POST",
-            data: {
-                IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
-                IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
-                CorredorInicial: $("#Filter_CorredorInicial").val(),
-                CorredorFinal: $("#Filter_CorredorFinal").val(),
-                ImprimirVazia: $("#Filter_ImprimirVazia").val(),
-            },
-            xhrFields: {
-                responseType: 'blob'
-            },
-            success: function (data) {
-                var a = document.createElement('a');
-                var url = window.URL.createObjectURL(data);
+        if ($("#relatorioTotalizacaoPorAlaForm").valid()) {
+            $.ajax({
+                url: "/Armazenagem/DownloadRelatorioTotalPorAla",
+                method: "POST",
+                data: {
+                    IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
+                    IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
+                    CorredorInicial: $("#Filter_CorredorInicial").val(),
+                    CorredorFinal: $("#Filter_CorredorFinal").val(),
+                    ImprimirVazia: $("#Filter_ImprimirVazia").val(),
+                },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (data) {
+                    var a = document.createElement('a');
+                    var url = window.URL.createObjectURL(data);
 
-                a.href = url;
-                a.download = 'Relatório total por alas.pdf';
-                document.body.append(a);
-                a.click();
-                a.remove();
-                window.URL.revokeObjectURL(url);
-            }
-        });
+                    a.href = url;
+                    a.download = 'Relatório total por alas.pdf';
+                    document.body.append(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                }
+            });
+        }
     });
 
     $("#imprimirRelatorioTotalEnderecoPorAla").click(function () {
-        $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=totaPorlAla", function () {
-            $("#modalImpressoras").modal();
-        });
+        if ($("#relatorioTotalizacaoPorAlaForm").valid()) {
+            $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=totaPorlAla", function () {
+                $("#modalImpressoras").modal();
+            });
+        }
     });
 
 })();

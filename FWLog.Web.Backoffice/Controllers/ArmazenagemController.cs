@@ -597,25 +597,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.ReltorioLogisticaCorredor)]
-        public JsonResult ValidarDownloadOuImpressaoLogisticaCorredor(long? idNivelArmazenagem, long? idPontoArmazenagem)
-        {
-            if (idNivelArmazenagem == null && idPontoArmazenagem == null)
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = "Nenhum registro encontrado para download ou para impressão, verifique os filtros e tente novamente.",
-                });
-            }
-
-            return Json(new AjaxGenericResultModel
-            {
-                Success = true
-            });
-        }
-
-        [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.ReltorioLogisticaCorredor)]
         public JsonResult ImprimirRelatorioLogisticaCorredor(ImprimirRelatorioLogisticaCorredorViewModel viewModel)
         {
             try

@@ -141,47 +141,43 @@
     });
 
     $("#downloadRelatorioLogisticaCorredor").click(function () {
-        $.when(validarOsFiltrosParaDownloadOuImpressao()).then(function (success) {
-            if (success) {
-                $.ajax({
-                    url: "/Armazenagem/DownloadRelatorioLogisticaCorredor",
-                    method: "POST",
-                    data: {
-                        IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
-                        IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
-                        CorredorInicial: $("#Filter_CorredorInicial").val(),
-                        CorredorFinal: $("#Filter_CorredorFinal").val(),
-                        DataInicial: $("#Filter_DataInicial").val(),
-                        DataFinal: $("#Filter_DataFinal").val(),
-                        Ordenacao: $("#Filter_Ordenacao").val()
-                    },
-                    xhrFields: {
-                        responseType: 'blob'
-                    },
-                    success: function (data) {
-                        var a = document.createElement('a');
-                        var url = window.URL.createObjectURL(data);
+        if ($("#relatorioLogisticaCorredorForm").valid()) {
+            $.ajax({
+                url: "/Armazenagem/DownloadRelatorioLogisticaCorredor",
+                method: "POST",
+                data: {
+                    IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
+                    IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
+                    CorredorInicial: $("#Filter_CorredorInicial").val(),
+                    CorredorFinal: $("#Filter_CorredorFinal").val(),
+                    DataInicial: $("#Filter_DataInicial").val(),
+                    DataFinal: $("#Filter_DataFinal").val(),
+                    Ordenacao: $("#Filter_Ordenacao").val()
+                },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (data) {
+                    var a = document.createElement('a');
+                    var url = window.URL.createObjectURL(data);
 
-                        a.href = url;
-                        a.download = 'Relatório - Logística por Corredor.pdf';
-                        document.body.append(a);
-                        a.click();
-                        a.remove();
-                        window.URL.revokeObjectURL(url);
-                    }
-                });
-            }
-        });
+                    a.href = url;
+                    a.download = 'Relatório - Logística por Corredor.pdf';
+                    document.body.append(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                }
+            });
+        }
     });
 
     $("#imprimirRelatorioLogisticaCorredor").click(function () {
-        $.when(validarOsFiltrosParaDownloadOuImpressao()).then(function (success) {
-            if (success) {
-                $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=logisticaCorredor", function () {
-                    $("#modalImpressoras").modal();
-                });
-            }
-        });
+        if ($("#relatorioLogisticaCorredorForm").valid()) {
+            $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=logisticaCorredor", function () {
+                $("#modalImpressoras").modal();
+            });
+        }
     });
 
 })();
@@ -199,38 +195,6 @@ function selecionarPontoArmazenagem(idPontoArmazenagem, descricao) {
     $("#modalPesquisaPontoArmazenagem").modal("hide");
     $("#modalPesquisaPontoArmazenagem").empty();
 }
-
-
-function validarOsFiltrosParaDownloadOuImpressao() {
-
-    let success = true;
-
-    $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "ValidarDownloadOuImpressaoLogisticaCorredor",
-        global: false,
-        async: false,
-        cache: false,
-        method: "POST",
-        data: {
-            idNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
-            idPontoArmazenagem: $("#Filter_PontoArmazenagem").val()
-        },
-        success: function (result) {
-            if (!result.Success) {
-                PNotify.warning({ text: result.Message });
-                success = false;
-            }
-        },
-        error: function () {
-            PNotify.warning({ text: 'Não foi possível validar os filtros. Por favor, tente novamente!' });
-        }
-    });
-
-    return success;
-}
-
-
-
 
 function imprimir(acao, id) {
     switch (acao) {
