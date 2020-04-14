@@ -120,7 +120,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public List<EnderecoArmazenagem> BuscarPorNivelEPontoArmazenagem(long nivel, long pontoarmazenagem, long idEmpresa)
         {
-            return Entities.EnderecoArmazenagem.Where(f => f.IdNivelArmazenagem == nivel && f.IdPontoArmazenagem == pontoarmazenagem && f.IdEmpresa == idEmpresa && !f.IsPontoSeparacao).ToList();
+            return Entities.EnderecoArmazenagem.Where(f => f.IdNivelArmazenagem == nivel && f.IdPontoArmazenagem == pontoarmazenagem && f.IdEmpresa == idEmpresa).ToList();
         }
 
         public List<EnderecoProdutoListaLinhaTabela> PesquisarNivelPontoCorredor(int corredor, long ponto, long idEmpresa)
