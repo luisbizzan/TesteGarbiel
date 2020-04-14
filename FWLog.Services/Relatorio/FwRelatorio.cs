@@ -75,7 +75,7 @@ namespace FWLog.Services.Relatorio
                 spaceLine.AddLineBreak();
                 row.Cells[count].AddParagraph(nomeColuna);
                 spaceLine = row.Cells[count].AddParagraph();
-                
+
                 count++;
             }
 
@@ -181,11 +181,11 @@ namespace FWLog.Services.Relatorio
                     descricao.AddText(_dataSource.Filtros.Descricao);
                 }
 
-                var date = rowHeader.Cells[0].AddParagraph();
-                date.AddFormattedText(new Font("Verdana", 10));
 
                 if (_dataSource.Filtros.DataRecebimentoInicial != null && _dataSource.Filtros.DataRecebimentoFinal != null)
                 {
+                    var date = rowHeader.Cells[0].AddParagraph();
+                    date.AddFormattedText(new Font("Verdana", 10));
                     date.AddFormattedText("Data de Recebimento: ", TextFormat.Bold);
                     date.AddText(string.Concat(_dataSource.Filtros
                         .DataRecebimentoInicial?.ToString("dd/MM/yyyy"), " à ",
@@ -193,12 +193,15 @@ namespace FWLog.Services.Relatorio
                 }
                 else if (_dataSource.Filtros?.DataRecebimentoInicial != null)
                 {
+                    var date = rowHeader.Cells[0].AddParagraph();
+                    date.AddFormattedText(new Font("Verdana", 10));
                     date.AddFormattedText("Data de Recebimento Inicial: ", TextFormat.Bold);
                     date.AddText(string.Concat(_dataSource.Filtros.DataRecebimentoInicial?.ToString("dd/MM/yyyy")));
                 }
                 else if (_dataSource.Filtros.DataRecebimentoFinal != null)
                 {
-
+                    var date = rowHeader.Cells[0].AddParagraph();
+                    date.AddFormattedText(new Font("Verdana", 10));
                     date.AddFormattedText("Data de Recebimento Final: ", TextFormat.Bold);
                     date.AddText(string.Concat(_dataSource.Filtros.DataRecebimentoFinal?.ToString("dd/MM/yyyy")));
                 }
@@ -213,6 +216,8 @@ namespace FWLog.Services.Relatorio
 
                 if (_dataSource.Filtros.DataInicial != null && _dataSource.Filtros.DataFinal != null)
                 {
+                    var date = rowHeader.Cells[0].AddParagraph();
+                    date.AddFormattedText(new Font("Verdana", 10));
                     date.AddFormattedText("Data: ", TextFormat.Bold);
                     date.AddText(string.Concat(_dataSource.Filtros
                         .DataInicial?.ToString("dd/MM/yyyy"), " à ",
@@ -233,6 +238,30 @@ namespace FWLog.Services.Relatorio
                     historicoTipo.AddFormattedText("Tipo Histórico: ", TextFormat.Bold);
                     historicoTipo.AddFormattedText(new Font("Verdana", 10));
                     historicoTipo.AddText(_dataSource.Filtros.HistoricoTipo);
+                }
+
+                if (_dataSource.Filtros.NivelArmazenagem != null)
+                {
+                    var nivelArmazenagem = rowHeader.Cells[0].AddParagraph();
+                    nivelArmazenagem.AddFormattedText("Nível Armazenagem: ", TextFormat.Bold);
+                    nivelArmazenagem.AddFormattedText(new Font("Verdana", 10));
+                    nivelArmazenagem.AddText(_dataSource.Filtros.NivelArmazenagem);
+                }
+
+                if (_dataSource.Filtros.PontoArmazenagem != null)
+                {
+                    var pontoArmazenagem = rowHeader.Cells[0].AddParagraph();
+                    pontoArmazenagem.AddFormattedText("Ponto Armazenagem: ", TextFormat.Bold);
+                    pontoArmazenagem.AddFormattedText(new Font("Verdana", 10));
+                    pontoArmazenagem.AddText(_dataSource.Filtros.PontoArmazenagem);
+                }
+
+                if (_dataSource.Filtros.CorredorInicial.HasValue && _dataSource.Filtros.CorredorFinal.HasValue)
+                {
+                    var corredores = rowHeader.Cells[0].AddParagraph();
+                    corredores.AddFormattedText("Corredores: ", TextFormat.Bold);
+                    corredores.AddFormattedText(new Font("Verdana", 10));
+                    corredores.AddText($"{_dataSource.Filtros.CorredorInicial} à { _dataSource.Filtros.CorredorFinal}");
                 }
             }
 
