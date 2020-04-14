@@ -213,7 +213,11 @@ function imprimir(acao, id) {
                     Ordenacao: $("#Filter_Ordenacao").val()
                 },
                 success: function (result) {
-                    mensagemImpressao(result);
+                    if (result.Success) {
+                        PNotify.success({ text: result.Message });
+                    } else {
+                        PNotify.error({ text: result.Message });
+                    }
                     $('#modalImpressoras').modal('toggle');
                     waitingDialog.hide();
                 }

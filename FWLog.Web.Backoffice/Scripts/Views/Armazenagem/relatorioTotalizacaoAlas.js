@@ -53,7 +53,7 @@
             dart.dataTables.saveFilterToData(data);
         },
         columns: [
-            { "defaultContent": "", width:'10%'},
+            { "defaultContent": "", width: '10%' },
             { data: 'CodigoEndereco' },
             { data: 'IdUsuarioInstalacao', width: '15%' },
             { data: 'ReferenciaProduto' },
@@ -172,7 +172,8 @@ function imprimir(acao, id) {
                         PNotify.success({ text: result.Message });
                     } else {
                         PNotify.error({ text: result.Message });
-                    }                    $('#modalImpressoras').modal('toggle');
+                    }
+                    $('#modalImpressoras').modal('toggle');
                     waitingDialog.hide();
                 }
             });
