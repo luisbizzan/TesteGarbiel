@@ -159,7 +159,11 @@ function imprimir(acao, id) {
                     ImprimirVazia: $("#Filter_ImprimirVazia").val(),
                 },
                 success: function (result) {
-                    mensagemImpressao(result);
+                    if (result.Success) {
+                        PNotify.success({ text: result.Message });
+                    } else {
+                        PNotify.error({ text: result.Message });
+                    }
                     $('#modalImpressoras').modal('toggle');
                     waitingDialog.hide();
                 }

@@ -220,8 +220,11 @@ function imprimir(acao, id) {
                     IdProduto: $("#Filter_IdProduto").val(),
                 },
                 success: function (result) {
-                    mensagemImpressao(result);
-                    $('#modalImpressoras').modal('toggle');
+                    if (result.Success) {
+                        PNotify.success({ text: result.Message });
+                    } else {
+                        PNotify.error({ text: result.Message });
+                    }                    $('#modalImpressoras').modal('toggle');
                     waitingDialog.hide();
                 }
             });
