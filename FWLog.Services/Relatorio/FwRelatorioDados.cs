@@ -34,6 +34,5 @@ namespace FWLog.Services.Relatorio
         public string PontoArmazenagem { get; set; }
         public int? CorredorInicial { get; set; }
         public int? CorredorFinal { get; set; }
-        public string Produto { get; set; }
     }
 }
