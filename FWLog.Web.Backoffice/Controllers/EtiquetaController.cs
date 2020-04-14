@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Web.Mvc;
 using FWLog.Services.Model.LogEtiquetagem;
+using log4net;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -17,14 +18,14 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly UnitOfWork _unitOfWork;
         private readonly EtiquetaService _etiquetaService;
         private readonly LogEtiquetagemService _logEtiquetagemService;
-        private readonly ApplicationLogService _applicationLogService;
+        private ILog _log;
 
-        public EtiquetaController(UnitOfWork unitOfWork, LogEtiquetagemService logEtiquetagemService, EtiquetaService etiquetaService, ApplicationLogService applicationLogService)
+        public EtiquetaController(UnitOfWork unitOfWork, LogEtiquetagemService logEtiquetagemService, EtiquetaService etiquetaService, ILog log)
         {
             _unitOfWork = unitOfWork;
             _etiquetaService = etiquetaService;
             _logEtiquetagemService = logEtiquetagemService;
-            _applicationLogService = applicationLogService;
+            _log = log;
         }
 
         #region Lote
@@ -108,7 +109,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception ex)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+                _log.Error(ex.Message, ex);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -179,7 +180,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception ex)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+                _log.Error(ex.Message, ex);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -235,7 +236,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception ex)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+                _log.Error(ex.Message, ex);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -286,7 +287,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception ex)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+                _log.Error(ex.Message, ex);
 
                 return Json(new AjaxGenericResultModel
                 {
