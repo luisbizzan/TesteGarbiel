@@ -498,9 +498,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
             relatorioRequest.IdEmpresa = IdEmpresa;
 
-            byte[] relatorio = _relatorioService.GerarRelatorioTotalizacaoLocalizacao(relatorioRequest, LabelUsuario);
+            var relatorio = _relatorioService.GerarRelatorioTotalizacaoLocalizacao(relatorioRequest, LabelUsuario);
 
-            return File(relatorio, "application/pdf", "Relatório - Totalização por Localização.pdf");
+            return File(relatorio, "application/pdf", "Relatório Totalização por Localização.pdf");
         }
 
         [HttpPost]
