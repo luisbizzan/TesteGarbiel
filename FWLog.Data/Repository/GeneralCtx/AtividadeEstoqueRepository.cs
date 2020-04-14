@@ -26,6 +26,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                 throw new BusinessException("O usuário não tem configuração de empresa.");
             }
 
+            if (!empresaUsuario.CorredorEstoqueInicio.HasValue || !empresaUsuario.CorredorEstoqueFim.HasValue)
+            {
+                return new List<AtividadeEstoqueListaLinhaTabela>();
+            }
+
             var query = (from a in Entities.AtividadeEstoque
                          join e in Entities.EnderecoArmazenagem on a.IdEnderecoArmazenagem equals e.IdEnderecoArmazenagem
                          join p in Entities.Produto on a.IdProduto equals p.IdProduto
