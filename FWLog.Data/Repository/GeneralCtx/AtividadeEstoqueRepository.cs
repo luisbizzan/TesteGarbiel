@@ -17,7 +17,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             x.IdProduto == idProduto && x.Finalizado == finalizado).FirstOrDefault();
         }
 
-        public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa, string idUsuario, int? idAtividadeEstoqueTipo)
+        public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa, string idUsuario, List<int> tiposAtividade)
         {
             UsuarioEmpresa empresaUsuario = Entities.UsuarioEmpresa.Where(w => w.IdEmpresa == idEmpresa && w.UserId == idUsuario).FirstOrDefault();
 
@@ -39,7 +39,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             !a.Finalizado &&
                             (empresaUsuario.CorredorEstoqueInicio == null || e.Corredor >= empresaUsuario.CorredorEstoqueInicio) &&
                             (empresaUsuario.CorredorEstoqueFim == null || e.Corredor <= empresaUsuario.CorredorEstoqueFim) &&
-                            (idAtividadeEstoqueTipo.Value == 0 || (int)a.IdAtividadeEstoqueTipo == idAtividadeEstoqueTipo.Value)
+                            (tiposAtividade.Contains((int)a.IdAtividadeEstoqueTipo))
                          orderby e.Codigo, e.Horizontal, e.Vertical, e.Divisao
                          select new AtividadeEstoqueListaLinhaTabela
                          {
