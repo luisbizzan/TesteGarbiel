@@ -134,8 +134,8 @@ namespace FWLog.Web.Api.Controllers
 
                 var resposta = new AtividadesEstoqueResposta
                 {
-                    CorredorInicio = empresaUsuario.CorredorEstoqueInicio.HasValue ? empresaUsuario.CorredorEstoqueInicio.Value : 0,
-                    CorredorFim = empresaUsuario.CorredorEstoqueFim.HasValue ? empresaUsuario.CorredorEstoqueFim.Value : 0,
+                    CorredorInicio = empresaUsuario.CorredorEstoqueInicio,
+                    CorredorFim = empresaUsuario.CorredorEstoqueFim,
                     Lista = _atividadeEstoqueService.PesquisarAtividade(IdEmpresa, IdUsuario, idAtividadeEstoqueTipo)
                 };
 
