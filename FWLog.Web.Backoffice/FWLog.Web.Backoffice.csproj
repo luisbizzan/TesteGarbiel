@@ -336,7 +336,7 @@
     <Compile Include="Models\GarantiaCtx\GarantiaCreateViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaDetalhesEntradaConferenciaViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaEntradaConferenciaViewModel.cs" />
-    <Compile Include="Models\GarantiaCtx\GarantiaListViewModel.cs" />
+    <Compile Include="Models\GarantiaCtx\GarantiaListVM.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaRegistroRecebimentoViewModel.cs" />
     <Compile Include="Models\GeralCtx\GeralUploadVM.cs" />
     <Compile Include="Models\GeralCtx\GeralHistoricoVM.cs" />

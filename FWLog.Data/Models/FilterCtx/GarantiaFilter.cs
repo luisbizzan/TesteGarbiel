@@ -4,20 +4,13 @@ namespace FWLog.Data.Models.FilterCtx
 {
     public class GarantiaFilter
     {
-        public long IdEmpresa { get; set; }
-        public long? IdGarantia { get; set; }
-        public long? IdCliente { get; set; }
-        public long? IdTransportadora { get; set; }
-        public long? IdFornecedor { get; set; }
-        public long? NumeroNF { get; set; }
-        public string NumeroFicticioNF { get; set; }
-        public string ChaveAcesso { get; set; }
-        public DateTime? DataEmissaoInicial { get; set; }
-        public DateTime? DataEmissaoFinal { get; set; }
-        public DateTime? DataRecebimentoInicial { get; set; }
-        public DateTime? DataRecebimentoFinal { get; set; }
-        public string IdUsuarioConferente { get; set; }
-        public long? IdGarantiaStatus { get; set; }
+        public string Cli_Cnpj { get; set; }
+        public long? Id { get; set; }
+        public string Nota_Fiscal { get; set; }
+        public string Serie { get; set; }
+        public long? Id_Status { get; set; }
+        public DateTime? Data_Inicial { get; set; }
+        public DateTime? Data_Final { get; set; }
+        public long? Id_Tipo { get; set; }
     }
 }
-

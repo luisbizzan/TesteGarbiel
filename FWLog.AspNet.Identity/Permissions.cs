@@ -5,7 +5,9 @@ namespace FWLog.AspNet.Identity
 {
     public class Permissions : PermissionBuilder
     {
-        public Permissions() : base(Res.ResourceManager) { }
+        public Permissions() : base(Res.ResourceManager)
+        {
+        }
 
         public class ApplicationLog : PermissionGroupBuildItem
         {
@@ -113,7 +115,6 @@ namespace FWLog.AspNet.Identity
             public const string AtualizarStatus = "QuarentenaAtualizarStatus";
             public const string EmitirTermoResponsabilidade = "QuarentenaEmitirTermoResponsabilidade";
             public const string ConsultarHistorico = "QuarentenaConsultarHistorico";
-
 
             public RecebimentoQuarentena() : base(Display.FromString("Quarentena Recebimento"))
             {
@@ -273,15 +274,14 @@ namespace FWLog.AspNet.Identity
         public class Garantia : PermissionGroupBuildItem
         {
             public const string Listar = "GarantiaList";
-            public const string RegistrarRecebimento = "RecebimentoRegistrar";
-            //public const string Editar = "GarantiaEdit";
-            public const string ConferirGarantia = "ConferirGarantia";
+            public const string EstornarSolicitacao = "EstornarSolicitacao";
+            public const string ConferirSolicitacao = "ConferirSolicitacao";
 
             public Garantia() : base(Display.FromString("Solicitação de Garantia"))
             {
                 Register(Listar, Display.FromString("Listar Solicitações de Garantia"));
-                Register(RegistrarRecebimento, Display.FromString("Registrar Recebimento"));
-                Register(ConferirGarantia, Display.FromString("Conferir Garantia"));
+                Register(EstornarSolicitacao, Display.FromString("Estornar Solicitação"));
+                Register(ConferirSolicitacao, Display.FromString("Conferir Solicitação"));
                 //Register(Editar, Display.FromString("Editar Solicitações de Garantia"));
             }
         }
@@ -299,6 +299,5 @@ namespace FWLog.AspNet.Identity
                 Register(Editar, Display.FromString("Editar produto"));
             }
         }
-
     }
 }
