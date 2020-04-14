@@ -165,19 +165,17 @@ namespace FWLog.Data.Repository.GeneralCtx
             return query.ToList();
         }
 
-        public IEnumerable<RelatorioTotalizacaoLocalizacaoItem> BuscarDadosTotalizacaoLocalizacao(DataTableFilter<RelatorioTotalizacaoLocalizacaoFiltro> model, out int totalRecordsFiltered, out int totalRecords)
+        private IQueryable<RelatorioTotalizacaoLocalizacaoItem> BuscarDadosTotalizacaoLocalizacaoQuery(RelatorioTotalizacaoLocalizacaoFiltro model)
         {
-            totalRecords = Entities.LoteProdutoEndereco.Count();
-
             var baseQuery = Entities.LoteProdutoEndereco.AsNoTracking().Where(lpe =>
-                                                               lpe.IdEmpresa == model.CustomFilter.IdEmpresa &&
-                                                               lpe.EnderecoArmazenagem.IdNivelArmazenagem == model.CustomFilter.IdNivelArmazenagem &&
-                                                               lpe.EnderecoArmazenagem.IdPontoArmazenagem == model.CustomFilter.IdPontoArmazenagem
+                                                               lpe.IdEmpresa == model.IdEmpresa &&
+                                                               lpe.EnderecoArmazenagem.IdNivelArmazenagem == model.IdNivelArmazenagem &&
+                                                               lpe.EnderecoArmazenagem.IdPontoArmazenagem == model.IdPontoArmazenagem
                                                             );
 
-            if (model.CustomFilter.CorredorInicial.HasValue && model.CustomFilter.CorredorFinal.HasValue)
+            if (model.CorredorInicial.HasValue && model.CorredorFinal.HasValue)
             {
-                var range = Enumerable.Range(model.CustomFilter.CorredorInicial.Value, model.CustomFilter.CorredorFinal.Value).ToList();
+                var range = Enumerable.Range(model.CorredorInicial.Value, model.CorredorFinal.Value).ToList();
 
                 baseQuery = baseQuery.Where(y => range.Contains(y.EnderecoArmazenagem.Corredor));
             }
@@ -190,6 +188,15 @@ namespace FWLog.Data.Repository.GeneralCtx
                 Quantidade = bq.Quantidade
             });
 
+            return query;
+        }
+
+        public IEnumerable<RelatorioTotalizacaoLocalizacaoItem> BuscarDadosTotalizacaoLocalizacao(DataTableFilter<RelatorioTotalizacaoLocalizacaoFiltro> model, out int totalRecordsFiltered, out int totalRecords)
+        {
+            totalRecords = Entities.LoteProdutoEndereco.Count();
+
+            var query = BuscarDadosTotalizacaoLocalizacaoQuery(model.CustomFilter);
+
             totalRecordsFiltered = query.Count();
 
             var response = query.OrderBy(model.OrderByColumn, model.OrderByDirection)
@@ -197,6 +204,13 @@ namespace FWLog.Data.Repository.GeneralCtx
                                 .Take(model.Length);
 
             return response.ToList();
+        }
+
+        public List<RelatorioTotalizacaoLocalizacaoItem> BuscarDadosTotalizacaoLocalizacao(RelatorioTotalizacaoLocalizacaoFiltro model)
+        {
+            var query = BuscarDadosTotalizacaoLocalizacaoQuery(model);
+
+            return query.ToList();
         }
     }
 }
