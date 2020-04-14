@@ -491,7 +491,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioPosicaoInventario)]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoLocalizacao)]
         public ActionResult DownloadRelatorioRelatorioTotalizacaoLocalizacao(RelatorioTotalizacaoLocalizacaoFilterViewModel viewModel)
         {
             var relatorioRequest = Mapper.Map<RelatorioTotalizacaoLocalizacaoFiltro>(viewModel);
@@ -504,7 +504,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioPosicaoInventario)]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoLocalizacao)]
         public JsonResult ImprimirRelatorioRelatorioTotalizacaoLocalizacao(RelatorioTotalizacaoLocalizacaoFilterViewModel viewModel, long idImpressora)
         {
             try
@@ -564,7 +564,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Saldo = lpe.ProdutoEstoque?.Saldo.ToString() ?? "-",
                 Cubagem = lpe.Produto.MetroCubico.ToString() ?? "-",
                 Largura = lpe.Produto.Largura?.ToString("n2") ?? "-",
-                Comprimento = lpe.Produto.Comprimento?.ToString() ?? "-",
+                Comprimento = lpe.Produto.Comprimento?.ToString("n2") ?? "-",
                 DtRepo = null,
                 DuraDD = null,
                 GiroDD = null,
