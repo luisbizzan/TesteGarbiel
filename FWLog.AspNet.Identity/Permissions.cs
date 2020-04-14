@@ -318,9 +318,9 @@ namespace FWLog.AspNet.Identity
         {
             public const string Listar = "HistoricoAcaoUsuarioListar";
 
-            public HistoricoAcaoUsuario() : base(Display.FromString("Histórico de Ações do Usuário"))
+            public HistoricoAcaoUsuario() : base(Display.FromString("Resumo Atividades RF"))
             {
-                Register(Listar, Display.FromString("Listar Histórico"));
+                Register(Listar, Display.FromString("Listar Atividades"));
             }
         }
     }

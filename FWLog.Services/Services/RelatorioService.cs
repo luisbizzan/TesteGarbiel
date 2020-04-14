@@ -1037,7 +1037,7 @@ namespace FWLog.Services.Services
                 NomeEmpresa = empresa.RazaoSocial,
                 NomeUsuario = filter.NomeUsuarioRequisicao,
                 Orientacao = Orientation.Landscape,
-                Titulo = "Relatório Histórico do Usuário",
+                Titulo = "Resumo Atividades RF",
                 Filtros = new FwRelatorioDadosFiltro
                 {
                     DataInicial = filter.DataInicial,
@@ -1296,13 +1296,13 @@ namespace FWLog.Services.Services
                 Titulo = "Relatório Posição Para Inventário",
                 Filtros = new FwRelatorioDadosFiltro()
                 {
-                    NivelArmazenagem = filter.IdNivelArmazenagem.HasValue ?_unitiOfWork.NivelArmazenagemRepository.GetById(filter.IdNivelArmazenagem.Value)?.Descricao : null,
-                    PontoArmazenagem = filter.IdNivelArmazenagem.HasValue ?_unitiOfWork.PontoArmazenagemRepository.GetById(filter.IdPontoArmazenagem.Value)?.Descricao : null,
-                    Referencia = filter.IdProduto.HasValue ?_unitiOfWork.ProdutoRepository.GetById(filter.IdProduto.Value)?.Referencia : null,
+                    NivelArmazenagem = filter.IdNivelArmazenagem.HasValue ? _unitiOfWork.NivelArmazenagemRepository.GetById(filter.IdNivelArmazenagem.Value)?.Descricao : null,
+                    PontoArmazenagem = filter.IdNivelArmazenagem.HasValue ? _unitiOfWork.PontoArmazenagemRepository.GetById(filter.IdPontoArmazenagem.Value)?.Descricao : null,
+                    Referencia = filter.IdProduto.HasValue ? _unitiOfWork.ProdutoRepository.GetById(filter.IdProduto.Value)?.Referencia : null,
                     Descricao = filter.IdProduto.HasValue ? _unitiOfWork.ProdutoRepository.GetById(filter.IdProduto.Value)?.Descricao : null
                 }
             };
-                var fwRelatorio = new FwRelatorio();
+            var fwRelatorio = new FwRelatorio();
 
             Document document = fwRelatorio.Customizar(fwRelatorioDados);
 
