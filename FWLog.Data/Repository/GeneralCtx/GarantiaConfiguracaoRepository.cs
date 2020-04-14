@@ -19,7 +19,7 @@ namespace FWLog.Data.Repository.GeneralCtx
         #endregion
 
         #region [Fornecedor Quebra] - Validar se código de fornecedor já esta cadastrado
-        private bool FornecedorQuebraPodeSerCadastrado(GarantiaConfiguracao fornecedor)
+        private bool FornecedorQuebraPodeSerCadastrado(string fornecedor)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     conn.Open();
                     if (conn.State == System.Data.ConnectionState.Open)
                     {
-                        string cmdSQL = String.Format("SELECT COUNT(1) V FROM gar_forn_quebra WHERE cod_fornecedor='{0}'", fornecedor.Cod_Fornecedor);
+                        string cmdSQL = String.Format("SELECT COUNT(1) V FROM gar_forn_quebra WHERE cod_fornecedor='{0}'", fornecedor);
                         _processamento = conn.ExecuteScalar<Int32>(cmdSQL);
                     }
                     conn.Close();
@@ -44,8 +44,8 @@ namespace FWLog.Data.Repository.GeneralCtx
         }
         #endregion
 
-        #region AutoComplete Fornecedor
-        public List<GarantiaConfiguracao> AutoCompleteFornecedor(string nome)
+        #region [Fornecedor Quebra] AutoComplete 
+        public List<GarantiaConfiguracao> FornecedorQuebraAutoComplete(string nome)
         {
             try
             {
@@ -78,23 +78,77 @@ namespace FWLog.Data.Repository.GeneralCtx
         #endregion
 
         #region [Fornecedor Quebra] - Inclusão
-        public void IncluirFornecedorQuebra(GarantiaConfiguracao fornecedor)
+        public void FornecedorQuebraIncluir(GarantiaConfiguracao fornecedor)
         {
             try
             {
-                if (!FornecedorQuebraPodeSerCadastrado(fornecedor))
-                    throw new Exception(String.Format("Já existe o código de fornecedor [{0}] cadastrado no sistema!", fornecedor.Cod_Fornecedor));
+                fornecedor.Codigos.ToList().ForEach(delegate (string codigo)
+                {
+                    if (FornecedorQuebraPodeSerCadastrado(codigo.Trim().ToUpper()))
+                        using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                        {
+                            conn.Open();
+                            if (conn.State == System.Data.ConnectionState.Open)
+                            {
+                                string cmdSQL = String.Format("INSERT INTO gar_forn_quebra(Cod_Fornecedor) VALUES('{0}')", codigo.Trim().ToUpper());
+                                conn.ExecuteScalar(cmdSQL);
+                            }
+                            conn.Close();
+                        }
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
 
+        #region [Fornecedor Quebra] - Exclusão
+        public void FornecedorQuebraExcluir(int Id)
+        {
+            try
+            {
                 using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
                 {
                     conn.Open();
                     if (conn.State == System.Data.ConnectionState.Open)
                     {
-                        string cmdSQL = String.Format("INSERT INTO gar_forn_quebra(Cod_Fornecedor) VALUES('{0}')", fornecedor.Cod_Fornecedor);
+                        string cmdSQL = String.Format("DELETE FROM gar_forn_quebra WHERE ID ={0}", Id);
                         conn.ExecuteScalar(cmdSQL);
                     }
                     conn.Close();
                 }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
+
+        #region [Fornecedor Quebra] - Listar
+        public IEnumerable<GarantiaConfiguracao> FornecedorQuebraListar()
+        {
+            try
+            {
+                IEnumerable<GarantiaConfiguracao> _lista = new List<GarantiaConfiguracao>();
+                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                {
+                    conn.Open();
+                    if (conn.State == System.Data.ConnectionState.Open)
+                    {
+                        string cmdSQL = String.Concat(
+                            "SELECT FQ.ID, FQ.COD_FORNECEDOR, F.\"NomeFantasia\", F.\"RazaoSocial\" ",
+                            "FROM GAR_FORN_QUEBRA FQ ",
+                            "INNER JOIN \"Fornecedor\" F ON LTRIM(RTRIM(F.cnpj)) = LTRIM(RTRIM(FQ.cod_fornecedor)) ",
+                            "ORDER BY FQ.ID");
+                        _lista = conn.Query<GarantiaConfiguracao>(cmdSQL).ToList();
+                    }
+                    conn.Close();
+                }
+                return _lista;
             }
             catch (Exception ex)
             {

@@ -14,21 +14,32 @@ namespace FWLog.Services.Services
         }
         #endregion
 
-        #region Fornecedor Quebra
-        public void IncluirFornecedorQuebra(GarantiaConfiguracao item)
+        #region [Fornecedor Quebra] Incluir
+        public void FornecedorQuebraIncluir(GarantiaConfiguracao item)
         {
-            _uow.GarantiaConfiguracaoRepository.IncluirFornecedorQuebra(item);
+            _uow.GarantiaConfiguracaoRepository.FornecedorQuebraIncluir(item);
         }
         #endregion
 
-        #region AutoComplete Fornecedor
-        public List<GarantiaConfiguracao> AutoCompleteFornecedor(string nome)
+        #region [Fornecedor Quebra] Excluir
+        public void FornecedorQuebraExcluir(int Id)
         {
-            return _uow.GarantiaConfiguracaoRepository.AutoCompleteFornecedor(nome);
+            _uow.GarantiaConfiguracaoRepository.FornecedorQuebraExcluir(Id);
         }
         #endregion
 
-        
+        #region [Fornecedor Quebra] Listar 
+        public IEnumerable<GarantiaConfiguracao> FornecedorQuebraListar()
+        {
+            return _uow.GarantiaConfiguracaoRepository.FornecedorQuebraListar();
+        }
+        #endregion
 
+        #region [Fornecedor Quebra] AutoComplete
+        public List<GarantiaConfiguracao> FornecedorQuebraAutoComplete(string nome)
+        {
+            return _uow.GarantiaConfiguracaoRepository.FornecedorQuebraAutoComplete(nome);
+        }
+        #endregion
     }
 }
