@@ -195,7 +195,6 @@ namespace FWLog.Services.Services
                         notaFiscalItem.Sequencia = Convert.ToInt32(item.Sequencia);
                         notaFiscalItem.QuantidadeDevolucao = item.QuantidadeDevolucao.NullOrEmpty() ? 0 : Convert.ToInt32(item.QuantidadeDevolucao);
 
-
                         if (itemNovo)
                         {
                             itemsNotaFsical.Add(notaFiscalItem);
@@ -228,7 +227,6 @@ namespace FWLog.Services.Services
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", notafiscal.CodigoIntegracao.ToString() } };
 
                     await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode());
-
                 }
                 catch (Exception ex)
                 {
@@ -337,35 +335,35 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task RegistrarRecebimentoNotaFiscalGarantia(long idNotaFiscal, string userId, string observacao, string informacaoTransportadora)
-        {
-            var garantiaService = new GarantiaService(_uow);
-            using (TransactionScope transactionScope = _uow.CreateTransactionScope())
-            {
-                var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
+        //public async Task RegistrarRecebimentoNotaFiscalGarantia(long idNotaFiscal, string userId, string observacao, string informacaoTransportadora)
+        //{
+        //    var garantiaService = new GarantiaService(_uow);
+        //    using (TransactionScope transactionScope = _uow.CreateTransactionScope())
+        //    {
+        //        var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
 
-                await VerificarNotaFiscalCancelada(notafiscal.CodigoIntegracao);
+        //        await VerificarNotaFiscalCancelada(notafiscal.CodigoIntegracao);
 
-                Garantia garantia = _uow.GarantiaRepository.BuscarGarantiaPorIdNotaFiscal(idNotaFiscal);
+        //        Garantia garantia = _uow.GarantiaRepository.BuscarGarantiaPorIdNotaFiscal(idNotaFiscal);
 
-                if (garantia != null)
-                {
-                    throw new BusinessException(string.Format("Já existe uma garantia criada para a Nota Fiscal {0}, portanto o recebimento não pode ser efetuado", idNotaFiscal));
-                }
+        //        if (garantia != null)
+        //        {
+        //            throw new BusinessException(string.Format("Já existe uma garantia criada para a Nota Fiscal {0}, portanto o recebimento não pode ser efetuado", idNotaFiscal));
+        //        }
 
-                if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
-                {
-                    await AtualizarNotaFiscalIntegracao(notafiscal, LoteStatusEnum.Recebido);
-                }
+        //        if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
+        //        {
+        //            await AtualizarNotaFiscalIntegracao(notafiscal, LoteStatusEnum.Recebido);
+        //        }
 
-                garantiaService.CriarRecebimentoGarantia(idNotaFiscal, userId, observacao, informacaoTransportadora);
+        //        garantiaService.CriarRecebimentoGarantia(idNotaFiscal, userId, observacao, informacaoTransportadora);
 
-                notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.Recebida;
+        //        notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.Recebida;
 
-                _uow.SaveChanges();
-                transactionScope.Complete();
-            }
-        }
+        //        _uow.SaveChanges();
+        //        transactionScope.Complete();
+        //    }
+        //}
 
         public async Task<long> RegistrarRecebimentoNotaFiscalDiv(long idEmpresa,
                                                             string idUsuarioRecebimento,
@@ -449,5 +447,3 @@ namespace FWLog.Services.Services
         }
     }
 }
-
-

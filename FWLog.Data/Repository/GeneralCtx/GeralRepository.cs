@@ -18,6 +18,33 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
         }
 
+        public List<GeralTipo> TodosTiposDaCategoria(string Tabela, string Coluna)
+        {
+            List<GeralTipo> retorno = new List<GeralTipo>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        Id,
+                        Descricao
+                    FROM
+                        geral_tipo
+                    WHERE
+                        Tabela = :Tabela
+                        AND Coluna = :Coluna
+                    ";
+                    retorno = conn.Query<GeralTipo>(sQuery, new { Tabela, Coluna }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
         public List<GeralHistorico> TodosHistoricosDaCategoria(long Id_Categoria, long Id_Ref)
         {
             List<GeralHistorico> retorno = new List<GeralHistorico>();
