@@ -1395,7 +1395,7 @@ namespace FWLog.Services.Services
                 NomeEmpresa = empresa.RazaoSocial,
                 NomeUsuario = labelUsuario,
                 Orientacao = Orientation.Landscape,
-                Titulo = "Relatório - Totalização por Localização",
+                Titulo = "Relatório Totalização por Localização",
                 Filtros = new FwRelatorioDadosFiltro()
                 {
                     NivelArmazenagem = _unitiOfWork.NivelArmazenagemRepository.GetById(filtro.IdNivelArmazenagem)?.Descricao,
