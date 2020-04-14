@@ -92,7 +92,7 @@ namespace FWLog.Web.Backoffice.Controllers
             relatorioRequest.NomeUsuarioRequisicao = LabelUsuario;
             byte[] relatorio = _relatorioService.GerarRelatorioHistoricoAcaoUsuario(relatorioRequest);
 
-            return File(relatorio, "application/pdf", "Relatório Histórico Ação Usuário.pdf");
+            return File(relatorio, "application/pdf", "Relatório Resumo Atividades RF.pdf");
         }
 
         [HttpPost]
