@@ -1387,12 +1387,25 @@ namespace FWLog.Services.Services
         {
             var listaLocalizacao = _unitiOfWork.LoteProdutoEnderecoRepository.BuscarDadosTotalizacaoLocalizacao(filtro);
 
-            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filtro.IdEmpresa);
+            var listaDadosRelatorio = new List<IFwRelatorioDados>();
+
+            foreach (var item in listaLocalizacao)
+            {
+                var itemRelatorio = new DadosRelatorioTotalizacaoLocalizacao
+                {
+                    CodigoEndereco = item.CodigoEndereco,
+                    ReferenciaProduto = item.ReferenciaProduto,
+                    Unidade = item.Unidade,
+                    Quantidade = item.Quantidade.ToString()
+                };
+
+                listaDadosRelatorio.Add(itemRelatorio);
+            };
 
             var fwRelatorioDados = new FwRelatorioDados
             {
                 DataCriacao = DateTime.Now,
-                NomeEmpresa = empresa.RazaoSocial,
+                NomeEmpresa = _unitiOfWork.EmpresaRepository.GetById(filtro.IdEmpresa).RazaoSocial,
                 NomeUsuario = labelUsuario,
                 Orientacao = Orientation.Landscape,
                 Titulo = "Relatório Totalização por Localização",
@@ -1402,81 +1415,13 @@ namespace FWLog.Services.Services
                     PontoArmazenagem = _unitiOfWork.PontoArmazenagemRepository.GetById(filtro.IdPontoArmazenagem)?.Descricao,
                     CorredorInicial = filtro.CorredorInicial,
                     CorredorFinal = filtro.CorredorFinal
-                }
+                },
+                Dados = listaDadosRelatorio
             };
 
             var fwRelatorio = new FwRelatorio();
 
-            Document document = fwRelatorio.Customizar(fwRelatorioDados);
-
-            //if (listaLocalizacao.Any())
-            //{
-            //    Paragraph paragraph = document.Sections[0].AddParagraph();
-            //    paragraph.AddLineBreak();
-            //    Table tabela = document.Sections[0].AddTable();
-
-            //    tabela.Format.Font = new Font("Verdana", new Unit(9));
-            //    tabela.AddColumn(new Unit(185));
-            //    tabela.AddColumn(new Unit(185));
-            //    tabela.AddColumn(new Unit(185));
-
-            //    Row row = tabela.AddRow();
-
-            //    foreach (var localizacao in listaLocalizacao)
-            //    {
-            //        row = tabela.AddRow();
-
-            //        paragraph.Format.SpaceAfter = 20;
-            //        paragraph.Format.Font = new Font("Verdana", new Unit(12))
-            //        {
-            //            Bold = true
-            //        };
-            //        paragraph.AddText(string.Concat(localizacao.Referencia, " - ", localizacao.Descricao));
-
-            //        row.Cells[0].AddParagraph("Endereço");
-            //        row.Cells[0].Format.Font.Bold = true;
-            //        row.Cells[1].AddParagraph("Lote");
-            //        row.Cells[1].Format.Font.Bold = true;
-            //        row.Cells[2].AddParagraph("Quantidade");
-            //        row.Cells[2].Format.Font.Bold = true;
-
-            //        var endereçosInstalados = query.Where(x => x.IdProduto == localizacao.IdProduto).Select(y => y).OrderBy(x => x.EnderecoArmazenagem.Codigo).ToList();
-            //        var qtdeTotal = endereçosInstalados.Sum(x => x.Quantidade);
-
-            //        foreach (var endereco in endereçosInstalados)
-            //        {
-            //            row = tabela.AddRow();
-            //            paragraph = row.Cells[0].AddParagraph();
-            //            paragraph.AddText(endereco.EnderecoArmazenagem.Codigo);
-            //            paragraph = row.Cells[1].AddParagraph();
-            //            paragraph.AddText(endereco.IdLote.ToString());
-            //            paragraph = row.Cells[2].AddParagraph();
-            //            paragraph.AddText(endereco.Quantidade.ToString());
-            //        }
-
-            //        row = tabela.AddRow();
-            //        row = tabela.AddRow();
-            //        paragraph = row.Cells[0].AddParagraph(string.Concat("Saldo: "));
-            //        paragraph.Format.Font.Bold = true;
-            //        paragraph = row.Cells[2].AddParagraph(qtdeTotal.ToString());
-            //        paragraph.Format.Font.Bold = true;
-
-            //        row = tabela.AddRow();
-            //        row = tabela.AddRow();
-
-            //        paragraph = document.Sections[0].AddParagraph();
-            //        tabela = document.Sections[0].AddTable();
-            //        tabela.Format.Font = new Font("Verdana", new Unit(9));
-
-            //        tabela.AddColumn(new Unit(185));
-            //        tabela.AddColumn(new Unit(185));
-            //        tabela.AddColumn(new Unit(185));
-
-            //        row = tabela.AddRow();
-            //    }
-            //}
-
-            return fwRelatorio.GerarCustomizado();
+            return fwRelatorio.Gerar(fwRelatorioDados);
         }
 
         public void ImprimirRelatorioTotalizacaoLocalizacao(RelatorioTotalizacaoLocalizacaoFiltro filtro, long idImpressora, string labelUsuario)

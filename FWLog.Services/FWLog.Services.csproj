@@ -201,6 +201,7 @@
     <Compile Include="Relatorio\Model\RastreioPeca.cs" />
     <Compile Include="Relatorio\Model\NotasRecebimento.cs" />
     <Compile Include="Relatorio\Model\RecebimentoNotas.cs" />
+    <Compile Include="Relatorio\Model\DadosRelatorioTotalizacaoLocalizacao.cs" />
     <Compile Include="Relatorio\Model\RelatorioHistoricoColetor.cs" />
     <Compile Include="Relatorio\Model\RelatorioProdutos.cs" />
     <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
