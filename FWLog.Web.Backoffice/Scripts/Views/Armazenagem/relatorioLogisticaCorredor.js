@@ -66,6 +66,7 @@
                 }
             }
         },
+        "scrollX": true,
         deferLoading: 0,
         initComplete: function (settings, json) {
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));

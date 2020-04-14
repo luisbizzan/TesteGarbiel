@@ -56,7 +56,7 @@
                         </div>
                         @Html.ValidationMessageFor(m => m.Filter.DataInicial)
                     </div>
-                    <div class="col-xs-12 col-md-2 col-lg-">
+                    <div class="col-xs-12 col-md-2 col-lg-3">
                         @Html.LabelFor(m => m.Filter.DataFinal)
                         <div class='input-group date'>
                             @Html.TextBoxFor(m => m.Filter.DataFinal, new { @class = "form-control dateFormat", data_field = "DataFinal" })
@@ -114,7 +114,7 @@
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
-                <table id="dataTable" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                <table id="dataTable" class="table table-striped table-bordered table-scrol" style="width:100%">
                     <thead>
                         <tr>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Codigo)</th>
