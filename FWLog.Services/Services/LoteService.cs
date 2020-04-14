@@ -11,6 +11,7 @@ using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using log4net;
 
 namespace FWLog.Services.Services
 {
@@ -18,11 +19,13 @@ namespace FWLog.Services.Services
     {
         private UnitOfWork _uow;
         private NotaFiscalService notaFiscalService;
+        private ILog _log;
 
-        public LoteService(UnitOfWork uow)
+        public LoteService(UnitOfWork uow, ILog log)
         {
             _uow = uow;
-            notaFiscalService = new NotaFiscalService(_uow);
+            notaFiscalService = new NotaFiscalService(_uow, log);
+            _log = log;
         }
 
         public void CriarLoteRecebimento(NotaFiscal notaFiscal, string userId, DateTime dataRecebimento, int? qtdVolumes = null)
@@ -333,8 +336,7 @@ namespace FWLog.Services.Services
             }
             catch (Exception e)
             {
-                ApplicationLogService log = new ApplicationLogService(_uow);
-                log.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 processamento.ProcessamentoErro = true;
             }
@@ -608,8 +610,7 @@ namespace FWLog.Services.Services
             }
             catch (Exception e)
             {
-                ApplicationLogService log = new ApplicationLogService(_uow);
-                log.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 processamento.ProcessamentoErro = true;
                 processamento.ProcessamentoErroMensagem = e.Message;
@@ -813,8 +814,7 @@ namespace FWLog.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro no conferência automática do lote - IdNotaFiscal: {0}.", lote.IdLote));
+                    _log.Error(string.Format("Erro no conferência automática do lote - IdNotaFiscal: {0}.", lote.IdLote), ex);
                 }
             }
         }

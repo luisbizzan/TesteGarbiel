@@ -1,5 +1,4 @@
 ﻿using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
@@ -8,16 +7,19 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 
 namespace FWLog.Services.Services
 {
     public class ClienteService : BaseService
     {
         private readonly UnitOfWork _unitOfWork;
+        private ILog _log;
 
-        public ClienteService(UnitOfWork unitOfWork)
+        public ClienteService(UnitOfWork unitOfWork, ILog log)
         {
             _unitOfWork = unitOfWork;
+            _log = log;
         }
 
         public async Task ConsultarCliente()
@@ -84,8 +86,7 @@ namespace FWLog.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_unitOfWork);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do Cliente: {0}.", clienteInt.CodigoIntegracao));
+                    _log.Error(string.Format("Erro na integração do Cliente: {0}.", clienteInt.CodigoIntegracao), ex);
 
                     continue;
                 }

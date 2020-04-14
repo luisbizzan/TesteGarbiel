@@ -1,5 +1,4 @@
 ﻿using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
@@ -9,17 +8,19 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 
 namespace FWLog.Services.Services
 {
     public class EmpresaService : BaseService
     {
         private UnitOfWork _unitOfWork;
-        private readonly IntegracaoLogService _integracaoLogService;
+        private ILog _log;
 
-        public EmpresaService(UnitOfWork uow, IntegracaoLogService _integracaoLogService)
+        public EmpresaService(UnitOfWork uow, IntegracaoLogService _integracaoLogService, ILog log)
         {
             _unitOfWork = uow;
+            _log = log;
         }
 
         public async Task ConsultarEmpresaIntegracao()
@@ -112,8 +113,7 @@ namespace FWLog.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_unitOfWork);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração da Empresa: {0}.", empInt.CodigoIntegracao));
+                    _log.Error(string.Format("Erro na integração da Empresa: {0}.", empInt.CodigoIntegracao), ex);
                 }
             }
         }
