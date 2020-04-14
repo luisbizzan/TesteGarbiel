@@ -69,6 +69,34 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(model);
         }
 
+        public ActionResult VisualizarSolicitacao(long Id)
+        {
+            var categoria = _geralService.SelecionaUploadCategoria(Id_Categoria);
+
+            if (categoria == null)
+                return PartialView("_FormUploads", new GeralUploadVM());
+
+            var model = new GeralUploadVM
+            {
+                Id_Ref = Id_Ref,
+                Id_Categoria = Id_Categoria,
+                Formatos = categoria.Formatos.Split(',').ToList(),
+                Tabela = categoria.Tabela,
+                Lista_Uploads = _geralService.TodosUploadsDaCategoria(Id_Categoria, Id_Ref)
+                    .Select(x => new GeralUploadVM
+                    {
+                        Id = x.Id,
+                        Arquivo = x.Arquivo,
+                        Arquivo_Tipo = x.Arquivo_Tipo,
+                        Id_Usr = x.Id_Usr,
+                        Usuario = x.Usuario,
+                        Dt_Cad = x.Dt_Cad
+                    }).ToList(),
+            };
+
+            return PartialView("_FormUploads", model);
+        }
+
         public ActionResult PageData(DataTableFilter<GarantiaSolicitacaoFilterVM> model)
         {
             int recordsFiltered, totalRecords;
