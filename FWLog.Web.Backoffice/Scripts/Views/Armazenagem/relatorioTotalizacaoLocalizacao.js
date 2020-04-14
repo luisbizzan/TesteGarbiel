@@ -89,39 +89,44 @@
         $("#Filter_IdPontoArmazenagem").val("");
     });
 
-    //$("#downloadRelatorioTotalEnderecoPorAla").click(function () {
-    //    $.ajax({
-    //        url: "/Armazenagem/DownloadRelatorioTotalPorAla",
-    //        method: "POST",
-    //        data: {
-    //            IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
-    //            IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
-    //            CorredorInicial: $("#Filter_CorredorInicial").val(),
-    //            CorredorFinal: $("#Filter_CorredorFinal").val(),
-    //            ImprimirVazia: $("#Filter_ImprimirVazia").val(),
-    //        },
-    //        xhrFields: {
-    //            responseType: 'blob'
-    //        },
-    //        success: function (data) {
-    //            var a = document.createElement('a');
-    //            var url = window.URL.createObjectURL(data);
+    $("#downloadRelatorioTotalizacaoLocalizacao").click(function () {
 
-    //            a.href = url;
-    //            a.download = 'Relatório total por alas.pdf';
-    //            document.body.append(a);
-    //            a.click();
-    //            a.remove();
-    //            window.URL.revokeObjectURL(url);
-    //        }
-    //    });
-    //});
+        if ($("#relatorioTotalizacaoLocalizacaoForm").valid()) {
+            $.ajax({
+                url: "/Armazenagem/DownloadRelatorioRelatorioTotalizacaoLocalizacao",
+                method: "POST",
+                data: {
+                    IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
+                    IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
+                    CorredorInicial: $("#Filter_CorredorInicial").val(),
+                    CorredorFinal: $("#Filter_CorredorFinal").val(),
+                    ImprimirVazia: $("#Filter_ImprimirVazia").val(),
+                },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (data) {
+                    var a = document.createElement('a');
+                    var url = window.URL.createObjectURL(data);
 
-    //$("#imprimirRelatorioTotalEnderecoPorAla").click(function () {
-    //    $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=totaPorlAla", function () {
-    //        $("#modalImpressoras").modal();
-    //    });
-    //});
+                    a.href = url;
+                    a.download = 'Relatório - Totalização por Localização.pdf';
+                    document.body.append(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                }
+            });
+        }
+    });
+
+    $("#imprimirRelatorioTotalizacaoLocalizacao").click(function () {
+        if ($("#relatorioTotalizacaoLocalizacaoForm").valid()) {
+            $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=totalLocalizacao", function () {
+                $("#modalImpressoras").modal();
+            });
+        }
+    });
 
 })();
 
@@ -139,26 +144,26 @@ function selecionarPontoArmazenagem(idPontoArmazenagem, descricao) {
     $("#modalPesquisaPontoArmazenagem").empty();
 }
 
-//function imprimir(acao, id) {
-//    switch (acao) {
-//        case 'totaPorlAla':
-//            $.ajax({
-//                url: "/Armazenagem/ImprimirRelatorioTotalPorAla",
-//                method: "POST",
-//                data: {
-//                    IdImpressora: $("#IdImpressora").val(),
-//                    IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
-//                    IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
-//                    CorredorInicial: $("#Filter_CorredorInicial").val(),
-//                    CorredorFinal: $("#Filter_CorredorFinal").val(),
-//                    ImprimirVazia: $("#Filter_ImprimirVazia").val(),
-//                },
-//                success: function (result) {
-//                    mensagemImpressao(result);
-//                    $('#modalImpressoras').modal('toggle');
-//                    waitingDialog.hide();
-//                }
-//            });
-//            break;
-//    }
-//}
+function imprimir(acao, id) {
+    switch (acao) {
+        case 'totalLocalizacao':
+            $.ajax({
+                url: "/Armazenagem/ImprimirRelatorioRelatorioTotalizacaoLocalizacao",
+                method: "POST",
+                data: {
+                    IdImpressora: $("#IdImpressora").val(),
+                    IdNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
+                    IdPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val(),
+                    CorredorInicial: $("#Filter_CorredorInicial").val(),
+                    CorredorFinal: $("#Filter_CorredorFinal").val(),
+                    ImprimirVazia: $("#Filter_ImprimirVazia").val(),
+                },
+                success: function (result) {
+                    mensagemImpressao(result);
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
+                }
+            });
+            break;
+    }
+}
