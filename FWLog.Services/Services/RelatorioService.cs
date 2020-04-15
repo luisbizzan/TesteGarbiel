@@ -1178,7 +1178,7 @@ namespace FWLog.Services.Services
                         paragraph = row.Cells[2].AddParagraph();
                         paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.Produto.Referencia ?? "-");
                         paragraph = row.Cells[3].AddParagraph();
-                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.Lote.IdLote.ToString() ?? "-");
+                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.Lote?.IdLote.ToString() ?? "-");
                         paragraph = row.Cells[4].AddParagraph();
                         paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss") ?? "-");
                         paragraph = row.Cells[5].AddParagraph();
