@@ -493,7 +493,7 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                var loteInstaladoProdutoResposta = _armazenagemService.PesquisaLotesInstaladosProduto(idProduto);
+                var loteInstaladoProdutoResposta = _armazenagemService.PesquisaLotesInstaladosProduto(idProduto, IdEmpresa);
 
                 return ApiOk(loteInstaladoProdutoResposta);
             }

@@ -53,9 +53,9 @@ namespace FWLog.Data.Repository.GeneralCtx
                                                              w.IdEmpresa == IdEmpresa).FirstOrDefault();
         }
 
-        public List<LoteProdutoEndereco> PesquisarPorProdutoComLote(long idProduto)
+        public List<LoteProdutoEndereco> PesquisarPorProdutoComLote(long idProduto, long idEmpresa)
         {
-            return Entities.LoteProdutoEndereco.Where(loteProdutoEndereco => loteProdutoEndereco.IdProduto == idProduto && loteProdutoEndereco.IdLote != null).ToList();
+            return Entities.LoteProdutoEndereco.Where(lpe => lpe.IdProduto == idProduto && lpe.IdEmpresa == idEmpresa && lpe.IdLote != null).ToList();
         }
 
         public IEnumerable<EnderecoArmazenagemTotalPorAlasLinhaTabela> BuscarDados(DataTableFilter<RelatorioTotalizacaoAlasListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)

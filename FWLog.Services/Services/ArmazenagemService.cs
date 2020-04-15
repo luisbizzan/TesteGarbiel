@@ -864,7 +864,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public LoteInstaladoProdutoResposta PesquisaLotesInstaladosProduto(long idProduto)
+        public LoteInstaladoProdutoResposta PesquisaLotesInstaladosProduto(long idProduto, long idEmpresa)
         {
             if (idProduto <= 0)
             {
@@ -887,7 +887,7 @@ namespace FWLog.Services.Services
 
             resposta.ListaDatasUsuarios = new List<LoteInstaladoProdutoDataUsuario>();
 
-            var listaLoteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorProdutoComLote(idProduto);
+            var listaLoteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorProdutoComLote(idProduto, idEmpresa);
 
             var agrupamentoDataUsuario = listaLoteProdutoEndereco.GroupBy(g => new { DataInstalacao = g.DataHoraInstalacao.Date, g.AspNetUsers }).ToList();
 
