@@ -79,7 +79,7 @@ namespace FWLog.Services.Services
                 {
                     IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                     IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.InstalarProduto,
-                    Descricao = $"Instalou o produto {produto.Referencia} do lote {requisicao.IdLote} no endereço {enderecoArmazenagem.Codigo}",
+                    Descricao = $"Instalou o produto {produto.Referencia} quantidade {requisicao.Quantidade} peso {pesoInstalacao} do lote {requisicao.IdLote} no endereço {enderecoArmazenagem.Codigo}",
                     IdEmpresa = requisicao.IdEmpresa,
                     IdUsuario = requisicao.IdUsuarioInstalacao
                 };
@@ -116,6 +116,12 @@ namespace FWLog.Services.Services
             if (lote == null)
             {
                 throw new BusinessException("O lote não foi encontrado.");
+            }
+
+            if (lote.IdLoteStatus != LoteStatusEnum.Finalizado && lote.IdLoteStatus != LoteStatusEnum.FinalizadoDivergenciaPositiva &&
+                lote.IdLoteStatus != LoteStatusEnum.FinalizadoDivergenciaNegativa && lote.IdLoteStatus != LoteStatusEnum.FinalizadoDivergenciaTodas)
+            {
+                throw new BusinessException("O lote não está finalizado.");
             }
         }
 
@@ -245,6 +251,16 @@ namespace FWLog.Services.Services
             if (enderecoArmazenagem.Ativo == false)
             {
                 throw new BusinessException("O endereço não está ativo.");
+            }
+
+            if (enderecoArmazenagem.PontoArmazenagem.Ativo == false)
+            {
+                throw new BusinessException("O ponto de armazenagem não está ativo.");
+            }
+
+            if (enderecoArmazenagem.PontoArmazenagem.NivelArmazenagem.Ativo == false)
+            {
+                throw new BusinessException("O nível de armazenagem não está ativo.");
             }
 
             LoteProdutoEndereco loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(requisicao.IdEnderecoArmazenagem);
