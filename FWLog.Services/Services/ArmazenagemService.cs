@@ -873,13 +873,13 @@ namespace FWLog.Services.Services
 
             var listaLoteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorProdutoComLote(idProduto);
 
-            var agrupamentoDataUsuario = listaLoteProdutoEndereco.GroupBy(g => new { g.DataHoraInstalacao, g.AspNetUsers }).ToList();
+            var agrupamentoDataUsuario = listaLoteProdutoEndereco.GroupBy(g => new { DataInstalacao = g.DataHoraInstalacao.Date, g.AspNetUsers }).ToList();
 
             foreach (var itemDataUsuario in agrupamentoDataUsuario)
             {
                 var dataUsuario = new LoteInstaladoProdutoDataUsuario();
 
-                dataUsuario.DataHoraInstalacao = itemDataUsuario.Key.DataHoraInstalacao;
+                dataUsuario.DataHoraInstalacao = itemDataUsuario.Key.DataInstalacao;
                 dataUsuario.CodigoUsuario = itemDataUsuario.Key.AspNetUsers.UserName;
 
                 var agrupamentoLoteNivelPonto = itemDataUsuario.ToList().GroupBy(g => new
@@ -1080,7 +1080,7 @@ namespace FWLog.Services.Services
 
                     if (loteProdutoEndereco != null)
                     {
-                        enderecoProdutoQuantidades.QuantidadeAtual = loteProdutoEndereco.Quantidade; 
+                        enderecoProdutoQuantidades.QuantidadeAtual = loteProdutoEndereco.Quantidade;
                     }
                 }
                 else
