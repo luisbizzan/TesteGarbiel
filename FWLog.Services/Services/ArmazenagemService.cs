@@ -117,6 +117,12 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("O lote não foi encontrado.");
             }
+
+            if (lote.IdLoteStatus != LoteStatusEnum.Finalizado && lote.IdLoteStatus != LoteStatusEnum.FinalizadoDivergenciaPositiva &&
+                lote.IdLoteStatus != LoteStatusEnum.FinalizadoDivergenciaNegativa && lote.IdLoteStatus != LoteStatusEnum.FinalizadoDivergenciaTodas)
+            {
+                throw new BusinessException("O lote não está finalizado.");
+            }
         }
 
         public void ValidarLoteProdutoInstalacao(ValidarLoteProdutoInstalacaoRequisicao requisicao)
@@ -245,6 +251,16 @@ namespace FWLog.Services.Services
             if (enderecoArmazenagem.Ativo == false)
             {
                 throw new BusinessException("O endereço não está ativo.");
+            }
+
+            if (enderecoArmazenagem.PontoArmazenagem.Ativo == false)
+            {
+                throw new BusinessException("O ponto de armazenagem não está ativo.");
+            }
+
+            if (enderecoArmazenagem.PontoArmazenagem.NivelArmazenagem.Ativo == false)
+            {
+                throw new BusinessException("O nível de armazenagem não está ativo.");
             }
 
             LoteProdutoEndereco loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(requisicao.IdEnderecoArmazenagem);
