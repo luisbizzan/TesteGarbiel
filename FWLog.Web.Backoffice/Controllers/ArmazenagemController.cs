@@ -261,7 +261,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var list = new List<RelatorioTotalizacaoAlasListItemViewModel>();
             List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
 
-            loteProdutoEnderecos.OrderBy(order => order.Corredor).ThenBy(order => order.CodigoEndereco).ForEach(lpe =>
+            loteProdutoEnderecos.ForEach(lpe =>
                 list.Add(new RelatorioTotalizacaoAlasListItemViewModel
                 {
                     NumeroCorredor = string.Concat("Corredor: ", lpe.Corredor.ToString("0#")),

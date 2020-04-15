@@ -102,7 +102,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         lpe => lpe.IdEmpresa == model.CustomFilter.IdEmpresa &&
                         enderecoArmazenagemIds.Contains(lpe.IdEnderecoArmazenagem) &&
                         model.CustomFilter.IdNivelArmazenagem == lpe.EnderecoArmazenagem.IdNivelArmazenagem &&
-                        model.CustomFilter.IdPontoArmazenagem == lpe.EnderecoArmazenagem.IdPontoArmazenagem).ToList()
+                        model.CustomFilter.IdPontoArmazenagem == lpe.EnderecoArmazenagem.IdPontoArmazenagem)
                      .Select(s => new EnderecoArmazenagemTotalPorAlasLinhaTabela
                      {
                          IdEnderecoArmazenagem = s.IdEnderecoArmazenagem,
@@ -115,7 +115,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                          QuantidadeProdutoPorEndereco = s.Quantidade,
                          ReferenciaProduto = s.Produto.Referencia,
                          Corredor = s.EnderecoArmazenagem.Corredor
-                     }).OrderBy(x => x.CodigoEndereco).AsQueryable();
+                     });
 
             }
 
@@ -129,7 +129,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRecordsFiltered = query.Count();
 
             query = query
-                .OrderBy(model.OrderByColumn, model.OrderByDirection).ThenBy(x => x.Corredor)
+                .OrderBy(model.OrderByColumn, model.OrderByDirection).OrderBy(x => x.Corredor).ThenBy(x => x.CodigoEndereco)
                 .Skip(model.Start)
                 .Take(model.Length);
 
