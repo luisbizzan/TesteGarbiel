@@ -1,8 +1,12 @@
 ﻿using DartDigital.Library.Exceptions;
+using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Services.Model.AtividadeEstoque;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.AtividadeEstoque;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -99,7 +103,7 @@ namespace FWLog.Web.Api.Controllers
             {
                 _atividadeEstoqueService.ValidarAtualizacaoAtividade(atividadeEstoqueRequisicao, IdUsuario);
 
-               var atividadeFinalizada = _atividadeEstoqueService.AtualizarAtividadeAbastecerPicking(atividadeEstoqueRequisicao, IdEmpresa, IdUsuario);
+                var atividadeFinalizada = _atividadeEstoqueService.AtualizarAtividadeAbastecerPicking(atividadeEstoqueRequisicao, IdEmpresa, IdUsuario);
 
                 var resposta = new AtualizarAtividadeEstoqueAbastecerPickingResposta()
                 {
@@ -121,7 +125,7 @@ namespace FWLog.Web.Api.Controllers
         [AllowAnonymous]
         [Route("api/v1/atividade-estoque/pesquisar/{idAtividadeEstoqueTipo}")]
         [HttpGet]
-        public IHttpActionResult PesquisarAtividade(int idAtividadeEstoqueTipo)
+        public async Task<IHttpActionResult> PesquisarAtividade(int idAtividadeEstoqueTipo)
         {
             try
             {
@@ -129,14 +133,45 @@ namespace FWLog.Web.Api.Controllers
 
                 if (empresaUsuario == null)
                 {
-                    throw new BusinessException("O usuário não tem configuração para esta empresa");
+                    throw new BusinessException("O usuário não tem configuração para esta empresa.");
+                }
+
+                var tiposAtividade = new List<int>();
+
+                if (idAtividadeEstoqueTipo == 0)
+                {
+                    var permissoes = await UserManager.GetPermissionsByIdEmpresaAsync(IdUsuario, IdEmpresa);
+
+                    if (permissoes == null)
+                    {
+                        throw new BusinessException("Não existem permissões configuradas para o usuário.");
+                    }
+
+                    if (permissoes.Any(w => w == Permissions.RFArmazenagem.AtividadeAbastecerPicking))
+                    {
+                        tiposAtividade.Add(AtividadeEstoqueTipoEnum.AbastecerPicking.GetHashCode());
+                    }
+
+                    if (permissoes.Any(w => w == Permissions.RFArmazenagem.AtividadeConferenciaEndereco))
+                    {
+                        tiposAtividade.Add(AtividadeEstoqueTipoEnum.ConferenciaEndereco.GetHashCode());
+                    }
+
+                    if (permissoes.Any(w => w == Permissions.RFArmazenagem.AtividadeConferencia399_400))
+                    {
+                        tiposAtividade.Add(AtividadeEstoqueTipoEnum.ConferenciaProdutoForaLinha.GetHashCode());
+                    }
+                }
+                else
+                {
+                    tiposAtividade.Add(idAtividadeEstoqueTipo);
                 }
 
                 var resposta = new AtividadesEstoqueResposta
                 {
                     CorredorInicio = empresaUsuario.CorredorEstoqueInicio,
                     CorredorFim = empresaUsuario.CorredorEstoqueFim,
-                    Lista = _atividadeEstoqueService.PesquisarAtividade(IdEmpresa, IdUsuario, idAtividadeEstoqueTipo)
+                    Lista = _atividadeEstoqueService.PesquisarAtividade(IdEmpresa, IdUsuario, tiposAtividade)
                 };
 
                 return ApiOk(resposta);
@@ -150,7 +185,7 @@ namespace FWLog.Web.Api.Controllers
                 throw;
             }
         }
-        
+
         [Authorize]
         [Route("api/v1/atividade-estoque/conferencia-399-400/validar-produto")]
         [HttpPost]

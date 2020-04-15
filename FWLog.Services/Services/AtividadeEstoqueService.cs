@@ -267,9 +267,9 @@ namespace FWLog.Services.Services
             }
         }
 
-        public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa, string idUsuario, int idAtividadeEstoqueTipo)
+        public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa, string idUsuario, List<int> tiposAtividade)
         {
-            return _unitOfWork.AtividadeEstoqueRepository.PesquisarAtividade(idEmpresa, idUsuario, idAtividadeEstoqueTipo);
+            return _unitOfWork.AtividadeEstoqueRepository.PesquisarAtividade(idEmpresa, idUsuario, tiposAtividade);
         }
 
         public void ValidarProdutoConferenciaProdutoForaLinha(int corredor, long idProduto, long idEmpresa)

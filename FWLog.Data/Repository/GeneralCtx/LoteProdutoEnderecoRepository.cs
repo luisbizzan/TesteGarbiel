@@ -98,8 +98,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                           model.CustomFilter.IdNivelArmazenagem == x.EnderecoArmazenagem.IdNivelArmazenagem &&
                           model.CustomFilter.IdPontoArmazenagem == x.EnderecoArmazenagem.IdPontoArmazenagem).Count();
 
-                query =
-                    Entities.LoteProdutoEndereco.AsNoTracking().Where(
+                query = Entities.LoteProdutoEndereco.AsNoTracking().Where(
                         lpe => lpe.IdEmpresa == model.CustomFilter.IdEmpresa &&
                         enderecoArmazenagemIds.Contains(lpe.IdEnderecoArmazenagem) &&
                         model.CustomFilter.IdNivelArmazenagem == lpe.EnderecoArmazenagem.IdNivelArmazenagem &&

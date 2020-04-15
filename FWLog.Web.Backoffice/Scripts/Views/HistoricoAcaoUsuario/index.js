@@ -6,7 +6,7 @@
 
     var $DataInicial = $('#Filter_DataInicial').closest('.date');
     var $DataFinal = $('#Filter_DataFinal').closest('.date');
-    
+
 
     var createLinkedPickers = function () {
         var dataInicial = $DataInicial.datetimepicker({
@@ -66,7 +66,7 @@
                 var url = window.URL.createObjectURL(data);
 
                 a.href = url;
-                a.download = 'Relatório Histórico do Usuário.pdf';
+                a.download = 'Relatório Resumo Atividades RF.pdf';
                 document.body.append(a);
                 a.click();
                 a.remove();
@@ -132,7 +132,8 @@ function imprimir(acao, id) {
                         PNotify.success({ text: result.Message });
                     } else {
                         PNotify.error({ text: result.Message });
-                    }                    $('#modalImpressoras').modal('toggle');
+                    }
+                    $('#modalImpressoras').modal('toggle');
                     waitingDialog.hide();
                 }
             });
