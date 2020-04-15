@@ -89,7 +89,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                _log.Error("Erro ao fazer chamada ajax para a URL: " + url);
+                _log.Warn("Erro ao fazer chamada ajax para a URL: " + url);
 
                 return Json(new AjaxGenericResultModel
                 {
