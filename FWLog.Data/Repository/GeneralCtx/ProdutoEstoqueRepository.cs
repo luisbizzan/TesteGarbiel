@@ -20,6 +20,7 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             string sql = "UPDATE \"ProdutoEstoque\" SET \"Saldo\" = \"Saldo\" + :SALDO WHERE \"IdProduto\" = :IDPRODUTO AND \"IdEmpresa\" = :IDEMPRESA ";
             Entities.Database.ExecuteSqlCommand(sql, new OracleParameter(":SALDO", saldo), new OracleParameter(":IDPRODUTO", idProduto), new OracleParameter(":IDEMPRESA", idEmpresa));
+            Entities.SaveChanges();
         }
 
         public int ObterDiasPrazoEntrega(long idEmpresa, List<long> listIdProdutos)

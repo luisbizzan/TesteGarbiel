@@ -187,7 +187,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     Notify.Error("Produto não localizado!");
                 }
 
-                _produtoEstoqueService.AtualizarOuInserirEnderecoArmazenagem(produtoEstoque, viewModel.IdEnderecoArmazenagem);
+                _produtoEstoqueService.AtualizarOuInserirEnderecoArmazenagem(produtoEstoque, viewModel.IdEnderecoArmazenagem, IdUsuario);
 
                 Notify.Success("Endereço de Armazenagem editado com sucesso.");
                 return RedirectToAction("Index");
