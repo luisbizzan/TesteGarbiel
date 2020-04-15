@@ -79,7 +79,7 @@ namespace FWLog.Services.Services
                 {
                     IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                     IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.InstalarProduto,
-                    Descricao = $"Instalou o produto {produto.Referencia} do lote {requisicao.IdLote} no endereço {enderecoArmazenagem.Codigo}",
+                    Descricao = $"Instalou o produto {produto.Referencia} quantidade {requisicao.Quantidade} peso {pesoInstalacao} do lote {requisicao.IdLote} no endereço {enderecoArmazenagem.Codigo}",
                     IdEmpresa = requisicao.IdEmpresa,
                     IdUsuario = requisicao.IdUsuarioInstalacao
                 };
