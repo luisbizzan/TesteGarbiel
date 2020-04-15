@@ -1,17 +1,16 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
 using FWLog.Services.Model.Lote;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
-using log4net;
 
 namespace FWLog.Services.Services
 {
@@ -743,6 +742,8 @@ namespace FWLog.Services.Services
 
                 _uow.LoteProdutoRepository.Add(loteProduto);
             }
+
+            _uow.SaveChanges();
         }
 
         private void CriarQuarentena(Lote lote, string IdUsuario)
