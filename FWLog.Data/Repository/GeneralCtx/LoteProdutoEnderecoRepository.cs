@@ -72,7 +72,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                 query = (from end in Entities.EnderecoArmazenagem
                          join lpe in Entities.LoteProdutoEndereco on end.IdEnderecoArmazenagem equals lpe.IdEnderecoArmazenagem into a
                          from lpe in a.DefaultIfEmpty()
-                         where model.CustomFilter.IdNivelArmazenagem == end.IdNivelArmazenagem &&
+                         where model.CustomFilter.IdEmpresa  == end.IdEmpresa &&
+                               model.CustomFilter.IdNivelArmazenagem == end.IdNivelArmazenagem &&
                                model.CustomFilter.IdPontoArmazenagem == end.IdPontoArmazenagem
                          select new EnderecoArmazenagemTotalPorAlasLinhaTabela
                          {
