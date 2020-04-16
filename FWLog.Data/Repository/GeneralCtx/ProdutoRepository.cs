@@ -118,7 +118,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             if (filter.CustomFilter.IdEnderecoArmazenagem.HasValue)
             {
-                query = query.Where(x => x.IdEnderecoArmazenagem == filter.CustomFilter.IdEnderecoArmazenagem);
+                query = query.Where(x => x.EnderecoArmazenagem?.IdEnderecoArmazenagem == filter.CustomFilter.IdEnderecoArmazenagem);
             }
 
             if (filter.CustomFilter.IdPontoArmazenagem.HasValue)
