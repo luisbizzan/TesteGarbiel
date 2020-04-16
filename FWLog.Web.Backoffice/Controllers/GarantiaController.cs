@@ -80,7 +80,19 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_VisualizarSolicitacao", model);
         }
 
-        public ActionResult PageData(DataTableFilter<GarantiaSolicitacaoFilterVM> model)
+        public ActionResult ConferirSolicitacao(long Id)
+        {
+            var itens = _uow.GarantiaRepository.ListarSolicitacaoItem(Id);
+
+            var model = new GarantiaConferenciaVM
+            {
+                Solicitacao = Mapper.Map<GarantiaSolicitacaoListVM>(_uow.GarantiaRepository.SelecionaSolicitacao(Id))
+            };
+
+            return PartialView("_ConferirSolicitacao", model);
+        }
+
+        public ActionResult ListarSolicitacao(DataTableFilter<GarantiaSolicitacaoFilterVM> model)
         {
             int recordsFiltered, totalRecords;
             var filter = Mapper.Map<DataTableFilter<GarantiaFilter>>(model);
