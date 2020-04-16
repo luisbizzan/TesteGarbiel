@@ -158,7 +158,7 @@ function validarOsFiltrosParaPesquisa() {
         data: {
             idProduto: $("#Filter_IdProduto").val(),
             idNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
-            idPontoArmazenagem: $("#Filter_PontoArmazenagem").val()
+            idPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val()
         },
         success: function (result) {
             if (!result.Success) {
@@ -184,7 +184,7 @@ function validarOsFiltrosParaDownloadOuImpressao() {
         data: {
             idProduto: $("#Filter_IdProduto").val(),
             idNivelArmazenagem: $("#Filter_IdNivelArmazenagem").val(),
-            idPontoArmazenagem: $("#Filter_PontoArmazenagem").val()
+            idPontoArmazenagem: $("#Filter_IdPontoArmazenagem").val()
         },
         success: function (result) {
             if (!result.Success) {

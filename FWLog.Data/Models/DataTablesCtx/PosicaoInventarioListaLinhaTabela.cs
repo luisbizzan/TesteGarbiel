@@ -8,7 +8,7 @@ namespace FWLog.Data.Models.DataTablesCtx
 
         public string DescricaoProduto { get; set; }
 
-        public long IdLote { get; set; }
+        public long? IdLote { get; set; }
 
         public string Codigo { get; set; }
 

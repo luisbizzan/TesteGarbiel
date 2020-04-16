@@ -118,12 +118,12 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             if (filter.CustomFilter.IdPontoArmazenagem.HasValue)
             {
-                query = query.Where(x => x.EnderecoArmazenagem.IdPontoArmazenagem == filter.CustomFilter.IdPontoArmazenagem);
+                query = query.Where(x => x.EnderecoArmazenagem?.IdPontoArmazenagem == filter.CustomFilter.IdPontoArmazenagem);
             }
 
             if (filter.CustomFilter.IdNivelArmazenagem.HasValue)
             {
-                query = query.Where(x => x.EnderecoArmazenagem.IdNivelArmazenagem == filter.CustomFilter.IdNivelArmazenagem);
+                query = query.Where(x => x.EnderecoArmazenagem?.IdNivelArmazenagem == filter.CustomFilter.IdNivelArmazenagem);
             }
 
             IEnumerable<ProdutoListaLinhaTabela> queryResult = query.Select(e => new ProdutoListaLinhaTabela

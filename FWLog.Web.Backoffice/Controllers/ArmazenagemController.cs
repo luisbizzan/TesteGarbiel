@@ -457,7 +457,7 @@ namespace FWLog.Web.Backoffice.Controllers
             loteProdutoEnderecos.OrderBy(x => x.Referencia).ThenBy(x => x.Codigo).ForEach(lpe => list.Add(new RelatorioPosicaoInventarioListItemViewModel
             {
                 Codigo = lpe.Codigo,
-                IdLote = lpe.IdLote.ToString(),
+                IdLote = lpe.IdLote != null ? lpe.IdLote.ToString() : "-",
                 QuantidadeProdutoPorEndereco = lpe.QuantidadeProdutoPorEndereco.ToString(),
                 Referencia = string.Concat(lpe.Referencia, " - ", lpe.DescricaoProduto)
 
@@ -630,7 +630,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var list = new List<RelatorioLogisticaCorredorListItemViewModel>();
 
-            produtos.ForEach(lpe => list.Add(new RelatorioLogisticaCorredorListItemViewModel {
+            produtos.ForEach(lpe => list.Add(new RelatorioLogisticaCorredorListItemViewModel
+            {
                 Altura = lpe.Produto.Altura?.ToString("n2") ?? "-",
                 Codigo = lpe.EnderecoArmazenagem.Codigo ?? "-",
                 Referencia = lpe.Produto.Referencia ?? "-",
@@ -646,7 +647,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Giro6m = null,
                 ItLoc = null
             }));
-            
+
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
