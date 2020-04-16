@@ -11,60 +11,113 @@
         </div>
         <div class="x_content">
             <!-- menu -->
-            <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
+            <ul class="nav nav-tabs bar_tabs" id="ulMenuConfig" role="tablist">
                 <li class="nav-item active">
-                    <a class="nav-link" id="fornecedor-quebra-tab" data-toggle="tab" href="#fornecedor-quebra" role="tab" aria-selected="true" aria-expanded="true">Fornecedor Quebra</a>
+                    <a id="FORN_QUEBRA" class="nav-link" data-toggle="tab" href="#TabFornecedorQuebra" role="tab" aria-selected="true" aria-expanded="true">Fornecedor Quebra</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="sankhya-top-tab" data-toggle="tab" href="#sankhya-top" role="tab" aria-selected="false">Sankhya Tops</a>
+                    <a id="SANKHYA_TOP" class="nav-link" data-toggle="tab" href="#TabSankhyaTop" role="tab" aria-selected="false">Sankhya Tops</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-selected="false">Contact</a>
+                    <a id="CONFIG" class="nav-link" data-toggle="tab" href="#TabConfiguracao" role="tab" aria-selected="false">Configuração</a>
+                </li>
+                <li class="nav-item">
+                    <a id="REM_CONFIG"  class="nav-link" data-toggle="tab" href="#TabRemessaConfiguracao" role="tab" aria-selected="false">Remessa Configuração</a>
+                </li>
+                <li class="nav-item">
+                    <a id="REM_USUARIO" class="nav-link" data-toggle="tab" href="#TabRemessaUsuario" role="tab" aria-selected="false">Remessa Usuário</a>
                 </li>
             </ul>
             <!-- panels -->
             <div class="tab-content" id="myTabContent">
-                <!-- Fornecedor Quebra -->
-                <div class="tab-pane fade active in" id="fornecedor-quebra" role="tabpanel" aria-labelledby="fornecedor-quebra-tab">
-                    <div class="col-md-4 col-sm-4">
-                        @Html.TextBoxFor(m => m.Cod_Fornecedor, new { @class = "form-control text-uppercase", data_field = "Cod_Fornecedor", placeholder = "Consultar Fornecedor" })
-                        <div>
-                            <div class="x_panel">
-                                <div class="x_title text-muted"><b>Fornecedores selecionados</b></div>
-                                <div class="x_content">
-                                    <ul id="listaFornecedor" class="to_do" style="overflow:auto; height:240px"></ul>
+                <!-- TAB Fornecedor Quebra -->
+                <div class="tab-pane fade active in" id="TabFornecedorQuebra" role="tabpanel">
+                    <div class="x_panel">
+                        <div class="col-md-4 col-sm-4">
+                            @Html.TextBoxFor(m => m.Cod_Fornecedor, new { @class = "form-control text-uppercase input-sm", data_field = "Cod_Fornecedor", placeholder = "Consultar Fornecedor", data_toggle = "tooltip", data_original_title = "Consultar Fornecedor de Quebra" })
+                            <div>
+                                <div class="x_panel">
+                                    <div class="x_title text-muted"><b>Fornecedores selecionados</b></div>
+                                    <div class="x_content">
+                                        <ul id="listaFornecedor" class="to_do" style="overflow:auto; height:240px"></ul>
+                                    </div>
+                                </div>
+                                <div class="form-inline">
+                                    <button id="btnLimpar" type="button" class="btn btn-danger">Limpar Lista</button>
+                                    <button id="btnGravar" type="button" class="btn btn-primary">Gravar Lista</button>
                                 </div>
                             </div>
-                            <div class="form-inline">
-                                <button id="btnLimpar" type="button" class="btn btn-danger">Limpar Lista</button>
-                                <button id="btnGravar" type="button" class="btn btn-primary">Gravar Lista</button>
+                        </div>
+                        <div class="col-md-8 col-sm-8">
+                            <!-- Grid Fornecedor Quebra -->
+                            <div class="x_content">
+                                <div class="x_title text-muted"><b>Fornecedores cadastrados</b></div>
+                                <table id="gridFornecedorQuebra" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
                             </div>
                         </div>
                     </div>
+                </div>
+                <!-- TAB Sankhya Tops -->
+                <div class="tab-pane fade" id="TabSankhyaTop" role="tabpanel">
+                    <div class="x_panel">
+                        <div class="col-md-5 col-sm-5">
 
-                    <div class="col-md-8 col-sm-8">
-                        <!-- Grid Fornecedor Quebra -->
-                        <div class="x_content">
-                            <div class="x_title text-muted"><b>Fornecedores cadastrados</b></div>
-                            <table id="gridFornecedorQuebra" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
+                            <div class="form-inline col-md-12 col-sm-12">
+                                <div class="col-md-2 col-sm-12"><input id="txtSankhyaCodigo" type="text" placeholder="Código" class="form-control input-sm text-uppercase"></div>
+                                <div class="col-md-10 col-sm-12">
+                                    <input id="txtSankhyaDescricao" type="text" placeholder="Descrição" class="form-control input-sm text-uppercase">
+                                    <button id="btnSankhyaAdicionar" type="button" class="btn btn-success"><i class="fa fa-plus"></i> Adicionar</button>
+                                </div>                                
+                            </div>
+
+                            <div class="col-md-12 col-sm-12">
+                                <div class="x_panel">
+                                    <div class="x_title text-muted"><b>Tops</b></div>
+                                    <div class="x_content">
+                                        <ul id="listaSankhyaTop" class="to_do" style="overflow:auto; height:240px"></ul>
+                                    </div>
+                                </div>
+                                <div class="form-inline">
+                                    <button id="btnSankhyaLimpar" type="button" class="btn btn-danger"> Limpar Lista</button>
+                                    <button id="btnSankhyaGravar" type="button" class="btn btn-primary"> Gravar Lista</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7 col-sm-7">
+                            <!-- Grid Sankhya Tops -->
+                            <div class="x_content">
+                                <div class="x_title text-muted"><b>Sankhya Tops</b></div>
+                                <table id="gridSankhyaTop" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- Sankhya Tops -->
-                <div class="tab-pane fade" id="sankhya-top" role="tabpanel" aria-labelledby="sankhya-top-tab">
-                    <div class="col-md-6 col-sm-6">
-                        <div class="input-group">
-                            <input type="text" class="form-control">
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-primary">Go!</button>
-                            </span>
+                <!-- TAB Configuração -->
+                <div class="tab-pane fade" id="TabConfiguracao" role="tabpanel">
+                    <div class="x_panel">
+                        <div class="col-md-4 col-sm-4">
+
+                        </div>
+                        <div class="col-md-8 col-sm-8">
+                            <!-- Grid Configuração -->
+                            <div class="x_content">
+                                <div class="x_title text-muted"><b>Configuração</b></div>
+                                <table id="gridConfiguracao" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- tab 3 -->
-                <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                    xxFood truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo
-                    booth letterpress, commodo enim craft beer mlkshk
+                <!-- TAB Remessa Configuração -->
+                <div class="tab-pane fade" id="TabRemessaConfiguracao" role="tabpanel">
+                    <div class="x_panel">
+                        <h5 class="text-muted">Remessa Configuração</h5>
+                    </div>
+                </div>
+                <!-- TAB Remessa Usuário -->
+                <div class="tab-pane fade" id="TabRemessaUsuario" role="tabpanel">
+                    <div class="x_panel">
+                        <h5 class="text-muted">Remessa Usuário</h5>
+                    </div>
                 </div>
             </div>
         </div>

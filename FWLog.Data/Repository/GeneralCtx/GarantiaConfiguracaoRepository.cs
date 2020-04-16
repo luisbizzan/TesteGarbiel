@@ -18,6 +18,75 @@ namespace FWLog.Data.Repository.GeneralCtx
         public GarantiaConfiguracaoRepository(Entities entities) : base(entities) { }
         #endregion
 
+        #region [Genérico] - Exclusão
+        public void RegistroExcluir(GarantiaConfiguracao Registro)
+        {
+            try
+            {
+                #region formatar comando exclusão pela TAG
+                var cmdSQL = String.Concat("DELETE FROM {0} WHERE ID = ", Registro.Id);
+
+                switch (Registro.Tag)
+                {
+                    case "REM_CONFIG":
+                        cmdSQL = String.Format(cmdSQL, "gar_remessa_config");
+                        break;
+                    case "REM_USUARIO":
+                        cmdSQL = String.Format(cmdSQL, "gar_remessa_usr");
+                        break;
+                    case "CONFIG":
+                        cmdSQL = String.Format(cmdSQL, "gar_config");
+                        break;
+                    case "FORN_QUEBRA":
+                        cmdSQL = String.Format(cmdSQL, "gar_forn_quebra");
+                        break;
+                    case "SANKHYA_TOP":
+                        cmdSQL = String.Format(cmdSQL, "geral_sankhya_tops");
+                        break;
+                }
+                #endregion
+
+                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                {
+                    conn.Open();
+                    if (conn.State == System.Data.ConnectionState.Open) { conn.ExecuteScalar(cmdSQL); }
+                    conn.Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
+
+        #region [Genérico] - Listar
+        public IEnumerable<GarantiaConfiguracao> RegistroListar(string TAG)
+        {
+            try
+            {
+                IEnumerable<GarantiaConfiguracao> _lista = new List<GarantiaConfiguracao>();
+
+                #region formatar comando consulta pela TAG
+                var cmdSQL = GarantiaConfiguracao.DicTagConsultaSQL.Where(w => w.Key.Equals(TAG, StringComparison.InvariantCulture)).FirstOrDefault().Value;
+                #endregion
+
+                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                {
+                    conn.Open();
+                    if (conn.State == System.Data.ConnectionState.Open) { _lista = conn.Query<GarantiaConfiguracao>(cmdSQL).ToList(); }
+                    conn.Close();
+                }
+                return _lista;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
+
         #region [Fornecedor Quebra] - Validar se código de fornecedor já esta cadastrado
         private bool FornecedorQuebraPodeSerCadastrado(string fornecedor)
         {
@@ -96,59 +165,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                             conn.Close();
                         }
                 });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        #endregion
-
-        #region [Fornecedor Quebra] - Exclusão
-        public void FornecedorQuebraExcluir(int Id)
-        {
-            try
-            {
-                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
-                {
-                    conn.Open();
-                    if (conn.State == System.Data.ConnectionState.Open)
-                    {
-                        string cmdSQL = String.Format("DELETE FROM gar_forn_quebra WHERE ID ={0}", Id);
-                        conn.ExecuteScalar(cmdSQL);
-                    }
-                    conn.Close();
-                }
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        #endregion
-
-        #region [Fornecedor Quebra] - Listar
-        public IEnumerable<GarantiaConfiguracao> FornecedorQuebraListar()
-        {
-            try
-            {
-                IEnumerable<GarantiaConfiguracao> _lista = new List<GarantiaConfiguracao>();
-                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
-                {
-                    conn.Open();
-                    if (conn.State == System.Data.ConnectionState.Open)
-                    {
-                        string cmdSQL = String.Concat(
-                            "SELECT FQ.ID, FQ.COD_FORNECEDOR, F.\"NomeFantasia\", F.\"RazaoSocial\" ",
-                            "FROM GAR_FORN_QUEBRA FQ ",
-                            "INNER JOIN \"Fornecedor\" F ON LTRIM(RTRIM(F.cnpj)) = LTRIM(RTRIM(FQ.cod_fornecedor)) ",
-                            "ORDER BY FQ.ID");
-                        _lista = conn.Query<GarantiaConfiguracao>(cmdSQL).ToList();
-                    }
-                    conn.Close();
-                }
-                return _lista;
             }
             catch (Exception ex)
             {

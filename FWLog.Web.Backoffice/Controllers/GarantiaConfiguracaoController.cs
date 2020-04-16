@@ -31,6 +31,83 @@ namespace FWLog.Web.Backoffice.Controllers
         }
         #endregion
 
+        #region [Genérico] Listar
+        [HttpGet]
+        public JsonResult RegistroListar(string TAG)
+        {
+            try
+            {
+                #region Validações
+                if (String.IsNullOrEmpty(TAG))
+                    throw new Exception(String.Concat("Obrigatório informar a Tag!"));
+
+                if (!GarantiaConfiguracao.DicTagsValidas.Values.Contains(TAG))
+                    throw new Exception(String.Format("Tag {0} inválida!", TAG));
+                #endregion
+
+                #region [Processamento] Formatar Valores para View 
+                var _lista = _garantiaConfigService.RegistroListar(TAG);
+
+                GarantiaConfiguracao.GridNome = GarantiaConfiguracao.DicTagGridNome.Where(w => w.Key.Equals(TAG, StringComparison.InvariantCulture)).FirstOrDefault().Value;
+                GarantiaConfiguracao.GridColunas = (object[])GarantiaConfiguracao.DicTagGridColuna.Where(w => w.Key.Equals(TAG, StringComparison.InvariantCulture)).FirstOrDefault().Value;
+
+                _lista.ToList<GarantiaConfiguracao>().ForEach(delegate (GarantiaConfiguracao Registro)
+                {
+                    Registro.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, Registro.Id);
+                });
+                #endregion
+
+                return Json(new
+                {
+                    Success = true,
+                    GridColunas = GarantiaConfiguracao.GridColunas.ToArray(),
+                    GridNome = GarantiaConfiguracao.GridNome,
+                    Data = _lista.ToArray()
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
+
+        #region [Genérico] Excluir
+        [HttpPost]
+        public ActionResult RegistroExcluir(GarantiaConfiguracao Registro)
+        {
+            try
+            {
+                #region Validações
+                if (Registro.Id.Equals(0))
+                    throw new Exception(String.Format("Id [{0}] do registro inválido!", Registro.Id));
+
+                if (String.IsNullOrEmpty(Registro.Tag))
+                    throw new Exception(String.Concat("Obrigatório informar a Tag!"));
+
+                if (!GarantiaConfiguracao.DicTagsValidas.Values.Contains(Registro.Tag))
+                    throw new Exception(String.Format("Tag {0} inválida!", Registro.Tag));
+
+                _garantiaConfigService.RegistroExcluir(Registro);
+                #endregion
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+        #endregion
+
         #region [Fornecedor Quebra] Incluir
         [HttpPost]
         public ActionResult FornecedorQuebraIncluir(GarantiaConfiguracaoViewModel fornecedor)
@@ -64,60 +141,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
         }
-        #endregion
-
-        #region [Fornecedor Quebra] Excluir
-        [HttpPost]
-        public ActionResult FornecedorQuebraExcluir(int Id)
-        {
-            try
-            {
-                if (Id.Equals(0))
-                    throw new Exception(String.Format("Id [{0}] inválido!", Id));
-
-                _garantiaConfigService.FornecedorQuebraExcluir(Id);
-
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = true,
-                    Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
-                });
-            }
-            catch (Exception ex)
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = ex.Message
-                });
-            }
-        }
-        #endregion
-
-        #region [Fornecedor Quebra] Listar
-        [HttpGet]
-        public JsonResult FornecedorQuebraListar()
-        {
-            try
-            {
-                var _lista = _garantiaConfigService.FornecedorQuebraListar();
-
-                #region Formatar Valores para View
-                _lista.ToList<GarantiaConfiguracao>().ForEach(delegate (GarantiaConfiguracao fornecedor)
-                {
-                    fornecedor.BotaoEvento =
-                    String.Format("<button type=\"button\" class=\"btn btn-danger\" onclick=\"FornecedorQuebraExcluir({0});\"><i class=\"fa fa-trash-o\" alt=\"Excluir Fornecedor\"></i></button>", fornecedor.Id);
-                });
-                #endregion
-
-                return Json(new { Success = true, Data = _lista.ToArray() }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
-            }
-        }
-        #endregion
+        #endregion        
 
         #region [Fornecedor Quebra] AutoComplete
         [HttpPost]

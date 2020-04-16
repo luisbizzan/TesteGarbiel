@@ -6,7 +6,7 @@ namespace FWLog.Services.Services
 {
     public class GarantiaConfiguracaoService
     {
-        #region variáveis
+        #region Variáveis Contexto
         private readonly UnitOfWork _uow;
         public GarantiaConfiguracaoService(UnitOfWork uow)
         {
@@ -14,24 +14,24 @@ namespace FWLog.Services.Services
         }
         #endregion
 
+        #region [Genérico] Excluir
+        public void RegistroExcluir(GarantiaConfiguracao Registro)
+        {
+            _uow.GarantiaConfiguracaoRepository.RegistroExcluir(Registro);
+        }
+        #endregion
+
+        #region [Genérico] Listar 
+        public IEnumerable<GarantiaConfiguracao> RegistroListar(string TAG)
+        {
+            return _uow.GarantiaConfiguracaoRepository.RegistroListar(TAG);
+        }
+        #endregion
+
         #region [Fornecedor Quebra] Incluir
         public void FornecedorQuebraIncluir(GarantiaConfiguracao item)
         {
             _uow.GarantiaConfiguracaoRepository.FornecedorQuebraIncluir(item);
-        }
-        #endregion
-
-        #region [Fornecedor Quebra] Excluir
-        public void FornecedorQuebraExcluir(int Id)
-        {
-            _uow.GarantiaConfiguracaoRepository.FornecedorQuebraExcluir(Id);
-        }
-        #endregion
-
-        #region [Fornecedor Quebra] Listar 
-        public IEnumerable<GarantiaConfiguracao> FornecedorQuebraListar()
-        {
-            return _uow.GarantiaConfiguracaoRepository.FornecedorQuebraListar();
         }
         #endregion
 
