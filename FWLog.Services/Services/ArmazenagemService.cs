@@ -281,7 +281,7 @@ namespace FWLog.Services.Services
                 "BU", //FW -BAURU
             };
 
-            if (!(siglasNaoVerificaPeso.Contains(enderecoArmazenagem.Empresa.Sigla) && enderecoArmazenagem.Codigo[3] == 'C'))
+            if (!(siglasNaoVerificaPeso.Contains(enderecoArmazenagem.Empresa.Sigla) && enderecoArmazenagem.Horizontal == "C"))
             {
                 //limite de peso do endereço
                 if (enderecoArmazenagem.LimitePeso.HasValue)
