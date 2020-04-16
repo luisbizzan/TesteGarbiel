@@ -30,6 +30,65 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioAtividadeEstoque)]
+        public ActionResult RelatorioAtividadeEstoque()
+        {
+            var model = new RelatorioAtividadeEstoqueViewModel
+            {
+                Filter = new RelatorioAtividadeEstoqueFilterViewModel()
+                {
+                    ListaAtividadeEstoqueTipo = new SelectList(
+                    _uow.AtividadeEstoqueTipoRepository.Todos().OrderBy(o => o.IdAtividadeEstoqueTipo).Select(x => new SelectListItem
+                    {
+                        Value = x.IdAtividadeEstoqueTipo.GetHashCode().ToString(),
+                        Text = x.Descricao,
+                    }), "Value", "Text"
+                )
+                }
+            };
+            
+            return View(model); ;
+        }
+
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioAtividadeEstoque)]
+        public ActionResult RelatorioAtividadeEstoquePageData(DataTableFilter<RelatorioAtividadeEstoqueFilterViewModel> model)
+        {
+            var filtro = Mapper.Map<DataTableFilter<AtividadeEstoqueListaFiltro>>(model);
+            filtro.CustomFilter.IdEmpresa = IdEmpresa;
+
+            var result = _uow.AtividadeEstoqueRepository.PesquisarPageData(filtro, out int registrosFiltrados, out int totalRegistros);
+
+            var list = new List<RelatorioAtividadeEstoqueListItemViewModel>();
+            
+            List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
+
+            foreach (var item in result)
+            {
+                list.Add(new RelatorioAtividadeEstoqueListItemViewModel()
+                {
+                    CodigoEndereco = item.CodigoEndereco,
+                    DataSolicitacao = item.DataSolicitacao.HasValue ? item.DataSolicitacao.Value.ToString("dd/MM/yyyy") : "",
+                    DataExecucao = item.DataExecucao.HasValue ? item.DataExecucao.Value.ToString("dd/MM/yyyy"): "",
+                    DescricaoProduto = item.DescricaoProduto,
+                    ReferenciaProduto = item.ReferenciaProduto,
+                    Finalizado = item.Finalizado ? "Sim" : "Não",
+                    QuantidadeInicial = item.QuantidadeInicial.HasValue ? item.QuantidadeInicial.ToString() : "",
+                    QuantidadeFinal = item.QuantidadeFinal.HasValue ? item.QuantidadeFinal.ToString() : "",
+                    TipoAtividade = item.TipoAtividade,
+                    UsuarioExecucao = usuarios.Where(x => x.UserId.Equals(item.UsuarioExecucao)).FirstOrDefault()?.PerfilUsuario.Nome,
+                });
+            }
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
+                Data = list
+            });
+        }
+
+        [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioRastreabilidadeLote)]
         public ActionResult RelatorioRastreabilidadeLote()
         {

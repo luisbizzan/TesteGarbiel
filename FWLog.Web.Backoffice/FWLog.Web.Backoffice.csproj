@@ -294,6 +294,7 @@
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioLogisticaCorredorViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioPosicaoInventarioViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioTotalPorAlaViewModel.cs" />
+    <Compile Include="Models\ArmazenagemCtx\RelatorioAtividadeEstoqueViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\RelatorioLogisticaCorredorViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\RelatorioLoteMovimentacaoViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\RelatorioPosicaoInventarioViewModel.cs" />
@@ -599,6 +600,7 @@
     <Content Include="Scripts\vendors\datatables\dataTables.rowGroup.js" />
     <Content Include="Scripts\vendors\onScan\onscan.js" />
     <Content Include="Scripts\vendors\onScan\onscan.min.js" />
+    <Content Include="Scripts\Views\Armazenagem\relatorioAtividadeEstoque.js" />
     <Content Include="Scripts\Views\Armazenagem\relatorioLogisticaCorredor.js" />
     <Content Include="Scripts\Views\Armazenagem\relatorioLoteMovimentacao.js" />
     <Content Include="Scripts\Views\Armazenagem\relatorioPosicaoInventario.js" />
@@ -741,6 +743,7 @@
     <Content Include="Views\Armazenagem\RelatorioPosicaoInventario.cshtml" />
     <Content Include="Views\Armazenagem\RelatorioTotalizacaoLocalizacao.cshtml" />
     <Content Include="Views\Armazenagem\RelatorioLogisticaCorredor.cshtml" />
+    <Content Include="Views\Armazenagem\RelatorioAtividadeEstoque.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
