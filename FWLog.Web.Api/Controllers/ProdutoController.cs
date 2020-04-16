@@ -100,6 +100,11 @@ namespace FWLog.Web.Api.Controllers
 
             if (produto == null)
             {
+                produto = _unitOfWork.ProdutoRepository.PesquisarPorCodigoBarras2(codref);
+            }
+
+            if (produto == null)
+            {
                 return ApiNotFound("Nenhum produto foi encontrado.");
             }
 
