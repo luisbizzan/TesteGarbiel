@@ -27,6 +27,22 @@
             return true
     }, 'Informe o corredor final para prosseguir');
 
+    $.validator.addMethod('validateCorredorFinalMaiorQue', function (value, ele) {
+        var corredorInicial = $("#Filter_CorredorInicial").val();
+
+        if (!value || !corredorInicial) {
+            return true;
+        }
+        
+        value = parseInt(value);
+        corredorInicial = parseInt(corredorInicial);
+
+        if (value >= corredorInicial)
+            return true;
+        else
+            return false;
+    }, 'O corredor final deve ser maior que o corredor inicial');
+
 
     $(document.body).on('click', "#pesquisar", function () {
         $("#tabelaResultado").show();

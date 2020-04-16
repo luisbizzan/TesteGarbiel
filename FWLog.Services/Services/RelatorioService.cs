@@ -1,6 +1,7 @@
 ﻿using ExtensionMethods.String;
 using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Relatorio;
@@ -1555,6 +1556,44 @@ namespace FWLog.Services.Services
             byte[] relatorio = GerarRelatorioLogisticaCorredor(relatorioRequest);
 
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
+        }
+
+        public byte[] GerarRelatorioAtividadeEstoque(DataTableFilter<AtividadeEstoqueListaFiltro> filtro, string userId)
+        {
+            var list = _unitiOfWork.AtividadeEstoqueRepository.PesquisarPageData(filtro, out int registrosFiltrados, out int totalRegistros).Select(x => new RelatorioAtividadeEstoque
+            {
+                TipoAtividade = x.TipoAtividade,
+                ReferenciaDescricaoProduto = x.ReferenciaProduto + "-" + x.DescricaoProduto,
+                QuantidadeInicial = x.QuantidadeInicial,
+                DataSolicitacao = x.DataSolicitacao,
+                QuantidadeFinal = x.QuantidadeFinal,
+                CodigoEndereco = x.CodigoEndereco,
+                DataExecucao = x.DataExecucao,
+                UsuarioExecucao = x.UsuarioExecucao,
+                Finalizado = x.Finalizado
+            }).ToList();
+
+            var dados = new List<IFwRelatorioDados>();
+            dados.AddRange(list);
+
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filtro.CustomFilter.IdEmpresa);
+
+            PerfilUsuario usuario = _unitiOfWork.PerfilUsuarioRepository.GetByUserId(userId);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = $"{usuario.Usuario.UserName} - {usuario.Nome}",
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório Atividades de Estoque",
+                Filtros = null,
+                Dados = dados
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            return fwRelatorio.Gerar(fwRelatorioDados);
         }
     }
 }

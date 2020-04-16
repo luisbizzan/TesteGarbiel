@@ -60,25 +60,22 @@
                 responseType: 'blob'
             },
             data: {
-                IdLote: $("#Filter_IdLote").val(),
-                NroNota: $("#Filter_NroNota").val(),
                 IdProduto: $("#Filter_IdProduto").val(),
-                ReferenciaPronduto: $("#Filter_DescricaoProduto").val(),
-                DataCompraMinima: $("#Filter_DataCompraMinima").val(),
-                DataCompraMaxima: $("#Filter_DataCompraMaxima").val(),
-                DataRecebimentoMinima: $("#Filter_DataRecebimentoMinima").val(),
-                DataRecebimentoMaxima: $("#Filter_DataRecebimentoMaxima").val(),
-                QtdCompraMinima: $("#Filter_QtdCompraMinima").val(),
-                QtdCompraMaxima: $("#Filter_QtdCompraMaxima").val(),
-                QtdRecebidaMinima: $("#Filter_QtdRecebidaMinima").val(),
-                QtdRecebidaMaxima: $("#Filter_QtdRecebidaMaxima").val()
+                IdAtividadeEstoqueTipo: $("#Filter_IdAtividadeEstoqueTipo").val(),
+                QuantidadeInicial: $("#Filter_QuantidadeInicial").val(),
+                QuantidadeFinal: $("#Filter_QuantidadeFinal").val(),
+                DataInicialSolicitacao: $("#Filter_DataInicialSolicitacao").val(),
+                DataFinalSolicitacao: $("#Filter_DataFinalSolicitacao").val(),
+                DataInicialExecucao: $("#Filter_DataInicialExecucao").val(),
+                DataFinalExecucao: $("#Filter_DataFinalExecucao").val(),
+                IdUsuarioExecucao: $("#Filter_IdUsuarioExecucao").val()
             },
             success: function (data) {
                 var a = document.createElement('a');
                 var url = window.URL.createObjectURL(data);
 
                 a.href = url;
-                a.download = 'Relatório Rastreio de Peça.pdf';
+                a.download = 'Relatório Atividades de Estoque.pdf';
                 document.body.append(a);
                 a.click();
                 a.remove();

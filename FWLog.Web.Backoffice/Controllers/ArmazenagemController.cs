@@ -9,6 +9,7 @@ using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.ArmazenagemCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using log4net;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,6 +87,20 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsFiltered = registrosFiltrados,
                 Data = list
             });
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioAtividadeEstoque)]
+        public ActionResult DownloadRelatorioAtividadeEstoque(RelatorioAtividadeEstoqueRequest viewModel)
+        {
+            ValidateModel(viewModel);
+
+            var filtro = Mapper.Map<DataTableFilter<AtividadeEstoqueListaFiltro>>(viewModel);
+            filtro.CustomFilter.IdEmpresa = IdEmpresa;
+
+            byte[] relatorio = _relatorioService.GerarRelatorioAtividadeEstoque(filtro, User.Identity.GetUserId());
+
+            return File(relatorio, "application/pdf", "Relatório Atividades de Estoque.pdf");
         }
 
         [HttpGet]

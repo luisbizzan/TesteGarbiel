@@ -192,8 +192,8 @@ function limparUsuarioMovimentacao() {
 }
 
 function selecionarEnderecoArmazenagem(IdEnderecoArmazenagem, codigo) {
-    $("#CodigoEnderecoArmazenagem").val(codigo);
-    $("#IdEnderecoArmazenagem").val(IdEnderecoArmazenagem);
+    $("#Filter_CodigoEnderecoArmazenagem").val(codigo);
+    $("#Filter_IdEnderecoArmazenagem").val(IdEnderecoArmazenagem);
     $("#modalPesquisaEnderecoArmazenagem").modal("hide");
     $("#modalPesquisaEnderecoArmazenagem").empty();
 }

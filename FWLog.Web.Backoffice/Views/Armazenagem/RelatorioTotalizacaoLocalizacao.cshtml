@@ -58,7 +58,7 @@
                 <div class="col-xs-12 col-md-2 col-lg-2">
                     @Html.LabelFor(m => m.Filter.CorredorFinal)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.CorredorFinal, new { @class = "form-control onlyNumber validateCorredorFinal", data_field = "CorredorFinal" })
+                        @Html.TextBoxFor(m => m.Filter.CorredorFinal, new { @class = "form-control onlyNumber validateCorredorFinal validateCorredorFinalMaiorQue", data_field = "CorredorFinal" })
                     </div>
                     @Html.ValidationMessageFor(m => m.Filter.CorredorFinal)
                 </div>
@@ -76,7 +76,7 @@
     <div class="col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Relatório Totalização Por Localização Apoio</h2>
+                <h2>Relatório Totalização Por Localização</h2>
                 <div class="nav navbar-right">
                     <div class="col-xs-12">
                         <a id="downloadRelatorioTotalizacaoLocalizacao" data-toggle="tooltip" title="Download Relatório" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
