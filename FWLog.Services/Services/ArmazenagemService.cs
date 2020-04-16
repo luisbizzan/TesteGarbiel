@@ -1110,5 +1110,63 @@ namespace FWLog.Services.Services
 
             return enderecoProdutoQuantidades;
         }
+
+        public void ConfirmaQuantidadeConferenciaAlas(int quantidade, long idProduto, long? idLote, long idEnderecoArmazenagem, long idEmpresa, string idUsuario)
+        {
+            if (quantidade <= 0)
+            {
+                throw new BusinessException("A quantidade deve ser informada.");
+            }
+
+            if (idProduto <= 0)
+            {
+                throw new BusinessException("O produto deve ser informado.");
+            }
+
+            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("O produto não foi encontrado.");
+            }
+
+            if (idLote != null)
+            {
+                var lote = _unitOfWork.LoteRepository.PesquisarPorLoteEmpresa(idLote.Value, idEmpresa);
+
+                if (lote == null)
+                {
+                    throw new BusinessException("O lote não foi encontrado.");
+                }
+            }
+
+            if (idEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("O endereço deve ser informado.");
+            }
+
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("O endereço não foi encontrado.");
+            }
+
+            if (enderecoArmazenagem.IdEmpresa != idEmpresa)
+            {
+                throw new BusinessException("O endereço não pertence a empresa do usuário.");
+            }
+
+            var historico = new GravarHistoricoColetorRequisicao()
+            {
+                Descricao = $"A quantidade conferida {quantidade} do produto {produto.Referencia} do lote {(idLote).GetValueOrDefault()} do endereço {enderecoArmazenagem.Codigo} está correta.",
+                IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ConferirEndereco,
+                IdEmpresa = idEmpresa,
+                IdUsuario = idUsuario
+            };
+
+            _coletorHistoricoService.GravarHistoricoColetor(historico);
+        }
     }
 }

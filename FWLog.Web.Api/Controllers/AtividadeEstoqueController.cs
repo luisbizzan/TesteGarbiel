@@ -307,6 +307,5 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(ex.Message);
             }
         }
-
     }
 }

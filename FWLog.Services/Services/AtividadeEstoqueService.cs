@@ -458,7 +458,7 @@ namespace FWLog.Services.Services
             {
                 LoteProdutoEndereco loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(requisicao.IdEnderecoArmazenagem);
 
-                if (loteProdutoEndereco ==  null)
+                if (loteProdutoEndereco == null)
                 {
                     throw new BusinessException("O produto não está instalado neste endereço.");
                 }

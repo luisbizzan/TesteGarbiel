@@ -638,5 +638,28 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(ex.Message);
             }
         }
+
+        [HttpPost]
+        [Route("api/v1/armazenagem/conferir-alas/confirma-quantidade")]
+        public IHttpActionResult ConfirmaQuantidadeConferenciaAlas(ConfirmaQuantidadeConferenciaAlasRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+            try
+            {
+
+                _armazenagemService.ConfirmaQuantidadeConferenciaAlas(requisicao?.Quantidade ?? 0, requisicao?.IdProduto ?? 0,
+                    requisicao?.IdLote, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa, IdUsuario);
+
+                return ApiOk();
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+
+        }
     }
 }
