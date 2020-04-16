@@ -1,8 +1,6 @@
 ﻿// Utilidades para o componente datatables.
 (function (dart, resources, undefined) {
-
     dart.dataTables = (function () {
-
         var windowLoadDate = null;
 
         // Para que a barra de progresso não apareça várias vezes seguida ao carregar a página,
@@ -28,14 +26,12 @@
         };
 
         var loadFormFilterEvents = function ($form, validate) {
-
             if ($form == null) {
                 $form = $('[data-filter="form"]');
             }
             var $clear = $form.find('[data-filter="clear"]');
             var $search = $form.find('[data-filter="search"]');
             var $dataTable = $('#' + $form.attr('data-filter-for'));
-
 
             $clear.on('click', function () {
                 $form[0].reset();
@@ -101,7 +97,6 @@
         };
 
         var loadFilterFromData = function (data) {
-
             if (!data.hasOwnProperty('CustomFilter')) {
                 return;
             }
@@ -143,23 +138,17 @@
             saveFilterToData: saveFilterToData,
             addEventsForDropdownAutoposition: addEventsForDropdownAutoposition
         };
-
-
     })();
-
 })(window.dart = window.dart || {}, dart.resources);
 
 // Render Actions Column
 (function (dart, resources, undefined) {
-
     dart.dataTables = dart.dataTables || {};
 
     dart.dataTables.renderActionsColumn = function (actionFn) {
-
         var minActionsForDropdown = 8;
 
         var isDropdownMode = function (actions) {
-
             var visibleActions = 0;
 
             for (var i = 0; i < actions.length; i++) {
@@ -188,8 +177,9 @@
         };
 
         var generateButtonElementForAction = function (action) {
+            let btColor = action.color == "" ? "btn-default" : action.color;
 
-            action.attrs.class = 'btn btn-row-actions btn-default';
+            action.attrs.class = 'btn btn-row-actions ' + btColor;
             action.attrs.title = action.text;
             action.attrs.text = action.text;
 
@@ -208,10 +198,9 @@
         };
 
         var generateLiElementForAction = function (action) {
-
             if (action.hasOwnProperty('href')) {
                 action.attrs.href = action.href;
-            } 
+            }
 
             action.attrs.text = ' ' + action.text;
 
@@ -241,11 +230,9 @@
         };
 
         var getHtml = function (actions, isDropdownModeResult) {
-
             var $html = generateContainerForActions(actions, isDropdownModeResult);
 
             for (var i = 0; i < actions.length; i++) {
-
                 if (!actions[i].visible) {
                     continue;
                 }
@@ -270,9 +257,10 @@
                     $html.find('ul').append(element);
                 } else {
                     var element = generateButtonElementForAction(action);
-                    $html.append(element);
+                    $html.append(element);                    
                 }
             }
+            $('.btn-row-actions').tooltip();
 
             return $html[0].outerHTML;
         };
@@ -288,12 +276,10 @@
             }
         };
     };
-
 })(window.dart = window.dart || {}, dart.resources);
 
 // Render Multiple Actions Column
 (function (dart, resources, undefined) {
-
     dart.dataTables = dart.dataTables || {};
 
     //{
@@ -445,5 +431,4 @@
             dart.dataTables.resizeCheckColumn();
         }, 1500)
     });
-
 })(window.dart = window.dart || {}, dart.resources);

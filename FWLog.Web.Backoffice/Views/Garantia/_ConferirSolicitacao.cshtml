@@ -1,0 +1,90 @@
+﻿@model FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaConferenciaVM
+@{
+    Layout = null;
+    @BundleHelper.RenderViewScriptModal(new
+{
+    id = Model.Solicitacao.Id
+})
+}
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">×</span>
+            </button>
+            <h4 class="modal-title">Conferencia de Solicitação</h4>
+        </div>
+        <div class="modal-body" style="overflow: auto; max-height: calc(100vh - 150px);">
+
+            <div class="x_panel">
+
+                <div class="x_content">
+                    <div class="row" style="margin-bottom:10px;">
+                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
+                            @Html.LabelFor(m => m.Solicitacao.Id): @Model.Solicitacao.Id
+                        </div>
+                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
+                            @Html.LabelFor(m => m.Solicitacao.Nota_Fiscal): @Model.Solicitacao.Nota_Fiscal
+                        </div>
+                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
+                            @Html.LabelFor(m => m.Solicitacao.Dt_Criacao): @Model.Solicitacao.Dt_Criacao
+                        </div>
+                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
+                            @Html.LabelFor(m => m.Solicitacao.Tipo): @Model.Solicitacao.Tipo
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
+                            @Html.LabelFor(m => m.Solicitacao.Cli_Cnpj): @Model.Solicitacao.Cli_Cnpj
+                        </div>
+                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
+                            @Html.LabelFor(m => m.Solicitacao.Razao_Social): @Model.Solicitacao.Razao_Social
+                        </div>
+                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
+                            @Html.LabelFor(m => m.Solicitacao.Rep): @Model.Solicitacao.Rep
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Conferir</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <form id="formConferir">
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Form.Refx, new { @class = "control-label" })
+                                    @Html.TextBoxFor(m => m.Form.Refx, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Form.Refx)
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Form.Quantidade, new { @class = "control-label" })
+                                    @Html.TextBoxFor(m => m.Form.Quantidade, new { @class = "form-control", @readonly = "readonly" })
+                                    @Html.ValidationMessageFor(m => m.Form.Quantidade)
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    @Html.LabelFor(m => m.Form.Descricao, new { @class = "control-label" })
+                                    @Html.TextBoxFor(m => m.Form.Descricao, new { @class = "form-control", @readonly = "readonly" })
+                                    @Html.ValidationMessageFor(m => m.Form.Descricao)
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-primary right"><i class="fa fa-exchange"></i> Alterar Quantidade</button>
+                        <button type="button" class="btn btn-success right"><i class="fa fa-save"></i> Finalizar Conferência</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

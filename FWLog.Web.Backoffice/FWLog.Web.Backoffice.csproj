@@ -332,10 +332,12 @@
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\LoteEtiquetaViewModel.cs" />
     <Compile Include="Models\GarantiaConfiguracaoCtx\GarantiaConfiguracaoViewModel.cs" />
+    <Compile Include="Models\GarantiaCtx\GarantiaConferenciaVM.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaDetailsViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaCreateViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaDetalhesEntradaConferenciaViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaEntradaConferenciaViewModel.cs" />
+    <Compile Include="Models\GarantiaCtx\GarantiaSolicitacaoItemVM.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaSolicitacaoVM.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaRegistroRecebimentoViewModel.cs" />
     <Compile Include="Models\GeralCtx\GeralUploadVM.cs" />
@@ -445,6 +447,7 @@
     <Content Include="Content\site.min.css">
       <DependentUpon>site.css</DependentUpon>
     </Content>
+    <Content Include="Content\vendors\datatables\select.dataTables.css" />
     <Content Include="Content\vendors\jquery-confirm\jquery-confirm.min.css" />
     <Content Include="favicon.ico" />
     <EmbeddedResource Include="GlobalResources\NivelArmazenagem\NivelArmazenagemStrings.resx">
@@ -726,6 +729,8 @@
     <Content Include="Views\Geral\_FormHistoricos.cshtml" />
     <Content Include="Views\Geral\_FormUploads.cshtml" />
     <Content Include="Views\GarantiaConfiguracao\Index.cshtml" />
+    <Content Include="Views\Garantia\_VisualizarSolicitacao.cshtml" />
+    <Content Include="Views\Garantia\_ConferirSolicitacao.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

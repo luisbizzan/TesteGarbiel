@@ -33,18 +33,21 @@
         return [
             {
                 text: "Visualizar",
+                color: "btn-info",
                 attrs: { 'data-id': full.Id, 'action': 'visualizarSolicitacao' },
                 icon: 'fa fa-eye',
                 visible: view.detailsVisible
             },
             {
                 text: "Estornar",
+                color: "btn-danger",
                 attrs: { 'data-id': full.Id, 'action': 'estornarSolicitacao' },
                 icon: 'fa fa-pencil-square',
                 visible: visivelEstornar
             },
             {
                 text: "Conferir",
+                color: "btn-primary",
                 attrs: { 'data-id': full.Id, 'action': 'conferirSolicitacao' },
                 icon: 'fa fa-check-square-o',
                 visible: visivelConferir
@@ -53,12 +56,11 @@
     });
 
     $("#dataTable").on('click', "[action='visualizarSolicitacao']", visualizarSolicitacao);
-    //$("#dataTable").on('click', "[action='estornarSolicitacao']", registrarRecebimento);
-    //$("#dataTable").on('click', "[action='conferirSolicitacao']", conferirSolicitacao);
+    $("#dataTable").on('click', "[action='estornarSolicitacao']", estornarSolicitacao);
+    $("#dataTable").on('click', "[action='conferirSolicitacao']", conferirSolicitacao);
 
     var $Data_Inicial = $('#Filter_Data_Inicial').closest('.date');
     var $Data_Final = $('#Filter_Data_Final').closest('.date');
-
 
     var createLinkedPickers = function () {
         var dataInicial = $Data_Inicial.datetimepicker({
@@ -107,12 +109,10 @@
         ]
     });
 
+    $('.btn-row-actions').tooltip();
+
     dart.dataTables.loadFormFilterEvents();
-
-   
-
 })();
-
 
 function visualizarSolicitacao() {
     var id = $(this).data("id");
@@ -120,39 +120,114 @@ function visualizarSolicitacao() {
 
     modal.load(CONTROLLER_PATH + "VisualizarSolicitacao/" + id, function () {
         modal.modal();
+
+        var botoes = ['selectAll', 'selectNone',
+            {
+                text: '<i class="fa fa-exchange"></i> Trocar Fornecedor',
+                className: 'btn-success ',
+                action: function (e, dt, node, config) {
+                    var ids = $.map(this.rows('.selected').data(), function (item) {
+                        return item[1].split(" - ")[0];
+                    });
+                    console.log(ids)
+
+                    if (ids.length == 0) {
+                        PNotify.error({ text: "Selecione um item." });
+                    } else {
+                        //criarAcao(ids.join());
+                    }
+                }
+            },
+            {
+                text: '<i class="fa fa-qrcode"></i> Emitir Etiquetas',
+                className: 'btn-primary ',
+                action: function (e, dt, node, config) {
+                    var ids = $.map(this.rows('.selected').data(), function (item) {
+                        return item[1].split(" - ")[0];
+                    });
+                    console.log(ids)
+
+                    if (ids.length == 0) {
+                        PNotify.error({ text: "Selecione um item." });
+                    } else {
+                        //criarAcao(ids.join());
+                    }
+                }
+            },
+            {
+                text: '<i class="fa fa-ticket"></i> N.F. de Compra',
+                className: 'btn-success',
+                action: function (e, dt, node, config) {
+                    var ids = $.map(this.rows('.selected').data(), function (item) {
+                        return item[1].split(" - ")[0];
+                    });
+                    console.log(ids)
+
+                    if (ids.length == 0) {
+                        PNotify.error({ text: "Selecione um item." });
+                    } else {
+                        //criarAcao(ids.join());
+                    }
+                }
+            },
+        ];
+
+        $('#tbSolicitacaoItens').DataTable({
+            destroy: true,
+            serverSide: false,
+            stateSave: false,
+            columnDefs: [
+                {
+                    targets: [1],
+                    visible: false
+                },
+                {
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets: [0]
+                },
+            ],
+            select: {
+                style: 'os',
+                selector: 'td:first-child'
+            },
+            dom: "Bfrtip",
+            bInfo: true,
+            buttons: botoes,
+        });
     });
 }
 
-
-
-
 function conferirSolicitacao() {
-    let id = $(this).data("id");
-    let $modal = $("#modalConferenciaGarantia");
+    var id = $(this).data("id");
+    let modal = $("#modalVisualizar");
 
-    $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "ValidarInicioConferenciaDaGarantia/" + id,
-        cache: false,
-        method: "POST",
-        success: function (result) {
-            if (result.Success) {
-                $modal.load(HOST_URL + CONTROLLER_PATH + "EntradaConferenciaGarantia/" + id, function (result) {
-                    $modal.modal();
+    modal.load(CONTROLLER_PATH + "ConferirSolicitacao/" + id, function () {
+        modal.modal();
+    });
+}
 
-                    $("#Referencia").focus();
-                });
-                if (result.Message != "")
-                    PNotify.warning({ text: result.Message });
-            } else {
-                PNotify.warning({ text: result.Message });
-            }
-        },
-        error: function (request, status, error) {
-            if (request.responseText == 'undefined') {
-                PNotify.error({ text: 'Um erro inesperado ocorreu, atualize a página e tente novamente.' });
-            }
-            else {
-                PNotify.error({ text: request.responseText });
+function estornarSolicitacao() {
+    var id = $(this).data("id");
+
+    $.confirm({
+        type: 'red',
+        theme: 'material',
+        title: 'Estornar Solicitação',
+        content: 'Tem Certeza?',
+        typeAnimated: true,
+        autoClose: 'cancelar|10000',
+        buttons: {
+            confirmar: {
+                text: 'Estornar',
+                btnClass: 'btn-red',
+                action: function () {
+                }
+            },
+            cancelar: {
+                text: 'Cancelar',
+                action: function () {
+                }
             }
         }
     });

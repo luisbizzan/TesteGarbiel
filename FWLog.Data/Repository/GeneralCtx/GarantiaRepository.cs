@@ -82,5 +82,66 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return retorno;
         }
+
+        public GarSolicitacao SelecionaSolicitacao(long Id_Solicitacao)
+        {
+            GarSolicitacao retorno = new GarSolicitacao();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        GS.Id,
+                        GS.Nota_Fiscal,
+                        GS.Dt_Criacao,
+                        GT1.descricao AS Tipo,
+                        GS.Cli_Cnpj
+                    FROM
+                        gar_solicitacao GS
+                        LEFT JOIN geral_tipo GT1 ON GT1.Id = GS.Id_Tipo
+                    WHERE
+                        GS.Id = :Id_Solicitacao
+                    ";
+                    retorno = conn.Query<GarSolicitacao>(sQuery, new { Id_Solicitacao }).SingleOrDefault();
+                }
+                conn.Close();
+            }
+            return retorno;
+        }
+
+        public List<GarSolicitacaoItem> ListarSolicitacaoItem(long Id_Solicitacao)
+        {
+            List<GarSolicitacaoItem> retorno = new List<GarSolicitacaoItem>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        Id,
+                        Id_Solicitacao,
+                        Id_Item_Nf,
+                        Refx,
+                        Cod_Fornecedor,
+                        Quant,
+                        Valor,
+                        ROUND(Quant * Valor,2) AS Valor_Total
+                    FROM
+                        gar_solicitacao_item
+                    WHERE
+                        Id_Solicitacao = :Id_Solicitacao
+                    ";
+                    retorno = conn.Query<GarSolicitacaoItem>(sQuery, new { Id_Solicitacao }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
     }
 }

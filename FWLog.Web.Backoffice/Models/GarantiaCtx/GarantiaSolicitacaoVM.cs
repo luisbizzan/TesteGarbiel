@@ -22,6 +22,12 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         [Display(Name = "Cnpj")]
         public string Cli_Cnpj { get; set; }
 
+        [Display(Name = "Razão Social")]
+        public string Razao_Social { get; set; }
+
+        [Display(Name = "Repr.")]
+        public string Rep { get; set; }
+
         [Display(Name = "Nr. Solicitação")]
         public long Id { get; set; }
 
@@ -40,6 +46,9 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public long Id_Status { get; set; }
 
         public String Status { get; set; }
+
+        [Display(Name = "Nota Fiscal")]
+        public string Nota_Fiscal { get; set; }
     }
 
     public class GarantiaSolicitacaoFilterVM

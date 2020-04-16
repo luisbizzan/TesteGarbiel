@@ -124,6 +124,7 @@ namespace FWLog.Web.Backoffice
                 "~/Content/vendors/datatables/responsive.bootstrap.css",
                 "~/Content/vendors/datatables/scroller.bootstrap.css",
                 "~/Content/vendors/datatables/buttons.dataTables.css",
+                "~/Content/vendors/datatables/select.dataTables.css",
                 "~/Content/vendors/datatables/buttons.bootstrap.css"));
 
             bundles.Add(new StyleBundle("~/style-bundles/vendors/iCheck").Include(

@@ -61,43 +61,38 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             };
 
-            //.Insert(0, new SelectListItem { Text = "Todos", Value = "0" })
-
             model.Filter.Data_Inicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(-7);
             model.Filter.Data_Final = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
 
             return View(model);
         }
 
-        //public ActionResult VisualizarSolicitacao(long Id)
-        //{
-        //    var categoria = _geralService.SelecionaUploadCategoria(Id_Categoria);
+        public ActionResult VisualizarSolicitacao(long Id)
+        {
+            var itens = _uow.GarantiaRepository.ListarSolicitacaoItem(Id);
 
-        //    if (categoria == null)
-        //        return PartialView("_FormUploads", new GeralUploadVM());
+            var model = new GarantiaSolicitacaoItemVM
+            {
+                Solicitacao = Mapper.Map<GarantiaSolicitacaoListVM>(_uow.GarantiaRepository.SelecionaSolicitacao(Id)),
+                Itens = Mapper.Map<List<GarantiaSolicitacaoItemListVM>>(itens)
+            };
 
-        //    var model = new GeralUploadVM
-        //    {
-        //        Id_Ref = Id_Ref,
-        //        Id_Categoria = Id_Categoria,
-        //        Formatos = categoria.Formatos.Split(',').ToList(),
-        //        Tabela = categoria.Tabela,
-        //        Lista_Uploads = _geralService.TodosUploadsDaCategoria(Id_Categoria, Id_Ref)
-        //            .Select(x => new GeralUploadVM
-        //            {
-        //                Id = x.Id,
-        //                Arquivo = x.Arquivo,
-        //                Arquivo_Tipo = x.Arquivo_Tipo,
-        //                Id_Usr = x.Id_Usr,
-        //                Usuario = x.Usuario,
-        //                Dt_Cad = x.Dt_Cad
-        //            }).ToList(),
-        //    };
+            return PartialView("_VisualizarSolicitacao", model);
+        }
 
-        //    return PartialView("_FormUploads", model);
-        //}
+        public ActionResult ConferirSolicitacao(long Id)
+        {
+            var itens = _uow.GarantiaRepository.ListarSolicitacaoItem(Id);
 
-        public ActionResult PageData(DataTableFilter<GarantiaSolicitacaoFilterVM> model)
+            var model = new GarantiaConferenciaVM
+            {
+                Solicitacao = Mapper.Map<GarantiaSolicitacaoListVM>(_uow.GarantiaRepository.SelecionaSolicitacao(Id))
+            };
+
+            return PartialView("_ConferirSolicitacao", model);
+        }
+
+        public ActionResult ListarSolicitacao(DataTableFilter<GarantiaSolicitacaoFilterVM> model)
         {
             int recordsFiltered, totalRecords;
             var filter = Mapper.Map<DataTableFilter<GarantiaFilter>>(model);
