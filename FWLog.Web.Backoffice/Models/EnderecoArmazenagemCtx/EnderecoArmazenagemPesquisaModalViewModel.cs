@@ -34,5 +34,6 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         [Display(Name = "Código")]
         public string Codigo { get; set; }
         public long? IdPontoArmazenagem { get; set; }
+        public bool? BuscarTodos { get; set; }
     }
 }

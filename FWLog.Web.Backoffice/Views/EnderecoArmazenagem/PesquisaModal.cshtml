@@ -29,6 +29,7 @@
                             @Html.LabelFor(m => m.Filtros.Codigo)
                             @Html.TextBoxFor(m => m.Filtros.Codigo, new { @class = "form-control text-uppercase", data_field = "Codigo", @placeholder = "00.X.00.00" })
                             @Html.HiddenFor(m => m.Filtros.IdPontoArmazenagem, new { data_field = "IdPontoArmazenagem" })
+                            @Html.HiddenFor(m => m.Filtros.BuscarTodos, new { data_field = "BuscarTodos" })
                         </div>
                     </div>
                     <div class="row">

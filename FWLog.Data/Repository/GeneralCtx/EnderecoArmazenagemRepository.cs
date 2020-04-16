@@ -69,9 +69,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                          where e.IdEmpresa == filtros.CustomFilter.IdEmpresa &&
                          (filtros.CustomFilter.Codigo.Equals(string.Empty) || e.Codigo.Contains(filtros.CustomFilter.Codigo)) &&
                          (filtros.CustomFilter.IdPontoArmazenagem.HasValue == false || e.IdPontoArmazenagem == filtros.CustomFilter.IdPontoArmazenagem) &&
+                         (filtros.CustomFilter.BuscarTodos.HasValue == true || 
                          e.Ativo == true &&
                          e.IsPontoSeparacao == true &&
-                         !(from p in Entities.ProdutoEstoque where p.IdEnderecoArmazenagem == e.IdEnderecoArmazenagem select p.IdEnderecoArmazenagem).Any()
+                         !(from p in Entities.ProdutoEstoque where p.IdEnderecoArmazenagem == e.IdEnderecoArmazenagem select p.IdEnderecoArmazenagem).Any())
                          select new EnderecoArmazenagemPesquisaModalListaLinhaTabela
                          {
                              IdEnderecoArmazenagem = e.IdEnderecoArmazenagem,
