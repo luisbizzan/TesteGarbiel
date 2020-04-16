@@ -615,7 +615,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var list = new List<RelatorioLogisticaCorredorListItemViewModel>();
 
-            produtos.ForEach(lpe => list.Add(new RelatorioLogisticaCorredorListItemViewModel {
+            produtos.ForEach(lpe => list.Add(new RelatorioLogisticaCorredorListItemViewModel
+            {
                 Altura = lpe.Produto.Altura?.ToString("n2") ?? "-",
                 Codigo = lpe.EnderecoArmazenagem.Codigo ?? "-",
                 Referencia = lpe.Produto.Referencia ?? "-",
@@ -631,7 +632,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Giro6m = null,
                 ItLoc = null
             }));
-            
+
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,
