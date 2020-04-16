@@ -442,7 +442,7 @@ namespace FWLog.Web.Backoffice.Controllers
             loteProdutoEnderecos.OrderBy(x => x.Referencia).ThenBy(x => x.Codigo).ForEach(lpe => list.Add(new RelatorioPosicaoInventarioListItemViewModel
             {
                 Codigo = lpe.Codigo,
-                IdLote = lpe.IdLote.ToString(),
+                IdLote = lpe.IdLote != null ? lpe.IdLote.ToString() : "-",
                 QuantidadeProdutoPorEndereco = lpe.QuantidadeProdutoPorEndereco.ToString(),
                 Referencia = string.Concat(lpe.Referencia, " - ", lpe.DescricaoProduto)
 
