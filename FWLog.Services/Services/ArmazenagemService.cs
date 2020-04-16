@@ -409,45 +409,38 @@ namespace FWLog.Services.Services
 
             var volume = ConsultaDetalhesVolumeInformado(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
 
-            try
+            var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
             {
-                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.RetirarProduto,
+                Descricao = $"Retirou o produto {volume.Produto.Referencia} quantidade {volume.Quantidade} peso {volume.PesoTotal} do lote {volume.Lote.IdLote} do endereço {volume.EnderecoArmazenagem.Codigo}",
+                IdEmpresa = idEmpresa,
+                IdUsuario = idUsuarioRetirada
+            };
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                _unitOfWork.LoteProdutoEnderecoRepository.Delete(volume);
+                await _unitOfWork.SaveChangesAsync();
+
+                var loteMovimentacao = new LoteMovimentacao
                 {
-                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
-                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.RetirarProduto,
-                    Descricao = $"Retirou o produto {volume.Produto.Referencia} do lote {volume.Lote.IdLote} do endereço {volume.EnderecoArmazenagem.Codigo}",
                     IdEmpresa = idEmpresa,
-                    IdUsuario = idUsuarioRetirada
+                    IdLote = idLote,
+                    IdProduto = idProduto,
+                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = idUsuarioRetirada,
+                    Quantidade = volume.Quantidade,
+                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Saida,
+                    DataHora = DateTime.Now
                 };
 
-                using (var transacao = _unitOfWork.CreateTransactionScope())
-                {
-                    _unitOfWork.LoteProdutoEnderecoRepository.Delete(volume);
-                    await _unitOfWork.SaveChangesAsync();
-
-                    var loteMovimentacao = new LoteMovimentacao
-                    {
-                        IdEmpresa = idEmpresa,
-                        IdLote = idLote,
-                        IdProduto = idProduto,
-                        IdEnderecoArmazenagem = idEnderecoArmazenagem,
-                        IdUsuarioMovimentacao = idUsuarioRetirada,
-                        Quantidade = volume.Quantidade,
-                        IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Saida,
-                        DataHora = DateTime.Now
-                    };
-
-                    _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
-                    await _unitOfWork.SaveChangesAsync();
-                    transacao.Complete();
-                }
-
-                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                await _unitOfWork.SaveChangesAsync();
+                transacao.Complete();
             }
-            catch
-            {
-                throw new BusinessException($"Erro ao retirar o produto {volume.Produto.Referencia} do lote {volume.Lote.IdLote} e do endereco {volume.EnderecoArmazenagem.Codigo}.");
-            }
+
+            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
         }
 
         public void ValidarEnderecoAjuste(ValidarEnderecoAjusteRequisicao requisicao)
