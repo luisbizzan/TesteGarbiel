@@ -1,37 +1,57 @@
 ﻿(function () {
-    $("#pesquisarEnderecoArmazenagem").click(function () {
-        let id = $("#IdPontoArmazenagem").val();
-        $("#modalPesquisaEnderecoArmazenagem").load(HOST_URL + "EnderecoArmazenagem/PesquisaModal/" + id, function () {
-            $("#modalPesquisaEnderecoArmazenagem").modal();
-        });
-    });
-
-    $("#limparEnderecoArmazenagem").click(function () {
-        $("#CodigoEnderecoArmazenagem").val("");
-        $("#IdEnderecoArmazenagem").val("");
-    });
-
     $("#pesquisarNivelArmazenagem").click(function () {
-        $("#modalPesquisaNivelArmazenagem").load(HOST_URL + "NivelArmazenagem/PesquisaModal", function () {
+        $("#modalPesquisaNivelArmazenagem").empty();
+        $("#modalPesquisaPontoArmazenagem").empty();
+        $("#modalPesquisaEnderecoArmazenagem").empty();
+
+        $("#modalPesquisaNivelArmazenagem").load("/NivelArmazenagem/PesquisaModal", function () {
             $("#modalPesquisaNivelArmazenagem").modal();
         });
     });
 
     $("#limparNivelArmazenagem").click(function () {
+        $("#modalPesquisaNivelArmazenagem").empty();
+        $("#modalPesquisaPontoArmazenagem").empty();
+        $("#modalPesquisaEnderecoArmazenagem").empty();
+        
         $("#DescricaoNivelArmazenagem").val("");
         $("#IdNivelArmazenagem").val("");
     });
+    
+
 
     $("#pesquisarPontoArmazenagem").click(function () {
+        $("#modalPesquisaPontoArmazenagem").empty();
+        $("#modalPesquisaEnderecoArmazenagem").empty();
+
         let id = $("#IdNivelArmazenagem").val();
-        $("#modalPesquisaPontoArmazenagem").load(HOST_URL + "PontoArmazenagem/PesquisaModal/" + id, function () {
+
+        $("#modalPesquisaPontoArmazenagem").load("/PontoArmazenagem/PesquisaModal/" + id, function () {
             $("#modalPesquisaPontoArmazenagem").modal();
         });
     });
 
     $("#limparPontoArmazenagem").click(function () {
+        $("#modalPesquisaPontoArmazenagem").empty();
+        $("#modalPesquisaEnderecoArmazenagem").empty();
+
         $("#DescricaoPontoArmazenagem").val("");
         $("#IdPontoArmazenagem").val("");
+    });
+
+    $("#pesquisarEnderecoArmazenagem").click(function () {
+        $("#modalPesquisaEnderecoArmazenagem").empty();
+
+        let id = $("#IdPontoArmazenagem").val();
+        $("#modalPesquisaEnderecoArmazenagem").load("/EnderecoArmazenagem/PesquisaModal/" + id, function () {
+            $("#modalPesquisaEnderecoArmazenagem").modal();
+        });
+    });
+
+    $("#limparEnderecoArmazenagem").click(function () {
+        $("#modalPesquisaEnderecoArmazenagem").empty();
+        $("#CodigoEnderecoArmazenagem").val("");
+        $("#IdEnderecoArmazenagem").val("");
     });
 
 })();
