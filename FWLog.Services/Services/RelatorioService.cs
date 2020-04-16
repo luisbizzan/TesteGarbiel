@@ -1297,7 +1297,7 @@ namespace FWLog.Services.Services
                 Filtros = new FwRelatorioDadosFiltro()
                 {
                     NivelArmazenagem = filter.IdNivelArmazenagem.HasValue ? _unitiOfWork.NivelArmazenagemRepository.GetById(filter.IdNivelArmazenagem.Value)?.Descricao : null,
-                    PontoArmazenagem = filter.IdNivelArmazenagem.HasValue ? _unitiOfWork.PontoArmazenagemRepository.GetById(filter.IdPontoArmazenagem.Value)?.Descricao : null,
+                    PontoArmazenagem = filter.IdPontoArmazenagem.HasValue ? _unitiOfWork.PontoArmazenagemRepository.GetById(filter.IdPontoArmazenagem.Value)?.Descricao : null,
                     Referencia = filter.IdProduto.HasValue ? _unitiOfWork.ProdutoRepository.GetById(filter.IdProduto.Value)?.Referencia : null,
                     Descricao = filter.IdProduto.HasValue ? _unitiOfWork.ProdutoRepository.GetById(filter.IdProduto.Value)?.Descricao : null
                 }
