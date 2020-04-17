@@ -29,7 +29,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                     (model.CustomFilter.Status.HasValue == false || w.Ativo == model.CustomFilter.Status))
                 .Select(s => new EnderecoArmazenagemListaLinhaTabela
                 {
-
                     IdEnderecoArmazenagem = s.IdEnderecoArmazenagem.ToString() ?? "-",
                     NivelArmazenagem = s.NivelArmazenagem.Descricao ?? "-",
                     PontoArmazenagem = s.PontoArmazenagem.Descricao ?? "-",
@@ -38,7 +37,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                     PontoSeparacao = s.IsPontoSeparacao ? "Sim" : "Não",
                     EstoqueMinimo = s.EstoqueMinimo ?? 0,
                     Status = s.Ativo ? "Ativo" : "Inativo",
-                    Quantidade = s.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == s.IdEnderecoArmazenagem).FirstOrDefault().Quantidade
+                    Quantidade = s.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == s.IdEnderecoArmazenagem).FirstOrDefault().Quantidade,
+                    Ocupado = s.LoteProdutoEndereco.Any()
                 });
 
             totalRecordsFiltered = query.Count();
