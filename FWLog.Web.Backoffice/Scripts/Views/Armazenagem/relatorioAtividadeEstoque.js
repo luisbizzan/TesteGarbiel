@@ -84,6 +84,14 @@
         });
     });
 
+    $("#imprimirRelatorio").click(function () {
+        if ($("#relatorioAtividadeEstoqueForm").valid()) {
+            $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=atividadeEstoque", function () {
+                $("#modalImpressoras").modal();
+            });
+        }
+    });
+
     $('#dataTable').DataTable({
         ajax: {
             "url": view.pageDataUrl,
@@ -170,4 +178,36 @@ function setUsuario(idUsuario, nomeUsuario, origem) {
     $("#Filter_IdUsuarioExecucao").val(idUsuario);
     $("#modalUsuarioExecucao").modal("hide");
     $("#modalUsuarioExecucao").empty();
+}
+
+function imprimir(acao, id) {
+    switch (acao) {
+        case 'atividadeEstoque':
+            $.ajax({
+                url: "/Armazenagem/ImprimirRelatorioAtividadeEstoque",
+                method: "POST",
+                data: {
+                    IdImpressora: $("#IdImpressora").val(),
+                    IdProduto: $("#Filter_IdProduto").val(),
+                    IdAtividadeEstoqueTipo: $("#Filter_IdAtividadeEstoqueTipo").val(),
+                    QuantidadeInicial: $("#Filter_QuantidadeInicial").val(),
+                    QuantidadeFinal: $("#Filter_QuantidadeFinal").val(),
+                    DataInicialSolicitacao: $("#Filter_DataInicialSolicitacao").val(),
+                    DataFinalSolicitacao: $("#Filter_DataFinalSolicitacao").val(),
+                    DataInicialExecucao: $("#Filter_DataInicialExecucao").val(),
+                    DataFinalExecucao: $("#Filter_DataFinalExecucao").val(),
+                    IdUsuarioExecucao: $("#Filter_IdUsuarioExecucao").val()
+                },
+                success: function (result) {
+                    if (result.Success) {
+                        PNotify.success({ text: result.Message });
+                    } else {
+                        PNotify.error({ text: result.Message });
+                    }
+                    $('#modalImpressoras').modal('toggle');
+                    waitingDialog.hide();
+                }
+            });
+            break;
+    }
 }

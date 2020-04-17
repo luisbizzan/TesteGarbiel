@@ -118,7 +118,7 @@ namespace FWLog.Services.Services
                     {
                         _uow.ProdutoRepository.Add(produto);
 
-                        //List<Empresa> empresas = _uow.EmpresaRepository.Tabela().ToList();
+                        //List<Empresa> empresas = _uow.EmpresaRepository.Tabela().Where(emp => !string.IsNullOrEmpty(emp.Sigla)).ToList();
 
                         //foreach (Empresa empresa in empresas)
                         //{

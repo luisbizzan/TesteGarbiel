@@ -292,7 +292,7 @@ namespace FWLog.AspNet.Identity
 
             public Produto() : base(Display.FromString("Produtos"))
             {
-                Register(Listar, Display.FromString("Listar produto"));
+                Register(Listar, Display.FromString("Listar produtos"));
                 Register(Visualizar, Display.FromString("Visualizar produto"));
                 Register(Editar, Display.FromString("Editar produto"));
             }

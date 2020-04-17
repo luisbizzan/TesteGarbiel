@@ -140,6 +140,11 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O produto não foi encontrado.");
             }
 
+            if (!produto.Ativo)
+            {
+                throw new BusinessException("O produto não está ativo.");
+            }
+
             LoteProduto loteProduto = _unitOfWork.LoteProdutoRepository.PesquisarProdutoNoLote(requisicao.IdEmpresa, requisicao.IdLote, requisicao.IdProduto);
 
             if (loteProduto == null)
@@ -767,6 +772,18 @@ namespace FWLog.Services.Services
                     throw new BusinessException("Endereço controla FIFO. Lote informado não é o mais antigo.");
                 }
             }
+
+            var lotesInstalados = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorLoteProduto(idLote, idProduto);
+
+            if (!lotesInstalados.NullOrEmpty())
+            {
+                var qtdInstalado = lotesInstalados.Sum(s => s.Quantidade);
+
+                if (qtdInstalado == loteProduto.Saldo)
+                {
+                    throw new BusinessException("Todos os volumes desse lote estão instalados.");
+                }
+            }
         }
 
         public void ValidarQuantidadeAbastecer(long idEnderecoArmazenagem, long idLote, long idProduto, int quantidade)
@@ -782,7 +799,18 @@ namespace FWLog.Services.Services
 
             var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(idLote, idProduto);
 
-            if (quantidade > loteProduto.Saldo)
+            var lotesInstalados = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorLoteProduto(idLote, idProduto);
+
+            if (!lotesInstalados.NullOrEmpty())
+            {
+                var qtdInstalado = lotesInstalados.Sum(s => s.Quantidade);
+
+                if (qtdInstalado + quantidade > loteProduto.Saldo)
+                {
+                    throw new BusinessException("Quantidade deve ser menor que o saldo disponível.");
+                }
+            }
+            else if (quantidade > loteProduto.Saldo)
             {
                 throw new BusinessException("Quantidade deve ser menor que o saldo disponível.");
             }

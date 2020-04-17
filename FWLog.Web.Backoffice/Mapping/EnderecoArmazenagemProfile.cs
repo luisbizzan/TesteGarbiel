@@ -14,7 +14,7 @@ namespace FWLog.Web.Backoffice.Mapping
             CreateMap<EnderecoArmazenagemListaLinhaTabela, EnderecoArmazenagemListaItemViewModel>();
             CreateMap<EnderecoArmazenagemCadastroViewModel, EnderecoArmazenagem>();
 
-            CreateMap<EnderecoArmazenagemEditarViewModel, EnderecoArmazenagem> ();
+            CreateMap<EnderecoArmazenagemEditarViewModel, EnderecoArmazenagem>();
 
             CreateMap<EnderecoArmazenagem, EnderecoArmazenagemEditarViewModel>()
                 .ForMember(dest => dest.DescricaoNivelArmazenagem, opt => opt.MapFrom(src => src.NivelArmazenagem.Descricao))
@@ -25,7 +25,8 @@ namespace FWLog.Web.Backoffice.Mapping
                 .ForMember(dest => dest.PontoArmazenagem, opt => opt.MapFrom(src => src.PontoArmazenagem.Descricao))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Ativo ? "Ativo" : "Inativo"))
                 .ForMember(dest => dest.Fifo, opt => opt.MapFrom(src => src.IsFifo ? "Sim" : "Não"))
-                .ForMember(dest => dest.PontoSeparacao, opt => opt.MapFrom(src => src.IsPontoSeparacao ? "Sim" : "Não"));
+                .ForMember(dest => dest.PontoSeparacao, opt => opt.MapFrom(src => src.IsPontoSeparacao ? "Sim" : "Não"))
+                .ForMember(dest => dest.IsEntrada, opt => opt.MapFrom(src => src.IsEntrada ? "Sim" : "Não"));
         }
     }
 }
