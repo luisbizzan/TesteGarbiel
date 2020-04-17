@@ -140,6 +140,11 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O produto não foi encontrado.");
             }
 
+            if (!produto.Ativo)
+            {
+                throw new BusinessException("O produto não está ativo.");
+            }
+
             LoteProduto loteProduto = _unitOfWork.LoteProdutoRepository.PesquisarProdutoNoLote(requisicao.IdEmpresa, requisicao.IdLote, requisicao.IdProduto);
 
             if (loteProduto == null)
