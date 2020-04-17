@@ -90,6 +90,8 @@
     });
 
     $("#pesquisarEnderecoArmazenagem").click(function () {
+        $("#modalPesquisaNivelArmazenagem").empty();
+        $("#modalPesquisaPontoArmazenagem").empty();
         $("#modalPesquisaEnderecoArmazenagem").empty();
 
         let id = $("#Filtros_IdPontoArmazenagem").val();
@@ -125,6 +127,7 @@
     });
 
     $("#pesquisarPontoArmazenagem").click(function () {
+        $("#modalPesquisaNivelArmazenagem").empty();
         $("#modalPesquisaPontoArmazenagem").empty();
         $("#modalPesquisaEnderecoArmazenagem").empty();
 

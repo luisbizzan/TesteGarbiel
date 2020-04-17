@@ -21,6 +21,7 @@
 
 
     $("#pesquisarPontoArmazenagem").click(function () {
+        $("#modalPesquisaNivelArmazenagem").empty();
         $("#modalPesquisaPontoArmazenagem").empty();
         $("#modalPesquisaEnderecoArmazenagem").empty();
 
@@ -40,6 +41,8 @@
     });
 
     $("#pesquisarEnderecoArmazenagem").click(function () {
+        $("#modalPesquisaNivelArmazenagem").empty();
+        $("#modalPesquisaPontoArmazenagem").empty();
         $("#modalPesquisaEnderecoArmazenagem").empty();
 
         let id = $("#IdPontoArmazenagem").val();
