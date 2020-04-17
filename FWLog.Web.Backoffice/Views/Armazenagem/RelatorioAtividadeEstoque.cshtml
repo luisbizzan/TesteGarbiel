@@ -13,7 +13,7 @@
         })
 }
 <!-- filter -->
-<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+<form id="relatorioAtividadeEstoqueForm" data-filter="form" data-filter-for="dataTable" class="form-filter">
     <div class="x_panel">
         <div class="x_title">
             <h2 class="collapse-link">
@@ -115,6 +115,7 @@
                 <div class="nav navbar-right">
                     <div class="col-xs-12">
                         <a id="downloadRelatorio" data-toggle="tooltip" title="Download Relatório" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
+                        <a id="imprimirRelatorio" data-toggle="tooltip" title="Imprimir Relatório" class="btn btn-default"><i class="fa fa-fw fa-print"></i></a>
                     </div>
                 </div>
                 <div class="clearfix"></div>
@@ -143,7 +144,8 @@
         </div>
     </div>
 </div>
-
+<!-- /table -->
 <div class="modal" id="modalProduto"></div>
 <div class="modal" id="modalUsuarioExecucao" data-toggle="modal" data-myvalue="1"></div>
-<!-- /table -->
+<div class="modal fade" id="modalImpressoras" data-backdrop="static"></div>
+
