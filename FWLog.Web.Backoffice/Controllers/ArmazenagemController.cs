@@ -95,12 +95,41 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             ValidateModel(viewModel);
 
-            var filtro = Mapper.Map<DataTableFilter<AtividadeEstoqueListaFiltro>>(viewModel);
-            filtro.CustomFilter.IdEmpresa = IdEmpresa;
+            viewModel.IdEmpresa = IdEmpresa;
 
-            byte[] relatorio = _relatorioService.GerarRelatorioAtividadeEstoque(filtro, User.Identity.GetUserId());
+            byte[] relatorio = _relatorioService.GerarRelatorioAtividadeEstoque(viewModel, User.Identity.GetUserId());
 
             return File(relatorio, "application/pdf", "Relatório Atividades de Estoque.pdf");
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioAtividadeEstoque)]
+        public JsonResult ImprimirRelatorioAtividadeEstoque(RelatorioAtividadeEstoqueRequest viewModel, long idImpressora)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                viewModel.IdEmpresa = IdEmpresa;
+
+                _relatorioService.ImprimirRelatorioAtividadeEstoque(viewModel, idImpressora, LabelUsuario);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         [HttpGet]
