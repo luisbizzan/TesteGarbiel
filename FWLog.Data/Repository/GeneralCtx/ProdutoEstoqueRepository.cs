@@ -56,6 +56,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                         "unidademedida.\"Sigla\"," +
                         "enderecoarmazenagem.\"IdEnderecoArmazenagem\"," +
                         "enderecoarmazenagem.\"Codigo\", " +
+                        "enderecoarmazenagem.\"IdPontoArmazenagem\", " +
+                        "enderecoarmazenagem.\"IdNivelArmazenagem\", " +
                         "produtoestoquestatus.\"IdProdutoEstoqueStatus\"," +
                         "produtoestoquestatus.\"Descricao\"" +
                     "FROM \"ProdutoEstoque\" produtoestoque " +

@@ -73,7 +73,12 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public Produto PesquisarPorCodigoBarras(string codigoBarras)
         {
-            return Entities.Produto.Where(w => w.CodigoBarras.Equals(codigoBarras) || w.CodigoBarras.Equals(codigoBarras)).FirstOrDefault();
+            return Entities.Produto.Where(w => w.CodigoBarras.Equals(codigoBarras)).FirstOrDefault();
+        }
+
+        public Produto PesquisarPorCodigoBarras2(string codigoBarras2)
+        {
+            return Entities.Produto.Where(w => w.CodigoBarras2.Equals(codigoBarras2)).FirstOrDefault();
         }
 
         public Produto PesquisarPorReferencia(string referencia)
@@ -113,7 +118,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             if (filter.CustomFilter.IdEnderecoArmazenagem.HasValue)
             {
-                query = query.Where(x => x.IdEnderecoArmazenagem == filter.CustomFilter.IdEnderecoArmazenagem);
+                query = query.Where(x => x.EnderecoArmazenagem?.IdEnderecoArmazenagem == filter.CustomFilter.IdEnderecoArmazenagem);
             }
 
             if (filter.CustomFilter.IdPontoArmazenagem.HasValue)
