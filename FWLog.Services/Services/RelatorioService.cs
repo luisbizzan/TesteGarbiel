@@ -1,4 +1,5 @@
-﻿using ExtensionMethods.String;
+﻿using AutoMapper;
+using ExtensionMethods.String;
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
@@ -1126,12 +1127,12 @@ namespace FWLog.Services.Services
                 Table tabela = document.Sections[0].AddTable();
 
                 tabela.Format.Font = new Font("Verdana", new Unit(9));
+                tabela.AddColumn(new Unit(80));
+                tabela.AddColumn(new Unit(150));
                 tabela.AddColumn(new Unit(90));
-                tabela.AddColumn(new Unit(112));
-                tabela.AddColumn(new Unit(90));
-                tabela.AddColumn(new Unit(78));
+                tabela.AddColumn(new Unit(68));
                 tabela.AddColumn(new Unit(130));
-                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(70));
                 tabela.AddColumn(new Unit(88));
                 tabela.AddColumn(new Unit(88));
 
@@ -1214,12 +1215,12 @@ namespace FWLog.Services.Services
                     tabela = document.Sections[0].AddTable();
                     tabela.Format.Font = new Font("Verdana", new Unit(9));
 
+                    tabela.AddColumn(new Unit(80));
+                    tabela.AddColumn(new Unit(150));
                     tabela.AddColumn(new Unit(90));
-                    tabela.AddColumn(new Unit(112));
-                    tabela.AddColumn(new Unit(90));
-                    tabela.AddColumn(new Unit(78));
+                    tabela.AddColumn(new Unit(68));
                     tabela.AddColumn(new Unit(130));
-                    tabela.AddColumn(new Unit(88));
+                    tabela.AddColumn(new Unit(70));
                     tabela.AddColumn(new Unit(88));
                     tabela.AddColumn(new Unit(88));
                 }
@@ -1558,25 +1559,41 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
 
-        public byte[] GerarRelatorioAtividadeEstoque(DataTableFilter<AtividadeEstoqueListaFiltro> filtro, string userId)
+        public byte[] GerarRelatorioAtividadeEstoque(RelatorioAtividadeEstoqueRequest model, string userId)
         {
-            var list = _unitiOfWork.AtividadeEstoqueRepository.PesquisarPageData(filtro, out int registrosFiltrados, out int totalRegistros).Select(x => new RelatorioAtividadeEstoque
+            var filtro = new AtividadeEstoqueListaFiltro()
+            {
+                IdEmpresa = model.IdEmpresa,
+                IdProduto = model.IdProduto,
+                IdAtividadeEstoqueTipo = model.IdAtividadeEstoqueTipo,
+                DataFinalExecucao = model.DataFinalExecucao,
+                DataFinalSolicitacao = model.DataFinalSolicitacao,
+                DataInicialExecucao = model.DataInicialExecucao,
+                DataInicialSolicitacao = model.DataInicialSolicitacao,
+                IdUsuarioExecucao = model.IdUsuarioExecucao,
+                QuantidadeFinal = model.QuantidadeFinal,
+                QuantidadeInicial = model.QuantidadeInicial
+            };
+
+            List<UsuarioEmpresa> usuarios = _unitiOfWork.UsuarioEmpresaRepository.ObterPorEmpresa(model.IdEmpresa);
+
+            var list = _unitiOfWork.AtividadeEstoqueRepository.PesquisarRelatorio(filtro).Select(x => new RelatorioAtividadeEstoque
             {
                 TipoAtividade = x.TipoAtividade,
                 ReferenciaDescricaoProduto = x.ReferenciaProduto + "-" + x.DescricaoProduto,
-                QuantidadeInicial = x.QuantidadeInicial,
-                DataSolicitacao = x.DataSolicitacao,
-                QuantidadeFinal = x.QuantidadeFinal,
+                QuantidadeInicial = x.QuantidadeInicial.HasValue ? x.QuantidadeInicial.Value.ToString() : "",
+                DataSolicitacao = x.DataSolicitacao.HasValue ? x.DataSolicitacao.Value.ToString("dd/MM/yyyy") : "",
+                QuantidadeFinal = x.QuantidadeFinal.HasValue ? x.QuantidadeFinal.Value.ToString() : "",
                 CodigoEndereco = x.CodigoEndereco,
-                DataExecucao = x.DataExecucao,
-                UsuarioExecucao = x.UsuarioExecucao,
-                Finalizado = x.Finalizado
+                DataExecucao = x.DataExecucao.HasValue ? x.DataExecucao.Value.ToString("dd/MM/yyyy") : "",
+                UsuarioExecucao = usuarios.Where(y => y.UserId.Equals(x.UsuarioExecucao)).FirstOrDefault()?.PerfilUsuario.Nome ?? "",
+                Finalizado = x.Finalizado ? "Sim" : "Não"
             }).ToList();
 
             var dados = new List<IFwRelatorioDados>();
             dados.AddRange(list);
 
-            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filtro.CustomFilter.IdEmpresa);
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filtro.IdEmpresa);
 
             PerfilUsuario usuario = _unitiOfWork.PerfilUsuarioRepository.GetByUserId(userId);
 
@@ -1594,6 +1611,13 @@ namespace FWLog.Services.Services
             var fwRelatorio = new FwRelatorio();
 
             return fwRelatorio.Gerar(fwRelatorioDados);
+        }
+
+        public void ImprimirRelatorioAtividadeEstoque(RelatorioAtividadeEstoqueRequest filtro, long idImpressora, string labelUsuario)
+        {
+            var relatorio = GerarRelatorioAtividadeEstoque(filtro, labelUsuario);
+
+            _impressoraService.Imprimir(relatorio, idImpressora);
         }
     }
 }
