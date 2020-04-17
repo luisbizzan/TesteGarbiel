@@ -117,5 +117,47 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return query.ToList();
         }
+
+        public IEnumerable<AtividadeEstoqueListaTabela> PesquisarRelatorio(AtividadeEstoqueListaFiltro filtro)
+        {
+            var dataInicialSolicitacao = filtro.DataInicialSolicitacao.HasValue ? new DateTime(filtro.DataInicialSolicitacao.Value.Year,
+                filtro.DataInicialSolicitacao.Value.Month, filtro.DataInicialSolicitacao.Value.Day, 0, 0, 0) : (DateTime?)null;
+
+            var dataFinalSolicitacao = filtro.DataFinalSolicitacao.HasValue ? new DateTime(filtro.DataFinalSolicitacao.Value.Year,
+                filtro.DataFinalSolicitacao.Value.Month, filtro.DataFinalSolicitacao.Value.Day, 23, 59, 59) : (DateTime?)null;
+
+            var dataInicialExecucao = filtro.DataInicialExecucao.HasValue ? new DateTime(filtro.DataInicialExecucao.Value.Year,
+                filtro.DataInicialExecucao.Value.Month, filtro.DataInicialExecucao.Value.Day, 0, 0, 0) : (DateTime?)null;
+
+            var dataFinalExecucao = filtro.DataFinalExecucao.HasValue ? new DateTime(filtro.DataFinalExecucao.Value.Year,
+                filtro.DataFinalExecucao.Value.Month, filtro.DataFinalExecucao.Value.Day, 23, 59, 59) : (DateTime?)null;
+
+            IQueryable<AtividadeEstoqueListaTabela> query =
+                Entities.AtividadeEstoque.AsNoTracking().Where(w => w.IdEmpresa == filtro.IdEmpresa &&
+                    (filtro.IdAtividadeEstoqueTipo.HasValue == false || w.IdAtividadeEstoqueTipo == (AtividadeEstoqueTipoEnum)filtro.IdAtividadeEstoqueTipo.Value) &&
+                    (filtro.QuantidadeInicial.HasValue == false || w.QuantidadeInicial == filtro.QuantidadeInicial.Value) &&
+                    (filtro.QuantidadeFinal.HasValue == false || w.QuantidadeFinal == filtro.QuantidadeFinal.Value) &&
+                    (dataInicialSolicitacao.HasValue == false || w.DataSolicitacao >= dataInicialSolicitacao) &&
+                    (dataFinalSolicitacao.HasValue == false || w.DataSolicitacao <= dataFinalSolicitacao) &&
+                    (dataInicialExecucao.HasValue == false || w.DataExecucao >= dataInicialExecucao) &&
+                    (dataFinalExecucao.HasValue == false || w.DataExecucao <= dataFinalExecucao) &&
+                    (string.IsNullOrEmpty(filtro.IdUsuarioExecucao) || w.IdUsuarioExecucao.Contains(filtro.IdUsuarioExecucao)) &&
+                    (filtro.IdProduto.HasValue == false || w.IdProduto == filtro.IdProduto.Value))
+                .Select(s => new AtividadeEstoqueListaTabela
+                {
+                    CodigoEndereco = s.EnderecoArmazenagem.Codigo,
+                    UsuarioExecucao = s.IdUsuarioExecucao,
+                    TipoAtividade = s.AtividadeEstoqueTipo.Descricao,
+                    QuantidadeInicial = s.QuantidadeInicial,
+                    QuantidadeFinal = s.QuantidadeFinal,
+                    DataExecucao = s.DataExecucao,
+                    DataSolicitacao = s.DataSolicitacao,
+                    ReferenciaProduto = s.Produto.Referencia,
+                    DescricaoProduto = s.Produto.Descricao,
+                    Finalizado = s.Finalizado
+                });
+
+            return query.ToList();
+        }
     }
 }
