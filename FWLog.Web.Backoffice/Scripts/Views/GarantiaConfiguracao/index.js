@@ -1,7 +1,4 @@
 ﻿/* [FORNECEDOR QUEBRA] variaveis */
-var TagPadrao = $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != null && $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != "" ?
-    $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id : "FORN_QUEBRA";
-
 var botaoFornQuebraLimpar = $("#btnLimpar")[0];
 var botaoFornQuebraGravar = $("#btnGravar")[0];
 var inputCodigoFornecedor = $("#Cod_Fornecedor")[0];
@@ -20,13 +17,83 @@ var ulSankhyaTop = $("#listaSankhyaTop")[0];
 var liSankhyaTop = '<li id="{codigo}"><p><button type="button" class="btn btn-danger" onclick="ShankhyaTopRemoverLista(*{codigo}|{descricao}*);">' +
     '<i class="fa fa-trash-o"></i></button>  <b>[{codigo}]  {descricao}</b></p></li>';
 
+/* [ GENÉRICO ] */
+var RegistroInclusao = new Object();
+var TagPadrao = $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != null && $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != "" ?
+    $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id : "FORN_QUEBRA";
+
 /* [GENÉRICO] evento clique do menu de configuração */
 $(document).ready(function (e) {
     RegistroListar(TagPadrao);
     $("#ulMenuConfig").click(function (c) {
-        RegistroListar(c.target.id.toString());
+        TagPadrao = c.target.id.toString();
+        RegistroListar(TagPadrao);
     });
 });
+
+/* [GENÉRICO] incluir registro(s) no banco dados */
+function RegistroIncluir() {
+    RegistroInclusao.Tag = TagPadrao;
+    RegistroInclusao.Inclusao = [];
+
+    switch (TagPadrao) {
+        case "FORN_QUEBRA":
+            {
+                $.each(_fornecedoresGravar, function (i, item) {
+                    var registro = new Object();
+                    registro.Id = 0;
+                    registro.Cod_Fornecedor = item;
+
+                    RegistroInclusao.Inclusao.push(JSON.stringify(registro));
+                });
+                _fornecedoresGravar = [];
+                $(ulFornecedores).html("");
+                console.log('FORNECEDOR QUEBRA');
+            }
+            break;
+        case "SANKHYA_TOP":
+            {
+                var registro = new Object();
+                $.each(_SankhyaTopLista, function (i, item) {
+                    registro.Id = item;
+                    RegistroInclusao.Inclusao.push(registro);
+                });
+            }
+            break;
+        case "REM_USUARIO":
+            {
+
+            }
+            break;
+        case "REM_CONFIG":
+            {
+
+            }
+            break;
+        case "CONFIG":
+            {
+
+            }
+            break;
+    }
+
+    console.log(RegistroInclusao);
+
+    $.post("/GarantiaConfiguracao/RegistroIncluir", { Registro: RegistroInclusao }, function (s) {
+        if (s.Success) {
+            PNotify.success({ text: s.Message });
+            RegistroListar(TagPadrao);
+        }
+        else {
+            PNotify.error({ text: s.Message });
+        }
+    }).fail(function (f) {
+        console.log(f);
+    }).done(function (d) {
+        console.log(d);
+    });
+
+}
 
 /* [GENÉRICO] excluir no banco dados */
 function RegistroExcluir(TagSelecionada, IdSelecionado) {
@@ -53,6 +120,7 @@ function RegistroExcluir(TagSelecionada, IdSelecionado) {
 /* [GENÉRICO] listar registros */
 function RegistroListar(TagInformada) {
     $.get("/GarantiaConfiguracao/RegistroListar", { TAG: TagInformada }, function (s, status) {
+        console.log(s);
         if (s.Success) {
             $(s.GridNome).DataTable({
                 destroy: true,
@@ -69,29 +137,6 @@ function RegistroListar(TagInformada) {
 }
 
 /***    FORNECEDOR QUEBRA   ***/
-/* [FORNECEDOR QUEBRA] cadastrar no banco dados */
-$(botaoFornQuebraGravar).click(function (e) {
-    var _fornecedor = new Object();
-    _fornecedor.Id = 0;
-    _fornecedor.Codigos = _fornecedoresGravar;
-
-    $.post("/GarantiaConfiguracao/FornecedorQuebraIncluir", { fornecedor: _fornecedor }, function (s) {
-        if (s.Success) {
-            PNotify.success({ text: s.Message });
-            _fornecedoresGravar = [];
-            $(ulFornecedores).html("");
-            FornecedorQuebraListar();
-        }
-        else {
-            PNotify.error({ text: s.Message });
-        }
-    }).fail(function (f) {
-        console.log(f);
-    }).done(function (d) {
-        console.log(d);
-    });
-});
-
 /* [FORNECEDOR QUEBRA] limpar lista */
 $(botaoFornQuebraLimpar).click(function () {
     $(ulFornecedores).html("");
@@ -112,7 +157,7 @@ $(inputCodigoFornecedor).autocomplete({
                 if (s.Success) {
                     $.each(s.Fornecedores, function (e, item) {
                         var registro = new Object();
-                        registro.data = item.Id;
+                        registro.data = item.Data;
                         registro.value = item.Value;
                         _fornecedoresAutoComplete.push(registro);
                     });
@@ -190,27 +235,4 @@ $(botaoSankhyaAdicionar).click(function () {
     else {
         PNotify.error({ text: "Informe o Código e Descrição da Top!" });
     }
-});
-
-/* [SANKHYA TOP] cadastrar no banco dados */
-$(botaoSankhyaGravar).click(function (e) {
-    var _fornecedor = new Object();
-    _fornecedor.Id = 0;
-    _fornecedor.Codigos = _fornecedoresGravar;
-
-    $.post("/GarantiaConfiguracao/FornecedorQuebraIncluir", { fornecedor: _fornecedor }, function (s) {
-        if (s.Success) {
-            PNotify.success({ text: s.Message });
-            _fornecedoresGravar = [];
-            $(ulFornecedores).html("");
-            FornecedorQuebraListar();
-        }
-        else {
-            PNotify.error({ text: s.Message });
-        }
-    }).fail(function (f) {
-        console.log(f);
-    }).done(function (d) {
-        console.log(d);
-    });
 });

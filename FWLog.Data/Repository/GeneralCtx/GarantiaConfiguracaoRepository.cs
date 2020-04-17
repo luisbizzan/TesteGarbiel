@@ -18,6 +18,129 @@ namespace FWLog.Data.Repository.GeneralCtx
         public GarantiaConfiguracaoRepository(Entities entities) : base(entities) { }
         #endregion
 
+        #region [Genérico] - Inclusão
+        public void RegistroIncluir(GarantiaConfiguracao RegistroIncluir)
+        {
+            try
+            {
+                #region Processamento 
+                switch (RegistroIncluir.Tag)
+                {
+                    #region Configuração
+                    case "CONFIG":
+                        {
+                            RegistroIncluir.RegistroFornecedorQuebra.ToList().ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item)
+                            {
+                                if (FornecedorQuebraPodeSerCadastrado(item.Cod_Fornecedor.Trim().ToUpper()))
+                                    using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                    {
+                                        conn.Open();
+                                        if (conn.State == System.Data.ConnectionState.Open)
+                                        {
+                                            conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.FornecedorQuebraIncluir, item.Cod_Fornecedor));
+                                        }
+                                        conn.Close();
+                                    }
+                            });
+                        }
+                        break;
+                    #endregion
+
+                    #region Fornecedor Quebra
+                    case "FORN_QUEBRA":
+                        {
+                            RegistroIncluir.RegistroFornecedorQuebra.ToList().ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item)
+                            {
+                                if (FornecedorQuebraPodeSerCadastrado(item.Cod_Fornecedor.Trim().ToUpper()))
+                                    using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                    {
+                                        conn.Open();
+                                        if (conn.State == System.Data.ConnectionState.Open)
+                                        {
+                                            conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.FornecedorQuebraIncluir, item.Cod_Fornecedor));
+                                        }
+                                        conn.Close();
+                                    }
+                            });
+                        }
+                        break;
+                    #endregion
+
+                    #region Remessa Configuração
+                    case "REM_CONFIG":
+                        {
+                            RegistroIncluir.RegistroFornecedorQuebra.ToList().ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item)
+                            {
+                                if (FornecedorQuebraPodeSerCadastrado(item.Cod_Fornecedor.Trim().ToUpper()))
+                                    using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                    {
+                                        conn.Open();
+                                        if (conn.State == System.Data.ConnectionState.Open)
+                                        {
+                                            conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.FornecedorQuebraIncluir, item.Cod_Fornecedor));
+                                        }
+                                        conn.Close();
+                                    }
+                            });
+                        }
+                        break;
+                    #endregion
+
+                    #region Sankhya Top
+                    case "SANKHYA_TOP":
+                        {
+                            RegistroIncluir.RegistroFornecedorQuebra.ToList().ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item)
+                            {
+                                if (FornecedorQuebraPodeSerCadastrado(item.Cod_Fornecedor.Trim().ToUpper()))
+                                    using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                    {
+                                        conn.Open();
+                                        if (conn.State == System.Data.ConnectionState.Open)
+                                        {
+                                            conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.FornecedorQuebraIncluir, item.Cod_Fornecedor));
+                                        }
+                                        conn.Close();
+                                    }
+                            });
+                        }
+                        break;
+                    #endregion
+
+                    #region Remessa Usuário
+                    case "REM_USUARIO":
+                        {
+                            RegistroIncluir.RegistroFornecedorQuebra.ToList().ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item)
+                            {
+                                if (FornecedorQuebraPodeSerCadastrado(item.Cod_Fornecedor.Trim().ToUpper()))
+                                    using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                    {
+                                        conn.Open();
+                                        if (conn.State == System.Data.ConnectionState.Open)
+                                        {
+                                            conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.FornecedorQuebraIncluir, item.Cod_Fornecedor));
+                                        }
+                                        conn.Close();
+                                    }
+                            });
+                        }
+                        break;
+                    #endregion
+
+                    #region Default
+                    default:
+                        throw new Exception(String.Format("[RegistroIncluir] A Tag {0} informada é inválida!", RegistroIncluir.Tag));
+                        #endregion
+                }
+                #endregion
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
+
         #region [Genérico] - Exclusão
         public void RegistroExcluir(GarantiaConfiguracao Registro)
         {
@@ -114,18 +237,18 @@ namespace FWLog.Data.Repository.GeneralCtx
         #endregion
 
         #region [Fornecedor Quebra] AutoComplete 
-        public List<GarantiaConfiguracao> FornecedorQuebraAutoComplete(string nome)
+        public List<GarantiaConfiguracao.AutoComplete> FornecedorQuebraAutoComplete(string nome)
         {
             try
             {
-                var select = new List<GarantiaConfiguracao>();
+                var select = new List<GarantiaConfiguracao.AutoComplete>();
                 using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
                 {
                     conn.Open();
                     if (conn.State == System.Data.ConnectionState.Open)
                     {
                         string cmdSQL = String.Format(String.Concat(
-                            "SELECT cnpj Id, \"RazaoSocial\" Value ",
+                            "SELECT cnpj Data, \"RazaoSocial\" Value ",
                             "FROM \"Fornecedor\" ",
                             "WHERE ROWNUM <= 10 ",
                             "AND \"RazaoSocial\" LIKE '{0}%' ",
@@ -133,7 +256,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             "GROUP BY \"RazaoSocial\", cnpj ",
                             "ORDER BY \"RazaoSocial\""), nome);
 
-                        select = conn.Query<GarantiaConfiguracao>(cmdSQL).ToList();
+                        select = conn.Query<GarantiaConfiguracao.AutoComplete>(cmdSQL).ToList();
                     }
                     conn.Close();
                 }
@@ -146,31 +269,5 @@ namespace FWLog.Data.Repository.GeneralCtx
         }
         #endregion
 
-        #region [Fornecedor Quebra] - Inclusão
-        public void FornecedorQuebraIncluir(GarantiaConfiguracao fornecedor)
-        {
-            try
-            {
-                fornecedor.Codigos.ToList().ForEach(delegate (string codigo)
-                {
-                    if (FornecedorQuebraPodeSerCadastrado(codigo.Trim().ToUpper()))
-                        using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
-                        {
-                            conn.Open();
-                            if (conn.State == System.Data.ConnectionState.Open)
-                            {
-                                string cmdSQL = String.Format("INSERT INTO gar_forn_quebra(Cod_Fornecedor) VALUES('{0}')", codigo.Trim().ToUpper());
-                                conn.ExecuteScalar(cmdSQL);
-                            }
-                            conn.Close();
-                        }
-                });
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        #endregion
     }
 }
