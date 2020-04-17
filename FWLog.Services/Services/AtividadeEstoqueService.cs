@@ -155,7 +155,7 @@ namespace FWLog.Services.Services
                 if (diaSemana != 1 && diaSemana != 7) //Diferente de sabado e domingo
                 {
                     var listaEndereco = _unitOfWork.ProdutoEstoqueRepository.ObterProdutoEstoquePorEmpresa(idEmpresa).Where(x => x.Saldo == 0 && x.IdEnderecoArmazenagem.HasValue &&
-                    (x.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.LiquidacaoEstoque || x.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.ForaLinha));
+                    (x.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.LiquidacaoEstoque || x.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.ForaLinha)).ToList();
 
                     foreach (var item in listaEndereco)
                     {

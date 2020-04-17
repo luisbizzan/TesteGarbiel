@@ -786,9 +786,7 @@ namespace FWLog.Services.Services
 
         public byte[] GerarRelatorioProdutos(RelatorioProdutosRequest filter)
         {
-            IQueryable<ProdutoEstoque> query = _unitiOfWork.ProdutoEstoqueRepository.ObterProdutoEstoquePorEmpresa(filter.IdEmpresa.Value)
-                .AsQueryable()
-                .OrderByDescending(x => x.IdProduto);
+            IQueryable<ProdutoEstoque> query = _unitiOfWork.ProdutoEstoqueRepository.ObterProdutoEstoquePorEmpresa(filter.IdEmpresa.Value).OrderByDescending(x => x.IdProduto);
 
             if (!string.IsNullOrEmpty(filter.Referencia))
             {
