@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
@@ -10,11 +9,11 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using log4net;
 
 namespace FWLog.Web.Backoffice.Controllers
 {

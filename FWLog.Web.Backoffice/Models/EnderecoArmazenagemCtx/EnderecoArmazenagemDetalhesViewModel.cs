@@ -1,5 +1,4 @@
-﻿using FWLog.Data.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
@@ -24,6 +23,8 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         public string PontoSeparacao { get; set; }
         [Display(Name = "Controla FIFO?")]
         public string Fifo { get; set; }
+        [Display(Name = "Entrada?")]
+        public string IsEntrada { get; set; }
         [Display(Name = "Status")]
         public string Status { get; set; }
 
