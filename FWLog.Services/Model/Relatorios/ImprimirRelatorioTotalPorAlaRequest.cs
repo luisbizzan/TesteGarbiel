@@ -2,7 +2,7 @@
 {
     public class ImprimirRelatorioTotalPorAlaRequest
     {
-        public long? IdEmpresa { get; set; }
+        public long IdEmpresa { get; set; }
         public string NomeUsuarioRequisicao { get; set; }
         public long IdNivelArmazenagem { get; set; }
         public long IdPontoArmazenagem { get; set; }

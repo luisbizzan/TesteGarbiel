@@ -653,6 +653,7 @@
     <Content Include="Views\Armazenagem\RelatorioTotalizacaoLocalizacao.cshtml" />
     <Content Include="Views\Armazenagem\RelatorioLogisticaCorredor.cshtml" />
     <Content Include="Views\Armazenagem\RelatorioAtividadeEstoque.cshtml" />
+    <Content Include="Views\EnderecoArmazenagem\ConfirmarImpressao.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

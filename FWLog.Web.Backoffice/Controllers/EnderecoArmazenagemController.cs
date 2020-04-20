@@ -204,8 +204,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     var item = new ProdutoItem
                     {
-                        NumeroLote = lpe.Lote.IdLote.ToString(),
-                        NumeroNf = lpe.Lote.NotaFiscal.Numero.ToString(),
+                        NumeroLote = lpe.Lote == null ? "-" : lpe.Lote.IdLote.ToString(),
+                        NumeroNf = lpe.Lote == null ? "-" : lpe.Lote.NotaFiscal.Numero.ToString(),
                         CodigoReferencia = lpe.Produto.Referencia,
                         DataInstalacao = lpe.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss"),
                         Descricao = lpe.Produto.Descricao,
