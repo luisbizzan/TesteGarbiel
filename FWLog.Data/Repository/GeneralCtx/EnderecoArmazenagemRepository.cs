@@ -69,7 +69,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                          where e.IdEmpresa == filtros.CustomFilter.IdEmpresa &&
                          (filtros.CustomFilter.Codigo.Equals(string.Empty) || e.Codigo.Contains(filtros.CustomFilter.Codigo)) &&
                          (filtros.CustomFilter.IdPontoArmazenagem.HasValue == false || e.IdPontoArmazenagem == filtros.CustomFilter.IdPontoArmazenagem) &&
-                         (filtros.CustomFilter.BuscarTodos == true || (!(from p in Entities.ProdutoEstoque where p.IdEnderecoArmazenagem == e.IdEnderecoArmazenagem select p.IdEnderecoArmazenagem).Any() &&  e.Ativo == true &&
+                         (filtros.CustomFilter.BuscarTodos == true || (!(from p in Entities.ProdutoEstoque where p.IdEnderecoArmazenagem == e.IdEnderecoArmazenagem select p.IdEnderecoArmazenagem).Any() && e.Ativo == true &&
                          e.IsPontoSeparacao == true))
                          select new EnderecoArmazenagemPesquisaModalListaLinhaTabela
                          {
@@ -127,7 +127,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             var query = (from e in Entities.EnderecoArmazenagem
                          join l in Entities.LoteProdutoEndereco on e.IdEnderecoArmazenagem equals l.IdEnderecoArmazenagem
                          join p in Entities.Produto on l.IdProduto equals p.IdProduto
-                         where e.IdPontoArmazenagem == ponto && e.Corredor.Equals(corredor) && l.IdEmpresa == idEmpresa
+                         where
+                            e.IdPontoArmazenagem == ponto &&
+                            e.Corredor.Equals(corredor) &&
+                            l.IdEmpresa == idEmpresa &&
+                            l.IdLote.HasValue
                          orderby e.Codigo, e.Horizontal, e.Vertical, e.Divisao
                          select new EnderecoProdutoListaLinhaTabela
                          {
