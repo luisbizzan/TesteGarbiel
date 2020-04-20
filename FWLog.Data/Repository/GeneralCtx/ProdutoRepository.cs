@@ -1,9 +1,7 @@
-﻿using Dapper;
-using FWLog.Data.Models;
+﻿using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
-using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -73,7 +71,12 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public Produto PesquisarPorCodigoBarras(string codigoBarras)
         {
-            return Entities.Produto.Where(w => w.CodigoBarras.Equals(codigoBarras) || w.CodigoBarras.Equals(codigoBarras)).FirstOrDefault();
+            return Entities.Produto.Where(w => w.CodigoBarras.Equals(codigoBarras)).FirstOrDefault();
+        }
+
+        public Produto PesquisarPorCodigoBarras2(string codigoBarras2)
+        {
+            return Entities.Produto.Where(w => w.CodigoBarras2.Equals(codigoBarras2)).FirstOrDefault();
         }
 
         public Produto PesquisarPorReferencia(string referencia)
@@ -81,7 +84,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.Produto.Where(w => w.Referencia.Equals(referencia)).FirstOrDefault();
         }
 
-        public IEnumerable<ProdutoListaLinhaTabela> FormatarDadosParaDataTable(DataTableFilter<ProdutoListaFiltro> filter, out int totalRecordsFiltered, out int totalRecords, IEnumerable<ProdutoEstoque> produtoEstoque)
+        public IEnumerable<ProdutoListaLinhaTabela> FormatarDadosParaDataTable(DataTableFilter<ProdutoListaFiltro> filter, out int totalRecordsFiltered, out int totalRecords, IQueryable<ProdutoEstoque> produtoEstoque)
         {
             totalRecords = produtoEstoque.Count();
 
@@ -93,7 +96,6 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             if (filter.CustomFilter.ProdutoStatus.HasValue)
             {
-
                 //Sem Locação
                 if (filter.CustomFilter.ProdutoStatus == 2)
                 {
@@ -113,7 +115,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             if (filter.CustomFilter.IdEnderecoArmazenagem.HasValue)
             {
-                query = query.Where(x => x.IdEnderecoArmazenagem == filter.CustomFilter.IdEnderecoArmazenagem);
+                query = query.Where(x => x.EnderecoArmazenagem.IdEnderecoArmazenagem == filter.CustomFilter.IdEnderecoArmazenagem);
             }
 
             if (filter.CustomFilter.IdPontoArmazenagem.HasValue)
@@ -126,29 +128,44 @@ namespace FWLog.Data.Repository.GeneralCtx
                 query = query.Where(x => x.EnderecoArmazenagem.IdNivelArmazenagem == filter.CustomFilter.IdNivelArmazenagem);
             }
 
-            IEnumerable<ProdutoListaLinhaTabela> queryResult = query.Select(e => new ProdutoListaLinhaTabela
+            var selectedQuery = query.Select(e => new
             {
-                IdProduto = e.IdProduto == 0 ? (long?)null : e.IdProduto,
+                IdProduto = e.IdProduto,
                 Referencia = e.Produto.Referencia,
                 Descricao = e.Produto.Descricao,
-                Peso = e.Produto.PesoBruto.ToString("n2"),
-                Largura = e.Produto.Largura?.ToString("n2"),
-                Altura = e.Produto.Altura?.ToString("n2"),
-                Comprimento = e.Produto.Comprimento?.ToString("n2"),
+                Peso = e.Produto.PesoBruto,
+                Largura = e.Produto.Largura,
+                Altura = e.Produto.Altura,
+                Comprimento = e.Produto.Comprimento,
                 Unidade = e.Produto.UnidadeMedida.Sigla,
-                Endereco = e.EnderecoArmazenagem?.Codigo,
-                Multiplo = e.Produto.MultiploVenda.ToString(),
-                Status = e.IdProdutoEstoqueStatus.ToString()
+                Endereco = e.EnderecoArmazenagem.Codigo,
+                Multiplo = e.Produto.MultiploVenda,
+                Status = e.IdProdutoEstoqueStatus
             });
 
-            totalRecordsFiltered = queryResult.Count();
+            totalRecordsFiltered = selectedQuery.Count();
 
-            queryResult = queryResult
+            var queryResult = selectedQuery
                 .OrderBy(filter.OrderByColumn, filter.OrderByDirection)
                 .Skip(filter.Start)
-                .Take(filter.Length);
+                .Take(filter.Length).ToList();
 
-            return queryResult.ToList();
+            var result = queryResult.Select(e => new ProdutoListaLinhaTabela
+            {
+                IdProduto = e.IdProduto == 0 ? (long?)null : e.IdProduto,
+                Referencia = e.Referencia,
+                Descricao = e.Descricao,
+                Peso = e.Peso.ToString("n2"),
+                Largura = e.Largura?.ToString("n2"),
+                Altura = e.Altura?.ToString("n2"),
+                Comprimento = e.Comprimento?.ToString("n2"),
+                Unidade = e.Unidade,
+                Endereco = e.Endereco,
+                Multiplo = e.Multiplo.ToString(),
+                Status = e.Status.ToString()
+            }).ToList();
+
+            return result.ToList();
         }
     }
 }

@@ -36,16 +36,19 @@
                 <div class="col-sm-4 col-xs-12 col-lg-3">
                     @Html.LabelFor(m => m.EstoqueMaximo): @Model.EstoqueMaximo
                 </div>
-            </div>
-            <div class="row">
                 <div class="col-sm-4 col-xs-12 col-lg-3">
                     @Html.LabelFor(m => m.LimitePeso): @Model.LimitePeso
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-sm-4 col-xs-12 col-lg-3">
                     @Html.LabelFor(m => m.Fifo): @Model.Fifo
                 </div>
                 <div class="col-sm-4 col-xs-12 col-lg-3">
                     @Html.LabelFor(m => m.PontoSeparacao): @Model.PontoSeparacao
+                </div>
+                <div class="col-sm-4 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.IsEntrada): @Model.IsEntrada
                 </div>
                 <div class="col-sm-2 col-xs-12 col-lg-3">
                     @Html.LabelFor(m => m.Status): @Model.Status
@@ -58,7 +61,7 @@
                 </div>
                 @if (Model.PontoArmazenagem != "Picking")
                 {
-                    <div class="row" style="margin-top: 15px; overflow-y: auto; height: 300px">
+                    <div class="row" style="margin-top: 15px; height: 300px">
                         <div class="col-sm-12 col-lg-12">
                             <table class="table table-bordered">
                                 <thead>
@@ -95,7 +98,7 @@
                                     else
                                     {
                                         <tr class="even">
-                                            <td colspan="6" class="text-center">Nenhum registro.</td>
+                                            <td colspan="9" class="text-center">Nenhum registro.</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -105,7 +108,7 @@
                 }
                 else
                 {
-                    <div class="row" style="margin-top: 15px; overflow-y: auto; height: 300px">
+                    <div class="row" style="margin-top: 15px; height: 300px">
                         <div class="col-sm-12 col-lg-12">
                             <table class="table table-bordered">
                                 <thead>
@@ -138,7 +141,7 @@
                                     else
                                     {
                                         <tr class="even">
-                                            <td colspan="6" class="text-center">Nenhum registro.</td>
+                                            <td colspan="7" class="text-center">Nenhum registro.</td>
                                         </tr>
                                     }
                                 </tbody>

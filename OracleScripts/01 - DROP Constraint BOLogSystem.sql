@@ -1,0 +1,1 @@
+ALTER TABLE "BOLogSystem" DROP CONSTRAINT "BOLogSystem_FK1";

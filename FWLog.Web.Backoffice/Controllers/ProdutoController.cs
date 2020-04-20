@@ -1,19 +1,19 @@
 ﻿using AutoMapper;
+using DartDigital.Library.Exceptions;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Model.Relatorios;
+using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.ProdutoCtx;
-using System.Collections.Generic;
-using System;
-using System.Web.Mvc;
-using FWLog.Services.Services;
-using FWLog.Data.EnumsAndConsts;
-using FWLog.Services.Model.Relatorios;
 using log4net;
+using System;
+using System.Collections.Generic;
+using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -21,20 +21,17 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly ProdutoEstoqueService _produtoEstoqueService;
-        private readonly ApplicationLogService _applicationLogService;
         private readonly RelatorioService _relatorioService;
         private readonly ILog _log;
 
         public ProdutoController(
-            UnitOfWork unitOfWork, 
-            ProdutoEstoqueService produtoEstoqueService, 
-            ApplicationLogService applicationLogService,
+            UnitOfWork unitOfWork,
+            ProdutoEstoqueService produtoEstoqueService,
             RelatorioService relatorioService,
             ILog ilog)
         {
             _unitOfWork = unitOfWork;
             _produtoEstoqueService = produtoEstoqueService;
-            _applicationLogService = applicationLogService;
             _relatorioService = relatorioService;
             _log = ilog;
         }
@@ -67,7 +64,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var model = new ProdutoListaViewModel();
 
             model.Filtros.ProdutoStatus = 2;
-            
+
             return View(model);
         }
 
@@ -132,15 +129,15 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var viewModel = new ProdutoDetalhesViewModel
             {
-                 IdProduto = produtoEstoque.IdProduto,
-                 EnderecoArmazenagem = produtoEstoque.EnderecoArmazenagem?.Codigo,
-                 Comprimento = produtoEstoque.Produto.Comprimento?.ToString("n2"),
-                 Altura = produtoEstoque.Produto.Altura?.ToString("n2"),
-                 Descricao = produtoEstoque.Produto.Descricao,
-                 Largura = produtoEstoque.Produto.Largura?.ToString("n2"),
-                 Peso = produtoEstoque.Produto.PesoBruto.ToString("n2"),
-                 Referencia = produtoEstoque.Produto.Referencia,
-                 ImagemSrc = produtoEstoque.Produto.EnderecoImagem != "0" ? produtoEstoque.Produto.EnderecoImagem : null,
+                IdProduto = produtoEstoque.IdProduto,
+                EnderecoArmazenagem = produtoEstoque.EnderecoArmazenagem?.Codigo,
+                Comprimento = produtoEstoque.Produto.Comprimento?.ToString("n2"),
+                Altura = produtoEstoque.Produto.Altura?.ToString("n2"),
+                Descricao = produtoEstoque.Produto.Descricao,
+                Largura = produtoEstoque.Produto.Largura?.ToString("n2"),
+                Peso = produtoEstoque.Produto.PesoBruto.ToString("n2"),
+                Referencia = produtoEstoque.Produto.Referencia,
+                ImagemSrc = produtoEstoque.Produto.EnderecoImagem != "0" ? produtoEstoque.Produto.EnderecoImagem : null,
             };
 
             return View(viewModel);
@@ -160,7 +157,7 @@ namespace FWLog.Web.Backoffice.Controllers
             if (produtoEstoque.IdEnderecoArmazenagem != null)
             {
                 EnderecoArmazenagem enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(produtoEstoque.IdEnderecoArmazenagem.Value);
-               
+
                 viewModel.IdEnderecoArmazenagem = enderecoArmazenagem.IdEnderecoArmazenagem;
                 viewModel.CodigoEnderecoArmazenagem = enderecoArmazenagem.Codigo;
                 viewModel.IdNivelArmazenagem = enderecoArmazenagem.IdNivelArmazenagem;
@@ -183,23 +180,22 @@ namespace FWLog.Web.Backoffice.Controllers
                     return View(viewModel);
                 }
 
-                ProdutoEstoque produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(viewModel.IdProduto, IdEmpresa);
+                _produtoEstoqueService.AtualizarOuInserirEnderecoArmazenagem(viewModel.IdProduto, viewModel.IdEnderecoArmazenagem.Value, IdEmpresa, IdUsuario);
 
-                if (produtoEstoque == null)
+                Notify.Success("Produto editado com sucesso.");
+
+                return Json(new AjaxGenericResultModel
                 {
-                    Notify.Error("Produto não localizado!");
-                }
-
-                _produtoEstoqueService.AtualizarOuInserirEnderecoArmazenagem(produtoEstoque, viewModel.IdEnderecoArmazenagem);
-
-                Notify.Success("Endereço de Armazenagem editado com sucesso.");
-                return RedirectToAction("Index");
+                    Success = true,
+                }, JsonRequestBehavior.DenyGet);
             }
-            catch (Exception e)
+            catch (BusinessException businessException)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, e);
-                Notify.Error("Algo inesperado ocorreu!");
-                return RedirectToAction("Index");
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = businessException.Message
+                }, JsonRequestBehavior.DenyGet);
             }
         }
 
@@ -209,7 +205,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             model.IdEmpresa = IdEmpresa;
             model.NomeUsuario = LabelUsuario;
-          
+
             byte[] relatorio = _relatorioService.GerarRelatorioProdutos(model);
 
             return File(relatorio, "application/pdf", "Relatório De Produtos.pdf");
@@ -249,7 +245,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult DownloadDetalhesProduto(long id)
         {
             var produto = _unitOfWork.ProdutoRepository.GetById(id);
-        
+
             var relatorioRequest = new DetalhesProdutoRequest
             {
                 IdEmpresa = IdEmpresa,

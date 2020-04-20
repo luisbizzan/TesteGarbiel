@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
@@ -10,6 +9,7 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,18 +22,18 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly UnitOfWork _unitOfWork;
         private readonly EnderecoArmazenagemService _enderecoArmazenagemService;
         private readonly EtiquetaService _etiquetaService;
-        private readonly ApplicationLogService _applicationLogService;
+        private ILog _log;
 
         public EnderecoArmazenagemController(
             UnitOfWork unitOfWork,
             EnderecoArmazenagemService enderecoArmazenagemService,
             EtiquetaService etiquetaService,
-            ApplicationLogService applicationLogService)
+            ILog log)
         {
             _unitOfWork = unitOfWork;
             _enderecoArmazenagemService = enderecoArmazenagemService;
             _etiquetaService = etiquetaService;
-            _applicationLogService = applicationLogService;
+            _log = log;
         }
 
         [HttpGet]
@@ -204,8 +204,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     var item = new ProdutoItem
                     {
-                        NumeroLote = lpe.Lote.IdLote.ToString(),
-                        NumeroNf = lpe.Lote.NotaFiscal.Numero.ToString(),
+                        NumeroLote = lpe.Lote == null ? "-" : lpe.Lote.IdLote.ToString(),
+                        NumeroNf = lpe.Lote == null ? "-" : lpe.Lote.NotaFiscal.Numero.ToString(),
                         CodigoReferencia = lpe.Produto.Referencia,
                         DataInstalacao = lpe.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss"),
                         Descricao = lpe.Produto.Descricao,
@@ -272,7 +272,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception ex)
             {
-                _applicationLogService.Error(ApplicationEnum.BackOffice, ex);
+                _log.Error(ex.Message, ex);
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -283,11 +283,12 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult PesquisaModal(long? id)
+        public ActionResult PesquisaModal(long? id, bool? buscarTodos)
         {
             var model = new EnderecoArmazenagemPesquisaModalViewModel();
 
             model.Filtros.IdPontoArmazenagem = id;
+            model.Filtros.BuscarTodos = buscarTodos ?? false;
 
             return View(model);
         }

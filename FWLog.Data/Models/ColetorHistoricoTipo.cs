@@ -5,13 +5,12 @@ namespace FWLog.Data.Models
 {
     public enum ColetorHistoricoTipoEnum
     {
-        Login = 1,
-        Logout = 2,
-        InstalarProduto = 3,
-        RetirarProduto = 4,
-        AjustarQuantidade = 5,
-        ConferirEndereco = 6,
-        ImprimirEtiqueta = 7,
+        InstalarProduto = 1,
+        RetirarProduto = 2,
+        AjustarQuantidade = 3,
+        ConferirEndereco = 4,
+        ImprimirEtiqueta = 5,
+        ConferirProdutoForaLinha = 6,
     }
 
     public class ColetorHistoricoTipo

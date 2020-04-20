@@ -6,7 +6,7 @@
 
     var $DataInicial = $('#Filter_DataInicial').closest('.date');
     var $DataFinal = $('#Filter_DataFinal').closest('.date');
-    
+
 
     var createLinkedPickers = function () {
         var dataInicial = $DataInicial.datetimepicker({
@@ -66,7 +66,7 @@
                 var url = window.URL.createObjectURL(data);
 
                 a.href = url;
-                a.download = 'Relatório Histórico do Usuário.pdf';
+                a.download = 'Relatório Resumo Atividades RF.pdf';
                 document.body.append(a);
                 a.click();
                 a.remove();
@@ -76,7 +76,6 @@
     });
 
     $("#imprimirHistoricoAcaoUsuario").click(function () {
-        debugger
         $("#modalImpressoras").load("BOPrinter/Selecionar?idImpressaoItem=1&acao=historico", function () {
             $("#modalImpressoras").modal();
         });
@@ -129,7 +128,11 @@ function imprimir(acao, id) {
                     HistoricoColetorTipo: $("#Filter_IdHistoricoColetorTipo option:selected").text(),
                 },
                 success: function (result) {
-                    mensagemImpressao(result);
+                    if (result.Success) {
+                        PNotify.success({ text: result.Message });
+                    } else {
+                        PNotify.error({ text: result.Message });
+                    }
                     $('#modalImpressoras').modal('toggle');
                     waitingDialog.hide();
                 }

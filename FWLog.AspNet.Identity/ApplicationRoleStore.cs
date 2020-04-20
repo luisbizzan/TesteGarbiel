@@ -256,7 +256,5 @@ namespace FWLog.AspNet.Identity
             return this.db.Permissions
                 .FirstOrDefaultAsync(x => x.ApplicationId == this.appId && x.Name == permissionName);
         }
-
-
     }
 }

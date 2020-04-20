@@ -66,10 +66,16 @@ namespace FWLog.Services.Relatorio
             row.HeadingFormat = true;
             row.Format.Font.Bold = true;
 
+            Paragraph spaceLine;
+
             count = 0;
             foreach (string nomeColuna in columnNames)
             {
+                spaceLine = row.Cells[count].AddParagraph();
+                spaceLine.AddLineBreak();
                 row.Cells[count].AddParagraph(nomeColuna);
+                spaceLine = row.Cells[count].AddParagraph();
+
                 count++;
             }
 
@@ -119,8 +125,8 @@ namespace FWLog.Services.Relatorio
             }
             else
             {
-                headerTable.AddColumn(new Unit(615, UnitType.Point));
-                var columnRight = headerTable.AddColumn(new Unit(150, UnitType.Point));
+                headerTable.AddColumn(new Unit(550, UnitType.Point));
+                var columnRight = headerTable.AddColumn(new Unit(215, UnitType.Point));
                 columnRight.Format.Alignment = ParagraphAlignment.Right;
             }
 
@@ -128,20 +134,21 @@ namespace FWLog.Services.Relatorio
             var titulo = rowHeader.Cells[0].AddParagraph();
             titulo.AddFormattedText(_dataSource.Titulo, new Font("Verdana", 12));
             titulo.Format.Font.Bold = true;
-            
+
             var spaceLine = rowHeader.Cells[0].AddParagraph();
             spaceLine.AddLineBreak();
 
-            if(_dataSource.Filtros != null)
+            if (_dataSource.Filtros != null)
             {
-                if(_dataSource.Filtros.Status != null)
+                if (_dataSource.Filtros.Status != null)
                 {
                     var status = rowHeader.Cells[0].AddParagraph();
                     status.AddFormattedText("Status: ", TextFormat.Bold);
                     status.AddFormattedText(new Font("Verdana", 10));
                     status.AddText(_dataSource.Filtros.Status);
                 }
-                if(_dataSource.Filtros.PrazoDeEntregaFinal != null && _dataSource.Filtros.PrazoDeEntregaInicial != null)
+
+                if (_dataSource.Filtros.PrazoDeEntregaFinal != null && _dataSource.Filtros.PrazoDeEntregaInicial != null)
                 {
                     var prazo = rowHeader.Cells[0].AddParagraph();
                     prazo.AddFormattedText("Prazo de Entrega: ", TextFormat.Bold);
@@ -150,8 +157,8 @@ namespace FWLog.Services.Relatorio
                         .PrazoDeEntregaInicial?.ToString("dd/MM/yyyy"), " à ",
                         _dataSource.Filtros.PrazoDeEntregaFinal?.ToString("dd/MM/yyyy")));
                 }
-                
-                if(_dataSource.Filtros.Referencia != null)
+
+                if (_dataSource.Filtros.Referencia != null)
                 {
                     var referencia = rowHeader.Cells[0].AddParagraph();
                     referencia.AddFormattedText("Referência: ", TextFormat.Bold);
@@ -162,7 +169,7 @@ namespace FWLog.Services.Relatorio
                 if (_dataSource.Filtros.CodigoDeBarras != null)
                 {
                     var codigoDeBarras = rowHeader.Cells[0].AddParagraph();
-                    codigoDeBarras.AddFormattedText("Referência: ", TextFormat.Bold);
+                    codigoDeBarras.AddFormattedText("Código de Barras: ", TextFormat.Bold);
                     codigoDeBarras.AddFormattedText(new Font("Verdana", 10));
                     codigoDeBarras.AddText(_dataSource.Filtros.CodigoDeBarras);
                 }
@@ -170,29 +177,31 @@ namespace FWLog.Services.Relatorio
                 if (_dataSource.Filtros.Descricao != null)
                 {
                     var descricao = rowHeader.Cells[0].AddParagraph();
-                    descricao.AddFormattedText("Referência: ", TextFormat.Bold);
+                    descricao.AddFormattedText("Descrição: ", TextFormat.Bold);
                     descricao.AddFormattedText(new Font("Verdana", 10));
                     descricao.AddText(_dataSource.Filtros.Descricao);
                 }
 
-                var date = rowHeader.Cells[0].AddParagraph();
-                date.AddFormattedText(new Font("Verdana", 10));
-
                 if (_dataSource.Filtros.DataRecebimentoInicial != null && _dataSource.Filtros.DataRecebimentoFinal != null)
                 {
+                    var date = rowHeader.Cells[0].AddParagraph();
+                    date.AddFormattedText(new Font("Verdana", 10));
                     date.AddFormattedText("Data de Recebimento: ", TextFormat.Bold);
                     date.AddText(string.Concat(_dataSource.Filtros
-                        .DataRecebimentoInicial?.ToString("dd/MM/yyyy"), " à ", 
+                        .DataRecebimentoInicial?.ToString("dd/MM/yyyy"), " à ",
                         _dataSource.Filtros?.DataRecebimentoFinal?.ToString("dd/MM/yyyy")));
                 }
                 else if (_dataSource.Filtros?.DataRecebimentoInicial != null)
                 {
+                    var date = rowHeader.Cells[0].AddParagraph();
+                    date.AddFormattedText(new Font("Verdana", 10));
                     date.AddFormattedText("Data de Recebimento Inicial: ", TextFormat.Bold);
                     date.AddText(string.Concat(_dataSource.Filtros.DataRecebimentoInicial?.ToString("dd/MM/yyyy")));
                 }
                 else if (_dataSource.Filtros.DataRecebimentoFinal != null)
                 {
-                    
+                    var date = rowHeader.Cells[0].AddParagraph();
+                    date.AddFormattedText(new Font("Verdana", 10));
                     date.AddFormattedText("Data de Recebimento Final: ", TextFormat.Bold);
                     date.AddText(string.Concat(_dataSource.Filtros.DataRecebimentoFinal?.ToString("dd/MM/yyyy")));
                 }
@@ -207,6 +216,8 @@ namespace FWLog.Services.Relatorio
 
                 if (_dataSource.Filtros.DataInicial != null && _dataSource.Filtros.DataFinal != null)
                 {
+                    var date = rowHeader.Cells[0].AddParagraph();
+                    date.AddFormattedText(new Font("Verdana", 10));
                     date.AddFormattedText("Data: ", TextFormat.Bold);
                     date.AddText(string.Concat(_dataSource.Filtros
                         .DataInicial?.ToString("dd/MM/yyyy"), " à ",
@@ -224,9 +235,33 @@ namespace FWLog.Services.Relatorio
                 if (_dataSource.Filtros.HistoricoTipo != null)
                 {
                     var historicoTipo = rowHeader.Cells[0].AddParagraph();
-                    historicoTipo.AddFormattedText("Tipo de Histórico: ", TextFormat.Bold);
+                    historicoTipo.AddFormattedText("Tipo Histórico: ", TextFormat.Bold);
                     historicoTipo.AddFormattedText(new Font("Verdana", 10));
                     historicoTipo.AddText(_dataSource.Filtros.HistoricoTipo);
+                }
+
+                if (_dataSource.Filtros.NivelArmazenagem != null)
+                {
+                    var nivelArmazenagem = rowHeader.Cells[0].AddParagraph();
+                    nivelArmazenagem.AddFormattedText("Nível Armazenagem: ", TextFormat.Bold);
+                    nivelArmazenagem.AddFormattedText(new Font("Verdana", 10));
+                    nivelArmazenagem.AddText(_dataSource.Filtros.NivelArmazenagem);
+                }
+
+                if (_dataSource.Filtros.PontoArmazenagem != null)
+                {
+                    var pontoArmazenagem = rowHeader.Cells[0].AddParagraph();
+                    pontoArmazenagem.AddFormattedText("Ponto Armazenagem: ", TextFormat.Bold);
+                    pontoArmazenagem.AddFormattedText(new Font("Verdana", 10));
+                    pontoArmazenagem.AddText(_dataSource.Filtros.PontoArmazenagem);
+                }
+
+                if (_dataSource.Filtros.CorredorInicial.HasValue && _dataSource.Filtros.CorredorFinal.HasValue)
+                {
+                    var corredores = rowHeader.Cells[0].AddParagraph();
+                    corredores.AddFormattedText("Corredores: ", TextFormat.Bold);
+                    corredores.AddFormattedText(new Font("Verdana", 10));
+                    corredores.AddText($"{_dataSource.Filtros.CorredorInicial} à { _dataSource.Filtros.CorredorFinal}");
                 }
             }
 
@@ -239,7 +274,9 @@ namespace FWLog.Services.Relatorio
             data.AddFormattedText(string.Concat("Data: ", _dataSource.DataCriacao.ToString("dd/MM/yyyy HH:mm"), Environment.NewLine, _dataSource.NomeEmpresa), new Font("Verdana", 8));
 
             var name = rowHeader.Cells[1].AddParagraph();
-            //name.AddFormattedText(_dataSource.NomeUsuario, new Font("Verdana", 8));
+            name.AddFormattedText(_dataSource.NomeUsuario, new Font("Verdana", 8));
+
+            name.AddLineBreak();
 
             Paragraph cabecalhoHr = header.AddParagraph();
             cabecalhoHr.Format.Borders.Bottom = new Border
@@ -313,7 +350,7 @@ namespace FWLog.Services.Relatorio
             return ms.ToArray();
         }
 
-         public string BaixarImagem(string fromUrl)
+        public string BaixarImagem(string fromUrl)
         {
             using (System.Net.WebClient webClient = new System.Net.WebClient())
             {

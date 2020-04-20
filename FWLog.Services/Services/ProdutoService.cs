@@ -10,16 +10,19 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 
 namespace FWLog.Services.Services
 {
     public class ProdutoService : BaseService
     {
         private UnitOfWork _uow;
+        private ILog _log;
 
-        public ProdutoService(UnitOfWork uow)
+        public ProdutoService(UnitOfWork uow, ILog log)
         {
             _uow = uow;
+            _log = log;
         }
 
         public async Task LimparIntegracao()
@@ -115,7 +118,7 @@ namespace FWLog.Services.Services
                     {
                         _uow.ProdutoRepository.Add(produto);
 
-                        //List<Empresa> empresas = _uow.EmpresaRepository.Tabela().ToList();
+                        //List<Empresa> empresas = _uow.EmpresaRepository.Tabela().Where(emp => !string.IsNullOrEmpty(emp.Sigla)).ToList();
 
                         //foreach (Empresa empresa in empresas)
                         //{
@@ -140,8 +143,7 @@ namespace FWLog.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do Produto: {0}.", produtoInt.CodigoIntegracao));
+                    _log.Error(string.Format("Erro na integração do Produto: {0}.", produtoInt.CodigoIntegracao), ex);
                 }
             }
         }
@@ -218,8 +220,7 @@ namespace FWLog.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração do Prazo de Entrega do Produto {0} Empresa: {1}.", produtoInt.CodigoIntegracaoProduto, produtoInt.CodigoIntegracaoEmpresa));
+                    _log.Error(string.Format("Erro gerado na integração do Prazo de Entrega do Produto {0} Empresa: {1}.", produtoInt.CodigoIntegracaoProduto, produtoInt.CodigoIntegracaoEmpresa), ex);
 
                     continue;
                 }
@@ -291,8 +292,7 @@ namespace FWLog.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da Média de Venda do Produto {0} Empresa: {1}.", produtoInt.CodigoIntegracaoProduto, produtoInt.CodigoIntegracaoEmpresa));
+                    _log.Error(string.Format("Erro gerado na integração da Média de Venda do Produto {0} Empresa: {1}.", produtoInt.CodigoIntegracaoProduto, produtoInt.CodigoIntegracaoEmpresa), ex);
                 }
             }
         }
@@ -325,8 +325,7 @@ namespace FWLog.Services.Services
                     }
                     catch (Exception ex)
                     {
-                        var applicationLogService = new ApplicationLogService(_uow);
-                        applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro gerado na integração da Reserva do Produto {0} Empresa: {1}.", produtoInt.CodigoIntegracaoProduto, produtoInt.CodigoIntegracaoEmpresa));
+                        _log.Error(string.Format("Erro gerado na integração da Reserva do Produto {0} Empresa: {1}.", produtoInt.CodigoIntegracaoProduto, produtoInt.CodigoIntegracaoEmpresa), ex);
                     }
                 }
             }

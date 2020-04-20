@@ -237,25 +237,21 @@ namespace FWLog.Web.Backoffice.Controllers
 
             long idEmpresa = _uow.EmpresaRepository.RetornarEmpresaPrincipal(applicationUser.Id);
 
-            try
+            var applicationSession = new ApplicationSession
             {
-                var applicationSession = new ApplicationSession
-                {
-                    IdAspNetUsers = applicationUser.Id,
-                    IdApplication = applicationUser.ApplicationId,
-                    DataLogin = DateTime.Now,
-                    DataUltimaAcao = DateTime.Now,
-                    IdEmpresa = idEmpresa
-                };
+                IdAspNetUsers = applicationUser.Id,
+                IdApplication = applicationUser.ApplicationId,
+                DataLogin = DateTime.Now,
+                DataUltimaAcao = DateTime.Now,
+                IdEmpresa = idEmpresa
+            };
 
-                _uow.ApplicationSessionRepository.Add(applicationSession);
-                _uow.SaveChanges();
+            _uow.ApplicationSessionRepository.Add(applicationSession);
+            _uow.SaveChanges();
 
-                applicationUser.IdApplicationSession = applicationSession.IdApplicationSession;
+            applicationUser.IdApplicationSession = applicationSession.IdApplicationSession;
 
-                UserManager.Update(applicationUser);
-            }
-            catch (Exception) { }
+            UserManager.Update(applicationUser);
         }
     }
 }

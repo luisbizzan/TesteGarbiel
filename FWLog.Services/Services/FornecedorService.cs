@@ -3,6 +3,7 @@ using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -14,10 +15,12 @@ namespace FWLog.Services.Services
     public class FornecedorService : BaseService
     {
         private UnitOfWork _uow;
+        private ILog _log;
 
-        public FornecedorService(UnitOfWork uow)
+        public FornecedorService(UnitOfWork uow, ILog log)
         {
             _uow = uow;
+            _log = log;
         }
 
         public async Task LimparIntegracao()
@@ -122,8 +125,7 @@ namespace FWLog.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do Fornecedor: {0}.", fornecInt.CodigoIntegracao));
+                    _log.Error(string.Format("Erro na integração do Fornecedor: {0}.", fornecInt.CodigoIntegracao), ex);
                 }
             }
         }

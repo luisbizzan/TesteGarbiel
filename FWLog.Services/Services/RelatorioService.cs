@@ -1,6 +1,8 @@
-﻿using ExtensionMethods.String;
+﻿using AutoMapper;
+using ExtensionMethods.String;
 using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Relatorio;
@@ -784,9 +786,7 @@ namespace FWLog.Services.Services
 
         public byte[] GerarRelatorioProdutos(RelatorioProdutosRequest filter)
         {
-            IQueryable<ProdutoEstoque> query = _unitiOfWork.ProdutoEstoqueRepository.ObterProdutoEstoquePorEmpresa(filter.IdEmpresa.Value)
-                .AsQueryable()
-                .OrderByDescending(x => x.IdProduto);
+            IQueryable<ProdutoEstoque> query = _unitiOfWork.ProdutoEstoqueRepository.ObterProdutoEstoquePorEmpresa(filter.IdEmpresa.Value).OrderByDescending(x => x.IdProduto);
 
             if (!string.IsNullOrEmpty(filter.Referencia))
             {
@@ -845,16 +845,16 @@ namespace FWLog.Services.Services
                 {
                     var recebimentoNotas = new RelatorioProdutos
                     {
-                        Referencia = item.Produto?.Referencia,
-                        Descricao = item.Produto.Descricao,
+                        Referencia = item.Produto?.Referencia ?? string.Empty,
+                        Descricao = item.Produto.Descricao ?? string.Empty,
                         LarguraAlturaComprimento = string.Concat(item.Produto.Largura?.ToString("n2"),
                             " / ", item.Produto.Altura?.ToString("n2"),
                             " / ", item.Produto.Comprimento?.ToString("n2")),
-                        Endereco = item.EnderecoArmazenagem?.Codigo,
-                        Multiplo = item.Produto.MultiploVenda.ToString(),
-                        Peso = item.Produto.PesoBruto.ToString("n2"),
-                        Status = item.IdProdutoEstoqueStatus.ToString(),
-                        UnidadeMedida = item.Produto.UnidadeMedida.Sigla,
+                        Endereco = item.EnderecoArmazenagem?.Codigo ?? string.Empty,
+                        Multiplo = item.Produto.MultiploVenda.ToString() ?? string.Empty,
+                        Peso = item.Produto.PesoBruto.ToString("n2") ?? string.Empty,
+                        Status = item.IdProdutoEstoqueStatus.ToString() ?? string.Empty,
+                        UnidadeMedida = item.Produto?.UnidadeMedida.Sigla ?? string.Empty,
                     };
 
                     listaProdutos.Add(recebimentoNotas);
@@ -1012,7 +1012,6 @@ namespace FWLog.Services.Services
 
             var listaHistorico = new List<IFwRelatorioDados>();
 
-
             if (query.Any())
             {
                 foreach (var item in query)
@@ -1038,7 +1037,7 @@ namespace FWLog.Services.Services
                 NomeEmpresa = empresa.RazaoSocial,
                 NomeUsuario = filter.NomeUsuarioRequisicao,
                 Orientacao = Orientation.Landscape,
-                Titulo = "Relatório Histórico do Usuário",
+                Titulo = "Resumo Atividades RF",
                 Filtros = new FwRelatorioDadosFiltro
                 {
                     DataInicial = filter.DataInicial,
@@ -1059,21 +1058,551 @@ namespace FWLog.Services.Services
         {
             var relatorioRequest = new RelatorioHistoricoAcaoUsuarioRequest
             {
-               ColetorAplicacao = request.ColetorAplicacao,
-               IdColetorAplicacao = request.IdColetorAplicacao,
-               HistoricoColetorTipo = request.HistoricoColetorTipo,
-               IdHistoricoColetorTipo = request.IdHistoricoColetorTipo,
-               NomeUsuarioRequisicao = request.NomeUsuarioRequisicao,
-               DataInicial = request.DataInicial,
-               DataFinal = request.DataFinal,
-               IdEmpresa = request.IdEmpresa,
-               IdUsuario = request.IdUsuario,
-               UsuarioSelecionado = request.UsuarioSelecionado
+                ColetorAplicacao = request.ColetorAplicacao,
+                IdColetorAplicacao = request.IdColetorAplicacao,
+                HistoricoColetorTipo = request.HistoricoColetorTipo,
+                IdHistoricoColetorTipo = request.IdHistoricoColetorTipo,
+                NomeUsuarioRequisicao = request.NomeUsuarioRequisicao,
+                DataInicial = request.DataInicial,
+                DataFinal = request.DataFinal,
+                IdEmpresa = request.IdEmpresa,
+                IdUsuario = request.IdUsuario,
+                UsuarioSelecionado = request.UsuarioSelecionado
             };
 
             byte[] relatorio = GerarRelatorioHistoricoAcaoUsuario(relatorioRequest);
 
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
+        }
+
+        public byte[] GerarRelatorioTotalEnderecoPorAla(RelatorioTotalizacaoAlasListaFiltro filter, string nomeUsuarioRequisicao) 
+        {
+            var lista = _unitiOfWork.LoteProdutoEnderecoRepository.BuscarDadosFormatadoParaRelatorioTotalAla(filter);
+
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filter.IdEmpresa);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = nomeUsuarioRequisicao,
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório Total de Endereço por Ala",
+                Filtros = new FwRelatorioDadosFiltro()
+                {
+                    NivelArmazenagem = _unitiOfWork.NivelArmazenagemRepository.GetById(filter.IdNivelArmazenagem)?.Descricao,
+                    PontoArmazenagem = _unitiOfWork.PontoArmazenagemRepository.GetById(filter.IdPontoArmazenagem)?.Descricao,
+                    CorredorInicial = filter.CorredorInicial,
+                    CorredorFinal = filter.CorredorFinal
+                }
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            Document document = fwRelatorio.Customizar(fwRelatorioDados);
+
+            List<UsuarioEmpresa> usuarios = _unitiOfWork.UsuarioEmpresaRepository.ObterPorEmpresa(filter.IdEmpresa);
+
+            var corredores = lista.Select(x => x.Corredor).Distinct().OrderBy(x => x).ToList();
+
+            if (lista.Any())
+            {
+                Paragraph paragraph = document.Sections[0].AddParagraph();
+                paragraph.AddLineBreak();
+                Table tabela = document.Sections[0].AddTable();
+
+                tabela.Format.Font = new Font("Verdana", new Unit(9));
+                tabela.AddColumn(new Unit(80));
+                tabela.AddColumn(new Unit(150));
+                tabela.AddColumn(new Unit(90));
+                tabela.AddColumn(new Unit(68));
+                tabela.AddColumn(new Unit(130));
+                tabela.AddColumn(new Unit(70));
+                tabela.AddColumn(new Unit(88));
+                tabela.AddColumn(new Unit(88));
+
+                Row row = tabela.AddRow();
+
+                foreach (var corredor in corredores)
+                {
+                    row = tabela.AddRow();
+
+                    paragraph.Format.SpaceAfter = 20;
+                    paragraph.Format.Font = new Font("Verdana", new Unit(12))
+                    {
+                        Bold = true
+                    };
+                    paragraph.AddText(string.Concat("Corredor: ", corredor.ToString("0#")));
+
+                    row.Cells[0].AddParagraph("Endereço");
+                    row.Cells[0].Format.Font.Bold = true;
+                    row.Cells[1].AddParagraph("Usuário");
+                    row.Cells[1].Format.Font.Bold = true;
+                    row.Cells[2].AddParagraph("Referência");
+                    row.Cells[2].Format.Font.Bold = true;
+                    row.Cells[3].AddParagraph("Lote");
+                    row.Cells[3].Format.Font.Bold = true;
+                    row.Cells[4].AddParagraph("Data");
+                    row.Cells[4].Format.Font.Bold = true;
+                    row.Cells[5].AddParagraph("Peso");
+                    row.Cells[5].Format.Font.Bold = true;
+                    row.Cells[6].AddParagraph("Quantidade");
+                    row.Cells[6].Format.Font.Bold = true;
+                    row.Cells[7].AddParagraph("Peso Total");
+                    row.Cells[7].Format.Font.Bold = true;
+                    
+                    
+                    var itens = lista.Where(x => x.Corredor == corredor).Select(y => y).OrderBy(x => x.CodigoEndereco).ToList();
+                    var totalArmazenado = itens.Sum(x => x.PesoTotalDeProduto);
+                    var qtdeTotal = itens.Sum(x => x.QuantidadeProdutoPorEndereco);
+
+                    foreach (var item in itens)
+                    {
+                        row = tabela.AddRow();
+                        paragraph = row.Cells[0].AddParagraph();
+                        paragraph.AddText(item.CodigoEndereco);
+                        paragraph = row.Cells[1].AddParagraph();
+                        paragraph.AddText(usuarios.Where(x => x.UserId == item.IdUsuarioInstalacao).FirstOrDefault()?.PerfilUsuario?.Nome ?? "-");
+                        paragraph = row.Cells[2].AddParagraph();
+                        paragraph.AddText(item.ReferenciaProduto ?? "-");
+                        paragraph = row.Cells[3].AddParagraph();
+                        paragraph.AddText(item.IdLote.ToString() ?? "-");
+                        paragraph = row.Cells[4].AddParagraph();
+                        paragraph.AddText(item.DataInstalacao?.ToString("dd/MM/yyyy HH:mm:ss") ?? "-");
+                        paragraph = row.Cells[5].AddParagraph();
+                        paragraph.AddText(item.PesoProduto?.ToString("n2") ?? "-");
+                        paragraph = row.Cells[6].AddParagraph();
+                        paragraph.AddText(item.QuantidadeProdutoPorEndereco.ToString() ?? "-");
+                        paragraph = row.Cells[7].AddParagraph();
+                        paragraph.AddText(item.PesoTotalDeProduto?.ToString("n2") ?? "-");
+
+                    }
+
+                    row = tabela.AddRow();
+                    row = tabela.AddRow();
+                    paragraph = row.Cells[4].AddParagraph(string.Concat("Total Armazenado(Kg): "));
+                    paragraph.Format.Font.Bold = true;
+                    paragraph = row.Cells[6].AddParagraph(qtdeTotal.ToString());
+                    paragraph.Format.Font.Bold = true;
+                    paragraph = row.Cells[7].AddParagraph(totalArmazenado?.ToString("n2"));
+                    paragraph.Format.Font.Bold = true;
+                    row = tabela.AddRow();
+                    paragraph = row.Cells[4].AddParagraph(string.Concat("Total Armazenado(Tn): "));
+                    paragraph.Format.Font.Bold = true;
+                    paragraph = row.Cells[6].AddParagraph(qtdeTotal.ToString());
+                    paragraph.Format.Font.Bold = true;
+                    paragraph = row.Cells[7].AddParagraph((totalArmazenado / 1000).ToString());
+                    paragraph.Format.Font.Bold = true;
+
+                    row = tabela.AddRow();
+                    row = tabela.AddRow();
+
+                    paragraph = document.Sections[0].AddParagraph();
+                    tabela = document.Sections[0].AddTable();
+                    tabela.Format.Font = new Font("Verdana", new Unit(9));
+
+                    tabela.AddColumn(new Unit(80));
+                    tabela.AddColumn(new Unit(150));
+                    tabela.AddColumn(new Unit(90));
+                    tabela.AddColumn(new Unit(68));
+                    tabela.AddColumn(new Unit(130));
+                    tabela.AddColumn(new Unit(70));
+                    tabela.AddColumn(new Unit(88));
+                    tabela.AddColumn(new Unit(88));
+                }
+
+                var qteTotalGeral = lista.Sum(x => x.QuantidadeProdutoPorEndereco);
+                var totalArmazenadoGeral = lista.Sum(x => x.PesoTotalDeProduto);
+
+                row = tabela.AddRow();
+                row = tabela.AddRow();
+                paragraph = row.Cells[4].AddParagraph(string.Concat("Total Geral(Kg): "));
+                paragraph.Format.Font.Bold = true;
+                paragraph = row.Cells[6].AddParagraph(qteTotalGeral.ToString());
+                paragraph.Format.Font.Bold = true;
+                paragraph = row.Cells[7].AddParagraph(totalArmazenadoGeral?.ToString("n2"));
+                paragraph.Format.Font.Bold = true;
+                row = tabela.AddRow();
+                paragraph = row.Cells[4].AddParagraph(string.Concat("Total Geral(Tn): "));
+                paragraph.Format.Font.Bold = true;
+                paragraph = row.Cells[6].AddParagraph(qteTotalGeral.ToString());
+                paragraph.Format.Font.Bold = true;
+                paragraph = row.Cells[7].AddParagraph((totalArmazenadoGeral / 1000).ToString());
+                paragraph.Format.Font.Bold = true;
+
+            }
+
+            return fwRelatorio.GerarCustomizado();
+        }
+
+        public void ImprimirRelatorioTotalEnderecoPorAla(ImprimirRelatorioTotalPorAlaRequest request)
+        {
+            var relatorioRequest = new RelatorioTotalizacaoAlasListaFiltro
+            {
+                CorredorInicial = request.CorredorInicial,
+                CorredorFinal = request.CorredorFinal,
+                IdEmpresa = request.IdEmpresa,
+                IdNivelArmazenagem = request.IdNivelArmazenagem,
+                IdPontoArmazenagem = request.IdPontoArmazenagem,
+                ImprimirVazia = request.ImprimirVazia
+            };
+
+            byte[] relatorio = GerarRelatorioTotalEnderecoPorAla(relatorioRequest,request.NomeUsuarioRequisicao);
+
+            _impressoraService.Imprimir(relatorio, request.IdImpressora);
+        }
+
+        public byte[] GerarRelatorioPosicaoParaInventario(RelatorioPosicaoInventarioRequest filter)
+        {
+            IQueryable<LoteProdutoEndereco> query = _unitiOfWork.LoteProdutoEnderecoRepository.PesquisarPorEmpresa(filter.IdEmpresa)
+            .AsQueryable();
+
+            if (filter.IdNivelArmazenagem.HasValue)
+            {
+                query = query.Where(x => x.EnderecoArmazenagem.IdNivelArmazenagem == filter.IdNivelArmazenagem);
+            }
+
+            if (filter.IdPontoArmazenagem.HasValue)
+            {
+                query = query.Where(x => x.EnderecoArmazenagem.IdPontoArmazenagem == filter.IdPontoArmazenagem);
+            }
+
+            if (filter.IdProduto.HasValue)
+            {
+                query = query.Where(x => x.IdProduto == filter.IdProduto);
+            }
+
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filter.IdEmpresa);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = filter.NomeUsuarioRequisicao,
+                Orientacao = Orientation.Portrait,
+                Titulo = "Relatório Posição Para Inventário",
+                Filtros = new FwRelatorioDadosFiltro()
+                {
+                    NivelArmazenagem = filter.IdNivelArmazenagem.HasValue ? _unitiOfWork.NivelArmazenagemRepository.GetById(filter.IdNivelArmazenagem.Value)?.Descricao : null,
+                    PontoArmazenagem = filter.IdPontoArmazenagem.HasValue ? _unitiOfWork.PontoArmazenagemRepository.GetById(filter.IdPontoArmazenagem.Value)?.Descricao : null,
+                    Referencia = filter.IdProduto.HasValue ? _unitiOfWork.ProdutoRepository.GetById(filter.IdProduto.Value)?.Referencia : null,
+                    Descricao = filter.IdProduto.HasValue ? _unitiOfWork.ProdutoRepository.GetById(filter.IdProduto.Value)?.Descricao : null
+                }
+            };
+            var fwRelatorio = new FwRelatorio();
+
+            Document document = fwRelatorio.Customizar(fwRelatorioDados);
+
+            if (query.Any())
+            {
+                var produtos = query.Select(x => x.Produto).Distinct().OrderBy(x => x.IdProduto).ToList();
+
+                Paragraph paragraph = document.Sections[0].AddParagraph();
+                paragraph.AddLineBreak();
+                Table tabela = document.Sections[0].AddTable();
+
+                tabela.Format.Font = new Font("Verdana", new Unit(9));
+                tabela.AddColumn(new Unit(185));
+                tabela.AddColumn(new Unit(185));
+                tabela.AddColumn(new Unit(185));
+
+                Row row = tabela.AddRow();
+
+                foreach (var produto in produtos)
+                {
+                    row = tabela.AddRow();
+
+                    paragraph.Format.SpaceAfter = 20;
+                    paragraph.Format.Font = new Font("Verdana", new Unit(12))
+                    {
+                        Bold = true
+                    };
+                    paragraph.AddText(string.Concat(produto.Referencia, " - ", produto.Descricao));
+
+                    row.Cells[0].AddParagraph("Endereço");
+                    row.Cells[0].Format.Font.Bold = true;
+                    row.Cells[1].AddParagraph("Lote");
+                    row.Cells[1].Format.Font.Bold = true;
+                    row.Cells[2].AddParagraph("Quantidade");
+                    row.Cells[2].Format.Font.Bold = true;
+
+                    var endereçosInstalados = query.Where(x => x.IdProduto == produto.IdProduto).Select(y => y).OrderBy(x => x.EnderecoArmazenagem.Codigo).ToList();
+                    var qtdeTotal = endereçosInstalados.Sum(x => x.Quantidade);
+
+                    foreach (var endereco in endereçosInstalados)
+                    {
+                        row = tabela.AddRow();
+                        paragraph = row.Cells[0].AddParagraph();
+                        paragraph.AddText(endereco.EnderecoArmazenagem.Codigo);
+                        paragraph = row.Cells[1].AddParagraph();
+                        paragraph.AddText(endereco.IdLote.ToString());
+                        paragraph = row.Cells[2].AddParagraph();
+                        paragraph.AddText(endereco.Quantidade.ToString());
+                    }
+
+                    row = tabela.AddRow();
+                    row = tabela.AddRow();
+                    paragraph = row.Cells[0].AddParagraph(string.Concat("Saldo: "));
+                    paragraph.Format.Font.Bold = true;
+                    paragraph = row.Cells[2].AddParagraph(qtdeTotal.ToString());
+                    paragraph.Format.Font.Bold = true;
+
+                    row = tabela.AddRow();
+                    row = tabela.AddRow();
+
+                    paragraph = document.Sections[0].AddParagraph();
+                    tabela = document.Sections[0].AddTable();
+                    tabela.Format.Font = new Font("Verdana", new Unit(9));
+
+                    tabela.AddColumn(new Unit(185));
+                    tabela.AddColumn(new Unit(185));
+                    tabela.AddColumn(new Unit(185));
+
+                    row = tabela.AddRow();
+                }
+            }
+
+            return fwRelatorio.GerarCustomizado();
+        }
+
+        public void ImprimirRelatorioPosicaoParaInventario(ImprimirRelatorioPosicaoInventarioRequest request)
+        {
+            var relatorioRequest = new RelatorioPosicaoInventarioRequest
+            {
+                IdEmpresa = request.IdEmpresa.Value,
+                IdProduto = request.IdProduto,
+                IdNivelArmazenagem = request.IdNivelArmazenagem,
+                IdPontoArmazenagem = request.IdPontoArmazenagem,
+                NomeUsuarioRequisicao = request.NomeUsuarioRequisicao
+            };
+
+            byte[] relatorio = GerarRelatorioPosicaoParaInventario(relatorioRequest);
+
+            _impressoraService.Imprimir(relatorio, request.IdImpressora);
+        }
+
+        public byte[] GerarRelatorioTotalizacaoLocalizacao(RelatorioTotalizacaoLocalizacaoFiltro filtro, string labelUsuario)
+        {
+            var listaLocalizacao = _unitiOfWork.LoteProdutoEnderecoRepository.BuscarDadosTotalizacaoLocalizacao(filtro);
+
+            var listaDadosRelatorio = new List<IFwRelatorioDados>();
+
+            foreach (var item in listaLocalizacao)
+            {
+                var itemRelatorio = new DadosRelatorioTotalizacaoLocalizacao
+                {
+                    CodigoEndereco = item.CodigoEndereco,
+                    ReferenciaProduto = item.ReferenciaProduto,
+                    Unidade = item.Unidade,
+                    Quantidade = item.Quantidade.ToString()
+                };
+
+                listaDadosRelatorio.Add(itemRelatorio);
+            };
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = _unitiOfWork.EmpresaRepository.GetById(filtro.IdEmpresa).RazaoSocial,
+                NomeUsuario = labelUsuario,
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório Totalização por Localização",
+                Filtros = new FwRelatorioDadosFiltro()
+                {
+                    NivelArmazenagem = _unitiOfWork.NivelArmazenagemRepository.GetById(filtro.IdNivelArmazenagem)?.Descricao,
+                    PontoArmazenagem = _unitiOfWork.PontoArmazenagemRepository.GetById(filtro.IdPontoArmazenagem)?.Descricao,
+                    CorredorInicial = filtro.CorredorInicial,
+                    CorredorFinal = filtro.CorredorFinal
+                },
+                Dados = listaDadosRelatorio
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            return fwRelatorio.Gerar(fwRelatorioDados);
+        }
+
+        public void ImprimirRelatorioTotalizacaoLocalizacao(RelatorioTotalizacaoLocalizacaoFiltro filtro, long idImpressora, string labelUsuario)
+        {
+            var relatorio = GerarRelatorioTotalizacaoLocalizacao(filtro, labelUsuario);
+
+            _impressoraService.Imprimir(relatorio, idImpressora);
+        }
+
+        public byte[] GerarRelatorioLogisticaCorredor(RelatorioLogisticaCorredorRequest filtro)
+        {
+            IQueryable<LoteProdutoEndereco> query = _unitiOfWork.LoteProdutoEnderecoRepository.PesquisarPorEmpresa(filtro.IdEmpresa)
+            .AsQueryable();
+
+            query = query.Where(lpe => lpe.EnderecoArmazenagem.IdNivelArmazenagem == filtro.IdNivelArmazenagem);
+
+            query = query.Where(lpe => lpe.EnderecoArmazenagem.IdPontoArmazenagem == filtro.IdPontoArmazenagem);
+
+            if (filtro.CorredorInicial > 0 && filtro.CorredorFinal > 0)
+            {
+                var range = Enumerable.Range(filtro.CorredorInicial.Value, filtro.CorredorFinal.Value);
+
+                query = query.Where(lpe => range.Contains(lpe.EnderecoArmazenagem.Corredor));
+            }
+
+            if (filtro.DataInicial.HasValue)
+            {
+                DateTime dataInicial = new DateTime(filtro.DataInicial.Value.Year, filtro.DataInicial.Value.Month, filtro.DataInicial.Value.Day, 00, 00, 00);
+                query = query.Where(lpe => lpe.DataHoraInstalacao >= dataInicial);
+            }
+
+            if (filtro.DataFinal.HasValue)
+            {
+                DateTime dataFinal = new DateTime(filtro.DataFinal.Value.Year, filtro.DataFinal.Value.Month, filtro.DataFinal.Value.Day, 23, 59, 59);
+                query = query.Where(lpe => lpe.DataHoraInstalacao <= dataFinal);
+            }
+
+            if (filtro.Ordenacao == 0)
+            {
+                query = query.OrderBy(lpe => lpe.EnderecoArmazenagem.Corredor).ThenBy(lpe => lpe.EnderecoArmazenagem.Codigo);
+            }
+            else if (filtro.Ordenacao == 1)
+            {
+                query = query.OrderBy(lpe => lpe.ProdutoEstoque.Saldo).ThenBy(lpe => lpe.EnderecoArmazenagem.Codigo);
+            }
+            //else
+            //{
+            //    query = query.OrderBy(x => x.EnderecoArmazenagem)
+            //}
+
+            var listaHistorico = new List<IFwRelatorioDados>();
+
+            if (query.Any())
+            {
+                foreach (var item in query)
+                {
+                    var recebimentoNotas = new RelatorioLogisticaCorredor
+                    {
+                        Codigo = item.EnderecoArmazenagem.Codigo,
+                        Referencia = item.Produto.Referencia,
+                        Descricao = item.Produto.Descricao,
+                        Unidade = item.Produto.UnidadeMedida.Sigla,
+                        Comprimento = item.Produto.Comprimento?.ToString("n2") ?? "-",
+                        Largura = item.Produto.Largura?.ToString("n2") ?? "-",
+                        Altura = item.Produto.Altura?.ToString("n2") ?? "-",
+                        Cubagem = item.Produto.MetroCubico?.ToString("n2") ?? "-",
+                        Giro6m = "-",
+                        GiroDD = "-",
+                        ItLoc = "-",
+                        Saldo = item.ProdutoEstoque.Saldo.ToString() ?? "-",
+                        DuraDD = "-",
+                        DtRepo = "-"
+                    };
+
+                    listaHistorico.Add(recebimentoNotas);
+                }
+            }
+
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filtro.IdEmpresa);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = filtro.NomeUsuarioRequisicao,
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório - Logística por Corredor",
+                Filtros = new FwRelatorioDadosFiltro()
+                {
+                    NivelArmazenagem = _unitiOfWork.NivelArmazenagemRepository.GetById(filtro.IdNivelArmazenagem)?.Descricao,
+                    PontoArmazenagem = _unitiOfWork.PontoArmazenagemRepository.GetById(filtro.IdPontoArmazenagem)?.Descricao,
+                    CorredorInicial = filtro.CorredorInicial,
+                    CorredorFinal = filtro.CorredorFinal,
+                    DataInicial = filtro.DataInicial,
+                    DataFinal = filtro.DataFinal
+                },
+                Dados = listaHistorico
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            return fwRelatorio.Gerar(fwRelatorioDados);
+        }
+
+        public void ImprimirRelatorioLogisticaCorredor(ImprimirRelatorioLogisticaCorredorRequest request)
+        {
+            var relatorioRequest = new RelatorioLogisticaCorredorRequest
+            {
+                IdEmpresa = request.IdEmpresa.Value,
+                NomeUsuarioRequisicao = request.NomeUsuarioRequisicao,
+                IdNivelArmazenagem = request.IdNivelArmazenagem,
+                IdPontoArmazenagem = request.IdPontoArmazenagem,
+                CorredorInicial = request.CorredorInicial,
+                CorredorFinal = request.CorredorFinal,
+                DataInicial = request.DataInicial,
+                DataFinal = request.DataFinal,
+                Ordenacao = request.Ordenacao
+            };
+
+            byte[] relatorio = GerarRelatorioLogisticaCorredor(relatorioRequest);
+
+            _impressoraService.Imprimir(relatorio, request.IdImpressora);
+        }
+
+        public byte[] GerarRelatorioAtividadeEstoque(RelatorioAtividadeEstoqueRequest model, string userId)
+        {
+            var filtro = new AtividadeEstoqueListaFiltro()
+            {
+                IdEmpresa = model.IdEmpresa,
+                IdProduto = model.IdProduto,
+                IdAtividadeEstoqueTipo = model.IdAtividadeEstoqueTipo,
+                DataFinalExecucao = model.DataFinalExecucao,
+                DataFinalSolicitacao = model.DataFinalSolicitacao,
+                DataInicialExecucao = model.DataInicialExecucao,
+                DataInicialSolicitacao = model.DataInicialSolicitacao,
+                IdUsuarioExecucao = model.IdUsuarioExecucao,
+                QuantidadeFinal = model.QuantidadeFinal,
+                QuantidadeInicial = model.QuantidadeInicial
+            };
+
+            List<UsuarioEmpresa> usuarios = _unitiOfWork.UsuarioEmpresaRepository.ObterPorEmpresa(model.IdEmpresa);
+
+            var list = _unitiOfWork.AtividadeEstoqueRepository.PesquisarRelatorio(filtro).Select(x => new RelatorioAtividadeEstoque
+            {
+                TipoAtividade = x.TipoAtividade,
+                ReferenciaDescricaoProduto = x.ReferenciaProduto + "-" + x.DescricaoProduto,
+                QuantidadeInicial = x.QuantidadeInicial.HasValue ? x.QuantidadeInicial.Value.ToString() : "",
+                DataSolicitacao = x.DataSolicitacao.HasValue ? x.DataSolicitacao.Value.ToString("dd/MM/yyyy") : "",
+                QuantidadeFinal = x.QuantidadeFinal.HasValue ? x.QuantidadeFinal.Value.ToString() : "",
+                CodigoEndereco = x.CodigoEndereco,
+                DataExecucao = x.DataExecucao.HasValue ? x.DataExecucao.Value.ToString("dd/MM/yyyy") : "",
+                UsuarioExecucao = usuarios.Where(y => y.UserId.Equals(x.UsuarioExecucao)).FirstOrDefault()?.PerfilUsuario.Nome ?? "",
+                Finalizado = x.Finalizado ? "Sim" : "Não"
+            }).ToList();
+
+            var dados = new List<IFwRelatorioDados>();
+            dados.AddRange(list);
+
+            Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filtro.IdEmpresa);
+
+            PerfilUsuario usuario = _unitiOfWork.PerfilUsuarioRepository.GetByUserId(userId);
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                DataCriacao = DateTime.Now,
+                NomeEmpresa = empresa.RazaoSocial,
+                NomeUsuario = $"{usuario.Usuario.UserName} - {usuario.Nome}",
+                Orientacao = Orientation.Landscape,
+                Titulo = "Relatório Atividades de Estoque",
+                Filtros = null,
+                Dados = dados
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            return fwRelatorio.Gerar(fwRelatorioDados);
+        }
+
+        public void ImprimirRelatorioAtividadeEstoque(RelatorioAtividadeEstoqueRequest filtro, long idImpressora, string labelUsuario)
+        {
+            var relatorio = GerarRelatorioAtividadeEstoque(filtro, labelUsuario);
+
+            _impressoraService.Imprimir(relatorio, idImpressora);
         }
     }
 }

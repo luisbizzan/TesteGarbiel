@@ -215,6 +215,11 @@ footer {
     background-color: darkblue;
     
 }
+
+.table-scrol {
+    overflow: auto;
+    margin: 0 auto;
+}
    
 .btn-secondary-selected:hover {
     color: white;

@@ -8,7 +8,8 @@ namespace FWLog.Data.Models
         Saida = 2,
         Ajuste = 3,
         Abastecimento = 4,
-        Conferencia = 5
+        Conferencia = 5,
+        ConferirProdutoForaLinha = 6,
     }
 
     public class LoteMovimentacaoTipo

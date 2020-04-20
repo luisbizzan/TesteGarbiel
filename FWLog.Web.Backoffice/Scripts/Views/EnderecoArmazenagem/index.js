@@ -27,19 +27,20 @@
     });
 
     var iconeStatus = function (data, type, row) {
+
         if (type === 'display') {
             var nomeCor,
                 codigo = row.Codigo || '',
                 tooltipText;
 
-            if (row.Quantidade === 0) {
+            if (row.Ocupado === false) {
                 nomeCor = 'verde';
-                tooltipText = 'Enderço disponível';
+                tooltipText = 'Endereço disponível';
             }
             else {
                 nomeCor = 'vermelho',
-                codigo = row.Codigo || '',
-                tooltipText = 'Endereço Ocupado';
+                    codigo = row.Codigo || '',
+                    tooltipText = 'Endereço ocupado';
             }
 
             return `<i class="fa fa-circle icone-status-${nomeCor}" title = "${tooltipText}" data-toggle = "tooltip"></i>${codigo}`;
@@ -69,9 +70,9 @@
         columns: [
             { data: 'NivelArmazenagem' },
             { data: 'PontoArmazenagem' },
-            { data: 'Codigo', render: iconeStatus  },
+            { data: 'Codigo', render: iconeStatus },
             { data: 'Fifo' },
-            { data: 'PontoSeparacao' }, 
+            { data: 'PontoSeparacao' },
             { data: 'EstoqueMinimo' },
             { data: 'Quantidade' },
             { data: 'Status' },
@@ -129,7 +130,7 @@
         });
     }
 
-}) ();
+})();
 
 function selecionarNivelArmazenagem(idNivelArmazenagem, descricao) {
     $("#Filtros_DescricaoNivelArmazenagem").val(descricao);

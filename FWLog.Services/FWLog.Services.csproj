@@ -103,9 +103,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Exceptions\BusinessException.cs" />
     <Compile Include="Exceptions\UnauthorizedException.cs" />
-    <Compile Include="Exceptions\ConpanyException.cs" />
+    <Compile Include="Exceptions\CompanyException.cs" />
+    <Compile Include="Exceptions\UserActionHistoricalException.cs" />
     <Compile Include="GlobalResources\General\GeneralStrings.en.Designer.cs">
       <DependentUpon>GeneralStrings.en.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -120,13 +120,10 @@
     <Compile Include="Integracao\Helpers\QueryPropertyAttribute.cs" />
     <Compile Include="Integracao\IntegracaoSankhya.cs" />
     <Compile Include="Interfaces\IBOAccountContentProvider.cs" />
-    <Compile Include="Model\Armazenagem\AbastecerPickingResponse.cs" />
     <Compile Include="Model\Armazenagem\AjustarVolumeLoteRequisicao.cs" />
-    <Compile Include="Model\Armazenagem\AjustarVolumeLoteResposta.cs" />
+    <Compile Include="Model\Armazenagem\EnderecoProdutoQuantidades.cs" />
     <Compile Include="Model\Armazenagem\InstalarVolumeLoteRequisicao.cs" />
-    <Compile Include="Model\Armazenagem\InstalarVolumeLoteResponse.cs" />
     <Compile Include="Model\Armazenagem\LoteInstaladoProdutoResposta.cs" />
-    <Compile Include="Model\Armazenagem\RetirarVolumeEnderecoResponse.cs" />
     <Compile Include="Model\Armazenagem\ValidarEnderecoAjusteRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarEnderecoInstalacaoRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarLoteProdutoAjusteRequisicao.cs" />
@@ -134,14 +131,15 @@
     <Compile Include="Model\Armazenagem\ValidarLoteProdutoInstalacaoRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarQuantidadeAjusteRequisicao.cs" />
     <Compile Include="Model\Armazenagem\ValidarQuantidadeInstalacaoRequisicao.cs" />
+    <Compile Include="Model\AtividadeEstoque\AtividadeEstoqueLista.cs" />
+    <Compile Include="Model\AtividadeEstoque\AtividadeEstoqueRequisicao.cs" />
+    <Compile Include="Model\AtividadeEstoque\FinalizarConferenciaEnderecoRequisicao.cs" />
     <Compile Include="Model\Coletor\GravarHistoricoColetorRequisicao.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaArmazenagemVolume.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaAvulsoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaDevolucaoTotalRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaDevolucaoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaEnderecoRequest.cs" />
-    <Compile Include="Model\Etiquetas\ImprimirEtiquetaEnderecoResponse.cs" />
-    <Compile Include="Model\Etiquetas\ImprimirEtiquetaLoteReponse.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaLoteRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaPickingRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaProdutoBase.cs" />
@@ -175,10 +173,16 @@
     <Compile Include="Model\Relatorios\DetalhesProdutoRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirDetalhesNotaEntradaConferenciaRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirNotasRecebimentoRequest.cs" />
+    <Compile Include="Model\Relatorios\ImprimirRelatorioLogisticaCorredorRequest.cs" />
+    <Compile Include="Model\Relatorios\ImprimirRelatorioPosicaoInventarioRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirRelatorioProdutosRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirRelatorioRecebimentoNotasRequest.cs" />
+    <Compile Include="Model\Relatorios\ImprimirRelatorioTotalPorAlaRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimriDetalhesProdutoRequest.cs" />
+    <Compile Include="Model\Relatorios\RelatorioAtividadeEstoqueRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioHistoricoAcaoUsuarioRequest.cs" />
+    <Compile Include="Model\Relatorios\RelatorioLogisticaCorredorRequest.cs" />
+    <Compile Include="Model\Relatorios\RelatorioPosicaoInventarioRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioProdutosRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioRastreioPecaRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioNotasRecebimentoRequest.cs" />
@@ -186,6 +190,7 @@
     <Compile Include="Model\IntegracaoSankhya\ExecuteQueryResponse.cs" />
     <Compile Include="Model\IntegracaoSankhya\NotaFiscalIntegracao.cs" />
     <Compile Include="Model\Relatorios\RelatorioResumoEtiquetagemRequest.cs" />
+    <Compile Include="Model\Relatorios\RelatorioTotalPorAlaRequest.cs" />
     <Compile Include="Model\Relatorios\TermoResponsabilidadeRequest.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
@@ -195,17 +200,20 @@
     <Compile Include="Relatorio\FwRelatorio.cs" />
     <Compile Include="Relatorio\FwRelatorioDados.cs" />
     <Compile Include="Relatorio\IFwRelatorioDados.cs" />
+    <Compile Include="Relatorio\Model\RelatorioAtividadeEstoque.cs" />
     <Compile Include="Relatorio\Model\ImprimirRelatorioHistoricoAcaoUsuarioRequest.cs" />
     <Compile Include="Relatorio\Model\RastreioPeca.cs" />
     <Compile Include="Relatorio\Model\NotasRecebimento.cs" />
     <Compile Include="Relatorio\Model\RecebimentoNotas.cs" />
+    <Compile Include="Relatorio\Model\DadosRelatorioTotalizacaoLocalizacao.cs" />
     <Compile Include="Relatorio\Model\RelatorioHistoricoColetor.cs" />
+    <Compile Include="Relatorio\Model\RelatorioLogisticaCorredor.cs" />
     <Compile Include="Relatorio\Model\RelatorioProdutos.cs" />
     <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
     <Compile Include="Services\AccountService.cs" />
-    <Compile Include="Services\ApplicationLogService.cs" />
     <Compile Include="Services\ArmazenagemService.cs" />
     <Compile Include="Services\BaseService.cs" />
+    <Compile Include="Services\AtividadeEstoqueService.cs" />
     <Compile Include="Services\ClienteService.cs" />
     <Compile Include="Services\ColetorHistoricoService.cs" />
     <Compile Include="Services\ConferenciaService.cs" />
@@ -224,7 +232,6 @@
     <Compile Include="Services\NotaFiscalService.cs" />
     <Compile Include="Services\PasswordService.cs" />
     <Compile Include="Services\BOAccountService.cs" />
-    <Compile Include="Services\BOLogSystemService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\PerfilUsuarioService.cs" />
     <Compile Include="Services\PontoArmazenagemService.cs" />

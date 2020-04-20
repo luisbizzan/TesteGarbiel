@@ -28,18 +28,15 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly BOAccountService _boService;
-        private readonly BOLogSystemService _boLogSystemService;
         private readonly PasswordService _passwordService;
 
         public BOAccountController(
             UnitOfWork uow,
             BOAccountService boService,
-            BOLogSystemService boLogSystemService,
             PasswordService passwordService)
         {
             _unitOfWork = uow;
             _boService = boService;
-            _boLogSystemService = boLogSystemService;
             _passwordService = passwordService;
         }
 
@@ -203,6 +200,45 @@ namespace FWLog.Web.Backoffice.Controllers
                 return errorView(null);
             }
 
+            for (int i = 0; i < model.EmpresasGrupos.Count; i++)
+            {
+                if (model.EmpresasGrupos[0].CorredorEstoqueInicio == null && model.EmpresasGrupos[0].CorredorEstoqueFim != null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorEstoque", "Preencha o valor inicial do Corredor Estoque");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorEstoqueInicio != null && model.EmpresasGrupos[0].CorredorEstoqueFim == null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorEstoque", "Preencha o valor final do Corredor Estoque");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorEstoqueInicio.HasValue && model.EmpresasGrupos[0].CorredorEstoqueFim.HasValue)
+                {
+                    if (model.EmpresasGrupos[0].CorredorEstoqueInicio.Value > model.EmpresasGrupos[0].CorredorEstoqueFim.Value)
+                    {
+                        ModelState.AddModelError($"[{i}].CorredorEstoque", "O valor inicial do Corredor Estoque não pode ser maior do que o final");
+                    }
+                }
+
+                if (model.EmpresasGrupos[0].CorredorSeparacaoInicio == null && model.EmpresasGrupos[0].CorredorSeparacaoFim != null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorSeparacao", "Preencha o valor inicial do Corredor Separação");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorSeparacaoInicio != null && model.EmpresasGrupos[0].CorredorSeparacaoFim == null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorSeparacao", "Preencha o valor final do Corredor Separação");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorSeparacaoInicio.HasValue && model.EmpresasGrupos[0].CorredorSeparacaoFim.HasValue)
+                {
+                    if (model.EmpresasGrupos[0].CorredorSeparacaoInicio.Value > model.EmpresasGrupos[0].CorredorSeparacaoFim.Value)
+                    {
+                        ModelState.AddModelError($"[{i}].CorredorSeparacao", "O valor inicial do Corredor Separação não pode ser maior do que o final");
+                    }
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 return errorView(null);
@@ -231,7 +267,22 @@ namespace FWLog.Web.Backoffice.Controllers
             _unitOfWork.PerfilUsuarioRepository.Add(perfilUsuario);
             _unitOfWork.SaveChanges();
 
-            model.EmpresasGrupos.ForEach(f => _unitOfWork.UsuarioEmpresaRepository.Add(new UsuarioEmpresa { UserId = user.Id, IdEmpresa = f.IdEmpresa, PerfilUsuarioId = perfilUsuario.PerfilUsuarioId, IdPerfilImpressoraPadrao = f.IdPerfilImpressoraPadrao }));
+            foreach (var f in model.EmpresasGrupos)
+            {
+                var newUsuarioEmpresa = new UsuarioEmpresa
+                {
+                    UserId = user.Id,
+                    IdEmpresa = f.IdEmpresa,
+                    PerfilUsuarioId = perfilUsuario.PerfilUsuarioId,
+                    IdPerfilImpressoraPadrao = f.IdPerfilImpressoraPadrao,
+                    CorredorEstoqueInicio = f.CorredorEstoqueInicio,
+                    CorredorEstoqueFim = f.CorredorEstoqueFim,
+                    CorredorSeparacaoInicio = f.CorredorSeparacaoInicio,
+                    CorredorSeparacaoFim = f.CorredorSeparacaoFim,
+                };
+                _unitOfWork.UsuarioEmpresaRepository.Add(newUsuarioEmpresa);
+            }
+
             _unitOfWork.SaveChanges();
 
             var empresasGruposNew = new StringBuilder();
@@ -254,14 +305,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             var userInfo = new BackOfficeUserInfo();
-            _boLogSystemService.Add(new BOLogSystemCreation
-            {
-                ActionType = ActionTypeNames.Add,
-                IP = userInfo.IP,
-                UserId = userInfo.UserId,
-                EntityName = nameof(AspNetUsers),
-                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, perfilUsuario, empresasGruposNew.ToString())
-            });
 
             Notify.Success(Resources.CommonStrings.RegisterCreatedSuccessMessage);
             return RedirectToAction("Index");
@@ -310,7 +353,11 @@ namespace FWLog.Web.Backoffice.Controllers
                     Nome = Empresas.First(f => f.IdEmpresa == empresa).Nome,
                     IsEmpresaPrincipal = perfil.EmpresaId == empresa ? true : false,
                     IdPerfilImpressoraPadrao = usuarioEmpresa?.IdPerfilImpressoraPadrao,
-                    PerfilImpressora = PerfilImpressorasList(empresa, usuarioEmpresa?.IdPerfilImpressoraPadrao)
+                    PerfilImpressora = PerfilImpressorasList(empresa, usuarioEmpresa?.IdPerfilImpressoraPadrao),
+                    CorredorEstoqueInicio = usuarioEmpresa?.CorredorEstoqueInicio,
+                    CorredorEstoqueFim = usuarioEmpresa?.CorredorEstoqueFim,
+                    CorredorSeparacaoInicio= usuarioEmpresa?.CorredorSeparacaoInicio,
+                    CorredorSeparacaoFim = usuarioEmpresa?.CorredorSeparacaoFim,
                 };
 
                 List<string> gruposPermissoesUsuarioEdicao = (await UserManager.GetUserRolesByIdEmpresa(user.Id, empresa).ConfigureAwait(false)).OrderBy(x => x).ToList();
@@ -415,6 +462,50 @@ namespace FWLog.Web.Backoffice.Controllers
                 return errorView();
             }
 
+            for (int i = 0; i < model.EmpresasGrupos.Count; i++)
+            {
+                if (model.EmpresasGrupos[0].CorredorEstoqueInicio == null && model.EmpresasGrupos[0].CorredorEstoqueFim != null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorEstoque", "Preencha o valor inicial do Corredor Estoque");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorEstoqueInicio != null && model.EmpresasGrupos[0].CorredorEstoqueFim == null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorEstoque", "Preencha o valor final do Corredor Estoque");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorEstoqueInicio.HasValue && model.EmpresasGrupos[0].CorredorEstoqueFim.HasValue)
+                {
+                    if (model.EmpresasGrupos[0].CorredorEstoqueInicio.Value > model.EmpresasGrupos[0].CorredorEstoqueFim.Value)
+                    {
+                        ModelState.AddModelError($"[{i}].CorredorEstoque", "O valor inicial do Corredor Estoque não pode ser maior do que o final");
+                    }
+                }
+
+                if (model.EmpresasGrupos[0].CorredorSeparacaoInicio == null && model.EmpresasGrupos[0].CorredorSeparacaoFim != null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorSeparacao", "Preencha o valor inicial do Corredor Separação");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorSeparacaoInicio != null && model.EmpresasGrupos[0].CorredorSeparacaoFim == null)
+                {
+                    ModelState.AddModelError($"[{i}].CorredorSeparacao", "Preencha o valor final do Corredor Separação");
+                }
+
+                if (model.EmpresasGrupos[0].CorredorSeparacaoInicio.HasValue && model.EmpresasGrupos[0].CorredorSeparacaoFim.HasValue)
+                {
+                    if (model.EmpresasGrupos[0].CorredorSeparacaoInicio.Value > model.EmpresasGrupos[0].CorredorSeparacaoFim.Value)
+                    {
+                        ModelState.AddModelError($"[{i}].CorredorSeparacao", "O valor inicial do Corredor Separação não pode ser maior do que o final");
+                    }
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return errorView();
+            }
+
             ApplicationUser oldUser = Mapper.Map<ApplicationUser>(user);
             user.Email = model.Email;
 
@@ -454,7 +545,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             var oldPerfil = _unitOfWork.PerfilUsuarioRepository.GetById(model.PerfilUsuarioId);
-            var log = new AspNetUsersLogSerializeModel(oldUser.UserName, oldPerfil, empresasGruposOld.ToString());
 
             var perfilUsuario = _unitOfWork.PerfilUsuarioRepository.GetById(model.PerfilUsuarioId);
             perfilUsuario.Nome = model.Nome;
@@ -466,20 +556,12 @@ namespace FWLog.Web.Backoffice.Controllers
 
             _boService.EditPerfilUsuario(perfilUsuario);
 
-            var empresasGrupos = model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected)).Select(s => new BOAccountService.impressorapadrao { IdEmpresa = s.IdEmpresa, IdPerfilImpressoraPadrao = s.IdPerfilImpressoraPadrao }).ToList();
+            var empresasGrupos = model.EmpresasGrupos.Where(w => w.Grupos.Any(a => a.IsSelected))
+                .Select(s => new BOAccountService.UsuarioEmpresaUpdateFields { IdEmpresa = s.IdEmpresa, IdPerfilImpressoraPadrao = s.IdPerfilImpressoraPadrao, CorredorEstoqueInicio = s.CorredorEstoqueInicio, CorredorEstoqueFim = s.CorredorEstoqueFim, CorredorSeparacaoInicio = s.CorredorSeparacaoInicio, CorredorSeparacaoFim = s.CorredorSeparacaoFim }).ToList();
             _boService.EditUsuarioEmpresas(Empresas, empresasGrupos, user.Id, perfilUsuario.PerfilUsuarioId);
 
             var userInfo = new BackOfficeUserInfo();
-            _boLogSystemService.Add(new BOLogSystemCreation
-            {
-                ActionType = ActionTypeNames.Edit,
-                IP = userInfo.IP,
-                UserId = userInfo.UserId,
-                EntityName = nameof(AspNetUsers),
-                OldEntity = log,
-                NewEntity = new AspNetUsersLogSerializeModel(user.UserName, perfilUsuario, empresasGruposNew.ToString())
-            });
-
+            
             Notify.Success(Resources.CommonStrings.RegisterEditedSuccessMessage);
             return RedirectToAction("Index");
         }
@@ -532,14 +614,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 var userInfo = new BackOfficeUserInfo();
-                _boLogSystemService.Add(new BOLogSystemCreation
-                {
-                    ActionType = ActionTypeNames.Delete,
-                    IP = userInfo.IP,
-                    UserId = userInfo.UserId,
-                    EntityName = nameof(AspNetUsers),
-                    NewEntity = new AspNetUsersLogSerializeModel(user.UserName, null, string.Empty)
-                });
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -581,15 +655,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 var userInfo = new BackOfficeUserInfo();
-                _boLogSystemService.Add(new BOLogSystemCreation
-                {
-                    ActionType = ActionTypeNames.Edit,
-                    IP = userInfo.IP,
-                    UserId = userInfo.UserId,
-                    EntityName = nameof(AspNetUsers),
-                    OldEntity = new AspNetUsersLogSerializeModel(oldUser.UserName, null, string.Empty),
-                    NewEntity = new AspNetUsersLogSerializeModel(user.UserName, null, string.Empty)
-                });
 
                 return Json(new AjaxGenericResultModel
                 {

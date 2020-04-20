@@ -19,6 +19,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.UsuarioEmpresa.Where(x => x.IdEmpresa == idEmpresa).ToList();
         }
 
+        public UsuarioEmpresa Obter(long idEmpresa, string userId)
+        {
+            return Entities.UsuarioEmpresa.FirstOrDefault(x => x.IdEmpresa == idEmpresa && x.UserId == userId);
+        }
+
         public List<long> GetAllEmpresasByUserId(string userId)
         {
             return Entities.UsuarioEmpresa.Where(w => w.UserId == userId).Select(s => s.IdEmpresa).ToList();

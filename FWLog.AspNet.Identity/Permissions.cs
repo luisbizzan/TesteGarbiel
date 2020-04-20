@@ -33,16 +33,6 @@ namespace FWLog.AspNet.Identity
             }
         }
 
-        public class BOLogSystem : PermissionGroupBuildItem
-        {
-            public const string List = "BOLogSystemList";
-
-            public BOLogSystem() : base(Display.FromResource(nameof(Res.BOLogSystem)))
-            {
-                Register(List, Display.FromString("Relatório de Auditoria"));
-            }
-        }
-
         public class BOAccount : PermissionGroupBuildItem
         {
             public const string List = "BOAccountList";
@@ -213,6 +203,9 @@ namespace FWLog.AspNet.Identity
             public const string Etiquetas = "RFArmazenagemEtiquetas";
             public const string ConferenciaGaiola = "RFConferenciaGaiola";
             public const string ConferenciaGaiolaManual = "RFConferenciaGaiolaManual";
+            public const string AtividadeConferenciaEndereco = "RFAtividadeConferenciaEndereco";
+            public const string AtividadeAbastecerPicking = "RFAtividadeAbastecerPicking";
+            public const string AtividadeConferencia399_400 = "RFAtividadeConferencia399_400";
 
             public RFArmazenagem() : base(Display.FromString("Coletor - Armazenagem"))
             {
@@ -220,11 +213,14 @@ namespace FWLog.AspNet.Identity
                 Register(AjustarQuantidade, Display.FromString("Ajustar Quantidade"));
                 Register(RetirarApoio, Display.FromString("Retirar Produto"));
                 Register(Rastreamento, Display.FromString("Rastreamento"));
-                Register(ConferenciaAlas, Display.FromString("Conferência Alas"));
+                Register(ConferenciaAlas, Display.FromString("Conferência Endereços"));
                 Register(AbastecerPicking, Display.FromString("Abastecer Picking"));
                 Register(Etiquetas, Display.FromString("Etiquetas"));
-                Register(ConferenciaGaiola, Display.FromString("Conferência"));
-                Register(ConferenciaGaiolaManual, Display.FromString("Conferência - Manual"));
+                Register(ConferenciaGaiola, Display.FromString("Conferência Volumes"));
+                Register(ConferenciaGaiolaManual, Display.FromString("Conferência Volumes - Manual"));
+                Register(AtividadeConferenciaEndereco, Display.FromString("Atividade - Conferência Endereço"));
+                Register(AtividadeAbastecerPicking, Display.FromString("Atividade - Abastecer Picking"));
+                Register(AtividadeConferencia399_400, Display.FromString("Atividade - Conferência 399/400"));
             }
         }
 
@@ -298,7 +294,7 @@ namespace FWLog.AspNet.Identity
 
             public Produto() : base(Display.FromString("Produtos"))
             {
-                Register(Listar, Display.FromString("Listar produto"));
+                Register(Listar, Display.FromString("Listar produtos"));
                 Register(Visualizar, Display.FromString("Visualizar produto"));
                 Register(Editar, Display.FromString("Editar produto"));
             }
@@ -306,13 +302,23 @@ namespace FWLog.AspNet.Identity
 
         public class RelatoriosArmazenagem : PermissionGroupBuildItem
         {
+            public const string RelatorioAtividadeEstoque = "RelatorioAtividadeEstoque";
             public const string RelatorioRastreabilidadeLote = "RelatorioRastreabilidadeLote";
             public const string RelatorioLoteMovimentacao = "RelatorioLoteMovimentacao";
+            public const string RelatorioTotalizacaoAlas = "RelatorioTotalizacaoAlas";
+            public const string RelatorioPosicaoInventario = "RelatorioPosicaoInventario";
+            public const string RelatorioTotalizacaoLocalizacao = "RelatorioTotalizacaoLocalizacao";
+            public const string ReltorioLogisticaCorredor = "ReltorioLogisticaCorredor";
 
             public RelatoriosArmazenagem() : base(Display.FromString("Armazenagem - Relatórios"))
             {
+                Register(RelatorioAtividadeEstoque, Display.FromString("Atividades de Estoque"));
                 Register(RelatorioRastreabilidadeLote, Display.FromString("Rastreabilidade de Lotes"));
                 Register(RelatorioLoteMovimentacao, Display.FromString("Movimentações de Lotes"));
+                Register(RelatorioTotalizacaoAlas, Display.FromString("Total por Alas"));
+                Register(RelatorioPosicaoInventario, Display.FromString("Posição para Inventário"));
+                Register(RelatorioTotalizacaoLocalizacao, Display.FromString("Totalização Por Localização"));
+                Register(ReltorioLogisticaCorredor, Display.FromString("Logística por Corredor"));
             }
         }
 
@@ -320,11 +326,10 @@ namespace FWLog.AspNet.Identity
         {
             public const string Listar = "HistoricoAcaoUsuarioListar";
 
-            public HistoricoAcaoUsuario() : base(Display.FromString("Histórico de Ações do Usuário"))
+            public HistoricoAcaoUsuario() : base(Display.FromString("Resumo Atividades RF"))
             {
-                Register(Listar, Display.FromString("Listar Histórico"));
+                Register(Listar, Display.FromString("Listar Atividades"));
             }
         }
-
     }
 }

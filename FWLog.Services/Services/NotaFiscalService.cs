@@ -1,4 +1,5 @@
-﻿using FWLog.Data;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Data;
 using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
@@ -10,16 +11,19 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using log4net;
 
 namespace FWLog.Services.Services
 {
     public class NotaFiscalService : BaseService
     {
         private UnitOfWork _uow;
+        private ILog _log;
 
-        public NotaFiscalService(UnitOfWork uow)
+        public NotaFiscalService(UnitOfWork uow, ILog log)
         {
             _uow = uow;
+            _log = log;
         }
 
         public async Task LimparIntegracao()
@@ -232,8 +236,7 @@ namespace FWLog.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração da seguinte nota fiscal: {0}.", notasInt.Key));
+                    _log.Error(string.Format("Erro na integração da seguinte nota fiscal: {0}.", notasInt.Key), ex);
 
                     continue;
                 }
@@ -333,7 +336,7 @@ namespace FWLog.Services.Services
 
         public async Task RegistrarRecebimentoNotaFiscal(long idNotaFiscal, string userId, DateTime dataRecebimento, int? qtdVolumes = null)
         {
-            var loteService = new LoteService(_uow);
+            var loteService = new LoteService(_uow, _log);
 
             var notafiscal = _uow.NotaFiscalRepository.GetById(idNotaFiscal);
 
@@ -440,8 +443,7 @@ namespace FWLog.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro no recebimento automático nota fiscal - IdNotaFiscal: {0}.", notafiscal.IdNotaFiscal));
+                    _log.Error(string.Format("Erro no recebimento automático nota fiscal - IdNotaFiscal: {0}.", notafiscal.IdNotaFiscal), ex);
                 }
             }
         }

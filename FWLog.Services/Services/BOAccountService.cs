@@ -66,21 +66,41 @@ namespace FWLog.Services.Services
             _uow.SaveChanges();
         }
 
-        public void EditUsuarioEmpresas(IEnumerable<EmpresaSelectedItem> empresasUserOn, List<impressorapadrao> empresasUserEdit, string userId, long perfilUsuarioId)
+        public void EditUsuarioEmpresas(IEnumerable<EmpresaSelectedItem> empresasUserOn, List<UsuarioEmpresaUpdateFields> empresasUserEdit, string userId, long perfilUsuarioId)
         {
             var empOld = _uow.UsuarioEmpresaRepository.GetAllEmpresasByUserId(userId);
 
             empOld = empresasUserOn.Where(w => empOld.Contains(w.IdEmpresa)).Select(s => s.IdEmpresa).ToList();
 
-            List<impressorapadrao> empAdd = empresasUserEdit.Where(x => !empOld.Any(y => y == x.IdEmpresa)).ToList();
+            List<UsuarioEmpresaUpdateFields> empresasAdd = empresasUserEdit.Where(x => !empOld.Any(y => y == x.IdEmpresa)).ToList();
             List<long> empRem = empOld.Where(x => !empresasUserEdit.Any(y => y.IdEmpresa == x)).ToList();
-            var empEdit = empOld.Where(x => !empAdd.Any(y => y.IdEmpresa == x) && !empRem.Any(y => y == x));
+            var empEdit = empOld.Where(x => !empresasAdd.Any(y => y.IdEmpresa == x) && !empRem.Any(y => y == x));
 
-            empAdd.ForEach(x => _uow.UsuarioEmpresaRepository.Add(new UsuarioEmpresa { UserId = userId, IdEmpresa = x.IdEmpresa, PerfilUsuarioId = perfilUsuarioId, IdPerfilImpressoraPadrao = x.IdPerfilImpressoraPadrao }));
+            foreach (var empresa in empresasAdd)
+            {
+                var newUsuarioEmpresa = new UsuarioEmpresa 
+                { 
+                    UserId = userId, 
+                    IdEmpresa = empresa.IdEmpresa, 
+                    PerfilUsuarioId = perfilUsuarioId, 
+                    IdPerfilImpressoraPadrao = empresa.IdPerfilImpressoraPadrao,
+                    CorredorEstoqueInicio = empresa.CorredorEstoqueInicio,
+                    CorredorEstoqueFim = empresa.CorredorEstoqueFim,
+                    CorredorSeparacaoInicio = empresa.CorredorSeparacaoInicio,
+                    CorredorSeparacaoFim = empresa.CorredorSeparacaoFim,
+                };
+                _uow.UsuarioEmpresaRepository.Add(newUsuarioEmpresa);
+            }
+
             empEdit.ForEach(x =>
             {
                 var usuarioEmpresa = _uow.UsuarioEmpresaRepository.Tabela().FirstOrDefault(y => y.IdEmpresa == x && y.UserId == userId);
                 usuarioEmpresa.IdPerfilImpressoraPadrao = empresasUserEdit.FirstOrDefault(y => y.IdEmpresa == x)?.IdPerfilImpressoraPadrao;
+                usuarioEmpresa.CorredorEstoqueInicio = empresasUserEdit.FirstOrDefault(y => y.IdEmpresa == x)?.CorredorEstoqueInicio;
+                usuarioEmpresa.CorredorEstoqueFim = empresasUserEdit.FirstOrDefault(y => y.IdEmpresa == x)?.CorredorEstoqueFim;
+                usuarioEmpresa.CorredorSeparacaoInicio = empresasUserEdit.FirstOrDefault(y => y.IdEmpresa == x)?.CorredorSeparacaoInicio;
+                usuarioEmpresa.CorredorSeparacaoFim = empresasUserEdit.FirstOrDefault(y => y.IdEmpresa == x)?.CorredorSeparacaoFim;
+
                 _uow.UsuarioEmpresaRepository.Update(usuarioEmpresa);
             });
 
@@ -89,11 +109,19 @@ namespace FWLog.Services.Services
             _uow.SaveChanges();
         }
 
-        public class impressorapadrao
+        public class UsuarioEmpresaUpdateFields
         {
             public long IdEmpresa { get; set; }
 
             public long? IdPerfilImpressoraPadrao { get; set; }
+
+            public int? CorredorEstoqueInicio { get; set; }
+
+            public int? CorredorEstoqueFim { get; set; }
+
+            public int? CorredorSeparacaoInicio { get; set; }
+
+            public int? CorredorSeparacaoFim { get; set; }
         }
     }
 }

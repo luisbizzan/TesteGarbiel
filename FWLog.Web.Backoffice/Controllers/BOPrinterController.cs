@@ -19,7 +19,6 @@ namespace FWLog.Web.Backoffice.Controllers
     public class BOPrinterController : BOBaseController
     {
         private readonly UnitOfWork _uow;
-        private readonly BOLogSystemService _boLogSystemService;
 
         private SelectList PrinterTypes
         {
@@ -60,10 +59,9 @@ namespace FWLog.Web.Backoffice.Controllers
             ViewBag.Empresas = _Empresas;
         }
 
-        public BOPrinterController(UnitOfWork uow, BOLogSystemService boLogSystemService)
+        public BOPrinterController(UnitOfWork uow)
         {
             _uow = uow;
-            _boLogSystemService = boLogSystemService;
         }
 
         [HttpGet]

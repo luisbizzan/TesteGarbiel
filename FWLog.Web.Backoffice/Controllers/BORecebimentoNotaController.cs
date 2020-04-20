@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using DartDigital.Library.Exceptions;
 using ExtensionMethods.List;
 using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;

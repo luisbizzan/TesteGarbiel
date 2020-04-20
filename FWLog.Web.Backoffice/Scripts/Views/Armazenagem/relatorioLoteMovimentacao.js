@@ -136,7 +136,8 @@
 
     $("#pesquisarEnderecoArmazenagem").click(function () {
         let id = $("#IdPontoArmazenagem").val();
-        $("#modalPesquisaEnderecoArmazenagem").load(HOST_URL + "EnderecoArmazenagem/PesquisaModal/" + id, function () {
+        let buscarTodos = true;
+        $("#modalPesquisaEnderecoArmazenagem").load(HOST_URL + "EnderecoArmazenagem/PesquisaModal" + "?id=" + id + "&buscarTodos=" + buscarTodos, function () {
             $("#modalPesquisaEnderecoArmazenagem").modal();
         });
     });
@@ -192,8 +193,8 @@ function limparUsuarioMovimentacao() {
 }
 
 function selecionarEnderecoArmazenagem(IdEnderecoArmazenagem, codigo) {
-    $("#CodigoEnderecoArmazenagem").val(codigo);
-    $("#IdEnderecoArmazenagem").val(IdEnderecoArmazenagem);
+    $("#Filter_CodigoEnderecoArmazenagem").val(codigo);
+    $("#Filter_IdEnderecoArmazenagem").val(IdEnderecoArmazenagem);
     $("#modalPesquisaEnderecoArmazenagem").modal("hide");
     $("#modalPesquisaEnderecoArmazenagem").empty();
 }

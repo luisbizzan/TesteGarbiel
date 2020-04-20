@@ -1,5 +1,4 @@
 ﻿using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
@@ -7,16 +6,19 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Threading.Tasks;
+using log4net;
 
 namespace FWLog.Services.Services
 {
     public class FreteTipoService : BaseService
     {
         private UnitOfWork _uow;
+        private ILog _log;
 
-        public FreteTipoService(UnitOfWork uow)
+        public FreteTipoService(UnitOfWork uow, ILog log)
         {
             _uow = uow;
+            _log = log;
         }
 
         public async Task ConsultarFreteTipo()
@@ -62,8 +64,7 @@ namespace FWLog.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro na integração do tipo de frete: {0}.", freteTipoInt.Sigla));
+                    _log.Error(string.Format("Erro na integração do tipo de frete: {0}.", freteTipoInt.Sigla), ex);
                 }
             }
         }

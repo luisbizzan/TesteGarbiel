@@ -51,5 +51,7 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         public string Status { get; set; }
         [Display(Name = "Quantidade")]
         public int Quantidade { get; set; }
+
+        public bool Ocupado { get; set; }
     }
 }

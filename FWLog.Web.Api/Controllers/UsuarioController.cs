@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Results;
 
 namespace FWLog.Web.Api.Controllers
 {
@@ -20,13 +19,11 @@ namespace FWLog.Web.Api.Controllers
     {
         private readonly AccountService _accountService;
         private readonly UnitOfWork _unitOfWork;
-        private readonly ColetorHistoricoService _coletorHistoricoService;
 
-        public UsuarioController(UnitOfWork unitOfWork, AccountService accountService, ColetorHistoricoService coletorHistoricoService)
+        public UsuarioController(UnitOfWork unitOfWork, AccountService accountService)
         {
             _unitOfWork = unitOfWork;
             _accountService = accountService;
-            _coletorHistoricoService = coletorHistoricoService;
         }
 
         [HttpPost]
@@ -66,8 +63,18 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        private async Task<IHttpActionResult> ValidaLogin(LoginRequisicao requisicao, ApplicationUser usuarioAplicacao)
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("api/v1/usuario/login")]
+        public async Task<IHttpActionResult> Login(LoginRequisicao requisicao)
         {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            var usuarioAplicacao = await UserManager.FindByNameAsync(requisicao.Codigo);
+
             if (usuarioAplicacao == null)
             {
                 return ApiNotFound("Usuário não cadastrado.");
@@ -110,28 +117,6 @@ namespace FWLog.Web.Api.Controllers
                 w.Equals(Permissions.ColetorAcesso.AcessarRFExpedicao, StringComparison.OrdinalIgnoreCase)))
             {
                 return ApiForbidden("Usuário sem permissão.", requisicao.Codigo);
-            }
-
-            return ApiOk();
-        }
-
-        [AllowAnonymous]
-        [HttpPost]
-        [Route("api/v1/usuario/login")]
-        public async Task<IHttpActionResult> Login(LoginRequisicao requisicao)
-        {
-            if (!ModelState.IsValid)
-            {
-                return ApiBadRequest(ModelState);
-            }
-
-            var usuarioAplicacao = await UserManager.FindByNameAsync(requisicao.Codigo);
-
-            var respostaAPI = await ValidaLogin(requisicao, usuarioAplicacao);
-
-            if (!(respostaAPI is OkResult))
-            {
-                return respostaAPI;
             }
 
             GerarTokenAcessoColetorResponse tokenResposta = await _accountService.GerarTokenAcessoColetor(requisicao.Codigo, requisicao.Senha, usuarioAplicacao.Id);
@@ -202,6 +187,11 @@ namespace FWLog.Web.Api.Controllers
         [Route("api/v1/usuario/validar-permissao")]
         public async Task<IHttpActionResult> ValidaPermissao(ValidarPermissaoRequisicao requisicao)
         {
+            if (requisicao == null)
+            {
+                return ApiBadRequest("Infome dados para requisição.");
+            }
+
             if (!ModelState.IsValid)
             {
                 return ApiBadRequest(ModelState);
@@ -209,11 +199,16 @@ namespace FWLog.Web.Api.Controllers
 
             var usuarioAplicacao = await UserManager.FindByNameAsync(requisicao.Codigo);
 
-            var respostaAPI = await ValidaLogin(requisicao, usuarioAplicacao);
-
-            if (!(respostaAPI is OkResult))
+            if (usuarioAplicacao == null)
             {
-                return respostaAPI;
+                return ApiNotFound("Usuário não cadastrado.");
+            }
+
+            var retornoLogin = SignInManager.UserManager.CheckPassword(usuarioAplicacao, requisicao.Senha);
+
+            if (!retornoLogin)
+            {
+                return ApiNotFound("Usuário ou senha inválidos.");
             }
 
             var usuarioTemPermissao = await UserManager.ValidatePermissionByIdEmpresaAsync(usuarioAplicacao.Id, IdEmpresa, requisicao.Permissao);

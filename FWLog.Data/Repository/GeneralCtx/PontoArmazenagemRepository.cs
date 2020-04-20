@@ -11,11 +11,16 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public PontoArmazenagemRepository(Entities entities) : base(entities) { }
 
+        public List<PontoArmazenagem> RetornarAtivos()
+        {
+            return Entities.PontoArmazenagem.Where(w => w.Ativo).ToList();
+        }
+
         public List<PontoArmazenagemListaLinhaTabela> BuscarLista(DataTableFilter<PontoArmazenagemListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
         {
             totalRecords = Entities.PontoArmazenagem.Where(w => w.IdEmpresa == model.CustomFilter.IdEmpresa).Count();
-            
-            IQueryable<PontoArmazenagemListaLinhaTabela> query = 
+
+            IQueryable<PontoArmazenagemListaLinhaTabela> query =
                 Entities.PontoArmazenagem.AsNoTracking().Where(w => w.IdEmpresa == model.CustomFilter.IdEmpresa &&
                     (model.CustomFilter.Descricao.Equals(string.Empty) || w.Descricao.Contains(model.CustomFilter.Descricao)) &&
                     (model.CustomFilter.IdNivelArmazenagem.HasValue == false || w.IdNivelArmazenagem == model.CustomFilter.IdNivelArmazenagem.Value) &&
@@ -70,7 +75,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return query.ToList();
         }
 
-        public PontoArmazenagem BuscarPontoArmazenagemPorIdEmpresaPorPontoEPorNivel( long? idNivelArmazenagem, string descricao, long IdEmpresa)
+        public PontoArmazenagem BuscarPontoArmazenagemPorIdEmpresaPorPontoEPorNivel(long? idNivelArmazenagem, string descricao, long IdEmpresa)
         {
             var pontoArmazenagem = Entities.PontoArmazenagem
                .FirstOrDefault(x => x.IdNivelArmazenagem == idNivelArmazenagem

@@ -1,9 +1,10 @@
-﻿using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
 using FWLog.Services.Model.Lote;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -17,11 +18,13 @@ namespace FWLog.Services.Services
     {
         private UnitOfWork _uow;
         private NotaFiscalService notaFiscalService;
+        private ILog _log;
 
-        public LoteService(UnitOfWork uow)
+        public LoteService(UnitOfWork uow, ILog log)
         {
             _uow = uow;
-            notaFiscalService = new NotaFiscalService(_uow);
+            notaFiscalService = new NotaFiscalService(_uow, log);
+            _log = log;
         }
 
         public void CriarLoteRecebimento(NotaFiscal notaFiscal, string userId, DateTime dataRecebimento, int? qtdVolumes = null)
@@ -332,8 +335,7 @@ namespace FWLog.Services.Services
             }
             catch (Exception e)
             {
-                ApplicationLogService log = new ApplicationLogService(_uow);
-                log.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 processamento.ProcessamentoErro = true;
             }
@@ -607,8 +609,7 @@ namespace FWLog.Services.Services
             }
             catch (Exception e)
             {
-                ApplicationLogService log = new ApplicationLogService(_uow);
-                log.Error(ApplicationEnum.BackOffice, e);
+                _log.Error(e.Message, e);
 
                 processamento.ProcessamentoErro = true;
                 processamento.ProcessamentoErroMensagem = e.Message;
@@ -741,6 +742,8 @@ namespace FWLog.Services.Services
 
                 _uow.LoteProdutoRepository.Add(loteProduto);
             }
+
+            _uow.SaveChanges();
         }
 
         private void CriarQuarentena(Lote lote, string IdUsuario)
@@ -812,8 +815,7 @@ namespace FWLog.Services.Services
                 }
                 catch (Exception ex)
                 {
-                    var applicationLogService = new ApplicationLogService(_uow);
-                    applicationLogService.Error(ApplicationEnum.Api, ex, string.Format("Erro no conferência automática do lote - IdNotaFiscal: {0}.", lote.IdLote));
+                    _log.Error(string.Format("Erro no conferência automática do lote - IdNotaFiscal: {0}.", lote.IdLote), ex);
                 }
             }
         }

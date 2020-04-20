@@ -1,32 +1,49 @@
-﻿using FWLog.Data.Models;
-using FWLog.Data.Repository.GeneralCtx;
+﻿using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Services.Model.Coletor;
+using log4net;
 using System;
 
 namespace FWLog.Services.Services
 {
     public class ColetorHistoricoService
     {
-        private readonly ColetorHistoricoTipoRepository _coletorHistoricoTipoRepository;
+        private readonly ILog _log;
+        private readonly UnitOfWork _unitOfWork;
 
-        public ColetorHistoricoService(ColetorHistoricoTipoRepository coletorHistoricoTipo)
+        public ColetorHistoricoService(UnitOfWork unitOfWork, ILog log)
         {
-            _coletorHistoricoTipoRepository = coletorHistoricoTipo;
+            _unitOfWork = unitOfWork;
+            _log = log;
         }
 
         public void GravarHistoricoColetor(GravarHistoricoColetorRequisicao gravarHistoricoColetorRequisicao)
         {
-            var coletorHistorico = new ColetorHistorico
+            try
             {
-                IdColetorAplicacao = gravarHistoricoColetorRequisicao.IdColetorAplocacao,
-                IdColetorHistoricoTipo = gravarHistoricoColetorRequisicao.IdColetorHistoricoTipo,
-                DataHora = DateTime.Now,
-                Descricao = gravarHistoricoColetorRequisicao.Descricao,
-                IdEmpresa = gravarHistoricoColetorRequisicao.IdEmpresa,
-                IdUsuario = gravarHistoricoColetorRequisicao.IdUsuario
-            };
+                var coletorHistorico = new ColetorHistorico
+                {
+                    IdColetorAplicacao = gravarHistoricoColetorRequisicao.IdColetorAplicacao,
+                    IdColetorHistoricoTipo = gravarHistoricoColetorRequisicao.IdColetorHistoricoTipo,
+                    DataHora = DateTime.Now,
+                    Descricao = gravarHistoricoColetorRequisicao.Descricao,
+                    IdEmpresa = gravarHistoricoColetorRequisicao.IdEmpresa,
+                    IdUsuario = gravarHistoricoColetorRequisicao.IdUsuario
+                };
 
-            _coletorHistoricoTipoRepository.GravarHistorico(coletorHistorico);
+                _unitOfWork.ColetorHistoricoTipoRepository.GravarHistorico(coletorHistorico);
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    _log.Error("Erro ao gravar histórico de ações do usuário", e);
+                }
+                catch
+                {
+                  //Fazer nada.               
+                }
+            }
         }
     }
 }
