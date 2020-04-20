@@ -68,7 +68,12 @@
 
             var confirmEvent = function () {
                 $modal.modal('hide');
-                postUrl(options.url, onConfirm);
+
+                if (options.url) {
+                    postUrl(options.url, onConfirm);
+                } else {
+                    onConfirm();
+                }
             };
 
             var cancelEvent = function () {
