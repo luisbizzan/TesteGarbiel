@@ -58,23 +58,14 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.LoteProdutoEndereco.Where(lpe => lpe.IdProduto == idProduto && lpe.IdEmpresa == idEmpresa && lpe.IdLote != null).ToList();
         }
 
-        public IEnumerable<EnderecoArmazenagemTotalPorAlasLinhaTabela> BuscarDados(DataTableFilter<RelatorioTotalizacaoAlasListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
+        private IQueryable<EnderecoArmazenagemTotalPorAlasLinhaTabela> BuscarTodosDadosTotalAla(RelatorioTotalizacaoAlasListaFiltro model)
         {
-            IQueryable<EnderecoArmazenagemTotalPorAlasLinhaTabela> query;
-
-            if (model.CustomFilter.ImprimirVazia)
-            {
-                totalRecords = Entities.EnderecoArmazenagem
-                .Where(x => x.IdEmpresa == model.CustomFilter.IdEmpresa &&
-                      model.CustomFilter.IdNivelArmazenagem == x.IdNivelArmazenagem &&
-                      model.CustomFilter.IdPontoArmazenagem == x.IdPontoArmazenagem).Count();
-
-                query = (from end in Entities.EnderecoArmazenagem
+            var query = (from end in Entities.EnderecoArmazenagem
                          join lpe in Entities.LoteProdutoEndereco on end.IdEnderecoArmazenagem equals lpe.IdEnderecoArmazenagem into a
                          from lpe in a.DefaultIfEmpty()
-                         where model.CustomFilter.IdEmpresa  == end.IdEmpresa &&
-                               model.CustomFilter.IdNivelArmazenagem == end.IdNivelArmazenagem &&
-                               model.CustomFilter.IdPontoArmazenagem == end.IdPontoArmazenagem
+                         where model.IdEmpresa == end.IdEmpresa &&
+                               model.IdNivelArmazenagem == end.IdNivelArmazenagem &&
+                               model.IdPontoArmazenagem == end.IdPontoArmazenagem
                          select new EnderecoArmazenagemTotalPorAlasLinhaTabela
                          {
                              IdEnderecoArmazenagem = end.IdEnderecoArmazenagem,
@@ -88,53 +79,75 @@ namespace FWLog.Data.Repository.GeneralCtx
                              QuantidadeProdutoPorEndereco = lpe.Quantidade,
                              ReferenciaProduto = lpe.Produto.Referencia
                          });
-            }
-            else
+
+            if (model.CorredorInicial.HasValue && model.CorredorFinal.HasValue)
             {
-                var enderecoArmazenagemIds = model.CustomFilter.ListaEnderecoArmazenagem.Select(x => x.IdEnderecoArmazenagem).ToList();
-
-                totalRecords = Entities.LoteProdutoEndereco
-                    .Where(x => x.IdEmpresa == model.CustomFilter.IdEmpresa &&
-                          enderecoArmazenagemIds.Contains(x.IdEnderecoArmazenagem) &&
-                          model.CustomFilter.IdNivelArmazenagem == x.EnderecoArmazenagem.IdNivelArmazenagem &&
-                          model.CustomFilter.IdPontoArmazenagem == x.EnderecoArmazenagem.IdPontoArmazenagem).Count();
-
-                query = Entities.LoteProdutoEndereco.AsNoTracking().Where(
-                        lpe => lpe.IdEmpresa == model.CustomFilter.IdEmpresa &&
-                        enderecoArmazenagemIds.Contains(lpe.IdEnderecoArmazenagem) &&
-                        model.CustomFilter.IdNivelArmazenagem == lpe.EnderecoArmazenagem.IdNivelArmazenagem &&
-                        model.CustomFilter.IdPontoArmazenagem == lpe.EnderecoArmazenagem.IdPontoArmazenagem)
-                     .Select(s => new EnderecoArmazenagemTotalPorAlasLinhaTabela
-                     {
-                         IdEnderecoArmazenagem = s.IdEnderecoArmazenagem,
-                         CodigoEndereco = s.EnderecoArmazenagem.Codigo,
-                         DataInstalacao = s.DataHoraInstalacao,
-                         IdUsuarioInstalacao = s.IdUsuarioInstalacao,
-                         PesoProduto = s.Produto.PesoBruto,
-                         IdLote = s.Lote.IdLote,
-                         PesoTotalDeProduto = s.PesoTotal,
-                         QuantidadeProdutoPorEndereco = s.Quantidade,
-                         ReferenciaProduto = s.Produto.Referencia,
-                         Corredor = s.EnderecoArmazenagem.Corredor
-                     });
-
-            }
-
-            if (model.CustomFilter.CorredorInicial > 0 && model.CustomFilter.CorredorFinal > 0)
-            {
-                var range = Enumerable.Range(model.CustomFilter.CorredorInicial, model.CustomFilter.CorredorFinal);
+                var range = Enumerable.Range(model.CorredorInicial.Value, model.CorredorFinal.Value);
 
                 query = query.Where(y => range.Contains(y.Corredor));
             }
 
+            return query;
+        }
+
+        private IQueryable<EnderecoArmazenagemTotalPorAlasLinhaTabela> BuscarDadosComProdutoInstalado(RelatorioTotalizacaoAlasListaFiltro model)
+        {
+            var query = Entities.LoteProdutoEndereco.AsNoTracking().Where(
+                         lpe => lpe.IdEmpresa == model.IdEmpresa &&
+                         model.IdNivelArmazenagem == lpe.EnderecoArmazenagem.IdNivelArmazenagem &&
+                         model.IdPontoArmazenagem == lpe.EnderecoArmazenagem.IdPontoArmazenagem)
+                      .Select(s => new EnderecoArmazenagemTotalPorAlasLinhaTabela
+                      {
+                          IdEnderecoArmazenagem = s.IdEnderecoArmazenagem,
+                          CodigoEndereco = s.EnderecoArmazenagem.Codigo,
+                          DataInstalacao = s.DataHoraInstalacao,
+                          IdUsuarioInstalacao = s.IdUsuarioInstalacao,
+                          PesoProduto = s.Produto.PesoBruto,
+                          IdLote = s.Lote.IdLote,
+                          PesoTotalDeProduto = s.PesoTotal,
+                          QuantidadeProdutoPorEndereco = s.Quantidade,
+                          ReferenciaProduto = s.Produto.Referencia,
+                          Corredor = s.EnderecoArmazenagem.Corredor
+                      });
+
+            if (model.CorredorInicial.HasValue && model.CorredorFinal.HasValue)
+            {
+                var range = Enumerable.Range(model.CorredorInicial.Value, model.CorredorFinal.Value);
+
+                query = query.Where(y => range.Contains(y.Corredor));
+            }
+
+            return query;
+        }
+
+        public IEnumerable<EnderecoArmazenagemTotalPorAlasLinhaTabela> BuscarDadosTotalAla(DataTableFilter<RelatorioTotalizacaoAlasListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
+        {
+            IQueryable<EnderecoArmazenagemTotalPorAlasLinhaTabela> query;
+
+            if (model.CustomFilter.ImprimirVazia)
+            {
+                totalRecords = Entities.EnderecoArmazenagem
+                  .Where(x => x.IdEmpresa == model.CustomFilter.IdEmpresa).Count();
+
+
+                query = BuscarTodosDadosTotalAla(model.CustomFilter);
+            }
+            else
+            {
+                totalRecords = Entities.LoteProdutoEndereco
+                   .Where(x => x.IdEmpresa == model.CustomFilter.IdEmpresa).Count();
+
+                query = BuscarDadosComProdutoInstalado(model.CustomFilter);
+
+            }
+
             totalRecordsFiltered = query.Count();
 
-            query = query
-                .OrderBy(model.OrderByColumn, model.OrderByDirection).OrderBy(x => x.Corredor).ThenBy(x => x.CodigoEndereco)
-                .Skip(model.Start)
-                .Take(model.Length);
+            var response = query.OrderBy(model.OrderByColumn, model.OrderByDirection).OrderBy(x => x.Corredor).ThenBy(x => x.CodigoEndereco)
+                                .Skip(model.Start)
+                                .Take(model.Length);
 
-            return query.ToList();
+            return response.ToList();
         }
 
         public IEnumerable<PosicaoInventarioListaLinhaTabela> BuscarDadosPosicaoInventario(DataTableFilter<RelatorioPosicaoInventarioListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
@@ -215,6 +228,22 @@ namespace FWLog.Data.Repository.GeneralCtx
         public List<RelatorioTotalizacaoLocalizacaoItem> BuscarDadosTotalizacaoLocalizacao(RelatorioTotalizacaoLocalizacaoFiltro model)
         {
             var query = BuscarDadosTotalizacaoLocalizacaoQuery(model);
+
+            return query.ToList();
+        }
+
+        public List<EnderecoArmazenagemTotalPorAlasLinhaTabela> BuscarDadosFormatadoParaRelatorioTotalAla(RelatorioTotalizacaoAlasListaFiltro model)
+        {
+            IQueryable<EnderecoArmazenagemTotalPorAlasLinhaTabela> query;
+
+            if (model.ImprimirVazia)
+            {
+                query = BuscarTodosDadosTotalAla(model);
+            }
+            else
+            {
+                query = BuscarDadosComProdutoInstalado(model);
+            }
 
             return query.ToList();
         }

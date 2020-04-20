@@ -1075,22 +1075,9 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
 
-        public byte[] GerarRelatorioTotalEnderecoPorAla(RelatorioTotalPorAlaRequest filter)
+        public byte[] GerarRelatorioTotalEnderecoPorAla(RelatorioTotalizacaoAlasListaFiltro filter, string nomeUsuarioRequisicao) 
         {
-            IQueryable<EnderecoArmazenagem> query = _unitiOfWork.EnderecoArmazenagemRepository.BuscarPorNivelEPontoArmazenagem(filter.IdNivelArmazenagem, filter.IdPontoArmazenagem, filter.IdEmpresa)
-            .AsQueryable();
-
-            if (!filter.ImprimirVazia)
-            {
-                query = query.Where(x => x.LoteProdutoEndereco.Any());
-            }
-
-            if (filter.CorredorInicial > 0 && filter.CorredorFinal > 0)
-            {
-                var range = Enumerable.Range(filter.CorredorInicial.Value, filter.CorredorFinal.Value);
-
-                query = query.Where(y => range.Contains(y.Corredor));
-            }
+            var lista = _unitiOfWork.LoteProdutoEnderecoRepository.BuscarDadosFormatadoParaRelatorioTotalAla(filter);
 
             Empresa empresa = _unitiOfWork.EmpresaRepository.GetById(filter.IdEmpresa);
 
@@ -1098,7 +1085,7 @@ namespace FWLog.Services.Services
             {
                 DataCriacao = DateTime.Now,
                 NomeEmpresa = empresa.RazaoSocial,
-                NomeUsuario = filter.NomeUsuarioRequisicao,
+                NomeUsuario = nomeUsuarioRequisicao,
                 Orientacao = Orientation.Landscape,
                 Titulo = "Relatório Total de Endereço por Ala",
                 Filtros = new FwRelatorioDadosFiltro()
@@ -1116,9 +1103,9 @@ namespace FWLog.Services.Services
 
             List<UsuarioEmpresa> usuarios = _unitiOfWork.UsuarioEmpresaRepository.ObterPorEmpresa(filter.IdEmpresa);
 
-            var corredores = query.Select(x => x.Corredor).Distinct().OrderBy(x => x).ToList();
+            var corredores = lista.Select(x => x.Corredor).Distinct().OrderBy(x => x).ToList();
 
-            if (query.Any())
+            if (lista.Any())
             {
                 Paragraph paragraph = document.Sections[0].AddParagraph();
                 paragraph.AddLineBreak();
@@ -1163,30 +1150,31 @@ namespace FWLog.Services.Services
                     row.Cells[6].Format.Font.Bold = true;
                     row.Cells[7].AddParagraph("Peso Total");
                     row.Cells[7].Format.Font.Bold = true;
-
-                    var itens = query.Where(x => x.Corredor == corredor).Select(y => y).OrderBy(x => x.Codigo).ToList();
-                    var totalArmazenado = itens.Where(x => x.LoteProdutoEndereco.Any()).Sum(x => x.LoteProdutoEndereco.First().Produto.PesoBruto);
-                    var qtdeTotal = itens.Where(x => x.LoteProdutoEndereco.Any()).Sum(x => x.LoteProdutoEndereco.First().Quantidade);
+                    
+                    
+                    var itens = lista.Where(x => x.Corredor == corredor).Select(y => y).OrderBy(x => x.CodigoEndereco).ToList();
+                    var totalArmazenado = itens.Sum(x => x.PesoTotalDeProduto);
+                    var qtdeTotal = itens.Sum(x => x.QuantidadeProdutoPorEndereco);
 
                     foreach (var item in itens)
                     {
                         row = tabela.AddRow();
                         paragraph = row.Cells[0].AddParagraph();
-                        paragraph.AddText(item.Codigo);
+                        paragraph.AddText(item.CodigoEndereco);
                         paragraph = row.Cells[1].AddParagraph();
-                        paragraph.AddText(usuarios.Where(x => x.UserId == item.LoteProdutoEndereco.Where(y => y.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.IdUsuarioInstalacao).FirstOrDefault()?.PerfilUsuario?.Nome ?? "-");
+                        paragraph.AddText(usuarios.Where(x => x.UserId == item.IdUsuarioInstalacao).FirstOrDefault()?.PerfilUsuario?.Nome ?? "-");
                         paragraph = row.Cells[2].AddParagraph();
-                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.Produto.Referencia ?? "-");
+                        paragraph.AddText(item.ReferenciaProduto ?? "-");
                         paragraph = row.Cells[3].AddParagraph();
-                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.Lote?.IdLote.ToString() ?? "-");
+                        paragraph.AddText(item.IdLote.ToString() ?? "-");
                         paragraph = row.Cells[4].AddParagraph();
-                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss") ?? "-");
+                        paragraph.AddText(item.DataInstalacao?.ToString("dd/MM/yyyy HH:mm:ss") ?? "-");
                         paragraph = row.Cells[5].AddParagraph();
-                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.Produto.PesoBruto.ToString("n2") ?? "-");
+                        paragraph.AddText(item.PesoProduto?.ToString("n2") ?? "-");
                         paragraph = row.Cells[6].AddParagraph();
-                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.Quantidade.ToString() ?? "-");
+                        paragraph.AddText(item.QuantidadeProdutoPorEndereco.ToString() ?? "-");
                         paragraph = row.Cells[7].AddParagraph();
-                        paragraph.AddText(item.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == item.IdEnderecoArmazenagem).FirstOrDefault()?.PesoTotal.ToString("n2") ?? "-");
+                        paragraph.AddText(item.PesoTotalDeProduto?.ToString("n2") ?? "-");
 
                     }
 
@@ -1196,7 +1184,7 @@ namespace FWLog.Services.Services
                     paragraph.Format.Font.Bold = true;
                     paragraph = row.Cells[6].AddParagraph(qtdeTotal.ToString());
                     paragraph.Format.Font.Bold = true;
-                    paragraph = row.Cells[7].AddParagraph(totalArmazenado.ToString("n2"));
+                    paragraph = row.Cells[7].AddParagraph(totalArmazenado?.ToString("n2"));
                     paragraph.Format.Font.Bold = true;
                     row = tabela.AddRow();
                     paragraph = row.Cells[4].AddParagraph(string.Concat("Total Armazenado(Tn): "));
@@ -1223,8 +1211,8 @@ namespace FWLog.Services.Services
                     tabela.AddColumn(new Unit(88));
                 }
 
-                var qteTotalGeral = query.Where(x => x.LoteProdutoEndereco.Any()).Sum(x => x.LoteProdutoEndereco.FirstOrDefault().Quantidade);
-                var totalArmazenadoGeral = query.Where(x => x.LoteProdutoEndereco.Any()).Sum(x => x.LoteProdutoEndereco.FirstOrDefault().Produto.PesoBruto);
+                var qteTotalGeral = lista.Sum(x => x.QuantidadeProdutoPorEndereco);
+                var totalArmazenadoGeral = lista.Sum(x => x.PesoTotalDeProduto);
 
                 row = tabela.AddRow();
                 row = tabela.AddRow();
@@ -1232,7 +1220,7 @@ namespace FWLog.Services.Services
                 paragraph.Format.Font.Bold = true;
                 paragraph = row.Cells[6].AddParagraph(qteTotalGeral.ToString());
                 paragraph.Format.Font.Bold = true;
-                paragraph = row.Cells[7].AddParagraph(totalArmazenadoGeral.ToString("n2"));
+                paragraph = row.Cells[7].AddParagraph(totalArmazenadoGeral?.ToString("n2"));
                 paragraph.Format.Font.Bold = true;
                 row = tabela.AddRow();
                 paragraph = row.Cells[4].AddParagraph(string.Concat("Total Geral(Tn): "));
@@ -1249,18 +1237,17 @@ namespace FWLog.Services.Services
 
         public void ImprimirRelatorioTotalEnderecoPorAla(ImprimirRelatorioTotalPorAlaRequest request)
         {
-            var relatorioRequest = new RelatorioTotalPorAlaRequest
+            var relatorioRequest = new RelatorioTotalizacaoAlasListaFiltro
             {
+                CorredorInicial = request.CorredorInicial,
                 CorredorFinal = request.CorredorFinal,
-                CorredorInicial = request.CorredorFinal,
-                IdEmpresa = request.IdEmpresa.Value,
+                IdEmpresa = request.IdEmpresa,
                 IdNivelArmazenagem = request.IdNivelArmazenagem,
                 IdPontoArmazenagem = request.IdPontoArmazenagem,
-                ImprimirVazia = request.ImprimirVazia,
-                NomeUsuarioRequisicao = request.NomeUsuarioRequisicao
+                ImprimirVazia = request.ImprimirVazia
             };
 
-            byte[] relatorio = GerarRelatorioTotalEnderecoPorAla(relatorioRequest);
+            byte[] relatorio = GerarRelatorioTotalEnderecoPorAla(relatorioRequest,request.NomeUsuarioRequisicao);
 
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }

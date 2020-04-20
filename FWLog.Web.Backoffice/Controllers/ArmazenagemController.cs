@@ -354,12 +354,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var filtro = Mapper.Map<DataTableFilter<RelatorioTotalizacaoAlasListaFiltro>>(model);
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
 
-            var listaEnderecoArmazenagem = _uow.EnderecoArmazenagemRepository
-                .BuscarPorNivelEPontoArmazenagem(filtro.CustomFilter.IdNivelArmazenagem, filtro.CustomFilter.IdPontoArmazenagem, filtro.CustomFilter.IdEmpresa);
-
-            filtro.CustomFilter.ListaEnderecoArmazenagem = listaEnderecoArmazenagem;
-
-            var loteProdutoEnderecos = _uow.LoteProdutoEnderecoRepository.BuscarDados(filtro, out int totalRecordsFiltered, out int totalRecords);
+            var loteProdutoEnderecos = _uow.LoteProdutoEnderecoRepository.BuscarDadosTotalAla(filtro, out int totalRecordsFiltered, out int totalRecords);
 
             var list = new List<RelatorioTotalizacaoAlasListItemViewModel>();
             List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
@@ -394,10 +389,10 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             ValidateModel(viewModel);
 
-            var relatorioRequest = Mapper.Map<RelatorioTotalPorAlaRequest>(viewModel);
-            relatorioRequest.IdEmpresa = IdEmpresa;
-            relatorioRequest.NomeUsuarioRequisicao = LabelUsuario;
-            byte[] relatorio = _relatorioService.GerarRelatorioTotalEnderecoPorAla(relatorioRequest);
+            var filtro = Mapper.Map<RelatorioTotalizacaoAlasListaFiltro>(viewModel);
+
+            filtro.IdEmpresa = IdEmpresa;
+            byte[] relatorio = _relatorioService.GerarRelatorioTotalEnderecoPorAla(filtro, LabelUsuario);
 
             return File(relatorio, "application/pdf", "Relatório total por alas.pdf");
         }
