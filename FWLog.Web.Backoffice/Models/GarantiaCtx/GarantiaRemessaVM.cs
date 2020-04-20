@@ -4,20 +4,20 @@ using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 {
-    public class GarantiaSolicitacaoVM
+    public class GarantiaRemessaVM
     {
-        public GarantiaSolicitacaoListVM EmptyItem { get; set; }
+        public GarantiaRemessaListVM EmptyItem { get; set; }
 
-        public GarantiaSolicitacaoFilterVM Filter { get; set; }
+        public GarantiaRemessaFilterVM Filter { get; set; }
 
-        public GarantiaSolicitacaoVM()
+        public GarantiaRemessaVM()
         {
-            EmptyItem = new GarantiaSolicitacaoListVM();
-            Filter = new GarantiaSolicitacaoFilterVM();
+            EmptyItem = new GarantiaRemessaListVM();
+            Filter = new GarantiaRemessaFilterVM();
         }
     }
 
-    public class GarantiaSolicitacaoListVM
+    public class GarantiaRemessaListVM
     {
         [Display(Name = "Cnpj")]
         public string Cli_Cnpj { get; set; }
@@ -28,14 +28,11 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         [Display(Name = "Repr.")]
         public string Rep { get; set; }
 
-        [Display(Name = "Nr. Solicitação")]
+        [Display(Name = "Nr. Remessa")]
         public long Id { get; set; }
 
         [Display(Name = "Data")]
         public DateTime? Dt_Criacao { get; set; }
-
-        [Display(Name = "Tipo")]
-        public long Id_Tipo { get; set; }
 
         public String Tipo { get; set; }
 
@@ -54,12 +51,12 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public string Filial { get; set; }
     }
 
-    public class GarantiaSolicitacaoFilterVM
+    public class GarantiaRemessaFilterVM
     {
         [Display(Name = "Cnpj")]
         public string Cli_Cnpj { get; set; }
 
-        [Display(Name = "Nr. Solicitação")]
+        [Display(Name = "Nr. Remessa")]
         public long? Id { get; set; }
 
         [Display(Name = "Nota Fiscal")]
@@ -80,12 +77,5 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public DateTime? Data_Final { get; set; }
 
         public SelectList Lista_Status { get; set; }
-
-        [Display(Name = "Tipo")]
-        public long? Id_Tipo { get; set; }
-
-        public String Tipo { get; set; }
-
-        public SelectList Lista_Tipos { get; set; }
     }
 }

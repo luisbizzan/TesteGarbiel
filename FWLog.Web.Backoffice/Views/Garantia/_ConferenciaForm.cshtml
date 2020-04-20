@@ -1,0 +1,50 @@
+﻿@model FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaConferenciaFormVM
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="x_panel">
+            <div class="x_content">
+                <form id="formConferir">
+
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Form.Refx, new { @class = "control-label" })
+                                @Html.TextBoxFor(m => m.Form.Refx, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Form.Refx)
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Form.Quantidade, new { @class = "control-label" })
+                                @Html.TextBoxFor(m => m.Form.Quantidade, new { @class = "form-control", @readonly = "readonly" })
+                                @Html.ValidationMessageFor(m => m.Form.Quantidade)
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.Form.Descricao, new { @class = "control-label" })
+                                @Html.TextBoxFor(m => m.Form.Descricao, new { @class = "form-control", @readonly = "readonly" })
+                                @Html.ValidationMessageFor(m => m.Form.Descricao)
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-success right"><i class="fa fa-exchange"></i> Alterar Quantidade</button>
+                    <button type="button" class="btn btn-primary right"><i class="fa fa-gears"></i> Ver Peças Pendentes</button>
+                    <button type="button" id="btFinalizarConferencia" class="btn btn-success right"><i class="fa fa-save"></i> Finalizar Conferência</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Últimos Conferidos</h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,48 @@
+﻿@model FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaLaudoVM
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="x_panel">
+            <div class="x_content">
+                <form>
+                    <div class="col-xs-12 col-md-2 col-lg-3 form-group">
+                        @Html.LabelFor(m => m.Form.Quant)
+                        @Html.TextBoxFor(m => m.Form.Quant, new { @class = "form-control onlyNumber" })
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                        @Html.LabelFor(m => m.Form.Id_Motivo)
+                        @Html.DropDownListFor(m => m.Form.Id_Motivo, Model.Form.Lista_Motivos, "", new { @class = "form-control" })
+                    </div>
+                    <button style="margin-top: 20px;" type="button" class="btn btn-primary">Gravar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="x_panel">
+            <div class="x_content">
+                <table id="tbDivergenciaItens" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Quant.</th>
+                            <th>Motivo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>teste</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>teste</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

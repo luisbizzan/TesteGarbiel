@@ -96,6 +96,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     SELECT
                         GS.Id,
                         GS.Nota_Fiscal,
+                        GS.Filial,
                         GS.Dt_Criacao,
                         GT1.descricao AS Tipo,
                         GS.Cli_Cnpj

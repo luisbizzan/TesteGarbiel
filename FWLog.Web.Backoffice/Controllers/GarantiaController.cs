@@ -26,18 +26,15 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly UnitOfWork _uow;
         private readonly GarantiaService _garantiaService;
         private readonly ApplicationLogService _applicationLogService;
-        private readonly ConferenciaService _conferenciaService;
 
         public GarantiaController(
             UnitOfWork uow,
             GarantiaService garantiaService,
-            ApplicationLogService applicationLogService,
-            ConferenciaService conferenciaService)
+            ApplicationLogService applicationLogService)
         {
             _uow = uow;
             _garantiaService = garantiaService;
             _applicationLogService = applicationLogService;
-            _conferenciaService = conferenciaService;
         }
 
         public ActionResult Index()
@@ -67,6 +64,24 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(model);
         }
 
+        public ActionResult ListarSolicitacao(DataTableFilter<GarantiaSolicitacaoFilterVM> model)
+        {
+            int recordsFiltered, totalRecords;
+            var filter = Mapper.Map<DataTableFilter<GarantiaFilter>>(model);
+
+            var teste = IdEmpresa;
+
+            IEnumerable<GarSolicitacao> result = _uow.GarantiaRepository.ListarSolicitacao(filter, out recordsFiltered, out totalRecords);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = recordsFiltered,
+                Data = Mapper.Map<IEnumerable<GarantiaSolicitacaoListVM>>(result)
+            });
+        }
+
         public ActionResult VisualizarSolicitacao(long Id)
         {
             var itens = _uow.GarantiaRepository.ListarSolicitacaoItem(Id);
@@ -92,12 +107,95 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_ConferirSolicitacao", model);
         }
 
-        public ActionResult ListarSolicitacao(DataTableFilter<GarantiaSolicitacaoFilterVM> model)
+        public ActionResult ConferenciaForm(long Id)
+        {
+            var model = new GarantiaConferenciaFormVM
+            {
+            };
+
+            return PartialView("_ConferenciaForm", model);
+        }
+
+        public ActionResult ConferenciaLaudo(long Id)
+        {
+            var model = new GarantiaLaudoVM
+            {
+            };
+
+            return PartialView("_ConferenciaLaudo", model);
+        }
+
+        public ActionResult ConferenciaLaudoDetalhe(long Id)
+        {
+            var model = new GarantiaLaudoVM
+            {
+                Form = new GarantiaLaudo()
+                {
+                    Lista_Motivos = new SelectList(
+                  _uow.GeralRepository.TodosTiposDaCategoria("GAR_SOLICITACAO", "ID_STATUS").OrderBy(o => o.Id).Select(x => new SelectListItem
+                  {
+                      Value = x.Id.ToString(),
+                      Text = x.Descricao,
+                  }), "Value", "Text")
+                }
+            };
+
+            return PartialView("_ConferenciaLaudoDetalhe", model);
+        }
+
+        public ActionResult ConferenciaDivergencia(long Id)
+        {
+            var itens = new List<GarantiaConferenciaDivergencia>();
+            itens.Add(new GarantiaConferenciaDivergencia
+            {
+                Descricao = "teste",
+                Refx = "zzz",
+                Divergencia = -5,
+                Quant = 10,
+                Quant_Conferida = 5
+            });
+            itens.Add(new GarantiaConferenciaDivergencia
+            {
+                Descricao = "teste",
+                Refx = "zzz",
+                Divergencia = 11,
+                Quant = 10,
+                Quant_Conferida = 11
+            });
+
+            var model = new GarantiaConferenciaDivergenciaVM
+            {
+                Itens = itens
+            };
+
+            return PartialView("_ConferenciaDivergencia", model);
+        }
+
+        public ActionResult Remessa()
+        {
+            var model = new GarantiaRemessaVM
+            {
+                Filter = new GarantiaRemessaFilterVM()
+                {
+                    Lista_Status = new SelectList(
+                  _uow.GeralRepository.TodosTiposDaCategoria("GAR_SOLICITACAO", "ID_STATUS").OrderBy(o => o.Id).Select(x => new SelectListItem
+                  {
+                      Value = x.Id.ToString(),
+                      Text = x.Descricao,
+                  }), "Value", "Text")
+                }
+            };
+
+            model.Filter.Data_Inicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(-7);
+            model.Filter.Data_Final = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
+
+            return View(model);
+        }
+
+        public ActionResult ListarRemessa(DataTableFilter<GarantiaRemessaFilterVM> model)
         {
             int recordsFiltered, totalRecords;
             var filter = Mapper.Map<DataTableFilter<GarantiaFilter>>(model);
-
-            //filter.CustomFilter.IdEmpresa = IdEmpresa;
 
             IEnumerable<GarSolicitacao> result = _uow.GarantiaRepository.ListarSolicitacao(filter, out recordsFiltered, out totalRecords);
 
@@ -106,7 +204,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Draw = model.Draw,
                 RecordsTotal = totalRecords,
                 RecordsFiltered = recordsFiltered,
-                Data = Mapper.Map<IEnumerable<GarantiaSolicitacaoListVM>>(result)
+                Data = Mapper.Map<IEnumerable<GarantiaRemessaListVM>>(result)
             });
         }
     }
