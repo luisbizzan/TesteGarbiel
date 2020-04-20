@@ -125,8 +125,8 @@ namespace FWLog.Services.Relatorio
             }
             else
             {
-                headerTable.AddColumn(new Unit(615, UnitType.Point));
-                var columnRight = headerTable.AddColumn(new Unit(150, UnitType.Point));
+                headerTable.AddColumn(new Unit(550, UnitType.Point));
+                var columnRight = headerTable.AddColumn(new Unit(215, UnitType.Point));
                 columnRight.Format.Alignment = ParagraphAlignment.Right;
             }
 

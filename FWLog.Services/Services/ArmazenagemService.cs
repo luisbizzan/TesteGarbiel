@@ -1028,7 +1028,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task FinalizarConferencia(long idEnderecoArmazenagem, long idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao)
+        public async Task FinalizarConferencia(long idEnderecoArmazenagem, long idProduto, int quantidade, long idEmpresa, string idUsuarioOperacao, bool conferenciaManual)
         {
             var volume = ValidarEnderecoConferir(idEnderecoArmazenagem);
 
@@ -1044,6 +1044,10 @@ namespace FWLog.Services.Services
                 var idLote = volume.IdLote.GetValueOrDefault();
                 var referenciaProduto = volume.Produto.Referencia;
                 var codigoEndereco = volume.EnderecoArmazenagem.Codigo;
+
+                var detalhesVolume = ConsultaDetalhesVolumeInformado(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
+
+                var descricao = $"Conferiu {(conferenciaManual ? "manualmente" : string.Empty)} o produto {detalhesVolume.Produto.Referencia} quantidade {quantidade} peso {detalhesVolume.PesoTotal} do lote {detalhesVolume.IdLote} do endereço {detalhesVolume.EnderecoArmazenagem.Codigo}.";
 
                 await RetirarVolumeEndereco(idEnderecoArmazenagem, idLote, volume.IdProduto, idEmpresa, idUsuarioOperacao);
 
@@ -1067,7 +1071,7 @@ namespace FWLog.Services.Services
                     IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                     IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ConferirEndereco,
                     DataHora = DateTime.Now,
-                    Descricao = $"Retirou o produto {referenciaProduto} do lote {idLote} do endereço {codigoEndereco} após conferência",
+                    Descricao = descricao,
                     IdEmpresa = idEmpresa,
                     IdUsuario = idUsuarioOperacao
                 };

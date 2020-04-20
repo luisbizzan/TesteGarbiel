@@ -19,13 +19,11 @@ namespace FWLog.Web.Api.Controllers
     {
         private readonly AccountService _accountService;
         private readonly UnitOfWork _unitOfWork;
-        private readonly ColetorHistoricoService _coletorHistoricoService;
 
-        public UsuarioController(UnitOfWork unitOfWork, AccountService accountService, ColetorHistoricoService coletorHistoricoService)
+        public UsuarioController(UnitOfWork unitOfWork, AccountService accountService)
         {
             _unitOfWork = unitOfWork;
             _accountService = accountService;
-            _coletorHistoricoService = coletorHistoricoService;
         }
 
         [HttpPost]

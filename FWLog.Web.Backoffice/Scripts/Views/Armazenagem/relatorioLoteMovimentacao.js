@@ -136,7 +136,8 @@
 
     $("#pesquisarEnderecoArmazenagem").click(function () {
         let id = $("#IdPontoArmazenagem").val();
-        $("#modalPesquisaEnderecoArmazenagem").load(HOST_URL + "EnderecoArmazenagem/PesquisaModal/" + id, function () {
+        let buscarTodos = true;
+        $("#modalPesquisaEnderecoArmazenagem").load(HOST_URL + "EnderecoArmazenagem/PesquisaModal" + "?id=" + id + "&buscarTodos=" + buscarTodos, function () {
             $("#modalPesquisaEnderecoArmazenagem").modal();
         });
     });

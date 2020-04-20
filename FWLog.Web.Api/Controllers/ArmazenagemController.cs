@@ -551,7 +551,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                await _armazenagemService.FinalizarConferencia(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0, requisicao?.Quantidade ?? 0, IdEmpresa, IdUsuario);
+                await _armazenagemService.FinalizarConferencia(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0, requisicao?.Quantidade ?? 0, IdEmpresa, IdUsuario, requisicao.ConferenciaManual);
             }
             catch (BusinessException ex)
             {

@@ -1,5 +1,5 @@
-﻿using FWLog.Data.Models;
-using FWLog.Data.Repository.GeneralCtx;
+﻿using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Services.Model.Coletor;
 using log4net;
 using System;
@@ -8,13 +8,13 @@ namespace FWLog.Services.Services
 {
     public class ColetorHistoricoService
     {
-        private readonly ColetorHistoricoTipoRepository _coletorHistoricoTipoRepository;
         private readonly ILog _log;
+        private readonly UnitOfWork _unitOfWork;
 
-        public ColetorHistoricoService(ColetorHistoricoTipoRepository coletorHistoricoTipo, ILog ilog)
+        public ColetorHistoricoService(UnitOfWork unitOfWork, ILog log)
         {
-            _coletorHistoricoTipoRepository = coletorHistoricoTipo;
-            _log = ilog;
+            _unitOfWork = unitOfWork;
+            _log = log;
         }
 
         public void GravarHistoricoColetor(GravarHistoricoColetorRequisicao gravarHistoricoColetorRequisicao)
@@ -31,7 +31,7 @@ namespace FWLog.Services.Services
                     IdUsuario = gravarHistoricoColetorRequisicao.IdUsuario
                 };
 
-                _coletorHistoricoTipoRepository.GravarHistorico(coletorHistorico);
+                _unitOfWork.ColetorHistoricoTipoRepository.GravarHistorico(coletorHistorico);
             }
             catch (Exception e)
             {
