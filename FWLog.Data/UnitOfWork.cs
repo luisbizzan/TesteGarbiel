@@ -34,7 +34,7 @@ namespace FWLog.Data
         private QuarentenaRepository _quarentenaRepository;
         private QuarentenaStatusRepository _quarentenaStatusRepository;
         private NotaFiscalStatusRepository _notaFiscalStatusRepository;
-		private NivelArmazenagemRepository _nivelArmazenagemRepository;
+        private NivelArmazenagemRepository _nivelArmazenagemRepository;
         private PontoArmazenagemRepository _pontoArmazenagemRepository;
         private TipoMovimentacaoRepository _tipoMovimentacaoRepository;
         private TipoArmazenagemRepository _tipoArmazenagemRepository;
@@ -52,7 +52,7 @@ namespace FWLog.Data
         private PerfilImpressoraRepository _perfilImpressoraRepository;
         private TipoEtiquetagemRepository _tipoEtiquetagemRepository;
         private LoteProdutoRepository _loteProdutoRepository;
-        private IntegracaoTipoRepository     _integracaoTipoRepository;
+        private IntegracaoTipoRepository _integracaoTipoRepository;
         private IntegracaoEntidadeRepository _integracaoEntidadeRepository;
         private LoteMovimentacaoRepository _loteMovimentacaoRepository;
         private LoteMovimentacaoTipoRepository _loteMovimentacaoTipoRepository;
@@ -66,7 +66,7 @@ namespace FWLog.Data
         private GarantiaStatusRepository _garantiaStatusRepository;
         private MotivoLaudoRepository _motivoLaudoRepository;
         private RepresentanteRepository _representanteRepository;
-        private LoteProdutoEnderecoRepository _loteProdutoEnderecoRepository;		
+        private LoteProdutoEnderecoRepository _loteProdutoEnderecoRepository;
         private IntegracaoLogRepository _integracaoLogRepository;
         private NotaFiscalRecebimentoRepository _notaFiscalRecebimentoRepository;
         private NotaRecebimentoStatusRepository _notaRecebimentoStatusRepository;
@@ -75,6 +75,7 @@ namespace FWLog.Data
         private ColetorHistoricoTipoRepository _coletorHistoricoTipoRepository;
         private AtividadeEstoqueRepository _atividadeEstoqueRepository;
         private AtividadeEstoqueTipoRepository _atividadeEstoqueTipoRepository;
+        private CaixaTipoRepository _caixaTipoRepository;
 
         public UnitOfWork()
         {
@@ -194,7 +195,7 @@ namespace FWLog.Data
         public TipoMovimentacaoRepository TipoMovimentacaoRepository
         {
             get => _tipoMovimentacaoRepository ?? (_tipoMovimentacaoRepository = new TipoMovimentacaoRepository(_context));
-		}
+        }
 
         public NivelArmazenagemRepository NivelArmazenagemRepository
         {
@@ -384,6 +385,11 @@ namespace FWLog.Data
         public ColetorHistoricoTipoRepository ColetorHistoricoTipoRepository
         {
             get => _coletorHistoricoTipoRepository ?? (_coletorHistoricoTipoRepository = new ColetorHistoricoTipoRepository(_context));
+        }
+
+        public CaixaTipoRepository CaixaTipoRepository
+        {
+            get => _caixaTipoRepository ?? (_caixaTipoRepository = new CaixaTipoRepository(_context));
         }
 
         public TransactionScope CreateTransactionScope()
