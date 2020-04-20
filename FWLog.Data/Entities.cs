@@ -82,6 +82,7 @@ namespace FWLog.Data
         public virtual DbSet<AtividadeEstoque> AtividadeEstoque { get; set; }
         public virtual DbSet<AtividadeEstoqueTipo> AtividadeEstoqueTipo { get; set; }
         public virtual DbSet<CaixaTipo> CaixaTipo { get; set; }
+        public virtual DbSet<Caixa> Caixa { get; set; }
 
         public int SaveChangesWithoutLog()
         {

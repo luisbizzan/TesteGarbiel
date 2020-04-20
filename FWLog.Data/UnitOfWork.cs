@@ -76,6 +76,7 @@ namespace FWLog.Data
         private AtividadeEstoqueRepository _atividadeEstoqueRepository;
         private AtividadeEstoqueTipoRepository _atividadeEstoqueTipoRepository;
         private CaixaTipoRepository _caixaTipoRepository;
+        private CaixaRepository _caixaRepository;
 
         public UnitOfWork()
         {
@@ -390,6 +391,11 @@ namespace FWLog.Data
         public CaixaTipoRepository CaixaTipoRepository
         {
             get => _caixaTipoRepository ?? (_caixaTipoRepository = new CaixaTipoRepository(_context));
+        }
+
+        public CaixaRepository CaixaRepository
+        {
+            get => _caixaRepository ?? (_caixaRepository = new CaixaRepository(_context));
         }
 
         public TransactionScope CreateTransactionScope()
