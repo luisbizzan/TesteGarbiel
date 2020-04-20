@@ -17,7 +17,7 @@ namespace FWLog.Services.Services
         private UnitOfWork _unitOfWork;
         private ILog _log;
 
-        public EmpresaService(UnitOfWork uow, IntegracaoLogService _integracaoLogService, ILog log)
+        public EmpresaService(UnitOfWork uow, ILog log)
         {
             _unitOfWork = uow;
             _log = log;
