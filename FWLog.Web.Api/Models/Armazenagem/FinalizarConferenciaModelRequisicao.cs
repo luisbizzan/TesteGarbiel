@@ -12,5 +12,7 @@ namespace FWLog.Web.Api.Models.Armazenagem
 
         [Required(ErrorMessage = "A quantidade deve ser informada.")]
         public int Quantidade { get; set; }
+
+        public bool ConferenciaManual { get; set; }
     }
 }

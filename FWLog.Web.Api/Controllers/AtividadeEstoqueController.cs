@@ -15,13 +15,11 @@ namespace FWLog.Web.Api.Controllers
     public class AtividadeEstoqueController : ApiBaseController
     {
         private readonly AtividadeEstoqueService _atividadeEstoqueService;
-        private readonly ArmazenagemService _armazenagemService;
         private readonly UnitOfWork _unitOfWork;
 
-        public AtividadeEstoqueController(UnitOfWork unitOfWork, AtividadeEstoqueService atividadeEstoqueService, ArmazenagemService armazenagemService)
+        public AtividadeEstoqueController(UnitOfWork unitOfWork, AtividadeEstoqueService atividadeEstoqueService)
         {
             _atividadeEstoqueService = atividadeEstoqueService;
-            _armazenagemService = armazenagemService;
             _unitOfWork = unitOfWork;
         }
 

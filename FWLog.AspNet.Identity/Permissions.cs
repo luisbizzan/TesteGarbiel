@@ -214,8 +214,8 @@ namespace FWLog.AspNet.Identity
                 Register(ConferenciaAlas, Display.FromString("Conferência Alas"));
                 Register(AbastecerPicking, Display.FromString("Abastecer Picking"));
                 Register(Etiquetas, Display.FromString("Etiquetas"));
-                Register(ConferenciaGaiola, Display.FromString("Conferência"));
-                Register(ConferenciaGaiolaManual, Display.FromString("Conferência - Manual"));
+                Register(ConferenciaGaiola, Display.FromString("Conferência Volumes"));
+                Register(ConferenciaGaiolaManual, Display.FromString("Conferência Volumes - Manual"));
                 Register(AtividadeConferenciaEndereco, Display.FromString("Atividade - Conferência Endereço"));
                 Register(AtividadeAbastecerPicking, Display.FromString("Atividade - Abastecer Picking"));
                 Register(AtividadeConferencia399_400, Display.FromString("Atividade - Conferência 399/400"));
