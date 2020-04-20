@@ -103,6 +103,7 @@
     <Compile Include="Logging\IBackOfficeUserInfo.cs" />
     <Compile Include="Models\Application.cs" />
     <Compile Include="Models\ApplicationSession.cs" />
+    <Compile Include="Models\Caixa.cs" />
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\ColetorAplicacao.cs" />
     <Compile Include="Models\ColetorHistorico.cs" />
@@ -247,6 +248,7 @@
     <Compile Include="Repository\CommonCtx\BaseRepository.cs" />
     <Compile Include="Repository\CommonCtx\CacheRepository.cs" />
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\CaixaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ClienteRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ColetorAplicacaoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ColetorHistoricoRepository.cs" />
