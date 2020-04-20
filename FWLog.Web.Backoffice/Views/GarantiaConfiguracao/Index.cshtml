@@ -1,4 +1,4 @@
-﻿@model FWLog.Web.Backoffice.Models.GarantiaConfiguracaoCtx.GarantiaConfiguracaoViewModel
+﻿@model FWLog.Data.Models.GarantiaConfiguracao.FornecedorQuebra
 @using FWLog.AspNet.Identity
 
 @section Scripts { @BundleHelper.RenderViewScript() }
@@ -44,7 +44,7 @@
                                 </div>
                                 <div class="form-inline">
                                     <button id="btnLimpar" type="button" class="btn btn-danger">Limpar Lista</button>
-                                    <button id="btnGravar" type="button" class="btn btn-primary">Gravar Lista</button>
+                                    <button id="btnGravar" type="button" class="btn btn-primary" onclick="FornecedorQuebraGravar();">Gravar Lista</button>
                                 </div>
                             </div>
                         </div>
@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="form-inline">
                                     <button id="btnSankhyaLimpar" type="button" class="btn btn-danger"> Limpar Lista</button>
-                                    <button id="btnSankhyaGravar" type="button" class="btn btn-primary"> Gravar Lista</button>
+                                    <button id="btnSankhyaGravar" type="button" class="btn btn-primary" onclick="ShankhyaTopGravar();"> Gravar Lista</button>
                                 </div>
                             </div>
                         </div>

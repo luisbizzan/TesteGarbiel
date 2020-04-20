@@ -31,6 +31,58 @@ namespace FWLog.Web.Backoffice.Controllers
         }
         #endregion
 
+        #region [Genérico] Incluir
+        [HttpPost]
+        public ActionResult RegistroIncluir(GarantiaConfiguracaoViewModel Registro)
+        {
+            try
+            {
+                #region Validações
+                Func<ViewResult> errorView = () => { return View(Registro); };
+
+                if (!ModelState.IsValid)
+                    throw new Exception(ModelState.Values.Where(x => x.Errors.Count > 0).Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />")));
+
+                var RegistroConvertido = ConverterRegistro(Registro);
+
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.TAG.CONFIG.ToString(), StringComparison.InvariantCulture))
+                    errorView = () => { return View(RegistroConvertido.RegistroConfiguracao); };
+
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.TAG.FORN_QUEBRA.ToString(), StringComparison.InvariantCulture))
+                    errorView = () => { return View(RegistroConvertido.RegistroFornecedorQuebra); };
+
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.TAG.REM_CONFIG.ToString(), StringComparison.InvariantCulture))
+                    errorView = () => { return View(RegistroConvertido.RegistroRemessaConfiguracao); };
+
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.TAG.REM_USUARIO.ToString(), StringComparison.InvariantCulture))
+                    errorView = () => { return View(RegistroConvertido.RegistroRemessaUsuario); };
+
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.TAG.SANKHYA_TOP.ToString(), StringComparison.InvariantCulture))
+                    errorView = () => { return View(RegistroConvertido.RegistroSankhyaTop); };
+
+                if (!ModelState.IsValid)
+                    throw new Exception(ModelState.Values.Where(x => x.Errors.Count > 0).Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />")));
+                #endregion
+
+                _garantiaConfigService.RegistroIncluir(RegistroConvertido);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+        #endregion      
+
         #region [Genérico] Listar
         [HttpGet]
         public JsonResult RegistroListar(string TAG)
@@ -46,15 +98,22 @@ namespace FWLog.Web.Backoffice.Controllers
                 #endregion
 
                 #region [Processamento] Formatar Valores para View 
-                var _lista = _garantiaConfigService.RegistroListar(TAG);
+                var garantia = _garantiaConfigService.RegistroListar(TAG);
 
                 GarantiaConfiguracao.GridNome = GarantiaConfiguracao.DicTagGridNome.Where(w => w.Key.Equals(TAG, StringComparison.InvariantCulture)).FirstOrDefault().Value;
                 GarantiaConfiguracao.GridColunas = (object[])GarantiaConfiguracao.DicTagGridColuna.Where(w => w.Key.Equals(TAG, StringComparison.InvariantCulture)).FirstOrDefault().Value;
 
-                _lista.ToList<GarantiaConfiguracao>().ForEach(delegate (GarantiaConfiguracao Registro)
-                {
-                    Registro.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, Registro.Id);
-                });
+                var _Data = new Object();
+                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.CONFIG.ToString()))
+                    _Data = garantia.RegistroConfiguracao;
+                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.FORN_QUEBRA.ToString()))
+                    _Data = garantia.RegistroFornecedorQuebra;
+                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.REM_CONFIG.ToString()))
+                    _Data = garantia.RegistroRemessaConfiguracao;
+                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.REM_USUARIO.ToString()))
+                    _Data = garantia.RegistroRemessaUsuario;
+                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.SANKHYA_TOP.ToString()))
+                    _Data = garantia.RegistroSankhyaTop;
                 #endregion
 
                 return Json(new
@@ -62,7 +121,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     Success = true,
                     GridColunas = GarantiaConfiguracao.GridColunas.ToArray(),
                     GridNome = GarantiaConfiguracao.GridNome,
-                    Data = _lista.ToArray()
+                    Data = _Data
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -108,41 +167,6 @@ namespace FWLog.Web.Backoffice.Controllers
         }
         #endregion
 
-        #region [Fornecedor Quebra] Incluir
-        [HttpPost]
-        public ActionResult FornecedorQuebraIncluir(GarantiaConfiguracaoViewModel fornecedor)
-        {
-            try
-            {
-                Func<ViewResult> errorView = () => { return View(fornecedor); };
-
-                if (!ModelState.IsValid)
-                    throw new Exception(ModelState.Values.Where(x => x.Errors.Count > 0).Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />")));
-
-                _garantiaConfigService.FornecedorQuebraIncluir(new GarantiaConfiguracao()
-                {
-                    Id = fornecedor.Id,
-                    Cod_Fornecedor = String.IsNullOrEmpty(fornecedor.Cod_Fornecedor) ? String.Empty : fornecedor.Cod_Fornecedor.ToUpper().Trim(),
-                    Codigos = fornecedor.Codigos
-                });
-
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = true,
-                    Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
-                });
-            }
-            catch (Exception ex)
-            {
-                return Json(new AjaxGenericResultModel
-                {
-                    Success = false,
-                    Message = ex.Message
-                });
-            }
-        }
-        #endregion        
-
         #region [Fornecedor Quebra] AutoComplete
         [HttpPost]
         public JsonResult FornecedorQuebraAutoComplete(string valor)
@@ -159,6 +183,65 @@ namespace FWLog.Web.Backoffice.Controllers
             catch (Exception ex)
             {
                 return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
+
+        #region [Genérico] Converter TAG
+        private static GarantiaConfiguracao ConverterRegistro(GarantiaConfiguracaoViewModel model)
+        {
+            try
+            {
+                var _Retorno = new GarantiaConfiguracao() { Tag = model.Tag };
+
+                #region Processamento 
+                switch (model.Tag)
+                {
+                    case "CONFIG":
+                        _Retorno.RegistroConfiguracao = new List<GarantiaConfiguracao.Configuracao>();
+                        model.Inclusao.ForEach(delegate (object o)
+                        {
+                            _Retorno.RegistroConfiguracao.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.Configuracao>(o.ToString()));
+                        });
+                        break;
+                    case "FORN_QUEBRA":
+                        _Retorno.RegistroFornecedorQuebra = new List<GarantiaConfiguracao.FornecedorQuebra>();
+                        model.Inclusao.ForEach(delegate (object o)
+                        {
+                            _Retorno.RegistroFornecedorQuebra.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.FornecedorQuebra>(o.ToString()));
+                        });
+                        break;
+                    case "REM_CONFIG":
+                        _Retorno.RegistroRemessaConfiguracao = new List<GarantiaConfiguracao.RemessaConfiguracao>();
+                        model.Inclusao.ForEach(delegate (object o)
+                        {
+                            _Retorno.RegistroRemessaConfiguracao.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.RemessaConfiguracao>(o.ToString()));
+                        });
+                        break;
+                    case "SANKHYA_TOP":
+                        _Retorno.RegistroSankhyaTop = new List<GarantiaConfiguracao.SankhyaTop>();
+                        model.Inclusao.ForEach(delegate (object o)
+                        {
+                            _Retorno.RegistroSankhyaTop.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.SankhyaTop>(o.ToString()));
+                        });
+                        break;
+                    case "REM_USUARIO":
+                        _Retorno.RegistroRemessaUsuario = new List<GarantiaConfiguracao.RemessaUsuario>();
+                        model.Inclusao.ForEach(delegate (object o)
+                        {
+                            _Retorno.RegistroRemessaUsuario.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.RemessaUsuario>(o.ToString()));
+                        });
+                        break;
+                    default:
+                        throw new Exception(String.Format("[ConverterRegistro] A Tag {0} é inválida!", model.Tag));
+                }
+                #endregion
+
+                return _Retorno;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
         #endregion
