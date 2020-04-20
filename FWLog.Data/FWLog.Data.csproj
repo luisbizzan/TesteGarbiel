@@ -162,7 +162,11 @@
     <Compile Include="Models\MotivoLaudo.cs" />
     <Compile Include="Models\IntegracaoLog.cs" />
     <Compile Include="Models\AtividadeEstoque.cs" />
+    <Compile Include="Models\PedidoVendaProdutoStatus.cs" />
+    <Compile Include="Models\PedidoVendaStatus.cs" />
+    <Compile Include="Models\PedidoVendaProduto.cs" />
     <Compile Include="Models\NotaFiscalRecebimento.cs" />
+    <Compile Include="Models\PedidoVenda.cs" />
     <Compile Include="Models\PerfilImpressora.cs" />
     <Compile Include="Models\PerfilImpressoraItem.cs" />
     <Compile Include="Models\AspNetUsers.cs" />
@@ -252,6 +256,10 @@
     <Compile Include="Repository\GeneralCtx\ColetorHistoricoTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\AtividadeEstoqueRepository.cs" />
     <Compile Include="Repository\GeneralCtx\AtividadeEstoqueTipoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PedidoVendaProdutoStatusRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PedidoVendaProdutoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PedidoVendaStatusRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PedidoVendaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaConferenciaTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaQuarentenaHisRepository.cs" />

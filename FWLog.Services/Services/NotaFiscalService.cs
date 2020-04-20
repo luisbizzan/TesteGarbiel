@@ -166,6 +166,7 @@ namespace FWLog.Services.Services
                     {
                         var codProduto = Convert.ToInt64(item.CodigoIntegracaoProduto);
                         var qtdNeg = Convert.ToInt32(item.Quantidade);
+                        var sequencia = Convert.ToInt32(item.Sequencia);
 
                         Produto produto = _uow.ProdutoRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codProduto);
                         if (produto == null)
@@ -182,7 +183,7 @@ namespace FWLog.Services.Services
                         bool itemNovo = false;
                         NotaFiscalItem notaFiscalItem;
 
-                        notaFiscalItem = notafiscal.NotaFiscalItens.FirstOrDefault(f => f.IdProduto == produto.IdProduto && f.Quantidade == qtdNeg);
+                        notaFiscalItem = notafiscal.NotaFiscalItens.FirstOrDefault(f => f.IdProduto == produto.IdProduto && f.Sequencia == sequencia);
 
                         if (notaFiscalItem == null)
                         {
@@ -196,7 +197,7 @@ namespace FWLog.Services.Services
                         notaFiscalItem.ValorUnitario = Convert.ToDecimal(item.ValorUnitarioItem.Replace(".", ","));
                         notaFiscalItem.ValorTotal = Convert.ToDecimal(item.ValorTotal.Replace(".", ","));
                         notaFiscalItem.CodigoNotaFiscal = codNota;
-                        notaFiscalItem.Sequencia = Convert.ToInt32(item.Sequencia);
+                        notaFiscalItem.Sequencia = sequencia;
                         notaFiscalItem.QuantidadeDevolucao = item.QuantidadeDevolucao.NullOrEmpty() ? 0 : Convert.ToInt32(item.QuantidadeDevolucao);
 
 
