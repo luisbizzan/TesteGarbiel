@@ -9,7 +9,7 @@ namespace FWLog.Web.Backoffice.Mapping
     {
         public ArmazenagemProfile()
         {
-            CreateMap<DownloadRelatorioTotalPorAlaViewModel, RelatorioTotalPorAlaRequest>();
+            CreateMap<DownloadRelatorioTotalPorAlaViewModel, RelatorioTotalizacaoAlasListaFiltro>();
             CreateMap<ImprimirRelatorioTotalPorAlaViewModel, ImprimirRelatorioTotalPorAlaRequest>();
             CreateMap<DownloadRelatorioPosicaoInventarioViewModel, RelatorioPosicaoInventarioRequest>();
             CreateMap<ImprimirRelatorioPosicaoInventarioViewModel, ImprimirRelatorioPosicaoInventarioRequest>();
