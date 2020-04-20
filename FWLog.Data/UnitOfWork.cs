@@ -75,10 +75,33 @@ namespace FWLog.Data
         private ColetorHistoricoTipoRepository _coletorHistoricoTipoRepository;
         private AtividadeEstoqueRepository _atividadeEstoqueRepository;
         private AtividadeEstoqueTipoRepository _atividadeEstoqueTipoRepository;
+        private PedidoVendaRepository _pedidoVendaRepository;
+        private PedidoVendaStatusRepository _pedidoVendaStatusRepository;
+        private PedidoVendaProdutoRepository _pedidoVendaProdutoRepository;
+        private PedidoVendaProdutoStatusRepository _pedidoVendaProdutoStatusRepository;
 
         public UnitOfWork()
         {
             _context = new Entities();
+        }
+        public PedidoVendaProdutoStatusRepository PedidoVendaProdutoStatusRepository
+        {
+            get => _pedidoVendaProdutoStatusRepository ?? (_pedidoVendaProdutoStatusRepository = new PedidoVendaProdutoStatusRepository(_context));
+        }
+
+        public PedidoVendaProdutoRepository PedidoVendaProdutoRepository
+        {
+            get => _pedidoVendaProdutoRepository ?? (_pedidoVendaProdutoRepository = new PedidoVendaProdutoRepository(_context));
+        }
+
+        public PedidoVendaStatusRepository PedidoVendaStatusRepository
+        {
+            get => _pedidoVendaStatusRepository ?? (_pedidoVendaStatusRepository = new PedidoVendaStatusRepository(_context));
+        }
+
+        public PedidoVendaRepository PedidoVendaRepository
+        {
+            get => _pedidoVendaRepository ?? (_pedidoVendaRepository = new PedidoVendaRepository(_context));
         }
 
         public AtividadeEstoqueTipoRepository AtividadeEstoqueTipoRepository
