@@ -29,7 +29,7 @@ namespace FWLog.Services.Services
         #endregion
 
         #region [Genérico] Listar 
-        public IEnumerable<GarantiaConfiguracao> RegistroListar(string TAG)
+        public GarantiaConfiguracao RegistroListar(string TAG)
         {
             return _uow.GarantiaConfiguracaoRepository.RegistroListar(TAG);
         }

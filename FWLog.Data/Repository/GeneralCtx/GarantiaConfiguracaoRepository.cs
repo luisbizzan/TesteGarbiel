@@ -69,7 +69,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     #region Remessa Configuração
                     case "REM_CONFIG":
                         {
-                            RegistroIncluir.RegistroFornecedorQuebra.ToList().ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item)
+                            RegistroIncluir.RegistroRemessaConfiguracao.ToList().ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao item)
                             {
                                 if (FornecedorQuebraPodeSerCadastrado(item.Cod_Fornecedor.Trim().ToUpper()))
                                     using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
@@ -89,18 +89,17 @@ namespace FWLog.Data.Repository.GeneralCtx
                     #region Sankhya Top
                     case "SANKHYA_TOP":
                         {
-                            RegistroIncluir.RegistroFornecedorQuebra.ToList().ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item)
+                            RegistroIncluir.RegistroSankhyaTop.ToList().ForEach(delegate (GarantiaConfiguracao.SankhyaTop item)
                             {
-                                if (FornecedorQuebraPodeSerCadastrado(item.Cod_Fornecedor.Trim().ToUpper()))
-                                    using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                {
+                                    conn.Open();
+                                    if (conn.State == System.Data.ConnectionState.Open)
                                     {
-                                        conn.Open();
-                                        if (conn.State == System.Data.ConnectionState.Open)
-                                        {
-                                            conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.FornecedorQuebraIncluir, item.Cod_Fornecedor));
-                                        }
-                                        conn.Close();
+                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.SankhyaTopIncluir, item.Top, item.Descricao));
                                     }
+                                    conn.Close();
+                                }
                             });
                         }
                         break;
@@ -185,23 +184,57 @@ namespace FWLog.Data.Repository.GeneralCtx
         #endregion
 
         #region [Genérico] - Listar
-        public IEnumerable<GarantiaConfiguracao> RegistroListar(string TAG)
+        public GarantiaConfiguracao RegistroListar(string TAG)
         {
             try
             {
-                IEnumerable<GarantiaConfiguracao> _lista = new List<GarantiaConfiguracao>();
+                var _garantia = new GarantiaConfiguracao() { Tag = TAG };
 
                 #region formatar comando consulta pela TAG
                 var cmdSQL = GarantiaConfiguracao.DicTagConsultaSQL.Where(w => w.Key.Equals(TAG, StringComparison.InvariantCulture)).FirstOrDefault().Value;
                 #endregion
 
+                #region Consulta Banco Dados 
                 using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
                 {
                     conn.Open();
-                    if (conn.State == System.Data.ConnectionState.Open) { _lista = conn.Query<GarantiaConfiguracao>(cmdSQL).ToList(); }
+                    if (conn.State == System.Data.ConnectionState.Open)
+                    {
+                        if (_garantia.Tag.Equals(GarantiaConfiguracao.TAG.CONFIG.ToString()))
+                        {
+                            _garantia.RegistroConfiguracao = conn.Query<GarantiaConfiguracao.Configuracao>(cmdSQL).ToList();
+                            _garantia.RegistroConfiguracao.ForEach(delegate (GarantiaConfiguracao.Configuracao item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
+                        }
+
+                        if (_garantia.Tag.Equals(GarantiaConfiguracao.TAG.FORN_QUEBRA.ToString()))
+                        {
+                            _garantia.RegistroFornecedorQuebra = conn.Query<GarantiaConfiguracao.FornecedorQuebra>(cmdSQL).ToList();
+                            _garantia.RegistroFornecedorQuebra.ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
+                        }
+
+                        if (_garantia.Tag.Equals(GarantiaConfiguracao.TAG.REM_CONFIG.ToString()))
+                        {
+                            _garantia.RegistroRemessaConfiguracao = conn.Query<GarantiaConfiguracao.RemessaConfiguracao>(cmdSQL).ToList();
+                            _garantia.RegistroRemessaConfiguracao.ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
+                        }
+
+                        if (_garantia.Tag.Equals(GarantiaConfiguracao.TAG.REM_USUARIO.ToString()))
+                        {
+                            _garantia.RegistroRemessaUsuario = conn.Query<GarantiaConfiguracao.RemessaUsuario>(cmdSQL).ToList();
+                            _garantia.RegistroRemessaUsuario.ForEach(delegate (GarantiaConfiguracao.RemessaUsuario item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
+                        }
+
+                        if (_garantia.Tag.Equals(GarantiaConfiguracao.TAG.SANKHYA_TOP.ToString()))
+                        {
+                            _garantia.RegistroSankhyaTop = conn.Query<GarantiaConfiguracao.SankhyaTop>(cmdSQL).ToList();
+                            _garantia.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
+                        }
+                    }
                     conn.Close();
                 }
-                return _lista;
+                #endregion
+
+                return _garantia;
             }
             catch (Exception ex)
             {

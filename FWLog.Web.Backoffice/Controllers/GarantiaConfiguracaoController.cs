@@ -98,15 +98,22 @@ namespace FWLog.Web.Backoffice.Controllers
                 #endregion
 
                 #region [Processamento] Formatar Valores para View 
-                var _lista = _garantiaConfigService.RegistroListar(TAG);
+                var garantia = _garantiaConfigService.RegistroListar(TAG);
 
                 GarantiaConfiguracao.GridNome = GarantiaConfiguracao.DicTagGridNome.Where(w => w.Key.Equals(TAG, StringComparison.InvariantCulture)).FirstOrDefault().Value;
                 GarantiaConfiguracao.GridColunas = (object[])GarantiaConfiguracao.DicTagGridColuna.Where(w => w.Key.Equals(TAG, StringComparison.InvariantCulture)).FirstOrDefault().Value;
 
-                _lista.ToList<GarantiaConfiguracao>().ForEach(delegate (GarantiaConfiguracao Registro)
-                {
-                    Registro.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, Registro.Id);
-                });
+                var _Data = new Object();
+                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.CONFIG.ToString()))
+                    _Data = garantia.RegistroConfiguracao;
+                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.FORN_QUEBRA.ToString()))
+                    _Data = garantia.RegistroFornecedorQuebra;
+                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.REM_CONFIG.ToString()))
+                    _Data = garantia.RegistroRemessaConfiguracao;
+                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.REM_USUARIO.ToString()))
+                    _Data = garantia.RegistroRemessaUsuario;
+                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.SANKHYA_TOP.ToString()))
+                    _Data = garantia.RegistroSankhyaTop;
                 #endregion
 
                 return Json(new
@@ -114,7 +121,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     Success = true,
                     GridColunas = GarantiaConfiguracao.GridColunas.ToArray(),
                     GridNome = GarantiaConfiguracao.GridNome,
-                    Data = _lista.ToArray()
+                    Data = _Data
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

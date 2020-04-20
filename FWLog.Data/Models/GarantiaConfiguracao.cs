@@ -45,6 +45,8 @@ namespace FWLog.Data.Models
 
             [Display(Name = "Razão Social")]
             public string RazaoSocial { get; set; }
+
+            public string BotaoEvento { get; set; }
         }
         #endregion
 
@@ -59,6 +61,8 @@ namespace FWLog.Data.Models
             [Required]
             [Display(Name = "Descrição da Top")]
             public string Descricao { get; set; }
+
+            public string BotaoEvento { get; set; }
         }
         #endregion
 
@@ -74,6 +78,8 @@ namespace FWLog.Data.Models
             public decimal Vlr_Minimo_Envio { get; set; }
             public long Prazo_Envio_Automatico { get; set; }
             public long Prazo_Descarte { get; set; }
+
+            public string BotaoEvento { get; set; }
         }
         #endregion
 
@@ -83,6 +89,8 @@ namespace FWLog.Data.Models
             [Display(Name = "Codigo")]
             public long Id { get; set; }
             public string Id_Usr { get; set; }
+
+            public string BotaoEvento { get; set; }
         }
         #endregion
 
@@ -97,6 +105,8 @@ namespace FWLog.Data.Models
             public long Automatica { get; set; }
             public long Vlr_Minimo { get; set; }
             public long Total { get; set; }
+
+            public string BotaoEvento { get; set; }
         }
         #endregion
 

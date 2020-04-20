@@ -14,8 +14,8 @@ var inputSankhyaCodigo = $("#txtSankhyaCodigo")[0];
 var inputSankhyaDescricao = $("#txtSankhyaDescricao")[0];
 var _SankhyaTopLista = [];
 var ulSankhyaTop = $("#listaSankhyaTop")[0];
-var liSankhyaTop = '<li id="{codigo}"><p><button type="button" class="btn btn-danger" onclick="ShankhyaTopRemoverLista(*{codigo}|{descricao}*);">' +
-    '<i class="fa fa-trash-o"></i></button>  <b>[{codigo}]  {descricao}</b></p></li>';
+var liSankhyaTop = '<li id="{top}"><p><button type="button" class="btn btn-danger" onclick="ShankhyaTopRemoverLista(*{top}|{descricao}*);">' +
+    '<i class="fa fa-trash-o"></i></button>  <b>[{top}]  {descricao}</b></p></li>';
 
 /* [ GENÉRICO ] */
 var RegistroInclusao = new Object();
@@ -34,50 +34,6 @@ $(document).ready(function (e) {
 /* [GENÉRICO] incluir registro(s) no banco dados */
 function RegistroIncluir() {
     RegistroInclusao.Tag = TagPadrao;
-    RegistroInclusao.Inclusao = [];
-
-    switch (TagPadrao) {
-        case "FORN_QUEBRA":
-            {
-                $.each(_fornecedoresGravar, function (i, item) {
-                    var registro = new Object();
-                    registro.Id = 0;
-                    registro.Cod_Fornecedor = item;
-
-                    RegistroInclusao.Inclusao.push(JSON.stringify(registro));
-                });
-                _fornecedoresGravar = [];
-                $(ulFornecedores).html("");
-                console.log('FORNECEDOR QUEBRA');
-            }
-            break;
-        case "SANKHYA_TOP":
-            {
-                var registro = new Object();
-                $.each(_SankhyaTopLista, function (i, item) {
-                    registro.Id = item;
-                    RegistroInclusao.Inclusao.push(registro);
-                });
-            }
-            break;
-        case "REM_USUARIO":
-            {
-
-            }
-            break;
-        case "REM_CONFIG":
-            {
-
-            }
-            break;
-        case "CONFIG":
-            {
-
-            }
-            break;
-    }
-
-    console.log(RegistroInclusao);
 
     $.post("/GarantiaConfiguracao/RegistroIncluir", { Registro: RegistroInclusao }, function (s) {
         if (s.Success) {
@@ -120,7 +76,6 @@ function RegistroExcluir(TagSelecionada, IdSelecionado) {
 /* [GENÉRICO] listar registros */
 function RegistroListar(TagInformada) {
     $.get("/GarantiaConfiguracao/RegistroListar", { TAG: TagInformada }, function (s, status) {
-        console.log(s);
         if (s.Success) {
             $(s.GridNome).DataTable({
                 destroy: true,
@@ -201,6 +156,23 @@ function FornecedorQuebraRemoverLista(cnpj) {
     $("#" + cnpj).remove();
 }
 
+/* [FORNECEDOR QUEBRA] gravar no banco */
+function FornecedorQuebraGravar() {
+    RegistroInclusao.Inclusao = [];
+
+    $.each(_fornecedoresGravar, function (i, item) {
+        var registro = new Object();
+        registro.Cod_Fornecedor = item;
+
+        RegistroInclusao.Inclusao.push(JSON.stringify(registro));
+    });
+
+    _fornecedoresGravar = [];
+    $(ulFornecedores).html("");
+
+    RegistroIncluir();
+}
+
 /***    SANKHYA TOP     ***/
 /* [SANKHYA TOP] remover lista  */
 function ShankhyaTopRemoverLista(sankhyaTopItem) {
@@ -215,17 +187,16 @@ function ShankhyaTopRemoverLista(sankhyaTopItem) {
 /* [SANKHYA TOP] adicionar na lista */
 $(botaoSankhyaAdicionar).click(function () {
     if ($(inputSankhyaCodigo).val() != "" && $(inputSankhyaDescricao).val() != "") {
-        var sankhyaTop = new Object();
+        var SankhyaTopItem = new Object();
+        SankhyaTopItem.Top = $(inputSankhyaCodigo).val().toString().toUpperCase();
+        SankhyaTopItem.Descricao = $(inputSankhyaDescricao).val().trim().toString().toUpperCase();
+        SankhyaTopItem.Data = SankhyaTopItem.Top + "|" + SankhyaTopItem.Descricao;
 
-        sankhyaTop.codigo = $(inputSankhyaCodigo).val().toString().toUpperCase();
-        sankhyaTop.descricao = $(inputSankhyaDescricao).val().trim().toString().toUpperCase();
-        sankhyaTop.data = sankhyaTop.codigo + '|' + sankhyaTop.descricao;
+        if (jQuery.inArray(SankhyaTopItem.Data, _SankhyaTopLista) == -1) {
+            _SankhyaTopLista.push(SankhyaTopItem.Data);
 
-        if (jQuery.inArray(sankhyaTop.data, _SankhyaTopLista) == -1) {
-            _SankhyaTopLista.push(sankhyaTop.data);
-
-            var liFormatado = liSankhyaTop.replace("{codigo}", sankhyaTop.codigo).replace("{codigo}", sankhyaTop.codigo).replace("{codigo}", sankhyaTop.codigo);
-            liFormatado = liFormatado.replace("{descricao}", sankhyaTop.descricao).replace("{descricao}", sankhyaTop.descricao).replace("*", "'").replace("*", "'");
+            var liFormatado = liSankhyaTop.replace("{top}", SankhyaTopItem.Top).replace("{top}", SankhyaTopItem.Top).replace("{top}", SankhyaTopItem.Top);
+            liFormatado = liFormatado.replace("{descricao}", SankhyaTopItem.Descricao).replace("{descricao}", SankhyaTopItem.Descricao).replace("*", "'").replace("*", "'");
 
             $(ulSankhyaTop).append(liFormatado);
         }
@@ -236,3 +207,17 @@ $(botaoSankhyaAdicionar).click(function () {
         PNotify.error({ text: "Informe o Código e Descrição da Top!" });
     }
 });
+
+/* [SANKHYA TOP] gravar no banco */
+function ShankhyaTopGravar() {
+    RegistroInclusao.Inclusao = [];
+
+    $.each(_SankhyaTopLista, function (i, item) {
+        var registro = new Object();
+        registro.Top = item.split('|')[0];
+        registro.Descricao = item.split('|')[1];
+        RegistroInclusao.Inclusao.push(JSON.stringify(registro));
+    });
+
+    RegistroIncluir();
+}
