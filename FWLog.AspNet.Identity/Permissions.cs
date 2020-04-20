@@ -211,7 +211,7 @@ namespace FWLog.AspNet.Identity
                 Register(AjustarQuantidade, Display.FromString("Ajustar Quantidade"));
                 Register(RetirarApoio, Display.FromString("Retirar Produto"));
                 Register(Rastreamento, Display.FromString("Rastreamento"));
-                Register(ConferenciaAlas, Display.FromString("Conferência Alas"));
+                Register(ConferenciaAlas, Display.FromString("Conferência Endereços"));
                 Register(AbastecerPicking, Display.FromString("Abastecer Picking"));
                 Register(Etiquetas, Display.FromString("Etiquetas"));
                 Register(ConferenciaGaiola, Display.FromString("Conferência Volumes"));
