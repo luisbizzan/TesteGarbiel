@@ -22,16 +22,32 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Produto não localizado!");
             }
 
+            LoteProdutoEndereco loteProdutoEndereco = null;
+
+            if (produtoEstoque.IdEnderecoArmazenagem.HasValue)
+            {
+                loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(produtoEstoque.IdEnderecoArmazenagem.Value, produtoEstoque.IdProduto, produtoEstoque.IdEmpresa);
+            }
+
+            if (loteProdutoEndereco?.Quantidade > 0)
+            {
+                throw new BusinessException("Existem peças no picking, não é possível alterar");
+            }
+
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
+                if (loteProdutoEndereco != null && loteProdutoEndereco.IdEnderecoArmazenagem != idEnderecoArmazenagem)
+                {
+                    _unitOfWork.LoteProdutoEnderecoRepository.Delete(loteProdutoEndereco);
+                    _unitOfWork.SaveChanges();
+
+                    loteProdutoEndereco = null;
+                }
+
                 produtoEstoque.IdEnderecoArmazenagem = idEnderecoArmazenagem;
+
                 _unitOfWork.ProdutoEstoqueRepository.Update(produtoEstoque);
                 _unitOfWork.SaveChanges();
-
-                var update = new LoteProdutoEndereco();
-                update.Quantidade = default(int);
-
-                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(idEnderecoArmazenagem, produtoEstoque.IdProduto, produtoEstoque.IdEmpresa);
 
                 if (loteProdutoEndereco == null)
                 {

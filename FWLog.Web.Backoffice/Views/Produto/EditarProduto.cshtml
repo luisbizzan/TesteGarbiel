@@ -7,7 +7,7 @@
     @BundleHelper.RenderViewScript()
 }
 
-@using (Html.BeginForm("EditarProduto"))
+@using (Html.BeginForm("EditarProduto", "Produto", FormMethod.Post, new { id = "form-editar-produto" }))
 {
     @Html.HiddenFor(x => x.IdProduto)
     <div class="x_panel">
@@ -65,5 +65,3 @@
 <div class="modal" id="modalPesquisaNivelArmazenagem"></div>
 <div class="modal" id="modalPesquisaEnderecoArmazenagem"></div>
 <div class="modal" id="modalPesquisaPontoArmazenagem"></div>
-
-

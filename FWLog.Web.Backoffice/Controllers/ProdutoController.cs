@@ -184,13 +184,18 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 Notify.Success("Produto editado com sucesso.");
 
-                return RedirectToAction("Index");
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                }, JsonRequestBehavior.DenyGet);
             }
             catch (BusinessException businessException)
             {
-                Notify.Error(businessException.Message);
-
-                return View(viewModel);
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = businessException.Message
+                }, JsonRequestBehavior.DenyGet);
             }
         }
 

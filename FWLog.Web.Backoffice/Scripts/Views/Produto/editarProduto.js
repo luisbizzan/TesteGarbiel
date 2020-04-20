@@ -1,5 +1,5 @@
 ﻿(function () {
-    //$.validator.setDefaults({ ignore: [] });
+    $.validator.setDefaults({ ignore: [] });
 
     $("#pesquisarNivelArmazenagem").click(function () {
         $("#modalPesquisaNivelArmazenagem").empty();
@@ -19,7 +19,6 @@
         $("#DescricaoNivelArmazenagem").val("");
         $("#IdNivelArmazenagem").val("");
     });
-
 
     $("#pesquisarPontoArmazenagem").click(function () {
         $("#modalPesquisaNivelArmazenagem").empty();
@@ -58,70 +57,51 @@
         $("#IdEnderecoArmazenagem").val("");
     });
 
-    //$('#formEditarProduto').submit(function () {
+    $('#form-editar-produto').submit(function (e) {
 
-    //    //e.preventDefault();
+        e.preventDefault();
 
-    //    if ($(this).valid()) {
+        if ($(this).valid()) {
 
-    //        dart.modalAjaxConfirm.open({
-    //            title: 'Confirmação de edição',
-    //            message: "Para mudança de endereço de produto todas as etiquetas devem ser impressas novamente. Deseja realmente continuar?",
-    //            //url: HOST_URL + "Empresa/MudarEmpresa/" + id,
-    //            onCancel: cancelaEdicao,
-    //            onConfirm: confirmaEdicao,
-    //        });
-    //    }
+            dart.modalAjaxConfirm.open({
+                title: 'Confirmação de edição',
+                message: "Para mudança de endereço de produto todas as etiquetas devem ser impressas novamente. Deseja realmente continuar?",
+                onConfirm: confirmaEdicao
+            });
+        }
 
-    //    return false;
-    //});
-
+        return false;
+    });
 })();
 
+function confirmaEdicao() {
 
-//function cancelaEdicao() {
-//    return false;
-//}
+    let form = document.getElementById('form-editar-produto');
 
-////function confirmaEdicao() {
-////    return true;
-////}
+    $.ajax({
+        url: form.action,
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        data: new FormData(form),
+        processData: false,
+        contentType: false,
+        success: function (result) {
 
-//function confirmaEdicao() {
+            if (result.Success) {
+                window.location = HOST_URL + "Produto"
+            } else {
+                new PNotify({
+                    title: 'Erro',
+                    text: result.Message,
+                    type: 'error'
+                });
+            }
+        }
+    });
 
-//    var form = $('#formEditarProduto');
-
-//    alert(form.serialize());
-
-//    $.ajax({
-//        url: form.action,
-//        type: "POST",
-//        dataType: "json",
-//        contentType: "application/json; charset=utf-8",
-//        data: new FormData(form),
-//        processData: false,
-//        contentType: false,
-//        success: function (result) {
-
-//            alert("Cheguei");
-
-//            return true;
-
-//            //new PNotify({
-//            //    title: (result.Success) ? 'Sucesso' : 'Erro',
-//            //    text: result.Message,
-//            //    type: (result.Success) ? 'success' : 'error'
-//            //});
-
-//            //if (result.Success) {
-//            //    form.reset();
-//            //    $(".modal").modal("hide");
-//            //}
-//        }
-//    });
-
-//    return false;
-//}
+    return false;
+}
 
 function selecionarNivelArmazenagem(idNivelArmazenagem, descricao) {
     $("#DescricaoNivelArmazenagem").val(descricao);
