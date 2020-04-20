@@ -47,6 +47,9 @@ namespace FWLog.Data.Models
 
         public DateTime DataHoraFimSeparacao { get; set; }
 
+        [Required]
+        public DateTime DataCriacao { get; set; }
+
         public virtual ICollection<PedidoVendaProduto> PedidoVendaProdutos { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
