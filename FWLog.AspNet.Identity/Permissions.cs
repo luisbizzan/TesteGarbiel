@@ -331,5 +331,23 @@ namespace FWLog.AspNet.Identity
                 Register(Listar, Display.FromString("Listar Atividades"));
             }
         }
+
+        public class Caixa : PermissionGroupBuildItem
+        {
+            public const string Listar = "CaixaListar";
+            public const string Cadastrar = "CaixaCadastrar";
+            public const string Editar = "CaixaEditar";
+            public const string Excluir = "CaixaExcluir";
+            public const string Visualizar = "CaixaVisualizar";
+
+            public Caixa() : base(Display.FromString("Caixa"))
+            {
+                Register(Listar, Display.FromString("Listar Caixas"));
+                Register(Cadastrar, Display.FromString("Cadastrar Caixa"));
+                Register(Editar, Display.FromString("Editar Caixa"));
+                Register(Excluir, Display.FromString("Excluir Caixa"));
+                Register(Visualizar, Display.FromString("Visualizar Caixa"));
+            }
+        }
     }
 }

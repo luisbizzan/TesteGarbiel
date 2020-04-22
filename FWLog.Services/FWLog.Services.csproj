@@ -218,6 +218,7 @@
     <Compile Include="Services\ClienteService.cs" />
     <Compile Include="Services\ColetorHistoricoService.cs" />
     <Compile Include="Services\ConferenciaService.cs" />
+    <Compile Include="Services\CaixaService.cs" />
     <Compile Include="Services\GarantiaService.cs" />
     <Compile Include="Services\MotivoLaudoService.cs" />
     <Compile Include="Services\IntegracaoLogService.cs" />
