@@ -45,19 +45,19 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 var RegistroConvertido = ConverterRegistro(Registro);
 
-                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.TAG.CONFIG.ToString(), StringComparison.InvariantCulture))
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.Configuracao))
                     errorView = () => { return View(RegistroConvertido.RegistroConfiguracao); };
 
-                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.TAG.FORN_QUEBRA.ToString(), StringComparison.InvariantCulture))
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra))
                     errorView = () => { return View(RegistroConvertido.RegistroFornecedorQuebra); };
 
-                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.TAG.REM_CONFIG.ToString(), StringComparison.InvariantCulture))
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaConfiguracao))
                     errorView = () => { return View(RegistroConvertido.RegistroRemessaConfiguracao); };
 
-                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.TAG.REM_USUARIO.ToString(), StringComparison.InvariantCulture))
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaUsuario))
                     errorView = () => { return View(RegistroConvertido.RegistroRemessaUsuario); };
 
-                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.TAG.SANKHYA_TOP.ToString(), StringComparison.InvariantCulture))
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop))
                     errorView = () => { return View(RegistroConvertido.RegistroSankhyaTop); };
 
                 if (!ModelState.IsValid)
@@ -85,34 +85,31 @@ namespace FWLog.Web.Backoffice.Controllers
 
         #region [Genérico] Listar
         [HttpGet]
-        public JsonResult RegistroListar(string TAG)
+        public JsonResult RegistroListar(GarantiaConfiguracao.GarantiaTag TAG)
         {
             try
             {
                 #region Validações
-                if (String.IsNullOrEmpty(TAG))
-                    throw new Exception(String.Concat("Obrigatório informar a Tag!"));
-
-                if (!GarantiaConfiguracao.DicTagsValidas.Values.Contains(TAG))
-                    throw new Exception(String.Format("Tag {0} inválida!", TAG));
+                if (!Enum.IsDefined(typeof(GarantiaConfiguracao.GarantiaTag), TAG))
+                    throw new Exception(String.Format("Tag {0} inválida!", TAG.ToString()));
                 #endregion
 
                 #region [Processamento] Formatar Valores para View 
                 var garantia = _garantiaConfigService.RegistroListar(TAG);
 
-                GarantiaConfiguracao.GridNome = GarantiaConfiguracao.DicTagGridNome.Where(w => w.Key.Equals(TAG, StringComparison.InvariantCulture)).FirstOrDefault().Value;
-                GarantiaConfiguracao.GridColunas = (object[])GarantiaConfiguracao.DicTagGridColuna.Where(w => w.Key.Equals(TAG, StringComparison.InvariantCulture)).FirstOrDefault().Value;
+                GarantiaConfiguracao.GridNome = GarantiaConfiguracao.DicTagGridNome.Where(w => w.Key.Equals(TAG)).FirstOrDefault().Value;
+                GarantiaConfiguracao.GridColunas = (object[])GarantiaConfiguracao.DicTagGridColuna.Where(w => w.Key.Equals(TAG)).FirstOrDefault().Value;
 
                 var _Data = new Object();
-                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.CONFIG.ToString()))
+                if (garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.Configuracao))
                     _Data = garantia.RegistroConfiguracao;
-                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.FORN_QUEBRA.ToString()))
+                if (garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra))
                     _Data = garantia.RegistroFornecedorQuebra;
-                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.REM_CONFIG.ToString()))
+                if (garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaConfiguracao))
                     _Data = garantia.RegistroRemessaConfiguracao;
-                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.REM_USUARIO.ToString()))
+                if (garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaUsuario))
                     _Data = garantia.RegistroRemessaUsuario;
-                if (garantia.Tag.Equals(GarantiaConfiguracao.TAG.SANKHYA_TOP.ToString()))
+                if (garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop))
                     _Data = garantia.RegistroSankhyaTop;
                 #endregion
 
@@ -141,10 +138,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 if (Registro.Id.Equals(0))
                     throw new Exception(String.Format("Id [{0}] do registro inválido!", Registro.Id));
 
-                if (String.IsNullOrEmpty(Registro.Tag))
-                    throw new Exception(String.Concat("Obrigatório informar a Tag!"));
+                //if (String.IsNullOrEmpty(Registro.Tag))
+                //    throw new Exception(String.Concat("Obrigatório informar a Tag!"));
 
-                if (!GarantiaConfiguracao.DicTagsValidas.Values.Contains(Registro.Tag))
+                if (!GarantiaConfiguracao.DicTagsValidas.Values.Contains(Registro.Tag.ToString()))
                     throw new Exception(String.Format("Tag {0} inválida!", Registro.Tag));
 
                 _garantiaConfigService.RegistroExcluir(Registro);
@@ -212,46 +209,61 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                var _Retorno = new GarantiaConfiguracao() { Tag = model.Tag };
+                var _Retorno = new GarantiaConfiguracao() { Tag = (GarantiaConfiguracao.GarantiaTag)Enum.Parse(typeof(GarantiaConfiguracao.GarantiaTag), model.Tag) };
 
                 #region Processamento 
-                switch (model.Tag)
+                switch (_Retorno.Tag)
                 {
-                    case "CONFIG":
+                    #region Configuração
+                    case GarantiaConfiguracao.GarantiaTag.Configuracao:
                         _Retorno.RegistroConfiguracao = new List<GarantiaConfiguracao.Configuracao>();
                         model.Inclusao.ForEach(delegate (object o)
                         {
                             _Retorno.RegistroConfiguracao.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.Configuracao>(o.ToString()));
                         });
                         break;
-                    case "FORN_QUEBRA":
+                    #endregion
+
+                    #region Fornecedor Quebra
+                    case GarantiaConfiguracao.GarantiaTag.FornecedorQuebra:
                         _Retorno.RegistroFornecedorQuebra = new List<GarantiaConfiguracao.FornecedorQuebra>();
                         model.Inclusao.ForEach(delegate (object o)
                         {
                             _Retorno.RegistroFornecedorQuebra.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.FornecedorQuebra>(o.ToString()));
                         });
                         break;
-                    case "REM_CONFIG":
+                    #endregion
+
+                    #region Remessa Configuração
+                    case GarantiaConfiguracao.GarantiaTag.RemessaConfiguracao:
                         _Retorno.RegistroRemessaConfiguracao = new List<GarantiaConfiguracao.RemessaConfiguracao>();
                         model.Inclusao.ForEach(delegate (object o)
                         {
                             _Retorno.RegistroRemessaConfiguracao.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.RemessaConfiguracao>(o.ToString()));
                         });
                         break;
-                    case "SANKHYA_TOP":
+                    #endregion
+
+                    #region Sankhya Top
+                    case GarantiaConfiguracao.GarantiaTag.SankhyaTop:
                         _Retorno.RegistroSankhyaTop = new List<GarantiaConfiguracao.SankhyaTop>();
                         model.Inclusao.ForEach(delegate (object o)
                         {
                             _Retorno.RegistroSankhyaTop.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.SankhyaTop>(o.ToString()));
                         });
                         break;
-                    case "REM_USUARIO":
+                    #endregion
+
+                    #region Remessa Usuário
+                    case GarantiaConfiguracao.GarantiaTag.RemessaUsuario:
                         _Retorno.RegistroRemessaUsuario = new List<GarantiaConfiguracao.RemessaUsuario>();
                         model.Inclusao.ForEach(delegate (object o)
                         {
                             _Retorno.RegistroRemessaUsuario.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.RemessaUsuario>(o.ToString()));
                         });
                         break;
+                    #endregion
+
                     default:
                         throw new Exception(String.Format("[ConverterRegistro] A Tag {0} é inválida!", model.Tag));
                 }

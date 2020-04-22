@@ -10,30 +10,32 @@
         </div>
         <div class="x_content">
             <!-- menu -->
+            <!-- GarantiaTag { RemessaConfiguracao, RemessaUsuario, Configuracao, FornecedorQuebra, SankhyaTop } -->
             <ul class="nav nav-tabs bar_tabs" id="ulMenuConfig" role="tablist">
                 <li class="nav-item active">
-                    <a id="FORN_QUEBRA" class="nav-link" data-toggle="tab" href="#TabFornecedorQuebra" role="tab" aria-selected="true" aria-expanded="true">Fornecedor Quebra</a>
+                    <a id="FornecedorQuebra" class="nav-link" data-toggle="tab" href="#TabFornecedorQuebra" role="tab" aria-selected="true" aria-expanded="true">Fornecedor Quebra</a>
                 </li>
                 <li class="nav-item">
-                    <a id="SANKHYA_TOP" class="nav-link" data-toggle="tab" href="#TabSankhyaTop" role="tab" aria-selected="false">Sankhya Tops</a>
+                    <a id="SankhyaTop" class="nav-link" data-toggle="tab" href="#TabSankhyaTop" role="tab" aria-selected="false">Sankhya Tops</a>
                 </li>
                 <li class="nav-item">
-                    <a id="CONFIG" class="nav-link" data-toggle="tab" href="#TabConfiguracao" role="tab" aria-selected="false">Configuração</a>
+                    <a id="Configuracao" class="nav-link" data-toggle="tab" href="#TabConfiguracao" role="tab" aria-selected="false">Configuração</a>
                 </li>
                 <li class="nav-item">
-                    <a id="REM_CONFIG" class="nav-link" data-toggle="tab" href="#TabRemessaConfiguracao" role="tab" aria-selected="false">Remessa Configuração</a>
+                    <a id="RemessaConfiguracao" class="nav-link" data-toggle="tab" href="#TabRemessaConfiguracao" role="tab" aria-selected="false">Remessa Configuração</a>
                 </li>
                 <li class="nav-item">
-                    <a id="REM_USUARIO" class="nav-link" data-toggle="tab" href="#TabRemessaUsuario" role="tab" aria-selected="false">Remessa Usuário</a>
+                    <a id="RemessaUsuario" class="nav-link" data-toggle="tab" href="#TabRemessaUsuario" role="tab" aria-selected="false">Remessa Usuário</a>
                 </li>
             </ul>
             <!-- panels -->
             <div class="tab-content" id="myTabContent">
                 <!-- TAB Fornecedor Quebra -->
-                <div class="tab-pane fade active in" id="TabFornecedorQuebra" role="tabpanel">
+                <div class="tab-pane fade active in" id="TabFornecedorQuebra">
                     <div class="x_panel">
                         <div class="col-md-4 col-sm-4">
-                            @Html.TextBoxFor(m => m.Cod_Fornecedor, new { @class = "form-control text-uppercase input-sm", data_field = "Cod_Fornecedor", placeholder = "Consultar Fornecedor", data_toggle = "tooltip", data_original_title = "Consultar Fornecedor de Quebra" })
+                            <div class="x_title text-muted"><b>Cadastrar</b></div>
+                            @Html.TextBoxFor(m => m.Cod_Fornecedor, new { @class = "form-control text-uppercase input-sm", data_field = "Cod_Fornecedor", placeholder = "Fornecedor", data_toggle = "tooltip", data_original_title = "Nome do Fornecedor a ser cadastrado" })
                             <div>
                                 <div class="x_panel">
                                     <div class="x_title text-muted"><b>Fornecedores selecionados</b></div>
@@ -43,56 +45,49 @@
                                 </div>
                                 <div class="form-inline">
                                     <button id="btnLimpar" type="button" class="btn btn-danger">Limpar Lista</button>
-                                    <button id="btnGravar" type="button" class="btn btn-primary" onclick="FornecedorQuebraGravar();">Gravar Lista</button>
+                                    <button type="button" class="btn btn-primary" onclick="FornecedorQuebraGravar();">Gravar Lista</button>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-8 col-sm-8">
                             <!-- Grid Fornecedor Quebra -->
-                            <div class="x_content">
-                                <div class="x_title text-muted"><b>Fornecedores cadastrados</b></div>
-                                <table id="gridFornecedorQuebra" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
-                            </div>
+                            <div class="x_title text-muted"><b>Fornecedores Cadastrados</b></div>
+                            <table id="gridFornecedorQuebra" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
+
                         </div>
                     </div>
                 </div>
                 <!-- TAB Sankhya Tops -->
-                <div class="tab-pane fade" id="TabSankhyaTop" role="tabpanel">
+                <div class="tab-pane fade" id="TabSankhyaTop">
                     <div class="x_panel">
                         <div class="col-md-5 col-sm-5">
-
-                            <div class="form-inline col-md-12 col-sm-12">
+                            <div class="x_title text-muted"><b>Novo</b></div>
+                            <div class="form-inline">
                                 <div class="col-md-2 col-sm-12"><input id="txtSankhyaCodigo" type="text" placeholder="Código" class="form-control input-sm text-uppercase"></div>
                                 <div class="col-md-10 col-sm-12">
                                     <input id="txtSankhyaDescricao" type="text" placeholder="Descrição" class="form-control input-sm text-uppercase">
                                     <button id="btnSankhyaAdicionar" type="button" class="btn btn-success"><i class="fa fa-plus"></i> Adicionar</button>
                                 </div>
                             </div>
-
                             <div class="col-md-12 col-sm-12">
-                                <div class="x_panel">
-                                    <div class="x_title text-muted"><b>Tops</b></div>
-                                    <div class="x_content">
-                                        <ul id="listaSankhyaTop" class="to_do" style="overflow:auto; height:240px"></ul>
-                                    </div>
+                                <div class="x_content">
+                                    <ul id="listaSankhyaTop" class="to_do" style="overflow:auto; height:240px"></ul>
                                 </div>
                                 <div class="form-inline">
                                     <button id="btnSankhyaLimpar" type="button" class="btn btn-danger"> Limpar Lista</button>
-                                    <button id="btnSankhyaGravar" type="button" class="btn btn-primary" onclick="ShankhyaTopGravar();"> Gravar Lista</button>
+                                    <button type="button" class="btn btn-primary" onclick="ShankhyaTopGravar();"> Gravar Lista</button>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-7 col-sm-7">
                             <!-- Grid Sankhya Tops -->
-                            <div class="x_content">
-                                <div class="x_title text-muted"><b>Sankhya Tops</b></div>
-                                <table id="gridSankhyaTop" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
-                            </div>
+                            <div class="x_title text-muted"><b>Tops cadastradas</b></div>
+                            <table id="gridSankhyaTop" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
                         </div>
                     </div>
                 </div>
                 <!-- TAB Configuração -->
-                <div class="tab-pane fade" id="TabConfiguracao" role="tabpanel">
+                <div class="tab-pane fade" id="TabConfiguracao">
                     <div class="x_panel">
                         <div class="col-md-4 col-sm-4">
 
@@ -107,24 +102,44 @@
                     </div>
                 </div>
                 <!-- TAB Remessa Configuração -->
-                <div class="tab-pane fade" id="TabRemessaConfiguracao" role="tabpanel">
+                <div class="tab-pane fade" id="TabRemessaConfiguracao">
                     <div class="x_panel">
-                        <div class="x_panel">
-                            <div class="col-md-4 col-sm-4">
-
+                        <div class="col-md-4 col-sm-4">
+                            <div class="x_title text-muted"><b>Novo</b></div>
+                            <div class="input-group input-group-sm col-sm-12">
+                                <div class="input-group-addon"><input id="txtRCFialial" class="form-control" placeholder="Filial"></div>
+                                <div class="input-group-addon"><span id="spanIdFilial" hidden="hidden">-</span><span id="spanFilial" class="input-group-addon">-</span></div>
                             </div>
-                            <div class="col-md-8 col-sm-8">
-                                <!-- Grid Configuração -->
-                                <div class="x_content">
-                                    <div class="x_title text-muted"><b>Remessa Configuração</b></div>
-                                    <table id="gridRemessaConfig" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
-                                </div>
+                            <div class="input-group input-group-sm col-sm-12">
+                                <div class="input-group-addon"><input id="txtRCFornecedor" class="form-control" placeholder="Fornecedor"></div>
+                                <div class="input-group-addon"><span id="spanFornecedor" class="input-group-addon">-</span></div>
                             </div>
+                            <div class="input-group input-group-sm col-sm-12">
+                                <span class="input-group-addon text-left">Automática</span>
+                                <div class="input-group-addon"><input id="chkRCAutomatica" type="checkbox" class="form-control"></div>
+                            </div>
+                            <div class="input-group input-group-sm col-sm-12">
+                                <span class="input-group-addon text-left">Minímo Para Envio</span>
+                                <div class="input-group-addon"><input id="txtRCMinimoEnvio" type="number" class="form-control" min="0" value="0"></div>
+                            </div>
+                            <div class="input-group input-group-sm col-sm-12">
+                                <span class="input-group-addon text-left">Total</span>
+                                <div class="input-group-addon"><input id="txtRCTotal" type="number" class="form-control" min="0" value="0"></div>
+                            </div>
+                            <div class="col-sm-12">
+                                <button id="btnLimpar" type="button" class="btn btn-danger col-sm-6">Limpar Lista</button>
+                                <button type="button" class="btn btn-primary col-sm-6" onclick="RemessaConfigGravar();">Gravar Lista</button>
+                            </div>
+                        </div>
+                        <div class="col-md-8 col-sm-8">
+                            <!-- Grid Configuração -->
+                            <div class="x_title text-muted"><b>Remessa Configuração</b></div>
+                            <table id="gridRemessaConfig" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
                         </div>
                     </div>
                 </div>
                 <!-- TAB Remessa Usuário -->
-                <div class="tab-pane fade" id="TabRemessaUsuario" role="tabpanel">
+                <div class="tab-pane fade" id="TabRemessaUsuario">
                     <div class="x_panel">
                         <div class="col-md-4 col-sm-4">
                             <input class="form-control text-lowercase input-sm" data-original-title="Consultar Usuário" data-toggle="tooltip" data-val="true" id="txtRemessaUsuario" placeholder="Consultar Usuário" type="text" value="">
@@ -137,7 +152,7 @@
                                 </div>
                                 <div class="form-inline">
                                     <button id="btnLimpar" type="button" class="btn btn-danger">Limpar Lista</button>
-                                    <button id="btnGravar" type="button" class="btn btn-primary" onclick="FornecedorQuebraGravar();">Gravar Lista</button>
+                                    <button type="button" class="btn btn-primary" onclick="RemessaUsuarioGravar();">Gravar Lista <i class="fa fa-save"></i></button>
                                 </div>
                             </div>
                         </div>

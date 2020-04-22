@@ -2,7 +2,7 @@
 /***  GENÉRICO  ***/
 var RegistroInclusao = new Object();
 var TagPadrao = $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != null && $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != "" ?
-    $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id : "FORN_QUEBRA";
+    $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id : "FornecedorQuebra";
 
 /* [GENÉRICO] evento clique do menu de configuração */
 $(document).ready(function (e) {
@@ -16,7 +16,6 @@ $(document).ready(function (e) {
 /* [GENÉRICO] incluir registro(s) no banco dados */
 function RegistroIncluir() {
     RegistroInclusao.Tag = TagPadrao;
-
     $.post("/GarantiaConfiguracao/RegistroIncluir", { Registro: RegistroInclusao }, function (s) {
         if (s.Success) {
             PNotify.success({ text: s.Message });
@@ -62,7 +61,7 @@ function RegistroListar(TagInformada) {
             $(s.GridNome).DataTable({
                 destroy: true,
                 serverSide: false,
-                searching: true,
+                //searching: true,
                 data: s.Data,
                 columns: s.GridColunas,
             });
@@ -76,7 +75,6 @@ function RegistroListar(TagInformada) {
 /***    FORNECEDOR QUEBRA   ***/
 /* [FORNECEDOR QUEBRA] variaveis */
 var botaoFornQuebraLimpar = $("#btnLimpar")[0];
-var botaoFornQuebraGravar = $("#btnGravar")[0];
 var inputCodigoFornecedor = $("#Cod_Fornecedor")[0];
 var ulFornecedores = $("#listaFornecedor")[0];
 var _fornecedoresGravar = []; var _fornecedoresAutoComplete = [];
@@ -166,7 +164,6 @@ function FornecedorQuebraGravar() {
 
 /***    SANKHYA TOP     ***/
 /* [SANKHYA TOP] variaveis */
-var botaoSankhyaGravar = $("#btnSankhyaGravar")[0];
 var botaoSankhyaAdicionar = $("#btnSankhyaAdicionar")[0];
 var inputSankhyaCodigo = $("#txtSankhyaCodigo")[0];
 var inputSankhyaDescricao = $("#txtSankhyaDescricao")[0];
@@ -227,6 +224,7 @@ function ShankhyaTopGravar() {
 /* [REMESSA USUÁRIO] */
 var inputCodigoUsuario = $("#txtRemessaUsuario")[0];
 var _remessaUsuarioAutoComplete = []; var _remessaUsuarioGravar = [];
+
 var liRemessaUsuario = '<li id="{data}"><p><button type="button" class="btn btn-danger" onclick="RemessaUsuarioRemoverLista(*{data}*);">' +
     '<i class="fa fa-trash-o"></i></button>  <b> {value}</b></p></li>';
 
@@ -287,5 +285,42 @@ function RemessaUsuarioRemoverLista(IdUsuario) {
     _remessaUsuarioGravar = jQuery.grep(_remessaUsuarioGravar, function (value) {
         return value != IdUsuario;
     });
-    $("#" + IdUsuario).remove();    
+    $("#" + IdUsuario).remove();
+}
+
+/* [REMESSA USUÁRIO] gravar no banco */
+function RemessaUsuarioGravar() {
+    RegistroInclusao.Inclusao = [];
+
+    $.each(_remessaUsuarioGravar, function (i, item) {
+        var registro = new Object();
+        registro.Id_Usr = item;
+
+        RegistroInclusao.Inclusao.push(JSON.stringify(registro));
+    });
+
+    _remessaUsuarioGravar = [];
+    $("#listaRemessaUsuarios").html("");
+
+    RegistroIncluir();
+}
+
+/*** REMESSA CONFIGURAÇÃO  ***/
+
+/* [REMESSA CONFIGURAÇÃO] gravar no banco */
+function RemessaConfigGravar() {
+    RegistroInclusao.Inclusao = [];
+
+    var registro = new Object();
+    registro.Id_Filial_Sankhya = $("#spanIdFilial").html();
+    registro.Filial = $("#spanFilial").html();
+    registro.Cod_Fornecedor = $("#spanFornecedor").html();
+    registro.Automatica = $("#chkRCAutomatica")[0].checked ? 1 : 0;
+    registro.Vlr_Minimo = $("#txtRCMinimoEnvio").val();
+    registro.Total = $("#txtRCTotal").val();
+    RegistroInclusao.Inclusao.push(JSON.stringify(registro));
+
+    console.log(RegistroInclusao);
+
+    //RegistroIncluir();
 }
