@@ -133,6 +133,13 @@ ALTER TABLE DART."PedidoVendaProduto" ADD CONSTRAINT "PedidoVendaProdutoStatus_F
 
 ALTER TABLE DART."PedidoVenda" ADD "DataCriacao" DATE NOT NULL;
 
+ALTER TABLE DART."PedidoVenda" ADD "IdRepresentante" NUMBER NOT NULL;
+
+ALTER TABLE DART."PedidoVenda" ADD CONSTRAINT "PedidoVenda_FK6" FOREIGN KEY ("IdRepresentante") REFERENCES DART."Representante"("IdRepresentante");
+CREATE INDEX "PedidoVenda_INDEX6" ON DART."PedidoVenda" ("IdRepresentante");
+
+
+
 
 
 

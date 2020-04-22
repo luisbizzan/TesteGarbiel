@@ -28,6 +28,10 @@ namespace FWLog.Data.Models
         [Required]
         public long IdTransportadora { get; set; }
 
+        [Index]
+        [Required]
+        public long IdRepresentante { get; set; }
+
         [Required]
         public int NroPedidoVenda { get; set; }
 
@@ -54,6 +58,9 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
+
+        [ForeignKey(nameof(IdRepresentante))]
+        public virtual Representante Representante { get; set; }
 
         [ForeignKey(nameof(IdCliente))]
         public virtual Cliente Cliente { get; set; }
