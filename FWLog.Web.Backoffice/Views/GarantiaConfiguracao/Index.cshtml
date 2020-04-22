@@ -1,6 +1,5 @@
 ﻿@model FWLog.Data.Models.GarantiaConfiguracao.FornecedorQuebra
 @using FWLog.AspNet.Identity
-
 @section Scripts { @BundleHelper.RenderViewScript() }
 
 <div class="col-md-12 col-sm-12">
@@ -22,7 +21,7 @@
                     <a id="CONFIG" class="nav-link" data-toggle="tab" href="#TabConfiguracao" role="tab" aria-selected="false">Configuração</a>
                 </li>
                 <li class="nav-item">
-                    <a id="REM_CONFIG"  class="nav-link" data-toggle="tab" href="#TabRemessaConfiguracao" role="tab" aria-selected="false">Remessa Configuração</a>
+                    <a id="REM_CONFIG" class="nav-link" data-toggle="tab" href="#TabRemessaConfiguracao" role="tab" aria-selected="false">Remessa Configuração</a>
                 </li>
                 <li class="nav-item">
                     <a id="REM_USUARIO" class="nav-link" data-toggle="tab" href="#TabRemessaUsuario" role="tab" aria-selected="false">Remessa Usuário</a>
@@ -67,7 +66,7 @@
                                 <div class="col-md-10 col-sm-12">
                                     <input id="txtSankhyaDescricao" type="text" placeholder="Descrição" class="form-control input-sm text-uppercase">
                                     <button id="btnSankhyaAdicionar" type="button" class="btn btn-success"><i class="fa fa-plus"></i> Adicionar</button>
-                                </div>                                
+                                </div>
                             </div>
 
                             <div class="col-md-12 col-sm-12">
@@ -110,13 +109,45 @@
                 <!-- TAB Remessa Configuração -->
                 <div class="tab-pane fade" id="TabRemessaConfiguracao" role="tabpanel">
                     <div class="x_panel">
-                        <h5 class="text-muted">Remessa Configuração</h5>
+                        <div class="x_panel">
+                            <div class="col-md-4 col-sm-4">
+
+                            </div>
+                            <div class="col-md-8 col-sm-8">
+                                <!-- Grid Configuração -->
+                                <div class="x_content">
+                                    <div class="x_title text-muted"><b>Remessa Configuração</b></div>
+                                    <table id="gridRemessaConfig" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- TAB Remessa Usuário -->
                 <div class="tab-pane fade" id="TabRemessaUsuario" role="tabpanel">
                     <div class="x_panel">
-                        <h5 class="text-muted">Remessa Usuário</h5>
+                        <div class="col-md-4 col-sm-4">
+                            <input class="form-control text-lowercase input-sm" data-original-title="Consultar Usuário" data-toggle="tooltip" data-val="true" id="txtRemessaUsuario" placeholder="Consultar Usuário" type="text" value="">
+                            <div>
+                                <div class="x_panel">
+                                    <div class="x_title text-muted"><b>Usuários selecionados</b></div>
+                                    <div class="x_content">
+                                        <ul id="listaRemessaUsuarios" class="to_do" style="overflow:auto; height:240px"></ul>
+                                    </div>
+                                </div>
+                                <div class="form-inline">
+                                    <button id="btnLimpar" type="button" class="btn btn-danger">Limpar Lista</button>
+                                    <button id="btnGravar" type="button" class="btn btn-primary" onclick="FornecedorQuebraGravar();">Gravar Lista</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 col-sm-8">
+                            <!-- Grid Configuração -->
+                            <div class="x_content">
+                                <div class="x_title text-muted"><b>Remessa Usuário</b></div>
+                                <table id="gridRemessaUsuario" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -187,6 +187,26 @@ namespace FWLog.Web.Backoffice.Controllers
         }
         #endregion
 
+        #region [Remessa Usuário] AutoComplete
+        [HttpPost]
+        public JsonResult RemessaUsuarioAutoComplete(string valor)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(valor))
+                    throw new Exception("Usuário não pode estar em branco!");
+
+                var _usuarios = _garantiaConfigService.RemessaUsuarioAutoComplete(valor.ToUpper());
+
+                return Json(new { Success = true, Usuarios = _usuarios }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
+
         #region [Genérico] Converter TAG
         private static GarantiaConfiguracao ConverterRegistro(GarantiaConfiguracaoViewModel model)
         {

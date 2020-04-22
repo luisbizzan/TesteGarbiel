@@ -25,7 +25,7 @@ namespace FWLog.Data.Models
         #region [FORNECEDOR QUEBRA] AutoComplete
         public class AutoComplete
         {
-            public long Data { get; set; }
+            public string Data { get; set; }
             public string Value { get; set; }
         }
         #endregion

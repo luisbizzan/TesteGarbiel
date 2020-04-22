@@ -148,24 +148,12 @@ namespace FWLog.Data.Repository.GeneralCtx
                 #region formatar comando exclusão pela TAG
                 var cmdSQL = String.Concat("DELETE FROM {0} WHERE ID = ", Registro.Id);
 
-                switch (Registro.Tag)
-                {
-                    case "REM_CONFIG":
-                        cmdSQL = String.Format(cmdSQL, "gar_remessa_config");
-                        break;
-                    case "REM_USUARIO":
-                        cmdSQL = String.Format(cmdSQL, "gar_remessa_usr");
-                        break;
-                    case "CONFIG":
-                        cmdSQL = String.Format(cmdSQL, "gar_config");
-                        break;
-                    case "FORN_QUEBRA":
-                        cmdSQL = String.Format(cmdSQL, "gar_forn_quebra");
-                        break;
-                    case "SANKHYA_TOP":
-                        cmdSQL = String.Format(cmdSQL, "geral_sankhya_tops");
-                        break;
-                }
+                cmdSQL =
+                    Registro.Tag.Equals(GarantiaConfiguracao.TAG.CONFIG.ToString()) ? String.Format(cmdSQL, "gar_config") :
+                    Registro.Tag.Equals(GarantiaConfiguracao.TAG.REM_CONFIG.ToString()) ? String.Format(cmdSQL, "gar_remessa_config") :
+                    Registro.Tag.Equals(GarantiaConfiguracao.TAG.REM_USUARIO.ToString()) ? String.Format(cmdSQL, "gar_remessa_usr") :
+                    Registro.Tag.Equals(GarantiaConfiguracao.TAG.FORN_QUEBRA.ToString()) ? String.Format(cmdSQL, "gar_forn_quebra") :
+                    Registro.Tag.Equals(GarantiaConfiguracao.TAG.SANKHYA_TOP.ToString()) ? String.Format(cmdSQL, "geral_sankhya_tops") : String.Empty;
                 #endregion
 
                 using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
@@ -302,5 +290,36 @@ namespace FWLog.Data.Repository.GeneralCtx
         }
         #endregion
 
+        #region [Remessa Usuário] AutoComplete 
+        public List<GarantiaConfiguracao.AutoComplete> RemessaUsuarioAutoComplete(string nome)
+        {
+            try
+            {
+                var select = new List<GarantiaConfiguracao.AutoComplete>();
+                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                {
+                    conn.Open();
+                    if (conn.State == System.Data.ConnectionState.Open)
+                    {
+                        string cmdSQL = String.Format(String.Concat(
+                            "SELECT \"Id\" Data, \"UserName\" ||' ('|| \"Email\" ||')' Value ",
+                            "FROM \"AspNetUsers\" ",
+                            "WHERE ROWNUM <= 10 ",
+                            "AND \"Email\" LIKE '{0}%' ",
+                            "OR \"UserName\" LIKE '{0}%' ",
+                            "ORDER BY \"UserName\""), nome);
+
+                        select = conn.Query<GarantiaConfiguracao.AutoComplete>(cmdSQL).ToList();
+                    }
+                    conn.Close();
+                }
+                return select;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
     }
 }

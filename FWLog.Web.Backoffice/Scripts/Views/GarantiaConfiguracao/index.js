@@ -1,23 +1,5 @@
-﻿/* [FORNECEDOR QUEBRA] variaveis */
-var botaoFornQuebraLimpar = $("#btnLimpar")[0];
-var botaoFornQuebraGravar = $("#btnGravar")[0];
-var inputCodigoFornecedor = $("#Cod_Fornecedor")[0];
-var ulFornecedores = $("#listaFornecedor")[0];
-var _fornecedoresGravar = []; var _fornecedoresAutoComplete = [];
-var liFornecedorQuebra = '<li id="{id}"><p><button type="button" class="btn btn-danger" onclick="FornecedorQuebraRemoverLista({data1});">' +
-    '<i class="fa fa-trash-o"></i></button>  <b>[{data0}]  {value}</b></p></li>';
-
-/* [SANKHYA TOP] variaveis */
-var botaoSankhyaGravar = $("#btnSankhyaGravar")[0];
-var botaoSankhyaAdicionar = $("#btnSankhyaAdicionar")[0];
-var inputSankhyaCodigo = $("#txtSankhyaCodigo")[0];
-var inputSankhyaDescricao = $("#txtSankhyaDescricao")[0];
-var _SankhyaTopLista = [];
-var ulSankhyaTop = $("#listaSankhyaTop")[0];
-var liSankhyaTop = '<li id="{top}"><p><button type="button" class="btn btn-danger" onclick="ShankhyaTopRemoverLista(*{top}|{descricao}*);">' +
-    '<i class="fa fa-trash-o"></i></button>  <b>[{top}]  {descricao}</b></p></li>';
-
-/* [ GENÉRICO ] */
+﻿
+/***  GENÉRICO  ***/
 var RegistroInclusao = new Object();
 var TagPadrao = $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != null && $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != "" ?
     $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id : "FORN_QUEBRA";
@@ -92,6 +74,15 @@ function RegistroListar(TagInformada) {
 }
 
 /***    FORNECEDOR QUEBRA   ***/
+/* [FORNECEDOR QUEBRA] variaveis */
+var botaoFornQuebraLimpar = $("#btnLimpar")[0];
+var botaoFornQuebraGravar = $("#btnGravar")[0];
+var inputCodigoFornecedor = $("#Cod_Fornecedor")[0];
+var ulFornecedores = $("#listaFornecedor")[0];
+var _fornecedoresGravar = []; var _fornecedoresAutoComplete = [];
+var liFornecedorQuebra = '<li id="{id}"><p><button type="button" class="btn btn-danger" onclick="FornecedorQuebraRemoverLista({data1});">' +
+    '<i class="fa fa-trash-o"></i></button>  <b>[{data0}]  {value}</b></p></li>';
+
 /* [FORNECEDOR QUEBRA] limpar lista */
 $(botaoFornQuebraLimpar).click(function () {
     $(ulFornecedores).html("");
@@ -174,6 +165,16 @@ function FornecedorQuebraGravar() {
 }
 
 /***    SANKHYA TOP     ***/
+/* [SANKHYA TOP] variaveis */
+var botaoSankhyaGravar = $("#btnSankhyaGravar")[0];
+var botaoSankhyaAdicionar = $("#btnSankhyaAdicionar")[0];
+var inputSankhyaCodigo = $("#txtSankhyaCodigo")[0];
+var inputSankhyaDescricao = $("#txtSankhyaDescricao")[0];
+var _SankhyaTopLista = [];
+var ulSankhyaTop = $("#listaSankhyaTop")[0];
+var liSankhyaTop = '<li id="{top}"><p><button type="button" class="btn btn-danger" onclick="ShankhyaTopRemoverLista(*{top}|{descricao}*);">' +
+    '<i class="fa fa-trash-o"></i></button>  <b>[{top}]  {descricao}</b></p></li>';
+
 /* [SANKHYA TOP] remover lista  */
 function ShankhyaTopRemoverLista(sankhyaTopItem) {
     var codigo = sankhyaTopItem.toString().split('|')[0];
@@ -220,4 +221,71 @@ function ShankhyaTopGravar() {
     });
 
     RegistroIncluir();
+}
+
+/***  REMESSA USUÁRIO ***/
+/* [REMESSA USUÁRIO] */
+var inputCodigoUsuario = $("#txtRemessaUsuario")[0];
+var _remessaUsuarioAutoComplete = []; var _remessaUsuarioGravar = [];
+var liRemessaUsuario = '<li id="{data}"><p><button type="button" class="btn btn-danger" onclick="RemessaUsuarioRemoverLista(*{data}*);">' +
+    '<i class="fa fa-trash-o"></i></button>  <b> {value}</b></p></li>';
+
+/* [REMESSA USUÁRIO] autocomplete */
+$(inputCodigoUsuario).autocomplete({
+    lookup: function (query, done) {
+
+        $.ajax({
+            url: "/GarantiaConfiguracao/RemessaUsuarioAutoComplete",
+            global: false,
+            method: "POST",
+            data: {
+                valor: $(inputCodigoUsuario).val()
+            },
+            success: function (s) {
+                if (s.Success) {
+                    $.each(s.Usuarios, function (e, item) {
+                        var registro = new Object();
+                        registro.data = item.Data;
+                        registro.value = item.Value;
+                        _remessaUsuarioAutoComplete.push(registro);
+                    });
+                }
+                else {
+                    PNotify.error({ text: s.Message });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+
+        var result = {
+            suggestions: _remessaUsuarioAutoComplete
+        };
+
+        _remessaUsuarioAutoComplete = [];
+        done(result);
+    },
+
+    onSelect: function (item) {
+        RemessaUsuarioAdicionarLista(item);
+        $(inputCodigoUsuario).val("");
+    }
+});
+
+/* [REMESSA USUÁRIO] adicionar na lista */
+function RemessaUsuarioAdicionarLista(usuario) {
+    if (jQuery.inArray(usuario.data, _remessaUsuarioGravar) == -1) {
+        _remessaUsuarioGravar.push(usuario.data);
+        $("#listaRemessaUsuarios").append(liRemessaUsuario.replace("{data}", usuario.data).replace("{data}", usuario.data).replace("{value}", usuario.value).replace("*", "'").replace("*", "'"));
+    }
+    $(inputCodigoUsuario).val("");
+}
+
+/* [REMESSA USUÁRIO] remover da lista */
+function RemessaUsuarioRemoverLista(IdUsuario) {
+    _remessaUsuarioGravar = jQuery.grep(_remessaUsuarioGravar, function (value) {
+        return value != IdUsuario;
+    });
+    $("#" + IdUsuario).remove();    
 }
