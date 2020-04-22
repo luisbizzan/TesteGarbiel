@@ -131,6 +131,9 @@ ALTER TABLE DART."PedidoVendaProduto" ADD "IdPedidoVendaProdutoStatus" NUMBER(10
 
 ALTER TABLE DART."PedidoVendaProduto" ADD CONSTRAINT "PedidoVendaProdutoStatus_FK3" FOREIGN KEY ("IdPedidoVendaProdutoStatus") REFERENCES DART."PedidoVendaProdutoStatus"("IdPedidoVendaProdutoStatus");
 
+ALTER TABLE DART."PedidoVenda" ADD "DataCriacao" DATE NOT NULL;
+
+
 
 
 
