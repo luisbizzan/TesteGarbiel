@@ -10,11 +10,11 @@
         new
         {
             urlDetalhes = Url.Action("Detalhes"),
-            destalhesVisivel = User.HasPermission(Permissions.Caixa.Visualizar),
+            //destalhesVisivel = User.HasPermission(Permissions.Caixa.Visualizar),
             urlEditar = Url.Action("Editar"),
-            editarVisivel = User.HasPermission(Permissions.Caixa.Editar),
+            //editarVisivel = User.HasPermission(Permissions.Caixa.Editar),
             urlExcluir = Url.Action("ExcluirAjax"),
-            excluirVisivel = User.HasPermission(Permissions.Caixa.Excluir),
+            //excluirVisivel = User.HasPermission(Permissions.Caixa.Excluir),
             urlDadosLista = Url.Action("DadosLista")
         })
 }
@@ -85,10 +85,10 @@
             <div class="x_title">
                 <h2>Lista de Caixas</h2>
                 <div class="nav navbar-right panel_toolbox">
-                    @if (User.HasPermission(Permissions.PontoArmazenagem.Cadastrar))
+                    @*@if (User.HasPermission(Permissions.PontoArmazenagem.Cadastrar))
                     {
                         <a class="btn btn-primary btn-dt-action" href="@Url.Action("Cadastrar")"><i class="fa fa-fw fa-plus"></i> Cadastrar</a>
-                    }
+                    }*@
                 </div>
                 <div class="clearfix"></div>
             </div>

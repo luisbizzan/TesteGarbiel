@@ -1,0 +1,36 @@
+﻿@model FWLog.Data.Models.Caixa
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript()
+}
+
+<div class="col-md-12 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Detalhes Caixa</h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="row">
+                <div class="col-sm-4 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.IdCaixa): @Model.IdCaixa
+                </div>
+                <div class="col-sm-4 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.Nome):  @Model.Nome
+                </div>
+                <div class="col-sm-4 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.TextoEtiqueta): @Model.TextoEtiqueta
+                </div>
+            </div>
+            <div class="ln_solid"></div>
+            <div class="row col-xs-12 form-buttons">
+                <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                <a href="@Url.Action("Editar", new { id = Model.IdCaixa })" class="btn btn-default">Editar</a>
+            </div>
+        </div>
+    </div>
+</div>

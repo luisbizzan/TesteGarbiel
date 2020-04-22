@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using DartDigital.Library.Exceptions;
 using FWLog.AspNet.Identity;
+using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
@@ -21,6 +23,15 @@ namespace FWLog.Web.Backoffice.Controllers
             _caixaService = caixaService;
         }
 
+        private SelectList BuscarCaixaTipoSelectList()
+        {
+            return new SelectList(_caixaService.BuscarTodosCaixaTipo().OrderBy(o => o.IdCaixaTipo).Select(x => new SelectListItem
+            {
+                Value = x.IdCaixaTipo.GetHashCode().ToString(),
+                Text = x.Descricao,
+            }), "Value", "Text");
+        }
+
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.Caixa.Listar)]
         public ActionResult Index()
@@ -34,11 +45,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }, "Value", "Text");
 
 
-            model.ListaCaixaTipo = new SelectList(_caixaService.BuscarTodosCaixaTipo().OrderBy(o => o.IdCaixaTipo).Select(x => new SelectListItem
-            {
-                Value = x.IdCaixaTipo.GetHashCode().ToString(),
-                Text = x.Descricao,
-            }), "Value", "Text");
+            model.ListaCaixaTipo = BuscarCaixaTipoSelectList();
 
             return View(model);
         }
@@ -60,44 +67,90 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-        //[HttpGet]
-        //[ApplicationAuthorize(Permissions = Permissions.Caixa.Cadastrar)]
-        //public ActionResult Cadastrar()
-        //{
-        //    var viewModel = new CaixaCadastroViewModel
-        //    {
-        //        Ativo = true
-        //    };
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Caixa.Cadastrar)]
+        public ActionResult Cadastrar()
+        {
+            ViewData["ListaCaixaTipo"] = BuscarCaixaTipoSelectList();
 
-        //    return View(viewModel);
-        //}
+            return View();
+        }
 
-        //[HttpPost]
-        //[ApplicationAuthorize(Permissions = Permissions.Caixa.Cadastrar)]
-        //public ActionResult Cadastrar(CaixaCadastroViewModel viewModel)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View(viewModel);
-        //    }
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Caixa.Cadastrar)]
+        public ActionResult Cadastrar(Caixa caixa)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewData["ListaCaixaTipo"] = BuscarCaixaTipoSelectList();
 
-        //    List<Caixa> enderecosPontoArmazenagem = _unitOfWork.CaixaRepository.PesquisarPorPontoArmazenagem(viewModel.IdPontoArmazenagem.Value);
-        //    bool enderecoExiste = enderecosPontoArmazenagem.Any(w => w.Codigo.Equals(viewModel.Codigo, StringComparison.OrdinalIgnoreCase));
+                return View(caixa);
+            }
 
-        //    if (enderecoExiste)
-        //    {
-        //        Notify.Error("Endereço já existe no ponto de armazenagem.");
-        //        return View(viewModel);
-        //    }
+            try
+            {
+                caixa.IdEmpresa = IdEmpresa;
 
-        //    var Caixa = Mapper.Map<Caixa>(viewModel);
-        //    Caixa.IdEmpresa = IdEmpresa;
+                _caixaService.Cadastrar(caixa);
 
-        //    _caixaService.Cadastrar(Caixa);
+                Notify.Success("Caixa cadastrada com sucesso.");
+            }
+            catch (BusinessException businessException)
+            {
+                ModelState.AddModelError(string.Empty, businessException.Message);
 
-        //    Notify.Success("Endereço de Armazenagem cadastrado com sucesso.");
-        //    return RedirectToAction("Index");
-        //}
+                ViewData["ListaCaixaTipo"] = BuscarCaixaTipoSelectList();
+
+                return View(caixa);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Caixa.Editar)]
+        public ActionResult Editar(long id)
+        {
+            var caixa = _caixaService.GetCaixaById(id);
+
+            //var viewModel = Mapper.Map<CaixaEditarViewModel>(Caixa);
+
+            return View(caixa);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Caixa.Editar)]
+        public ActionResult Editar(Caixa caixa)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(caixa);
+            }
+
+            try
+            {
+                _caixaService.Editar(caixa);
+
+                Notify.Success("Caixa editada com sucesso.");
+            }
+            catch (BusinessException businessException)
+            {
+                ModelState.AddModelError(string.Empty, businessException.Message);
+
+                return View(caixa);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Caixa.Visualizar)]
+        public ActionResult Detalhes(long id)
+        {
+            var caixa = _caixaService.GetCaixaById(id);
+
+            return View(caixa);
+        }
 
         //[HttpPost]
         //[ApplicationAuthorize(Permissions = Permissions.Caixa.Excluir)]
@@ -121,110 +174,6 @@ namespace FWLog.Web.Backoffice.Controllers
         //            Message = Resources.CommonStrings.RegisterHasRelationshipsErrorMessage
         //        }, JsonRequestBehavior.DenyGet);
         //    }
-        //}
-
-        //[HttpGet]
-        //[ApplicationAuthorize(Permissions = Permissions.Caixa.Editar)]
-        //public ActionResult Editar(long id)
-        //{
-        //    Caixa Caixa = _unitOfWork.CaixaRepository.GetById(id);
-
-        //    var viewModel = Mapper.Map<CaixaEditarViewModel>(Caixa);
-
-        //    return View(viewModel);
-        //}
-
-        //[HttpPost]
-        //[ApplicationAuthorize(Permissions = Permissions.Caixa.Editar)]
-        //public ActionResult Editar(CaixaEditarViewModel viewModel)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View(viewModel);
-        //    }
-
-        //    Caixa Caixa = _unitOfWork.CaixaRepository.GetById(viewModel.IdCaixa);
-
-        //    if (!Caixa.Codigo.Equals(viewModel.Codigo, StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        List<Caixa> enderecosPontoArmazenagem = _unitOfWork.CaixaRepository.PesquisarPorPontoArmazenagem(viewModel.IdPontoArmazenagem.Value);
-        //        int numeroEnderecos = enderecosPontoArmazenagem.Where(w =>
-        //            w.IdCaixa != viewModel.IdCaixa &&
-        //            w.Codigo.Equals(viewModel.Codigo, StringComparison.OrdinalIgnoreCase)).Count();
-
-        //        if (numeroEnderecos > 0)
-        //        {
-        //            Notify.Error("Endereço já existe no ponto de armazenagem.");
-        //            return View(viewModel);
-        //        }
-        //    }
-
-        //    Caixa.Ativo = viewModel.Ativo;
-        //    Caixa.IsEntrada = viewModel.IsEntrada;
-        //    Caixa.Codigo = viewModel.Codigo;
-        //    Caixa.EstoqueMaximo = viewModel.EstoqueMaximo;
-        //    Caixa.EstoqueMinimo = viewModel.EstoqueMinimo;
-        //    Caixa.IdNivelArmazenagem = viewModel.IdNivelArmazenagem.Value;
-        //    Caixa.IdPontoArmazenagem = viewModel.IdPontoArmazenagem.Value;
-        //    Caixa.IsFifo = viewModel.IsFifo;
-        //    Caixa.IsPontoSeparacao = viewModel.IsPontoSeparacao;
-        //    Caixa.LimitePeso = viewModel.LimitePeso;
-        //    Caixa.IdEmpresa = IdEmpresa;
-
-        //    _CaixaService.Editar(Caixa);
-
-        //    Notify.Success("Endereço de Armazenagem editado com sucesso.");
-        //    return RedirectToAction("Index");
-        //}
-
-        //[HttpGet]
-        //[ApplicationAuthorize(Permissions = Permissions.Caixa.Visualizar)]
-        //public ActionResult Detalhes(long id)
-        //{
-        //    Caixa Caixa = _unitOfWork.CaixaRepository.GetById(id);
-
-        //    var viewModel = Mapper.Map<CaixaDetalhesViewModel>(Caixa);
-
-        //    var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarRegistrosPorEndereco(viewModel.IdCaixa);
-
-        //    // Popula Itens na lista de produtos do Endereço Armazenagem
-        //    loteProdutoEndereco.ForEach(lpe =>
-        //    {
-        //        if (lpe.Caixa.PontoArmazenagem.Descricao != "Picking")
-        //        {
-        //            var item = new ProdutoItem
-        //            {
-        //                NumeroLote = lpe.Lote == null ? "-" : lpe.Lote.IdLote.ToString(),
-        //                NumeroNf = lpe.Lote == null ? "-" : lpe.Lote.NotaFiscal.Numero.ToString(),
-        //                CodigoReferencia = lpe.Produto.Referencia,
-        //                DataInstalacao = lpe.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss"),
-        //                Descricao = lpe.Produto.Descricao,
-        //                Multiplo = lpe.Produto.MultiploVenda.ToString(),
-        //                Peso = lpe.Produto.PesoBruto.ToString("n2"),
-        //                QuantidadeInstalada = lpe.Quantidade.ToString(),
-        //                UsuarioResponsavel = _unitOfWork.PerfilUsuarioRepository.GetByUserId(lpe.AspNetUsers.Id).Nome
-        //            };
-
-        //            viewModel.Items.Add(item);
-        //        }
-        //        else
-        //        {
-        //            var item = new ProdutoItem
-        //            {
-        //                CodigoReferencia = lpe.Produto.Referencia,
-        //                DataInstalacao = lpe.DataHoraInstalacao.ToString("dd/MM/yyyy HH:mm:ss"),
-        //                Descricao = lpe.Produto.Descricao,
-        //                Multiplo = lpe.Produto.MultiploVenda.ToString("n2"),
-        //                Peso = lpe.Produto.PesoBruto.ToString("n2"),
-        //                QuantidadeInstalada = lpe.Quantidade.ToString(),
-        //                UsuarioResponsavel = _unitOfWork.PerfilUsuarioRepository.GetByUserId(lpe.AspNetUsers.Id).Nome
-        //            };
-
-        //            viewModel.Items.Add(item);
-        //        }
-        //    });
-
-        //    return View(viewModel);
         //}
 
         //[HttpGet]
