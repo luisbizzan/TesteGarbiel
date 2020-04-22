@@ -91,7 +91,7 @@ namespace FWLog.Services.Services
                                 IdAtividadeEstoqueTipo = AtividadeEstoqueTipoEnum.AbastecerPicking,
                                 IdEnderecoArmazenagem = item.IdEnderecoArmazenagem,
                                 IdProduto = item.IdProduto,
-                                DataSolicitacao = new DateTime(),
+                                DataSolicitacao = DateTime.Now,
                                 Finalizado = false
                             });
 
@@ -110,7 +110,7 @@ namespace FWLog.Services.Services
         {
             try
             {
-                DateTime dataAtual = new DateTime();
+                DateTime dataAtual = DateTime.Now;
                 int diaSemana = (int)dataAtual.DayOfWeek;
 
                 if (diaSemana == 2) //Segunda-feira
@@ -130,7 +130,7 @@ namespace FWLog.Services.Services
                                 IdAtividadeEstoqueTipo = AtividadeEstoqueTipoEnum.ConferenciaEndereco,
                                 IdEnderecoArmazenagem = item.IdEnderecoArmazenagem,
                                 IdProduto = item.IdProduto,
-                                DataSolicitacao = new DateTime(),
+                                DataSolicitacao = DateTime.Now,
                                 Finalizado = false
                             });
 
@@ -149,7 +149,7 @@ namespace FWLog.Services.Services
         {
             try
             {
-                DateTime dataAtual = new DateTime();
+                DateTime dataAtual = DateTime.Now;
                 int diaSemana = (int)dataAtual.DayOfWeek;
 
                 if (diaSemana != 1 && diaSemana != 7) //Diferente de sabado e domingo
@@ -170,7 +170,7 @@ namespace FWLog.Services.Services
                                 IdAtividadeEstoqueTipo = AtividadeEstoqueTipoEnum.ConferenciaProdutoForaLinha,
                                 IdEnderecoArmazenagem = item.IdEnderecoArmazenagem.Value,
                                 IdProduto = item.IdProduto,
-                                DataSolicitacao = new DateTime(),
+                                DataSolicitacao = DateTime.Now,
                                 Finalizado = false
                             });
 
