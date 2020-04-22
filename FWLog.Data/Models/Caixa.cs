@@ -25,16 +25,16 @@ namespace FWLog.Data.Models
         public string TextoEtiqueta { get; set; }
 
         [Required]
-        public int Largura { get; set; }
+        public decimal Largura { get; set; }
 
         [Required]
-        public int Altura { get; set; }
+        public decimal Altura { get; set; }
 
         [Required]
-        public int Comprimento { get; set; }
+        public decimal Comprimento { get; set; }
 
         [Required]
-        public int Cubagem { get; set; }
+        public decimal Cubagem { get; set; }
 
         [Required]
         public decimal PesoCaixa { get; set; }
