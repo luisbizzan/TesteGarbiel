@@ -15,14 +15,6 @@ namespace FWLog.Services.Services
             _unitOfWork = unitOfWork;
         }
 
-        public Caixa Cadastrar(Caixa caixa)
-        {
-            _unitOfWork.CaixaRepository.Add(caixa);
-            _unitOfWork.SaveChanges();
-
-            return caixa;
-        }
-
         public List<CaixaTipo> BuscarTodosCaixaTipo()
         {
             return _unitOfWork.CaixaTipoRepository.Todos();
@@ -33,17 +25,30 @@ namespace FWLog.Services.Services
             return _unitOfWork.CaixaRepository.BuscarLista(filtro, out registrosFiltrados, out totalRegistros);
         }
 
+        public void Cadastrar(Caixa caixa)
+        {
+            caixa.Cubagem = caixa.Largura * caixa.Altura * caixa.Comprimento;
+
+            _unitOfWork.CaixaRepository.Add(caixa);
+            _unitOfWork.SaveChanges();
+        }
+
+        public Caixa GetCaixaById(long idCaixa)
+        {
+            return _unitOfWork.CaixaRepository.GetById(idCaixa);
+        }
+
+        public void Editar(Caixa Caixa)
+        {
+            _unitOfWork.CaixaRepository.Update(Caixa);
+            _unitOfWork.SaveChanges();
+        }
+
         //public void Excluir(long idCaixa)
         //{
         //    Caixa Caixa = _unitOfWork.CaixaRepository.GetById(idCaixa);
 
         //    _unitOfWork.CaixaRepository.Delete(Caixa);
-        //    _unitOfWork.SaveChanges();
-        //}
-
-        //public void Editar(Caixa Caixa)
-        //{
-        //    _unitOfWork.CaixaRepository.Update(Caixa);
         //    _unitOfWork.SaveChanges();
         //}
     }

@@ -536,6 +536,7 @@
     <Content Include="Scripts\Views\BOPrinter\create.js" />
     <Content Include="Scripts\Views\BOPrinter\edit.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioRastreioPeca.js" />
+    <Content Include="Scripts\Views\Caixa\cadastrar.js" />
     <Content Include="Scripts\Views\Cliente\searchModal.js" />
     <Content Include="Scripts\Views\Empresa\editar.js" />
     <Content Include="Scripts\Views\Empresa\searchModal.js" />
@@ -658,6 +659,9 @@
     <Content Include="Views\Armazenagem\RelatorioAtividadeEstoque.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\ConfirmarImpressao.cshtml" />
     <Content Include="Views\Caixa\Index.cshtml" />
+    <Content Include="Views\Caixa\Cadastrar.cshtml" />
+    <Content Include="Views\Caixa\Editar.cshtml" />
+    <Content Include="Views\Caixa\Detalhes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
@@ -902,7 +906,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
-    <Folder Include="Views\EnderecoArmazenagem\Caixa\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
