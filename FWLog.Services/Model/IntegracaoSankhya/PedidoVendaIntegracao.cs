@@ -27,7 +27,11 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string CodigoIntegracaoTransportadora { get; set; }      
 
         [TabelaIntegracao(DisplayName = "TGFCAB.DTNEG")]
-        public string DataCriacao { get; set; } 
+        public string DataCriacao { get; set; }
+
+        [TabelaIntegracao(DisplayName = "TGFCAB.CODVEND")]
+        [Required]
+        public string CodigoIntegracaoRepresentante { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFITE.CODPROD")]
         [Required]

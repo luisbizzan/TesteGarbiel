@@ -10,7 +10,6 @@ using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 using log4net;
 
 namespace FWLog.Services.Services
@@ -33,7 +32,7 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            var where = " WHERE TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSSEP = 1)";
+            var where = " WHERE TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSREC = 0 OR TGFCAB.AD_STATUSREC IS NULL)";
             var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
 
             List<PedidoVendaIntegracao> pedidosVendaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<PedidoVendaIntegracao>(where, inner);
@@ -69,6 +68,13 @@ namespace FWLog.Services.Services
                         throw new Exception(string.Format("Código do Cliente (CODPARC: {0}) inválido", pedidoVendaIntegracao.CodigoIntegracaoCliente));
                     }
 
+                    var codRep = Convert.ToInt32(pedidoVendaIntegracao.CodigoIntegracaoRepresentante);
+                    Representante representante = _uow.RepresentanteRepository.ConsultarPorCodigoIntegracao(codCliente);
+                    if (cliente == null)
+                    {
+                        throw new Exception(string.Format("Código do Representante (CODVEND: {0}) inválido", pedidoVendaIntegracao.CodigoIntegracaoRepresentante));
+                    }
+
                     bool pedidoNovo = true;
 
                     var codPedido = Convert.ToInt32(pedidoVendaIntegracao.CodigoIntegracao);
@@ -90,6 +96,7 @@ namespace FWLog.Services.Services
                     pedidoVenda.DataCriacao = pedidoVendaIntegracao.DataCriacao == null ? DateTime.Now : DateTime.ParseExact(pedidoVendaIntegracao.DataCriacao, "ddMMyyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     pedidoVenda.IdEmpresa = empresa.IdEmpresa;
                     pedidoVenda.IdTransportadora = transportadora.IdTransportadora;
+                    pedidoVenda.IdRepresentante = representante.IdRepresentante;
 
                     var pedidoVendaProdutos = pedidoIntegracao.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.QtdPedido, s.Sequencia }).ToList();
 
