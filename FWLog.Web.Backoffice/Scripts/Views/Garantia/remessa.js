@@ -198,8 +198,6 @@ function visualizarSolicitacao() {
     });
 }
 
-
-
 function conferirSolicitacao() {
     var id = $(this).data("id");
     let modal = $("#modalVisualizar");

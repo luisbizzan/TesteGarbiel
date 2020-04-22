@@ -338,6 +338,8 @@
     <Compile Include="Models\GarantiaCtx\GarantiaDetalhesEntradaConferenciaViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaEntradaConferenciaViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaSolicitacaoItemVM.cs" />
+    <Compile Include="Models\GarantiaCtx\GarantiaLaudoVM.cs" />
+    <Compile Include="Models\GarantiaCtx\GarantiaRemessaVM.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaSolicitacaoVM.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaRegistroRecebimentoViewModel.cs" />
     <Compile Include="Models\GeralCtx\GeralUploadVM.cs" />
@@ -632,6 +634,8 @@
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\index.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
+    <Content Include="Scripts\Views\Garantia\conferirSolicitacao.js" />
+    <Content Include="Scripts\Views\Garantia\remessa.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
     <Content Include="Scripts\Views\Geral\formGeralUploads.js" />
     <Content Include="Scripts\Views\Geral\formGeralHistoricos.js" />
@@ -731,6 +735,12 @@
     <Content Include="Views\GarantiaConfiguracao\Index.cshtml" />
     <Content Include="Views\Garantia\_VisualizarSolicitacao.cshtml" />
     <Content Include="Views\Garantia\_ConferirSolicitacao.cshtml" />
+    <Content Include="Views\Garantia\_ConferenciaForm.cshtml" />
+    <Content Include="Views\Garantia\_ConferenciaDivergencia.cshtml" />
+    <Content Include="Views\Garantia\_ConferenciaLaudo.cshtml" />
+    <Content Include="Views\Garantia\_ConferenciaLaudoDetalhe.cshtml" />
+    <Content Include="Views\Garantia\Remessa.cshtml" />
+    <Content Include="Views\Garantia\_ConferenciaItensPendentes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

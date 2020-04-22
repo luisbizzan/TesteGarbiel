@@ -1,0 +1,44 @@
+﻿@model FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaConferenciaDivergenciaVM
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="x_panel">
+            <div class="x_content">
+                <table id="tbDivergenciaItens" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(m => m.Cabecalho.Refx)</th>
+                            <th>@Html.DisplayNameFor(m => m.Cabecalho.Descricao)</th>
+                            <th>@Html.DisplayNameFor(m => m.Cabecalho.Quant)</th>
+                            <th>@Html.DisplayNameFor(m => m.Cabecalho.Quant_Conferida)</th>
+                            <th>@Html.DisplayNameFor(m => m.Cabecalho.Divergencia)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Itens)
+                        {
+                            <tr>
+                                <td>@item.Refx</td>
+                                <td>@item.Descricao</td>
+                                <td>@item.Quant</td>
+                                <td>@item.Quant_Conferida</td>
+                                <td>
+                                    @if (item.Divergencia > 0)
+                                    {
+                                        <span class="label label-success"> @item.Divergencia</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-danger"> @item.Divergencia</span>
+
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <button id="btFinalizarDivergencia" type="button" class="btn btn-success right"><i class="fa fa-save"></i> Finalizar Conferência</button>
+            </div>
+        </div>
+    </div>
+</div>
