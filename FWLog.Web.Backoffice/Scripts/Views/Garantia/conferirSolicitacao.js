@@ -20,6 +20,10 @@ function conferir() {
         $("#btFinalizarConferencia").click(function () {
             finalizarConferencia();
         });
+
+        $("#btItensPendentes").click(function () {
+            itensPendentes();
+        });
     });
 }
 
@@ -68,7 +72,7 @@ function finalizarConferencia() {
     $("#divergencia-tab").parent().removeClass("disabled");
     $("#divergencia-tab").attr("data-toggle", "tab");
 
-     //ajax para verificar se esta certo e retornar a quantida de divergencias
+    //ajax para verificar se esta certo e retornar a quantida de divergencias
     $.alert({
         type: 'red',
         typeAnimated: true,
@@ -94,7 +98,17 @@ function itensLaudoDetalhe() {
     let modal = $("#modalLaudoDetalhes .modal-body");
     $("#modalLaudoDetalhes .modal-title").html("zzz - Itens");
 
-    modal.load(CONTROLLER_PATH + "ConferenciaLaudoDetalhe/" + id, function () {      
+    modal.load(CONTROLLER_PATH + "ConferenciaLaudoDetalhe/" + id, function () {
         $("#modalLaudoDetalhes").modal("show");
+    });
+}
+
+function itensPendentes() {
+    var id = 0;
+    let modal = $("#modalItensPendentes .modal-body");
+    $("#modalItensPendentes .modal-title").html("Itens Pendentes");
+
+    modal.load(CONTROLLER_PATH + "ConferenciaItensPendentes/" + id, function () {
+        $("#modalItensPendentes").modal("show");
     });
 }

@@ -740,6 +740,7 @@
     <Content Include="Views\Garantia\_ConferenciaLaudo.cshtml" />
     <Content Include="Views\Garantia\_ConferenciaLaudoDetalhe.cshtml" />
     <Content Include="Views\Garantia\Remessa.cshtml" />
+    <Content Include="Views\Garantia\_ConferenciaItensPendentes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

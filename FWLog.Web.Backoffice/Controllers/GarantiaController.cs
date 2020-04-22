@@ -125,6 +125,15 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_ConferenciaLaudo", model);
         }
 
+        public ActionResult ConferenciaItensPendentes(long Id)
+        {
+            var model = new GarantiaLaudoVM
+            {
+            };
+
+            return PartialView("_ConferenciaItensPendentes", model);
+        }
+
         public ActionResult ConferenciaLaudoDetalhe(long Id)
         {
             var model = new GarantiaLaudoVM
