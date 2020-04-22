@@ -31,32 +31,32 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             if (filtro.CustomFilter.PesoMaximo.HasValue)
             {
-                query = query.Where(caixa => caixa.PesoMaximo.Equals(filtro.CustomFilter.PesoMaximo));
+                query = query.Where(caixa => caixa.PesoMaximo == filtro.CustomFilter.PesoMaximo);
             }
 
             if (filtro.CustomFilter.Cubagem.HasValue)
             {
-                query = query.Where(caixa => caixa.Cubagem.Equals(filtro.CustomFilter.Cubagem));
+                query = query.Where(caixa => caixa.Cubagem == filtro.CustomFilter.Cubagem);
             }
 
             if (filtro.CustomFilter.Sobra.HasValue)
             {
-                query = query.Where(caixa => caixa.Sobra.Equals(filtro.CustomFilter.Sobra));
+                query = query.Where(caixa => caixa.Sobra == filtro.CustomFilter.Sobra);
             }
 
             if (filtro.CustomFilter.IdCaixaTipo.HasValue)
             {
-                query = query.Where(caixa => caixa.IdCaixaTipo.Equals(filtro.CustomFilter.IdCaixaTipo));
+                query = query.Where(caixa => caixa.IdCaixaTipo == filtro.CustomFilter.IdCaixaTipo);
             }
 
             if (filtro.CustomFilter.PesoCaixa.HasValue)
             {
-                query = query.Where(caixa => caixa.PesoCaixa.Equals(filtro.CustomFilter.PesoCaixa));
+                query = query.Where(caixa => caixa.PesoCaixa == filtro.CustomFilter.PesoCaixa);
             }
 
             if (filtro.CustomFilter.Prioridade.HasValue)
             {
-                query = query.Where(caixa => caixa.Prioridade.Equals(filtro.CustomFilter.Prioridade));
+                query = query.Where(caixa => caixa.Prioridade == filtro.CustomFilter.Prioridade);
             }
 
             if (filtro.CustomFilter.Status.HasValue)
@@ -75,7 +75,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 PesoMaximo = caixa.PesoMaximo,
                 Cubagem = caixa.Cubagem,
                 Sobra = caixa.Sobra,
-                IdCaixaTipo = caixa.IdCaixaTipo,
+                CaixaTipoDescricao = caixa.CaixaTipo.Descricao,
                 PesoCaixa = caixa.PesoCaixa,
                 Prioridade = caixa.Prioridade,
                 Status = caixa.Ativo ? "Ativo" : "Inativo"

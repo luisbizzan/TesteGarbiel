@@ -2,7 +2,6 @@
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
-using System;
 using System.Collections.Generic;
 
 namespace FWLog.Services.Services
@@ -22,6 +21,11 @@ namespace FWLog.Services.Services
             _unitOfWork.SaveChanges();
 
             return caixa;
+        }
+
+        public List<CaixaTipo> BuscarTodosCaixaTipo()
+        {
+            return _unitOfWork.CaixaTipoRepository.Todos();
         }
 
         public List<CaixaListaTabela> BuscarLista(DataTableFilter<CaixaListaFiltro> filtro, out int registrosFiltrados, out int totalRegistros)

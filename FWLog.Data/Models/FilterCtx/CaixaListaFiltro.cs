@@ -12,19 +12,19 @@ namespace FWLog.Data.Models.FilterCtx
         [Display(Name = "Texto Etiqueta")]
         public string TextoEtiqueta { get; set; }
 
-        [Display(Name = "Peso Máximo")]
+        [Display(Name = "Peso Máximo (Kg)")]
         public decimal? PesoMaximo { get; set; }
 
-        [Display(Name = "Cubicagem")]
+        [Display(Name = "Cubicagem (CM³)")]
         public decimal? Cubagem { get; set; }
 
-        [Display(Name = "Sobra")]
+        [Display(Name = "Sobra (%)")]
         public decimal? Sobra { get; set; }
 
         [Display(Name = "Caixa para")]
         public CaixaTipoEnum? IdCaixaTipo { get; set; }
 
-        [Display(Name = "Peso da Caixa")]
+        [Display(Name = "Peso da Caixa (Kg)")]
         public decimal? PesoCaixa { get; set; }
 
         [Display(Name = "Prioridade")]

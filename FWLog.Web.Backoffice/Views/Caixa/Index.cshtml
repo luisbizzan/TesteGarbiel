@@ -37,9 +37,37 @@
                     @Html.LabelFor(m => m.Filtros.TextoEtiqueta)
                     @Html.TextBoxFor(m => m.Filtros.TextoEtiqueta, new { @class = "form-control", data_field = "TextoEtiqueta" })
                 </div>
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Filtros.PesoMaximo)
+                    @Html.TextBoxFor(m => m.Filtros.PesoMaximo, new { @class = "form-control", data_field = "PesoMaximo" })
+                </div>
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Filtros.Cubagem)
+                    @Html.TextBoxFor(m => m.Filtros.Cubagem, new { @class = "form-control", data_field = "Cubagem" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Filtros.Sobra)
+                    @Html.TextBoxFor(m => m.Filtros.Sobra, new { @class = "form-control", data_field = "Sobra" })
+                </div>
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Filtros.IdCaixaTipo)
+                    @Html.DropDownListFor(m => m.Filtros.IdCaixaTipo, Model.ListaCaixaTipo, "Todos...", new { @class = "form-control", data_field = "IdCaixaTipo" })
+                </div>
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Filtros.PesoCaixa)
+                    @Html.TextBoxFor(m => m.Filtros.PesoCaixa, new { @class = "form-control", data_field = "PesoCaixa" })
+                </div>
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Filtros.Prioridade)
+                    @Html.TextBoxFor(m => m.Filtros.Prioridade, new { @class = "form-control", data_field = "Prioridade" })
+                </div>
+            </div>
+            <div class="row">
                 <div class="form-group col-md-4 col-lg-2">
                     @Html.LabelFor(m => m.Filtros.Status)
-                    @Html.DropDownListFor(m => m.Filtros.Status, (IEnumerable<SelectListItem>)ViewBag.Status, "Todos...", new { @class = "form-control", data_field = "Status" })
+                    @Html.DropDownListFor(m => m.Filtros.Status, Model.ListaStatus, "Todos...", new { @class = "form-control", data_field = "Status" })
                 </div>
             </div>
             <div class="row">
@@ -73,7 +101,7 @@
                             <th>@Html.DisplayNameFor(m => m.ItemVazio.PesoMaximo)</th>
                             <th>@Html.DisplayNameFor(m => m.ItemVazio.Cubagem)</th>
                             <th>@Html.DisplayNameFor(m => m.ItemVazio.Sobra)</th>
-                            <th>@Html.DisplayNameFor(m => m.ItemVazio.IdCaixaTipo)</th>
+                            <th>@Html.DisplayNameFor(m => m.ItemVazio.CaixaTipoDescricao)</th>
                             <th>@Html.DisplayNameFor(m => m.ItemVazio.PesoCaixa)</th>
                             <th>@Html.DisplayNameFor(m => m.ItemVazio.Prioridade)</th>
                             <th>@Html.DisplayNameFor(m => m.ItemVazio.Status)</th>

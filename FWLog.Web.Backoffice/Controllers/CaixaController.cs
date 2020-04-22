@@ -4,8 +4,10 @@ using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
+using FWLog.Web.Backoffice.Models.CaixaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -23,9 +25,22 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Caixa.Listar)]
         public ActionResult Index()
         {
-            SetViewBags();
+            var model = new CaixaListaViewModel();
 
-            return View();
+            model.ListaStatus = new SelectList(new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Ativo", Value = "true"},
+                new SelectListItem { Text = "Inativo", Value = "false"}
+            }, "Value", "Text");
+
+
+            model.ListaCaixaTipo = new SelectList(_caixaService.BuscarTodosCaixaTipo().OrderBy(o => o.IdCaixaTipo).Select(x => new SelectListItem
+            {
+                Value = x.IdCaixaTipo.GetHashCode().ToString(),
+                Text = x.Descricao,
+            }), "Value", "Text");
+
+            return View(model);
         }
 
         [HttpPost]

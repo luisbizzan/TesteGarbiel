@@ -50,7 +50,7 @@
             { data: 'PesoMaximo' },
             { data: 'Cubagem' },
             { data: 'Sobra' },
-            { data: 'IdCaixaTipo' },
+            { data: 'CaixaTipoDescricao' },
             { data: 'PesoCaixa' },
             { data: 'Prioridade' },
             { data: 'Status' },
