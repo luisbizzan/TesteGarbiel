@@ -1,7 +1,7 @@
-﻿@using ViewGlobalizationResolver = FWLog.Web.Backoffice.Helpers.Globalization.ViewGlobalizationResolver 
+﻿@using ViewGlobalizationResolver = FWLog.Web.Backoffice.Helpers.Globalization.ViewGlobalizationResolver
 
 @{
-    var resolver = ViewGlobalizationResolver.GetResolver();    
+    var resolver = ViewGlobalizationResolver.GetResolver();
 }
 
 @resolver.RenderMomentLocaleScript()
@@ -25,7 +25,7 @@
 
         // jQuery Mask
         var applyMask = function () {
-        
+
             var cpfCnpjMaskBehavior = function (val) {
                 // Os digitos extras no CPF servem para permitir que um CNPJ seja colado no campo,
                 // sem que o CNPJ seja cortado por conta da máscara do CPF.
@@ -55,7 +55,7 @@
                 $(this).mask(createPhoneMask($(this).val(), false), phoneOptions);
             });
             $('.cep').mask('00000-000');
-            $('.cpf-cnpj').mask(cpfCnpjMaskBehavior, cpfCnpjOptions);            
+            $('.cpf-cnpj').mask(cpfCnpjMaskBehavior, cpfCnpjOptions);
             $('.decimal').mask('@resolver.GetDecimalNumberMask()', { reverse: true });
             $('.integer').mask("#0", { reverse: true });
             $('.alpha-only').mask('Z', { translation: { 'Z': { pattern: /[a-zA-ZÀ-ÿ ]/, recursive: true } } });
@@ -72,7 +72,7 @@
             else {
                 return '(00) 0000-00000';
             }
-        }   
+        }
 
         // jQuery Validate
         var configValidator = function () {
@@ -95,7 +95,7 @@
             $.validator.addMethod("cpforcnpj", function (value, element, params) {
                 return dart.validations.isValidCpfOrCnpj(value);
             });
-            
+
             $.validator.unobtrusive.adapters.add("cpf", ["cpf"], function (options) {
                 options.rules["cpf"] = {};
                 options.messages["cpf"] = options.message;
@@ -135,7 +135,15 @@
                 return true;
             });
 
+            //Filtro Decimal para aceitar vírgula
+            $.validator.methods.range = function (value, element, param) {
+                var globalizedValue = value.replace(",", ".");
+                return this.optional(element) || (globalizedValue >= param[0] && globalizedValue <= param[1]);
+            }
 
+            $.validator.methods.number = function (value, element) {
+                return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:[\s\.,]\d{3})+)(?:[\.,]\d+)?$/.test(value);
+            }
         };
 
         // DateTimePicker
@@ -205,9 +213,9 @@
         // Dart
         var configDart = function () {
 
-            @{               
+            @{
                 string config = Json.Encode(new
-                { 
+                {
                     saveTempFileUrl = Url.Action("SaveTempFile", "File"),
                     downloadFileUrl = Url.Action("Download", "File"),
                     saveTempFileAndCropUrl = Url.Action("SaveTempFileAndCrop", "File")
