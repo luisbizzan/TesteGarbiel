@@ -95,7 +95,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 caixa.IdEmpresa = IdEmpresa;
 
-                _caixaService.Cadastrar(caixa);
+                _caixaService.Cadastrar(caixa, IdEmpresa);
 
                 Notify.Success("Caixa cadastrada com sucesso.");
             }
@@ -117,34 +117,42 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var caixa = _caixaService.GetCaixaById(id);
 
-            //var viewModel = Mapper.Map<CaixaEditarViewModel>(Caixa);
+            var viewModel = Mapper.Map<CaixaEdicaoViewModel>(caixa);
 
-            return View(caixa);
+            viewModel.ListaCaixaTipo = BuscarCaixaTipoSelectList();
+
+            return View(viewModel);
         }
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Caixa.Editar)]
-        public ActionResult Editar(Caixa caixa)
+        public ActionResult Editar(CaixaEdicaoViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
-                return View(caixa);
+                viewModel.ListaCaixaTipo = BuscarCaixaTipoSelectList();
+
+                return View(viewModel);
             }
 
             try
             {
-                _caixaService.Editar(caixa);
+                var caixa = Mapper.Map<Caixa>(viewModel);
+
+                _caixaService.Editar(caixa, IdEmpresa);
 
                 Notify.Success("Caixa editada com sucesso.");
+
+                return RedirectToAction("Index");
             }
             catch (BusinessException businessException)
             {
                 ModelState.AddModelError(string.Empty, businessException.Message);
 
-                return View(caixa);
-            }
+                viewModel.ListaCaixaTipo = BuscarCaixaTipoSelectList();
 
-            return RedirectToAction("Index");
+                return View(viewModel);
+            }
         }
 
         [HttpGet]

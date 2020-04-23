@@ -1,4 +1,5 @@
-﻿using FWLog.Data;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
@@ -25,9 +26,16 @@ namespace FWLog.Services.Services
             return _unitOfWork.CaixaRepository.BuscarLista(filtro, out registrosFiltrados, out totalRegistros);
         }
 
-        public void Cadastrar(Caixa caixa)
+        private void CalculaCubagem(Caixa caixa)
         {
             caixa.Cubagem = caixa.Largura * caixa.Altura * caixa.Comprimento;
+        }
+
+        public void Cadastrar(Caixa caixa, long idEmpresaUsuarioLogado)
+        {
+            caixa.IdEmpresa = idEmpresaUsuarioLogado;
+
+            CalculaCubagem(caixa);
 
             _unitOfWork.CaixaRepository.Add(caixa);
             _unitOfWork.SaveChanges();
@@ -38,9 +46,36 @@ namespace FWLog.Services.Services
             return _unitOfWork.CaixaRepository.GetById(idCaixa);
         }
 
-        public void Editar(Caixa Caixa)
+        public void Editar(Caixa caixa, long idEmpresaUsuarioLogado)
         {
-            _unitOfWork.CaixaRepository.Update(Caixa);
+            var caixaAntiga = GetCaixaById(caixa.IdCaixa);
+
+            if (caixaAntiga == null)
+            {
+                throw new BusinessException("Caixa não encontrada");
+            }
+
+            if (caixaAntiga.IdEmpresa != idEmpresaUsuarioLogado)
+            {
+                throw new BusinessException("Usuário não tem permissão para editar caixa");
+            }
+
+            caixaAntiga.IdCaixaTipo = caixa.IdCaixaTipo;
+            caixaAntiga.Nome = caixa.Nome;
+            caixaAntiga.TextoEtiqueta = caixa.TextoEtiqueta;
+            caixaAntiga.Largura = caixa.Largura;
+            caixaAntiga.Altura = caixa.Altura;
+            caixaAntiga.Comprimento = caixa.Comprimento;
+
+            CalculaCubagem(caixaAntiga);
+
+            caixaAntiga.PesoCaixa = caixa.PesoCaixa;
+            caixaAntiga.PesoMaximo = caixa.PesoMaximo;
+            caixaAntiga.Sobra = caixa.Sobra;
+            caixaAntiga.Prioridade = caixa.Prioridade;
+            caixaAntiga.Ativo = caixa.Ativo;
+
+            _unitOfWork.CaixaRepository.Update(caixaAntiga);
             _unitOfWork.SaveChanges();
         }
 
