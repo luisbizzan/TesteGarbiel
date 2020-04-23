@@ -145,11 +145,11 @@ namespace FWLog.Services.Services
 
                     _uow.SaveChanges();
 
-                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.AguardandoSeparacao;
+                   // pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.AguardandoSeparacao;
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", pedidoVenda.CodigoIntegracao.ToString() } };
 
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSSEP", PedidoVendaStatusEnum.AguardandoSeparacao.GetHashCode());
+                   // await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSSEP", PedidoVendaStatusEnum.AguardandoSeparacao.GetHashCode());
 
                     _uow.SaveChanges();
                 }
