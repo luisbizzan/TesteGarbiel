@@ -2,6 +2,7 @@
 @using FWLog.AspNet.Identity
 
 @{
+    ViewBag.Title = "Caixas de Separação";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -27,7 +28,7 @@
             </h2>
             <div class="clearfix"></div>
         </div>
-        <div class="x_content" style="display: block;">
+        <div class="x_content">
             <div class="row">
                 <div class="form-group col-md-6 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.Nome)

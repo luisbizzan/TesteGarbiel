@@ -65,11 +65,11 @@
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-sm-2 col-xs-12">
+                @*<div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.IdCaixaTipo, new { @class = "control-label" })
                     @Html.DropDownListFor(m => m.IdCaixaTipo, (IEnumerable<SelectListItem>)ViewData["ListaCaixaTipo"], "Todos...", new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.IdCaixaTipo)
-                </div>
+                </div>*@
                 <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.Prioridade, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Prioridade, new { @class = "form-control integer" })
