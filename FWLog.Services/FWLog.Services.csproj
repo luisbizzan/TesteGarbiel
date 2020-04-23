@@ -143,6 +143,7 @@
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaLoteRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaPickingRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaProdutoBase.cs" />
+    <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeSeparacaoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeRecebimento.cs" />
     <Compile Include="Model\Etiquetas\ValidarEnderecoPickingRequest.cs" />
     <Compile Include="Model\IntegracaoSankhya\ClienteIntegracao.cs" />

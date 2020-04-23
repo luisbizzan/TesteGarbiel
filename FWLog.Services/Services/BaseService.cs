@@ -8,6 +8,10 @@ namespace FWLog.Services.Services
 {
     public class BaseService
     {
+        public const string SIGLA_EMPRESA_MATRIZ = "00";
+        public const string MANAUS = "MANAUS";
+        public const string MINAS_GERAIS = "MINAS GERAIS";
+
         public void ValidarCampo(string campo, string nome)
         {
             if (campo == null)
