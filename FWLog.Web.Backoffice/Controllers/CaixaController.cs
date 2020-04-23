@@ -153,7 +153,9 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var caixa = _caixaService.GetCaixaById(id);
 
-            return View(caixa);
+            var viewModel = Mapper.Map<CaixaDetalhesViewModel>(caixa);
+
+            return View(viewModel);
         }
 
         //[HttpPost]

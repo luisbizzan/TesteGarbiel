@@ -322,6 +322,7 @@
     <Compile Include="Models\BORecebimentoNotaCtx\ResumoFinalizarConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\TratarDivergenciaRecebimentoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\ExibirDivergenciaRecebimentoViewModel.cs" />
+    <Compile Include="Models\CaixaCtx\CaixaDetalhesViewModel.cs" />
     <Compile Include="Models\CaixaCtx\CaixaCadastroViewModel.cs" />
     <Compile Include="Models\ClienteCtx\ClienteSearchModalViewModel.cs" />
     <Compile Include="Models\EmpresaCtx\EmpresaSearchModalViewModel.cs" />

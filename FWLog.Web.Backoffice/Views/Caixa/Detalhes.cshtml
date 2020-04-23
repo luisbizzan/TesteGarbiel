@@ -1,4 +1,4 @@
-﻿@model FWLog.Data.Models.Caixa
+﻿@model FWLog.Web.Backoffice.Models.CaixaCtx.CaixaDetalhesViewModel
 
 @{
     ViewBag.Title = "Visualização de Caixa";
@@ -56,8 +56,8 @@
             </div>
             <div class="row">
                 <div class="form-group col-md-6 col-lg-3">
-                    @Html.LabelFor(m => m.IdCaixaTipo)
-                    @Html.TextBoxFor(m => m.IdCaixaTipo, new { @class = "form-control", @readonly = "readonly" })
+                    @Html.LabelFor(m => m.CaixaTipoDescricao)
+                    @Html.TextBoxFor(m => m.CaixaTipoDescricao, new { @class = "form-control", @readonly = "readonly" })
                 </div>
                 <div class="form-group col-md-6 col-lg-3">
                     @Html.LabelFor(m => m.Prioridade)
