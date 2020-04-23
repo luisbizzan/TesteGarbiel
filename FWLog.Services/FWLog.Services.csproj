@@ -213,6 +213,7 @@
     <Compile Include="Relatorio\Model\RelatorioProdutos.cs" />
     <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
     <Compile Include="Services\AccountService.cs" />
+    <Compile Include="Services\SeparacaoPedidoService.cs" />
     <Compile Include="Services\ArmazenagemService.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\AtividadeEstoqueService.cs" />
