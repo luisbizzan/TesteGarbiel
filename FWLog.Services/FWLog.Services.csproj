@@ -194,6 +194,7 @@
     <Compile Include="Model\Relatorios\RelatorioTotalPorAlaRequest.cs" />
     <Compile Include="Model\Relatorios\TermoResponsabilidadeRequest.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
+    <Compile Include="Model\SeparacaoPedido\BuscarPedidoVendaResposta.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
     <Compile Include="Model\TokenResponse.cs" />
     <Compile Include="Model\Usuario\GerarTokenAcessoColetorResponse.cs" />
@@ -244,6 +245,7 @@
     <Compile Include="Services\RelatorioService.cs" />
     <Compile Include="Services\FornecedorService.cs" />
     <Compile Include="Services\RepresentanteService.cs" />
+    <Compile Include="Services\SeparacaoPedidoService.cs" />
     <Compile Include="Services\UnidadeMedidaService.cs" />
     <Compile Include="Services\TransportadoraService.cs" />
     <Compile Include="Templates\MailTemplate.cs" />

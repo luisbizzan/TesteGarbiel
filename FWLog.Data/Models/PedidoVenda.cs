@@ -74,5 +74,7 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdUsuarioSeparacao))]
         public virtual AspNetUsers UsuarioSeparacao { get; set; }
 
+        
+
     }
 }
