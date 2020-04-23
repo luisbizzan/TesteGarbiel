@@ -12,7 +12,7 @@ using System.Text;
 
 namespace FWLog.Services.Services
 {
-    public class EtiquetaService
+    public class EtiquetaService : BaseService
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly ImpressoraService _impressoraService;
@@ -631,6 +631,79 @@ namespace FWLog.Services.Services
             }
         }
 
+        public void ImprimirEtiquetaVolumeSeparacao(ImprimirEtiquetaVolumeSeparacaoRequest requisicao, long idEmpresa)
+        {
+            var stringEtiqueta = new StringBuilder();
+
+            stringEtiqueta.Append("^XA");
+            stringEtiqueta.Append("^LL860");
+            stringEtiqueta.Append("^FO40,40^GB696,860,8^FS");
+
+            stringEtiqueta.Append($"^FO196,50^FB800,4,0,L,0^A0B,38,38^FD+{requisicao.ClienteNome}+&+{requisicao.ClienteEndereco}, {requisicao.ClienteEnderecoNumero}+&+{requisicao.ClienteCEP}-{requisicao.ClienteCidade}-{requisicao.ClienteEstado}+&+{requisicao.ClienteTelefone}+^FS");
+
+            stringEtiqueta.Append("^FO354,80^ADB,4,3^FDPEDIDO REPRES.         CLIENTE     PEDIDO           CENTENA  ^FS");
+            stringEtiqueta.Append($"^FO377,650^ADB,52,28^FD+{requisicao.RepresentanteCodigo}+^FS");
+
+            stringEtiqueta.Append($"^FO383,100^ADB,29,20^FD+{requisicao.ClienteCodigo}+'  '+{requisicao.PedidoCodigo}+'  '+{requisicao.Centena}+^FS");
+
+            stringEtiqueta.Append("^FO425,700^GB,195,120,4^FS");
+
+            stringEtiqueta.Append($"^FO440,718^A0B,120,100^FR^FD+{requisicao.TransportadoraSigla}+^FS");
+
+            stringEtiqueta.Append($"^FO440,50^FB610,4,0,L,0^A0B,40,30^FD+{requisicao.TransportadoraCodigo}+&+{requisicao.TransportadoraNome}+^FS");
+
+            var codigoBarras = $"{requisicao.PedidoCodigo}{requisicao.TransportadoraCodigo}{requisicao.Volume}";
+
+            stringEtiqueta.Append($"^FO566,480^BY2,164^BCB,143,Y,N^FD+{codigoBarras}+^FS");
+            stringEtiqueta.Append("^FO545,310^GB90,0,2^FS");
+            stringEtiqueta.Append("^FO545,400^GB190,0,2^FS");
+
+            stringEtiqueta.Append("^FO550,260^A0B,20,20^FD+CAIXA+^FS");
+            stringEtiqueta.Append($"^FO570,235^A0B,80,70^FR^FD+{requisicao.CaixaTextoEtiqueta}+^FS");
+
+            stringEtiqueta.Append("^FO550,347^A0B,20,20^FD+INICIO+^FS");
+            stringEtiqueta.Append($"^FO570,315^A0B,80,70^FR^FD+{requisicao.CorredoresInicio}+^FS");
+
+            stringEtiqueta.Append("^FO635,250^GBO,152,2^FS");
+            stringEtiqueta.Append("^FO640,305^A0B,20,20^FD+INTERVALO+^FS");
+            stringEtiqueta.Append($"^FO670,260^A0B,55,45^FR^FD+{requisicao.CorredoresIntervalo}+^FS");
+
+            stringEtiqueta.Append("^FO550,180^A0B,20,20^FD+VOLUME+^FS");
+            stringEtiqueta.Append($"^FO600,50^A0B,100,130^FD+{requisicao.Volume}+^FS");
+            stringEtiqueta.Append("^FO545,250^GB190,0,2^FS");
+
+            var empresa = _unitOfWork.EmpresaRepository.GetById(idEmpresa);
+
+            if (empresa.Sigla == SIGLA_EMPRESA_MATRIZ)
+            {
+                stringEtiqueta.Append("^FO70,214^XGLOGO.GRF,1,1^FS");
+            }
+            else if (empresa.Sigla == SIGLA_EMPRESA_MANAUS)
+            {
+                stringEtiqueta.Append("^FO70,110^XGLOGO.GRF,1,1^FS");
+                stringEtiqueta.Append("^FO140,125^A0B,25,25^FD+DISTRIBUIDORA DE PECAS AUTOMOTIVAS LTDA+^FS");
+            }
+            else if (empresa.Sigla == SIGLA_EMPRESA_MINAS)
+            {
+                stringEtiqueta.Append("^FO140,125^A0B,25,25^FD+DISTRIBUIDORA DE PECAS AUTOMOTIVAS LTDA+^FS");
+            }
+            else
+            {
+                stringEtiqueta.Append("^FO140,125^A0B,25,25^FD+DISTRIBUIDORA DE PECAS AUTOMOTIVAS LTDA+^FS");
+            }
+
+            stringEtiqueta.Append("^FO184,40^GBO,860,2^FS");
+            stringEtiqueta.Append("^FO344,40^GBO,860,2^FS");
+            stringEtiqueta.Append("^FO424,40^GBO,860,2^FS");
+            stringEtiqueta.Append("^FO544,40^GBO,860,2^FS");
+
+            stringEtiqueta.Append("^XZ");
+
+            var arrayBytesEtiqueta = Encoding.ASCII.GetBytes(stringEtiqueta.ToString());
+
+            _impressoraService.Imprimir(arrayBytesEtiqueta, requisicao.IdImpressora);
+        }
+
         private class CelulaEtiqueta
         {
             internal CelulaEtiqueta(int x, int y = 0)
@@ -642,6 +715,5 @@ namespace FWLog.Services.Services
             public int X { get; private set; }
             public int Y { get; private set; }
         }
-
     }
 }

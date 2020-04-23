@@ -1,21 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using FWLog.Data.Models;
+using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
-namespace FWLog.Data.Models
+namespace FWLog.Web.Backoffice.Models.CaixaCtx
 {
-    public class Caixa
+    [Bind(Exclude = "ListaCaixaTipo")]
+    public class CaixaEdicaoViewModel
     {
-        [Key]
-        [Index]
         [Required]
         public long IdCaixa { get; set; }
 
-        [Required]
-        public long IdEmpresa { get; set; }
-
         [Display(Name = "Caixa para")]
         [Required]
-        public CaixaTipoEnum IdCaixaTipo { get; set; }
+        public CaixaTipoEnum? IdCaixaTipo { get; set; }
 
         [Display(Name = "Nome")]
         [Required]
@@ -29,46 +26,38 @@ namespace FWLog.Data.Models
 
         [Display(Name = "Largura (CM)")]
         [Required]
-        public decimal Largura { get; set; }
+        public decimal? Largura { get; set; }
 
         [Display(Name = "Altura (CM)")]
         [Required]
-        public decimal Altura { get; set; }
+        public decimal? Altura { get; set; }
 
         [Display(Name = "Comprimento (CM)")]
         [Required]
-        public decimal Comprimento { get; set; }
-
-        [Display(Name = "Cubagem (CM³)")]
-        [Required]
-        public decimal Cubagem { get; set; }
+        public decimal? Comprimento { get; set; }
 
         [Display(Name = "Peso Caixa (Kg)")]
         [Required]
-        public decimal PesoCaixa { get; set; }
+        public string PesoCaixa { get; set; }
 
         [Display(Name = "Peso Máximo (Kg)")]
         [Required]
-        public decimal PesoMaximo { get; set; }
+        public string PesoMaximo { get; set; }
 
         [Display(Name = "Sobra (%)")]
         [Required]
         [Range(0, 100)]
-        public decimal Sobra { get; set; }
+        public decimal? Sobra { get; set; }
 
         [Display(Name = "Prioridade")]
         [Required]
         [Range(0, 999)]
-        public int Prioridade { get; set; }
+        public int? Prioridade { get; set; }
 
         [Display(Name = "Ativo")]
         [Required]
         public bool Ativo { get; set; }
 
-        [ForeignKey(nameof(IdEmpresa))]
-        public virtual Empresa Empresa { get; set; }
-
-        [ForeignKey(nameof(IdCaixaTipo))]
-        public virtual CaixaTipo CaixaTipo { get; set; }
+        public SelectList ListaCaixaTipo { get; set; }
     }
 }

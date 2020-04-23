@@ -91,7 +91,7 @@ namespace FWLog.Services.Services
 
                     pedidoVenda.NroPedidoVenda = Convert.ToInt32(pedidoVendaIntegracao.NroPedidoVenda);
                     pedidoVenda.CodigoIntegracao = codPedido;
-                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoIntegracao;
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao;
                     pedidoVenda.IdCliente = cliente.IdCliente;
                     pedidoVenda.DataCriacao = pedidoVendaIntegracao.DataCriacao == null ? DateTime.Now : DateTime.ParseExact(pedidoVendaIntegracao.DataCriacao, "ddMMyyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     pedidoVenda.IdEmpresa = empresa.IdEmpresa;
