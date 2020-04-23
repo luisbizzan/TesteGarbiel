@@ -88,4 +88,34 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
         public SelectList Lista_Tipos { get; set; }
     }
+
+    public class GarantiaSolicitacao
+    {
+        [Display(Name = "Chave de Acesso")]
+        public string Chave_Acesso { get; set; }
+
+        [Required]
+        [Display(Name = "Código de Postagem")]
+        public string Codigo_Postagem { get; set; }
+
+        [Display(Name = "CNPJ")]
+        public string Cnpj { get; set; }
+
+        [Display(Name = "Número")]
+        public string Numero { get; set; }
+
+        [Display(Name = "Série")]
+        public string Serie { get; set; }
+
+        [Display(Name = "Número Interno")]
+        public string Numero_Interno { get; set; }
+
+        [Required]
+        [Display(Name = "Tipo")]
+        public long? Id_Tipo { get; set; }
+
+        public String Tipo { get; set; }
+
+        public SelectList Lista_Tipos { get; set; }
+    }
 }

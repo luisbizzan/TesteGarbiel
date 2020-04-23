@@ -59,6 +59,10 @@
     $("#dataTable").on('click', "[action='estornarSolicitacao']", estornarSolicitacao);
     $("#dataTable").on('click', "[action='conferirSolicitacao']", conferirSolicitacao);
 
+    $("#btImportarSolicitacao").click(function () {
+        importarSolicitacao();
+    });
+
     var $Data_Inicial = $('#Filter_Data_Inicial').closest('.date');
     var $Data_Final = $('#Filter_Data_Final').closest('.date');
 
@@ -205,6 +209,15 @@ function conferirSolicitacao() {
     let modal = $("#modalVisualizar");
 
     modal.load(CONTROLLER_PATH + "ConferirSolicitacao/" + id, function () {
+        modal.modal();
+    });
+}
+
+function importarSolicitacao() {
+
+    let modal = $("#modalVisualizar");
+
+    modal.load(CONTROLLER_PATH + "ImportarSolicitacao/", function () {
         modal.modal();
     });
 }

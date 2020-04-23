@@ -107,6 +107,53 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_ConferirSolicitacao", model);
         }
 
+        public ActionResult ImportarSolicitacao()
+        {
+            var model = new GarantiaSolicitacao
+            {
+            };
+
+            return PartialView("_ImportarSolicitacao", model);
+        }
+
+        [HttpPost]
+        public ActionResult ImportarSolicitacaoGravar(GarantiaSolicitacao item)
+        {
+            if (item.Id_Tipo == 1 && string.IsNullOrEmpty(item.Chave_Acesso))
+                ModelState.AddModelError("Chave_Acesso", "O campo Chave de Acesso é obrigatório.");
+
+            if (item.Id_Tipo == 2 && string.IsNullOrEmpty(item.Cnpj))
+                ModelState.AddModelError("Cnpj", "O campo Cnpj é obrigatório.");
+
+            if (item.Id_Tipo == 2 && string.IsNullOrEmpty(item.Numero))
+                ModelState.AddModelError("Numero", "O campo Número é obrigatório.");
+
+            if (item.Id_Tipo == 2 && string.IsNullOrEmpty(item.Serie))
+                ModelState.AddModelError("Serie", "O campo Série é obrigatório.");
+
+            if (item.Id_Tipo == 3 && string.IsNullOrEmpty(item.Numero_Interno))
+                ModelState.AddModelError("Numero_Interno", "O campo Número Interno é obrigatório.");
+
+            if (!ModelState.IsValid)
+            {
+                var erros = ModelState.Values.Where(x => x.Errors.Count > 0)
+                    .Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />"));
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = erros
+                });
+            }
+            else
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                });
+            }
+        }
+
         public ActionResult ConferenciaForm(long Id)
         {
             var model = new GarantiaConferenciaFormVM

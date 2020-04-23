@@ -7,16 +7,34 @@
 
     $("#divergencia-tab").click(function () {
         if (!$(this).parent().hasClass("disabled")) {
-            divergencia();
+            divergencia();           
         }
     });
 })();
 
+$("body").keydown(function (e) {
+    var keyCode = e.keyCode || e.which;
+    //console.log(keyCode);
+    if ($("#tabEscolhida").val() == "1") {
+        if (keyCode == 115) {
+            e.preventDefault();
+            if ($("body .jconfirm").length == 0) {
+                alterarQuantidade();
+            }
+        } else if (keyCode == 114) {
+            e.preventDefault();
+            itensPendentes();
+        }
+    }
+});
+
 function conferir() {
+    $("#tabEscolhida").val("1");
     var id = $("#Solicitacao_Id").val();
     let div = $("#tabConferir");
 
     div.load(CONTROLLER_PATH + "ConferenciaForm/" + id, function () {
+
         $("#btFinalizarConferencia").click(function () {
             finalizarConferencia();
         });
@@ -24,10 +42,22 @@ function conferir() {
         $("#btItensPendentes").click(function () {
             itensPendentes();
         });
+
+        $("#btAlterarQuantidade").click(function () {
+            alterarQuantidade();
+        });
+
+        $('#Form_Refx').keypress(function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+                $("#Form_Quantidade").val("1");
+            }
+        });
     });
 }
 
 function divergencia() {
+    $("#tabEscolhida").val("2");
     var id = $("#Solicitacao_Id").val();
     let div = $("#tabDivergencia");
 
@@ -110,5 +140,45 @@ function itensPendentes() {
 
     modal.load(CONTROLLER_PATH + "ConferenciaItensPendentes/" + id, function () {
         $("#modalItensPendentes").modal("show");
+    });
+}
+
+function alterarQuantidade() {
+    $.confirm({
+        title: 'Alterar Quantidade',
+        content: '' +
+            '<form action="" class="formName">' +
+            '<div class="form-group">' +
+            '<label>Digite a Quantidade</label>' +
+            '<input type="text" placeholder="Quantidade" class="qtd form-control" required />' +
+            '</div>' +
+            '</form>',
+        buttons: {
+            gravar: {
+                text: 'Gravar',
+                btnClass: 'btn-blue',
+                action: function () {
+                    var qtd = this.$content.find('.qtd').val();
+                    if (!qtd) {
+                        $.alert('Digite uma quantidade valida.');
+                        return false;
+                    }
+                    $("#Form_Quantidade").val(qtd);
+                }
+            },
+            cancelar: {
+                text: 'Cancelar',
+                action: function () {
+                }
+            }
+        },
+        onContentReady: function () {
+            var jc = this;
+            this.$content.find('.qtd').focus();
+            this.$content.find('form').on('submit', function (e) {
+                e.preventDefault();
+                jc.$$gravar.trigger('click');
+            });
+        }
     });
 }
