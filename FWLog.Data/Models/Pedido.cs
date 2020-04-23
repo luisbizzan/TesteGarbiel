@@ -37,7 +37,7 @@ namespace FWLog.Data.Models
 
         [Index]
         [Required]
-        public PedidoStatusEnum IdPedidoStatus { get; set; }
+        public PedidoVendaStatusEnum IdPedidoVendaStatus { get; set; }
 
         [Required]
         public int CodigoIntegracao { get; set; }
@@ -59,7 +59,7 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdTransportadora))]
         public virtual Produto Transportadora { get; set; }
 
-        [ForeignKey(nameof(IdPedidoStatus))]
-        public virtual PedidoStatus PedidoVendaStatus { get; set; }
+        [ForeignKey(nameof(IdPedidoVendaStatus))]
+        public virtual PedidoVendaStatus PedidoVendaStatus { get; set; }
     }
 }

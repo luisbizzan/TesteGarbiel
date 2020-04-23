@@ -31,7 +31,7 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            var where = " WHERE TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSSEP = 0 OR TGFCAB.AD_STATUSSEP IS NULL) and TGFCAB.nunota = 703";
+            var where = " WHERE TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSSEP = 0 OR TGFCAB.AD_STATUSSEP IS NULL)";
             var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
 
             List<PedidoIntegracao> pedidosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<PedidoIntegracao>(where, inner);
@@ -90,7 +90,7 @@ namespace FWLog.Services.Services
 
                     pedido.NroPedido = Convert.ToInt32(pedidoCabecalho.NroPedidoVenda);
                     pedido.CodigoIntegracao = codPedido;
-                    pedido.IdPedidoStatus = PedidoStatusEnum.ProcessandoIntegracao;
+                    pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoIntegracao;
                     pedido.IdCliente = cliente.IdCliente;
                     pedido.DataCriacao = pedidoCabecalho.DataCriacao == null ? DateTime.Now : DateTime.ParseExact(pedidoCabecalho.DataCriacao, "ddMMyyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     pedido.IdEmpresa = empresa.IdEmpresa;
@@ -143,11 +143,11 @@ namespace FWLog.Services.Services
 
                     _uow.SaveChanges();
 
-                    pedido.IdPedidoStatus = PedidoStatusEnum.ProcessandoIntegracao;
+                    pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao;
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", pedido.CodigoIntegracao.ToString() } };
 
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSSEP", PedidoStatusEnum.Integrado.GetHashCode());
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSSEP", PedidoVendaStatusEnum.PendenteSeparacao.GetHashCode());
 
                     _uow.SaveChanges();
                 }

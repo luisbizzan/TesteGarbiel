@@ -5,6 +5,7 @@ namespace FWLog.Data.Models
 {
     public enum PedidoVendaStatusEnum
     {
+        ProcessandoIntegracao = 0,
         PendenteSeparacao = 1,
         EnviadoSeparacao = 2,
         ProcessandoSeparacao = 3,

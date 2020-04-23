@@ -89,9 +89,6 @@ namespace FWLog.Data
         public virtual DbSet<Caixa> Caixa { get; set; }
         public virtual DbSet<Pedido> Pedido { get; set; }
         public virtual DbSet<PedidoItem> PedidoItem { get; set; }
-
-        public virtual DbSet<PedidoStatus> PedidoStatus { get; set; }
-
         public int SaveChangesWithoutLog()
         {
             return base.SaveChanges();
