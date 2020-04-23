@@ -195,6 +195,7 @@
     <Compile Include="Model\Relatorios\RelatorioTotalPorAlaRequest.cs" />
     <Compile Include="Model\Relatorios\TermoResponsabilidadeRequest.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
+    <Compile Include="Model\SeparacaoPedido\BuscarPedidoVendaResposta.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
     <Compile Include="Model\TokenResponse.cs" />
     <Compile Include="Model\Usuario\GerarTokenAcessoColetorResponse.cs" />
