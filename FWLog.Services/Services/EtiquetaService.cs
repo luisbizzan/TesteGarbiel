@@ -678,12 +678,12 @@ namespace FWLog.Services.Services
             {
                 stringEtiqueta.Append("^FO70,214^XGLOGO.GRF,1,1^FS");
             }
-            else if (empresa.Cidade.ToUpper() == MANAUS)
+            else if (empresa.Sigla == SIGLA_EMPRESA_MANAUS)
             {
                 stringEtiqueta.Append("^FO70,110^XGLOGO.GRF,1,1^FS");
                 stringEtiqueta.Append("^FO140,125^A0B,25,25^FD+DISTRIBUIDORA DE PECAS AUTOMOTIVAS LTDA+^FS");
             }
-            else if (empresa.Estado.ToUpper() == MINAS_GERAIS)
+            else if (empresa.Sigla == SIGLA_EMPRESA_MINAS)
             {
                 stringEtiqueta.Append("^FO140,125^A0B,25,25^FD+DISTRIBUIDORA DE PECAS AUTOMOTIVAS LTDA+^FS");
             }
