@@ -5,17 +5,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
 {
-    public class PedidoVenda
+    public class Pedido
     {
-        public PedidoVenda()
+        public Pedido()
         {
-            PedidoVendaProdutos = new HashSet<PedidoVendaProduto>();
+            PedidoItens = new HashSet<PedidoItem>();
         }
 
         [Key]
-        [Required]
-        public long IdPedidoVenda { get; set; }
-
         [Required]
         public long IdPedido { get; set; }
 
@@ -36,28 +33,19 @@ namespace FWLog.Data.Models
         public long IdRepresentante { get; set; }
 
         [Required]
-        public int NroPedidoVenda { get; set; }
-
-        public int NroVolumes { get; set; }
+        public int NroPedido { get; set; }
 
         [Index]
         [Required]
-        public PedidoVendaStatusEnum IdPedidoVendaStatus { get; set; }
+        public PedidoStatusEnum IdPedidoStatus { get; set; }
 
-        [Index]
-        public string IdUsuarioSeparacao { get; set; }
-
-        public DateTime? DataHoraInicioSeparacao { get; set; }
-
-        public DateTime? DataHoraFimSeparacao { get; set; }
+        [Required]
+        public int CodigoIntegracao { get; set; }
 
         [Required]
         public DateTime DataCriacao { get; set; }
 
-        public virtual ICollection<PedidoVendaProduto> PedidoVendaProdutos { get; set; }
-
-        [ForeignKey(nameof(IdPedido))]
-        public virtual Pedido Pedido { get; set; }
+        public virtual ICollection<PedidoItem> PedidoItens { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
@@ -71,10 +59,7 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdTransportadora))]
         public virtual Produto Transportadora { get; set; }
 
-        [ForeignKey(nameof(IdPedidoVendaStatus))]
-        public virtual PedidoVendaStatus PedidoVendaStatus { get; set; }
-
-        [ForeignKey(nameof(IdUsuarioSeparacao))]
-        public virtual AspNetUsers UsuarioSeparacao { get; set; }
+        [ForeignKey(nameof(IdPedidoStatus))]
+        public virtual PedidoStatus PedidoVendaStatus { get; set; }
     }
 }

@@ -12,11 +12,6 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         }
 
-        public PedidoVenda ObterPorCodigoIntegracao(long codigoIntegracao)
-        {
-            return Entities.PedidoVenda.FirstOrDefault(f => f.CodigoIntegracao == codigoIntegracao);
-        }
-
         public List<long> PesquisarIdsEmSeparacao(string idUsuario, long idEmpresa)
         {
             return Entities.PedidoVenda.Where(w => w.IdUsuarioSeparacao == idUsuario && w.IdEmpresa == idEmpresa && w.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao)

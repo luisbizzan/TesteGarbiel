@@ -164,7 +164,10 @@
     <Compile Include="Models\MotivoLaudo.cs" />
     <Compile Include="Models\IntegracaoLog.cs" />
     <Compile Include="Models\AtividadeEstoque.cs" />
+    <Compile Include="Models\Pedido.cs" />
+    <Compile Include="Models\PedidoItem.cs" />
     <Compile Include="Models\PedidoVendaProdutoStatus.cs" />
+    <Compile Include="Models\PedidoStatus.cs" />
     <Compile Include="Models\PedidoVendaStatus.cs" />
     <Compile Include="Models\PedidoVendaProduto.cs" />
     <Compile Include="Models\NotaFiscalRecebimento.cs" />
@@ -258,8 +261,11 @@
     <Compile Include="Repository\GeneralCtx\ColetorHistoricoTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\AtividadeEstoqueRepository.cs" />
     <Compile Include="Repository\GeneralCtx\AtividadeEstoqueTipoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PedidoStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PedidoVendaProdutoStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PedidoVendaProdutoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PedidoItemRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PedidoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PedidoVendaStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PedidoVendaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaConferenciaTipoRepository.cs" />

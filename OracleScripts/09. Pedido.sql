@@ -8,6 +8,7 @@ CREATE TABLE "Pedido"
 , "CodigoIntegracao" NUMBER(10,0) NOT NULL
 , "IdRepresentante" NUMBER(19) NOT NULL
 , "DataCriacao" DATE NOT NULL
+, "IdPedidoStatus" NUMBER(10) NOT NULL 
 , CONSTRAINT "Pedido_PK" PRIMARY KEY 
   (
     "IdPedido" 
@@ -47,6 +48,11 @@ ALTER TABLE DART."Pedido" ADD CONSTRAINT "Pedido_FK3" FOREIGN KEY ("IdTransporta
 ALTER TABLE DART."Pedido" ADD CONSTRAINT "Pedido_FK4" FOREIGN KEY ("IdUsuarioSeparacao") REFERENCES DART."AspNetUsers"("Id");
 ALTER TABLE DART."Pedido" ADD CONSTRAINT "Pedido_FK5" FOREIGN KEY ("IdPedidoStatus") REFERENCES DART."PedidoStatus"("IdPedidoStatus");
 ALTER TABLE DART."Pedido" ADD CONSTRAINT "Pedido_FK6" FOREIGN KEY ("IdRepresentante") REFERENCES DART."Representante"("IdRepresentante");
+
+ALTER TABLE DART."PedidoVenda" ADD "IdPedido" NUMBER(19,0);
+ALTER TABLE DART."PedidoVenda" MODIFY "IdPedido" NUMBER(19,0) NOT NULL;
+ALTER TABLE DART."PedidoVenda" ADD CONSTRAINT "PedidoVenda_FK7" FOREIGN KEY ("IdPedido") REFERENCES DART."Pedido"("IdPedido");
+CREATE INDEX "PedidoVenda_INDEX7" ON DART."PedidoVenda" ("IdPedido");
 
 
 	

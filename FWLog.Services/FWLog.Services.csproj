@@ -157,7 +157,7 @@
     <Compile Include="Model\IntegracaoSankhya\FornecedorIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\FreteTipoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\LoginReposta.cs" />
-    <Compile Include="Model\IntegracaoSankhya\PedidoVendaIntegracao.cs" />
+    <Compile Include="Model\IntegracaoSankhya\PedidoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoEstoqueIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoMediaVendaIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoReservadontegracao.cs" />
@@ -213,6 +213,7 @@
     <Compile Include="Relatorio\Model\RelatorioProdutos.cs" />
     <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
     <Compile Include="Services\AccountService.cs" />
+    <Compile Include="Services\PedidoService.cs" />
     <Compile Include="Services\SeparacaoPedidoService.cs" />
     <Compile Include="Services\ArmazenagemService.cs" />
     <Compile Include="Services\BaseService.cs" />

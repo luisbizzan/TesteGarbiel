@@ -199,7 +199,7 @@
     <Compile Include="Controllers\ImpressoraController.cs" />
     <Compile Include="Controllers\AtividadeEstoqueController.cs" />
     <Compile Include="Controllers\LoteController.cs" />
-    <Compile Include="Controllers\PedidoVendaController.cs" />
+    <Compile Include="Controllers\PedidoController.cs" />
     <Compile Include="Controllers\RepresentanteController.cs" />
     <Compile Include="Controllers\SeparacaoPedidoController.cs" />
     <Compile Include="Controllers\UnidadeMedidaController.cs" />
