@@ -3,11 +3,12 @@ using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
+using System;
 using System.Collections.Generic;
 
 namespace FWLog.Services.Services
 {
-    public class CaixaService
+    public class CaixaService : BaseService
     {
         private readonly UnitOfWork _unitOfWork;
 
@@ -79,12 +80,19 @@ namespace FWLog.Services.Services
             _unitOfWork.SaveChanges();
         }
 
-        //public void Excluir(long idCaixa)
-        //{
-        //    Caixa Caixa = _unitOfWork.CaixaRepository.GetById(idCaixa);
+        public void Excluir(int idCaixa)
+        {
+            try
+            {
+                var caixa = _unitOfWork.CaixaRepository.GetById(idCaixa);
 
-        //    _unitOfWork.CaixaRepository.Delete(Caixa);
-        //    _unitOfWork.SaveChanges();
-        //}
+                _unitOfWork.CaixaRepository.Delete(caixa);
+                _unitOfWork.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                ValidaELancaExcecaoIntegridade(exception);
+            }
+        }
     }
 }
