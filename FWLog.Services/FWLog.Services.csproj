@@ -143,6 +143,7 @@
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaLoteRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaPickingRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaProdutoBase.cs" />
+    <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeSeparacaoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeRecebimento.cs" />
     <Compile Include="Model\Etiquetas\ValidarEnderecoPickingRequest.cs" />
     <Compile Include="Model\IntegracaoSankhya\ClienteIntegracao.cs" />
@@ -213,6 +214,7 @@
     <Compile Include="Relatorio\Model\RelatorioProdutos.cs" />
     <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
     <Compile Include="Services\AccountService.cs" />
+    <Compile Include="Services\SeparacaoPedidoService.cs" />
     <Compile Include="Services\ArmazenagemService.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\AtividadeEstoqueService.cs" />
@@ -245,7 +247,6 @@
     <Compile Include="Services\RelatorioService.cs" />
     <Compile Include="Services\FornecedorService.cs" />
     <Compile Include="Services\RepresentanteService.cs" />
-    <Compile Include="Services\SeparacaoPedidoService.cs" />
     <Compile Include="Services\UnidadeMedidaService.cs" />
     <Compile Include="Services\TransportadoraService.cs" />
     <Compile Include="Templates\MailTemplate.cs" />

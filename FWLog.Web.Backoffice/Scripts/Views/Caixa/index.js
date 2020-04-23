@@ -1,13 +1,6 @@
 ﻿(function () {
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
-            //{
-            //    action: 'imprimir',
-            //    icon: 'fa fa-print',
-            //    text: "Imprimir Etiqueta Endereço",
-            //    attrs: { 'data-id': full.IdEnderecoArmazenagem, 'action': 'imprimir' },
-            //    visible: view.imprimirVisivel
-            //},
             {
                 action: 'details',
                 href: view.urlDetalhes + '/' + full.IdCaixa,

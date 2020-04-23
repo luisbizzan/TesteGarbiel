@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using DartDigital.Library.Exceptions;
-using FWLog.Services.Services;
+﻿using FWLog.Services.Services;
 using FWLog.Web.Api.Models.SeparacaoPedido;
 using System;
 using System.Collections.Generic;
@@ -17,6 +15,20 @@ namespace FWLog.Web.Api.Controllers
         public SeparacaoPedidoController(SeparacaoPedidoService separacaoPedidoService)
         {
             _separacaoPedidoService = separacaoPedidoService;
+        }
+
+        [Route("api/v1/separacao-pedido/consulta-pedido-venda")]
+        [HttpGet]
+        public IHttpActionResult ConsultaPedidoVendaEmSeparacao()
+        {
+            var idsPedidosProcessoDeSeparacao = _separacaoPedidoService.ConsultaPedidoVendaEmSeparacao(IdUsuario, IdEmpresa);
+
+            var response = new SeparacaoPedidoResposta
+            {
+                PedidosProcessoDeSeparacao = idsPedidosProcessoDeSeparacao
+            };
+
+            return ApiOk(response);
         }
 
         //[Route("api/v1/separacao-pedido/buscar-pedido-venda/{idPedidoVenda}/{codigoDeBarras}")]

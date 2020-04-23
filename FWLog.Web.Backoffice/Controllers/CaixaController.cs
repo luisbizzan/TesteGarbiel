@@ -95,7 +95,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 caixa.IdEmpresa = IdEmpresa;
 
-                _caixaService.Cadastrar(caixa);
+                _caixaService.Cadastrar(caixa, IdEmpresa);
 
                 Notify.Success("Caixa cadastrada com sucesso.");
             }
@@ -117,34 +117,42 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var caixa = _caixaService.GetCaixaById(id);
 
-            //var viewModel = Mapper.Map<CaixaEditarViewModel>(Caixa);
+            var viewModel = Mapper.Map<CaixaEdicaoViewModel>(caixa);
 
-            return View(caixa);
+            viewModel.ListaCaixaTipo = BuscarCaixaTipoSelectList();
+
+            return View(viewModel);
         }
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Caixa.Editar)]
-        public ActionResult Editar(Caixa caixa)
+        public ActionResult Editar(CaixaEdicaoViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
-                return View(caixa);
+                viewModel.ListaCaixaTipo = BuscarCaixaTipoSelectList();
+
+                return View(viewModel);
             }
 
             try
             {
-                _caixaService.Editar(caixa);
+                var caixa = Mapper.Map<Caixa>(viewModel);
+
+                _caixaService.Editar(caixa, IdEmpresa);
 
                 Notify.Success("Caixa editada com sucesso.");
+
+                return RedirectToAction("Index");
             }
             catch (BusinessException businessException)
             {
                 ModelState.AddModelError(string.Empty, businessException.Message);
 
-                return View(caixa);
-            }
+                viewModel.ListaCaixaTipo = BuscarCaixaTipoSelectList();
 
-            return RedirectToAction("Index");
+                return View(viewModel);
+            }
         }
 
         [HttpGet]
@@ -153,60 +161,33 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var caixa = _caixaService.GetCaixaById(id);
 
-            return View(caixa);
+            var viewModel = Mapper.Map<CaixaDetalhesViewModel>(caixa);
+
+            return View(viewModel);
         }
 
-        //[HttpPost]
-        //[ApplicationAuthorize(Permissions = Permissions.Caixa.Excluir)]
-        //public JsonResult ExcluirAjax(int id)
-        //{
-        //    try
-        //    {
-        //        _CaixaService.Excluir(id);
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Caixa.Excluir)]
+        public JsonResult ExcluirAjax(int id)
+        {
+            try
+            {
+                _caixaService.Excluir(id);
 
-        //        return Json(new AjaxGenericResultModel
-        //        {
-        //            Success = true,
-        //            Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
-        //        }, JsonRequestBehavior.DenyGet);
-        //    }
-        //    catch
-        //    {
-        //        return Json(new AjaxGenericResultModel
-        //        {
-        //            Success = false,
-        //            Message = Resources.CommonStrings.RegisterHasRelationshipsErrorMessage
-        //        }, JsonRequestBehavior.DenyGet);
-        //    }
-        //}
-
-        //[HttpGet]
-        //public ActionResult PesquisaModal(long? id, bool? buscarTodos)
-        //{
-        //    var model = new CaixaPesquisaModalViewModel();
-
-        //    model.Filtros.IdPontoArmazenagem = id;
-        //    model.Filtros.BuscarTodos = buscarTodos ?? false;
-
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-        //[ApplicationAuthorize]
-        //public ActionResult CaixaPesquisaModalDadosLista(DataTableFilter<CaixaPesquisaModalFiltroViewModel> model)
-        //{
-        //    var filtros = Mapper.Map<DataTableFilter<CaixaPesquisaModalFiltro>>(model);
-        //    filtros.CustomFilter.IdEmpresa = IdEmpresa;
-
-        //    IEnumerable<CaixaPesquisaModalListaLinhaTabela> result = _unitOfWork.CaixaRepository.BuscarListaModal(filtros, out int registrosFiltrados, out int totalRegistros);
-
-        //    return DataTableResult.FromModel(new DataTableResponseModel
-        //    {
-        //        Draw = model.Draw,
-        //        RecordsTotal = totalRegistros,
-        //        RecordsFiltered = registrosFiltrados,
-        //        Data = Mapper.Map<IEnumerable<CaixaPesquisaModalItemViewModel>>(result)
-        //    });
-        //}
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
+                }, JsonRequestBehavior.DenyGet);
+            }
+            catch (BusinessException exception)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = exception.Message
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
     }
 }

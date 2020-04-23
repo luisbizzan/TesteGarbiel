@@ -35,5 +35,23 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TGFPAR.AD_CLASSIF")]
         [Required]
         public string Classificacao { get; set; }
+
+        [TabelaIntegracao(DisplayName = "TGFCPL.CEPENTREGA")]
+        public string CEP { get; set; }
+
+        [TabelaIntegracao(DisplayName = "CONCAT(CONCAT(TSIEND.TIPO, ' '), TSIEND.NOMEEND)")]
+        public string Endereco { get; set; }
+
+        [TabelaIntegracao(DisplayName = "TGFCPL.NUMENTREGA")]
+        public string Numero { get; set; }
+
+        [TabelaIntegracao(DisplayName = "TGFPAR.TELEFONE")]
+        public string Telefone { get; set; }
+
+        [TabelaIntegracao(DisplayName = "TSIUFS.UF")]
+        public string UF { get; set; }
+
+        [TabelaIntegracao(DisplayName = "TSICID.NOMECID")]
+        public string Cidade { get; set; }
     }
 }

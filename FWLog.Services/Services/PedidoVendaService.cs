@@ -32,7 +32,7 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            var where = " WHERE TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSREC = 0 OR TGFCAB.AD_STATUSREC IS NULL)";
+            var where = " WHERE TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSSEP = 0 OR TGFCAB.AD_STATUSSEP IS NULL) and TGFCAB.nunota = 703";
             var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
 
             List<PedidoVendaIntegracao> pedidosVendaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<PedidoVendaIntegracao>(where, inner);
@@ -51,28 +51,28 @@ namespace FWLog.Services.Services
                     Empresa empresa = _uow.EmpresaRepository.ConsultaPorCodigoIntegracao(codEmp);
                     if (empresa == null)
                     {
-                        throw new Exception(string.Format("Código da Empresa (CODEMP: {0}) inválido", pedidoVendaIntegracao.CodigoIntegracaoEmpresa));
+                        throw new BusinessException(string.Format("Código da Empresa (CODEMP: {0}) inválido", pedidoVendaIntegracao.CodigoIntegracaoEmpresa));
                     }
 
                     var codParcTransp = Convert.ToInt32(pedidoVendaIntegracao.CodigoIntegracaoTransportadora);
                     Transportadora transportadora = _uow.TransportadoraRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codParcTransp);
                     if (transportadora == null)
                     {
-                        throw new Exception(string.Format("Código da Transportadora (CODPARCTRANSP: {0}) inválido", pedidoVendaIntegracao.CodigoIntegracaoTransportadora));
+                        throw new BusinessException(string.Format("Código da Transportadora (CODPARCTRANSP: {0}) inválido", pedidoVendaIntegracao.CodigoIntegracaoTransportadora));
                     }
 
                     var codCliente = Convert.ToInt32(pedidoVendaIntegracao.CodigoIntegracaoCliente);
                     Cliente cliente = _uow.ClienteRepository.ConsultarPorCodigoIntegracao(codCliente);
                     if (cliente == null)
                     {
-                        throw new Exception(string.Format("Código do Cliente (CODPARC: {0}) inválido", pedidoVendaIntegracao.CodigoIntegracaoCliente));
+                        throw new BusinessException(string.Format("Código do Cliente (CODPARC: {0}) inválido", pedidoVendaIntegracao.CodigoIntegracaoCliente));
                     }
 
                     var codRep = Convert.ToInt32(pedidoVendaIntegracao.CodigoIntegracaoRepresentante);
-                    Representante representante = _uow.RepresentanteRepository.ConsultarPorCodigoIntegracao(codCliente);
-                    if (cliente == null)
+                    Representante representante = _uow.RepresentanteRepository.ConsultarPorCodigoIntegracao(codRep);
+                    if (representante == null)
                     {
-                        throw new Exception(string.Format("Código do Representante (CODVEND: {0}) inválido", pedidoVendaIntegracao.CodigoIntegracaoRepresentante));
+                        throw new BusinessException(string.Format("Código do Representante (CODVEND: {0}) inválido", pedidoVendaIntegracao.CodigoIntegracaoRepresentante));
                     }
 
                     bool pedidoNovo = true;
@@ -91,7 +91,7 @@ namespace FWLog.Services.Services
 
                     pedidoVenda.NroPedidoVenda = Convert.ToInt32(pedidoVendaIntegracao.NroPedidoVenda);
                     pedidoVenda.CodigoIntegracao = codPedido;
-                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoIntegracao;
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao;
                     pedidoVenda.IdCliente = cliente.IdCliente;
                     pedidoVenda.DataCriacao = pedidoVendaIntegracao.DataCriacao == null ? DateTime.Now : DateTime.ParseExact(pedidoVendaIntegracao.DataCriacao, "ddMMyyyy HH:mm:ss", CultureInfo.InvariantCulture);
                     pedidoVenda.IdEmpresa = empresa.IdEmpresa;
@@ -111,7 +111,7 @@ namespace FWLog.Services.Services
                         Produto produto = _uow.ProdutoRepository.Todos().FirstOrDefault(f => f.CodigoIntegracao == codProduto);
                         if (produto == null)
                         {
-                            throw new Exception(string.Format("Código da Produto (CODPROD: {0}) inválido", item.CodigoIntegracaoProduto));
+                            throw new BusinessException(string.Format("Código da Produto (CODPROD: {0}) inválido", item.CodigoIntegracaoProduto));
                         }
 
                         bool itemNovo = false;
@@ -145,16 +145,17 @@ namespace FWLog.Services.Services
 
                     _uow.SaveChanges();
 
+                   // pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.AguardandoSeparacao;
+
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", pedidoVenda.CodigoIntegracao.ToString() } };
 
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSSEP", PedidoVendaStatusEnum.AguardandoSeparacao.GetHashCode()); ;
+                   // await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSSEP", PedidoVendaStatusEnum.AguardandoSeparacao.GetHashCode());
 
+                    _uow.SaveChanges();
                 }
                 catch (Exception ex)
                 {
                     _log.Error(string.Format("Erro na integração do pedido de venda: {0}.", pedidoIntegracao.Key), ex);
-
-                    continue;
                 }
             }
         }

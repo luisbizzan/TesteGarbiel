@@ -47,9 +47,9 @@ namespace FWLog.Data.Models
         [Index]
         public string IdUsuarioSeparacao { get; set; }
 
-        public DateTime DataHoraInicioSeparacao { get; set; }
+        public DateTime? DataHoraInicioSeparacao { get; set; }
 
-        public DateTime DataHoraFimSeparacao { get; set; }
+        public DateTime? DataHoraFimSeparacao { get; set; }
 
         [Required]
         public DateTime DataCriacao { get; set; }

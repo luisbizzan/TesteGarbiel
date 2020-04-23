@@ -76,7 +76,7 @@ namespace FWLog.Services.Services
                     empresaConfig.Empresa.CNPJ = empInt.CNPJ;
                     empresaConfig.Empresa.Complemento = empInt.Complemento;
                     empresaConfig.Empresa.Endereco = empInt.Endereco;
-                    empresaConfig.Empresa.Estado = empInt.Estadp;
+                    empresaConfig.Empresa.Estado = empInt.Estado;
                     empresaConfig.Empresa.NomeFantasia = empInt.NomeFantasia;
                     empresaConfig.Empresa.Numero = empInt.Numero;
                     empresaConfig.Empresa.RazaoSocial = empInt.RazaoSocial;
