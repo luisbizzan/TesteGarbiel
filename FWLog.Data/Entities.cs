@@ -90,7 +90,7 @@ namespace FWLog.Data
         public virtual DbSet<Pedido> Pedido { get; set; }
         public virtual DbSet<PedidoItem> PedidoItem { get; set; }
 
-        public virtual DbSet<PedidoItem> PedidoStatus { get; set; }
+        public virtual DbSet<PedidoStatus> PedidoStatus { get; set; }
 
         public int SaveChangesWithoutLog()
         {
