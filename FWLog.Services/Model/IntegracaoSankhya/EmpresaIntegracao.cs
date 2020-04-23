@@ -52,7 +52,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string Sigla { get; set; }
 
         [TabelaIntegracao(DisplayName = "TSIUFS.DESCRICAO")]
-        public string Estadp { get; set; }
+        public string Estado { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFEMP.AD_FONE_SAC")]
         [Required]

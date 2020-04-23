@@ -4,7 +4,6 @@ using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
 {
-    [AllowAnonymous]
     public class ClienteController : ApiBaseController
     {
         public ClienteService _clienteService;
@@ -14,7 +13,7 @@ namespace FWLog.Web.Api.Controllers
             _clienteService = clienteService;
         }
 
-        [Route("api/v1/Cliente/integrar")]
+        [Route("api/v1/cliente/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarCliente()
         {
