@@ -52,8 +52,16 @@ namespace FWLog.Web.Backoffice.Controllers
                     errorView = () => { return View(RegistroConvertido.RegistroFornecedorQuebra); };
 
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaConfiguracao))
+                {
+                    RegistroConvertido.RegistroRemessaConfiguracao.ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao remessaConfig)
+                    {
+                        if (remessaConfig.Id_Filial_Sankhya.Equals(0)) throw new Exception("Código Filial inválido!");
+                        if (remessaConfig.Cod_Fornecedor.Equals(0)) throw new Exception("Código Fornecedor inválido!");
+                        if (remessaConfig.Vlr_Minimo.Equals(0)) throw new Exception("Valor Minímo deve ser maior que zero!");
+                        if (remessaConfig.Total.Equals(0)) throw new Exception("Valor Total deve ser maior que zero!");
+                    });
                     errorView = () => { return View(RegistroConvertido.RegistroRemessaConfiguracao); };
-
+                }
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaUsuario))
                     errorView = () => { return View(RegistroConvertido.RegistroRemessaUsuario); };
 
@@ -164,46 +172,6 @@ namespace FWLog.Web.Backoffice.Controllers
         }
         #endregion
 
-        #region [Fornecedor Quebra] AutoComplete
-        [HttpPost]
-        public JsonResult FornecedorQuebraAutoComplete(string valor)
-        {
-            try
-            {
-                if (String.IsNullOrEmpty(valor))
-                    throw new Exception("Fornecedor não pode estar em branco!");
-
-                var _fornecedores = _garantiaConfigService.FornecedorQuebraAutoComplete(valor.ToUpper());
-
-                return Json(new { Success = true, Fornecedores = _fornecedores }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
-            }
-        }
-        #endregion
-
-        #region [Remessa Usuário] AutoComplete
-        [HttpPost]
-        public JsonResult RemessaUsuarioAutoComplete(string valor)
-        {
-            try
-            {
-                if (String.IsNullOrEmpty(valor))
-                    throw new Exception("Usuário não pode estar em branco!");
-
-                var _usuarios = _garantiaConfigService.RemessaUsuarioAutoComplete(valor.ToUpper());
-
-                return Json(new { Success = true, Usuarios = _usuarios }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
-            }
-        }
-        #endregion
-
         #region [Genérico] Converter TAG
         private static GarantiaConfiguracao ConverterRegistro(GarantiaConfiguracaoViewModel model)
         {
@@ -274,6 +242,29 @@ namespace FWLog.Web.Backoffice.Controllers
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+        #endregion
+
+        #region [Genérico] AutoComplete
+        [HttpPost]
+        public JsonResult AutoComplete(GarantiaConfiguracao.AutoComplete autocomplete)
+        {
+            try
+            {
+                #region Erros 
+                Func<ViewResult> errorView = () => { return View(autocomplete); };
+                if (!ModelState.IsValid)
+                    throw new Exception(ModelState.Values.Where(x => x.Errors.Count > 0).Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />")));
+                #endregion
+
+                var _lista = _garantiaConfigService.AutoComplete(autocomplete);
+
+                return Json(new { Success = true, Lista = _lista }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
         #endregion

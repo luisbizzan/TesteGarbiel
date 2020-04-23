@@ -231,6 +231,93 @@ namespace FWLog.Data.Repository.GeneralCtx
         }
         #endregion
 
+        #region [Genérico] AutoComplete 
+        public List<GarantiaConfiguracao.AutoComplete> AutoComplete(GarantiaConfiguracao.AutoComplete _AutoComplete)
+        {
+            try
+            {
+                var _listaAutoComplete = new List<GarantiaConfiguracao.AutoComplete>();
+
+                #region Formatar Consulta SQL
+                switch (_AutoComplete.tag)
+                {
+                    #region Fornecedor Quebra
+                    case GarantiaConfiguracao.GarantiaTag.FornecedorQuebra:
+                        _AutoComplete.comandoSQL = String.Format(String.Concat(
+                            "SELECT cnpj Data, \"RazaoSocial\" Value ",
+                            "FROM \"Fornecedor\" ",
+                            "WHERE ROWNUM <= 10 ",
+                            "AND \"Ativo\" = 1 ",
+                            "AND \"RazaoSocial\" LIKE '{0}%' ",
+                            "AND cnpj NOT IN (SELECT DISTINCT cod_fornecedor FROM gar_forn_quebra) ",
+                            "GROUP BY \"RazaoSocial\", cnpj ",
+                            "ORDER BY \"RazaoSocial\""), _AutoComplete.palavra.ToUpper());
+                        break;
+                    #endregion
+
+                    #region Remessa Usuário
+                    case GarantiaConfiguracao.GarantiaTag.RemessaUsuario:
+                        _AutoComplete.comandoSQL = String.Format(String.Concat(
+                            "SELECT \"Id\" Data, \"UserName\" ||' ('|| \"Email\" ||')' Value ",
+                            "FROM \"AspNetUsers\" ",
+                            "WHERE ROWNUM <= 10 ",
+                            "AND \"Id\" NOT IN (SELECT Id_Usr FROM gar_remessa_usr) ",
+                            "AND \"Email\" LIKE '{0}%' ",
+                            "OR \"UserName\" LIKE '{0}%' ",
+                            "ORDER BY \"UserName\""), _AutoComplete.palavra);
+                        break;
+                    #endregion
+
+                    #region Remessa Configuração
+                    case GarantiaConfiguracao.GarantiaTag.RemessaConfiguracao:
+                        {
+                            if (_AutoComplete.tagAutoComplete.Equals(GarantiaConfiguracao.AutoCompleteTag.Fornecedor))
+                                _AutoComplete.comandoSQL = String.Format(String.Concat(
+                                    "SELECT cnpj Data, \"RazaoSocial\" Value ",
+                                    "FROM \"Fornecedor\" ",
+                                    "WHERE ROWNUM <= 10 ",
+                                    "AND \"Ativo\" = 1 ",
+                                    "AND \"RazaoSocial\" LIKE '{0}%' ",
+                                    "AND cnpj NOT IN (SELECT DISTINCT cod_fornecedor FROM gar_remessa_config) ",
+                                    "GROUP BY \"RazaoSocial\", cnpj ",
+                                    "ORDER BY \"RazaoSocial\""), _AutoComplete.palavra.ToUpper());
+
+                            if (_AutoComplete.tagAutoComplete.Equals(GarantiaConfiguracao.AutoCompleteTag.Filial))
+                                _AutoComplete.comandoSQL = String.Format(String.Concat(
+                                    "SELECT \"IdEmpresa\" Data, \"NomeFantasia\" Value ",
+                                    "FROM \"Empresa\" ",
+                                    "WHERE ROWNUM <= 10 ",
+                                    "AND \"Ativo\" = 1 ",
+                                    "AND \"IdEmpresa\" NOT IN (SELECT Id_Filial_Sankhya FROM gar_remessa_config) ",
+                                    "AND \"NomeFantasia\" LIKE UPPER('%{0}%') ",
+                                    "ORDER BY \"NomeFantasia\""), _AutoComplete.palavra);
+                        }
+                        break;
+                        #endregion
+                }
+                #endregion
+
+                #region Processar Consulta Banco Dados
+                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                {
+                    conn.Open();
+                    if (conn.State == System.Data.ConnectionState.Open)
+                    {
+                        _listaAutoComplete = conn.Query<GarantiaConfiguracao.AutoComplete>(_AutoComplete.comandoSQL).ToList();
+                    }
+                    conn.Close();
+                }
+                #endregion
+
+                return _listaAutoComplete;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
+
         #region [Fornecedor Quebra] - Validar se código de fornecedor já esta cadastrado
         private bool FornecedorQuebraPodeSerCadastrado(string fornecedor)
         {
@@ -253,72 +340,6 @@ namespace FWLog.Data.Repository.GeneralCtx
             catch
             {
                 return false;
-            }
-        }
-        #endregion
-
-        #region [Fornecedor Quebra] AutoComplete 
-        public List<GarantiaConfiguracao.AutoComplete> FornecedorQuebraAutoComplete(string nome)
-        {
-            try
-            {
-                var select = new List<GarantiaConfiguracao.AutoComplete>();
-                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
-                {
-                    conn.Open();
-                    if (conn.State == System.Data.ConnectionState.Open)
-                    {
-                        string cmdSQL = String.Format(String.Concat(
-                            "SELECT cnpj Data, \"RazaoSocial\" Value ",
-                            "FROM \"Fornecedor\" ",
-                            "WHERE ROWNUM <= 10 ",
-                            "AND \"RazaoSocial\" LIKE '{0}%' ",
-                            "AND cnpj NOT IN (SELECT DISTINCT cod_fornecedor FROM gar_forn_quebra) ",
-                            "GROUP BY \"RazaoSocial\", cnpj ",
-                            "ORDER BY \"RazaoSocial\""), nome);
-
-                        select = conn.Query<GarantiaConfiguracao.AutoComplete>(cmdSQL).ToList();
-                    }
-                    conn.Close();
-                }
-                return select;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-        #endregion
-
-        #region [Remessa Usuário] AutoComplete 
-        public List<GarantiaConfiguracao.AutoComplete> RemessaUsuarioAutoComplete(string nome)
-        {
-            try
-            {
-                var select = new List<GarantiaConfiguracao.AutoComplete>();
-                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
-                {
-                    conn.Open();
-                    if (conn.State == System.Data.ConnectionState.Open)
-                    {
-                        string cmdSQL = String.Format(String.Concat(
-                            "SELECT \"Id\" Data, \"UserName\" ||' ('|| \"Email\" ||')' Value ",
-                            "FROM \"AspNetUsers\" ",
-                            "WHERE ROWNUM <= 10 ",
-                            "AND \"Id\" NOT IN (SELECT Id_Usr FROM gar_remessa_usr) ",
-                            "AND \"Email\" LIKE '{0}%' ",
-                            "OR \"UserName\" LIKE '{0}%' ",
-                            "ORDER BY \"UserName\""), nome);
-
-                        select = conn.Query<GarantiaConfiguracao.AutoComplete>(cmdSQL).ToList();
-                    }
-                    conn.Close();
-                }
-                return select;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
             }
         }
         #endregion

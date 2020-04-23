@@ -24,11 +24,22 @@ namespace FWLog.Data.Models
 
         public string BotaoEvento { get; set; }
 
-        #region [FORNECEDOR QUEBRA] AutoComplete
+        #region [GENÉRICO] AutoComplete
         public class AutoComplete
         {
             public string Data { get; set; }
             public string Value { get; set; }
+
+            [Required]
+            [Display(Name = "TAG")]
+            public GarantiaTag tag { get; set; }
+            [Required]
+            [Display(Name = "Texto")]
+            public string palavra { get; set; }
+
+            public AutoCompleteTag tagAutoComplete { get; set; }
+
+            public string comandoSQL { get; set; }
         }
         #endregion
 
@@ -132,6 +143,7 @@ namespace FWLog.Data.Models
         public static string GridNome { get; set; }
         public static object[] GridColunas { get; set; }
         public enum GarantiaTag { RemessaConfiguracao, RemessaUsuario, Configuracao, FornecedorQuebra, SankhyaTop }
+        public enum AutoCompleteTag { Fornecedor, Filial }
 
         /// <summary>
         /// Dicionário de TAGs

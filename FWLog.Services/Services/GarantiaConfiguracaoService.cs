@@ -35,17 +35,10 @@ namespace FWLog.Services.Services
         }
         #endregion
 
-        #region [Fornecedor Quebra] AutoComplete
-        public List<GarantiaConfiguracao.AutoComplete> FornecedorQuebraAutoComplete(string nome)
+        #region [Genérico] AutoComplete
+        public List<GarantiaConfiguracao.AutoComplete> AutoComplete(GarantiaConfiguracao.AutoComplete _AutoComplete)
         {
-            return _uow.GarantiaConfiguracaoRepository.FornecedorQuebraAutoComplete(nome);
-        }
-        #endregion
-
-        #region [Remessa Usuário] AutoComplete
-        public List<GarantiaConfiguracao.AutoComplete> RemessaUsuarioAutoComplete(string nome)
-        {
-            return _uow.GarantiaConfiguracaoRepository.RemessaUsuarioAutoComplete(nome);
+            return _uow.GarantiaConfiguracaoRepository.AutoComplete(_AutoComplete);
         }
         #endregion
     }
