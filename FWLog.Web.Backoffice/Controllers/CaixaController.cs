@@ -71,24 +71,28 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Caixa.Cadastrar)]
         public ActionResult Cadastrar()
         {
-            ViewData["ListaCaixaTipo"] = BuscarCaixaTipoSelectList();
-
-            return View();
+            return View(new CaixaCadastroViewModel
+            {
+                ListaCaixaTipo = BuscarCaixaTipoSelectList(),
+                Ativo = true
+            });
         }
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Caixa.Cadastrar)]
-        public ActionResult Cadastrar(Caixa caixa)
+        public ActionResult Cadastrar(CaixaCadastroViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
-                ViewData["ListaCaixaTipo"] = BuscarCaixaTipoSelectList();
+                viewModel.ListaCaixaTipo = BuscarCaixaTipoSelectList();
 
-                return View(caixa);
+                return View(viewModel);
             }
 
             try
             {
+                var caixa = Mapper.Map<Caixa>(viewModel);
+
                 caixa.IdEmpresa = IdEmpresa;
 
                 _caixaService.Cadastrar(caixa);
@@ -99,9 +103,9 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ModelState.AddModelError(string.Empty, businessException.Message);
 
-                ViewData["ListaCaixaTipo"] = BuscarCaixaTipoSelectList();
+                viewModel.ListaCaixaTipo = BuscarCaixaTipoSelectList();
 
-                return View(caixa);
+                return View(viewModel);
             }
 
             return RedirectToAction("Index");
