@@ -29,23 +29,16 @@ namespace FWLog.Services.Services
         #endregion
 
         #region [Genérico] Listar 
-        public GarantiaConfiguracao RegistroListar(string TAG)
+        public GarantiaConfiguracao RegistroListar(GarantiaConfiguracao.GarantiaTag TAG)
         {
             return _uow.GarantiaConfiguracaoRepository.RegistroListar(TAG);
         }
         #endregion
 
-        #region [Fornecedor Quebra] AutoComplete
-        public List<GarantiaConfiguracao.AutoComplete> FornecedorQuebraAutoComplete(string nome)
+        #region [Genérico] AutoComplete
+        public List<GarantiaConfiguracao.AutoComplete> AutoComplete(GarantiaConfiguracao.AutoComplete _AutoComplete)
         {
-            return _uow.GarantiaConfiguracaoRepository.FornecedorQuebraAutoComplete(nome);
-        }
-        #endregion
-
-        #region [Remessa Usuário] AutoComplete
-        public List<GarantiaConfiguracao.AutoComplete> RemessaUsuarioAutoComplete(string nome)
-        {
-            return _uow.GarantiaConfiguracaoRepository.RemessaUsuarioAutoComplete(nome);
+            return _uow.GarantiaConfiguracaoRepository.AutoComplete(_AutoComplete);
         }
         #endregion
     }

@@ -2,7 +2,8 @@
 /***  GENÉRICO  ***/
 var RegistroInclusao = new Object();
 var TagPadrao = $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != null && $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != "" ?
-    $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id : "FORN_QUEBRA";
+    $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id : "FornecedorQuebra";
+var _listaAutoComplete = [];
 
 /* [GENÉRICO] evento clique do menu de configuração */
 $(document).ready(function (e) {
@@ -16,7 +17,6 @@ $(document).ready(function (e) {
 /* [GENÉRICO] incluir registro(s) no banco dados */
 function RegistroIncluir() {
     RegistroInclusao.Tag = TagPadrao;
-
     $.post("/GarantiaConfiguracao/RegistroIncluir", { Registro: RegistroInclusao }, function (s) {
         if (s.Success) {
             PNotify.success({ text: s.Message });
@@ -62,7 +62,7 @@ function RegistroListar(TagInformada) {
             $(s.GridNome).DataTable({
                 destroy: true,
                 serverSide: false,
-                searching: true,
+                //searching: true,
                 data: s.Data,
                 columns: s.GridColunas,
             });
@@ -75,33 +75,32 @@ function RegistroListar(TagInformada) {
 
 /***    FORNECEDOR QUEBRA   ***/
 /* [FORNECEDOR QUEBRA] variaveis */
-var botaoFornQuebraLimpar = $("#btnLimpar")[0];
-var botaoFornQuebraGravar = $("#btnGravar")[0];
-var inputCodigoFornecedor = $("#Cod_Fornecedor")[0];
-var ulFornecedores = $("#listaFornecedor")[0];
-var _fornecedoresGravar = []; var _fornecedoresAutoComplete = [];
+var _fornecedoresGravar = [];
+var _fornecedoresAutoComplete = [];
 var liFornecedorQuebra = '<li id="{id}"><p><button type="button" class="btn btn-danger" onclick="FornecedorQuebraRemoverLista({data1});">' +
     '<i class="fa fa-trash-o"></i></button>  <b>[{data0}]  {value}</b></p></li>';
 
 /* [FORNECEDOR QUEBRA] limpar lista */
-$(botaoFornQuebraLimpar).click(function () {
-    $(ulFornecedores).html("");
+$("#btnLimpar").click(function () {
+    $("#listaFornecedor").html("");
 });
 
 /* [FORNECEDOR QUEBRA] autocomplete */
-$(inputCodigoFornecedor).autocomplete({
+$("#Cod_Fornecedor").autocomplete({
     lookup: function (query, done) {
 
+        var AutoComplete = new Object();
+        AutoComplete.tag = TagPadrao;
+        AutoComplete.palavra = $("#Cod_Fornecedor").val();
+
         $.ajax({
-            url: "/GarantiaConfiguracao/FornecedorQuebraAutoComplete",
+            url: "/GarantiaConfiguracao/AutoComplete",
             global: false,
             method: "POST",
-            data: {
-                valor: $(inputCodigoFornecedor).val()
-            },
+            data: { autocomplete: AutoComplete },
             success: function (s) {
                 if (s.Success) {
-                    $.each(s.Fornecedores, function (e, item) {
+                    $.each(s.Lista, function (e, item) {
                         var registro = new Object();
                         registro.data = item.Data;
                         registro.value = item.Value;
@@ -127,7 +126,7 @@ $(inputCodigoFornecedor).autocomplete({
 
     onSelect: function (item) {
         FornecedorQuebraAdicionarLista(item);
-        $(inputCodigoFornecedor).val("");
+        $("#Cod_Fornecedor").val("");
     }
 });
 
@@ -135,7 +134,7 @@ $(inputCodigoFornecedor).autocomplete({
 function FornecedorQuebraAdicionarLista(fornecedor) {
     if (jQuery.inArray(fornecedor.data, _fornecedoresGravar) == -1) {
         _fornecedoresGravar.push(fornecedor.data);
-        $(ulFornecedores).append(liFornecedorQuebra.replace("{value}", fornecedor.value).replace("{id}", fornecedor.data).replace("{data0}", fornecedor.data).replace("{data1}", fornecedor.data));
+        $("#listaFornecedor").append(liFornecedorQuebra.replace("{value}", fornecedor.value).replace("{id}", fornecedor.data).replace("{data0}", fornecedor.data).replace("{data1}", fornecedor.data));
     }
 }
 
@@ -159,19 +158,14 @@ function FornecedorQuebraGravar() {
     });
 
     _fornecedoresGravar = [];
-    $(ulFornecedores).html("");
+    $("#listaFornecedor").html("");
 
     RegistroIncluir();
 }
 
 /***    SANKHYA TOP     ***/
 /* [SANKHYA TOP] variaveis */
-var botaoSankhyaGravar = $("#btnSankhyaGravar")[0];
-var botaoSankhyaAdicionar = $("#btnSankhyaAdicionar")[0];
-var inputSankhyaCodigo = $("#txtSankhyaCodigo")[0];
-var inputSankhyaDescricao = $("#txtSankhyaDescricao")[0];
 var _SankhyaTopLista = [];
-var ulSankhyaTop = $("#listaSankhyaTop")[0];
 var liSankhyaTop = '<li id="{top}"><p><button type="button" class="btn btn-danger" onclick="ShankhyaTopRemoverLista(*{top}|{descricao}*);">' +
     '<i class="fa fa-trash-o"></i></button>  <b>[{top}]  {descricao}</b></p></li>';
 
@@ -186,11 +180,11 @@ function ShankhyaTopRemoverLista(sankhyaTopItem) {
 }
 
 /* [SANKHYA TOP] adicionar na lista */
-$(botaoSankhyaAdicionar).click(function () {
-    if ($(inputSankhyaCodigo).val() != "" && $(inputSankhyaDescricao).val() != "") {
+$("#btnSankhyaAdicionar").click(function () {
+    if ($("#txtSankhyaCodigo").val() != "" && $("#txtSankhyaDescricao").val() != "") {
         var SankhyaTopItem = new Object();
-        SankhyaTopItem.Top = $(inputSankhyaCodigo).val().toString().toUpperCase();
-        SankhyaTopItem.Descricao = $(inputSankhyaDescricao).val().trim().toString().toUpperCase();
+        SankhyaTopItem.Top = $("#txtSankhyaCodigo").val().toString().toUpperCase();
+        SankhyaTopItem.Descricao = $("#txtSankhyaDescricao").val().trim().toString().toUpperCase();
         SankhyaTopItem.Data = SankhyaTopItem.Top + "|" + SankhyaTopItem.Descricao;
 
         if (jQuery.inArray(SankhyaTopItem.Data, _SankhyaTopLista) == -1) {
@@ -199,10 +193,10 @@ $(botaoSankhyaAdicionar).click(function () {
             var liFormatado = liSankhyaTop.replace("{top}", SankhyaTopItem.Top).replace("{top}", SankhyaTopItem.Top).replace("{top}", SankhyaTopItem.Top);
             liFormatado = liFormatado.replace("{descricao}", SankhyaTopItem.Descricao).replace("{descricao}", SankhyaTopItem.Descricao).replace("*", "'").replace("*", "'");
 
-            $(ulSankhyaTop).append(liFormatado);
+            $("#listaSankhyaTop").append(liFormatado);
         }
-        $(inputSankhyaCodigo).val("");
-        $(inputSankhyaDescricao).val("");
+        $("#txtSankhyaCodigo").val("");
+        $("#txtSankhyaDescricao").val("");
     }
     else {
         PNotify.error({ text: "Informe o Código e Descrição da Top!" });
@@ -225,25 +219,28 @@ function ShankhyaTopGravar() {
 
 /***  REMESSA USUÁRIO ***/
 /* [REMESSA USUÁRIO] */
-var inputCodigoUsuario = $("#txtRemessaUsuario")[0];
-var _remessaUsuarioAutoComplete = []; var _remessaUsuarioGravar = [];
+var _remessaUsuarioAutoComplete = [];
+var _remessaUsuarioGravar = [];
+
 var liRemessaUsuario = '<li id="{data}"><p><button type="button" class="btn btn-danger" onclick="RemessaUsuarioRemoverLista(*{data}*);">' +
     '<i class="fa fa-trash-o"></i></button>  <b> {value}</b></p></li>';
 
 /* [REMESSA USUÁRIO] autocomplete */
-$(inputCodigoUsuario).autocomplete({
+$("#txtRemessaUsuario").autocomplete({
     lookup: function (query, done) {
 
+        var AutoComplete = new Object();
+        AutoComplete.tag = TagPadrao;
+        AutoComplete.palavra = $("#txtRemessaUsuario").val();
+
         $.ajax({
-            url: "/GarantiaConfiguracao/RemessaUsuarioAutoComplete",
+            url: "/GarantiaConfiguracao/AutoComplete",
             global: false,
             method: "POST",
-            data: {
-                valor: $(inputCodigoUsuario).val()
-            },
+            data: { autocomplete: AutoComplete },
             success: function (s) {
                 if (s.Success) {
-                    $.each(s.Usuarios, function (e, item) {
+                    $.each(s.Lista, function (e, item) {
                         var registro = new Object();
                         registro.data = item.Data;
                         registro.value = item.Value;
@@ -269,7 +266,7 @@ $(inputCodigoUsuario).autocomplete({
 
     onSelect: function (item) {
         RemessaUsuarioAdicionarLista(item);
-        $(inputCodigoUsuario).val("");
+        $("#txtRemessaUsuario").val("");
     }
 });
 
@@ -279,7 +276,7 @@ function RemessaUsuarioAdicionarLista(usuario) {
         _remessaUsuarioGravar.push(usuario.data);
         $("#listaRemessaUsuarios").append(liRemessaUsuario.replace("{data}", usuario.data).replace("{data}", usuario.data).replace("{value}", usuario.value).replace("*", "'").replace("*", "'"));
     }
-    $(inputCodigoUsuario).val("");
+    $("#txtRemessaUsuario").val("");
 }
 
 /* [REMESSA USUÁRIO] remover da lista */
@@ -287,5 +284,137 @@ function RemessaUsuarioRemoverLista(IdUsuario) {
     _remessaUsuarioGravar = jQuery.grep(_remessaUsuarioGravar, function (value) {
         return value != IdUsuario;
     });
-    $("#" + IdUsuario).remove();    
+    $("#" + IdUsuario).remove();
 }
+
+/* [REMESSA USUÁRIO] gravar no banco */
+function RemessaUsuarioGravar() {
+    RegistroInclusao.Inclusao = [];
+
+    $.each(_remessaUsuarioGravar, function (i, item) {
+        var registro = new Object();
+        registro.Id_Usr = item;
+
+        RegistroInclusao.Inclusao.push(JSON.stringify(registro));
+    });
+
+    _remessaUsuarioGravar = [];
+    $("#listaRemessaUsuarios").html("");
+
+    RegistroIncluir();
+}
+
+/*** REMESSA CONFIGURAÇÃO  ***/
+
+/* [REMESSA CONFIGURAÇÃO] gravar no banco */
+function RemessaConfigGravar() {
+    RegistroInclusao.Inclusao = [];
+
+    var registro = new Object();
+    registro.Id_Filial_Sankhya = $("#spanIdFilial").html() == "" ? 0 : $("#spanIdFilial").html();
+    registro.Filial = $("#spanFilial").html();
+    registro.Cod_Fornecedor = $("#spanFornecedor").html() == "" ? 0 : $("#spanFornecedor").html();
+    registro.Automatica = $("#chkRCAutomatica")[0].checked ? 1 : 0;
+    registro.Vlr_Minimo = $("#txtRCMinimoEnvio").val();
+    registro.Total = $("#txtRCTotal").val();
+    RegistroInclusao.Inclusao.push(JSON.stringify(registro));
+
+    console.log(RegistroInclusao);
+
+    RegistroIncluir();
+}
+
+/* [REMESSA CONFIGURAÇÃO] autocomplete - FORNECEDOR */
+$("#txtRCFornecedor").autocomplete({
+    lookup: function (query, done) {
+
+        var AutoComplete = new Object();
+        AutoComplete.tag = TagPadrao;
+        AutoComplete.tagAutoComplete = "Fornecedor";
+        AutoComplete.palavra = $("#txtRCFornecedor").val();
+
+        $.ajax({
+            url: "/GarantiaConfiguracao/AutoComplete",
+            global: false,
+            method: "POST",
+            data: { autocomplete: AutoComplete },
+            success: function (s) {
+                if (s.Success) {
+                    $.each(s.Lista, function (e, item) {
+                        var registro = new Object();
+                        registro.data = item.Data;
+                        registro.value = item.Value;
+                        _listaAutoComplete.push(registro);
+                    });
+                }
+                else {
+                    PNotify.error({ text: s.Message });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+
+        var result = {
+            suggestions: _listaAutoComplete
+        };
+
+        _listaAutoComplete = [];
+        done(result);
+    },
+
+    onSelect: function (remessaConfig) {
+        $("#spanIdFornecedor").html(remessaConfig.data);
+        $("#spanFornecedor").html(remessaConfig.value);
+        $("#txtRCFornecedor").val("");
+    }
+});
+
+
+/* [REMESSA CONFIGURAÇÃO] autocomplete - FILIAL */
+$("#txtRCFilial").autocomplete({
+    lookup: function (query, done) {
+
+        var AutoComplete = new Object();
+        AutoComplete.tag = TagPadrao;
+        AutoComplete.tagAutoComplete = "Filial";
+        AutoComplete.palavra = $("#txtRCFilial").val();
+
+        $.ajax({
+            url: "/GarantiaConfiguracao/AutoComplete",
+            global: false,
+            method: "POST",
+            data: { autocomplete: AutoComplete },
+            success: function (s) {
+                if (s.Success) {
+                    $.each(s.Lista, function (e, item) {
+                        var registro = new Object();
+                        registro.data = item.Data;
+                        registro.value = item.Value;
+                        _listaAutoComplete.push(registro);
+                    });
+                }
+                else {
+                    PNotify.error({ text: s.Message });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+
+        var result = {
+            suggestions: _listaAutoComplete
+        };
+
+        _listaAutoComplete = [];
+        done(result);
+    },
+
+    onSelect: function (remessaConfig) {
+        $("#spanIdFilial").html(remessaConfig.data);
+        $("#spanFilial").html(remessaConfig.value);
+        $("#txtRCFilial").val("");
+    }
+});

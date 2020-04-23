@@ -9,24 +9,37 @@ namespace FWLog.Data.Models
     {
         [Required]
         [Display(Name = "TAG")]
-        public string Tag { get; set; }
+        public GarantiaTag Tag { get; set; }
 
         [Display(Name = "Código")]
         public long Id { get; set; }
 
+        #region Listas de Inclusão
         public List<FornecedorQuebra> RegistroFornecedorQuebra { get; set; }
         public List<SankhyaTop> RegistroSankhyaTop { get; set; }
         public List<Configuracao> RegistroConfiguracao { get; set; }
         public List<RemessaUsuario> RegistroRemessaUsuario { get; set; }
         public List<RemessaConfiguracao> RegistroRemessaConfiguracao { get; set; }
+        #endregion
 
         public string BotaoEvento { get; set; }
 
-        #region [FORNECEDOR QUEBRA] AutoComplete
+        #region [GENÉRICO] AutoComplete
         public class AutoComplete
         {
             public string Data { get; set; }
             public string Value { get; set; }
+
+            [Required]
+            [Display(Name = "TAG")]
+            public GarantiaTag tag { get; set; }
+            [Required]
+            [Display(Name = "Texto")]
+            public string palavra { get; set; }
+
+            public AutoCompleteTag tagAutoComplete { get; set; }
+
+            public string comandoSQL { get; set; }
         }
         #endregion
 
@@ -86,9 +99,14 @@ namespace FWLog.Data.Models
         #region [GAR_REMESSA_USR]
         public class RemessaUsuario
         {
-            [Display(Name = "Codigo")]
+            [Display(Name = "Código")]
             public long Id { get; set; }
+            [Required]
+            [Display(Name = "Código de Usuário")]
             public string Id_Usr { get; set; }
+
+            public string Usuario { get; set; }
+            public string Email { get; set; }
 
             public string BotaoEvento { get; set; }
         }
@@ -97,13 +115,25 @@ namespace FWLog.Data.Models
         #region [GAR_REMESSA_CONFIG]
         public class RemessaConfiguracao
         {
-            [Display(Name = "Codigo")]
+            [Display(Name = "Código")]
             public long Id { get; set; }
+            [Required]
+            [Display(Name = "Código Filial")]
             public long Id_Filial_Sankhya { get; set; }
+            [Required]
+            [Display(Name = "Filial")]
             public string Filial { get; set; }
+            [Required]
+            [Display(Name = "Fornecedor")]
             public string Cod_Fornecedor { get; set; }
+            [Required]
+            [Display(Name = "Automática")]
             public long Automatica { get; set; }
+            [Required]
+            [Display(Name = "Valor Minímo")]
             public long Vlr_Minimo { get; set; }
+            [Required]
+            [Display(Name = "Valor Total")]
             public long Total { get; set; }
 
             public string BotaoEvento { get; set; }
@@ -112,30 +142,35 @@ namespace FWLog.Data.Models
 
         public static string GridNome { get; set; }
         public static object[] GridColunas { get; set; }
-        public enum TAG { REM_CONFIG, REM_USUARIO, CONFIG, FORN_QUEBRA, SANKHYA_TOP }
+        public enum GarantiaTag { RemessaConfiguracao, RemessaUsuario, Configuracao, FornecedorQuebra, SankhyaTop }
+        public enum AutoCompleteTag { Fornecedor, Filial }
 
         /// <summary>
         /// Dicionário de TAGs
         /// </summary>
         public static Dictionary<int, string> DicTagsValidas
         {
-            get { return new Dictionary<int, string>() { { 0, "REM_CONFIG" }, { 1, "REM_USUARIO" }, { 2, "CONFIG" }, { 3, "FORN_QUEBRA" }, { 4, "SANKHYA_TOP" } }; }
+            get
+            {
+                return new Dictionary<int, string>()
+                { { 0, GarantiaTag.RemessaConfiguracao.ToString() }, { 1, GarantiaTag.RemessaUsuario.ToString() }, { 2, GarantiaTag.Configuracao.ToString() }, { 3, GarantiaTag.FornecedorQuebra.ToString() }, { 4, GarantiaTag.SankhyaTop.ToString() } };
+            }
         }
 
         /// <summary>
         /// Dicionáriode TAG x Consultas SQL
         /// </summary>
-        public static Dictionary<string, string> DicTagConsultaSQL
+        public static Dictionary<GarantiaTag, string> DicTagConsultaSQL
         {
             get
             {
-                return new Dictionary<string, string>()
+                return new Dictionary<GarantiaTag, string>()
                 {
-                    {"FORN_QUEBRA", SQL.FornecedorQuebraListar },
-                    {"SANKHYA_TOP", SQL.SankhyaTopListar },
-                    {"CONFIG", SQL.ConfiguracaoListar },
-                    {"REM_CONFIG", SQL.RemessaConfiguracaoListar },
-                    {"REM_USUARIO", SQL.RemessaUsuarioListar },
+                    {GarantiaTag.FornecedorQuebra, SQL.FornecedorQuebraListar },
+                    {GarantiaTag.SankhyaTop, SQL.SankhyaTopListar },
+                    {GarantiaTag.Configuracao, SQL.ConfiguracaoListar },
+                    {GarantiaTag.RemessaConfiguracao, SQL.RemessaConfiguracaoListar },
+                    {GarantiaTag.RemessaUsuario, SQL.RemessaUsuarioListar },
                 };
             }
         }
@@ -143,17 +178,17 @@ namespace FWLog.Data.Models
         /// <summary>
         /// Dicionario de TAG x Nome Grid View
         /// </summary>
-        public static Dictionary<string, string> DicTagGridNome
+        public static Dictionary<GarantiaTag, string> DicTagGridNome
         {
             get
             {
-                return new Dictionary<string, string>()
+                return new Dictionary<GarantiaConfiguracao.GarantiaTag, string>()
                 {
-                    {"FORN_QUEBRA", "#gridFornecedorQuebra" },
-                    {"SANKHYA_TOP", "#gridSankhyaTop" },
-                    {"CONFIG", "#gridConfiguracao" },
-                    {"REM_CONFIG", "#gridRemessaConfig" },
-                    {"REM_USUARIO", "#gridRemessaUsuario" },
+                    {GarantiaTag.FornecedorQuebra, "#gridFornecedorQuebra" },
+                    {GarantiaTag.SankhyaTop, "#gridSankhyaTop" },
+                    {GarantiaTag.Configuracao, "#gridConfiguracao" },
+                    {GarantiaTag.RemessaConfiguracao, "#gridRemessaConfig" },
+                    {GarantiaTag.RemessaUsuario, "#gridRemessaUsuario" },
                 };
             }
         }
@@ -161,26 +196,26 @@ namespace FWLog.Data.Models
         /// <summary>
         /// Dicionário TAG x Colunas
         /// </summary>
-        public static Dictionary<string, object> DicTagGridColuna
+        public static Dictionary<GarantiaTag, object> DicTagGridColuna
         {
             get
             {
-                return new Dictionary<string, object>()
+                return new Dictionary<GarantiaConfiguracao.GarantiaTag, object>()
                 {
-                    {"FORN_QUEBRA", new object[]
+                    {GarantiaTag.FornecedorQuebra, new object[]
                     {
                         new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Cod_Fornecedor", title = "CNPJ" },
                         new { data = "NomeFantasia", title =  "Nome Fantasia" }, new { data = "RazaoSocial", title = "Razão Social" }
                     }},
-                    {"SANKHYA_TOP", new object[]  { new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Top", title = "Top" }, new { data = "Descricao", title = "Descrição" } }},
-                    {"REM_USUARIO", new object[] { new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Id_Usr", title = "Id Usuário" } } },
-                    {"REM_CONFIG", new object[]
+                    {GarantiaTag.SankhyaTop, new object[]  { new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Top", title = "Top" }, new { data = "Descricao", title = "Descrição" } }},
+                    {GarantiaTag.RemessaUsuario, new object[] { new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Usuario", title = "Usuário" }, new { data = "Email", title = "E-mail" } } },
+                    {GarantiaTag.RemessaConfiguracao, new object[]
                     {
                         new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Id_Filial_Sankhya", title = "Id Filial Sankhya" }, new { data = "Filial", title = "Filial" },
                         new { data = "Cod_Fornecedor", title = "Código Fornecedor" }, new { data = "Automatica", title = "Automática" }, new { data = "Vlr_Minimo", title = "Valor Minímo" },
                         new { data = "Total", title = "Total" }
                     }},
-                    {"CONFIG", new object[]
+                    {GarantiaTag.Configuracao, new object[]
                     {
                         new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Id_Filial_Sankhya", title = "Id Filial Sankhya" }, new { data = "Filial", title = "Filial" },
                         new { data = "Pct_Estorno_Frete", title = "Estorno Frete" }, new { data = "Pct_Desvalorizacao", title = "Desvalorização" }, new { data = "Vlr_Minimo_Envio", title = "Valor Minímo Envio" },
@@ -229,12 +264,21 @@ namespace FWLog.Data.Models
             #endregion
 
             #region Remessa Usuário
-            public static string RemessaUsuarioListar { get { return "SELECT Id, Id_Usr FROM gar_remessa_usr"; } }
+            public static string RemessaUsuarioListar
+            {
+                get
+                {
+                    return String.Concat(
+                        "SELECT usr.Id, asp.\"UserName\" Usuario, asp.\"Email\" Email ",
+                        "FROM \"AspNetUsers\" asp ",
+                        "INNER JOIN gar_remessa_usr usr ON usr.Id_Usr = asp.\"Id\"");
+                }
+            }
 
             /// <summary>
             /// {0} Id_Usr
             /// </summary>
-            public static string RemessaUsuarioIncluir { get { return String.Concat("INSER INTO gar_remessa_usr(Id_Usr) VALUES({0})"); } }
+            public static string RemessaUsuarioIncluir { get { return String.Concat("INSERT INTO gar_remessa_usr(Id_Usr) VALUES('{0}')"); } }
             #endregion
 
             #region Configuração
