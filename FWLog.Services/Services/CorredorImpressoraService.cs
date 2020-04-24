@@ -3,11 +3,12 @@ using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
+using System;
 using System.Collections.Generic;
 
 namespace FWLog.Services.Services
 {
-    public class CorredorImpressoraService
+    public class CorredorImpressoraService : BaseService
     {
         private readonly UnitOfWork _unitOfWork;
 
@@ -63,13 +64,13 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Usuário não tem permissão para editar o corredor x imprressora");
             }
 
-            var _grupoCorredorArmazenagemPorCorredor = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorCorredor(grupoCorredorArmazenagem.IdEmpresa, grupoCorredorArmazenagem.CorredorInicial,
+            var _grupoCorredorArmazenagemPorCorredor = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorCorredor(idEmpresaUsuarioLogado, grupoCorredorArmazenagem.CorredorInicial,
                 grupoCorredorArmazenagem.CorredorFinal, grupoCorredorArmazenagem.IdPontoArmazenagem);
 
             if (_grupoCorredorArmazenagemPorCorredor != null && _grupoCorredorArmazenagemPorCorredor.IdGrupoCorredorArmazenagem != grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem)
                 throw new BusinessException("O intervalo de corredores já foi cadastrado para o ponto de armazenagem informado.");
 
-            var _grupoCorredorArmazenagemPorImpressora = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorImpressora(grupoCorredorArmazenagem.IdEmpresa, grupoCorredorArmazenagem.CorredorInicial,
+            var _grupoCorredorArmazenagemPorImpressora = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorImpressora(idEmpresaUsuarioLogado, grupoCorredorArmazenagem.CorredorInicial,
                 grupoCorredorArmazenagem.CorredorFinal, grupoCorredorArmazenagem.IdImpressora);
 
             if (_grupoCorredorArmazenagemPorImpressora != null && _grupoCorredorArmazenagemPorImpressora.IdGrupoCorredorArmazenagem != grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem)
@@ -83,6 +84,21 @@ namespace FWLog.Services.Services
 
             _unitOfWork.GrupoCorredorArmazenagemRepository.Update(grupoCorredorArmazenagemAntigo);
             _unitOfWork.SaveChanges();
+        }
+
+        public void Excluir(int id)
+        {
+            try
+            {
+                var grupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository.GetById(id);
+
+                _unitOfWork.GrupoCorredorArmazenagemRepository.Delete(grupoCorredorArmazenagem);
+                _unitOfWork.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                ValidaELancaExcecaoIntegridade(exception);
+            }
         }
     }
 }
