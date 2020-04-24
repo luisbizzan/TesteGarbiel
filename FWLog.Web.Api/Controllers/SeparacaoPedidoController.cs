@@ -31,29 +31,29 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk(response);
         }
 
-        //[Route("api/v1/separacao-pedido/buscar-pedido-venda/{idPedidoVenda}/{codigoDeBarras}")]
-        //[HttpGet]
-        //public IHttpActionResult BuscarPedidoVenda(long? idPedidoVenda, string codigoDeBarras)
-        //{
-        //    if (idPedidoVenda == null && string.IsNullOrEmpty(codigoDeBarras))
-        //    {
-        //        return ApiBadRequest("Id do pedido ou código de barras é inválido.");
-        //    }
+        [Route("api/v1/separacao-pedido/buscar-pedido-venda/{idPedidoVenda}/{codigoDeBarras}")]
+        [HttpGet]
+        public IHttpActionResult BuscarPedidoVenda(long? idPedidoVenda, string codigoDeBarras)
+        {
+            if (idPedidoVenda == null && string.IsNullOrEmpty(codigoDeBarras))
+            {
+                return ApiBadRequest("Id do pedido ou código de barras é inválido.");
+            }
 
-        //    BuscarPedidoVendaResposta pedidoVendaResposta;
+            BuscarPedidoVendaResposta pedidoVendaResposta;
 
-        //    try
-        //    {
-        //        var response = _separacaoPedidoService.BuscarPedidoVenda(idPedidoVenda, codigoDeBarras, IdUsuario, IdEmpresa);
+            try
+            {
+                var response = _separacaoPedidoService.BuscarPedidoVenda(idPedidoVenda, codigoDeBarras, IdUsuario, IdEmpresa);
 
-        //        pedidoVendaResposta = Mapper.Map<BuscarPedidoVendaResposta>(response);
-        //    }
-        //    catch (BusinessException ex)
-        //    {
-        //        return ApiBadRequest(ex.Message);
-        //    }
+                pedidoVendaResposta = Mapper.Map<BuscarPedidoVendaResposta>(response);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
 
-        //    return ApiOk(pedidoVendaResposta);
-        //}
+            return ApiOk(pedidoVendaResposta);
+        }
     }
 }

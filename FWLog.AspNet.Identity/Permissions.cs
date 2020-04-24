@@ -227,10 +227,12 @@ namespace FWLog.AspNet.Identity
         public class RFSeparacao : PermissionGroupBuildItem
         {
             public const string CancelarSeparacao = "RFCancelarSeparacao";
+            public const string FuncaoF7 = "RFFuncaoF7";
 
             public RFSeparacao() : base(Display.FromString("Coletor - Separação"))
             {
                 Register(CancelarSeparacao, Display.FromString("Cancelar Separação"));
+                Register(CancelarSeparacao, Display.FromString("Função F7 - Ajustar Produto Pedido"));
             }
         }
 
