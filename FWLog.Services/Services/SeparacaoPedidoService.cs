@@ -182,17 +182,16 @@ namespace FWLog.Services.Services
                     //pedidoVendaProduto.QtdSeparada = 0;
                 }
 
-                //TODO: Aguardando definição de status
+                var listaPedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(idPedidoVenda);
 
-                //var listaPedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(idPedidoVenda);
-
-                //foreach (var pedidoVendaVolume in listaPedidoVendaVolume)
-                //{
-                //    //pedidoVendaVolume.IdPedidoVendaStatus = idPedidoVendaStatus;
-                //    pedidoVendaVolume.DataHoraInicioSeparacao = null;
-                //    pedidoVendaVolume.DataHoraFimSeparacao = null;
-                //    pedidoVendaVolume.IdCaixaVolume = null;
-                //}
+                foreach (var pedidoVendaVolume in listaPedidoVendaVolume)
+                {
+                    ////TODO: Aguardando definição de status
+                    //pedidoVendaVolume.IdPedidoVendaStatus = idPedidoVendaStatus;
+                    //pedidoVendaVolume.DataHoraInicioSeparacao = null;
+                    //pedidoVendaVolume.DataHoraFimSeparacao = null;
+                    //pedidoVendaVolume.IdCaixaVolume = null;
+                }
 
                 await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
 

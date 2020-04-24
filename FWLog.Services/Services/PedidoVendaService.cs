@@ -15,5 +15,3 @@ namespace FWLog.Services.Services
         }
     }
 }
-
-
