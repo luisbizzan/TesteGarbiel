@@ -157,7 +157,7 @@
     <Compile Include="Model\IntegracaoSankhya\FornecedorIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\FreteTipoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\LoginReposta.cs" />
-    <Compile Include="Model\IntegracaoSankhya\PedidoVendaIntegracao.cs" />
+    <Compile Include="Model\IntegracaoSankhya\PedidoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoEstoqueIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoMediaVendaIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoReservadontegracao.cs" />
@@ -195,6 +195,7 @@
     <Compile Include="Model\Relatorios\RelatorioTotalPorAlaRequest.cs" />
     <Compile Include="Model\Relatorios\TermoResponsabilidadeRequest.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
+    <Compile Include="Model\SeparacaoPedido\BuscarPedidoVendaResposta.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
     <Compile Include="Model\TokenResponse.cs" />
     <Compile Include="Model\Usuario\GerarTokenAcessoColetorResponse.cs" />
@@ -213,6 +214,7 @@
     <Compile Include="Relatorio\Model\RelatorioProdutos.cs" />
     <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
     <Compile Include="Services\AccountService.cs" />
+    <Compile Include="Services\PedidoService.cs" />
     <Compile Include="Services\SeparacaoPedidoService.cs" />
     <Compile Include="Services\ArmazenagemService.cs" />
     <Compile Include="Services\BaseService.cs" />
@@ -221,6 +223,7 @@
     <Compile Include="Services\ColetorHistoricoService.cs" />
     <Compile Include="Services\ConferenciaService.cs" />
     <Compile Include="Services\CaixaService.cs" />
+    <Compile Include="Services\CorredorImpressoraService.cs" />
     <Compile Include="Services\GarantiaService.cs" />
     <Compile Include="Services\MotivoLaudoService.cs" />
     <Compile Include="Services\IntegracaoLogService.cs" />

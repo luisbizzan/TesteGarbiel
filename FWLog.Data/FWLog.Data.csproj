@@ -112,6 +112,7 @@
     <Compile Include="Models\DataTablesCtx\AtividadeEstoqueListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\AtividadeEstoqueListaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\CaixaListaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\CorredorImpressoraListaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemTotalPorAlasLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoProdutoListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemPesquisaModalListaLinhaTabela.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Models\DataTablesCtx\TransportadoraPesquisaModalLinhaTabela.cs" />
     <Compile Include="Models\FilterCtx\AtividadeEstoqueListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\CaixaListaFiltro.cs" />
+    <Compile Include="Models\FilterCtx\CorredorImpressoraListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\EnderecoArmazenagemPesquisaModalFiltro.cs" />
     <Compile Include="Models\FilterCtx\GarantiaFilter.cs" />
     <Compile Include="Models\FilterCtx\ClientePesquisaModalFiltro.cs" />
@@ -155,6 +157,7 @@
     <Compile Include="Models\GarantiaQuarentenaProduto.cs" />
     <Compile Include="Models\GarantiaQuarentenaStatus.cs" />
     <Compile Include="Models\GarantiaStatus.cs" />
+    <Compile Include="Models\GrupoCorredorArmazenagem.cs" />
     <Compile Include="Models\ImpressaoItem.cs" />
     <Compile Include="Models\IntegracaoEntidade.cs" />
     <Compile Include="Models\LoteMovimentacao.cs" />
@@ -164,6 +167,9 @@
     <Compile Include="Models\MotivoLaudo.cs" />
     <Compile Include="Models\IntegracaoLog.cs" />
     <Compile Include="Models\AtividadeEstoque.cs" />
+    <Compile Include="Models\Pedido.cs" />
+    <Compile Include="Models\PedidoItem.cs" />
+    <Compile Include="Models\PedidoVendaVolume.cs" />
     <Compile Include="Models\PedidoVendaProdutoStatus.cs" />
     <Compile Include="Models\PedidoVendaStatus.cs" />
     <Compile Include="Models\PedidoVendaProduto.cs" />
@@ -258,8 +264,12 @@
     <Compile Include="Repository\GeneralCtx\ColetorHistoricoTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\AtividadeEstoqueRepository.cs" />
     <Compile Include="Repository\GeneralCtx\AtividadeEstoqueTipoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\GrupoCorredorArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PedidoVendaProdutoStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PedidoVendaProdutoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PedidoItemRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PedidoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\PedidoVendaVolumeRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PedidoVendaStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PedidoVendaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaConferenciaTipoRepository.cs" />

@@ -20,9 +20,6 @@ namespace FWLog.Data.Models
         [Required]
         public int QtdPedido { get; set; }
 
-        [Required]
-        public int Sequencia { get; set; }
-
         [Index]
         [Required]
         public PedidoVendaProdutoStatusEnum IdPedidoVendaProdutoStatus { get; set; }
