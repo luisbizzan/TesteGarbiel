@@ -87,6 +87,7 @@ namespace FWLog.Data
         public virtual DbSet<PedidoVendaStatus> PedidoVendaStatus { get; set; }
         public virtual DbSet<CaixaTipo> CaixaTipo { get; set; }
         public virtual DbSet<Caixa> Caixa { get; set; }
+        public virtual DbSet<GrupoCorredorArmazenagem> GrupoCorredorArmazenagem { get; set; }
 
         public int SaveChangesWithoutLog()
         {

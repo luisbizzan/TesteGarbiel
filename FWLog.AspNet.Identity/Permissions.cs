@@ -349,5 +349,21 @@ namespace FWLog.AspNet.Identity
                 Register(Visualizar, Display.FromString("Visualizar Caixa"));
             }
         }
+
+        public class Separacao : PermissionGroupBuildItem
+        {
+            public const string ListarCorredorImpressora = "CorredorImpressoraListar";
+            public const string CadastrarCorredorImpressora = "CorredorImpressoraCadastrar";
+            public const string EditarCorredorImpressora = "CorredorImpressoraEditar";
+            public const string VisualizarCorredorImpressora = "CorredorImpressoraVisualizar";
+
+            public Separacao() : base(Display.FromString("Separação"))
+            {
+                Register(ListarCorredorImpressora, Display.FromString("Listar Corredor x Impressora"));
+                Register(CadastrarCorredorImpressora, Display.FromString("Cadastrar Corredor x Impressora"));
+                Register(EditarCorredorImpressora, Display.FromString("Editar Corredor x Impressora"));
+                Register(VisualizarCorredorImpressora, Display.FromString("Visualizar Corredor x Impressora"));
+            }
+        }
     }
 }

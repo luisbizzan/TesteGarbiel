@@ -1,0 +1,123 @@
+﻿@model FWLog.Web.Backoffice.Models.CorredorImpressoraCtx.CorredorImpressoraListaViewModel
+@using FWLog.AspNet.Identity
+
+@{
+    ViewBag.Title = "Corredores x Impressora";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+            urlDetalhes = Url.Action("Detalhes"),
+            destalhesVisivel = User.HasPermission(Permissions.Separacao.VisualizarCorredorImpressora),
+            urlEditar = Url.Action("Editar"),
+            editarVisivel = User.HasPermission(Permissions.Separacao.EditarCorredorImpressora),
+            urlExcluir = Url.Action("ExcluirAjax"),
+            excluirVisivel = User.HasPermission(Permissions.Separacao.VisualizarCorredorImpressora),
+            urlDadosLista = Url.Action("DadosLista")
+        })
+}
+
+<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2 class="collapse-link">
+                <i class="fa fa-chevron-down fa-fw"></i> Filtros
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content" style="display: block;">
+            <div class="row">
+                <div class="form-group col-sm-4 col-xs-12 col-lg-4">
+                    @Html.LabelFor(m => m.Filtros.IdPontoArmazenagem, new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filtros.DescricaoPontoArmazenagem, null, new { @class = "form-control", @readonly = "true", data_field = "DescricaoPontoArmazenagem" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filtros.IdPontoArmazenagem, new { data_field = "IdPontoArmazenagem" })
+                </div>
+                <div class="form-group col-sm-4 col-xs-12 col-lg-4">
+                    @Html.LabelFor(m => m.Filtros.IdImpressora)
+                    @Html.DropDownListFor(m => m.Filtros.IdImpressora, Model.Filtros.ListaImpressora, "Todos...", new { @class = "form-control", data_field = "IdImpressora" })
+                </div>
+                <div class="form-group col-sm-4 col-xs-12 col-lg-4">
+                    @Html.LabelFor(m => m.Filtros.Status)
+                    @Html.DropDownListFor(m => m.Filtros.Status, Model.Filtros.ListaStatus, "Todos...", new { @class = "form-control", data_field = "Status" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-4 col-xs-12 col-lg-4">
+                    <div class="x_panel">
+                        <div class="x_title">
+                            @Html.LabelFor(m => m.Filtros.CorredorInicial)
+                        </div>
+                        <div class="x_content" style="display: block;">
+                            <div class="row">
+                                <div class="form-group col-md-6 col-xs-12">
+                                    <div class='input-group'>
+                                        <span class="input-group-addon">
+                                            <span>De</span>
+                                        </span>
+                                        @Html.TextBoxFor(m => m.Filtros.CorredorInicial, new { @class = "form-control validateCorredorInicial onyNumber", data_field = "CorredorInicial", type = "number" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.Filtros.CorredorInicial)
+                                </div>
+                                <div class="form-group col-md-6 col-xs-12">
+                                    <div class='input-group'>
+                                        <span class="input-group-addon">
+                                            <span>Até</span>
+                                        </span>
+                                        @Html.TextBoxFor(m => m.Filtros.CorredorFinal, new { @class = "form-control onyNumber", data_field = "CorredorFinal", type = "number" })
+                                    </div>
+                                    @Html.ValidationMessageFor(m => m.Filtros.CorredorFinal)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 form-buttons">
+                    <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
+                    <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Lista de Corredores x Impressora</h2>
+                <div class="nav navbar-right panel_toolbox">
+                    @if (User.HasPermission(Permissions.Separacao.CadastrarCorredorImpressora))
+                    {
+                        <a class="btn btn-primary btn-dt-action" href="@Url.Action("Cadastrar")"><i class="fa fa-fw fa-plus"></i> Cadastrar</a>
+                    }
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table id="dataTable" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(m => m.Itens.CorredorInicial)</th>
+                            <th>@Html.DisplayNameFor(m => m.Itens.CorredorFinal)</th>
+                            <th>@Html.DisplayNameFor(m => m.Itens.DescricaoPontoArmazenagem)</th>
+                            <th>@Html.DisplayNameFor(m => m.Itens.Impressora)</th>
+                            <th>@Html.DisplayNameFor(m => m.Itens.Status)</th>
+                            <th>@Resources.CommonStrings.ActionsLabel</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modalPesquisaPontoArmazenagem"></div>
