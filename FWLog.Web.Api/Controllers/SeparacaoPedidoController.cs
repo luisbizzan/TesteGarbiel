@@ -74,5 +74,19 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/separacao-pedido/iniciar-separacao-pedido-venda/{idPedidoVenda}")]
+        [HttpPost]
+        public IHttpActionResult IniciarSeparacaoPedido(long idPedidoVenda)
+        {
+            var idsPedidosProcessoDeSeparacao = _separacaoPedidoService.ConsultaPedidoVendaEmSeparacao(IdUsuario, IdEmpresa);
+
+            var response = new SeparacaoPedidoResposta
+            {
+                PedidosProcessoDeSeparacao = idsPedidosProcessoDeSeparacao
+            };
+
+            return ApiOk(response);
+        }
     }
 }
