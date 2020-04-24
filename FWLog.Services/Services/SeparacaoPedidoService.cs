@@ -168,24 +168,21 @@ namespace FWLog.Services.Services
 
                 _unitOfWork.SaveChanges();
 
-                //TODO:
-                /*
-                    Atualizar a LoteProdutoEndereco abatendo da coluna Quantidade a PedidoVendaProduto.QtdSeparada filtrando o IdProduto, IdEmpresa e IdEnderecoArmazenagem
+                var listaPedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
 
-                    O IdEnderecoArmazenagem, deve ser carregado da PedidoVendaProduto que foi gerado pelo Robô de Separação
+                foreach (var pedidoVendaProduto in listaPedidoVendaProduto)
+                {
+                    //TODO: Atualizar a LoteProdutoEndereco abatendo da coluna Quantidade a PedidoVendaProduto.QtdSeparada filtrando o IdProduto, IdEmpresa e IdEnderecoArmazenagem
 
-                    Atualizar a PedidoVendaProduto.QtdSeparada de todos os produtos do pedido para zero para que a separação seja reiniciada
+                    //TODO: Aguardando definição de status
+                    //pedidoVendaProduto.IdPedidoVendaStatus = novoStatusSeparacao;
+                    //pedidoVendaProduto.DataHoraInicioSeparacao = null;
+                    //pedidoVendaProduto.DataHoraFimSeparacao = null;
+                    //pedidoVendaProduto.IdUsuarioAutorizacaoZerar = idUsuarioPermissaoCancelamento;
+                    //pedidoVendaProduto.QtdSeparada = 0;
+                }
 
-                    Atualizar as colunas a seguir da PedidoVendaProduto IdUsuarioAutorizacaoZerarPedido, DataHoraInicioSeparacao, DataHoraFimSeparacao para NULL e a StatusSeparacao para “2 - Enviado para Separação”
-                */
-
-                //var listaPedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
-
-                //foreach (var pedidoVendaProduto in listaPedidoVendaProduto)
-                //{
-                //}
-
-                //Aguardando definição de status
+                //TODO: Aguardando definição de status
 
                 //var listaPedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(idPedidoVenda);
 

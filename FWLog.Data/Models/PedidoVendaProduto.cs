@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
@@ -20,9 +21,29 @@ namespace FWLog.Data.Models
         [Required]
         public int QtdPedido { get; set; }
 
+        [Required]
+        public int Sequencia { get; set; }
+
         [Index]
         [Required]
         public PedidoVendaProdutoStatusEnum IdPedidoVendaProdutoStatus { get; set; }
+
+        [Required]
+        public decimal CubagemProduto { get; set; }
+
+        [Required]
+        public decimal PesoProdutoKg { get; set; }
+
+        [Required]
+        public long IdEnderecoArmazenagem { get; set; }
+
+        public int? QtdSeparada { get; set; }
+
+        public DateTime? DataHoraFimSeparacao { get; set; }
+
+        public DateTime? DataHoraInicioSeparacao { get; set; }
+
+        public string IdUsuarioAutorizacaoZerar { get; set; }
 
         [ForeignKey(nameof(IdPedidoVenda))]
         public virtual PedidoVenda PedidoVenda { get; set; }
