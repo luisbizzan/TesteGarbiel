@@ -2,6 +2,7 @@
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
+using FWLog.Services.Integracao;
 using FWLog.Services.Model.Armazenagem;
 using FWLog.Services.Model.Coletor;
 using System;
@@ -100,7 +101,7 @@ namespace FWLog.Services.Services
         //    return pedidoVenda;
         //}
 
-        public void CancelarPedidoSeparacao(long idPedidoVenda, string idUsuarioPermissaoCancelamento, string idUsuarioOperacao, long idEmpresa)
+        public async Task CancelarPedidoSeparacao(long idPedidoVenda, string idUsuarioPermissaoCancelamento, string idUsuarioOperacao, long idEmpresa)
         {
             if (idPedidoVenda <= 0)
             {
@@ -136,7 +137,9 @@ namespace FWLog.Services.Services
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
+                var novoStatusSeparacao = PedidoVendaStatusEnum.EnviadoSeparacao;
+
+                pedidoVenda.IdPedidoVendaStatus = novoStatusSeparacao;
                 pedidoVenda.IdUsuarioSeparacao = null;
                 pedidoVenda.DataHoraInicioSeparacao = null;
                 pedidoVenda.DataHoraFimSeparacao = null;
@@ -160,27 +163,31 @@ namespace FWLog.Services.Services
                 //{
                 //}
 
-                //TODO: Devem ser atualizadas as colunas da PedidoVendaVolume
-                //PedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
-                //PedidoVendaVolume.DataHoraInicioSeparacao = null;
-                //PedidoVendaVolume.DataHoraFimSeparacao = null;
-                //PedidoVendaVolume.IdCaixaVolume = null;
+                //Aguardando definição de status
 
-                //TODO: Adicionar logs de PedidoVendaVolume
-                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
-                {
-                    IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
-                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.CancelamentoSeparacao,
-                    Descricao = $"Cancelou a separação do pedido {idPedidoVenda} com permissão do usuário {idUsuarioPermissaoCancelamento}",
-                    IdEmpresa = idEmpresa,
-                    IdUsuario = idUsuarioOperacao
-                };
+                //var listaPedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(idPedidoVenda);
 
-                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+                //foreach (var pedidoVendaVolume in listaPedidoVendaVolume)
+                //{
+                //    //pedidoVendaVolume.IdPedidoVendaStatus = idPedidoVendaStatus;
+                //    pedidoVendaVolume.DataHoraInicioSeparacao = null;
+                //    pedidoVendaVolume.DataHoraFimSeparacao = null;
+                //    pedidoVendaVolume.IdCaixaVolume = null;
+                //}
 
-                //TODO: Atualizar o status da separação no Sankhya
+                await AtualizarStatusSeparacaoSankhya(pedidoVenda.Pedido.CodigoIntegracao, novoStatusSeparacao);
 
                 transacao.Complete();
+            }
+        }
+
+        private async Task AtualizarStatusSeparacaoSankhya(int codigoIntegracaoPedido, PedidoVendaStatusEnum status)
+        {
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                var campoChave = new Dictionary<string, string> { { "NUNOTA", codigoIntegracaoPedido.ToString() } };
+
+                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSSEP", status.GetHashCode());
             }
         }
     }
