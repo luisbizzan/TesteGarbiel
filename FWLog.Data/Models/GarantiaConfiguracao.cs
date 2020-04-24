@@ -82,14 +82,35 @@ namespace FWLog.Data.Models
         #region [GAR_CONFIG]
         public class Configuracao
         {
-            [Display(Name = "Codigo")]
+            [Display(Name = "Código")]
             public long Id { get; set; }
+            [Required]
+
+            [Display(Name = "Código Filial")]
             public long Id_Filial_Sankhya { get; set; }
+            [Required]
+            [Display(Name = "Filial")]
             public string Filial { get; set; }
+            [Required]
+            [Display(Name = "Percentual Estorno Frete")]
             public long Pct_Estorno_Frete { get; set; }
+            public string Pct_Estorno_FreteView { get; set; }
+            [Required]
+            [Display(Name = "Percentual Desvalorização")]
             public long Pct_Desvalorizacao { get; set; }
+            public string Pct_DesvalorizacaoView { get; set; }
+            [Required]
+            [MinLength(1)]
+            [Display(Name = "Valor Minímo")]
             public decimal Vlr_Minimo_Envio { get; set; }
+            public string Vlr_Minimo_EnvioView { get; set; }
+            [Required]
+            [MinLength(1)]
+            [Display(Name = "Prazo Envio Automático")]
             public long Prazo_Envio_Automatico { get; set; }
+            [Required]
+            [MinLength(1)]
+            [Display(Name = "Prazo Descarte")]
             public long Prazo_Descarte { get; set; }
 
             public string BotaoEvento { get; set; }
@@ -129,9 +150,11 @@ namespace FWLog.Data.Models
             [Required]
             [Display(Name = "Automática")]
             public long Automatica { get; set; }
+            public string AutomaticaView { get; set; }
             [Required]
             [Display(Name = "Valor Minímo")]
-            public long Vlr_Minimo { get; set; }
+            public decimal Vlr_Minimo { get; set; }
+            public string Vlr_MinimoView { get; set; }
             [Required]
             [Display(Name = "Valor Total")]
             public long Total { get; set; }
@@ -200,7 +223,7 @@ namespace FWLog.Data.Models
         {
             get
             {
-                return new Dictionary<GarantiaConfiguracao.GarantiaTag, object>()
+                return new Dictionary<GarantiaTag, object>()
                 {
                     {GarantiaTag.FornecedorQuebra, new object[]
                     {
@@ -211,8 +234,8 @@ namespace FWLog.Data.Models
                     {GarantiaTag.RemessaUsuario, new object[] { new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Usuario", title = "Usuário" }, new { data = "Email", title = "E-mail" } } },
                     {GarantiaTag.RemessaConfiguracao, new object[]
                     {
-                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Id_Filial_Sankhya", title = "Id Filial Sankhya" }, new { data = "Filial", title = "Filial" },
-                        new { data = "Cod_Fornecedor", title = "Código Fornecedor" }, new { data = "Automatica", title = "Automática" }, new { data = "Vlr_Minimo", title = "Valor Minímo" },
+                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Id_Filial_Sankhya", title = "Id Filial" }, new { data = "Filial", title = "Filial" },
+                        new { data = "Cod_Fornecedor", title = "Fornecedor (CNPJ)" }, new { data = "AutomaticaView", title = "Automática" }, new { data = "Vlr_MinimoView", title = "R$ Minímo" },
                         new { data = "Total", title = "Total" }
                     }},
                     {GarantiaTag.Configuracao, new object[]
@@ -230,7 +253,7 @@ namespace FWLog.Data.Models
         /// </summary>
         public static string botaoExcluirTemplate
         {
-            get { return "<button type=\"button\" class=\"btn btn-danger\" onclick=\"RegistroExcluir('{0}',{1});\"><i class=\"fa fa-trash-o\" data-toggle=\"tooltip\" data-original-title=\"Excluir Registro\"></i></button>"; }
+            get { return "<a onclick=\"RegistroExcluir('{0}',{1});\" class=\"btn btn-link btn-row-actions\" data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"Excluir Registro\"><i class=\"glyphicon glyphicon-trash text-danger\"></i></a>"; }
         }
 
         #region Catálogo Comandos SQL
@@ -255,12 +278,24 @@ namespace FWLog.Data.Models
             #endregion
 
             #region Remessa Configuração
-            public static string RemessaConfiguracaoListar { get { return "SELECT Id, Id_Filial_Sankhya, Filial, Cod_Fornecedor, Automatica, Vlr_Minimo, Total  FROM gar_remessa_config"; } }
+            public static string RemessaConfiguracaoListar
+            {
+                get
+                {
+                    return String.Concat(
+                        "SELECT 	rc.Id, rc.Id_Filial_Sankhya, rc.Filial, f.\"RazaoSocial\" Cod_Fornecedor, rc.Automatica, rc.Vlr_Minimo, rc.Total ",
+                        "FROM gar_remessa_config rc ",
+                        "INNER JOIN \"Fornecedor\" f ON TRIM(f.cnpj)=TRIM(rc.Cod_Fornecedor)");
+                }
+            }
 
             /// <summary>
             /// {0} Id_Filial_Sankhya | {1} Filial | {2} Cod_Fornecedor | {3} Automatica | {4} Vlr_Minimo | {5} Total
             /// </summary>
-            public static string RemessaConfiguracaoIncluir { get { return String.Concat("INSERT INTO gar_remessa_config(Id_Filial_Sankhya, Filial, Cod_Fornecedor, Automatica, Vlr_Minimo, Total) VALUES({0}, '{1}', '{2}', {3}, {4}, {5})"); } }
+            public static string RemessaConfiguracaoIncluir
+            {
+                get { return String.Concat("INSERT INTO gar_remessa_config(Id_Filial_Sankhya, Filial, Cod_Fornecedor, Automatica, Vlr_Minimo, Total) VALUES({0}, '{1}', {2}, {3}, {4}, {5})"); }
+            }
             #endregion
 
             #region Remessa Usuário

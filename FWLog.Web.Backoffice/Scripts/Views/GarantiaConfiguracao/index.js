@@ -4,6 +4,27 @@ var RegistroInclusao = new Object();
 var TagPadrao = $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != null && $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != "" ?
     $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id : "FornecedorQuebra";
 var _listaAutoComplete = [];
+$('.btn-row-actions').tooltip();
+$('.onlyNumber').mask('0#');
+
+/* [GENÉRICO] limpar listas */
+function CancelarTudo() {
+    _fornecedoresGravar = [];
+    _listaAutoComplete = [];
+    _remessaUsuarioGravar = [];
+    _SankhyaTopLista = [];
+
+    $("#listaFornecedor").html("");
+    $("#listaSankhyaTop").html("");
+    $("#listaRemessaUsuarios").html("");
+
+    $("#spanIdFilial").html("");
+    $("#spanFilial").html("");
+    $("#spanFornecedor").html("");
+    $("#chkRCAutomatica")[0].checked = false;
+    $("#txtRCMinimoEnvio").val("");
+    $("#txtRCTotal").val("");
+}
 
 /* [GENÉRICO] evento clique do menu de configuração */
 $(document).ready(function (e) {
@@ -17,10 +38,12 @@ $(document).ready(function (e) {
 /* [GENÉRICO] incluir registro(s) no banco dados */
 function RegistroIncluir() {
     RegistroInclusao.Tag = TagPadrao;
+
     $.post("/GarantiaConfiguracao/RegistroIncluir", { Registro: RegistroInclusao }, function (s) {
         if (s.Success) {
             PNotify.success({ text: s.Message });
             RegistroListar(TagPadrao);
+            CancelarTudo();
         }
         else {
             PNotify.error({ text: s.Message });
@@ -28,9 +51,8 @@ function RegistroIncluir() {
     }).fail(function (f) {
         console.log(f);
     }).done(function (d) {
-        console.log(d);
+        //console.log(d);
     });
-
 }
 
 /* [GENÉRICO] excluir no banco dados */
@@ -42,7 +64,7 @@ function RegistroExcluir(TagSelecionada, IdSelecionado) {
     $.post("/GarantiaConfiguracao/RegistroExcluir", { Registro: _Registro }, function (s) {
         if (s.Success) {
             PNotify.success({ text: s.Message });
-            RecarregarGrid(TagSelecionada);
+            RegistroListar(TagSelecionada);
         }
         else {
             PNotify.error({ text: s.Message });
@@ -52,7 +74,6 @@ function RegistroExcluir(TagSelecionada, IdSelecionado) {
     }).done(function (d) {
         //console.log(d);
     });
-
 }
 
 /* [GENÉRICO] listar registros */
@@ -76,14 +97,7 @@ function RegistroListar(TagInformada) {
 /***    FORNECEDOR QUEBRA   ***/
 /* [FORNECEDOR QUEBRA] variaveis */
 var _fornecedoresGravar = [];
-var _fornecedoresAutoComplete = [];
-var liFornecedorQuebra = '<li id="{id}"><p><button type="button" class="btn btn-danger" onclick="FornecedorQuebraRemoverLista({data1});">' +
-    '<i class="fa fa-trash-o"></i></button>  <b>[{data0}]  {value}</b></p></li>';
-
-/* [FORNECEDOR QUEBRA] limpar lista */
-$("#btnLimpar").click(function () {
-    $("#listaFornecedor").html("");
-});
+var liFornecedorQuebra = '<li id="{id}"><p><a onclick="FornecedorQuebraRemoverLista({data1});" class="btn btn-link"><b><i class="fa fa-trash-o text-danger"></i></b></a>  <b> [{data0}]  {value}</b></p></li>';
 
 /* [FORNECEDOR QUEBRA] autocomplete */
 $("#Cod_Fornecedor").autocomplete({
@@ -100,11 +114,12 @@ $("#Cod_Fornecedor").autocomplete({
             data: { autocomplete: AutoComplete },
             success: function (s) {
                 if (s.Success) {
+                    _listaAutoComplete = [];
                     $.each(s.Lista, function (e, item) {
                         var registro = new Object();
                         registro.data = item.Data;
                         registro.value = item.Value;
-                        _fornecedoresAutoComplete.push(registro);
+                        _listaAutoComplete.push(registro);
                     });
                 }
                 else {
@@ -117,10 +132,10 @@ $("#Cod_Fornecedor").autocomplete({
         });
 
         var result = {
-            suggestions: _fornecedoresAutoComplete
+            suggestions: _listaAutoComplete
         };
 
-        _fornecedoresAutoComplete = [];
+        _listaAutoComplete = [];
         done(result);
     },
 
@@ -136,6 +151,8 @@ function FornecedorQuebraAdicionarLista(fornecedor) {
         _fornecedoresGravar.push(fornecedor.data);
         $("#listaFornecedor").append(liFornecedorQuebra.replace("{value}", fornecedor.value).replace("{id}", fornecedor.data).replace("{data0}", fornecedor.data).replace("{data1}", fornecedor.data));
     }
+
+    $("#controleFornecedor").attr("style", (_fornecedoresGravar.length > 0) ? "display:normal;" : "display:none;");
 }
 
 /* [FORNECEDOR QUEBRA] remover da lista */
@@ -144,6 +161,8 @@ function FornecedorQuebraRemoverLista(cnpj) {
         return value != cnpj;
     });
     $("#" + cnpj).remove();
+
+    $("#controleFornecedor").attr("style", (_fornecedoresGravar.length > 0) ? "display:normal;" : "display:none;");
 }
 
 /* [FORNECEDOR QUEBRA] gravar no banco */
@@ -166,8 +185,7 @@ function FornecedorQuebraGravar() {
 /***    SANKHYA TOP     ***/
 /* [SANKHYA TOP] variaveis */
 var _SankhyaTopLista = [];
-var liSankhyaTop = '<li id="{top}"><p><button type="button" class="btn btn-danger" onclick="ShankhyaTopRemoverLista(*{top}|{descricao}*);">' +
-    '<i class="fa fa-trash-o"></i></button>  <b>[{top}]  {descricao}</b></p></li>';
+var liSankhyaTop = '<li id="{top}"><p><a onclick="ShankhyaTopRemoverLista(*{top}|{descricao}*);" class="btn btn-link"><b><i class="fa fa-trash-o text-danger"></i></b></a> <b> [{top}]  {descricao}</b></p></li>';
 
 /* [SANKHYA TOP] remover lista  */
 function ShankhyaTopRemoverLista(sankhyaTopItem) {
@@ -219,11 +237,8 @@ function ShankhyaTopGravar() {
 
 /***  REMESSA USUÁRIO ***/
 /* [REMESSA USUÁRIO] */
-var _remessaUsuarioAutoComplete = [];
 var _remessaUsuarioGravar = [];
-
-var liRemessaUsuario = '<li id="{data}"><p><button type="button" class="btn btn-danger" onclick="RemessaUsuarioRemoverLista(*{data}*);">' +
-    '<i class="fa fa-trash-o"></i></button>  <b> {value}</b></p></li>';
+var liRemessaUsuario = '<li id="{data}"><p><a class="btn btn-link" onclick="RemessaUsuarioRemoverLista(*{data}*);" data-toggle="tooltip" data-placement="top" data-original-title="Remover"><b><i class="fa fa-trash-o text-danger"></i></b></a>  <b> {value}</b></p></li>';
 
 /* [REMESSA USUÁRIO] autocomplete */
 $("#txtRemessaUsuario").autocomplete({
@@ -239,12 +254,13 @@ $("#txtRemessaUsuario").autocomplete({
             method: "POST",
             data: { autocomplete: AutoComplete },
             success: function (s) {
+                _listaAutoComplete = [];
                 if (s.Success) {
                     $.each(s.Lista, function (e, item) {
                         var registro = new Object();
                         registro.data = item.Data;
                         registro.value = item.Value;
-                        _remessaUsuarioAutoComplete.push(registro);
+                        _listaAutoComplete.push(registro);
                     });
                 }
                 else {
@@ -257,10 +273,10 @@ $("#txtRemessaUsuario").autocomplete({
         });
 
         var result = {
-            suggestions: _remessaUsuarioAutoComplete
+            suggestions: _listaAutoComplete
         };
 
-        _remessaUsuarioAutoComplete = [];
+        _listaAutoComplete = [];
         done(result);
     },
 
@@ -313,13 +329,11 @@ function RemessaConfigGravar() {
     var registro = new Object();
     registro.Id_Filial_Sankhya = $("#spanIdFilial").html() == "" ? 0 : $("#spanIdFilial").html();
     registro.Filial = $("#spanFilial").html();
-    registro.Cod_Fornecedor = $("#spanFornecedor").html() == "" ? 0 : $("#spanFornecedor").html();
+    registro.Cod_Fornecedor = $("#spanIdFornecedor").html() == "" ? 0 : $("#spanIdFornecedor").html();
     registro.Automatica = $("#chkRCAutomatica")[0].checked ? 1 : 0;
-    registro.Vlr_Minimo = $("#txtRCMinimoEnvio").val();
-    registro.Total = $("#txtRCTotal").val();
+    registro.Vlr_Minimo = $("#txtRCMinimoEnvio").val() == "" ? 0 : $("#txtRCMinimoEnvio").val().replace(".", "").replace(",", ".");
+    registro.Total = $("#txtRCTotal").val() == "" ? 0 : $("#txtRCTotal").val();
     RegistroInclusao.Inclusao.push(JSON.stringify(registro));
-
-    console.log(RegistroInclusao);
 
     RegistroIncluir();
 }
@@ -339,6 +353,7 @@ $("#txtRCFornecedor").autocomplete({
             method: "POST",
             data: { autocomplete: AutoComplete },
             success: function (s) {
+                _listaAutoComplete = [];
                 if (s.Success) {
                     $.each(s.Lista, function (e, item) {
                         var registro = new Object();
@@ -371,7 +386,6 @@ $("#txtRCFornecedor").autocomplete({
     }
 });
 
-
 /* [REMESSA CONFIGURAÇÃO] autocomplete - FILIAL */
 $("#txtRCFilial").autocomplete({
     lookup: function (query, done) {
@@ -388,6 +402,7 @@ $("#txtRCFilial").autocomplete({
             data: { autocomplete: AutoComplete },
             success: function (s) {
                 if (s.Success) {
+                    _listaAutoComplete = [];
                     $.each(s.Lista, function (e, item) {
                         var registro = new Object();
                         registro.data = item.Data;
@@ -416,5 +431,53 @@ $("#txtRCFilial").autocomplete({
         $("#spanIdFilial").html(remessaConfig.data);
         $("#spanFilial").html(remessaConfig.value);
         $("#txtRCFilial").val("");
+    }
+});
+
+/* [CONFIGURAÇÃO] autocomplete - FILIAL */
+$("#txtConfigFilial").autocomplete({
+    lookup: function (query, done) {
+
+        var AutoComplete = new Object();
+        AutoComplete.tag = TagPadrao;
+        AutoComplete.tagAutoComplete = "Filial";
+        AutoComplete.palavra = $("#txtConfigFilial").val();
+
+        $.ajax({
+            url: "/GarantiaConfiguracao/AutoComplete",
+            global: false,
+            method: "POST",
+            data: { autocomplete: AutoComplete },
+            success: function (s) {
+                if (s.Success) {
+                    _listaAutoComplete = [];
+                    $.each(s.Lista, function (e, item) {
+                        var registro = new Object();
+                        registro.data = item.Data;
+                        registro.value = item.Value;
+                        _listaAutoComplete.push(registro);
+                    });
+                }
+                else {
+                    PNotify.error({ text: s.Message });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+
+        var result = {
+            suggestions: _listaAutoComplete
+        };
+
+        _listaAutoComplete = [];
+        done(result);
+    },
+
+    onSelect: function (remessaConfig) {
+        $("#spanConfigIdFilial").html(remessaConfig.data);
+        $("#spanConfigFilial").html(remessaConfig.value);
+        $("#txtConfigFilial").val("");
     }
 });

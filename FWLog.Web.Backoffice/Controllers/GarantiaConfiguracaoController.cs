@@ -46,8 +46,17 @@ namespace FWLog.Web.Backoffice.Controllers
                 var RegistroConvertido = ConverterRegistro(Registro);
 
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.Configuracao))
+                {
+                    RegistroConvertido.RegistroConfiguracao.ForEach(delegate (GarantiaConfiguracao.Configuracao config)
+                    {
+                        if (config.Id_Filial_Sankhya.Equals(0)) throw new Exception("Código de Filial inválido!");
+                        if (String.IsNullOrEmpty(config.Filial)) throw new Exception("Filial inválida!");
+                        if (config.Pct_Estorno_Frete.Equals(0)) throw new Exception("Percentual Estorno Frete inválido!");
+                        if (config.Pct_Desvalorizacao.Equals(0)) throw new Exception("Percentual Desvalorização inválido!");
+                        if (config.Vlr_Minimo_Envio.Equals(0)) throw new Exception("Valor Mínimo de Envio não pode ser zero!");
+                    });
                     errorView = () => { return View(RegistroConvertido.RegistroConfiguracao); };
-
+                }
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra))
                     errorView = () => { return View(RegistroConvertido.RegistroFornecedorQuebra); };
 
@@ -56,12 +65,16 @@ namespace FWLog.Web.Backoffice.Controllers
                     RegistroConvertido.RegistroRemessaConfiguracao.ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao remessaConfig)
                     {
                         if (remessaConfig.Id_Filial_Sankhya.Equals(0)) throw new Exception("Código Filial inválido!");
-                        if (remessaConfig.Cod_Fornecedor.Equals(0)) throw new Exception("Código Fornecedor inválido!");
+                        if (String.IsNullOrEmpty(remessaConfig.Filial)) throw new Exception("Filial inválida!");
+                        if (String.IsNullOrEmpty(remessaConfig.Cod_Fornecedor)) throw new Exception("Informe o Fornecedor!");
                         if (remessaConfig.Vlr_Minimo.Equals(0)) throw new Exception("Valor Minímo deve ser maior que zero!");
                         if (remessaConfig.Total.Equals(0)) throw new Exception("Valor Total deve ser maior que zero!");
+
+                        remessaConfig.Filial = remessaConfig.Filial.Split(']').Length.Equals(2) ? remessaConfig.Filial.Split(']')[0].Replace("[", String.Empty).Trim() : remessaConfig.Filial;
                     });
                     errorView = () => { return View(RegistroConvertido.RegistroRemessaConfiguracao); };
                 }
+
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaUsuario))
                     errorView = () => { return View(RegistroConvertido.RegistroRemessaUsuario); };
 
@@ -131,7 +144,11 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
+                return Json(new
+                {
+                    Success = false,
+                    Message = ex.Message
+                }, JsonRequestBehavior.AllowGet);
             }
         }
         #endregion
@@ -260,11 +277,19 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 var _lista = _garantiaConfigService.AutoComplete(autocomplete);
 
-                return Json(new { Success = true, Lista = _lista }, JsonRequestBehavior.AllowGet);
+                return Json(new
+                {
+                    Success = true,
+                    Lista = _lista
+                }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
-                return Json(new { Success = false, Message = ex.Message }, JsonRequestBehavior.AllowGet);
+                return Json(new
+                {
+                    Success = false,
+                    Message = ex.Message
+                }, JsonRequestBehavior.AllowGet);
             }
         }
         #endregion

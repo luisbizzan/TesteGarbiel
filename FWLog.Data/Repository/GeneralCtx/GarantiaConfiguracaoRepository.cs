@@ -8,6 +8,7 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx
@@ -29,18 +30,18 @@ namespace FWLog.Data.Repository.GeneralCtx
                     #region Configuração
                     case GarantiaConfiguracao.GarantiaTag.Configuracao:
                         {
-                            RegistroIncluir.RegistroFornecedorQuebra.ToList().ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item)
+                            RegistroIncluir.RegistroConfiguracao.ToList().ForEach(delegate (GarantiaConfiguracao.Configuracao item)
                             {
-                                if (FornecedorQuebraPodeSerCadastrado(item.Cod_Fornecedor.Trim().ToUpper()))
-                                    using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                {
+                                    conn.Open();
+                                    if (conn.State == System.Data.ConnectionState.Open)
                                     {
-                                        conn.Open();
-                                        if (conn.State == System.Data.ConnectionState.Open)
-                                        {
-                                            conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.FornecedorQuebraIncluir, item.Cod_Fornecedor));
-                                        }
-                                        conn.Close();
+                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.ConfiguracaoIncluir, item.Id_Filial_Sankhya, item.Filial, item.Pct_Estorno_Frete,
+                                            item.Pct_Desvalorizacao, item.Vlr_Minimo_Envio, item.Prazo_Envio_Automatico, item.Prazo_Descarte));
                                     }
+                                    conn.Close();
+                                }
                             });
                         }
                         break;
@@ -71,17 +72,16 @@ namespace FWLog.Data.Repository.GeneralCtx
                         {
                             RegistroIncluir.RegistroRemessaConfiguracao.ToList().ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao item)
                             {
-                                if (FornecedorQuebraPodeSerCadastrado(item.Cod_Fornecedor.Trim().ToUpper()))
-                                    using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                {
+                                    conn.Open();
+                                    if (conn.State == System.Data.ConnectionState.Open)
                                     {
-                                        conn.Open();
-                                        if (conn.State == System.Data.ConnectionState.Open)
-                                        {
-                                            conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.RemessaConfiguracaoIncluir,
-                                                item.Id_Filial_Sankhya, item.Filial, item.Cod_Fornecedor, item.Automatica, item.Vlr_Minimo, item.Total));
-                                        }
-                                        conn.Close();
+                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.RemessaConfiguracaoIncluir,
+                                            item.Id_Filial_Sankhya, item.Filial, item.Cod_Fornecedor, item.Automatica, item.Vlr_Minimo.ToString().Replace(",", "."), item.Total));
                                     }
+                                    conn.Close();
+                                }
                             });
                         }
                         break;
@@ -149,11 +149,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                 var cmdSQL = String.Concat("DELETE FROM {0} WHERE ID = ", Registro.Id);
 
                 cmdSQL =
-                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.Configuracao.ToString()) ? String.Format(cmdSQL, "gar_config") :
-                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaConfiguracao.ToString()) ? String.Format(cmdSQL, "gar_remessa_config") :
-                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaUsuario.ToString()) ? String.Format(cmdSQL, "gar_remessa_usr") :
-                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra.ToString()) ? String.Format(cmdSQL, "gar_forn_quebra") :
-                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop.ToString()) ? String.Format(cmdSQL, "geral_sankhya_tops") : String.Empty;
+                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.Configuracao) ? String.Format(cmdSQL, "gar_config") :
+                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaConfiguracao) ? String.Format(cmdSQL, "gar_remessa_config") :
+                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaUsuario) ? String.Format(cmdSQL, "gar_remessa_usr") :
+                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra) ? String.Format(cmdSQL, "gar_forn_quebra") :
+                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop) ? String.Format(cmdSQL, "geral_sankhya_tops") : String.Empty;
                 #endregion
 
                 using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
@@ -191,7 +191,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.Configuracao))
                         {
                             _garantia.RegistroConfiguracao = conn.Query<GarantiaConfiguracao.Configuracao>(cmdSQL).ToList();
-                            _garantia.RegistroConfiguracao.ForEach(delegate (GarantiaConfiguracao.Configuracao item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
+                            _garantia.RegistroConfiguracao.ForEach(delegate (GarantiaConfiguracao.Configuracao item) {
+                                item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id);
+                                item.Vlr_Minimo_EnvioView = String.Format("{0:0,0.00}", item.Vlr_Minimo_Envio);
+                            });
                         }
 
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra))
@@ -203,7 +206,14 @@ namespace FWLog.Data.Repository.GeneralCtx
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaConfiguracao))
                         {
                             _garantia.RegistroRemessaConfiguracao = conn.Query<GarantiaConfiguracao.RemessaConfiguracao>(cmdSQL).ToList();
-                            _garantia.RegistroRemessaConfiguracao.ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
+                            _garantia.RegistroRemessaConfiguracao.ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao item)
+                            {
+                                item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id);
+                                item.Vlr_MinimoView = String.Format("{0:0,0.00}", item.Vlr_Minimo);
+                                item.AutomaticaView = item.Automatica.Equals(1) ?
+                                String.Format("<h4 class=\"text-center\"><i class=\"glyphicon glyphicon-ok-circle text-success\" data-toggle=\"tooltip\" data-original-title=\"Sim\"></i></h4>") :
+                                String.Format("<h4 class=\"text-center\"><i class=\"glyphicon glyphicon-remove-circle text-danger\" data-toggle=\"tooltip\" data-original-title=\"Não\"></i></h4>");
+                            });
                         }
 
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaUsuario))
@@ -226,7 +236,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception(String.Format("{0} - {1}", TAG.ToString(), ex.Message));
             }
         }
         #endregion
@@ -275,20 +285,33 @@ namespace FWLog.Data.Repository.GeneralCtx
                                 _AutoComplete.comandoSQL = String.Format(String.Concat(
                                     "SELECT cnpj Data, \"RazaoSocial\" Value ",
                                     "FROM \"Fornecedor\" ",
-                                    "WHERE ROWNUM <= 10 ",
-                                    "AND \"Ativo\" = 1 ",
+                                    "WHERE \"Ativo\" = 1 ",
+                                    "AND ROWNUM <= 10 ",
                                     "AND \"RazaoSocial\" LIKE '{0}%' ",
-                                    "AND cnpj NOT IN (SELECT DISTINCT cod_fornecedor FROM gar_remessa_config) ",
                                     "GROUP BY \"RazaoSocial\", cnpj ",
                                     "ORDER BY \"RazaoSocial\""), _AutoComplete.palavra.ToUpper());
 
                             if (_AutoComplete.tagAutoComplete.Equals(GarantiaConfiguracao.AutoCompleteTag.Filial))
                                 _AutoComplete.comandoSQL = String.Format(String.Concat(
-                                    "SELECT \"IdEmpresa\" Data, \"NomeFantasia\" Value ",
+                                    "SELECT \"IdEmpresa\" Data, '['||\"Sigla\"||'] '|| \"NomeFantasia\" Value ",
                                     "FROM \"Empresa\" ",
-                                    "WHERE ROWNUM <= 10 ",
-                                    "AND \"Ativo\" = 1 ",
-                                    "AND \"IdEmpresa\" NOT IN (SELECT Id_Filial_Sankhya FROM gar_remessa_config) ",
+                                    "WHERE \"Ativo\" = 1 ",
+                                    "AND ROWNUM <= 10 ",
+                                    "AND \"NomeFantasia\" LIKE UPPER('%{0}%') ",
+                                    "ORDER BY \"NomeFantasia\""), _AutoComplete.palavra);
+                        }
+                        break;
+                    #endregion
+
+                    #region Configuração
+                    case GarantiaConfiguracao.GarantiaTag.Configuracao:
+                        {
+                            if (_AutoComplete.tagAutoComplete.Equals(GarantiaConfiguracao.AutoCompleteTag.Filial))
+                                _AutoComplete.comandoSQL = String.Format(String.Concat(
+                                    "SELECT \"IdEmpresa\" Data, '['||\"Sigla\"||'] '|| \"NomeFantasia\" Value ",
+                                    "FROM \"Empresa\" ",
+                                    "WHERE \"Ativo\" = 1 ",
+                                    "AND ROWNUM <= 10 ",
                                     "AND \"NomeFantasia\" LIKE UPPER('%{0}%') ",
                                     "ORDER BY \"NomeFantasia\""), _AutoComplete.palavra);
                         }
