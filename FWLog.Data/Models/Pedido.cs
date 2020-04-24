@@ -16,6 +16,9 @@ namespace FWLog.Data.Models
         [Required]
         public long IdPedido { get; set; }
 
+        [Required]
+        public int NroPedido { get; set; }
+
         [Index]
         [Required]
         public long IdEmpresa { get; set; }
@@ -28,22 +31,19 @@ namespace FWLog.Data.Models
         [Required]
         public long IdTransportadora { get; set; }
 
+        [Required]
+        public int CodigoIntegracao { get; set; }
+
         [Index]
         [Required]
         public long IdRepresentante { get; set; }
 
         [Required]
-        public int NroPedido { get; set; }
+        public DateTime DataCriacao { get; set; }
 
         [Index]
         [Required]
         public PedidoVendaStatusEnum IdPedidoVendaStatus { get; set; }
-
-        [Required]
-        public int CodigoIntegracao { get; set; }
-
-        [Required]
-        public DateTime DataCriacao { get; set; }
 
         public virtual ICollection<PedidoItem> PedidoItens { get; set; }
 

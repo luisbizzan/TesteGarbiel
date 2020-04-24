@@ -99,8 +99,8 @@ namespace FWLog.Data
         public GrupoCorredorArmazenagemRepository GrupoCorredorArmazenagemRepository
         {
             get => _grupoCorredorArmazenagemRepository ?? (_grupoCorredorArmazenagemRepository = new GrupoCorredorArmazenagemRepository(_context));
-		}
-		
+        }
+
         public PedidoRepository PedidoRepository
         {
             get => _pedidoRepository ?? (_pedidoRepository = new PedidoRepository(_context));

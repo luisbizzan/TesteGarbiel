@@ -8,6 +8,7 @@ using FWLog.Services.Model.SeparacaoPedido;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Linq;
 
@@ -186,9 +187,7 @@ namespace FWLog.Services.Services
 
                 _unitOfWork.SaveChanges();
 
-                var listaPedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
-
-                foreach (var pedidoVendaProduto in listaPedidoVendaProduto)
+                foreach (var pedidoVendaProduto in pedidoVenda.PedidoVendaProdutos.ToList())
                 {
                     //TODO: Atualizar a LoteProdutoEndereco abatendo da coluna Quantidade a PedidoVendaProduto.QtdSeparada filtrando o IdProduto, IdEmpresa e IdEnderecoArmazenagem
 
@@ -202,9 +201,7 @@ namespace FWLog.Services.Services
 
                 //_unitOfWork.SaveChanges();
 
-                var listaPedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(idPedidoVenda);
-
-                foreach (var pedidoVendaVolume in listaPedidoVendaVolume)
+                foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes.ToList())
                 {
                     ////TODO: Aguardando definição de status
                     //pedidoVendaVolume.IdPedidoVendaStatus = idPedidoVendaStatus;
@@ -230,6 +227,48 @@ namespace FWLog.Services.Services
 
                 transacao.Complete();
             }
+        }
+
+        public async Task IniciarSeparacaoPedidoVenda(long idPedidoVenda, string idUsuarioOperacao, long idEmpresa)
+        {
+            // validações
+            if (idPedidoVenda <= 0)
+            {
+                throw new BusinessException("O pedido deve ser informado.");
+            }
+            
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda);
+            if (pedidoVenda == null)
+            {
+                throw new BusinessException("O pedido não foi encontrado.");
+            }
+
+            if (pedidoVenda.IdEmpresa != idEmpresa)
+            {
+                throw new BusinessException("O pedido não pertence a empresa do usuário logado.");
+            }
+
+            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao &&
+                pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
+            {
+                throw new BusinessException("O pedido de venda não está liberado para separação.");
+            }
+
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao &&
+                pedidoVenda.IdUsuarioSeparacao != idUsuarioOperacao)
+            {
+                throw new BusinessException("O pedido já está sendo separado por outro usuário.");
+            }
+
+            // update do pedido na base oracle
+            pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+            pedidoVenda.IdUsuarioSeparacao = idUsuarioOperacao;
+            pedidoVenda.DataHoraInicioSeparacao = DateTime.Now;
+            
+            _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+
+            // update no Sankhya
+            await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, PedidoVendaStatusEnum.ProcessandoSeparacao);
         }
     }
 }

@@ -3,13 +3,13 @@ using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using log4net;
 
 namespace FWLog.Services.Services
 {
@@ -159,5 +159,3 @@ namespace FWLog.Services.Services
         }
     }
 }
-
-
