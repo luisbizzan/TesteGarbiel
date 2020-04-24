@@ -1,41 +1,38 @@
-CREATE TABLE "PedidoItemProduto" 
+CREATE TABLE "PedidoItem" 
 (
-  "IdPedidoItemProduto" NUMBER(19) NOT NULL 
-, "IdPedidoItem" NUMBER(19) NOT NULL 
+  "IdPedidoItem" NUMBER(19) NOT NULL 
+, "IdPedido" NUMBER(19) NOT NULL 
 , "IdProduto" NUMBER(19) NOT NULL 
 , "QtdPedido" NUMBER(10) NOT NULL 
-, "Sequence" NUMBER(10) NOT NULL 
-, CONSTRAINT "PedidoItemProduto_PK" PRIMARY KEY 
+, "Sequencia" NUMBER(10) NOT NULL 
+, CONSTRAINT "PedidoItem_PK" PRIMARY KEY 
   (
-    "IdPedidoItemProduto" 
+    "IdPedidoItem" 
   )
   USING INDEX 
   (
-      CREATE UNIQUE INDEX "PedidoItemProduto_PK" ON "PedidoItemProduto" ("IdPedidoItemProduto" ASC) 
+      CREATE UNIQUE INDEX "PedidoItem_PK" ON "PedidoItem" ("IdPedidoItem" ASC) 
   )
   ENABLE 
 );
 
-CREATE SEQUENCE "PedidoItemProduto_SEQ";
+CREATE SEQUENCE "PedidoItem_SEQ";
 
-CREATE trigger "PedidoItemProduto_SEQ_TRG"  
-   before insert on "DART"."PedidoItemProduto" 
+CREATE trigger "PedidoItem_SEQ_TRG"  
+   before insert on "DART"."PedidoItem" 
    for each row 
 begin  
    if inserting then 
-      if :NEW."IdPedidoItemProduto" is null then 
-         select "PedidoItemProduto_SEQ".nextval into :NEW."IdPedidoItemProduto" from dual; 
+      if :NEW."IdPedidoItem" is null then 
+         select "PedidoItem_SEQ".nextval into :NEW."IdPedidoItem" from dual; 
       end if; 
    end if; 
 end;
 /
 
-ALTER TABLE DART."PedidoItemProduto" RENAME COLUMN "Sequence" TO "Sequencia";
-ALTER TABLE DART."PedidoItemProduto" ADD "IdPedidoItemProdutoStatus" NUMBER(10,0) NOT NULL;
+CREATE INDEX "PedidoItem_INDEX1" ON DART."PedidoItem" ("IdPedido");
+CREATE INDEX "PedidoItem_INDEX2" ON DART."PedidoItem" ("IdProduto");
 
-CREATE INDEX "PedidoItemProduto_INDEX1" ON DART."PedidoItemProduto" ("IdPedidoItem");
-CREATE INDEX "PedidoItemProduto_INDEX2" ON DART."PedidoItemProduto" ("IdProduto");
-
-ALTER TABLE DART."PedidoItemProduto" ADD CONSTRAINT "PedidoItemProduto_FK1" FOREIGN KEY ("IdPedidoItem") REFERENCES DART."PedidoItem"("IdPedidoItem");
-ALTER TABLE DART."PedidoItemProduto" ADD CONSTRAINT "PedidoItemProduto_FK2" FOREIGN KEY ("IdProduto") REFERENCES DART."Produto"("IdProduto");
-ALTER TABLE DART."PedidoItemProduto" ADD CONSTRAINT "PedidoItemProdutoStatus_FK3" FOREIGN KEY ("IdPedidoItemProdutoStatus") REFERENCES DART."PedidoItemProdutoStatus"("IdPedidoItemProdutoStatus");
+ALTER TABLE DART."PedidoItem" ADD CONSTRAINT "PedidoItem_FK1" FOREIGN KEY ("IdPedido") REFERENCES DART."Pedido"("IdPedido");
+ALTER TABLE DART."PedidoItem" ADD CONSTRAINT "PedidoItem_FK2" FOREIGN KEY ("IdProduto") REFERENCES DART."Produto"("IdProduto");
+ALTER TABLE DART."PedidoItem" ADD CONSTRAINT "PedidoItemStatus_FK3" FOREIGN KEY ("IdPedidoItemStatus") REFERENCES DART."PedidoItemStatus"("IdPedidoItemStatus");
