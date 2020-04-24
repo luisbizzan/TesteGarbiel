@@ -224,6 +224,16 @@ namespace FWLog.AspNet.Identity
             }
         }
 
+        public class RFSeparacao : PermissionGroupBuildItem
+        {
+            public const string CancelarSeparacao = "RFCancelarSeparacao";
+
+            public RFSeparacao() : base(Display.FromString("Coletor - Separação"))
+            {
+                Register(CancelarSeparacao, Display.FromString("Cancelar Separação"));
+            }
+        }
+
         public class RFEtiquetas : PermissionGroupBuildItem
         {
             public const string EtiquetaEndereco = "RFImprimirEtiquetaEndereco";
@@ -347,6 +357,22 @@ namespace FWLog.AspNet.Identity
                 Register(Editar, Display.FromString("Editar Caixa"));
                 Register(Excluir, Display.FromString("Excluir Caixa"));
                 Register(Visualizar, Display.FromString("Visualizar Caixa"));
+            }
+        }
+
+        public class Separacao : PermissionGroupBuildItem
+        {
+            public const string ListarCorredorImpressora = "CorredorImpressoraListar";
+            public const string CadastrarCorredorImpressora = "CorredorImpressoraCadastrar";
+            public const string EditarCorredorImpressora = "CorredorImpressoraEditar";
+            public const string VisualizarCorredorImpressora = "CorredorImpressoraVisualizar";
+
+            public Separacao() : base(Display.FromString("Separação"))
+            {
+                Register(ListarCorredorImpressora, Display.FromString("Listar Corredor x Impressora"));
+                Register(CadastrarCorredorImpressora, Display.FromString("Cadastrar Corredor x Impressora"));
+                Register(EditarCorredorImpressora, Display.FromString("Editar Corredor x Impressora"));
+                Register(VisualizarCorredorImpressora, Display.FromString("Visualizar Corredor x Impressora"));
             }
         }
     }
