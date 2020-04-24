@@ -58,6 +58,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.LoteProdutoEndereco.Where(lpe => lpe.IdProduto == idProduto && lpe.IdEmpresa == idEmpresa && lpe.IdLote != null).ToList();
         }
 
+        public List<LoteProdutoEndereco> PesquisarPorProduto(long idProduto, long idEmpresa)
+        {
+            return Entities.LoteProdutoEndereco.Where(lpe => lpe.IdProduto == idProduto && lpe.IdEmpresa == idEmpresa).ToList();
+        }
+
         private IQueryable<EnderecoArmazenagemTotalPorAlasLinhaTabela> BuscarTodosDadosTotalAla(RelatorioTotalizacaoAlasListaFiltro model)
         {
             var query = (from end in Entities.EnderecoArmazenagem
