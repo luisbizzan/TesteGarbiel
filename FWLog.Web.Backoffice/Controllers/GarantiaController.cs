@@ -165,8 +165,23 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult ConferenciaLaudo(long Id)
         {
+            var lista = new List<GarantiaLaudo>();
+            lista.Add(new GarantiaLaudo
+            {
+                Refx = "teste",
+                Descricao = "aaaaa",
+                Quant = 10
+            });
+            lista.Add(new GarantiaLaudo
+            {
+                Refx = "testeaa",
+                Descricao = "aaaaaccc",
+                Quant = 2
+            });
+
             var model = new GarantiaLaudoVM
             {
+                Lista = lista
             };
 
             return PartialView("_ConferenciaLaudo", model);
@@ -174,26 +189,44 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult ConferenciaItensPendentes(long Id)
         {
-            var model = new GarantiaLaudoVM
+            var model = new List<GarantiaConferencia>();
+            model.Add(new GarantiaConferencia
             {
-            };
+                Refx = "teste",
+                Descricao = "aaaaa",
+                Quantidade = 10
+            });
+            model.Add(new GarantiaConferencia
+            {
+                Refx = "testeaa",
+                Descricao = "aaaaaccc",
+                Quantidade = 2
+            });
 
             return PartialView("_ConferenciaItensPendentes", model);
         }
 
         public ActionResult ConferenciaLaudoDetalhe(long Id)
         {
+            var lista = new List<GarantiaLaudo>();
+            lista.Add(new GarantiaLaudo
+            {
+                Motivo = "teste",
+                Quant = 10
+            });
+            lista.Add(new GarantiaLaudo
+            {
+                Motivo = "testeee",
+                Quant = 5
+            });
+
             var model = new GarantiaLaudoVM
             {
                 Form = new GarantiaLaudo()
                 {
-                    Lista_Motivos = new SelectList(
-                  _uow.GeralRepository.TodosTiposDaCategoria("GAR_SOLICITACAO", "ID_STATUS").OrderBy(o => o.Id).Select(x => new SelectListItem
-                  {
-                      Value = x.Id.ToString(),
-                      Text = x.Descricao,
-                  }), "Value", "Text")
-                }
+                    Lista_Motivos = new SelectList(_uow.GarantiaRepository.ListarMotivoLaudo(), "Id", "Descricao", "Tipo", 1)
+                },
+                Lista = lista
             };
 
             return PartialView("_ConferenciaLaudoDetalhe", model);

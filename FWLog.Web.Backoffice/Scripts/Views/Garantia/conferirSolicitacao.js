@@ -135,6 +135,7 @@ function itensLaudoDetalhe() {
 
 function itensPendentes() {
     var id = 0;
+    $("#modalItensPendentes").modal("hide");
     let modal = $("#modalItensPendentes .modal-body");
     $("#modalItensPendentes .modal-title").html("Itens Pendentes");
 
