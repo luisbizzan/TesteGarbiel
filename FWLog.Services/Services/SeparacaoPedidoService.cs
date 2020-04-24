@@ -182,6 +182,8 @@ namespace FWLog.Services.Services
                     //pedidoVendaProduto.QtdSeparada = 0;
                 }
 
+                //_unitOfWork.SaveChanges();
+
                 var listaPedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(idPedidoVenda);
 
                 foreach (var pedidoVendaVolume in listaPedidoVendaVolume)
@@ -193,7 +195,20 @@ namespace FWLog.Services.Services
                     //pedidoVendaVolume.IdCaixaVolume = null;
                 }
 
+                //_unitOfWork.SaveChanges();
+
                 await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.CancelamentoSeparacao,
+                    Descricao = $"Cancelou a separação do pedido {idPedidoVenda} com permissão do usuário {idUsuarioPermissaoCancelamento}",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuarioOperacao
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
 
                 transacao.Complete();
             }
