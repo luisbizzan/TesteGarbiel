@@ -78,16 +78,23 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/separacao-pedido/iniciar-separacao-pedido-venda/{idPedidoVenda}")]
         [HttpPost]
-        public IHttpActionResult IniciarSeparacaoPedido(long idPedidoVenda)
+        public async Task<IHttpActionResult> IniciarSeparacaoPedido(long idPedidoVenda)
         {
-            var idsPedidosProcessoDeSeparacao = _separacaoPedidoService.ConsultaPedidoVendaEmSeparacao(IdUsuario, IdEmpresa);
-
-            var response = new SeparacaoPedidoResposta
+            if (!ModelState.IsValid)
             {
-                PedidosProcessoDeSeparacao = idsPedidosProcessoDeSeparacao
-            };
+                return ApiBadRequest(ModelState);
+            }
 
-            return ApiOk(response);
+            try
+            {
+                await _separacaoPedidoService.IniciarSeparacaoPedidoVenda(idPedidoVenda, IdUsuario, IdEmpresa);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
         }
     }
 }
