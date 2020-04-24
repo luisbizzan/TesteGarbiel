@@ -7,6 +7,7 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
@@ -168,9 +169,7 @@ namespace FWLog.Services.Services
 
                 _unitOfWork.SaveChanges();
 
-                var listaPedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
-
-                foreach (var pedidoVendaProduto in listaPedidoVendaProduto)
+                foreach (var pedidoVendaProduto in pedidoVenda.PedidoVendaProdutos.ToList())
                 {
                     //TODO: Atualizar a LoteProdutoEndereco abatendo da coluna Quantidade a PedidoVendaProduto.QtdSeparada filtrando o IdProduto, IdEmpresa e IdEnderecoArmazenagem
 
@@ -184,9 +183,7 @@ namespace FWLog.Services.Services
 
                 //_unitOfWork.SaveChanges();
 
-                var listaPedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(idPedidoVenda);
-
-                foreach (var pedidoVendaVolume in listaPedidoVendaVolume)
+                foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes.ToList())
                 {
                     ////TODO: Aguardando definição de status
                     //pedidoVendaVolume.IdPedidoVendaStatus = idPedidoVendaStatus;
