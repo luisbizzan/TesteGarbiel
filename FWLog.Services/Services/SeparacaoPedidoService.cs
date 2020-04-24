@@ -83,16 +83,16 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void ValidarPedidoVendaVolumePorUsuario(string idUsuario, long idEmpresa, List<ProdutoEstoque> produtoEstoque)
-        {
-            var usuarioEmpresa = _unitOfWork.UsuarioEmpresaRepository.Obter(idEmpresa, idUsuario);
-            
-            foreach (var item in produtoEstoque)
-            {
-                if(usuarioEmpresa.CorredorSeparacaoInicio == item.EnderecoArmazenagem.Corredor || )
-            }
-        }
+        //public void ValidarPedidoVendaVolumePorUsuario(string idUsuario, long idEmpresa, List<ProdutoEstoque> produtoEstoque)
+        //{
+        //    var usuarioEmpresa = _unitOfWork.UsuarioEmpresaRepository.Obter(idEmpresa, idUsuario);
+        //    var range = Enumerable.Range(usuarioEmpresa.CorredorEstoqueInicio.Value, usuarioEmpresa.CorredorSeparacaoFim.Value);
 
+        //    foreach (var item in produtoEstoque)
+        //    {
+        //        if(!range.Contains(item.EnderecoArmazenagem.Corredor))
+        //    }
+        //}
 
         public PedidoVenda ConsultaPedidoVenda(long? idPedidoVenda, string codigoDeBarras, long idEmpresa)
         {
