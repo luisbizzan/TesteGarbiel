@@ -82,8 +82,8 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdCaixaCubagem))]
         public virtual Caixa CaixaCubagem { get; set; }
 
-        //[ForeignKey(nameof(IdGrupoCorredorArmazenagem))]
-        //public virtual GrupoCorredorArmazenagem GrupoCorredorArmazenagem { get; set; }
+        [ForeignKey(nameof(IdGrupoCorredorArmazenagem))]
+        public virtual GrupoCorredorArmazenagem GrupoCorredorArmazenagem { get; set; }
 
         [ForeignKey(nameof(IdPerfilImpressora))]
         public virtual PerfilImpressora PerfilImpressora { get; set; }
