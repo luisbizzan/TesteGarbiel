@@ -161,6 +161,7 @@ namespace FWLog.Services.Services
 
             var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.BuscarProdutoEstoquePorIdProduto(idEmpresa, listIdProduto);
 
+            //TODO: Falta Finalizar o processo de busca das informações e montar o objeto de resposta
             return new BuscarPedidoVendaResposta();
         }
 
@@ -200,7 +201,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        //TODO Falta definir os status e adicionar IdPontoArmazenagemSeparacao na UsuarioEmpresa
+        //TODO: Falta definir os status e adicionar IdPontoArmazenagemSeparacao na UsuarioEmpresa
         //public void ValidarPedidoVendaVolumePorUsuario(string idUsuario, long idEmpresa, List<ProdutoEstoque> produtoEstoque)
         //{
         //    var usuarioEmpresa = _unitOfWork.UsuarioEmpresaRepository.Obter(idEmpresa, idUsuario);
