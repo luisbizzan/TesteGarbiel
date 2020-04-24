@@ -81,13 +81,26 @@ namespace FWLog.Data
         private PedidoVendaProdutoStatusRepository _pedidoVendaProdutoStatusRepository;
         private CaixaTipoRepository _caixaTipoRepository;
         private CaixaRepository _caixaRepository;
+        private GrupoCorredorArmazenagemRepository _grupoCorredorArmazenagemRepository;
         private PedidoRepository _pedidoRepository;
         private PedidoItemRepository _pedidoItemRepository;
+        private PedidoVendaVolumeRepository _pedidoVendaVolumeRepository;
+
         public UnitOfWork()
         {
             _context = new Entities();
         }
 
+        public PedidoVendaVolumeRepository PedidoVendaVolumeRepository
+        {
+            get => _pedidoVendaVolumeRepository ?? (_pedidoVendaVolumeRepository = new PedidoVendaVolumeRepository(_context));
+        }
+
+        public GrupoCorredorArmazenagemRepository GrupoCorredorArmazenagemRepository
+        {
+            get => _grupoCorredorArmazenagemRepository ?? (_grupoCorredorArmazenagemRepository = new GrupoCorredorArmazenagemRepository(_context));
+		}
+		
         public PedidoRepository PedidoRepository
         {
             get => _pedidoRepository ?? (_pedidoRepository = new PedidoRepository(_context));
