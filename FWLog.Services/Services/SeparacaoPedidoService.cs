@@ -1,14 +1,12 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
 using FWLog.Data.Models;
-using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Services.Integracao;
-using FWLog.Services.Model.Armazenagem;
 using FWLog.Services.Model.Coletor;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
@@ -17,17 +15,41 @@ namespace FWLog.Services.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly ColetorHistoricoService _coletorHistoricoService;
+        private ILog _log;
 
-        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService)
+        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService, ILog log)
         {
             _unitOfWork = unitOfWork;
             _coletorHistoricoService = coletorHistoricoService;
+            _log = log;
         }
 
         public List<long> ConsultaPedidoVendaEmSeparacao(string idUsuario, long idEmpresa)
         {
             var ids = _unitOfWork.PedidoVendaRepository.PesquisarIdsEmSeparacao(idUsuario, idEmpresa);
             return ids;
+        }
+
+        public async Task AtualizarStatusPedidoVenda(Pedido pedido, PedidoVendaStatusEnum statusPedidoVenda)
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            try
+            {
+                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", pedido.CodigoIntegracao.ToString() } };
+
+                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSSEP", statusPedidoVenda.GetHashCode());
+
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = string.Format("Erro na atualização do pedido de venda: {0}.", pedido.CodigoIntegracao);
+                _log.Error(errorMessage, ex);
+                throw new BusinessException(errorMessage);
+            }
         }
 
         //public BuscarPedidoVendaResposta BuscarPedidoVenda(long? idPedidoVenda, string codigoDeBarras, string idUsuario, long idEmpresa)
@@ -175,19 +197,9 @@ namespace FWLog.Services.Services
                 //    pedidoVendaVolume.IdCaixaVolume = null;
                 //}
 
-                await AtualizarStatusSeparacaoSankhya(pedidoVenda.Pedido.CodigoIntegracao, novoStatusSeparacao);
+                await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
 
                 transacao.Complete();
-            }
-        }
-
-        private async Task AtualizarStatusSeparacaoSankhya(int codigoIntegracaoPedido, PedidoVendaStatusEnum status)
-        {
-            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            {
-                var campoChave = new Dictionary<string, string> { { "NUNOTA", codigoIntegracaoPedido.ToString() } };
-
-                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSSEP", status.GetHashCode());
             }
         }
     }
