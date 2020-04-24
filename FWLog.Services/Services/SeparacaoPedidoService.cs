@@ -260,14 +260,21 @@ namespace FWLog.Services.Services
             }
 
             // update do pedido na base oracle
-            pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
-            pedidoVenda.IdUsuarioSeparacao = idUsuarioOperacao;
-            pedidoVenda.DataHoraInicioSeparacao = DateTime.Now;
-            
-            _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+            using (var transaction = _unitOfWork.CreateTransactionScope())
+            {
+                pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+                pedidoVenda.IdUsuarioSeparacao = idUsuarioOperacao;
+                pedidoVenda.DataHoraInicioSeparacao = DateTime.Now;
 
-            // update no Sankhya
-            await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, PedidoVendaStatusEnum.ProcessandoSeparacao);
+                _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+
+                _unitOfWork.SaveChanges();
+
+                // update no Sankhya
+                await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, PedidoVendaStatusEnum.ProcessandoSeparacao);
+
+                transaction.Complete();
+            }
         }
     }
 }
