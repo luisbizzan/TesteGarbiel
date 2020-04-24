@@ -69,13 +69,13 @@ namespace FWLog.Data.Models
 
         [Index]
         [Required]
-        public PedidoVendaProdutoStatusEnum IdPedidoVendaProdutoStatus { get; set; }
+        public PedidoVendaStatusEnum IdPedidoVendaStatus { get; set; }
 
         [ForeignKey(nameof(IdPedidoVenda))]
         public virtual PedidoVenda PedidoVenda { get; set; }
 
-        [ForeignKey(nameof(IdPedidoVendaProdutoStatus))]
-        public virtual PedidoVendaProdutoStatus PedidoVendaProdutoStatus { get; set; }
+        [ForeignKey(nameof(IdPedidoVendaStatus))]
+        public virtual PedidoVendaStatus PedidoVendaProdutoStatus { get; set; }
 
         [ForeignKey(nameof(IdCaixaCubagem))]
         public virtual Caixa CaixaCubagem { get; set; }

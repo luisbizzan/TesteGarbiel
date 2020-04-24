@@ -7,6 +7,7 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
@@ -123,7 +124,7 @@ namespace FWLog.Services.Services
         //    return pedidoVenda;
         //}
 
-        public async Task CancelarPedidoSeparacao(long idPedidoVenda, string idUsuarioPermissaoCancelamento, string idUsuarioOperacao, long idEmpresa)
+        public async Task CancelarPedidoSeparacao(long idPedidoVenda, string usuarioPermissaoCancelamento, string idUsuarioOperacao, long idEmpresa)
         {
             if (idPedidoVenda <= 0)
             {
@@ -152,7 +153,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido não está em separação.");
             }
 
-            if (idUsuarioPermissaoCancelamento.NullOrEmpty())
+            if (usuarioPermissaoCancelamento.NullOrEmpty())
             {
                 throw new BusinessException("O usuário da permissão deve ser informado.");
             }
@@ -168,36 +169,43 @@ namespace FWLog.Services.Services
 
                 _unitOfWork.SaveChanges();
 
-                //TODO:
-                /*
-                    Atualizar a LoteProdutoEndereco abatendo da coluna Quantidade a PedidoVendaProduto.QtdSeparada filtrando o IdProduto, IdEmpresa e IdEnderecoArmazenagem
+                foreach (var pedidoVendaProduto in pedidoVenda.PedidoVendaProdutos.ToList())
+                {
+                    //TODO: Atualizar a LoteProdutoEndereco abatendo da coluna Quantidade a PedidoVendaProduto.QtdSeparada filtrando o IdProduto, IdEmpresa e IdEnderecoArmazenagem
 
-                    O IdEnderecoArmazenagem, deve ser carregado da PedidoVendaProduto que foi gerado pelo Robô de Separação
+                    //TODO: Aguardando definição de status
+                    //pedidoVendaProduto.IdPedidoVendaStatus = novoStatusSeparacao;
+                    //pedidoVendaProduto.DataHoraInicioSeparacao = null;
+                    //pedidoVendaProduto.DataHoraFimSeparacao = null;
+                    //pedidoVendaProduto.IdUsuarioAutorizacaoZerar = idUsuarioPermissaoCancelamento;
+                    //pedidoVendaProduto.QtdSeparada = 0;
+                }
 
-                    Atualizar a PedidoVendaProduto.QtdSeparada de todos os produtos do pedido para zero para que a separação seja reiniciada
+                //_unitOfWork.SaveChanges();
 
-                    Atualizar as colunas a seguir da PedidoVendaProduto IdUsuarioAutorizacaoZerarPedido, DataHoraInicioSeparacao, DataHoraFimSeparacao para NULL e a StatusSeparacao para “2 - Enviado para Separação”
-                */
+                foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes.ToList())
+                {
+                    ////TODO: Aguardando definição de status
+                    //pedidoVendaVolume.IdPedidoVendaStatus = idPedidoVendaStatus;
+                    //pedidoVendaVolume.DataHoraInicioSeparacao = null;
+                    //pedidoVendaVolume.DataHoraFimSeparacao = null;
+                    //pedidoVendaVolume.IdCaixaVolume = null;
+                }
 
-                //var listaPedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
-
-                //foreach (var pedidoVendaProduto in listaPedidoVendaProduto)
-                //{
-                //}
-
-                //Aguardando definição de status
-
-                //var listaPedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(idPedidoVenda);
-
-                //foreach (var pedidoVendaVolume in listaPedidoVendaVolume)
-                //{
-                //    //pedidoVendaVolume.IdPedidoVendaStatus = idPedidoVendaStatus;
-                //    pedidoVendaVolume.DataHoraInicioSeparacao = null;
-                //    pedidoVendaVolume.DataHoraFimSeparacao = null;
-                //    pedidoVendaVolume.IdCaixaVolume = null;
-                //}
+                //_unitOfWork.SaveChanges();
 
                 await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.CancelamentoSeparacao,
+                    Descricao = $"Cancelou a separação do pedido {idPedidoVenda} com permissão do usuário {usuarioPermissaoCancelamento}",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuarioOperacao
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
 
                 transacao.Complete();
             }
