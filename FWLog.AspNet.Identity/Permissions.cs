@@ -224,6 +224,16 @@ namespace FWLog.AspNet.Identity
             }
         }
 
+        public class RFSeparacao : PermissionGroupBuildItem
+        {
+            public const string CancelarSeparacao = "RFCancelarSeparacao";
+
+            public RFSeparacao() : base(Display.FromString("Coletor - Separação"))
+            {
+                Register(CancelarSeparacao, Display.FromString("Cancelar Separação"));
+            }
+        }
+
         public class RFEtiquetas : PermissionGroupBuildItem
         {
             public const string EtiquetaEndereco = "RFImprimirEtiquetaEndereco";

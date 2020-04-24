@@ -88,7 +88,9 @@ namespace FWLog.Data
         public virtual DbSet<CaixaTipo> CaixaTipo { get; set; }
         public virtual DbSet<Caixa> Caixa { get; set; }
         public virtual DbSet<GrupoCorredorArmazenagem> GrupoCorredorArmazenagem { get; set; }
-
+        public virtual DbSet<Pedido> Pedido { get; set; }
+        public virtual DbSet<PedidoItem> PedidoItem { get; set; }
+		
         public int SaveChangesWithoutLog()
         {
             return base.SaveChanges();

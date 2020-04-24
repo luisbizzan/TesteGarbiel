@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace FWLog.Services.Model.IntegracaoSankhya
 {
     [TabelaIntegracao(DisplayName = "TGFCAB")]
-    public class PedidoVendaIntegracao
+    public class PedidoIntegracao
     {
         [TabelaIntegracao(DisplayName = "TGFCAB.NUNOTA")]
         [Required]
