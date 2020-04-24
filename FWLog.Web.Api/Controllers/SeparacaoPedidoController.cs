@@ -1,4 +1,6 @@
-﻿using FWLog.Services.Services;
+﻿using AutoMapper;
+using DartDigital.Library.Exceptions;
+using FWLog.Services.Services;
 using FWLog.Web.Api.Models.SeparacaoPedido;
 using System;
 using System.Collections.Generic;

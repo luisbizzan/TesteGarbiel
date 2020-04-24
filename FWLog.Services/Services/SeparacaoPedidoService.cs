@@ -36,6 +36,10 @@ namespace FWLog.Services.Services
 
             ValidarPedidoVendaPorUsuario(idUsuario, idEmpresa, pedidoVenda);
 
+            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository
+                .ConsultarPedidoVendaVolumePorIdPedidoVenda(pedidoVenda.IdPedidoVenda);
+
+
             var listIdProduto = pedidoVenda.PedidoVendaProdutos.Select(x => x.IdProduto).ToList();
 
             var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.BuscarProdutoEstoquePorIdProduto(idEmpresa, listIdProduto);
@@ -78,6 +82,17 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Existe um pedido em separação pelo usuário logado que não foi concluído.");
             }
         }
+
+        public void ValidarPedidoVendaVolumePorUsuario(string idUsuario, long idEmpresa, List<ProdutoEstoque> produtoEstoque)
+        {
+            var usuarioEmpresa = _unitOfWork.UsuarioEmpresaRepository.Obter(idEmpresa, idUsuario);
+            
+            foreach (var item in produtoEstoque)
+            {
+                if(usuarioEmpresa.CorredorSeparacaoInicio == item.EnderecoArmazenagem.Corredor || )
+            }
+        }
+
 
         public PedidoVenda ConsultaPedidoVenda(long? idPedidoVenda, string codigoDeBarras, long idEmpresa)
         {

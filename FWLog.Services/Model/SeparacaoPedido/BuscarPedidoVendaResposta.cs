@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FWLog.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ namespace FWLog.Services.Model.SeparacaoPedido
         public int NroPedidoVenda { get; set; }
         public long IdEmpresa { get; set; }
         public int StatusSeparacao { get; set; }
-        //public List<GrupoCorredorArmazenagem> {get;set;}
+        public List<GrupoCorredorArmazenagem> GrupoCorredorArmazenagem{ get; set; }
         public List<EnderecoProduto> EnderecoProduto { get; set; }
     }
 
