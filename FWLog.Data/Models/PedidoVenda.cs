@@ -10,6 +10,7 @@ namespace FWLog.Data.Models
         public PedidoVenda()
         {
             PedidoVendaProdutos = new HashSet<PedidoVendaProduto>();
+            PedidoVendaVolumes = new HashSet<PedidoVendaVolume>();
         }
 
         [Key]
@@ -76,5 +77,7 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdUsuarioSeparacao))]
         public virtual AspNetUsers UsuarioSeparacao { get; set; }
+
+        public virtual ICollection<PedidoVendaVolume> PedidoVendaVolumes { get; set; }
     }
 }
