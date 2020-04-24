@@ -12,7 +12,7 @@ CREATE TABLE "PedidoVendaVolume"
 , "CorredorInicio" NUMBER (10) NOT NULL
 , "CorredorFim" NUMBER (10) NOT NULL
 , "IdPerfilImpressora" NUMBER (19) NOT NULL
-, "IdCaixaVolume"  NUMBER (19) NOT NULL
+, "IdCaixaVolume"  NUMBER (19) NULL
 , "DataHoraInicioSeparacao" DATE
 , "DataHoraFimSeparacao" DATE
 , "IdPedidoVendaStatus" NUMBER (19)

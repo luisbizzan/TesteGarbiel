@@ -18,7 +18,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                         .Select(x => x.IdPedidoVenda).ToList();
         }
 
-        public PedidoVenda ObterPorNroPedidoENroVolume(int nroPedido,int nroVolumes, long idEmpresa)
+        public PedidoVenda ObterPorNroPedidoENroVolume(int nroPedido, int nroVolumes, long idEmpresa)
         {
             return Entities.PedidoVenda.FirstOrDefault(f => f.NroPedidoVenda == nroPedido && f.NroVolumes == nroVolumes && f.IdEmpresa == idEmpresa);
         }

@@ -9,7 +9,11 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public PedidoVendaVolumeRepository(Entities entities) : base(entities)
         {
+        }
 
+        public List<PedidoVendaVolume> ObterPorIdPedidoVenda(long idPedidoVenda)
+        {
+            return Entities.PedidoVendaVolume.Where(x => x.IdPedidoVenda == idPedidoVenda).ToList();
         }
 
         public List<PedidoVendaVolume> ConsultarPedidoVendaVolumePorIdPedidoVenda(long idPedidoVenda)

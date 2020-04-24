@@ -368,6 +368,7 @@ namespace FWLog.AspNet.Identity
             public const string CadastrarCorredorImpressora = "CorredorImpressoraCadastrar";
             public const string EditarCorredorImpressora = "CorredorImpressoraEditar";
             public const string VisualizarCorredorImpressora = "CorredorImpressoraVisualizar";
+            public const string ExcluirCorredorImpressora = "CorredorImpressoraExcluir";
 
             public Separacao() : base(Display.FromString("Separação"))
             {
@@ -375,6 +376,7 @@ namespace FWLog.AspNet.Identity
                 Register(CadastrarCorredorImpressora, Display.FromString("Cadastrar Corredor x Impressora"));
                 Register(EditarCorredorImpressora, Display.FromString("Editar Corredor x Impressora"));
                 Register(VisualizarCorredorImpressora, Display.FromString("Visualizar Corredor x Impressora"));
+                Register(ExcluirCorredorImpressora, Display.FromString("Excluir Corredor x Impressora"));
             }
         }
     }

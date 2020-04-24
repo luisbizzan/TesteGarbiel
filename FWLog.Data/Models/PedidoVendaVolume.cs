@@ -55,19 +55,17 @@ namespace FWLog.Data.Models
         [Index]
         public long IdPerfilImpressora { get; set; }
 
-        [Required]
         [Index]
-        public long IdCaixaVolume { get; set; }
+        public long? IdCaixaVolume { get; set; }
 
         [Index]
-        public DateTime DataHoraInicioSeparacao { get; set; }
+        public DateTime? DataHoraInicioSeparacao { get; set; }
 
         [Index]
-        public DateTime DataHoraFimSeparacao { get; set; }
+        public DateTime? DataHoraFimSeparacao { get; set; }
 
         [Index]
         public string IdUsuarioSeparacao { get; set; }
-
 
         [Index]
         [Required]

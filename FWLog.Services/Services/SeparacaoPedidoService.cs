@@ -1,31 +1,148 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
 using FWLog.Data.Models;
-using FWLog.Data.Models.DataTablesCtx;
-using FWLog.Services.Model.Armazenagem;
+using FWLog.Services.Integracao;
 using FWLog.Services.Model.Coletor;
+using log4net;
 using FWLog.Services.Model.SeparacaoPedido;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace FWLog.Services.Services
 {
     public class SeparacaoPedidoService
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly ColetorHistoricoService _coletorHistoricoService;
+        private ILog _log;
 
-        public SeparacaoPedidoService(UnitOfWork unitOfWork)
+        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService, ILog log)
         {
             _unitOfWork = unitOfWork;
+            _coletorHistoricoService = coletorHistoricoService;
+            _log = log;
         }
 
         public List<long> ConsultaPedidoVendaEmSeparacao(string idUsuario, long idEmpresa)
         {
             var ids = _unitOfWork.PedidoVendaRepository.PesquisarIdsEmSeparacao(idUsuario, idEmpresa);
             return ids;
+        }
+
+        public async Task AtualizarStatusPedidoVenda(Pedido pedido, PedidoVendaStatusEnum statusPedidoVenda)
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            try
+            {
+                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", pedido.CodigoIntegracao.ToString() } };
+
+                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSSEP", statusPedidoVenda.GetHashCode());
+
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = string.Format("Erro na atualização do pedido de venda: {0}.", pedido.CodigoIntegracao);
+                _log.Error(errorMessage, ex);
+                throw new BusinessException(errorMessage);
+            }
+        }
+
+        public async Task CancelarPedidoSeparacao(long idPedidoVenda, string usuarioPermissaoCancelamento, string idUsuarioOperacao, long idEmpresa)
+        {
+            if (idPedidoVenda <= 0)
+            {
+                throw new BusinessException("O pedido deve ser informado.");
+            }
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda);
+
+            if (pedidoVenda == null)
+            {
+                throw new BusinessException("O pedido não foi encontrado.");
+            }
+
+            if (pedidoVenda.IdEmpresa != idEmpresa)
+            {
+                throw new BusinessException("O pedido não pertence a empresa do usuário logado.");
+
+            }
+
+            if (pedidoVenda.IdUsuarioSeparacao != idUsuarioOperacao)
+            {
+                throw new BusinessException("O pedido não pertence ao usuário logado.");
+            }
+
+            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
+            {
+                throw new BusinessException("O pedido não está em separação.");
+            }
+
+            if (usuarioPermissaoCancelamento.NullOrEmpty())
+            {
+                throw new BusinessException("O usuário da permissão deve ser informado.");
+            }
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                var novoStatusSeparacao = PedidoVendaStatusEnum.EnviadoSeparacao;
+
+                pedidoVenda.IdPedidoVendaStatus = novoStatusSeparacao;
+                pedidoVenda.IdUsuarioSeparacao = null;
+                pedidoVenda.DataHoraInicioSeparacao = null;
+                pedidoVenda.DataHoraFimSeparacao = null;
+
+                _unitOfWork.SaveChanges();
+
+                var listaPedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
+
+                foreach (var pedidoVendaProduto in listaPedidoVendaProduto)
+                {
+                    //TODO: Atualizar a LoteProdutoEndereco abatendo da coluna Quantidade a PedidoVendaProduto.QtdSeparada filtrando o IdProduto, IdEmpresa e IdEnderecoArmazenagem
+
+                    //TODO: Aguardando definição de status
+                    //pedidoVendaProduto.IdPedidoVendaStatus = novoStatusSeparacao;
+                    //pedidoVendaProduto.DataHoraInicioSeparacao = null;
+                    //pedidoVendaProduto.DataHoraFimSeparacao = null;
+                    //pedidoVendaProduto.IdUsuarioAutorizacaoZerar = idUsuarioPermissaoCancelamento;
+                    //pedidoVendaProduto.QtdSeparada = 0;
+                }
+
+                //_unitOfWork.SaveChanges();
+
+                var listaPedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(idPedidoVenda);
+
+                foreach (var pedidoVendaVolume in listaPedidoVendaVolume)
+                {
+                    ////TODO: Aguardando definição de status
+                    //pedidoVendaVolume.IdPedidoVendaStatus = idPedidoVendaStatus;
+                    //pedidoVendaVolume.DataHoraInicioSeparacao = null;
+                    //pedidoVendaVolume.DataHoraFimSeparacao = null;
+                    //pedidoVendaVolume.IdCaixaVolume = null;
+                }
+
+                //_unitOfWork.SaveChanges();
+
+                await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.CancelamentoSeparacao,
+                    Descricao = $"Cancelou a separação do pedido {idPedidoVenda} com permissão do usuário {usuarioPermissaoCancelamento}",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuarioOperacao
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+
+                transacao.Complete();
+            }
         }
 
         public BuscarPedidoVendaResposta BuscarPedidoVenda(long? idPedidoVenda, string codigoDeBarras, string idUsuario, long idEmpresa)
@@ -83,6 +200,7 @@ namespace FWLog.Services.Services
             }
         }
 
+        //TODO Falta definir os status e adicionar IdPontoArmazenagemSeparacao na UsuarioEmpresa
         //public void ValidarPedidoVendaVolumePorUsuario(string idUsuario, long idEmpresa, List<ProdutoEstoque> produtoEstoque)
         //{
         //    var usuarioEmpresa = _unitOfWork.UsuarioEmpresaRepository.Obter(idEmpresa, idUsuario);
@@ -90,7 +208,7 @@ namespace FWLog.Services.Services
 
         //    foreach (var item in produtoEstoque)
         //    {
-        //        if(!range.Contains(item.EnderecoArmazenagem.Corredor))
+        //        if (!range.Contains(item.EnderecoArmazenagem.Corredor))
         //    }
         //}
 

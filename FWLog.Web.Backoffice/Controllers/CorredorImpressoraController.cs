@@ -200,5 +200,29 @@ namespace FWLog.Web.Backoffice.Controllers
                 return View(viewModel);
             }
         }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Separacao.ExcluirCorredorImpressora)]
+        public JsonResult ExcluirAjax(int id)
+        {
+            try
+            {
+                _service.Excluir(id);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
+                }, JsonRequestBehavior.DenyGet);
+            }
+            catch (BusinessException exception)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = exception.Message
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
     }
 }

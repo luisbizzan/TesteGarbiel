@@ -75,8 +75,8 @@
         var table = $(this).closest('table');
 
         dart.modalAjaxDelete.open({
-            title: 'Excluir Caixa',
-            message: 'Somente caixas não utilizadas podem ser excluídas. Deseja continuar?',
+            title: 'Excluir Corredor x Impressora',
+            message: 'Somente corredores x impressora não utilizados podem ser excluídos. Deseja continuar?',
             deleteUrl: $(this).attr('data-delete-url'),
             onConfirm: function () {
                 table.DataTable().ajax.reload(null, false);
