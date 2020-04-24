@@ -266,6 +266,7 @@
     <Compile Include="Models\Produto\ProdutoReservadoModelRequest.cs" />
     <Compile Include="Models\SeparacaoPedido\SeparacaoPedidoResposta.cs" />
     <Compile Include="Models\SeparacaoPedido\BuscarPedidoVendaResposta.cs" />
+    <Compile Include="Models\SeparacaoPedido\CancelarPedidoSeparacaoRequisicao.cs" />
     <Compile Include="Models\Usuario\BuscarPermissoesResposta.cs" />
     <Compile Include="Models\Usuario\ValidarPermissaoRequisicao.cs" />
     <Compile Include="Models\Usuario\RecoverPasswordModelRequest.cs" />

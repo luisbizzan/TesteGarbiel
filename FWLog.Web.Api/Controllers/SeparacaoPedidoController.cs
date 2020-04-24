@@ -1,9 +1,6 @@
-﻿using FWLog.Services.Services;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Services.Services;
 using FWLog.Web.Api.Models.SeparacaoPedido;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
@@ -55,5 +52,26 @@ namespace FWLog.Web.Api.Controllers
 
         //    return ApiOk(pedidoVendaResposta);
         //}
+
+        [Route("api/v1/separacao-pedido/cancelar")]
+        [HttpPost]
+        public IHttpActionResult CancelarPedidoSeparacao(CancelarPedidoSeparacaoRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _separacaoPedidoService.CancelarPedidoSeparacao(requisicao?.IdPedidoVenda ?? 0, requisicao?.IdUsuarioPermissao, IdUsuario, IdEmpresa);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
     }
 }

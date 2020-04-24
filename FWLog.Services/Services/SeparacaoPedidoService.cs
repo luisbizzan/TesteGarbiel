@@ -15,10 +15,12 @@ namespace FWLog.Services.Services
     public class SeparacaoPedidoService
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly ColetorHistoricoService _coletorHistoricoService;
 
-        public SeparacaoPedidoService(UnitOfWork unitOfWork)
+        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService)
         {
             _unitOfWork = unitOfWork;
+            _coletorHistoricoService = coletorHistoricoService;
         }
 
         public List<long> ConsultaPedidoVendaEmSeparacao(string idUsuario, long idEmpresa)
@@ -97,5 +99,89 @@ namespace FWLog.Services.Services
 
         //    return pedidoVenda;
         //}
+
+        public void CancelarPedidoSeparacao(long idPedidoVenda, string idUsuarioPermissaoCancelamento, string idUsuarioOperacao, long idEmpresa)
+        {
+            if (idPedidoVenda <= 0)
+            {
+                throw new BusinessException("O pedido deve ser informado.");
+            }
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda);
+
+            if (pedidoVenda == null)
+            {
+                throw new BusinessException("O pedido não foi encontrado.");
+            }
+
+            if (pedidoVenda.IdEmpresa != idEmpresa)
+            {
+                throw new BusinessException("O pedido não pertence a empresa do usuário logado.");
+
+            }
+
+            if (pedidoVenda.IdUsuarioSeparacao != idUsuarioOperacao)
+            {
+                throw new BusinessException("O pedido não pertence ao usuário logado.");
+            }
+
+            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
+            {
+                throw new BusinessException("O pedido não está em separação.");
+            }
+
+            if (idUsuarioPermissaoCancelamento.NullOrEmpty())
+            {
+                throw new BusinessException("O usuário da permissão deve ser informado.");
+            }
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
+                pedidoVenda.IdUsuarioSeparacao = null;
+                pedidoVenda.DataHoraInicioSeparacao = null;
+                pedidoVenda.DataHoraFimSeparacao = null;
+
+                _unitOfWork.SaveChanges();
+
+                //TODO:
+                /*
+                    Atualizar a LoteProdutoEndereco abatendo da coluna Quantidade a PedidoVendaProduto.QtdSeparada filtrando o IdProduto, IdEmpresa e IdEnderecoArmazenagem
+
+                    O IdEnderecoArmazenagem, deve ser carregado da PedidoVendaProduto que foi gerado pelo Robô de Separação
+
+                    Atualizar a PedidoVendaProduto.QtdSeparada de todos os produtos do pedido para zero para que a separação seja reiniciada
+
+                    Atualizar as colunas a seguir da PedidoVendaProduto IdUsuarioAutorizacaoZerarPedido, DataHoraInicioSeparacao, DataHoraFimSeparacao para NULL e a StatusSeparacao para “2 - Enviado para Separação”
+                */
+
+                //var listaPedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
+
+                //foreach (var pedidoVendaProduto in listaPedidoVendaProduto)
+                //{
+                //}
+
+                //TODO: Devem ser atualizadas as colunas da PedidoVendaVolume
+                //PedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
+                //PedidoVendaVolume.DataHoraInicioSeparacao = null;
+                //PedidoVendaVolume.DataHoraFimSeparacao = null;
+                //PedidoVendaVolume.IdCaixaVolume = null;
+
+                //TODO: Adicionar logs de PedidoVendaVolume
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.CancelamentoSeparacao,
+                    Descricao = $"Cancelou a separação do pedido {idPedidoVenda} com permissão do usuário {idUsuarioPermissaoCancelamento}",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuarioOperacao
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+
+                //TODO: Atualizar o status da separação no Sankhya
+
+                transacao.Complete();
+            }
+        }
     }
 }
