@@ -83,9 +83,16 @@ namespace FWLog.Data
         private CaixaRepository _caixaRepository;
         private PedidoRepository _pedidoRepository;
         private PedidoItemRepository _pedidoItemRepository;
+        private PedidoVendaVolumeRepository _pedidoVendaVolumeRepository;
+
         public UnitOfWork()
         {
             _context = new Entities();
+        }
+
+        public PedidoVendaVolumeRepository PedidoVendaVolumeRepository
+        {
+            get => _pedidoVendaVolumeRepository ?? (_pedidoVendaVolumeRepository = new PedidoVendaVolumeRepository(_context));
         }
 
         public PedidoRepository PedidoRepository
