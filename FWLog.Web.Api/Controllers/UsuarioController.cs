@@ -218,7 +218,7 @@ namespace FWLog.Web.Api.Controllers
                 return ApiForbidden("Usuário sem permissão.", requisicao.Codigo);
             }
 
-            return ApiOk();
+            return ApiOk(new ValidarPermissaoResposta());
         }
     }
 }

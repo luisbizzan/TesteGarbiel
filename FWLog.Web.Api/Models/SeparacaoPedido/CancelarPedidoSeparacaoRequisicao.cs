@@ -8,6 +8,6 @@ namespace FWLog.Web.Api.Models.SeparacaoPedido
         public long IdPedidoVenda { get; set; }
 
         [Required]
-        public string IdUsuarioPermissao { get; set; }
+        public string UsuarioPermissao { get; set; }
     }
 }

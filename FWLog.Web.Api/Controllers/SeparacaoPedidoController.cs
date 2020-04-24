@@ -1,6 +1,7 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.SeparacaoPedido;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
@@ -55,7 +56,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/separacao-pedido/cancelar")]
         [HttpPost]
-        public IHttpActionResult CancelarPedidoSeparacao(CancelarPedidoSeparacaoRequisicao requisicao)
+        public async Task<IHttpActionResult> CancelarPedidoSeparacao(CancelarPedidoSeparacaoRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
@@ -64,7 +65,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _separacaoPedidoService.CancelarPedidoSeparacao(requisicao?.IdPedidoVenda ?? 0, requisicao?.IdUsuarioPermissao, IdUsuario, IdEmpresa);
+                await _separacaoPedidoService.CancelarPedidoSeparacao(requisicao?.IdPedidoVenda ?? 0, requisicao?.UsuarioPermissao, IdUsuario, IdEmpresa);
             }
             catch (BusinessException businessException)
             {

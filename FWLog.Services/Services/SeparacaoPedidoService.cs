@@ -123,7 +123,7 @@ namespace FWLog.Services.Services
         //    return pedidoVenda;
         //}
 
-        public async Task CancelarPedidoSeparacao(long idPedidoVenda, string idUsuarioPermissaoCancelamento, string idUsuarioOperacao, long idEmpresa)
+        public async Task CancelarPedidoSeparacao(long idPedidoVenda, string usuarioPermissaoCancelamento, string idUsuarioOperacao, long idEmpresa)
         {
             if (idPedidoVenda <= 0)
             {
@@ -152,7 +152,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido não está em separação.");
             }
 
-            if (idUsuarioPermissaoCancelamento.NullOrEmpty())
+            if (usuarioPermissaoCancelamento.NullOrEmpty())
             {
                 throw new BusinessException("O usuário da permissão deve ser informado.");
             }
@@ -203,7 +203,7 @@ namespace FWLog.Services.Services
                 {
                     IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
                     IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.CancelamentoSeparacao,
-                    Descricao = $"Cancelou a separação do pedido {idPedidoVenda} com permissão do usuário {idUsuarioPermissaoCancelamento}",
+                    Descricao = $"Cancelou a separação do pedido {idPedidoVenda} com permissão do usuário {usuarioPermissaoCancelamento}",
                     IdEmpresa = idEmpresa,
                     IdUsuario = idUsuarioOperacao
                 };
