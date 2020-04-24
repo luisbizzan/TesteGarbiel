@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
@@ -7,10 +8,12 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
     public class GarantiaLaudoVM
     {
         public GarantiaLaudo Form { get; set; }
+        public List<GarantiaLaudo> Lista { get; set; }
 
         public GarantiaLaudoVM()
         {
             Form = new GarantiaLaudo();
+            Lista = new List<GarantiaLaudo>();
         }
     }
 
@@ -20,6 +23,8 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
         [Display(Name = "Motivo")]
         public long Id_Motivo { get; set; }
+
+        public string Motivo { get; set; }
 
         [Display(Name = "Referência")]
         public string Refx { get; set; }

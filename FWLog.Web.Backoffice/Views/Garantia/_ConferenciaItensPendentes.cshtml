@@ -1,4 +1,4 @@
-﻿@model FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaLaudoVM
+﻿@model List<FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaConferencia>
 
 <div class="row">
     <div class="col-md-12">
@@ -13,16 +13,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>xxx</td>
-                            <td>teste</td>
-                            <td>2</td>
-                        </tr>
-                        <tr>
-                            <td>zzz</td>
-                            <td>teste</td>
-                            <td>2</td>
-                        </tr>
+                        @foreach (var item in Model)
+                        {
+
+                            <tr>
+                                <td>@item.Refx</td>
+                                <td>@item.Descricao</td>
+                                <td>@item.Quantidade</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>

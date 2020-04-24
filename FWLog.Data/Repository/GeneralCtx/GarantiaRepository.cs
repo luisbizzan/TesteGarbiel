@@ -144,5 +144,34 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return retorno;
         }
+
+        public List<GarMotivoLaudo> ListarMotivoLaudo()
+        {
+            List<GarMotivoLaudo> retorno = new List<GarMotivoLaudo>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        GML.Id,
+                        GML.Descricao,
+                        GML.Id_Tipo,
+                        GT.Descricao AS Tipo
+                    FROM
+                        gar_motivo_laudo GML
+                        INNER JOIN geral_tipo GT ON GT.id = GML.Id_Tipo AND GT.tabela = 'GAR_MOTIVO_LAUDO' AND GT.coluna = 'ID_TIPO'
+                    ORDER BY GT.Descricao, GML.Descricao
+
+                    ";
+                    retorno = conn.Query<GarMotivoLaudo>(sQuery, new { }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
     }
 }
