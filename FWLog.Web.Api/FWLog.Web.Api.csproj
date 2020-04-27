@@ -193,6 +193,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\ApiBaseController.cs" />
     <Compile Include="Controllers\ArmazenagemController.cs" />
+    <Compile Include="Controllers\CaixaController.cs" />
     <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
@@ -218,6 +219,7 @@
     </Compile>
     <Compile Include="Helpers\ApiErrorBuilder.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
+    <Compile Include="Mapping\CaixaProfile.cs" />
     <Compile Include="Mapping\ProdutoModelResponseProfile.cs" />
     <Compile Include="Models\Armazenagem\EnderecoProdutoQuantidadesResposta.cs" />
     <Compile Include="Models\Armazenagem\ConfirmaQuantidadeConferenciaAlasRequisicao.cs" />
@@ -250,6 +252,7 @@
     <Compile Include="Models\AtividadeEstoque\ValidarQuantidadeConferenciaProdutoForaLinhaRequisicao.cs" />
     <Compile Include="Models\AtividadeEstoque\ValidarEnderecoConferenciaProdutoForaLinhaRequisicao.cs" />
     <Compile Include="Models\AtividadeEstoque\ValidarProdutoConferenciaProdutoForaLinhaRequisicao.cs" />
+    <Compile Include="Models\Caixa\CaixaResposta.cs" />
     <Compile Include="Models\EnderecoArmazenagem\EnderecoArmazenagemResposta.cs" />
     <Compile Include="Models\EnderecoArmazenagem\EnderecosArmazenagemResposta.cs" />
     <Compile Include="Models\EnderecoArmazenagem\PesquisarEnderecoArmazenagemPorIdResposta.cs" />
