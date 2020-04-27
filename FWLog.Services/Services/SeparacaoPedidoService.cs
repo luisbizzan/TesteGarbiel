@@ -261,7 +261,6 @@ namespace FWLog.Services.Services
                 foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes.ToList())
                 {
                     pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
-                    pedidoVendaVolume.IdUsuarioSeparacao = null;
                     pedidoVendaVolume.DataHoraInicioSeparacao = null;
                     pedidoVendaVolume.DataHoraFimSeparacao = null;
                     pedidoVendaVolume.IdCaixaVolume = null;
@@ -274,9 +273,12 @@ namespace FWLog.Services.Services
                         }
 
                         pedidoVendaProduto.IdPedidoVendaStatus = novoStatusSeparacao;
+                        pedidoVendaProduto.IdUsuarioSeparacao = null;
                         pedidoVendaProduto.DataHoraInicioSeparacao = null;
                         pedidoVendaProduto.DataHoraFimSeparacao = null;
                         pedidoVendaProduto.IdUsuarioAutorizacaoZerar = idUsuarioOperacao;
+                        pedidoVendaProduto.DataHoraAutorizacaoZerarPedido = DateTime.Now;
+
                         pedidoVendaProduto.QtdSeparada = 0;
                     }
 
