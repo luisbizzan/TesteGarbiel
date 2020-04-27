@@ -7,5 +7,7 @@
         public long? IdNivelArmazenagem { get; set; }
         public long? IdPontoArmazenagem { get; set; }
         public bool? Status { get; set; }
+        public bool? Picking { get; set; }
+        public bool? PontoSeparacao { get; set; }
     }
 }

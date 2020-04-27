@@ -90,5 +90,10 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return selectedQuery.ToList();
         }
+
+        public List<Caixa> BuscarCaixaTipoSeparacao(long idEmpresa)
+        {
+            return Entities.Caixa.Include("CaixaTipo").Where(x => x.IdEmpresa == idEmpresa && x.IdCaixaTipo == CaixaTipoEnum.Separacao && x.Ativo == true).OrderBy(o => o.Nome).ToList();
+        }
     }
 }

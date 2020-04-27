@@ -1,29 +1,43 @@
-﻿using FWLog.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace FWLog.Services.Model.SeparacaoPedido
 {
     public class BuscarPedidoVendaResposta
     {
         public long IdPedidoVenda { get; set; }
+
         public int NroPedidoVenda { get; set; }
-        public long IdEmpresa { get; set; }
-        public int StatusSeparacao { get; set; }
-        public List<GrupoCorredorArmazenagem> GrupoCorredorArmazenagem{ get; set; }
-        public List<EnderecoProduto> EnderecoProduto { get; set; }
+
+        //public long IdEmpresa { get; set; }
+
+        public bool SeparacaoIniciada { get; set; }
+
+        public List<BuscarPedidoVendaGrupoCorredorResposta> ListaCorredoresSeparacao { get; set; }
     }
 
-    public class EnderecoProduto
+    public class BuscarPedidoVendaGrupoCorredorResposta
+    {
+        public long IdGrupoCorredorArmazenagem { get; set; }
+
+        public int CorredorInicial { get; set; }
+
+        public int CorredorFinal { get; set; }
+
+        public List<BuscarPedidoVendaGrupoCorredorEnderecoProdutoResposta> ListaEnderecosArmazenagem { get; set; }
+    }
+
+    public class BuscarPedidoVendaGrupoCorredorEnderecoProdutoResposta
     {
         public int Corredor { get; set; }
+
         public string Codigo { get; set; }
+
         public string PontoArmazenagem { get; set; }
+
         public string ReferenciaProduto { get; set; }
-        public int MultiploProduto { get; set; }
+
+        public decimal MultiploProduto { get; set; }
+
         public int QtdePedido { get; set; }
     }
 }

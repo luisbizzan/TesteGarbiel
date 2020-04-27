@@ -1,5 +1,6 @@
 ﻿using FWLog.Data.Models;
 using FWLog.Data.Repository.CommonCtx;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,8 +15,9 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public List<long> PesquisarIdsEmSeparacao(string idUsuario, long idEmpresa)
         {
-            return Entities.PedidoVenda.Where(w => w.IdUsuarioSeparacao == idUsuario && w.IdEmpresa == idEmpresa && w.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao)
-                                        .Select(x => x.IdPedidoVenda).ToList();
+            /* return Entities.PedidoVenda.Where(w => w.IdUsuarioSeparacao == idUsuario && w.IdEmpresa == idEmpresa && w.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao).Select(x => x.IdPedidoVenda).ToList();*/
+
+            throw new NotImplementedException();
         }
 
         public PedidoVenda ObterPorNroPedidoENroVolume(int nroPedido, int nroVolumes, long idEmpresa)
@@ -23,9 +25,9 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.PedidoVenda.FirstOrDefault(f => f.NroPedidoVenda == nroPedido && f.NroVolumes == nroVolumes && f.IdEmpresa == idEmpresa);
         }
 
-        public List<PedidoVenda> ObterPorIdUsuarioEIdEmpresa(string idUsuario, long IdEmpresa)
+        public PedidoVenda ObterPorIdPedidoVendaEIdEmpresa(long idPedidoVenda, long idEmpresa)
         {
-            return Entities.PedidoVenda.Where(x => x.IdUsuarioSeparacao == idUsuario && x.IdEmpresa == IdEmpresa).ToList();
+            return Entities.PedidoVenda.FirstOrDefault(pv => pv.IdPedidoVenda == idPedidoVenda && pv.IdEmpresa == idEmpresa);
         }
     }
 }

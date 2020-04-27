@@ -17,7 +17,6 @@ CREATE TABLE "PedidoVendaVolume"
 , "DataHoraFimSeparacao" DATE
 , "IdPedidoVendaStatus" NUMBER (19)
 , "IdUsuarioSeparacao" VARCHAR (128)
-
 , CONSTRAINT "PedidoVendaVolume_PK" PRIMARY KEY 
   (
     "IdPedidoVendaVolume" 

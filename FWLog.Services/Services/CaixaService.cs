@@ -22,6 +22,19 @@ namespace FWLog.Services.Services
             return _unitOfWork.CaixaTipoRepository.Todos();
         }
 
+        public void ValidarPesquisa(long idEmpresa)
+        {
+            if (idEmpresa <= 0)
+            {
+                throw new BusinessException("A empresa deve ser informada.");
+            }
+        }
+
+        public List<Caixa> BuscarCaixaTipoSeparacao(long idEmpresa)
+        {
+            return _unitOfWork.CaixaRepository.BuscarCaixaTipoSeparacao(idEmpresa);
+        }
+
         public List<CaixaListaTabela> BuscarLista(DataTableFilter<CaixaListaFiltro> filtro, out int registrosFiltrados, out int totalRegistros)
         {
             return _unitOfWork.CaixaRepository.BuscarLista(filtro, out registrosFiltrados, out totalRegistros);

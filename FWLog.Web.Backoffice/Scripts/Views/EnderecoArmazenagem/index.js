@@ -73,6 +73,7 @@
             { data: 'Codigo', render: iconeStatus },
             { data: 'Fifo' },
             { data: 'PontoSeparacao' },
+            { data: 'Picking' },
             { data: 'EstoqueMinimo' },
             { data: 'Quantidade' },
             { data: 'Status' },
