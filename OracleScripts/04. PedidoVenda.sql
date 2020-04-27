@@ -1,15 +1,16 @@
 CREATE TABLE "PedidoVenda" 
 (
   "IdPedidoVenda" NUMBER(19) NOT NULL 
-, "IdPedido" NUMBER(19,0) NOT  NULL
+, "IdPedido" NUMBER(19,0) NOT NULL
 , "NroPedidoVenda" NUMBER(10) NOT NULL 
 , "IdEmpresa" NUMBER(19) NOT NULL 
 , "IdCliente" NUMBER(19) NOT NULL 
 , "IdTransportadora" NUMBER(19) NOT NULL 
-, "NroVolumes" NUMBER(10)
+, "NroVolumes" NUMBER(10) NOT NULL 
 , "DataHoraInicioSeparacao" DATE 
 , "DataHoraFimSeparacao" DATE 
-, "IdPedidoVendaStatus" NUMBER(10) NOT NULL 
+, "IdPedidoVendaStatus" NUMBER(10) NOT NULL
+, "IdRepresentante" NUMBER NOT NULL
 , CONSTRAINT "PedidoVenda_PK" PRIMARY KEY 
   (
     "IdPedidoVenda" 
@@ -35,11 +36,6 @@ BEGIN
   END COLUMN_SEQUENCES;
 END;
 /
-
-ALTER TABLE DART."PedidoVenda" ADD "DataCriacao" DATE NOT NULL;
-ALTER TABLE DART."PedidoVenda" ADD "IdRepresentante" NUMBER NOT NULL;
-ALTER TABLE DART."PedidoVenda" ADD "CodigoIntegracao" NUMBER NOT NULL;
-ALTER TABLE DART."PedidoVenda" MODIFY "CodigoIntegracao" NUMBER(10,0);
 
 CREATE INDEX "PedidoVenda_INDEX1" ON DART."PedidoVenda" ("IdEmpresa");
 CREATE INDEX "PedidoVenda_INDEX2" ON DART."PedidoVenda" ("IdCliente");
