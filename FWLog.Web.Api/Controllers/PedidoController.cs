@@ -18,7 +18,7 @@ namespace FWLog.Web.Api.Controllers
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarPedido()
         {
-            await _pedidoService.ConsultaPedido();
+            await _pedidoService.ConsultarPedidoIntegracao();
 
             return ApiOk();
         }

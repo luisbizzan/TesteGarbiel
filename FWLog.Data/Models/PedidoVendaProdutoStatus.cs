@@ -7,6 +7,7 @@ namespace FWLog.Data.Models
     {
         ProcessandoIntegracao = 0,
         AguardandoSeparacao = 1,
+        EnviadoSeparacao = 2,
     }
 
     public class PedidoVendaProdutoStatus

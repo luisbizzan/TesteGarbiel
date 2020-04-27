@@ -3,8 +3,8 @@ using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.Coletor;
-using log4net;
 using FWLog.Services.Model.SeparacaoPedido;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -54,28 +54,28 @@ namespace FWLog.Services.Services
             }
         }
 
-        public BuscarPedidoVendaResposta BuscarPedidoVenda(long? idPedidoVenda, string codigoDeBarras, string idUsuario, long idEmpresa)
+        public BuscarPedidoVendaResposta BuscarPedidoVenda(string referenciaPedido, string idUsuario, long idEmpresa)
         {
-            ValidarPedidoVenda(idPedidoVenda, codigoDeBarras, idEmpresa);
-
-            var pedidoVenda = ConsultaPedidoVenda(idPedidoVenda, codigoDeBarras, idEmpresa);
+            var pedidoVenda = ValidarPedidoVenda(referenciaPedido, idEmpresa);
 
             ValidarPedidoVendaPorUsuario(idUsuario, idEmpresa, pedidoVenda);
 
-            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository
-                .ConsultarPedidoVendaVolumePorIdPedidoVenda(pedidoVenda.IdPedidoVenda);
+            //var listIdProduto = pedidoVenda.PedidoVendaProdutos.Select(x => x.IdProduto).ToList();
 
-            var listIdProduto = pedidoVenda.PedidoVendaProdutos.Select(x => x.IdProduto).ToList();
-
-            var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.BuscarProdutoEstoquePorIdProduto(idEmpresa, listIdProduto);
+            //var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.BuscarProdutoEstoquePorIdProduto(idEmpresa, listIdProduto);
 
             //TODO: Falta Finalizar o processo de busca das informações e montar o objeto de resposta
             return new BuscarPedidoVendaResposta();
         }
 
-        public void ValidarPedidoVenda(long? idPedidoVenda, string codigoDeBarras, long idEmpresa)
+        public PedidoVenda ValidarPedidoVenda(string referenciaPedido, long idEmpresa)
         {
-            var pedidoVenda = ConsultaPedidoVenda(idPedidoVenda, codigoDeBarras, idEmpresa);
+            if (referenciaPedido.NullOrEmpty())
+            {
+                throw new BusinessException("Referência do pedido deve ser infomada.");
+            }
+
+            var pedidoVenda = ConsultaPedidoVenda(referenciaPedido, idEmpresa);
 
             if (pedidoVenda == null)
             {
@@ -97,6 +97,8 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("O pedido informado teve a separação cancelada.");
             }
+
+            return pedidoVenda;
         }
 
         public void ValidarPedidoVendaPorUsuario(string idUsuario, long idEmpresa, PedidoVenda pedidoVenda)
@@ -121,24 +123,77 @@ namespace FWLog.Services.Services
         //    }
         //}
 
-        public PedidoVenda ConsultaPedidoVenda(long? idPedidoVenda, string codigoDeBarras, long idEmpresa)
+        public PedidoVenda ConsultaPedidoVenda(string referenciaPedido, long idEmpresa)
         {
             PedidoVenda pedidoVenda;
 
-            if (idPedidoVenda != null)
+            if (long.TryParse(referenciaPedido, out long idPedidoVenda))
             {
-                pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda.Value);
+                pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda);
             }
             else
             {
-                var volume = codigoDeBarras.Substring(codigoDeBarras.Count(), -3);
+                var volume = referenciaPedido.Substring(referenciaPedido.Count(), -3);
 
-                var nroPedido = codigoDeBarras.Remove(codigoDeBarras.Count(), -6);
+                var nroPedido = referenciaPedido.Remove(referenciaPedido.Count(), -6);
 
                 pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoENroVolume(int.Parse(nroPedido), int.Parse(volume), idEmpresa);
             }
 
             return pedidoVenda;
+        }
+
+        private async Task AjustarQuantidadeVolume(long idEnderecoArmazenagem, long idProduto, int quantidadeAdicionar, long idEmpresa, string idUsuarioAjuste)
+        {
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(idEnderecoArmazenagem, idProduto, idEmpresa);
+
+            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+
+            var quantidadeAnterior = loteProdutoEndereco.Quantidade;
+
+            var novaQuantidade = loteProdutoEndereco.Quantidade += quantidadeAdicionar;
+
+            var pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * novaQuantidade;
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                loteProdutoEndereco.Quantidade = novaQuantidade;
+                loteProdutoEndereco.PesoTotal = pesoInstalacao;
+
+                _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
+                await _unitOfWork.SaveChangesAsync();
+
+                if (loteProdutoEndereco.IdLote.HasValue)
+                {
+                    var loteMovimentacao = new LoteMovimentacao
+                    {
+                        IdEmpresa = idEmpresa,
+                        IdLote = loteProdutoEndereco.IdLote.Value,
+                        IdProduto = loteProdutoEndereco.IdProduto,
+                        IdEnderecoArmazenagem = loteProdutoEndereco.IdEnderecoArmazenagem,
+                        IdUsuarioMovimentacao = idUsuarioAjuste,
+                        Quantidade = loteProdutoEndereco.Quantidade,
+                        IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Ajuste,
+                        DataHora = DateTime.Now
+                    };
+
+                    _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+                transacao.Complete();
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade,
+                    Descricao = $"Ajustou a quantidade de {quantidadeAnterior} para {loteProdutoEndereco.Quantidade} unidade(s) do produto {loteProdutoEndereco.Produto.Referencia} do lote {loteProdutoEndereco.Lote.IdLote} do endereço {loteProdutoEndereco.EnderecoArmazenagem.Codigo}",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuarioAjuste
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+            }
         }
 
         public async Task CancelarPedidoSeparacao(long idPedidoVenda, string usuarioPermissaoCancelamento, string idUsuarioOperacao, long idEmpresa)
@@ -188,28 +243,29 @@ namespace FWLog.Services.Services
 
                 foreach (var pedidoVendaProduto in pedidoVenda.PedidoVendaProdutos.ToList())
                 {
-                    //TODO: Atualizar a LoteProdutoEndereco abatendo da coluna Quantidade a PedidoVendaProduto.QtdSeparada filtrando o IdProduto, IdEmpresa e IdEnderecoArmazenagem
+                    if (pedidoVendaProduto.QtdSeparada.HasValue)
+                    {
+                        await AjustarQuantidadeVolume(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, pedidoVendaProduto.QtdSeparada.Value, idEmpresa, idUsuarioOperacao);
+                    }
 
-                    //TODO: Aguardando definição de status
-                    //pedidoVendaProduto.IdPedidoVendaStatus = novoStatusSeparacao;
-                    //pedidoVendaProduto.DataHoraInicioSeparacao = null;
-                    //pedidoVendaProduto.DataHoraFimSeparacao = null;
-                    //pedidoVendaProduto.IdUsuarioAutorizacaoZerar = idUsuarioPermissaoCancelamento;
-                    //pedidoVendaProduto.QtdSeparada = 0;
+                    pedidoVendaProduto.IdPedidoVendaProdutoStatus = PedidoVendaProdutoStatusEnum.AguardandoSeparacao;
+                    pedidoVendaProduto.DataHoraInicioSeparacao = null;
+                    pedidoVendaProduto.DataHoraFimSeparacao = null;
+                    pedidoVendaProduto.IdUsuarioAutorizacaoZerar = idUsuarioOperacao;
+                    pedidoVendaProduto.QtdSeparada = 0;
                 }
 
-                //_unitOfWork.SaveChanges();
+                _unitOfWork.SaveChanges();
 
                 foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes.ToList())
                 {
-                    ////TODO: Aguardando definição de status
-                    //pedidoVendaVolume.IdPedidoVendaStatus = idPedidoVendaStatus;
-                    //pedidoVendaVolume.DataHoraInicioSeparacao = null;
-                    //pedidoVendaVolume.DataHoraFimSeparacao = null;
-                    //pedidoVendaVolume.IdCaixaVolume = null;
+                    pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
+                    pedidoVendaVolume.DataHoraInicioSeparacao = null;
+                    pedidoVendaVolume.DataHoraFimSeparacao = null;
+                    pedidoVendaVolume.IdCaixaVolume = null;
                 }
 
-                //_unitOfWork.SaveChanges();
+                _unitOfWork.SaveChanges();
 
                 await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
 
@@ -235,7 +291,7 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("O pedido deve ser informado.");
             }
-            
+
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda);
             if (pedidoVenda == null)
             {
