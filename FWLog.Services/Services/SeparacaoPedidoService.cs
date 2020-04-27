@@ -54,32 +54,56 @@ namespace FWLog.Services.Services
             }
         }
 
-        public BuscarPedidoVendaResposta BuscarPedidoVenda(string referenciaPedido, string idUsuario, long idEmpresa)
+        public BuscarPedidoVendaResposta BuscarPedidoVenda(string codigoBarrasPedido, string idUsuario, long idEmpresa)
         {
-            var pedidoVenda = ValidarPedidoVenda(referenciaPedido, idEmpresa);
+            var pedidoVenda = ValidarPedidoVenda(codigoBarrasPedido, idEmpresa);
 
             ValidarPedidoVendaPorUsuario(idUsuario, idEmpresa, pedidoVenda);
 
-            //var listIdProduto = pedidoVenda.PedidoVendaProdutos.Select(x => x.IdProduto).ToList();
+            var model = new BuscarPedidoVendaResposta();
 
-            //var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.BuscarProdutoEstoquePorIdProduto(idEmpresa, listIdProduto);
+            model.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
+            model.NroPedidoVenda = pedidoVenda.NroPedidoVenda;
+            model.SeparacaoIniciada = pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao;
 
-            //TODO: Falta Finalizar o processo de busca das informações e montar o objeto de resposta
-            return new BuscarPedidoVendaResposta();
+            model.ListaCorredoresSeparacao = pedidoVenda.PedidoVendaVolumes.Select(pedidoVendaVolume => new BuscarPedidoVendaGrupoCorredorResposta
+            {
+                IdGrupoCorredorArmazenagem = pedidoVendaVolume.IdGrupoCorredorArmazenagem,
+                CorredorInicial = pedidoVendaVolume.GrupoCorredorArmazenagem.CorredorInicial,
+                CorredorFinal = pedidoVendaVolume.GrupoCorredorArmazenagem.CorredorFinal
+            }).OrderBy(o => new { o.CorredorInicial, o.CorredorFinal }).ToList();
+
+            //model.ListaEnderecosArmazenagem = pedidoVenda.PedidoVendaProdutos.Where(p => p.QtdSeparada < p.Qtd)
+            //.Select(pedidoVendaProduto => new BuscarPedidoVendaGrupoCorredorEnderecoProdutoResposta
+            //{
+            //    Corredor = pedidoVendaProduto.EnderecoArmazenagem.Corredor,
+            //    Codigo = pedidoVendaProduto.EnderecoArmazenagem.Codigo,
+            //    PontoArmazenagem = pedidoVendaProduto.EnderecoArmazenagem.PontoArmazenagem.Descricao,
+            //    ReferenciaProduto = pedidoVendaProduto.Produto.Referencia,
+            //    MultiploProduto = pedidoVendaProduto.Produto.MultiploVenda,
+            //    QtdePedido = pedidoVendaProduto.QtdPedido
+            //}).OrderBy(o => new { o.Corredor, o.Codigo }).ToList();
+
+            return model;
         }
 
-        public PedidoVenda ValidarPedidoVenda(string referenciaPedido, long idEmpresa)
+        private PedidoVenda ValidarPedidoVenda(string codigoBarrasPedido, long idEmpresa)
         {
-            if (referenciaPedido.NullOrEmpty())
+            if (codigoBarrasPedido.NullOrEmpty())
             {
-                throw new BusinessException("Referência do pedido deve ser infomada.");
+                throw new BusinessException("Código de barras do pedido deve ser infomado.");
             }
 
-            var pedidoVenda = ConsultaPedidoVenda(referenciaPedido, idEmpresa);
+            var pedidoVenda = ConsultaPedidoVenda(codigoBarrasPedido, idEmpresa);
 
             if (pedidoVenda == null)
             {
                 throw new BusinessException("O pedido informado não foi encontrado.");
+            }
+
+            if (pedidoVenda.IdEmpresa != idEmpresa)
+            {
+                throw new BusinessException("O pedido informado não pertence a empresa do usuário logado.");
             }
 
             if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ConcluidaComSucesso)
@@ -92,8 +116,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido informado ainda não está liberado para a separação.");
             }
 
-            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento
-                || pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado)
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento || pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado)
             {
                 throw new BusinessException("O pedido informado teve a separação cancelada.");
             }
@@ -101,7 +124,7 @@ namespace FWLog.Services.Services
             return pedidoVenda;
         }
 
-        public void ValidarPedidoVendaPorUsuario(string idUsuario, long idEmpresa, PedidoVenda pedidoVenda)
+        private void ValidarPedidoVendaPorUsuario(string idUsuario, long idEmpresa, PedidoVenda pedidoVenda)
         {
             var pedidoVendaPorUsuario = _unitOfWork.PedidoVendaRepository.ObterPorIdUsuarioEIdEmpresa(idUsuario, idEmpresa);
 
@@ -123,22 +146,28 @@ namespace FWLog.Services.Services
         //    }
         //}
 
-        public PedidoVenda ConsultaPedidoVenda(string referenciaPedido, long idEmpresa)
+        private PedidoVenda ConsultaPedidoVenda(string codigoBarrasPedido, long idEmpresa)
         {
-            PedidoVenda pedidoVenda;
-
-            if (long.TryParse(referenciaPedido, out long idPedidoVenda))
+            if (codigoBarrasPedido.Length < 7)
             {
-                pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda);
+                throw new BusinessException("Código de Barras de pedido inválido.");
             }
-            else
+
+            var numeroPedidoString = codigoBarrasPedido.Substring(0, codigoBarrasPedido.Length - 6);
+
+            if (!int.TryParse(numeroPedidoString, out int numeroPedido))
             {
-                var volume = referenciaPedido.Substring(referenciaPedido.Count(), -3);
-
-                var nroPedido = referenciaPedido.Remove(referenciaPedido.Count(), -6);
-
-                pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoENroVolume(int.Parse(nroPedido), int.Parse(volume), idEmpresa);
+                throw new BusinessException("Código de Barras de pedido inválido.");
             }
+
+            var volumeString = codigoBarrasPedido.Substring(codigoBarrasPedido.Length - 3);
+
+            if (!int.TryParse(volumeString, out int volume))
+            {
+                throw new BusinessException("Código de Barras de pedido inválido.");
+            }
+
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoENroVolume(numeroPedido, volume, idEmpresa);
 
             return pedidoVenda;
         }
