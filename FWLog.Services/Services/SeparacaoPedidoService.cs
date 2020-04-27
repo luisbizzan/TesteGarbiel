@@ -350,5 +350,10 @@ namespace FWLog.Services.Services
                 transaction.Complete();
             }
         }
+
+        public Task FinalizarSeparacaoVolume(long idPedidoVenda, long idPedidoVendaVolume, long idCaixa, string idUsuario, long idEmpresa)
+        {
+            throw new BusinessException("Método não implementado");
+        }
     }
 }
