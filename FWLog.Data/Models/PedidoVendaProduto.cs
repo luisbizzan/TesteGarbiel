@@ -8,6 +8,7 @@ namespace FWLog.Data.Models
     {
         [Key]
         [Required]
+        [Index]
         public long IdPedidoVendaProduto { get; set; }
 
         [Required]
@@ -23,7 +24,7 @@ namespace FWLog.Data.Models
         public long IdProduto { get; set; }
 
         [Required]
-        public int QtdPedido { get; set; }
+        public int QtdSeparar { get; set; }
 
         [Required]
         public int Sequencia { get; set; }
@@ -39,6 +40,7 @@ namespace FWLog.Data.Models
         public decimal PesoProdutoKg { get; set; }
 
         [Required]
+        [Index]
         public long IdEnderecoArmazenagem { get; set; }
 
         public int? QtdSeparada { get; set; }
@@ -48,6 +50,14 @@ namespace FWLog.Data.Models
         public DateTime? DataHoraInicioSeparacao { get; set; }
 
         public string IdUsuarioAutorizacaoZerar { get; set; }
+
+        public DateTime? DataHoraAutorizacaoZerarPedido { get; set; }
+
+        [Index]
+        public long? IdLote { get; set; }
+
+        [Index]
+        public string IdUsuarioSeparacao { get; set; }
 
         [ForeignKey(nameof(IdPedidoVenda))]
         public virtual PedidoVenda PedidoVenda { get; set; }
@@ -63,5 +73,11 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdEnderecoArmazenagem))]
         public virtual EnderecoArmazenagem EnderecoArmazenagem { get; set; }
+
+        [ForeignKey(nameof(IdUsuarioSeparacao))]
+        public virtual AspNetUsers UsuarioSeparacao { get; set; }
+
+        [ForeignKey(nameof(IdLote))]
+        public virtual Lote Lote { get; set; }
     }
 }

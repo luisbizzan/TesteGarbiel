@@ -28,8 +28,9 @@ namespace FWLog.Services.Services
 
         public List<long> ConsultaPedidoVendaEmSeparacao(string idUsuario, long idEmpresa)
         {
-            var ids = _unitOfWork.PedidoVendaRepository.PesquisarIdsEmSeparacao(idUsuario, idEmpresa);
-            return ids;
+            //var ids = _unitOfWork.PedidoVendaRepository.PesquisarIdsEmSeparacao(idUsuario, idEmpresa);
+            //return ids;
+            throw new NotImplementedException();
         }
 
         public async Task AtualizarStatusPedidoVenda(Pedido pedido, PedidoVendaStatusEnum statusPedidoVenda)
@@ -126,12 +127,12 @@ namespace FWLog.Services.Services
 
         private void ValidarPedidoVendaPorUsuario(string idUsuario, long idEmpresa, PedidoVenda pedidoVenda)
         {
-            var pedidoVendaPorUsuario = _unitOfWork.PedidoVendaRepository.ObterPorIdUsuarioEIdEmpresa(idUsuario, idEmpresa);
+            //var pedidoVendaPorUsuario = _unitOfWork.PedidoVendaRepository.ObterPorIdUsuarioEIdEmpresa(idUsuario, idEmpresa);
 
-            if (pedidoVendaPorUsuario.Any(x => x.PedidoVendaStatus.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao && x.IdPedidoVenda != pedidoVenda.IdPedidoVenda))
-            {
-                throw new BusinessException("Existe um pedido em separação pelo usuário logado que não foi concluído.");
-            }
+            //if (pedidoVendaPorUsuario.Any(x => x.PedidoVendaStatus.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao && x.IdPedidoVenda != pedidoVenda.IdPedidoVenda))
+            //{
+            //    throw new BusinessException("Existe um pedido em separação pelo usuário logado que não foi concluído.");
+            //}
         }
 
         //TODO: Falta definir os status e adicionar IdPontoArmazenagemSeparacao na UsuarioEmpresa
@@ -244,10 +245,10 @@ namespace FWLog.Services.Services
 
             }
 
-            if (pedidoVenda.IdUsuarioSeparacao != idUsuarioOperacao)
-            {
-                throw new BusinessException("O pedido não pertence ao usuário logado.");
-            }
+            //if (pedidoVenda.IdUsuarioSeparacao != idUsuarioOperacao)
+            //{
+            //    throw new BusinessException("O pedido não pertence ao usuário logado.");
+            //}
 
             if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
             {
@@ -264,7 +265,6 @@ namespace FWLog.Services.Services
                 var novoStatusSeparacao = PedidoVendaStatusEnum.EnviadoSeparacao;
 
                 pedidoVenda.IdPedidoVendaStatus = novoStatusSeparacao;
-                pedidoVenda.IdUsuarioSeparacao = null;
                 pedidoVenda.DataHoraInicioSeparacao = null;
                 pedidoVenda.DataHoraFimSeparacao = null;
 
@@ -289,6 +289,7 @@ namespace FWLog.Services.Services
                 foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes.ToList())
                 {
                     pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
+                    pedidoVendaVolume.IdUsuarioSeparacao = null;
                     pedidoVendaVolume.DataHoraInicioSeparacao = null;
                     pedidoVendaVolume.DataHoraFimSeparacao = null;
                     pedidoVendaVolume.IdCaixaVolume = null;
@@ -338,17 +339,16 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido de venda não está liberado para separação.");
             }
 
-            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao &&
-                pedidoVenda.IdUsuarioSeparacao != idUsuarioOperacao)
-            {
-                throw new BusinessException("O pedido já está sendo separado por outro usuário.");
-            }
+            //if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao /*&& pedidoVenda.IdUsuarioSeparacao != idUsuarioOperacao*/)
+            //{
+            //    throw new BusinessException("O pedido já está sendo separado por outro usuário.");
+            //}
 
             // update do pedido na base oracle
             using (var transaction = _unitOfWork.CreateTransactionScope())
             {
                 pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
-                pedidoVenda.IdUsuarioSeparacao = idUsuarioOperacao;
+                //pedidoVenda.IdUsuarioSeparacao = idUsuarioOperacao;
                 pedidoVenda.DataHoraInicioSeparacao = DateTime.Now;
 
                 _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);

@@ -49,11 +49,6 @@ ALTER TABLE DART."Pedido" ADD CONSTRAINT "Pedido_FK4" FOREIGN KEY ("IdUsuarioSep
 ALTER TABLE DART."Pedido" ADD CONSTRAINT "Pedido_FK5" FOREIGN KEY ("IdPedidoVendaStatus") REFERENCES DART."PedidoVendaStatus"("IdPedidoVendaStatus");
 ALTER TABLE DART."Pedido" ADD CONSTRAINT "Pedido_FK6" FOREIGN KEY ("IdRepresentante") REFERENCES DART."Representante"("IdRepresentante");
 
-ALTER TABLE DART."PedidoVenda" ADD "IdPedido" NUMBER(19,0);
-ALTER TABLE DART."PedidoVenda" MODIFY "IdPedido" NUMBER(19,0) NOT NULL;
-ALTER TABLE DART."PedidoVenda" ADD CONSTRAINT "PedidoVenda_FK7" FOREIGN KEY ("IdPedido") REFERENCES DART."Pedido"("IdPedido");
-CREATE INDEX "PedidoVenda_INDEX7" ON DART."PedidoVenda" ("IdPedido");
-
 
 	
 
