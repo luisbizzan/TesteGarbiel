@@ -26,9 +26,6 @@ namespace FWLog.Data.Models
         [Required]
         public int QtdSeparar { get; set; }
 
-        [Required]
-        public int Sequencia { get; set; }
-
         [Index]
         [Required]
         public PedidoVendaStatusEnum IdPedidoVendaStatus { get; set; }
@@ -37,7 +34,7 @@ namespace FWLog.Data.Models
         public decimal CubagemProduto { get; set; }
 
         [Required]
-        public decimal PesoProdutoKg { get; set; }
+        public decimal PesoProduto { get; set; }
 
         [Required]
         [Index]
