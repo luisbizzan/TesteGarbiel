@@ -32,6 +32,14 @@ function CancelarTudo() {
     $("#txtConfigMinimo").val("");
     $("#txtConfigPrazoEnvio").val("");
     $("#txtConfigPrazoDescarte").val("");
+
+    /* Fornecedor Grupo */
+    $("#txtFornecedorPai").val("");
+    $("#spanIdFornecedorPai").html("");
+    $("#spanFornecedorPai").html("");
+    $("#txtFornecedorFilho").val("");
+    $("#spanIdFornecedorFilho").html("");
+    $("#spanFornecedorFilho").html("");
 }
 
 /* [GENÉRICO] evento clique do menu de configuração */
@@ -87,7 +95,6 @@ function RegistroExcluir(TagSelecionada, IdSelecionado) {
 /* [GENÉRICO] listar registros */
 function RegistroListar(TagInformada) {
     $.get("/GarantiaConfiguracao/RegistroListar", { TAG: TagInformada }, function (s, status) {
-        console.log(s);
         if (s.Success) {
             $(s.GridNome).DataTable({
                 destroy: true,
@@ -106,7 +113,7 @@ function RegistroListar(TagInformada) {
 /***    FORNECEDOR QUEBRA   ***/
 /* [FORNECEDOR QUEBRA] variaveis */
 var _fornecedoresGravar = [];
-var liFornecedorQuebra = '<li id="{id}"><p><a onclick="FornecedorQuebraRemoverLista({data1});" class="btn btn-link"><b><i class="fa fa-trash-o text-danger"></i></b></a>  <b> [{data0}]  {value}</b></p></li>';
+var liFornecedorQuebra = '<li id="{id}"><p><a onclick="FornecedorQuebraRemoverLista({data});" class="btn btn-link"><b><i class="fa fa-trash-o text-danger"></i></b></a><span class="label label-primary"> {value}</span></p></li>';
 
 /* [FORNECEDOR QUEBRA] autocomplete */
 $("#Cod_Fornecedor").autocomplete({
@@ -158,7 +165,7 @@ $("#Cod_Fornecedor").autocomplete({
 function FornecedorQuebraAdicionarLista(fornecedor) {
     if (jQuery.inArray(fornecedor.data, _fornecedoresGravar) == -1) {
         _fornecedoresGravar.push(fornecedor.data);
-        $("#listaFornecedor").append(liFornecedorQuebra.replace("{value}", fornecedor.value).replace("{id}", fornecedor.data).replace("{data0}", fornecedor.data).replace("{data1}", fornecedor.data));
+        $("#listaFornecedor").append(liFornecedorQuebra.replace("{value}", fornecedor.value).replace("{id}", fornecedor.data).replace("{data}", fornecedor.data));
     }
 
     $("#controleFornecedor").attr("style", (_fornecedoresGravar.length > 0) ? "display:normal;" : "display:none;");
@@ -194,7 +201,7 @@ function FornecedorQuebraGravar() {
 /***    SANKHYA TOP     ***/
 /* [SANKHYA TOP] variaveis */
 var _SankhyaTopLista = [];
-var liSankhyaTop = '<li id="{top}"><p><a onclick="ShankhyaTopRemoverLista(*{top}|{descricao}*);" class="btn btn-link"><b><i class="fa fa-trash-o text-danger"></i></b></a> <b> [{top}]  {descricao}</b></p></li>';
+var liSankhyaTop = '<li id="{top}"><p><a onclick="ShankhyaTopRemoverLista(*{top}|{descricao}*);" class="btn btn-link"><b><i class="fa fa-trash-o text-danger"></i></b></a><span class="label label-primary">  [{top}]  {descricao}</span></p></li>';
 
 /* [SANKHYA TOP] remover lista  */
 function ShankhyaTopRemoverLista(sankhyaTopItem) {
@@ -330,7 +337,6 @@ function RemessaUsuarioGravar() {
 }
 
 /*** REMESSA CONFIGURAÇÃO  ***/
-
 /* [REMESSA CONFIGURAÇÃO] gravar no banco */
 function RemessaConfigGravar() {
     RegistroInclusao.Inclusao = [];
@@ -444,7 +450,6 @@ $("#txtRCFilial").autocomplete({
 });
 
 /*** CONFIGURAÇÃO  ***/
-
 /* [CONFIGURAÇÃO] gravar no banco */
 function ConfiguracaoGravar() {
     RegistroInclusao.Inclusao = [];
@@ -509,5 +514,116 @@ $("#txtConfigFilial").autocomplete({
         $("#spanConfigIdFilial").html(remessaConfig.data);
         $("#spanConfigFilial").html(remessaConfig.value);
         $("#txtConfigFilial").val("");
+    }
+});
+
+/*** FORNECEDOR GRUPO  ***/
+/* [FORNECEDOR GRUPO] gravar banco dados */
+function FornecedorGrupoGravar() {
+    RegistroInclusao.Inclusao = [];
+
+    var registro = new Object();
+    registro.Id_Filial_Sankhya = $("#spanConfigIdFilial").html() == "" ? 0 : $("#spanConfigIdFilial").html();
+    registro.Filial = $("#spanConfigFilial").html();
+
+    registro.Id_Filial_Sankhya = $("#spanConfigIdFilial").html() == "" ? 0 : $("#spanConfigIdFilial").html();
+    registro.Filial = $("#spanConfigFilial").html();
+
+    RegistroInclusao.Inclusao.push(JSON.stringify(registro));
+
+    RegistroIncluir();
+}
+
+/* [FORNECEDOR GRUPO] autocomplete PAI */
+$("#txtFornecedorPai").autocomplete({
+    lookup: function (query, done) {
+        var AutoComplete = new Object();
+        AutoComplete.tag = TagPadrao;
+        AutoComplete.tagAutoComplete = "Fornecedor";
+        AutoComplete.palavra = $("#txtFornecedorPai").val();
+
+        $.ajax({
+            url: "/GarantiaConfiguracao/AutoComplete",
+            global: false,
+            method: "POST",
+            data: { autocomplete: AutoComplete },
+            success: function (s) {
+                if (s.Success) {
+                    _listaAutoComplete = [];
+                    $.each(s.Lista, function (e, item) {
+                        var registro = new Object();
+                        registro.data = item.Data;
+                        registro.value = item.Value;
+                        _listaAutoComplete.push(registro);
+                    });
+                }
+                else {
+                    PNotify.error({ text: s.Message });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+
+        var result = {
+            suggestions: _listaAutoComplete
+        };
+
+        _listaAutoComplete = [];
+        done(result);
+    },
+
+    onSelect: function (retorno) {
+        $("#spanIdFornecedorPai").html(retorno.data);
+        $("#spanFornecedorPai").html(retorno.value);
+        $("#txtFornecedorPai").val("");
+    }
+});
+
+/* [FORNECEDOR GRUPO] autocomplete FILHO */
+$("#txtFornecedorFilho").autocomplete({
+    lookup: function (query, done) {
+        var AutoComplete = new Object();
+        AutoComplete.tag = TagPadrao;
+        AutoComplete.tagAutoComplete = "Fornecedor";
+        AutoComplete.palavra = $("#txtFornecedorFilho").val();
+
+        $.ajax({
+            url: "/GarantiaConfiguracao/AutoComplete",
+            global: false,
+            method: "POST",
+            data: { autocomplete: AutoComplete },
+            success: function (s) {
+                if (s.Success) {
+                    _listaAutoComplete = [];
+                    $.each(s.Lista, function (e, item) {
+                        var registro = new Object();
+                        registro.data = item.Data;
+                        registro.value = item.Value;
+                        _listaAutoComplete.push(registro);
+                    });
+                }
+                else {
+                    PNotify.error({ text: s.Message });
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+
+        var result = {
+            suggestions: _listaAutoComplete
+        };
+
+        _listaAutoComplete = [];
+        done(result);
+    },
+
+    onSelect: function (retorno) {
+        $("#spanIdFornecedorFilho").html(retorno.data);
+        $("#spanFornecedorFilho").html(retorno.value);
+        $("#txtFornecedorFilho").val("");
     }
 });

@@ -20,6 +20,7 @@ namespace FWLog.Data.Models
         public List<Configuracao> RegistroConfiguracao { get; set; }
         public List<RemessaUsuario> RegistroRemessaUsuario { get; set; }
         public List<RemessaConfiguracao> RegistroRemessaConfiguracao { get; set; }
+        public List<FornecedorGrupo> RegistroFornecedorGrupo { get; set; }
         #endregion
 
         public string BotaoEvento { get; set; }
@@ -43,7 +44,7 @@ namespace FWLog.Data.Models
         }
         #endregion
 
-        #region [FORNECEDOR QUEBRA]
+        #region [GAR_FORN_QUEBRA]
         public class FornecedorQuebra
         {
             [Display(Name = "Codigo")]
@@ -163,9 +164,27 @@ namespace FWLog.Data.Models
         }
         #endregion
 
+        #region [GAR_FORN_GRUPO]
+        public class FornecedorGrupo
+        {
+            [Display(Name = "Codigo")]
+            public long Id { get; set; }
+
+            [Required]
+            [Display(Name = "Código Fornecedor Pai")]
+            public string Cod_Forn_Pai { get; set; }
+
+            [Required]
+            [Display(Name = "Código Fornecedor Filho")]
+            public string Cod_Forn_Filho { get; set; }
+
+            public string BotaoEvento { get; set; }
+        }
+        #endregion
+
         public static string GridNome { get; set; }
         public static object[] GridColunas { get; set; }
-        public enum GarantiaTag { RemessaConfiguracao, RemessaUsuario, Configuracao, FornecedorQuebra, SankhyaTop }
+        public enum GarantiaTag { RemessaConfiguracao, RemessaUsuario, Configuracao, FornecedorQuebra, SankhyaTop, FornecedorGrupo }
         public enum AutoCompleteTag { Fornecedor, Filial }
 
         /// <summary>
@@ -176,7 +195,13 @@ namespace FWLog.Data.Models
             get
             {
                 return new Dictionary<int, string>()
-                { { 0, GarantiaTag.RemessaConfiguracao.ToString() }, { 1, GarantiaTag.RemessaUsuario.ToString() }, { 2, GarantiaTag.Configuracao.ToString() }, { 3, GarantiaTag.FornecedorQuebra.ToString() }, { 4, GarantiaTag.SankhyaTop.ToString() } };
+                {
+                    { 0, GarantiaTag.RemessaConfiguracao.ToString() },
+                    { 1, GarantiaTag.RemessaUsuario.ToString() },
+                    { 2, GarantiaTag.Configuracao.ToString() },
+                    { 3, GarantiaTag.FornecedorQuebra.ToString() },
+                    { 4, GarantiaTag.SankhyaTop.ToString() },
+                    { 5, GarantiaTag.FornecedorGrupo.ToString() }};
             }
         }
 
@@ -194,6 +219,7 @@ namespace FWLog.Data.Models
                     {GarantiaTag.Configuracao, SQL.ConfiguracaoListar },
                     {GarantiaTag.RemessaConfiguracao, SQL.RemessaConfiguracaoListar },
                     {GarantiaTag.RemessaUsuario, SQL.RemessaUsuarioListar },
+                    {GarantiaTag.FornecedorGrupo, SQL.FornecedorGrupoListar }
                 };
             }
         }
@@ -212,6 +238,7 @@ namespace FWLog.Data.Models
                     {GarantiaTag.Configuracao, "#gridConfiguracao" },
                     {GarantiaTag.RemessaConfiguracao, "#gridRemessaConfig" },
                     {GarantiaTag.RemessaUsuario, "#gridRemessaUsuario" },
+                    {GarantiaTag.FornecedorGrupo , "#gridFornecedorGrupo" }
                 };
             }
         }
@@ -244,6 +271,11 @@ namespace FWLog.Data.Models
                         new { data = "Pct_Estorno_FreteView", title = "Estorno Frete" }, new { data = "Pct_DesvalorizacaoView", title = "Desvalorização" }, new { data = "Vlr_Minimo_EnvioView", title = "R$ Minímo Envio" },
                         new { data = "Prazo_Envio_Automatico", title = "Prazo Envio Automático" }, new { data = "Prazo_Descarte", title = "Prazo Descarte" }
                     }},
+                    {GarantiaTag.FornecedorGrupo, new object[]
+                    {
+                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Cod_Forn_Pai", title = "Código Pai" }, new { data = "Cod_Forn_Filho", title = "Código Filho" },
+                    }
+                    }
                 };
             }
         }
@@ -259,6 +291,24 @@ namespace FWLog.Data.Models
         #region Catálogo Comandos SQL
         public static class SQL
         {
+            #region Fornecedor Grupo
+            public static string FornecedorGrupoListar
+            {
+                get
+                {
+                    return String.Concat("SELECT FG.ID, FG.COD_FORNECEDOR, F.\"NomeFantasia\", F.\"RazaoSocial\" ",
+                        "FROM GAR_FORN_GRUPO FG ",
+                        "INNER JOIN \"Fornecedor\" F ON LTRIM(RTRIM(F.cnpj)) = LTRIM(RTRIM(FG.cod_fornecedor)) ",
+                        "ORDER BY FG.ID");
+                }
+            }
+
+            /// <summary>
+            /// {0} Código Fornecedor Pai | {1} Código Fornecedor Filho
+            /// </summary>
+            public static string FornecedorGrupoIncluir { get { return String.Concat("INSERT INTO gar_forn_grupo(Cod_Forn_Pai, Cod_Forn_Filho) VALUES('{0}','{1}')"); } }
+            #endregion
+
             #region Fornecedor Quebra
             public static string FornecedorQuebraListar
             {
@@ -347,6 +397,10 @@ namespace FWLog.Data.Models
             /// {0} Top | {1} Descricao 
             /// </summary>
             public static string SankhyaTopIncluir { get { return String.Concat("INSERT INTO geral_sankhya_tops(Top, Descricao) VALUES('{0}', '{1}')"); } }
+            #endregion
+
+            #region Fornecedor Grupo
+            //TabFornecedorGrupo
             #endregion
         }
         #endregion

@@ -59,6 +59,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                     errorView = () => { return View(RegistroConvertido.RegistroConfiguracao); };
                 }
+
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra))
                     errorView = () => { return View(RegistroConvertido.RegistroFornecedorQuebra); };
 
@@ -82,6 +83,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop))
                     errorView = () => { return View(RegistroConvertido.RegistroSankhyaTop); };
+
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorGrupo))
+                    errorView = () => { return View(RegistroConvertido.RegistroFornecedorGrupo); };
 
                 if (!ModelState.IsValid)
                     throw new Exception(ModelState.Values.Where(x => x.Errors.Count > 0).Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />")));
@@ -134,6 +138,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     _Data = garantia.RegistroRemessaUsuario;
                 if (garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop))
                     _Data = garantia.RegistroSankhyaTop;
+                if (garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorGrupo))
+                    _Data = garantia.RegistroFornecedorGrupo;
                 #endregion
 
                 return Json(new
@@ -164,9 +170,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 #region Validações
                 if (Registro.Id.Equals(0))
                     throw new Exception(String.Format("Id [{0}] do registro inválido!", Registro.Id));
-
-                //if (String.IsNullOrEmpty(Registro.Tag))
-                //    throw new Exception(String.Concat("Obrigatório informar a Tag!"));
 
                 if (!GarantiaConfiguracao.DicTagsValidas.Values.Contains(Registro.Tag.ToString()))
                     throw new Exception(String.Format("Tag {0} inválida!", Registro.Tag));
@@ -247,6 +250,16 @@ namespace FWLog.Web.Backoffice.Controllers
                         model.Inclusao.ForEach(delegate (object o)
                         {
                             _Retorno.RegistroRemessaUsuario.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.RemessaUsuario>(o.ToString()));
+                        });
+                        break;
+                    #endregion
+
+                    #region Fornecedor Grupo
+                    case GarantiaConfiguracao.GarantiaTag.FornecedorGrupo:
+                        _Retorno.RegistroFornecedorGrupo = new List<GarantiaConfiguracao.FornecedorGrupo>();
+                        model.Inclusao.ForEach(delegate (object o)
+                        {
+                            _Retorno.RegistroFornecedorGrupo.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.FornecedorGrupo>(o.ToString()));
                         });
                         break;
                     #endregion

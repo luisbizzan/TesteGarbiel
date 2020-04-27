@@ -125,6 +125,26 @@ namespace FWLog.Data.Repository.GeneralCtx
                         break;
                     #endregion
 
+                    #region Fornecedor Quebra
+                    case GarantiaConfiguracao.GarantiaTag.FornecedorGrupo:
+                        {
+                            RegistroIncluir.RegistroFornecedorGrupo.ToList().ForEach(delegate (GarantiaConfiguracao.FornecedorGrupo item)
+                            {
+                                //if (FornecedorQuebraPodeSerCadastrado(item.Cod_Fornecedor.Trim().ToUpper()))
+                                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                {
+                                    conn.Open();
+                                    if (conn.State == System.Data.ConnectionState.Open)
+                                    {
+                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.FornecedorGrupoIncluir, item.Cod_Forn_Pai, item.Cod_Forn_Filho));
+                                    }
+                                    conn.Close();
+                                }
+                            });
+                        }
+                        break;
+                    #endregion
+
                     #region Default
                     default:
                         throw new Exception(String.Format("[RegistroIncluir] A Tag {0} informada é inválida!", RegistroIncluir.Tag));
@@ -318,6 +338,19 @@ namespace FWLog.Data.Repository.GeneralCtx
                                     "AND \"NomeFantasia\" LIKE UPPER('%{0}%') ",
                                     "ORDER BY \"NomeFantasia\""), _AutoComplete.palavra);
                         }
+                        break;
+                    #endregion
+
+                    #region Fornecedor Grupo
+                    case GarantiaConfiguracao.GarantiaTag.FornecedorGrupo:
+                        _AutoComplete.comandoSQL = String.Format(String.Concat(
+                            "SELECT cnpj Data, \"RazaoSocial\" Value ",
+                            "FROM \"Fornecedor\" ",
+                            "WHERE ROWNUM <= 10 ",
+                            "AND \"Ativo\" = 1 ",
+                            "AND \"RazaoSocial\" LIKE '{0}%' ",
+                            "GROUP BY \"RazaoSocial\", cnpj ",
+                            "ORDER BY \"RazaoSocial\""), _AutoComplete.palavra.ToUpper());
                         break;
                         #endregion
                 }
