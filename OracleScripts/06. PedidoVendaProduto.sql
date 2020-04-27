@@ -2,6 +2,7 @@ CREATE TABLE "PedidoVendaProduto"
 (
   "IdPedidoVendaProduto" NUMBER(19) NOT NULL 
 , "IdPedidoVenda" NUMBER(19) NOT NULL 
+, "IdPedidoVendaVolume" NUMBER(19) NOT NULL 
 , "IdProduto" NUMBER(19) NOT NULL 
 , "QtdPedido" NUMBER(10) NOT NULL 
 , "Sequence" NUMBER(10) NOT NULL 
@@ -35,7 +36,9 @@ ALTER TABLE DART."PedidoVendaProduto" ADD "IdPedidoVendaProdutoStatus" NUMBER(10
 
 CREATE INDEX "PedidoVendaProduto_INDEX1" ON DART."PedidoVendaProduto" ("IdPedidoVenda");
 CREATE INDEX "PedidoVendaProduto_INDEX2" ON DART."PedidoVendaProduto" ("IdProduto");
+CREATE INDEX "PedidoVendaProduto_INDEX3" ON DART."PedidoVendaProduto" ("IdPedidoVendaVolume");
 
 ALTER TABLE DART."PedidoVendaProduto" ADD CONSTRAINT "PedidoVendaProduto_FK1" FOREIGN KEY ("IdPedidoVenda") REFERENCES DART."PedidoVenda"("IdPedidoVenda");
 ALTER TABLE DART."PedidoVendaProduto" ADD CONSTRAINT "PedidoVendaProduto_FK2" FOREIGN KEY ("IdProduto") REFERENCES DART."Produto"("IdProduto");
 ALTER TABLE DART."PedidoVendaProduto" ADD CONSTRAINT "PedidoVendaProdutoStatus_FK3" FOREIGN KEY ("IdPedidoVendaProdutoStatus") REFERENCES DART."PedidoVendaProdutoStatus"("IdPedidoVendaProdutoStatus");
+ALTER TABLE DART."PedidoVendaProduto" ADD CONSTRAINT "PedidoVendaProduto_FK4" FOREIGN KEY ("IdPedidoVendaVolume") REFERENCES DART."PedidoVendaVolume"("IdPedidoVendaVolume");

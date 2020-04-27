@@ -16,6 +16,10 @@ namespace FWLog.Data.Models
 
         [Required]
         [Index]
+        public long IdPedidoVendaVolume { get; set; }
+
+        [Required]
+        [Index]
         public long IdProduto { get; set; }
 
         [Required]
@@ -47,6 +51,9 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdPedidoVenda))]
         public virtual PedidoVenda PedidoVenda { get; set; }
+
+        [ForeignKey(nameof(IdPedidoVendaVolume))]
+        public virtual PedidoVendaVolume PedidoVendaVolume { get; set; }
 
         [ForeignKey(nameof(IdProduto))]
         public virtual Produto Produto { get; set; }
