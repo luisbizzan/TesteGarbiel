@@ -261,7 +261,7 @@ namespace FWLog.Services.Services
                 foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes.ToList())
                 {
                     pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
-                    pedidoVendaVolume.IdUsuarioSeparacao = null;
+                    //pedidoVendaVolume.IdUsuarioSeparacao = null;
                     pedidoVendaVolume.DataHoraInicioSeparacao = null;
                     pedidoVendaVolume.DataHoraFimSeparacao = null;
                     pedidoVendaVolume.IdCaixaVolume = null;
@@ -348,7 +348,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, string idUsuario,long idEmpresa)
+        public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, string idUsuario, long idEmpresa)
         {
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedidoVendaEIdEmpresa(idPedidoVenda, idEmpresa);
 
@@ -360,9 +360,9 @@ namespace FWLog.Services.Services
 
             var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(pedidoVendaProduto.IdPedidoVendaVolume);
 
-            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, idEmpresa);
-
             ValdarPedidoVendaVolume(pedidoVendaVolume);
+
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, idEmpresa);
 
             ValidarLoteProdutoEndereco(loteProdutoEndereco);
 
@@ -372,14 +372,14 @@ namespace FWLog.Services.Services
                 IdProduto = pedidoVendaProduto.IdProduto,
                 Multiplo = pedidoVendaProduto.Produto.MultiploVenda,
                 Referencia = pedidoVendaProduto.Produto.Referencia,
-                QtdeSeparar = pedidoVendaProduto.QtdeSeparar.Value,
+                QtdSeparar = pedidoVendaProduto.QtdSeparar,
             };
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                var qtdeSeparada = pedidoVendaProduto.QtdSeparada + pedidoVendaProduto.Produto.MultiploVenda;
+                var qtdSeparada = pedidoVendaProduto.QtdSeparada + pedidoVendaProduto.Produto.MultiploVenda;
 
-                if ((int)qtdeSeparada > pedidoVendaProduto.QtdeSeparar)
+                if ((int)qtdSeparada > pedidoVendaProduto.QtdSeparar)
                 {
                     throw new BusinessException("A quantidade separada é maior que o pedido.");
                 }
@@ -396,10 +396,10 @@ namespace FWLog.Services.Services
                 if (pedidoVendaProduto.QtdSeparada == 0)
                 {
                     pedidoVendaProduto.DataHoraInicioSeparacao = DateTime.Now;
+                    pedidoVendaProduto.IdUsuarioSeparacao = idUsuario;
                     pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
                 }
-
-                if(pedidoVendaProduto.QtdSeparada == pedidoVendaProduto.QtdeSeparar)
+                else if(pedidoVendaProduto.QtdSeparada == pedidoVendaProduto.QtdSeparar)
                 {
                     pedidoVendaProduto.DataHoraFimSeparacao = DateTime.Now;
                     pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ConcluidaComSucesso;
@@ -407,10 +407,10 @@ namespace FWLog.Services.Services
                     salvarSeparacaoProdutoResposta.ProdutoSeparado = pedidoVendaProduto.Produto;
                 }
 
-                pedidoVendaProduto.QtdSeparada = (int)qtdeSeparada;
+                pedidoVendaProduto.QtdSeparada = (int)qtdSeparada;
                 _unitOfWork.PedidoVendaProdutoRepository.Update(pedidoVendaProduto);
 
-                loteProdutoEndereco.Quantidade -= (int)qtdeSeparada;
+                loteProdutoEndereco.Quantidade -= (int)qtdSeparada;
                 _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
                 _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
                 _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);

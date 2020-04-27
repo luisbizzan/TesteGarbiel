@@ -48,8 +48,6 @@ namespace FWLog.Data.Models
 
         public DateTime? DataHoraFimSeparacao { get; set; }
 
-        [Required]
-        public DateTime DataCriacao { get; set; }
 
         [ForeignKey(nameof(IdPedido))]
         public virtual Pedido Pedido { get; set; }

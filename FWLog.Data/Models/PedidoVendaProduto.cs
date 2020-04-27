@@ -45,8 +45,6 @@ namespace FWLog.Data.Models
 
         public int? QtdSeparada { get; set; }
 
-        public int? QtdeSeparar { get; set; }
-
         public DateTime? DataHoraFimSeparacao { get; set; }
 
         public DateTime? DataHoraInicioSeparacao { get; set; }
