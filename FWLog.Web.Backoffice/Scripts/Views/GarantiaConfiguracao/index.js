@@ -4,7 +4,6 @@ var RegistroInclusao = new Object();
 var TagPadrao = $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != null && $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != "" ?
     $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id : "FornecedorQuebra";
 var _listaAutoComplete = [];
-$('.btn-row-actions').tooltip();
 $('.onlyNumber').mask('0#');
 
 /* [GENÉRICO] limpar listas */
@@ -24,6 +23,15 @@ function CancelarTudo() {
     $("#chkRCAutomatica")[0].checked = false;
     $("#txtRCMinimoEnvio").val("");
     $("#txtRCTotal").val("");
+
+    /* Configuração */
+    $("#spanConfigIdFilial").html("");
+    $("#spanConfigFilial").html("");
+    $("#txtConfigEstFrete").val("");
+    $("#txtConfigDesvalorizacao").val("");
+    $("#txtConfigMinimo").val("");
+    $("#txtConfigPrazoEnvio").val("");
+    $("#txtConfigPrazoDescarte").val("");
 }
 
 /* [GENÉRICO] evento clique do menu de configuração */
@@ -79,6 +87,7 @@ function RegistroExcluir(TagSelecionada, IdSelecionado) {
 /* [GENÉRICO] listar registros */
 function RegistroListar(TagInformada) {
     $.get("/GarantiaConfiguracao/RegistroListar", { TAG: TagInformada }, function (s, status) {
+        console.log(s);
         if (s.Success) {
             $(s.GridNome).DataTable({
                 destroy: true,
@@ -433,6 +442,27 @@ $("#txtRCFilial").autocomplete({
         $("#txtRCFilial").val("");
     }
 });
+
+/*** CONFIGURAÇÃO  ***/
+
+/* [CONFIGURAÇÃO] gravar no banco */
+function ConfiguracaoGravar() {
+    RegistroInclusao.Inclusao = [];
+
+    var registro = new Object();
+    registro.Id_Filial_Sankhya = $("#spanConfigIdFilial").html() == "" ? 0 : $("#spanConfigIdFilial").html();
+    registro.Filial = $("#spanConfigFilial").html();
+
+    registro.Pct_Estorno_Frete = $("#txtConfigEstFrete").val() == "" ? 0 : $("#txtConfigEstFrete").val();
+    registro.Pct_Desvalorizacao = $("#txtConfigDesvalorizacao").val() == "" ? 0 : $("#txtConfigDesvalorizacao").val();
+    registro.Vlr_Minimo_Envio = $("#txtConfigMinimo").val() == "" ? 0 : $("#txtConfigMinimo").val().replace(".", "").replace(",", ".");
+    registro.Prazo_Envio_Automatico = $("#txtConfigPrazoEnvio").val() == "" ? 0 : $("#txtConfigPrazoEnvio").val();
+    registro.Prazo_Descarte = $("#txtConfigPrazoDescarte").val() == "" ? 0 : $("#txtConfigPrazoDescarte").val();
+
+    RegistroInclusao.Inclusao.push(JSON.stringify(registro));
+
+    RegistroIncluir();
+}
 
 /* [CONFIGURAÇÃO] autocomplete - FILIAL */
 $("#txtConfigFilial").autocomplete({

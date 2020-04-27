@@ -54,6 +54,8 @@ namespace FWLog.Web.Backoffice.Controllers
                         if (config.Pct_Estorno_Frete.Equals(0)) throw new Exception("Percentual Estorno Frete inválido!");
                         if (config.Pct_Desvalorizacao.Equals(0)) throw new Exception("Percentual Desvalorização inválido!");
                         if (config.Vlr_Minimo_Envio.Equals(0)) throw new Exception("Valor Mínimo de Envio não pode ser zero!");
+
+                        config.Filial = config.Filial.Split(']').Length.Equals(2) ? config.Filial.Split(']')[0].Replace("[", String.Empty).Trim() : config.Filial;
                     });
                     errorView = () => { return View(RegistroConvertido.RegistroConfiguracao); };
                 }

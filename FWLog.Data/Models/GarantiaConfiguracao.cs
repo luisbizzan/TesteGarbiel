@@ -241,7 +241,7 @@ namespace FWLog.Data.Models
                     {GarantiaTag.Configuracao, new object[]
                     {
                         new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Id_Filial_Sankhya", title = "Id Filial Sankhya" }, new { data = "Filial", title = "Filial" },
-                        new { data = "Pct_Estorno_Frete", title = "Estorno Frete" }, new { data = "Pct_Desvalorizacao", title = "Desvalorização" }, new { data = "Vlr_Minimo_Envio", title = "Valor Minímo Envio" },
+                        new { data = "Pct_Estorno_FreteView", title = "Estorno Frete" }, new { data = "Pct_DesvalorizacaoView", title = "Desvalorização" }, new { data = "Vlr_Minimo_EnvioView", title = "R$ Minímo Envio" },
                         new { data = "Prazo_Envio_Automatico", title = "Prazo Envio Automático" }, new { data = "Prazo_Descarte", title = "Prazo Descarte" }
                     }},
                 };
@@ -317,7 +317,16 @@ namespace FWLog.Data.Models
             #endregion
 
             #region Configuração
-            public static string ConfiguracaoListar { get { return "SELECT Id, Id_Filial_Sankhya, Filial, Pct_Estorno_Frete, Pct_Desvalorizacao, Vlr_Minimo_Envio, Prazo_Envio_Automatico, Prazo_Descarte FROM gar_config"; } }
+            public static string ConfiguracaoListar
+            {
+                get
+                {
+                    return String.Concat("SELECT c.Id, c.Id_Filial_Sankhya, e.\"NomeFantasia\" ||' (' || c.Filial ||')' Filial, c.Pct_Estorno_Frete, c.Pct_Desvalorizacao, ",
+                        "c.Vlr_Minimo_Envio, c.Prazo_Envio_Automatico, c.Prazo_Descarte ",
+                        "FROM gar_config c ",
+                        "INNER JOIN \"Empresa\" e ON e.\"IdEmpresa\" = c.Id_Filial_Sankhya");
+                }
+            }
 
             /// <summary>
             /// {0} Id_Filial_Sankhya | {1} Filial | {2} Pct_Estorno_Frete | {3} Pct_Desvalorizacao | {4} Vlr_Minimo_Envio | {5} Prazo_Envio_Automatico | {6} Prazo_Descarte

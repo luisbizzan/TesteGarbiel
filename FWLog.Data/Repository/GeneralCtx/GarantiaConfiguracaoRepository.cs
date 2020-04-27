@@ -38,7 +38,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                     if (conn.State == System.Data.ConnectionState.Open)
                                     {
                                         conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.ConfiguracaoIncluir, item.Id_Filial_Sankhya, item.Filial, item.Pct_Estorno_Frete,
-                                            item.Pct_Desvalorizacao, item.Vlr_Minimo_Envio, item.Prazo_Envio_Automatico, item.Prazo_Descarte));
+                                            item.Pct_Desvalorizacao, item.Vlr_Minimo_Envio.ToString().Replace(",", "."), item.Prazo_Envio_Automatico, item.Prazo_Descarte));
                                     }
                                     conn.Close();
                                 }
@@ -191,9 +191,12 @@ namespace FWLog.Data.Repository.GeneralCtx
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.Configuracao))
                         {
                             _garantia.RegistroConfiguracao = conn.Query<GarantiaConfiguracao.Configuracao>(cmdSQL).ToList();
-                            _garantia.RegistroConfiguracao.ForEach(delegate (GarantiaConfiguracao.Configuracao item) {
+                            _garantia.RegistroConfiguracao.ForEach(delegate (GarantiaConfiguracao.Configuracao item)
+                            {
                                 item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id);
                                 item.Vlr_Minimo_EnvioView = String.Format("{0:0,0.00}", item.Vlr_Minimo_Envio);
+                                item.Pct_DesvalorizacaoView = String.Format("{0}%", item.Pct_Desvalorizacao.ToString().Replace(",", "."));
+                                item.Pct_Estorno_FreteView = String.Format("{0}%", item.Pct_Estorno_Frete.ToString().Replace(",", "."));
                             });
                         }
 
