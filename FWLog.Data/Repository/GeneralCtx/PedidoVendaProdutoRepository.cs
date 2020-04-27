@@ -15,5 +15,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.PedidoVendaProduto.Where(x => x.IdPedidoVenda == idPedidoVenda).ToList();
         }
+
+        public PedidoVendaProduto ObterPorIdProduto(long idProduto)
+        {
+            return Entities.PedidoVendaProduto.FirstOrDefault(x => x.IdProduto == idProduto);
+        }
     }
 }

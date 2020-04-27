@@ -73,42 +73,6 @@ namespace FWLog.Services.Services
             return new BuscarPedidoVendaResposta();
         }
 
-        public void ValidarPedidoVenda(long? idPedidoVenda, string codigoDeBarras, long idEmpresa)
-        {
-            var pedidoVenda = ConsultaPedidoVenda(idPedidoVenda, codigoDeBarras, idEmpresa);
-
-            if (pedidoVenda == null)
-            {
-                throw new BusinessException("O pedido informado não foi encontrado.");
-            }
-
-            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ConcluidaComSucesso)
-            {
-                throw new BusinessException("O pedido informado já foi separado.");
-            }
-
-            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
-            {
-                throw new BusinessException("O pedido informado ainda não está liberado para a separação.");
-            }
-
-            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento
-                || pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado)
-            {
-                throw new BusinessException("O pedido informado teve a separação cancelada.");
-            }
-        }
-
-        public void ValidarPedidoVendaPorUsuario(string idUsuario, long idEmpresa, PedidoVenda pedidoVenda)
-        {
-            var pedidoVendaPorUsuario = _unitOfWork.PedidoVendaRepository.ObterPorIdUsuarioEIdEmpresa(idUsuario, idEmpresa);
-
-            if (pedidoVendaPorUsuario.Any(x => x.PedidoVendaStatus.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao && x.IdPedidoVenda != pedidoVenda.IdPedidoVenda))
-            {
-                throw new BusinessException("Existe um pedido em separação pelo usuário logado que não foi concluído.");
-            }
-        }
-
         //TODO: Falta definir os status e adicionar IdPontoArmazenagemSeparacao na UsuarioEmpresa
         //public void ValidarPedidoVendaVolumePorUsuario(string idUsuario, long idEmpresa, List<ProdutoEstoque> produtoEstoque)
         //{
@@ -123,13 +87,13 @@ namespace FWLog.Services.Services
 
         public PedidoVenda ConsultaPedidoVenda(long? idPedidoVenda, string codigoDeBarras, long idEmpresa)
         {
-            PedidoVenda pedidoVenda;
+            PedidoVenda pedidoVenda = null;
 
             if (idPedidoVenda != null)
             {
                 pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda.Value);
             }
-            else
+            else if(string.IsNullOrEmpty(codigoDeBarras))
             {
                 var volume = codigoDeBarras.Substring(codigoDeBarras.Count(), -3);
 
@@ -268,6 +232,122 @@ namespace FWLog.Services.Services
 
             // update no Sankhya
             await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, PedidoVendaStatusEnum.ProcessandoSeparacao);
+        }
+
+        public async Task SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, string idUsuario,long idEmpresa)
+        {
+            ValidarPedidoVenda(idPedidoVenda, null, idEmpresa);
+
+            ValidarProdutoPorPedidoVenda(idPedidoVenda, idProduto);
+
+            var pedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdProduto(idProduto);
+
+            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(pedidoVendaProduto.IdPedidoVendaVolume);
+
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, idEmpresa);
+
+            ValdarPedidoVendaVolume(pedidoVendaVolume);
+
+            ValidarLoteProdutoEndereco(loteProdutoEndereco);
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                var qtdeSeparada = pedidoVendaProduto.QtdSeparada + pedidoVendaProduto.Produto.MultiploVenda;
+
+                if (qtdeSeparada > pedidoVendaProduto.QtdPedido)
+                {
+                    throw new BusinessException("A quantidade separada é maior que o pedido.");
+                }
+
+                if (!pedidoVendaProduto.PedidoVendaVolume.PedidoVendaProduto.Any())
+                {
+                    pedidoVendaProduto.PedidoVendaVolume.DataHoraInicioSeparacao = DateTime.Now;
+                }
+
+                if (pedidoVendaProduto.QtdSeparada > 0)
+                {
+                    pedidoVendaProduto.DataHoraInicioSeparacao = DateTime.Now;
+                    //pedidoVendaProduto.IdPedidoVendaProdutoStatus = PedidoVendaProdutoStatusEnum.ProcessandoSeparacao;
+                }
+
+                if(pedidoVendaProduto.QtdSeparada == pedidoVendaProduto.QtdeSeparar)
+                {
+                    pedidoVendaProduto.DataHoraFimSeparacao = DateTime.Now;
+                    //pedidoVendaProduto.IdPedidoVendaProdutoStatus = PedidoVendaProdutoStatusEnum.ConcluidaComSucesso;
+                }
+
+                pedidoVendaProduto.QtdSeparada = (int)qtdeSeparada;
+                _unitOfWork.PedidoVendaProdutoRepository.Update(pedidoVendaProduto);
+               
+                loteProdutoEndereco.Quantidade -= (int)qtdeSeparada;
+                _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                transacao.Complete();
+            }
+        }
+
+        public void ValidarPedidoVenda(long? idPedidoVenda, string codigoDeBarras, long idEmpresa)
+        {
+            var pedidoVenda = ConsultaPedidoVenda(idPedidoVenda, codigoDeBarras, idEmpresa);
+
+            if (pedidoVenda == null)
+            {
+                throw new BusinessException("O pedido informado não foi encontrado.");
+            }
+
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ConcluidaComSucesso)
+            {
+                throw new BusinessException("O pedido informado já foi separado.");
+            }
+
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
+            {
+                throw new BusinessException("O pedido informado ainda não está liberado para a separação.");
+            }
+
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento
+                || pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado)
+            {
+                throw new BusinessException("O pedido informado teve a separação cancelada.");
+            }
+        }
+
+        public void ValidarPedidoVendaPorUsuario(string idUsuario, long idEmpresa, PedidoVenda pedidoVenda)
+        {
+            var pedidoVendaPorUsuario = _unitOfWork.PedidoVendaRepository.ObterPorIdUsuarioEIdEmpresa(idUsuario, idEmpresa);
+
+            if (pedidoVendaPorUsuario.Any(x => x.PedidoVendaStatus.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao && x.IdPedidoVenda != pedidoVenda.IdPedidoVenda))
+            {
+                throw new BusinessException("Existe um pedido em separação pelo usuário logado que não foi concluído.");
+            }
+        }
+
+        public void ValidarProdutoPorPedidoVenda(long idPedidoVenda, long idProduto)
+        {
+            var pedidoVendaProdutos = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
+
+            if(!pedidoVendaProdutos.Any(pvp => pvp.IdProduto == idProduto))
+            {
+                throw new BusinessException("O produto informado não faz parte do pedido em separação.");
+            }
+        }
+
+        public void ValidarLoteProdutoEndereco(LoteProdutoEndereco loteProdutoEndereco)
+        {
+            if (loteProdutoEndereco == null)
+            {
+                throw new BusinessException("Não foi encontrado lote produto endereço associado ao produto.");
+            }
+        }
+
+        public void ValdarPedidoVendaVolume(PedidoVendaVolume pedidoVendaVolume)
+        {
+            if (pedidoVendaVolume == null)
+            {
+                throw new BusinessException("O Volume não foi encontrado.");
+            }
         }
     }
 }

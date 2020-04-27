@@ -96,5 +96,27 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/separacao-pedido/salvar-separacao-produto")]
+        [HttpPost]
+        public async Task<IHttpActionResult> SalvarSeparacaoProduto(SalvarSeparacaoProdutoRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                await _separacaoPedidoService.SalvarSeparacaoProduto(requisicao.IdPedidoVenda,requisicao.IdProduto, IdUsuario, IdEmpresa);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
+
     }
 }
