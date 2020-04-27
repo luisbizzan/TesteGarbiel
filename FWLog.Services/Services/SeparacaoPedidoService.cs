@@ -59,19 +59,22 @@ namespace FWLog.Services.Services
         {
             var pedidoVenda = ValidarPedidoVenda(codigoBarrasPedido, idEmpresa);
 
-            ValidarPedidoVendaPorUsuario(idUsuario, idEmpresa, pedidoVenda);
-
             var model = new BuscarPedidoVendaResposta();
 
             model.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
             model.NroPedidoVenda = pedidoVenda.NroPedidoVenda;
             model.SeparacaoIniciada = pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao;
 
+            var a = pedidoVenda.PedidoVendaVolumes.ToList();
+
+            var b = a.First().PedidoVendaProdutos.ToList();
+
             model.ListaCorredoresSeparacao = pedidoVenda.PedidoVendaVolumes.Select(pedidoVendaVolume => new BuscarPedidoVendaGrupoCorredorResposta
             {
                 IdGrupoCorredorArmazenagem = pedidoVendaVolume.IdGrupoCorredorArmazenagem,
                 CorredorInicial = pedidoVendaVolume.GrupoCorredorArmazenagem.CorredorInicial,
-                CorredorFinal = pedidoVendaVolume.GrupoCorredorArmazenagem.CorredorFinal
+                CorredorFinal = pedidoVendaVolume.GrupoCorredorArmazenagem.CorredorFinal,
+                //ListaEnderecosArmazenagem = pedidoVendaVolume.PedidoVendaProdutoStatus
             }).OrderBy(o => new { o.CorredorInicial, o.CorredorFinal }).ToList();
 
             //model.ListaEnderecosArmazenagem = pedidoVenda.PedidoVendaProdutos.Where(p => p.QtdSeparada < p.Qtd)
@@ -123,16 +126,6 @@ namespace FWLog.Services.Services
             }
 
             return pedidoVenda;
-        }
-
-        private void ValidarPedidoVendaPorUsuario(string idUsuario, long idEmpresa, PedidoVenda pedidoVenda)
-        {
-            //var pedidoVendaPorUsuario = _unitOfWork.PedidoVendaRepository.ObterPorIdUsuarioEIdEmpresa(idUsuario, idEmpresa);
-
-            //if (pedidoVendaPorUsuario.Any(x => x.PedidoVendaStatus.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao && x.IdPedidoVenda != pedidoVenda.IdPedidoVenda))
-            //{
-            //    throw new BusinessException("Existe um pedido em separação pelo usuário logado que não foi concluído.");
-            //}
         }
 
         //TODO: Falta definir os status e adicionar IdPontoArmazenagemSeparacao na UsuarioEmpresa
@@ -270,21 +263,6 @@ namespace FWLog.Services.Services
 
                 _unitOfWork.SaveChanges();
 
-                foreach (var pedidoVendaProduto in pedidoVenda.PedidoVendaProdutos.ToList())
-                {
-                    if (pedidoVendaProduto.QtdSeparada.HasValue)
-                    {
-                        await AjustarQuantidadeVolume(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, pedidoVendaProduto.QtdSeparada.Value, idEmpresa, idUsuarioOperacao);
-                    }
-
-                    pedidoVendaProduto.IdPedidoVendaProdutoStatus = PedidoVendaProdutoStatusEnum.AguardandoSeparacao;
-                    pedidoVendaProduto.DataHoraInicioSeparacao = null;
-                    pedidoVendaProduto.DataHoraFimSeparacao = null;
-                    pedidoVendaProduto.IdUsuarioAutorizacaoZerar = idUsuarioOperacao;
-                    pedidoVendaProduto.QtdSeparada = 0;
-                }
-
-                _unitOfWork.SaveChanges();
 
                 foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes.ToList())
                 {
@@ -293,9 +271,23 @@ namespace FWLog.Services.Services
                     pedidoVendaVolume.DataHoraInicioSeparacao = null;
                     pedidoVendaVolume.DataHoraFimSeparacao = null;
                     pedidoVendaVolume.IdCaixaVolume = null;
-                }
 
-                _unitOfWork.SaveChanges();
+                    foreach (var pedidoVendaProduto in pedidoVendaVolume.PedidoVendaProdutos.ToList())
+                    {
+                        if (pedidoVendaProduto.QtdSeparada.HasValue)
+                        {
+                            await AjustarQuantidadeVolume(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, pedidoVendaProduto.QtdSeparada.Value, idEmpresa, idUsuarioOperacao);
+                        }
+
+                        pedidoVendaProduto.IdPedidoVendaStatus = novoStatusSeparacao;
+                        pedidoVendaProduto.DataHoraInicioSeparacao = null;
+                        pedidoVendaProduto.DataHoraFimSeparacao = null;
+                        pedidoVendaProduto.IdUsuarioAutorizacaoZerar = idUsuarioOperacao;
+                        pedidoVendaProduto.QtdSeparada = 0;
+                    }
+
+                    _unitOfWork.SaveChanges();
+                }
 
                 await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
 

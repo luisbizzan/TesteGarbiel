@@ -31,7 +31,7 @@ namespace FWLog.Data.Models
 
         [Index]
         [Required]
-        public PedidoVendaProdutoStatusEnum IdPedidoVendaProdutoStatus { get; set; }
+        public PedidoVendaStatusEnum IdPedidoVendaStatus { get; set; }
 
         [Required]
         public decimal CubagemProduto { get; set; }
@@ -68,8 +68,8 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdProduto))]
         public virtual Produto Produto { get; set; }
 
-        [ForeignKey(nameof(IdPedidoVendaProdutoStatus))]
-        public virtual PedidoVendaProdutoStatus PedidoVendaProdutoStatus { get; set; }
+        [ForeignKey(nameof(IdPedidoVendaStatus))]
+        public virtual PedidoVendaStatus PedidoVendaProdutoStatus { get; set; }
 
         [ForeignKey(nameof(IdEnderecoArmazenagem))]
         public virtual EnderecoArmazenagem EnderecoArmazenagem { get; set; }

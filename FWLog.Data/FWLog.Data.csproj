@@ -170,7 +170,6 @@
     <Compile Include="Models\Pedido.cs" />
     <Compile Include="Models\PedidoItem.cs" />
     <Compile Include="Models\PedidoVendaVolume.cs" />
-    <Compile Include="Models\PedidoVendaProdutoStatus.cs" />
     <Compile Include="Models\PedidoVendaStatus.cs" />
     <Compile Include="Models\PedidoVendaProduto.cs" />
     <Compile Include="Models\NotaFiscalRecebimento.cs" />
@@ -265,7 +264,6 @@
     <Compile Include="Repository\GeneralCtx\AtividadeEstoqueRepository.cs" />
     <Compile Include="Repository\GeneralCtx\AtividadeEstoqueTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GrupoCorredorArmazenagemRepository.cs" />
-    <Compile Include="Repository\GeneralCtx\PedidoVendaProdutoStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PedidoVendaProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PedidoItemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\PedidoRepository.cs" />

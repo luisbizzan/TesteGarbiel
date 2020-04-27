@@ -24,10 +24,5 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.PedidoVenda.FirstOrDefault(f => f.NroPedidoVenda == nroPedido && f.NroVolumes == nroVolumes && f.IdEmpresa == idEmpresa);
         }
-
-        //public List<PedidoVenda> ObterPorIdUsuarioEIdEmpresa(string idUsuario, long IdEmpresa)
-        //{
-        //    return Entities.PedidoVenda.Where(x => /*x.IdUsuarioSeparacao == idUsuario &&*/ x.IdEmpresa == IdEmpresa).ToList();
-        //}
     }
 }
