@@ -60,12 +60,31 @@ namespace FWLog.Services.Services
 
             ValidarPedidoVendaPorUsuario(idUsuario, idEmpresa, pedidoVenda);
 
-            //var listIdProduto = pedidoVenda.PedidoVendaProdutos.Select(x => x.IdProduto).ToList();
+            var model = new BuscarPedidoVendaResposta();
 
-            //var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.BuscarProdutoEstoquePorIdProduto(idEmpresa, listIdProduto);
+            model.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
+            model.NroPedidoVenda = pedidoVenda.NroPedidoVenda;
+            model.SeparacaoIniciada = pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao;
 
-            //TODO: Falta Finalizar o processo de busca das informações e montar o objeto de resposta
-            return new BuscarPedidoVendaResposta();
+            model.ListaCorredoresSeparacao = pedidoVenda.PedidoVendaVolumes.Select(pedidoVendaVolume => new BuscarPedidoVendaGrupoCorredorResposta
+            {
+                IdGrupoCorredorArmazenagem = pedidoVendaVolume.IdGrupoCorredorArmazenagem,
+                CorredorInicial = pedidoVendaVolume.GrupoCorredorArmazenagem.CorredorInicial,
+                CorredorFinal = pedidoVendaVolume.GrupoCorredorArmazenagem.CorredorFinal
+            }).OrderBy(o => new { o.CorredorInicial, o.CorredorFinal }).ToList();
+
+            //model.ListaEnderecosArmazenagem = pedidoVenda.PedidoVendaProdutos.Where(p => p.QtdSeparada < p.Qtd)
+            //.Select(pedidoVendaProduto => new BuscarPedidoVendaGrupoCorredorEnderecoProdutoResposta
+            //{
+            //    Corredor = pedidoVendaProduto.EnderecoArmazenagem.Corredor,
+            //    Codigo = pedidoVendaProduto.EnderecoArmazenagem.Codigo,
+            //    PontoArmazenagem = pedidoVendaProduto.EnderecoArmazenagem.PontoArmazenagem.Descricao,
+            //    ReferenciaProduto = pedidoVendaProduto.Produto.Referencia,
+            //    MultiploProduto = pedidoVendaProduto.Produto.MultiploVenda,
+            //    QtdePedido = pedidoVendaProduto.QtdPedido
+            //}).OrderBy(o => new { o.Corredor, o.Codigo }).ToList();
+
+            return model;
         }
 
         private PedidoVenda ValidarPedidoVenda(string codigoBarrasPedido, long idEmpresa)

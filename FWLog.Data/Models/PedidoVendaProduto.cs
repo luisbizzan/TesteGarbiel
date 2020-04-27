@@ -53,5 +53,8 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdPedidoVendaProdutoStatus))]
         public virtual PedidoVendaProdutoStatus PedidoVendaProdutoStatus { get; set; }
+
+        [ForeignKey(nameof(IdEnderecoArmazenagem))]
+        public virtual EnderecoArmazenagem EnderecoArmazenagem { get; set; }
     }
 }

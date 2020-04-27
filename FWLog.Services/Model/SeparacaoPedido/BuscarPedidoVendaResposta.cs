@@ -1,5 +1,4 @@
-﻿using FWLog.Data.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace FWLog.Services.Model.SeparacaoPedido
 {
@@ -13,7 +12,7 @@ namespace FWLog.Services.Model.SeparacaoPedido
 
         public bool SeparacaoIniciada { get; set; }
 
-        public List<GrupoCorredorArmazenagem> ListaCorredoresSeparacao { get; set; }
+        public List<BuscarPedidoVendaGrupoCorredorResposta> ListaCorredoresSeparacao { get; set; }
     }
 
     public class BuscarPedidoVendaGrupoCorredorResposta
@@ -37,7 +36,7 @@ namespace FWLog.Services.Model.SeparacaoPedido
 
         public string ReferenciaProduto { get; set; }
 
-        public int MultiploProduto { get; set; }
+        public decimal MultiploProduto { get; set; }
 
         public int QtdePedido { get; set; }
     }
