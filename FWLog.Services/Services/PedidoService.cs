@@ -24,7 +24,7 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task ConsultaPedido()
+        public async Task ConsultarPedidoIntegracao()
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
