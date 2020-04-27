@@ -352,7 +352,7 @@ namespace FWLog.AspNet.Identity
             public const string Excluir = "CaixaExcluir";
             public const string Visualizar = "CaixaVisualizar";
 
-            public Caixa() : base(Display.FromString("Caixa"))
+            public Caixa() : base(Display.FromString("Separação - Caixas"))
             {
                 Register(Listar, Display.FromString("Listar Caixas"));
                 Register(Cadastrar, Display.FromString("Cadastrar Caixa"));
