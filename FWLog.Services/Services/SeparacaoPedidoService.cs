@@ -78,7 +78,8 @@ namespace FWLog.Services.Services
                     PontoArmazenagem = pedidoVendaProduto.EnderecoArmazenagem.PontoArmazenagem.Descricao,
                     ReferenciaProduto = pedidoVendaProduto.Produto.Referencia,
                     MultiploProduto = pedidoVendaProduto.Produto.MultiploVenda,
-                    QtdePedido = pedidoVendaProduto.QtdSeparar
+                    QtdePedido = pedidoVendaProduto.QtdSeparar,
+                    IdPontoArmazenagem = pedidoVendaProduto.EnderecoArmazenagem.IdPontoArmazenagem
                 }).OrderBy(o => o.Corredor).ThenBy(o => o.Codigo).ToList()
             }).OrderBy(o => new { o.CorredorInicial, o.CorredorFinal }).ToList();
 
