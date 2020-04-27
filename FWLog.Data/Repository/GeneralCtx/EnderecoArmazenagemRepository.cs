@@ -26,6 +26,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                     (model.CustomFilter.Codigo.Equals(string.Empty) || w.Codigo.Contains(model.CustomFilter.Codigo)) &&
                     (model.CustomFilter.IdNivelArmazenagem.HasValue == false || w.IdNivelArmazenagem == model.CustomFilter.IdNivelArmazenagem.Value) &&
                     (model.CustomFilter.IdPontoArmazenagem.HasValue == false || w.IdPontoArmazenagem == model.CustomFilter.IdPontoArmazenagem.Value) &&
+                    (model.CustomFilter.Picking.HasValue == false || w.IsPicking == model.CustomFilter.Picking) &&
+                    (model.CustomFilter.PontoSeparacao.HasValue == false || w.IsPontoSeparacao == model.CustomFilter.PontoSeparacao) &&
                     (model.CustomFilter.Status.HasValue == false || w.Ativo == model.CustomFilter.Status))
                 .Select(s => new EnderecoArmazenagemListaLinhaTabela
                 {
@@ -35,6 +37,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     Codigo = s.Codigo ?? "-",
                     Fifo = s.IsFifo ? "Sim" : "Não",
                     PontoSeparacao = s.IsPontoSeparacao ? "Sim" : "Não",
+                    Picking = s.IsPicking ? "Sim" : "Não",
                     EstoqueMinimo = s.EstoqueMinimo ?? 0,
                     Status = s.Ativo ? "Ativo" : "Inativo",
                     Quantidade = s.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == s.IdEnderecoArmazenagem).FirstOrDefault().Quantidade,
