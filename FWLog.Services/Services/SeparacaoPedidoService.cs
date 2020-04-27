@@ -399,6 +399,8 @@ namespace FWLog.Services.Services
                     pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
                     pedidoVenda.DataHoraInicioSeparacao = dataHoraInicial;
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+                    _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+                    _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
                 }
 
                 if (pedidoVendaProduto.QtdSeparada == 0)
@@ -420,8 +422,6 @@ namespace FWLog.Services.Services
 
                 loteProdutoEndereco.Quantidade -= (int)qtdSeparada;
                 _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
-                _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
-                _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
 
                 await _unitOfWork.SaveChangesAsync();
 
