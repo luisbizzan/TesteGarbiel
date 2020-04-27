@@ -78,7 +78,8 @@ namespace FWLog.Services.Services
                     PontoArmazenagem = pedidoVendaProduto.EnderecoArmazenagem.PontoArmazenagem.Descricao,
                     ReferenciaProduto = pedidoVendaProduto.Produto.Referencia,
                     MultiploProduto = pedidoVendaProduto.Produto.MultiploVenda,
-                    QtdePedido = pedidoVendaProduto.QtdSeparar
+                    QtdePedido = pedidoVendaProduto.QtdSeparar,
+                    IdPontoArmazenagem = pedidoVendaProduto.EnderecoArmazenagem.IdPontoArmazenagem
                 }).OrderBy(o => o.Corredor).ThenBy(o => o.Codigo).ToList()
             }).OrderBy(o => new { o.CorredorInicial, o.CorredorFinal }).ToList();
 
@@ -261,7 +262,6 @@ namespace FWLog.Services.Services
                 foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes.ToList())
                 {
                     pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
-                    //pedidoVendaVolume.IdUsuarioSeparacao = null;
                     pedidoVendaVolume.DataHoraInicioSeparacao = null;
                     pedidoVendaVolume.DataHoraFimSeparacao = null;
                     pedidoVendaVolume.IdCaixaVolume = null;
@@ -274,9 +274,12 @@ namespace FWLog.Services.Services
                         }
 
                         pedidoVendaProduto.IdPedidoVendaStatus = novoStatusSeparacao;
+                        pedidoVendaProduto.IdUsuarioSeparacao = null;
                         pedidoVendaProduto.DataHoraInicioSeparacao = null;
                         pedidoVendaProduto.DataHoraFimSeparacao = null;
                         pedidoVendaProduto.IdUsuarioAutorizacaoZerar = idUsuarioOperacao;
+                        pedidoVendaProduto.DataHoraAutorizacaoZerarPedido = DateTime.Now;
+
                         pedidoVendaProduto.QtdSeparada = 0;
                     }
 
@@ -346,6 +349,11 @@ namespace FWLog.Services.Services
 
                 transaction.Complete();
             }
+        }
+
+        public Task FinalizarSeparacaoVolume(long idPedidoVenda, long idPedidoVendaVolume, long idCaixa, string idUsuario, long idEmpresa)
+        {
+            throw new BusinessException("Método não implementado");
         }
 
         public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, string idUsuario, long idEmpresa)
@@ -447,7 +455,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        //TODO: Será utilizado no momento que precisar validar pedidos venda em aberto para separação por usuário
+        //TODO: Será utilizado no momento que precisar validar PedidosVenda em aberto para separação por usuário
         //public void ValidarPedidoVendaPorUsuario(string idUsuario, long idEmpresa, PedidoVenda pedidoVenda)
         //{
         //    var pedidoVendaPorUsuario = _unitOfWork.PedidoVendaRepository.ObterPorIdUsuarioEIdEmpresa(idUsuario, idEmpresa);

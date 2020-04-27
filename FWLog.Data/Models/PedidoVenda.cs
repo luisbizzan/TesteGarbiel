@@ -38,6 +38,7 @@ namespace FWLog.Data.Models
         [Required]
         public int NroPedidoVenda { get; set; }
 
+        [Required]
         public int NroVolumes { get; set; }
 
         [Index]
@@ -47,7 +48,6 @@ namespace FWLog.Data.Models
         public DateTime? DataHoraInicioSeparacao { get; set; }
 
         public DateTime? DataHoraFimSeparacao { get; set; }
-
 
         [ForeignKey(nameof(IdPedido))]
         public virtual Pedido Pedido { get; set; }

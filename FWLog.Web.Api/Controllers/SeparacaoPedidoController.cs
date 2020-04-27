@@ -88,6 +88,27 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [Route("api/v1/separacao-pedido/finalizar-volume")]
+        [HttpPost]
+        public async Task<IHttpActionResult> FinalizarSeparacaoVolume(FinalizarSeparacaoVolumeRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                await _separacaoPedidoService.FinalizarSeparacaoVolume(requisicao?.IdPedidoVenda ?? 0, requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.IdCaixa ?? 0, IdUsuario, IdEmpresa);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
+
         [Route("api/v1/separacao-pedido/salvar-separacao-produto")]
         [HttpPost]
         public async Task<IHttpActionResult> SalvarSeparacaoProduto(SalvarSeparacaoProdutoRequisicao requisicao)

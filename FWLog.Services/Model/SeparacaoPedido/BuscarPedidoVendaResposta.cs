@@ -28,6 +28,8 @@ namespace FWLog.Services.Model.SeparacaoPedido
 
     public class BuscarPedidoVendaGrupoCorredorEnderecoProdutoResposta
     {
+        public long IdPontoArmazenagem { get; set; }
+
         public int Corredor { get; set; }
 
         public string Codigo { get; set; }

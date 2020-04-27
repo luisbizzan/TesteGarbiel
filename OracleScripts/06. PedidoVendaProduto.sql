@@ -6,9 +6,8 @@ CREATE TABLE "PedidoVendaProduto"
 , "IdProduto" NUMBER(19) NOT NULL 
 , "IdPedidoVendaStatus" NUMBER(10) NOT NULL
 , "QtdSeparar" NUMBER(10) NOT NULL 
-, "Sequencia" NUMBER(10) NOT NULL 
 , "CubagemProduto" FLOAT NOT NULL
-, "PesoProdutoKg" FLOAT NOT NULL
+, "PesoProduto" FLOAT NOT NULL
 , "IdEnderecoArmazenagem" NUMBER(19,0) NOT NULL
 , "QtdSeparada" NUMBER(10,0)
 , "DataHoraFimSeparacao" DATE
