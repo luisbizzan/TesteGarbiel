@@ -95,5 +95,19 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.Caixa.Include("CaixaTipo").Where(x => x.IdEmpresa == idEmpresa && x.IdCaixaTipo == CaixaTipoEnum.Separacao && x.Ativo == true).OrderBy(o => o.Nome).ToList();
         }
+
+        public bool ExistePrioridadeCadastrada(int prioridade, long? idCaixaVerificacao)
+        {
+            var query = Entities.Caixa.Where(caixa => caixa.Prioridade == prioridade && caixa.Ativo);
+
+            if (idCaixaVerificacao.HasValue)
+            {
+                var valorConvertido = idCaixaVerificacao.Value;
+
+                query = query.Where(caixa => caixa.IdCaixa != valorConvertido);
+            }
+
+            return query.Any();
+        }
     }
 }
