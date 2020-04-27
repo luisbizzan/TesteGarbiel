@@ -42,13 +42,18 @@
                 @Html.HiddenFor(m => m.IdPontoArmazenagem)
                 @Html.ValidationMessageFor(m => m.IdPontoArmazenagem)
             </div>
-        </div>
-        <div class="row">
             <div class="form-group col-sm-2 col-xs-12">
                 @Html.LabelFor(m => m.Codigo, new { @class = "control-label" })
                 @Html.TextBoxFor(m => m.Codigo, new { @class = "form-control text-uppercase", @placeholder = "00.X.00.00" })
                 @Html.ValidationMessageFor(m => m.Codigo)
             </div>
+            <div class="form-group col-sm-2 col-xs-12">
+                @Html.LabelFor(m => m.LimitePeso, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.LimitePeso, new { @class = "form-control integer", })
+                @Html.ValidationMessageFor(m => m.LimitePeso)
+            </div>
+        </div>
+        <div class="row">
             <div class="form-group col-sm-2 col-xs-12">
                 @Html.LabelFor(m => m.EstoqueMinimo, new { @class = "control-label" })
                 @Html.TextBoxFor(m => m.EstoqueMinimo, new { @class = "form-control integer", })
@@ -59,13 +64,6 @@
                 @Html.TextBoxFor(m => m.EstoqueMaximo, new { @class = "form-control integer", })
                 @Html.ValidationMessageFor(m => m.EstoqueMaximo)
             </div>
-            <div class="form-group col-sm-2 col-xs-12">
-                @Html.LabelFor(m => m.LimitePeso, new { @class = "control-label" })
-                @Html.TextBoxFor(m => m.LimitePeso, new { @class = "form-control integer", })
-                @Html.ValidationMessageFor(m => m.LimitePeso)
-            </div>
-        </div>
-        <div class="row">
             <div class="form-group col-sm-2 col-xs-12">
                 @Html.LabelFor(m => m.IsFifo, new { @class = "control-label" })
                 <div class="checkbox">
@@ -81,12 +79,21 @@
                 @Html.ValidationMessageFor(m => m.IsPontoSeparacao)
             </div>
             <div class="form-group col-sm-2 col-xs-12">
+                @Html.LabelFor(m => m.IsPkicing, new { @class = "control-label" })
+                <div class="checkbox">
+                    @Html.CheckBoxFor(m => m.IsPkicing, new { @class = "flat" })
+                </div>
+                @Html.ValidationMessageFor(m => m.IsPkicing)
+            </div>
+            <div class="form-group col-sm-2 col-xs-12">
                 @Html.LabelFor(m => m.IsEntrada, new { @class = "control-label" })
                 <div class="checkbox">
                     @Html.CheckBoxFor(m => m.IsEntrada, new { @class = "flat" })
                 </div>
                 @Html.ValidationMessageFor(m => m.Ativo)
             </div>
+        </div>
+        <div class="row">
             <div class="form-group col-sm-2 col-xs-12">
                 @Html.LabelFor(m => m.Ativo, new { @class = "control-label" })
                 <div class="checkbox">

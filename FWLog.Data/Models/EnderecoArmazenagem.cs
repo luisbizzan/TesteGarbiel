@@ -42,6 +42,8 @@ namespace FWLog.Data.Models
         public bool Ativo { get; set; }
         [Required]
         public bool IsEntrada { get; set; }
+        [Required]
+        public bool IsPicking { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
