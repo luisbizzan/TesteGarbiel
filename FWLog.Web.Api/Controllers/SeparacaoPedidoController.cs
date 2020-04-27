@@ -35,7 +35,7 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                var response = _separacaoPedidoService.BuscarPedidoVenda(referenciaPedido, IdUsuario, IdEmpresa);
+                var response = _separacaoPedidoService.BuscarPedidoVenda(referenciaPedido, IdEmpresa);
 
                 return ApiOk(response);
             }

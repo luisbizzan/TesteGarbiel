@@ -55,7 +55,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public BuscarPedidoVendaResposta BuscarPedidoVenda(string codigoBarrasPedido, string idUsuario, long idEmpresa)
+        public BuscarPedidoVendaResposta BuscarPedidoVenda(string codigoBarrasPedido, long idEmpresa)
         {
             var pedidoVenda = ValidarPedidoVenda(codigoBarrasPedido, idEmpresa);
 
@@ -65,28 +65,22 @@ namespace FWLog.Services.Services
             model.NroPedidoVenda = pedidoVenda.NroPedidoVenda;
             model.SeparacaoIniciada = pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao;
 
-            var a = pedidoVenda.PedidoVendaVolumes.ToList();
-
-            var b = a.First().PedidoVendaProdutos.ToList();
-
             model.ListaCorredoresSeparacao = pedidoVenda.PedidoVendaVolumes.Select(pedidoVendaVolume => new BuscarPedidoVendaGrupoCorredorResposta
             {
                 IdGrupoCorredorArmazenagem = pedidoVendaVolume.IdGrupoCorredorArmazenagem,
                 CorredorInicial = pedidoVendaVolume.GrupoCorredorArmazenagem.CorredorInicial,
                 CorredorFinal = pedidoVendaVolume.GrupoCorredorArmazenagem.CorredorFinal,
-                //ListaEnderecosArmazenagem = pedidoVendaVolume.PedidoVendaProdutoStatus
+                ListaEnderecosArmazenagem = pedidoVendaVolume.PedidoVendaProdutos.Where(p => p.QtdSeparada.GetValueOrDefault() < p.QtdSeparar).Select(pedidoVendaProduto =>
+                new BuscarPedidoVendaGrupoCorredorEnderecoProdutoResposta
+                {
+                    Corredor = pedidoVendaProduto.EnderecoArmazenagem.Corredor,
+                    Codigo = pedidoVendaProduto.EnderecoArmazenagem.Codigo,
+                    PontoArmazenagem = pedidoVendaProduto.EnderecoArmazenagem.PontoArmazenagem.Descricao,
+                    ReferenciaProduto = pedidoVendaProduto.Produto.Referencia,
+                    MultiploProduto = pedidoVendaProduto.Produto.MultiploVenda,
+                    QtdePedido = pedidoVendaProduto.QtdSeparar
+                }).OrderBy(o => o.Corredor).ThenBy(o => o.Codigo).ToList()
             }).OrderBy(o => new { o.CorredorInicial, o.CorredorFinal }).ToList();
-
-            //model.ListaEnderecosArmazenagem = pedidoVenda.PedidoVendaProdutos.Where(p => p.QtdSeparada < p.Qtd)
-            //.Select(pedidoVendaProduto => new BuscarPedidoVendaGrupoCorredorEnderecoProdutoResposta
-            //{
-            //    Corredor = pedidoVendaProduto.EnderecoArmazenagem.Corredor,
-            //    Codigo = pedidoVendaProduto.EnderecoArmazenagem.Codigo,
-            //    PontoArmazenagem = pedidoVendaProduto.EnderecoArmazenagem.PontoArmazenagem.Descricao,
-            //    ReferenciaProduto = pedidoVendaProduto.Produto.Referencia,
-            //    MultiploProduto = pedidoVendaProduto.Produto.MultiploVenda,
-            //    QtdePedido = pedidoVendaProduto.QtdPedido
-            //}).OrderBy(o => new { o.Corredor, o.Codigo }).ToList();
 
             return model;
         }
