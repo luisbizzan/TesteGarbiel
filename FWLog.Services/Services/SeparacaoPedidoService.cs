@@ -54,28 +54,28 @@ namespace FWLog.Services.Services
             }
         }
 
-        public BuscarPedidoVendaResposta BuscarPedidoVenda(long? idPedidoVenda, string codigoDeBarras, string idUsuario, long idEmpresa)
+        public BuscarPedidoVendaResposta BuscarPedidoVenda(string referenciaPedido, string idUsuario, long idEmpresa)
         {
-            ValidarPedidoVenda(idPedidoVenda, codigoDeBarras, idEmpresa);
-
-            var pedidoVenda = ConsultaPedidoVenda(idPedidoVenda, codigoDeBarras, idEmpresa);
+            var pedidoVenda = ValidarPedidoVenda(referenciaPedido, idEmpresa);
 
             ValidarPedidoVendaPorUsuario(idUsuario, idEmpresa, pedidoVenda);
 
-            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository
-                .ConsultarPedidoVendaVolumePorIdPedidoVenda(pedidoVenda.IdPedidoVenda);
+            //var listIdProduto = pedidoVenda.PedidoVendaProdutos.Select(x => x.IdProduto).ToList();
 
-            var listIdProduto = pedidoVenda.PedidoVendaProdutos.Select(x => x.IdProduto).ToList();
-
-            var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.BuscarProdutoEstoquePorIdProduto(idEmpresa, listIdProduto);
+            //var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.BuscarProdutoEstoquePorIdProduto(idEmpresa, listIdProduto);
 
             //TODO: Falta Finalizar o processo de busca das informações e montar o objeto de resposta
             return new BuscarPedidoVendaResposta();
         }
 
-        public void ValidarPedidoVenda(long? idPedidoVenda, string codigoDeBarras, long idEmpresa)
+        public PedidoVenda ValidarPedidoVenda(string referenciaPedido, long idEmpresa)
         {
-            var pedidoVenda = ConsultaPedidoVenda(idPedidoVenda, codigoDeBarras, idEmpresa);
+            if (referenciaPedido.NullOrEmpty())
+            {
+                throw new BusinessException("Referência do pedido deve ser infomada.");
+            }
+
+            var pedidoVenda = ConsultaPedidoVenda(referenciaPedido, idEmpresa);
 
             if (pedidoVenda == null)
             {
@@ -97,6 +97,8 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("O pedido informado teve a separação cancelada.");
             }
+
+            return pedidoVenda;
         }
 
         public void ValidarPedidoVendaPorUsuario(string idUsuario, long idEmpresa, PedidoVenda pedidoVenda)
@@ -121,19 +123,19 @@ namespace FWLog.Services.Services
         //    }
         //}
 
-        public PedidoVenda ConsultaPedidoVenda(long? idPedidoVenda, string codigoDeBarras, long idEmpresa)
+        public PedidoVenda ConsultaPedidoVenda(string referenciaPedido, long idEmpresa)
         {
             PedidoVenda pedidoVenda;
 
-            if (idPedidoVenda != null)
+            if (long.TryParse(referenciaPedido, out long idPedidoVenda))
             {
-                pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda.Value);
+                pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda);
             }
             else
             {
-                var volume = codigoDeBarras.Substring(codigoDeBarras.Count(), -3);
+                var volume = referenciaPedido.Substring(referenciaPedido.Count(), -3);
 
-                var nroPedido = codigoDeBarras.Remove(codigoDeBarras.Count(), -6);
+                var nroPedido = referenciaPedido.Remove(referenciaPedido.Count(), -6);
 
                 pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoENroVolume(int.Parse(nroPedido), int.Parse(volume), idEmpresa);
             }

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using DartDigital.Library.Exceptions;
+﻿using DartDigital.Library.Exceptions;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.SeparacaoPedido;
 using System.Threading.Tasks;
@@ -16,7 +15,7 @@ namespace FWLog.Web.Api.Controllers
             _separacaoPedidoService = separacaoPedidoService;
         }
 
-        [Route("api/v1/separacao-pedido/consulta-pedido-venda")]
+        [Route("api/v1/separacao-pedido/consultar-pedido-venda")]
         [HttpGet]
         public IHttpActionResult ConsultaPedidoVendaEmSeparacao()
         {
@@ -30,29 +29,20 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk(response);
         }
 
-        [Route("api/v1/separacao-pedido/buscar-pedido-venda/{idPedidoVenda}/{codigoDeBarras}")]
+        [Route("api/v1/separacao-pedido/consultar-pedido-venda/{referenciaPedido}")]
         [HttpGet]
-        public IHttpActionResult BuscarPedidoVenda(long? idPedidoVenda, string codigoDeBarras)
+        public IHttpActionResult BuscarPedidoVenda(string referenciaPedido)
         {
-            if (idPedidoVenda == null && string.IsNullOrEmpty(codigoDeBarras))
-            {
-                return ApiBadRequest("Id do pedido ou código de barras é inválido.");
-            }
-
-            BuscarPedidoVendaResposta pedidoVendaResposta;
-
             try
             {
-                var response = _separacaoPedidoService.BuscarPedidoVenda(idPedidoVenda, codigoDeBarras, IdUsuario, IdEmpresa);
+                var response = _separacaoPedidoService.BuscarPedidoVenda(referenciaPedido, IdUsuario, IdEmpresa);
 
-                pedidoVendaResposta = Mapper.Map<BuscarPedidoVendaResposta>(response);
+                return ApiOk(response);
             }
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
             }
-
-            return ApiOk(pedidoVendaResposta);
         }
 
         [Route("api/v1/separacao-pedido/cancelar")]
