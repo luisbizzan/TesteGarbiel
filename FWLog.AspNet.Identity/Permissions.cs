@@ -11,7 +11,7 @@ namespace FWLog.AspNet.Identity
         {
             public const string List = "ApplicationLogList";
 
-            public ApplicationLog() : base(Display.FromResource(nameof(Res.ApplicationLog)))
+            public ApplicationLog() : base(Display.FromString("Sistema - Log de Erros"))
             {
                 Register(List, Display.FromString("Relatório de Erros"));
             }
@@ -172,7 +172,7 @@ namespace FWLog.AspNet.Identity
         {
             public const string EditarConfiguracao = "EmpresaConfiguracaoEditar";
 
-            public Empresa() : base(Display.FromString("Empresas"))
+            public Empresa() : base(Display.FromString("Sistema - Empresas"))
             {
                 Register(EditarConfiguracao, Display.FromString("Editar Configurações"));
             }
