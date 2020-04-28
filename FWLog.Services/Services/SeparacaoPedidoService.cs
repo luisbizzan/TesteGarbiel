@@ -85,37 +85,55 @@ namespace FWLog.Services.Services
 
             ValidarPedidoVenda(pedidoVenda, idEmpresa);
 
+            var pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.FirstOrDefault(volume => volume.NroVolume == numeroVolume);
+
+            if (pedidoVendaVolume == null)
+            {
+                throw new BusinessException("Volume fornecido não encontrado.");
+            }
+
             var model = new BuscarPedidoVendaResposta();
 
             model.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
             model.NroPedidoVenda = pedidoVenda.NroPedidoVenda;
             model.SeparacaoIniciada = pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao;
+            model.IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume;
+            model.NroVolume = pedidoVendaVolume.NroVolume;
 
-            var pedidoVendaVolumesFiltrados = pedidoVenda.PedidoVendaVolumes.Where(volume => volume.NroVolume == numeroVolume).ToList();
+            var consultaProdutos = (from pedidoVendaProduto in pedidoVendaVolume.PedidoVendaProdutos
+                                    let enderecoArmazenagem = pedidoVendaProduto.EnderecoArmazenagem
+                                    from grupoCorredorArmazenagem in _unitOfWork.GrupoCorredorArmazenagemRepository.Todos().Where(gca =>
+                                                   gca.IdPontoArmazenagem == enderecoArmazenagem.IdPontoArmazenagem &&
+                                                   enderecoArmazenagem.Corredor >= gca.CorredorInicial &&
+                                                   enderecoArmazenagem.Corredor <= gca.CorredorFinal)
+                                    where
+                                        pedidoVendaProduto.QtdSeparada.GetValueOrDefault() < pedidoVendaProduto.QtdSeparar
+                                    select new
+                                    {
+                                        GrupoCorredorArmazenagem = new
+                                        {
+                                            grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem,
+                                            grupoCorredorArmazenagem.CorredorInicial,
+                                            grupoCorredorArmazenagem.CorredorFinal,
+                                        },
+                                        pedidoVendaProduto
+                                    }).ToList();
 
-            var primeiroPedidoVendaVolume = pedidoVendaVolumesFiltrados.FirstOrDefault();
-
-            if (primeiroPedidoVendaVolume != null)
+            model.ListaCorredoresSeparacao = consultaProdutos.GroupBy(g => g.GrupoCorredorArmazenagem).Select(g => new BuscarPedidoVendaGrupoCorredorResposta
             {
-                model.IdPedidoVendaVolume = primeiroPedidoVendaVolume.IdPedidoVendaVolume;
-                model.NroVolume = primeiroPedidoVendaVolume.NroVolume;
-            }
-
-            model.ListaCorredoresSeparacao = pedidoVendaVolumesFiltrados.Select(pedidoVendaVolume => new BuscarPedidoVendaGrupoCorredorResposta
-            {
-                IdGrupoCorredorArmazenagem = pedidoVendaVolume.IdGrupoCorredorArmazenagem,
-                CorredorInicial = pedidoVendaVolume.GrupoCorredorArmazenagem.CorredorInicial,
-                CorredorFinal = pedidoVendaVolume.GrupoCorredorArmazenagem.CorredorFinal,
-                ListaEnderecosArmazenagem = pedidoVendaVolume.PedidoVendaProdutos.Where(p => p.QtdSeparada.GetValueOrDefault() < p.QtdSeparar).Select(pedidoVendaProduto =>
-                new BuscarPedidoVendaGrupoCorredorEnderecoProdutoResposta
+                IdGrupoCorredorArmazenagem = g.Key.IdGrupoCorredorArmazenagem,
+                CorredorInicial = g.Key.CorredorInicial,
+                CorredorFinal = g.Key.CorredorFinal,
+                ListaEnderecosArmazenagem = g.Select(item => new BuscarPedidoVendaGrupoCorredorEnderecoProdutoResposta
                 {
-                    Corredor = pedidoVendaProduto.EnderecoArmazenagem.Corredor,
-                    Codigo = pedidoVendaProduto.EnderecoArmazenagem.Codigo,
-                    PontoArmazenagem = pedidoVendaProduto.EnderecoArmazenagem.PontoArmazenagem.Descricao,
-                    ReferenciaProduto = pedidoVendaProduto.Produto.Referencia,
-                    MultiploProduto = pedidoVendaProduto.Produto.MultiploVenda,
-                    QtdePedido = pedidoVendaProduto.QtdSeparar,
-                    IdPontoArmazenagem = pedidoVendaProduto.EnderecoArmazenagem.IdPontoArmazenagem
+                    Corredor = item.pedidoVendaProduto.EnderecoArmazenagem.Corredor,
+                    Codigo = item.pedidoVendaProduto.EnderecoArmazenagem.Codigo,
+                    PontoArmazenagem = item.pedidoVendaProduto.EnderecoArmazenagem.PontoArmazenagem.Descricao,
+                    IdProduto = item.pedidoVendaProduto.IdProduto,
+                    ReferenciaProduto = item.pedidoVendaProduto.Produto.Referencia,
+                    MultiploProduto = item.pedidoVendaProduto.Produto.MultiploVenda,
+                    QtdePedido = item.pedidoVendaProduto.QtdSeparar,
+                    IdPontoArmazenagem = item.pedidoVendaProduto.EnderecoArmazenagem.IdPontoArmazenagem
                 }).ToList()
             }).ToList();
 
@@ -311,7 +329,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task IniciarSeparacaoPedidoVenda(long idPedidoVenda, string idUsuarioOperacao, long idEmpresa) 
+        public async Task IniciarSeparacaoPedidoVenda(long idPedidoVenda, string idUsuarioOperacao, long idEmpresa)
         {
             // validações
             if (idPedidoVenda <= 0)
