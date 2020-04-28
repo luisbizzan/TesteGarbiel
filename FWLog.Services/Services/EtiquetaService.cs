@@ -636,7 +636,6 @@ namespace FWLog.Services.Services
             var stringEtiqueta = new StringBuilder();
 
             stringEtiqueta.Append("^XA");
-            stringEtiqueta.Append($"^PQ{requisicao.QtdImpressao}^FS");
             stringEtiqueta.Append("^LL860");
             stringEtiqueta.Append("^FO40,40^GB696,860,8^FS");
 
