@@ -431,28 +431,30 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Caixa de separação não encontrada.");
             }
 
-            var novoStatusSeparacao = PedidoVendaStatusEnum.ConcluidaComSucesso;
-            var dataProcessamento = DateTime.Now;
-            var finalizouPedidoVenda = false;
-
-            await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
-
-            var todosProdutosVenda = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
-
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
+                var novoStatusSeparacao = PedidoVendaStatusEnum.ConcluidaComSucesso;
+                var dataProcessamento = DateTime.Now;
+
                 pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
                 pedidoVendaVolume.DataHoraFimSeparacao = dataProcessamento;
                 pedidoVendaVolume.IdCaixaVolume = idCaixa;
 
                 _unitOfWork.SaveChanges();
 
+                var todosProdutosVenda = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
+
+                var finalizouPedidoVenda = false;
+
                 if (!todosProdutosVenda.Any(produtoVendaProduto => produtoVendaProduto.QtdSeparada != produtoVendaProduto.QtdSeparar))
                 {
                     pedidoVenda.IdPedidoVendaStatus = novoStatusSeparacao;
+                    pedidoVenda.Pedido.IdPedidoVendaStatus = novoStatusSeparacao;
                     pedidoVenda.DataHoraFimSeparacao = dataProcessamento;
 
                     _unitOfWork.SaveChanges();
+
+                    await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
 
                     //TODO: Atualizar a QtdeConferida dos produtos do pedido no Sankhya.
 
