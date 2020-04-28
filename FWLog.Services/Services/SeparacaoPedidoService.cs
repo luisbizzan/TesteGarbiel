@@ -418,12 +418,12 @@ namespace FWLog.Services.Services
                 }
 
                 pedidoVendaProduto.QtdSeparada = (int)qtdSeparada;
+               
                 _unitOfWork.PedidoVendaProdutoRepository.Update(pedidoVendaProduto);
 
-                loteProdutoEndereco.Quantidade -= (int)qtdSeparada;
-                _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
-
                 await _unitOfWork.SaveChangesAsync();
+
+                await AjustarQuantidadeVolume(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, pedidoVendaProduto.QtdSeparada.Value, idEmpresa, idUsuario);
 
                 transacao.Complete();
             }
