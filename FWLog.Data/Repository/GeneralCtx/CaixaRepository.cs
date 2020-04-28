@@ -109,5 +109,19 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return query.Any();
         }
+
+        public Caixa BuscarCaixaAtivaPorEmpresa(long idCaixa, long idEmpresa, CaixaTipoEnum? caixaTipo)
+        {
+            var query = Entities.Caixa.Where(caixa => caixa.IdCaixa == idCaixa && caixa.IdEmpresa == idEmpresa && caixa.Ativo);
+
+            if (caixaTipo.HasValue)
+            {
+                var caixaTipoValue = caixaTipo.Value;
+
+                query = query.Where(caixa => caixa.IdCaixaTipo == caixaTipoValue);
+            }
+
+            return query.FirstOrDefault();
+        }
     }
 }

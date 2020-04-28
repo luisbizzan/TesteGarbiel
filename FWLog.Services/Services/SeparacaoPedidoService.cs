@@ -57,7 +57,14 @@ namespace FWLog.Services.Services
 
         public BuscarPedidoVendaResposta BuscarPedidoVenda(string codigoBarrasPedido, long idEmpresa)
         {
-            var pedidoVenda = ValidarPedidoVenda(codigoBarrasPedido, idEmpresa);
+            if (codigoBarrasPedido.NullOrEmpty())
+            {
+                throw new BusinessException("Código de barras do pedido deve ser infomado.");
+            }
+
+            var pedidoVenda = ConsultaPedidoVenda(codigoBarrasPedido, idEmpresa);
+
+            ValidarPedidoVenda(pedidoVenda, idEmpresa);
 
             var model = new BuscarPedidoVendaResposta();
 
@@ -86,15 +93,8 @@ namespace FWLog.Services.Services
             return model;
         }
 
-        private PedidoVenda ValidarPedidoVenda(string codigoBarrasPedido, long idEmpresa)
+        private void ValidarPedidoVenda(PedidoVenda pedidoVenda, long idEmpresa)
         {
-            if (codigoBarrasPedido.NullOrEmpty())
-            {
-                throw new BusinessException("Código de barras do pedido deve ser infomado.");
-            }
-
-            var pedidoVenda = ConsultaPedidoVenda(codigoBarrasPedido, idEmpresa);
-
             if (pedidoVenda == null)
             {
                 throw new BusinessException("O pedido informado não foi encontrado.");
@@ -119,8 +119,6 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("O pedido informado teve a separação cancelada.");
             }
-
-            return pedidoVenda;
         }
 
         //TODO: Falta definir os status e adicionar IdPontoArmazenagemSeparacao na UsuarioEmpresa
@@ -351,9 +349,88 @@ namespace FWLog.Services.Services
             }
         }
 
-        public Task FinalizarSeparacaoVolume(long idPedidoVenda, long idPedidoVendaVolume, long idCaixa, string idUsuario, long idEmpresa)
+        public async Task FinalizarSeparacaoVolume(long idPedidoVenda, long idPedidoVendaVolume, long idCaixa, string idUsuarioOperacao, long idEmpresa)
         {
-            throw new BusinessException("Método não implementado");
+            if (idPedidoVenda <= 0)
+            {
+                throw new BusinessException("O pedido deve ser informado.");
+            }
+
+            if (idPedidoVendaVolume <= 0)
+            {
+                throw new BusinessException("O volume deve ser informado.");
+            }
+
+            if (idCaixa <= 0)
+            {
+                throw new BusinessException("A caixa deve ser informada.");
+            }
+
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda);
+
+            ValidarPedidoVenda(pedidoVenda, idEmpresa);
+
+            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
+
+            if (pedidoVendaVolume == null)
+            {
+                throw new BusinessException("O volume informado não foi encontrado.");
+            }
+
+            if (pedidoVendaVolume.PedidoVendaProdutos.Any(pedidoVendaProduto => pedidoVendaProduto.QtdSeparada.GetValueOrDefault() < pedidoVendaProduto.QtdSeparar))
+            {
+                throw new BusinessException("Ainda existem itens a serem separados no pedido.");
+            }
+
+            var caixaSeparacao = _unitOfWork.CaixaRepository.BuscarCaixaAtivaPorEmpresa(idCaixa, idEmpresa, CaixaTipoEnum.Separacao);
+
+            if (caixaSeparacao == null)
+            {
+                throw new BusinessException("Caixa de separação não encontrada.");
+            }
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                var novoStatusSeparacao = PedidoVendaStatusEnum.ConcluidaComSucesso;
+                var dataProcessamento = DateTime.Now;
+
+                pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
+                pedidoVendaVolume.DataHoraFimSeparacao = dataProcessamento;
+                pedidoVendaVolume.IdCaixaVolume = idCaixa;
+
+                _unitOfWork.SaveChanges();
+
+                var todosProdutosVenda = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
+
+                var finalizouPedidoVenda = false;
+
+                if (!todosProdutosVenda.Any(produtoVendaProduto => produtoVendaProduto.QtdSeparada != produtoVendaProduto.QtdSeparar))
+                {
+                    pedidoVenda.IdPedidoVendaStatus = novoStatusSeparacao;
+                    pedidoVenda.DataHoraFimSeparacao = dataProcessamento;
+
+                    _unitOfWork.SaveChanges();
+
+                    await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
+
+                    //TODO: Atualizar a QtdeConferida dos produtos do pedido no Sankhya.
+
+                    finalizouPedidoVenda = true;
+                }
+
+                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.FinalizacaoSeparacao,
+                    Descricao = $"Finalizou a separação do volume {idPedidoVendaVolume} {(finalizouPedidoVenda ? "e a separação " : "")}do pedido {idPedidoVenda} com a caixa {caixaSeparacao.Nome}",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuarioOperacao
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+
+                transacao.Complete();
+            }
         }
 
         public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, string idUsuario, long idEmpresa)
@@ -409,7 +486,7 @@ namespace FWLog.Services.Services
                     pedidoVendaProduto.IdUsuarioSeparacao = idUsuario;
                     pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
                 }
-                else if(pedidoVendaProduto.QtdSeparada == pedidoVendaProduto.QtdSeparar)
+                else if (pedidoVendaProduto.QtdSeparada == pedidoVendaProduto.QtdSeparar)
                 {
                     pedidoVendaProduto.DataHoraFimSeparacao = DateTime.Now;
                     pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ConcluidaComSucesso;
@@ -470,7 +547,7 @@ namespace FWLog.Services.Services
         {
             var pedidoVendaProdutos = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
 
-            if(!pedidoVendaProdutos.Any(pvp => pvp.IdProduto == idProduto))
+            if (!pedidoVendaProdutos.Any(pvp => pvp.IdProduto == idProduto))
             {
                 throw new BusinessException("O produto informado não faz parte do pedido em separação.");
             }
