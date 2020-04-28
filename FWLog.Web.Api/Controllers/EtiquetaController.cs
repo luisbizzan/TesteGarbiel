@@ -222,5 +222,33 @@ namespace FWLog.Web.Api.Controllers
                 }
             }
         }
+
+        [HttpPost]
+        [Route("api/v1/etiqueta/separacao/imprimir")]
+        public IHttpActionResult ImprimirEtiquetaSeparacaoVolume(ImprimirEtiquetaVolumeSeparacaoRequest requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+            else
+            {
+                try
+                {
+                    _etiquetaService.ImprimirEtiquetaVolumeSeparacao(requisicao, IdEmpresa);
+
+                    return ApiOk();
+
+                }
+                catch (BusinessException ex)
+                {
+                    return ApiBadRequest(ex.Message);
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+        }
     }
 }

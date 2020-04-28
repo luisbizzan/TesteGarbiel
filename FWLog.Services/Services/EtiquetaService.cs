@@ -636,6 +636,7 @@ namespace FWLog.Services.Services
             var stringEtiqueta = new StringBuilder();
 
             stringEtiqueta.Append("^XA");
+            stringEtiqueta.Append($"^PQ{requisicao.QtdImpressao}^FS");
             stringEtiqueta.Append("^LL860");
             stringEtiqueta.Append("^FO40,40^GB696,860,8^FS");
 
@@ -672,25 +673,27 @@ namespace FWLog.Services.Services
             stringEtiqueta.Append($"^FO600,50^A0B,100,130^FD+{requisicao.Volume}+^FS");
             stringEtiqueta.Append("^FO545,250^GB190,0,2^FS");
 
-            var empresa = _unitOfWork.EmpresaRepository.GetById(idEmpresa);
+            stringEtiqueta.Append("^FO70,214^XGLOGO.GRF,1,1^FS");
 
-            if (empresa.Sigla == SIGLA_EMPRESA_MATRIZ)
-            {
-                stringEtiqueta.Append("^FO70,214^XGLOGO.GRF,1,1^FS");
-            }
-            else if (empresa.Sigla == SIGLA_EMPRESA_MANAUS)
-            {
-                stringEtiqueta.Append("^FO70,110^XGLOGO.GRF,1,1^FS");
-                stringEtiqueta.Append("^FO140,125^A0B,25,25^FD+DISTRIBUIDORA DE PECAS AUTOMOTIVAS LTDA+^FS");
-            }
-            else if (empresa.Sigla == SIGLA_EMPRESA_MINAS)
-            {
-                stringEtiqueta.Append("^FO140,125^A0B,25,25^FD+DISTRIBUIDORA DE PECAS AUTOMOTIVAS LTDA+^FS");
-            }
-            else
-            {
-                stringEtiqueta.Append("^FO140,125^A0B,25,25^FD+DISTRIBUIDORA DE PECAS AUTOMOTIVAS LTDA+^FS");
-            }
+            //var empresa = _unitOfWork.EmpresaRepository.GetById(idEmpresa);
+
+            //if (empresa.Sigla == SIGLA_EMPRESA_MATRIZ)
+            //{
+            //    stringEtiqueta.Append("^FO70,214^XGLOGO.GRF,1,1^FS");
+            //}
+            //else if (empresa.Sigla == SIGLA_EMPRESA_MANAUS)
+            //{
+            //    stringEtiqueta.Append("^FO70,110^XGLOGO.GRF,1,1^FS");
+            //    stringEtiqueta.Append("^FO140,125^A0B,25,25^FD+DISTRIBUIDORA DE PECAS AUTOMOTIVAS LTDA+^FS");
+            //}
+            //else if (empresa.Sigla == SIGLA_EMPRESA_MINAS)
+            //{
+            //    stringEtiqueta.Append("^FO140,125^A0B,25,25^FD+DISTRIBUIDORA DE PECAS AUTOMOTIVAS LTDA+^FS");
+            //}
+            //else
+            //{
+            //    stringEtiqueta.Append("^FO140,125^A0B,25,25^FD+DISTRIBUIDORA DE PECAS AUTOMOTIVAS LTDA+^FS");
+            //}
 
             stringEtiqueta.Append("^FO184,40^GBO,860,2^FS");
             stringEtiqueta.Append("^FO344,40^GBO,860,2^FS");
