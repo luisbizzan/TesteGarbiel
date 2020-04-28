@@ -401,7 +401,7 @@ namespace FWLog.Data.Models
             #endregion
 
             #region Fornecedor Grupo
-            //TabFornecedorGrupo
+            
             #endregion
         }
         #endregion

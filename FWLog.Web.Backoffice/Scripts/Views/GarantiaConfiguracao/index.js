@@ -527,7 +527,6 @@ function FornecedorGrupoGravar() {
     registro.Cod_Forn_Filho = $("#spanIdFornecedorFilho").html() == "" ? 0 : $("#spanIdFornecedorFilho").html();
 
     RegistroInclusao.Inclusao.push(JSON.stringify(registro));
-    console.log(RegistroInclusao);
     RegistroIncluir();    
 }
 

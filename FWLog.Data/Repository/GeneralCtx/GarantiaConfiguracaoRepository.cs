@@ -173,7 +173,9 @@ namespace FWLog.Data.Repository.GeneralCtx
                     Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaConfiguracao) ? String.Format(cmdSQL, "gar_remessa_config") :
                     Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaUsuario) ? String.Format(cmdSQL, "gar_remessa_usr") :
                     Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra) ? String.Format(cmdSQL, "gar_forn_quebra") :
-                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop) ? String.Format(cmdSQL, "geral_sankhya_tops") : String.Empty;
+                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop) ? String.Format(cmdSQL, "geral_sankhya_tops") :
+                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorGrupo) ? String.Format(cmdSQL, "gar_forn_grupo") :
+                    String.Empty;
                 #endregion
 
                 using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
@@ -362,11 +364,12 @@ namespace FWLog.Data.Repository.GeneralCtx
                     #region Fornecedor Grupo
                     case GarantiaConfiguracao.GarantiaTag.FornecedorGrupo:
                         _AutoComplete.comandoSQL = String.Format(String.Concat(
-                            "SELECT cnpj Data, cnpj ||' - '||\"RazaoSocial\" Value ",
+                            "SELECT cnpj Data, '('|| cnpj ||') '||\"RazaoSocial\" Value ",
                             "FROM \"Fornecedor\" ",
                             "WHERE ROWNUM <= 10 ",
                             "AND \"Ativo\" = 1 ",
                             "AND \"RazaoSocial\" LIKE '{0}%' ",
+                            "OR cnpj LIKE '%{0}%' ",
                             "GROUP BY \"RazaoSocial\", cnpj ",
                             "ORDER BY \"RazaoSocial\""), _AutoComplete.palavra.ToUpper());
                         break;
