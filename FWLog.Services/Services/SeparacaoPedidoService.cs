@@ -45,7 +45,6 @@ namespace FWLog.Services.Services
                 Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", pedido.CodigoIntegracao.ToString() } };
 
                 await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSSEP", statusPedidoVenda.GetHashCode());
-
             }
             catch (Exception ex)
             {
@@ -319,7 +318,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido deve ser informado.");
             }
 
-            var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda);
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedidoVendaEIdEmpresa(idPedidoVenda, idEmpresa);
             if (pedidoVenda == null)
             {
                 throw new BusinessException("O pedido não foi encontrado.");
@@ -341,18 +340,19 @@ namespace FWLog.Services.Services
             //    throw new BusinessException("O pedido já está sendo separado por outro usuário.");
             //}
 
+            // update no Sankhya
+            await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, PedidoVendaStatusEnum.ProcessandoSeparacao);
+
             // update do pedido na base oracle
             using (var transaction = _unitOfWork.CreateTransactionScope())
             {
                 pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
                 pedidoVenda.DataHoraInicioSeparacao = DateTime.Now;
+                pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
 
                 _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
 
                 _unitOfWork.SaveChanges();
-
-                // update no Sankhya
-                await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, PedidoVendaStatusEnum.ProcessandoSeparacao);
 
                 transaction.Complete();
             }
