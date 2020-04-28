@@ -512,12 +512,14 @@ namespace FWLog.Services.Services
                     throw new BusinessException("A quantidade separada é maior que o pedido.");
                 }
 
+                //TODO: Validar com Anderson a necessidade de atualizar a PedidoVenda novamente, sabendo que o mesmo ocorre no início da separação
                 if (!pedidoVendaVolume.PedidoVendaProdutos.Any())
                 {
                     var dataHoraInicial = DateTime.Now;
                     pedidoVendaVolume.DataHoraInicioSeparacao = dataHoraInicial;
                     pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
                     pedidoVenda.DataHoraInicioSeparacao = dataHoraInicial;
+                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
                     _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
                     _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
