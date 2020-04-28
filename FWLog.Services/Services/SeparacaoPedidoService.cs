@@ -495,7 +495,7 @@ namespace FWLog.Services.Services
                 }
 
                 pedidoVendaProduto.QtdSeparada = (int)qtdSeparada;
-               
+
                 _unitOfWork.PedidoVendaProdutoRepository.Update(pedidoVendaProduto);
 
                 await _unitOfWork.SaveChangesAsync();
