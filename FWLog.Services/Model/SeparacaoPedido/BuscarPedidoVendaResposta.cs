@@ -38,6 +38,8 @@ namespace FWLog.Services.Model.SeparacaoPedido
 
         public string PontoArmazenagem { get; set; }
 
+        public long IdProduto { get; set; }
+
         public string ReferenciaProduto { get; set; }
 
         public decimal MultiploProduto { get; set; }

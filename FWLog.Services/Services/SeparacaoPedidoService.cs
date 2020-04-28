@@ -129,6 +129,7 @@ namespace FWLog.Services.Services
                     Corredor = item.pedidoVendaProduto.EnderecoArmazenagem.Corredor,
                     Codigo = item.pedidoVendaProduto.EnderecoArmazenagem.Codigo,
                     PontoArmazenagem = item.pedidoVendaProduto.EnderecoArmazenagem.PontoArmazenagem.Descricao,
+                    IdProduto = item.pedidoVendaProduto.IdProduto,
                     ReferenciaProduto = item.pedidoVendaProduto.Produto.Referencia,
                     MultiploProduto = item.pedidoVendaProduto.Produto.MultiploVenda,
                     QtdePedido = item.pedidoVendaProduto.QtdSeparar,
