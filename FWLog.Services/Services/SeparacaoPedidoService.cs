@@ -62,7 +62,26 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Código de barras do pedido deve ser infomado.");
             }
 
-            var pedidoVenda = ConsultaPedidoVenda(codigoBarrasPedido, idEmpresa);
+            if (codigoBarrasPedido.Length < 7)
+            {
+                throw new BusinessException("Código de Barras de pedido inválido.");
+            }
+
+            var numeroPedidoString = codigoBarrasPedido.Substring(0, codigoBarrasPedido.Length - 6);
+
+            if (!int.TryParse(numeroPedidoString, out int numeroPedido))
+            {
+                throw new BusinessException("Código de Barras de pedido inválido.");
+            }
+
+            var numeroVolumeString = codigoBarrasPedido.Substring(codigoBarrasPedido.Length - 3);
+
+            if (!int.TryParse(numeroVolumeString, out int numeroVolume))
+            {
+                throw new BusinessException("Código de Barras de pedido inválido.");
+            }
+
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
             ValidarPedidoVenda(pedidoVenda, idEmpresa);
 
@@ -72,7 +91,17 @@ namespace FWLog.Services.Services
             model.NroPedidoVenda = pedidoVenda.NroPedidoVenda;
             model.SeparacaoIniciada = pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao;
 
-            model.ListaCorredoresSeparacao = pedidoVenda.PedidoVendaVolumes.Select(pedidoVendaVolume => new BuscarPedidoVendaGrupoCorredorResposta
+            var pedidoVendaVolumesFiltrados = pedidoVenda.PedidoVendaVolumes.Where(volume => volume.NroVolume == numeroVolume).ToList();
+
+            var primeiroPedidoVendaVolume = pedidoVendaVolumesFiltrados.FirstOrDefault();
+
+            if (primeiroPedidoVendaVolume != null)
+            {
+                model.IdPedidoVendaVolume = primeiroPedidoVendaVolume.IdPedidoVendaVolume;
+                model.NroVolume = primeiroPedidoVendaVolume.NroVolume;
+            }
+
+            model.ListaCorredoresSeparacao = pedidoVendaVolumesFiltrados.Select(pedidoVendaVolume => new BuscarPedidoVendaGrupoCorredorResposta
             {
                 IdGrupoCorredorArmazenagem = pedidoVendaVolume.IdGrupoCorredorArmazenagem,
                 CorredorInicial = pedidoVendaVolume.GrupoCorredorArmazenagem.CorredorInicial,
@@ -139,32 +168,6 @@ namespace FWLog.Services.Services
         //        if (!range.Contains(item.EnderecoArmazenagem.Corredor))
         //    }
         //}
-
-        private PedidoVenda ConsultaPedidoVenda(string codigoBarrasPedido, long idEmpresa)
-        {
-            if (codigoBarrasPedido.Length < 7)
-            {
-                throw new BusinessException("Código de Barras de pedido inválido.");
-            }
-
-            var numeroPedidoString = codigoBarrasPedido.Substring(0, codigoBarrasPedido.Length - 6);
-
-            if (!int.TryParse(numeroPedidoString, out int numeroPedido))
-            {
-                throw new BusinessException("Código de Barras de pedido inválido.");
-            }
-
-            var volumeString = codigoBarrasPedido.Substring(codigoBarrasPedido.Length - 3);
-
-            if (!int.TryParse(volumeString, out int volume))
-            {
-                throw new BusinessException("Código de Barras de pedido inválido.");
-            }
-
-            var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoENroVolume(numeroPedido, volume, idEmpresa);
-
-            return pedidoVenda;
-        }
 
         private async Task AjustarQuantidadeVolume(long idEnderecoArmazenagem, long idProduto, int quantidadeAdicionar, long idEmpresa, string idUsuarioAjuste)
         {
@@ -387,6 +390,8 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("Ainda existem itens a serem separados no pedido.");
             }
+
+            //TODO: Validar status volume
 
             var caixaSeparacao = _unitOfWork.CaixaRepository.BuscarCaixaAtivaPorEmpresa(idCaixa, idEmpresa, CaixaTipoEnum.Separacao);
 

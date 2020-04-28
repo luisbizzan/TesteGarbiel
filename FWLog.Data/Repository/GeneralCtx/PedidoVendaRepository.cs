@@ -20,9 +20,9 @@ namespace FWLog.Data.Repository.GeneralCtx
             throw new NotImplementedException();
         }
 
-        public PedidoVenda ObterPorNroPedidoENroVolume(int nroPedido, int nroVolumes, long idEmpresa)
+        public PedidoVenda ObterPorNroPedidoEEmpresa(int nroPedido, long idEmpresa)
         {
-            return Entities.PedidoVenda.FirstOrDefault(f => f.NroPedidoVenda == nroPedido && f.NroVolumes == nroVolumes && f.IdEmpresa == idEmpresa);
+            return Entities.PedidoVenda.FirstOrDefault(f => f.NroPedidoVenda == nroPedido && f.IdEmpresa == idEmpresa);
         }
 
         public PedidoVenda ObterPorIdPedidoVendaEIdEmpresa(long idPedidoVenda, long idEmpresa)
