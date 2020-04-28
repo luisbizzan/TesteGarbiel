@@ -301,7 +301,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task IniciarSeparacaoPedidoVenda(long idPedidoVenda, string idUsuarioOperacao, long idEmpresa)
+        public async Task IniciarSeparacaoPedidoVenda(long idPedidoVenda, string idUsuarioOperacao, long idEmpresa) 
         {
             // validações
             if (idPedidoVenda <= 0)
@@ -335,7 +335,6 @@ namespace FWLog.Services.Services
             using (var transaction = _unitOfWork.CreateTransactionScope())
             {
                 pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
-                //pedidoVenda.IdUsuarioSeparacao = idUsuarioOperacao;
                 pedidoVenda.DataHoraInicioSeparacao = DateTime.Now;
 
                 _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
