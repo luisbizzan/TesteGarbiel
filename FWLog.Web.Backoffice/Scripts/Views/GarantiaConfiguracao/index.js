@@ -523,15 +523,12 @@ function FornecedorGrupoGravar() {
     RegistroInclusao.Inclusao = [];
 
     var registro = new Object();
-    registro.Id_Filial_Sankhya = $("#spanConfigIdFilial").html() == "" ? 0 : $("#spanConfigIdFilial").html();
-    registro.Filial = $("#spanConfigFilial").html();
-
-    registro.Id_Filial_Sankhya = $("#spanConfigIdFilial").html() == "" ? 0 : $("#spanConfigIdFilial").html();
-    registro.Filial = $("#spanConfigFilial").html();
+    registro.Cod_Forn_Pai = $("#spanIdFornecedorPai").html() == "" ? 0 : $("#spanIdFornecedorPai").html();
+    registro.Cod_Forn_Filho = $("#spanIdFornecedorFilho").html() == "" ? 0 : $("#spanIdFornecedorFilho").html();
 
     RegistroInclusao.Inclusao.push(JSON.stringify(registro));
-
-    RegistroIncluir();
+    console.log(RegistroInclusao);
+    RegistroIncluir();    
 }
 
 /* [FORNECEDOR GRUPO] autocomplete PAI */

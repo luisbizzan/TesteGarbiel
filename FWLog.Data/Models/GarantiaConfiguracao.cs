@@ -171,11 +171,11 @@ namespace FWLog.Data.Models
             public long Id { get; set; }
 
             [Required]
-            [Display(Name = "Código Fornecedor Pai")]
+            [Display(Name = "Fornecedor Pai")]
             public string Cod_Forn_Pai { get; set; }
 
             [Required]
-            [Display(Name = "Código Fornecedor Filho")]
+            [Display(Name = "Fornecedor Filho")]
             public string Cod_Forn_Filho { get; set; }
 
             public string BotaoEvento { get; set; }
@@ -296,10 +296,11 @@ namespace FWLog.Data.Models
             {
                 get
                 {
-                    return String.Concat("SELECT FG.ID, FG.COD_FORNECEDOR, F.\"NomeFantasia\", F.\"RazaoSocial\" ",
-                        "FROM GAR_FORN_GRUPO FG ",
-                        "INNER JOIN \"Fornecedor\" F ON LTRIM(RTRIM(F.cnpj)) = LTRIM(RTRIM(FG.cod_fornecedor)) ",
-                        "ORDER BY FG.ID");
+                    return String.Concat("SELECT fg.Id, fp.\"RazaoSocial\" Cod_Forn_Pai, ff.\"RazaoSocial\" Cod_Forn_Filho ",
+                        "FROM gar_forn_grupo fg ",
+                        "INNER JOIN \"Fornecedor\" fp ON fp.cnpj = fg.cod_forn_pai ",
+                        "INNER JOIN \"Fornecedor\" ff ON ff.cnpj = fg.cod_forn_filho ",
+                        "ORDER BY fg.Id");
                 }
             }
 

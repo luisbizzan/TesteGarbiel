@@ -125,21 +125,21 @@ namespace FWLog.Data.Repository.GeneralCtx
                         break;
                     #endregion
 
-                    #region Fornecedor Quebra
+                    #region Fornecedor Grupo
                     case GarantiaConfiguracao.GarantiaTag.FornecedorGrupo:
                         {
                             RegistroIncluir.RegistroFornecedorGrupo.ToList().ForEach(delegate (GarantiaConfiguracao.FornecedorGrupo item)
                             {
-                                //if (FornecedorQuebraPodeSerCadastrado(item.Cod_Fornecedor.Trim().ToUpper()))
-                                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
-                                {
-                                    conn.Open();
-                                    if (conn.State == System.Data.ConnectionState.Open)
+                                if (ValidarInclusaoFornecedorGrupo(item))
+                                    using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
                                     {
-                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.FornecedorGrupoIncluir, item.Cod_Forn_Pai, item.Cod_Forn_Filho));
+                                        conn.Open();
+                                        if (conn.State == System.Data.ConnectionState.Open)
+                                        {
+                                            conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.FornecedorGrupoIncluir, item.Cod_Forn_Pai, item.Cod_Forn_Filho));
+                                        }
+                                        conn.Close();
                                     }
-                                    conn.Close();
-                                }
                             });
                         }
                         break;
@@ -208,6 +208,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     conn.Open();
                     if (conn.State == System.Data.ConnectionState.Open)
                     {
+                        #region Configuração
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.Configuracao))
                         {
                             _garantia.RegistroConfiguracao = conn.Query<GarantiaConfiguracao.Configuracao>(cmdSQL).ToList();
@@ -219,13 +220,17 @@ namespace FWLog.Data.Repository.GeneralCtx
                                 item.Pct_Estorno_FreteView = String.Format("{0}%", item.Pct_Estorno_Frete.ToString().Replace(",", "."));
                             });
                         }
+                        #endregion
 
+                        #region Fornecedor Quebra
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra))
                         {
                             _garantia.RegistroFornecedorQuebra = conn.Query<GarantiaConfiguracao.FornecedorQuebra>(cmdSQL).ToList();
                             _garantia.RegistroFornecedorQuebra.ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
                         }
+                        #endregion
 
+                        #region Remessa Configuração
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaConfiguracao))
                         {
                             _garantia.RegistroRemessaConfiguracao = conn.Query<GarantiaConfiguracao.RemessaConfiguracao>(cmdSQL).ToList();
@@ -238,18 +243,31 @@ namespace FWLog.Data.Repository.GeneralCtx
                                 String.Format("<h4 class=\"text-center\"><i class=\"glyphicon glyphicon-remove-circle text-danger\" data-toggle=\"tooltip\" data-original-title=\"Não\"></i></h4>");
                             });
                         }
+                        #endregion
 
+                        #region Remessa Usuário
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaUsuario))
                         {
                             _garantia.RegistroRemessaUsuario = conn.Query<GarantiaConfiguracao.RemessaUsuario>(cmdSQL).ToList();
                             _garantia.RegistroRemessaUsuario.ForEach(delegate (GarantiaConfiguracao.RemessaUsuario item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
                         }
+                        #endregion
 
+                        #region Sankhya Top
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop))
                         {
                             _garantia.RegistroSankhyaTop = conn.Query<GarantiaConfiguracao.SankhyaTop>(cmdSQL).ToList();
                             _garantia.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
                         }
+                        #endregion
+
+                        #region Fornecedor Grupo
+                        if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorGrupo))
+                        {
+                            _garantia.RegistroFornecedorGrupo = conn.Query<GarantiaConfiguracao.FornecedorGrupo>(cmdSQL).ToList();
+                            _garantia.RegistroFornecedorGrupo.ForEach(delegate (GarantiaConfiguracao.FornecedorGrupo item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
+                        }
+                        #endregion
                     }
                     conn.Close();
                 }
@@ -344,7 +362,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     #region Fornecedor Grupo
                     case GarantiaConfiguracao.GarantiaTag.FornecedorGrupo:
                         _AutoComplete.comandoSQL = String.Format(String.Concat(
-                            "SELECT cnpj Data, \"RazaoSocial\" Value ",
+                            "SELECT cnpj Data, cnpj ||' - '||\"RazaoSocial\" Value ",
                             "FROM \"Fornecedor\" ",
                             "WHERE ROWNUM <= 10 ",
                             "AND \"Ativo\" = 1 ",
@@ -399,6 +417,58 @@ namespace FWLog.Data.Repository.GeneralCtx
             catch
             {
                 return false;
+            }
+        }
+        #endregion
+
+        #region [Fornecedor Grupo] - Validar se cadastro fornecedor grupo pode ser incluído no banco dados
+        /// <summary>
+        ///  retorno verdadeiro o registro pode ser cadastrado 
+        /// </summary>
+        private bool ValidarInclusaoFornecedorGrupo(GarantiaConfiguracao.FornecedorGrupo registro)
+        {
+            try
+            {
+                var _processamento = 0;
+                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                {
+                    conn.Open();
+                    if (conn.State == System.Data.ConnectionState.Open)
+                    {
+                        #region Validar se fornecedor Filho e fornecedor Pai não estão com mesmo código
+                        if (registro.Cod_Forn_Filho == registro.Cod_Forn_Pai)
+                            throw new Exception("O fornecedor Pai e fornecedor Filho não pode ser o mesmo!");
+                        #endregion
+
+                        #region Validar se Pai já é Filho
+                        string cmdSQL = String.Format("SELECT COUNT(1) V FROM gar_forn_grupo WHERE cod_forn_filho='{0}'", registro.Cod_Forn_Pai);
+                        _processamento = conn.ExecuteScalar<Int32>(cmdSQL);
+                        if (!_processamento.Equals(0))
+                            throw new Exception("O fornecedor já consta cadastrado como Filho e não pode ser cadastrado como Pai!");
+                        #endregion
+
+                        #region Validar se Filho já é Filho de outro Pai
+                        cmdSQL = String.Format("SELECT COUNT(1) V FROM gar_forn_grupo WHERE cod_forn_filho='{0}'", registro.Cod_Forn_Filho);
+                        _processamento = conn.ExecuteScalar<Int32>(cmdSQL);
+                        if (!_processamento.Equals(0))
+                            throw new Exception("O fornecedor já consta cadastrado como Filho e não pode ser cadastrado como Filho de outro Pai!");
+                        #endregion
+
+                        #region Validar se Filho já é Pai
+                        cmdSQL = String.Format("SELECT COUNT(1) V FROM gar_forn_grupo WHERE cod_forn_Pai='{0}'", registro.Cod_Forn_Filho);
+                        _processamento = conn.ExecuteScalar<Int32>(cmdSQL);
+                        if (!_processamento.Equals(0))
+                            throw new Exception("O fornecedor já consta cadastrado como Pai e não pode ser cadastrado como Filho!");
+                        #endregion
+
+                    }
+                    conn.Close();
+                }
+                return _processamento.Equals(0) ? true : false;
+            }
+            catch (Exception erro)
+            {
+                throw new Exception(erro.Message);
             }
         }
         #endregion
