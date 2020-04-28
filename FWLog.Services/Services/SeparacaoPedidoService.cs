@@ -87,8 +87,8 @@ namespace FWLog.Services.Services
                     MultiploProduto = pedidoVendaProduto.Produto.MultiploVenda,
                     QtdePedido = pedidoVendaProduto.QtdSeparar,
                     IdPontoArmazenagem = pedidoVendaProduto.EnderecoArmazenagem.IdPontoArmazenagem
-                }).OrderBy(o => o.Corredor).ThenBy(o => o.Codigo).ToList()
-            }).OrderBy(o => new { o.CorredorInicial, o.CorredorFinal }).ToList();
+                })/*.OrderBy(o => o.Corredor).ThenBy(o => o.Codigo)*/.ToList()
+            })./*OrderBy(o => new { o.CorredorInicial }).ThenBy(o => o.CorredorFinal).*/ToList();
 
             return model;
         }
