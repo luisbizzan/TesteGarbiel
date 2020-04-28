@@ -174,6 +174,24 @@ namespace FWLog.Services.Services
             }
         }
 
+        private void ValidarPedidoVendaVolume(PedidoVendaVolume pedidoVendaVolume)
+        {
+            if (pedidoVendaVolume == null)
+            {
+                throw new BusinessException("O volume informado não foi encontrado.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.ConcluidaComSucesso)
+            {
+                throw new BusinessException("O volume informado já foi separado.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento || pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado)
+            {
+                throw new BusinessException("O volume informado teve a separação cancelada.");
+            }
+        }
+
         //TODO: Falta definir os status e adicionar IdPontoArmazenagemSeparacao na UsuarioEmpresa
         //public void ValidarPedidoVendaVolumePorUsuario(string idUsuario, long idEmpresa, List<ProdutoEstoque> produtoEstoque)
         //{
@@ -399,17 +417,12 @@ namespace FWLog.Services.Services
 
             var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
 
-            if (pedidoVendaVolume == null)
-            {
-                throw new BusinessException("O volume informado não foi encontrado.");
-            }
+            ValidarPedidoVendaVolume(pedidoVendaVolume);
 
             if (pedidoVendaVolume.PedidoVendaProdutos.Any(pedidoVendaProduto => pedidoVendaProduto.QtdSeparada.GetValueOrDefault() < pedidoVendaProduto.QtdSeparar))
             {
                 throw new BusinessException("Ainda existem itens a serem separados no pedido.");
             }
-
-            //TODO: Validar status volume
 
             var caixaSeparacao = _unitOfWork.CaixaRepository.BuscarCaixaAtivaPorEmpresa(idCaixa, idEmpresa, CaixaTipoEnum.Separacao);
 
@@ -418,20 +431,21 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Caixa de separação não encontrada.");
             }
 
+            var novoStatusSeparacao = PedidoVendaStatusEnum.ConcluidaComSucesso;
+            var dataProcessamento = DateTime.Now;
+            var finalizouPedidoVenda = false;
+
+            await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
+
+            var todosProdutosVenda = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
+
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                var novoStatusSeparacao = PedidoVendaStatusEnum.ConcluidaComSucesso;
-                var dataProcessamento = DateTime.Now;
-
                 pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
                 pedidoVendaVolume.DataHoraFimSeparacao = dataProcessamento;
                 pedidoVendaVolume.IdCaixaVolume = idCaixa;
 
                 _unitOfWork.SaveChanges();
-
-                var todosProdutosVenda = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
-
-                var finalizouPedidoVenda = false;
 
                 if (!todosProdutosVenda.Any(produtoVendaProduto => produtoVendaProduto.QtdSeparada != produtoVendaProduto.QtdSeparar))
                 {
@@ -439,8 +453,6 @@ namespace FWLog.Services.Services
                     pedidoVenda.DataHoraFimSeparacao = dataProcessamento;
 
                     _unitOfWork.SaveChanges();
-
-                    await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
 
                     //TODO: Atualizar a QtdeConferida dos produtos do pedido no Sankhya.
 
@@ -466,7 +478,7 @@ namespace FWLog.Services.Services
         {
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedidoVendaEIdEmpresa(idPedidoVenda, idEmpresa);
 
-            ValidarPedidoVenda(pedidoVenda);
+            ValidarPedidoVenda(pedidoVenda, idEmpresa);
 
             ValidarProdutoPorPedidoVenda(idPedidoVenda, idProduto);
 
@@ -474,7 +486,7 @@ namespace FWLog.Services.Services
 
             var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(pedidoVendaProduto.IdPedidoVendaVolume);
 
-            ValdarPedidoVendaVolume(pedidoVendaVolume);
+            ValidarPedidoVendaVolume(pedidoVendaVolume);
 
             var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, idEmpresa);
 
@@ -537,30 +549,6 @@ namespace FWLog.Services.Services
             return salvarSeparacaoProdutoResposta;
         }
 
-        public void ValidarPedidoVenda(PedidoVenda pedidoVenda)
-        {
-            if (pedidoVenda == null)
-            {
-                throw new BusinessException("O pedido informado não foi encontrado.");
-            }
-
-            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ConcluidaComSucesso)
-            {
-                throw new BusinessException("O pedido informado já foi separado.");
-            }
-
-            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
-            {
-                throw new BusinessException("O pedido informado ainda não está liberado para a separação.");
-            }
-
-            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento
-                || pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado)
-            {
-                throw new BusinessException("O pedido informado teve a separação cancelada.");
-            }
-        }
-
         //TODO: Será utilizado no momento que precisar validar PedidosVenda em aberto para separação por usuário
         //public void ValidarPedidoVendaPorUsuario(string idUsuario, long idEmpresa, PedidoVenda pedidoVenda)
         //{
@@ -587,14 +575,6 @@ namespace FWLog.Services.Services
             if (loteProdutoEndereco == null)
             {
                 throw new BusinessException("Não foi encontrado lote produto endereço associado ao produto.");
-            }
-        }
-
-        public void ValdarPedidoVendaVolume(PedidoVendaVolume pedidoVendaVolume)
-        {
-            if (pedidoVendaVolume == null)
-            {
-                throw new BusinessException("O Volume não foi encontrado.");
             }
         }
     }
