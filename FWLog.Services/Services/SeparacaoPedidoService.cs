@@ -186,6 +186,11 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume informado já foi separado.");
             }
 
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
+            {
+                throw new BusinessException("O volume informado ainda não está liberado para a separação.");
+            }
+
             if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento || pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado)
             {
                 throw new BusinessException("O volume informado teve a separação cancelada.");
