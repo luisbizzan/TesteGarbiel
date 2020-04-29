@@ -10,6 +10,7 @@ namespace FWLog.Data.Models
         public PedidoVenda()
         {
             PedidoVendaVolumes = new HashSet<PedidoVendaVolume>();
+            PedidoVendaProdutos = new HashSet<PedidoVendaProduto>();
         }
 
         [Key]
@@ -68,5 +69,6 @@ namespace FWLog.Data.Models
         public virtual PedidoVendaStatus PedidoVendaStatus { get; set; }
 
         public virtual ICollection<PedidoVendaVolume> PedidoVendaVolumes { get; set; }
+        public virtual ICollection<PedidoVendaProduto> PedidoVendaProdutos { get; set; }
     }
 }

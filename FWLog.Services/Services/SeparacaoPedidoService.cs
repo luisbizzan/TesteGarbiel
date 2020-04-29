@@ -3,6 +3,7 @@ using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.Coletor;
+using FWLog.Services.Model.IntegracaoSankhya;
 using FWLog.Services.Model.SeparacaoPedido;
 using log4net;
 using System;
@@ -598,5 +599,98 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Não foi encontrado lote produto endereço associado ao produto.");
             }
         }
+
+        public void ValdarPedidoVendaVolume(PedidoVendaVolume pedidoVendaVolume)
+        {
+            if (pedidoVendaVolume == null)
+            {
+                throw new BusinessException("O Volume não foi encontrado.");
+            }
+        }
+
+        private async Task AtualizarQtdConferidaIntegracao(PedidoVenda pedidoVenda)
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+            
+            var itensIntegracao = new List<PedidoItemIntegracao>();
+
+            var vendaProdutos = pedidoVenda.PedidoVendaProdutos.Where(w => w.QtdSeparada.HasValue).GroupBy(g => g.IdProduto).ToDictionary(d => d.Key, d => d.ToList());
+
+            foreach (var vendaProduto in vendaProdutos)
+            {
+                var pedidoItens = pedidoVenda.Pedido.PedidoItens.Where(w => w.IdProduto == vendaProduto.Key).OrderBy(o => o.Sequencia).ToList();
+
+                var qtdSeparada = vendaProduto.Value.Sum(s => s.QtdSeparada).Value;
+
+                if (pedidoItens.NullOrEmpty())
+                {
+                    throw new BusinessException("Não foi possível encontrar os itens da nota fiscal para atualizar o pedido no Sankhya.");
+                }
+
+                if (pedidoItens.Count() == 1)
+                {
+                    var itemIntegracao = new PedidoItemIntegracao()
+                    {
+                        QtdSeparada = qtdSeparada,
+                        Sequencia = pedidoItens.First().Sequencia,
+                        IdProduto = pedidoItens.First().IdProduto
+                    };
+
+                    itensIntegracao.Add(itemIntegracao);
+                }
+                else
+                {
+                    foreach (var item in pedidoItens)
+                    {
+                        int qtdAlocada = 0;
+                        int qtdPendente = 0;
+
+                        if (itensIntegracao.Any(s => s.IdProduto == item.IdProduto))
+                        {
+                            qtdAlocada = itensIntegracao.Where(s => s.IdProduto == item.IdProduto).Sum(s => s.QtdSeparada);
+                        }
+
+                        if (qtdSeparada > qtdAlocada)
+                        {
+                            qtdPendente = qtdSeparada - qtdAlocada;
+                        }
+
+                        var itemDevolucao = new PedidoItemIntegracao()
+                        {
+                            QtdSeparada = item.QtdPedido <= qtdPendente ? item.QtdPedido : qtdPendente,
+                            Sequencia = item.Sequencia,
+                            IdProduto = item.IdProduto
+                        };
+
+                        itensIntegracao.Add(itemDevolucao);
+
+                        if (itensIntegracao.Where(s => s.IdProduto == item.IdProduto).Sum(s => s.QtdSeparada) == qtdSeparada)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            foreach (var item in itensIntegracao)
+            {
+                try
+                {
+                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", pedidoVenda.Pedido.CodigoIntegracao.ToString() }, { "SEQUENCIA", item.Sequencia.ToString() } };
+
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("ItemNota", campoChave, "QTDCONFERIDA", item.QtdSeparada);
+                }
+                catch (Exception ex)
+                {
+                    var errorMessage = string.Format($"Erro na atualização da quantidade conferida do pedido de venda: {pedidoVenda.Pedido.CodigoIntegracao}.");
+                    _log.Error(errorMessage, ex);
+                    throw new BusinessException(errorMessage);
+                }
+            }
+        }
     }
 }
+

@@ -28,5 +28,9 @@ namespace FWLog.Data.Models
 
         [Required]
         public bool Ativo { get; set; }
+
+        [Required]
+        [StringLength(3)]
+        public string CodigoTransportadora { get; set; }
     }
 }

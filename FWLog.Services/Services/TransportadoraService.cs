@@ -59,6 +59,8 @@ namespace FWLog.Services.Services
             where.Append("AND RAZAOSOCIAL IS NOT NULL ");
             where.Append("AND TRANSPORTADORA = 'S' ");
             where.Append("AND AD_INTEGRARFWLOG = '1' ");
+            where.Append("AND AD_ABREVTRANSP IS NOT NULL ");
+            where.Append("AND AD_ABREVTRANSP <> '' ");
 
             List<TransportadoraIntegracao> transportadorasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<TransportadoraIntegracao>(where: where.ToString());
 
@@ -84,6 +86,7 @@ namespace FWLog.Services.Services
                     transportadora.CNPJ = transpInt.CNPJ;
                     transportadora.RazaoSocial = transpInt.RazaoSocial;
                     transportadora.NomeFantasia = transpInt.NomeFantasia;
+                    transportadora.CodigoTransportadora = transpInt.CodigoTransportadora;
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", transportadora.CodigoIntegracao.ToString() } };
 
