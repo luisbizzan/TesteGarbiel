@@ -128,10 +128,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(businessException.Message);
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
         }
     }
 }

@@ -221,45 +221,44 @@ namespace FWLog.Services.Services
 
             var pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * novaQuantidade;
 
-            using (var transacao = _unitOfWork.CreateTransactionScope())
+            loteProdutoEndereco.Quantidade = novaQuantidade;
+            loteProdutoEndereco.PesoTotal = pesoInstalacao;
+
+            _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
+            await _unitOfWork.SaveChangesAsync();
+
+            var textoLogLote = string.Empty;
+
+            if (loteProdutoEndereco.IdLote.HasValue)
             {
-                loteProdutoEndereco.Quantidade = novaQuantidade;
-                loteProdutoEndereco.PesoTotal = pesoInstalacao;
-
-                _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
-                await _unitOfWork.SaveChangesAsync();
-
-                if (loteProdutoEndereco.IdLote.HasValue)
+                var loteMovimentacao = new LoteMovimentacao
                 {
-                    var loteMovimentacao = new LoteMovimentacao
-                    {
-                        IdEmpresa = idEmpresa,
-                        IdLote = loteProdutoEndereco.IdLote.Value,
-                        IdProduto = loteProdutoEndereco.IdProduto,
-                        IdEnderecoArmazenagem = loteProdutoEndereco.IdEnderecoArmazenagem,
-                        IdUsuarioMovimentacao = idUsuarioAjuste,
-                        Quantidade = loteProdutoEndereco.Quantidade,
-                        IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Ajuste,
-                        DataHora = DateTime.Now
-                    };
-
-                    _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
-                    await _unitOfWork.SaveChangesAsync();
-                }
-
-                transacao.Complete();
-
-                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
-                {
-                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
-                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade,
-                    Descricao = $"Ajustou a quantidade de {quantidadeAnterior} para {loteProdutoEndereco.Quantidade} unidade(s) do produto {loteProdutoEndereco.Produto.Referencia} do lote {loteProdutoEndereco.Lote.IdLote} do endereço {loteProdutoEndereco.EnderecoArmazenagem.Codigo}",
                     IdEmpresa = idEmpresa,
-                    IdUsuario = idUsuarioAjuste
+                    IdLote = loteProdutoEndereco.IdLote.Value,
+                    IdProduto = loteProdutoEndereco.IdProduto,
+                    IdEnderecoArmazenagem = loteProdutoEndereco.IdEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = idUsuarioAjuste,
+                    Quantidade = loteProdutoEndereco.Quantidade,
+                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Ajuste,
+                    DataHora = DateTime.Now
                 };
 
-                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                await _unitOfWork.SaveChangesAsync();
+
+                textoLogLote = $" do lote {loteProdutoEndereco.IdLote}";
             }
+
+            var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+            {
+                IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
+                IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade,
+                Descricao = $"Ajustou a quantidade de {quantidadeAnterior} para {loteProdutoEndereco.Quantidade} unidade(s) do produto {loteProdutoEndereco.Produto.Referencia} do{textoLogLote} endereço {loteProdutoEndereco.EnderecoArmazenagem.Codigo}",
+                IdEmpresa = idEmpresa,
+                IdUsuario = idUsuarioAjuste
+            };
+
+            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
         }
 
         public async Task CancelarPedidoSeparacao(long idPedidoVenda, string usuarioPermissaoCancelamento, string idUsuarioOperacao, long idEmpresa)
@@ -491,9 +490,7 @@ namespace FWLog.Services.Services
 
             var pedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdProduto(idProduto);
 
-            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(pedidoVendaProduto.IdPedidoVendaVolume);
-
-            ValidarPedidoVendaVolume(pedidoVendaVolume);
+            ValidarPedidoVendaVolume(pedidoVendaProduto.PedidoVendaVolume);
 
             var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, idEmpresa);
 
@@ -510,48 +507,62 @@ namespace FWLog.Services.Services
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                var qtdSeparada = pedidoVendaProduto.QtdSeparada.GetValueOrDefault() + (int)pedidoVendaProduto.Produto.MultiploVenda;
+                var quantidadeIncrementada = (int)pedidoVendaProduto.Produto.MultiploVenda;
+
+                var qtdSeparada = pedidoVendaProduto.QtdSeparada.GetValueOrDefault() + quantidadeIncrementada;
 
                 if (qtdSeparada > pedidoVendaProduto.QtdSeparar)
                 {
                     throw new BusinessException("A quantidade separada é maior que o pedido.");
                 }
 
-                //TODO: Validar com Anderson a necessidade de atualizar a PedidoVenda novamente, sabendo que o mesmo ocorre no início da separação
-                if (!pedidoVendaVolume.PedidoVendaProdutos.Any())
+                var dataProcessamento = DateTime.Now;
+
+                if (pedidoVendaProduto.PedidoVendaVolume.PedidoVendaProdutos.Count(pvv => pvv.QtdSeparada.GetValueOrDefault() == 0) == pedidoVendaProduto.PedidoVendaVolume.PedidoVendaProdutos.Count())
                 {
-                    var dataHoraInicial = DateTime.Now;
-                    pedidoVendaVolume.DataHoraInicioSeparacao = dataHoraInicial;
-                    pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
-                    pedidoVenda.DataHoraInicioSeparacao = dataHoraInicial;
-                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
-                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
-                    _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
-                    _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
+                    pedidoVendaProduto.PedidoVendaVolume.DataHoraInicioSeparacao = dataProcessamento;
+                    pedidoVendaProduto.PedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+
+                    if (pedidoVenda.DataHoraInicioSeparacao == null)
+                    {
+                        pedidoVenda.DataHoraInicioSeparacao = dataProcessamento;
+                        pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+                        pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+
+                        _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+                    }
+
+                    await _unitOfWork.SaveChangesAsync();
                 }
 
                 if (pedidoVendaProduto.QtdSeparada.GetValueOrDefault() == 0)
                 {
-                    pedidoVendaProduto.DataHoraInicioSeparacao = DateTime.Now;
+                    pedidoVendaProduto.DataHoraInicioSeparacao = dataProcessamento;
                     pedidoVendaProduto.IdUsuarioSeparacao = idUsuario;
                     pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
                 }
-                else if (pedidoVendaProduto.QtdSeparada == pedidoVendaProduto.QtdSeparar)
+                else if (qtdSeparada == pedidoVendaProduto.QtdSeparar)
                 {
-                    pedidoVendaProduto.DataHoraFimSeparacao = DateTime.Now;
+                    pedidoVendaProduto.DataHoraFimSeparacao = dataProcessamento;
                     pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ConcluidaComSucesso;
+
                     salvarSeparacaoProdutoResposta.ProdutoSeparado = true;
                 }
 
-                salvarSeparacaoProdutoResposta.VolumeSeparado = !pedidoVendaVolume.PedidoVendaProdutos.Any(pvv => pvv.QtdSeparada != pvv.QtdSeparar);
+                pedidoVendaProduto.QtdSeparada = salvarSeparacaoProdutoResposta.QtdSeparada = qtdSeparada;
 
-                pedidoVendaProduto.QtdSeparada = qtdSeparada;
+                if (!pedidoVendaProduto.PedidoVendaVolume.PedidoVendaProdutos.Any(pvv => pvv.QtdSeparada != pvv.QtdSeparar))
+                {
+                    salvarSeparacaoProdutoResposta.VolumeSeparado = true;
+
+                    pedidoVendaProduto.PedidoVendaVolume.DataHoraFimSeparacao = dataProcessamento;
+                    pedidoVendaProduto.PedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.ConcluidaComSucesso;
+                }
 
                 _unitOfWork.PedidoVendaProdutoRepository.Update(pedidoVendaProduto);
-
                 await _unitOfWork.SaveChangesAsync();
 
-                await AjustarQuantidadeVolume(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, pedidoVendaProduto.QtdSeparada.Value, idEmpresa, idUsuario);
+                await AjustarQuantidadeVolume(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, quantidadeIncrementada * -1, idEmpresa, idUsuario);
 
                 transacao.Complete();
             }
