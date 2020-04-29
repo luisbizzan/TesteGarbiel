@@ -21,7 +21,6 @@
     
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        debugger
         return [
             {
                 action: 'details',

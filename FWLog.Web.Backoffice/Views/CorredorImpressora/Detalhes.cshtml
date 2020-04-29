@@ -1,4 +1,5 @@
 ﻿@model FWLog.Web.Backoffice.Models.CorredorImpressoraCtx.CorredorImpressoraDetalhesViewModel
+@using FWLog.AspNet.Identity
 
 @{
     ViewBag.Title = "Visualização de Corredor x Impressora";
@@ -37,7 +38,10 @@
             <div class="ln_solid"></div>
             <div class="row col-xs-12 form-buttons">
                 <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
-                <a href="@Url.Action("Editar", new { id = Model.IdGrupoCorredorArmazenagem })" class="btn btn-default">Editar</a>
+                @if (User.HasPermission(Permissions.Separacao.EditarCorredorImpressora))
+                {
+                    <a href="@Url.Action("Editar", new { id = Model.IdGrupoCorredorArmazenagem })" class="btn btn-default">Editar</a>
+                }
             </div>
         </div>
     </div>
