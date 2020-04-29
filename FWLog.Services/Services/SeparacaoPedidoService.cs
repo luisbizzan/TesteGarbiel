@@ -481,21 +481,26 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, string idUsuario, long idEmpresa)
+        public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, long idProdutoSeparacao, string idUsuario, long idEmpresa)
         {
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedidoVendaEIdEmpresa(idPedidoVenda, idEmpresa);
 
             ValidarPedidoVenda(pedidoVenda, idEmpresa);
 
-            ValidarProdutoPorPedidoVenda(idPedidoVenda, idProduto);
+            ValidarProdutoPorPedidoVenda(idPedidoVenda, idProdutoSeparacao);
 
-            var pedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdProduto(idProduto);
+            var pedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdProduto(idProdutoSeparacao);
 
             ValidarPedidoVendaVolume(pedidoVendaProduto.PedidoVendaVolume);
 
             var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, idEmpresa);
 
             ValidarLoteProdutoEndereco(loteProdutoEndereco);
+
+            if (idProduto != idProdutoSeparacao)
+            {
+                throw new BusinessException("O produto informado é inválido para separação.");
+            }
 
             var salvarSeparacaoProdutoResposta = new SalvarSeparacaoProdutoResposta
             {
@@ -614,7 +619,7 @@ namespace FWLog.Services.Services
             {
                 return;
             }
-            
+
             var itensIntegracao = new List<PedidoItemIntegracao>();
 
             var vendaProdutos = pedidoVenda.PedidoVendaProdutos.Where(w => w.QtdSeparada.HasValue).GroupBy(g => g.IdProduto).ToDictionary(d => d.Key, d => d.ToList());
@@ -674,7 +679,7 @@ namespace FWLog.Services.Services
                     }
                 }
             }
-            
+
             foreach (var item in itensIntegracao)
             {
                 try
@@ -693,4 +698,3 @@ namespace FWLog.Services.Services
         }
     }
 }
-

@@ -1,7 +1,6 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.SeparacaoPedido;
-using System;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -120,7 +119,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                var response = await _separacaoPedidoService.SalvarSeparacaoProduto(requisicao.IdPedidoVenda, requisicao.IdProduto, IdUsuario, IdEmpresa);
+                var response = await _separacaoPedidoService.SalvarSeparacaoProduto(requisicao.IdPedidoVenda, requisicao.IdProduto, requisicao.IdProdutoSeparacao, IdUsuario, IdEmpresa);
 
                 return ApiOk(response);
             }
