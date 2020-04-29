@@ -525,7 +525,7 @@ namespace FWLog.Services.Services
                     _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
                 }
 
-                if (pedidoVendaProduto.QtdSeparada == 0)
+                if (pedidoVendaProduto.QtdSeparada.GetValueOrDefault() == 0)
                 {
                     pedidoVendaProduto.DataHoraInicioSeparacao = DateTime.Now;
                     pedidoVendaProduto.IdUsuarioSeparacao = idUsuario;
@@ -535,9 +535,10 @@ namespace FWLog.Services.Services
                 {
                     pedidoVendaProduto.DataHoraFimSeparacao = DateTime.Now;
                     pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ConcluidaComSucesso;
-                    salvarSeparacaoProdutoResposta.Volume = pedidoVendaVolume;
-                    salvarSeparacaoProdutoResposta.ProdutoSeparado = pedidoVendaProduto.Produto;
+                    salvarSeparacaoProdutoResposta.ProdutoSeparado = true;
                 }
+
+                salvarSeparacaoProdutoResposta.VolumeSeparado = !pedidoVendaVolume.PedidoVendaProdutos.Any(pvv => pvv.QtdSeparada != pvv.QtdSeparar);
 
                 pedidoVendaProduto.QtdSeparada = (int)qtdSeparada;
 
