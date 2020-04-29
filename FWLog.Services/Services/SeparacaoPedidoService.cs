@@ -459,9 +459,9 @@ namespace FWLog.Services.Services
 
                     _unitOfWork.SaveChanges();
 
-                    await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
+                    await AtualizarQtdConferidaIntegracao(pedidoVenda);
 
-                    //TODO: Atualizar a QtdeConferida dos produtos do pedido no Sankhya.
+                    await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
 
                     finalizouPedidoVenda = true;
                 }
