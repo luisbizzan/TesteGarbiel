@@ -1,6 +1,4 @@
-﻿using FWLog.Data.Models;
-
-namespace FWLog.Services.Model.SeparacaoPedido
+﻿namespace FWLog.Services.Model.SeparacaoPedido
 {
     public class SalvarSeparacaoProdutoResposta
     {
@@ -9,8 +7,8 @@ namespace FWLog.Services.Model.SeparacaoPedido
         public string Referencia { get; set; }
         public int QtdSeparar { get; set; }
         public int QtdSeparada { get; set; }
-        public decimal? Multiplo { get; set; }
-        public FWLog.Data.Models.Produto ProdutoSeparado { get; set; }
-        public PedidoVendaVolume Volume { get; set; }
+        public decimal Multiplo { get; set; }
+        public bool ProdutoSeparado { get; set; }
+        public bool VolumeSeparado { get; set; }
     }
 }
