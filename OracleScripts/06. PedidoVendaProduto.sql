@@ -54,3 +54,4 @@ ALTER TABLE DART."PedidoVendaProduto" ADD CONSTRAINT "PedidoVendaProduto_FK3" FO
 ALTER TABLE DART."PedidoVendaProduto" ADD CONSTRAINT "PedidoVendaProduto_FK4" FOREIGN KEY ("IdPedidoVendaStatus") REFERENCES DART."PedidoVendaStatus"("IdPedidoVendaStatus");
 ALTER TABLE DART."PedidoVendaProduto" ADD CONSTRAINT "PedidoVendaProduto_FK5" FOREIGN KEY ("IdLote") REFERENCES DART."Lote"("IdLote");
 ALTER TABLE DART."PedidoVendaProduto" ADD CONSTRAINT "PedidoVendaProduto_FK6" FOREIGN KEY ("IdUsuarioSeparacao") REFERENCES DART."AspNetUsers"("Id");
+ALTER TABLE DART."PedidoVendaProduto" ADD CONSTRAINT "PedidoVendaProduto_FK7" FOREIGN KEY ("IdEnderecoArmazenagem") REFERENCES DART."EnderecoArmazenagem"("IdEnderecoArmazenagem");

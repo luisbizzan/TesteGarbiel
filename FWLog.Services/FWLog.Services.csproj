@@ -145,6 +145,7 @@
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeSeparacaoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeRecebimento.cs" />
     <Compile Include="Model\Etiquetas\ValidarEnderecoPickingRequest.cs" />
+    <Compile Include="Model\IntegracaoSankhya\PedidoItemIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ClienteIntegracao.cs" />
     <Compile Include="Model\IntegracaoLog\IntegracaoLog.cs" />
     <Compile Include="Model\IntegracaoSankhya\ConfirmarNotaFiscalResposta.cs" />
