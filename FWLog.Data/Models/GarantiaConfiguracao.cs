@@ -21,6 +21,7 @@ namespace FWLog.Data.Models
         public List<RemessaUsuario> RegistroRemessaUsuario { get; set; }
         public List<RemessaConfiguracao> RegistroRemessaConfiguracao { get; set; }
         public List<FornecedorGrupo> RegistroFornecedorGrupo { get; set; }
+        public List<AutoComplete> ListaAutoComplete { get; set; }
         #endregion
 
         public string BotaoEvento { get; set; }

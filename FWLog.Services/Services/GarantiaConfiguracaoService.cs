@@ -41,5 +41,12 @@ namespace FWLog.Services.Services
             return _uow.GarantiaConfiguracaoRepository.AutoComplete(_AutoComplete);
         }
         #endregion
+
+        #region [Sankhya Top] Listar Ids Negociação
+        public GarantiaConfiguracao ListarIdNegociacao()
+        {
+            return _uow.GarantiaConfiguracaoRepository.ListarIdNegociacao();
+        }
+        #endregion
     }
 }

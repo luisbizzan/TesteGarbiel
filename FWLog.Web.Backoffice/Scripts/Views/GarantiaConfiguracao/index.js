@@ -44,6 +44,7 @@ function CancelarTudo() {
 
 /* [GENÉRICO] evento clique do menu de configuração */
 $(document).ready(function (e) {
+    ListarNegociacao();
     RegistroListar(TagPadrao);
     $("#ulMenuConfig").click(function (c) {
         TagPadrao = c.target.id.toString();
@@ -202,6 +203,21 @@ function FornecedorQuebraGravar() {
 /* [SANKHYA TOP] variaveis */
 var _SankhyaTopLista = [];
 var liSankhyaTop = '<li id="{top}"><p><a onclick="ShankhyaTopRemoverLista(*{top}|{descricao}*);" class="btn btn-link"><b><i class="fa fa-trash-o text-danger"></i></b></a><span class="label label-primary">  [{top}]  {descricao}</span></p></li>';
+
+/* [SANKHYA TOP] drop down list Id Negociação  */
+function ListarNegociacao() {
+    $.get("/GarantiaConfiguracao/ListarIdNegociacao", {}, function (s, status) {
+        if (s.Success) {
+            $("#ddlNegociacao").empty();
+            $.each(s.Lista, function (key, value) {
+                $("#ddlNegociacao").append('<option value=' + key + '>' + value + '</option>');
+            });
+        }
+        else {
+            PNotify.error({ text: s.Message });
+        }
+    });
+}
 
 /* [SANKHYA TOP] remover lista  */
 function ShankhyaTopRemoverLista(sankhyaTopItem) {
@@ -527,7 +543,7 @@ function FornecedorGrupoGravar() {
     registro.Cod_Forn_Filho = $("#spanIdFornecedorFilho").html() == "" ? 0 : $("#spanIdFornecedorFilho").html();
 
     RegistroInclusao.Inclusao.push(JSON.stringify(registro));
-    RegistroIncluir();    
+    RegistroIncluir();
 }
 
 /* [FORNECEDOR GRUPO] autocomplete PAI */

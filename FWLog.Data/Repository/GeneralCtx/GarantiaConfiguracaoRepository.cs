@@ -398,6 +398,38 @@ namespace FWLog.Data.Repository.GeneralCtx
         }
         #endregion
 
+        #region [Sankhya Tops] Select - Id Negociação
+        public GarantiaConfiguracao ListarIdNegociacao()
+        {
+            var _lista = new GarantiaConfiguracao();
+            try
+            {
+                var cmdSQL = String.Format(
+                    @"SELECT codtipvenda Data, descrtipvenda Value 
+                        FROM tgftpv@skw 
+                        WHERE ativo = 'S'
+                        GROUP BY codtipvenda, descrtipvenda
+                        ORDER BY descrtipvenda");
+
+                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                {
+                    conn.Open();
+                    if (conn.State == System.Data.ConnectionState.Open)
+                    {
+                        _lista.ListaAutoComplete = new List<GarantiaConfiguracao.AutoComplete>(conn.Query<GarantiaConfiguracao.AutoComplete>(cmdSQL).ToList());
+                    }
+                    conn.Close();
+                }
+
+                return _lista;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
+
         #region [Fornecedor Quebra] - Validar se código de fornecedor já esta cadastrado
         private bool FornecedorQuebraPodeSerCadastrado(string fornecedor)
         {

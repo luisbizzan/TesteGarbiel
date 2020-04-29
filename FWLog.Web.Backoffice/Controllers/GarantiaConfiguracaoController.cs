@@ -308,5 +308,32 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
         #endregion
+
+        #region [Sankhya Tops] Listar Ids Negociação
+        [HttpGet]
+        public JsonResult ListarIdNegociacao()
+        {
+            try
+            {
+                #region [Processamento] Formatar Valores para View 
+                var garantiaConfiguracao = _garantiaConfigService.ListarIdNegociacao();
+                #endregion
+
+                return Json(new
+                {
+                    Success = true,
+                    Lista = garantiaConfiguracao.ListaAutoComplete
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    Success = false,
+                    Message = ex.Message
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        #endregion
     }
 }
