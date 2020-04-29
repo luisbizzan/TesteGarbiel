@@ -505,9 +505,9 @@ namespace FWLog.Services.Services
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                var qtdSeparada = pedidoVendaProduto.QtdSeparada + pedidoVendaProduto.Produto.MultiploVenda;
+                var qtdSeparada = pedidoVendaProduto.QtdSeparada.GetValueOrDefault() + (int)pedidoVendaProduto.Produto.MultiploVenda;
 
-                if ((int)qtdSeparada > pedidoVendaProduto.QtdSeparar)
+                if (qtdSeparada > pedidoVendaProduto.QtdSeparar)
                 {
                     throw new BusinessException("A quantidade separada é maior que o pedido.");
                 }
@@ -540,7 +540,7 @@ namespace FWLog.Services.Services
 
                 salvarSeparacaoProdutoResposta.VolumeSeparado = !pedidoVendaVolume.PedidoVendaProdutos.Any(pvv => pvv.QtdSeparada != pvv.QtdSeparar);
 
-                pedidoVendaProduto.QtdSeparada = (int)qtdSeparada;
+                pedidoVendaProduto.QtdSeparada = qtdSeparada;
 
                 _unitOfWork.PedidoVendaProdutoRepository.Update(pedidoVendaProduto);
 
