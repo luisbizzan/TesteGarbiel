@@ -658,7 +658,7 @@ namespace FWLog.Services.Services
             stringEtiqueta.Append("^LL860");
             stringEtiqueta.Append("^FO40,40^GB696,860,8^FS");
 
-            stringEtiqueta.Append($"^FO196,50^FB800,4,0,L,0^A0B,38,38^FD{clienteNome}&{clienteEndereco}, {clienteEnderecoNumero}&{clienteCEP}-{clienteCidade}-{clienteEstado}&{clienteTelefone}^FS");
+            stringEtiqueta.Append($@"^FO196,50^FB800,4,0,L,0^A0B,38,38^FD{clienteNome}\&{clienteEndereco}, {clienteEnderecoNumero}\&{clienteCEP}-{clienteCidade}-{clienteEstado}\&Tel.:{clienteTelefone}^FS");
 
             stringEtiqueta.Append("^FO354,80^ADB,4,3^FDPEDIDO REPRES.         CLIENTE     PEDIDO           CENTENA  ^FS");
             stringEtiqueta.Append($"^FO377,650^ADB,52,28^FD{representanteCodigo}^FS");
@@ -669,7 +669,7 @@ namespace FWLog.Services.Services
 
             stringEtiqueta.Append($"^FO440,718^A0B,120,100^FR^FD{transportadoraSigla}^FS");
 
-            stringEtiqueta.Append($"^FO440,50^FB610,4,0,L,0^A0B,40,30^FD{transportadoraCodigo}&{transprotadoraNome}^FS");
+            stringEtiqueta.Append($@"^FO440,50^FB610,4,0,L,0^A0B,40,30^FD{transportadoraCodigo}\&{transprotadoraNome}^FS");
 
             var codigoBarras = $"{pedidoCodigo}{transportadoraCodigo}{volume}";
 
@@ -688,7 +688,7 @@ namespace FWLog.Services.Services
             stringEtiqueta.Append($"^FO670,260^A0B,55,45^FR^FD{corredoresIntervalo}^FS");
 
             stringEtiqueta.Append("^FO550,180^A0B,20,20^FD+VOLUME+^FS");
-            stringEtiqueta.Append($"^FO600,50^A0B,100,130^FD+{volume}+^FS");
+            stringEtiqueta.Append($"^FO600,50^A0B,100,130^FD{volume}^FS");
             stringEtiqueta.Append("^FO545,250^GB190,0,2^FS");
 
             //Logo
