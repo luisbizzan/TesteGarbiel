@@ -6,41 +6,28 @@
     });
 
     $("#divergencia-tab").click(function () {
-        if (!$(this).parent().hasClass("disabled")) {
-            divergencia();           
-        }
+        divergencia();
+    });
+
+    $("#btFinalizarConferencia").click(function () {
+        finalizarConferencia();
     });
 })();
 
-$("body").keydown(function (e) {
-    var keyCode = e.keyCode || e.which;
-    //console.log(keyCode);
-    if ($("#tabEscolhida").val() == "1") {
-        if (keyCode == 115) {
-            e.preventDefault();
-            if ($("body .jconfirm").length == 0) {
-                alterarQuantidade();
-            }
-        } else if (keyCode == 114) {
-            e.preventDefault();
-            itensPendentes();
-        }
-    }
-});
-
 function conferir() {
-    $("#tabEscolhida").val("1");
-    var id = $("#Solicitacao_Id").val();
     let div = $("#tabConferir");
 
-    div.load(CONTROLLER_PATH + "ConferenciaForm/" + id, function () {
-
-        $("#btFinalizarConferencia").click(function () {
-            finalizarConferencia();
-        });
+    div.load(CONTROLLER_PATH + "ConferenciaForm", {
+        Id_Conferencia: $("#Conferencia_Id").val(),
+    }, function () {
+        $("#Form_Quant").val("1");
 
         $("#btItensPendentes").click(function () {
             itensPendentes();
+        });
+
+        $("#btItensConferidos").click(function () {
+            itensConferidos();
         });
 
         $("#btAlterarQuantidade").click(function () {
@@ -50,67 +37,80 @@ function conferir() {
         $('#Form_Refx').keypress(function (e) {
             if (e.which == 13) {
                 e.preventDefault();
-                $("#Form_Quantidade").val("1");
+
+                $.ajax({
+                    url: HOST_URL + CONTROLLER_PATH + "AtualizarItemConferencia",
+                    method: "POST",
+                    data: {
+                        Id_Conf: $("#Conferencia_Id").val(),
+                        Refx: $("#Form_Refx").val(),
+                        Quant_Conferida: $("#Form_Quant").val(),
+                    },
+                    success: function (result) {
+                        if (result.Success) {
+                            $("#Form_Quant").val("1");
+                            $("#Form_Refx").val("");
+                            PNotify.success({ text: result.Message });
+                        } else {
+                            PNotify.error({ text: result.Message });
+                        }
+                    },
+                    error: function (request, status, error) {
+                        PNotify.warning({ text: result.Message });
+                    }
+                });
             }
         });
     });
 }
 
 function divergencia() {
-    $("#tabEscolhida").val("2");
-    var id = $("#Solicitacao_Id").val();
     let div = $("#tabDivergencia");
 
-    div.load(CONTROLLER_PATH + "ConferenciaDivergencia/" + id, function () {
-        $("#btFinalizarDivergencia").click(function () {
-            //ajax para verificar se esta certo
-
-            //se tiver certo mostra msg de laudo
-            $.confirm({
-                type: 'red',
-                theme: 'material',
-                title: 'Finalização da Conferência',
-                content: 'Será finalizado a conferência e após este procedimento será abastecido o(s) estoque(s) e gerado(s) devido(s) documentos.',
-                typeAnimated: true,
-                autoClose: 'cancelar|10000',
-                buttons: {
-                    laudo: {
-                        text: 'Lançar Itens de Laudo',
-                        btnClass: 'btn-blue',
-                        action: function () {
-                            itensLaudo();
-                        }
-                    },
-                    finalizar: {
-                        text: 'Finalizar',
-                        btnClass: 'btn-red',
-                        action: function () {
-                        }
-                    },
-                    cancelar: {
-                        text: 'Cancelar',
-                        action: function () {
-                        }
-                    }
-                }
-            });
+    div.load(CONTROLLER_PATH + "ConferenciaDivergencia", {
+        Id_Conferencia: $("#Conferencia_Id").val()
+    }, function () {
+        $('#tbDivergenciaItens').DataTable({
+            destroy: true,
+            serverSide: false,
+            stateSave: false,
+            dom: "Bfrtip",
+            buttons: [],
+            searching: true,
+            bInfo: true
         });
     });
 }
 
 function finalizarConferencia() {
-    $("#divergencia-tab").parent().removeClass("disabled");
-    $("#divergencia-tab").attr("data-toggle", "tab");
-
-    //ajax para verificar se esta certo e retornar a quantida de divergencias
-    $.alert({
+    $.confirm({
         type: 'red',
-        typeAnimated: true,
         theme: 'material',
-        title: 'Atenção!',
-        content: 'Foram encontradas <strong>50</strong> divergência(s), verifique na etapa 2!',
+        title: 'Finalização da Conferência',
+        content: 'Será finalizado a conferência e após este procedimento será abastecido o(s) estoque(s) e gerado(s) devido(s) documentos.',
+        typeAnimated: true,
+        autoClose: 'cancelar|10000',
+        buttons: {
+            laudo: {
+                text: 'Lançar Itens de Laudo',
+                btnClass: 'btn-blue',
+                action: function () {
+                    itensLaudo();
+                }
+            },
+            finalizar: {
+                text: 'Finalizar',
+                btnClass: 'btn-red',
+                action: function () {
+                }
+            },
+            cancelar: {
+                text: 'Cancelar',
+                action: function () {
+                }
+            }
+        }
     });
-    $("#divergencia-tab").click();
 }
 
 function itensLaudo() {
@@ -120,6 +120,45 @@ function itensLaudo() {
 
     modal.load(CONTROLLER_PATH + "ConferenciaLaudo/" + id, function () {
         $("#modalLaudo").modal("show");
+
+        var botoes = ['selectAll', 'selectNone',
+            {
+                text: '<i class="fa fa-qrcode"></i> Emitir Etiquetas',
+                className: 'btn-primary ',
+                action: function (e, dt, node, config) {
+                    var ids = $.map(this.rows('.selected').data(), function (item) {
+                        return item[1].split(" - ")[0];
+                    });
+                    console.log(ids)
+
+                    if (ids.length == 0) {
+                        PNotify.error({ text: "Selecione um item." });
+                    } else {
+                        //criarAcao(ids.join());
+                    }
+                }
+            },
+        ];
+
+        $('#tbLaudoItens').DataTable({
+            destroy: true,
+            serverSide: false,
+            stateSave: false,
+            columnDefs: [
+                {
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets: [0]
+                },
+            ],
+            select: {
+                style: 'os',
+                selector: 'td:first-child'
+            },
+            dom: "Bfrtip",
+            bInfo: true,
+            buttons: botoes,
+        });
     });
 }
 
@@ -144,6 +183,17 @@ function itensPendentes() {
     });
 }
 
+function itensConferidos() {
+    var id = 0;
+    $("#modalItensPendentes").modal("hide");
+    let modal = $("#modalItensPendentes .modal-body");
+    $("#modalItensPendentes .modal-title").html("Itens Conferidos");
+
+    modal.load(CONTROLLER_PATH + "ConferenciaItensConferidos/" + id, function () {
+        $("#modalItensPendentes").modal("show");
+    });
+}
+
 function alterarQuantidade() {
     $.confirm({
         title: 'Alterar Quantidade',
@@ -164,7 +214,7 @@ function alterarQuantidade() {
                         $.alert('Digite uma quantidade valida.');
                         return false;
                     }
-                    $("#Form_Quantidade").val(qtd);
+                    $("#Form_Quant").val(qtd);
                 }
             },
             cancelar: {

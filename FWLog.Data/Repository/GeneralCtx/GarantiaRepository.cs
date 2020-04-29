@@ -173,5 +173,139 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return retorno;
         }
+
+        public long PegaIdUltimaConferenciaAtiva(string Origem, long Id)
+        {
+            long retorno = 0;
+            string sQuery = "";
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    if (Origem == "solicitacao")
+                        sQuery = @"SELECT id FROM gar_conferencia WHERE Ativo = 1 AND Id_Solicitacao = :Id ORDER BY id DESC FETCH FIRST 1 ROWS ONLY";
+                    else
+                        sQuery = @"SELECT id FROM gar_conferencia WHERE Ativo = 1 AND Id_Remessa = :Id ORDER BY id DESC FETCH FIRST 1 ROWS ONLY";
+
+                    retorno = conn.Query<long>(sQuery, new { Id }).SingleOrDefault();
+                }
+                conn.Close();
+            }
+            return retorno;
+        }
+
+        public GarConferencia SelecionaConferencia(long Id_Conferencia)
+        {
+            GarConferencia retorno = new GarConferencia();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        GC.Id,
+                        GT.Descricao AS Tipo_Conf,
+                        GC.Id_Tipo_Conf,
+                        GC.Id_Remessa,
+                        GC.Id_Solicitacao
+                    FROM
+                        gar_conferencia GC
+                        INNER JOIN geral_tipo GT ON GT.id = GC.Id_Tipo_Conf AND GT.tabela = 'GAR_CONFERENCIA' AND GT.coluna = 'ID_TIPO_CONF'
+                    WHERE
+                        GC.Id = :Id_Conferencia
+                    ";
+                    retorno = conn.Query<GarConferencia>(sQuery, new { Id_Conferencia }).SingleOrDefault();
+                }
+                conn.Close();
+            }
+            return retorno;
+        }
+
+        public void AtualizarItemConferencia(GarConferenciaItem item)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    UPDATE gar_conferencia_item SET Quant_Conferida = Quant_Conferida + :Quant_Conferida, DT_CONF = SYSDATE
+                    WHERE Id_Conf = :Id_Conf AND id_item IN(SELECT id FROM gar_solicitacao_item WHERE Refx = :Refx)
+                    ";
+                    conn.Query<GarConferenciaItem>(sQuery, new
+                    {
+                        item.Quant_Conferida,
+                        item.Id_Conf,
+                        item.Refx
+                    });
+                }
+                conn.Close();
+            }
+        }
+
+        public void InserirHistoricoConferencia(GarConferenciaHist item)
+        {
+            //TODO VERIFICAR SE ITEM EXISTE NA TABELA DE ESTOQUE
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    INSERT INTO gar_conferencia_hist
+	                    ( Id_Conf, Refx, Volume, Id_Usr, Quant_Conferida, Dt_Conf )
+                    VALUES
+	                    ( :Id_Conf, :Refx, :Volume, :Id_Usr, :Quant_Conferida, SYSDATE )
+                    ";
+                    conn.Query<GarConferenciaHist>(sQuery, new
+                    {
+                        item.Id_Conf,
+                        item.Refx,
+                        item.Volume,
+                        item.Id_Usr,
+                        item.Quant_Conferida
+                    });
+                }
+                conn.Close();
+            }
+        }
+
+        public List<GarConferenciaItem> ListarConferenciaItem(long Id_Conferencia)
+        {
+            List<GarConferenciaItem> retorno = new List<GarConferenciaItem>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == System.Data.ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        GCI.Id,
+                        GCI.Id_Conf,
+                        GCI.Id_Item_Nf,
+                        GSI.Refx,
+                        GSI.Cod_Fornecedor,
+                        GSI.Quant,
+                        GCI.Quant_Conferida,
+                        GSI.Valor,
+                        ROUND(GSI.Quant * GSI.Valor,2) AS Valor_Total
+                    FROM
+                        gar_conferencia_item GCI
+                        INNER JOIN gar_solicitacao_item GSI ON GSI.id = GCI.id_item
+                    WHERE
+                        GCI.Id_Conf = :Id_Conferencia
+                    ";
+                    retorno = conn.Query<GarConferenciaItem>(sQuery, new { Id_Conferencia }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
     }
 }

@@ -97,10 +97,12 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult ConferirSolicitacao(long Id)
         {
-            var itens = _uow.GarantiaRepository.ListarSolicitacaoItem(Id);
+            //Origem - Remessa | Solicitação
+            var idConferencia = _uow.GarantiaRepository.PegaIdUltimaConferenciaAtiva("solicitacao", Id);
 
             var model = new GarantiaConferenciaVM
             {
+                Conferencia = Mapper.Map<GarantiaConferencia>(_uow.GarantiaRepository.SelecionaConferencia(idConferencia)),
                 Solicitacao = Mapper.Map<GarantiaSolicitacaoListVM>(_uow.GarantiaRepository.SelecionaSolicitacao(Id))
             };
 
@@ -154,13 +156,61 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-        public ActionResult ConferenciaForm(long Id)
+        public ActionResult ConferenciaForm(long Id_Conferencia)
         {
             var model = new GarantiaConferenciaFormVM
             {
+                Form = new GarantiaConferenciaItem
+                {
+                    Id = Id_Conferencia
+                }
             };
 
             return PartialView("_ConferenciaForm", model);
+        }
+
+        [HttpPost]
+        public ActionResult AtualizarItemConferencia(GarantiaConferenciaItem item)
+        {
+            if (string.IsNullOrEmpty(item.Refx))
+                ModelState.AddModelError("Refx", "O campo Código é obrigatório.");
+
+            if (!ModelState.IsValid)
+            {
+                var erros = ModelState.Values.Where(x => x.Errors.Count > 0)
+                    .Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />"));
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = erros
+                });
+            }
+            else
+            {
+                //ATUALIZA A QUANTIDADE CONFERIDA
+                _uow.GarantiaRepository.AtualizarItemConferencia(new GarConferenciaItem
+                {
+                    Quant_Conferida = item.Quant_Conferida,
+                    Refx = item.Refx,
+                    Id_Conf = item.Id_Conf
+                });
+
+                //GRAVA O HISTORICO
+                _uow.GarantiaRepository.InserirHistoricoConferencia(new GarConferenciaHist
+                {
+                    Quant_Conferida = item.Quant_Conferida,
+                    Refx = item.Refx,
+                    Volume = "",
+                    Id_Usr = IdUsuario,
+                    Id_Conf = item.Id_Conf
+                });
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                });
+            }
         }
 
         public ActionResult ConferenciaLaudo(long Id)
@@ -189,21 +239,40 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult ConferenciaItensPendentes(long Id)
         {
-            var model = new List<GarantiaConferencia>();
-            model.Add(new GarantiaConferencia
+            var model = new List<GarantiaConferenciaItem>();
+            model.Add(new GarantiaConferenciaItem
             {
                 Refx = "teste",
                 Descricao = "aaaaa",
-                Quantidade = 10
+                Quant = 10
             });
-            model.Add(new GarantiaConferencia
+            model.Add(new GarantiaConferenciaItem
             {
                 Refx = "testeaa",
                 Descricao = "aaaaaccc",
-                Quantidade = 2
+                Quant = 2
             });
 
             return PartialView("_ConferenciaItensPendentes", model);
+        }
+
+        public ActionResult ConferenciaItensConferidos(long Id)
+        {
+            var model = new List<GarantiaConferenciaItem>();
+            model.Add(new GarantiaConferenciaItem
+            {
+                Refx = "teste",
+                Descricao = "aaaaa",
+                Quant = 10
+            });
+            model.Add(new GarantiaConferenciaItem
+            {
+                Refx = "testeaa",
+                Descricao = "aaaaaccc",
+                Quant = -2
+            });
+
+            return PartialView("_ConferenciaItensConferidos", model);
         }
 
         public ActionResult ConferenciaLaudoDetalhe(long Id)
@@ -232,29 +301,13 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_ConferenciaLaudoDetalhe", model);
         }
 
-        public ActionResult ConferenciaDivergencia(long Id)
+        public ActionResult ConferenciaDivergencia(long Id_Conferencia)
         {
-            var itens = new List<GarantiaConferenciaDivergencia>();
-            itens.Add(new GarantiaConferenciaDivergencia
-            {
-                Descricao = "teste",
-                Refx = "zzz",
-                Divergencia = -5,
-                Quant = 10,
-                Quant_Conferida = 5
-            });
-            itens.Add(new GarantiaConferenciaDivergencia
-            {
-                Descricao = "teste",
-                Refx = "zzz",
-                Divergencia = 11,
-                Quant = 10,
-                Quant_Conferida = 11
-            });
+            var result = _uow.GarantiaRepository.ListarConferenciaItem(Id_Conferencia);
 
             var model = new GarantiaConferenciaDivergenciaVM
             {
-                Itens = itens
+                Itens = Mapper.Map<IEnumerable<GarantiaConferenciaItem>>(result).ToList()
             };
 
             return PartialView("_ConferenciaDivergencia", model);

@@ -12,15 +12,13 @@ namespace FWLog.Web.Backoffice.Mapping
         {
             CreateMap<GarSolicitacao, GarantiaSolicitacaoListVM>();
 
-            CreateMap<Garantia, GarantiaCreateViewModel>().ReverseMap();
-
-            CreateMap<Garantia, GarantiaDetailsViewModel>();
-
             CreateMap<GarantiaSolicitacaoFilterVM, GarantiaFilter>();
 
             CreateMap<GarSolicitacaoItem, GarantiaSolicitacaoItemListVM>();
 
             CreateMap<GarSolicitacao, GarantiaRemessaListVM>();
+
+            CreateMap<GarConferenciaItem, GarantiaConferenciaItem>();
         }
     }
 }

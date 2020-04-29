@@ -1,4 +1,4 @@
-﻿@model FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaConferenciaDivergenciaVM
+﻿@model List<FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaConferencia>
 
 <div class="row">
     <div class="col-md-12">
@@ -7,37 +7,32 @@
                 <table id="tbDivergenciaItens" class="table table-striped table-bordered dt-responsive" style="width:100%">
                     <thead>
                         <tr>
-                            <th>@Html.DisplayNameFor(m => m.Cabecalho.Refx)</th>
-                            <th>@Html.DisplayNameFor(m => m.Cabecalho.Descricao)</th>
-                            <th>@Html.DisplayNameFor(m => m.Cabecalho.Quant)</th>
-                            <th>@Html.DisplayNameFor(m => m.Cabecalho.Quant_Conferida)</th>
-                            <th>@Html.DisplayNameFor(m => m.Cabecalho.Divergencia)</th>
+                            <th>Refx</th>
+                            <th>Descrição</th>
+                            <th>Quant.</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.Itens)
+                        @foreach (var item in Model)
                         {
+
                             <tr>
                                 <td>@item.Refx</td>
                                 <td>@item.Descricao</td>
-                                <td>@item.Quant</td>
-                                <td>@item.Quant_Conferida</td>
                                 <td>
-                                    @if (item.Divergencia > 0)
+                                    @if (item.Quantidade < 0)
                                     {
-                                        <span class="label label-success"> @item.Divergencia</span>
+                                        <span class="label label-danger">@item.Quantidade</span>
                                     }
                                     else
                                     {
-                                        <span class="label label-danger"> @item.Divergencia</span>
-
+                                        <span class="label label-success">@item.Quantidade</span>
                                     }
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
-                
             </div>
         </div>
     </div>

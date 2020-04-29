@@ -743,6 +743,7 @@
     <Content Include="Views\Garantia\Remessa.cshtml" />
     <Content Include="Views\Garantia\_ConferenciaItensPendentes.cshtml" />
     <Content Include="Views\Garantia\_ImportarSolicitacao.cshtml" />
+    <Content Include="Views\Garantia\_ConferenciaItensConferidos.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

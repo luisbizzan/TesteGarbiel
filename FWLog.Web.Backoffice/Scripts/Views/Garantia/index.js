@@ -1,4 +1,10 @@
 ﻿(function () {
+
+
+    $('#modalVisualizar').on('hidden.bs.modal', function () {
+        location.reload();
+    });
+
     $.validator.setDefaults({ ignore: null });
     $('.onlyNumber').mask('0#');
     $("dateFormat").mask("99/99/9999");
@@ -113,6 +119,7 @@
         ]
     });
 
+
     $('.btn-row-actions').tooltip();
 
     dart.dataTables.loadFormFilterEvents();
@@ -221,6 +228,7 @@ function importarSolicitacao() {
         modal.modal();
     });
 }
+
 
 function estornarSolicitacao() {
     var id = $(this).data("id");

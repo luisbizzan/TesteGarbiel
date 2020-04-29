@@ -4,13 +4,13 @@
     <div class="col-md-12">
         <div class="x_panel">
             <div class="x_content">
-                <button id="btAdicionarLaudo" type="button" class="btn btn-primary right"><i class="fa fa-plus"></i> Adicionar Laudo</button>
-                <table id="tbDivergenciaItens" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                <table id="tbLaudoItens" class="table table-striped table-bordered dt-responsive" style="width:100%">
                     <thead>
                         <tr>
-                            <th>@Model.Form.Refx</th>
-                            <th>@Model.Form.Descricao</th>
-                            <th>@Model.Form.Quant</th>
+                            <th></th>
+                            <th>@Html.DisplayNameFor(m => m.Form.Refx)</th>
+                            <th>@Html.DisplayNameFor(m => m.Form.Descricao)</th>
+                            <th>@Html.DisplayNameFor(m => m.Form.Quant)</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -19,6 +19,7 @@
                         {
 
                             <tr>
+                                <td></td>
                                 <td>@item.Refx</td>
                                 <td>@item.Descricao</td>
                                 <td>@item.Quant</td>

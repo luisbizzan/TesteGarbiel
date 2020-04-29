@@ -12,17 +12,6 @@
                     <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                         @Html.LabelFor(m => m.Form.Id_Motivo)
                         @Html.DropDownListFor(m => m.Form.Id_Motivo, Model.Form.Lista_Motivos, new { @class = "form-control" })
-
-                        @*<select class="form-control select2">
-                                <optgroup label="Group Name">
-                                    <option>Nested option</option>
-                                    <option>Nested optionzz</option>
-                                </optgroup>
-                                <optgroup label="teste">
-                                    <option>Nested option</option>
-                                    <option>Nested optionzz</option>
-                                </optgroup>
-                            </select>*@
                     </div>
                     <button style="margin-top: 20px;" type="button" class="btn btn-primary">Gravar</button>
                 </form>
