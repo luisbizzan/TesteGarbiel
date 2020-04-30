@@ -159,15 +159,20 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("O pedido informado não pertence a empresa do usuário logado.");
             }
+        }
 
-            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ConcluidaComSucesso)
-            {
-                throw new BusinessException("O pedido informado já foi separado.");
-            }
+        private void ValidarPedidoVendaEmSeparacao(PedidoVenda pedidoVenda, long idEmpresa)
+        {
+            ValidarPedidoVenda(pedidoVenda, idEmpresa);
 
             if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
             {
                 throw new BusinessException("O pedido informado ainda não está liberado para a separação.");
+            }
+
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ConcluidaComSucesso)
+            {
+                throw new BusinessException("O pedido informado já foi separado.");
             }
 
             if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento || pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado)
@@ -176,7 +181,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        private void ValidarPedidoVendaVolume(PedidoVendaVolume pedidoVendaVolume)
+        private void ValidarPedidoVendaVolumeConcluidoCancelado(PedidoVendaVolume pedidoVendaVolume)
         {
             if (pedidoVendaVolume == null)
             {
@@ -186,11 +191,6 @@ namespace FWLog.Services.Services
             if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.ConcluidaComSucesso)
             {
                 throw new BusinessException("O volume informado já foi separado.");
-            }
-
-            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
-            {
-                throw new BusinessException("O volume informado ainda não está liberado para a separação.");
             }
 
             if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento || pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado)
@@ -419,11 +419,16 @@ namespace FWLog.Services.Services
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda);
 
-            ValidarPedidoVenda(pedidoVenda, idEmpresa);
+            ValidarPedidoVendaEmSeparacao(pedidoVenda, idEmpresa);
 
             var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
 
-            ValidarPedidoVendaVolume(pedidoVendaVolume);
+            ValidarPedidoVendaVolumeConcluidoCancelado(pedidoVendaVolume);
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
+            {
+                throw new BusinessException("O volume informado ainda não está liberado para a separação.");
+            }
 
             if (pedidoVendaVolume.PedidoVendaProdutos.Any(pedidoVendaProduto => pedidoVendaProduto.QtdSeparada.GetValueOrDefault() < pedidoVendaProduto.QtdSeparar))
             {
@@ -486,13 +491,13 @@ namespace FWLog.Services.Services
         {
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedidoVendaEIdEmpresa(idPedidoVenda, idEmpresa);
 
-            ValidarPedidoVenda(pedidoVenda, idEmpresa);
+            ValidarPedidoVendaEmSeparacao(pedidoVenda, idEmpresa);
 
             ValidarProdutoPorPedidoVenda(idPedidoVenda, idProdutoSeparacao);
 
             var pedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdProduto(idProdutoSeparacao);
 
-            ValidarPedidoVendaVolume(pedidoVendaProduto.PedidoVendaVolume);
+            ValidarPedidoVendaVolumeConcluidoCancelado(pedidoVendaProduto.PedidoVendaVolume);
 
             var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, idEmpresa);
 
