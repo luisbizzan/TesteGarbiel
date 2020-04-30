@@ -382,21 +382,22 @@ namespace FWLog.Services.Services
             //    throw new BusinessException("O pedido já está sendo separado por outro usuário.");
             //}
 
-            // update no Sankhya
             await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, PedidoVendaStatusEnum.ProcessandoSeparacao);
 
-            // update do pedido na base oracle
-            using (var transaction = _unitOfWork.CreateTransactionScope())
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
             {
-                pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
-                pedidoVenda.DataHoraInicioSeparacao = DateTime.Now;
-                pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+                using (var transaction = _unitOfWork.CreateTransactionScope())
+                {
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+                    pedidoVenda.DataHoraInicioSeparacao = DateTime.Now;
+                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
 
-                _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+                    _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
 
-                _unitOfWork.SaveChanges();
+                    _unitOfWork.SaveChanges();
 
-                transaction.Complete();
+                    transaction.Complete();
+                }
             }
         }
 
