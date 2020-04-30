@@ -377,6 +377,7 @@
     <Compile Include="Models\EtiquetaCtx\RecebimentoEtiquetaViewModel.cs" />
     <Compile Include="Models\RecebimentoEtiquetaIndividualPersonalizadaCtx\RecebimentoEtiquetaIndividualListViewModel.cs" />
     <Compile Include="Models\TransportadoraCtx\TransportadoraSearchModalViewModel.cs" />
+    <Compile Include="Models\TransporteEnderecoCtx\TransporteEnderecoListaViewModel.cs" />
     <Compile Include="Startup.cs" />
     <Content Include="Content\dart\dart-template.css">
       <DependentUpon>dart-template.scss</DependentUpon>
