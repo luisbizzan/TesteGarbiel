@@ -564,13 +564,7 @@ namespace FWLog.Services.Services
 
                 pedidoVendaProduto.QtdSeparada = salvarSeparacaoProdutoResposta.QtdSeparada = qtdSeparada;
 
-                if (!pedidoVendaProduto.PedidoVendaVolume.PedidoVendaProdutos.Any(pvv => pvv.QtdSeparada != pvv.QtdSeparar))
-                {
-                    salvarSeparacaoProdutoResposta.VolumeSeparado = true;
-
-                    pedidoVendaProduto.PedidoVendaVolume.DataHoraFimSeparacao = dataProcessamento;
-                    pedidoVendaProduto.PedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.ConcluidaComSucesso;
-                }
+                salvarSeparacaoProdutoResposta.VolumeSeparado = !pedidoVendaProduto.PedidoVendaVolume.PedidoVendaProdutos.Any(pvv => pvv.QtdSeparada != pvv.QtdSeparar);
 
                 _unitOfWork.PedidoVendaProdutoRepository.Update(pedidoVendaProduto);
                 await _unitOfWork.SaveChangesAsync();
