@@ -97,7 +97,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                     conn.Open();
                                     if (conn.State == System.Data.ConnectionState.Open)
                                     {
-                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.SankhyaTopIncluir, item.Top, item.Descricao));
+                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.SankhyaTopIncluir, item.Top, item.Descricao, item.Id_Negociacao));
                                     }
                                     conn.Close();
                                 }
@@ -405,13 +405,13 @@ namespace FWLog.Data.Repository.GeneralCtx
             try
             {
                 var cmdSQL = String.Format(
-                    @"SELECT codtipvenda Data, descrtipvenda Value 
-                        FROM tgftpv@skw 
+                    @"SELECT codtipvenda Data, descrtipvenda Value
+                        FROM tgftpv 
                         WHERE ativo = 'S'
                         GROUP BY codtipvenda, descrtipvenda
                         ORDER BY descrtipvenda");
 
-                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                using (var conn = new OracleConnection(ConfigurationManager.ConnectionStrings["Sankya"].ToString()))
                 {
                     conn.Open();
                     if (conn.State == System.Data.ConnectionState.Open)
@@ -420,6 +420,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                     }
                     conn.Close();
                 }
+
+                _lista.ListaAutoComplete.ForEach(delegate (GarantiaConfiguracao.AutoComplete select) { select.Value = String.IsNullOrEmpty(select.Value) ? "SEM TIPO DE VENDA" : select.Value.ToUpper(); });
 
                 return _lista;
             }

@@ -82,7 +82,14 @@ namespace FWLog.Web.Backoffice.Controllers
                     errorView = () => { return View(RegistroConvertido.RegistroRemessaUsuario); };
 
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop))
+                {
+                    RegistroConvertido.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop sankhya)
+                    {
+                        if (String.IsNullOrEmpty(sankhya.Top)) throw new Exception("Informe o Código da Top!");
+                        if (String.IsNullOrEmpty(sankhya.Descricao)) throw new Exception("Informe a Descrição da Top!");
+                    });
                     errorView = () => { return View(RegistroConvertido.RegistroSankhyaTop); };
+                }
 
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorGrupo))
                     errorView = () => { return View(RegistroConvertido.RegistroFornecedorGrupo); };

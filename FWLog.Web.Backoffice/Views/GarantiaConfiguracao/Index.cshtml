@@ -46,7 +46,7 @@
                                         <ul id="listaFornecedor" class="to_do" style="overflow:auto; height:240px"></ul>
                                     </div>
                                     <div id="controleFornecedor" class="btn-group col-sm-12" style="display:normal;">
-                                        <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-trash text-danger"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
                                         <a class="btn btn-default col-xs-6" onclick="FornecedorQuebraGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Fornecedor"><i class="fa fa-save text-success"></i></a>
                                     </div>
                                 </div>
@@ -66,25 +66,30 @@
                         <div class="col-md-4 col-sm-4">
                             <div class="x_title text-muted"><b>&emsp;</b></div>
                             <div class="col-md-12 col-sm-12">
-                                <div class="input-group input-group-sm col-sm-10">
-                                    <span class="input-group-addon">Negociação</span>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon"><b>Negociação</b></span>
                                     <select id="ddlNegociacao" class="form-control input-sm"></select>
                                 </div>
                             </div>
-                            <div class="form-inline">
-                                <div class="col-md-2 col-sm-12"><input id="txtSankhyaCodigo" type="text" placeholder="Código" class="form-control input-sm text-uppercase"></div>
-                                <div class="col-md-10 col-sm-12">
-                                    <input id="txtSankhyaDescricao" type="text" placeholder="Descrição" class="form-control input-sm text-uppercase">
-                                    <button id="btnSankhyaAdicionar" type="button" class="btn btn-success"><i class="fa fa-plus"></i> Adicionar</button>
+
+                            <div class="col-md-12 col-sm-12">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon"><b>Código</b></span>
+                                    <input id="txtSankhyaCodigo" type="text" placeholder="Código" class="form-control input-sm text-uppercase">
                                 </div>
                             </div>
                             <div class="col-md-12 col-sm-12">
-                                <div class="x_content">
-                                    <ul id="listaSankhyaTop" class="to_do" style="overflow:auto; height:240px"></ul>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon"><b>Descrição</b></span>
+                                    <input id="txtSankhyaDescricao" type="text" placeholder="Descrição" class="form-control input-sm text-uppercase">
                                 </div>
-                                <div id="controleSankhyaTop" class="btn-group col-sm-12" style="display:normal;">
-                                    <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-trash text-danger"></i></a>
-                                    <a class="btn btn-default col-xs-6" onclick="ShankhyaTopGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Top Sankhya"><i class="fa fa-save text-success"></i></a>
+                            </div>
+                            <div class="form-inline">
+                                <div class="x_content">
+                                    <div id="controleSankhyaTop" class="btn-group col-sm-12" style="display:normal;">
+                                        <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="ShankhyaTopGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Top Sankhya"><i class="fa fa-save text-success"></i></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -127,7 +132,7 @@
                                 </div>
                                 <div class="input-group input-group-sm col-sm-12">
                                     <div id="controleRemessaConfig" class="btn-groupcol-sm-12" style="display:normal;">
-                                        <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-trash text-danger"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
                                         <a class="btn btn-default col-xs-6" onclick="ConfiguracaoGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Configuração"><i class="fa fa-save text-success"></i></a>
                                     </div>
                                 </div>
@@ -178,7 +183,7 @@
 
                             <div class="x_content">
                                 <div id="controleRemessaConfig" class="btn-group col-sm-12" style="display:normal;">
-                                    <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-trash text-danger"></i></a>
+                                    <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
                                     <a class="btn btn-default col-xs-6" onclick="RemessaConfigGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Remessa Configuração"><i class="fa fa-save text-success"></i></a>
                                 </div>
                             </div>
@@ -204,7 +209,7 @@
                                     </div>
                                 </div>
                                 <div id="controleRemessaUsuario" class="btn-group col-sm-12" style="display:normal;">
-                                    <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-trash text-danger"></i></a>
+                                    <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
                                     <a class="btn btn-default col-xs-6" onclick="RemessaUsuarioGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Remessa Usuário"><i class="fa fa-save text-success"></i></a>
                                 </div>
                             </div>
@@ -240,7 +245,7 @@
                             <div>
                                 <div class="x_panel">
                                     <div id="controleFornecedorGrupo" class="btn-group col-sm-12" style="display:normal;">
-                                        <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-trash text-danger"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
                                         <a class="btn btn-default col-xs-6" onclick="FornecedorGrupoGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Fornecedor Grupo"><i class="fa fa-save text-success"></i></a>
                                     </div>
                                 </div>

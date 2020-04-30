@@ -76,6 +76,16 @@ namespace FWLog.Data.Models
             [Required]
             [Display(Name = "Descrição da Top")]
             public string Descricao { get; set; }
+            [Required]
+            [Display(Name = "Negociação")]
+            public long Id_Negociacao { get; set; }
+            [Display(Name = "Negociação")]
+            public string Id_NegociacaoView { get; set; }
+
+            [Display(Name = "Venda Mínima")]
+            public string VendaMin { get; set; }
+            [Display(Name = "Venda Máxima")]
+            public string VendaMax { get; set; }
 
             public string BotaoEvento { get; set; }
         }
@@ -253,30 +263,45 @@ namespace FWLog.Data.Models
             {
                 return new Dictionary<GarantiaTag, object>()
                 {
-                    {GarantiaTag.FornecedorQuebra, new object[]
+                    { GarantiaTag.FornecedorQuebra, new object[]
                     {
-                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Cod_Fornecedor", title = "CNPJ" },
-                        new { data = "NomeFantasia", title =  "Nome Fantasia" }, new { data = "RazaoSocial", title = "Razão Social" }
+                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
+                        new { data = "Cod_Fornecedor", title = "CNPJ" }, new { data = "NomeFantasia", title =  "Nome Fantasia" }, new { data = "RazaoSocial", title = "Razão Social" }
                     }},
-                    {GarantiaTag.SankhyaTop, new object[]  { new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Top", title = "Top" }, new { data = "Descricao", title = "Descrição" } }},
-                    {GarantiaTag.RemessaUsuario, new object[] { new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Usuario", title = "Usuário" }, new { data = "Email", title = "E-mail" } } },
-                    {GarantiaTag.RemessaConfiguracao, new object[]
+
+                    { GarantiaTag.SankhyaTop, new object[]
                     {
-                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Id_Filial_Sankhya", title = "Id Filial" }, new { data = "Filial", title = "Filial" },
-                        new { data = "Cod_Fornecedor", title = "Fornecedor (CNPJ)" }, new { data = "AutomaticaView", title = "Automática" }, new { data = "Vlr_MinimoView", title = "R$ Minímo" },
-                        new { data = "Total", title = "Total" }
+                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
+                        new { data = "Top", title = "Top" }, new { data = "Descricao", title = "Descrição" }, new { data = "Id_NegociacaoView", title = "Negociação" },
+                        new { data = "VendaMin", title = "Venda Mínima" }, new { data = "VendaMax", title = "Venda Máxima" }
                     }},
-                    {GarantiaTag.Configuracao, new object[]
+
+                    { GarantiaTag.RemessaUsuario, new object[] 
                     {
-                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Id_Filial_Sankhya", title = "Id Filial Sankhya" }, new { data = "Filial", title = "Filial" },
-                        new { data = "Pct_Estorno_FreteView", title = "Estorno Frete" }, new { data = "Pct_DesvalorizacaoView", title = "Desvalorização" }, new { data = "Vlr_Minimo_EnvioView", title = "R$ Minímo Envio" },
+                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
+                        new { data = "Usuario", title = "Usuário" }, new { data = "Email", title = "E-mail" }
+                    } },
+
+                    { GarantiaTag.RemessaConfiguracao, new object[]
+                    {
+                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
+                        new { data = "Id_Filial_Sankhya", title = "Id Filial" }, new { data = "Filial", title = "Filial" }, new { data = "Cod_Fornecedor", title = "Fornecedor (CNPJ)" },
+                        new { data = "AutomaticaView", title = "Automática" }, new { data = "Vlr_MinimoView", title = "R$ Minímo" }, new { data = "Total", title = "Total" }
+                    }},
+
+                    { GarantiaTag.Configuracao, new object[]
+                    {
+                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
+                        new { data = "Id_Filial_Sankhya", title = "Id Filial Sankhya" }, new { data = "Filial", title = "Filial" }, new { data = "Pct_Estorno_FreteView", title = "Estorno Frete" },
+                        new { data = "Pct_DesvalorizacaoView", title = "Desvalorização" }, new { data = "Vlr_Minimo_EnvioView", title = "R$ Minímo Envio" },
                         new { data = "Prazo_Envio_Automatico", title = "Prazo Envio Automático" }, new { data = "Prazo_Descarte", title = "Prazo Descarte" }
                     }},
-                    {GarantiaTag.FornecedorGrupo, new object[]
+
+                    { GarantiaTag.FornecedorGrupo, new object[]
                     {
-                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" }, new { data = "Cod_Forn_Pai", title = "Código Pai" }, new { data = "Cod_Forn_Filho", title = "Código Filho" },
-                    }
-                    }
+                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
+                        new { data = "Cod_Forn_Pai", title = "Fornecedor Pai" }, new { data = "Cod_Forn_Filho", title = "Fornecedor Filho" },
+                    }}
                 };
             }
         }
@@ -301,6 +326,7 @@ namespace FWLog.Data.Models
                         "FROM gar_forn_grupo fg ",
                         "INNER JOIN \"Fornecedor\" fp ON fp.cnpj = fg.cod_forn_pai ",
                         "INNER JOIN \"Fornecedor\" ff ON ff.cnpj = fg.cod_forn_filho ",
+                        "GROUP BY fg.Id, fp.\"RazaoSocial\", ff.\"RazaoSocial\" ",
                         "ORDER BY fg.Id");
                 }
             }
@@ -398,11 +424,11 @@ namespace FWLog.Data.Models
             /// <summary>
             /// {0} Top | {1} Descricao 
             /// </summary>
-            public static string SankhyaTopIncluir { get { return String.Concat("INSERT INTO geral_sankhya_tops(Top, Descricao) VALUES('{0}', '{1}')"); } }
+            public static string SankhyaTopIncluir { get { return String.Concat("INSERT INTO geral_sankhya_tops(Top, Descricao, Id_Negociacao) VALUES(UPPER('{0}'), UPPER('{1}'), {2} )"); } }
             #endregion
 
             #region Fornecedor Grupo
-            
+
             #endregion
         }
         #endregion

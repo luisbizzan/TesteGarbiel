@@ -8,13 +8,12 @@ $('.onlyNumber').mask('0#');
 
 /* [GENÉRICO] limpar listas */
 function CancelarTudo() {
+    RegistroInclusao.Inclusao = [];
     _fornecedoresGravar = [];
     _listaAutoComplete = [];
     _remessaUsuarioGravar = [];
-    _SankhyaTopLista = [];
 
     $("#listaFornecedor").html("");
-    $("#listaSankhyaTop").html("");
     $("#listaRemessaUsuarios").html("");
 
     $("#spanIdFilial").html("");
@@ -23,6 +22,11 @@ function CancelarTudo() {
     $("#chkRCAutomatica")[0].checked = false;
     $("#txtRCMinimoEnvio").val("");
     $("#txtRCTotal").val("");
+
+    /* Sankhya Top */
+    $("#ddlNegociacao").val(0);
+    $("#txtSankhyaCodigo").val("");
+    $("#txtSankhyaDescricao").val("");
 
     /* Configuração */
     $("#spanConfigIdFilial").html("");
@@ -52,19 +56,27 @@ $(document).ready(function (e) {
     });
 });
 
+/* [GENÉRICO] mostrar mensagens */
+function Mensagem(mensagemSucesso, mensagem) {
+    if (mensagemSucesso) {
+        PNotify.success({ text: mensagem, delay: 1000 });
+    }
+    else {
+        PNotify.error({ text: mensagem, delay: 2500 });
+    }
+}
+
 /* [GENÉRICO] incluir registro(s) no banco dados */
 function RegistroIncluir() {
     RegistroInclusao.Tag = TagPadrao;
 
     $.post("/GarantiaConfiguracao/RegistroIncluir", { Registro: RegistroInclusao }, function (s) {
         if (s.Success) {
-            PNotify.success({ text: s.Message });
             RegistroListar(TagPadrao);
             CancelarTudo();
         }
-        else {
-            PNotify.error({ text: s.Message });
-        }
+        Mensagem(s.Success, s.Message);
+
     }).fail(function (f) {
         console.log(f);
     }).done(function (d) {
@@ -80,12 +92,11 @@ function RegistroExcluir(TagSelecionada, IdSelecionado) {
 
     $.post("/GarantiaConfiguracao/RegistroExcluir", { Registro: _Registro }, function (s) {
         if (s.Success) {
-            PNotify.success({ text: s.Message });
             RegistroListar(TagSelecionada);
         }
-        else {
-            PNotify.error({ text: s.Message });
-        }
+
+        Mensagem(s.Success, s.Message);
+
     }).fail(function (f) {
         console.log(f);
     }).done(function (d) {
@@ -100,13 +111,12 @@ function RegistroListar(TagInformada) {
             $(s.GridNome).DataTable({
                 destroy: true,
                 serverSide: false,
-                //searching: true,
                 data: s.Data,
                 columns: s.GridColunas,
             });
         }
         else {
-            PNotify.error({ text: s.Message });
+            Mensagem(s.Success, s.Message);
         }
     });
 }
@@ -140,7 +150,7 @@ $("#Cod_Fornecedor").autocomplete({
                     });
                 }
                 else {
-                    PNotify.error({ text: s.Message });
+                    Mensagem(s.Success, s.Message);
                 }
             },
             error: function (e) {
@@ -200,69 +210,30 @@ function FornecedorQuebraGravar() {
 }
 
 /***    SANKHYA TOP     ***/
-/* [SANKHYA TOP] variaveis */
-var _SankhyaTopLista = [];
-var liSankhyaTop = '<li id="{top}"><p><a onclick="ShankhyaTopRemoverLista(*{top}|{descricao}*);" class="btn btn-link"><b><i class="fa fa-trash-o text-danger"></i></b></a><span class="label label-primary">  [{top}]  {descricao}</span></p></li>';
-
 /* [SANKHYA TOP] drop down list Id Negociação  */
 function ListarNegociacao() {
     $.get("/GarantiaConfiguracao/ListarIdNegociacao", {}, function (s, status) {
         if (s.Success) {
             $("#ddlNegociacao").empty();
-            $.each(s.Lista, function (key, value) {
-                $("#ddlNegociacao").append('<option value=' + key + '>' + value + '</option>');
+            $.each(s.Lista, function (key, item) {
+                $("#ddlNegociacao").append('<option value=' + item.Data + '>' + item.Value + '</option>');
             });
         }
         else {
-            PNotify.error({ text: s.Message });
+            Mensagem(s.Success, s.Message);
         }
     });
 }
-
-/* [SANKHYA TOP] remover lista  */
-function ShankhyaTopRemoverLista(sankhyaTopItem) {
-    var codigo = sankhyaTopItem.toString().split('|')[0];
-
-    _SankhyaTopLista = jQuery.grep(_SankhyaTopLista, function (value) {
-        return value != sankhyaTopItem;
-    });
-    $("#" + codigo).remove();
-}
-
-/* [SANKHYA TOP] adicionar na lista */
-$("#btnSankhyaAdicionar").click(function () {
-    if ($("#txtSankhyaCodigo").val() != "" && $("#txtSankhyaDescricao").val() != "") {
-        var SankhyaTopItem = new Object();
-        SankhyaTopItem.Top = $("#txtSankhyaCodigo").val().toString().toUpperCase();
-        SankhyaTopItem.Descricao = $("#txtSankhyaDescricao").val().trim().toString().toUpperCase();
-        SankhyaTopItem.Data = SankhyaTopItem.Top + "|" + SankhyaTopItem.Descricao;
-
-        if (jQuery.inArray(SankhyaTopItem.Data, _SankhyaTopLista) == -1) {
-            _SankhyaTopLista.push(SankhyaTopItem.Data);
-
-            var liFormatado = liSankhyaTop.replace("{top}", SankhyaTopItem.Top).replace("{top}", SankhyaTopItem.Top).replace("{top}", SankhyaTopItem.Top);
-            liFormatado = liFormatado.replace("{descricao}", SankhyaTopItem.Descricao).replace("{descricao}", SankhyaTopItem.Descricao).replace("*", "'").replace("*", "'");
-
-            $("#listaSankhyaTop").append(liFormatado);
-        }
-        $("#txtSankhyaCodigo").val("");
-        $("#txtSankhyaDescricao").val("");
-    }
-    else {
-        PNotify.error({ text: "Informe o Código e Descrição da Top!" });
-    }
-});
 
 /* [SANKHYA TOP] gravar no banco */
 function ShankhyaTopGravar() {
     RegistroInclusao.Inclusao = [];
 
-    $.each(_SankhyaTopLista, function (i, item) {
-        var registro = new Object();
-        registro.Top = item.split('|')[0];
-        registro.Descricao = item.split('|')[1];
-        RegistroInclusao.Inclusao.push(JSON.stringify(registro));
-    });
+    var registro = new Object();
+    registro.Id_Negociacao = $("#ddlNegociacao").val();
+    registro.Top = $("#txtSankhyaCodigo").val();
+    registro.Descricao = $("#txtSankhyaDescricao").val();
+    RegistroInclusao.Inclusao.push(JSON.stringify(registro));
 
     RegistroIncluir();
 }
@@ -296,7 +267,7 @@ $("#txtRemessaUsuario").autocomplete({
                     });
                 }
                 else {
-                    PNotify.error({ text: s.Message });
+                    Mensagem(s.Success, s.Message);
                 }
             },
             error: function (e) {
@@ -394,7 +365,7 @@ $("#txtRCFornecedor").autocomplete({
                     });
                 }
                 else {
-                    PNotify.error({ text: s.Message });
+                    Mensagem(s.Success, s.Message);
                 }
             },
             error: function (e) {
@@ -442,7 +413,7 @@ $("#txtRCFilial").autocomplete({
                     });
                 }
                 else {
-                    PNotify.error({ text: s.Message });
+                    Mensagem(s.Success, s.Message);
                 }
             },
             error: function (e) {
@@ -510,7 +481,7 @@ $("#txtConfigFilial").autocomplete({
                     });
                 }
                 else {
-                    PNotify.error({ text: s.Message });
+                    Mensagem(s.Success, s.Message);
                 }
             },
             error: function (e) {
@@ -570,7 +541,7 @@ $("#txtFornecedorPai").autocomplete({
                     });
                 }
                 else {
-                    PNotify.error({ text: s.Message });
+                    Mensagem(s.Success, s.Message);
                 }
             },
             error: function (e) {
@@ -617,7 +588,7 @@ $("#txtFornecedorFilho").autocomplete({
                     });
                 }
                 else {
-                    PNotify.error({ text: s.Message });
+                    Mensagem(s.Success, s.Message);
                 }
             },
             error: function (e) {
