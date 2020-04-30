@@ -631,14 +631,14 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void ImprimirEtiquetaVolumeSeparacao(ImprimirEtiquetaVolumeSeparacaoRequest requisicao, long idEmpresa)
+        private void ImprimirEtiquetaVolumeSeparacao(ImprimirEtiquetaVolumeSeparacaoRequest requisicao, long idEmpresa)
         {
             string clienteNome = requisicao.ClienteNome?.Normalizar();
             string clienteEndereco = requisicao.ClienteEndereco?.Normalizar();
             string clienteEnderecoNumero = requisicao.ClienteEnderecoNumero?.Normalizar();
             string clienteCEP = Convert.ToUInt64(requisicao.ClienteCEP).ToString(@"00000\-000");
             string clienteCidade = requisicao.ClienteCidade?.Normalizar();
-            string clienteEstado = requisicao.ClienteEstado?.Normalizar();
+            string clienteEstado = requisicao.ClienteUF?.Normalizar();
             string clienteTelefone = string.Format("{0:(##) #####-####}", requisicao.ClienteTelefone);
             string clienteCodigo = requisicao.ClienteCodigo?.Normalizar();
             string representanteCodigo = requisicao.RepresentanteCodigo?.Normalizar();
@@ -646,11 +646,11 @@ namespace FWLog.Services.Services
             string centena = requisicao.Centena?.Normalizar();
             string transportadoraSigla = requisicao.TransportadoraSigla?.Normalizar();
             string transportadoraCodigo = requisicao.TransportadoraCodigo?.Normalizar();
-            string transprotadoraNome = requisicao.TransportadoraNome?.Normalizar();
-            string volume = requisicao.Volume?.Normalizar();
+            string transportadoraNome = requisicao.TransportadoraNome?.Normalizar();
+            string volume = requisicao.Volume.PadLeft(3, '0')?.Normalizar();
             string caixaTextoEtiqueta = requisicao.CaixaTextoEtiqueta?.Normalizar();
-            string corredoresInicio = requisicao.CorredoresInicio?.Normalizar();
-            string corredoresIntervalo = requisicao.CorredoresIntervalo?.Normalizar();
+            string corredoresInicio = requisicao.CorredoresInicio.PadLeft(2, '0')?.Normalizar();
+            string corredoresIntervalo = $"{corredoresInicio} a {requisicao.CorredoresFim.PadLeft(2, '0')}"?.Normalizar();
 
             var stringEtiqueta = new StringBuilder();
 
@@ -669,7 +669,7 @@ namespace FWLog.Services.Services
 
             stringEtiqueta.Append($"^FO440,718^A0B,120,100^FR^FD{transportadoraSigla}^FS");
 
-            stringEtiqueta.Append($@"^FO440,50^FB610,4,0,L,0^A0B,40,30^FD{transportadoraCodigo}\&{transprotadoraNome}^FS");
+            stringEtiqueta.Append($@"^FO440,50^FB610,4,0,L,0^A0B,40,30^FD{transportadoraCodigo}\&{transportadoraNome}^FS");
 
             var codigoBarras = $"{pedidoCodigo}{transportadoraCodigo}{volume}";
 
@@ -724,6 +724,44 @@ namespace FWLog.Services.Services
             var arrayBytesEtiqueta = Encoding.ASCII.GetBytes(stringEtiqueta.ToString());
 
             _impressoraService.Imprimir(arrayBytesEtiqueta, requisicao.IdImpressora);
+        }
+
+        public void ImprimirEtiquetaVolumes(List<PedidoVendaVolume> listaVolumes)
+        {
+            foreach (var volume in listaVolumes)
+            {
+                var requisicaoImpressao = new ImprimirEtiquetaVolumeSeparacaoRequest();
+
+                var pedidoVenda = volume.PedidoVenda;
+                var cliente = pedidoVenda.Pedido.Cliente;
+                var representante = pedidoVenda.Representante;
+                var pedido = pedidoVenda.Pedido;
+                var transportadora = pedidoVenda.Transportadora;
+                var caixa = volume.CaixaCubagem;
+                var grupoCorredorArmazenagem = volume.GrupoCorredorArmazenagem;
+
+                requisicaoImpressao.ClienteNome = cliente.NomeFantasia;
+                requisicaoImpressao.ClienteEndereco = cliente.Endereco;
+                requisicaoImpressao.ClienteEnderecoNumero = cliente.Numero;
+                requisicaoImpressao.ClienteCEP = cliente.CEP;
+                requisicaoImpressao.ClienteCidade = cliente.Cidade;
+                requisicaoImpressao.ClienteUF = cliente.UF;
+                requisicaoImpressao.ClienteTelefone = cliente.Telefone;
+                requisicaoImpressao.ClienteCodigo = cliente.CodigoIntegracao.ToString();
+                requisicaoImpressao.RepresentanteCodigo = representante.CodigoIntegracao.ToString();
+                requisicaoImpressao.PedidoCodigo = pedido.CodigoIntegracao.ToString();
+                requisicaoImpressao.Centena = volume.NroCentena.ToString();
+                requisicaoImpressao.TransportadoraSigla = transportadora.CodigoTransportadora;
+                requisicaoImpressao.TransportadoraCodigo = transportadora.CodigoIntegracao.ToString();
+                requisicaoImpressao.TransportadoraNome = transportadora.NomeFantasia;
+                requisicaoImpressao.CorredoresInicio = grupoCorredorArmazenagem.CorredorInicial.ToString();
+                requisicaoImpressao.CorredoresFim = grupoCorredorArmazenagem.CorredorFinal.ToString();
+                requisicaoImpressao.CaixaTextoEtiqueta = caixa.TextoEtiqueta;
+                requisicaoImpressao.Volume = volume.NroVolume.ToString();
+                requisicaoImpressao.IdImpressora = grupoCorredorArmazenagem.IdImpressora;
+
+                ImprimirEtiquetaVolumeSeparacao(requisicaoImpressao, volume.PedidoVenda.IdEmpresa);
+            }
         }
 
         private class CelulaEtiqueta
