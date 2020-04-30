@@ -276,7 +276,7 @@ namespace FWLog.Data.Models
                         new { data = "VendaMin", title = "Venda Mínima" }, new { data = "VendaMax", title = "Venda Máxima" }
                     }},
 
-                    { GarantiaTag.RemessaUsuario, new object[] 
+                    { GarantiaTag.RemessaUsuario, new object[]
                     {
                         new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
                         new { data = "Usuario", title = "Usuário" }, new { data = "Email", title = "E-mail" }
@@ -420,7 +420,15 @@ namespace FWLog.Data.Models
             #endregion
 
             #region Sankhya Top
-            public static string SankhyaTopListar { get { return "SELECT Id, Descricao, Top FROM geral_sankhya_tops"; } }
+            public static string SankhyaTopListar
+            {
+                get
+                {
+                    return String.Concat("SELECT gst.Id, gst.Top, gst.Descricao, gst.Id_Negociacao, tgf.DescrTipVenda Id_NegociacaoView, tgf.VendaMin, tgf.VendaMax ",
+                        "FROM geral_sankhya_tops gst ",
+                        "INNER JOIN tgftpv@sankhya tgf ON gst.Id_Negociacao = tgf.CodTipVenda ");
+                }
+            }
             /// <summary>
             /// {0} Top | {1} Descricao 
             /// </summary>
