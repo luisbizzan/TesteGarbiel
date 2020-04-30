@@ -37,6 +37,8 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         [Display(Name = "Quant.")]
         public long? Quant { get; set; }
 
+        public DateTime Dt_Conf { get; set; }
+
         [Display(Name = "Quant. Conf.")]
         public long? Quant_Conferida { get; set; }
 
@@ -48,6 +50,8 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
         public long Id_Conf { get; set; }
         public long? Id { get; set; }
+
+        public long Tem_No_Excesso { get; set; }
     }
 
     public class GarantiaConferenciaDivergenciaVM

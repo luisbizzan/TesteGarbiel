@@ -113,7 +113,6 @@
             { data: 'Id', },
             { data: 'Dt_Criacao', },
             { data: 'Tipo', },
-            { data: 'Valor', },
             { data: 'Status', },
             actionsColumn
         ]

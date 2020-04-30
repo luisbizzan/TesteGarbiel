@@ -19,6 +19,8 @@ namespace FWLog.Web.Backoffice.Mapping
             CreateMap<GarSolicitacao, GarantiaRemessaListVM>();
 
             CreateMap<GarConferenciaItem, GarantiaConferenciaItem>();
+
+            CreateMap<GarConferenciaHist, GarantiaConferenciaItem>();
         }
     }
 }

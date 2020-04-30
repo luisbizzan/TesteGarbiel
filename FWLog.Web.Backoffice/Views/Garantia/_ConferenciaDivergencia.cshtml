@@ -17,27 +17,33 @@
                     <tbody>
                         @foreach (var item in Model.Itens)
                         {
-                            <tr>
+                            <tr style="@(item.Tem_No_Excesso == 1 ? "background-color:#bb110021" : "")">
                                 <td>@item.Refx</td>
                                 <td>@item.Descricao</td>
                                 <td>@item.Quant</td>
                                 <td>@item.Quant_Conferida</td>
                                 <td>
-                                    @if (item.Divergencia > 0)
+                                    @if (item.Tem_No_Excesso == 1)
+                                    {
+                                        <span class="label label-danger"> EXCESSO</span>
+                                    }
+                                    else if (item.Divergencia > 0)
                                     {
                                         <span class="label label-success"> @item.Divergencia</span>
                                     }
-                                    else
+                                    else if (item.Divergencia < 0)
                                     {
                                         <span class="label label-danger"> @item.Divergencia</span>
-
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-info"> @item.Divergencia</span>
                                     }
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
-                
             </div>
         </div>
     </div>

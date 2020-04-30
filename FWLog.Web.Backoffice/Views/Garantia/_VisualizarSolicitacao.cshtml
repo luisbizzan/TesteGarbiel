@@ -76,8 +76,8 @@
                                 <td>@item.Refx</td>
                                 <td>@item.Descricao</td>
                                 <td>@item.Quant</td>
-                                <td>@item.Valor</td>
-                                <td>@item.Valor_Total</td>
+                                <td>@String.Format("{0:C}", item.Valor)</td>
+                                <td>@String.Format("{0:C}", item.Valor_Total)</td>
                                 <td>@item.Cod_Fornecedor</td>
                             </tr>
                             }

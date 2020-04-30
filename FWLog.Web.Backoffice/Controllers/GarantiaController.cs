@@ -192,11 +192,12 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Quant_Conferida = item.Quant_Conferida,
                     Refx = item.Refx,
+                    Id_Usr = IdUsuario,
                     Id_Conf = item.Id_Conf
                 });
 
                 //GRAVA O HISTORICO
-                _uow.GarantiaRepository.InserirHistoricoConferencia(new GarConferenciaHist
+                _uow.GarantiaRepository.InserirConferenciaHistorico(new GarConferenciaHist
                 {
                     Quant_Conferida = item.Quant_Conferida,
                     Refx = item.Refx,
@@ -208,7 +209,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,
-                    Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                    Message = string.Format("{0} - {1} Processado!", item.Refx, item.Quant_Conferida)
                 });
             }
         }
@@ -237,42 +238,20 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_ConferenciaLaudo", model);
         }
 
-        public ActionResult ConferenciaItensPendentes(long Id)
+        public ActionResult ConferenciaItemPendente(long Id_Conferencia)
         {
-            var model = new List<GarantiaConferenciaItem>();
-            model.Add(new GarantiaConferenciaItem
-            {
-                Refx = "teste",
-                Descricao = "aaaaa",
-                Quant = 10
-            });
-            model.Add(new GarantiaConferenciaItem
-            {
-                Refx = "testeaa",
-                Descricao = "aaaaaccc",
-                Quant = 2
-            });
+            var result = _uow.GarantiaRepository.ListarConferenciaItemPendente(Id_Conferencia);
+            var model = Mapper.Map<IEnumerable<GarantiaConferenciaItem>>(result).ToList();
 
-            return PartialView("_ConferenciaItensPendentes", model);
+            return PartialView("_ConferenciaItemPendente", model);
         }
 
-        public ActionResult ConferenciaItensConferidos(long Id)
+        public ActionResult ConferenciaItemConferido(long Id_Conferencia)
         {
-            var model = new List<GarantiaConferenciaItem>();
-            model.Add(new GarantiaConferenciaItem
-            {
-                Refx = "teste",
-                Descricao = "aaaaa",
-                Quant = 10
-            });
-            model.Add(new GarantiaConferenciaItem
-            {
-                Refx = "testeaa",
-                Descricao = "aaaaaccc",
-                Quant = -2
-            });
+            var result = _uow.GarantiaRepository.ListarConferenciaHistorico(Id_Conferencia);
+            var model = Mapper.Map<IEnumerable<GarantiaConferenciaItem>>(result).ToList();
 
-            return PartialView("_ConferenciaItensConferidos", model);
+            return PartialView("_ConferenciaItemConferido", model);
         }
 
         public ActionResult ConferenciaLaudoDetalhe(long Id)
@@ -304,13 +283,29 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult ConferenciaDivergencia(long Id_Conferencia)
         {
             var result = _uow.GarantiaRepository.ListarConferenciaItem(Id_Conferencia);
-
             var model = new GarantiaConferenciaDivergenciaVM
             {
                 Itens = Mapper.Map<IEnumerable<GarantiaConferenciaItem>>(result).ToList()
             };
 
             return PartialView("_ConferenciaDivergencia", model);
+        }
+
+        public ActionResult Teste()
+        {
+            //GRAVA O HISTORICO
+            _uow.GarantiaRepository.CriarConferencia(new GarConferencia
+            {
+                Id_Solicitacao = 10,
+                Id_Usr = IdUsuario,
+                Id_Tipo_Conf = 5
+            });
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+            });
         }
 
         public ActionResult Remessa()

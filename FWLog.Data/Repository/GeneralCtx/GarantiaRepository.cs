@@ -8,6 +8,7 @@ using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Linq;
 using System.Text;
 
@@ -27,7 +28,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
             {
                 conn.Open();
-                if (conn.State == System.Data.ConnectionState.Open)
+                if (conn.State == ConnectionState.Open)
                 {
                     sQuery.AppendFormat(@"
                     SELECT
@@ -90,7 +91,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
             {
                 conn.Open();
-                if (conn.State == System.Data.ConnectionState.Open)
+                if (conn.State == ConnectionState.Open)
                 {
                     string sQuery = @"
                     SELECT
@@ -120,7 +121,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
             {
                 conn.Open();
-                if (conn.State == System.Data.ConnectionState.Open)
+                if (conn.State == ConnectionState.Open)
                 {
                     string sQuery = @"
                     SELECT
@@ -152,7 +153,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
             {
                 conn.Open();
-                if (conn.State == System.Data.ConnectionState.Open)
+                if (conn.State == ConnectionState.Open)
                 {
                     string sQuery = @"
                     SELECT
@@ -182,7 +183,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
             {
                 conn.Open();
-                if (conn.State == System.Data.ConnectionState.Open)
+                if (conn.State == ConnectionState.Open)
                 {
                     if (Origem == "solicitacao")
                         sQuery = @"SELECT id FROM gar_conferencia WHERE Ativo = 1 AND Id_Solicitacao = :Id ORDER BY id DESC FETCH FIRST 1 ROWS ONLY";
@@ -203,7 +204,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
             {
                 conn.Open();
-                if (conn.State == System.Data.ConnectionState.Open)
+                if (conn.State == ConnectionState.Open)
                 {
                     string sQuery = @"
                     SELECT
@@ -229,31 +230,139 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
             {
+                string sQuery = "";
                 conn.Open();
-                if (conn.State == System.Data.ConnectionState.Open)
+                if (conn.State == ConnectionState.Open)
                 {
-                    string sQuery = @"
-                    UPDATE gar_conferencia_item SET Quant_Conferida = Quant_Conferida + :Quant_Conferida, DT_CONF = SYSDATE
-                    WHERE Id_Conf = :Id_Conf AND id_item IN(SELECT id FROM gar_solicitacao_item WHERE Refx = :Refx)
+                    sQuery = @"
+                    SELECT
+                        (SELECT COUNT(*) FROM gar_conferencia_item WHERE id_conf = GC.id AND refx = :Refx ) AS tem_na_nota,
+                        (SELECT COUNT(*) FROM gar_conferencia_excesso WHERE id_conf = GC.id AND refx = :Refx ) AS tem_no_excesso
+                    FROM
+                        gar_conferencia GC
+                    WHERE
+                        GC.id = :Id_Conf
                     ";
-                    conn.Query<GarConferenciaItem>(sQuery, new
+                    var retorno = conn.Query<GarConferenciaItem>(sQuery, new { item.Refx, item.Id_Conf }).SingleOrDefault();
+
+                    if (retorno.Tem_Na_Nota == 1)
                     {
-                        item.Quant_Conferida,
-                        item.Id_Conf,
-                        item.Refx
-                    });
+                        sQuery = @"
+                        UPDATE gar_conferencia_item SET Quant_Conferida = Quant_Conferida + :Quant_Conferida, Id_Usr = :Id_Usr, Dt_Conf = SYSDATE
+                        WHERE Id_Conf = :Id_Conf AND Refx = :Refx
+                        ";
+                        conn.Query<GarConferenciaItem>(sQuery, new
+                        {
+                            item.Quant_Conferida,
+                            item.Id_Usr,
+                            item.Id_Conf,
+                            item.Refx
+                        });
+                    }
+                    else if (retorno.Tem_No_Excesso == 0)
+                    {
+                        sQuery = @"
+                        INSERT INTO gar_conferencia_excesso
+                        ( Quant_Conferida, Id_Conf, Refx, Id_Usr, Dt_Conf )
+                        VALUES
+                        ( :Quant_Conferida, :Id_Conf, :Refx, :Id_Usr, SYSDATE )
+                        ";
+                        conn.Query<GarConferenciaItem>(sQuery, new
+                        {
+                            item.Quant_Conferida,
+                            item.Id_Conf,
+                            item.Refx,
+                            item.Id_Usr
+                        });
+                    }
+                    else if (retorno.Tem_No_Excesso == 1)
+                    {
+                        sQuery = @"
+                         UPDATE gar_conferencia_excesso SET Quant_Conferida = Quant_Conferida + :Quant_Conferida, Id_Usr = :Id_Usr, Dt_Conf = SYSDATE
+                        WHERE Id_Conf = :Id_Conf AND Refx = :Refx
+                        ";
+                        conn.Query<GarConferenciaItem>(sQuery, new
+                        {
+                            item.Quant_Conferida,
+                            item.Id_Usr,
+                            item.Id_Conf,
+                            item.Refx
+                        });
+
+                        sQuery = @"DELETE  FROM gar_conferencia_excesso WHERE Id_Conf = :Id_Conf AND Refx = :Refx AND Quant_Conferida <= 0";
+                        conn.Query<GarConferenciaItem>(sQuery, new
+                        {
+                            item.Id_Conf,
+                            item.Refx
+                        });
+                    }
                 }
                 conn.Close();
             }
         }
 
-        public void InserirHistoricoConferencia(GarConferenciaHist item)
+        public void CriarConferencia(GarConferencia item)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    sQuery = @"
+                    SELECT COUNT(*) FROM gar_conferencia WHERE id_solicitacao = :Id_Solicitacao AND ativo = 1
+                    ";
+                    var retorno = conn.Query<int>(sQuery, new { item.Id_Solicitacao }).SingleOrDefault();
+
+                    if (retorno == 0)
+                    {
+                        var param = new DynamicParameters();
+
+                        param.Add(name: "Id_Solicitacao", value: item.Id_Solicitacao, direction: ParameterDirection.Input);
+                        param.Add(name: "Id_Tipo_Conf", value: item.Id_Tipo_Conf, direction: ParameterDirection.Input);
+                        param.Add(name: "Id_Usr", value: item.Id_Usr, direction: ParameterDirection.Input);
+                        param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                        conn.Execute("INSERT INTO gar_conferencia (Id_Solicitacao, Id_Tipo_Conf, Id_Usr, Dt_Conf) VALUES (:Id_Solicitacao, :Id_Tipo_Conf, :Id_Usr, SYSDATE) returning Id into :Id", param);
+
+                        var Id_Conferencia = param.Get<int>("Id");
+
+                        sQuery = @"
+                        INSERT INTO gar_conferencia_item (refx, id_conf, dt_conf, id_usr,quant)
+                        SELECT
+                            refx,
+                            :Id_Conferencia,
+                            SYSDATE AS dt_conf,
+                            :id_usr,
+                            SUM(quant) AS quant
+                        FROM
+                            gar_solicitacao_item
+                        WHERE
+                            id_solicitacao = :Id_Solicitacao
+                        GROUP BY
+                            refx
+                        ";
+                        conn.Query<GarConferenciaHist>(sQuery, new
+                        {
+                            Id_Conferencia,
+                            item.Id_Usr,
+                            item.Id_Solicitacao
+                        });
+                    }
+                }
+                conn.Close();
+            }
+        }
+
+        #region Conferencia Historico
+
+        public void InserirConferenciaHistorico(GarConferenciaHist item)
         {
             //TODO VERIFICAR SE ITEM EXISTE NA TABELA DE ESTOQUE
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
             {
                 conn.Open();
-                if (conn.State == System.Data.ConnectionState.Open)
+                if (conn.State == ConnectionState.Open)
                 {
                     string sQuery = @"
                     INSERT INTO gar_conferencia_hist
@@ -274,6 +383,68 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
         }
 
+        public List<GarConferenciaHist> ListarConferenciaHistorico(long Id_Conferencia)
+        {
+            List<GarConferenciaHist> retorno = new List<GarConferenciaHist>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        Id,
+                        Id_Conf,
+                        Refx,
+                        Volume,
+                        Dt_Conf,
+                        Quant_Conferida
+                    FROM
+                        gar_conferencia_hist
+                    WHERE
+                        Id_Conf = :Id_Conferencia
+                    ORDER BY
+                        Id DESC
+                    ";
+                    retorno = conn.Query<GarConferenciaHist>(sQuery, new { Id_Conferencia }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
+        public List<GarConferenciaHist> ListarConferenciaItemPendente(long Id_Conferencia)
+        {
+            List<GarConferenciaHist> retorno = new List<GarConferenciaHist>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        GCI.Id,
+                        GCI.Id_Conf,
+                        GCI.Refx
+                    FROM
+                        gar_conferencia_item GCI
+                    WHERE
+                        GCI.Id_Conf = :Id_Conferencia
+                        AND GCI.Refx NOT IN(SELECT GCH.refx FROM gar_conferencia_hist GCH WHERE GCH.Id_Conf = GCI.Id_Conf)
+                    ";
+                    retorno = conn.Query<GarConferenciaHist>(sQuery, new { Id_Conferencia }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
+        #endregion Conferencia Historico
+
         public List<GarConferenciaItem> ListarConferenciaItem(long Id_Conferencia)
         {
             List<GarConferenciaItem> retorno = new List<GarConferenciaItem>();
@@ -281,24 +452,34 @@ namespace FWLog.Data.Repository.GeneralCtx
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
             {
                 conn.Open();
-                if (conn.State == System.Data.ConnectionState.Open)
+                if (conn.State == ConnectionState.Open)
                 {
                     string sQuery = @"
                     SELECT
-                        GCI.Id,
-                        GCI.Id_Conf,
-                        GCI.Id_Item_Nf,
-                        GSI.Refx,
-                        GSI.Cod_Fornecedor,
-                        GSI.Quant,
-                        GCI.Quant_Conferida,
-                        GSI.Valor,
-                        ROUND(GSI.Quant * GSI.Valor,2) AS Valor_Total
+                        Id,
+                        Id_Conf,
+                        Refx,
+                        (Quant_Conferida - Quant) AS Divergencia,
+                        Quant,
+                        0 AS Tem_No_Excesso,
+                        Quant_Conferida
                     FROM
-                        gar_conferencia_item GCI
-                        INNER JOIN gar_solicitacao_item GSI ON GSI.id = GCI.id_item
+                        gar_conferencia_item
                     WHERE
-                        GCI.Id_Conf = :Id_Conferencia
+                        Id_Conf = :Id_Conferencia
+                    UNION
+                    SELECT
+                        Id,
+                        Id_Conf,
+                        Refx,
+                        0 AS Divergencia,
+                        0 AS Quant,
+                        1 AS Tem_No_Excesso,
+                        Quant_Conferida
+                    FROM
+                        gar_conferencia_excesso
+                    WHERE
+                        Id_Conf = :Id_Conferencia
                     ";
                     retorno = conn.Query<GarConferenciaItem>(sQuery, new { Id_Conferencia }).ToList();
                 }

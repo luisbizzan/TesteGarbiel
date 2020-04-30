@@ -1,15 +1,16 @@
-﻿@model List<FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaConferencia>
+﻿@model List<FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaConferenciaItem>
 
 <div class="row">
     <div class="col-md-12">
         <div class="x_panel">
             <div class="x_content">
-                <table id="tbDivergenciaItens" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                <table id="tbItensPendentes" class="table table-striped table-bordered dt-responsive" style="width:100%">
                     <thead>
                         <tr>
                             <th>Refx</th>
                             <th>Descrição</th>
                             <th>Quant.</th>
+                            <th>Dt</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -20,15 +21,16 @@
                                 <td>@item.Refx</td>
                                 <td>@item.Descricao</td>
                                 <td>
-                                    @if (item.Quantidade < 0)
+                                    @if (item.Quant_Conferida < 0)
                                     {
-                                        <span class="label label-danger">@item.Quantidade</span>
+                                        <span class="label label-danger">@item.Quant_Conferida</span>
                                     }
                                     else
                                     {
-                                        <span class="label label-success">@item.Quantidade</span>
+                                        <span class="label label-success">@item.Quant_Conferida</span>
                                     }
                                 </td>
+                                <td>@String.Format("{0:dd/MM/yyyy hh:mm}", item.Dt_Conf)</td>
                             </tr>
                         }
                     </tbody>

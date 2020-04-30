@@ -1,15 +1,14 @@
-﻿@model List<FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaConferencia>
+﻿@model List<FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaConferenciaItem>
 
 <div class="row">
     <div class="col-md-12">
         <div class="x_panel">
             <div class="x_content">
-                <table id="tbDivergenciaItens" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                <table id="tbItensPendentes" class="table table-striped table-bordered dt-responsive" style="width:100%">
                     <thead>
                         <tr>
                             <th>Refx</th>
                             <th>Descrição</th>
-                            <th>Quant.</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -19,7 +18,6 @@
                             <tr>
                                 <td>@item.Refx</td>
                                 <td>@item.Descricao</td>
-                                <td>@item.Quantidade</td>
                             </tr>
                         }
                     </tbody>

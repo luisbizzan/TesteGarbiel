@@ -50,7 +50,7 @@ function conferir() {
                         if (result.Success) {
                             $("#Form_Quant").val("1");
                             $("#Form_Refx").val("");
-                            PNotify.success({ text: result.Message });
+                            PNotify.success({ text: result.Message, delay: 1000 });
                         } else {
                             PNotify.error({ text: result.Message });
                         }
@@ -178,8 +178,20 @@ function itensPendentes() {
     let modal = $("#modalItensPendentes .modal-body");
     $("#modalItensPendentes .modal-title").html("Itens Pendentes");
 
-    modal.load(CONTROLLER_PATH + "ConferenciaItensPendentes/" + id, function () {
+    modal.load(CONTROLLER_PATH + "ConferenciaItemPendente", {
+        Id_Conferencia: $("#Conferencia_Id").val()
+    }, function () {
         $("#modalItensPendentes").modal("show");
+        $('#tbItensPendentes').DataTable({
+            destroy: true,
+            serverSide: false,
+            stateSave: false,
+            dom: "Bfrtip",
+            order: [],
+            buttons: [],
+            searching: true,
+            bInfo: true
+        });
     });
 }
 
@@ -189,8 +201,20 @@ function itensConferidos() {
     let modal = $("#modalItensPendentes .modal-body");
     $("#modalItensPendentes .modal-title").html("Itens Conferidos");
 
-    modal.load(CONTROLLER_PATH + "ConferenciaItensConferidos/" + id, function () {
+    modal.load(CONTROLLER_PATH + "ConferenciaItemConferido", {
+        Id_Conferencia: $("#Conferencia_Id").val()
+    }, function () {
         $("#modalItensPendentes").modal("show");
+        $('#tbItensPendentes').DataTable({
+            destroy: true,
+            serverSide: false,
+            stateSave: false,
+            dom: "Bfrtip",
+            order: [],
+            buttons: [],
+            searching: true,
+            bInfo: true
+        });
     });
 }
 
