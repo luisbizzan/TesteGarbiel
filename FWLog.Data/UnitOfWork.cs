@@ -75,6 +75,7 @@ namespace FWLog.Data
         private ColetorHistoricoTipoRepository _coletorHistoricoTipoRepository;
         private AtividadeEstoqueRepository _atividadeEstoqueRepository;
         private AtividadeEstoqueTipoRepository _atividadeEstoqueTipoRepository;
+        private TransportadoraEnderecoRepository _transportadoraEnderecoRepository;
 
         public UnitOfWork()
         {
@@ -384,6 +385,11 @@ namespace FWLog.Data
         public ColetorHistoricoTipoRepository ColetorHistoricoTipoRepository
         {
             get => _coletorHistoricoTipoRepository ?? (_coletorHistoricoTipoRepository = new ColetorHistoricoTipoRepository(_context));
+        }
+
+        public TransportadoraEnderecoRepository TransportadoraEnderecoRepository
+        {
+            get => _transportadoraEnderecoRepository ?? (_transportadoraEnderecoRepository = new TransportadoraEnderecoRepository(_context));
         }
 
         public TransactionScope CreateTransactionScope()
