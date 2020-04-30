@@ -45,5 +45,7 @@ namespace FWLog.Services.Model.SeparacaoPedido
         public decimal MultiploProduto { get; set; }
 
         public int QtdePedido { get; set; }
+
+        public int QtdSeparada { get; set; }
     }
 }

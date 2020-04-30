@@ -1,4 +1,5 @@
 ﻿@model FWLog.Web.Backoffice.Models.CaixaCtx.CaixaDetalhesViewModel
+@using FWLog.AspNet.Identity
 
 @{
     ViewBag.Title = "Visualização de Caixa";
@@ -71,7 +72,10 @@
             <div class="ln_solid"></div>
             <div class="row col-xs-12 form-buttons">
                 <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
-                <a href="@Url.Action("Editar", new { id = Model.IdCaixa })" class="btn btn-default">Editar</a>
+                @if (User.HasPermission(Permissions.Caixa.Editar))
+                {
+                    <a href="@Url.Action("Editar", new { id = Model.IdCaixa })" class="btn btn-default">Editar</a>
+                }
             </div>
         </div>
     </div>

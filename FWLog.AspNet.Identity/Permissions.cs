@@ -372,7 +372,7 @@ namespace FWLog.AspNet.Identity
             public const string VisualizarCorredorImpressora = "CorredorImpressoraVisualizar";
             public const string ExcluirCorredorImpressora = "CorredorImpressoraExcluir";
 
-            public Separacao() : base(Display.FromString("Separação"))
+            public Separacao() : base(Display.FromString("Separação - Corredores x Impressoras"))
             {
                 Register(ListarCorredorImpressora, Display.FromString("Listar Corredor x Impressora"));
                 Register(CadastrarCorredorImpressora, Display.FromString("Cadastrar Corredor x Impressora"));
