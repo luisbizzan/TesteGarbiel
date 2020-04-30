@@ -2,11 +2,7 @@
 using DartDigital.Library.Exceptions;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Caixa;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
@@ -28,7 +24,7 @@ namespace FWLog.Web.Api.Controllers
             try
             {
                 _caixaService.ValidarPesquisa(IdEmpresa);
-                
+
                 var caixasDeSeparacao = _caixaService.BuscarCaixaTipoSeparacao(IdEmpresa);
 
                 var response = Mapper.Map<List<CaixaResposta>>(caixasDeSeparacao);
@@ -39,7 +35,7 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch 
+            catch
             {
                 throw;
             }
