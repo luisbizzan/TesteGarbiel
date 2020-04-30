@@ -331,5 +331,23 @@ namespace FWLog.AspNet.Identity
                 Register(Listar, Display.FromString("Listar Atividades"));
             }
         }
+
+        public class Expedicao : PermissionGroupBuildItem
+        {
+            public const string ListarTranportadoraEndereco = "TranportadoraEnderecoListar";
+            public const string CadastrarTranportadoraEndereco = "TranportadoraEnderecoCadastrar";
+            public const string EditarTranportadoraEndereco = "TranportadoraEnderecoEditar";
+            public const string VisualizarTranportadoraEndereco = "TranportadoraEndereco Visualizar";
+            public const string ExcluirTranportadoraEndereco = "TranportadoraEndereco Excluir";
+
+            public Expedicao() : base(Display.FromString("Expedição - Transportadora x Endereços"))
+            {
+                Register(ListarTranportadoraEndereco, Display.FromString("Listar Transportadora x Endereço"));
+                Register(CadastrarTranportadoraEndereco, Display.FromString("Cadastrar Transportadora x Endereço"));
+                Register(EditarTranportadoraEndereco, Display.FromString("Editar Transportadora x Endereço"));
+                Register(VisualizarTranportadoraEndereco, Display.FromString("Visualizar Transportadora x Endereço"));
+                Register(ExcluirTranportadoraEndereco, Display.FromString("Excluir Transportadora x Endereço"));
+            }
+        }
     }
 }
