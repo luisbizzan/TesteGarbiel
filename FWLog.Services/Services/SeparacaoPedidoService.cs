@@ -133,6 +133,7 @@ namespace FWLog.Services.Services
                     ReferenciaProduto = item.pedidoVendaProduto.Produto.Referencia,
                     MultiploProduto = item.pedidoVendaProduto.Produto.MultiploVenda,
                     QtdePedido = item.pedidoVendaProduto.QtdSeparar,
+                    QtdSeparada = item.pedidoVendaProduto.QtdSeparada.GetValueOrDefault(),
                     IdPontoArmazenagem = item.pedidoVendaProduto.EnderecoArmazenagem.IdPontoArmazenagem
                 }).ToList()
             }).ToList();
