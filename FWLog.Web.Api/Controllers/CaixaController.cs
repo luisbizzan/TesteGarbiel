@@ -27,9 +27,9 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                _caixaService.ValidarPesquisa(219);
+                _caixaService.ValidarPesquisa(IdEmpresa);
                 
-                var caixasDeSeparacao = _caixaService.BuscarCaixaTipoSeparacao(219);
+                var caixasDeSeparacao = _caixaService.BuscarCaixaTipoSeparacao(IdEmpresa);
 
                 var response = Mapper.Map<List<CaixaResposta>>(caixasDeSeparacao);
 
