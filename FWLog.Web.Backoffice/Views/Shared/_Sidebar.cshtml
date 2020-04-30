@@ -31,6 +31,9 @@
             new MenuItem { Text = "Relatório - Totalização Por Localização", Url = Url.Action("RelatorioTotalizacaoLocalizacao", "Armazenagem"), RequirePermission = Permissions.RelatoriosArmazenagem.RelatorioTotalizacaoLocalizacao },
             new MenuItem { Text = "Relatório - Logística por Corredor", Url = Url.Action("RelatorioLogisticaCorredor", "Armazenagem"), RequirePermission = Permissions.RelatoriosArmazenagem.ReltorioLogisticaCorredor }
         ),
+        new MenuGroup("Expedição", "fa fa-truck").SetItems(
+            new MenuItem { Text = "Endereços X Transportadoras", Url = Url.Action("Index", "NivelArmazenagem"), RequirePermission = Permissions.NivelArmazenagem.Listar },
+        ),
           new MenuGroup(text: Res.GarantiaMenuItem, icon: "fa fa-shield").SetItems(
             new MenuItem { Text = "Solicitação de Garantia", Url = Url.Action("Index", "Garantia"), RequirePermission = Permissions.Garantia.Listar },
             new MenuItem { Text = "Motivo do Laudo", Url = Url.Action("MotivoLaudo", "MotivoLaudo"), RequirePermission = Permissions.MotivoLaudo.Listar }
