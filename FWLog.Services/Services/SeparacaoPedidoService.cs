@@ -352,7 +352,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task IniciarSeparacaoPedidoVenda(long idPedidoVenda, string idUsuarioOperacao, long idEmpresa)
+        public async Task IniciarSeparacaoPedidoVenda(long idPedidoVenda, string idUsuarioOperacao, long idEmpresa, long idPedidoVendaVolume)
         {
             // validações
             if (idPedidoVenda <= 0)
@@ -382,21 +382,36 @@ namespace FWLog.Services.Services
             //    throw new BusinessException("O pedido já está sendo separado por outro usuário.");
             //}
 
-            // update no Sankhya
-            await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, PedidoVendaStatusEnum.ProcessandoSeparacao);
+            var dataProcessamento = DateTime.Now;
 
-            // update do pedido na base oracle
-            using (var transaction = _unitOfWork.CreateTransactionScope())
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
             {
-                pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
-                pedidoVenda.DataHoraInicioSeparacao = DateTime.Now;
-                pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+                await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, PedidoVendaStatusEnum.ProcessandoSeparacao);
 
-                _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+                using (var transaction = _unitOfWork.CreateTransactionScope())
+                {
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+                    pedidoVenda.DataHoraInicioSeparacao = dataProcessamento;
+                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+
+                    _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+
+                    _unitOfWork.SaveChanges();
+
+                    transaction.Complete();
+                }
+            }
+
+            var pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.First(f => f.IdPedidoVendaVolume == idPedidoVendaVolume);
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
+            {
+                pedidoVendaVolume.DataHoraInicioSeparacao = dataProcessamento;
+                pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+
+                _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
 
                 _unitOfWork.SaveChanges();
-
-                transaction.Complete();
             }
         }
 
@@ -530,22 +545,7 @@ namespace FWLog.Services.Services
 
                 var dataProcessamento = DateTime.Now;
 
-                if (pedidoVendaProduto.PedidoVendaVolume.PedidoVendaProdutos.Count(pvv => pvv.QtdSeparada.GetValueOrDefault() == 0) == pedidoVendaProduto.PedidoVendaVolume.PedidoVendaProdutos.Count())
-                {
-                    pedidoVendaProduto.PedidoVendaVolume.DataHoraInicioSeparacao = dataProcessamento;
-                    pedidoVendaProduto.PedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
-
-                    if (pedidoVenda.DataHoraInicioSeparacao == null)
-                    {
-                        pedidoVenda.DataHoraInicioSeparacao = dataProcessamento;
-                        pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
-                        pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
-
-                        _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
-                    }
-
-                    await _unitOfWork.SaveChangesAsync();
-                }
+               
 
                 if (pedidoVendaProduto.QtdSeparada.GetValueOrDefault() == 0)
                 {

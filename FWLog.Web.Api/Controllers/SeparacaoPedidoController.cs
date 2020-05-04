@@ -66,9 +66,9 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/separacao-pedido/iniciar-separacao-pedido-venda/{idPedidoVenda}")]
+        [Route("api/v1/separacao-pedido/iniciar-separacao-pedido-venda")]
         [HttpPost]
-        public async Task<IHttpActionResult> IniciarSeparacaoPedido(long idPedidoVenda)
+        public async Task<IHttpActionResult> IniciarSeparacaoPedido(IniciarSeparacaoVolumeRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
@@ -77,7 +77,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                await _separacaoPedidoService.IniciarSeparacaoPedidoVenda(idPedidoVenda, IdUsuario, IdEmpresa);
+                await _separacaoPedidoService.IniciarSeparacaoPedidoVenda(requisicao.IdPedidoVenda, IdUsuario, IdEmpresa, requisicao.IdPedidoVendaVolume);
             }
             catch (BusinessException businessException)
             {
