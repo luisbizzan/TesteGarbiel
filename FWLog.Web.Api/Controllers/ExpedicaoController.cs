@@ -17,15 +17,15 @@ namespace FWLog.Web.Api.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [Route("api/v1/expedicao/validar-referencia-pedido/{referenciaPedido}")]
+        [Route("api/v1/expedicao/busca-pedido-volume/{referenciaPedido}")]
         [HttpPost]
-        public IHttpActionResult ValidarReferenciaPedido(string referenciaPedido)
+        public IHttpActionResult BuscaPedidoVendaVolume(string referenciaPedido)
         {
             try
             {
-                _expedicaoService.ValidarReferenciaPedido(referenciaPedido, IdEmpresa);
+                var resposta = _expedicaoService.BuscaPedidoVendaVolume(referenciaPedido, IdEmpresa);
 
-                return ApiOk();
+                return ApiOk(resposta);
             }
             catch (BusinessException ex)
             {
