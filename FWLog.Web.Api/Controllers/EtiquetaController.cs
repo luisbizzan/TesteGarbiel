@@ -11,14 +11,10 @@ namespace FWLog.Web.Api.Controllers
     public class EtiquetaController : ApiBaseController
     {
         private readonly EtiquetaService _etiquetaService;
-        private readonly UnitOfWork _unitOfWork;
-        private readonly ColetorHistoricoService _coletorHistoricoService;
 
-        public EtiquetaController(UnitOfWork unitOfWork, EtiquetaService etiquetaService, ColetorHistoricoService coletorHistoricoService)
+        public EtiquetaController(EtiquetaService etiquetaService)
         {
-            _unitOfWork = unitOfWork;
             _etiquetaService = etiquetaService;
-            _coletorHistoricoService = coletorHistoricoService;
         }
 
         [HttpPost]

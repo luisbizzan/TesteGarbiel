@@ -33,6 +33,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.ProdutoEstoque.Where(x => x.IdProduto == idProduto && x.IdEmpresa == idEmpresa).FirstOrDefault();
         }
 
+        public List<ProdutoEstoque> BuscarProdutoEstoquePorIdProduto(long idEmpresa, List<long> listIdProdutos)
+        {
+            return Entities.ProdutoEstoque.Where(w => w.IdEmpresa == idEmpresa && listIdProdutos.Contains(w.IdProduto)).ToList();
+        }
+
         public IQueryable<ProdutoEstoque> ObterProdutoEstoquePorEmpresa(long idEmpresa)
         {
             return Entities.ProdutoEstoque.Where(produtoEstoque => produtoEstoque.IdEmpresa == idEmpresa);

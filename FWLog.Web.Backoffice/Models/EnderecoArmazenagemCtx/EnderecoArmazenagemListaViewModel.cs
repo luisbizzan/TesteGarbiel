@@ -14,6 +14,8 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         public EnderecoArmazenagemListaItemViewModel Itens { get; set; }
         public EnderecoArmazenagemListaFilterViewModel Filtros { get; set; }
         public SelectList Status { get; set; }
+        public SelectList Picking { get; set; }
+        public SelectList PontoSeparacao { get; set; }
     }
 
     public class EnderecoArmazenagemListaFilterViewModel
@@ -26,7 +28,10 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         public int? Status { get; set; }
         [Display(Name = "Código Endereço")]
         public string Codigo { get; set; }
-
+        [Display(Name = "Picking?")]
+        public int? Picking { get; set; }
+        [Display(Name = "Ponto de Separação?")]
+        public int? PontoSeparacao { get; set; }
         public string DescricaoNivelArmazenagem { get; set; }
         public string DescricaoPontoArmazenagem { get; set; }
     }
@@ -45,6 +50,8 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         public string Fifo { get; set; }
         [Display(Name = "Ponto Separação")]
         public string PontoSeparacao { get; set; }
+        [Display(Name = "Picking")]
+        public string Picking { get; set; }
         [Display(Name = "Estoque Minimo")]
         public int EstoqueMinimo { get; set; }
         [Display(Name = "Status")]

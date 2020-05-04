@@ -23,10 +23,14 @@ namespace FWLog.Data.Models
         [Index]
         public string CNPJ { get; set; }
 
-        [Required]        
+        [Required]
         public long CodigoIntegracao { get; set; }
 
         [Required]
         public bool Ativo { get; set; }
+
+        [Required]
+        [StringLength(3)]
+        public string CodigoTransportadora { get; set; }
     }
 }

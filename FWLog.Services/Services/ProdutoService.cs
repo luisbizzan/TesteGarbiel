@@ -1,5 +1,4 @@
 ﻿using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
@@ -11,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
+using DartDigital.Library.Exceptions;
+using FWLog.Services.Model.Produto;
 
 namespace FWLog.Services.Services
 {
@@ -297,14 +298,14 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task<long> ConsultarQuantidadeReservada(long idProduto, long idEmpresa)
+        public async Task<int> ConsultarQuantidadeReservada(long idProduto, long idEmpresa)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
                 return 0;
             }
-            
-            long quantidadeReservada = 0;
+
+            int quantidadeReservada = 0;
 
             Empresa empresa = _uow.EmpresaRepository.ConsultaPorId(idEmpresa);
             Produto produto = _uow.ProdutoRepository.GetById(idProduto);
@@ -331,6 +332,51 @@ namespace FWLog.Services.Services
             }
 
             return quantidadeReservada;
+        }
+
+        public async Task<ProdutoEstoqueResposta> ConsultarProdutoEstoque(long idProduto, long idEmpresa)
+        {
+            var produto = _uow.ProdutoRepository.GetById(idProduto);
+            if (produto == null)
+            {
+                throw new BusinessException("Produto não encontrado.");
+            }
+
+            var produtoEstoque = _uow.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(idProduto, idEmpresa);
+            if (produtoEstoque == null)
+            {
+                throw new BusinessException("Produto não configurado para a empresa selecionada.");
+            }
+
+            var qtdreservada = await ConsultarQuantidadeReservada(produto.IdProduto, idEmpresa);
+
+            var resposta = new ProdutoEstoqueResposta()
+            {
+                Referencia = produto.Referencia,
+                IdProduto = produto.IdProduto,
+                QtdEstoque = produtoEstoque.Saldo,
+                QtdReservada = qtdreservada,
+                Saldo = produtoEstoque.Saldo - qtdreservada,
+                PontosArmazenagem = new List<PontoArmazenagemResposta>()
+            };
+
+            var loteProdutoEndereco = _uow.LoteProdutoEnderecoRepository.PesquisarPorProduto(idProduto, idEmpresa);
+            if (loteProdutoEndereco != null)
+            {
+                var pontosArmazenagem = loteProdutoEndereco.GroupBy(g => g.EnderecoArmazenagem.IdPontoArmazenagem).ToDictionary(g => g.Key, g => g.ToList());
+
+                foreach (var item in pontosArmazenagem)
+                {
+                    resposta.PontosArmazenagem.Add(new PontoArmazenagemResposta
+                    {
+                        Descricao = item.Value.First().EnderecoArmazenagem.PontoArmazenagem.Descricao,
+                        IdPontoArmazenagem = item.Key,
+                        Saldo = item.Value.Sum(s => s.Quantidade)
+                    });
+                }
+            }
+
+            return resposta;
         }
     }
 }

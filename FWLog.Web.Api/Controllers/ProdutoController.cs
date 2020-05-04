@@ -142,5 +142,19 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk(produtoResposta);
         }
+
+        [HttpGet]
+        [Route("api/v1/produto/estoque/{id}")]
+        public async Task<IHttpActionResult> ConsultarProdutoEstoque(long id)
+        {
+            if (id <= 0)
+            {
+                return ApiBadRequest("Informe código do produto.");
+            }
+
+            var resposta = await _produtoService.ConsultarProdutoEstoque(id, IdEmpresa);
+
+            return ApiOk(resposta);
+        }
     }
 }

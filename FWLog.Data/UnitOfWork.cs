@@ -34,7 +34,7 @@ namespace FWLog.Data
         private QuarentenaRepository _quarentenaRepository;
         private QuarentenaStatusRepository _quarentenaStatusRepository;
         private NotaFiscalStatusRepository _notaFiscalStatusRepository;
-		private NivelArmazenagemRepository _nivelArmazenagemRepository;
+        private NivelArmazenagemRepository _nivelArmazenagemRepository;
         private PontoArmazenagemRepository _pontoArmazenagemRepository;
         private TipoMovimentacaoRepository _tipoMovimentacaoRepository;
         private TipoArmazenagemRepository _tipoArmazenagemRepository;
@@ -52,7 +52,7 @@ namespace FWLog.Data
         private PerfilImpressoraRepository _perfilImpressoraRepository;
         private TipoEtiquetagemRepository _tipoEtiquetagemRepository;
         private LoteProdutoRepository _loteProdutoRepository;
-        private IntegracaoTipoRepository     _integracaoTipoRepository;
+        private IntegracaoTipoRepository _integracaoTipoRepository;
         private IntegracaoEntidadeRepository _integracaoEntidadeRepository;
         private LoteMovimentacaoRepository _loteMovimentacaoRepository;
         private LoteMovimentacaoTipoRepository _loteMovimentacaoTipoRepository;
@@ -66,7 +66,7 @@ namespace FWLog.Data
         private GarantiaStatusRepository _garantiaStatusRepository;
         private MotivoLaudoRepository _motivoLaudoRepository;
         private RepresentanteRepository _representanteRepository;
-        private LoteProdutoEnderecoRepository _loteProdutoEnderecoRepository;		
+        private LoteProdutoEnderecoRepository _loteProdutoEnderecoRepository;
         private IntegracaoLogRepository _integracaoLogRepository;
         private NotaFiscalRecebimentoRepository _notaFiscalRecebimentoRepository;
         private NotaRecebimentoStatusRepository _notaRecebimentoStatusRepository;
@@ -75,11 +75,55 @@ namespace FWLog.Data
         private ColetorHistoricoTipoRepository _coletorHistoricoTipoRepository;
         private AtividadeEstoqueRepository _atividadeEstoqueRepository;
         private AtividadeEstoqueTipoRepository _atividadeEstoqueTipoRepository;
+        private PedidoVendaRepository _pedidoVendaRepository;
+        private PedidoVendaStatusRepository _pedidoVendaStatusRepository;
+        private PedidoVendaProdutoRepository _pedidoVendaProdutoRepository;
+        private CaixaTipoRepository _caixaTipoRepository;
+        private CaixaRepository _caixaRepository;
+        private GrupoCorredorArmazenagemRepository _grupoCorredorArmazenagemRepository;
+        private PedidoRepository _pedidoRepository;
+        private PedidoItemRepository _pedidoItemRepository;
+        private PedidoVendaVolumeRepository _pedidoVendaVolumeRepository;
         private TransportadoraEnderecoRepository _transportadoraEnderecoRepository;
 
         public UnitOfWork()
         {
             _context = new Entities();
+        }
+
+        public PedidoVendaVolumeRepository PedidoVendaVolumeRepository
+        {
+            get => _pedidoVendaVolumeRepository ?? (_pedidoVendaVolumeRepository = new PedidoVendaVolumeRepository(_context));
+        }
+
+        public GrupoCorredorArmazenagemRepository GrupoCorredorArmazenagemRepository
+        {
+            get => _grupoCorredorArmazenagemRepository ?? (_grupoCorredorArmazenagemRepository = new GrupoCorredorArmazenagemRepository(_context));
+        }
+
+        public PedidoRepository PedidoRepository
+        {
+            get => _pedidoRepository ?? (_pedidoRepository = new PedidoRepository(_context));
+        }
+
+        public PedidoItemRepository PedidoItemRepository
+        {
+            get => _pedidoItemRepository ?? (_pedidoItemRepository = new PedidoItemRepository(_context));
+        }
+
+        public PedidoVendaProdutoRepository PedidoVendaProdutoRepository
+        {
+            get => _pedidoVendaProdutoRepository ?? (_pedidoVendaProdutoRepository = new PedidoVendaProdutoRepository(_context));
+        }
+
+        public PedidoVendaStatusRepository PedidoVendaStatusRepository
+        {
+            get => _pedidoVendaStatusRepository ?? (_pedidoVendaStatusRepository = new PedidoVendaStatusRepository(_context));
+        }
+
+        public PedidoVendaRepository PedidoVendaRepository
+        {
+            get => _pedidoVendaRepository ?? (_pedidoVendaRepository = new PedidoVendaRepository(_context));
         }
 
         public AtividadeEstoqueTipoRepository AtividadeEstoqueTipoRepository
@@ -195,7 +239,7 @@ namespace FWLog.Data
         public TipoMovimentacaoRepository TipoMovimentacaoRepository
         {
             get => _tipoMovimentacaoRepository ?? (_tipoMovimentacaoRepository = new TipoMovimentacaoRepository(_context));
-		}
+        }
 
         public NivelArmazenagemRepository NivelArmazenagemRepository
         {
@@ -385,6 +429,16 @@ namespace FWLog.Data
         public ColetorHistoricoTipoRepository ColetorHistoricoTipoRepository
         {
             get => _coletorHistoricoTipoRepository ?? (_coletorHistoricoTipoRepository = new ColetorHistoricoTipoRepository(_context));
+        }
+
+        public CaixaTipoRepository CaixaTipoRepository
+        {
+            get => _caixaTipoRepository ?? (_caixaTipoRepository = new CaixaTipoRepository(_context));
+        }
+
+        public CaixaRepository CaixaRepository
+        {
+            get => _caixaRepository ?? (_caixaRepository = new CaixaRepository(_context));
         }
 
         public TransportadoraEnderecoRepository TransportadoraEnderecoRepository

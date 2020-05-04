@@ -232,6 +232,7 @@
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
     <Compile Include="Controllers\ArmazenagemController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
+    <Compile Include="Controllers\CaixaController.cs" />
     <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\GarantiaController.cs" />
@@ -250,6 +251,7 @@
     <Compile Include="Controllers\BOFornecedorController.cs" />
     <Compile Include="Controllers\ProdutoController.cs" />
     <Compile Include="Controllers\RecebimentoEtiquetaIndividualPersonalizadaController.cs" />
+    <Compile Include="Controllers\CorredorImpressoraController.cs" />
     <Compile Include="Controllers\TransportadoraController.cs" />
     <Compile Include="Controllers\TransportadoraEnderecoController.cs" />
     <Compile Include="EnumsAndConsts\EmpresaCookie.cs" />
@@ -278,6 +280,8 @@
     <Compile Include="Mapping\ArmazenagemProfile.cs" />
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
+    <Compile Include="Mapping\CaixaProfile.cs" />
+    <Compile Include="Mapping\CorredorImpressoraProfile.cs" />
     <Compile Include="Mapping\GarantiaProfile.cs" />
     <Compile Include="Mapping\ClienteProfile.cs" />
     <Compile Include="Mapping\HistoricoAcaoUsuarioProfile.cs" />
@@ -321,7 +325,14 @@
     <Compile Include="Models\BORecebimentoNotaCtx\ResumoFinalizarConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\TratarDivergenciaRecebimentoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\ExibirDivergenciaRecebimentoViewModel.cs" />
+    <Compile Include="Models\CaixaCtx\CaixaEdicaoViewModel.cs" />
+    <Compile Include="Models\CaixaCtx\CaixaDetalhesViewModel.cs" />
+    <Compile Include="Models\CaixaCtx\CaixaCadastroViewModel.cs" />
     <Compile Include="Models\ClienteCtx\ClienteSearchModalViewModel.cs" />
+    <Compile Include="Models\CorredorImpressoraCtx\CorredorImpressoraCadastroViewModel.cs" />
+    <Compile Include="Models\CorredorImpressoraCtx\CorredorImpressoraDetalhesViewModel.cs" />
+    <Compile Include="Models\CorredorImpressoraCtx\CorredorImpressoraEdicaoViewModel.cs" />
+    <Compile Include="Models\CorredorImpressoraCtx\CorredorImpressoraListaViewModel.cs" />
     <Compile Include="Models\EmpresaCtx\EmpresaSearchModalViewModel.cs" />
     <Compile Include="Models\BOFornecedorCtx\BOFornecedorSearchModalViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
@@ -339,6 +350,7 @@
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORegistroRecebimentoViewModel.cs" />
     <Compile Include="Models\EmpresaCtx\EmpresaConfigEditarViewModel.cs" />
+    <Compile Include="Models\CaixaCtx\CaixaListaViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemConfirmaImpressaoViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemEtiquetaViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemCadastroViewModel.cs" />
@@ -536,7 +548,12 @@
     <Content Include="Scripts\Views\BOPrinter\create.js" />
     <Content Include="Scripts\Views\BOPrinter\edit.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioRastreioPeca.js" />
+    <Content Include="Scripts\Views\Caixa\cadastrar.js" />
+    <Content Include="Scripts\Views\Caixa\editar.js" />
     <Content Include="Scripts\Views\Cliente\searchModal.js" />
+    <Content Include="Scripts\Views\CorredorImpressora\cadastrar.js" />
+    <Content Include="Scripts\Views\CorredorImpressora\editar.js" />
+    <Content Include="Scripts\Views\CorredorImpressora\index.js" />
     <Content Include="Scripts\Views\Empresa\editar.js" />
     <Content Include="Scripts\Views\Empresa\searchModal.js" />
     <Content Include="Scripts\Views\BOFornecedor\searchModal.js" />
@@ -547,8 +564,9 @@
     <Content Include="Scripts\Views\BORecebimentoNota\index.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\editar.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\cadastrar.js" />
-    <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
+    <Content Include="Scripts\Views\Caixa\index.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\confirmarImpressao.js" />
+    <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
@@ -657,6 +675,14 @@
     <Content Include="Views\Armazenagem\RelatorioLogisticaCorredor.cshtml" />
     <Content Include="Views\Armazenagem\RelatorioAtividadeEstoque.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\ConfirmarImpressao.cshtml" />
+    <Content Include="Views\Caixa\Index.cshtml" />
+    <Content Include="Views\Caixa\Cadastrar.cshtml" />
+    <Content Include="Views\Caixa\Editar.cshtml" />
+    <Content Include="Views\Caixa\Detalhes.cshtml" />
+    <Content Include="Views\CorredorImpressora\Index.cshtml" />
+    <Content Include="Views\CorredorImpressora\Cadastrar.cshtml" />
+    <Content Include="Views\CorredorImpressora\Editar.cshtml" />
+    <Content Include="Views\CorredorImpressora\Detalhes.cshtml" />
     <Content Include="Views\TransportadoraEndereco\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
