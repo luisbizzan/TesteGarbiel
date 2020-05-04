@@ -87,6 +87,20 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        public async Task<IHttpActionResult> DividirPedido()
+        {
+            try
+            {
+                await _separacaoPedidoService.DividirPedido(IdEmpresa);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
+
         [Route("api/v1/separacao-pedido/finalizar-volume")]
         [HttpPost]
         public async Task<IHttpActionResult> FinalizarSeparacaoVolume(FinalizarSeparacaoVolumeRequisicao requisicao)

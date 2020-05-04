@@ -1,5 +1,4 @@
-﻿using ExtensionMethods.String;
-using FWLog.Data.Models;
+﻿using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
@@ -45,6 +44,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                 .Take(model.Length);
 
             return query.ToList();
+        }
+
+        public TransportadoraEndereco ObterPorEnderecoTransportadoraEmpresa(long idEnderecoArmazenagem, long idTransportadora, long idEmpresa)
+        {
+            return Entities.TransportadoraEndereco.Where(te => te.IdEnderecoArmazenagem == idEnderecoArmazenagem && te.IdTransportadora == idTransportadora && te.EnderecoArmazenagem.IdEmpresa == idEmpresa).FirstOrDefault();
         }
     }
 }
