@@ -1,6 +1,4 @@
 ﻿using DartDigital.Library.Exceptions;
-using FWLog.Services.Services;
-using FWLog.Web.Api.Models.ExpedicaoPedido;
 using FWLog.Data;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Expedicao;

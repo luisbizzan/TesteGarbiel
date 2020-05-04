@@ -30,7 +30,7 @@ namespace FWLog.Services.Services
             // validações
             if (idPedidoVenda <= 0)
             {
-                throw new BusinessException("O pedido deve ser informado.");
+                throw new BusinessException("O pedido de venda deve ser informado.");
             }
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedidoVendaEIdEmpresa(idPedidoVenda, idEmpresa);
@@ -46,7 +46,7 @@ namespace FWLog.Services.Services
 
             if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.ConcluidaComSucesso)
             {
-                throw new BusinessException("Separação do volume não está finalizada.");
+                throw new BusinessException("A separação do volume não está finalizada.");
             }
 
             var pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.First(f => f.IdPedidoVendaVolume == idPedidoVendaVolume);
@@ -55,8 +55,9 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume não foi encontrado.");
             }
 
-            //Verificar se a NF do pedido foi emitida, e confirmada. Status: “A” no Sankhya e as guias foram pagas, status “Y” no Sankhya; Caso não tenha, exibir mensagem “NF e Guias não estão emitidas/ pagas” (Tabela Pedido)            
-            if (pedidoVenda.NroPedidoVenda != default)
+            // TODO: melhorar validação quando Sankhya criar os status de Nota e Guia:
+            // - verificar se a NF do pedido foi emitida, e confirmada. Status: “A” no Sankhya e as guias foram pagas, status “Y” no Sankhya
+            if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
             {                
                 throw new BusinessException("NF e Guias não estão emitidas/pagas.");
             }
