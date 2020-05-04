@@ -44,5 +44,39 @@ namespace FWLog.Services.Services
 
             return idPedidoVenda;
         }
+
+        public async Task AtualizarQuantidadeVolume(long idPedidoVenda, int quantidade)
+        {
+            try
+            {
+                var pedidoVenda = _uow.PedidoVendaRepository.GetById(idPedidoVenda);
+
+                if (pedidoVenda != null)
+                    pedidoVenda.NroVolumes = pedidoVenda.NroVolumes + quantidade;
+
+                await _uow.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.Error(String.Format("Erro ao atualizar a quantidade de volumes do pedido de venda {0}.", idPedidoVenda), ex);
+            }
+        }
+
+        public async Task AtualizarStatus(long idPedidoVenda, PedidoVendaStatusEnum status)
+        {
+            try
+            {
+                var pedidoVenda = _uow.PedidoVendaRepository.GetById(idPedidoVenda);
+
+                if (pedidoVenda != null)
+                    pedidoVenda.IdPedidoVendaStatus = status;
+
+                await _uow.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.Error(String.Format("Erro ao atualizar o status do pedido de venda {0}.", idPedidoVenda), ex);
+            }
+        }
     }
 }

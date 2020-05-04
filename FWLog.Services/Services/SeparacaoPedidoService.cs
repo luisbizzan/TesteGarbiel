@@ -760,7 +760,7 @@ namespace FWLog.Services.Services
                  */
                 foreach (var itemCorredorArmazenagem in grupoCorredorArmazenagem) 
                 {
-                    int contadorVolume = 1;
+                    int quantidadeVolume = 0;
                     
                     //Captura o corredor do item.
                     var listaItensDoPedidoPorCorredor = listaItensDoPedido.Where(x => x.IdGrupoCorredorArmazenagem == itemCorredorArmazenagem.IdGrupoCorredorArmazenagem).ToList();
@@ -782,12 +782,12 @@ namespace FWLog.Services.Services
                         {
                             //Chamar aqui para salvar o volume.
                             //Implementar aqui dentro do método Salvar se CaixaFornecedor então IdCaixa é nulo.
-                            var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, contadorVolume);
+                            var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume);
 
                             if (idPedidoVendaVolume == 0)
                                 break;
 
-                            contadorVolume++;
+                            quantidadeVolume++;
 
                             foreach (var item in listaItensDoPedidoDividido)
                             {
@@ -796,11 +796,14 @@ namespace FWLog.Services.Services
                             }
                         }
 
-                        //Atualizar a quantidade de volumes na PedidoVenda.
+                        //Atualiza a quantidade de volumes na PedidoVenda.
+                        await _pedidoVendaService.AtualizarQuantidadeVolume(idPedidoVenda, quantidadeVolume);
+                        quantidadeVolume = 0;
                     }
                 }
 
-                //Atualizar status da PedidoVenda.
+                //Atualiza o status do PedidoVenda para 
+                await _pedidoVendaService.AtualizarStatus(idPedidoVenda, PedidoVendaStatusEnum.EnviadoSeparacao);
             }
         }
 
@@ -834,8 +837,6 @@ namespace FWLog.Services.Services
 
             return listaItensDoPedidoAgrupada;
         }
-
-        
 
         public async Task<List<PedidoItemViewModel>> Cubicagem(List<PedidoItemViewModel> listaItensDoPedido, long idEmpresa) //Cubicagem
         {
@@ -1406,8 +1407,8 @@ namespace FWLog.Services.Services
             bool encontrouCaixaCorreta; //Indica que a caixa correta foi encontrada.
             bool sair;
             decimal nAuxQtde = 0;
-            decimal? nAuxCub = 0;
-            decimal nAuxPeso = 0;
+            decimal? contadorCubagem; //Acumulador (auxiliar) para cubagem.
+            decimal contadorPeso; //Acumulador (auxiliar) para peso.
             bool usarCaixaEncontrada; //Indica que os itens receberão a caixa encontrada.
             bool usouAgrupamento = false; //Indica se o agrupamento foi utilizado.
             PedidoItemViewModel pedidoItem = new PedidoItemViewModel(); 
@@ -1419,12 +1420,11 @@ namespace FWLog.Services.Services
             //Controle das peças que estão sem agrupamento
             do
             {
+                usouAgrupamento = false;
+
                 for (int i = 0; i < listaItensDoPedido.Count; i++)
                 {
-                    usouAgrupamento = false;
-                    
-                    //FALTOU VERIFICAR usa embalagem fornecedor OR
-                    if (listaItensDoPedido[i].Agrupador == 0 || listaItensDoPedido[i].Caixa == null)
+                    if (listaItensDoPedido[i].Agrupador == 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume)
                         break;
 
                     caixaCorrente = await BuscarMaiorCaixa(listaCaixasMaisComum);
@@ -1459,29 +1459,31 @@ namespace FWLog.Services.Services
                         //Laço que coloca os itens dentro da caixa
                         nAuxQtde = 0;
 
+                        decimal valor = 1.05M;
+
                         var condicao = (nAuxQtde + listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda) <= listaItensDoPedido[i].Quantidade &&
-                            ((listaItensDoPedido[i].Produto.CubagemProduto * (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda))) / listaItensDoPedido[i].Produto.MultiploVenda <= (caixaCorrente.Cubagem * ((100 - caixaCorrente.Sobra) / 100)) &
-                            ((listaItensDoPedido[i].Produto.PesoBruto * (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda)) <= (caixaCorrente.PesoMaximo * 1))));
+                            ((listaItensDoPedido[i].Produto.CubagemProduto * (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda))) / listaItensDoPedido[i].Produto.CubagemProduto <= (caixaCorrente.Cubagem * ((100 - caixaCorrente.Sobra) / 100)) &
+                            ((listaItensDoPedido[i].Produto.PesoBruto * (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda)) <= (caixaCorrente.PesoMaximo * valor))));
 
                         do
                         {
                             nAuxQtde += listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda;
-                            nAuxCub = (listaItensDoPedido[i].Produto.CubagemProduto * nAuxQtde) / listaItensDoPedido[i].Produto.MultiploVenda;
-                            nAuxPeso = (listaItensDoPedido[i].Produto.PesoBruto * nAuxQtde) / listaItensDoPedido[i].Produto.MultiploVenda;
+                            contadorCubagem = (listaItensDoPedido[i].Produto.CubagemProduto * nAuxQtde) / listaItensDoPedido[i].Produto.MultiploVenda;
+                            contadorPeso = (listaItensDoPedido[i].Produto.PesoBruto * nAuxQtde) / listaItensDoPedido[i].Produto.MultiploVenda;
                         } while (condicao);
 
                         usarCaixaEncontrada = true;
 
                         if (!encontrouCaixaCorreta)
                         {
-                            if (nAuxCub != 0 && nAuxCub < (caixaCorrente.Cubagem * ((100-caixaCorrente.Sobra) / 100 )) &&
+                            if (contadorCubagem.Value != 0 && contadorCubagem < (caixaCorrente.Cubagem * ((100-caixaCorrente.Sobra) / 100 )) &&
                                 listaItensDoPedido[i].Caixa != null)
                             {
-                                if (caixaAnteriorEhMelhorQueAtual && nAuxCub != nAux2Cub)
+                                if (caixaAnteriorEhMelhorQueAtual && contadorCubagem != nAux2Cub)
                                 {
                                     encontrouCaixaCorreta = true;
 
-                                    caixaCorrente = caixaAnterior; //ALTERAR 
+                                    caixaCorrente = caixaAnterior; 
                                     caixaAnteriorEhMelhorQueAtual = false;
 
                                     usarCaixaEncontrada = false;
@@ -1504,10 +1506,10 @@ namespace FWLog.Services.Services
                                         encontrouCaixaCorreta = true;
                                     }
 
-                                    nAux2Cub = nAuxCub;
+                                    nAux2Cub = contadorCubagem;
                                     caixaAnteriorEhMelhorQueAtual = true;
 
-                                    usarCaixaEncontrada = true;
+                                    usarCaixaEncontrada = false;
                                     usouAgrupamento = true;
                                 }
                             }
