@@ -202,6 +202,7 @@
     <Compile Include="Controllers\LoteController.cs" />
     <Compile Include="Controllers\PedidoController.cs" />
     <Compile Include="Controllers\RepresentanteController.cs" />
+    <Compile Include="Controllers\ExpedicaoController.cs" />
     <Compile Include="Controllers\SeparacaoPedidoController.cs" />
     <Compile Include="Controllers\UnidadeMedidaController.cs" />
     <Compile Include="Controllers\FreteTipoController.cs" />
