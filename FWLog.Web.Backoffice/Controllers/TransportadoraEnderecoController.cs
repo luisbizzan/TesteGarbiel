@@ -69,5 +69,57 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return View(viewModel);
         }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Expedicao.CadastrarTranportadoraEndereco)]
+        public ActionResult Cadastrar()
+        {
+            return View();
+        }
+
+        //[HttpPost]
+        //[ApplicationAuthorize(Permissions = Permissions.Separacao.CadastrarCorredorImpressora)]
+        //public ActionResult Cadastrar(TransportadoraEnderecoCadastroViewModel viewModel)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        viewModel.ListaImpressora = new SelectList(
+        //            _service.BuscarImpressoraPorEmpresa(IdEmpresa).Select(x => new SelectListItem
+        //            {
+        //                Value = x.Id.ToString(),
+        //                Text = x.Name,
+        //            }), "Value", "Text"
+        //            );
+
+        //        return View(viewModel);
+        //    }
+
+        //    try
+        //    {
+        //        var corredorImpressora = Mapper.Map<GrupoCorredorArmazenagem>(viewModel);
+
+        //        corredorImpressora.IdEmpresa = IdEmpresa;
+
+        //        _service.Cadastrar(corredorImpressora);
+
+        //        Notify.Success("Corredor x impressora cadastrado com sucesso.");
+        //    }
+        //    catch (BusinessException businessException)
+        //    {
+        //        ModelState.AddModelError(string.Empty, businessException.Message);
+
+        //        viewModel.ListaImpressora = new SelectList(
+        //            _service.BuscarImpressoraPorEmpresa(IdEmpresa).Select(x => new SelectListItem
+        //            {
+        //                Value = x.Id.ToString(),
+        //                Text = x.Name,
+        //            }), "Value", "Text"
+        //            );
+
+        //        return View(viewModel);
+        //    }
+
+        //    return RedirectToAction("Index");
+        //}
     }
 }
