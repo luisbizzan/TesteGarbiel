@@ -108,5 +108,37 @@ namespace FWLog.Services.Services
                 }
             }
         }
+
+        public void ValidaEnderecoInstalacaoVolume(long idPedidoVendaVolume, long idEnderecoArmazenagem, long idEmpresa)
+        {
+            if (idPedidoVendaVolume <= 0)
+            {
+                throw new BusinessException("O volume deve ser informado.");
+            }
+
+            if (idEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("O endereço deve ser informado.");
+            }
+
+            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
+
+            if (pedidoVendaVolume == null)
+            {
+                throw new BusinessException("O volume não foi encontrado.");
+            }
+
+            if (pedidoVendaVolume.PedidoVenda.IdEmpresa != idEmpresa)
+            {
+                throw new BusinessException("O volume informado não pertence a empresa do usuário logado.");
+            }
+
+            var enderecoTransportadora = _unitOfWork.TransportadoraEnderecoRepository.ObterPorEnderecoTransportadoraEmpresa(idEnderecoArmazenagem, pedidoVendaVolume.PedidoVenda.IdTransportadora, idEmpresa);
+
+            if (enderecoTransportadora == null)
+            {
+                throw new BusinessException("Endereço não pertence a transportadora.");
+            }
+        }
     }
 }
