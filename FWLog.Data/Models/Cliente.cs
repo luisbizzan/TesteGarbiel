@@ -28,7 +28,6 @@ namespace FWLog.Data.Models
         [Index]
         public long CodigoIntegracao { get; set; }
 
-        [Required]
         [StringLength(14)]
         public string Classificacao { get; set; }
 
@@ -40,6 +39,30 @@ namespace FWLog.Data.Models
 
         [Index]
         public long? IdRepresentanteInterno { get; set; }
+
+        [Required]
+        [StringLength(8)]
+        public string CEP { get; set; }
+
+        [Required]
+        [StringLength(76)]
+        public string Endereco { get; set; }
+
+        [Required]
+        [StringLength(6)]
+        public string Numero { get; set; }
+
+        [Required]
+        [StringLength(13)]
+        public string Telefone { get; set; }
+
+        [StringLength(2)]
+        [Required]
+        public string UF { get; set; }
+
+        [StringLength(50)]
+        [Required]
+        public string Cidade { get; set; }
 
         [ForeignKey(nameof(IdRepresentanteInterno))]
         public virtual Representante RepresentanteInterno { get; set; }
