@@ -50,8 +50,7 @@
       <HintPath>..\packages\FluentValidation.7.5.1\lib\net45\FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\FWLog.Web.Backoffice\bin\log4net.dll</HintPath>
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="MigraDoc.DocumentObjectModel, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>..\packages\PDFsharp-MigraDoc.1.50.5147\lib\net20\MigraDoc.DocumentObjectModel.dll</HintPath>
@@ -147,6 +146,7 @@
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeSeparacaoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeRecebimento.cs" />
     <Compile Include="Model\Etiquetas\ValidarEnderecoPickingRequest.cs" />
+    <Compile Include="Model\IntegracaoSankhya\PedidoItemIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ClienteIntegracao.cs" />
     <Compile Include="Model\IntegracaoLog\IntegracaoLog.cs" />
     <Compile Include="Model\IntegracaoSankhya\ConfirmarNotaFiscalResposta.cs" />
@@ -201,6 +201,7 @@
     <Compile Include="Model\SeparacaoPedido\BuscarPedidoVendaResposta.cs" />
     <Compile Include="Model\SeparacaoPedido\PedidoItemViewModel.cs" />
     <Compile Include="Model\SeparacaoPedido\VolumeViewModel.cs" />
+    <Compile Include="Model\SeparacaoPedido\SalvarSeparacaoProdutoResposta.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
     <Compile Include="Model\TokenResponse.cs" />
     <Compile Include="Model\Usuario\GerarTokenAcessoColetorResponse.cs" />

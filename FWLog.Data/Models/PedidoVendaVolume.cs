@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,6 +7,11 @@ namespace FWLog.Data.Models
 {
     public class PedidoVendaVolume
     {
+        public PedidoVendaVolume()
+        {
+            PedidoVendaProdutos = new HashSet<PedidoVendaProduto>();
+        }
+
         [Key]
         [Required]
         public long IdPedidoVendaVolume { get; set; }
@@ -37,7 +43,7 @@ namespace FWLog.Data.Models
 
         [Required]
         [Index]
-        public decimal PesoVolumeKG { get; set; }
+        public decimal PesoVolume { get; set; }
 
         [Required]
         [Index]
@@ -53,7 +59,7 @@ namespace FWLog.Data.Models
 
         [Required]
         [Index]
-        public long IdPerfilImpressora { get; set; }
+        public long IdImpressora { get; set; }
 
         [Index]
         public long? IdCaixaVolume { get; set; }
@@ -63,9 +69,6 @@ namespace FWLog.Data.Models
 
         [Index]
         public DateTime? DataHoraFimSeparacao { get; set; }
-
-        [Index]
-        public string IdUsuarioSeparacao { get; set; }
 
         [Index]
         [Required]
@@ -83,13 +86,12 @@ namespace FWLog.Data.Models
         [ForeignKey(nameof(IdGrupoCorredorArmazenagem))]
         public virtual GrupoCorredorArmazenagem GrupoCorredorArmazenagem { get; set; }
 
-        [ForeignKey(nameof(IdPerfilImpressora))]
-        public virtual PerfilImpressora PerfilImpressora { get; set; }
+        [ForeignKey(nameof(IdImpressora))]
+        public virtual Printer Printer { get; set; }
 
         [ForeignKey(nameof(IdCaixaVolume))]
         public virtual Caixa CaixaVolume { get; set; }
 
-        [ForeignKey(nameof(IdUsuarioSeparacao))]
-        public virtual AspNetUsers UsuarioSeparacao { get; set; }
+        public virtual ICollection<PedidoVendaProduto> PedidoVendaProdutos { get; set; }
     }
 }

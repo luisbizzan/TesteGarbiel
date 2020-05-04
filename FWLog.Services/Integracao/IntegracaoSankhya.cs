@@ -227,7 +227,7 @@ namespace FWLog.Services.Integracao
         public async Task<List<TClass>> PreExecutarQuery<TClass>(string where = "", string inner = "", int idIntegracaoTipo = 0, int idIntegracaoEntidade = 0, string httpVerbo = "") where TClass : class, new()
         {
             Type typeClass = typeof(TClass);
-            List<TClass> resultList = null;
+            List<TClass> resultList = new List<TClass>();
 
             TabelaIntegracaoAttribute classAttr = (TabelaIntegracaoAttribute)typeClass.GetCustomAttributes(typeof(TabelaIntegracaoAttribute), false).FirstOrDefault();
 

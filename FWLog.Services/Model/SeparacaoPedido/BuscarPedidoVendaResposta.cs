@@ -8,9 +8,11 @@ namespace FWLog.Services.Model.SeparacaoPedido
 
         public int NroPedidoVenda { get; set; }
 
-        //public long IdEmpresa { get; set; }
-
         public bool SeparacaoIniciada { get; set; }
+
+        public long IdPedidoVendaVolume { get; set; }
+
+        public int NroVolume { get; set; }
 
         public List<BuscarPedidoVendaGrupoCorredorResposta> ListaCorredoresSeparacao { get; set; }
     }
@@ -28,16 +30,22 @@ namespace FWLog.Services.Model.SeparacaoPedido
 
     public class BuscarPedidoVendaGrupoCorredorEnderecoProdutoResposta
     {
+        public long IdPontoArmazenagem { get; set; }
+
         public int Corredor { get; set; }
 
         public string Codigo { get; set; }
 
         public string PontoArmazenagem { get; set; }
 
+        public long IdProduto { get; set; }
+
         public string ReferenciaProduto { get; set; }
 
         public decimal MultiploProduto { get; set; }
 
         public int QtdePedido { get; set; }
+
+        public int QtdSeparada { get; set; }
     }
 }

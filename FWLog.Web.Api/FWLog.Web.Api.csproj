@@ -267,6 +267,9 @@
     <Compile Include="Models\Lote\BuscarLotePorIdResposta.cs" />
     <Compile Include="Models\Produto\PesquisarPorCodigoBarrasReferenciaResposta.cs" />
     <Compile Include="Models\Produto\ProdutoReservadoModelRequest.cs" />
+    <Compile Include="Models\SeparacaoPedido\IniciarSeparacaoVolumeRequisicao.cs" />
+    <Compile Include="Models\SeparacaoPedido\FinalizarSeparacaoVolumeRequisicao.cs" />
+    <Compile Include="Models\SeparacaoPedido\SalvarSeparacaoProdutoRequisicao.cs" />
     <Compile Include="Models\SeparacaoPedido\SeparacaoPedidoResposta.cs" />
     <Compile Include="Models\SeparacaoPedido\BuscarPedidoVendaResposta.cs" />
     <Compile Include="Models\SeparacaoPedido\CancelarPedidoSeparacaoRequisicao.cs" />

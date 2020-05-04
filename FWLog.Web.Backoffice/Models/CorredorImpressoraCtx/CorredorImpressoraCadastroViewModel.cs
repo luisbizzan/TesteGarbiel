@@ -24,7 +24,7 @@ namespace FWLog.Web.Backoffice.Models.CorredorImpressoraCtx
         [Required]
         public long IdImpressora { get; set; }
 
-        [Display(Name = "Status")]
+        [Display(Name = "Ativo")]
         [Required]
         public bool Ativo { get; set; }
 

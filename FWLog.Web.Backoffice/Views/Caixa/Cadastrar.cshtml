@@ -19,63 +19,63 @@
         <div class="x_content">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="row">
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.Nome, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Nome, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.Nome)
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.TextoEtiqueta, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.TextoEtiqueta, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.TextoEtiqueta)
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.Largura, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Largura, new { @class = "form-control integer" })
                     @Html.ValidationMessageFor(m => m.Largura)
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.Altura, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Altura, new { @class = "form-control integer" })
                     @Html.ValidationMessageFor(m => m.Altura)
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.Comprimento, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Comprimento, new { @class = "form-control integer" })
                     @Html.ValidationMessageFor(m => m.Comprimento)
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.PesoCaixa, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.PesoCaixa, new { @class = "form-control decimal" })
                     @Html.ValidationMessageFor(m => m.PesoCaixa)
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.PesoMaximo, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.PesoMaximo, new { @class = "form-control decimal" })
                     @Html.ValidationMessageFor(m => m.PesoMaximo)
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.Sobra, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Sobra, new { @class = "form-control decimal" })
                     @Html.ValidationMessageFor(m => m.Sobra)
                 </div>
             </div>
             <div class="row">
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.IdCaixaTipo, new { @class = "control-label" })
                     @Html.DropDownListFor(m => m.IdCaixaTipo, Model.ListaCaixaTipo, "Todos...", new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.IdCaixaTipo)
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.Prioridade, new { @class = "control-label" })
                     @Html.TextBoxFor(m => m.Prioridade, new { @class = "form-control integer" })
                     @Html.ValidationMessageFor(m => m.Prioridade)
                 </div>
-                <div class="form-group col-sm-2 col-xs-12">
+                <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.Ativo, new { @class = "control-label" })
                     <div class="checkbox">
                         @Html.CheckBoxFor(m => m.Ativo, new { @class = "flat" })

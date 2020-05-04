@@ -25,5 +25,9 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "ATIVO")]
         [Required]
         public string Ativo { get; set; }
+
+        [TabelaIntegracao(DisplayName = "AD_ABREVTRANSP")]
+        [Required]
+        public string CodigoTransportadora { get; set; }
     }
 }

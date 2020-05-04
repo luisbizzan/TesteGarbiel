@@ -9,8 +9,8 @@ namespace FWLog.Data.Models
     {
         public PedidoVenda()
         {
-            PedidoVendaProdutos = new HashSet<PedidoVendaProduto>();
             PedidoVendaVolumes = new HashSet<PedidoVendaVolume>();
+            PedidoVendaProdutos = new HashSet<PedidoVendaProduto>();
         }
 
         [Key]
@@ -39,23 +39,16 @@ namespace FWLog.Data.Models
         [Required]
         public int NroPedidoVenda { get; set; }
 
+        [Required]
         public int NroVolumes { get; set; }
 
         [Index]
         [Required]
         public PedidoVendaStatusEnum IdPedidoVendaStatus { get; set; }
 
-        [Index]
-        public string IdUsuarioSeparacao { get; set; }
-
         public DateTime? DataHoraInicioSeparacao { get; set; }
 
         public DateTime? DataHoraFimSeparacao { get; set; }
-
-        [Required]
-        public DateTime DataCriacao { get; set; }
-
-        public virtual ICollection<PedidoVendaProduto> PedidoVendaProdutos { get; set; }
 
         [ForeignKey(nameof(IdPedido))]
         public virtual Pedido Pedido { get; set; }
@@ -70,14 +63,12 @@ namespace FWLog.Data.Models
         public virtual Cliente Cliente { get; set; }
 
         [ForeignKey(nameof(IdTransportadora))]
-        public virtual Produto Transportadora { get; set; }
+        public virtual Transportadora Transportadora { get; set; }
 
         [ForeignKey(nameof(IdPedidoVendaStatus))]
         public virtual PedidoVendaStatus PedidoVendaStatus { get; set; }
 
-        [ForeignKey(nameof(IdUsuarioSeparacao))]
-        public virtual AspNetUsers UsuarioSeparacao { get; set; }
-
         public virtual ICollection<PedidoVendaVolume> PedidoVendaVolumes { get; set; }
+        public virtual ICollection<PedidoVendaProduto> PedidoVendaProdutos { get; set; }
     }
 }

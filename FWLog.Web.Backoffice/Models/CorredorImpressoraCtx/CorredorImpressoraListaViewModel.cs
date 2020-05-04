@@ -27,7 +27,7 @@ namespace FWLog.Web.Backoffice.Models.CorredorImpressoraCtx
         public string DescricaoPontoArmazenagem { get; set; }
         [Display(Name = "Impressora")]
         public string Impressora { get; set; }
-        [Display(Name = "Status")]
+        [Display(Name = "Ativo")]
         public string Status { get; set; }
     }
 
@@ -43,7 +43,7 @@ namespace FWLog.Web.Backoffice.Models.CorredorImpressoraCtx
         [Display(Name = "Impressora")]
         public int? IdImpressora { get; set; }
         public SelectList ListaImpressora { get; set; }
-        [Display(Name = "Status")]
+        [Display(Name = "Ativo")]
         public bool? Status { get; set; }
         public SelectList ListaStatus { get; set; }
     }
