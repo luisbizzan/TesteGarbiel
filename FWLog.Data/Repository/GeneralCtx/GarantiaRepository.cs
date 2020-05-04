@@ -146,7 +146,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return retorno;
         }
 
-        public List<GarMotivoLaudo> ListarMotivoLaudo()
+        public List<GarMotivoLaudo> ListarMotivoLaudo(long Id_Tipo)
         {
             List<GarMotivoLaudo> retorno = new List<GarMotivoLaudo>();
 
@@ -164,10 +164,184 @@ namespace FWLog.Data.Repository.GeneralCtx
                     FROM
                         gar_motivo_laudo GML
                         INNER JOIN geral_tipo GT ON GT.id = GML.Id_Tipo AND GT.tabela = 'GAR_MOTIVO_LAUDO' AND GT.coluna = 'ID_TIPO'
+                    WHERE
+                        GML.Id_Tipo = :Id_Tipo
                     ORDER BY GT.Descricao, GML.Descricao
 
                     ";
-                    retorno = conn.Query<GarMotivoLaudo>(sQuery, new { }).ToList();
+                    retorno = conn.Query<GarMotivoLaudo>(sQuery, new { Id_Tipo }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
+        public List<GarSolicitacaoItemLaudo> ListarConferenciaSolicitacaoLaudo(long Id_Conferencia)
+        {
+            List<GarSolicitacaoItemLaudo> retorno = new List<GarSolicitacaoItemLaudo>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT Id_Conf, Refx, Quant, Tem_No_Excesso, (Quant_Laudo + Quant_Laudo_Automatico) AS Quant_Laudo  FROM(
+                        SELECT
+                            GCI.Id_Conf,
+                            GCI.Refx,
+                            CASE WHEN  (Quant_Conferida - Quant) < 0 THEN (Quant_Conferida - Quant) * -1 ELSE (Quant_Conferida - Quant) END AS Quant_Laudo_Automatico,
+                            NVL((SELECT SUM(GSIL.quant) FROM gar_solicitacao_item_laudo GSIL INNER JOIN gar_solicitacao_item GSI ON GSI.id = GSIL.id_item
+                            WHERE GSI.id_solicitacao = GC.id_solicitacao AND GSI.refx = GCI.refx  ),0) AS Quant_Laudo,
+                            GCI.Quant,
+                            0 AS Tem_No_Excesso
+                        FROM
+                            gar_conferencia_item GCI
+                            INNER JOIN gar_conferencia GC ON GC.id = GCI.Id_Conf
+                        WHERE
+                            GCI.Id_Conf = :Id_Conferencia
+                        UNION
+                        SELECT
+                            Id_Conf,
+                            Refx,
+                            Quant_Conferida AS Quant_Laudo_Automatico,
+                            0 AS Quant_Laudo,
+                            Quant_Conferida AS Quant,
+                            1 AS Tem_No_Excesso
+                        FROM
+                            gar_conferencia_excesso
+                        WHERE
+                            Id_Conf = :Id_Conferencia
+                    )
+
+                    ";
+                    retorno = conn.Query<GarSolicitacaoItemLaudo>(sQuery, new { Id_Conferencia }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
+        public List<GarSolicitacaoItemLaudo> ListarConferenciaSolicitacaoLaudoDetalhe(long Id_Conferencia, string Refx)
+        {
+            List<GarSolicitacaoItemLaudo> retorno = new List<GarSolicitacaoItemLaudo>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        L.Id,
+                        GML.descricao AS Motivo,
+                        L.Id_Item_Nf,
+                        L.Quant_Laudo
+                    FROM(
+                        SELECT
+                            0 AS Id,
+                            GCI.Refx,
+                            (Quant_Conferida - Quant) AS Quant_Laudo,
+                            0 AS Id_Item_Nf,
+                            CASE WHEN  (Quant_Conferida - Quant) < 0 THEN 3 ELSE 2 END AS Id_Motivo
+                        FROM
+                            gar_conferencia_item GCI
+                            INNER JOIN gar_conferencia GC ON GC.id = GCI.Id_Conf
+                        WHERE
+                            GCI.Id_Conf = :Id_Conferencia
+                            AND GCI.Refx = :Refx
+                            AND (Quant_Conferida - Quant) != 0
+                        UNION
+                            SELECT
+                                GSIL.Id,
+                                GSI.Refx,
+                                GSIL.Quant,
+                                GSI.Id_Item_Nf,
+                                GSIL.Id_Motivo
+                            FROM
+                                gar_conferencia GC
+                                INNER JOIN gar_solicitacao_item GSI ON GSI.id_solicitacao = GC.id_solicitacao
+                                INNER JOIN gar_solicitacao_item_laudo GSIL ON GSIL.id_item = GSI.id
+                            WHERE
+                                GC.Id = :Id_Conferencia
+                                AND GSI.Refx = :Refx
+                    ) L INNER JOIN gar_motivo_laudo GML ON L.Id_Motivo = GML.id
+                    ";
+                    retorno = conn.Query<GarSolicitacaoItemLaudo>(sQuery, new { Id_Conferencia, Refx }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
+        public void CriarLaudo(GarSolicitacaoItemLaudo item)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    sQuery = @"
+                    INSERT INTO gar_solicitacao_item_laudo
+	                ( Id_Item, Id_Motivo, Quant, Id_Tipo_Retorno )
+                    VALUES
+	                ( :Id_Item, :Id_Motivo, :Quant, :Id_Tipo_Retorno )";
+                    conn.Query<GarConferenciaHist>(sQuery, new
+                    {
+                        item.Id_Item,
+                        item.Id_Motivo,
+                        item.Quant,
+                        item.Id_Tipo_Retorno,
+                    });
+                }
+                conn.Close();
+            }
+        }
+
+        public void ExcluirLaudo(long Id)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    sQuery = @"DELETE  FROM gar_solicitacao_item_laudo WHERE Id = :Id";
+                    conn.Query<GarConferenciaItem>(sQuery, new
+                    {
+                        Id
+                    });
+                }
+                conn.Close();
+            }
+        }
+
+        public List<GarSolicitacaoItemLaudo> ListarLaudoItem(long Id_Conferencia, string Refx)
+        {
+            List<GarSolicitacaoItemLaudo> retorno = new List<GarSolicitacaoItemLaudo>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        GSI.Id_Item_Nf,
+                        GSI.Quant,
+                        GSI.Id
+                    FROM
+                        gar_conferencia GC
+                        INNER JOIN gar_solicitacao_item GSI ON GSI.id_solicitacao = GC.id_solicitacao
+                    WHERE
+                        GSI.Refx = :Refx
+                        AND GC.Id = :Id_Conferencia
+                    ";
+                    retorno = conn.Query<GarSolicitacaoItemLaudo>(sQuery, new { Refx, Id_Conferencia }).ToList();
                 }
                 conn.Close();
             }
