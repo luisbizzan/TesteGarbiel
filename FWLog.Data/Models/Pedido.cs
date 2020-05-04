@@ -42,6 +42,9 @@ namespace FWLog.Data.Models
         public DateTime DataCriacao { get; set; }
 
         [Index]
+        public long? CodigoIntegracaoNotaFiscal { get; set; }
+
+        [Index]
         [Required]
         public PedidoVendaStatusEnum IdPedidoVendaStatus { get; set; }
 
