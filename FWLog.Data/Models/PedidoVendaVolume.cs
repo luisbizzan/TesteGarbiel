@@ -74,6 +74,14 @@ namespace FWLog.Data.Models
         [Required]
         public PedidoVendaStatusEnum IdPedidoVendaStatus { get; set; }
 
+        [Index]
+        public string IdUsuarioInstalTransportadora { get; set; }
+
+        public DateTime? DataHoraInstalTransportadora { get; set; }
+
+        [Index]
+        public long? IdEnderecoArmazTransportadora { get; set; }
+
         [ForeignKey(nameof(IdPedidoVenda))]
         public virtual PedidoVenda PedidoVenda { get; set; }
 
@@ -91,6 +99,12 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdCaixaVolume))]
         public virtual Caixa CaixaVolume { get; set; }
+
+        [ForeignKey(nameof(IdUsuarioInstalTransportadora))]
+        public virtual AspNetUsers UsuarioInstalacaoTransportadora { get; set; }
+
+        [ForeignKey(nameof(IdEnderecoArmazTransportadora))]
+        public virtual EnderecoArmazenagem EnderecoTransportadora { get; set; }
 
         public virtual ICollection<PedidoVendaProduto> PedidoVendaProdutos { get; set; }
     }
