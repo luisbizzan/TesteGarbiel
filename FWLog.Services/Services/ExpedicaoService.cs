@@ -2,6 +2,7 @@
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
+using FWLog.Services.Model.Expedicao;
 using FWLog.Services.Model.IntegracaoSankhya;
 using log4net;
 using System;
@@ -22,7 +23,7 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public void ValidarReferenciaPedido(string referenciaPedido, long idEmpresa)
+        public PedidoVendaVolumeResposta BuscaPedidoVendaVolume(string referenciaPedido, long idEmpresa)
         {
             if (referenciaPedido.NullOrEmpty())
             {
@@ -78,6 +79,15 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("Endereço da transportadora não cadastrado!");
             }
+
+            var resposta = new PedidoVendaVolumeResposta()
+            {
+                IdPedidoVenda = pedidoVenda.IdPedidoVenda,
+                IdTransportadora = pedidoVenda.IdTransportadora,
+                IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume
+            };
+
+            return resposta;
         }
 
         public async Task AtualizaNotasFiscaisPedidos()
