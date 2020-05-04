@@ -11,14 +11,10 @@ namespace FWLog.Web.Api.Controllers
     public class EtiquetaController : ApiBaseController
     {
         private readonly EtiquetaService _etiquetaService;
-        private readonly UnitOfWork _unitOfWork;
-        private readonly ColetorHistoricoService _coletorHistoricoService;
 
-        public EtiquetaController(UnitOfWork unitOfWork, EtiquetaService etiquetaService, ColetorHistoricoService coletorHistoricoService)
+        public EtiquetaController(EtiquetaService etiquetaService)
         {
-            _unitOfWork = unitOfWork;
             _etiquetaService = etiquetaService;
-            _coletorHistoricoService = coletorHistoricoService;
         }
 
         [HttpPost]
@@ -208,34 +204,6 @@ namespace FWLog.Web.Api.Controllers
                     };
 
                     _etiquetaService.ValidarEnderecoPicking(request);
-
-                    return ApiOk();
-
-                }
-                catch (BusinessException ex)
-                {
-                    return ApiBadRequest(ex.Message);
-                }
-                catch
-                {
-                    throw;
-                }
-            }
-        }
-
-        [HttpPost]
-        [Route("api/v1/etiqueta/separacao/imprimir")]
-        public IHttpActionResult ImprimirEtiquetaSeparacaoVolume(ImprimirEtiquetaVolumeSeparacaoRequest requisicao)
-        {
-            if (!ModelState.IsValid)
-            {
-                return ApiBadRequest(ModelState);
-            }
-            else
-            {
-                try
-                {
-                    _etiquetaService.ImprimirEtiquetaVolumeSeparacao(requisicao, IdEmpresa);
 
                     return ApiOk();
 
