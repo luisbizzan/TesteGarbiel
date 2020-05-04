@@ -16,6 +16,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.ProdutoEstoque.FirstOrDefault(f => f.IdProduto == idProduto && f.IdEmpresa == idEmpresa);
         }
 
+        public ProdutoEstoque ObterPorProdutoEmpresaPicking(long idProduto, long idEmpresa)
+        {
+            return Entities.ProdutoEstoque.FirstOrDefault(f => f.IdProduto == idProduto && f.IdEmpresa == idEmpresa && f.EnderecoArmazenagem.IsPicking == true && f.EnderecoArmazenagem.Ativo);
+        }
+
         public void AtualizarSaldoArmazenagem(long idProduto, long idEmpresa, int saldo)
         {
             string sql = "UPDATE \"ProdutoEstoque\" SET \"Saldo\" = \"Saldo\" + :SALDO WHERE \"IdProduto\" = :IDPRODUTO AND \"IdEmpresa\" = :IDEMPRESA ";
