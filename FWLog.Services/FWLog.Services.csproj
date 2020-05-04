@@ -133,6 +133,7 @@
     <Compile Include="Model\AtividadeEstoque\AtividadeEstoqueLista.cs" />
     <Compile Include="Model\AtividadeEstoque\AtividadeEstoqueRequisicao.cs" />
     <Compile Include="Model\AtividadeEstoque\FinalizarConferenciaEnderecoRequisicao.cs" />
+    <Compile Include="Model\Caixa\CaixaViewModel.cs" />
     <Compile Include="Model\Coletor\GravarHistoricoColetorRequisicao.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaArmazenagemVolume.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaAvulsoRequest.cs" />
@@ -172,6 +173,7 @@
     <Compile Include="Model\Lote\ResumoFinalizarConferenciaResponse.cs" />
     <Compile Include="Model\Lote\TratarDivergenciaRequest.cs" />
     <Compile Include="Model\Produto\ProdutoEstoqueResposta.cs" />
+    <Compile Include="Model\Produto\ProdutoViewModel.cs" />
     <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />
     <Compile Include="Model\Relatorios\DetalhesProdutoRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirDetalhesNotaEntradaConferenciaRequest.cs" />
@@ -197,6 +199,8 @@
     <Compile Include="Model\Relatorios\TermoResponsabilidadeRequest.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
     <Compile Include="Model\SeparacaoPedido\BuscarPedidoVendaResposta.cs" />
+    <Compile Include="Model\SeparacaoPedido\PedidoItemViewModel.cs" />
+    <Compile Include="Model\SeparacaoPedido\VolumeViewModel.cs" />
     <Compile Include="Model\SeparacaoPedido\SalvarSeparacaoProdutoResposta.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
     <Compile Include="Model\TokenResponse.cs" />
@@ -218,6 +222,8 @@
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ExpedicaoService.cs" />
     <Compile Include="Services\PedidoService.cs" />
+    <Compile Include="Services\PedidoVendaProdutoService.cs" />
+    <Compile Include="Services\PedidoVendaVolumeService.cs" />
     <Compile Include="Services\SeparacaoPedidoService.cs" />
     <Compile Include="Services\ArmazenagemService.cs" />
     <Compile Include="Services\BaseService.cs" />
