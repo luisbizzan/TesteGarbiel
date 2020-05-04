@@ -65,5 +65,27 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/expedicao/salva-instalacao-volumes")]
+        [HttpPost]
+        public IHttpActionResult SalvaInstalacaoVolumes(SalvaInstalacaoVolumesRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _expedicaoService.SalvaInstalacaoVolumes(requisicao?.ListaVolumes, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa, IdUsuario);
+
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
     }
 }

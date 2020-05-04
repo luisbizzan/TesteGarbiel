@@ -1,5 +1,6 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
 using log4net;
@@ -139,6 +140,49 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("Endereço não pertence a transportadora.");
             }
+        }
+
+        public void SalvaInstalacaoVolumes(List<long> listaIdsVolumes, long idEnderecoArmazenagem, long idEmpresa, string idUsuario)
+        {
+            if (listaIdsVolumes.NullOrEmpty())
+            {
+                throw new BusinessException("A lista de volumes deve ser informada.");
+            }
+
+            if (idEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("O endereço deve ser informado.");
+            }
+
+            foreach (var idPedidoVendaVolume in listaIdsVolumes)
+            {
+                ValidaEnderecoInstalacaoVolume(idPedidoVendaVolume, idEnderecoArmazenagem, idEmpresa);
+            }
+
+            var listaPedidoVendaVolume = new List<PedidoVendaVolume>();
+
+            foreach (var idPedidoVendaVolume in listaIdsVolumes)
+            {
+                var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
+
+                if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.ConcluidaComSucesso)
+                {
+                    throw new BusinessException($"Volume {pedidoVendaVolume.NroVolume} com status inválido.");
+                }
+
+                listaPedidoVendaVolume.Add(pedidoVendaVolume);
+            }
+
+            if (listaPedidoVendaVolume.Select(pvv => pvv.IdPedidoVenda).Distinct().Count() > 1)
+            {
+                throw new BusinessException("Existem volumes de diferentes pedidos.");
+            }
+
+            //TODO: Salvar dados
+            //using (var transacao = _unitOfWork.CreateTransactionScope())
+            //{
+            //    transacao.Complete();
+            //}
         }
     }
 }
