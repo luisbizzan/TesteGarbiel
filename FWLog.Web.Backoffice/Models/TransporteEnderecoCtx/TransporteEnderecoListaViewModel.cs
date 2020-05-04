@@ -17,12 +17,11 @@ namespace FWLog.Web.Backoffice.Models.TransporteEnderecoCtx
 
     public class TransporteEnderecoListaItemViewModel
     {
-        [Display(Name = "CNPJ Transportadora")]
-        public string CnpjTransportadora { get; set; }
-        [Display(Name = "Razão Social")]
-        public string RazaoSocialTransportadora { get; set; }
+        [Display(Name = "")]
+        public string DadosTransportadora { get; set; }
         [Display(Name = "Endereço")]
-        public string CodigoEnderecoArmazenagem { get; set; }
+        public string Codigo { get; set; }
+        public long IdTransportadoraEndereco { get; set; }
 
     }
 
