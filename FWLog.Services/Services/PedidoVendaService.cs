@@ -26,7 +26,6 @@ namespace FWLog.Services.Services
                 _uow.PedidoVendaRepository.Add(new PedidoVenda()
                 {
                     IdPedido = pedido.IdPedido,
-                    DataCriacao = DateTime.Now,
                     IdCliente = pedido.IdCliente,
                     IdEmpresa = pedido.IdEmpresa,
                     IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao,

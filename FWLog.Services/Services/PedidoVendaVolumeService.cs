@@ -40,11 +40,11 @@ namespace FWLog.Services.Services
                     IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao,
                     NroCentena = numeroCentena,
                     NroVolume = numeroVolume,
-                    PesoVolumeKG = 1,
+                    PesoVolume = 1,
                     CorredorInicio = grupoCorredorArmazenagem.CorredorInicial,
                     CorredorFim = grupoCorredorArmazenagem.CorredorFinal,
                     EtiquetaVolume = caixaEscolhida.TextoEtiqueta,
-                    IdPerfilImpressora = 1
+                    IdImpressora = grupoCorredorArmazenagem.IdImpressora
                 });
 
                 idPedidoVendaVolume = await _uow.SaveChangesAsync();

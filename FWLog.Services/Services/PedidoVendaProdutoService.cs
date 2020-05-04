@@ -31,11 +31,9 @@ namespace FWLog.Services.Services
                     IdPedidoVendaVolume = idPedidoVendaVolume,
                     IdProduto = pedidoItem.Produto.IdProduto,
                     IdEnderecoArmazenagem = pedidoItem.IdEnderecoArmazenagem,
-                    IdPedidoVendaProdutoStatus = PedidoVendaProdutoStatusEnum.AguardandoSeparacao,
-                    QtdPedido = pedidoItem.Quantidade,
+                    IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao,
                     QtdSeparada = null,
-                    Sequencia = 1, 
-                    PesoProdutoKg = pedidoItem.Produto.PesoBruto,
+                    PesoProduto = pedidoItem.Produto.PesoBruto,
                     DataHoraInicioSeparacao = null,
                     DataHoraFimSeparacao = null
                 });
