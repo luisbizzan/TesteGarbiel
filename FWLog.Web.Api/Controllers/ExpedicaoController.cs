@@ -1,6 +1,7 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
 using FWLog.Services.Services;
+using FWLog.Web.Api.Models.Expedicao;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -39,6 +40,28 @@ namespace FWLog.Web.Api.Controllers
         public async Task<IHttpActionResult> AtualizaNotasFiscaisPedidos()
         {
             await _expedicaoService.AtualizaNotasFiscaisPedidos();
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/expedicao/validar-endereco-volume")]
+        [HttpPost]
+        public IHttpActionResult ValidaEnderecoInstalacaoVolume(ValidaEnderecoInstalacaoVolumeRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _expedicaoService.ValidaEnderecoInstalacaoVolume(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa);
+
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
 
             return ApiOk();
         }
