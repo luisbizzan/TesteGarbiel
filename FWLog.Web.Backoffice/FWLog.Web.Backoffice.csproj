@@ -292,6 +292,7 @@
     <Compile Include="Mapping\NivelArmazenagemProfile.cs" />
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
     <Compile Include="Mapping\ProdutoProfile.cs" />
+    <Compile Include="Mapping\TransportadoraEnderecoProfile.cs" />
     <Compile Include="Mapping\TransportadoraProfile.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioLogisticaCorredorViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioPosicaoInventarioViewModel.cs" />
@@ -390,6 +391,7 @@
     <Compile Include="Models\EtiquetaCtx\RecebimentoEtiquetaViewModel.cs" />
     <Compile Include="Models\RecebimentoEtiquetaIndividualPersonalizadaCtx\RecebimentoEtiquetaIndividualListViewModel.cs" />
     <Compile Include="Models\TransportadoraCtx\TransportadoraSearchModalViewModel.cs" />
+    <Compile Include="Models\TransporteEnderecoCtx\TransportadoraEnderecoDetalhesViewModel.cs" />
     <Compile Include="Models\TransporteEnderecoCtx\TransporteEnderecoListaViewModel.cs" />
     <Compile Include="Startup.cs" />
     <Content Include="Content\dart\dart-template.css">
@@ -684,6 +686,7 @@
     <Content Include="Views\CorredorImpressora\Editar.cshtml" />
     <Content Include="Views\CorredorImpressora\Detalhes.cshtml" />
     <Content Include="Views\TransportadoraEndereco\Index.cshtml" />
+    <Content Include="Views\TransportadoraEndereco\Detalhes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

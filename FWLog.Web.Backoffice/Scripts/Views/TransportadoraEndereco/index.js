@@ -3,21 +3,18 @@
     let actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         return [
             {
-                text: "Visualizar",
-                attrs: { 'data-id': full.IdTransportadoraEndereco, 'action': 'detailsUrl' },
-                icon: 'fa fa-eye',
+                action: 'details',
+                href: view.urlDetalhes + '/' + full.IdTransportadoraEndereco,
                 visible: view.destalhesVisivel
             },
             {
-                text: "Editar",
-                attrs: { 'data-id': full.IdTransportadoraEndereco, 'action': 'registrarRecebimentoUrl' },
-                icon: 'fa fa-edit',
+                action: 'edit',
+                href: view.urlEditar + '/' + full.IdTransportadoraEndereco,
                 visible: view.editarVisivel
             },
             {
-                text: "Excluir",
-                attrs: { 'data-id': full.IdTransportadoraEndereco, 'action': 'registrarRecebimentoUrl' },
-                icon: 'fa fa-trash-o',
+                action: 'delete',
+                attrs: { 'data-delete-url': view.urlExcluir + '/' + full.IdTransportadoraEndereco },
                 visible: view.excluirVisivel
             }
         ];

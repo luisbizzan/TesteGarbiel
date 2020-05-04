@@ -58,5 +58,16 @@ namespace FWLog.Web.Backoffice.Controllers
                 Data = list
             });
         }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Expedicao.VisualizarTranportadoraEndereco)]
+        public ActionResult Detalhes(long id)
+        {
+            var trasportadoraEndereco = _unitOfWork.TransportadoraEnderecoRepository.GetById(id);
+
+            var viewModel = Mapper.Map<TransportadoraEnderecoDetalhesViewModel>(trasportadoraEndereco);
+
+            return View(viewModel);
+        }
     }
 }

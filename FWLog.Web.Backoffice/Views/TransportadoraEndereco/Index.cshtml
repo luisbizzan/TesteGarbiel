@@ -9,7 +9,7 @@
         new
         {
             pageDataUrl = Url.Action("PageData"),
-            //urlDetalhes = Url.Action("Detalhes"),
+            urlDetalhes = Url.Action("Detalhes"),
             destalhesVisivel = User.HasPermission(Permissions.Expedicao.VisualizarTranportadoraEndereco),
             //urlEditar = Url.Action("Editar"),
             editarVisivel = User.HasPermission(Permissions.Expedicao.EditarTranportadoraEndereco),
