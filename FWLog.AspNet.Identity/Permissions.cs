@@ -331,5 +331,25 @@ namespace FWLog.AspNet.Identity
                 Register(Listar, Display.FromString("Listar Atividades"));
             }
         }
+
+        public class RFExpedicao : PermissionGroupBuildItem
+        {
+            public const string RFExpedicaoInstalarVolumes = "RFExpedicaoInstalarVolumes";
+            public const string RFExpedicaoMoverDoca = "RFExpedicaoMoverDoca";
+            public const string RFExpedicaoRemoverDoca = "RFExpedicaoRemoverDoca";
+            public const string RFExpedicaoDespacharNF = "RFExpedicaoDespacharNF";
+            public const string RFExpedicaoImprimirRomaneio = "RFExpedicaoImprimirRomaneio";
+            public const string RFExpedicaoReimprimirRomaneio = "RFExpedicaoReimprimirRomaneio";
+
+            public RFExpedicao() : base(Display.FromString("Coletor - Expedição"))
+            {
+                Register(RFExpedicaoInstalarVolumes, Display.FromString("Instalar Volumes"));
+                Register(RFExpedicaoMoverDoca, Display.FromString("Mover para a DOCA"));
+                Register(RFExpedicaoRemoverDoca, Display.FromString("Remover da DOCA"));
+                Register(RFExpedicaoDespacharNF, Display.FromString("Despachar N.F.(s)"));
+                Register(RFExpedicaoImprimirRomaneio, Display.FromString("Imprimir Romaneio"));
+                Register(RFExpedicaoReimprimirRomaneio, Display.FromString("Reimp. de Romaneio"));
+            }
+        }
     }
 }
