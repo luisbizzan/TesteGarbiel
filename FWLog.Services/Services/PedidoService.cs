@@ -67,8 +67,7 @@ namespace FWLog.Services.Services
                         throw new BusinessException(string.Format("Código do Cliente (CODPARC: {0}) inválido", pedidoCabecalho.CodigoIntegracaoCliente));
                     }
 
-                    var codRep = Convert.ToInt32(pedidoCabecalho.CodigoIntegracaoRepresentante);
-                    Representante representante = _uow.RepresentanteRepository.ConsultarPorCodigoIntegracao(codRep);
+                    Representante representante = _uow.RepresentanteRepository.BuscarPorCodigoIntegracaoVendedor(pedidoCabecalho.CodigoIntegracaoRepresentante);
                     if (representante == null)
                     {
                         throw new BusinessException(string.Format("Código do Representante (CODVEND: {0}) inválido", pedidoCabecalho.CodigoIntegracaoRepresentante));
@@ -140,7 +139,7 @@ namespace FWLog.Services.Services
                     {
                         _uow.PedidoRepository.Add(pedido);
                     }
-
+                    
                     _uow.SaveChanges();
 
                     pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao;

@@ -110,6 +110,7 @@ namespace FWLog.Services.Services
                     produto.ReferenciaFornecedor = produtoInt.ReferenciaFornecedor;
                     produto.CodigoBarras = produtoInt.CodigoBarras;
                     produto.IdUnidadeMedida = unidade.IdUnidadeMedida;
+                    produto.CodigoBarras2 = produtoInt.CodigoBarras2;
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() } };
 

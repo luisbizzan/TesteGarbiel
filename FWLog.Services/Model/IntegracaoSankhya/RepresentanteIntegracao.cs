@@ -28,6 +28,6 @@ namespace FWLog.Services.Model.IntegracaoSankhya
 
         [TabelaIntegracao(DisplayName = "TGFVEN.CODVEND")]
         [Required]
-        public int CodigoIntegracaoVendedor { get; set; }
+        public string CodigoIntegracaoVendedor { get; set; }
     }
 }

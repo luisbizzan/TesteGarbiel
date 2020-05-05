@@ -46,6 +46,7 @@ namespace FWLog.Services.Services
             where.Append("AND CEPENTREGA IS NOT NULL ");
             where.Append("AND TSIEND.NOMEEND IS NOT NULL ");
             where.Append("AND TSIUFS.UF IS NOT NULL ");
+            where.Append("AND TGFCPL.NUMENTREGA IS NOT NULL ");
 
             List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString(), inner: inner.ToString());
 
