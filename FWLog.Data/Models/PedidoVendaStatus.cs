@@ -9,7 +9,7 @@ namespace FWLog.Data.Models
         PendenteSeparacao = 1,
         EnviadoSeparacao = 2,
         ProcessandoSeparacao = 3,
-        ConcluidaComSucesso = 4,
+        SeparacaoConcluidaComSucesso = 4,
         PendenteCancelamento = 5,
         Cancelado = 6
     }

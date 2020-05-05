@@ -179,7 +179,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido informado ainda não está liberado para a separação.");
             }
 
-            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ConcluidaComSucesso)
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
             {
                 throw new BusinessException("O pedido informado já foi separado.");
             }
@@ -197,7 +197,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume informado não foi encontrado.");
             }
 
-            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.ConcluidaComSucesso)
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
             {
                 throw new BusinessException("O volume informado já foi separado.");
             }
@@ -468,7 +468,7 @@ namespace FWLog.Services.Services
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                var novoStatusSeparacao = PedidoVendaStatusEnum.ConcluidaComSucesso;
+                var novoStatusSeparacao = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
                 var dataProcessamento = DateTime.Now;
 
                 pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
@@ -565,7 +565,7 @@ namespace FWLog.Services.Services
                 else if (qtdSeparada == pedidoVendaProduto.QtdSeparar)
                 {
                     pedidoVendaProduto.DataHoraFimSeparacao = dataProcessamento;
-                    pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ConcluidaComSucesso;
+                    pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
 
                     salvarSeparacaoProdutoResposta.ProdutoSeparado = true;
                 }
