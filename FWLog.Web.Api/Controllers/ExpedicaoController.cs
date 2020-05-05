@@ -88,7 +88,7 @@ namespace FWLog.Web.Api.Controllers
         }
 
 
-        [Route("api/v1/expedicao-pedido/iniciar-expedicao-pedido-venda")]
+        [Route("api/v1/expedicao/iniciar-expedicao-pedido-venda")]
         [HttpPost]
         public IHttpActionResult IniciarExpedicaoPedido(IniciarExpedicaoRequisicao requisicao)
         {
@@ -123,6 +123,27 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(businessException.Message);
             }
+        }
+
+        [Route("api/v1/expedicao/validar-volume-doca/{referenciaPedido}")]
+        [HttpGet]        
+        public IHttpActionResult ValidarVolumeDoca(string referenciaPedido)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                var resposta = _expedicaoService.ValidarVolumeDoca(referenciaPedido, IdUsuario, IdEmpresa);
+                return ApiOk(resposta);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
         }
     }
 }

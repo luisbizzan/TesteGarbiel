@@ -293,5 +293,93 @@ namespace FWLog.Services.Services
             };
 
         }
+
+        public PedidoVendaVolumeResposta ValidarVolumeDoca(string referenciaPedido, string idUsuario, long idEmpresa)
+        {
+            if (referenciaPedido.NullOrEmpty())
+            {
+                throw new BusinessException("Código de barras do pedido deve ser infomado.");
+            }
+
+            if (referenciaPedido.Length < 7)
+            {
+                throw new BusinessException("Código de Barras de pedido inválido.");
+            }
+
+            var numeroPedidoString = referenciaPedido.Substring(0, referenciaPedido.Length - 6);
+
+            if (!int.TryParse(numeroPedidoString, out int numeroPedido))
+            {
+                throw new BusinessException("Código de Barras de pedido inválido.");
+            }
+
+            var numeroVolumeString = referenciaPedido.Substring(referenciaPedido.Length - 3);
+
+            if (!int.TryParse(numeroVolumeString, out int numeroVolume))
+            {
+                throw new BusinessException("Código de Barras de pedido inválido.");
+            }
+
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
+
+            if (pedidoVenda == null)
+            {
+                throw new BusinessException("Pedido não encontrado.");
+            }
+
+            var pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.FirstOrDefault(volume => volume.NroVolume == numeroVolume);
+
+            if (pedidoVendaVolume == null)
+            {
+                throw new BusinessException("Volume fornecido não encontrado.");
+            }
+
+            if (pedidoVendaVolume.IdEnderecoArmazTransportadora == null)
+            {
+                throw new BusinessException($"O volume não foi instalado.");
+            }
+
+            var codigoTransportadora = referenciaPedido.Substring(referenciaPedido.Length - 6).Replace(numeroVolumeString, "");
+
+            if (pedidoVenda.Transportadora.CodigoTransportadora != codigoTransportadora)
+            {
+                throw new BusinessException("Este volume não pertence a esta transportadora.");                
+            }
+
+            if (pedidoVenda.Transportadora.Enderecos.NullOrEmpty())
+            {
+                throw new BusinessException("Endereço da transportadora não cadastrado.");
+            }
+
+            if (!pedidoVenda.Transportadora.Enderecos.Any(e => e.IdEnderecoArmazenagem == pedidoVendaVolume.IdEnderecoArmazTransportadora))
+            {
+                throw new BusinessException($"O volume não foi instalado.");
+            }
+
+            if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
+            {
+                throw new BusinessException("Este volume não tem uma nota fiscal faturada.");
+            }
+
+            if (pedidoVendaVolume.DataHoraInstalacaoDOCA != null && pedidoVendaVolume.DataHoraInstalacaoDOCA != default)
+            {
+                throw new BusinessException("Este volume já foi lido, ou está em duplicidade.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeInstaladoTransportadora &&
+                pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA)
+            {
+                throw new BusinessException("Há volumes ainda não locados deste pedido.");
+            }
+
+            var resposta = new PedidoVendaVolumeResposta()
+            {
+                IdPedidoVenda = pedidoVenda.IdPedidoVenda,
+                IdTransportadora = pedidoVenda.IdTransportadora,
+                IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume
+            };
+
+            return resposta;
+        }
     }
 }
