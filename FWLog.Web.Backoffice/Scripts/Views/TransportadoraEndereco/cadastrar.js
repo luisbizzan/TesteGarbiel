@@ -1,4 +1,5 @@
 ﻿(function () {
+    $.validator.setDefaults({ ignore: null });
 
     $("#pesquisarTransportadora").click(function () {
         $("#modalTransportadora").load(HOST_URL + "Transportadora/SearchModal", function () {
