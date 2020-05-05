@@ -19,13 +19,11 @@ namespace FWLog.Web.Backoffice.Controllers
 {
     public class TransportadoraEnderecoController : BOBaseController
     {
-        private readonly UnitOfWork _unitOfWork;
         private readonly ILog _log;
         private readonly TransportadoraEnderecoService _transportadoraEnderecoService;
 
-        public TransportadoraEnderecoController(UnitOfWork unitOfWork, ILog log, TransportadoraEnderecoService transportadoraEnderecoService)
+        public TransportadoraEnderecoController(ILog log, TransportadoraEnderecoService transportadoraEnderecoService)
         {
-            _unitOfWork = unitOfWork;
             _log = log;
             _transportadoraEnderecoService = transportadoraEnderecoService;
         }
@@ -45,7 +43,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             filter.CustomFilter.IdEmpresa = IdEmpresa;
 
-            var transportadoraEnderecos = _unitOfWork.TransportadoraEnderecoRepository.BuscarOsDadosParaTabela(filter, out int registrosFiltrados, out int totalRegistros);
+            var transportadoraEnderecos = _transportadoraEnderecoService.BuscarDadosParaTabela(filter, out int registrosFiltrados, out int totalRegistros);
 
             var list = new List<TransporteEnderecoListaItemViewModel>();
 
@@ -69,7 +67,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Expedicao.VisualizarTranportadoraEndereco)]
         public ActionResult Detalhes(long id)
         {
-            var trasportadoraEndereco = _unitOfWork.TransportadoraEnderecoRepository.GetById(id);
+            var trasportadoraEndereco = _transportadoraEnderecoService.BuscarTransportadoraEndereco(id);
 
             var viewModel = Mapper.Map<TransportadoraEnderecoDetalhesViewModel>(trasportadoraEndereco);
 
@@ -119,7 +117,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [ApplicationAuthorize(Permissions = Permissions.Expedicao.EditarTranportadoraEndereco)]
         public ActionResult Editar(long id)
         {
-            var transportadoraEndereco = _unitOfWork.TransportadoraEnderecoRepository.GetById(id);
+            var transportadoraEndereco = _transportadoraEnderecoService.BuscarTransportadoraEndereco(id);
 
             var viewModel = Mapper.Map<TransportadoraEnderecoEdicaoViewModel>(transportadoraEndereco);
 
@@ -156,6 +154,30 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Expedicao.ExcluirTranportadoraEndereco)]
+        public JsonResult ExcluirAjax(int id)
+        {
+            try
+            {
+                _transportadoraEnderecoService.Excluir(id);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
+                }, JsonRequestBehavior.DenyGet);
+            }
+            catch (BusinessException exception)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = exception.Message
+                }, JsonRequestBehavior.DenyGet);
+            }
         }
     }
 }

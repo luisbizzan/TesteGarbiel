@@ -74,7 +74,7 @@
         var table = $(this).closest('table');
 
         dart.modalAjaxDelete.open({
-            title: 'Excluir Corredor x Impressora',
+            title: 'Excluir Transportadora x Endereço',
             message: 'Somente corredores x impressora não utilizados podem ser excluídos. Deseja continuar?',
             deleteUrl: $(this).attr('data-delete-url'),
             onConfirm: function () {

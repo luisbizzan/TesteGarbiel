@@ -45,6 +45,19 @@
 
     dart.dataTables.loadFormFilterEvents();
 
+    $('#dataTable').on('click', '[data-delete-url]', function () {
+        var table = $(this).closest('table');
+
+        dart.modalAjaxDelete.open({
+            title: 'Excluir Corredor x Impressora',
+            message: 'Somente Transportadora x Endereço não utilizados podem ser excluídos. Deseja continuar?',
+            deleteUrl: $(this).attr('data-delete-url'),
+            onConfirm: function () {
+                table.DataTable().ajax.reload(null, false);
+            }
+        });
+    });
+
     $("#pesquisarTransportadora").click(function () {
         $("#modalTransportadora").load(HOST_URL + "Transportadora/SearchModal", function () {
             $("#modalTransportadora").modal();
