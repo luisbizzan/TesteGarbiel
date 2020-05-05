@@ -24,7 +24,7 @@ namespace FWLog.Data.Models
         public int Sequencia { get; set; }
 
         [ForeignKey(nameof(IdPedido))]
-        public virtual PedidoVenda PedidoVenda { get; set; }
+        public virtual Pedido Pedido { get; set; }
 
         [ForeignKey(nameof(IdProduto))]
         public virtual Produto Produto { get; set; }

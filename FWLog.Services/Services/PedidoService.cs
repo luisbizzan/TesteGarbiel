@@ -67,8 +67,7 @@ namespace FWLog.Services.Services
                         throw new BusinessException(string.Format("Código do Cliente (CODPARC: {0}) inválido", pedidoCabecalho.CodigoIntegracaoCliente));
                     }
 
-                    var codRep = Convert.ToInt32(pedidoCabecalho.CodigoIntegracaoRepresentante);
-                    Representante representante = _uow.RepresentanteRepository.ConsultarPorCodigoIntegracao(codRep);
+                    Representante representante = _uow.RepresentanteRepository.BuscarPorCodigoIntegracaoVendedor(pedidoCabecalho.CodigoIntegracaoRepresentante);
                     if (representante == null)
                     {
                         throw new BusinessException(string.Format("Código do Representante (CODVEND: {0}) inválido", pedidoCabecalho.CodigoIntegracaoRepresentante));
@@ -99,7 +98,7 @@ namespace FWLog.Services.Services
 
                     var itens = pedidoIntegracao.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.QtdPedido, s.Sequencia }).ToList();
 
-                    List<PedidoItem> pedidosItens = new List<PedidoItem>();
+                    var pedidosItens = new List<PedidoItem>();
 
                     foreach (var item in itens)
                     {
@@ -113,32 +112,29 @@ namespace FWLog.Services.Services
                             throw new BusinessException(string.Format("Código da Produto (CODPROD: {0}) inválido", item.CodigoIntegracaoProduto));
                         }
 
-                        bool itemNovo = false;
-
-                        //Delete dos itenss
-                        PedidoItem pedidoItem = pedido.PedidoItens.FirstOrDefault(f => f.IdProduto == produto.IdProduto && f.Sequencia == sequencia);
-
-                        if (pedidoItem == null)
-                        {
-                            pedidoItem = new PedidoItem();
-                            itemNovo = true;
-                        }
+                        var pedidoItem = new PedidoItem();
 
                         pedidoItem.IdProduto = produto.IdProduto;
                         pedidoItem.QtdPedido = qtdPedido;
                         pedidoItem.Sequencia = sequencia;
 
-                        if (itemNovo)
-                        {
-                            pedidosItens.Add(pedidoItem);
-
-                            pedido.PedidoItens = pedidosItens;
-                        }
+                        pedidosItens.Add(pedidoItem);
                     }
+
+                    if (!pedido.PedidoItens.NullOrEmpty())
+                    {
+                        _uow.PedidoItemRepository.DeleteRange(pedido.PedidoItens.ToList());
+                    }
+
+                    pedido.PedidoItens = pedidosItens;
 
                     if (pedidoNovo)
                     {
                         _uow.PedidoRepository.Add(pedido);
+                    }
+                    else
+                    {
+                        _uow.PedidoRepository.Update(pedido);
                     }
 
                     _uow.SaveChanges();
