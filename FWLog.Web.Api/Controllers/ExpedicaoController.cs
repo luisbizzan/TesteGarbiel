@@ -78,7 +78,6 @@ namespace FWLog.Web.Api.Controllers
             try
             {
                 await _expedicaoService.SalvaInstalacaoVolumes(requisicao?.ListaVolumes, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa, IdUsuario);
-
             }
             catch (BusinessException businessException)
             {
@@ -87,5 +86,28 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+
+        [Route("api/v1/expedicao-pedido/iniciar-expedicao-pedido-venda")]
+        [HttpPost]
+        public IHttpActionResult IniciarExpedicaoPedido(IniciarExpedicaoRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _expedicaoService.IniciarExpedicaoPedidoVenda(requisicao.IdPedidoVenda, requisicao.IdPedidoVendaVolume, IdUsuario, IdEmpresa);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
+
     }
 }
