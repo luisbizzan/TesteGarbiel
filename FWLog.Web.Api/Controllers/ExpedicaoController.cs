@@ -68,7 +68,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/expedicao-pedido/iniciar-expedicao-pedido-venda")]
         [HttpPost]
-        public IHttpActionResult IniciarSeparacaoPedido(IniciarExpedicaoRequisicao requisicao)
+        public IHttpActionResult IniciarExpedicaoPedido(IniciarExpedicaoRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
