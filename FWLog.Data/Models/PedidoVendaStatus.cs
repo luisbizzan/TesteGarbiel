@@ -11,7 +11,14 @@ namespace FWLog.Data.Models
         ProcessandoSeparacao = 3,
         SeparacaoConcluidaComSucesso = 4,
         PendenteCancelamento = 5,
-        Cancelado = 6
+        Cancelado = 6,
+        InstalandoVolumeTransportadora = 7,
+        VolumeInstaladoTransportadora = 8,
+        MovendoDOCA = 9,
+        MovidoDOCA = 10,
+        DespachandoNF = 11,
+        NFDespachada = 12,
+        RomaneioImpresso = 13
     }
 
     public class PedidoVendaStatus
