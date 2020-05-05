@@ -60,7 +60,7 @@ namespace FWLog.Data.Models
         public virtual Cliente Cliente { get; set; }
 
         [ForeignKey(nameof(IdTransportadora))]
-        public virtual Produto Transportadora { get; set; }
+        public virtual Transportadora Transportadora { get; set; }
 
         [ForeignKey(nameof(IdPedidoVendaStatus))]
         public virtual PedidoVendaStatus PedidoVendaStatus { get; set; }

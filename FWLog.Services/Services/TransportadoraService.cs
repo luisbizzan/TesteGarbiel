@@ -60,8 +60,7 @@ namespace FWLog.Services.Services
             where.Append("AND TRANSPORTADORA = 'S' ");
             where.Append("AND AD_INTEGRARFWLOG = '1' ");
             where.Append("AND AD_ABREVTRANSP IS NOT NULL ");
-            where.Append("AND AD_ABREVTRANSP <> '' ");
-
+            
             List<TransportadoraIntegracao> transportadorasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<TransportadoraIntegracao>(where: where.ToString());
 
             foreach (var transpInt in transportadorasIntegracao)

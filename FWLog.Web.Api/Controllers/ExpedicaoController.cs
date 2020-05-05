@@ -18,9 +18,9 @@ namespace FWLog.Web.Api.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [Route("api/v1/expedicao/busca-pedido-volume/{referenciaPedido}")]
+        [Route("api/v1/expedicao/consultar-volume/{referenciaPedido}")]
         [HttpPost]
-        public IHttpActionResult BuscaPedidoVendaVolume(string referenciaPedido)
+        public IHttpActionResult ConsultarPedidoVendaVolume(string referenciaPedido)
         {
             try
             {

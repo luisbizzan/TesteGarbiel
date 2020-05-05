@@ -35,5 +35,12 @@ namespace FWLog.Data.Repository.GeneralCtx
                 return rep.IdRepresentante;
             }
         }
+
+        public Representante BuscarPorCodigoIntegracaoVendedor(string codigoIntegracaoVendedor)
+        {
+            var codRep = Convert.ToInt64(codigoIntegracaoVendedor);
+
+            return Entities.Representante.Where(f => f.CodigoIntegracaoVendedor == codRep).FirstOrDefault();
+        }
     }
 }

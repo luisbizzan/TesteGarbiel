@@ -1,8 +1,6 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
 using FWLog.Data.Models;
-using log4net;
-using System;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.Expedicao;
 using FWLog.Services.Model.IntegracaoSankhya;
@@ -58,7 +56,7 @@ namespace FWLog.Services.Services
             // TODO: melhorar validação quando Sankhya criar os status de Nota e Guia:
             // - verificar se a NF do pedido foi emitida, e confirmada. Status: “A” no Sankhya e as guias foram pagas, status “Y” no Sankhya
             if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
-            {                
+            {
                 throw new BusinessException("NF e Guias não estão emitidas/pagas.");
             }
 
@@ -289,7 +287,11 @@ namespace FWLog.Services.Services
             {
                 IdTransportadora = transportadora.IdTransportadora,
                 NomeTransportadora = transportadora.NomeFantasia,
-                ListaEnderecos = enderecosInstalados.Select(enderecoInstalado => enderecoInstalado.EnderecoTransportadora.Codigo).Distinct().ToList()
+                ListaEnderecos = enderecosInstalados.Select(enderecoInstalado => new EnderecosPorTransportadoraVolumeResposta
+                {
+                    IdPedidoVendaVolume = enderecoInstalado.IdPedidoVendaVolume,
+                    CodigoEndereco = enderecoInstalado.EnderecoTransportadora.Codigo
+                }).ToList()
             };
 
         }
