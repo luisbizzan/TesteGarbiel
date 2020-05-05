@@ -114,5 +114,48 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Expedicao.EditarTranportadoraEndereco)]
+        public ActionResult Editar(long id)
+        {
+            var transportadoraEndereco = _unitOfWork.TransportadoraEnderecoRepository.GetById(id);
+
+            var viewModel = Mapper.Map<TransportadoraEnderecoEdicaoViewModel>(transportadoraEndereco);
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Expedicao.EditarTranportadoraEndereco)]
+        public ActionResult Editar(TransportadoraEnderecoEdicaoViewModel viewModel)
+        {
+            ValidateModel(viewModel);
+
+            try
+            {
+                var transportadoraEndereco = Mapper.Map<TransportadoraEndereco>(viewModel);
+
+                _transportadoraEnderecoService.Editar(transportadoraEndereco, IdEmpresa);
+
+                Notify.Success("Transportadora x Endereço editado com sucesso.");
+            }
+            catch (BusinessException businessException)
+            {
+                ModelState.AddModelError(string.Empty, businessException.Message);
+
+                return View(viewModel);
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
+
+                Notify.Error("Ocorreu um erro ao vincular endereço na transportadora.");
+
+                return View(viewModel);
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }

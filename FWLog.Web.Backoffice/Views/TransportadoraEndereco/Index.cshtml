@@ -11,11 +11,10 @@
             pageDataUrl = Url.Action("PageData"),
             urlDetalhes = Url.Action("Detalhes"),
             destalhesVisivel = User.HasPermission(Permissions.Expedicao.VisualizarTranportadoraEndereco),
-            //urlEditar = Url.Action("Editar"),
+            urlEditar = Url.Action("Editar"),
             editarVisivel = User.HasPermission(Permissions.Expedicao.EditarTranportadoraEndereco),
             //urlExcluir = Url.Action("ExcluirAjax"),
             excluirVisivel = User.HasPermission(Permissions.Expedicao.ExcluirTranportadoraEndereco),
-            //urlDadosLista = Url.Action("DadosLista")
         })
 }
 

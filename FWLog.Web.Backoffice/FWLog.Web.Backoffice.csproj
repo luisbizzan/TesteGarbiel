@@ -393,6 +393,7 @@
     <Compile Include="Models\TransportadoraCtx\TransportadoraSearchModalViewModel.cs" />
     <Compile Include="Models\TransporteEnderecoCtx\TransportadoraEnderecoCadastroViewModel.cs" />
     <Compile Include="Models\TransporteEnderecoCtx\TransportadoraEnderecoDetalhesViewModel.cs" />
+    <Compile Include="Models\TransporteEnderecoCtx\TransportadoraEnderecoEdicaoViewModel.cs" />
     <Compile Include="Models\TransporteEnderecoCtx\TransporteEnderecoListaViewModel.cs" />
     <Compile Include="Startup.cs" />
     <Content Include="Content\dart\dart-template.css">
@@ -592,6 +593,7 @@
     <Content Include="Scripts\Views\RecebimentoEtiquetaIndividualPersonalizada\index.js" />
     <Content Include="Scripts\Views\Etiqueta\lote.js" />
     <Content Include="Scripts\Views\TransportadoraEndereco\cadastrar.js" />
+    <Content Include="Scripts\Views\TransportadoraEndereco\editar.js" />
     <Content Include="Scripts\Views\TransportadoraEndereco\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
@@ -690,6 +692,7 @@
     <Content Include="Views\TransportadoraEndereco\Index.cshtml" />
     <Content Include="Views\TransportadoraEndereco\Detalhes.cshtml" />
     <Content Include="Views\TransportadoraEndereco\Cadastrar.cshtml" />
+    <Content Include="Views\TransportadoraEndereco\Editar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
