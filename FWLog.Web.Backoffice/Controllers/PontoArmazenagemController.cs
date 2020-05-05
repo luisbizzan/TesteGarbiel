@@ -218,7 +218,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpGet]
         [ApplicationAuthorize]
-        public ActionResult PesquisaModal(long? id)
+        public ActionResult PesquisaModal(long? id, bool? idExpedicao)
         {
             var viewModel = new PontoArmazenagemPesquisaModalViewModel
             {
@@ -231,6 +231,7 @@ namespace FWLog.Web.Backoffice.Controllers
             };
 
             viewModel.Filtros.IdNivelArmazenagem = id;
+            viewModel.Filtros.IsExpedicao = idExpedicao;
 
             return View(viewModel);
         }

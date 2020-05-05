@@ -79,10 +79,24 @@
 
 
 function limparTransportadora() {
-    let razaoSocial = $("#Filter_RazaoSocialTransportadora");
-    let cliente = $("#Filter_IdTransportadora");
+    let razaoSocial = $("#Filtros_RazaoSocialTransportadora");
+    let cliente = $("#Filtros_IdTransportadora");
     razaoSocial.val("");
     cliente.val("");
+}
+
+function setTransportadora(idTransportadora, nomeFantasia) {
+    $("#Filtros_RazaoSocialTransportadora").val(nomeFantasia);
+    $("#Filtros_IdTransportadora").val(idTransportadora);
+    $("#modalTransportadora").modal("hide");
+    $("#modalTransportadora").empty();
+}
+
+function selecionarEnderecoArmazenagem(IdEnderecoArmazenagem, codigo) {
+    $("#Filtros_CodigoEnderecoArmazenagem").val(codigo);
+    $("#Filtros_IdEnderecoArmazenagem").val(IdEnderecoArmazenagem);
+    $("#modalPesquisaEnderecoArmazenagem").modal("hide");
+    $("#modalPesquisaEnderecoArmazenagem").empty();
 }
 
 
