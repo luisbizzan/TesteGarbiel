@@ -1,12 +1,11 @@
-﻿using AutoMapper;
-using DartDigital.Library.Exceptions;
+﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.Caixa;
 using FWLog.Services.Model.Coletor;
-using FWLog.Services.Model.Produto;
 using FWLog.Services.Model.IntegracaoSankhya;
+using FWLog.Services.Model.Produto;
 using FWLog.Services.Model.SeparacaoPedido;
 using log4net;
 using System;
@@ -180,7 +179,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido informado ainda não está liberado para a separação.");
             }
 
-            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ConcluidaComSucesso)
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
             {
                 throw new BusinessException("O pedido informado já foi separado.");
             }
@@ -198,7 +197,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume informado não foi encontrado.");
             }
 
-            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.ConcluidaComSucesso)
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
             {
                 throw new BusinessException("O volume informado já foi separado.");
             }
@@ -469,7 +468,7 @@ namespace FWLog.Services.Services
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                var novoStatusSeparacao = PedidoVendaStatusEnum.ConcluidaComSucesso;
+                var novoStatusSeparacao = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
                 var dataProcessamento = DateTime.Now;
 
                 pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
@@ -555,7 +554,7 @@ namespace FWLog.Services.Services
 
                 var dataProcessamento = DateTime.Now;
 
-               
+
 
                 if (pedidoVendaProduto.QtdSeparada.GetValueOrDefault() == 0)
                 {
@@ -566,7 +565,7 @@ namespace FWLog.Services.Services
                 else if (qtdSeparada == pedidoVendaProduto.QtdSeparar)
                 {
                     pedidoVendaProduto.DataHoraFimSeparacao = dataProcessamento;
-                    pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ConcluidaComSucesso;
+                    pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
 
                     salvarSeparacaoProdutoResposta.ProdutoSeparado = true;
                 }
@@ -720,18 +719,18 @@ namespace FWLog.Services.Services
 
             foreach (var pedido in listaPedidos) //Percorre a lista de pedidos.
             {
-                var idPedidoVenda = await _pedidoVendaService.Salvar(pedido); 
+                var idPedidoVenda = await _pedidoVendaService.Salvar(pedido);
 
                 if (idPedidoVenda == 0)
                     break;
 
                 //Agrupa os itens do pedido por produto. 
-                var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido); 
+                var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido);
 
                 /*
                  * Usamos o foreach abaixo para capturar e atualizar o IdGrupoCorredorArmazenagem e IdEnderecoArmazenagem de cada item.
                  */
-                foreach (var pedidoItem in listaItensDoPedido) 
+                foreach (var pedidoItem in listaItensDoPedido)
                 {
                     //Captura o endereço de picking do produto.
                     //Posteriormente a lógica deverá ser alterada por ponto de separação.
@@ -757,10 +756,10 @@ namespace FWLog.Services.Services
                  * Além disso, através do método Cubicagem, saberemos a caixa de cada produto. 
                  * É importante saber que o processo é feito por corredor.
                  */
-                foreach (var itemCorredorArmazenagem in grupoCorredorArmazenagem) 
+                foreach (var itemCorredorArmazenagem in grupoCorredorArmazenagem)
                 {
                     int quantidadeVolume = 0;
-                    
+
                     //Captura o corredor do item.
                     var listaItensDoPedidoPorCorredor = listaItensDoPedido.Where(x => x.IdGrupoCorredorArmazenagem == itemCorredorArmazenagem.IdGrupoCorredorArmazenagem).ToList();
 
@@ -989,8 +988,8 @@ namespace FWLog.Services.Services
              *  6. Em seguida, remover da listaCaixas o ID das caixas que forem iguais da tabela de recusa.
              *  7. Caso a lista de recusa seja vazia ou o ID não exista na listaCaixas, vida que segue.
              * */
-             
-            for (int i = 0; i <listaCaixas.Count; i++)
+
+            for (int i = 0; i < listaCaixas.Count; i++)
             {
                 //Valida a cubagem entre a caixa e o produto.
                 if (await CalcularCubagemEntreCaixaProduto(produto, listaCaixas[i]))
@@ -1005,17 +1004,17 @@ namespace FWLog.Services.Services
                      * Se existir, atualiza o campo quantidadeRanking, ou seja, mais uma caixa que pode ser usada pelo item.
                      * Caso contrário cadastra a caixa na listaRankingCaixas.
                      */
-                    
+
                     if (caixaRanking != null)
                     {
                         int index = listaRankingCaixas.IndexOf(caixaRanking);
                         listaRankingCaixas[index].QuantidadeRanking++;
-                    }   
+                    }
                     else
                     {
                         listaCaixas[i].QuantidadeRanking = 1;
                         listaRankingCaixas.Add(listaCaixas[i]);
-                    }   
+                    }
                 }
             }
 
@@ -1032,13 +1031,13 @@ namespace FWLog.Services.Services
         public async Task<bool> CalcularCubagemEntreCaixaProduto(ProdutoViewModel produto, CaixaViewModel caixa) //chkCubIt2
         {
             bool retorno = false;
-            
+
             //Valida se a largura, comprimento e peso bruto do produto é diferente de 0.
             if (produto.Largura.HasValue == false || produto.Largura == 0 ||
                 produto.Comprimento.HasValue == false || produto.Comprimento == 0 ||
                 produto.PesoBruto == 0)
                 return false;
-            
+
             //Valida se a largura, comprimento e e peso bruto do produto é menor os valores da caixa.
             if (produto.Altura <= caixa.Altura && produto.Largura <= caixa.Largura && produto.Comprimento <= caixa.Comprimento)
                 retorno = true;
@@ -1085,14 +1084,14 @@ namespace FWLog.Services.Services
             }
 
             caixaMaior = await BuscarMaiorCaixa(listaCaixasMaisComum);
-            
+
             do
             {
-                usouAgrupamento = false; 
+                usouAgrupamento = false;
 
                 contadorCubagem = 0;
-                contadorPeso = 0; 
-                
+                contadorPeso = 0;
+
                 //Primeira triagem dos itens - não há consideração pelos multiplos
                 for (int i = 0; i < listaItensDoPedido.Count; i++)
                 {
@@ -1116,11 +1115,11 @@ namespace FWLog.Services.Services
 
                     //Verifica se a cubagem total (contadorCubagem + cubagemPedidoItem) é menor ou igual a cubagem da caixa.
                     //Verifica se o peso total (contadorCubagem + cubagemPedidoItem) é menor ou igual ao peso maximo da caixa.
-                    if ((contadorCubagem + cubagemPedidoItem.Value) <= (caixaMaior.Cubagem * ((100 - caixaMaior.Sobra)/100)) &&
+                    if ((contadorCubagem + cubagemPedidoItem.Value) <= (caixaMaior.Cubagem * ((100 - caixaMaior.Sobra) / 100)) &&
                         (contadorPeso + pesoPedidoItem.Value) <= (caixaMaior.PesoMaximo * valor))
                     {
                         //Verifica se a caixa identificada está na lista de caixas dos itens do pedido;
-                        if (listaItensDoPedido[i].Caixa.Any(x=> x == caixaMaior))
+                        if (listaItensDoPedido[i].Caixa.Any(x => x == caixaMaior))
                         {
                             //Soma a cubagem do item do pedido ao contador.
                             contadorCubagem += cubagemPedidoItem.Value;
@@ -1135,11 +1134,11 @@ namespace FWLog.Services.Services
                 }
 
                 usarCaixaEncontrada = true;
-                
+
                 if (!encontrouCaixaCorreta)
                 {
                     //Analisa a sobra da caixa
-                    if (contadorCubagem < (caixaMaior.Cubagem *((100 - caixaMaior.Sobra)/100)))
+                    if (contadorCubagem < (caixaMaior.Cubagem * ((100 - caixaMaior.Sobra) / 100)))
                     {
                         if (caixaAnteriorEhMelhorQueAtual && contadorCubagem != contadorCubagem2)
                         {
@@ -1254,7 +1253,7 @@ namespace FWLog.Services.Services
             //Valida se a listaRankingCaixas é nula.
             if (listaRankingCaixas == null)
                 return listaCaixasMaisComum;
-            
+
             //Captura a quantidade do maior da listaRankingCaixas.
             decimal quantidadeDoMaiorDaListaRankingCaixas = listaRankingCaixas.Max(x => x.QuantidadeRanking);
 
@@ -1326,7 +1325,7 @@ namespace FWLog.Services.Services
         public async Task<CaixaViewModel> BuscarMaiorCaixa(List<CaixaViewModel> listaCaixasMaisComum)
         {
             CaixaViewModel caixaMaior = new CaixaViewModel();
-            
+
             for (int i = 0; i < listaCaixasMaisComum.Count; i++)
             {
                 //Verifica se é a primeira caixaMaior ou se a cubagem da listaCaixasMaisComum 
@@ -1425,7 +1424,7 @@ namespace FWLog.Services.Services
             decimal contadorPeso; //Acumulador (auxiliar) para peso.
             bool usarCaixaEncontrada; //Indica que os itens receberão a caixa encontrada.
             bool usouAgrupamento = false; //Indica se o agrupamento foi utilizado.
-            PedidoItemViewModel pedidoItem = new PedidoItemViewModel(); 
+            PedidoItemViewModel pedidoItem = new PedidoItemViewModel();
             List<PedidoItemViewModel> listaItensDoPedidoRetorno = new List<PedidoItemViewModel>();
 
             //Pra garantir que o agrupamento a ser usado não é o mesmo
@@ -1490,14 +1489,14 @@ namespace FWLog.Services.Services
 
                         if (!encontrouCaixaCorreta)
                         {
-                            if (contadorCubagem.Value != 0 && contadorCubagem < (caixaCorrente.Cubagem * ((100-caixaCorrente.Sobra) / 100 )) &&
+                            if (contadorCubagem.Value != 0 && contadorCubagem < (caixaCorrente.Cubagem * ((100 - caixaCorrente.Sobra) / 100)) &&
                                 listaItensDoPedido[i].Caixa != null)
                             {
                                 if (caixaAnteriorEhMelhorQueAtual && contadorCubagem != nAux2Cub)
                                 {
                                     encontrouCaixaCorreta = true;
 
-                                    caixaCorrente = caixaAnterior; 
+                                    caixaCorrente = caixaAnterior;
                                     caixaAnteriorEhMelhorQueAtual = false;
 
                                     usarCaixaEncontrada = false;
@@ -1593,7 +1592,7 @@ namespace FWLog.Services.Services
 
         public async Task<List<VolumeViewModel>> BuscarCubagemVolumes(List<PedidoItemViewModel> listaItensDoPedido)
         {
-            List<VolumeViewModel> listaVolumes = new List<VolumeViewModel>(); 
+            List<VolumeViewModel> listaVolumes = new List<VolumeViewModel>();
             int nAuxAgrup = 0;
             long nAuxNrCx = 0;
 
@@ -1604,16 +1603,16 @@ namespace FWLog.Services.Services
                 if (listaItensDoPedido[i].CaixaEscolhida != null)
                 {
                     var condicao = listaItensDoPedido[i].Quantidade / listaItensDoPedido[i].Produto.MultiploVenda;
-                    
+
                     for (int l = 0; l < condicao; l++)
                     {
                         listaVolumes.Add(new VolumeViewModel()
                         {
-                            CaixaFornecedor =  true
+                            CaixaFornecedor = true
                         });
                         //aAdd(aVolumes, { 'F', 0 } )
                     }
-                } 
+                }
                 else if (listaItensDoPedido[i].Agrupador != nAuxAgrup || listaItensDoPedido[i].CaixaEscolhida.IdCaixa != nAuxNrCx)
                 {
                     nAuxCX = listaItensDoPedido[i].Caixa.Where(x => x.IdCaixa == listaItensDoPedido[i].CaixaEscolhida.IdCaixa).FirstOrDefault();
