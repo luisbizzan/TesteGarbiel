@@ -36,7 +36,10 @@ namespace FWLog.Services.Services
             if (_grupoCorredorArmazenagemPorCorredor != null)
                 throw new BusinessException("O intervalo de corredores já foi cadastrado para o ponto de armazenagem informado.");
 
-            if(IntevaloSobrepostos(grupoCorredorArmazenagem))
+            var listGrupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository
+                .BuscarPorEmpresaEPontoArmazenagem(grupoCorredorArmazenagem.IdEmpresa, grupoCorredorArmazenagem.IdPontoArmazenagem);
+
+            if (IntevaloSobrepostos(listGrupoCorredorArmazenagem,grupoCorredorArmazenagem.CorredorInicial, grupoCorredorArmazenagem.CorredorFinal))
                 throw new BusinessException("Não é permitido cadastro de intervalo de corredores sobrepostos para um mesmo ponto de armazenagem.");
 
             var _grupoCorredorArmazenagemPorImpressora = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorImpressora(grupoCorredorArmazenagem.IdEmpresa, grupoCorredorArmazenagem.CorredorInicial,
@@ -74,8 +77,12 @@ namespace FWLog.Services.Services
             if (_grupoCorredorArmazenagemPorCorredor != null && _grupoCorredorArmazenagemPorCorredor.IdGrupoCorredorArmazenagem != grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem)
                 throw new BusinessException("O intervalo de corredores já foi cadastrado para o ponto de armazenagem informado.");
 
-            if (IntevaloSobrepostos(grupoCorredorArmazenagem) && _grupoCorredorArmazenagemPorCorredor.IdGrupoCorredorArmazenagem != grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem)
+            var listGrupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository
+               .BuscarPorEmpresaEPontoArmazenagem(grupoCorredorArmazenagemAntigo.IdEmpresa, grupoCorredorArmazenagemAntigo.IdPontoArmazenagem);
+
+            if (IntevaloSobrepostos(listGrupoCorredorArmazenagem, grupoCorredorArmazenagem.CorredorInicial, grupoCorredorArmazenagem.CorredorFinal) && _grupoCorredorArmazenagemPorCorredor.IdGrupoCorredorArmazenagem != grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem)
                 throw new BusinessException("Não é permitido cadastro de intervalo de corredores sobrepostos para um mesmo ponto de armazenagem.");
+
 
             var _grupoCorredorArmazenagemPorImpressora = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorImpressora(idEmpresaUsuarioLogado, grupoCorredorArmazenagem.CorredorInicial,
                 grupoCorredorArmazenagem.CorredorFinal, grupoCorredorArmazenagem.IdImpressora);
@@ -108,11 +115,9 @@ namespace FWLog.Services.Services
             }
         }
 
-        private bool IntevaloSobrepostos(GrupoCorredorArmazenagem grupoCorredorArmazenagem)
+        private bool IntevaloSobrepostos(List<GrupoCorredorArmazenagem> listGrupoCorredorArmazenagem, int corredorInicialInformado,int corredorFinalInformado)
         {
-            var listGrupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorEmpresaEPontoArmazenagem(grupoCorredorArmazenagem.IdEmpresa, grupoCorredorArmazenagem.IdPontoArmazenagem);
-
-            var rangeCorredoresParaValidar = Enumerable.Range(grupoCorredorArmazenagem.CorredorInicial, grupoCorredorArmazenagem.CorredorFinal == grupoCorredorArmazenagem.CorredorInicial ? 1 : (grupoCorredorArmazenagem.CorredorFinal - grupoCorredorArmazenagem.CorredorInicial) + 1);
+            var rangeCorredoresParaValidar = Enumerable.Range(corredorInicialInformado, corredorFinalInformado == corredorInicialInformado ? 1 : (corredorFinalInformado - corredorInicialInformado) + 1);
 
             foreach (var item in listGrupoCorredorArmazenagem)
             {
