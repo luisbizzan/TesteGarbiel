@@ -258,6 +258,7 @@
     <Compile Include="Services\RelatorioService.cs" />
     <Compile Include="Services\FornecedorService.cs" />
     <Compile Include="Services\RepresentanteService.cs" />
+    <Compile Include="Services\TransportadoraEnderecoService.cs" />
     <Compile Include="Services\UnidadeMedidaService.cs" />
     <Compile Include="Services\TransportadoraService.cs" />
     <Compile Include="Templates\MailTemplate.cs" />

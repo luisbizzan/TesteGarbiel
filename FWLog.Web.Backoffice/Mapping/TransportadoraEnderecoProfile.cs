@@ -13,6 +13,11 @@ namespace FWLog.Web.Backoffice.Mapping
             .ForMember(c => c.RazaoSocialTransportadora, opt => opt.MapFrom(src => src.Transportadora.RazaoSocial))
             .ForMember(c => c.CnpjTransportadora, opt => opt.MapFrom(src => src.Transportadora.CNPJ.CnpjOuCpf()))
             .ForMember(c => c.Codigo, opt => opt.MapFrom(src => src.EnderecoArmazenagem.Codigo));
+
+            CreateMap<TransportadoraEnderecoCadastroViewModel, TransportadoraEndereco>()
+                   .ForMember(c => c.EnderecoArmazenagem, opt => opt.Ignore());
         }
+
+       
     }
 }

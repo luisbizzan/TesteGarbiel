@@ -6,5 +6,6 @@
         public string Codigo { get; set; }
         public long? IdPontoArmazenagem { get; set; }
         public bool? BuscarTodos { get; set; }
+        public bool? IsExpedicao { get; set; }
     }
 }

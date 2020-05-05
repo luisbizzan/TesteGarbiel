@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
+using DartDigital.Library.Exceptions;
 using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.TransporteEnderecoCtx;
 using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -17,11 +21,13 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly ILog _log;
+        private readonly TransportadoraEnderecoService _transportadoraEnderecoService;
 
-        public TransportadoraEnderecoController(UnitOfWork unitOfWork, ILog log)
+        public TransportadoraEnderecoController(UnitOfWork unitOfWork, ILog log, TransportadoraEnderecoService transportadoraEnderecoService)
         {
             _unitOfWork = unitOfWork;
             _log = log;
+            _transportadoraEnderecoService = transportadoraEnderecoService;
         }
 
         [HttpGet]
@@ -77,49 +83,36 @@ namespace FWLog.Web.Backoffice.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //[ApplicationAuthorize(Permissions = Permissions.Separacao.CadastrarCorredorImpressora)]
-        //public ActionResult Cadastrar(TransportadoraEnderecoCadastroViewModel viewModel)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        viewModel.ListaImpressora = new SelectList(
-        //            _service.BuscarImpressoraPorEmpresa(IdEmpresa).Select(x => new SelectListItem
-        //            {
-        //                Value = x.Id.ToString(),
-        //                Text = x.Name,
-        //            }), "Value", "Text"
-        //            );
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Expedicao.CadastrarTranportadoraEndereco)]
+        public ActionResult Cadastrar(TransportadoraEnderecoCadastroViewModel viewModel)
+        {
+            ValidateModel(viewModel);
 
-        //        return View(viewModel);
-        //    }
+            try
+            {
+                var transportadoraEndereco = Mapper.Map<TransportadoraEndereco>(viewModel);
 
-        //    try
-        //    {
-        //        var corredorImpressora = Mapper.Map<GrupoCorredorArmazenagem>(viewModel);
+                _transportadoraEnderecoService.Cadastrar(transportadoraEndereco,IdEmpresa);
 
-        //        corredorImpressora.IdEmpresa = IdEmpresa;
+                Notify.Success("Transportadora x Endereço cadastrado com sucesso.");
+            }
+            catch (BusinessException businessException)
+            {
+                ModelState.AddModelError(string.Empty, businessException.Message);
 
-        //        _service.Cadastrar(corredorImpressora);
+                return View(viewModel);
+            }
+            catch (Exception exception)
+            {
+                _log.Error(exception.Message, exception);
 
-        //        Notify.Success("Corredor x impressora cadastrado com sucesso.");
-        //    }
-        //    catch (BusinessException businessException)
-        //    {
-        //        ModelState.AddModelError(string.Empty, businessException.Message);
+                Notify.Error("Ocorreu um erro ao vincular endereço na transportadora.");
 
-        //        viewModel.ListaImpressora = new SelectList(
-        //            _service.BuscarImpressoraPorEmpresa(IdEmpresa).Select(x => new SelectListItem
-        //            {
-        //                Value = x.Id.ToString(),
-        //                Text = x.Name,
-        //            }), "Value", "Text"
-        //            );
+                return View(viewModel);
+            }
 
-        //        return View(viewModel);
-        //    }
-
-        //    return RedirectToAction("Index");
-        //}
+            return RedirectToAction("Index");
+        }
     }
 }

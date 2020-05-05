@@ -17,9 +17,9 @@
         $("#modalPesquisaEnderecoArmazenagem").empty();
 
         let id = $("#IdPontoArmazenagem").val();
-        let buscarTodos = true;
+        let isExpedicao = true;
 
-        $("#modalPesquisaEnderecoArmazenagem").load(HOST_URL + "EnderecoArmazenagem/PesquisaModal" + "?id=" + id + "&buscarTodos=" + buscarTodos, function () {
+        $("#modalPesquisaEnderecoArmazenagem").load(HOST_URL + "EnderecoArmazenagem/PesquisaModal" + "?id=" + id + "&buscarTodos=" + true + "&isExpedicao=" + isExpedicao, function () {
             $("#modalPesquisaEnderecoArmazenagem").modal();
         });
     });
@@ -36,8 +36,12 @@
         $("#modalPesquisaPontoArmazenagem").empty();
         $("#modalPesquisaEnderecoArmazenagem").empty();
 
-        $("#modalPesquisaNivelArmazenagem").load(HOST_URL + "NivelArmazenagem/PesquisaModal", function () {
+        let isExpedicao = true;
+
+        $("#modalPesquisaNivelArmazenagem").load(HOST_URL + "NivelArmazenagem/PesquisaModal" + "?isExpedicao=" + isExpedicao , function () {
             $("#modalPesquisaNivelArmazenagem").modal();
+            $("#modalPesquisaNivelArmazenagem").find("#Filtros_Status").prop('disabled', true);
+
         });
     });
 
@@ -56,8 +60,10 @@
         $("#modalPesquisaEnderecoArmazenagem").empty();
 
         let id = $("#IdNivelArmazenagem").val();
-        $("#modalPesquisaPontoArmazenagem").load(HOST_URL + "PontoArmazenagem/PesquisaModal/" + id, function () {
+        let isExpedicao = true;
+        $("#modalPesquisaPontoArmazenagem").load(HOST_URL + "PontoArmazenagem/PesquisaModal" + "?id=" + id + "&isExpedicao=" + isExpedicao, function () {
             $("#modalPesquisaPontoArmazenagem").modal();
+            $("#modalPesquisaPontoArmazenagem").find("#Filtros_Status").prop('disabled', true);
         });
     });
 
@@ -96,6 +102,7 @@ function selecionarEnderecoArmazenagem(IdEnderecoArmazenagem, codigo) {
 function selecionarNivelArmazenagem(idNivelArmazenagem, descricao) {
     $("#DescricaoNivelArmazenagem").val(descricao);
     $("#IdNivelArmazenagem").val(idNivelArmazenagem);
+    $("#modalPesquisaNivelArmazenagem").find("#Filtros_Status").prop('disabled', false);
     $("#modalPesquisaNivelArmazenagem").modal("hide");
     $("#modalPesquisaNivelArmazenagem").empty();
 }
@@ -104,6 +111,7 @@ function selecionarPontoArmazenagem(idPontoArmazenagem, descricao) {
     $("#DescricaoPontoArmazenagem").val(descricao);
     $("#IdPontoArmazenagem").val(idPontoArmazenagem);
     $("#modalPesquisaPontoArmazenagem").modal("hide");
+    $("#modalPesquisaPontoArmazenagem").find("#Filtros_Status").prop('disabled', true);
     $("#modalPesquisaPontoArmazenagem").empty();
 }
 
