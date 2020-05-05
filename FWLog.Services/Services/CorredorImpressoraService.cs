@@ -5,6 +5,7 @@ using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FWLog.Services.Services
 {
@@ -35,6 +36,9 @@ namespace FWLog.Services.Services
             if (_grupoCorredorArmazenagemPorCorredor != null)
                 throw new BusinessException("O intervalo de corredores já foi cadastrado para o ponto de armazenagem informado.");
 
+            if(IntevaloSobrepostos(grupoCorredorArmazenagem))
+                throw new BusinessException("Não é permitido cadastro de intervalo de corredores sobrepostos para um mesmo ponto de armazenagem.");
+
             var _grupoCorredorArmazenagemPorImpressora = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorImpressora(grupoCorredorArmazenagem.IdEmpresa, grupoCorredorArmazenagem.CorredorInicial,
                 grupoCorredorArmazenagem.CorredorFinal, grupoCorredorArmazenagem.IdImpressora);
 
@@ -49,7 +53,7 @@ namespace FWLog.Services.Services
         {
             return _unitOfWork.GrupoCorredorArmazenagemRepository.GetById(idCorredorImpressora);
         }
-
+       
         public void Editar(GrupoCorredorArmazenagem grupoCorredorArmazenagem, long idEmpresaUsuarioLogado)
         {
             var grupoCorredorArmazenagemAntigo = GetCorredorImpressoraById(grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem);
@@ -69,6 +73,9 @@ namespace FWLog.Services.Services
 
             if (_grupoCorredorArmazenagemPorCorredor != null && _grupoCorredorArmazenagemPorCorredor.IdGrupoCorredorArmazenagem != grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem)
                 throw new BusinessException("O intervalo de corredores já foi cadastrado para o ponto de armazenagem informado.");
+
+            if (IntevaloSobrepostos(grupoCorredorArmazenagem) && _grupoCorredorArmazenagemPorCorredor.IdGrupoCorredorArmazenagem != grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem)
+                throw new BusinessException("Não é permitido cadastro de intervalo de corredores sobrepostos para um mesmo ponto de armazenagem.");
 
             var _grupoCorredorArmazenagemPorImpressora = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorImpressora(idEmpresaUsuarioLogado, grupoCorredorArmazenagem.CorredorInicial,
                 grupoCorredorArmazenagem.CorredorFinal, grupoCorredorArmazenagem.IdImpressora);
@@ -100,5 +107,21 @@ namespace FWLog.Services.Services
                 ValidaELancaExcecaoIntegridade(exception);
             }
         }
+
+        private bool IntevaloSobrepostos(GrupoCorredorArmazenagem grupoCorredorArmazenagem)
+        {
+            var listGrupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorEmpresaEPontoArmazenagem(grupoCorredorArmazenagem.IdEmpresa, grupoCorredorArmazenagem.IdPontoArmazenagem);
+
+            var rangeCorredoresParaValidar = Enumerable.Range(grupoCorredorArmazenagem.CorredorInicial, grupoCorredorArmazenagem.CorredorFinal == grupoCorredorArmazenagem.CorredorInicial ? 1 : (grupoCorredorArmazenagem.CorredorFinal - grupoCorredorArmazenagem.CorredorInicial) + 1);
+
+            foreach (var item in listGrupoCorredorArmazenagem)
+            {
+                if (Enumerable.Range(item.CorredorInicial, item.CorredorFinal == item.CorredorInicial ? 1 : (item.CorredorFinal - item.CorredorInicial) + 1).Intersect(rangeCorredoresParaValidar).Any())
+                    return true;
+            }
+
+            return false;
+        }
+
     }
 }
