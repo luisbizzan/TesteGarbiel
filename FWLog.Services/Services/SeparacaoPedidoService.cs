@@ -713,7 +713,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Empresa inválida");
 
             //Captura os corredores por empresa e ordena por corredor inicial.
-            var grupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository.Todos().Where(x => x.IdEmpresa == idEmpresa).OrderBy(x => x.CorredorInicial);
+            var grupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository.Todos().Where(x => x.IdEmpresa == idEmpresa).OrderBy(x => x.CorredorInicial).ToList();
 
             //Captura os pedidos por empresa e status pendente separação.
             var listaPedidos = _unitOfWork.PedidoRepository.PesquisarPendenteSeparacao(idEmpresa);
@@ -741,8 +741,7 @@ namespace FWLog.Services.Services
                         break;
 
                     //Captura o grupo de corredores do item do pedido.
-                    var grupoCorredorArmazenagemItemPedido = _unitOfWork.GrupoCorredorArmazenagemRepository.Todos().Where(
-                        x => x.CorredorInicial >= enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor && x.CorredorFinal <= enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor).FirstOrDefault();
+                    var grupoCorredorArmazenagemItemPedido = await BuscarGrupoCorredorArmazenagemItemPedido(enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
 
                     if (grupoCorredorArmazenagemItemPedido == null)
                         break;
@@ -794,6 +793,8 @@ namespace FWLog.Services.Services
                                 //Chamar aqui para salvar os produtos do volume.
                                 await _pedidoVendaProdutoService.Salvar(idPedidoVenda, idPedidoVendaVolume, item);
                             }
+
+                            //Imprimir Etiqueta
                         }
 
                         //Atualiza a quantidade de volumes na PedidoVenda.
@@ -807,6 +808,19 @@ namespace FWLog.Services.Services
             }
         }
 
+        public async Task<GrupoCorredorArmazenagem> BuscarGrupoCorredorArmazenagemItemPedido(int corredor, List<GrupoCorredorArmazenagem> listaGrupoCorredorArmazenagem)
+        {
+            GrupoCorredorArmazenagem grupoArmazenagem = new GrupoCorredorArmazenagem();
+
+            foreach (var item in listaGrupoCorredorArmazenagem)
+            {
+                if (corredor >= item.CorredorInicial && corredor <= item.CorredorFinal)
+                    return item;
+            }
+
+            return grupoArmazenagem;
+        }
+
         public async Task<List<PedidoItemViewModel>> AgruparItensDoPedidoPorProduto(long idPedido)
         {
             List<PedidoItemViewModel> listaItensDoPedidoAgrupada = new List<PedidoItemViewModel>();
@@ -815,7 +829,7 @@ namespace FWLog.Services.Services
             var listaItensDoPedido = _unitOfWork.PedidoItemRepository.BuscarPorIdPedido(idPedido);
 
             //Devido a mais de uma linha do mesmo produto, fazemos o agrupamento por produto.
-            listaItensDoPedidoAgrupada = listaItensDoPedido.GroupBy(x => new { x.IdPedido, x.Produto, x.QtdPedido }).Select(s => new PedidoItemViewModel()
+            listaItensDoPedidoAgrupada = listaItensDoPedido.GroupBy(x => new { x.IdPedido, x.Produto }).Select(s => new PedidoItemViewModel()
             {
                 Produto = new ProdutoViewModel()
                 {
@@ -832,7 +846,7 @@ namespace FWLog.Services.Services
                     MultiploVenda = s.Key.Produto.MultiploVenda,
                     Ativo = s.Key.Produto.Ativo
                 },
-                Quantidade = s.Key.QtdPedido
+                Quantidade = s.Sum(x => x.QtdPedido)
             }).ToList();
 
             return listaItensDoPedidoAgrupada;
@@ -903,7 +917,7 @@ namespace FWLog.Services.Services
         public async Task<List<PedidoItemViewModel>> BuscarPesoCubagemItensPedido(List<PedidoItemViewModel> listaItensDoPedido, List<ProdutoEstoque> listaEnderecosSeparacao, List<CaixaViewModel> listaCaixas) //getInfoIt
         {
             var listaItensDoPedidoCubicados = new List<PedidoItemViewModel>();
-            
+
             for (int i = 0; i < listaItensDoPedido.Count; i++)
             {
                 /*Busca todos os endereços de separação do produto.
@@ -918,7 +932,7 @@ namespace FWLog.Services.Services
                 //Mantive a verificação comentada pois, se tiver algum erro perante a isso basta descomentar.
                 //if (listaEnderecosSeparacaoDoProduto == null)
                 //    break;
-                
+
                 decimal? larguraProduto = listaItensDoPedido[i].Produto.Largura;
                 decimal? comprimentoProduto = listaItensDoPedido[i].Produto.Comprimento;
                 decimal? alturaProduto = listaItensDoPedido[i].Produto.Altura;
@@ -944,10 +958,10 @@ namespace FWLog.Services.Services
                     Quantidade = listaItensDoPedido[i].Quantidade,
                     Caixa = await CaixasQuePodemSerUtilizadas(listaItensDoPedido[i].Produto, listaCaixas)
                 });
-
-                //Classifica a listaRankingCaixas por Quantidade
-                listaRankingCaixas = listaRankingCaixas.OrderBy(x => x.QuantidadeRanking).ToList();
             }
+
+            //Classifica a listaRankingCaixas por Quantidade
+            listaRankingCaixas = listaRankingCaixas.OrderBy(x => x.QuantidadeRanking).ToList();
 
             return listaItensDoPedidoCubicados;
         }
@@ -1026,7 +1040,7 @@ namespace FWLog.Services.Services
                 return false;
             
             //Valida se a largura, comprimento e e peso bruto do produto é menor os valores da caixa.
-            if (produto.Largura <= caixa.Largura && produto.Comprimento <= caixa.Comprimento && produto.PesoBruto <= caixa.PesoCaixa)
+            if (produto.Altura <= caixa.Altura && produto.Largura <= caixa.Largura && produto.Comprimento <= caixa.Comprimento)
                 retorno = true;
 
             return retorno;

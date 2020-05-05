@@ -29,5 +29,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.PedidoVenda.Include("Pedido").FirstOrDefault(pv => pv.IdPedidoVenda == idPedidoVenda && pv.IdEmpresa == idEmpresa);
         }
+
+        public PedidoVenda ObterPorIdPedido(long idPedido)
+        {
+            return Entities.PedidoVenda.FirstOrDefault(x => x.IdPedido == idPedido);
+        }
     }
 }
