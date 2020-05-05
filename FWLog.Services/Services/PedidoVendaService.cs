@@ -17,13 +17,20 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task<int> Salvar(Pedido pedido)
+        public async Task<long> Salvar(Pedido pedido)
         {
-            int idPedidoVenda = 0;
+            long idPedidoVenda = 0;
 
             try
             {
-                _uow.PedidoVendaRepository.Add(new PedidoVenda()
+                var pedidoVendaRepository = _uow.PedidoVendaRepository.ObterPorIdPedido(pedido.IdPedido);
+
+                if (pedidoVendaRepository != null)
+                {
+                    return pedidoVendaRepository.IdPedidoVenda;
+                }
+
+                var pedidoVenda = new PedidoVenda()
                 {
                     IdPedido = pedido.IdPedido,
                     IdCliente = pedido.IdCliente,
@@ -33,9 +40,13 @@ namespace FWLog.Services.Services
                     IdTransportadora = pedido.IdTransportadora,
                     NroPedidoVenda = pedido.NroPedido,
                     NroVolumes = 0 //Inicialmente salva com 0. Posteriormente, o valor é atualizado.
-                });
+                };
 
-                idPedidoVenda = await _uow.SaveChangesAsync();
+                _uow.PedidoVendaRepository.Add(pedidoVenda);
+
+                await _uow.SaveChangesAsync();
+
+                idPedidoVenda = pedidoVenda.IdPedidoVenda;
             }
             catch (Exception ex)
             {

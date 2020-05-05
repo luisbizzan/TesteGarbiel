@@ -21,15 +21,15 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task<int> Salvar(long idPedidoVenda, CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagem grupoCorredorArmazenagem, int numeroVolume)
+        public async Task<long> Salvar(long idPedidoVenda, CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagem grupoCorredorArmazenagem, int numeroVolume)
         {
-            int idPedidoVendaVolume = 0;
+            long idPedidoVendaVolume = 0;
 
             try
             {
                 int numeroCentena = await GerarNumeroCentena();
-                
-                _uow.PedidoVendaVolumeRepository.Add(new PedidoVendaVolume()
+
+                var pedidoVendaVolume = new PedidoVendaVolume()
                 {
                     IdPedidoVenda = idPedidoVenda,
                     IdCaixaCubagem = caixaEscolhida.IdCaixa,
@@ -45,9 +45,13 @@ namespace FWLog.Services.Services
                     CorredorFim = grupoCorredorArmazenagem.CorredorFinal,
                     EtiquetaVolume = caixaEscolhida.TextoEtiqueta,
                     IdImpressora = grupoCorredorArmazenagem.IdImpressora
-                });
+                };
 
-                idPedidoVendaVolume = await _uow.SaveChangesAsync();
+
+                _uow.PedidoVendaVolumeRepository.Add(pedidoVendaVolume);
+                await _uow.SaveChangesAsync();
+
+                idPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume;
             }
             catch (Exception ex)
             {

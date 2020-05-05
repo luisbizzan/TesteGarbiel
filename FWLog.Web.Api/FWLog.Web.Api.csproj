@@ -262,6 +262,9 @@
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaPickingRequisicao.cs" />
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaProdutoRequisicao.cs" />
     <Compile Include="Models\Etiqueta\ValidarEnderecoPickingRequisicao.cs" />
+    <Compile Include="Models\Expedicao\SalvaInstalacaoVolumesRequisicao.cs" />
+    <Compile Include="Models\Expedicao\IniciarExpedicaoRequisicao.cs" />
+    <Compile Include="Models\Expedicao\ValidaEnderecoInstalacaoVolumeRequisicao.cs" />
     <Compile Include="Models\Impressora\ImpressoraResposta.cs" />
     <Compile Include="Models\Impressora\ImpressorasResposta.cs" />
     <Compile Include="Models\Lote\BuscaProdutoNoLoteResposta.cs" />
