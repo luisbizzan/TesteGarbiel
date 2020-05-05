@@ -308,7 +308,7 @@ namespace FWLog.Services.Services
                     lote.IdLoteStatus = LoteStatusEnum.Conferencia;
                     _uow.LoteRepository.Update(lote);
 
-                    await _loteService.AtualizarNotaFiscalIntegracao(lote.NotaFiscal, lote.IdLoteStatus);
+                    //await _loteService.AtualizarNotaFiscalIntegracao(lote.NotaFiscal, lote.IdLoteStatus);
                 }
 
                 if (!DateTime.TryParse(inicioConferencia, out DateTime dataHoraInicioConferencia))
@@ -334,7 +334,7 @@ namespace FWLog.Services.Services
 
                 _uow.LoteConferenciaRepository.Add(loteConferencia);
 
-                _uow.SaveChanges();
+                //_uow.SaveChanges();
 
                 conferenciaResponse.Lote = lote;
                 conferenciaResponse.Produto = produto;
