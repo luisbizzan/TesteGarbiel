@@ -8,6 +8,13 @@ namespace FWLog.Services.Model.Expedicao
 
         public string NomeTransportadora { get; set; }
 
-        public List<string> ListaEnderecos { get; set; }
+        public List<EnderecosPorTransportadoraVolumeResposta> ListaEnderecos { get; set; }
+    }
+
+    public class EnderecosPorTransportadoraVolumeResposta
+    {
+        public long IdPedidoVendaVolume { get; set; }
+
+        public string CodigoEndereco { get; set; }
     }
 }

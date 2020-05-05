@@ -1,6 +1,10 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
+using FWLog.Data.Models.FilterCtx;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace FWLog.Services.Services
@@ -62,6 +66,31 @@ namespace FWLog.Services.Services
 
             _unitOfWork.TransportadoraEnderecoRepository.Update(transportadoraEnderecoAntigo);
             _unitOfWork.SaveChanges();
+        }
+
+        public void Excluir(int id)
+        {
+            try
+            {
+                var transportadoraEndereco = _unitOfWork.TransportadoraEnderecoRepository.GetById(id);
+
+                _unitOfWork.TransportadoraEnderecoRepository.Delete(transportadoraEndereco);
+                _unitOfWork.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                ValidaELancaExcecaoIntegridade(exception);
+            }
+        }
+
+        public TransportadoraEndereco BuscarTransportadoraEndereco(long id)
+        {
+            return _unitOfWork.TransportadoraEnderecoRepository.GetById(id);
+        }
+
+        public IEnumerable<TransportadoraEnderecoListaLinhaTabela> BuscarDadosParaTabela(DataTableFilter<TransportadoraEnderecoListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
+        {
+           return _unitOfWork.TransportadoraEnderecoRepository.BuscarOsDadosParaTabela(model, out totalRecordsFiltered, out totalRecords);
         }
     }
 }
