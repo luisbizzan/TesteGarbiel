@@ -3,7 +3,6 @@ using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -47,6 +46,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRecordsFiltered = query.Count();
 
             return query.PaginationResult(filter);
+        }
+
+        public Transportadora ConsultarPorCodigoTransportadora(string codigoTransportadora)
+        {
+            return Entities.Transportadora.FirstOrDefault(f => f.CodigoTransportadora == codigoTransportadora);
         }
     }
 }

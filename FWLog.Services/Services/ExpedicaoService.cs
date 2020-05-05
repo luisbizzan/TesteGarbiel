@@ -263,5 +263,35 @@ namespace FWLog.Services.Services
                 transacao.Complete();
             }
         }
+
+        public EnderecosPorTransportadoraResposta BuscaEnderecosPorTransportadora(string codigoTransportadora, long idEmpresa)
+        {
+            if (string.IsNullOrWhiteSpace(codigoTransportadora))
+            {
+                throw new BusinessException("O código da transportadora deve ser informado.");
+            }
+
+            var transportadora = _unitOfWork.TransportadoraRepository.ConsultarPorCodigoTransportadora(codigoTransportadora);
+
+            if (transportadora == null)
+            {
+                throw new BusinessException("A tranportadora informada não foi encontrada.");
+            }
+
+            var enderecosInstalados = _unitOfWork.PedidoVendaVolumeRepository.ObterVolumesInstaladosPorTranportadoraEmpresa(transportadora.IdTransportadora, idEmpresa);
+
+            if (enderecosInstalados.NullOrEmpty())
+            {
+                throw new BusinessException("VAGO.");
+            }
+
+            return new EnderecosPorTransportadoraResposta()
+            {
+                IdTransportadora = transportadora.IdTransportadora,
+                NomeTransportadora = transportadora.NomeFantasia,
+                ListaEnderecos = enderecosInstalados.Select(enderecoInstalado => enderecoInstalado.EnderecoTransportadora.Codigo).Distinct().ToList()
+            };
+
+        }
     }
 }
