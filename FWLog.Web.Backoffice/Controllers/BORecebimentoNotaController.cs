@@ -1752,6 +1752,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     var request = new ImprimirEtiquetaArmazenagemVolume
                     {
+                        IdEmpresa = IdEmpresa,
                         NroLote = idLote,
                         QuantidadeEtiquetas = quantidadeCaixa,
                         QuantidadePorCaixa = quantidadePorCaixa,
