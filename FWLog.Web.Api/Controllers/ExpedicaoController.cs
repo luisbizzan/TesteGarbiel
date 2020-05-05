@@ -87,5 +87,21 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/expedicao/busca-enderecos-transportadora/{codigoTransportadora}")]
+        [HttpGet]
+        public IHttpActionResult BuscaEnderecosPorTransportadora(string codigoTransportadora)
+        {
+            try
+            {
+                var dadosVolumesInstalados = _expedicaoService.BuscaEnderecosPorTransportadora(codigoTransportadora, IdEmpresa);
+
+                return ApiOk(dadosVolumesInstalados);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+        }
     }
 }
