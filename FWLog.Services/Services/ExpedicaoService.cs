@@ -152,7 +152,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void SalvaInstalacaoVolumes(List<long> listaIdsVolumes, long idEnderecoArmazenagem, long idEmpresa, string idUsuario)
+        public async Task SalvaInstalacaoVolumes(List<long> listaIdsVolumes, long idEnderecoArmazenagem, long idEmpresa, string idUsuario)
         {
             if (listaIdsVolumes.NullOrEmpty())
             {
@@ -188,16 +188,30 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Existem volumes de diferentes pedidos.");
             }
 
-            //using (var transacao = _unitOfWork.CreateTransactionScope())
-            //{
-            //    foreach (var pedidoVendaVolume in listaPedidoVendaVolume)
-            //    {
-            //        pedidoVendaVolume.IdEnderecoArmazTransportadora = idEnderecoArmazenagem;
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                foreach (var pedidoVendaVolume in listaPedidoVendaVolume)
+                {
+                    pedidoVendaVolume.IdEnderecoArmazTransportadora = idEnderecoArmazenagem;
 
-            //        pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.Cancelado;
-            //    }
-            //    transacao.Complete();
-            //}
+                    pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
+
+                    pedidoVendaVolume.PedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.InstalandoVolumeTransportadora;
+
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+                var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(listaPedidoVendaVolume.First().IdPedidoVenda);
+
+                if (pedidoVenda.PedidoVendaVolumes.All(pvv => pvv.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora))
+                {
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
+
+                    await _unitOfWork.SaveChangesAsync();
+                }
+
+                transacao.Complete();
+            }
         }
     }
 }

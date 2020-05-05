@@ -68,7 +68,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/expedicao/salva-instalacao-volumes")]
         [HttpPost]
-        public IHttpActionResult SalvaInstalacaoVolumes(SalvaInstalacaoVolumesRequisicao requisicao)
+        public async Task<IHttpActionResult> SalvaInstalacaoVolumes(SalvaInstalacaoVolumesRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
@@ -77,7 +77,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _expedicaoService.SalvaInstalacaoVolumes(requisicao?.ListaVolumes, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa, IdUsuario);
+                await _expedicaoService.SalvaInstalacaoVolumes(requisicao?.ListaVolumes, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa, IdUsuario);
 
             }
             catch (BusinessException businessException)
