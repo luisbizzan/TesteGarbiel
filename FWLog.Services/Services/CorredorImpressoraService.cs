@@ -80,9 +80,8 @@ namespace FWLog.Services.Services
             var listGrupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository
                .BuscarPorEmpresaEPontoArmazenagem(grupoCorredorArmazenagemAntigo.IdEmpresa, grupoCorredorArmazenagemAntigo.IdPontoArmazenagem);
 
-            if (IntevaloSobrepostos(listGrupoCorredorArmazenagem, grupoCorredorArmazenagem.CorredorInicial, grupoCorredorArmazenagem.CorredorFinal) && _grupoCorredorArmazenagemPorCorredor.IdGrupoCorredorArmazenagem != grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem)
+            if (IntevaloSobrepostos(listGrupoCorredorArmazenagem, grupoCorredorArmazenagem.CorredorInicial, grupoCorredorArmazenagem.CorredorFinal))
                 throw new BusinessException("Não é permitido cadastro de intervalo de corredores sobrepostos para um mesmo ponto de armazenagem.");
-
 
             var _grupoCorredorArmazenagemPorImpressora = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorImpressora(idEmpresaUsuarioLogado, grupoCorredorArmazenagem.CorredorInicial,
                 grupoCorredorArmazenagem.CorredorFinal, grupoCorredorArmazenagem.IdImpressora);
