@@ -2,7 +2,6 @@
 using DartDigital.Library.Exceptions;
 using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
-using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
