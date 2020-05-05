@@ -1,6 +1,8 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
 using FWLog.Data.Models;
+using log4net;
+using System;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.Expedicao;
 using FWLog.Services.Model.IntegracaoSankhya;
@@ -21,6 +23,54 @@ namespace FWLog.Services.Services
         {
             _unitOfWork = unitOfWork;
             _log = log;
+        }
+
+        public void IniciarExpedicaoPedidoVenda(long idPedidoVenda, long idPedidoVendaVolume, string idUsuario, long idEmpresa)
+        {
+            // validações
+            if (idPedidoVenda <= 0)
+            {
+                throw new BusinessException("O pedido de venda deve ser informado.");
+            }
+
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedidoVendaEIdEmpresa(idPedidoVenda, idEmpresa);
+            if (pedidoVenda == null)
+            {
+                throw new BusinessException("O pedido não foi encontrado.");
+            }
+
+            if (pedidoVenda.IdEmpresa != idEmpresa)
+            {
+                throw new BusinessException("O pedido não pertence a empresa do usuário logado.");
+            }
+
+            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.ConcluidaComSucesso)
+            {
+                throw new BusinessException("A separação do volume não está finalizada.");
+            }
+
+            var pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.First(f => f.IdPedidoVendaVolume == idPedidoVendaVolume);
+            if (pedidoVendaVolume == null)
+            {
+                throw new BusinessException("O volume não foi encontrado.");
+            }
+
+            // TODO: melhorar validação quando Sankhya criar os status de Nota e Guia:
+            // - verificar se a NF do pedido foi emitida, e confirmada. Status: “A” no Sankhya e as guias foram pagas, status “Y” no Sankhya
+            if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
+            {                
+                throw new BusinessException("NF e Guias não estão emitidas/pagas.");
+            }
+
+            using (var transaction = _unitOfWork.CreateTransactionScope())
+            {
+                pedidoVendaVolume.DataHoraInicioSeparacao = DateTime.Now;
+                pedidoVendaVolume.IdUsuarioInstalTransportadora = idUsuario;
+
+                _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
+                _unitOfWork.SaveChanges();
+                transaction.Complete();
+            }
         }
 
         public PedidoVendaVolumeResposta BuscaPedidoVendaVolume(string referenciaPedido, long idEmpresa)
