@@ -188,9 +188,14 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Existem volumes de diferentes pedidos.");
             }
 
-            //TODO: Salvar dados
             //using (var transacao = _unitOfWork.CreateTransactionScope())
             //{
+            //    foreach (var pedidoVendaVolume in listaPedidoVendaVolume)
+            //    {
+            //        pedidoVendaVolume.IdEnderecoArmazTransportadora = idEnderecoArmazenagem;
+
+            //        pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.Cancelado;
+            //    }
             //    transacao.Complete();
             //}
         }
