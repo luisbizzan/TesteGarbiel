@@ -32,7 +32,7 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         [Display(Name = "Entrada?")]
         public bool IsEntrada { get; set; }
         [Display(Name = "Picking?")]
-        public bool IsPkicing { get; set; }
+        public bool IsPicking { get; set; }
         [Required]
         [Display(Name = "Ativo?")]
         public bool Ativo { get; set; }
