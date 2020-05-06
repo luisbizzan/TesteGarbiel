@@ -42,7 +42,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido não pertence a empresa do usuário logado.");
             }
 
-            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
+            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora)
             {
                 throw new BusinessException("A separação do volume não está finalizada.");
             }
