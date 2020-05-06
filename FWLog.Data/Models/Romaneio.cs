@@ -18,7 +18,7 @@ namespace FWLog.Data.Models
         public long IdEmpresa { get; set; }
 
         [Required]
-        public long NroRomaneio { get; set; }
+        public int NroRomaneio { get; set; }
 
         [ForeignKey(nameof(IdTransportadora))]
         public virtual Transportadora Transportadora { get; set; }
