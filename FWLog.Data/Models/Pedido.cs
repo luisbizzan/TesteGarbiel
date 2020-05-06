@@ -48,6 +48,8 @@ namespace FWLog.Data.Models
         [Required]
         public PedidoVendaStatusEnum IdPedidoVendaStatus { get; set; }
 
+        public string CodigoIntegracaoTipoFrete { get; set; }
+
         public virtual ICollection<PedidoItem> PedidoItens { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]

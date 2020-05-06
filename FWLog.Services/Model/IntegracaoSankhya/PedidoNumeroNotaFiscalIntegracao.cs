@@ -10,5 +10,8 @@ namespace FWLog.Services.Model.IntegracaoSankhya
 
         [TabelaIntegracao(DisplayName = "TGFCAB.NUNOTA")]
         public string NumeroNotaFiscal { get; set; }
+
+        [TabelaIntegracao(DisplayName = "TGFCAB.CIF_FOB")]
+        public string TipoFrete { get; set; }
     }
 }

@@ -155,13 +155,30 @@ namespace FWLog.Services.Services
             {
                 try
                 {
-                    PedidoNumeroNotaFiscalIntegracao dadosNotaFiscal = await ConsultarSituacaoNFVenda(pedido);
+                    var dadosNotaFiscal = await ConsultarSituacaoNFVenda(pedido);
 
-                    if (dadosNotaFiscal != null && long.TryParse(dadosNotaFiscal.NumeroNotaFiscal, out long numeroNotaFiscal))
+                    if (dadosNotaFiscal != null)
                     {
-                        pedido.CodigoIntegracaoNotaFiscal = numeroNotaFiscal;
+                        var salvaPedido = false;
 
-                        await _unitOfWork.SaveChangesAsync();
+                        if (long.TryParse(dadosNotaFiscal.NumeroNotaFiscal, out long numeroNotaFiscal))
+                        {
+                            pedido.CodigoIntegracaoNotaFiscal = numeroNotaFiscal;
+
+                            salvaPedido = true;
+                        }
+
+                        if (string.IsNullOrWhiteSpace(dadosNotaFiscal.TipoFrete) && !string.Equals(pedido.CodigoIntegracaoTipoFrete, dadosNotaFiscal.TipoFrete))
+                        {
+                            pedido.CodigoIntegracaoTipoFrete = dadosNotaFiscal.TipoFrete;
+
+                            salvaPedido = true;
+                        }
+
+                        if (salvaPedido)
+                        {
+                            await _unitOfWork.SaveChangesAsync();
+                        }
                     }
                 }
                 catch (Exception exception)
@@ -197,6 +214,7 @@ namespace FWLog.Services.Services
 
             return true;
         }
+
         private async Task<PedidoNumeroNotaFiscalIntegracao> ConsultarSituacaoNFVenda(Pedido pedido)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
