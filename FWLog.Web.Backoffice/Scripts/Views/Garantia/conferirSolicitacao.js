@@ -12,6 +12,10 @@
     $("#btFinalizarConferencia").click(function () {
         finalizarConferencia();
     });
+
+    $('#modalLaudoDetalhes').on('hidden.bs.modal', function () {
+        itensLaudo();
+    });
 })();
 
 function conferir() {
@@ -118,8 +122,11 @@ function itensLaudo() {
     let modal = $("#modalLaudo .modal-body");
     $("#modalLaudo .modal-title").html("Itens do Laudo");
 
-    modal.load(CONTROLLER_PATH + "ConferenciaLaudo/" + id, function () {
+    modal.load(CONTROLLER_PATH + "ConferenciaLaudo", {
+        Id_Conferencia: $("#Conferencia_Id").val()
+    }, function () {
         $("#modalLaudo").modal("show");
+        $('.btn-row-actions').tooltip();
 
         var botoes = ['selectAll', 'selectNone',
             {
@@ -162,13 +169,90 @@ function itensLaudo() {
     });
 }
 
-function itensLaudoDetalhe() {
+function itensLaudoDetalhe(refx) {
     var id = 0;
     let modal = $("#modalLaudoDetalhes .modal-body");
-    $("#modalLaudoDetalhes .modal-title").html("zzz - Itens");
+    $("#modalLaudoDetalhes .modal-title").html(refx + " - Itens");
 
-    modal.load(CONTROLLER_PATH + "ConferenciaLaudoDetalhe/" + id, function () {
+    modal.load(CONTROLLER_PATH + "ConferenciaLaudoDetalhe", {
+        Id_Conferencia: $("#Conferencia_Id").val(),
+        Refx: refx
+    }, function () {
         $("#modalLaudoDetalhes").modal("show");
+        $('#tbLaudoItensDetalhe').DataTable({
+            destroy: true,
+            serverSide: false,
+            stateSave: false,
+            dom: "Bfrtip",
+            order: [],
+            buttons: [],
+            searching: true,
+            bInfo: true
+        });
+
+        $('#formLaudoItensDetalhe').submit(function (e) {
+            e.preventDefault();
+            var formulario = $("form#formLaudoItensDetalhe").serialize();
+
+            $.ajax({
+                url: HOST_URL + CONTROLLER_PATH + "ConferenciaLaudoDetalheGravar",
+                method: "POST",
+                data: formulario,
+                success: function (result) {
+                    if (result.Success) {
+                        itensLaudoDetalhe(refx);
+                        PNotify.success({ text: result.Message, delay: 1000 });
+                    } else {
+                        PNotify.error({ text: result.Message });
+                    }
+                },
+                error: function (request, status, error) {
+                    PNotify.warning({ text: result.Message });
+                }
+            });
+        });
+    });
+}
+
+function excluirLaudo(id) {
+    let refx = $("#formLaudoItensDetalhe #Refx").val();
+
+    $.confirm({
+        type: 'red',
+        theme: 'material',
+        title: 'Excluir Laudo',
+        content: 'Tem Certeza?',
+        typeAnimated: true,
+        autoClose: 'cancelar|10000',
+        buttons: {
+            confirmar: {
+                text: 'Excluir',
+                btnClass: 'btn-red',
+                action: function () {
+                    $.ajax({
+                        url: HOST_URL + CONTROLLER_PATH + "ConferenciaLaudoDetalheExcluir",
+                        method: "POST",
+                        data: { Id: id },
+                        success: function (result) {
+                            if (result.Success) {
+                                itensLaudoDetalhe(refx);
+                                PNotify.success({ text: result.Message, delay: 1000 });
+                            } else {
+                                PNotify.error({ text: result.Message });
+                            }
+                        },
+                        error: function (request, status, error) {
+                            PNotify.warning({ text: result.Message });
+                        }
+                    });
+                }
+            },
+            cancelar: {
+                text: 'Cancelar',
+                action: function () {
+                }
+            }
+        }
     });
 }
 
@@ -225,7 +309,7 @@ function alterarQuantidade() {
             '<form action="" class="formName">' +
             '<div class="form-group">' +
             '<label>Digite a Quantidade</label>' +
-            '<input type="text" placeholder="Quantidade" class="qtd form-control" required />' +
+            '<input type="text" placeholder="Quantidade" class="qtd form-control onlyNumber" required />' +
             '</div>' +
             '</form>',
         buttons: {
@@ -249,6 +333,7 @@ function alterarQuantidade() {
         },
         onContentReady: function () {
             var jc = this;
+            $('.onlyNumber').mask('0#');
             this.$content.find('.qtd').focus();
             this.$content.find('form').on('submit', function (e) {
                 e.preventDefault();

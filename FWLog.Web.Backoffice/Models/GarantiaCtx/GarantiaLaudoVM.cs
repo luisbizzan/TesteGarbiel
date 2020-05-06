@@ -19,6 +19,18 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
     public class GarantiaLaudo
     {
+        public long Id { get; set; }
+        public SelectList Lista_Itens { get; set; }
+
+        [Display(Name = "Item NF")]
+        public long Id_Item_Nf { get; set; }
+
+        public string Item_Nf { get; set; }
+
+        [Display(Name = "Item NF")]
+        public long Id_Item { get; set; }
+
+        public string Item { get; set; }
         public SelectList Lista_Motivos { get; set; }
 
         [Display(Name = "Motivo")]
@@ -34,5 +46,8 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
         [Display(Name = "Quant.")]
         public long Quant { get; set; }
+
+        public long Tem_No_Excesso { get; set; }
+        public long Quant_Laudo { get; set; }
     }
 }

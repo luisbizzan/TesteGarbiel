@@ -18,13 +18,22 @@
                         @foreach (var item in Model.Lista)
                         {
 
-                            <tr>
+                            <tr style="@(item.Tem_No_Excesso == 1 ? "background-color:#bb110021" : "")">
                                 <td></td>
                                 <td>@item.Refx</td>
                                 <td>@item.Descricao</td>
-                                <td>@item.Quant</td>
                                 <td>
-                                    <a href="#" onclick="itensLaudoDetalhe()" class="btn btn-sm btn-info" title="" data-original-title="Visualizar"><i class="fa fa-eye"></i></a>
+                                    @item.Quant
+                                </td>
+                                <td>
+                                    @if (item.Tem_No_Excesso == 1)
+                                    {
+                                        <span class="label label-danger"> EXCESSO</span>
+                                    }
+                                    else
+                                    {
+                                        <a data-toggle="tooltip" title="" data-original-title="Laudos" href="javascript:void(0)" onclick="itensLaudoDetalhe('@item.Refx')" class="btn btn-row-actions btn-sm @(item.Quant_Laudo > 0 ? "btn-danger" : "btn-default")"><i class="fa fa-sticky-note"></i> @item.Quant_Laudo</a>
+                                    }
                                 </td>
                             </tr>
                         }

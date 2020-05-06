@@ -214,30 +214,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-        public ActionResult ConferenciaLaudo(long Id)
-        {
-            var lista = new List<GarantiaLaudo>();
-            lista.Add(new GarantiaLaudo
-            {
-                Refx = "teste",
-                Descricao = "aaaaa",
-                Quant = 10
-            });
-            lista.Add(new GarantiaLaudo
-            {
-                Refx = "testeaa",
-                Descricao = "aaaaaccc",
-                Quant = 2
-            });
-
-            var model = new GarantiaLaudoVM
-            {
-                Lista = lista
-            };
-
-            return PartialView("_ConferenciaLaudo", model);
-        }
-
         public ActionResult ConferenciaItemPendente(long Id_Conferencia)
         {
             var result = _uow.GarantiaRepository.ListarConferenciaItemPendente(Id_Conferencia);
@@ -254,30 +230,81 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_ConferenciaItemConferido", model);
         }
 
-        public ActionResult ConferenciaLaudoDetalhe(long Id)
+        public ActionResult ConferenciaLaudo(long Id_Conferencia)
         {
-            var lista = new List<GarantiaLaudo>();
-            lista.Add(new GarantiaLaudo
+            var result = _uow.GarantiaRepository.ListarConferenciaSolicitacaoLaudo(Id_Conferencia);
+            var lista = Mapper.Map<IEnumerable<GarantiaLaudo>>(result).ToList();
+
+            var model = new GarantiaLaudoVM
             {
-                Motivo = "teste",
-                Quant = 10
-            });
-            lista.Add(new GarantiaLaudo
-            {
-                Motivo = "testeee",
-                Quant = 5
-            });
+                Lista = lista
+            };
+
+            return PartialView("_ConferenciaLaudo", model);
+        }
+
+        public ActionResult ConferenciaLaudoDetalhe(long Id_Conferencia, string Refx)
+        {
+            var result = _uow.GarantiaRepository.ListarConferenciaSolicitacaoLaudoDetalhe(Id_Conferencia, Refx);
+            var lista = Mapper.Map<IEnumerable<GarantiaLaudo>>(result).ToList();
 
             var model = new GarantiaLaudoVM
             {
                 Form = new GarantiaLaudo()
                 {
-                    Lista_Motivos = new SelectList(_uow.GarantiaRepository.ListarMotivoLaudo(), "Id", "Descricao", "Tipo", 1)
+                    Refx = Refx,
+                    Lista_Motivos = new SelectList(_uow.GarantiaRepository.ListarMotivoLaudo(8), "Id", "Descricao", 1),
+                    Lista_Itens = new SelectList(_uow.GarantiaRepository.ListarLaudoItem(Id_Conferencia, Refx), "Id", "Id_Item_Nf", 1)
                 },
                 Lista = lista
             };
 
             return PartialView("_ConferenciaLaudoDetalhe", model);
+        }
+
+        [HttpPost]
+        public ActionResult ConferenciaLaudoDetalheGravar(GarantiaLaudo item)
+        {
+            if (!ModelState.IsValid)
+            {
+                var erros = ModelState.Values.Where(x => x.Errors.Count > 0)
+                    .Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />"));
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = erros
+                });
+            }
+            else
+            {
+                //todo fazer verificações de quantidade
+                _uow.GarantiaRepository.CriarLaudo(new GarSolicitacaoItemLaudo
+                {
+                    Id_Item = item.Id_Item,
+                    Id_Motivo = item.Id_Motivo,
+                    Id_Tipo_Retorno = 4,
+                    Quant = item.Quant
+                });
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult ConferenciaLaudoDetalheExcluir(long Id)
+        {
+            //todo fazer verificações de quantidade
+            _uow.GarantiaRepository.ExcluirLaudo(Id);
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
+            });
         }
 
         public ActionResult ConferenciaDivergencia(long Id_Conferencia)
