@@ -345,7 +345,7 @@ namespace FWLog.Services.Services
 
             if (pedidoVenda.Transportadora.CodigoTransportadora != codigoTransportadora)
             {
-                throw new BusinessException("Este volume não pertence a esta transportadora.");                
+                throw new BusinessException("Este volume não pertence a esta transportadora.");
             }
 
             if (pedidoVenda.Transportadora.Enderecos.NullOrEmpty())

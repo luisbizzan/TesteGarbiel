@@ -87,7 +87,6 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-
         [Route("api/v1/expedicao/iniciar-expedicao-pedido-venda")]
         [HttpPost]
         public IHttpActionResult IniciarExpedicaoPedido(IniciarExpedicaoRequisicao requisicao)
@@ -126,7 +125,7 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [Route("api/v1/expedicao/validar-volume-doca/{referenciaPedido}")]
-        [HttpGet]        
+        [HttpGet]
         public IHttpActionResult ValidarVolumeDoca(string referenciaPedido)
         {
             if (!ModelState.IsValid)
