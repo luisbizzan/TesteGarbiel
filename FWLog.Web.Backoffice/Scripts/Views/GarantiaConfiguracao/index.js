@@ -46,6 +46,23 @@ function CancelarTudo() {
     $("#spanFornecedorFilho").html("");
 }
 
+
+$("#txtConfigEstFrete").on('change', function (e) {
+    FormatarPercentagem($("#txtConfigEstFrete")[0].id);
+});
+
+$("#txtConfigDesvalorizacao").on('change', function (e) {
+    FormatarPercentagem($("#txtConfigDesvalorizacao")[0].id);
+});
+
+/* [GENÉRICO] formatar percentagem configuração */
+function FormatarPercentagem(IdControle) {
+    IdControle = "#" + IdControle;
+    var valor = $(IdControle).val().replace(",", ".");
+    valor = (valor > 99.99) ? 100 : valor;
+    $(IdControle).val(valor);
+}
+
 /* [GENÉRICO] evento clique do menu de configuração */
 $(document).ready(function (e) {
     ListarNegociacao();
@@ -62,7 +79,7 @@ function Mensagem(mensagemSucesso, mensagem) {
         PNotify.success({ text: mensagem, delay: 1000 });
     }
     else {
-        PNotify.error({ text: mensagem, delay: 2500 });
+        PNotify.error({ text: mensagem, delay: 5000 });
     }
 }
 
@@ -108,6 +125,7 @@ function RegistroExcluir(TagSelecionada, IdSelecionado) {
 function RegistroListar(TagInformada) {
     $.get("/GarantiaConfiguracao/RegistroListar", { TAG: TagInformada }, function (s, status) {
         if (s.Success) {
+            console.log(s);
             $(s.GridNome).DataTable({
                 destroy: true,
                 serverSide: false,
@@ -334,7 +352,7 @@ function RemessaConfigGravar() {
     registro.Cod_Fornecedor = $("#spanIdFornecedor").html() == "" ? 0 : $("#spanIdFornecedor").html();
     registro.Automatica = $("#chkRCAutomatica")[0].checked ? 1 : 0;
     registro.Vlr_Minimo = $("#txtRCMinimoEnvio").val() == "" ? 0 : $("#txtRCMinimoEnvio").val().replace(".", "").replace(",", ".");
-    registro.Total = $("#txtRCTotal").val() == "" ? 0 : $("#txtRCTotal").val();
+    registro.Total = $("#chkRCTotal")[0].checked ? 1 : 0;
     RegistroInclusao.Inclusao.push(JSON.stringify(registro));
 
     RegistroIncluir();
@@ -459,7 +477,6 @@ function ConfiguracaoGravar() {
 /* [CONFIGURAÇÃO] autocomplete - FILIAL */
 $("#txtConfigFilial").autocomplete({
     lookup: function (query, done) {
-
         var AutoComplete = new Object();
         AutoComplete.tag = TagPadrao;
         AutoComplete.tagAutoComplete = "Filial";
@@ -477,6 +494,7 @@ $("#txtConfigFilial").autocomplete({
                         var registro = new Object();
                         registro.data = item.Data;
                         registro.value = item.Value;
+                        registro.registro = item;
                         _listaAutoComplete.push(registro);
                     });
                 }
@@ -498,9 +516,18 @@ $("#txtConfigFilial").autocomplete({
     },
 
     onSelect: function (remessaConfig) {
+        CancelarTudo();
         $("#spanConfigIdFilial").html(remessaConfig.data);
         $("#spanConfigFilial").html(remessaConfig.value);
         $("#txtConfigFilial").val("");
+
+        if (remessaConfig.registro.RegistroCadastrado) {
+            $("#txtConfigEstFrete").val(remessaConfig.registro.Pct_Estorno_Frete);
+            $("#txtConfigDesvalorizacao").val(remessaConfig.registro.Pct_Desvalorizacao);
+            $("#txtConfigMinimo").val(remessaConfig.registro.Vlr_Minimo_EnvioView);
+            $("#txtConfigPrazoEnvio").val(remessaConfig.registro.Prazo_Envio_Automatico);
+            $("#txtConfigPrazoDescarte").val(remessaConfig.registro.Prazo_Descarte);
+        }
     }
 });
 

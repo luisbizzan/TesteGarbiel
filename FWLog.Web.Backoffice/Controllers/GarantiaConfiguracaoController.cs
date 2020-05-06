@@ -45,6 +45,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 var RegistroConvertido = ConverterRegistro(Registro);
 
+                #region Configuração
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.Configuracao))
                 {
                     RegistroConvertido.RegistroConfiguracao.ForEach(delegate (GarantiaConfiguracao.Configuracao config)
@@ -59,10 +60,14 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                     errorView = () => { return View(RegistroConvertido.RegistroConfiguracao); };
                 }
+                #endregion
 
+                #region Fornecedor Quebra
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra))
                     errorView = () => { return View(RegistroConvertido.RegistroFornecedorQuebra); };
+                #endregion
 
+                #region Remessa Configuração
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaConfiguracao))
                 {
                     RegistroConvertido.RegistroRemessaConfiguracao.ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao remessaConfig)
@@ -71,16 +76,19 @@ namespace FWLog.Web.Backoffice.Controllers
                         if (String.IsNullOrEmpty(remessaConfig.Filial)) throw new Exception("Filial inválida!");
                         if (String.IsNullOrEmpty(remessaConfig.Cod_Fornecedor)) throw new Exception("Informe o Fornecedor!");
                         if (remessaConfig.Vlr_Minimo.Equals(0)) throw new Exception("Valor Minímo deve ser maior que zero!");
-                        if (remessaConfig.Total.Equals(0)) throw new Exception("Valor Total deve ser maior que zero!");
 
                         remessaConfig.Filial = remessaConfig.Filial.Split(']').Length.Equals(2) ? remessaConfig.Filial.Split(']')[0].Replace("[", String.Empty).Trim() : remessaConfig.Filial;
                     });
                     errorView = () => { return View(RegistroConvertido.RegistroRemessaConfiguracao); };
                 }
+                #endregion
 
+                #region Remessa Usuário
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaUsuario))
                     errorView = () => { return View(RegistroConvertido.RegistroRemessaUsuario); };
+                #endregion
 
+                #region Sankhya Top
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop))
                 {
                     RegistroConvertido.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop sankhya)
@@ -90,9 +98,12 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                     errorView = () => { return View(RegistroConvertido.RegistroSankhyaTop); };
                 }
+                #endregion
 
+                #region Fornecedor Grupo
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorGrupo))
                     errorView = () => { return View(RegistroConvertido.RegistroFornecedorGrupo); };
+                #endregion
 
                 if (!ModelState.IsValid)
                     throw new Exception(ModelState.Values.Where(x => x.Errors.Count > 0).Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />")));
@@ -135,6 +146,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 GarantiaConfiguracao.GridColunas = (object[])GarantiaConfiguracao.DicTagGridColuna.Where(w => w.Key.Equals(TAG)).FirstOrDefault().Value;
 
                 var _Data = new Object();
+                var _Data1 = new Object();
                 if (garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.Configuracao))
                     _Data = garantia.RegistroConfiguracao;
                 if (garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra))
@@ -154,7 +166,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     Success = true,
                     GridColunas = GarantiaConfiguracao.GridColunas.ToArray(),
                     GridNome = GarantiaConfiguracao.GridNome,
-                    Data = _Data
+                    Data = _Data,
+                    DataI = _Data1
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

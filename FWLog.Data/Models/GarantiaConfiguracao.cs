@@ -32,6 +32,14 @@ namespace FWLog.Data.Models
             public string Data { get; set; }
             public string Value { get; set; }
 
+            public long Pct_Estorno_Frete { get; set; }
+            public long Pct_Desvalorizacao { get; set; }
+            public decimal Vlr_Minimo_Envio { get; set; }
+            public string Vlr_Minimo_EnvioView { get; set; }
+            public long Prazo_Envio_Automatico { get; set; }
+            public long Prazo_Descarte { get; set; }
+            public Boolean RegistroCadastrado { get; set; }
+
             [Required]
             [Display(Name = "TAG")]
             public GarantiaTag tag { get; set; }
@@ -105,11 +113,11 @@ namespace FWLog.Data.Models
             public string Filial { get; set; }
             [Required]
             [Display(Name = "Percentual Estorno Frete")]
-            public long Pct_Estorno_Frete { get; set; }
+            public decimal Pct_Estorno_Frete { get; set; }
             public string Pct_Estorno_FreteView { get; set; }
             [Required]
             [Display(Name = "Percentual Desvalorização")]
-            public long Pct_Desvalorizacao { get; set; }
+            public decimal Pct_Desvalorizacao { get; set; }
             public string Pct_DesvalorizacaoView { get; set; }
             [Required]
             [MinLength(1)]
@@ -170,6 +178,7 @@ namespace FWLog.Data.Models
             [Required]
             [Display(Name = "Valor Total")]
             public long Total { get; set; }
+            public string TotalView { get; set; }
 
             public string BotaoEvento { get; set; }
         }
@@ -184,6 +193,7 @@ namespace FWLog.Data.Models
             [Required]
             [Display(Name = "Fornecedor Pai")]
             public string Cod_Forn_Pai { get; set; }
+            public string divFilhos { get; set; }
 
             [Required]
             [Display(Name = "Fornecedor Filho")]
@@ -286,21 +296,22 @@ namespace FWLog.Data.Models
                     {
                         new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
                         new { data = "Id_Filial_Sankhya", title = "Id Filial" }, new { data = "Filial", title = "Filial" }, new { data = "Cod_Fornecedor", title = "Fornecedor (CNPJ)" },
-                        new { data = "AutomaticaView", title = "Automática" }, new { data = "Vlr_MinimoView", title = "R$ Minímo" }, new { data = "Total", title = "Total" }
+                        new { data = "AutomaticaView", title = "Automática" }, new { data = "Vlr_MinimoView", title = "R$ Minímo" }, new { data = "TotalView", title = "Total" }
                     }},
 
                     { GarantiaTag.Configuracao, new object[]
                     {
                         new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
                         new { data = "Id_Filial_Sankhya", title = "Id Filial Sankhya" }, new { data = "Filial", title = "Filial" }, new { data = "Pct_Estorno_FreteView", title = "Estorno Frete" },
-                        new { data = "Pct_DesvalorizacaoView", title = "Desvalorização" }, new { data = "Vlr_Minimo_EnvioView", title = "R$ Minímo Envio" },
-                        new { data = "Prazo_Envio_Automatico", title = "Prazo Envio Automático" }, new { data = "Prazo_Descarte", title = "Prazo Descarte" }
+                        new { data = "Pct_DesvalorizacaoView", title = "Desvalorização" }, new { data = "Vlr_Minimo_EnvioView", title = "R$ Minímo Laudo" },
+                        new { data = "Prazo_Envio_Automatico", title = "Prazo Envio Laudo" }, new { data = "Prazo_Descarte", title = "Prazo Descarte" }
                     }},
 
                     { GarantiaTag.FornecedorGrupo, new object[]
                     {
-                        new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
-                        new { data = "Cod_Forn_Pai", title = "Fornecedor Pai" }, new { data = "Cod_Forn_Filho", title = "Fornecedor Filho" },
+                        //new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
+                        new { data = "Cod_Forn_Pai", title = "Fornecedor Pai" }, //new { data = "Cod_Forn_Filho", title = "Fornecedor Filho" },
+                        new { data = "divFilhos", title = "Fornecedor Filho" },
                     }}
                 };
             }
@@ -312,6 +323,30 @@ namespace FWLog.Data.Models
         public static string botaoExcluirTemplate
         {
             get { return "<a onclick=\"RegistroExcluir('{0}',{1});\" class=\"btn btn-link btn-row-actions\" data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"Excluir Registro\"><i class=\"glyphicon glyphicon-trash text-danger\"></i></a>"; }
+        }
+        public static string botaoCheked { get { return "<h4 class=\"text-center\"><i class=\"glyphicon glyphicon-ok-circle text-success\" data-toggle=\"tooltip\" data-original-title=\"Sim\"></i></h4>"; } }
+        public static string botaoUnCheked { get { return "<h4 class=\"text-center\"><i class=\"glyphicon glyphicon-remove-circle text-danger\" data-toggle=\"tooltip\" data-original-title=\"Não\"></i></h4>"; } }
+        /// <summary>
+        /// {0} Nome Fornecedor Filho | {1} Tag | {2} Id Registro
+        /// </summary>
+        public static string botaoExcluirFornecedorFilho
+        {
+            get
+            {
+                return "<a onclick=\"RegistroExcluir('{1}',{2});\" class=\"btn btn-link btn-row-actions\" data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"Excluir {0}\"><i class=\"glyphicon glyphicon-trash text-danger\"></i></a> {0}</br>";
+            }
+        }
+        /// <summary>
+        /// {0} Id Primeiro Filho | {1} Cod Fornecedor Filho
+        /// </summary>
+        public static string botaoDivFornecedorGrupo
+        {
+            get
+            {
+                return String.Concat("<a class=\"btn btn-link\" data-toggle=\"collapse\" data-target=\"#div{0}\">",
+                    "<i class=\"glyphicon glyphicon-list-alt text-warning\" data-toggle=\"tooltip\" data-original-title=\"Visualizar Filho(s)\"></i></a>",
+                    "<div id=\"div{0}\" class=\"collapse\">{1}</div>");
+            }
         }
 
         #region Catálogo Comandos SQL
@@ -407,6 +442,17 @@ namespace FWLog.Data.Models
             }
 
             /// <summary>
+            /// {0} Id Filial Sankhya
+            /// </summary>
+            public static string ConfiguracaoJaConsta
+            {
+                get
+                {
+                    return String.Concat("SELECT COUNT(1) FROM gar_config WHERE Id_Filial_Sankhya = {0}");
+                }
+            }
+
+            /// <summary>
             /// {0} Id_Filial_Sankhya | {1} Filial | {2} Pct_Estorno_Frete | {3} Pct_Desvalorizacao | {4} Vlr_Minimo_Envio | {5} Prazo_Envio_Automatico | {6} Prazo_Descarte
             /// </summary>
             public static string ConfiguracaoIncluir
@@ -415,6 +461,19 @@ namespace FWLog.Data.Models
                 {
                     return String.Concat("INSERT INTO gar_config(Id_Filial_Sankhya, Filial, Pct_Estorno_Frete, Pct_Desvalorizacao, Vlr_Minimo_Envio, Prazo_Envio_Automatico, Prazo_Descarte) ",
                         "VALUES({0}, '{1}', {2}, {3}, {4}, {5}, {6})");
+                }
+            }
+
+            /// <summary>
+            /// {0} Percentagem Estorno Frete | {1} Percetagem Desvalorizacao | {2} Valor Minimo Envio | {3} Prazo Envio Automatico | {4} Prazo Descarte | {5} Id Filial Sankhya
+            /// </summary>
+            public static string ConfigurarAtualizar
+            {
+                get
+                {
+                    return String.Concat("UPDATE gar_config ",
+                        "SET Pct_Estorno_Frete = {0}, Pct_Desvalorizacao = {1}, Vlr_Minimo_Envio = {2}, Prazo_Envio_Automatico = {3}, Prazo_Descarte = {4} ",
+                        "WHERE Id_Filial_Sankhya = {5}");
                 }
             }
             #endregion
