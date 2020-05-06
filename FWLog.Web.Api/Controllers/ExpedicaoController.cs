@@ -18,9 +18,9 @@ namespace FWLog.Web.Api.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [Route("api/v1/expedicao/busca-pedido-volume/{referenciaPedido}")]
+        [Route("api/v1/expedicao/consultar-volume/{referenciaPedido}")]
         [HttpPost]
-        public IHttpActionResult BuscaPedidoVendaVolume(string referenciaPedido)
+        public IHttpActionResult ConsultarPedidoVendaVolume(string referenciaPedido)
         {
             try
             {
@@ -44,6 +44,28 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [Route("api/v1/expedicao/validar-transportadora-volume")]
+        [HttpPost]
+        public IHttpActionResult ValidaTransportadoraInstalacaoVolume(ValidaTransportadoraInstalacaoVolumeRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _expedicaoService.ValidaTransportadoraInstalacaoVolume(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.IdTransportadora ?? 0, IdEmpresa);
+
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
+
         [Route("api/v1/expedicao/validar-endereco-volume")]
         [HttpPost]
         public IHttpActionResult ValidaEnderecoInstalacaoVolume(ValidaEnderecoInstalacaoVolumeRequisicao requisicao)
@@ -55,7 +77,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _expedicaoService.ValidaEnderecoInstalacaoVolume(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa);
+                _expedicaoService.ValidaEnderecoInstalacaoVolume(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.IdTransportadora ?? 0, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa);
 
             }
             catch (BusinessException businessException)
@@ -66,7 +88,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/expedicao/salva-instalacao-volumes")]
+        [Route("api/v1/expedicao/salvar-instalacao-volumes")]
         [HttpPost]
         public async Task<IHttpActionResult> SalvaInstalacaoVolumes(SalvaInstalacaoVolumesRequisicao requisicao)
         {
@@ -77,7 +99,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                await _expedicaoService.SalvaInstalacaoVolumes(requisicao?.ListaVolumes, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa, IdUsuario);
+                await _expedicaoService.SalvaInstalacaoVolumes(requisicao?.ListaVolumes, requisicao?.IdTransportadora ?? 0, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa, IdUsuario);
             }
             catch (BusinessException businessException)
             {
@@ -87,7 +109,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/expedicao-pedido/iniciar-expedicao-pedido-venda")]
+        [Route("api/v1/expedicao/iniciar-expedicao-pedido-venda")]
         [HttpPost]
         public IHttpActionResult IniciarExpedicaoPedido(IniciarExpedicaoRequisicao requisicao)
         {
@@ -122,6 +144,48 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(businessException.Message);
             }
+        }
+
+        [Route("api/v1/expedicao/validar-volume-doca/{referenciaPedido}")]
+        [HttpGet]
+        public IHttpActionResult ValidarVolumeDoca(string referenciaPedido)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                var resposta = _expedicaoService.ValidarVolumeDoca(referenciaPedido, IdUsuario, IdEmpresa);
+                return ApiOk(resposta);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+        }
+
+        [Route("api/v1/expedicao/finalizar-movimentacao-doca")]
+        [HttpPost]
+        public IHttpActionResult FinalizarMovimentacaoDoca(FinalizarMovimentacaoDocaRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _expedicaoService.FinalizarMovimentacaoDoca(requisicao.ListaVolumes, requisicao.IdTransportadora, IdUsuario, IdEmpresa);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
         }
     }
 }
