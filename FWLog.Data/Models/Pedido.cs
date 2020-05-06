@@ -50,6 +50,8 @@ namespace FWLog.Data.Models
 
         public string CodigoIntegracaoTipoFrete { get; set; }
 
+        public string ChaveAcesso { get; set; }
+
         public virtual ICollection<PedidoItem> PedidoItens { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
