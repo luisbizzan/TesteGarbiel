@@ -427,7 +427,7 @@ namespace FWLog.Services.Services
                         throw new BusinessException($"Volume {volume.EtiquetaVolume} ja foi lido ou está em duplicidade.");
                     }
 
-                    if (volume.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA || volume.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeInstaladoTransportadora)
+                    if (volume.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA && volume.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeInstaladoTransportadora)
                     {
                         throw new BusinessException($"Volume { volume.EtiquetaVolume } não pode ser intalado na doca.");
                     }
@@ -439,7 +439,6 @@ namespace FWLog.Services.Services
 
                     if (volume.PedidoVenda.IdTransportadora != idTransportadora)
                     {
-
                         throw new BusinessException($"Volume { volume.EtiquetaVolume } não pertence a transportadora: {transportadora.NomeFantasia}.");
                     }
 
