@@ -8,6 +8,7 @@ using FWLog.Services.Model.IntegracaoSankhya;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -143,19 +144,18 @@ namespace FWLog.Services.Services
 
         public async Task AtualizaNotasFiscaisPedidos()
         {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+
+            }
             var pedidosSemNota = _unitOfWork.PedidoRepository.ObterPedidosSemNotaFiscal();
 
             foreach (var pedido in pedidosSemNota)
             {
                 try
                 {
-                    var where = $"WHERE TGFVAR.NUNOTAORIG = {pedido.CodigoIntegracao} AND TGFCAB.STATUSNFE = 'A'";
-
-                    var inner = "INNER JOIN TGFVAR ON TGFVAR.NUNOTA = TGFCAB.NUNOTA";
-
-                    var dadosIntegracaoSankhya = await IntegracaoSankhya.Instance.PreExecutarQuery<PedidoNumeroNotaFiscalIntegracao>(where: where, inner: inner);
-
-                    var dadosNotaFiscal = dadosIntegracaoSankhya.FirstOrDefault();
+                    PedidoNumeroNotaFiscalIntegracao dadosNotaFiscal = await ConsultarSituacaoNFVenda(pedido);
 
                     if (dadosNotaFiscal != null && long.TryParse(dadosNotaFiscal.NumeroNotaFiscal, out long numeroNotaFiscal))
                     {
@@ -169,6 +169,47 @@ namespace FWLog.Services.Services
                     _log.Error(string.Format("Erro na tentativa de integração de nota fiscal do pedido {0}", pedido.IdPedido), exception);
                 }
             }
+        }
+
+        public async Task<bool> ValidarSituacaoNFVenda(Pedido pedido)
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return true;
+            }
+
+            if (pedido.CodigoIntegracaoNotaFiscal == null)
+            {
+                throw new BusinessException("O pedido não tem nota fiscal emitada.");
+            }
+
+            PedidoNumeroNotaFiscalIntegracao dadosNotaFiscal = await ConsultarSituacaoNFVenda(pedido);
+
+            if (dadosNotaFiscal == null)
+            {
+                return false;
+            }
+
+            if (!(long.TryParse(dadosNotaFiscal.NumeroNotaFiscal, out long numeroNotaFiscal) && pedido.CodigoIntegracaoNotaFiscal == numeroNotaFiscal))
+            {
+                return false;
+            }
+
+            return true;
+        }
+        private async Task<PedidoNumeroNotaFiscalIntegracao> ConsultarSituacaoNFVenda(Pedido pedido)
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return null;
+            }
+
+            var where = $"WHERE TGFVAR.NUNOTAORIG = {pedido.CodigoIntegracao} AND TGFCAB.STATUSNFE = 'A'";
+            var inner = "INNER JOIN TGFVAR ON TGFVAR.NUNOTA = TGFCAB.NUNOTA";
+
+            var dadosIntegracaoSankhya = await IntegracaoSankhya.Instance.PreExecutarQuery<PedidoNumeroNotaFiscalIntegracao>(where: where, inner: inner);
+
+            return dadosIntegracaoSankhya.FirstOrDefault();
         }
 
         public PedidoVendaVolume ValidaTransportadoraInstalacaoVolume(long idPedidoVendaVolume, long idtransportadora, long idEmpresa)
