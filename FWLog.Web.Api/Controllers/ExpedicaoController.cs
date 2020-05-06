@@ -145,5 +145,27 @@ namespace FWLog.Web.Api.Controllers
             }
 
         }
+
+        [Route("api/v1/expedicao/validar-despacho-transportadora/{codigoTransportadora}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public IHttpActionResult ValidarDespachoTransportadora(string codigoTransportadora)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _expedicaoService.ValidarDespachoTransportadora(codigoTransportadora, IdUsuario, IdEmpresa);
+                return ApiOk();
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+        }
     }
 }

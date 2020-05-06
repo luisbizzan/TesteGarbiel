@@ -34,5 +34,13 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.PedidoVenda.FirstOrDefault(x => x.IdPedido == idPedido);
         }
+
+        public bool ExistemPedidosParaDespachoNaTransportadora(long idTransportadora, long idEmpresa)
+        {
+            return Entities.PedidoVenda.Any(x => x.IdTransportadora == idTransportadora &&
+                                                    x.IdEmpresa == idEmpresa &&
+                                                    (x.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA
+                                                    || x.IdPedidoVendaStatus == PedidoVendaStatusEnum.DespachandoNF));
+        }
     }
 }
