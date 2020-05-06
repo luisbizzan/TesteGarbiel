@@ -147,8 +147,8 @@ namespace FWLog.Services.Services
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
                 return;
-
             }
+
             var pedidosSemNota = _unitOfWork.PedidoRepository.ObterPedidosSemNotaFiscal();
 
             foreach (var pedido in pedidosSemNota)
