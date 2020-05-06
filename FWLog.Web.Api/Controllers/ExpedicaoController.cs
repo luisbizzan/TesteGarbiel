@@ -179,8 +179,9 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                 _expedicaoService.ValidarDespachoTransportadora(codigoTransportadora, IdUsuario, IdEmpresa);
-                return ApiOk();
+                 var resposta = _expedicaoService.ValidarDespachoTransportadora(codigoTransportadora, IdUsuario, IdEmpresa);
+
+                return ApiOk(resposta);
             }
             catch (BusinessException businessException)
             {

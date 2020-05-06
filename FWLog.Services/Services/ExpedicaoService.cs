@@ -465,7 +465,7 @@ namespace FWLog.Services.Services
             return resposta;
         }
 
-        public void ValidarDespachoTransportadora(string codigoTransportadora, string idUsuario, long idEmpresa)
+        public DespachoTransportadoraResposta ValidarDespachoTransportadora(string codigoTransportadora, string idUsuario, long idEmpresa)
         {
             if (string.IsNullOrWhiteSpace(codigoTransportadora))
             {
@@ -490,8 +490,15 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("Não existem volumes na DOCA para esta transportadora.");
             }
+
+            var resposta = new DespachoTransportadoraResposta()
+            {
+                IdTransportadora = transportadora.IdTransportadora
+            };
+
+            return resposta;
         }
-        
+
         public void FinalizarMovimentacaoDoca(List<long> idsVolume, long idTransportadora, string idUsuario, long idEmpresa)
         {
             if (idsVolume.NullOrEmpty())
@@ -570,6 +577,31 @@ namespace FWLog.Services.Services
                 IdEmpresa = idEmpresa,
                 IdUsuario = idUsuario
             });
+        }
+
+        public void FinalizarDespachoNF(long idTransportadora, string chaveAcesso)
+        {
+            if (idTransportadora <= 0)
+            {
+                throw new BusinessException("Favor informar a tranportadora.");
+            }
+
+            if (chaveAcesso.NullOrEmpty())
+            {
+                throw new BusinessException("Favor informar a chave de acesso da NF.");
+            }
+
+            if (chaveAcesso.Length != 44)
+            {
+                throw new BusinessException("Chave de acesso inválida.");
+            }
+
+            Transportadora transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
+
+            if (transportadora == null)
+            {
+
+            }
         }
     }
 }
