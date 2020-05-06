@@ -29,7 +29,9 @@
                 <li class="nav-item">
                     <a id="FornecedorGrupo" class="nav-link" data-toggle="tab" href="#TabFornecedorGrupo" role="tab" aria-selected="false">Fornecedor Grupo</a>
                 </li>
-
+                <li class="nav-item">
+                    <a id="MotivoLaudo" class="nav-link" data-toggle="tab" href="#TabMotivoLaudo" role="tab" aria-selected="false">Motivo Laudo</a>
+                </li>
             </ul>
             <!-- panels -->
             <div class="tab-content">
@@ -254,6 +256,35 @@
                             <div class="x_title text-muted"><b>&emsp;</b></div>
                             <table id="gridFornecedorGrupo" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
 
+                        </div>
+                    </div>
+                </div>
+                <!-- TAB Motivo Laudo -->
+                <div class="tab-pane fade" id="TabMotivoLaudo">
+                    <div class="x_panel">
+                        <div class="col-md-4 col-sm-4">
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
+                            <div class="col-sm-12">
+                                <div class="input-group input-group-addon input-group-sm col-sm-12">
+                                    <div class="col-sm-12"><input id="txtFornecedorPai" class="form-control input-sm" placeholder="Fornecedor Pai"></div>
+                                    <div class="input-group-addon">
+                                        <div class="col-sm-12 text-center"><b id="spanIdFornecedorPai" hidden="hidden"></b><h3 id="spanFornecedorPai" class="label label-primary"></h3></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="x_panel">
+                                    <div id="controleFornecedorGrupo" class="btn-group col-sm-12" style="display:normal;">
+                                        <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="FornecedorGrupoGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Motivo Laudo"><i class="fa fa-save text-success"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 col-sm-8">
+                            <!-- Grid Motivo Laudo -->
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
+                            <table id="gridMotivoLaudo" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
                         </div>
                     </div>
                 </div>

@@ -124,6 +124,7 @@ function RegistroExcluir(TagSelecionada, IdSelecionado) {
 /* [GENÉRICO] listar registros */
 function RegistroListar(TagInformada) {
     $.get("/GarantiaConfiguracao/RegistroListar", { TAG: TagInformada }, function (s, status) {
+        console.log(s);
         if (s.Success) {
             $(s.GridNome).DataTable({
                 destroy: true,

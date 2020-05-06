@@ -206,7 +206,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 var _garantia = new GarantiaConfiguracao() { Tag = TAG };
 
                 #region formatar comando consulta pela TAG
-                var comandoSQL = GarantiaConfiguracao.DicTagConsultaSQL.Where(SQL => SQL.Key.Equals(TAG)).FirstOrDefault().Value.ToString();
+                var comandoSQL = GarantiaConfiguracao.Contexto.DicTagConsultaSQL.Where(SQL => SQL.Key.Equals(TAG)).FirstOrDefault().Value.ToString();
                 #endregion
 
                 #region Consulta Banco Dados 
@@ -221,7 +221,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             _garantia.RegistroConfiguracao = conn.Query<GarantiaConfiguracao.Configuracao>(comandoSQL).ToList();
                             _garantia.RegistroConfiguracao.ForEach(delegate (GarantiaConfiguracao.Configuracao item)
                             {
-                                item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id);
+                                item.BotaoEvento = String.Format(GarantiaConfiguracao.Contexto.botaoExcluirTemplate, TAG, item.Id);
                                 item.Vlr_Minimo_EnvioView = String.Format("{0:0,0.00}", item.Vlr_Minimo_Envio);
                                 item.Pct_DesvalorizacaoView = String.Format("{0}%", item.Pct_Desvalorizacao.ToString().Replace(",", "."));
                                 item.Pct_Estorno_FreteView = String.Format("{0}%", item.Pct_Estorno_Frete.ToString().Replace(",", "."));
@@ -233,7 +233,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra))
                         {
                             _garantia.RegistroFornecedorQuebra = conn.Query<GarantiaConfiguracao.FornecedorQuebra>(comandoSQL).ToList();
-                            _garantia.RegistroFornecedorQuebra.ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
+                            _garantia.RegistroFornecedorQuebra.ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.Contexto.botaoExcluirTemplate, TAG, item.Id); });
                         }
                         #endregion
 
@@ -243,10 +243,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                             _garantia.RegistroRemessaConfiguracao = conn.Query<GarantiaConfiguracao.RemessaConfiguracao>(comandoSQL).ToList();
                             _garantia.RegistroRemessaConfiguracao.ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao item)
                             {
-                                item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id);
+                                item.BotaoEvento = String.Format(GarantiaConfiguracao.Contexto.botaoExcluirTemplate, TAG, item.Id);
                                 item.Vlr_MinimoView = String.Format("{0:0,0.00}", item.Vlr_Minimo);
-                                item.AutomaticaView = item.Automatica.Equals(1) ? GarantiaConfiguracao.botaoCheked : GarantiaConfiguracao.botaoUnCheked;
-                                item.TotalView = item.Total.Equals(1) ? GarantiaConfiguracao.botaoCheked : GarantiaConfiguracao.botaoUnCheked;
+                                item.AutomaticaView = item.Automatica.Equals(1) ? GarantiaConfiguracao.Contexto.botaoCheked : GarantiaConfiguracao.Contexto.botaoUnCheked;
+                                item.TotalView = item.Total.Equals(1) ? GarantiaConfiguracao.Contexto.botaoCheked : GarantiaConfiguracao.Contexto.botaoUnCheked;
                             });
                         }
                         #endregion
@@ -255,7 +255,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaUsuario))
                         {
                             _garantia.RegistroRemessaUsuario = conn.Query<GarantiaConfiguracao.RemessaUsuario>(comandoSQL).ToList();
-                            _garantia.RegistroRemessaUsuario.ForEach(delegate (GarantiaConfiguracao.RemessaUsuario item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
+                            _garantia.RegistroRemessaUsuario.ForEach(delegate (GarantiaConfiguracao.RemessaUsuario item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.Contexto.botaoExcluirTemplate, TAG, item.Id); });
                         }
                         #endregion
 
@@ -263,7 +263,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop))
                         {
                             _garantia.RegistroSankhyaTop = conn.Query<GarantiaConfiguracao.SankhyaTop>(comandoSQL).ToList();
-                            _garantia.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
+                            _garantia.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.Contexto.botaoExcluirTemplate, TAG, item.Id); });
                         }
                         #endregion
 
@@ -271,7 +271,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorGrupo))
                         {
                             _garantia.RegistroFornecedorGrupo = conn.Query<GarantiaConfiguracao.FornecedorGrupo>(comandoSQL).ToList();
-                            _garantia.RegistroFornecedorGrupo.ForEach(delegate (GarantiaConfiguracao.FornecedorGrupo item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.botaoExcluirTemplate, TAG, item.Id); });
+                            _garantia.RegistroFornecedorGrupo.ForEach(delegate (GarantiaConfiguracao.FornecedorGrupo item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.Contexto.botaoExcluirTemplate, TAG, item.Id); });
 
                             var _listaAgrupada = _garantia.RegistroFornecedorGrupo.GroupBy(g => g.Cod_Forn_Pai).Select(s => s.ToList()).ToList();
                             _garantia.RegistroFornecedorGrupo = new List<GarantiaConfiguracao.FornecedorGrupo>();
@@ -280,11 +280,19 @@ namespace FWLog.Data.Repository.GeneralCtx
                                 var registro = new GarantiaConfiguracao.FornecedorGrupo() { Cod_Forn_Pai = fg.FirstOrDefault().Cod_Forn_Pai, divFilhos = String.Empty };
                                 fg.ForEach(delegate (GarantiaConfiguracao.FornecedorGrupo fgItem)
                                 {
-                                    registro.divFilhos += String.Format(GarantiaConfiguracao.botaoExcluirFornecedorFilho, fgItem.Cod_Forn_Filho, TAG, fgItem.Id);
+                                    registro.divFilhos += String.Format(GarantiaConfiguracao.Contexto.botaoExcluirFornecedorFilho, fgItem.Cod_Forn_Filho, TAG, fgItem.Id);
                                 });
-                                registro.divFilhos = String.Format(GarantiaConfiguracao.botaoDivFornecedorGrupo, fg.FirstOrDefault().Id, registro.divFilhos);
+                                registro.divFilhos = String.Format(GarantiaConfiguracao.Contexto.botaoDivFornecedorGrupo, fg.FirstOrDefault().Id, registro.divFilhos);
                                 _garantia.RegistroFornecedorGrupo.Add(registro);
                             });
+                        }
+                        #endregion
+
+                        #region Motivo Laudo
+                        if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.MotivoLaudo))
+                        {
+                            _garantia.RegistroMotivoLaudo = conn.Query<GarantiaConfiguracao.MotivoLaudo>(comandoSQL).ToList();
+                            _garantia.RegistroMotivoLaudo.ForEach(delegate (GarantiaConfiguracao.MotivoLaudo item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.Contexto.botaoExcluirTemplate, TAG, item.Id); });
                         }
                         #endregion
                     }
