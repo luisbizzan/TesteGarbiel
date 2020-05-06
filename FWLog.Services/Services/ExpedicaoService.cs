@@ -62,7 +62,7 @@ namespace FWLog.Services.Services
 
             using (var transaction = _unitOfWork.CreateTransactionScope())
             {
-                pedidoVendaVolume.DataHoraInicioSeparacao = DateTime.Now;
+                pedidoVendaVolume.DataHoraInstalTransportadora = DateTime.Now;
                 pedidoVendaVolume.IdUsuarioInstalTransportadora = idUsuario;
 
                 _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
