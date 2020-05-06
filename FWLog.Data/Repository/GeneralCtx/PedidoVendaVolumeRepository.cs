@@ -23,7 +23,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public List<PedidoVendaVolume> ObterVolumesInstaladosPorTranportadoraEmpresa(long idTransportadora, long idEmpresa)
         {
-            var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora && pedidoVendaVolume.PedidoVenda.IdTransportadora == idTransportadora && pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa);
+            var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora && pedidoVendaVolume.PedidoVenda.IdTransportadora == idTransportadora && pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa && pedidoVendaVolume.IdEnderecoArmazTransportadora.HasValue);
 
             return query.ToList();
         }
