@@ -9,6 +9,9 @@ namespace FWLog.Web.Api.Models.Expedicao
         public List<long> ListaVolumes { get; set; }
 
         [Required]
+        public long IdTransportadora { get; set; }
+
+        [Required]
         public long IdEnderecoArmazenagem { get; set; }
     }
 }

@@ -168,16 +168,16 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void ValidaEnderecoInstalacaoVolume(long idPedidoVendaVolume, long idEnderecoArmazenagem, long idEmpresa)
+        public PedidoVendaVolume ValidaTransportadoraInstalacaoVolume(long idPedidoVendaVolume, long idtransportadora, long idEmpresa)
         {
             if (idPedidoVendaVolume <= 0)
             {
                 throw new BusinessException("O volume deve ser informado.");
             }
 
-            if (idEnderecoArmazenagem <= 0)
+            if (idtransportadora <= 0)
             {
-                throw new BusinessException("O endereço deve ser informado.");
+                throw new BusinessException("A transportadora deve ser informada.");
             }
 
             var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
@@ -192,6 +192,25 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume informado não pertence a empresa do usuário logado.");
             }
 
+            var transportadora = _unitOfWork.TransportadoraRepository.GetById(idtransportadora);
+
+            if (transportadora == null)
+            {
+                throw new BusinessException("A transportadora informada não existe.");
+            }
+
+            if (pedidoVendaVolume.PedidoVenda.IdTransportadora != idtransportadora)
+            {
+                throw new BusinessException("Transportadora diferente dos volumes.");
+            }
+
+            return pedidoVendaVolume;
+        }
+
+        public void ValidaEnderecoInstalacaoVolume(long idPedidoVendaVolume, long idTransportadora, long idEnderecoArmazenagem, long idEmpresa)
+        {
+            var pedidoVendaVolume = ValidaTransportadoraInstalacaoVolume(idPedidoVendaVolume, idTransportadora, idEmpresa);
+
             var enderecoTransportadora = _unitOfWork.TransportadoraEnderecoRepository.ObterPorEnderecoTransportadoraEmpresa(idEnderecoArmazenagem, pedidoVendaVolume.PedidoVenda.IdTransportadora, idEmpresa);
 
             if (enderecoTransportadora == null)
@@ -200,7 +219,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task SalvaInstalacaoVolumes(List<long> listaIdsVolumes, long idEnderecoArmazenagem, long idEmpresa, string idUsuario)
+        public async Task SalvaInstalacaoVolumes(List<long> listaIdsVolumes, long idTransportadora, long idEnderecoArmazenagem, long idEmpresa, string idUsuario)
         {
             if (listaIdsVolumes.NullOrEmpty())
             {
@@ -214,7 +233,7 @@ namespace FWLog.Services.Services
 
             foreach (var idPedidoVendaVolume in listaIdsVolumes)
             {
-                ValidaEnderecoInstalacaoVolume(idPedidoVendaVolume, idEnderecoArmazenagem, idEmpresa);
+                ValidaEnderecoInstalacaoVolume(idPedidoVendaVolume, idTransportadora, idEnderecoArmazenagem, idEmpresa);
             }
 
             var listaPedidoVendaVolume = new List<PedidoVendaVolume>();

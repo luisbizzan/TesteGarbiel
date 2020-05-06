@@ -2,11 +2,8 @@
 
 namespace FWLog.Web.Api.Models.Expedicao
 {
-    public class ValidaEnderecoInstalacaoVolumeRequisicao
+    public class ValidaEnderecoInstalacaoVolumeRequisicao : ValidaTransportadoraInstalacaoVolumeRequisicao
     {
-        [Required]
-        public long IdPedidoVendaVolume { get; set; }
-
         [Required]
         public long IdEnderecoArmazenagem { get; set; }
     }

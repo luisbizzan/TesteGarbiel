@@ -44,6 +44,28 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [Route("api/v1/expedicao/validar-transportadora-volume")]
+        [HttpPost]
+        public IHttpActionResult ValidaTransportadoraInstalacaoVolume(ValidaTransportadoraInstalacaoVolumeRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _expedicaoService.ValidaTransportadoraInstalacaoVolume(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.IdTransportadora ?? 0, IdEmpresa);
+
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
+
         [Route("api/v1/expedicao/validar-endereco-volume")]
         [HttpPost]
         public IHttpActionResult ValidaEnderecoInstalacaoVolume(ValidaEnderecoInstalacaoVolumeRequisicao requisicao)
@@ -55,7 +77,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _expedicaoService.ValidaEnderecoInstalacaoVolume(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa);
+                _expedicaoService.ValidaEnderecoInstalacaoVolume(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.IdTransportadora ?? 0, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa);
 
             }
             catch (BusinessException businessException)
@@ -66,7 +88,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/expedicao/salva-instalacao-volumes")]
+        [Route("api/v1/expedicao/salvar-instalacao-volumes")]
         [HttpPost]
         public async Task<IHttpActionResult> SalvaInstalacaoVolumes(SalvaInstalacaoVolumesRequisicao requisicao)
         {
@@ -77,7 +99,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                await _expedicaoService.SalvaInstalacaoVolumes(requisicao?.ListaVolumes, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa, IdUsuario);
+                await _expedicaoService.SalvaInstalacaoVolumes(requisicao?.ListaVolumes, requisicao?.IdTransportadora ?? 0, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa, IdUsuario);
             }
             catch (BusinessException businessException)
             {
