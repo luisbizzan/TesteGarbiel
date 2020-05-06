@@ -34,5 +34,19 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/transportadora/pesquisar/{codigoTransportadora}")]
+        [HttpGet]
+        public IHttpActionResult ConsultarTransportadora(string codigoTransportadora)
+        {
+            var transportadora = _transportadoraService.ConsultarTransportadora(codigoTransportadora);
+
+            if (transportadora == null)
+            {
+                return ApiNotFound("Nenhuma transportadora foi encontrada.");
+            }
+
+            return ApiOk(transportadora);
+        }
     }
 }

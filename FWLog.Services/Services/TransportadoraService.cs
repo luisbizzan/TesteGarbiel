@@ -2,12 +2,13 @@
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
+using FWLog.Services.Model.Transportadora;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using System.Threading.Tasks;
-using log4net;
 
 namespace FWLog.Services.Services
 {
@@ -60,7 +61,7 @@ namespace FWLog.Services.Services
             where.Append("AND TRANSPORTADORA = 'S' ");
             where.Append("AND AD_INTEGRARFWLOG = '1' ");
             where.Append("AND AD_ABREVTRANSP IS NOT NULL ");
-            
+
             List<TransportadoraIntegracao> transportadorasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<TransportadoraIntegracao>(where: where.ToString());
 
             foreach (var transpInt in transportadorasIntegracao)
@@ -90,7 +91,7 @@ namespace FWLog.Services.Services
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", transportadora.CodigoIntegracao.ToString() } };
 
                     await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
-                    
+
                     if (transportadoraNova)
                     {
                         _uow.TransportadoraRepository.Add(transportadora);
@@ -99,7 +100,7 @@ namespace FWLog.Services.Services
                     {
                         _uow.TransportadoraRepository.Update(transportadora);
                     }
-                
+
                     _uow.SaveChanges();
                 }
                 catch (Exception ex)
@@ -109,6 +110,23 @@ namespace FWLog.Services.Services
                     continue;
                 }
             }
+        }
+
+        public ConsultaTransportadoraResposta ConsultarTransportadora(string codigoTransportadora)
+        {
+            var transportadora = _uow.TransportadoraRepository.ConsultarPorCodigoTransportadora(codigoTransportadora);
+
+            if (transportadora != null)
+            {
+                return new ConsultaTransportadoraResposta
+                {
+                    IdTransportadora = transportadora.IdTransportadora,
+                    Nome = transportadora.NomeFantasia,
+                    CodigoTransportadora = transportadora.CodigoTransportadora
+                };
+            }
+
+            return null;
         }
     }
 }
