@@ -98,7 +98,22 @@ namespace FWLog.Services.Services
 
             if (pedidoVendaVolume == null)
             {
-                throw new BusinessException("Volume fornecido não encontrado.");
+                throw new BusinessException("Volume não encontrado.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado || pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento)
+            {
+                throw new BusinessException("Volume cancelado.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteSeparacao || pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoIntegracao)
+            {
+                throw new BusinessException("Volume não liberado para separação.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao && pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
+            {
+                throw new BusinessException("Volume já separado.");
             }
 
             var model = new BuscarPedidoVendaResposta();
@@ -386,11 +401,6 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido de venda não está liberado para separação.");
             }
 
-            //if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao /*&& pedidoVenda.IdUsuarioSeparacao != idUsuarioOperacao*/)
-            //{
-            //    throw new BusinessException("O pedido já está sendo separado por outro usuário.");
-            //}
-
             var dataProcessamento = DateTime.Now;
 
             if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
@@ -519,7 +529,7 @@ namespace FWLog.Services.Services
 
             ValidarProdutoPorPedidoVenda(idPedidoVenda, idProdutoSeparacao);
 
-            var pedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdProduto(idProdutoSeparacao);
+            var pedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVendaEIdProduto(pedidoVenda.IdPedidoVenda,idProdutoSeparacao);
 
             ValidarPedidoVendaVolumeConcluidoCancelado(pedidoVendaProduto.PedidoVendaVolume);
 
@@ -554,15 +564,13 @@ namespace FWLog.Services.Services
 
                 var dataProcessamento = DateTime.Now;
 
-
-
                 if (pedidoVendaProduto.QtdSeparada.GetValueOrDefault() == 0)
                 {
                     pedidoVendaProduto.DataHoraInicioSeparacao = dataProcessamento;
                     pedidoVendaProduto.IdUsuarioSeparacao = idUsuario;
                     pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
                 }
-                else if (qtdSeparada == pedidoVendaProduto.QtdSeparar)
+                if (qtdSeparada == pedidoVendaProduto.QtdSeparar)
                 {
                     pedidoVendaProduto.DataHoraFimSeparacao = dataProcessamento;
                     pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;

@@ -73,6 +73,13 @@ namespace FWLog.Services.Services
                         throw new BusinessException(string.Format("Código do Representante (CODVEND: {0}) inválido", pedidoCabecalho.CodigoIntegracaoRepresentante));
                     }
 
+                    var numeroPedido = Convert.ToInt32(pedidoCabecalho.NroPedidoVenda);
+
+                    if (numeroPedido == 0)
+                    {
+                        throw new BusinessException($"Código do Pedido (NUMNOTA: {pedidoCabecalho.NroPedidoVenda}) inválido");
+                    }
+
                     bool pedidoNovo = true;
 
                     var codPedido = Convert.ToInt32(pedidoCabecalho.CodigoIntegracao);
@@ -87,7 +94,7 @@ namespace FWLog.Services.Services
                         pedido = new Pedido();
                     }
 
-                    pedido.NroPedido = Convert.ToInt32(pedidoCabecalho.NroPedidoVenda);
+                    pedido.NroPedido = numeroPedido;
                     pedido.CodigoIntegracao = codPedido;
                     pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoIntegracao;
                     pedido.IdCliente = cliente.IdCliente;

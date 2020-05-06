@@ -190,7 +190,7 @@ namespace FWLog.Web.Backoffice.Controllers
             enderecoArmazenagem.IsPontoSeparacao = viewModel.IsPontoSeparacao;
             enderecoArmazenagem.LimitePeso = viewModel.LimitePeso;
             enderecoArmazenagem.IdEmpresa = IdEmpresa;
-            enderecoArmazenagem.IsPicking = viewModel.IsPkicing;
+            enderecoArmazenagem.IsPicking = viewModel.IsPicking;
 
             _enderecoArmazenagemService.Editar(enderecoArmazenagem);
 

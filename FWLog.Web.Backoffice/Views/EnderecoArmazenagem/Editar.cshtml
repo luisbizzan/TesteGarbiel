@@ -10,105 +10,105 @@
 
 @using (Html.BeginForm("Editar"))
 {
-@Html.HiddenFor(x => x.IdEnderecoArmazenagem)
-<div class="x_panel">
-    <div class="x_title">
-        <h2>Editar Endereço de Armazenagem</h2>
-        <div class="clearfix"></div>
+    @Html.HiddenFor(x => x.IdEnderecoArmazenagem)
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Editar Endereço de Armazenagem</h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="row">
+                <div class="form-group col-sm-4 col-xs-12">
+                    @Html.LabelFor(m => m.IdNivelArmazenagem, new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.DescricaoNivelArmazenagem, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.IdNivelArmazenagem)
+                    @Html.ValidationMessageFor(m => m.IdNivelArmazenagem)
+                </div>
+                <div class="form-group col-sm-4 col-xs-12">
+                    @Html.LabelFor(m => m.IdPontoArmazenagem, new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.DescricaoPontoArmazenagem, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.IdPontoArmazenagem)
+                    @Html.ValidationMessageFor(m => m.IdPontoArmazenagem)
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.Codigo, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Codigo, new { @class = "form-control text-uppercase", @placeholder = "00.X.00.00" })
+                    @Html.ValidationMessageFor(m => m.Codigo)
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.LimitePeso, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.LimitePeso, new { @class = "form-control integer", })
+                    @Html.ValidationMessageFor(m => m.LimitePeso)
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.EstoqueMinimo, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.EstoqueMinimo, new { @class = "form-control integer", })
+                    @Html.ValidationMessageFor(m => m.EstoqueMinimo)
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.EstoqueMaximo, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.EstoqueMaximo, new { @class = "form-control integer", })
+                    @Html.ValidationMessageFor(m => m.EstoqueMaximo)
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.IsFifo, new { @class = "control-label" })
+                    <div class="checkbox">
+                        @Html.CheckBoxFor(m => m.IsFifo, new { @class = "flat" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.IsFifo)
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.IsPontoSeparacao, new { @class = "control-label" })
+                    <div class="checkbox">
+                        @Html.CheckBoxFor(m => m.IsPontoSeparacao, new { @class = "flat" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.IsPontoSeparacao)
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.IsPicking, new { @class = "control-label" })
+                    <div class="checkbox">
+                        @Html.CheckBoxFor(m => m.IsPicking, new { @class = "flat" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.IsPicking)
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.IsEntrada, new { @class = "control-label" })
+                    <div class="checkbox">
+                        @Html.CheckBoxFor(m => m.IsEntrada, new { @class = "flat" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Ativo)
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.Ativo, new { @class = "control-label" })
+                    <div class="checkbox">
+                        @Html.CheckBoxFor(m => m.Ativo, new { @class = "flat" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Ativo)
+                </div>
+            </div>
+            <div class="ln_solid"></div>
+            <div class="row col-xs-12 form-buttons">
+                <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </div>
     </div>
-    <div class="x_content">
-        <div class="row">
-            <div class="form-group col-sm-4 col-xs-12">
-                @Html.LabelFor(m => m.IdNivelArmazenagem, new { @class = "control-label" })
-                <div class="input-group">
-                    @Html.TextBoxFor(m => m.DescricaoNivelArmazenagem, null, new { @class = "form-control", @readonly = "true" })
-                    <span class="input-group-btn">
-                        <a id="pesquisarNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
-                        <a id="limparNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
-                    </span>
-                </div>
-                @Html.HiddenFor(m => m.IdNivelArmazenagem)
-                @Html.ValidationMessageFor(m => m.IdNivelArmazenagem)
-            </div>
-            <div class="form-group col-sm-4 col-xs-12">
-                @Html.LabelFor(m => m.IdPontoArmazenagem, new { @class = "control-label" })
-                <div class="input-group">
-                    @Html.TextBoxFor(m => m.DescricaoPontoArmazenagem, null, new { @class = "form-control", @readonly = "true" })
-                    <span class="input-group-btn">
-                        <a id="pesquisarPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
-                        <a id="limparPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
-                    </span>
-                </div>
-                @Html.HiddenFor(m => m.IdPontoArmazenagem)
-                @Html.ValidationMessageFor(m => m.IdPontoArmazenagem)
-            </div>
-            <div class="form-group col-sm-2 col-xs-12">
-                @Html.LabelFor(m => m.Codigo, new { @class = "control-label" })
-                @Html.TextBoxFor(m => m.Codigo, new { @class = "form-control text-uppercase", @placeholder = "00.X.00.00" })
-                @Html.ValidationMessageFor(m => m.Codigo)
-            </div>
-            <div class="form-group col-sm-2 col-xs-12">
-                @Html.LabelFor(m => m.LimitePeso, new { @class = "control-label" })
-                @Html.TextBoxFor(m => m.LimitePeso, new { @class = "form-control integer", })
-                @Html.ValidationMessageFor(m => m.LimitePeso)
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-sm-2 col-xs-12">
-                @Html.LabelFor(m => m.EstoqueMinimo, new { @class = "control-label" })
-                @Html.TextBoxFor(m => m.EstoqueMinimo, new { @class = "form-control integer", })
-                @Html.ValidationMessageFor(m => m.EstoqueMinimo)
-            </div>
-            <div class="form-group col-sm-2 col-xs-12">
-                @Html.LabelFor(m => m.EstoqueMaximo, new { @class = "control-label" })
-                @Html.TextBoxFor(m => m.EstoqueMaximo, new { @class = "form-control integer", })
-                @Html.ValidationMessageFor(m => m.EstoqueMaximo)
-            </div>
-            <div class="form-group col-sm-2 col-xs-12">
-                @Html.LabelFor(m => m.IsFifo, new { @class = "control-label" })
-                <div class="checkbox">
-                    @Html.CheckBoxFor(m => m.IsFifo, new { @class = "flat" })
-                </div>
-                @Html.ValidationMessageFor(m => m.IsFifo)
-            </div>
-            <div class="form-group col-sm-2 col-xs-12">
-                @Html.LabelFor(m => m.IsPontoSeparacao, new { @class = "control-label" })
-                <div class="checkbox">
-                    @Html.CheckBoxFor(m => m.IsPontoSeparacao, new { @class = "flat" })
-                </div>
-                @Html.ValidationMessageFor(m => m.IsPontoSeparacao)
-            </div>
-            <div class="form-group col-sm-2 col-xs-12">
-                @Html.LabelFor(m => m.IsPkicing, new { @class = "control-label" })
-                <div class="checkbox">
-                    @Html.CheckBoxFor(m => m.IsPkicing, new { @class = "flat" })
-                </div>
-                @Html.ValidationMessageFor(m => m.IsPkicing)
-            </div>
-            <div class="form-group col-sm-2 col-xs-12">
-                @Html.LabelFor(m => m.IsEntrada, new { @class = "control-label" })
-                <div class="checkbox">
-                    @Html.CheckBoxFor(m => m.IsEntrada, new { @class = "flat" })
-                </div>
-                @Html.ValidationMessageFor(m => m.Ativo)
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-sm-2 col-xs-12">
-                @Html.LabelFor(m => m.Ativo, new { @class = "control-label" })
-                <div class="checkbox">
-                    @Html.CheckBoxFor(m => m.Ativo, new { @class = "flat" })
-                </div>
-                @Html.ValidationMessageFor(m => m.Ativo)
-            </div>
-        </div>
-        <div class="ln_solid"></div>
-        <div class="row col-xs-12 form-buttons">
-            <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
-            <button type="submit" class="btn btn-primary">Salvar</button>
-        </div>
-    </div>
-</div>
 }
 <div class="modal" id="modalPesquisaNivelArmazenagem"></div>
 <div class="modal" id="modalPesquisaPontoArmazenagem"></div>
