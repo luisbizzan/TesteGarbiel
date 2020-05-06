@@ -144,5 +144,26 @@ namespace FWLog.Web.Api.Controllers
             }
 
         }
+
+        [Route("api/v1/expedicao/finalizar-movimentacao-doca")]
+        [HttpPost]
+        public IHttpActionResult FinalizarMovimentacaoDoca(FinalizarMovimentacaoDocaRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _expedicaoService.FinalizarMovimentacaoDoca(requisicao.ListaVolumes, requisicao.IdTransportadora, IdUsuario, IdEmpresa);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
     }
 }

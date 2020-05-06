@@ -2,6 +2,7 @@
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
+using FWLog.Services.Model.Coletor;
 using FWLog.Services.Model.Expedicao;
 using FWLog.Services.Model.IntegracaoSankhya;
 using log4net;
@@ -16,11 +17,13 @@ namespace FWLog.Services.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private ILog _log;
+        private readonly ColetorHistoricoService _coletorHistoricoService;
 
-        public ExpedicaoService(UnitOfWork unitOfWork, ILog log)
+        public ExpedicaoService(UnitOfWork unitOfWork, ILog log, ColetorHistoricoService coletorHistoricoService)
         {
             _unitOfWork = unitOfWork;
             _log = log;
+            _coletorHistoricoService = coletorHistoricoService;
         }
 
         public void IniciarExpedicaoPedidoVenda(long idPedidoVenda, long idPedidoVendaVolume, string idUsuario, long idEmpresa)
@@ -382,6 +385,87 @@ namespace FWLog.Services.Services
             };
 
             return resposta;
+        }
+
+        public void FinalizarMovimentacaoDoca(List<long> idsVolume, long idTransportadora, string idUsuario, long idEmpresa)
+        {
+            if (idsVolume.NullOrEmpty())
+            {
+                throw new BusinessException($"Favor informar os volumes para finalização da movimentação para doca.");
+            }
+
+            var pedidoVolumes = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdsPedidoVendaVolume(idsVolume);
+            var transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
+
+            var dataProcessamento = DateTime.Now;
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                foreach (var volume in pedidoVolumes)
+                {
+                    if (volume.DataHoraInstalacaoDOCA != null)
+                    {
+                        throw new BusinessException($"Volume {volume.EtiquetaVolume} ja foi lido ou está em duplicidade.");
+                    }
+
+                    if (volume.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA || volume.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeInstaladoTransportadora)
+                    {
+                        throw new BusinessException($"Volume { volume.EtiquetaVolume } não pode ser intalado na doca.");
+                    }
+
+                    if (volume.PedidoVenda.Pedido.CodigoIntegracaoNotaFiscal == null)
+                    {
+                        throw new BusinessException($"Volume { volume.EtiquetaVolume } não tem nota fiscal faturada.");
+                    }
+
+                    if (volume.PedidoVenda.IdTransportadora != idTransportadora)
+                    {
+
+                        throw new BusinessException($"Volume { volume.EtiquetaVolume } não pertence a transportadora: {transportadora.NomeFantasia}.");
+                    }
+
+                    volume.IdUsuarioInstalacaoDOCA = idUsuario;
+                    volume.DataHoraInstalacaoDOCA = dataProcessamento;
+                    volume.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovidoDOCA;
+
+                    if (!volume.PedidoVenda.PedidoVendaVolumes.Any(a => a.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovidoDOCA))
+                    {
+                        volume.PedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovidoDOCA;
+                    }
+                    else
+                    {
+                        volume.PedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovendoDOCA;
+                    }
+
+                    _unitOfWork.SaveChanges();
+                }
+
+                transacao.Complete();
+            }
+
+            string stringVolumes;
+
+            if (pedidoVolumes.Count > 1)
+            {
+                var ultimoVolume = pedidoVolumes.Last();
+
+                stringVolumes = string.Join(", ", pedidoVolumes.Where(w => w.IdPedidoVendaVolume != ultimoVolume.IdPedidoVendaVolume).Select(s => s.EtiquetaVolume).ToArray());
+
+                stringVolumes = string.Concat(stringVolumes, $" e { ultimoVolume.EtiquetaVolume }");
+            }
+            else
+            {
+                stringVolumes = pedidoVolumes.First().EtiquetaVolume;
+            }
+
+            _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
+            {
+                IdColetorAplicacao = ColetorAplicacaoEnum.Expedicao,
+                IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.MoverDoca,
+                Descricao = $"Os Volumes {stringVolumes} foram movidos para a DOCA da transportadora {transportadora.NomeFantasia}.",
+                IdEmpresa = idEmpresa,
+                IdUsuario = idUsuario
+            });
         }
     }
 }
