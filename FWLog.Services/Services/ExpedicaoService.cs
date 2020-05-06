@@ -295,9 +295,9 @@ namespace FWLog.Services.Services
                 throw new BusinessException("A tranportadora informada não foi encontrada.");
             }
 
-            var enderecosInstalados = _unitOfWork.PedidoVendaVolumeRepository.ObterVolumesInstaladosPorTranportadoraEmpresa(transportadora.IdTransportadora, idEmpresa);
+            var volumesInstalados = _unitOfWork.PedidoVendaVolumeRepository.ObterVolumesInstaladosPorTranportadoraEmpresa(transportadora.IdTransportadora, idEmpresa);
 
-            if (enderecosInstalados.NullOrEmpty())
+            if (volumesInstalados.NullOrEmpty())
             {
                 throw new BusinessException("VAGO.");
             }
@@ -306,7 +306,7 @@ namespace FWLog.Services.Services
             {
                 IdTransportadora = transportadora.IdTransportadora,
                 NomeTransportadora = transportadora.NomeFantasia,
-                ListaEnderecos = enderecosInstalados.Select(enderecoInstalado => new EnderecosPorTransportadoraVolumeResposta
+                ListaEnderecos = volumesInstalados.Select(enderecoInstalado => new EnderecosPorTransportadoraVolumeResposta
                 {
                     IdPedidoVendaVolume = enderecoInstalado.IdPedidoVendaVolume,
                     CodigoEndereco = enderecoInstalado.EnderecoTransportadora.Codigo
