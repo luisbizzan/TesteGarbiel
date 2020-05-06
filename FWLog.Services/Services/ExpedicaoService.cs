@@ -465,6 +465,33 @@ namespace FWLog.Services.Services
             return resposta;
         }
 
+        public void ValidarDespachoTransportadora(string codigoTransportadora, string idUsuario, long idEmpresa)
+        {
+            if (string.IsNullOrWhiteSpace(codigoTransportadora))
+            {
+                throw new BusinessException("O código da transportadora deve ser informado.");
+            }
+
+            var transportadora = _unitOfWork.TransportadoraRepository.ConsultarPorCodigoTransportadora(codigoTransportadora);
+
+            if (transportadora == null)
+            {
+                throw new BusinessException("A tranportadora informada não foi encontrada.");
+            }
+
+            if (!transportadora.Ativo)
+            {
+                throw new BusinessException("A tranportadora está inativa.");
+            }
+
+            var existemPedidosParaDespacho = _unitOfWork.PedidoVendaRepository.ExistemPedidosParaDespachoNaTransportadora(transportadora.IdTransportadora, idEmpresa);
+
+            if (!existemPedidosParaDespacho)
+            {
+                throw new BusinessException("Não existem volumes na DOCA para esta transportadora.");
+            }
+        }
+        
         public void FinalizarMovimentacaoDoca(List<long> idsVolume, long idTransportadora, string idUsuario, long idEmpresa)
         {
             if (idsVolume.NullOrEmpty())
