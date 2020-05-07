@@ -622,7 +622,41 @@ namespace FWLog.Services.Services
 
         public void ImprimirRomaneio(int nroRomaneio, int nroNotaFiscal, long idImpressora, bool imprimeSegundaVia, long idEmpresa, string idUsuario)
         {
-            throw new BusinessException("Não implemementado ainda");
+            if (nroRomaneio <= 0)
+            {
+                throw new BusinessException("Número romaneio deve ser informado.");
+            }
+
+            if (nroNotaFiscal <= 0)
+            {
+                throw new BusinessException("Número NF deve ser informado.");
+            }
+
+            if (idImpressora <= 0)
+            {
+                throw new BusinessException("Impressora deve ser informada.");
+            }
+
+            var romaneio = _unitOfWork.RomaneioRepository.BuscarPorNumeroRomaneioEEmpresa(nroRomaneio, idEmpresa);
+
+            if (romaneio == null)
+            {
+                throw new BusinessException("Romaneio não encontrado.");
+            }
+
+            var romaneioNotaFiscal = _unitOfWork.RomaneioNotaFiscalRepository.BuscarPorRomaneioENumeroNotaFiscal(nroRomaneio, nroNotaFiscal);
+
+            if (romaneioNotaFiscal == null)
+            {
+                throw new BusinessException("Nota Fiscal de romaneio não encontrada.");
+            }
+
+            var impressora = _unitOfWork.BOPrinterRepository.GetById(idImpressora);
+
+            if (impressora == null)
+            {
+                throw new BusinessException("Impressora não encontrada.");
+            }
         }
     }
 }
