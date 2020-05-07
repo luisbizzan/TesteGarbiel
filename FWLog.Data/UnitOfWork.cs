@@ -86,6 +86,7 @@ namespace FWLog.Data
         private PedidoVendaVolumeRepository _pedidoVendaVolumeRepository;
         private TransportadoraEnderecoRepository _transportadoraEnderecoRepository;
         private RomaneioRepository _romaneioRepository;
+        private RomaneioNotaFiscalRepository _romaneioNotaFiscalRepository;
 
         public UnitOfWork()
         {
@@ -450,6 +451,11 @@ namespace FWLog.Data
         public RomaneioRepository RomaneioRepository
         {
             get => _romaneioRepository ?? (_romaneioRepository = new RomaneioRepository(_context));
+        }
+
+        public RomaneioNotaFiscalRepository RomaneioNotaFiscalRepository
+        {
+            get => _romaneioNotaFiscalRepository ?? (_romaneioNotaFiscalRepository = new RomaneioNotaFiscalRepository(_context));
         }
 
         public TransactionScope CreateTransactionScope()
