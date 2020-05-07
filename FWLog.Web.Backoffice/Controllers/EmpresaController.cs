@@ -209,6 +209,14 @@ namespace FWLog.Web.Backoffice.Controllers
                     Text = x.Descricao,
                 }), "Value", "Text");
 
+                model.DiaColeta = new SelectList(_unitOfWork.DiasDaSemanaRepository.RetornarTodos()
+                .Where(x => x.IdDiasDaSemana != DiasDaSemanaEnum.Domingo && x.IdDiasDaSemana != DiasDaSemanaEnum.Sabado)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.IdDiasDaSemana.GetHashCode().ToString(),
+                    Text = x.Descricao,
+                }), "Value", "Text");
+
                 return View(model);
             }
 
