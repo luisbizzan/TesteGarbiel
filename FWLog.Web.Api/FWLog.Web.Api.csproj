@@ -262,6 +262,7 @@
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaPickingRequisicao.cs" />
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaProdutoRequisicao.cs" />
     <Compile Include="Models\Etiqueta\ValidarEnderecoPickingRequisicao.cs" />
+    <Compile Include="Models\Expedicao\ValidarNotaFiscalRomaneioRequisicao.cs" />
     <Compile Include="Models\Expedicao\ImprimirRomaneioRequisicao.cs" />
     <Compile Include="Models\Expedicao\FinalizarDespachoNFRequisicao.cs" />
     <Compile Include="Models\Expedicao\FinalizarMovimentacaoDocaRequisicao.cs" />

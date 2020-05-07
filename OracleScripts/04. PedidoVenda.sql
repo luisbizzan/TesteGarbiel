@@ -55,6 +55,9 @@ ALTER TABLE DART."PedidoVenda" ADD "DataHoraDespachoNotaFiscal" DATE;
 ALTER TABLE DART."PedidoVenda" ADD "IdUsuarioDespachoNotaFiscal" VARCHAR2(128);
 
 
+ALTER TABLE DART."PedidoVenda" ADD "DataHoraRomaneio" DATE;
+
+
 
 
 

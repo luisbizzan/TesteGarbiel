@@ -253,5 +253,27 @@ namespace FWLog.Web.Api.Controllers
                 }
             }
         }
+
+        [Route("api/v1/expedicao/romaneio/validar-nota")]
+        [HttpPost]
+        public IHttpActionResult ValidarNotaFiscalRomaneio(ValidarNotaFiscalRomaneioRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _expedicaoService.ValidarNotaFiscalRomaneio(requisicao.IdTransportadora, requisicao.ChaveAcesso);
+
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
     }
 }
