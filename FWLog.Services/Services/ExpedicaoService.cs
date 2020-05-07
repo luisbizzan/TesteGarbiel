@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
@@ -606,32 +607,9 @@ namespace FWLog.Services.Services
 
         public async Task FinalizarDespachoNF(long idTransportadora, string chaveAcesso, string idUsuario, long idEmpresa)
         {
-            if (idTransportadora <= 0)
-            {
-                throw new BusinessException("Favor informar a tranportadora.");
-            }
+            ValidarTransportadora(idTransportadora);
 
-            if (string.IsNullOrEmpty(chaveAcesso))
-            {
-                throw new BusinessException("Favor informar a chave de acesso da NF.");
-            }
-
-            if (chaveAcesso.Length != 44)
-            {
-                throw new BusinessException("Chave de acesso inválida.");
-            }
-
-            Transportadora transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
-
-            if (transportadora == null)
-            {
-                throw new BusinessException("Transportadora não encontrada.");
-            }
-
-            if (!transportadora.Ativo)
-            {
-                throw new BusinessException("Transportadora não está ativa.");
-            }
+            ValidarChaveAcessoNF(chaveAcesso);
 
             Pedido pedido = _unitOfWork.PedidoRepository.PesquisaPorChaveAcesso(chaveAcesso);
 
@@ -725,6 +703,75 @@ namespace FWLog.Services.Services
                 IdEmpresa = idEmpresa,
                 IdUsuarioExecucao = idUsuario
             }, idImpressora);
+        }
+
+        public void ValidarNotaFiscalRomaneio(long idTransportadora, string chaveAcesso)
+        {
+            ValidarTransportadora(idTransportadora);
+
+            ValidarChaveAcessoNF(chaveAcesso);
+
+            Pedido pedido = _unitOfWork.PedidoRepository.PesquisaPorChaveAcesso(chaveAcesso);
+
+            if (pedido.IdTransportadora != idTransportadora)
+            {
+                throw new BusinessException("Nota fiscal não pertence a transportadora informada.");
+            }
+
+            PedidoVenda pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedido(pedido.IdPedido);
+
+            if (pedidoVenda == null)
+            {
+                throw new BusinessException("Não existe pedido venda para chave de acesso informada.");
+            }
+
+            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.NFDespachada)
+            {
+                throw new BusinessException("Atenção, esta nota fiscal ainda não foi despachada.");
+            }
+
+            if (pedidoVenda.DataHoraRomaneio.HasValue)
+            {
+                throw new BusinessException("Atenção, NF pertence a outro romaneio.");
+            }
+        }
+
+        private void ValidarChaveAcessoNF(string chaveAcesso)
+        {
+            if (string.IsNullOrEmpty(chaveAcesso))
+            {
+                throw new BusinessException("Favor informar a chave de acesso da NF.");
+            }
+
+            if (chaveAcesso.Length != 44)
+            {
+                throw new BusinessException("Chave de acesso inválida.");
+            }
+
+            if (!Regex.IsMatch(chaveAcesso, @"^\d+$"))
+            {
+                throw new BusinessException("Leitura inválida! Efetue a leitura do código de barras novamente.");
+            }
+        }
+
+        private void ValidarTransportadora(long idTransportadora)
+        {
+            if (idTransportadora <= 0)
+            {
+                throw new BusinessException("Favor informar a tranportadora.");
+            }
+
+            Transportadora transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
+
+            if (transportadora == null)
+            {
+                throw new BusinessException("Transportadora não encontrada.");
+            }
+
+            if (!transportadora.Ativo)
+            {
+                throw new BusinessException("Transportadora não está ativa.");
+            }
         }
     }
 }
