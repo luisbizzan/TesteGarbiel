@@ -19,12 +19,16 @@ namespace FWLog.Services.Services
         private readonly UnitOfWork _unitOfWork;
         private ILog _log;
         private readonly ColetorHistoricoService _coletorHistoricoService;
+        private readonly NotaFiscalService _notaFiscalService;
+        private readonly PedidoService _pedidoService;
 
-        public ExpedicaoService(UnitOfWork unitOfWork, ILog log, ColetorHistoricoService coletorHistoricoService)
+        public ExpedicaoService(UnitOfWork unitOfWork, ILog log, ColetorHistoricoService coletorHistoricoService, NotaFiscalService notaFiscalService, PedidoService pedidoService)
         {
             _unitOfWork = unitOfWork;
             _log = log;
             _coletorHistoricoService = coletorHistoricoService;
+            _notaFiscalService = notaFiscalService;
+            _pedidoService = pedidoService;
         }
 
         public void IniciarExpedicaoPedidoVenda(long idPedidoVenda, long idPedidoVendaVolume, string idUsuario, long idEmpresa)
@@ -203,16 +207,18 @@ namespace FWLog.Services.Services
                 return true;
             }
 
-            if (pedido.CodigoIntegracaoNotaFiscal == null)
+            if (!pedido.CodigoIntegracaoNotaFiscal.HasValue || pedido.CodigoIntegracaoNotaFiscal <= 0)
             {
-                throw new BusinessException("O pedido não tem nota fiscal emitada.");
+                throw new BusinessException("Pedido não tem nota fiscal emitida.");
             }
+
+            await _notaFiscalService.VerificarNotaFiscalCancelada(pedido.CodigoIntegracaoNotaFiscal.Value);
 
             PedidoNumeroNotaFiscalIntegracao dadosNotaFiscal = await ConsultarSituacaoNFVenda(pedido);
 
             if (dadosNotaFiscal == null)
             {
-                return false;
+                throw new BusinessException($"Nota Fiscal {pedido.CodigoIntegracaoNotaFiscal} não foi encontrada no Sankhya.");
             }
 
             if (!(long.TryParse(dadosNotaFiscal.NumeroNotaFiscal, out long numeroNotaFiscal) && pedido.CodigoIntegracaoNotaFiscal == numeroNotaFiscal))
@@ -587,14 +593,14 @@ namespace FWLog.Services.Services
             });
         }
 
-        public void FinalizarDespachoNF(long idTransportadora, string chaveAcesso)
+        public async Task FinalizarDespachoNF(long idTransportadora, string chaveAcesso, string idUsuario, long idEmpresa)
         {
             if (idTransportadora <= 0)
             {
                 throw new BusinessException("Favor informar a tranportadora.");
             }
 
-            if (chaveAcesso.NullOrEmpty())
+            if (string.IsNullOrEmpty(chaveAcesso))
             {
                 throw new BusinessException("Favor informar a chave de acesso da NF.");
             }
@@ -616,25 +622,60 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Transportadora não está ativa.");
             }
 
-            //Pedido pedido = _unitOfWork.PedidoRepository.PesquisaPorChaveAcesso(chaveAcesso);
+            Pedido pedido = _unitOfWork.PedidoRepository.PesquisaPorChaveAcesso(chaveAcesso);
 
-            //if (pedido.IdTransportadora != idTransportadora)
-            //{
-            //    throw new BusinessException("Nota fiscal não pertence a transportadora informada.");
-            //}
+            if (pedido.IdTransportadora != idTransportadora)
+            {
+                throw new BusinessException("Nota fiscal não pertence a transportadora informada.");
+            }
 
-            //PedidoVenda pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedido(pedido.IdPedido);
+            PedidoVenda pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedido(pedido.IdPedido);
 
-            //if (pedidoVenda == null)
-            //{
-            //    throw new BusinessException("Não existe pedido venda para chave de acesso informada.");
-            //}
+            if (pedidoVenda == null)
+            {
+                throw new BusinessException("Não existe pedido venda para chave de acesso informada.");
+            }
 
-            //if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovidoDOCA)
-            //{
-            //    throw new BusinessException("Nota fiscal não está instalada na doca.");
-            //}
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.DespachandoNF ||
+                pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.NFDespachada ||
+                pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.RomaneioImpresso)
+            {
+                throw new BusinessException("Nota fiscal já foi despachada.");
+            }
 
+            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovidoDOCA)
+            {
+                throw new BusinessException("Nota fiscal não está instalada na doca.");
+            }
+
+            if (await ValidarSituacaoNFVenda(pedido))
+            {
+                throw new BusinessException("Nota fiscal não está autorizada no Sankhya.");
+            }
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.NFDespachada;
+                pedidoVenda.DataHoraDespachoNotaFiscal = DateTime.Now;
+                pedidoVenda.IdUsuarioDespachoNotaFiscal = idUsuario;
+
+                pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.NFDespachada;
+
+                await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, PedidoVendaStatusEnum.NFDespachada);
+
+                _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Expedicao,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.DespachoNF,
+                    Descricao = $"Nota fiscal {pedido.CodigoIntegracaoNotaFiscal} despachada para a transportadora {pedido.Transportadora.NomeFantasia}. Chave de Acesso: {pedido.ChaveAcesso}.",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuario
+                });
+
+                _unitOfWork.SaveChanges();
+
+                transacao.Complete();
+            }
         }
     }
 }

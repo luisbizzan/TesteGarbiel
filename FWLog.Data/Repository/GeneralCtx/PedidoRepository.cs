@@ -34,9 +34,9 @@ namespace FWLog.Data.Repository.GeneralCtx
             return query.ToList();
         }
 
-        //public Pedido PesquisaPorChaveAcesso(string chaveAcesso)
-        //{
-        //    return Entities.Pedido.FirstOrDefault(f => f.ChaveAcesso == chaveAcesso);
-        //}
+        public Pedido PesquisaPorChaveAcesso(string chaveAcesso)
+        {
+            return Entities.Pedido.FirstOrDefault(f => f.ChaveAcesso == chaveAcesso);
+        }
     }
 }

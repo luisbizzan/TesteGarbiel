@@ -179,7 +179,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                 var resposta = _expedicaoService.ValidarDespachoTransportadora(codigoTransportadora, IdUsuario, IdEmpresa);
+                var resposta = _expedicaoService.ValidarDespachoTransportadora(codigoTransportadora, IdUsuario, IdEmpresa);
 
                 return ApiOk(resposta);
             }
@@ -188,7 +188,7 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(businessException.Message);
             }
         }
-        
+
         [Route("api/v1/expedicao/finalizar-movimentacao-doca")]
         [HttpPost]
         public IHttpActionResult FinalizarMovimentacaoDoca(FinalizarMovimentacaoDocaRequisicao requisicao)
@@ -200,8 +200,28 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-               
                 _expedicaoService.FinalizarMovimentacaoDoca(requisicao.ListaVolumes, requisicao.IdTransportadora, IdUsuario, IdEmpresa);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/expedicao/finalizar-despacho")]
+        [HttpPost]
+        public async Task<IHttpActionResult> FinalizarDespachoNF(FinalizarDespachoNFRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                await _expedicaoService.FinalizarDespachoNF(requisicao.IdTransportadora, requisicao.ChaveAcesso, IdUsuario, IdEmpresa);
             }
             catch (BusinessException businessException)
             {

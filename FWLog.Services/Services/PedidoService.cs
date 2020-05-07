@@ -130,23 +130,28 @@ namespace FWLog.Services.Services
                         pedidosItens.Add(pedidoItem);
                     }
 
-                    if (!pedido.PedidoItens.NullOrEmpty())
+                    using (var transacao = _uow.CreateTransactionScope())
                     {
-                        _uow.PedidoItemRepository.DeleteRange(pedido.PedidoItens.ToList());
-                    }
+                        if (!pedido.PedidoItens.NullOrEmpty())
+                        {
+                            _uow.PedidoItemRepository.DeleteRange(pedido.PedidoItens.ToList());
+                        }
 
-                    pedido.PedidoItens = pedidosItens;
+                        pedido.PedidoItens = pedidosItens;
 
-                    if (pedidoNovo)
-                    {
-                        _uow.PedidoRepository.Add(pedido);
-                    }
-                    else
-                    {
-                        _uow.PedidoRepository.Update(pedido);
-                    }
+                        if (pedidoNovo)
+                        {
+                            _uow.PedidoRepository.Add(pedido);
+                        }
+                        else
+                        {
+                            _uow.PedidoRepository.Update(pedido);
+                        }
 
-                    _uow.SaveChanges();
+                        _uow.SaveChanges();
+
+                        transacao.Complete();
+                    }
 
                     pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao;
 
@@ -160,6 +165,27 @@ namespace FWLog.Services.Services
                 {
                     _log.Error(string.Format("Erro na integração do pedido: {0}.", pedidoIntegracao.Key), ex);
                 }
+            }
+        }
+
+        public async Task AtualizarStatusPedido(Pedido pedido, PedidoVendaStatusEnum statusPedidoVenda)
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            try
+            {
+                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", pedido.CodigoIntegracao.ToString() } };
+
+                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSSEP", statusPedidoVenda.GetHashCode());
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = string.Format("Erro na atualização do pedido de venda: {0}.", pedido.CodigoIntegracao);
+                _log.Error(errorMessage, ex);
+                throw new BusinessException(errorMessage);
             }
         }
     }
