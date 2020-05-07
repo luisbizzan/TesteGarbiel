@@ -600,8 +600,33 @@ namespace FWLog.Services.Services
 
             if (transportadora == null)
             {
-
+                throw new BusinessException("Transportadora não encontrada.");
             }
+
+            if (!transportadora.Ativo)
+            {
+                throw new BusinessException("Transportadora não está ativa.");
+            }
+
+            //Pedido pedido = _unitOfWork.PedidoRepository.PesquisaPorChaveAcesso(chaveAcesso);
+
+            //if (pedido.IdTransportadora != idTransportadora)
+            //{
+            //    throw new BusinessException("Nota fiscal não pertence a transportadora informada.");
+            //}
+
+            //PedidoVenda pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedido(pedido.IdPedido);
+
+            //if (pedidoVenda == null)
+            //{
+            //    throw new BusinessException("Não existe pedido venda para chave de acesso informada.");
+            //}
+
+            //if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovidoDOCA)
+            //{
+            //    throw new BusinessException("Nota fiscal não está instalada na doca.");
+            //}
+
         }
     }
 }
