@@ -117,7 +117,9 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public List<EnderecoArmazenagem> BuscarPorCorredorInicialEFinal(int corredorInicial, int corredorFinal, long idEmpresa)
         {
-            var range = Enumerable.Range(corredorInicial, corredorFinal);
+            var count = corredorInicial == corredorFinal ? 1 : (corredorFinal - corredorInicial) + 1;
+
+            var range = Enumerable.Range(corredorInicial, count);
 
             var query = (from e in Entities.EnderecoArmazenagem
                          where range.Contains(e.Corredor) && e.IdEmpresa == idEmpresa && !e.IsPontoSeparacao
