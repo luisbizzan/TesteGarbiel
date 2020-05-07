@@ -179,9 +179,9 @@ namespace FWLog.Services.Services
                         {
                             throw new BusinessException($"Erro ao atualizar a nota fiscal do pedido {pedido.IdPedido} por não haver o número da DANFE");
                         }
-                        else if (!string.Equals(pedido.ChaveAcesso, dadosNotaFiscal.ChaveAcesso))
+                        else if (!string.Equals(pedido.ChaveAcessoNotaFiscal, dadosNotaFiscal.ChaveAcesso))
                         {
-                            pedido.ChaveAcesso = dadosNotaFiscal.ChaveAcesso;
+                            pedido.ChaveAcessoNotaFiscal = dadosNotaFiscal.ChaveAcesso;
 
                             salvaPedido = true;
                         }

@@ -50,7 +50,7 @@ namespace FWLog.Data.Models
 
         public string CodigoIntegracaoTipoFrete { get; set; }
 
-        public string ChaveAcesso { get; set; }
+        public string ChaveAcessoNotaFiscal { get; set; }
 
         public virtual ICollection<PedidoItem> PedidoItens { get; set; }
 
