@@ -29,10 +29,12 @@
                 <li class="nav-item">
                     <a id="FornecedorGrupo" class="nav-link" data-toggle="tab" href="#TabFornecedorGrupo" role="tab" aria-selected="false">Fornecedor Grupo</a>
                 </li>
-
+                <li class="nav-item">
+                    <a id="MotivoLaudo" class="nav-link" data-toggle="tab" href="#TabMotivoLaudo" role="tab" aria-selected="false">Motivo Laudo</a>
+                </li>
             </ul>
             <!-- panels -->
-            <div class="tab-content" id="myTabContent">
+            <div class="tab-content">
                 <!-- TAB Fornecedor Quebra -->
                 <div class="tab-pane fade active in" id="TabFornecedorQuebra">
                     <div class="x_panel">
@@ -47,14 +49,14 @@
                                     </div>
                                     <div id="controleFornecedor" class="btn-group col-sm-12" style="display:normal;">
                                         <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
-                                        <a class="btn btn-default col-xs-6" onclick="FornecedorQuebraGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Fornecedor"><i class="fa fa-save text-success"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="GravarFornecedorQuebra();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Fornecedor"><i class="fa fa-save text-success"></i></a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-8 col-sm-8">
                             <!-- Grid Fornecedor Quebra -->
-                            <div class="x_title text-muted"><b>Fornecedores Cadastrados</b></div>
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
                             <table id="gridFornecedorQuebra" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
 
                         </div>
@@ -87,15 +89,15 @@
                             <div class="form-inline">
                                 <div class="x_content">
                                     <div id="controleSankhyaTop" class="btn-group col-sm-12" style="display:normal;">
-                                        <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
-                                        <a class="btn btn-default col-xs-6" onclick="ShankhyaTopGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Top Sankhya"><i class="fa fa-save text-success"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="CancelarShankhyaTop();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="GravarShankhyaTop();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Top Sankhya"><i class="fa fa-save text-success"></i></a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-8 col-sm-8">
                             <!-- Grid Sankhya Tops -->
-                            <div class="x_title text-muted"><b>Tops Cadastradas</b></div>
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
                             <table id="gridSankhyaTop" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
                         </div>
                     </div>
@@ -112,18 +114,18 @@
                                 </div>
                                 <div class="input-group input-group-sm col-sm-12">
                                     <div class="input-group-addon">Percentual Estorno Frete (%)</div>
-                                    <div class="input-group-addon"><input id="txtConfigEstFrete" type="number" class="form-control" min="0" max="100"></div>
+                                    <div class="input-group-addon"><input id="txtConfigEstFrete" type="number" class="form-control" step='0.01' min="0.01" max="100" placeholder="0.00"></div>
                                 </div>
                                 <div class="input-group input-group-sm col-sm-12">
                                     <div class="input-group-addon">Percentual Desvalorização (%)</div>
-                                    <div class="input-group-addon"><input id="txtConfigDesvalorizacao" type="number" class="form-control" min="0" max="100"></div>
+                                    <div class="input-group-addon"><input id="txtConfigDesvalorizacao" type="number" class="form-control" step='0.01' min="0.01" max="100" placeholder="0.00"></div>
                                 </div>
                                 <div class="input-group input-group-sm col-sm-12">
-                                    <div class="input-group-addon">Valor Minímo Envio (R$)</div>
-                                    <div class="input-group-addon"><input id="txtConfigMinimo" type="text" class="form-control money" min="0"></div>
+                                    <div class="input-group-addon">Valor Minímo Laudo (R$)</div>
+                                    <div class="input-group-addon"><input id="txtConfigMinimo" type="text" class="form-control money" min="0" placeholder="150,00"></div>
                                 </div>
                                 <div class="input-group input-group-sm col-sm-12">
-                                    <div class="input-group-addon">Prazo Envio Automático</div>
+                                    <div class="input-group-addon">Prazo Envio Laudo</div>
                                     <div class="input-group-addon"><input id="txtConfigPrazoEnvio" type="number" class="form-control" min="0"></div>
                                 </div>
                                 <div class="input-group input-group-sm col-sm-12">
@@ -132,15 +134,15 @@
                                 </div>
                                 <div class="x_content">
                                     <div id="controleConfig" class="btn-groupcol-sm-12" style="display:normal;">
-                                        <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
-                                        <a class="btn btn-default col-xs-6" onclick="ConfiguracaoGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Configuração"><i class="fa fa-save text-success"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="CancelarConfiguracao();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="GravarConfiguracao();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Configuração"><i class="fa fa-save text-success"></i></a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-8 col-sm-8">
                             <!-- Grid Configuração -->
-                            <div class="x_title text-muted"><b>Configuração Cadastradas</b></div>
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
                             <table id="gridConfiguracao" class="table table-striped table-bordered" style="width:100%"></table>
                         </div>
                     </div>
@@ -162,35 +164,33 @@
                                     <div class="col-sm-12 text-center"><b id="spanIdFornecedor" hidden="hidden"></b><h3 id="spanFornecedor" class="label label-primary"></h3></div>
                                 </div>
                             </div>
+
                             <div class="col-sm-12">
-                                <div class="input-group input-group-sm col-sm-12">
-                                    <span class="input-group-addon">Automática</span>
-                                    <div class="input-group-addon"><input id="chkRCAutomatica" type="checkbox" class="flat"></div>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon"><span>Automática</span></span>
+                                    <span class="input-group-addon"><input id="chkRCAutomatica" type="checkbox" class="flat"></span>
                                 </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="input-group input-group-sm col-sm-12">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon">Remessa Total</span>
+                                    <span class="input-group-addon"><input id="chkRCTotal" type="checkbox" class="flat"></span>
+                                </div>
+
+                                <div class="input-group input-group-sm">
                                     <span class="input-group-addon">Minímo Envio (R$)</span>
-                                    <div class="input-group-addon"><input id="txtRCMinimoEnvio" type="text" class="form-control money" min="0"></div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="input-group input-group-sm col-sm-12">
-                                    <span class="input-group-addon">Total</span>
-                                    <div class="input-group-addon"><input id="txtRCTotal" type="number" class="form-control" min="0" value="0"></div>
+                                    <span class="input-group-addon"><input id="txtRCMinimoEnvio" type="text" class="form-control money" min="0"></span>
                                 </div>
                             </div>
 
                             <div class="x_content">
                                 <div id="controleRemessaConfig" class="btn-group col-sm-12" style="display:normal;">
-                                    <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
-                                    <a class="btn btn-default col-xs-6" onclick="RemessaConfigGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Remessa Configuração"><i class="fa fa-save text-success"></i></a>
+                                    <a class="btn btn-default col-xs-6" onclick="CancelarRemessaConfiguracao();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
+                                    <a class="btn btn-default col-xs-6" onclick="GravarRemessaConfiguracao();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Remessa Configuração"><i class="fa fa-save text-success"></i></a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-7 col-sm-7">
                             <!-- Grid Remessa Configuração -->
-                            <div class="x_title text-muted"><b>Remessa Configuração Cadastradas</b></div>
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
                             <table id="gridRemessaConfig" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
                         </div>
                     </div>
@@ -209,20 +209,20 @@
                                     </div>
                                 </div>
                                 <div id="controleRemessaUsuario" class="btn-group col-sm-12" style="display:normal;">
-                                    <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
-                                    <a class="btn btn-default col-xs-6" onclick="RemessaUsuarioGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Remessa Usuário"><i class="fa fa-save text-success"></i></a>
+                                    <a class="btn btn-default col-xs-6" onclick="CancelarRemessaUsuario();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
+                                    <a class="btn btn-default col-xs-6" onclick="GravarRemessaUsuario();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Remessa Usuário"><i class="fa fa-save text-success"></i></a>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-8 col-sm-8">
                             <!-- Grid Remessa Usuário -->
-                            <div class="x_title text-muted"><b>Remessa Usuário Cadastradas</b></div>
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
                             <table id="gridRemessaUsuario" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
                         </div>
                     </div>
                 </div>
                 <!-- TAB Fornecedor Grupo -->
-                <div class="tab-pane fade active in" id="TabFornecedorGrupo">
+                <div class="tab-pane fade" id="TabFornecedorGrupo">
                     <div class="x_panel">
                         <div class="col-md-4 col-sm-4">
                             <div class="x_title text-muted"><b>&emsp;</b></div>
@@ -245,17 +245,43 @@
                             <div>
                                 <div class="x_panel">
                                     <div id="controleFornecedorGrupo" class="btn-group col-sm-12" style="display:normal;">
-                                        <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
-                                        <a class="btn btn-default col-xs-6" onclick="FornecedorGrupoGravar();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Fornecedor Grupo"><i class="fa fa-save text-success"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="CancelarFornecedorGrupo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="GravarFornecedorGrupo();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Fornecedor Grupo"><i class="fa fa-save text-success"></i></a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-8 col-sm-8">
                             <!-- Grid Fornecedor Grupo -->
-                            <div class="x_title text-muted"><b>Fornecedores Grupo Cadastrados</b></div>
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
                             <table id="gridFornecedorGrupo" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
 
+                        </div>
+                    </div>
+                </div>
+                <!-- TAB Motivo Laudo -->
+                <div class="tab-pane fade" id="TabMotivoLaudo">
+                    <div class="x_panel">
+                        <div class="col-md-4 col-sm-4">
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
+                            <div class="col-sm-12">
+                                <div class="input-group input-group-addon input-group-sm col-sm-12">
+                                    <div class="col-sm-12"><input id="txtDescricaoMotivoLaudo" class="form-control input-sm" placeholder="Motivo Laudo Descrição"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="x_panel">
+                                    <div id="controleMotivoLaudo" class="btn-group col-sm-12" style="display:normal;">
+                                        <a class="btn btn-default col-xs-6" onclick="CancelarMotivoLaudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="GravarMotivoLaudo();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Motivo Laudo"><i class="fa fa-save text-success"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 col-sm-8">
+                            <!-- Grid Motivo Laudo -->
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
+                            <table id="gridMotivoLaudo" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
                         </div>
                     </div>
                 </div>
@@ -263,3 +289,14 @@
         </div>
     </div>
 </div>
+
+<!-- Scripts -->
+<script src="@Url.Content("~/Scripts/jquery/jquery-3.3.1.min.js")"></script>
+<script src="@Url.Content("~/Scripts/vendors/devbridge-autocomplete/jquery.autocomplete.min.js")"></script>
+<script src="@Url.Content("~/Scripts/Views/GarantiaConfiguracao/configuracao.js")"></script>
+<script src="@Url.Content("~/Scripts/Views/GarantiaConfiguracao/fornecedorquebra.js")"></script>
+<script src="@Url.Content("~/Scripts/Views/GarantiaConfiguracao/fornecedorgrupo.js")"></script>
+<script src="@Url.Content("~/Scripts/Views/GarantiaConfiguracao/motivolaudo.js")"></script>
+<script src="@Url.Content("~/Scripts/Views/GarantiaConfiguracao/remessaconfiguracao.js")"></script>
+<script src="@Url.Content("~/Scripts/Views/GarantiaConfiguracao/remessausuario.js")"></script>
+<script src="@Url.Content("~/Scripts/Views/GarantiaConfiguracao/sankhyatop.js")"></script>

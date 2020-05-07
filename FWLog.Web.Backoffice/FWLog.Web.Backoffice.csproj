@@ -632,8 +632,18 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\confirmarImpressao.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
+    <Content Include="Scripts\Views\GarantiaConfiguracao\configuracao.js" />
+    <Content Include="Scripts\Views\GarantiaConfiguracao\fornecedorquebra.js" />
+    <Content Include="Scripts\Views\GarantiaConfiguracao\fornecedorgrupo.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\index.js" />
+
     <Content Include="Scripts\Views\Garantia\solicitacaoImportar.js" />
+
+    <Content Include="Scripts\Views\GarantiaConfiguracao\motivolaudo.js" />
+    <Content Include="Scripts\Views\GarantiaConfiguracao\remessaconfiguracao.js" />
+    <Content Include="Scripts\Views\GarantiaConfiguracao\remessausuario.js" />
+    <Content Include="Scripts\Views\GarantiaConfiguracao\sankhyatop.js" />
+
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\solicitacaoConferir.js" />
     <Content Include="Scripts\Views\Garantia\remessa.js" />

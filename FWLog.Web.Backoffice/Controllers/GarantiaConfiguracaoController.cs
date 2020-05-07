@@ -45,6 +45,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 var RegistroConvertido = ConverterRegistro(Registro);
 
+                #region Configuração
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.Configuracao))
                 {
                     RegistroConvertido.RegistroConfiguracao.ForEach(delegate (GarantiaConfiguracao.Configuracao config)
@@ -59,10 +60,14 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                     errorView = () => { return View(RegistroConvertido.RegistroConfiguracao); };
                 }
+                #endregion
 
+                #region Fornecedor Quebra
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra))
                     errorView = () => { return View(RegistroConvertido.RegistroFornecedorQuebra); };
+                #endregion
 
+                #region Remessa Configuração
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaConfiguracao))
                 {
                     RegistroConvertido.RegistroRemessaConfiguracao.ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao remessaConfig)
@@ -71,16 +76,19 @@ namespace FWLog.Web.Backoffice.Controllers
                         if (String.IsNullOrEmpty(remessaConfig.Filial)) throw new Exception("Filial inválida!");
                         if (String.IsNullOrEmpty(remessaConfig.Cod_Fornecedor)) throw new Exception("Informe o Fornecedor!");
                         if (remessaConfig.Vlr_Minimo.Equals(0)) throw new Exception("Valor Minímo deve ser maior que zero!");
-                        if (remessaConfig.Total.Equals(0)) throw new Exception("Valor Total deve ser maior que zero!");
 
                         remessaConfig.Filial = remessaConfig.Filial.Split(']').Length.Equals(2) ? remessaConfig.Filial.Split(']')[0].Replace("[", String.Empty).Trim() : remessaConfig.Filial;
                     });
                     errorView = () => { return View(RegistroConvertido.RegistroRemessaConfiguracao); };
                 }
+                #endregion
 
+                #region Remessa Usuário
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaUsuario))
                     errorView = () => { return View(RegistroConvertido.RegistroRemessaUsuario); };
+                #endregion
 
+                #region Sankhya Top
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop))
                 {
                     RegistroConvertido.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop sankhya)
@@ -90,9 +98,26 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                     errorView = () => { return View(RegistroConvertido.RegistroSankhyaTop); };
                 }
+                #endregion
 
+                #region Fornecedor Grupo
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorGrupo))
                     errorView = () => { return View(RegistroConvertido.RegistroFornecedorGrupo); };
+                #endregion
+
+                #region Motivo Laudo
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.MotivoLaudo))
+                {
+                    RegistroConvertido.RegistroMotivoLaudo.ForEach(delegate (GarantiaConfiguracao.MotivoLaudo motivoLaudo)
+                    {
+                        Int32.Parse(motivoLaudo.Id_Tipo);
+
+                        if ((GarantiaConfiguracao.TipoGeral)Convert.ToInt32(motivoLaudo.Id_Tipo) != GarantiaConfiguracao.TipoGeral.Defeito)
+                            throw new Exception(String.Format("Tipo Motivo Laudo {0} inválido!", ((GarantiaConfiguracao.TipoGeral)Convert.ToInt32(motivoLaudo.Id_Tipo)).ToString()));
+                    });
+                    errorView = () => { return View(RegistroConvertido.RegistroMotivoLaudo); };
+                }
+                #endregion
 
                 if (!ModelState.IsValid)
                     throw new Exception(ModelState.Values.Where(x => x.Errors.Count > 0).Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />")));
@@ -131,8 +156,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 #region [Processamento] Formatar Valores para View 
                 var garantia = _garantiaConfigService.RegistroListar(TAG);
 
-                GarantiaConfiguracao.GridNome = GarantiaConfiguracao.DicTagGridNome.Where(w => w.Key.Equals(TAG)).FirstOrDefault().Value;
-                GarantiaConfiguracao.GridColunas = (object[])GarantiaConfiguracao.DicTagGridColuna.Where(w => w.Key.Equals(TAG)).FirstOrDefault().Value;
+                GarantiaConfiguracao.Contexto.GridNome = GarantiaConfiguracao.Contexto.DicTagGridNome.Where(w => w.Key.Equals(TAG)).FirstOrDefault().Value;
+                GarantiaConfiguracao.Contexto.GridColunas = (object[])GarantiaConfiguracao.Contexto.DicTagGridColuna.Where(w => w.Key.Equals(TAG)).FirstOrDefault().Value;
 
                 var _Data = new Object();
                 if (garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.Configuracao))
@@ -147,14 +172,16 @@ namespace FWLog.Web.Backoffice.Controllers
                     _Data = garantia.RegistroSankhyaTop;
                 if (garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorGrupo))
                     _Data = garantia.RegistroFornecedorGrupo;
+                if (garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.MotivoLaudo))
+                    _Data = garantia.RegistroMotivoLaudo;
                 #endregion
 
                 return Json(new
                 {
                     Success = true,
-                    GridColunas = GarantiaConfiguracao.GridColunas.ToArray(),
-                    GridNome = GarantiaConfiguracao.GridNome,
-                    Data = _Data
+                    GridColunas = GarantiaConfiguracao.Contexto.GridColunas.ToArray(),
+                    GridNome = GarantiaConfiguracao.Contexto.GridNome,
+                    Data = _Data,
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -178,7 +205,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 if (Registro.Id.Equals(0))
                     throw new Exception(String.Format("Id [{0}] do registro inválido!", Registro.Id));
 
-                if (!GarantiaConfiguracao.DicTagsValidas.Values.Contains(Registro.Tag.ToString()))
+                if (!GarantiaConfiguracao.Contexto.DicTagsValidas.Values.Contains(Registro.Tag.ToString()))
                     throw new Exception(String.Format("Tag {0} inválida!", Registro.Tag));
 
                 _garantiaConfigService.RegistroExcluir(Registro);
@@ -216,7 +243,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         _Retorno.RegistroConfiguracao = new List<GarantiaConfiguracao.Configuracao>();
                         model.Inclusao.ForEach(delegate (object o)
                         {
-                            _Retorno.RegistroConfiguracao.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.Configuracao>(o.ToString()));
+                            _Retorno.RegistroConfiguracao.Add(GarantiaConfiguracao.Contexto.SerializarJS.Deserialize<GarantiaConfiguracao.Configuracao>(o.ToString()));
                         });
                         break;
                     #endregion
@@ -226,7 +253,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         _Retorno.RegistroFornecedorQuebra = new List<GarantiaConfiguracao.FornecedorQuebra>();
                         model.Inclusao.ForEach(delegate (object o)
                         {
-                            _Retorno.RegistroFornecedorQuebra.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.FornecedorQuebra>(o.ToString()));
+                            _Retorno.RegistroFornecedorQuebra.Add(GarantiaConfiguracao.Contexto.SerializarJS.Deserialize<GarantiaConfiguracao.FornecedorQuebra>(o.ToString()));
                         });
                         break;
                     #endregion
@@ -236,7 +263,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         _Retorno.RegistroRemessaConfiguracao = new List<GarantiaConfiguracao.RemessaConfiguracao>();
                         model.Inclusao.ForEach(delegate (object o)
                         {
-                            _Retorno.RegistroRemessaConfiguracao.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.RemessaConfiguracao>(o.ToString()));
+                            _Retorno.RegistroRemessaConfiguracao.Add(GarantiaConfiguracao.Contexto.SerializarJS.Deserialize<GarantiaConfiguracao.RemessaConfiguracao>(o.ToString()));
                         });
                         break;
                     #endregion
@@ -246,7 +273,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         _Retorno.RegistroSankhyaTop = new List<GarantiaConfiguracao.SankhyaTop>();
                         model.Inclusao.ForEach(delegate (object o)
                         {
-                            _Retorno.RegistroSankhyaTop.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.SankhyaTop>(o.ToString()));
+                            _Retorno.RegistroSankhyaTop.Add(GarantiaConfiguracao.Contexto.SerializarJS.Deserialize<GarantiaConfiguracao.SankhyaTop>(o.ToString()));
                         });
                         break;
                     #endregion
@@ -256,7 +283,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         _Retorno.RegistroRemessaUsuario = new List<GarantiaConfiguracao.RemessaUsuario>();
                         model.Inclusao.ForEach(delegate (object o)
                         {
-                            _Retorno.RegistroRemessaUsuario.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.RemessaUsuario>(o.ToString()));
+                            _Retorno.RegistroRemessaUsuario.Add(GarantiaConfiguracao.Contexto.SerializarJS.Deserialize<GarantiaConfiguracao.RemessaUsuario>(o.ToString()));
                         });
                         break;
                     #endregion
@@ -266,7 +293,17 @@ namespace FWLog.Web.Backoffice.Controllers
                         _Retorno.RegistroFornecedorGrupo = new List<GarantiaConfiguracao.FornecedorGrupo>();
                         model.Inclusao.ForEach(delegate (object o)
                         {
-                            _Retorno.RegistroFornecedorGrupo.Add(GarantiaConfiguracao.SerializarJS.Deserialize<GarantiaConfiguracao.FornecedorGrupo>(o.ToString()));
+                            _Retorno.RegistroFornecedorGrupo.Add(GarantiaConfiguracao.Contexto.SerializarJS.Deserialize<GarantiaConfiguracao.FornecedorGrupo>(o.ToString()));
+                        });
+                        break;
+                    #endregion
+
+                    #region Motivo Laudo
+                    case GarantiaConfiguracao.GarantiaTag.MotivoLaudo:
+                        _Retorno.RegistroMotivoLaudo = new List<GarantiaConfiguracao.MotivoLaudo>();
+                        model.Inclusao.ForEach(delegate (object o)
+                        {
+                            _Retorno.RegistroMotivoLaudo.Add(GarantiaConfiguracao.Contexto.SerializarJS.Deserialize<GarantiaConfiguracao.MotivoLaudo>(o.ToString()));
                         });
                         break;
                     #endregion
