@@ -64,7 +64,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(model);
         }
 
-        public ActionResult ListarSolicitacao(DataTableFilter<GarantiaSolicitacaoFilterVM> model)
+        public ActionResult SolicitacaoListar(DataTableFilter<GarantiaSolicitacaoFilterVM> model)
         {
             int recordsFiltered, totalRecords;
             var filter = Mapper.Map<DataTableFilter<GarantiaFilter>>(model);
@@ -82,7 +82,7 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-        public ActionResult VisualizarSolicitacao(long Id)
+        public ActionResult SolicitacaoVisualizar(long Id)
         {
             var itens = _uow.GarantiaRepository.ListarSolicitacaoItem(Id);
 
@@ -92,10 +92,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 Itens = Mapper.Map<List<GarantiaSolicitacaoItemListVM>>(itens)
             };
 
-            return PartialView("_VisualizarSolicitacao", model);
+            return PartialView("_SolicitacaoVisualizar", model);
         }
 
-        public ActionResult ConferirSolicitacao(long Id)
+        public ActionResult SolicitacaoConferir(long Id)
         {
             //Origem - Remessa | Solicitação
             var idConferencia = _uow.GarantiaRepository.PegaIdUltimaConferenciaAtiva("solicitacao", Id);
@@ -106,20 +106,20 @@ namespace FWLog.Web.Backoffice.Controllers
                 Solicitacao = Mapper.Map<GarantiaSolicitacaoListVM>(_uow.GarantiaRepository.SelecionaSolicitacao(Id))
             };
 
-            return PartialView("_ConferirSolicitacao", model);
+            return PartialView("_SolicitacaoConferir", model);
         }
 
-        public ActionResult ImportarSolicitacao()
+        public ActionResult SolicitacaoImportar()
         {
             var model = new GarantiaSolicitacao
             {
             };
 
-            return PartialView("_ImportarSolicitacao", model);
+            return PartialView("_SolicitacaoImportar", model);
         }
 
         [HttpPost]
-        public ActionResult ImportarSolicitacaoGravar(GarantiaSolicitacao item)
+        public ActionResult SolicitacaoImportarGravar(GarantiaSolicitacao item)
         {
             if (item.Id_Tipo == 1 && string.IsNullOrEmpty(item.Chave_Acesso))
                 ModelState.AddModelError("Chave_Acesso", "O campo Chave de Acesso é obrigatório.");
@@ -148,12 +148,28 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             else
             {
+                //TODO ROTINA PARA IMPORTAR
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,
                     Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
                 });
             }
+        }
+
+        [HttpPost]
+        public ActionResult SolicitacaoEstornar(long Id)
+        {
+            _uow.GarantiaRepository.EstornarSolicitacao(new GarSolicitacao
+            {
+                Id = Id
+            });
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = "Estorno efetuado com sucesso."
+            });
         }
 
         public ActionResult ConferenciaForm(long Id_Conferencia)
@@ -245,16 +261,18 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult ConferenciaLaudoDetalhe(long Id_Conferencia, string Refx)
         {
+            var conferencia = _uow.GarantiaRepository.SelecionaConferenciaItem(Id_Conferencia, Refx);
+
             var result = _uow.GarantiaRepository.ListarConferenciaSolicitacaoLaudoDetalhe(Id_Conferencia, Refx);
             var lista = Mapper.Map<IEnumerable<GarantiaLaudo>>(result).ToList();
 
             var model = new GarantiaLaudoVM
             {
+                Conferencia = Mapper.Map<GarantiaConferenciaItem>(conferencia),
                 Form = new GarantiaLaudo()
                 {
                     Refx = Refx,
-                    Lista_Motivos = new SelectList(_uow.GarantiaRepository.ListarMotivoLaudo(8), "Id", "Descricao", 1),
-                    Lista_Itens = new SelectList(_uow.GarantiaRepository.ListarLaudoItem(Id_Conferencia, Refx), "Id", "Id_Item_Nf", 1)
+                    Lista_Motivos = new SelectList(_uow.GarantiaRepository.ListarMotivoLaudo(8), "Id", "Descricao", 1)
                 },
                 Lista = lista
             };
@@ -265,6 +283,12 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpPost]
         public ActionResult ConferenciaLaudoDetalheGravar(GarantiaLaudo item)
         {
+            if (item.Quant > item.Quant_Max)
+                ModelState.AddModelError("Quant", string.Format("Quantidade máxima permitida é <strong>{0}</strong>.", item.Quant_Max));
+
+            if (item.Quant <= 0)
+                ModelState.AddModelError("Quant", string.Format("Quantidade minima permitida é <strong>1</strong>."));
+
             if (!ModelState.IsValid)
             {
                 var erros = ModelState.Values.Where(x => x.Errors.Count > 0)
@@ -318,15 +342,38 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_ConferenciaDivergencia", model);
         }
 
-        public ActionResult Teste()
+        public ActionResult Teste(long Id)
         {
             //GRAVA O HISTORICO
             _uow.GarantiaRepository.CriarConferencia(new GarConferencia
             {
-                Id_Solicitacao = 10,
+                Id_Solicitacao = Id,
                 Id_Usr = IdUsuario,
                 Id_Tipo_Conf = 5
             });
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+            });
+        }
+
+        [HttpPost]
+        public ActionResult ConferenciaFinalizar(long Id_Conferencia)
+        {
+            var conferencia = _uow.GarantiaRepository.SelecionaConferencia(Id_Conferencia);
+
+            if (conferencia.Id_Tipo_Conf == 5)
+            {
+                //CONFERENCIA DE ENTRADA
+                _uow.GarantiaRepository.FinalizarConferenciaEntrada(new GarConferencia
+                {
+                    Id = conferencia.Id,
+                    Id_Usr = IdUsuario,
+                    Id_Solicitacao = conferencia.Id_Solicitacao
+                });
+            }
 
             return Json(new AjaxGenericResultModel
             {

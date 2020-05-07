@@ -31,10 +31,15 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
     public class GarantiaConferenciaItem
     {
+        public long? Quant_Max { get; set; }
+
         [Display(Name = "Refx")]
         public string Refx { get; set; }
 
-        [Display(Name = "Quant.")]
+        [Display(Name = "Usuário")]
+        public string Usr { get; set; }
+
+        [Display(Name = "Quant. NF.")]
         public long? Quant { get; set; }
 
         public DateTime Dt_Conf { get; set; }
@@ -50,6 +55,7 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
         public long Id_Conf { get; set; }
         public long? Id { get; set; }
+        public long Id_Item { get; set; }
 
         public long Tem_No_Excesso { get; set; }
     }

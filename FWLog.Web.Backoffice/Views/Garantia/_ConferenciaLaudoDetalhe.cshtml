@@ -6,19 +6,27 @@
             <div class="x_content">
                 <form id="formLaudoItensDetalhe">
                     @Html.HiddenFor(m => m.Form.Refx, new { id = "Refx", Name = "Refx" })
+                    @Html.HiddenFor(m => m.Conferencia.Quant_Max, new { id = "Quant_Max", Name = "Quant_Max" })
+                    @Html.HiddenFor(m => m.Conferencia.Id_Item, new { id = "Id_Item", Name = "Id_Item" })
                     <div class="col-xs-12 col-md-2  form-group">
-                        @Html.LabelFor(m => m.Form.Quant)
-                        @Html.TextBoxFor(m => m.Form.Quant, new { id = "Quant", Name = "Quant", @class = "form-control onlyNumber" })
+                        @Html.LabelFor(m => m.Conferencia.Quant)
+                        @Html.TextBoxFor(m => m.Conferencia.Quant, new { @class = "form-control", @readonly = "readonly" })
                     </div>
                     <div class="col-xs-12 col-md-2 form-group">
-                        @Html.LabelFor(m => m.Form.Id_Item)
-                        @Html.DropDownListFor(m => m.Form.Id_Item, Model.Form.Lista_Itens, new { id = "Id_Item", Name = "Id_Item", @class = "form-control" })
+                        @Html.LabelFor(m => m.Conferencia.Quant_Conferida)
+                        @Html.TextBoxFor(m => m.Conferencia.Quant_Conferida, new { @class = "form-control", @readonly = "readonly" })
                     </div>
-                    <div class="col-xs-12 col-md-6 form-group">
-                        @Html.LabelFor(m => m.Form.Id_Motivo)
-                        @Html.DropDownListFor(m => m.Form.Id_Motivo, Model.Form.Lista_Motivos, new { id = "Id_Motivo", Name = "Id_Motivo", @class = "form-control" })
+                    <div id="divFormLaudoItensDetalhe">
+                        <div class="col-xs-12 col-md-2  form-group">
+                            @Html.LabelFor(m => m.Form.Quant)
+                            @Html.TextBoxFor(m => m.Form.Quant, new { id = "Quant", Name = "Quant", @class = "form-control onlyNumber" })
+                        </div>
+                        <div class="col-xs-12 col-md-5 form-group">
+                            @Html.LabelFor(m => m.Form.Id_Motivo)
+                            @Html.DropDownListFor(m => m.Form.Id_Motivo, Model.Form.Lista_Motivos, new { id = "Id_Motivo", Name = "Id_Motivo", @class = "form-control" })
+                        </div>
+                        <button style="margin-top: 20px;" type="submit" class="btn btn-primary">Gravar</button>
                     </div>
-                    <button style="margin-top: 20px;" type="submit" class="btn btn-primary">Gravar</button>
                 </form>
             </div>
         </div>
@@ -33,7 +41,6 @@
                     <thead>
                         <tr>
                             <th>Quant.</th>
-                            <th>Item NF</th>
                             <th>Motivo</th>
                             <th></th>
                         </tr>
@@ -51,16 +58,6 @@
                                     else
                                     {
                                         <span class="label label-success">@item.Quant_Laudo</span>
-                                    }
-                                </td>
-                                <td>
-                                    @if (item.Id_Item_Nf == 0)
-                                    {
-                                        <span class="label label-danger"> AUTOMÁTICO</span>
-                                    }
-                                    else
-                                    {
-                                        @item.Id_Item_Nf
                                     }
                                 </td>
                                 <td>@item.Motivo</td>

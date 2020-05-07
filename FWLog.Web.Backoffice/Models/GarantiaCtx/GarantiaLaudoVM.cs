@@ -8,11 +8,13 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
     public class GarantiaLaudoVM
     {
         public GarantiaLaudo Form { get; set; }
+        public GarantiaConferenciaItem Conferencia { get; set; }
         public List<GarantiaLaudo> Lista { get; set; }
 
         public GarantiaLaudoVM()
         {
             Form = new GarantiaLaudo();
+            Conferencia = new GarantiaConferenciaItem();
             Lista = new List<GarantiaLaudo>();
         }
     }
@@ -20,7 +22,6 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
     public class GarantiaLaudo
     {
         public long Id { get; set; }
-        public SelectList Lista_Itens { get; set; }
 
         [Display(Name = "Item NF")]
         public long Id_Item_Nf { get; set; }
@@ -49,5 +50,6 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
         public long Tem_No_Excesso { get; set; }
         public long Quant_Laudo { get; set; }
+        public long Quant_Max { get; set; }
     }
 }

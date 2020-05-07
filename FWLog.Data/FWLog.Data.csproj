@@ -106,7 +106,6 @@
     <Compile Include="Models\ApplicationSession.cs" />
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\ColetorAplicacao.cs" />
-    <Compile Include="Models\GarConferenciaCabecalho.cs" />
     <Compile Include="Models\GarConferencia.cs" />
     <Compile Include="Models\GarSolicitacao.cs" />
     <Compile Include="Models\GarantiaConfiguracao.cs" />

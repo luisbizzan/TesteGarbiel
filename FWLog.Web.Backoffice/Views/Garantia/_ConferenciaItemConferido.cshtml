@@ -10,6 +10,7 @@
                             <th>Refx</th>
                             <th>Descrição</th>
                             <th>Quant.</th>
+                            <th>Usuário</th>
                             <th>Dt</th>
                         </tr>
                     </thead>
@@ -30,6 +31,7 @@
                                         <span class="label label-success">@item.Quant_Conferida</span>
                                     }
                                 </td>
+                                <td>@item.Usr</td>
                                 <td>@String.Format("{0:dd/MM/yyyy hh:mm}", item.Dt_Conf)</td>
                             </tr>
                         }

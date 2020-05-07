@@ -633,9 +633,9 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\index.js" />
-    <Content Include="Scripts\Views\Garantia\importarSolicitacao.js" />
+    <Content Include="Scripts\Views\Garantia\solicitacaoImportar.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
-    <Content Include="Scripts\Views\Garantia\conferirSolicitacao.js" />
+    <Content Include="Scripts\Views\Garantia\solicitacaoConferir.js" />
     <Content Include="Scripts\Views\Garantia\remessa.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
     <Content Include="Scripts\Views\Geral\formGeralUploads.js" />
@@ -734,15 +734,15 @@
     <Content Include="Views\Geral\_FormHistoricos.cshtml" />
     <Content Include="Views\Geral\_FormUploads.cshtml" />
     <Content Include="Views\GarantiaConfiguracao\Index.cshtml" />
-    <Content Include="Views\Garantia\_VisualizarSolicitacao.cshtml" />
-    <Content Include="Views\Garantia\_ConferirSolicitacao.cshtml" />
+    <Content Include="Views\Garantia\_SolicitacaoVisualizar.cshtml" />
+    <Content Include="Views\Garantia\_SolicitacaoConferir.cshtml" />
     <Content Include="Views\Garantia\_ConferenciaForm.cshtml" />
     <Content Include="Views\Garantia\_ConferenciaDivergencia.cshtml" />
     <Content Include="Views\Garantia\_ConferenciaLaudo.cshtml" />
     <Content Include="Views\Garantia\_ConferenciaLaudoDetalhe.cshtml" />
     <Content Include="Views\Garantia\Remessa.cshtml" />
     <Content Include="Views\Garantia\_ConferenciaItemPendente.cshtml" />
-    <Content Include="Views\Garantia\_ImportarSolicitacao.cshtml" />
+    <Content Include="Views\Garantia\_SolicitacaoImportar.cshtml" />
     <Content Include="Views\Garantia\_ConferenciaItemConferido.cshtml" />
   </ItemGroup>
   <ItemGroup>

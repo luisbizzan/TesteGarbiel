@@ -25,7 +25,7 @@ function importar() {
     var formulario = $("form#formImportarSolicitacao").serialize();
 
     $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "ImportarSolicitacaoGravar",
+        url: HOST_URL + CONTROLLER_PATH + "SolicitacaoImportarGravar",
         method: "POST",
         data: formulario,
         success: function (result) {

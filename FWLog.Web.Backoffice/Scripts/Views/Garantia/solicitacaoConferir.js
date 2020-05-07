@@ -106,6 +106,47 @@ function finalizarConferencia() {
                 text: 'Finalizar',
                 btnClass: 'btn-red',
                 action: function () {
+                    finalizarConferenciaConfirmar();
+                }
+            },
+            cancelar: {
+                text: 'Cancelar',
+                action: function () {
+                }
+            }
+        }
+    });
+}
+
+function finalizarConferenciaConfirmar() {
+    $.confirm({
+        type: 'red',
+        theme: 'material',
+        title: 'Finalizar',
+        content: 'Tem Certeza?',
+        typeAnimated: true,
+        autoClose: 'cancelar|10000',
+        buttons: {
+            confirmar: {
+                text: 'Finalizar',
+                btnClass: 'btn-red',
+                action: function () {
+                    $.ajax({
+                        url: HOST_URL + CONTROLLER_PATH + "ConferenciaFinalizar",
+                        method: "POST",
+                        data: { Id_Conferencia: $("#Conferencia_Id").val() },
+                        success: function (result) {
+                            if (result.Success) {
+                                $("#modalVisualizar").modal("hide");
+                                PNotify.success({ text: result.Message, delay: 1000 });
+                            } else {
+                                PNotify.error({ text: result.Message });
+                            }
+                        },
+                        error: function (request, status, error) {
+                            PNotify.warning({ text: result.Message });
+                        }
+                    });
                 }
             },
             cancelar: {
@@ -189,6 +230,14 @@ function itensLaudoDetalhe(refx) {
             searching: true,
             bInfo: true
         });
+
+        $('.onlyNumber').mask('0#');
+
+        let quantMax = $("#formLaudoItensDetalhe #Quant_Max").val();
+        if (quantMax <= 0)
+            $("#divFormLaudoItensDetalhe").hide();
+
+        $("#formLaudoItensDetalhe #Quant").val(quantMax);
 
         $('#formLaudoItensDetalhe').submit(function (e) {
             e.preventDefault();
@@ -333,7 +382,13 @@ function alterarQuantidade() {
         },
         onContentReady: function () {
             var jc = this;
-            $('.onlyNumber').mask('0#');
+            $('.onlyNumber').mask("Z0999999.00", {
+                translation: {
+                    '0': { pattern: /\d/ },
+                    '9': { pattern: /\d/, optional: true },
+                    'Z': { pattern: /[\-\+]/, optional: true }
+                }
+            });
             this.$content.find('.qtd').focus();
             this.$content.find('form').on('submit', function (e) {
                 e.preventDefault();

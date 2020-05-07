@@ -114,6 +114,26 @@ namespace FWLog.Data.Repository.GeneralCtx
             return retorno;
         }
 
+        public void EstornarSolicitacao(GarSolicitacao item)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    //Deletar a solicitação
+                    sQuery = @"DELETE FROM gar_solicitacao WHERE Id = :Id AND Id_Status != 24";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id });
+
+                    //Deletar a conferencia
+                    sQuery = @"DELETE FROM gar_conferencia WHERE Id_Solicitacao = :Id";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id });
+                }
+                conn.Close();
+            }
+        }
+
         public List<GarSolicitacaoItem> ListarSolicitacaoItem(long Id_Solicitacao)
         {
             List<GarSolicitacaoItem> retorno = new List<GarSolicitacaoItem>();
@@ -277,6 +297,90 @@ namespace FWLog.Data.Repository.GeneralCtx
             return retorno;
         }
 
+        public void FinalizarConferenciaEntrada(GarConferencia item)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    //Grava itens a mais e a menos na tebela de excesso
+                    sQuery = @"
+                    INSERT INTO gar_conferencia_excesso (Id_Conf, Id_Usr, Dt_Conf, Id_Item, Quant_Conferida, Refx, Id_Tipo)
+                    SELECT
+                        :Id AS Id_Conf,
+                        :Id_Usr AS Id_Usr,
+                        SYSDATE AS Dt_Conf,
+                        Id_Item,
+                        Quant AS Quant_Conferida,
+                        Refx,
+                        (CASE WHEN Id_Motivo = 3 THEN 35 ELSE 34 END) AS Id_Tipo
+                    FROM(
+                        SELECT
+                            GCI.Refx,
+                            (Quant_Conferida - Quant) AS Quant,
+                            0 AS Id_Item,
+                            CASE WHEN  (Quant_Conferida - Quant) < 0 THEN 3 ELSE 2 END AS Id_Motivo
+                        FROM
+                            gar_conferencia_item GCI
+                            INNER JOIN gar_conferencia GC ON GC.id = GCI.Id_Conf
+                        WHERE
+                            GCI.Id_Conf = :Id
+                            AND (Quant_Conferida - Quant) != 0
+                    )
+                    ";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id, item.Id_Usr });
+
+                    //Abastece Estoque Laudo e Garantia
+                    sQuery = @"
+                    INSERT INTO gar_movimentacao ( Id_Item, Valor, Id_Tipo_Estoque, Id_Doc_Laudo, Id_Tipo, Id_Tipo_Movimentacao, Quant)
+                    SELECT * FROM(
+                        SELECT
+                            GSI.Id AS Id_Item,
+                            GSI.Valor,
+                            15 Id_Tipo_Estoque,
+                            0 AS Id_Doc_Laudo,
+                            13 AS Id_Tipo,
+                            27 AS Id_Tipo_Movimentacao,
+                            CASE WHEN  GSIL.Id IS NULL THEN  GSI.Quant ELSE ( GSI.Quant - GSIL.Quant) END AS Quant
+                        FROM
+                            gar_conferencia GC
+                            INNER JOIN gar_solicitacao_item GSI ON GSI.id_solicitacao = GC.id_solicitacao
+                            LEFT JOIN gar_solicitacao_item_laudo GSIL ON GSIL.id_item = GSI.id
+                        WHERE
+                            GC.Id = :Id
+                        UNION ALL
+                        SELECT
+                            GSI.Id AS Id_Item,
+                            GSI.Valor,
+                            14 Id_Tipo_Estoque,
+                            GSIL.Id AS Id_Doc_Laudo,
+                            13 AS Id_Tipo,
+                            27 AS Id_Tipo_Movimentacao,
+                            GSIL.Quant
+                        FROM
+                            gar_conferencia GC
+                            INNER JOIN gar_solicitacao_item GSI ON GSI.id_solicitacao = GC.id_solicitacao
+                            INNER JOIN gar_solicitacao_item_laudo GSIL ON GSIL.id_item = GSI.id
+                        WHERE
+                            GC.Id = :Id
+                    ) WHERE Quant != 0
+                    ";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id });
+
+                    //Fecha a conferencia
+                    sQuery = @"UPDATE gar_conferencia SET Ativo = 0 WHERE Id = :Id";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id });
+
+                    //Fecha a solicitação
+                    sQuery = @"UPDATE gar_solicitacao SET Id_Status = 24 WHERE Id = :Id_Solicitacao";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id_Solicitacao });
+                }
+                conn.Close();
+            }
+        }
+
         public void CriarLaudo(GarSolicitacaoItemLaudo item)
         {
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
@@ -394,6 +498,47 @@ namespace FWLog.Data.Repository.GeneralCtx
                         GC.Id = :Id_Conferencia
                     ";
                     retorno = conn.Query<GarConferencia>(sQuery, new { Id_Conferencia }).SingleOrDefault();
+                }
+                conn.Close();
+            }
+            return retorno;
+        }
+
+        public GarConferenciaItem SelecionaConferenciaItem(long Id_Conferencia, string Refx)
+        {
+            GarConferenciaItem retorno = new GarConferenciaItem();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        Id,
+                        Quant,
+                        Quant_Conferida,
+                        Id_Item,
+                        GREATEST(Quant_Conferida,Quant) - (Quant_Laudo + Quant_Laudo_Automatico) AS Quant_Max
+                    FROM(
+                        SELECT
+                            GCI.Id,
+                            GCI.Quant,
+                            GCI.Quant_Conferida,
+                            (SELECT MAX(Id) FROM gar_solicitacao_item GSI WHERE GSI.id_solicitacao = GC.id_solicitacao AND GSI.refx = GCI.refx ) AS Id_Item,
+                            CASE WHEN  (Quant_Conferida - Quant) < 0 THEN (Quant_Conferida - Quant) * -1 ELSE (Quant_Conferida - Quant) END AS Quant_Laudo_Automatico,
+                            NVL((SELECT SUM(GSIL.quant) FROM gar_solicitacao_item_laudo GSIL INNER JOIN gar_solicitacao_item GSI ON GSI.id = GSIL.id_item
+                            WHERE GSI.id_solicitacao = GC.id_solicitacao AND GSI.refx = GCI.refx  ),0) AS Quant_Laudo
+                        FROM
+                            gar_conferencia_item GCI
+                            INNER JOIN gar_conferencia GC ON GC.id = GCI.Id_Conf
+                        WHERE
+                            GCI.Id_Conf = :Id_Conferencia
+                            AND GCI.Refx = :Refx
+                    )
+
+                    ";
+                    retorno = conn.Query<GarConferenciaItem>(sQuery, new { Id_Conferencia, Refx }).SingleOrDefault();
                 }
                 conn.Close();
             }
@@ -568,18 +713,20 @@ namespace FWLog.Data.Repository.GeneralCtx
                 {
                     string sQuery = @"
                     SELECT
-                        Id,
-                        Id_Conf,
-                        Refx,
-                        Volume,
-                        Dt_Conf,
-                        Quant_Conferida
+                        GCH.Id,
+                        GCH.Id_Conf,
+                        GCH.Refx,
+                        U.""UserName"" AS Usr,
+                        GCH.Volume,
+                        GCH.Dt_Conf,
+                        GCH.Quant_Conferida
                     FROM
-                        gar_conferencia_hist
+                        gar_conferencia_hist GCH
+                        INNER JOIN ""AspNetUsers"" U ON U.""Id"" =  GCH.id_usr
                     WHERE
-                        Id_Conf = :Id_Conferencia
+                        GCH.Id_Conf = :Id_Conferencia
                     ORDER BY
-                        Id DESC
+                        GCH.Id DESC
                     ";
                     retorno = conn.Query<GarConferenciaHist>(sQuery, new { Id_Conferencia }).ToList();
                 }

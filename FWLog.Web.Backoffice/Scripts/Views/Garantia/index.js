@@ -1,6 +1,4 @@
 ﻿(function () {
-
-
     $('#modalVisualizar').on('hidden.bs.modal', function () {
         location.reload();
     });
@@ -33,7 +31,7 @@
     }, 'Data Final Obrigatório');
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        var visivelEstornar = view.estornarSolicitacao;
+        var visivelEstornar = view.estornarSolicitacao && (full.Id_Status !== 24);
         var visivelConferir = view.conferirSolicitacao && (full.Id_Status === 22 || full.Id_Status === 23);
 
         return [
@@ -118,7 +116,6 @@
         ]
     });
 
-
     $('.btn-row-actions').tooltip();
 
     dart.dataTables.loadFormFilterEvents();
@@ -128,7 +125,7 @@ function visualizarSolicitacao() {
     var id = $(this).data("id");
     let modal = $("#modalVisualizar");
 
-    modal.load(CONTROLLER_PATH + "VisualizarSolicitacao/" + id, function () {
+    modal.load(CONTROLLER_PATH + "SolicitacaoVisualizar/" + id, function () {
         modal.modal();
 
         var botoes = ['selectAll', 'selectNone',
@@ -208,26 +205,22 @@ function visualizarSolicitacao() {
     });
 }
 
-
-
 function conferirSolicitacao() {
     var id = $(this).data("id");
     let modal = $("#modalVisualizar");
 
-    modal.load(CONTROLLER_PATH + "ConferirSolicitacao/" + id, function () {
+    modal.load(CONTROLLER_PATH + "SolicitacaoConferir/" + id, function () {
         modal.modal();
     });
 }
 
 function importarSolicitacao() {
-
     let modal = $("#modalVisualizar");
 
-    modal.load(CONTROLLER_PATH + "ImportarSolicitacao/", function () {
+    modal.load(CONTROLLER_PATH + "SolicitacaoImportar/", function () {
         modal.modal();
     });
 }
-
 
 function estornarSolicitacao() {
     var id = $(this).data("id");
@@ -236,7 +229,7 @@ function estornarSolicitacao() {
         type: 'red',
         theme: 'material',
         title: 'Estornar Solicitação',
-        content: 'Tem Certeza?',
+        content: 'Serão excluidos todos os dados da solicitação, e você terá que importar o documento novamente, continuar?',
         typeAnimated: true,
         autoClose: 'cancelar|10000',
         buttons: {
@@ -244,6 +237,22 @@ function estornarSolicitacao() {
                 text: 'Estornar',
                 btnClass: 'btn-red',
                 action: function () {
+                    $.ajax({
+                        url: HOST_URL + CONTROLLER_PATH + "SolicitacaoEstornar",
+                        method: "POST",
+                        data: { Id: id },
+                        success: function (result) {
+                            if (result.Success) {
+                                location.reload();
+                                PNotify.success({ text: result.Message, delay: 1000 });
+                            } else {
+                                PNotify.error({ text: result.Message });
+                            }
+                        },
+                        error: function (request, status, error) {
+                            PNotify.warning({ text: result.Message });
+                        }
+                    });
                 }
             },
             cancelar: {
