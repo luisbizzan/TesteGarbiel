@@ -655,7 +655,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Nota fiscal não está instalada na doca.");
             }
 
-            if (await ValidarSituacaoNFVenda(pedido))
+            if (!await ValidarSituacaoNFVenda(pedido))
             {
                 throw new BusinessException("Nota fiscal não está autorizada no Sankhya.");
             }
