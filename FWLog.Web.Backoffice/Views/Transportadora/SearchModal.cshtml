@@ -36,6 +36,7 @@
                         @Html.LabelFor(m => m.Filter.CNPJ)
                         @Html.TextBoxFor(m => m.Filter.CNPJ, new { @class = "form-control", data_field = "CNPJ" })
                     </div>
+                    @Html.HiddenFor(m => m.Filter.Ativo, new { data_field = "Ativo" })
                 </div>
                 <div class="row">
                     <div class="col-xs-12 form-buttons">

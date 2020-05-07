@@ -31,6 +31,16 @@
         limparEmpresa("EmpresaGarantia");
     });
 
+    $("#pesquisarTransportadora").click(function () {
+        $("#modalTransportadora").load(HOST_URL + "Transportadora/SearchModal?ativo=true", function () {
+            $("#modalTransportadora").modal();
+        });
+    });
+
+    $("#limparTransportadora").click(function () {
+        limparTransportadora();
+    });
+
 })();
 
 function setEmpresa(idEmpresa, nomeFantasia, campo) {
@@ -49,4 +59,17 @@ function limparEmpresa(campo) {
     empresa.val("");
 }
 
+function limparTransportadora() {
+    let razaoSocial = $("#RazaoSocialTransportadora");
+    let cliente = $("#IdTransportadora");
+    razaoSocial.val("");
+    cliente.val("");
+}
+
+function setTransportadora(idTransportadora, nomeFantasia) {
+    $("#RazaoSocialTransportadora").val(nomeFantasia);
+    $("#IdTransportadora").val(idTransportadora);
+    $("#modalTransportadora").modal("hide");
+    $("#modalTransportadora").empty();
+}
 
