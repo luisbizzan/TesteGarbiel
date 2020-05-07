@@ -45,7 +45,6 @@ namespace FWLog.Services.Services
             throw new NotImplementedException();
         }
 
-
         public BuscarPedidoVendaResposta BuscarPedidoVenda(string codigoBarrasPedido, long idEmpresa)
         {
             if (codigoBarrasPedido.NullOrEmpty())

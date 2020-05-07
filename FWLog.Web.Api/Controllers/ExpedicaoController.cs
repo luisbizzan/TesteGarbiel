@@ -243,7 +243,7 @@ namespace FWLog.Web.Api.Controllers
             {
                 try
                 {
-                    _expedicaoService.ImprimirRomaneio(requisicao?.NroRomaneio ?? 0, requisicao?.NroNotaFiscal ?? 0, requisicao?.IdImpressora ?? 0, requisicao?.ImprimeSegundaVia ?? false, IdEmpresa, IdUsuario);
+                    _expedicaoService.ImprimirRomaneio(requisicao?.NroRomaneio ?? 0, requisicao?.IdImpressora ?? 0, requisicao?.ImprimeSegundaVia ?? false, IdEmpresa, IdUsuario);
 
                     return ApiOk();
                 }
