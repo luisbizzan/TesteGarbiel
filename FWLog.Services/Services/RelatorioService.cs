@@ -1658,11 +1658,16 @@ namespace FWLog.Services.Services
             return fwRelatorio.Gerar(fwRelatorioDados);
         }
 
-        public void ImprimirRomaneio(RelatorioRomaneioRequest dadosRelatorio, long idImpressora)
+        public void ImprimirRomaneio(RelatorioRomaneioRequest dadosRelatorio, long idImpressora, bool imprimeSegundaVia)
         {
             var arrayBytesRelatorio = GerarRomaneio(dadosRelatorio);
 
-            _impressoraService.Imprimir(arrayBytesRelatorio, idImpressora);
+            var quantidadeImpressoes = imprimeSegundaVia ? 2 : 1;
+
+            for (int indiceImpressao = 0; indiceImpressao < quantidadeImpressoes; indiceImpressao++)
+            {
+                _impressoraService.Imprimir(arrayBytesRelatorio, idImpressora);
+            }
         }
     }
 }
