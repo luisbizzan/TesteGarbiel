@@ -168,7 +168,7 @@ namespace FWLog.Services.Services
                             salvaPedido = true;
                         }
 
-                        if (string.IsNullOrWhiteSpace(dadosNotaFiscal.TipoFrete) && !string.Equals(pedido.CodigoIntegracaoTipoFrete, dadosNotaFiscal.TipoFrete))
+                        if (!string.IsNullOrWhiteSpace(dadosNotaFiscal.TipoFrete) && !string.Equals(pedido.CodigoIntegracaoTipoFrete, dadosNotaFiscal.TipoFrete))
                         {
                             pedido.CodigoIntegracaoTipoFrete = dadosNotaFiscal.TipoFrete;
 
@@ -179,7 +179,7 @@ namespace FWLog.Services.Services
                         {
                             throw new BusinessException($"Erro ao atualizar a nota fiscal do pedido {pedido.IdPedido} por não haver o número da DANFE");
                         }
-                        else if(!string.Equals(pedido.ChaveAcesso, dadosNotaFiscal.ChaveAcesso))
+                        else if (!string.Equals(pedido.ChaveAcesso, dadosNotaFiscal.ChaveAcesso))
                         {
                             pedido.ChaveAcesso = dadosNotaFiscal.ChaveAcesso;
 
@@ -212,7 +212,7 @@ namespace FWLog.Services.Services
 
             if (pedido.CodigoIntegracaoNotaFiscal == null)
             {
-                throw new BusinessException("O pedido não tem nota fiscal emitada.");
+                throw new BusinessException("Pedido sem NF emitida.");
             }
 
             PedidoNumeroNotaFiscalIntegracao dadosNotaFiscal = await ConsultarSituacaoNFVenda(pedido);
@@ -237,8 +237,9 @@ namespace FWLog.Services.Services
                 return null;
             }
 
-            var where = $"WHERE TGFVAR.NUNOTAORIG = {pedido.CodigoIntegracao} AND TGFCAB.STATUSNFE = 'A'";
+            var where = $"WHERE TGFVAR.NUNOTAORIG = {pedido.CodigoIntegracao} AND TGFCAB.STATUSNFE = 'A' AND TGFCAN.NUNOTA IS NULL";
             var inner = "INNER JOIN TGFVAR ON TGFVAR.NUNOTA = TGFCAB.NUNOTA";
+            inner += " LEFT JOIN TGFCAN ON TGFCAN.NUNOTA = TGFCAB.NUNOTA";
 
             var dadosIntegracaoSankhya = await IntegracaoSankhya.Instance.PreExecutarQuery<PedidoNumeroNotaFiscalIntegracao>(where: where, inner: inner);
 
