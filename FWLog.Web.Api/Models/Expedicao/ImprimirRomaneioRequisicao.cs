@@ -8,9 +8,6 @@ namespace FWLog.Web.Api.Models.Expedicao
         public int NroRomaneio { get; set; }
 
         [Required]
-        public int NroNotaFiscal { get; set; }
-
-        [Required]
         public long IdImpressora { get; set; }
 
         [Required]

@@ -5,6 +5,7 @@ using FWLog.Services.Integracao;
 using FWLog.Services.Model.Coletor;
 using FWLog.Services.Model.Expedicao;
 using FWLog.Services.Model.IntegracaoSankhya;
+using FWLog.Services.Model.Relatorios;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -19,12 +20,14 @@ namespace FWLog.Services.Services
         private readonly UnitOfWork _unitOfWork;
         private ILog _log;
         private readonly ColetorHistoricoService _coletorHistoricoService;
+        private readonly RelatorioService _relatorioService;
 
-        public ExpedicaoService(UnitOfWork unitOfWork, ILog log, ColetorHistoricoService coletorHistoricoService)
+        public ExpedicaoService(UnitOfWork unitOfWork, ILog log, ColetorHistoricoService coletorHistoricoService, RelatorioService relatorioService)
         {
             _unitOfWork = unitOfWork;
             _log = log;
             _coletorHistoricoService = coletorHistoricoService;
+            _relatorioService = relatorioService;
         }
 
         public void IniciarExpedicaoPedidoVenda(long idPedidoVenda, long idPedidoVendaVolume, string idUsuario, long idEmpresa)
@@ -620,16 +623,11 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void ImprimirRomaneio(int nroRomaneio, int nroNotaFiscal, long idImpressora, bool imprimeSegundaVia, long idEmpresa, string idUsuario)
+        public void ImprimirRomaneio(int nroRomaneio, long idImpressora, bool imprimeSegundaVia, long idEmpresa, string idUsuario)
         {
             if (nroRomaneio <= 0)
             {
                 throw new BusinessException("Número romaneio deve ser informado.");
-            }
-
-            if (nroNotaFiscal <= 0)
-            {
-                throw new BusinessException("Número NF deve ser informado.");
             }
 
             if (idImpressora <= 0)
@@ -644,19 +642,23 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Romaneio não encontrado.");
             }
 
-            var romaneioNotaFiscal = _unitOfWork.RomaneioNotaFiscalRepository.BuscarPorRomaneioENumeroNotaFiscal(nroRomaneio, nroNotaFiscal);
-
-            if (romaneioNotaFiscal == null)
+            if (romaneio.RomaneioNotaFiscal.NullOrEmpty())
             {
-                throw new BusinessException("Nota Fiscal de romaneio não encontrada.");
+                throw new BusinessException("Notas Fiscais de romaneio não encontradas.");
             }
 
-            var impressora = _unitOfWork.BOPrinterRepository.GetById(idImpressora);
-
-            if (impressora == null)
+            if (_unitOfWork.BOPrinterRepository.GetById(idImpressora) == null)
             {
                 throw new BusinessException("Impressora não encontrada.");
             }
+
+            _relatorioService.ImprimirRomaneio(new RelatorioRomaneioRequest()
+            {
+                Romaneio = romaneio,
+                DataHoraEmissaoRomaneio = DateTime.Now,
+                IdEmpresa = idEmpresa,
+                IdUsuarioExecucao = idUsuario
+            }, idImpressora);
         }
     }
 }
