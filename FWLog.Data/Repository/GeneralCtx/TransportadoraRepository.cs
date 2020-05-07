@@ -32,6 +32,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             IQueryable<TransportadoraPesquisaModalLinhaTabela> query = Entities.Transportadora.AsNoTracking()
                 .Where(x => (filter.CustomFilter.IdTransportadora.HasValue == false || x.IdTransportadora == filter.CustomFilter.IdTransportadora) &&
                 (filter.CustomFilter.NomeFantasia.Equals(string.Empty) || x.NomeFantasia.Contains(filter.CustomFilter.NomeFantasia)) &&
+                (filter.CustomFilter.Ativo.HasValue == false || x.Ativo == true) &&
                 (filter.CustomFilter.CNPJ.Equals(string.Empty) || x.CNPJ.Contains(filter.CustomFilter.CNPJ.Replace(".", "").Replace("/", "").Replace("-", ""))))
                 .Select(e => new TransportadoraPesquisaModalLinhaTabela
                 {

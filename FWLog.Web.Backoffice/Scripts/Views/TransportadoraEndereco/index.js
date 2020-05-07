@@ -70,9 +70,6 @@
     });
 
     $("#pesquisarEnderecoArmazenagem").click(function () {
-        //$("#modalPesquisaNivelArmazenagem").empty();
-        //$("#modalPesquisaPontoArmazenagem").empty();
-        //$("#modalPesquisaEnderecoArmazenagem").empty();
 
         let buscarTodos = true;
 

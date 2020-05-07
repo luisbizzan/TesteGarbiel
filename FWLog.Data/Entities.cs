@@ -93,6 +93,7 @@ namespace FWLog.Data
         public virtual DbSet<TransportadoraEndereco> TransportadoraEndereco { get; set; }
         public virtual DbSet<Romaneio> Romaneio { get; set; }
         public virtual DbSet<RomaneioNotaFiscal> RomaneioNotaFiscal { get; set; }
+        public virtual DbSet<DiasDaSemana> DiasDaSemana { get; set; }
 
         public int SaveChangesWithoutLog()
         {
