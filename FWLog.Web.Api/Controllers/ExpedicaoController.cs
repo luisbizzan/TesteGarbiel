@@ -179,7 +179,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                 var resposta = _expedicaoService.ValidarDespachoTransportadora(codigoTransportadora, IdUsuario, IdEmpresa);
+                var resposta = _expedicaoService.ValidarDespachoTransportadora(codigoTransportadora, IdUsuario, IdEmpresa);
 
                 return ApiOk(resposta);
             }
@@ -188,7 +188,7 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(businessException.Message);
             }
         }
-        
+
         [Route("api/v1/expedicao/finalizar-movimentacao-doca")]
         [HttpPost]
         public IHttpActionResult FinalizarMovimentacaoDoca(FinalizarMovimentacaoDocaRequisicao requisicao)
@@ -200,7 +200,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-               
+
                 _expedicaoService.FinalizarMovimentacaoDoca(requisicao.ListaVolumes, requisicao.IdTransportadora, IdUsuario, IdEmpresa);
             }
             catch (BusinessException businessException)
@@ -209,6 +209,29 @@ namespace FWLog.Web.Api.Controllers
             }
 
             return ApiOk();
+        }
+
+        [HttpPost]
+        [Route("api/v1/expedicao/romaneio/imprimir")]
+        public IHttpActionResult ImprimirRomaneio(ImprimirRomaneioRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+            else
+            {
+                try
+                {
+                    _expedicaoService.ImprimirRomaneio(requisicao?.NroRomaneio ?? 0, requisicao?.NroNotaFiscal ?? 0, requisicao?.IdImpressora ?? 0, requisicao?.ImprimeSegundaVia ?? false, IdEmpresa, IdUsuario);
+
+                    return ApiOk();
+                }
+                catch (BusinessException businessException)
+                {
+                    return ApiBadRequest(businessException.Message);
+                }
+            }
         }
     }
 }

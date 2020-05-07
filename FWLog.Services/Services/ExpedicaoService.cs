@@ -619,5 +619,10 @@ namespace FWLog.Services.Services
 
             }
         }
+
+        public void ImprimirRomaneio(int nroRomaneio, int nroNotaFiscal, long idImpressora, bool imprimeSegundaVia, long idEmpresa, string idUsuario)
+        {
+            throw new BusinessException("Não implemementado ainda");
+        }
     }
 }
