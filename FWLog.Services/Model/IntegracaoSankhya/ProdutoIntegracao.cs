@@ -69,6 +69,12 @@ namespace FWLog.Services.Model.IntegracaoSankhya
 
         [TabelaIntegracao(DisplayName = "CODVOL")]
         public string UnidadeMedidaSigla { get; set; }
+    }
 
+    [TabelaIntegracao(DisplayName = "TGFPRO")]
+    public class ProdutoQuantidadeRegistroIntegracao
+    {
+        [TabelaIntegracao(DisplayName = "COUNT(1)")]
+        public string QuantidadeRegistro { get; set; }
     }
 }
