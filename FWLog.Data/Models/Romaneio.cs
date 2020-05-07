@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
@@ -25,5 +26,7 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
+
+        public virtual ICollection<RomaneioNotaFiscal> RomaneioNotaFiscal { get; set; }
     }
 }

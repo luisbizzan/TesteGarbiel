@@ -23,14 +23,16 @@ namespace FWLog.Services.Services
         private ILog _log;
         private List<CaixaViewModel> listaRankingCaixas;
         private PedidoVendaService _pedidoVendaService;
+        private PedidoService _pedidoService;
         private PedidoVendaProdutoService _pedidoVendaProdutoService;
         private PedidoVendaVolumeService _pedidoVendaVolumeService;
 
-        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService, ILog log, PedidoVendaService pedidoVendaService, PedidoVendaProdutoService pedidoVendaProdutoService, PedidoVendaVolumeService pedidoVendaVolumeService)
+        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService, ILog log, PedidoService pedidoService, PedidoVendaService pedidoVendaService, PedidoVendaProdutoService pedidoVendaProdutoService, PedidoVendaVolumeService pedidoVendaVolumeService)
         {
             _unitOfWork = unitOfWork;
             _coletorHistoricoService = coletorHistoricoService;
             _log = log;
+            _pedidoService = pedidoService;
             _pedidoVendaService = pedidoVendaService;
             _pedidoVendaProdutoService = pedidoVendaProdutoService;
             _pedidoVendaVolumeService = pedidoVendaVolumeService;
@@ -41,27 +43,6 @@ namespace FWLog.Services.Services
             //var ids = _unitOfWork.PedidoVendaRepository.PesquisarIdsEmSeparacao(idUsuario, idEmpresa);
             //return ids;
             throw new NotImplementedException();
-        }
-
-        public async Task AtualizarStatusPedidoVenda(Pedido pedido, PedidoVendaStatusEnum statusPedidoVenda)
-        {
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            {
-                return;
-            }
-
-            try
-            {
-                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", pedido.CodigoIntegracao.ToString() } };
-
-                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSSEP", statusPedidoVenda.GetHashCode());
-            }
-            catch (Exception ex)
-            {
-                var errorMessage = string.Format("Erro na atualização do pedido de venda: {0}.", pedido.CodigoIntegracao);
-                _log.Error(errorMessage, ex);
-                throw new BusinessException(errorMessage);
-            }
         }
 
         public BuscarPedidoVendaResposta BuscarPedidoVenda(string codigoBarrasPedido, long idEmpresa)
@@ -361,7 +342,7 @@ namespace FWLog.Services.Services
                     _unitOfWork.SaveChanges();
                 }
 
-                await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
+                await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, novoStatusSeparacao);
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                 {
@@ -407,7 +388,7 @@ namespace FWLog.Services.Services
 
             if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
             {
-                await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, PedidoVendaStatusEnum.ProcessandoSeparacao);
+                await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, PedidoVendaStatusEnum.ProcessandoSeparacao);
 
                 using (var transaction = _unitOfWork.CreateTransactionScope())
                 {
@@ -503,7 +484,7 @@ namespace FWLog.Services.Services
 
                     await AtualizarQtdConferidaIntegracao(pedidoVenda);
 
-                    await AtualizarStatusPedidoVenda(pedidoVenda.Pedido, novoStatusSeparacao);
+                    await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, novoStatusSeparacao);
 
                     finalizouPedidoVenda = true;
                 }

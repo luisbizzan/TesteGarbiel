@@ -188,6 +188,7 @@
     <Compile Include="Model\Relatorios\ImprimirRelatorioRecebimentoNotasRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirRelatorioTotalPorAlaRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimriDetalhesProdutoRequest.cs" />
+    <Compile Include="Model\Relatorios\RelatorioRomaneioRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioAtividadeEstoqueRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioHistoricoAcaoUsuarioRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioLogisticaCorredorRequest.cs" />
@@ -214,6 +215,7 @@
     <Compile Include="Relatorio\FwRelatorio.cs" />
     <Compile Include="Relatorio\FwRelatorioDados.cs" />
     <Compile Include="Relatorio\IFwRelatorioDados.cs" />
+    <Compile Include="Relatorio\Model\DadosRelatorioRomaneio.cs" />
     <Compile Include="Relatorio\Model\RelatorioAtividadeEstoque.cs" />
     <Compile Include="Relatorio\Model\ImprimirRelatorioHistoricoAcaoUsuarioRequest.cs" />
     <Compile Include="Relatorio\Model\RastreioPeca.cs" />

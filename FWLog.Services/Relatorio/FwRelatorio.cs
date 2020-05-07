@@ -263,6 +263,30 @@ namespace FWLog.Services.Relatorio
                     corredores.AddFormattedText(new Font("Verdana", 10));
                     corredores.AddText($"{_dataSource.Filtros.CorredorInicial} à { _dataSource.Filtros.CorredorFinal}");
                 }
+
+                if (_dataSource.Filtros.DataHoraEmissaoRomaneio.HasValue)
+                {
+                    var date = rowHeader.Cells[0].AddParagraph();
+                    date.AddFormattedText(new Font("Verdana", 10));
+                    date.AddFormattedText("Data Emissão Romaneio: ", TextFormat.Bold);
+                    date.AddText(_dataSource.Filtros.DataHoraEmissaoRomaneio?.ToString("dd/MM/yyyy"));
+                }
+
+                if (_dataSource.Filtros.NumeroRomaneio.HasValue)
+                {
+                    var corredores = rowHeader.Cells[0].AddParagraph();
+                    corredores.AddFormattedText("Nro. Romaneio: ", TextFormat.Bold);
+                    corredores.AddFormattedText(new Font("Verdana", 10));
+                    corredores.AddText($"{_dataSource.Filtros.NumeroRomaneio}");
+                }
+
+                if (!string.IsNullOrWhiteSpace(_dataSource.Filtros.Transportadora))
+                {
+                    var corredores = rowHeader.Cells[0].AddParagraph();
+                    corredores.AddFormattedText("Transportadora: ", TextFormat.Bold);
+                    corredores.AddFormattedText(new Font("Verdana", 10));
+                    corredores.AddText($"{_dataSource.Filtros.Transportadora}");
+                }
             }
 
             var pImagem = rowHeader.Cells[1].AddParagraph();
