@@ -269,7 +269,7 @@ namespace FWLog.Services.Relatorio
                     var date = rowHeader.Cells[0].AddParagraph();
                     date.AddFormattedText(new Font("Verdana", 10));
                     date.AddFormattedText("Data Emissão Romaneio: ", TextFormat.Bold);
-                    date.AddText(_dataSource.Filtros.DataHoraEmissaoRomaneio?.ToString("dd/MM/yyyy"));
+                    date.AddText(_dataSource.Filtros.DataHoraEmissaoRomaneio?.ToString("dd/MM/yyyy - HH:mm:ss"));
                 }
 
                 if (_dataSource.Filtros.NumeroRomaneio.HasValue)

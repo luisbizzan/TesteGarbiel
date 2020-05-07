@@ -9,6 +9,7 @@ using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace FWLog.Services.Services
@@ -1613,38 +1614,19 @@ namespace FWLog.Services.Services
 
             var listaDadosRelatorio = new List<IFwRelatorioDados>();
 
-            /*
-                * NroNotaFiscal - Pedido.CodigoIntegracaoNotaFiscal
-
-                Nome do Cliente - cliente.razaosocial
-
-                Cod. Cliente - cliente.codcliente
-
-                Cod. Pedido - pedido.numnota
-
-                Endereco - cliente.CODENDENTREGA ”-” cliente.CODCIDENTREGA
-
-                Telefone - cliente.telefone
-
-                Qt. Vol - romaneionotafiscal.nrovolumes
-
-                CIF/FOB - pedido.tipofrete
-
-                Total de Volumes: Soma da quantidade de volumes por NF.
-
-                Total de Nota: Soma da quantidade de NFs do Romaneio.
-            */
-
-            foreach (var item in dadosRelatorio.Romaneio.RomaneioNotaFiscal)
+            foreach (var romaneioNotaFiscal in dadosRelatorio.Romaneio.RomaneioNotaFiscal)
             {
+                var cliente = romaneioNotaFiscal.Cliente;
+                var pedido = romaneioNotaFiscal.PedidoVenda.Pedido;
+
                 var itemRelatorio = new DadosRelatorioRomaneio
                 {
-                    NumeroNotaFiscal = item.NroNotaFiscal.ToString(),
-                    Cliente = $"{item.Cliente.NomeFantasia}",
-                    Endereco = $"{item.Cliente.Endereco}",
-                    Telefone = $"{item.Cliente.Telefone}",
-                    QauntidadeVolumes = $"{item.NroVolumes}",
-                    TipoFrete = $"{item.PedidoVenda.Pedido.CodigoIntegracaoTipoFrete}"
+                    NumeroNotaFiscal = pedido.CodigoIntegracaoNotaFiscal.ToString(),
+                    Cliente = $"{cliente.RazaoSocial} - {cliente.CodigoIntegracao} - {pedido.CodigoIntegracao}",
+                    Endereco = $"{cliente.Endereco} - {cliente.Cidade}",
+                    Telefone = $"{cliente.Telefone}",
+                    QauntidadeVolumes = $"{romaneioNotaFiscal.NroVolumes}",
+                    TipoFrete = $"{pedido.CodigoIntegracaoTipoFrete}"
                 };
 
                 listaDadosRelatorio.Add(itemRelatorio);
@@ -1677,9 +1659,11 @@ namespace FWLog.Services.Services
 
         public void ImprimirRomaneio(RelatorioRomaneioRequest dadosRelatorio, long idImpressora)
         {
-            var relatorio = GerarRomaneio(dadosRelatorio);
+            var arrayBytesRelatorio = GerarRomaneio(dadosRelatorio);
 
-            _impressoraService.Imprimir(relatorio, idImpressora);
+            File.WriteAllBytes($"c:\\test\\furacao\\impressao-romaneio-{Guid.NewGuid()}.pdf", arrayBytesRelatorio);
+
+            _impressoraService.Imprimir(arrayBytesRelatorio, idImpressora);
         }
     }
 }
