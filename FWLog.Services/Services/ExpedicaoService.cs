@@ -675,7 +675,7 @@ namespace FWLog.Services.Services
                 {
                     IdColetorAplicacao = ColetorAplicacaoEnum.Expedicao,
                     IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.DespachoNF,
-                    Descricao = $"Nota fiscal {pedido.CodigoIntegracaoNotaFiscal} despachada para a transportadora {pedido.Transportadora.NomeFantasia}. Chave de Acesso: {pedido.ChaveAcesso}.",
+                    Descricao = $"Nota fiscal {pedido.CodigoIntegracaoNotaFiscal} despachada para a transportadora {pedido.Transportadora.NomeFantasia}. Chave de Acesso: {pedido.ChaveAcessoNotaFiscal}.",
                     IdEmpresa = idEmpresa,
                     IdUsuario = idUsuario
                 });

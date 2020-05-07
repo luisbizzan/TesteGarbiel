@@ -36,7 +36,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public Pedido PesquisaPorChaveAcesso(string chaveAcesso)
         {
-            return Entities.Pedido.FirstOrDefault(f => f.ChaveAcesso == chaveAcesso);
+            return Entities.Pedido.FirstOrDefault(f => f.ChaveAcessoNotaFiscal == chaveAcesso);
         }
     }
 }
