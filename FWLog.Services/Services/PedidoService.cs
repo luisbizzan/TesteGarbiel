@@ -102,8 +102,6 @@ namespace FWLog.Services.Services
                     pedido.IdEmpresa = empresa.IdEmpresa;
                     pedido.IdTransportadora = transportadora.IdTransportadora;
                     pedido.IdRepresentante = representante.IdRepresentante;
-                    //TODO: Validar se o insert é aqui mesmo - FUR-1516
-                    pedido.ChaveAcesso = pedidoCabecalho.ChaveAcesso;
 
                     var itens = pedidoIntegracao.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.QtdPedido, s.Sequencia }).ToList();
 

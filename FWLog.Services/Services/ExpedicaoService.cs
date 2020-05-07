@@ -175,8 +175,11 @@ namespace FWLog.Services.Services
                             salvaPedido = true;
                         }
 
-                        //TODO: Não sei se é necessário essa validação. Coloquei pela pesquisa de tudo que altera na tabela Pedido - FUR-1516
-                        if (string.IsNullOrWhiteSpace(dadosNotaFiscal.ChaveAcesso) && !string.Equals(pedido.ChaveAcesso, dadosNotaFiscal.ChaveAcesso))
+                        if (string.IsNullOrWhiteSpace(dadosNotaFiscal.ChaveAcesso))
+                        {
+                            throw new BusinessException($"Erro ao atualizar a nota fiscal do pedido {pedido.IdPedido} por não haver o número da DANFE");
+                        }
+                        else if(!string.Equals(pedido.ChaveAcesso, dadosNotaFiscal.ChaveAcesso))
                         {
                             pedido.ChaveAcesso = dadosNotaFiscal.ChaveAcesso;
 
@@ -188,6 +191,10 @@ namespace FWLog.Services.Services
                             await _unitOfWork.SaveChangesAsync();
                         }
                     }
+                }
+                catch (BusinessException ex)
+                {
+                    _log.Error(ex.Message, ex);
                 }
                 catch (Exception exception)
                 {
