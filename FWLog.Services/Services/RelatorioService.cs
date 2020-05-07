@@ -9,7 +9,6 @@ using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace FWLog.Services.Services
@@ -1619,11 +1618,13 @@ namespace FWLog.Services.Services
                 var cliente = romaneioNotaFiscal.Cliente;
                 var pedido = romaneioNotaFiscal.PedidoVenda.Pedido;
 
+                var separadorLinha = Environment.NewLine;
+
                 var itemRelatorio = new DadosRelatorioRomaneio
                 {
                     NumeroNotaFiscal = pedido.CodigoIntegracaoNotaFiscal.ToString(),
-                    Cliente = $"{cliente.RazaoSocial} - {cliente.CodigoIntegracao} - {pedido.CodigoIntegracao}",
-                    Endereco = $"{cliente.Endereco} - {cliente.Cidade}",
+                    Cliente = $"{cliente.RazaoSocial}{separadorLinha}{cliente.CodigoIntegracao} - {pedido.CodigoIntegracao}",
+                    Endereco = $"{cliente.Endereco}{separadorLinha}{cliente.Cidade}",
                     Telefone = $"{cliente.Telefone}",
                     QauntidadeVolumes = $"{romaneioNotaFiscal.NroVolumes}",
                     TipoFrete = $"{pedido.CodigoIntegracaoTipoFrete}"
@@ -1660,8 +1661,6 @@ namespace FWLog.Services.Services
         public void ImprimirRomaneio(RelatorioRomaneioRequest dadosRelatorio, long idImpressora)
         {
             var arrayBytesRelatorio = GerarRomaneio(dadosRelatorio);
-
-            File.WriteAllBytes($"c:\\test\\furacao\\impressao-romaneio-{Guid.NewGuid()}.pdf", arrayBytesRelatorio);
 
             _impressoraService.Imprimir(arrayBytesRelatorio, idImpressora);
         }
