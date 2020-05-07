@@ -1440,7 +1440,9 @@ namespace FWLog.Services.Services
 
             if (filtro.CorredorInicial > 0 && filtro.CorredorFinal > 0)
             {
-                var range = Enumerable.Range(filtro.CorredorInicial.Value, filtro.CorredorFinal.Value);
+                var count = filtro.CorredorInicial.Value == filtro.CorredorFinal.Value ? 1 : (filtro.CorredorFinal.Value - filtro.CorredorInicial.Value) + 1;
+
+                var range = Enumerable.Range(filtro.CorredorInicial.Value, count);
 
                 query = query.Where(lpe => range.Contains(lpe.EnderecoArmazenagem.Corredor));
             }

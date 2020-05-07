@@ -91,6 +91,7 @@ namespace FWLog.Data
         public virtual DbSet<PedidoItem> PedidoItem { get; set; }
         public virtual DbSet<PedidoVendaVolume> PedidoVendaVolume { get; set; }
         public virtual DbSet<TransportadoraEndereco> TransportadoraEndereco { get; set; }
+        public virtual DbSet<Romaneio> Romaneio { get; set; }
 
         public int SaveChangesWithoutLog()
         {

@@ -175,6 +175,14 @@ namespace FWLog.Services.Services
                             salvaPedido = true;
                         }
 
+                        //TODO: Não sei se é necessário essa validação. Coloquei pela pesquisa de tudo que altera na tabela Pedido - FUR-1516
+                        if (string.IsNullOrWhiteSpace(dadosNotaFiscal.ChaveAcesso) && !string.Equals(pedido.ChaveAcesso, dadosNotaFiscal.ChaveAcesso))
+                        {
+                            pedido.ChaveAcesso = dadosNotaFiscal.ChaveAcesso;
+
+                            salvaPedido = true;
+                        }
+
                         if (salvaPedido)
                         {
                             await _unitOfWork.SaveChangesAsync();
