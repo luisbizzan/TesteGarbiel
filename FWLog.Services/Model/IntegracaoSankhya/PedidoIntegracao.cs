@@ -44,9 +44,6 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TGFITE.SEQUENCIA")]
         [Required]
         public string Sequencia { get; set; }
-
-        [TabelaIntegracao(DisplayName = "TGFCAB.CHAVENFE")]
-        public string ChaveAcesso { get; set; }
     }
 }
 

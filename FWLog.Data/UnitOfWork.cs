@@ -477,7 +477,7 @@ namespace FWLog.Data
 
             opts.Timeout = timeout.Value;
 
-            return new TransactionScope(TransactionScopeOption.Required, opts);
+            return new TransactionScope(TransactionScopeOption.Required, opts, TransactionScopeAsyncFlowOption.Enabled);
         }
 
         public async Task<int> SaveChangesAsync()

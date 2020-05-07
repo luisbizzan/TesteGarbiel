@@ -513,7 +513,7 @@ namespace FWLog.Services.Services
 
             ValidarProdutoPorPedidoVenda(idPedidoVenda, idProdutoSeparacao);
 
-            var pedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVendaEIdProduto(pedidoVenda.IdPedidoVenda,idProdutoSeparacao);
+            var pedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVendaEIdProduto(pedidoVenda.IdPedidoVenda, idProdutoSeparacao);
 
             ValidarPedidoVendaVolumeConcluidoCancelado(pedidoVendaProduto.PedidoVendaVolume);
 
@@ -554,6 +554,7 @@ namespace FWLog.Services.Services
                     pedidoVendaProduto.IdUsuarioSeparacao = idUsuario;
                     pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
                 }
+
                 if (qtdSeparada == pedidoVendaProduto.QtdSeparar)
                 {
                     pedidoVendaProduto.DataHoraFimSeparacao = dataProcessamento;
