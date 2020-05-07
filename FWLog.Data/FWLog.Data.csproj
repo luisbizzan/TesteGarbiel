@@ -213,6 +213,7 @@
     <Compile Include="Models\Representante.cs" />
     <Compile Include="Models\NotaRecebimentoStatus.cs" />
     <Compile Include="Models\Romaneio.cs" />
+    <Compile Include="Models\RomaneioNotaFiscal.cs" />
     <Compile Include="Models\TipoConferencia.cs" />
     <Compile Include="Models\EmpresaTipo.cs" />
     <Compile Include="Models\EnderecoArmazenagem.cs" />
@@ -315,6 +316,7 @@
     <Compile Include="Repository\GeneralCtx\QuarentenaStatusRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ProdutoEstoqueRepository.cs" />
     <Compile Include="Repository\GeneralCtx\RepresentanteRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\RomaneioNotaFiscalRepository.cs" />
     <Compile Include="Repository\GeneralCtx\RomaneioRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoArmazenagemRepository.cs" />
     <Compile Include="Repository\GeneralCtx\TipoConferenciaRepository.cs" />

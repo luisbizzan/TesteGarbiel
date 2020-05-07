@@ -172,7 +172,7 @@ namespace FWLog.Services.Services
                             salvaPedido = true;
                         }
 
-                        if (string.IsNullOrWhiteSpace(dadosNotaFiscal.TipoFrete) && !string.Equals(pedido.CodigoIntegracaoTipoFrete, dadosNotaFiscal.TipoFrete))
+                        if (!string.IsNullOrWhiteSpace(dadosNotaFiscal.TipoFrete) && !string.Equals(pedido.CodigoIntegracaoTipoFrete, dadosNotaFiscal.TipoFrete))
                         {
                             pedido.CodigoIntegracaoTipoFrete = dadosNotaFiscal.TipoFrete;
 
@@ -183,9 +183,9 @@ namespace FWLog.Services.Services
                         {
                             throw new BusinessException($"Erro ao atualizar a nota fiscal do pedido {pedido.IdPedido} por não haver o número da DANFE");
                         }
-                        else if(!string.Equals(pedido.ChaveAcesso, dadosNotaFiscal.ChaveAcesso))
+                        else if (!string.Equals(pedido.ChaveAcessoNotaFiscal, dadosNotaFiscal.ChaveAcesso))
                         {
-                            pedido.ChaveAcesso = dadosNotaFiscal.ChaveAcesso;
+                            pedido.ChaveAcessoNotaFiscal = dadosNotaFiscal.ChaveAcesso;
 
                             salvaPedido = true;
                         }
@@ -243,8 +243,9 @@ namespace FWLog.Services.Services
                 return null;
             }
 
-            var where = $"WHERE TGFVAR.NUNOTAORIG = {pedido.CodigoIntegracao} AND TGFCAB.STATUSNFE = 'A'";
+            var where = $"WHERE TGFVAR.NUNOTAORIG = {pedido.CodigoIntegracao} AND TGFCAB.STATUSNFE = 'A' AND TGFCAN.NUNOTA IS NULL";
             var inner = "INNER JOIN TGFVAR ON TGFVAR.NUNOTA = TGFCAB.NUNOTA";
+            inner += " LEFT JOIN TGFCAN ON TGFCAN.NUNOTA = TGFCAB.NUNOTA";
 
             var dadosIntegracaoSankhya = await IntegracaoSankhya.Instance.PreExecutarQuery<PedidoNumeroNotaFiscalIntegracao>(where: where, inner: inner);
 
@@ -682,6 +683,45 @@ namespace FWLog.Services.Services
                 _unitOfWork.SaveChanges();
 
                 transacao.Complete();
+            }
+        }
+
+        public void ImprimirRomaneio(int nroRomaneio, int nroNotaFiscal, long idImpressora, bool imprimeSegundaVia, long idEmpresa, string idUsuario)
+        {
+            if (nroRomaneio <= 0)
+            {
+                throw new BusinessException("Número romaneio deve ser informado.");
+            }
+
+            if (nroNotaFiscal <= 0)
+            {
+                throw new BusinessException("Número NF deve ser informado.");
+            }
+
+            if (idImpressora <= 0)
+            {
+                throw new BusinessException("Impressora deve ser informada.");
+            }
+
+            var romaneio = _unitOfWork.RomaneioRepository.BuscarPorNumeroRomaneioEEmpresa(nroRomaneio, idEmpresa);
+
+            if (romaneio == null)
+            {
+                throw new BusinessException("Romaneio não encontrado.");
+            }
+
+            var romaneioNotaFiscal = _unitOfWork.RomaneioNotaFiscalRepository.BuscarPorRomaneioENumeroNotaFiscal(nroRomaneio, nroNotaFiscal);
+
+            if (romaneioNotaFiscal == null)
+            {
+                throw new BusinessException("Nota Fiscal de romaneio não encontrada.");
+            }
+
+            var impressora = _unitOfWork.BOPrinterRepository.GetById(idImpressora);
+
+            if (impressora == null)
+            {
+                throw new BusinessException("Impressora não encontrada.");
             }
         }
     }

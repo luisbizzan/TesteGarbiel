@@ -230,5 +230,28 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [HttpPost]
+        [Route("api/v1/expedicao/romaneio/imprimir")]
+        public IHttpActionResult ImprimirRomaneio(ImprimirRomaneioRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+            else
+            {
+                try
+                {
+                    _expedicaoService.ImprimirRomaneio(requisicao?.NroRomaneio ?? 0, requisicao?.NroNotaFiscal ?? 0, requisicao?.IdImpressora ?? 0, requisicao?.ImprimeSegundaVia ?? false, IdEmpresa, IdUsuario);
+
+                    return ApiOk();
+                }
+                catch (BusinessException businessException)
+                {
+                    return ApiBadRequest(businessException.Message);
+                }
+            }
+        }
     }
 }
