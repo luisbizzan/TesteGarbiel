@@ -19,6 +19,7 @@ namespace FWLog.Web.Api.Controllers
             _produtoService = produtoService;
         }
 
+        [AllowAnonymous]
         [Route("api/v1/produto/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarProduto()

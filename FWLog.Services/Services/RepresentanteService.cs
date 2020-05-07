@@ -59,11 +59,9 @@ namespace FWLog.Services.Services
                     representante.CodigoIntegracao = codParc;
                     representante.Ativo = representanteInt.Ativo == "S" ? true : false;
                     representante.Nome = representanteInt.RazaoSocial;
-                    representante.CodigoIntegracaoVendedor = representanteInt.CodigoIntegracaoVendedor;
+                    representante.CodigoIntegracaoVendedor = Convert.ToInt32(representanteInt.CodigoIntegracaoVendedor);
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", representante.CodigoIntegracao.ToString() } };
-
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
 
                     if (representanteNovo)
                     {
@@ -75,6 +73,8 @@ namespace FWLog.Services.Services
                     }
 
                     _unitOfWork.SaveChanges();
+
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
                 }
                 catch (Exception ex)
                 {

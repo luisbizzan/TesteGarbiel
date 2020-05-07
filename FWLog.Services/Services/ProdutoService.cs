@@ -156,7 +156,7 @@ namespace FWLog.Services.Services
                         }
                         else
                         {   
-                            _uow.ProdutoRepository.Update(produto);
+                           _uow.ProdutoRepository.Update(produto);
                         }
 
                         _uow.SaveChanges();
