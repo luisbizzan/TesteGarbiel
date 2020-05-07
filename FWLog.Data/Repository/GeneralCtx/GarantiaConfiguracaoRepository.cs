@@ -150,6 +150,25 @@ namespace FWLog.Data.Repository.GeneralCtx
                         break;
                     #endregion
 
+                    #region Motivo Laudo
+                    case GarantiaConfiguracao.GarantiaTag.MotivoLaudo:
+                        {
+                            RegistroIncluir.RegistroMotivoLaudo.ToList().ForEach(delegate (GarantiaConfiguracao.MotivoLaudo item)
+                            {
+                                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                {
+                                    conn.Open();
+                                    if (conn.State == System.Data.ConnectionState.Open)
+                                    {
+                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.MotivoLaudoIncluir, item.Id_Tipo, item.MotivoLaudoDescricao));
+                                    }
+                                    conn.Close();
+                                }
+                            });
+                        }
+                        break;
+                    #endregion
+
                     #region Default
                     default:
                         throw new Exception(String.Format("[RegistroIncluir] A Tag {0} informada é inválida!", RegistroIncluir.Tag));
@@ -180,6 +199,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra) ? String.Format(cmdSQL, "gar_forn_quebra") :
                     Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop) ? String.Format(cmdSQL, "geral_sankhya_tops") :
                     Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorGrupo) ? String.Format(cmdSQL, "gar_forn_grupo") :
+                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.MotivoLaudo) ? String.Format(cmdSQL, "gar_motivo_laudo") :
                     String.Empty;
                 #endregion
 

@@ -105,6 +105,20 @@ namespace FWLog.Web.Backoffice.Controllers
                     errorView = () => { return View(RegistroConvertido.RegistroFornecedorGrupo); };
                 #endregion
 
+                #region Motivo Laudo
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.MotivoLaudo))
+                {
+                    RegistroConvertido.RegistroMotivoLaudo.ForEach(delegate (GarantiaConfiguracao.MotivoLaudo motivoLaudo)
+                    {
+                        Int32.Parse(motivoLaudo.Id_Tipo);
+
+                        if ((GarantiaConfiguracao.TipoGeral)Convert.ToInt32(motivoLaudo.Id_Tipo) != GarantiaConfiguracao.TipoGeral.Defeito)
+                            throw new Exception(String.Format("Tipo Motivo Laudo {0} inválido!", ((GarantiaConfiguracao.TipoGeral)Convert.ToInt32(motivoLaudo.Id_Tipo)).ToString()));
+                    });
+                    errorView = () => { return View(RegistroConvertido.RegistroMotivoLaudo); };
+                }
+                #endregion
+
                 if (!ModelState.IsValid)
                     throw new Exception(ModelState.Values.Where(x => x.Errors.Count > 0).Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />")));
                 #endregion
@@ -280,6 +294,16 @@ namespace FWLog.Web.Backoffice.Controllers
                         model.Inclusao.ForEach(delegate (object o)
                         {
                             _Retorno.RegistroFornecedorGrupo.Add(GarantiaConfiguracao.Contexto.SerializarJS.Deserialize<GarantiaConfiguracao.FornecedorGrupo>(o.ToString()));
+                        });
+                        break;
+                    #endregion
+
+                    #region Motivo Laudo
+                    case GarantiaConfiguracao.GarantiaTag.MotivoLaudo:
+                        _Retorno.RegistroMotivoLaudo = new List<GarantiaConfiguracao.MotivoLaudo>();
+                        model.Inclusao.ForEach(delegate (object o)
+                        {
+                            _Retorno.RegistroMotivoLaudo.Add(GarantiaConfiguracao.Contexto.SerializarJS.Deserialize<GarantiaConfiguracao.MotivoLaudo>(o.ToString()));
                         });
                         break;
                     #endregion

@@ -29,6 +29,10 @@ namespace FWLog.Data.Models
         public string BotaoEvento { get; set; }
         public enum GarantiaTag { RemessaConfiguracao, RemessaUsuario, Configuracao, FornecedorQuebra, SankhyaTop, FornecedorGrupo, MotivoLaudo }
         public enum AutoCompleteTag { Fornecedor, Filial }
+        public enum TipoGeral
+        {
+            Automatico = 1, Manual = 2, Fornecedor = 3, Entrada = 4, Origem = 5, RetornoFornecedor = 6, EnvioCliente = 7, Defeito = 8, Sinistro = 9
+        }
 
         #region Variáveis de Contexto
         public static class Contexto
@@ -544,6 +548,11 @@ namespace FWLog.Data.Models
                         "WHERE ml.Id_Tipo = 8");
                 }
             }
+
+            /// <summary>
+            /// {0} Id Tipo | {1} Descrição
+            /// </summary>
+            public static string MotivoLaudoIncluir { get { return String.Concat("INSERT INTO gar_motivo_laudo(Id_Tipo, Descricao) VALUES({0},'{1}')"); } }
             #endregion
         }
         #endregion        
