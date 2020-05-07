@@ -13,7 +13,8 @@ namespace FWLog.Data.Models
         ConferirProdutoForaLinha = 6,
         CancelamentoSeparacao = 7,
         FinalizacaoSeparacao = 8,
-        MoverDoca = 9
+        MoverDoca = 9,
+        DespachoNF = 10
     }
 
     public class ColetorHistoricoTipo

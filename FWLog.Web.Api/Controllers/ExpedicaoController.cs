@@ -200,8 +200,28 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-
                 _expedicaoService.FinalizarMovimentacaoDoca(requisicao.ListaVolumes, requisicao.IdTransportadora, IdUsuario, IdEmpresa);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/expedicao/finalizar-despacho")]
+        [HttpPost]
+        public async Task<IHttpActionResult> FinalizarDespachoNF(FinalizarDespachoNFRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                await _expedicaoService.FinalizarDespachoNF(requisicao.IdTransportadora, requisicao.ChaveAcesso, IdUsuario, IdEmpresa);
             }
             catch (BusinessException businessException)
             {

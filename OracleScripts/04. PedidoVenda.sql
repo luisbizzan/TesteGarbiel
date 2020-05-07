@@ -51,6 +51,10 @@ ALTER TABLE DART."PedidoVenda" ADD CONSTRAINT "PedidoVenda_FK4" FOREIGN KEY ("Id
 ALTER TABLE DART."PedidoVenda" ADD CONSTRAINT "PedidoVenda_FK5" FOREIGN KEY ("IdRepresentante") REFERENCES DART."Representante"("IdRepresentante");
 ALTER TABLE DART."PedidoVenda" ADD CONSTRAINT "PedidoVenda_FK6" FOREIGN KEY ("IdPedido") REFERENCES DART."Pedido"("IdPedido");
 
+ALTER TABLE DART."PedidoVenda" ADD "DataHoraDespachoNotaFiscal" DATE;
+ALTER TABLE DART."PedidoVenda" ADD "IdUsuarioDespachoNotaFiscal" VARCHAR2(128);
+
+
 
 
 

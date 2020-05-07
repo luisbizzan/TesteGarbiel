@@ -1612,7 +1612,7 @@ namespace FWLog.Services.Services
             var labelUsuario = $"{usuario.Usuario.UserName} - {usuario.Nome}";
 
             var listaDadosRelatorio = new List<IFwRelatorioDados>();
-            
+
             /*
                 * NroNotaFiscal - Pedido.CodigoIntegracaoNotaFiscal
 
