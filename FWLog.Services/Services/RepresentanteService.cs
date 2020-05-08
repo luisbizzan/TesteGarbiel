@@ -63,8 +63,6 @@ namespace FWLog.Services.Services
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", representante.CodigoIntegracao.ToString() } };
 
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
-
                     if (representanteNovo)
                     {
                         _unitOfWork.RepresentanteRepository.Add(representante);
@@ -75,6 +73,8 @@ namespace FWLog.Services.Services
                     }
 
                     _unitOfWork.SaveChanges();
+
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
                 }
                 catch (Exception ex)
                 {

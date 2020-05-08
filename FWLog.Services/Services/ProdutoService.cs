@@ -62,92 +62,115 @@ namespace FWLog.Services.Services
             where.Append("WHERE DESCRPROD IS NOT NULL ");
             where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
             where.Append("AND AD_INTEGRARFWLOG = '1' ");
-            where.Append("ORDER BY CODPROD OFFSET 0 ROWS FETCH NEXT 5000 ROWS ONLY ");
+            
+            int quantidadeRegistro = 4999;
+            int quantidadeChamada = 0;
+            
+            List<ProdutoQuantidadeRegistroIntegracao> produtoQuantidadeRegistroIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoQuantidadeRegistroIntegracao>(where: where.ToString());
 
-            List<Model.IntegracaoSankhya.ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoIntegracao>(where: where.ToString());
-
-            var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
-
-            foreach (var produtoInt in produtosIntegracao)
+            if (produtoQuantidadeRegistroIntegracao != null)
             {
                 try
                 {
-                    ValidarDadosIntegracao(produtoInt);
-
-                    var unidade = unidadesMedida.FirstOrDefault(f => f.Sigla == produtoInt.UnidadeMedidaSigla);
-
-                    if (unidade == null)
-                    {
-                        throw new Exception("Código da Unidade de Medida (CODVOL) inválido");
-                    }
-
-                    bool produtoNovo = false;
-
-                    var codProd = Convert.ToInt64(produtoInt.CodigoIntegracao);
-                    Produto produto = _uow.ProdutoRepository.ConsultarPorCodigoIntegracao(codProd);
-
-                    if (produto == null)
-                    {
-                        produtoNovo = true;
-                        produto = new Produto();
-                    }
-
-                    produto.Altura = produtoInt.Altura == null ? (decimal?)null : Convert.ToDecimal(produtoInt.Altura.Replace(".", ","));
-                    produto.Ativo = produtoInt.Ativo == "S" ? true : false;
-                    produto.CodigoFabricante = produtoInt.CodigoFabricante == null ? (long?)null : Convert.ToInt64(produtoInt.CodigoFabricante);
-                    produto.CodigoIntegracao = codProd;
-                    produto.CodigoProdutoNFE = Convert.ToInt32(produtoInt.CodigoProdutoNFE);
-                    produto.Comprimento = produtoInt.Comprimento == null ? (decimal?)null : Convert.ToDecimal(produtoInt.Comprimento.Replace(".", ","));
-                    produto.Descricao = produtoInt.Descricao;
-                    produto.EnderecoImagem = produtoInt.EnderecoImagem;
-                    produto.Largura = produtoInt.Largura == null ? (decimal?)null : Convert.ToDecimal(produtoInt.Largura.Replace(".", ","));
-                    produto.MetroCubico = produtoInt.MetroCubico == null ? (decimal?)null : Convert.ToDecimal(produtoInt.MetroCubico.Replace(".", ","));
-                    produto.MultiploVenda = Convert.ToDecimal(produtoInt.MultiploVenda.Replace(".", ","));
-                    produto.NomeFabricante = produtoInt.NomeFabricante;
-                    produto.PesoBruto = Convert.ToDecimal(produtoInt.PesoBruto.Replace(".", ",")) / 1000;
-                    produto.PesoLiquido = Convert.ToDecimal(produtoInt.PesoLiquido.Replace(".", ",")) / 1000;
-                    produto.Referencia = produtoInt.Referencia;
-                    produto.ReferenciaFornecedor = produtoInt.ReferenciaFornecedor;
-                    produto.CodigoBarras = produtoInt.CodigoBarras;
-                    produto.IdUnidadeMedida = unidade.IdUnidadeMedida;
-                    produto.CodigoBarras2 = produtoInt.CodigoBarras2;
-
-                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() } };
-
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", campoChave, "AD_INTEGRARFWLOG", "0");
-
-                    if (produtoNovo)
-                    {
-                        _uow.ProdutoRepository.Add(produto);
-
-                        //List<Empresa> empresas = _uow.EmpresaRepository.Tabela().Where(emp => !string.IsNullOrEmpty(emp.Sigla)).ToList();
-
-                        //foreach (Empresa empresa in empresas)
-                        //{
-                        //    var produtoEstoque = new ProdutoEstoque
-                        //    {
-                        //        IdProduto = produto.IdProduto,
-                        //        IdEmpresa = empresa.IdEmpresa,
-                        //        Saldo = 0,
-                        //        IdProdutoEstoqueStatus = ProdutoEstoqueStatusEnum.Ativo,
-                        //        DiasPrazoEntrega = 10
-                        //    };
-
-                        //    _uow.ProdutoEstoqueRepository.Add(produtoEstoque);
-                        //}
-                    }
-                    else
-                    {
-                        _uow.ProdutoRepository.Update(produto);
-                    }
-
-                    _uow.SaveChanges();
+                    quantidadeRegistro = Convert.ToInt32(produtoQuantidadeRegistroIntegracao[0].QuantidadeRegistro);
                 }
-                catch (Exception ex)
-                {
-                    _log.Error(string.Format("Erro na integração do Produto: {0}.", produtoInt.CodigoIntegracao), ex);
-                }
+                catch { }
             }
+
+            quantidadeChamada = quantidadeRegistro / 4999;
+
+            where.Append("ORDER BY CODPROD OFFSET 0 ROWS FETCH NEXT 5000 ROWS ONLY ");
+
+            for (int i = 0; i < quantidadeChamada; i++)
+            {
+                List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoIntegracao>(where: where.ToString());
+
+                var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
+
+                foreach (var produtoInt in produtosIntegracao)
+                {
+                    try
+                    {
+                        ValidarDadosIntegracao(produtoInt);
+
+                        var unidade = unidadesMedida.FirstOrDefault(f => f.Sigla == produtoInt.UnidadeMedidaSigla);
+
+                        if (unidade == null)
+                        {
+                            throw new Exception("Código da Unidade de Medida (CODVOL) inválido");
+                        }
+
+                        bool produtoNovo = false;
+
+                        var codProd = Convert.ToInt64(produtoInt.CodigoIntegracao);
+                        Produto produto = _uow.ProdutoRepository.ConsultarPorCodigoIntegracao(codProd);
+
+                        if (produto == null)
+                        {
+                            produtoNovo = true;
+                            produto = new Produto();
+                        }
+
+                        produto.Altura = produtoInt.Altura == null ? (decimal?)null : Convert.ToDecimal(produtoInt.Altura.Replace(".", ","));
+                        produto.Ativo = produtoInt.Ativo == "S" ? true : false;
+                        produto.CodigoFabricante = produtoInt.CodigoFabricante == null ? (long?)null : Convert.ToInt64(produtoInt.CodigoFabricante);
+                        produto.CodigoIntegracao = codProd;
+                        produto.CodigoProdutoNFE = Convert.ToInt32(produtoInt.CodigoProdutoNFE);
+                        produto.Comprimento = produtoInt.Comprimento == null ? (decimal?)null : Convert.ToDecimal(produtoInt.Comprimento.Replace(".", ","));
+                        produto.Descricao = produtoInt.Descricao;
+                        produto.EnderecoImagem = produtoInt.EnderecoImagem;
+                        produto.Largura = produtoInt.Largura == null ? (decimal?)null : Convert.ToDecimal(produtoInt.Largura.Replace(".", ","));
+                        produto.MetroCubico = produtoInt.MetroCubico == null ? (decimal?)null : Convert.ToDecimal(produtoInt.MetroCubico.Replace(".", ","));
+                        produto.MultiploVenda = Convert.ToDecimal(produtoInt.MultiploVenda.Replace(".", ","));
+                        produto.NomeFabricante = produtoInt.NomeFabricante;
+                        produto.PesoBruto = Convert.ToDecimal(produtoInt.PesoBruto.Replace(".", ",")) / 1000;
+                        produto.PesoLiquido = Convert.ToDecimal(produtoInt.PesoLiquido.Replace(".", ",")) / 1000;
+                        produto.Referencia = produtoInt.Referencia;
+                        produto.ReferenciaFornecedor = produtoInt.ReferenciaFornecedor;
+                        produto.CodigoBarras = produtoInt.CodigoBarras;
+                        produto.IdUnidadeMedida = unidade.IdUnidadeMedida;
+                        produto.CodigoBarras2 = produtoInt.CodigoBarras2;
+
+                        Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() } };
+
+                        await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", campoChave, "AD_INTEGRARFWLOG", "0");
+
+                        if (produtoNovo)
+                        {
+                            _uow.ProdutoRepository.Add(produto);
+
+                            List<Empresa> empresas = _uow.EmpresaRepository.Tabela().Where(emp => !string.IsNullOrEmpty(emp.Sigla)).ToList();
+
+                            foreach (Empresa empresa in empresas)
+                            {
+                                var produtoEstoque = new ProdutoEstoque
+                                {
+                                    IdProduto = produto.IdProduto,
+                                    IdEmpresa = empresa.IdEmpresa,
+                                    Saldo = 0,
+                                    IdProdutoEstoqueStatus = ProdutoEstoqueStatusEnum.Ativo,
+                                    DiasPrazoEntrega = 10
+                                };
+
+                                _uow.ProdutoEstoqueRepository.Add(produtoEstoque);
+                            }
+                        }
+                        else
+                        {   
+                           _uow.ProdutoRepository.Update(produto);
+                        }
+
+                        _uow.SaveChanges();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Error(string.Format("Erro na integração do Produto: {0}.", produtoInt.CodigoIntegracao), ex);
+                    }
+                }
+
+                i++;
+            }            
         }
 
         public async Task LimparIntegracaoPrazoEntrega()
