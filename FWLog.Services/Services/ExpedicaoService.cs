@@ -19,7 +19,7 @@ namespace FWLog.Services.Services
     public class ExpedicaoService
     {
         private readonly UnitOfWork _unitOfWork;
-        private ILog _log;
+        private readonly ILog _log;
         private readonly ColetorHistoricoService _coletorHistoricoService;
         private readonly NotaFiscalService _notaFiscalService;
         private readonly PedidoService _pedidoService;
@@ -713,9 +713,9 @@ namespace FWLog.Services.Services
 
             Pedido pedido = _unitOfWork.PedidoRepository.PesquisaPorChaveAcesso(chaveAcesso);
 
-            if (pedido.IdTransportadora != idTransportadora)
+            if (pedido == null)
             {
-                throw new BusinessException("Nota fiscal não pertence a transportadora informada.");
+                throw new BusinessException("A nota fiscal não encontrada.");
             }
 
             PedidoVenda pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedido(pedido.IdPedido);
@@ -723,6 +723,11 @@ namespace FWLog.Services.Services
             if (pedidoVenda == null)
             {
                 throw new BusinessException("Não existe pedido venda para chave de acesso informada.");
+            }
+
+            if (pedidoVenda.IdTransportadora != idTransportadora)
+            {
+                throw new BusinessException("Nota fiscal não pertence a transportadora informada.");
             }
 
             if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.NFDespachada)
@@ -747,7 +752,7 @@ namespace FWLog.Services.Services
 
             var perfilImpressoras = _unitOfWork.PerfilImpressoraItemRepository.ObterPorIdPerfilImpressora(usuarioEmpresa.IdPerfilImpressoraPadrao.Value);
 
-            if(!perfilImpressoras.Any(p => p.IdImpressaoItem == ImpressaoItemEnum.RelatorioA4))
+            if (!perfilImpressoras.Any(p => p.IdImpressaoItem == ImpressaoItemEnum.RelatorioA4))
             {
                 throw new BusinessException("Usuário não possui impressora configurada para Romaneio.");
             }
@@ -813,6 +818,62 @@ namespace FWLog.Services.Services
             return transportadora;
         }
 
+        private Romaneio ValidarNroRomaneio(int nroRomaneio, long idEmpresa)
+        {
+            if (nroRomaneio <= 0)
+            {
+                throw new BusinessException("Favor informar o número do romaneio.");
+            }
+
+            Romaneio romaneio = _unitOfWork.RomaneioRepository.BuscarPorNumeroRomaneioEEmpresa(nroRomaneio, idEmpresa);
+
+            if (romaneio == null)
+            {
+                throw new BusinessException("Romaneio não encontrado.");
+            }
+
+            return romaneio;
+        }
+
+        private Romaneio ValidarIdRomaneio(long idRomaneio, long idEmpresa)
+        {
+            if (idRomaneio <= 0)
+            {
+                throw new BusinessException("Favor informar o romaneio.");
+            }
+
+            Romaneio romaneio = _unitOfWork.RomaneioRepository.GetById(idRomaneio);
+
+            if (romaneio == null)
+            {
+                throw new BusinessException("Romaneio não encontrado.");
+            }
+
+            if (romaneio.IdEmpresa != idEmpresa)
+            {
+                throw new BusinessException("Romaneio não pertence a empresa.");
+            }
+
+            return romaneio;
+        }
+
+        private Printer ValidarIdImpressora(long idImpressora)
+        {
+            if (idImpressora <= 0)
+            {
+                throw new BusinessException("Favor informar a impressora.");
+            }
+
+            Printer impressora = _unitOfWork.BOPrinterRepository.GetById(idImpressora);
+
+            if (impressora == null)
+            {
+                throw new BusinessException("Impressora não encontrada.");
+            }
+
+            return impressora;
+        }
+
         public RomaneioTransportadoraResposta ValidarRomaneioTransportadora(string codigoTransportadora, long idEmpresa)
         {
             var transportadora = ValidarTransportadoraPorCodigo(codigoTransportadora);
@@ -823,6 +884,11 @@ namespace FWLog.Services.Services
 
             if (grupoBat != null && grupoBat.Split(',').Contains(empresa.Sigla))
             {
+                if (!empresa.EmpresaConfig.IdDiasDaSemana.HasValue)
+                {
+                    throw new BusinessException("Não existe configuração de dia coleta para a empresa.");
+                }
+
                 if (empresa.EmpresaConfig.IdDiasDaSemana.GetHashCode() != DateTime.Now.DayOfWeek.GetHashCode())
                 {
                     throw new BusinessException("Atenção, não haverá coleta para esta cidade.");
@@ -848,6 +914,36 @@ namespace FWLog.Services.Services
             };
 
             return resposta;
+        }
+
+        public RomaneioResposta BuscarRomaneio(int nroRomaneio, long idEmpresa)
+        {
+            var romaneio = ValidarNroRomaneio(nroRomaneio, idEmpresa);
+
+            var resposta = new RomaneioResposta()
+            {
+                IdRomaneio = romaneio.IdRomaneio,
+            };
+
+            return resposta;
+        }
+
+        public void ReimprimirRomaneio(long idRomaneio, long idImpressora, long idEmpresa, string idUsuario)
+        {
+            var romaneio = ValidarIdRomaneio(idRomaneio, idEmpresa);
+
+            var impressora = ValidarIdImpressora(idImpressora);
+
+            ImprimirRomaneio(romaneio.NroRomaneio, impressora.Id, false, idEmpresa, idUsuario);
+
+            _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
+            {
+                IdColetorAplicacao = ColetorAplicacaoEnum.Expedicao,
+                IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ReimpressaoRomaneio,
+                Descricao = $"Romaneio {romaneio.NroRomaneio} da transportadora {romaneio.Transportadora.NomeFantasia} reimpresso.",
+                IdEmpresa = idEmpresa,
+                IdUsuario = idUsuario
+            });
         }
     }
 }
