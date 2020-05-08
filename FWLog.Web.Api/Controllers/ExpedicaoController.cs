@@ -317,5 +317,27 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(businessException.Message);
             }
         }
+
+
+        [Route("api/v1/expedicao/romaneio/{nroRomaneio}")]
+        [HttpPost]
+        public IHttpActionResult BuscarRomaneio(int nroRomaneio)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                var resposta = _expedicaoService.BuscarRomaneio(nroRomaneio, IdEmpresa);
+
+                return ApiOk(resposta);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+        }
     }
 }

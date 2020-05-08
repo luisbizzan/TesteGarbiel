@@ -747,7 +747,7 @@ namespace FWLog.Services.Services
 
             var perfilImpressoras = _unitOfWork.PerfilImpressoraItemRepository.ObterPorIdPerfilImpressora(usuarioEmpresa.IdPerfilImpressoraPadrao.Value);
 
-            if(!perfilImpressoras.Any(p => p.IdImpressaoItem == ImpressaoItemEnum.RelatorioA4))
+            if (!perfilImpressoras.Any(p => p.IdImpressaoItem == ImpressaoItemEnum.RelatorioA4))
             {
                 throw new BusinessException("Usuário não possui impressora configurada para Romaneio.");
             }
@@ -813,6 +813,23 @@ namespace FWLog.Services.Services
             return transportadora;
         }
 
+        private Romaneio ValidarNroRomaneio(int nroRomaneio, long idEmpresa)
+        {
+            if (nroRomaneio <= 0)
+            {
+                throw new BusinessException("Favor informar o número do romaneio.");
+            }
+
+            Romaneio romaneio = _unitOfWork.RomaneioRepository.BuscarPorNumeroRomaneioEEmpresa(nroRomaneio, idEmpresa);
+
+            if (romaneio == null)
+            {
+                throw new BusinessException("Romaneio não encontrado.");
+            }
+
+            return romaneio;
+        }
+
         public RomaneioTransportadoraResposta ValidarRomaneioTransportadora(string codigoTransportadora, long idEmpresa)
         {
             var transportadora = ValidarTransportadoraPorCodigo(codigoTransportadora);
@@ -823,6 +840,11 @@ namespace FWLog.Services.Services
 
             if (grupoBat != null && grupoBat.Split(',').Contains(empresa.Sigla))
             {
+                if (!empresa.EmpresaConfig.IdDiasDaSemana.HasValue)
+                {
+                    throw new BusinessException("Não existe configuração de dia coleta para a empresa.");
+                }
+
                 if (empresa.EmpresaConfig.IdDiasDaSemana.GetHashCode() != DateTime.Now.DayOfWeek.GetHashCode())
                 {
                     throw new BusinessException("Atenção, não haverá coleta para esta cidade.");
@@ -844,6 +866,18 @@ namespace FWLog.Services.Services
             var resposta = new RomaneioTransportadoraResposta()
             {
                 IdTransportadora = transportadora.IdTransportadora
+            };
+
+            return resposta;
+        }
+
+        public RomaneioResposta BuscarRomaneio(int nroRomaneio, long idEmpresa)
+        {
+            var romaneio = ValidarNroRomaneio(nroRomaneio, idEmpresa);
+
+            var resposta = new RomaneioResposta()
+            {
+                IdRomaneio = romaneio.IdRomaneio,
             };
 
             return resposta;
