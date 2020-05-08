@@ -5,10 +5,10 @@ namespace FWLog.Web.Api.Models.Expedicao
 {
     public class FinalizarMovimentacaoDocaRequisicao
     {
-        [Required]
+        [Required(ErrorMessage = "Os volumes devem ser informadaos.")]
         public List<long> ListaVolumes { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A transportadora deve ser informada.")]
         public long IdTransportadora { get; set; }
     }
 }
