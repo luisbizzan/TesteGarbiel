@@ -19,7 +19,7 @@ namespace FWLog.Services.Services
     public class ExpedicaoService
     {
         private readonly UnitOfWork _unitOfWork;
-        private ILog _log;
+        private readonly ILog _log;
         private readonly ColetorHistoricoService _coletorHistoricoService;
         private readonly NotaFiscalService _notaFiscalService;
         private readonly PedidoService _pedidoService;
