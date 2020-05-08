@@ -275,5 +275,89 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/expedicao/romaneio/validar-impressora")]
+        [HttpPost]
+        public IHttpActionResult ValidarImpressoraRomaneio(ValidarImpressoraRomaneioRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _expedicaoService.ValidarImpressoraRomaneio(requisicao.IdUsuario, requisicao.IdEmpresa);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/expedicao/romaneio/validar-transportadora/{codigoTransportadora}")]
+        [HttpPost]
+        public IHttpActionResult ValidarRomaneioTransportadora(string codigoTransportadora)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                var resposta = _expedicaoService.ValidarRomaneioTransportadora(codigoTransportadora, IdEmpresa);
+
+                return ApiOk(resposta);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+        }
+
+        [Route("api/v1/expedicao/romaneio/{nroRomaneio}")]
+        [HttpGet]
+        public IHttpActionResult BuscarRomaneio(int nroRomaneio)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                var resposta = _expedicaoService.BuscarRomaneio(nroRomaneio, IdEmpresa);
+
+                return ApiOk(resposta);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+        }
+
+        [Route("api/v1/expedicao/romaneio/reimprimir")]
+        [HttpPost]
+        public IHttpActionResult ReimprimirRomaneio(RomaneioReimprimirRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _expedicaoService.ReimprimirRomaneio(requisicao.IdRomaneio, requisicao.IdImpressora, IdEmpresa, IdUsuario);
+
+                return ApiOk();
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+        }
     }
 }

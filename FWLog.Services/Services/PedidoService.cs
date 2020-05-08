@@ -5,6 +5,7 @@ using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
 using log4net;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
@@ -31,7 +32,14 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            var where = " WHERE TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSSEP = 0 OR TGFCAB.AD_STATUSSEP IS NULL)";
+            var topSankhya = ConfigurationManager.AppSettings["IntegracaoSankhya_TOP_PedidoVenda"];
+
+            if (string.IsNullOrEmpty(topSankhya))
+            {
+                throw new BusinessException("As tops de pedido venda não estão configuradas.");
+            }
+
+            var where = $" WHERE TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSSEP = 0 OR TGFCAB.AD_STATUSSEP IS NULL) AND TGFCAB.CODTIPOPER IN ({topSankhya}) ";
             var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
 
             List<PedidoIntegracao> pedidosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<PedidoIntegracao>(where, inner);
