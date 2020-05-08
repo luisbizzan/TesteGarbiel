@@ -830,6 +830,45 @@ namespace FWLog.Services.Services
             return romaneio;
         }
 
+        private Romaneio ValidarIdRomaneio(long idRomaneio, long idEmpresa)
+        {
+            if (idRomaneio <= 0)
+            {
+                throw new BusinessException("Favor informar o romaneio.");
+            }
+
+            Romaneio romaneio = _unitOfWork.RomaneioRepository.GetById(idRomaneio);
+
+            if (romaneio == null)
+            {
+                throw new BusinessException("Romaneio não encontrado.");
+            }
+
+            if (romaneio.IdEmpresa != idEmpresa)
+            {
+                throw new BusinessException("Romaneio não pertence a empresa.");
+            }
+
+            return romaneio;
+        }
+
+        private Printer ValidarIdImpressora(long idImpressora)
+        {
+            if (idImpressora <= 0)
+            {
+                throw new BusinessException("Favor informar a impressora.");
+            }
+
+            Printer impressora = _unitOfWork.BOPrinterRepository.GetById(idImpressora);
+
+            if (impressora == null)
+            {
+                throw new BusinessException("Impressora não encontrada.");
+            }
+
+            return impressora;
+        }
+
         public RomaneioTransportadoraResposta ValidarRomaneioTransportadora(string codigoTransportadora, long idEmpresa)
         {
             var transportadora = ValidarTransportadoraPorCodigo(codigoTransportadora);
@@ -881,6 +920,24 @@ namespace FWLog.Services.Services
             };
 
             return resposta;
+        }
+
+        public void ReimprimirRomaneio(long idRomaneio, long idImpressora, long idEmpresa, string idUsuario)
+        {
+            var romaneio = ValidarIdRomaneio(idRomaneio, idEmpresa);
+
+            var impressora = ValidarIdImpressora(idImpressora);
+
+            ImprimirRomaneio(romaneio.NroRomaneio, impressora.Id, false, idEmpresa, idUsuario);
+
+            _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
+            {
+                IdColetorAplicacao = ColetorAplicacaoEnum.Expedicao,
+                IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.ReimpressaoRomaneio,
+                Descricao = $"Romaneio {romaneio.NroRomaneio} da transportadora {romaneio.Transportadora.NomeFantasia} reimpresso.",
+                IdEmpresa = idEmpresa,
+                IdUsuario = idUsuario
+            });
         }
     }
 }
