@@ -2,7 +2,7 @@
 
 namespace FWLog.Web.Api.Models.Expedicao
 {
-    public class ValidarImpressoraRomaneioConfiguradaRequisicao
+    public class ValidarImpressoraRomaneioRequisicao
     {
         [Required(ErrorMessage = "O usuário deve ser informado.")]
         public string IdUsuario { get; set; }

@@ -276,9 +276,10 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/expedicao/romaneio/validar-impressora-configurada")]
+        [Route("api/v1/expedicao/romaneio/validar-impressora")]
+        [AllowAnonymous]
         [HttpPost]
-        public IHttpActionResult ValidarImpressoraRomaneioConfigurada(ValidarImpressoraRomaneioConfiguradaRequisicao requisicao)
+        public IHttpActionResult ValidarImpressoraRomaneio(ValidarImpressoraRomaneioRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
@@ -287,8 +288,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _expedicaoService.ValidarImpressoraRomaneioConfigurada(requisicao.IdUsuario,requisicao.IdEmpresa);
-
+                _expedicaoService.ValidarImpressoraRomaneio(requisicao.IdUsuario,requisicao.IdEmpresa);
             }
             catch (BusinessException businessException)
             {

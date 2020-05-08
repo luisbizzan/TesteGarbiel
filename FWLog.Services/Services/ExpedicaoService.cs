@@ -736,18 +736,21 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void ValidarImpressoraRomaneioConfigurada(string idUsuario, long idEmpresa)
+        public void ValidarImpressoraRomaneio(string idUsuario, long idEmpresa)
         {
-
             var usuarioEmpresa = _unitOfWork.UsuarioEmpresaRepository.Obter(idEmpresa, idUsuario);
 
             if (!usuarioEmpresa.IdPerfilImpressoraPadrao.HasValue)
             {
                 throw new BusinessException("O usário não possui impressora configurada nessa empresa.");
             }
-            else if()
 
-            
+            var perfilImpressoras = _unitOfWork.PerfilImpressoraItemRepository.ObterPorIdPerfilImpressora(usuarioEmpresa.IdPerfilImpressoraPadrao.Value);
+
+            if(!perfilImpressoras.Any(p => p.IdImpressaoItem == ImpressaoItemEnum.RelatorioA4))
+            {
+                throw new BusinessException("Usuário não possui impressora configurada para Romaneio.");
+            }
         }
 
         private void ValidarChaveAcessoNF(string chaveAcesso)
