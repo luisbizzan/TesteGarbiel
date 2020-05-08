@@ -531,7 +531,7 @@ namespace FWLog.Services.Services
             etiquetaZpl.Append($"^FO55,15^FB760,1,0,C,0^A0B,250,120^FR^FD{refProduto}^FS");
 
             // Texto do endereço de armazenagem
-            etiquetaZpl.Append($"^FO440,15^FB760,1,0,C,0^A0B,180,150^FD0{textoEndereco}^FS");
+            etiquetaZpl.Append($"^FO440,15^FB760,1,0,C,0^A0B,180,150^FD{textoEndereco}^FS");
 
             // Barcode do endereço de armazenagem
             etiquetaZpl.Append($"^FO600,250^BCR,85,N,N^FD{codEndereco}^FS");
