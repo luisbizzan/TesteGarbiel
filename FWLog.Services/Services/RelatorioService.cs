@@ -1645,14 +1645,14 @@ namespace FWLog.Services.Services
 
             totalizadores.Add(new RelatorioTotalizadorFinal()
             {
-                Texto = "Total de Nota:",
+                Texto = "Total de Notas:",
                 Valor = listaNFRomaneios.Count
             });
 
             var assinaturas = new List<RelatorioTextoFinal>()
             {
                 new RelatorioTextoFinal { Texto = "Nome:" },
-                new RelatorioTextoFinal { Texto ="R.G. :" },
+                new RelatorioTextoFinal { Texto = "R.G. :" },
                 new RelatorioTextoFinal { Texto ="Placa do Veículo:" }
             };
 
