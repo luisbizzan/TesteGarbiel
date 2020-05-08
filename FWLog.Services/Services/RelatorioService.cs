@@ -1613,7 +1613,9 @@ namespace FWLog.Services.Services
 
             var listaDadosRelatorio = new List<IFwRelatorioDados>();
 
-            foreach (var romaneioNotaFiscal in dadosRelatorio.Romaneio.RomaneioNotaFiscal)
+            var listaNFRomaneios = dadosRelatorio.Romaneio.RomaneioNotaFiscal.ToList();
+
+            foreach (var romaneioNotaFiscal in listaNFRomaneios)
             {
                 var cliente = romaneioNotaFiscal.Cliente;
                 var pedido = romaneioNotaFiscal.PedidoVenda.Pedido;
@@ -1633,6 +1635,27 @@ namespace FWLog.Services.Services
                 listaDadosRelatorio.Add(itemRelatorio);
             };
 
+            var totalizadores = new List<RelatorioTotalizadorFinal>();
+
+            totalizadores.Add(new RelatorioTotalizadorFinal()
+            {
+                Texto = "Total de Volumes:",
+                Valor = listaNFRomaneios.Sum(nfr => nfr.NroVolumes)
+            });
+
+            totalizadores.Add(new RelatorioTotalizadorFinal()
+            {
+                Texto = "Total de Nota:",
+                Valor = listaNFRomaneios.Count
+            });
+
+            var assinaturas = new List<RelatorioTextoFinal>()
+            {
+                new RelatorioTextoFinal { Texto = "Nome:" },
+                new RelatorioTextoFinal { Texto ="R.G. :" },
+                new RelatorioTextoFinal { Texto ="Placa do Veículo:" }
+            };
+
             var dataImpressao = DateTime.Now;
 
             var transportadora = dadosRelatorio.Romaneio.Transportadora;
@@ -1650,7 +1673,9 @@ namespace FWLog.Services.Services
                     NumeroRomaneio = dadosRelatorio.Romaneio.NroRomaneio,
                     DataHoraEmissaoRomaneio = dadosRelatorio.DataHoraEmissaoRomaneio
                 },
-                Dados = listaDadosRelatorio
+                Dados = listaDadosRelatorio,
+                DadosTotalizacaoFinal = totalizadores,
+                DadosTextoFinal = assinaturas
             };
 
             var fwRelatorio = new FwRelatorio();

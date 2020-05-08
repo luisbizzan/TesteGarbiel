@@ -225,6 +225,8 @@
     <Compile Include="Relatorio\Model\RelatorioHistoricoColetor.cs" />
     <Compile Include="Relatorio\Model\RelatorioLogisticaCorredor.cs" />
     <Compile Include="Relatorio\Model\RelatorioProdutos.cs" />
+    <Compile Include="Relatorio\Model\RelatorioTextoFinal.cs" />
+    <Compile Include="Relatorio\Model\RelatorioTotalizadorFinal.cs" />
     <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\ExpedicaoService.cs" />

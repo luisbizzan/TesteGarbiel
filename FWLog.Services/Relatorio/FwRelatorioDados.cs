@@ -1,4 +1,5 @@
-﻿using MigraDoc.DocumentObjectModel;
+﻿using FWLog.Services.Relatorio.Model;
+using MigraDoc.DocumentObjectModel;
 using System;
 using System.Collections.Generic;
 
@@ -13,6 +14,8 @@ namespace FWLog.Services.Relatorio
         public string NomeEmpresa { get; set; }
         public string NomeUsuario { get; set; }
         public List<IFwRelatorioDados> Dados { get; set; }
+        public List<RelatorioTotalizadorFinal> DadosTotalizacaoFinal { get; set; }
+        public List<RelatorioTextoFinal> DadosTextoFinal { get; set; }
     }
 
     public class FwRelatorioDadosFiltro
