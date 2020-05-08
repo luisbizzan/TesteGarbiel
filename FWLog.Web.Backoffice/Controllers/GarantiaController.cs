@@ -261,18 +261,23 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult ConferenciaLaudoDetalhe(long Id_Conferencia, string Refx)
         {
-            var conferencia = _uow.GarantiaRepository.SelecionaConferenciaItem(Id_Conferencia, Refx);
+            var conferencia = _uow.GarantiaRepository.SelecionaConferencia(Id_Conferencia);
+            var conferenciaItem = _uow.GarantiaRepository.SelecionaConferenciaItem(Id_Conferencia, Refx);
 
             var result = _uow.GarantiaRepository.ListarConferenciaSolicitacaoLaudoDetalhe(Id_Conferencia, Refx);
             var lista = Mapper.Map<IEnumerable<GarantiaLaudo>>(result).ToList();
 
+            //Tipo Solicitação => 17 = Devolução | 18 = Garantia
+            //Tipo Laudo => 9 = Sinistro | 8 = Defeito
+            var idTipoLaudo = conferencia.Id_Tipo_Solicitacao == 17 ? 9 : 8;
+
             var model = new GarantiaLaudoVM
             {
-                Conferencia = Mapper.Map<GarantiaConferenciaItem>(conferencia),
+                Conferencia = Mapper.Map<GarantiaConferenciaItem>(conferenciaItem),
                 Form = new GarantiaLaudo()
                 {
                     Refx = Refx,
-                    Lista_Motivos = new SelectList(_uow.GarantiaRepository.ListarMotivoLaudo(8), "Id", "Descricao", 1)
+                    Lista_Motivos = new SelectList(_uow.GarantiaRepository.ListarMotivoLaudo(idTipoLaudo), "Id", "Descricao", 1)
                 },
                 Lista = lista
             };
@@ -364,15 +369,38 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var conferencia = _uow.GarantiaRepository.SelecionaConferencia(Id_Conferencia);
 
-            if (conferencia.Id_Tipo_Conf == 5)
+            //Tipo Solicitação => 17 = Devolução | 18 = Garantia
+            if (conferencia.Id_Tipo_Solicitacao == 18)
             {
-                //CONFERENCIA DE ENTRADA
-                _uow.GarantiaRepository.FinalizarConferenciaEntrada(new GarConferencia
+                //GARANTIA
+                if (conferencia.Id_Tipo_Conf == 5)
                 {
-                    Id = conferencia.Id,
-                    Id_Usr = IdUsuario,
-                    Id_Solicitacao = conferencia.Id_Solicitacao
-                });
+                    //CONFERENCIA DE ENTRADA
+                    _uow.GarantiaRepository.FinalizarConferenciaEntrada(new GarConferencia
+                    {
+                        Id = conferencia.Id,
+                        Id_Usr = IdUsuario,
+                        Id_Solicitacao = conferencia.Id_Solicitacao
+                    });
+
+                    //TOOD PARTE DE NF SANKYA
+                }
+            }
+            else if (conferencia.Id_Tipo_Solicitacao == 17)
+            {
+                //DEVOLUÇÃO
+                if (conferencia.Id_Tipo_Conf == 5)
+                {
+                    //CONFERENCIA DE ENTRADA
+                    _uow.GarantiaRepository.FinalizarConferenciaEntrada(new GarConferencia
+                    {
+                        Id = conferencia.Id,
+                        Id_Usr = IdUsuario,
+                        Id_Solicitacao = conferencia.Id_Solicitacao
+                    });
+
+                    //TOOD PARTE DE NF SANKYA
+                }
             }
 
             return Json(new AjaxGenericResultModel

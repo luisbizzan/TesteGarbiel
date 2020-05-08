@@ -332,42 +332,46 @@ namespace FWLog.Data.Repository.GeneralCtx
                     ";
                     conn.Query<GarConferencia>(sQuery, new { item.Id, item.Id_Usr });
 
-                    //Abastece Estoque Laudo e Garantia
-                    sQuery = @"
-                    INSERT INTO gar_movimentacao ( Id_Item, Valor, Id_Tipo_Estoque, Id_Doc_Laudo, Id_Tipo, Id_Tipo_Movimentacao, Quant)
-                    SELECT * FROM(
-                        SELECT
-                            GSI.Id AS Id_Item,
-                            GSI.Valor,
-                            15 Id_Tipo_Estoque,
-                            0 AS Id_Doc_Laudo,
-                            13 AS Id_Tipo,
-                            27 AS Id_Tipo_Movimentacao,
-                            CASE WHEN  GSIL.Id IS NULL THEN  GSI.Quant ELSE ( GSI.Quant - GSIL.Quant) END AS Quant
-                        FROM
-                            gar_conferencia GC
-                            INNER JOIN gar_solicitacao_item GSI ON GSI.id_solicitacao = GC.id_solicitacao
-                            LEFT JOIN gar_solicitacao_item_laudo GSIL ON GSIL.id_item = GSI.id
-                        WHERE
-                            GC.Id = :Id
-                        UNION ALL
-                        SELECT
-                            GSI.Id AS Id_Item,
-                            GSI.Valor,
-                            14 Id_Tipo_Estoque,
-                            GSIL.Id AS Id_Doc_Laudo,
-                            13 AS Id_Tipo,
-                            27 AS Id_Tipo_Movimentacao,
-                            GSIL.Quant
-                        FROM
-                            gar_conferencia GC
-                            INNER JOIN gar_solicitacao_item GSI ON GSI.id_solicitacao = GC.id_solicitacao
-                            INNER JOIN gar_solicitacao_item_laudo GSIL ON GSIL.id_item = GSI.id
-                        WHERE
-                            GC.Id = :Id
-                    ) WHERE Quant != 0
-                    ";
-                    conn.Query<GarConferencia>(sQuery, new { item.Id });
+                    //Tipo Solicitação => 17 = Devolução | 18 = Garantia
+                    if (item.Id_Tipo_Solicitacao == 18)
+                    {
+                        //Se for Garantia Abastece Estoque Laudo e Garantia
+                        sQuery = @"
+                        INSERT INTO gar_movimentacao ( Id_Item, Valor, Id_Tipo_Estoque, Id_Doc_Laudo, Id_Tipo, Id_Tipo_Movimentacao, Quant)
+                        SELECT * FROM(
+                            SELECT
+                                GSI.Id AS Id_Item,
+                                GSI.Valor,
+                                15 Id_Tipo_Estoque,
+                                0 AS Id_Doc_Laudo,
+                                13 AS Id_Tipo,
+                                27 AS Id_Tipo_Movimentacao,
+                                CASE WHEN  GSIL.Id IS NULL THEN  GSI.Quant ELSE ( GSI.Quant - GSIL.Quant) END AS Quant
+                            FROM
+                                gar_conferencia GC
+                                INNER JOIN gar_solicitacao_item GSI ON GSI.id_solicitacao = GC.id_solicitacao
+                                LEFT JOIN gar_solicitacao_item_laudo GSIL ON GSIL.id_item = GSI.id
+                            WHERE
+                                GC.Id = :Id
+                            UNION ALL
+                            SELECT
+                                GSI.Id AS Id_Item,
+                                GSI.Valor,
+                                14 Id_Tipo_Estoque,
+                                GSIL.Id AS Id_Doc_Laudo,
+                                13 AS Id_Tipo,
+                                27 AS Id_Tipo_Movimentacao,
+                                GSIL.Quant
+                            FROM
+                                gar_conferencia GC
+                                INNER JOIN gar_solicitacao_item GSI ON GSI.id_solicitacao = GC.id_solicitacao
+                                INNER JOIN gar_solicitacao_item_laudo GSIL ON GSIL.id_item = GSI.id
+                            WHERE
+                                GC.Id = :Id
+                        ) WHERE Quant != 0
+                        ";
+                        conn.Query<GarConferencia>(sQuery, new { item.Id });
+                    }
 
                     //Fecha a conferencia
                     sQuery = @"UPDATE gar_conferencia SET Ativo = 0 WHERE Id = :Id";
@@ -490,10 +494,12 @@ namespace FWLog.Data.Repository.GeneralCtx
                         GT.Descricao AS Tipo_Conf,
                         GC.Id_Tipo_Conf,
                         GC.Id_Remessa,
-                        GC.Id_Solicitacao
+                        GC.Id_Solicitacao,
+                        GS.Id_Tipo AS Id_Tipo_Solicitacao
                     FROM
                         gar_conferencia GC
                         INNER JOIN geral_tipo GT ON GT.id = GC.Id_Tipo_Conf AND GT.tabela = 'GAR_CONFERENCIA' AND GT.coluna = 'ID_TIPO_CONF'
+                        LEFT JOIN gar_solicitacao GS ON GS.id = GC.Id_Solicitacao
                     WHERE
                         GC.Id = :Id_Conferencia
                     ";

@@ -38,33 +38,48 @@ function conferir() {
             alterarQuantidade();
         });
 
+
+        onScan.attachTo($('#Form_Refx')[0], {
+            onScan: function (sScancode, iQuatity) {
+                console.log(sScancode);
+                //TODO PROCESSAR LEITOR E PEGAR REFX
+                $('#Form_Refx').val(sScancode);
+
+                conferirItem();
+            }
+        });
+
         $('#Form_Refx').keypress(function (e) {
             if (e.which == 13) {
                 e.preventDefault();
-
-                $.ajax({
-                    url: HOST_URL + CONTROLLER_PATH + "AtualizarItemConferencia",
-                    method: "POST",
-                    data: {
-                        Id_Conf: $("#Conferencia_Id").val(),
-                        Refx: $("#Form_Refx").val(),
-                        Quant_Conferida: $("#Form_Quant").val(),
-                    },
-                    success: function (result) {
-                        if (result.Success) {
-                            $("#Form_Quant").val("1");
-                            $("#Form_Refx").val("");
-                            PNotify.success({ text: result.Message, delay: 1000 });
-                        } else {
-                            PNotify.error({ text: result.Message });
-                        }
-                    },
-                    error: function (request, status, error) {
-                        PNotify.warning({ text: result.Message });
-                    }
-                });
+                conferirItem();
             }
         });
+    });
+}
+
+function conferirItem() {
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "AtualizarItemConferencia",
+        method: "POST",
+        data: {
+            Id_Conf: $("#Conferencia_Id").val(),
+            Refx: $("#Form_Refx").val(),
+            Quant_Conferida: $("#Form_Quant").val(),
+        },
+        success: function (result) {
+            if (result.Success) {
+                $("#Form_Quant").val("1");
+                $("#Form_Refx").val("");
+                PNotify.success({ text: result.Message, delay: 1000 });
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+        },
+        error: function (request, status, error) {
+            PNotify.warning({ text: result.Message });
+        }
     });
 }
 

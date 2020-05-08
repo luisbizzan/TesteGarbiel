@@ -10,6 +10,8 @@ namespace FWLog.Data.Models
         public DateTime Dt_Conf { get; set; }
         public long Id_Remessa { get; set; }
         public long Id_Solicitacao { get; set; }
+        public long Id_Tipo_Solicitacao { get; set; }
+
         public int Ativo { get; set; }
         public String Id_Usr { get; set; }
         public String Usr { get; set; }
