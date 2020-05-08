@@ -146,6 +146,7 @@
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeSeparacaoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeRecebimento.cs" />
     <Compile Include="Model\Etiquetas\ValidarEnderecoPickingRequest.cs" />
+    <Compile Include="Model\Expedicao\RomaneioTransportadoraResposta.cs" />
     <Compile Include="Model\Expedicao\DespachoTransportadoraResposta.cs" />
     <Compile Include="Model\Expedicao\EnderecosPorTransportadoraResposta.cs" />
     <Compile Include="Model\Expedicao\PedidoVendaVolumeResposta.cs" />
@@ -188,7 +189,6 @@
     <Compile Include="Model\Relatorios\ImprimirRelatorioRecebimentoNotasRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirRelatorioTotalPorAlaRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimriDetalhesProdutoRequest.cs" />
-    <Compile Include="Model\Relatorios\RelatorioRomaneioRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioAtividadeEstoqueRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioHistoricoAcaoUsuarioRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioLogisticaCorredorRequest.cs" />
@@ -200,6 +200,7 @@
     <Compile Include="Model\IntegracaoSankhya\ExecuteQueryResponse.cs" />
     <Compile Include="Model\IntegracaoSankhya\NotaFiscalIntegracao.cs" />
     <Compile Include="Model\Relatorios\RelatorioResumoEtiquetagemRequest.cs" />
+    <Compile Include="Model\Relatorios\RelatorioRomaneioRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioTotalPorAlaRequest.cs" />
     <Compile Include="Model\Relatorios\TermoResponsabilidadeRequest.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />

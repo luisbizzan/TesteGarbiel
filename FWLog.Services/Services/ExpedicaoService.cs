@@ -773,5 +773,63 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Transportadora não está ativa.");
             }
         }
+
+        private Transportadora ValidarTransportadoraPorCodigo(string codigoTransportadora)
+        {
+            if (string.IsNullOrEmpty(codigoTransportadora))
+            {
+                throw new BusinessException("Favor informar o código da tranportadora.");
+            }
+
+            Transportadora transportadora = _unitOfWork.TransportadoraRepository.ConsultarPorCodigoTransportadora(codigoTransportadora);
+
+            if (transportadora == null)
+            {
+                throw new BusinessException("Transportadora não encontrada.");
+            }
+
+            if (!transportadora.Ativo)
+            {
+                throw new BusinessException("Transportadora não está ativa.");
+            }
+
+            return transportadora;
+        }
+
+        public RomaneioTransportadoraResposta ValidarRomaneioTransportadora(string codigoTransportadora, long idEmpresa)
+        {
+            var transportadora = ValidarTransportadoraPorCodigo(codigoTransportadora);
+
+            Empresa empresa = _unitOfWork.EmpresaRepository.GetById(idEmpresa);
+
+            string grupoBat = ConfigurationManager.AppSettings["IntegracaoSankhya_Empresa_GrupoBat"];
+
+            if (grupoBat != null && grupoBat.Split(',').Contains(empresa.Sigla))
+            {
+                if (empresa.EmpresaConfig.IdDiasDaSemana.GetHashCode() != DateTime.Now.DayOfWeek.GetHashCode())
+                {
+                    throw new BusinessException("Atenção, não haverá coleta para esta cidade.");
+                }
+
+                if (empresa.EmpresaConfig.IdTransportadora != transportadora.IdTransportadora)
+                {
+                    throw new BusinessException("Transportadora não está configurada para coleta.");
+                }
+            }
+
+            var pedidos = _unitOfWork.PedidoVendaRepository.ObterPorIdTransportadoraRomaneio(transportadora.IdTransportadora, idEmpresa);
+
+            if (pedidos.NullOrEmpty())
+            {
+                throw new BusinessException("Atenção, não há nenhuma nota despachada para esta transportadora.");
+            }
+
+            var resposta = new RomaneioTransportadoraResposta()
+            {
+                IdTransportadora = transportadora.IdTransportadora
+            };
+
+            return resposta;
+        }
     }
 }

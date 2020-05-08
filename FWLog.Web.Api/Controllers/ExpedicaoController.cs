@@ -275,5 +275,26 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/expedicao/romaneio/validar-transportadora/{codigoTransportadora}")]
+        [HttpPost]
+        public IHttpActionResult ValidarRomaneioTransportadora(string codigoTransportadora)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                var resposta =  _expedicaoService.ValidarRomaneioTransportadora(codigoTransportadora, IdEmpresa);
+
+                return ApiOk(resposta);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+        }
     }
 }
