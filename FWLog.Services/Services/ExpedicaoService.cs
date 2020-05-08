@@ -938,42 +938,42 @@ namespace FWLog.Services.Services
             }
 
             ValidarTransportadora(idTransportadora);
-
-            foreach (var chaveAcesso in chavesAcessos)
+            // ações
+            using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                // validações
-                ValidarChaveAcessoNF(chaveAcesso);
+                // Romaneio
+                var romaneio = new Romaneio();
+                romaneio.IdTransportadora = idTransportadora;
+                romaneio.IdEmpresa = idEmpresa;
+                romaneio.NroRomaneio = GetNextNroRomaneioByEmpresa(idEmpresa);
 
-                Pedido pedido = _unitOfWork.PedidoRepository.PesquisaPorChaveAcesso(chaveAcesso);
+                _unitOfWork.RomaneioRepository.Add(romaneio);
+                _unitOfWork.SaveChanges();
 
-                if (pedido.IdTransportadora != idTransportadora)
+                foreach (var chaveAcesso in chavesAcessos)
                 {
-                    throw new BusinessException("Nota fiscal não pertence a transportadora informada.");
-                }
+                    // validações
+                    ValidarChaveAcessoNF(chaveAcesso);
 
-                PedidoVenda pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedido(pedido.IdPedido);
+                    Pedido pedido = _unitOfWork.PedidoRepository.PesquisaPorChaveAcesso(chaveAcesso);
 
-                if (pedidoVenda == null)
-                {
-                    throw new BusinessException("Não existe pedido venda para chave de acesso informada.");
-                }
-                
-                NotaFiscal notaFiscal = _unitOfWork.NotaFiscalRepository.ObterPorChave(chaveAcesso);
-                if (notaFiscal == null)
-                {
-                    throw new BusinessException("Nota fiscal não encontrada.");
-                }
+                    if (pedido.IdTransportadora != idTransportadora)
+                    {
+                        throw new BusinessException("Nota fiscal não pertence a transportadora informada.");
+                    }
 
-                // ações
-                using (var transacao = _unitOfWork.CreateTransactionScope())
-                {
-                    // Romaneio
-                    var romaneio = new Romaneio();
-                    romaneio.IdTransportadora = idTransportadora;
-                    romaneio.IdEmpresa = idEmpresa;
-                    romaneio.NroRomaneio = GetNextNroRomaneioByEmpresa(idEmpresa);
+                    PedidoVenda pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedido(pedido.IdPedido);
 
-                    _unitOfWork.RomaneioRepository.Add(romaneio);
+                    if (pedidoVenda == null)
+                    {
+                        throw new BusinessException("Não existe pedido venda para chave de acesso informada.");
+                    }
+
+                    NotaFiscal notaFiscal = _unitOfWork.NotaFiscalRepository.ObterPorChave(chaveAcesso);
+                    if (notaFiscal == null)
+                    {
+                        throw new BusinessException("Nota fiscal não encontrada.");
+                    }
 
                     // Notas do Romaneio
                     var romaneioNotaFiscal = new RomaneioNotaFiscal();
@@ -982,6 +982,8 @@ namespace FWLog.Services.Services
                     romaneioNotaFiscal.NroNotaFiscal = notaFiscal.Numero;
                     romaneioNotaFiscal.NroVolumes = pedidoVenda.NroVolumes;
                     
+                    _unitOfWork.SaveChanges();
+
                     // tratamento especial pra empresas k1 e k2
                     var empresa = _unitOfWork.EmpresaRepository.GetById(idEmpresa);
                     if (empresa.Sigla == "K1" || empresa.Sigla == "K2")
@@ -1011,12 +1013,7 @@ namespace FWLog.Services.Services
                         pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.RomaneioImpresso;
                         _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
                     }
-
-                    foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes)
-                    {
-                        pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.RomaneioImpresso;
-                        _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
-                    }
+                    _unitOfWork.SaveChanges();
 
                     _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
                     {
@@ -1027,12 +1024,11 @@ namespace FWLog.Services.Services
                         IdUsuario = idUsuario
                     });
 
-                    _unitOfWork.SaveChanges();
-
-                    transacao.Complete();
-
-                    idRomaneioResultado = romaneio.IdRomaneio;
+                    _unitOfWork.SaveChanges();                    
                 }
+
+                transacao.Complete();
+                idRomaneioResultado = romaneio.IdRomaneio;
             }
 
             var resposta = new RomaneioFinalizarNFResposta
