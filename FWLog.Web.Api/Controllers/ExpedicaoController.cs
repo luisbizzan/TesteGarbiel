@@ -287,7 +287,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _expedicaoService.ValidarImpressoraRomaneio(requisicao.IdUsuario,requisicao.IdEmpresa);
+                _expedicaoService.ValidarImpressoraRomaneio(requisicao.IdUsuario, requisicao.IdEmpresa);
             }
             catch (BusinessException businessException)
             {
@@ -308,7 +308,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                var resposta =  _expedicaoService.ValidarRomaneioTransportadora(codigoTransportadora, IdEmpresa);
+                var resposta = _expedicaoService.ValidarRomaneioTransportadora(codigoTransportadora, IdEmpresa);
 
                 return ApiOk(resposta);
             }
@@ -318,9 +318,8 @@ namespace FWLog.Web.Api.Controllers
             }
         }
 
-
         [Route("api/v1/expedicao/romaneio/{nroRomaneio}")]
-        [HttpPost]
+        [HttpGet]
         public IHttpActionResult BuscarRomaneio(int nroRomaneio)
         {
             if (!ModelState.IsValid)
