@@ -14,7 +14,8 @@ namespace FWLog.Data.Models
         CancelamentoSeparacao = 7,
         FinalizacaoSeparacao = 8,
         MoverDoca = 9,
-        DespachoNF = 10
+        DespachoNF = 10,
+        Romaneio = 11
     }
 
     public class ColetorHistoricoTipo
