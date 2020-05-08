@@ -736,6 +736,20 @@ namespace FWLog.Services.Services
             }
         }
 
+        public void ValidarImpressoraRomaneioConfigurada(string idUsuario, long idEmpresa)
+        {
+
+            var usuarioEmpresa = _unitOfWork.UsuarioEmpresaRepository.Obter(idEmpresa, idUsuario);
+
+            if (!usuarioEmpresa.IdPerfilImpressoraPadrao.HasValue)
+            {
+                throw new BusinessException("O usário não possui impressora configurada nessa empresa.");
+            }
+            else if()
+
+            
+        }
+
         private void ValidarChaveAcessoNF(string chaveAcesso)
         {
             if (string.IsNullOrEmpty(chaveAcesso))
