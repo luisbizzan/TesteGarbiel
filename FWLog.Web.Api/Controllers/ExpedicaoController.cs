@@ -277,7 +277,6 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [Route("api/v1/expedicao/romaneio/validar-impressora")]
-        [AllowAnonymous]
         [HttpPost]
         public IHttpActionResult ValidarImpressoraRomaneio(ValidarImpressoraRomaneioRequisicao requisicao)
         {
