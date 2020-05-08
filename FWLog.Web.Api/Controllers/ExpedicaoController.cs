@@ -341,7 +341,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/expedicao/romaneio/finalizar-nota")]
         [HttpPost]
-        public async Task<IHttpActionResult> FinalizarRomaneioNF(FinalizarDespachoNFRequisicao requisicao)
+        public async Task<IHttpActionResult> FinalizarRomaneioNF(FinalizarRomaneioNFRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
@@ -358,8 +358,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(businessException.Message);
             }
-
-            return ApiOk();
         }
 
         [Route("api/v1/expedicao/romaneio/reimprimir")]
@@ -381,8 +379,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(businessException.Message);
             }
-
-            return ApiOk();
         }
     }
 }
