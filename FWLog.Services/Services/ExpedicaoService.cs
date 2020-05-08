@@ -843,7 +843,8 @@ namespace FWLog.Services.Services
 
             var resposta = new RomaneioTransportadoraResposta()
             {
-                IdTransportadora = transportadora.IdTransportadora
+                IdTransportadora = transportadora.IdTransportadora,
+                ChavesAcessos = pedidos.Select(x => x.Pedido.ChaveAcessoNotaFiscal).ToList()
             };
 
             return resposta;
