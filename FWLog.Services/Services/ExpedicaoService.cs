@@ -702,7 +702,7 @@ namespace FWLog.Services.Services
                 DataHoraEmissaoRomaneio = DateTime.Now,
                 IdEmpresa = idEmpresa,
                 IdUsuarioExecucao = idUsuario
-            }, idImpressora);
+            }, idImpressora, imprimeSegundaVia);
         }
 
         public void ValidarNotaFiscalRomaneio(long idTransportadora, string chaveAcesso)
