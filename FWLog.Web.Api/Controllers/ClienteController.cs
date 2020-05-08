@@ -4,6 +4,7 @@ using System.Web.Http;
 
 namespace FWLog.Web.Api.Controllers
 {
+    [AllowAnonymous]
     public class ClienteController : ApiBaseController
     {
         public ClienteService _clienteService;
