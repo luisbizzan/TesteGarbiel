@@ -19,7 +19,7 @@ namespace FWLog.Services.Services
     public class ExpedicaoService
     {
         private readonly UnitOfWork _unitOfWork;
-        private ILog _log;
+        private readonly ILog _log;
         private readonly ColetorHistoricoService _coletorHistoricoService;
         private readonly NotaFiscalService _notaFiscalService;
         private readonly PedidoService _pedidoService;
@@ -747,7 +747,7 @@ namespace FWLog.Services.Services
 
             var perfilImpressoras = _unitOfWork.PerfilImpressoraItemRepository.ObterPorIdPerfilImpressora(usuarioEmpresa.IdPerfilImpressoraPadrao.Value);
 
-            if(!perfilImpressoras.Any(p => p.IdImpressaoItem == ImpressaoItemEnum.RelatorioA4))
+            if (!perfilImpressoras.Any(p => p.IdImpressaoItem == ImpressaoItemEnum.RelatorioA4))
             {
                 throw new BusinessException("Usuário não possui impressora configurada para Romaneio.");
             }
