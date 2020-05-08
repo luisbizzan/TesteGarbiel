@@ -276,6 +276,28 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [Route("api/v1/expedicao/romaneio/validar-impressora")]
+        [AllowAnonymous]
+        [HttpPost]
+        public IHttpActionResult ValidarImpressoraRomaneio(ValidarImpressoraRomaneioRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _expedicaoService.ValidarImpressoraRomaneio(requisicao.IdUsuario,requisicao.IdEmpresa);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+            return ApiOk();
+        }
+
         [Route("api/v1/expedicao/romaneio/validar-transportadora/{codigoTransportadora}")]
         [HttpPost]
         public IHttpActionResult ValidarRomaneioTransportadora(string codigoTransportadora)
