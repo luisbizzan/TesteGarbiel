@@ -318,9 +318,8 @@ namespace FWLog.Web.Api.Controllers
             }
         }
 
-
         [Route("api/v1/expedicao/romaneio/{nroRomaneio}")]
-        [HttpPost]
+        [HttpGet]
         public IHttpActionResult BuscarRomaneio(int nroRomaneio)
         {
             if (!ModelState.IsValid)
