@@ -713,9 +713,9 @@ namespace FWLog.Services.Services
 
             Pedido pedido = _unitOfWork.PedidoRepository.PesquisaPorChaveAcesso(chaveAcesso);
 
-            if (pedido.IdTransportadora != idTransportadora)
+            if (pedido == null)
             {
-                throw new BusinessException("Nota fiscal não pertence a transportadora informada.");
+                throw new BusinessException("A nota fiscal não encontrada.");
             }
 
             PedidoVenda pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedido(pedido.IdPedido);
@@ -723,6 +723,11 @@ namespace FWLog.Services.Services
             if (pedidoVenda == null)
             {
                 throw new BusinessException("Não existe pedido venda para chave de acesso informada.");
+            }
+
+            if (pedidoVenda.IdTransportadora != idTransportadora)
+            {
+                throw new BusinessException("Nota fiscal não pertence a transportadora informada.");
             }
 
             if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.NFDespachada)
