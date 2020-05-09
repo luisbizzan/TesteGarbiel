@@ -9,6 +9,7 @@ namespace FWLog.Data.Models
         public String Filial { get; set; }
         public DateTime Dt_Criacao { get; set; }
         public long Id_Tipo { get; set; }
+        public long Id_Tipo_Doc { get; set; }
         public String Tipo { get; set; }
         public String Cli_Cnpj { get; set; }
         public String Razao_Social { get; set; }

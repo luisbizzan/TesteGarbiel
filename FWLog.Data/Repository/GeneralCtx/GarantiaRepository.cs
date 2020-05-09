@@ -114,6 +114,127 @@ namespace FWLog.Data.Repository.GeneralCtx
             return retorno;
         }
 
+        public void ImportarSolicitacaoNfCartaManual(GarSolicitacao item)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                bool podeImportar = false;
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    //VERIFICA SE JA FOI IMPORTADO
+                    if (item.Id_Tipo_Doc == 31)
+                        sQuery = @"SELECT COUNT(*) FROM gar_solicitacao WHERE Nota_Fiscal = :Nota_Fiscal AND Cli_Cnpj = :Cli_Cnpj AND Serie = :Serie";
+                    else if (item.Id_Tipo_Doc == 32)
+                        sQuery = @"SELECT COUNT(*) FROM gar_solicitacao WHERE Nota_Fiscal = :Nota_Fiscal";
+
+                    podeImportar = conn.Query<int>(sQuery, new { item.Nota_Fiscal }).SingleOrDefault() == 0;
+
+                    if (podeImportar)
+                    {
+                        var Id_Solicitacao = 0;
+                        var Id_DevGar = 0;
+
+                        if (item.Id_Tipo_Doc == 31)
+                        {
+                            //NF MANUAL
+                            var param = new DynamicParameters();
+                            param.Add(name: "Id_Usr", value: item.Id_Usr, direction: ParameterDirection.Input);
+                            param.Add(name: "Cli_Cnpj", value: item.Cli_Cnpj, direction: ParameterDirection.Input);
+                            param.Add(name: "Nota_Fiscal", value: item.Nota_Fiscal, direction: ParameterDirection.Input);
+                            param.Add(name: "Serie", value: item.Serie, direction: ParameterDirection.Input);
+                            param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                            param.Add(name: "Id_DevGar", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                            conn.Execute(@"
+                            INSERT INTO gar_solicitacao (filial, dt_criacao, id_tipo, cli_cnpj,id_status,id_usr,legenda,id_sav,nota_fiscal,serie,id_tipo_doc)
+                            SELECT 
+                                remetente_id AS filial,
+                                SYSDATE AS dt_criacao,
+                                17 AS id_tipo,
+                                cnpj AS cli_cnpj,
+                                22 AS id_status,
+                                :Id_Usr AS id_usr,
+                                '???' AS legenda,
+                                id AS id_sav,
+                                nota_fiscal,
+                                serie,
+                                31 AS id_tipo_doc    
+                            FROM 
+                                fdv_devgar@furacaophp 
+                            WHERE 
+                                cnpj = :Cli_Cnpj 
+                                AND nota_fiscal = :Nota_Fiscal
+                                AND serie = :Serie
+                                AND finalizado NOT IN (0,5)
+                            returning Id, FD.id into :Id, :Id_DevGar", param);
+
+                            Id_Solicitacao = param.Get<int>("Id");
+                            Id_DevGar = param.Get<int>("Id_DevGar");
+                        }
+                        else if (item.Id_Tipo_Doc == 32)
+                        {
+                            //NF CARTA
+                            var param = new DynamicParameters();
+                            param.Add(name: "Id_Usr", value: item.Id_Usr, direction: ParameterDirection.Input);
+                            param.Add(name: "Cli_Cnpj", value: item.Cli_Cnpj, direction: ParameterDirection.Input);
+                            param.Add(name: "Nota_Fiscal", value: item.Nota_Fiscal, direction: ParameterDirection.Input);
+                            param.Add(name: "Serie", value: item.Serie, direction: ParameterDirection.Input);
+                            param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                            param.Add(name: "Id_DevGar", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                            conn.Execute(@"
+                            INSERT INTO gar_solicitacao (filial, dt_criacao, id_tipo, cli_cnpj,id_status,id_usr,legenda,id_sav,nota_fiscal,serie,id_tipo_doc)
+                            SELECT 
+                                remetente_id AS filial,
+                                SYSDATE AS dt_criacao,
+                                17 AS id_tipo,
+                                cnpj AS cli_cnpj,
+                                22 AS id_status,
+                                :Id_Usr AS id_usr,
+                                '???' AS legenda,
+                                id AS id_sav,
+                                nota_fiscal,
+                                serie,
+                                32 AS id_tipo_doc    
+                            FROM 
+                                fdv_devgar@furacaophp FD
+                            WHERE 
+                                nota_fiscal = :Nota_Fiscal
+                                AND finalizado NOT IN (0,5)
+                             returning Id, FD.id into :Id, :Id_DevGar", param);
+
+                            Id_Solicitacao = param.Get<int>("Id");
+                            Id_DevGar = param.Get<int>("Id_DevGar");
+                        }
+
+                        //ITENS DA NF
+                        sQuery = @"
+                        INSERT INTO gar_solicitacao_item (id_solicitacao, id_item_nf, refx, cod_fornecedor,quant,valor)
+                        SELECT
+                            :Id_Solicitacao AS id_solicitacao,
+                            num_origem_nf AS id_item_nf,
+                            cod_produto AS refx,
+                            '' AS cod_fornecedor,
+                            quantidade AS quant,
+                            vlr_unitario AS valor
+                        FROM
+                            fdv_devgar_itens@furacaophp
+                        WHERE
+                            devgar_id = :Id_DevGar; 
+                        ";
+                        conn.Query<GarConferenciaHist>(sQuery, new
+                        {
+                            Id_Solicitacao,
+                            Id_DevGar
+                        });
+                    }
+                }
+                conn.Close();
+            }
+        }
+
         public void EstornarSolicitacao(GarSolicitacao item)
         {
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
