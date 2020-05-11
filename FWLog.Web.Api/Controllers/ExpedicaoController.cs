@@ -339,6 +339,27 @@ namespace FWLog.Web.Api.Controllers
             }
         }
 
+        [Route("api/v1/expedicao/romaneio/finalizar-nota")]
+        [HttpPost]
+        public async Task<IHttpActionResult> FinalizarRomaneioNF(FinalizarRomaneioNFRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {                
+                await _expedicaoService.FinalizarRomaneioNF(requisicao.IdTransportadora, requisicao.ChaveAcesso, IdUsuario, IdEmpresa);
+
+                return ApiOk();
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+        }
+
         [Route("api/v1/expedicao/romaneio/reimprimir")]
         [HttpPost]
         public IHttpActionResult ReimprimirRomaneio(RomaneioReimprimirRequisicao requisicao)
@@ -349,7 +370,7 @@ namespace FWLog.Web.Api.Controllers
             }
 
             try
-            {
+            {                
                 _expedicaoService.ReimprimirRomaneio(requisicao.IdRomaneio, requisicao.IdImpressora, IdEmpresa, IdUsuario);
 
                 return ApiOk();

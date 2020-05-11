@@ -928,6 +928,122 @@ namespace FWLog.Services.Services
             return resposta;
         }
 
+        public async Task<RomaneioFinalizarNFResposta> FinalizarRomaneioNF(long idTransportadora, List<string> chavesAcessos, string idUsuario, long idEmpresa)
+        {
+            long idRomaneioResultado = default;
+
+            if (!chavesAcessos.Any())
+            {
+                throw new BusinessException("Favor informar as chaves de acesso.");
+            }
+
+            ValidarTransportadora(idTransportadora);
+            // ações
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                // Romaneio
+                var romaneio = new Romaneio();
+                romaneio.IdTransportadora = idTransportadora;
+                romaneio.IdEmpresa = idEmpresa;
+                romaneio.NroRomaneio = GetNextNroRomaneioByEmpresa(idEmpresa);
+
+                _unitOfWork.RomaneioRepository.Add(romaneio);
+                _unitOfWork.SaveChanges();
+
+                foreach (var chaveAcesso in chavesAcessos)
+                {
+                    // validações
+                    ValidarChaveAcessoNF(chaveAcesso);
+
+                    Pedido pedido = _unitOfWork.PedidoRepository.PesquisaPorChaveAcesso(chaveAcesso);
+
+                    if (pedido.IdTransportadora != idTransportadora)
+                    {
+                        throw new BusinessException("Nota fiscal não pertence a transportadora informada.");
+                    }
+
+                    PedidoVenda pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedido(pedido.IdPedido);
+
+                    if (pedidoVenda == null)
+                    {
+                        throw new BusinessException("Não existe pedido venda para chave de acesso informada.");
+                    }
+
+                    NotaFiscal notaFiscal = _unitOfWork.NotaFiscalRepository.ObterPorChave(chaveAcesso);
+                    if (notaFiscal == null)
+                    {
+                        throw new BusinessException("Nota fiscal não encontrada.");
+                    }
+
+                    // Notas do Romaneio
+                    var romaneioNotaFiscal = new RomaneioNotaFiscal();
+                    romaneioNotaFiscal.IdRomaneio = romaneio.IdRomaneio;
+                    romaneioNotaFiscal.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
+                    romaneioNotaFiscal.NroNotaFiscal = notaFiscal.Numero;
+                    romaneioNotaFiscal.NroVolumes = pedidoVenda.NroVolumes;
+                    
+                    _unitOfWork.SaveChanges();
+
+                    // tratamento especial pra empresas k1 e k2
+                    var empresa = _unitOfWork.EmpresaRepository.GetById(idEmpresa);
+                    if (empresa.Sigla == "K1" || empresa.Sigla == "K2")
+                    {
+                        var somaDosVolumes = pedidoVenda.PedidoVendaVolumes.Aggregate(default(decimal), (x, y) => x + y.PesoVolume);
+                        romaneioNotaFiscal.TotalPesoLiquidoVolumes = somaDosVolumes;
+                        romaneioNotaFiscal.TotalPesoBrutoVolumes = somaDosVolumes;
+                    }
+
+                    _unitOfWork.RomaneioNotaFiscalRepository.Add(romaneioNotaFiscal);
+
+                    pedidoVenda.IdUsuarioRomaneio = idUsuario;
+                    var dataHoraEmissaoRomaneio = DateTime.Now;
+                    pedidoVenda.DataHoraRomaneio = dataHoraEmissaoRomaneio;
+
+                    // atualiza status no Sankhya e nas entidades do pedido
+                    await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, PedidoVendaStatusEnum.RomaneioImpresso);
+
+                    pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.RomaneioImpresso;
+                    _unitOfWork.PedidoRepository.Update(pedido);
+
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.RomaneioImpresso;
+                    _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+
+                    foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes)
+                    {
+                        pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.RomaneioImpresso;
+                        _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
+                    }
+                    _unitOfWork.SaveChanges();
+
+                    _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
+                    {
+                        IdColetorAplicacao = ColetorAplicacaoEnum.Expedicao,
+                        IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.Romaneio,
+                        Descricao = $"Log: Romaneio {romaneio.IdRomaneio} gerado para a transportadora {idTransportadora}. Usuário: {idUsuario}, Data/Hora: {dataHoraEmissaoRomaneio}.",
+                        IdEmpresa = idEmpresa,
+                        IdUsuario = idUsuario
+                    });
+
+                    _unitOfWork.SaveChanges();                    
+                }
+
+                transacao.Complete();
+                idRomaneioResultado = romaneio.IdRomaneio;
+            }
+
+            var resposta = new RomaneioFinalizarNFResposta
+            {
+                IdRomaneio = idRomaneioResultado
+            };
+
+            return resposta;
+        }
+
+        private int GetNextNroRomaneioByEmpresa(long idEmpresa)
+        {
+            return _unitOfWork.RomaneioRepository.BuscaUltimoNroRomaneioPorEmpresa(idEmpresa) + 1;
+        }
+        
         public void ReimprimirRomaneio(long idRomaneio, long idImpressora, long idEmpresa, string idUsuario)
         {
             var romaneio = ValidarIdRomaneio(idRomaneio, idEmpresa);

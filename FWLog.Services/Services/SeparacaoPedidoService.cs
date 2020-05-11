@@ -707,7 +707,7 @@ namespace FWLog.Services.Services
             var grupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository.Todos().Where(x => x.IdEmpresa == idEmpresa).OrderBy(x => x.CorredorInicial).ToList();
 
             //Captura os pedidos por empresa e status pendente separação.
-            var listaPedidos = _unitOfWork.PedidoRepository.PesquisarPendenteSeparacao(idEmpresa);
+            var listaPedidos = _unitOfWork.PedidoRepository.PesquisarPendenteSeparacao(idEmpresa).Where(x => x.IdPedido == 83).ToList();
 
             foreach (var pedido in listaPedidos) //Percorre a lista de pedidos.
             {
@@ -786,6 +786,7 @@ namespace FWLog.Services.Services
                             }
 
                             //Imprimir Etiqueta
+                            //Código comentado BLOCO DE NOTAS
                         }
 
                         //Atualiza a quantidade de volumes na PedidoVenda.
@@ -1048,13 +1049,14 @@ namespace FWLog.Services.Services
             bool caixaAnteriorEhMelhorQueAtual = false; //Indica que a caixa anterior é melhor que a atual.
             bool encontrouCaixaCorreta = false; //Indica que a caixa correta foi encontrada.
             bool usarCaixaEncontrada = false; //Indica que os itens receberão a caixa encontrada.
-            CaixaViewModel caixaMaior = new CaixaViewModel(); //Caixa corrente.
-            CaixaViewModel caixaAnterior = new CaixaViewModel(); //Controle da caixa anterior.
-            CaixaViewModel proximaCaixa = new CaixaViewModel(); //Próxima caixa na escala de grandeza.
+            CaixaViewModel caixaMaior = null; //Caixa corrente.
+            CaixaViewModel caixaAnterior = null; //Controle da caixa anterior.
+            CaixaViewModel proximaCaixa = null; //Próxima caixa na escala de grandeza.
             decimal contadorCubagem2 = 0;
             bool usouAgrupamento; //Indica se o agrupamento foi utilizado.
             decimal contadorCubagem; //Acumulador (auxiliar) para cubagem.
             decimal contadorPeso; //Acumulador (auxiliar) para peso.
+            bool sair = false;
 
             //Captura a lista de caixas mais comum.
             var listaCaixasMaisComum = await BuscarCaixaMaisComum(listaItensDoPedido);
@@ -1226,10 +1228,10 @@ namespace FWLog.Services.Services
                 }
 
                 if (!usouAgrupamento)
-                    break;
+                    sair = true;
                 else
                     agrupador++;
-            } while (true);
+            } while (!sair);
 
             return await BuscaItensNaoCubicadosSemFrancionamento(agrupador, listaItensDoPedido, listaCaixasMaisComum);
         }
@@ -1366,8 +1368,8 @@ namespace FWLog.Services.Services
         /// <returns></returns>
         public async Task<CaixaViewModel> CalcularProximaCaixaMaior(CaixaViewModel maiorCaixa, List<CaixaViewModel> listaCaixasMaisComum) //getPrxMaior
         {
-            CaixaViewModel proximaMaiorCaixa = new CaixaViewModel();
-            CaixaViewModel retornoProximaMaiorCaixa = new CaixaViewModel();
+            CaixaViewModel proximaMaiorCaixa = null;
+            CaixaViewModel retornoProximaMaiorCaixa = null;
 
             for (int i = 0; i < listaCaixasMaisComum.Count; i++)
             {
@@ -1404,9 +1406,9 @@ namespace FWLog.Services.Services
         public async Task<List<PedidoItemViewModel>> BuscaItensNaoCubicadosSemFrancionamento(int agrupador, List<PedidoItemViewModel> listaItensDoPedido, List<CaixaViewModel> listaCaixasMaisComum) //calcFracVol
         {
             //Declaração das variáveis que serão utilizadas.
-            CaixaViewModel caixaCorrente = new CaixaViewModel(); // Caixa corrente.
-            CaixaViewModel proximaCaixa = new CaixaViewModel(); //Próxima caixa na escala de grandeza.
-            CaixaViewModel caixaAnterior = new CaixaViewModel(); //Controle da caixa anterior.
+            CaixaViewModel caixaCorrente = null; // Caixa corrente.
+            CaixaViewModel proximaCaixa = null; //Próxima caixa na escala de grandeza.
+            CaixaViewModel caixaAnterior = null; //Controle da caixa anterior.
             bool caixaAnteriorEhMelhorQueAtual = false; //Indica que a caixa anterior é melhor que a atual.
             decimal? nAux2Cub;
             bool encontrouCaixaCorreta; //Indica que a caixa correta foi encontrada.
@@ -1418,6 +1420,7 @@ namespace FWLog.Services.Services
             bool usouAgrupamento = false; //Indica se o agrupamento foi utilizado.
             PedidoItemViewModel pedidoItem = new PedidoItemViewModel();
             List<PedidoItemViewModel> listaItensDoPedidoRetorno = new List<PedidoItemViewModel>();
+            bool sairWhile = false;
 
             //Pra garantir que o agrupamento a ser usado não é o mesmo
             agrupador++;
@@ -1452,7 +1455,7 @@ namespace FWLog.Services.Services
                             if (proximaCaixa == null)
                             {
                                 if (!caixaAnteriorEhMelhorQueAtual)
-                                    break;
+                                    sairWhile = true;
                             }
                             else
                             {
@@ -1466,16 +1469,16 @@ namespace FWLog.Services.Services
 
                         decimal valor = 1.05M;
 
-                        var condicao = (nAuxQtde + listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda) <= listaItensDoPedido[i].Quantidade &&
-                            ((listaItensDoPedido[i].Produto.CubagemProduto * (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda))) / listaItensDoPedido[i].Produto.CubagemProduto <= (caixaCorrente.Cubagem * ((100 - caixaCorrente.Sobra) / 100)) &
-                            ((listaItensDoPedido[i].Produto.PesoBruto * (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda)) <= (caixaCorrente.PesoMaximo * valor))));
-
                         do
                         {
                             nAuxQtde += listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda;
                             contadorCubagem = (listaItensDoPedido[i].Produto.CubagemProduto * nAuxQtde) / listaItensDoPedido[i].Produto.MultiploVenda;
                             contadorPeso = (listaItensDoPedido[i].Produto.PesoBruto * nAuxQtde) / listaItensDoPedido[i].Produto.MultiploVenda;
-                        } while (condicao);
+                        } while (
+                            (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda)) <= listaItensDoPedido[i].Quantidade &&
+                            (((listaItensDoPedido[i].Produto.CubagemProduto * (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda))) / listaItensDoPedido[i].Produto.MultiploVenda) <= (caixaCorrente.Cubagem * ((100 - caixaCorrente.Sobra) / 100)) &&
+                            ((listaItensDoPedido[i].Produto.PesoBruto * (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda)) <= (caixaCorrente.PesoMaximo * valor))))
+                        );
 
                         usarCaixaEncontrada = true;
 
@@ -1560,7 +1563,10 @@ namespace FWLog.Services.Services
                         }
 
                         if (!usouAgrupamento || nAuxQtde == 0)
+                        {
                             sair = true;
+                            usouAgrupamento = false;
+                        }
                         else
                         {
                             agrupador++;
@@ -1569,7 +1575,7 @@ namespace FWLog.Services.Services
                     } while (!sair);
 
                     if (!usouAgrupamento)
-                        break;
+                        sairWhile = true;
                     else
                     {
                         agrupador++;
@@ -1577,7 +1583,7 @@ namespace FWLog.Services.Services
                     }
                 }
 
-            } while (true);
+            } while (!sairWhile);
 
             return listaItensDoPedido;
         }
@@ -1592,7 +1598,7 @@ namespace FWLog.Services.Services
 
             for (int i = 0; i < listaItensDoPedido.Count; i++)
             {
-                if (listaItensDoPedido[i].CaixaEscolhida != null)
+                if (listaItensDoPedido[i].CaixaEscolhida == null)
                 {
                     var condicao = listaItensDoPedido[i].Quantidade / listaItensDoPedido[i].Produto.MultiploVenda;
 

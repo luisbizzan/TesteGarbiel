@@ -14,5 +14,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.Romaneio.Where(romaneio => romaneio.NroRomaneio == nroRomaneio && romaneio.IdEmpresa == idEmpresa).FirstOrDefault();
         }
+
+        public int BuscaUltimoNroRomaneioPorEmpresa(long idEmpresa)
+        {
+            return Entities.Romaneio.Where(romaneio => romaneio.IdEmpresa == idEmpresa).Max(x => x.NroRomaneio);
+        }
     }
 }

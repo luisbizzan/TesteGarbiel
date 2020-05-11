@@ -90,11 +90,11 @@ namespace FWLog.Web.Api.Controllers
         [AllowAnonymous]
         [Route("api/v1/separacao-pedido/dividir-pedido")]
         [HttpPost]
-        public async Task<IHttpActionResult> DividirPedido()
+        public async Task<IHttpActionResult> DividirPedido(long idEmpresa)
         {
             try
             {
-                await _separacaoPedidoService.DividirPedido(IdEmpresa);
+                await _separacaoPedidoService.DividirPedido(idEmpresa);
             }
             catch (BusinessException businessException)
             {

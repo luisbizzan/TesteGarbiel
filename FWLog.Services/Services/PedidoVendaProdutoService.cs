@@ -38,7 +38,7 @@ namespace FWLog.Services.Services
                     DataHoraFimSeparacao = null
                 });
 
-                _uow.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
             catch (Exception ex)
             {
