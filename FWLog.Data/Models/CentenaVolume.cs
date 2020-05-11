@@ -5,10 +5,10 @@ namespace FWLog.Data.Models
 {
     public class CentenaVolume
     {
+        [Key]
         [Required]
         public long IdEmpresa { get; set; }
         [Required]
-        [Key]
         public int Numero { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]

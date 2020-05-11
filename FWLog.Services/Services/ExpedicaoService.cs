@@ -1041,7 +1041,7 @@ namespace FWLog.Services.Services
                     {
                         IdColetorAplicacao = ColetorAplicacaoEnum.Expedicao,
                         IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.Romaneio,
-                        Descricao = $"Log: Romaneio {romaneio.IdRomaneio} gerado para a transportadora {idTransportadora}. Usuário: {idUsuario}, Data/Hora: {dataHoraEmissaoRomaneio}.",
+                        Descricao = $"Romaneio {romaneio.NroRomaneio} gerado para a transportadora {pedido.Transportadora.NomeFantasia}.",
                         IdEmpresa = idEmpresa,
                         IdUsuario = idUsuario
                     });

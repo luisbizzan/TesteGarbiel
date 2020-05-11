@@ -194,5 +194,22 @@ namespace FWLog.Services.Services
                 throw new BusinessException(errorMessage);
             }
         }
+
+        public async Task AtualizarStatus(long idPedido, PedidoVendaStatusEnum status)
+        {
+            try
+            {
+                var pedido = _uow.PedidoRepository.GetById(idPedido);
+
+                pedido.IdPedidoVendaStatus = status;
+                _uow.PedidoRepository.Update(pedido);
+
+                await _uow.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.Error(String.Format("Erro ao atualizar o status do pedido {0}.", idPedido), ex);
+            }
+        }
     }
 }
