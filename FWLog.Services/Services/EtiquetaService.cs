@@ -608,7 +608,7 @@ namespace FWLog.Services.Services
         {
             if (string.IsNullOrEmpty(requisicao.referenciaProdutoOuEndereco))
             {
-                throw new BusinessException("O Endereço deve ser informado.");
+                throw new BusinessException("Endereço deve ser informado.");
             }
 
             var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPickingPorCodigo(requisicao.referenciaProdutoOuEndereco, requisicao.IdEmpresa);
@@ -624,7 +624,7 @@ namespace FWLog.Services.Services
 
                 if (produto == null)
                 {
-                    throw new BusinessException("O endereço/produto não foi encontrado.");
+                    throw new BusinessException("O endereço/produto não encontrado.");
                 }
 
                 var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto, requisicao.IdEmpresa);
@@ -635,18 +635,18 @@ namespace FWLog.Services.Services
                 }
                 else
                 {
-                    throw new BusinessException("O endereço do produto não foi encontrado.");
+                    throw new BusinessException("Eendereço do produto não encontrado.");
                 }
             }
 
             if (enderecoArmazenagem == null)
             {
-                throw new BusinessException("O endereço não foi encontrado.");
+                throw new BusinessException("Endereço não encontrado.");
             }
 
             if (!enderecoArmazenagem.IsPontoSeparacao)
             {
-                throw new BusinessException("O endereço informado não é um ponto de separação.");
+                throw new BusinessException("Endereço não é Picking.");
             }
 
             var resposta = new ValidarEnderecoPickingResposta()
