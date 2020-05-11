@@ -7,6 +7,7 @@ namespace FWLog.Services.Model.SeparacaoPedido
     {
         public List<PedidoItemViewModel> ListaItensDoPedido { get; set; }
         public CaixaViewModel Caixa { get; set; }
-        public bool CaixaFornecedor { get; set; }
+        public bool IsCaixaFornecedor { get; set; }
+        public decimal Peso { get; set; }
     }
 }

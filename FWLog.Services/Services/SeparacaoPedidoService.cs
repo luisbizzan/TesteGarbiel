@@ -773,9 +773,8 @@ namespace FWLog.Services.Services
 
                         foreach (var itemVolume in listaVolumes)
                         {
-                            //Chamar aqui para salvar o volume.
                             //Implementar aqui dentro do método Salvar se CaixaFornecedor então IdCaixa é nulo.
-                            var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume, pedido.IdEmpresa);
+                            var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso);
 
                             if (idPedidoVendaVolume == 0)
                                 break;
@@ -793,7 +792,6 @@ namespace FWLog.Services.Services
 
                         //Atualiza a quantidade de volumes na PedidoVenda.
                         await _pedidoVendaService.AtualizarQuantidadeVolume(idPedidoVenda, quantidadeVolume);
-                        quantidadeVolume = 0;
                     }
                 }
 
@@ -801,7 +799,7 @@ namespace FWLog.Services.Services
                 await _pedidoVendaService.AtualizarStatus(idPedidoVenda, PedidoVendaStatusEnum.EnviadoSeparacao);
 
                 //Atualiza o status do Pedido para Enviado Separação.
-                await _pedidoService.AtualizarStatusPedido(pedido, PedidoVendaStatusEnum.EnviadoSeparacao);
+                await _pedidoService.AtualizarStatus(pedido.IdPedido, PedidoVendaStatusEnum.EnviadoSeparacao);
             }
         }
 
@@ -982,7 +980,9 @@ namespace FWLog.Services.Services
                     Agrupador = 0,
                     CaixaEscolhida = null,
                     Quantidade = listaItensDoPedido[i].Quantidade,
-                    Caixa = await CaixasQuePodemSerUtilizadas(listaItensDoPedido[i].Produto, listaCaixas)
+                    Caixa = await CaixasQuePodemSerUtilizadas(listaItensDoPedido[i].Produto, listaCaixas),
+                    IdEnderecoArmazenagem = listaItensDoPedido[i].IdEnderecoArmazenagem,
+                    IdGrupoCorredorArmazenagem = listaItensDoPedido[i].IdGrupoCorredorArmazenagem
                 });
             }
 
@@ -1640,7 +1640,8 @@ namespace FWLog.Services.Services
                     {
                         listaVolumes.Add(new VolumeViewModel()
                         {
-                            CaixaFornecedor = true
+                            IsCaixaFornecedor = true,
+                            Peso = +listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade
                         });
                     }
                 }
@@ -1652,7 +1653,8 @@ namespace FWLog.Services.Services
                     {
                         listaVolumes.Add(new VolumeViewModel()
                         {
-                            Caixa = nAuxCX
+                            Caixa = nAuxCX,
+                            Peso =+ listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade
                         }); 
 
                         nAuxAgrup = listaItensDoPedido[i].Agrupador;
@@ -1662,7 +1664,8 @@ namespace FWLog.Services.Services
                     {
                         listaVolumes.Add(new VolumeViewModel()
                         {
-                            CaixaFornecedor = true
+                            IsCaixaFornecedor = true,
+                            Peso = +listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade
                         });
                     }
                 }

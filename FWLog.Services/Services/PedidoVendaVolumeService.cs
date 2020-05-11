@@ -21,7 +21,7 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task<long> Salvar(long idPedidoVenda, CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagem grupoCorredorArmazenagem, int numeroVolume, long idEmpresa)
+        public async Task<long> Salvar(long idPedidoVenda, CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagem grupoCorredorArmazenagem, int numeroVolume, long idEmpresa, decimal peso)
         {
             long idPedidoVendaVolume = 0;
 
@@ -40,7 +40,7 @@ namespace FWLog.Services.Services
                     IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao,
                     NroCentena = numeroCentena,
                     NroVolume = numeroVolume,
-                    PesoVolume = 1,
+                    PesoVolume = peso,
                     CorredorInicio = grupoCorredorArmazenagem.CorredorInicial,
                     CorredorFim = grupoCorredorArmazenagem.CorredorFinal,
                     EtiquetaVolume = caixaEscolhida.TextoEtiqueta,
@@ -81,7 +81,11 @@ namespace FWLog.Services.Services
                 }
                 else
                 {
-                    numero = centena.Numero = +1;
+                    if (centena.Numero == 9999)
+                        numero = 1;
+                    else
+                        numero = centena.Numero = +1;
+
                     centena.Numero = numero;
                 }
 
