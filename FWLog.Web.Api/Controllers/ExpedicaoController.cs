@@ -2,6 +2,7 @@
 using FWLog.Data;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Expedicao;
+using System;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -243,7 +244,7 @@ namespace FWLog.Web.Api.Controllers
             {
                 try
                 {
-                    _expedicaoService.ImprimirRomaneio(requisicao?.NroRomaneio ?? 0, requisicao?.IdImpressora ?? 0, requisicao?.ImprimeSegundaVia ?? false, IdEmpresa, IdUsuario);
+                    _expedicaoService.ImprimirRomaneio(requisicao?.IdRomaneio ?? 0, requisicao?.IdImpressora ?? 0, requisicao?.ImprimeSegundaVia ?? false, IdEmpresa, IdUsuario);
 
                     return ApiOk();
                 }
@@ -350,13 +351,18 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                await _expedicaoService.FinalizarRomaneioNF(requisicao.IdTransportadora, requisicao.ChaveAcesso, IdUsuario, IdEmpresa);
+                var response = await _expedicaoService.FinalizarRomaneioNF(requisicao.IdTransportadora, requisicao.ChaveAcesso, IdUsuario, IdEmpresa);
 
-                return ApiOk();
+                return ApiOk(response);
             }
             catch (BusinessException businessException)
             {
                 return ApiBadRequest(businessException.Message);
+            }
+            catch (Exception e)
+            {
+                var bla = e;
+                return ApiBadRequest(e.Message);
             }
         }
 
