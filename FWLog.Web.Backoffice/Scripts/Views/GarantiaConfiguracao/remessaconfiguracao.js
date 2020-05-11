@@ -11,14 +11,12 @@ function GravarRemessaConfiguracao() {
     registro.Vlr_Minimo = $("#txtRCMinimoEnvio").val() == "" ? 0 : $("#txtRCMinimoEnvio").val().replace(".", "").replace(",", ".");
     registro.Total = $("#chkRCTotal")[0].checked ? 1 : 0;
     RegistroInclusao.Inclusao.push(JSON.stringify(registro));
-
-    RegistroIncluir();
     CancelarRemessaConfiguracao();
+    RegistroIncluir();    
 }
 
 /* cancelar */
 function CancelarRemessaConfiguracao() {
-    RegistroInclusao.Inclusao = [];
     _listaAutoComplete = [];
     $("#spanIdFilial").html("");
     $("#spanFilial").html("");

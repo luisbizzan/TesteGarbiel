@@ -13,15 +13,12 @@ function GravarConfiguracao() {
     registro.Prazo_Descarte = $("#txtConfigPrazoDescarte").val() == "" ? 0 : $("#txtConfigPrazoDescarte").val();
 
     RegistroInclusao.Inclusao.push(JSON.stringify(registro));
-
-    RegistroIncluir();
     CancelarConfiguracao();
+    RegistroIncluir();
 }
 
 /* cancelar */
 function CancelarConfiguracao() {
-    RegistroInclusao.Inclusao = [];
-    _listaAutoComplete = [];
     $("#spanConfigIdFilial").html("");
     $("#spanConfigFilial").html("");
     $("#txtConfigEstFrete").val("");

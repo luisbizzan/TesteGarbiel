@@ -48,7 +48,7 @@
                                         <ul id="listaFornecedor" class="to_do" style="overflow:auto; height:240px"></ul>
                                     </div>
                                     <div id="controleFornecedor" class="btn-group col-sm-12" style="display:normal;">
-                                        <a class="btn btn-default col-xs-6" onclick="CancelarTudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="CancelarFornecedorQuebra();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
                                         <a class="btn btn-default col-xs-6" onclick="GravarFornecedorQuebra();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Fornecedor"><i class="fa fa-save text-success"></i></a>
                                     </div>
                                 </div>
@@ -109,28 +109,28 @@
                             <div class="x_title text-muted"><b>&emsp;</b></div>
                             <div class="row">
                                 <div class="input-group input-group-addon input-group-sm col-sm-12">
-                                    <div class="col-sm-12"><input id="txtConfigFilial" class="form-control input-sm" placeholder="Filial"></div>
+                                    <div class="col-sm-12"><input id="txtConfigFilial" class="form-control input-sm" placeholder="Filial" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Consultar Filial"></div>
                                     <div class="col-sm-12 text-center"><b id="spanConfigIdFilial" hidden="hidden"></b><h3 id="spanConfigFilial" class="label label-primary"></h3></div>
                                 </div>
                                 <div class="input-group input-group-sm col-sm-12">
                                     <div class="input-group-addon">Percentual Estorno Frete (%)</div>
-                                    <div class="input-group-addon"><input id="txtConfigEstFrete" type="number" class="form-control" step='0.01' min="0.01" max="100" placeholder="0.00"></div>
+                                    <div class="input-group-addon"><input id="txtConfigEstFrete" type="number" class="form-control" step='0.01' min="0.01" max="100" placeholder="0.00" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Estorno Frete %"></div>
                                 </div>
                                 <div class="input-group input-group-sm col-sm-12">
                                     <div class="input-group-addon">Percentual Desvalorização (%)</div>
-                                    <div class="input-group-addon"><input id="txtConfigDesvalorizacao" type="number" class="form-control" step='0.01' min="0.01" max="100" placeholder="0.00"></div>
+                                    <div class="input-group-addon"><input id="txtConfigDesvalorizacao" type="number" class="form-control" step='0.01' min="0.01" max="100" placeholder="0.00" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Desvalorização %"></div>
                                 </div>
                                 <div class="input-group input-group-sm col-sm-12">
                                     <div class="input-group-addon">Valor Minímo Laudo (R$)</div>
-                                    <div class="input-group-addon"><input id="txtConfigMinimo" type="text" class="form-control money" min="0" placeholder="150,00"></div>
+                                    <div class="input-group-addon"><input id="txtConfigMinimo" type="text" class="form-control money" min="0" placeholder="150,00" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="R$ Minímo Laudo"></div>
                                 </div>
                                 <div class="input-group input-group-sm col-sm-12">
                                     <div class="input-group-addon">Prazo Envio Laudo</div>
-                                    <div class="input-group-addon"><input id="txtConfigPrazoEnvio" type="number" class="form-control" min="0"></div>
+                                    <div class="input-group-addon"><input id="txtConfigPrazoEnvio" type="number" class="form-control" min="0" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Prazo Envio Laudo"></div>
                                 </div>
                                 <div class="input-group input-group-sm col-sm-12">
                                     <div class="input-group-addon">Prazo Descarte</div>
-                                    <div class="input-group-addon"><input id="txtConfigPrazoDescarte" type="number" class="form-control" min="0"></div>
+                                    <div class="input-group-addon"><input id="txtConfigPrazoDescarte" type="number" class="form-control" min="0" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Prazo Descarte"></div>
                                 </div>
                                 <div class="x_content">
                                     <div id="controleConfig" class="btn-groupcol-sm-12" style="display:normal;">
@@ -154,13 +154,13 @@
                             <div class="x_title text-muted"><b>&emsp;</b></div>
                             <div class="col-sm-12">
                                 <div class="input-group input-group-addon input-group-sm col-sm-12">
-                                    <div class="col-sm-12"><input id="txtRCFilial" class="form-control input-sm" placeholder="Filial"></div>
+                                    <div class="col-sm-12"><input id="txtRCFilial" class="form-control input-sm" placeholder="Filial"data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Filial"></div>
                                     <div class="col-sm-12 text-center"><b id="spanIdFilial" hidden="hidden"></b><h3 id="spanFilial" class="label label-primary"></h3></div>
                                 </div>
                             </div>
                             <div class="col-sm-12">
                                 <div class="input-group input-group-addon input-group-sm col-sm-12">
-                                    <div class="col-sm-12"><input id="txtRCFornecedor" class="form-control input-sm" placeholder="Fornecedor"></div>
+                                    <div class="col-sm-12"><input id="txtRCFornecedor" class="form-control input-sm" placeholder="Fornecedor" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Fornecedor"></div>
                                     <div class="col-sm-12 text-center"><b id="spanIdFornecedor" hidden="hidden"></b><h3 id="spanFornecedor" class="label label-primary"></h3></div>
                                 </div>
                             </div>
@@ -168,16 +168,16 @@
                             <div class="col-sm-12">
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-addon"><span>Automática</span></span>
-                                    <span class="input-group-addon"><input id="chkRCAutomatica" type="checkbox" class="flat"></span>
+                                    <span class="input-group-addon"><input id="chkRCAutomatica" type="checkbox" class="flat" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Remessa Automática"></span>
                                 </div>
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-addon">Remessa Total</span>
-                                    <span class="input-group-addon"><input id="chkRCTotal" type="checkbox" class="flat"></span>
+                                    <span class="input-group-addon"><input id="chkRCTotal" type="checkbox" class="flat" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Remessa Total"></span>
                                 </div>
 
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-addon">Minímo Envio (R$)</span>
-                                    <span class="input-group-addon"><input id="txtRCMinimoEnvio" type="text" class="form-control money" min="0"></span>
+                                    <span class="input-group-addon"><input id="txtRCMinimoEnvio" type="text" class="form-control money" min="0" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="R$ Minímo Envio"></span>
                                 </div>
                             </div>
 
@@ -228,7 +228,7 @@
                             <div class="x_title text-muted"><b>&emsp;</b></div>
                             <div class="col-sm-12">
                                 <div class="input-group input-group-addon input-group-sm col-sm-12">
-                                    <div class="col-sm-12"><input id="txtFornecedorPai" class="form-control input-sm" placeholder="Fornecedor Pai"></div>
+                                    <div class="col-sm-12"><input id="txtFornecedorPai" class="form-control input-sm" placeholder="Fornecedor Pai" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Fornecedor Pai"></div>
                                     <div class="input-group-addon">
                                         <div class="col-sm-12 text-center"><b id="spanIdFornecedorPai" hidden="hidden"></b><h3 id="spanFornecedorPai" class="label label-primary"></h3></div>
                                     </div>
@@ -236,7 +236,7 @@
                             </div>
                             <div class="col-sm-12">
                                 <div class="input-group input-group-addon input-group-sm col-sm-12">
-                                    <div class="col-sm-12"><input id="txtFornecedorFilho" class="form-control input-sm" placeholder="Fornecedor Filho"></div>
+                                    <div class="col-sm-12"><input id="txtFornecedorFilho" class="form-control input-sm" placeholder="Fornecedor Filho" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Fornecedor Filho"></div>
                                     <div class="input-group-addon">
                                         <div class="col-sm-12 text-center"><b id="spanIdFornecedorFilho" hidden="hidden"></b><h3 id="spanFornecedorFilho" class="label label-primary"></h3></div>
                                     </div>
@@ -265,8 +265,9 @@
                         <div class="col-md-4 col-sm-4">
                             <div class="x_title text-muted"><b>&emsp;</b></div>
                             <div class="col-sm-12">
+                                <span id="spanIdTipo" hidden="hidden">8</span>
                                 <div class="input-group input-group-addon input-group-sm col-sm-12">
-                                    <div class="col-sm-12"><input id="txtDescricaoMotivoLaudo" class="form-control input-sm" placeholder="Motivo Laudo Descrição"></div>
+                                    <div class="col-sm-12"><input id="txtDescricaoMotivoLaudo" class="form-control input-sm text-uppercase" placeholder="Motivo Laudo Descrição" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Descrição Motivo Laudo"></div>
                                 </div>
                             </div>
                             <div>
