@@ -631,7 +631,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        private void ImprimirEtiquetaVolumeSeparacao(ImprimirEtiquetaVolumeSeparacaoRequest requisicao, long idEmpresa)
+        public void ImprimirEtiquetaVolumeSeparacao(ImprimirEtiquetaVolumeSeparacaoRequest requisicao, long idEmpresa)
         {
             string clienteNome = requisicao.ClienteNome?.Normalizar();
             string clienteEndereco = requisicao.ClienteEndereco?.Normalizar();
