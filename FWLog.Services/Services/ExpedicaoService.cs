@@ -256,7 +256,7 @@ namespace FWLog.Services.Services
             return dadosIntegracaoSankhya.FirstOrDefault();
         }
 
-        public PedidoVendaVolume ValidaTransportadoraInstalacaoVolume(long idPedidoVendaVolume, long idtransportadora, long idEmpresa)
+        public PedidoVendaVolume ValidarTransportadoraInstalacaoVolume(long idPedidoVendaVolume, long idtransportadora, long idEmpresa)
         {
             if (idPedidoVendaVolume <= 0)
             {
@@ -295,9 +295,9 @@ namespace FWLog.Services.Services
             return pedidoVendaVolume;
         }
 
-        public void ValidaEnderecoInstalacaoVolume(long idPedidoVendaVolume, long idTransportadora, long idEnderecoArmazenagem, long idEmpresa)
+        public void ValidarEnderecoInstalacaoVolume(long idPedidoVendaVolume, long idTransportadora, long idEnderecoArmazenagem, long idEmpresa)
         {
-            var pedidoVendaVolume = ValidaTransportadoraInstalacaoVolume(idPedidoVendaVolume, idTransportadora, idEmpresa);
+            var pedidoVendaVolume = ValidarTransportadoraInstalacaoVolume(idPedidoVendaVolume, idTransportadora, idEmpresa);
 
             var enderecoTransportadora = _unitOfWork.TransportadoraEnderecoRepository.ObterPorEnderecoTransportadoraEmpresa(idEnderecoArmazenagem, pedidoVendaVolume.PedidoVenda.IdTransportadora, idEmpresa);
 
@@ -307,21 +307,28 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task SalvaInstalacaoVolumes(List<long> listaIdsVolumes, long idTransportadora, long idEnderecoArmazenagem, long idEmpresa, string idUsuario)
+        public async Task SalvarInstalacaoVolumes(List<long> listaIdsVolumes, long idTransportadora, long idEnderecoArmazenagem, long idEmpresa, string idUsuario)
         {
             if (listaIdsVolumes.NullOrEmpty())
             {
-                throw new BusinessException("A lista de volumes deve ser informada.");
+                throw new BusinessException("Volumes devem ser informados.");
             }
 
             if (idEnderecoArmazenagem <= 0)
             {
-                throw new BusinessException("O endereço deve ser informado.");
+                throw new BusinessException("Endereço deve ser informado.");
+            }
+
+            var enderecoInstalacao = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (enderecoInstalacao == null)
+            {
+                throw new BusinessException("Endereço não encontrado.");
             }
 
             foreach (var idPedidoVendaVolume in listaIdsVolumes)
             {
-                ValidaEnderecoInstalacaoVolume(idPedidoVendaVolume, idTransportadora, idEnderecoArmazenagem, idEmpresa);
+                ValidarEnderecoInstalacaoVolume(idPedidoVendaVolume, idTransportadora, idEnderecoArmazenagem, idEmpresa);
             }
 
             var listaPedidoVendaVolume = new List<PedidoVendaVolume>();
@@ -345,6 +352,8 @@ namespace FWLog.Services.Services
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
+                var listaVolumesString = new List<string>();
+
                 foreach (var pedidoVendaVolume in listaPedidoVendaVolume)
                 {
                     pedidoVendaVolume.IdEnderecoArmazTransportadora = idEnderecoArmazenagem;
@@ -354,6 +363,8 @@ namespace FWLog.Services.Services
                     pedidoVendaVolume.PedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.InstalandoVolumeTransportadora;
 
                     await _unitOfWork.SaveChangesAsync();
+
+                    listaVolumesString.Add(pedidoVendaVolume.EtiquetaVolume);
                 }
 
                 var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(listaPedidoVendaVolume.First().IdPedidoVenda);
@@ -364,6 +375,17 @@ namespace FWLog.Services.Services
 
                     await _unitOfWork.SaveChangesAsync();
                 }
+
+                var stringVolumes = string.Join(", ", listaVolumesString);
+
+                _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Expedicao,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.InstalarMultiplo,
+                    Descricao = $"Os volumes {stringVolumes} foram instalados no endereço {enderecoInstalacao.Codigo} para a transportadora {pedidoVenda.Transportadora.NomeFantasia}.",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuario
+                });
 
                 transacao.Complete();
             }
@@ -981,7 +1003,7 @@ namespace FWLog.Services.Services
                     romaneioNotaFiscal.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
                     romaneioNotaFiscal.NroNotaFiscal = notaFiscal.Numero;
                     romaneioNotaFiscal.NroVolumes = pedidoVenda.NroVolumes;
-                    
+
                     _unitOfWork.SaveChanges();
 
                     // tratamento especial pra empresas k1 e k2
@@ -1024,7 +1046,7 @@ namespace FWLog.Services.Services
                         IdUsuario = idUsuario
                     });
 
-                    _unitOfWork.SaveChanges();                    
+                    _unitOfWork.SaveChanges();
                 }
 
                 transacao.Complete();
@@ -1043,7 +1065,7 @@ namespace FWLog.Services.Services
         {
             return _unitOfWork.RomaneioRepository.BuscaUltimoNroRomaneioPorEmpresa(idEmpresa) + 1;
         }
-        
+
         public void ReimprimirRomaneio(long idRomaneio, long idImpressora, long idEmpresa, string idUsuario)
         {
             var romaneio = ValidarIdRomaneio(idRomaneio, idEmpresa);

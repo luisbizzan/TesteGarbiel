@@ -37,7 +37,7 @@ namespace FWLog.Web.Api.Controllers
         [AllowAnonymous]
         [Route("api/v1/expedicao/integrar-notas-fiscais")]
         [HttpPost]
-        public async Task<IHttpActionResult> AtualizaNotasFiscaisPedidos()
+        public async Task<IHttpActionResult> AtualizarNotasFiscaisPedidos()
         {
             await _expedicaoService.AtualizaNotasFiscaisPedidos();
 
@@ -46,7 +46,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/expedicao/validar-transportadora-volume")]
         [HttpPost]
-        public IHttpActionResult ValidaTransportadoraInstalacaoVolume(ValidaTransportadoraInstalacaoVolumeRequisicao requisicao)
+        public IHttpActionResult ValidarTransportadoraInstalacaoVolume(ValidaTransportadoraInstalacaoVolumeRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
@@ -55,7 +55,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _expedicaoService.ValidaTransportadoraInstalacaoVolume(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.IdTransportadora ?? 0, IdEmpresa);
+                _expedicaoService.ValidarTransportadoraInstalacaoVolume(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.IdTransportadora ?? 0, IdEmpresa);
 
             }
             catch (BusinessException businessException)
@@ -68,7 +68,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/expedicao/validar-endereco-volume")]
         [HttpPost]
-        public IHttpActionResult ValidaEnderecoInstalacaoVolume(ValidaEnderecoInstalacaoVolumeRequisicao requisicao)
+        public IHttpActionResult ValidarEnderecoInstalacaoVolume(ValidaEnderecoInstalacaoVolumeRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
@@ -77,7 +77,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _expedicaoService.ValidaEnderecoInstalacaoVolume(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.IdTransportadora ?? 0, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa);
+                _expedicaoService.ValidarEnderecoInstalacaoVolume(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.IdTransportadora ?? 0, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa);
 
             }
             catch (BusinessException businessException)
@@ -90,7 +90,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/expedicao/salvar-instalacao-volumes")]
         [HttpPost]
-        public async Task<IHttpActionResult> SalvaInstalacaoVolumes(SalvaInstalacaoVolumesRequisicao requisicao)
+        public async Task<IHttpActionResult> SalvarInstalacaoVolumes(SalvaInstalacaoVolumesRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
@@ -99,7 +99,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                await _expedicaoService.SalvaInstalacaoVolumes(requisicao?.ListaVolumes, requisicao?.IdTransportadora ?? 0, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa, IdUsuario);
+                await _expedicaoService.SalvarInstalacaoVolumes(requisicao?.ListaVolumes, requisicao?.IdTransportadora ?? 0, requisicao?.IdEnderecoArmazenagem ?? 0, IdEmpresa, IdUsuario);
             }
             catch (BusinessException businessException)
             {
@@ -349,7 +349,7 @@ namespace FWLog.Web.Api.Controllers
             }
 
             try
-            {                
+            {
                 await _expedicaoService.FinalizarRomaneioNF(requisicao.IdTransportadora, requisicao.ChaveAcesso, IdUsuario, IdEmpresa);
 
                 return ApiOk();
@@ -370,7 +370,7 @@ namespace FWLog.Web.Api.Controllers
             }
 
             try
-            {                
+            {
                 _expedicaoService.ReimprimirRomaneio(requisicao.IdRomaneio, requisicao.IdImpressora, IdEmpresa, IdUsuario);
 
                 return ApiOk();
