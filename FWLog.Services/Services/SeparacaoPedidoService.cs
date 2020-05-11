@@ -4,6 +4,7 @@ using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.Caixa;
 using FWLog.Services.Model.Coletor;
+using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Model.IntegracaoSankhya;
 using FWLog.Services.Model.Produto;
 using FWLog.Services.Model.SeparacaoPedido;
@@ -26,8 +27,9 @@ namespace FWLog.Services.Services
         private PedidoService _pedidoService;
         private PedidoVendaProdutoService _pedidoVendaProdutoService;
         private PedidoVendaVolumeService _pedidoVendaVolumeService;
+        private EtiquetaService _etiquetaService;
 
-        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService, ILog log, PedidoService pedidoService, PedidoVendaService pedidoVendaService, PedidoVendaProdutoService pedidoVendaProdutoService, PedidoVendaVolumeService pedidoVendaVolumeService)
+        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService, ILog log, PedidoService pedidoService, PedidoVendaService pedidoVendaService, PedidoVendaProdutoService pedidoVendaProdutoService, PedidoVendaVolumeService pedidoVendaVolumeService, EtiquetaService etiquetaService)
         {
             _unitOfWork = unitOfWork;
             _coletorHistoricoService = coletorHistoricoService;
@@ -36,6 +38,7 @@ namespace FWLog.Services.Services
             _pedidoVendaService = pedidoVendaService;
             _pedidoVendaProdutoService = pedidoVendaProdutoService;
             _pedidoVendaVolumeService = pedidoVendaVolumeService;
+            _etiquetaService = etiquetaService;
         }
 
         public List<long> ConsultaPedidoVendaEmSeparacao(string idUsuario, long idEmpresa)
@@ -761,7 +764,7 @@ namespace FWLog.Services.Services
 
                     //Captura os itens do pedido com as caixas em que cada um deve ir.
                     //A partir do método cubicagem, existem chamadas para vários outros.
-                    var listaItensDoPedidoDividido = await Cubicagem(listaItensDoPedidoPorCorredor, idEmpresa);
+                    var listaItensDoPedidoDividido = await Cubagem(listaItensDoPedidoPorCorredor, idEmpresa);
 
                     if (listaItensDoPedidoDividido.Count > 0)
                     {
@@ -772,7 +775,7 @@ namespace FWLog.Services.Services
                         {
                             //Chamar aqui para salvar o volume.
                             //Implementar aqui dentro do método Salvar se CaixaFornecedor então IdCaixa é nulo.
-                            var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume);
+                            var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume, pedido.IdEmpresa);
 
                             if (idPedidoVendaVolume == 0)
                                 break;
@@ -781,12 +784,11 @@ namespace FWLog.Services.Services
 
                             foreach (var item in listaItensDoPedidoDividido)
                             {
-                                //Chamar aqui para salvar os produtos do volume.
                                 await _pedidoVendaProdutoService.Salvar(idPedidoVenda, idPedidoVendaVolume, item);
                             }
 
-                            //Imprimir Etiqueta
-                            //Código comentado BLOCO DE NOTAS
+                            //Imprime a etiqueta de separação.
+                            await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, itemCorredorArmazenagem, pedido, idPedidoVendaVolume);
                         }
 
                         //Atualiza a quantidade de volumes na PedidoVenda.
@@ -795,9 +797,41 @@ namespace FWLog.Services.Services
                     }
                 }
 
-                //Atualiza o status do PedidoVenda para 
+                //Atualiza o status do PedidoVenda para Enviado Separação.
                 await _pedidoVendaService.AtualizarStatus(idPedidoVenda, PedidoVendaStatusEnum.EnviadoSeparacao);
+
+                //Atualiza o status do Pedido para Enviado Separação.
+                await _pedidoService.AtualizarStatusPedido(pedido, PedidoVendaStatusEnum.EnviadoSeparacao);
             }
+        }
+
+        public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagem grupoCorredorArmazenagem, Pedido pedido, long idPedidoVendaVolume)
+        {
+            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
+            
+            _etiquetaService.ImprimirEtiquetaVolumeSeparacao(new ImprimirEtiquetaVolumeSeparacaoRequest()
+            {
+                ClienteNome = pedido.Cliente.NomeFantasia,
+                ClienteEndereco = pedido.Cliente.Endereco,
+                ClienteEnderecoNumero = pedido.Cliente.Numero,
+                ClienteCEP = pedido.Cliente.CEP,
+                ClienteCidade = pedido.Cliente.Cidade,
+                ClienteUF = pedido.Cliente.UF,
+                ClienteTelefone = pedido.Cliente.Telefone,
+                ClienteCodigo = pedido.Cliente.IdCliente.ToString(),
+                RepresentanteCodigo = pedido.Representante.IdRepresentante.ToString(),
+                PedidoCodigo = pedido.IdPedido.ToString(),
+                Centena = String.Format("{0:0000}", pedidoVendaVolume.NroCentena),
+                TransportadoraSigla = pedido.Transportadora.CodigoTransportadora,
+                TransportadoraCodigo = pedido.Transportadora.IdTransportadora.ToString(),
+                TransportadoraNome = pedido.Transportadora.RazaoSocial,
+                CorredoresInicio = grupoCorredorArmazenagem.CorredorInicial.ToString(),
+                CorredoresFim = grupoCorredorArmazenagem.CorredorFinal.ToString(),
+                CaixaTextoEtiqueta = volume.Caixa.TextoEtiqueta,
+                Volume = numeroVolume.ToString(),
+                IdImpressora = grupoCorredorArmazenagem.IdImpressora
+            },
+            pedido.IdEmpresa);
         }
 
         public async Task<GrupoCorredorArmazenagem> BuscarGrupoCorredorArmazenagemItemPedido(int corredor, List<GrupoCorredorArmazenagem> listaGrupoCorredorArmazenagem)
@@ -844,7 +878,7 @@ namespace FWLog.Services.Services
             return listaItensDoPedidoAgrupada;
         }
 
-        public async Task<List<PedidoItemViewModel>> Cubicagem(List<PedidoItemViewModel> listaItensDoPedido, long idEmpresa) //Cubicagem
+        public async Task<List<PedidoItemViewModel>> Cubagem(List<PedidoItemViewModel> listaItensDoPedido, long idEmpresa) //Cubicagem
         {
             List<PedidoItemViewModel> listaItensDoPedidoRetorno = new List<PedidoItemViewModel>();
 
@@ -1608,7 +1642,6 @@ namespace FWLog.Services.Services
                         {
                             CaixaFornecedor = true
                         });
-                        //aAdd(aVolumes, { 'F', 0 } )
                     }
                 }
                 else if (listaItensDoPedido[i].Agrupador != nAuxAgrup || listaItensDoPedido[i].CaixaEscolhida.IdCaixa != nAuxNrCx)
@@ -1620,8 +1653,8 @@ namespace FWLog.Services.Services
                         listaVolumes.Add(new VolumeViewModel()
                         {
                             Caixa = nAuxCX
-                        }); ;
-                        //aAdd(aVolumes, { aCaixas[nAuxCX, 3], ; aCaixas[nAuxCX, 1] } )
+                        }); 
+
                         nAuxAgrup = listaItensDoPedido[i].Agrupador;
                         nAuxNrCx = listaItensDoPedido[i].CaixaEscolhida.IdCaixa;
                     }
@@ -1631,7 +1664,6 @@ namespace FWLog.Services.Services
                         {
                             CaixaFornecedor = true
                         });
-                        //aAdd(aVolumes, { 'F', 0 } )
                     }
                 }
             }

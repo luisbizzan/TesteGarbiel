@@ -88,12 +88,12 @@ namespace FWLog.Data
         private RomaneioRepository _romaneioRepository;
         private RomaneioNotaFiscalRepository _romaneioNotaFiscalRepository;
         private DiasDaSemanaRepository _diasDaSemanaRepository;
+        private CentenaVolumeRepository _centenaVolumeRepository;
 
         public UnitOfWork()
         {
             _context = new Entities();
         }
-
         public PedidoVendaVolumeRepository PedidoVendaVolumeRepository
         {
             get => _pedidoVendaVolumeRepository ?? (_pedidoVendaVolumeRepository = new PedidoVendaVolumeRepository(_context));
@@ -462,6 +462,11 @@ namespace FWLog.Data
         public DiasDaSemanaRepository DiasDaSemanaRepository
         {
             get => _diasDaSemanaRepository ?? (_diasDaSemanaRepository = new DiasDaSemanaRepository(_context));
+        }
+
+        public CentenaVolumeRepository CentenaVolumeRepository
+        {
+            get => _centenaVolumeRepository ?? (_centenaVolumeRepository = new CentenaVolumeRepository(_context));
         }
 
         public TransactionScope CreateTransactionScope()
