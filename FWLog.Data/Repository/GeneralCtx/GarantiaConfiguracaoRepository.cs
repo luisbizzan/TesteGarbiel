@@ -160,7 +160,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                     conn.Open();
                                     if (conn.State == System.Data.ConnectionState.Open)
                                     {
-                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.MotivoLaudoIncluir, item.Id_Tipo, item.MotivoLaudoDescricao));
+                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.MotivoLaudoIncluir, Convert.ToInt32(item.Id_Tipo), item.MotivoLaudoDescricao.ToUpper()));
                                     }
                                     conn.Close();
                                 }

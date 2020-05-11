@@ -79,16 +79,12 @@ function GravarFornecedorQuebra() {
         RegistroInclusao.Inclusao.push(JSON.stringify(registro));
     });
 
-    _fornecedoresGravar = [];
-    $("#listaFornecedor").html("");
-
-    RegistroIncluir();
     CancelarFornecedorQuebra();
+    RegistroIncluir();
 }
 
 /* cancelar */
 function CancelarFornecedorQuebra() {
-    RegistroInclusao.Inclusao = [];
     _fornecedoresGravar = [];
     _listaAutoComplete = [];
     $("#listaFornecedor").html("");

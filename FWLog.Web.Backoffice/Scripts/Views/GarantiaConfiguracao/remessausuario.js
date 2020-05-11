@@ -31,16 +31,12 @@ function GravarRemessaUsuario() {
         RegistroInclusao.Inclusao.push(JSON.stringify(registro));
     });
 
-    _remessaUsuarioGravar = [];
-    $("#listaRemessaUsuarios").html("");
-
-    RegistroIncluir();
     CancelarRemessaUsuario();
+    RegistroIncluir();
 }
 
 /* cancelar */
 function CancelarRemessaUsuario() {
-    RegistroInclusao.Inclusao = [];
     _listaAutoComplete = [];
     _remessaUsuarioGravar = [];
     $("#listaRemessaUsuarios").html("");

@@ -8,14 +8,12 @@ function GravarFornecedorGrupo() {
     registro.Cod_Forn_Filho = $("#spanIdFornecedorFilho").html() == "" ? 0 : $("#spanIdFornecedorFilho").html();
 
     RegistroInclusao.Inclusao.push(JSON.stringify(registro));
-    RegistroIncluir();
     CancelarFornecedorGrupo();
+    RegistroIncluir();    
 }
 
 /* cancelar */
 function CancelarFornecedorGrupo() {
-    RegistroInclusao.Inclusao = [];
-    _listaAutoComplete = [];
     $("#txtFornecedorPai").val("");
     $("#spanIdFornecedorPai").html("");
     $("#spanFornecedorPai").html("");

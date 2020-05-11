@@ -56,7 +56,10 @@ function RegistroIncluir() {
         console.log(f);
     }).done(function (d) {
         //console.log(d);
-    });
+        });
+
+    RegistroInclusao.Inclusao = [];
+    _listaAutoComplete = [];
 }
 
 /* [GENÉRICO] excluir no banco dados */
