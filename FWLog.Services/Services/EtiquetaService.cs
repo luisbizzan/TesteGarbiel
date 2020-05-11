@@ -604,14 +604,40 @@ namespace FWLog.Services.Services
             _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
         }
 
-        public void ValidarEnderecoPicking(ValidarEnderecoPickingRequest requisicao)
+        public ValidarEnderecoPickingResposta ValidarProdutoOuEnderecoPicking(ValidarEnderecoPickingRequest requisicao)
         {
-            if (requisicao.IdEnderecoArmazenagem <= 0)
+            if (string.IsNullOrEmpty(requisicao.referenciaProdutoOuEndereco))
             {
                 throw new BusinessException("O Endereço deve ser informado.");
             }
 
-            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(requisicao.IdEnderecoArmazenagem);
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPickingPorCodigo(requisicao.referenciaProdutoOuEndereco, requisicao.IdEmpresa);
+
+            if (enderecoArmazenagem == null && long.TryParse(requisicao.referenciaProdutoOuEndereco, out long id))
+            {
+                enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(id);
+            }
+
+            if (enderecoArmazenagem == null)
+            {
+                var produto = _unitOfWork.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(requisicao.referenciaProdutoOuEndereco);
+
+                if (produto == null)
+                {
+                    throw new BusinessException("O endereço/produto não foi encontrado.");
+                }
+
+                var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto, requisicao.IdEmpresa);
+
+                if (produtoEstoque != null)
+                {
+                    enderecoArmazenagem = produtoEstoque.EnderecoArmazenagem;
+                }
+                else
+                {
+                    throw new BusinessException("O endereço do produto não foi encontrado.");
+                }
+            }
 
             if (enderecoArmazenagem == null)
             {
@@ -623,12 +649,12 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O endereço informado não é um ponto de separação.");
             }
 
-            var pontoArmazenagem = _unitOfWork.PontoArmazenagemRepository.GetById(enderecoArmazenagem.IdPontoArmazenagem);
-
-            if (pontoArmazenagem.Descricao != "Picking")
+            var resposta = new ValidarEnderecoPickingResposta()
             {
-                throw new BusinessException("O endereço informado não é endereço de Picking.");
-            }
+                IdEnderecoArmazenagem = enderecoArmazenagem.IdEnderecoArmazenagem,
+            };
+
+            return resposta;
         }
 
         private class CelulaEtiqueta
