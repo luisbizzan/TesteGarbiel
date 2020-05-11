@@ -359,11 +359,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(businessException.Message);
             }
-            catch (Exception e)
-            {
-                var bla = e;
-                return ApiBadRequest(e.Message);
-            }
         }
 
         [Route("api/v1/expedicao/romaneio/reimprimir")]
