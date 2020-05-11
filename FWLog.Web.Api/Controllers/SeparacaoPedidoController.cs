@@ -145,5 +145,26 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(businessException.Message);
             }
         }
+
+        [Route("api/v1/separacao-pedido/consultar-entradas-produto/{idProduto}")]
+        [HttpGet]
+        public IHttpActionResult ConsultarEntradasProduto(long idProduto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                var response = _separacaoPedidoService.ConsultarEntradasProduto(idProduto, IdEmpresa);
+
+                return ApiOk(response);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+        }
     }
 }

@@ -2,7 +2,9 @@
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx
@@ -166,6 +168,38 @@ namespace FWLog.Data.Repository.GeneralCtx
             }).ToList();
 
             return result.ToList();
+        }
+
+        public List<EntradaProduto> ConsultarEntradasProduto(long idProduto, long idEmpresa)
+        {
+            var dataInicio = DateTime.Now.AddDays(-90);
+
+            var listaStatusFiltragem = new List<LoteStatusEnum>
+            {
+                LoteStatusEnum.Finalizado,
+                LoteStatusEnum.ConferidoDivergencia,
+                LoteStatusEnum.FinalizadoDivergenciaNegativa
+            };
+
+            var query = (from produto in Entities.Produto
+                         from loteProduto in Entities.LoteProduto.Where(lp => lp.IdProduto == produto.IdProduto)
+                         from lote in Entities.Lote.Where(l => l.IdLote == loteProduto.IdLote)
+                         where
+                            produto.IdProduto == idProduto &&
+                            loteProduto.IdEmpresa == idEmpresa &&
+                            lote.DataInicioConferencia >= dataInicio &&
+                            listaStatusFiltragem.Contains(lote.IdLoteStatus)
+                         select new EntradaProduto
+                         {
+                             IdProduto = produto.IdProduto,
+                             ReferenciaProduto = produto.Referencia,
+                             DataInicioConferenciaLote = lote.DataInicioConferencia.Value,
+                             QuantidadeRecebidaLoteProduto = (int)loteProduto.QuantidadeRecebida
+                         });
+
+            var queryList = query.ToList();
+
+            return queryList;
         }
     }
 }

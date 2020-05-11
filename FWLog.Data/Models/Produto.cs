@@ -6,7 +6,7 @@ namespace FWLog.Data.Models
     public class Produto
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Required]        
+        [Required]
         public long IdProduto { get; set; }
 
         [Required]
@@ -29,7 +29,7 @@ namespace FWLog.Data.Models
 
         [StringLength(80)]
         public string NomeFabricante { get; set; }
-     
+
         [StringLength(200)]
         public string EnderecoImagem { get; set; }
 
