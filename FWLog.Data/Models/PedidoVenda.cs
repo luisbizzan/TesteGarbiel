@@ -54,6 +54,8 @@ namespace FWLog.Data.Models
 
         public string IdUsuarioDespachoNotaFiscal { get; set; }
 
+        public string IdUsuarioRomaneio { get; set; }
+
         public DateTime? DataHoraRomaneio { get; set; }
 
         [ForeignKey(nameof(IdPedido))]
@@ -76,6 +78,9 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdUsuarioDespachoNotaFiscal))]
         public virtual AspNetUsers UsuarioDespachoNotaFiscal { get; set; }
+
+        [ForeignKey(nameof(IdUsuarioRomaneio))]
+        public virtual AspNetUsers UsuarioRomaneio { get; set; }
 
         public virtual ICollection<PedidoVendaVolume> PedidoVendaVolumes { get; set; }
         public virtual ICollection<PedidoVendaProduto> PedidoVendaProdutos { get; set; }
