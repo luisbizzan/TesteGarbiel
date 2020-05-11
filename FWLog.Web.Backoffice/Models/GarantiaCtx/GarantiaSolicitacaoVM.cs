@@ -94,7 +94,6 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         [Display(Name = "Chave de Acesso")]
         public string Chave_Acesso { get; set; }
 
-        [Required]
         [Display(Name = "Código de Postagem")]
         public string Codigo_Postagem { get; set; }
 
