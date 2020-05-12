@@ -58,6 +58,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.LoteProdutoEndereco.Where(lpe => lpe.IdProduto == idProduto && lpe.IdEmpresa == idEmpresa && lpe.IdLote != null).ToList();
         }
 
+        public List<LoteProdutoEndereco> PesquisarPorProduto(long idProduto, long idEmpresa)
+        {
+            return Entities.LoteProdutoEndereco.Where(lpe => lpe.IdProduto == idProduto && lpe.IdEmpresa == idEmpresa).ToList();
+        }
+
         private IQueryable<EnderecoArmazenagemTotalPorAlasLinhaTabela> BuscarTodosDadosTotalAla(RelatorioTotalizacaoAlasListaFiltro model)
         {
             var query = (from end in Entities.EnderecoArmazenagem
@@ -82,7 +87,9 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             if (model.CorredorInicial.HasValue && model.CorredorFinal.HasValue)
             {
-                var range = Enumerable.Range(model.CorredorInicial.Value, model.CorredorFinal.Value);
+                var count = model.CorredorInicial.Value == model.CorredorFinal.Value ? 1 : (model.CorredorFinal.Value - model.CorredorInicial.Value) + 1;
+
+                var range = Enumerable.Range(model.CorredorInicial.Value, count);
 
                 query = query.Where(y => range.Contains(y.Corredor));
             }
@@ -112,7 +119,9 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             if (model.CorredorInicial.HasValue && model.CorredorFinal.HasValue)
             {
-                var range = Enumerable.Range(model.CorredorInicial.Value, model.CorredorFinal.Value);
+                var count = model.CorredorInicial.Value == model.CorredorFinal.Value ? 1 : (model.CorredorFinal.Value - model.CorredorInicial.Value) + 1;
+
+                var range = Enumerable.Range(model.CorredorInicial.Value, count);
 
                 query = query.Where(y => range.Contains(y.Corredor));
             }
@@ -194,7 +203,9 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             if (model.CorredorInicial.HasValue && model.CorredorFinal.HasValue)
             {
-                var range = Enumerable.Range(model.CorredorInicial.Value, model.CorredorFinal.Value).ToList();
+                var count = model.CorredorInicial.Value == model.CorredorFinal.Value ? 1 : (model.CorredorFinal.Value - model.CorredorInicial.Value) + 1;
+
+                var range = Enumerable.Range(model.CorredorInicial.Value, count);
 
                 baseQuery = baseQuery.Where(y => range.Contains(y.EnderecoArmazenagem.Corredor));
             }
@@ -260,7 +271,9 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             if (model.CustomFilter.CorredorInicial > 0 && model.CustomFilter.CorredorFinal > 0)
             {
-                var range = Enumerable.Range(model.CustomFilter.CorredorInicial.Value, model.CustomFilter.CorredorFinal.Value);
+                var count = model.CustomFilter.CorredorInicial.Value == model.CustomFilter.CorredorFinal.Value ? 1 : (model.CustomFilter.CorredorFinal.Value - model.CustomFilter.CorredorInicial.Value) + 1;
+
+                var range = Enumerable.Range(model.CustomFilter.CorredorInicial.Value, count);
 
                 query = query.Where(y => range.Contains(y.EnderecoArmazenagem.Corredor));
             }

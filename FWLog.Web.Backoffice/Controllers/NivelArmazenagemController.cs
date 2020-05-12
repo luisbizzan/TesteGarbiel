@@ -190,7 +190,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpGet]
         [ApplicationAuthorize]
-        public ActionResult PesquisaModal()
+        public ActionResult PesquisaModal(bool? isExpedicao)
         {
             var viewModel = new NivelArmazenagemPesquisaModalViewModel
             {
@@ -200,6 +200,11 @@ namespace FWLog.Web.Backoffice.Controllers
                     new SelectListItem { Text = "Inativo", Value = "0"}
                 }, "Value", "Text")
             };
+
+            if(isExpedicao != null && isExpedicao == true)
+            {
+                viewModel.Filtros.Status = 1;
+            }
 
             return View(viewModel);
         }

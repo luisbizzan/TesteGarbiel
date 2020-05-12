@@ -11,14 +11,15 @@ namespace FWLog.Services.Relatorio
 {
     public class FwRelatorio
     {
-        public FwRelatorioDados _dataSource;
-        public Document _document = new Document();
+        private FwRelatorioDados _dataSource;
+        private Document _document = new Document();
 
         public byte[] Gerar(FwRelatorioDados data)
         {
             Configurar(data);
             CriarCabecalho();
             CriarTabela();
+            CriarTextosPosTabela();
             CriarRodape();
             return Renderizar();
         }
@@ -44,7 +45,6 @@ namespace FWLog.Services.Relatorio
                 return;
             }
 
-            int count = 0;
             Table tabela = _document.Sections[0].AddTable();
             tabela.Format.Font = new Font("Verdana", new Unit(9));
 
@@ -68,7 +68,7 @@ namespace FWLog.Services.Relatorio
 
             Paragraph spaceLine;
 
-            count = 0;
+            int count = 0;
             foreach (string nomeColuna in columnNames)
             {
                 spaceLine = row.Cells[count].AddParagraph();
@@ -107,6 +107,68 @@ namespace FWLog.Services.Relatorio
                         row.Cells[count].AddParagraph(property.GetValue(item).ToString());
                     }
                     count++;
+                }
+            }
+        }
+
+        private void CriarTextosPosTabela()
+        {
+            if (!_dataSource.DadosTotalizacaoFinal.NullOrEmpty())
+            {
+                var tabela = _document.Sections[0].AddTable();
+                tabela.Format.Font = new Font("Verdana", new Unit(12));
+
+                var properties = _dataSource.DadosTotalizacaoFinal.First().GetType().GetProperties();
+
+                foreach (var property in properties)
+                {
+                    if (property.GetCustomAttributes(typeof(ColunaRelatorioAttribute), true).Length > 0)
+                    {
+                        var attribute = (ColunaRelatorioAttribute)property.GetCustomAttributes(typeof(ColunaRelatorioAttribute), true)[0];
+                        tabela.AddColumn(new Unit(attribute.Tamanho, UnitType.Point));
+                    }
+                }
+
+                for (int indicePulaLinhas = 0; indicePulaLinhas < 1; indicePulaLinhas++)
+                {
+                    tabela.AddRow();
+                }
+
+                foreach (var itemTotalizacao in _dataSource.DadosTotalizacaoFinal)
+                {
+                    var row = tabela.AddRow();
+
+                    row.Cells[0].AddParagraph(itemTotalizacao.Texto);
+                    row.Cells[1].AddParagraph(itemTotalizacao.Valor.ToString());
+                }
+            }
+
+            if (!_dataSource.DadosTextoFinal.NullOrEmpty())
+            {
+                var tabela = _document.Sections[0].AddTable();
+                tabela.Format.Font = new Font("Verdana", new Unit(12));
+
+                var properties = _dataSource.DadosTextoFinal.First().GetType().GetProperties();
+
+                foreach (var property in properties)
+                {
+                    if (property.GetCustomAttributes(typeof(ColunaRelatorioAttribute), true).Length > 0)
+                    {
+                        var attribute = (ColunaRelatorioAttribute)property.GetCustomAttributes(typeof(ColunaRelatorioAttribute), true)[0];
+                        tabela.AddColumn(new Unit(attribute.Tamanho, UnitType.Point));
+                    }
+                }
+
+                for (int indicePulaLinhas = 0; indicePulaLinhas < 1; indicePulaLinhas++)
+                {
+                    tabela.AddRow();
+                }
+
+                foreach (var textoFinal in _dataSource.DadosTextoFinal)
+                {
+                    var row = tabela.AddRow();
+
+                    row.Cells[0].AddParagraph(textoFinal.Texto);
                 }
             }
         }
@@ -262,6 +324,30 @@ namespace FWLog.Services.Relatorio
                     corredores.AddFormattedText("Corredores: ", TextFormat.Bold);
                     corredores.AddFormattedText(new Font("Verdana", 10));
                     corredores.AddText($"{_dataSource.Filtros.CorredorInicial} à { _dataSource.Filtros.CorredorFinal}");
+                }
+
+                if (_dataSource.Filtros.DataHoraEmissaoRomaneio.HasValue)
+                {
+                    var date = rowHeader.Cells[0].AddParagraph();
+                    date.AddFormattedText(new Font("Verdana", 10));
+                    date.AddFormattedText("Data Emissão Romaneio: ", TextFormat.Bold);
+                    date.AddText(_dataSource.Filtros.DataHoraEmissaoRomaneio?.ToString("dd/MM/yyyy - HH:mm:ss"));
+                }
+
+                if (_dataSource.Filtros.NumeroRomaneio.HasValue)
+                {
+                    var corredores = rowHeader.Cells[0].AddParagraph();
+                    corredores.AddFormattedText("Nro. Romaneio: ", TextFormat.Bold);
+                    corredores.AddFormattedText(new Font("Verdana", 10));
+                    corredores.AddText($"{_dataSource.Filtros.NumeroRomaneio}");
+                }
+
+                if (!string.IsNullOrWhiteSpace(_dataSource.Filtros.Transportadora))
+                {
+                    var corredores = rowHeader.Cells[0].AddParagraph();
+                    corredores.AddFormattedText("Transportadora: ", TextFormat.Bold);
+                    corredores.AddFormattedText(new Font("Verdana", 10));
+                    corredores.AddText($"{_dataSource.Filtros.Transportadora}");
                 }
             }
 

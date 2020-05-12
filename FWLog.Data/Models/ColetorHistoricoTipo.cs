@@ -11,6 +11,13 @@ namespace FWLog.Data.Models
         ConferirEndereco = 4,
         ImprimirEtiqueta = 5,
         ConferirProdutoForaLinha = 6,
+        CancelamentoSeparacao = 7,
+        FinalizacaoSeparacao = 8,
+        MoverDoca = 9,
+        DespachoNF = 10,
+        Romaneio = 11,
+        ReimpressaoRomaneio = 12,
+        InstalarMultiplo = 13
     }
 
     public class ColetorHistoricoTipo

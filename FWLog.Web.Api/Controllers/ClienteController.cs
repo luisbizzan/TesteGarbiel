@@ -14,7 +14,8 @@ namespace FWLog.Web.Api.Controllers
             _clienteService = clienteService;
         }
 
-        [Route("api/v1/Cliente/integrar")]
+        [AllowAnonymous]
+        [Route("api/v1/cliente/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarCliente()
         {

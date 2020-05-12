@@ -1,0 +1,82 @@
+﻿@model FWLog.Web.Backoffice.Models.CaixaCtx.CaixaDetalhesViewModel
+@using FWLog.AspNet.Identity
+
+@{
+    ViewBag.Title = "Visualização de Caixa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="col-md-12 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Detalhes Caixa</h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="row">
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Nome)
+                    @Html.TextBoxFor(m => m.Nome, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.TextoEtiqueta)
+                    @Html.TextBoxFor(m => m.TextoEtiqueta, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Cubagem)
+                    @Html.TextBoxFor(m => m.Cubagem, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Largura)
+                    @Html.TextBoxFor(m => m.Largura, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Altura)
+                    @Html.TextBoxFor(m => m.Altura, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Comprimento)
+                    @Html.TextBoxFor(m => m.Comprimento, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.PesoCaixa)
+                    @Html.TextBoxFor(m => m.PesoCaixa, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.PesoMaximo)
+                    @Html.TextBoxFor(m => m.PesoMaximo, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Sobra)
+                    @Html.TextBoxFor(m => m.Sobra, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.CaixaTipoDescricao)
+                    @Html.TextBoxFor(m => m.CaixaTipoDescricao, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Prioridade)
+                    @Html.TextBoxFor(m => m.Prioridade, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-md-4 col-lg-2">
+                    @Html.LabelFor(m => m.Ativo)
+                    @Html.TextBoxFor(m => m.Ativo, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="ln_solid"></div>
+            <div class="row col-xs-12 form-buttons">
+                <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                @if (User.HasPermission(Permissions.Caixa.Editar))
+                {
+                    <a href="@Url.Action("Editar", new { id = Model.IdCaixa })" class="btn btn-default">Editar</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

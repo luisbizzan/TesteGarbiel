@@ -31,6 +31,8 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         [Required]
         [Display(Name = "Entrada?")]
         public bool IsEntrada { get; set; }
+        [Display(Name = "Picking?")]
+        public bool IsPicking { get; set; }
         [Required]
         [Display(Name = "Ativo?")]
         public bool Ativo { get; set; }

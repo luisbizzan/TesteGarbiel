@@ -43,5 +43,7 @@ namespace FWLog.Web.Backoffice.Models.TransportadoraCtx
 
         [Display(Name = "CNPJ")]
         public string CNPJ { get; set; }
+
+        public bool? Ativo { get; set; }
     }
 }

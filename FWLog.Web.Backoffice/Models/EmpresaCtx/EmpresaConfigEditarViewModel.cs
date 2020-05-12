@@ -25,14 +25,20 @@ namespace FWLog.Web.Backoffice.Models.EmpresaCtx
         public bool EmpresaFazGarantia { get; set; }
         [Display(Name = "CNPJ Conferência Automática")]
         public string CNPJConferenciaAutomatica { get; set; }
+        [Display(Name = "Data da Coleta")]
+        public DiasDaSemanaEnum? IdDiasDaSemana { get; set; }
+        [Display(Name = "Transportadora")]
+        public long? IdTransportadora { get; set; }
 
         public EmpresaDetalhesViewModel Empresa { get; set; }
 
         public string NomeFantasiaEmpresaMatriz { get; set; }
         public string NomeFantasiaEmpresaGarantia { get; set; }
+        public string RazaoSocialTransportadora { get; set; }
 
         public SelectList TiposEmpresa { get; set; }
         public SelectList TiposConferencia { get; set; }
+        public SelectList DiaColeta { get; set; }
     }
 
     public class EmpresaDetalhesViewModel

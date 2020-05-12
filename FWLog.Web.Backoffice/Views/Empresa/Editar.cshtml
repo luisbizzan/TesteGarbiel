@@ -70,6 +70,23 @@
                             @Html.ValidationMessageFor(m => m.EmpresaFazGarantia)
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="form-group col-md-6 col-lg-3">
+                            @Html.LabelFor(m => m.IdDiasDaSemana)
+                            @Html.DropDownListFor(m => m.IdDiasDaSemana, Model.DiaColeta, "Selecione...", new { @class = "form-control" })
+                        </div>
+                        <div class="form-group col-md-6 col-lg-3">
+                            @Html.LabelFor(m => m.IdTransportadora, new { @class = "control-label" })
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.RazaoSocialTransportadora, null, new { @class = "form-control", @readonly = "true", data_field = "RazaoSocialTransportadora" })
+                                <span class="input-group-btn">
+                                    <a id="pesquisarTransportadora" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                                    <a id="limparTransportadora" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                                </span>
+                            </div>
+                            @Html.HiddenFor(m => m.IdTransportadora, new { data_field = "IdTransportadora" })
+                        </div>
+                    </div>
                     <div class="ln_solid"></div>
                     <div class="row col-xs-12 form-buttons">
                         <button type="submit" class="btn btn-primary">Salvar</button>
@@ -146,3 +163,4 @@
     </div>
 }
 <div class="modal" id="modalEmpresaGarantia" data-toggle="modal" data-myvalue="1"></div>
+<div class="modal" id="modalTransportadora"></div>

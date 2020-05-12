@@ -11,7 +11,8 @@ namespace FWLog.Web.Backoffice.Mapping
             CreateMap<EmpresaConfig, EmpresaConfigEditarViewModel>()
              .ForMember(d => d.Empresa, opt => opt.MapFrom(s => s.Empresa))
              .ForMember(d => d.NomeFantasiaEmpresaGarantia, opt => opt.MapFrom(s => s.EmpresaGarantia.NomeFantasia))
-             .ForMember(d => d.NomeFantasiaEmpresaMatriz, opt => opt.MapFrom(s => s.EmpresaMatriz.NomeFantasia));
+             .ForMember(d => d.NomeFantasiaEmpresaMatriz, opt => opt.MapFrom(s => s.EmpresaMatriz.NomeFantasia))
+             .ForMember(d => d.RazaoSocialTransportadora, opt => opt.MapFrom(s => s.Transportadora.RazaoSocial));
 
             CreateMap<Empresa, EmpresaDetalhesViewModel>()
                 .ForMember(dest => dest.CNPJ, opt => opt.MapFrom(src => src.CNPJ.Substring(0, 2) + "." + src.CNPJ.Substring(2, 3) + "." + src.CNPJ.Substring(5, 3) + "/" + src.CNPJ.Substring(8, 4) + "-" + src.CNPJ.Substring(12, 2)));

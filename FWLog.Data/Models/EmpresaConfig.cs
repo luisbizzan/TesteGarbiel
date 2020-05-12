@@ -34,13 +34,23 @@ namespace FWLog.Data.Models
 
         [Index]
         public TipoConferenciaEnum? IdTipoConferencia { get; set; }
-        
+
+        [Index]
+        public DiasDaSemanaEnum? IdDiasDaSemana { get; set; }
+
+        [Index]
+        public long? IdTransportadora { get; set; }
+
         [ForeignKey(nameof(IdEmpresaTipo))]
         public virtual EmpresaTipo EmpresaTipo { get; set; }
         
         [ForeignKey(nameof(IdTipoConferencia))]
         public virtual TipoConferencia TipoConferencia { get; set; }
 
-        
+        [ForeignKey(nameof(IdDiasDaSemana))]
+        public virtual DiasDaSemana DiasDaSemana { get; set; }
+
+        [ForeignKey(nameof(IdTransportadora))]
+        public virtual Transportadora Transportadora { get; set; }
     }
 }

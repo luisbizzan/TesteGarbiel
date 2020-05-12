@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using ExtensionMethods.String;
+﻿using ExtensionMethods.String;
 using FWLog.Data;
 using FWLog.Data.Models;
-using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Relatorio;
@@ -1075,7 +1073,7 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
 
-        public byte[] GerarRelatorioTotalEnderecoPorAla(RelatorioTotalizacaoAlasListaFiltro filter, string nomeUsuarioRequisicao) 
+        public byte[] GerarRelatorioTotalEnderecoPorAla(RelatorioTotalizacaoAlasListaFiltro filter, string nomeUsuarioRequisicao)
         {
             var lista = _unitiOfWork.LoteProdutoEnderecoRepository.BuscarDadosFormatadoParaRelatorioTotalAla(filter);
 
@@ -1150,8 +1148,8 @@ namespace FWLog.Services.Services
                     row.Cells[6].Format.Font.Bold = true;
                     row.Cells[7].AddParagraph("Peso Total");
                     row.Cells[7].Format.Font.Bold = true;
-                    
-                    
+
+
                     var itens = lista.Where(x => x.Corredor == corredor).Select(y => y).OrderBy(x => x.CodigoEndereco).ToList();
                     var totalArmazenado = itens.Sum(x => x.PesoTotalDeProduto);
                     var qtdeTotal = itens.Sum(x => x.QuantidadeProdutoPorEndereco);
@@ -1247,7 +1245,7 @@ namespace FWLog.Services.Services
                 ImprimirVazia = request.ImprimirVazia
             };
 
-            byte[] relatorio = GerarRelatorioTotalEnderecoPorAla(relatorioRequest,request.NomeUsuarioRequisicao);
+            byte[] relatorio = GerarRelatorioTotalEnderecoPorAla(relatorioRequest, request.NomeUsuarioRequisicao);
 
             _impressoraService.Imprimir(relatorio, request.IdImpressora);
         }
@@ -1440,7 +1438,9 @@ namespace FWLog.Services.Services
 
             if (filtro.CorredorInicial > 0 && filtro.CorredorFinal > 0)
             {
-                var range = Enumerable.Range(filtro.CorredorInicial.Value, filtro.CorredorFinal.Value);
+                var count = filtro.CorredorInicial.Value == filtro.CorredorFinal.Value ? 1 : (filtro.CorredorFinal.Value - filtro.CorredorInicial.Value) + 1;
+
+                var range = Enumerable.Range(filtro.CorredorInicial.Value, count);
 
                 query = query.Where(lpe => range.Contains(lpe.EnderecoArmazenagem.Corredor));
             }
@@ -1603,6 +1603,96 @@ namespace FWLog.Services.Services
             var relatorio = GerarRelatorioAtividadeEstoque(filtro, labelUsuario);
 
             _impressoraService.Imprimir(relatorio, idImpressora);
+        }
+
+        private byte[] GerarRomaneio(RelatorioRomaneioRequest dadosRelatorio)
+        {
+            var usuario = _unitiOfWork.PerfilUsuarioRepository.GetByUserId(dadosRelatorio.IdUsuarioExecucao);
+
+            var labelUsuario = $"{usuario.Usuario.UserName} - {usuario.Nome}";
+
+            var listaDadosRelatorio = new List<IFwRelatorioDados>();
+
+            var listaNFRomaneios = dadosRelatorio.Romaneio.RomaneioNotaFiscal.ToList();
+
+            foreach (var romaneioNotaFiscal in listaNFRomaneios)
+            {
+                var cliente = romaneioNotaFiscal.Cliente;
+                var pedido = romaneioNotaFiscal.PedidoVenda.Pedido;
+
+                var separadorLinha = Environment.NewLine;
+
+                var itemRelatorio = new DadosRelatorioRomaneio
+                {
+                    NumeroNotaFiscal = pedido.CodigoIntegracaoNotaFiscal.ToString(),
+                    Cliente = $"{cliente.RazaoSocial}{separadorLinha}{cliente.CodigoIntegracao} - {pedido.CodigoIntegracao}",
+                    Endereco = $"{cliente.Endereco}{separadorLinha}{cliente.Cidade}",
+                    Telefone = $"{cliente.Telefone}",
+                    QauntidadeVolumes = $"{romaneioNotaFiscal.NroVolumes}",
+                    TipoFrete = $"{pedido.CodigoIntegracaoTipoFrete}"
+                };
+
+                listaDadosRelatorio.Add(itemRelatorio);
+            };
+
+            var totalizadores = new List<RelatorioTotalizadorFinal>();
+
+            totalizadores.Add(new RelatorioTotalizadorFinal()
+            {
+                Texto = "Total de Volumes:",
+                Valor = listaNFRomaneios.Sum(nfr => nfr.NroVolumes)
+            });
+
+            totalizadores.Add(new RelatorioTotalizadorFinal()
+            {
+                Texto = "Total de Notas:",
+                Valor = listaNFRomaneios.Count
+            });
+
+            var assinaturas = new List<RelatorioTextoFinal>()
+            {
+                new RelatorioTextoFinal { Texto = "Nome:" },
+                new RelatorioTextoFinal { Texto = "R.G. :" },
+                new RelatorioTextoFinal { Texto ="Placa do Veículo:" }
+            };
+
+            var dataImpressao = DateTime.Now;
+
+            var transportadora = dadosRelatorio.Romaneio.Transportadora;
+
+            var fwRelatorioDados = new FwRelatorioDados
+            {
+                Titulo = "Planilha de Transporte",
+                DataCriacao = dataImpressao,
+                NomeEmpresa = _unitiOfWork.EmpresaRepository.GetById(dadosRelatorio.IdEmpresa).RazaoSocial,
+                NomeUsuario = labelUsuario,
+                Orientacao = Orientation.Landscape,
+                Filtros = new FwRelatorioDadosFiltro()
+                {
+                    Transportadora = $"{transportadora.IdTransportadora} - {transportadora.NomeFantasia}",
+                    NumeroRomaneio = dadosRelatorio.Romaneio.NroRomaneio,
+                    DataHoraEmissaoRomaneio = dadosRelatorio.DataHoraEmissaoRomaneio
+                },
+                Dados = listaDadosRelatorio,
+                DadosTotalizacaoFinal = totalizadores,
+                DadosTextoFinal = assinaturas
+            };
+
+            var fwRelatorio = new FwRelatorio();
+
+            return fwRelatorio.Gerar(fwRelatorioDados);
+        }
+
+        public void ImprimirRomaneio(RelatorioRomaneioRequest dadosRelatorio, long idImpressora, bool imprimeSegundaVia)
+        {
+            var arrayBytesRelatorio = GerarRomaneio(dadosRelatorio);
+
+            var quantidadeImpressoes = imprimeSegundaVia ? 2 : 1;
+
+            for (int indiceImpressao = 0; indiceImpressao < quantidadeImpressoes; indiceImpressao++)
+            {
+                _impressoraService.Imprimir(arrayBytesRelatorio, idImpressora);
+            }
         }
     }
 }

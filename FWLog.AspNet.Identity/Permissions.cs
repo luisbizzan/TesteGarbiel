@@ -11,7 +11,7 @@ namespace FWLog.AspNet.Identity
         {
             public const string List = "ApplicationLogList";
 
-            public ApplicationLog() : base(Display.FromResource(nameof(Res.ApplicationLog)))
+            public ApplicationLog() : base(Display.FromString("Sistema - Log de Erros"))
             {
                 Register(List, Display.FromString("Relatório de Erros"));
             }
@@ -24,7 +24,7 @@ namespace FWLog.AspNet.Identity
             public const string Edit = "RoleEdit";
             public const string Delete = "RoleDelete";
 
-            public Role() : base(Display.FromString("Grupos de Usuários"))
+            public Role() : base(Display.FromString("Usuários - Grupos"))
             {
                 Register(List, Display.FromString("Listar Grupos"));
                 Register(Create, Display.FromString("Cadastrar Grupo"));
@@ -40,7 +40,7 @@ namespace FWLog.AspNet.Identity
             public const string Edit = "BOAccountEdit";
             public const string Delete = "BOAccountDelete";
 
-            public BOAccount() : base(Display.FromString("Gerenciar Usuários"))
+            public BOAccount() : base(Display.FromString("Usuários - Gerenciar"))
             {
                 Register(List, Display.FromString("Listar Usuários"));
                 Register(Create, Display.FromString("Cadastrar Usuário"));
@@ -56,7 +56,7 @@ namespace FWLog.AspNet.Identity
             public const string Edit = "PrinterTypeEdit";
             public const string Delete = "PrinterTypeDelete";
 
-            public Printer() : base(Display.FromString("Impressoras"))
+            public Printer() : base(Display.FromString("Sistema - Impressoras"))
             {
                 Register(List, Display.FromString("Listar Impressoras"));
                 Register(Create, Display.FromString("Cadastrar Impressora"));
@@ -81,7 +81,7 @@ namespace FWLog.AspNet.Identity
             public const string DevolucaoTotal = "PermitirDevolucaoTotal";
             public const string VisualizarDivergenciaConferencia = "VisualizarDivergenciaConferencia";
 
-            public Recebimento() : base(Display.FromString("Recebimento de Notas Fiscais"))
+            public Recebimento() : base(Display.FromString("Recebimento - Notas Fiscais"))
             {
                 Register(List, Display.FromString("Listar Notas Fiscais"));
                 Register(RegistrarRecebimento, Display.FromString("Registrar Recebimento"));
@@ -107,7 +107,7 @@ namespace FWLog.AspNet.Identity
             public const string ConsultarHistorico = "QuarentenaConsultarHistorico";
 
 
-            public RecebimentoQuarentena() : base(Display.FromString("Quarentena Recebimento"))
+            public RecebimentoQuarentena() : base(Display.FromString("Recebimento - Quarentena"))
             {
                 Register(Listar, Display.FromString("Listar Quarentena"));
                 Register(AtualizarStatus, Display.FromString("Atualizar Status Quarentena"));
@@ -123,7 +123,7 @@ namespace FWLog.AspNet.Identity
             public const string Editar = "PontoArmazanagemEditar";
             public const string Excluir = "PontoArmazanagemExcluir";
 
-            public PontoArmazenagem() : base(Display.FromString("Pontos de Armazenagem"))
+            public PontoArmazenagem() : base(Display.FromString("Armazenagem - Pontos"))
             {
                 Register(Listar, Display.FromString("Listar Pontos"));
                 Register(Cadastrar, Display.FromString("Cadastrar Ponto"));
@@ -139,7 +139,7 @@ namespace FWLog.AspNet.Identity
             public const string Editar = "NivelArmazenagemEdit";
             public const string Excluir = "NivelArmazenagemDelete";
 
-            public NivelArmazenagem() : base(Display.FromString("Níveis de Armazenagem"))
+            public NivelArmazenagem() : base(Display.FromString("Armazenagem - Níveis"))
             {
                 Register(Listar, Display.FromString("Listar Níveis"));
                 Register(Cadastrar, Display.FromString("Cadastrar Nível"));
@@ -157,7 +157,7 @@ namespace FWLog.AspNet.Identity
             public const string Visualizar = "EnderecoArmazenagemVisualizar";
             public const string Imprimir = "EnderecoArmazenagemVisualizar";
 
-            public EnderecoArmazenagem() : base(Display.FromString("Endereços de Armazenagem"))
+            public EnderecoArmazenagem() : base(Display.FromString("Armazenagem - Endereços"))
             {
                 Register(Listar, Display.FromString("Listar Endereços"));
                 Register(Cadastrar, Display.FromString("Cadastrar Endereço"));
@@ -172,7 +172,7 @@ namespace FWLog.AspNet.Identity
         {
             public const string EditarConfiguracao = "EmpresaConfiguracaoEditar";
 
-            public Empresa() : base(Display.FromString("Empresas"))
+            public Empresa() : base(Display.FromString("Sistema - Empresas"))
             {
                 Register(EditarConfiguracao, Display.FromString("Editar Configurações"));
             }
@@ -184,7 +184,7 @@ namespace FWLog.AspNet.Identity
             public const string AcessarRFSeparacao = "RFAcessoSeparacao";
             public const string AcessarRFExpedicao = "RFAcessoExpedicao";
 
-            public ColetorAcesso() : base(Display.FromString("Coletor - Acesso"))
+            public ColetorAcesso() : base(Display.FromString("Coletor - Aplicações"))
             {
                 Register(AcessarRFArmazenagem, Display.FromString("Acessar Armazenagem"));
                 Register(AcessarRFSeparacao, Display.FromString("Acessar Separação"));
@@ -224,6 +224,20 @@ namespace FWLog.AspNet.Identity
             }
         }
 
+        public class RFSeparacao : PermissionGroupBuildItem
+        {
+            public const string CancelarSeparacao = "RFCancelarSeparacao";
+            public const string FuncaoF7 = "RFFuncaoF7";
+            public const string FuncaoF9ConsultaEstoque = "RFFuncaoF9ConsultaEstoque";
+
+            public RFSeparacao() : base(Display.FromString("Coletor - Separação"))
+            {
+                Register(CancelarSeparacao, Display.FromString("Cancelar Separação"));
+                Register(FuncaoF7, Display.FromString("Função F7 - Ajustar Produto Pedido"));
+                Register(FuncaoF9ConsultaEstoque, Display.FromString("Função F9 -  Consulta Estoque"));
+            }
+        }
+
         public class RFEtiquetas : PermissionGroupBuildItem
         {
             public const string EtiquetaEndereco = "RFImprimirEtiquetaEndereco";
@@ -247,7 +261,7 @@ namespace FWLog.AspNet.Identity
             public const string Editar = "PerfilImpressoraEdit";
             public const string Excluir = "PerfilImpressoraDelete";
 
-            public PerfilImpressora() : base(Display.FromString("Perfil Impressora"))
+            public PerfilImpressora() : base(Display.FromString("Usuários - Perfil Impressora"))
             {
                 Register(Listar, Display.FromString("Listar Perfil de Impressoras"));
                 Register(Criar, Display.FromString("Criar Perfil de Impressora"));
@@ -262,7 +276,7 @@ namespace FWLog.AspNet.Identity
             public const string Cadastrar = "MotivoLaudoCreate";
             public const string Editar = "MotivoLaudoEdit";
 
-            public MotivoLaudo() : base(Display.FromString("Motivo do Laudo"))
+            public MotivoLaudo() : base(Display.FromString("Garantia - Motivo Laudo"))
             {
                 Register(Listar, Display.FromString("Listar Motivos do Laudo"));
                 Register(Cadastrar, Display.FromString("Cadastrar Motivos do Laudo"));
@@ -277,7 +291,7 @@ namespace FWLog.AspNet.Identity
             //public const string Editar = "GarantiaEdit";
             public const string ConferirGarantia = "ConferirGarantia";
 
-            public Garantia() : base(Display.FromString("Solicitação de Garantia"))
+            public Garantia() : base(Display.FromString("Garantia - Solicitação"))
             {
                 Register(Listar, Display.FromString("Listar Solicitações de Garantia"));
                 Register(RegistrarRecebimento, Display.FromString("Registrar Recebimento"));
@@ -292,7 +306,7 @@ namespace FWLog.AspNet.Identity
             public const string Visualizar = "ProdutoVisualizar";
             public const string Editar = "ProdutoEditar";
 
-            public Produto() : base(Display.FromString("Produtos"))
+            public Produto() : base(Display.FromString("Armazenagem - Produtos"))
             {
                 Register(Listar, Display.FromString("Listar produtos"));
                 Register(Visualizar, Display.FromString("Visualizar produto"));
@@ -326,9 +340,83 @@ namespace FWLog.AspNet.Identity
         {
             public const string Listar = "HistoricoAcaoUsuarioListar";
 
-            public HistoricoAcaoUsuario() : base(Display.FromString("Resumo Atividades RF"))
+            public HistoricoAcaoUsuario() : base(Display.FromString("Usuários - Resumo Atividades RF"))
             {
                 Register(Listar, Display.FromString("Listar Atividades"));
+            }
+        }
+
+        public class Caixa : PermissionGroupBuildItem
+        {
+            public const string Listar = "CaixaListar";
+            public const string Cadastrar = "CaixaCadastrar";
+            public const string Editar = "CaixaEditar";
+            public const string Excluir = "CaixaExcluir";
+            public const string Visualizar = "CaixaVisualizar";
+
+            public Caixa() : base(Display.FromString("Separação - Caixas"))
+            {
+                Register(Listar, Display.FromString("Listar Caixas"));
+                Register(Cadastrar, Display.FromString("Cadastrar Caixa"));
+                Register(Editar, Display.FromString("Editar Caixa"));
+                Register(Excluir, Display.FromString("Excluir Caixa"));
+                Register(Visualizar, Display.FromString("Visualizar Caixa"));
+            }
+        }
+
+        public class Separacao : PermissionGroupBuildItem
+        {
+            public const string ListarCorredorImpressora = "CorredorImpressoraListar";
+            public const string CadastrarCorredorImpressora = "CorredorImpressoraCadastrar";
+            public const string EditarCorredorImpressora = "CorredorImpressoraEditar";
+            public const string VisualizarCorredorImpressora = "CorredorImpressoraVisualizar";
+            public const string ExcluirCorredorImpressora = "CorredorImpressoraExcluir";
+
+            public Separacao() : base(Display.FromString("Separação - Corredores x Impressoras"))
+            {
+                Register(ListarCorredorImpressora, Display.FromString("Listar Corredor x Impressora"));
+                Register(CadastrarCorredorImpressora, Display.FromString("Cadastrar Corredor x Impressora"));
+                Register(EditarCorredorImpressora, Display.FromString("Editar Corredor x Impressora"));
+                Register(VisualizarCorredorImpressora, Display.FromString("Visualizar Corredor x Impressora"));
+                Register(ExcluirCorredorImpressora, Display.FromString("Excluir Corredor x Impressora"));
+            }
+        }
+
+        public class RFExpedicao : PermissionGroupBuildItem
+        {
+            public const string RFExpedicaoInstalarVolumes = "RFExpedicaoInstalarVolumes";
+            public const string RFExpedicaoMoverDoca = "RFExpedicaoMoverDoca";
+            public const string RFExpedicaoRemoverDoca = "RFExpedicaoRemoverDoca";
+            public const string RFExpedicaoDespacharNF = "RFExpedicaoDespacharNF";
+            public const string RFExpedicaoImprimirRomaneio = "RFExpedicaoImprimirRomaneio";
+            public const string RFExpedicaoReimprimirRomaneio = "RFExpedicaoReimprimirRomaneio";
+
+            public RFExpedicao() : base(Display.FromString("Coletor - Expedição"))
+            {
+                Register(RFExpedicaoInstalarVolumes, Display.FromString("Instalar Volumes"));
+                Register(RFExpedicaoMoverDoca, Display.FromString("Mover para a DOCA"));
+                Register(RFExpedicaoRemoverDoca, Display.FromString("Remover da DOCA"));
+                Register(RFExpedicaoDespacharNF, Display.FromString("Despachar N.F.(s)"));
+                Register(RFExpedicaoImprimirRomaneio, Display.FromString("Imprimir Romaneio"));
+                Register(RFExpedicaoReimprimirRomaneio, Display.FromString("Reimp. de Romaneio"));
+            }
+        }
+
+        public class Expedicao : PermissionGroupBuildItem
+        {
+            public const string ListarTranportadoraEndereco = "TranportadoraEnderecoListar";
+            public const string CadastrarTranportadoraEndereco = "TranportadoraEnderecoCadastrar";
+            public const string EditarTranportadoraEndereco = "TranportadoraEnderecoEditar";
+            public const string VisualizarTranportadoraEndereco = "TranportadoraEndereco Visualizar";
+            public const string ExcluirTranportadoraEndereco = "TranportadoraEndereco Excluir";
+
+            public Expedicao() : base(Display.FromString("Expedição - Transportadora x Endereços"))
+            {
+                Register(ListarTranportadoraEndereco, Display.FromString("Listar Transportadora x Endereço"));
+                Register(CadastrarTranportadoraEndereco, Display.FromString("Cadastrar Transportadora x Endereço"));
+                Register(EditarTranportadoraEndereco, Display.FromString("Editar Transportadora x Endereço"));
+                Register(VisualizarTranportadoraEndereco, Display.FromString("Visualizar Transportadora x Endereço"));
+                Register(ExcluirTranportadoraEndereco, Display.FromString("Excluir Transportadora x Endereço"));
             }
         }
     }

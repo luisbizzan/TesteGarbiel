@@ -1,0 +1,48 @@
+﻿@model FWLog.Web.Backoffice.Models.CorredorImpressoraCtx.CorredorImpressoraDetalhesViewModel
+@using FWLog.AspNet.Identity
+
+@{
+    ViewBag.Title = "Visualização de Corredor x Impressora";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="col-md-12 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Detalhes Corredor x Impressora</h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="row">
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.CorredorInicial)
+                    @Html.TextBoxFor(m => m.CorredorInicial, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.CorredorFinal)
+                    @Html.TextBoxFor(m => m.CorredorFinal, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.DescricaoPontoArmazenagem)
+                    @Html.TextBoxFor(m => m.DescricaoPontoArmazenagem, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.DescricaoImpressora)
+                    @Html.TextBoxFor(m => m.DescricaoImpressora, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.LabelFor(m => m.Ativo)
+                    @Html.TextBoxFor(m => m.Ativo, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="ln_solid"></div>
+            <div class="row col-xs-12 form-buttons">
+                <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                @if (User.HasPermission(Permissions.Separacao.EditarCorredorImpressora))
+                {
+                    <a href="@Url.Action("Editar", new { id = Model.IdGrupoCorredorArmazenagem })" class="btn btn-default">Editar</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

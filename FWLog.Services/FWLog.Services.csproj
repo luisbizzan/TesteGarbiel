@@ -50,8 +50,7 @@
       <HintPath>..\packages\FluentValidation.7.5.1\lib\net45\FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\FWLog.Web.Backoffice\bin\log4net.dll</HintPath>
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="MigraDoc.DocumentObjectModel, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>..\packages\PDFsharp-MigraDoc.1.50.5147\lib\net20\MigraDoc.DocumentObjectModel.dll</HintPath>
@@ -134,6 +133,7 @@
     <Compile Include="Model\AtividadeEstoque\AtividadeEstoqueLista.cs" />
     <Compile Include="Model\AtividadeEstoque\AtividadeEstoqueRequisicao.cs" />
     <Compile Include="Model\AtividadeEstoque\FinalizarConferenciaEnderecoRequisicao.cs" />
+    <Compile Include="Model\Caixa\CaixaViewModel.cs" />
     <Compile Include="Model\Coletor\GravarHistoricoColetorRequisicao.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaArmazenagemVolume.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaAvulsoRequest.cs" />
@@ -143,9 +143,19 @@
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaLoteRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaPickingRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaProdutoBase.cs" />
+    <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeSeparacaoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeRecebimento.cs" />
     <Compile Include="Model\Etiquetas\ValidarEnderecoPickingRequestResposta.cs" />
     <Compile Include="Model\Etiquetas\ValidarEnderecoPickingRequest.cs" />
+    <Compile Include="Model\Expedicao\RomaneioResposta.cs" />
+    <Compile Include="Model\Expedicao\RomaneioFinalizarNFResposta.cs" />
+    <Compile Include="Model\Expedicao\RomaneioTransportadoraResposta.cs" />
+    <Compile Include="Model\Expedicao\DespachoTransportadoraResposta.cs" />
+    <Compile Include="Model\Expedicao\EnderecosPorTransportadoraResposta.cs" />
+    <Compile Include="Model\Expedicao\PedidoVendaVolumeResposta.cs" />
+    <Compile Include="Model\GrupoCorredorArmazenagem\GrupoCorredorArmazenagemViewModel.cs" />
+    <Compile Include="Model\IntegracaoSankhya\PedidoNumeroNotaFiscalIntegracao.cs" />
+    <Compile Include="Model\IntegracaoSankhya\PedidoItemIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ClienteIntegracao.cs" />
     <Compile Include="Model\IntegracaoLog\IntegracaoLog.cs" />
     <Compile Include="Model\IntegracaoSankhya\ConfirmarNotaFiscalResposta.cs" />
@@ -157,6 +167,7 @@
     <Compile Include="Model\IntegracaoSankhya\FornecedorIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\FreteTipoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\LoginReposta.cs" />
+    <Compile Include="Model\IntegracaoSankhya\PedidoIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoEstoqueIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoMediaVendaIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ProdutoReservadontegracao.cs" />
@@ -170,6 +181,9 @@
     <Compile Include="Model\Lote\ProcessamentoTratativaDivergencia.cs" />
     <Compile Include="Model\Lote\ResumoFinalizarConferenciaResponse.cs" />
     <Compile Include="Model\Lote\TratarDivergenciaRequest.cs" />
+    <Compile Include="Model\ProdutoEstoque\ProdutoEstoqueViewModel.cs" />
+    <Compile Include="Model\Produto\ProdutoEstoqueResposta.cs" />
+    <Compile Include="Model\Produto\ProdutoViewModel.cs" />
     <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />
     <Compile Include="Model\Relatorios\DetalhesProdutoRequest.cs" />
     <Compile Include="Model\Relatorios\ImprimirDetalhesNotaEntradaConferenciaRequest.cs" />
@@ -191,16 +205,23 @@
     <Compile Include="Model\IntegracaoSankhya\ExecuteQueryResponse.cs" />
     <Compile Include="Model\IntegracaoSankhya\NotaFiscalIntegracao.cs" />
     <Compile Include="Model\Relatorios\RelatorioResumoEtiquetagemRequest.cs" />
+    <Compile Include="Model\Relatorios\RelatorioRomaneioRequest.cs" />
     <Compile Include="Model\Relatorios\RelatorioTotalPorAlaRequest.cs" />
     <Compile Include="Model\Relatorios\TermoResponsabilidadeRequest.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
+    <Compile Include="Model\SeparacaoPedido\BuscarPedidoVendaResposta.cs" />
+    <Compile Include="Model\SeparacaoPedido\PedidoItemViewModel.cs" />
+    <Compile Include="Model\SeparacaoPedido\VolumeViewModel.cs" />
+    <Compile Include="Model\SeparacaoPedido\SalvarSeparacaoProdutoResposta.cs" />
     <Compile Include="Model\TokenErrrorResponse.cs" />
     <Compile Include="Model\TokenResponse.cs" />
+    <Compile Include="Model\Transportadora\ConsultaTransportadoraResposta.cs" />
     <Compile Include="Model\Usuario\GerarTokenAcessoColetorResponse.cs" />
     <Compile Include="Relatorio\ColunaRelatorioAttribute.cs" />
     <Compile Include="Relatorio\FwRelatorio.cs" />
     <Compile Include="Relatorio\FwRelatorioDados.cs" />
     <Compile Include="Relatorio\IFwRelatorioDados.cs" />
+    <Compile Include="Relatorio\Model\DadosRelatorioRomaneio.cs" />
     <Compile Include="Relatorio\Model\RelatorioAtividadeEstoque.cs" />
     <Compile Include="Relatorio\Model\ImprimirRelatorioHistoricoAcaoUsuarioRequest.cs" />
     <Compile Include="Relatorio\Model\RastreioPeca.cs" />
@@ -210,17 +231,27 @@
     <Compile Include="Relatorio\Model\RelatorioHistoricoColetor.cs" />
     <Compile Include="Relatorio\Model\RelatorioLogisticaCorredor.cs" />
     <Compile Include="Relatorio\Model\RelatorioProdutos.cs" />
+    <Compile Include="Relatorio\Model\RelatorioTextoFinal.cs" />
+    <Compile Include="Relatorio\Model\RelatorioTotalizadorFinal.cs" />
     <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
     <Compile Include="Services\AccountService.cs" />
+    <Compile Include="Services\ExpedicaoService.cs" />
+    <Compile Include="Services\PedidoService.cs" />
+    <Compile Include="Services\PedidoVendaProdutoService.cs" />
+    <Compile Include="Services\PedidoVendaVolumeService.cs" />
+    <Compile Include="Services\SeparacaoPedidoService.cs" />
     <Compile Include="Services\ArmazenagemService.cs" />
     <Compile Include="Services\BaseService.cs" />
     <Compile Include="Services\AtividadeEstoqueService.cs" />
     <Compile Include="Services\ClienteService.cs" />
     <Compile Include="Services\ColetorHistoricoService.cs" />
     <Compile Include="Services\ConferenciaService.cs" />
+    <Compile Include="Services\CaixaService.cs" />
+    <Compile Include="Services\CorredorImpressoraService.cs" />
     <Compile Include="Services\GarantiaService.cs" />
     <Compile Include="Services\MotivoLaudoService.cs" />
     <Compile Include="Services\IntegracaoLogService.cs" />
+    <Compile Include="Services\PedidoVendaService.cs" />
     <Compile Include="Services\PerfilImpressoraService.cs" />
     <Compile Include="Services\EmpresaService.cs" />
     <Compile Include="Services\EnderecoArmazenagemService.cs" />
@@ -242,6 +273,7 @@
     <Compile Include="Services\RelatorioService.cs" />
     <Compile Include="Services\FornecedorService.cs" />
     <Compile Include="Services\RepresentanteService.cs" />
+    <Compile Include="Services\TransportadoraEnderecoService.cs" />
     <Compile Include="Services\UnidadeMedidaService.cs" />
     <Compile Include="Services\TransportadoraService.cs" />
     <Compile Include="Templates\MailTemplate.cs" />
