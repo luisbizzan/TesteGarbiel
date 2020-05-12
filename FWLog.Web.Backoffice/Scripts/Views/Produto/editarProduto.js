@@ -57,20 +57,25 @@
         $("#IdEnderecoArmazenagem").val("");
     });
 
+    var idEnderecoArmazenagemAntigo = $("#IdEnderecoArmazenagem").val();
+
     $('#form-editar-produto').submit(function (e) {
 
         e.preventDefault();
 
-        if ($(this).valid()) {
+        var idEnderecoArmazenagemNovo = $("#IdEnderecoArmazenagem").val();
+
+        if ((idEnderecoArmazenagemAntigo && idEnderecoArmazenagemAntigo != idEnderecoArmazenagemNovo) && $(this).valid()) {
 
             dart.modalAjaxConfirm.open({
                 title: 'Confirmação de edição',
                 message: "Para mudança de endereço de produto todas as etiquetas devem ser impressas novamente. Deseja realmente continuar?",
                 onConfirm: confirmaEdicao
             });
-        }
 
-        return false;
+        } else {
+            confirmaEdicao();
+        }
     });
 })();
 

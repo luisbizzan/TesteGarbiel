@@ -32,6 +32,7 @@ namespace FWLog.Web.Backoffice.Models.PontoArmazenagemCtx
     public class PontoArmazenagemPesquisaModalFiltroViewModel
     {
         public long? IdNivelArmazenagem { get; set; }
+        public bool? IsExpedicao { get; set; }
         [Display(Name = "Ponto de Armazenagem")]
         public string Descricao { get; set; }
         [Display(Name = "Status")]

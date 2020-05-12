@@ -16,6 +16,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.ProdutoEstoque.FirstOrDefault(f => f.IdProduto == idProduto && f.IdEmpresa == idEmpresa);
         }
 
+        public ProdutoEstoque ObterPorProdutoEmpresaPicking(long idProduto, long idEmpresa)
+        {
+            return Entities.ProdutoEstoque.FirstOrDefault(f => f.IdProduto == idProduto && f.IdEmpresa == idEmpresa && f.EnderecoArmazenagem.IsPicking == true && f.EnderecoArmazenagem.Ativo);
+        }
+
         public void AtualizarSaldoArmazenagem(long idProduto, long idEmpresa, int saldo)
         {
             string sql = "UPDATE \"ProdutoEstoque\" SET \"Saldo\" = \"Saldo\" + :SALDO WHERE \"IdProduto\" = :IDPRODUTO AND \"IdEmpresa\" = :IDEMPRESA ";
@@ -31,6 +36,11 @@ namespace FWLog.Data.Repository.GeneralCtx
         public ProdutoEstoque ConsultarPorProduto(long idProduto, long idEmpresa)
         {
             return Entities.ProdutoEstoque.Where(x => x.IdProduto == idProduto && x.IdEmpresa == idEmpresa).FirstOrDefault();
+        }
+
+        public List<ProdutoEstoque> BuscarProdutoEstoquePorIdProduto(long idEmpresa, List<long> listIdProdutos)
+        {
+            return Entities.ProdutoEstoque.Where(w => w.IdEmpresa == idEmpresa && listIdProdutos.Contains(w.IdProduto)).ToList();
         }
 
         public IQueryable<ProdutoEstoque> ObterProdutoEstoquePorEmpresa(long idEmpresa)

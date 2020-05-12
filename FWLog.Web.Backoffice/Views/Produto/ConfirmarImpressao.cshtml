@@ -1,0 +1,31 @@
+﻿@model FWLog.Web.Backoffice.Models.ProdutoCtx.ProdutoConfirmaImpressaoViewModel
+@{
+    Layout = null;
+
+    @BundleHelper.RenderViewScriptModal()
+}
+
+<div class="vertical-alignment-helper">
+    <div class="modal-dialog vertical-align-center">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirmar Impressão da Etiqueta</h4>
+            </div><div class="container"></div>
+            <div class="modal-body" style="overflow: auto; max-height: calc(90vh - 40px);">
+                <div class="row">
+                    <div class="col-sm-12 col-lg-12">
+                        <span>Deseja imprimir a etiqueta do endereço <b>@Model.Codigo</b> com a referência <b>@Model.Referencia</b> (@Model.DescricaoProduto)?</span>
+                    </div>
+
+                    @Html.Hidden("IdEnderecoArmazenagem", Model.IdEnderecoArmazenagem)
+                    @Html.Hidden("IdProduto", Model.IdProduto)
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="btnConfirmar" class="btn btn-primary">Confirmar</a>
+                <a href="#" class="btn btn-default" data-dismiss="modal">Cancelar</a>
+            </div>
+        </div>
+    </div>
+</div>
+

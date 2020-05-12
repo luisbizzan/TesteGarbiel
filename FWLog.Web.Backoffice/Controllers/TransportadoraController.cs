@@ -21,11 +21,14 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult SearchModal()
+        public ActionResult SearchModal(bool? ativo)
         {
             SetViewBags();
 
             var model = new TransportadoraSearchModalViewModel();
+
+            model.Filter.Ativo = ativo;
+
             return View(model);
         }
 

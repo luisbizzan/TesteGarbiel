@@ -25,6 +25,8 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         public string Fifo { get; set; }
         [Display(Name = "Entrada?")]
         public string IsEntrada { get; set; }
+        [Display(Name = "Picking?")]
+        public string IsPicking { get; set; }
         [Display(Name = "Status")]
         public string Status { get; set; }
 

@@ -48,7 +48,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             };
             
-            return View(model); ;
+            return View(model); 
         }
 
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioAtividadeEstoque)]

@@ -81,6 +81,20 @@ namespace FWLog.Data
         public virtual DbSet<ColetorHistorico> ColetorHistorico { get; set; }
         public virtual DbSet<AtividadeEstoque> AtividadeEstoque { get; set; }
         public virtual DbSet<AtividadeEstoqueTipo> AtividadeEstoqueTipo { get; set; }
+        public virtual DbSet<PedidoVenda> PedidoVenda { get; set; }
+        public virtual DbSet<PedidoVendaProduto> PedidoVendaProduto { get; set; }
+        public virtual DbSet<PedidoVendaStatus> PedidoVendaStatus { get; set; }
+        public virtual DbSet<CaixaTipo> CaixaTipo { get; set; }
+        public virtual DbSet<Caixa> Caixa { get; set; }
+        public virtual DbSet<GrupoCorredorArmazenagem> GrupoCorredorArmazenagem { get; set; }
+        public virtual DbSet<Pedido> Pedido { get; set; }
+        public virtual DbSet<PedidoItem> PedidoItem { get; set; }
+        public virtual DbSet<PedidoVendaVolume> PedidoVendaVolume { get; set; }
+        public virtual DbSet<TransportadoraEndereco> TransportadoraEndereco { get; set; }
+        public virtual DbSet<Romaneio> Romaneio { get; set; }
+        public virtual DbSet<RomaneioNotaFiscal> RomaneioNotaFiscal { get; set; }
+        public virtual DbSet<DiasDaSemana> DiasDaSemana { get; set; }
+        public virtual DbSet<CentenaVolume> CentenaVolume { get; set; }
 
         public int SaveChangesWithoutLog()
         {

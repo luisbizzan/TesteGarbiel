@@ -345,3 +345,7 @@ ASALocalRun/
 healthchecksdb
 
 # End of https://www.gitignore.io/api/visualstudio
+FWLog.Web.Backoffice/Models/ProdutoCtx/ProdutoConfirmaImpressaoViewModel.cs
+FWLog.Web.Backoffice/Models/ProdutoCtx/ProdutoImpressaoViewModel.cs
+FWLog.Web.Backoffice/Scripts/Views/Produto/confirmarImpressao.js
+FWLog.Web.Backoffice/Views/Produto/ConfirmarImpressao.cshtml

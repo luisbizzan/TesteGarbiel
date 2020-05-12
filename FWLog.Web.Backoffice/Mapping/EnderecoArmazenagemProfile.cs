@@ -26,6 +26,7 @@ namespace FWLog.Web.Backoffice.Mapping
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Ativo ? "Ativo" : "Inativo"))
                 .ForMember(dest => dest.Fifo, opt => opt.MapFrom(src => src.IsFifo ? "Sim" : "Não"))
                 .ForMember(dest => dest.PontoSeparacao, opt => opt.MapFrom(src => src.IsPontoSeparacao ? "Sim" : "Não"))
+                .ForMember(dest => dest.IsPicking, opt => opt.MapFrom(src => src.IsPicking ? "Sim" : "Não"))
                 .ForMember(dest => dest.IsEntrada, opt => opt.MapFrom(src => src.IsEntrada ? "Sim" : "Não"));
         }
     }

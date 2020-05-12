@@ -1,10 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FWLog.Data.Models
 {
     public class Transportadora
     {
+        public Transportadora()
+        {
+            Enderecos = new HashSet<TransportadoraEndereco>();
+        }
+
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
         public long IdTransportadora { get; set; }
@@ -23,10 +29,16 @@ namespace FWLog.Data.Models
         [Index]
         public string CNPJ { get; set; }
 
-        [Required]        
+        [Required]
         public long CodigoIntegracao { get; set; }
 
         [Required]
         public bool Ativo { get; set; }
+
+        [Required]
+        [StringLength(3)]
+        public string CodigoTransportadora { get; set; }
+
+        public virtual ICollection<TransportadoraEndereco> Enderecos { get; set; }
     }
 }

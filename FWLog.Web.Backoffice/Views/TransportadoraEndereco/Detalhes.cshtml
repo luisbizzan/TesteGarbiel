@@ -1,0 +1,40 @@
+﻿@model FWLog.Web.Backoffice.Models.TransporteEnderecoCtx.TransportadoraEnderecoDetalhesViewModel
+@using FWLog.AspNet.Identity
+@{
+    ViewBag.Title = "Visualização de Transportadora x Endereço";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="col-md-12 col-xs-12">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Detalhes Transportadora x Endereços</h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="row">
+                <div class="form-group col-sm-4 col-xs-12 col-lg-4">
+                    @Html.LabelFor(m => m.RazaoSocialTransportadora)
+                    @Html.TextBoxFor(m => m.RazaoSocialTransportadora, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-sm-4 col-xs-12 col-lg-4">
+                    @Html.LabelFor(m => m.CnpjTransportadora)
+                    @Html.TextBoxFor(m => m.CnpjTransportadora, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <div class="form-group col-sm-4 col-xs-12 col-lg-4">
+                    @Html.LabelFor(m => m.Codigo)
+                    @Html.TextBoxFor(m => m.Codigo, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="ln_solid"></div>
+            <div class="row col-xs-12 form-buttons">
+                <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                @if (User.HasPermission(Permissions.Expedicao.EditarTranportadoraEndereco))
+                {
+                    <a href="@Url.Action("Editar", new { id = Model.IdTransportadoraEndereco })" class="btn btn-default">Editar</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

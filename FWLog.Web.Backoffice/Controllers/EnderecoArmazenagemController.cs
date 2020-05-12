@@ -46,6 +46,16 @@ namespace FWLog.Web.Backoffice.Controllers
                         {
                             new SelectListItem { Text = "Ativo", Value = "1"},
                             new SelectListItem { Text = "Inativo", Value = "0"}
+                        }, "Value", "Text"),
+                Picking = new SelectList(new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "Sim", Value = "1"},
+                            new SelectListItem { Text = "Não", Value = "0"}
+                        }, "Value", "Text"),
+                PontoSeparacao = new SelectList(new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "Sim", Value = "1"},
+                            new SelectListItem { Text = "Não", Value = "0"}
                         }, "Value", "Text")
             };
 
@@ -180,6 +190,7 @@ namespace FWLog.Web.Backoffice.Controllers
             enderecoArmazenagem.IsPontoSeparacao = viewModel.IsPontoSeparacao;
             enderecoArmazenagem.LimitePeso = viewModel.LimitePeso;
             enderecoArmazenagem.IdEmpresa = IdEmpresa;
+            enderecoArmazenagem.IsPicking = viewModel.IsPicking;
 
             _enderecoArmazenagemService.Editar(enderecoArmazenagem);
 
@@ -200,7 +211,7 @@ namespace FWLog.Web.Backoffice.Controllers
             // Popula Itens na lista de produtos do Endereço Armazenagem
             loteProdutoEndereco.ForEach(lpe =>
             {
-                if (lpe.EnderecoArmazenagem.PontoArmazenagem.Descricao != "Picking")
+                if (!lpe.EnderecoArmazenagem.IsPicking)
                 {
                     var item = new ProdutoItem
                     {
@@ -283,12 +294,13 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult PesquisaModal(long? id, bool? buscarTodos)
+        public ActionResult PesquisaModal(long? id, bool? buscarTodos, bool? isExpedicao)
         {
             var model = new EnderecoArmazenagemPesquisaModalViewModel();
 
             model.Filtros.IdPontoArmazenagem = id;
             model.Filtros.BuscarTodos = buscarTodos ?? false;
+            model.Filtros.IsExpedicao = isExpedicao;
 
             return View(model);
         }

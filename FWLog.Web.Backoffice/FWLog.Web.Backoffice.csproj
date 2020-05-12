@@ -232,6 +232,7 @@
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
     <Compile Include="Controllers\ArmazenagemController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
+    <Compile Include="Controllers\CaixaController.cs" />
     <Compile Include="Controllers\EnderecoArmazenagemController.cs" />
     <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\GarantiaController.cs" />
@@ -250,7 +251,9 @@
     <Compile Include="Controllers\BOFornecedorController.cs" />
     <Compile Include="Controllers\ProdutoController.cs" />
     <Compile Include="Controllers\RecebimentoEtiquetaIndividualPersonalizadaController.cs" />
+    <Compile Include="Controllers\CorredorImpressoraController.cs" />
     <Compile Include="Controllers\TransportadoraController.cs" />
+    <Compile Include="Controllers\TransportadoraEnderecoController.cs" />
     <Compile Include="EnumsAndConsts\EmpresaCookie.cs" />
     <Compile Include="GlobalResources\BOPrinter\BOPrinterStrings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -277,6 +280,8 @@
     <Compile Include="Mapping\ArmazenagemProfile.cs" />
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
+    <Compile Include="Mapping\CaixaProfile.cs" />
+    <Compile Include="Mapping\CorredorImpressoraProfile.cs" />
     <Compile Include="Mapping\GarantiaProfile.cs" />
     <Compile Include="Mapping\ClienteProfile.cs" />
     <Compile Include="Mapping\HistoricoAcaoUsuarioProfile.cs" />
@@ -287,6 +292,7 @@
     <Compile Include="Mapping\NivelArmazenagemProfile.cs" />
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
     <Compile Include="Mapping\ProdutoProfile.cs" />
+    <Compile Include="Mapping\TransportadoraEnderecoProfile.cs" />
     <Compile Include="Mapping\TransportadoraProfile.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioLogisticaCorredorViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioPosicaoInventarioViewModel.cs" />
@@ -320,7 +326,14 @@
     <Compile Include="Models\BORecebimentoNotaCtx\ResumoFinalizarConferenciaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\TratarDivergenciaRecebimentoViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\ExibirDivergenciaRecebimentoViewModel.cs" />
+    <Compile Include="Models\CaixaCtx\CaixaEdicaoViewModel.cs" />
+    <Compile Include="Models\CaixaCtx\CaixaDetalhesViewModel.cs" />
+    <Compile Include="Models\CaixaCtx\CaixaCadastroViewModel.cs" />
     <Compile Include="Models\ClienteCtx\ClienteSearchModalViewModel.cs" />
+    <Compile Include="Models\CorredorImpressoraCtx\CorredorImpressoraCadastroViewModel.cs" />
+    <Compile Include="Models\CorredorImpressoraCtx\CorredorImpressoraDetalhesViewModel.cs" />
+    <Compile Include="Models\CorredorImpressoraCtx\CorredorImpressoraEdicaoViewModel.cs" />
+    <Compile Include="Models\CorredorImpressoraCtx\CorredorImpressoraListaViewModel.cs" />
     <Compile Include="Models\EmpresaCtx\EmpresaSearchModalViewModel.cs" />
     <Compile Include="Models\BOFornecedorCtx\BOFornecedorSearchModalViewModel.cs" />
     <Compile Include="Models\BOPrinterCtx\BOPrinterDetailsViewModel.cs" />
@@ -338,6 +351,7 @@
     <Compile Include="Models\BORecebimentoNotaCtx\BORecebimentoNotaListViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\BORegistroRecebimentoViewModel.cs" />
     <Compile Include="Models\EmpresaCtx\EmpresaConfigEditarViewModel.cs" />
+    <Compile Include="Models\CaixaCtx\CaixaListaViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemConfirmaImpressaoViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemEtiquetaViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemCadastroViewModel.cs" />
@@ -369,14 +383,20 @@
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemEditarViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemPesquisaModalViewModel.cs" />
+    <Compile Include="Models\ProdutoCtx\ProdutoConfirmaImpressaoViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoDetalhesViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoEditarViewModel.cs" />
+    <Compile Include="Models\ProdutoCtx\ProdutoImpressaoViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoImprimirDetalhes.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoListaViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoSearchModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\RecebimentoEtiquetaViewModel.cs" />
     <Compile Include="Models\RecebimentoEtiquetaIndividualPersonalizadaCtx\RecebimentoEtiquetaIndividualListViewModel.cs" />
     <Compile Include="Models\TransportadoraCtx\TransportadoraSearchModalViewModel.cs" />
+    <Compile Include="Models\TransporteEnderecoCtx\TransportadoraEnderecoCadastroViewModel.cs" />
+    <Compile Include="Models\TransporteEnderecoCtx\TransportadoraEnderecoDetalhesViewModel.cs" />
+    <Compile Include="Models\TransporteEnderecoCtx\TransportadoraEnderecoEdicaoViewModel.cs" />
+    <Compile Include="Models\TransporteEnderecoCtx\TransporteEnderecoListaViewModel.cs" />
     <Compile Include="Startup.cs" />
     <Content Include="Content\dart\dart-template.css">
       <DependentUpon>dart-template.scss</DependentUpon>
@@ -534,7 +554,12 @@
     <Content Include="Scripts\Views\BOPrinter\create.js" />
     <Content Include="Scripts\Views\BOPrinter\edit.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioRastreioPeca.js" />
+    <Content Include="Scripts\Views\Caixa\cadastrar.js" />
+    <Content Include="Scripts\Views\Caixa\editar.js" />
     <Content Include="Scripts\Views\Cliente\searchModal.js" />
+    <Content Include="Scripts\Views\CorredorImpressora\cadastrar.js" />
+    <Content Include="Scripts\Views\CorredorImpressora\editar.js" />
+    <Content Include="Scripts\Views\CorredorImpressora\index.js" />
     <Content Include="Scripts\Views\Empresa\editar.js" />
     <Content Include="Scripts\Views\Empresa\searchModal.js" />
     <Content Include="Scripts\Views\BOFornecedor\searchModal.js" />
@@ -545,8 +570,9 @@
     <Content Include="Scripts\Views\BORecebimentoNota\index.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\editar.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\cadastrar.js" />
-    <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
+    <Content Include="Scripts\Views\Caixa\index.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\confirmarImpressao.js" />
+    <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
@@ -562,12 +588,16 @@
     <Content Include="Scripts\Views\PontoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\index.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\pesquisaModal.js" />
+    <Content Include="Scripts\Views\Produto\confirmarImpressao.js" />
     <Content Include="Scripts\Views\Produto\detalhesProduto.js" />
     <Content Include="Scripts\Views\Produto\editarProduto.js" />
     <Content Include="Scripts\Views\Produto\index.js" />
     <Content Include="Scripts\Views\Produto\searchModal.js" />
     <Content Include="Scripts\Views\RecebimentoEtiquetaIndividualPersonalizada\index.js" />
     <Content Include="Scripts\Views\Etiqueta\lote.js" />
+    <Content Include="Scripts\Views\TransportadoraEndereco\cadastrar.js" />
+    <Content Include="Scripts\Views\TransportadoraEndereco\editar.js" />
+    <Content Include="Scripts\Views\TransportadoraEndereco\index.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
     <Content Include="Views\Shared\_MudarEmpresa.cshtml" />
@@ -654,6 +684,19 @@
     <Content Include="Views\Armazenagem\RelatorioLogisticaCorredor.cshtml" />
     <Content Include="Views\Armazenagem\RelatorioAtividadeEstoque.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\ConfirmarImpressao.cshtml" />
+    <Content Include="Views\Produto\ConfirmarImpressao.cshtml" />
+    <Content Include="Views\Caixa\Index.cshtml" />
+    <Content Include="Views\Caixa\Cadastrar.cshtml" />
+    <Content Include="Views\Caixa\Editar.cshtml" />
+    <Content Include="Views\Caixa\Detalhes.cshtml" />
+    <Content Include="Views\CorredorImpressora\Index.cshtml" />
+    <Content Include="Views\CorredorImpressora\Cadastrar.cshtml" />
+    <Content Include="Views\CorredorImpressora\Editar.cshtml" />
+    <Content Include="Views\CorredorImpressora\Detalhes.cshtml" />
+    <Content Include="Views\TransportadoraEndereco\Index.cshtml" />
+    <Content Include="Views\TransportadoraEndereco\Detalhes.cshtml" />
+    <Content Include="Views\TransportadoraEndereco\Cadastrar.cshtml" />
+    <Content Include="Views\TransportadoraEndereco\Editar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
