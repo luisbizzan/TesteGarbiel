@@ -6,11 +6,11 @@
         let valor = $(this).val();
         $(".divTipo").hide();
 
-        if (valor == "1") {
+        if (valor == "30") {
             $("#div1").show();
-        } else if (valor == "2") {
+        } else if (valor == "31") {
             $("#div2").show();
-        } else if (valor == "3") {
+        } else if (valor == "32") {
             $("#div3").show();
         }
     });

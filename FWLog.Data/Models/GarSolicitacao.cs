@@ -9,7 +9,7 @@ namespace FWLog.Data.Models
         public String Filial { get; set; }
         public DateTime Dt_Criacao { get; set; }
         public long Id_Tipo { get; set; }
-        public long Id_Tipo_Doc { get; set; }
+        public long? Id_Tipo_Doc { get; set; }
         public String Tipo { get; set; }
         public String Cli_Cnpj { get; set; }
         public String Razao_Social { get; set; }
@@ -32,6 +32,7 @@ namespace FWLog.Data.Models
         public long Id_Solicitacao { get; set; }
         public long Id_Item_Nf { get; set; }
         public String Refx { get; set; }
+        public String Descricao { get; set; }
         public String Cod_Fornecedor { get; set; }
         public long Quant { get; set; }
         public long Valor { get; set; }

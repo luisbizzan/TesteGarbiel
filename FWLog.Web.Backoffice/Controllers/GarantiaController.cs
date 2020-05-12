@@ -121,19 +121,19 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpPost]
         public ActionResult SolicitacaoImportarGravar(GarantiaSolicitacao item)
         {
-            if (item.Id_Tipo == 1 && string.IsNullOrEmpty(item.Chave_Acesso))
+            if (item.Id_Tipo == 30 && string.IsNullOrEmpty(item.Chave_Acesso))
                 ModelState.AddModelError("Chave_Acesso", "O campo Chave de Acesso é obrigatório.");
 
-            if (item.Id_Tipo == 2 && string.IsNullOrEmpty(item.Cnpj))
+            if (item.Id_Tipo == 31 && string.IsNullOrEmpty(item.Cnpj))
                 ModelState.AddModelError("Cnpj", "O campo Cnpj é obrigatório.");
 
-            if (item.Id_Tipo == 2 && string.IsNullOrEmpty(item.Numero))
+            if (item.Id_Tipo == 31 && string.IsNullOrEmpty(item.Numero))
                 ModelState.AddModelError("Numero", "O campo Número é obrigatório.");
 
-            if (item.Id_Tipo == 2 && string.IsNullOrEmpty(item.Serie))
+            if (item.Id_Tipo == 31 && string.IsNullOrEmpty(item.Serie))
                 ModelState.AddModelError("Serie", "O campo Série é obrigatório.");
 
-            if (item.Id_Tipo == 3 && string.IsNullOrEmpty(item.Numero_Interno))
+            if (item.Id_Tipo == 32 && string.IsNullOrEmpty(item.Numero_Interno))
                 ModelState.AddModelError("Numero_Interno", "O campo Número Interno é obrigatório.");
 
             if (!ModelState.IsValid)
@@ -148,7 +148,32 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             else
             {
-                //TODO ROTINA PARA IMPORTAR
+                item.Codigo_Postagem = string.IsNullOrEmpty(item.Codigo_Postagem) ? "REPRESENTANTE" : item.Codigo_Postagem;
+
+                if (item.Id_Tipo == 31 || item.Id_Tipo == 32)
+                {
+                    //IMPORTA SOLICITAÇÃO SE FOR CARTA OU NOTA MANUAL
+                    var idSolicitacao = _uow.GarantiaRepository.ImportarSolicitacaoNfCartaManual(new GarSolicitacao
+                    {
+                        Cli_Cnpj = item.Cnpj,
+                        Nota_Fiscal = item.Numero_Interno == null ? item.Numero : item.Numero_Interno,
+                        Id_Usr = IdUsuario,
+                        Serie = item.Serie,
+                        Id_Tipo_Doc = item.Id_Tipo
+                    }, item.Codigo_Postagem);
+
+                    if (idSolicitacao != 0)
+                    {
+                        //CRIAR A CONFERENCIA DE ENTRADA
+                        _uow.GarantiaRepository.CriarConferencia(new GarConferencia
+                        {
+                            Id_Solicitacao = idSolicitacao,
+                            Id_Usr = IdUsuario,
+                            Id_Tipo_Conf = 5
+                        });
+                    }
+                }
+
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,
