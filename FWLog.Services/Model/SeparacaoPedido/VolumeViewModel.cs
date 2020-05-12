@@ -9,5 +9,6 @@ namespace FWLog.Services.Model.SeparacaoPedido
         public CaixaViewModel Caixa { get; set; }
         public bool IsCaixaFornecedor { get; set; }
         public decimal Peso { get; set; }
+        public decimal Cubagem { get; set; }
     }
 }

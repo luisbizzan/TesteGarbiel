@@ -7,12 +7,13 @@ namespace FWLog.Data.Models
         RelatorioA4 = 1,
         EtiquetaLote = 2,
         EtiquetaIndividual = 3,
-        EtiquetaAvulso = 4,        
+        EtiquetaAvulso = 4,
         EtiquetaRecebimento = 5,
-        EtiquetaEndereco = 6,        
-        EtiquetaDevolucao = 7,        
+        EtiquetaEndereco = 6,
+        EtiquetaDevolucao = 7,
         EtiquetaPersonalizada = 8,
-        EtiquetaGarantia = 10
+        EtiquetaGarantia = 10,
+        EtiquetaPicking = 11
     }
 
     public class ImpressaoItem

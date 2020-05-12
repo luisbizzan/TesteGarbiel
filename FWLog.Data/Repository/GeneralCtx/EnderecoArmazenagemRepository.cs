@@ -105,6 +105,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.EnderecoArmazenagem.Where(w => w.Codigo.Equals(codigo) && w.IdEmpresa == idEmpresa).ToList();
         }
 
+        public EnderecoArmazenagem PesquisarPickingPorCodigo(string codigo, long idEmpresa)
+        {
+            return Entities.EnderecoArmazenagem.Where(w => w.Codigo.Equals(codigo) && w.IdEmpresa == idEmpresa && w.IsPontoSeparacao).FirstOrDefault();
+        }
+
         public List<EnderecoArmazenagem> PesquisarPorCorredor(int corredor, long idEmpresa)
         {
             var query = (from e in Entities.EnderecoArmazenagem

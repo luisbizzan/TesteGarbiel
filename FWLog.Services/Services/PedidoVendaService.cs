@@ -65,6 +65,8 @@ namespace FWLog.Services.Services
                 if (pedidoVenda != null)
                     pedidoVenda.NroVolumes = pedidoVenda.NroVolumes + quantidade;
 
+                _uow.PedidoVendaRepository.Update(pedidoVenda);
+
                 await _uow.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -81,6 +83,8 @@ namespace FWLog.Services.Services
 
                 if (pedidoVenda != null)
                     pedidoVenda.IdPedidoVendaStatus = status;
+
+                _uow.PedidoVendaRepository.Update(pedidoVenda);
 
                 await _uow.SaveChangesAsync();
             }

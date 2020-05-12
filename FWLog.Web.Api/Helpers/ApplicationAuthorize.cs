@@ -67,7 +67,7 @@ namespace FWLog.Web.Api.Helpers
             var userManager = actionContext.Request.GetOwinContext().GetUserManager<WebApiUserManager>();
             ApplicationUser usuarioAplicacao = userManager.FindById(userId);
 
-            if(usuarioAplicacao.IdApplicationSession.HasValue == false)
+            if (usuarioAplicacao?.IdApplicationSession.HasValue == false)
             {
                 return false;
             }

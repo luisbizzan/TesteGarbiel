@@ -119,5 +119,12 @@ namespace FWLog.Services.Services
                 ValidaELancaExcecaoIntegridade(exception);
             }
         }
+
+        public Caixa BuscarCaixaFornecedor(long idEmpresa)
+        {
+            var caixa = _unitOfWork.CaixaRepository.BuscarCaixaSeparacaoFornecedor(idEmpresa);
+
+            return caixa;
+        }
     }
 }
