@@ -3,9 +3,6 @@ using FWLog.Data.Models;
 using FWLog.Services.Model.Caixa;
 using log4net;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
@@ -21,7 +18,7 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task<long> Salvar(long idPedidoVenda, CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagem grupoCorredorArmazenagem, int numeroVolume, long idEmpresa, decimal peso)
+        public async Task<long> Salvar(long idPedidoVenda, CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagem grupoCorredorArmazenagem, int numeroVolume, long idEmpresa, decimal peso, decimal cubagem)
         {
             long idPedidoVendaVolume = 0;
 
@@ -33,18 +30,18 @@ namespace FWLog.Services.Services
                 {
                     IdPedidoVenda = idPedidoVenda,
                     IdCaixaCubagem = caixaEscolhida.IdCaixa,
-                    IdCaixaVolume = caixaEscolhida.IdCaixa,
                     IdGrupoCorredorArmazenagem = grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem,
                     DataHoraInicioSeparacao = null,
                     DataHoraFimSeparacao = null,
-                    IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao,
+                    IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
                     NroCentena = numeroCentena,
                     NroVolume = numeroVolume,
                     PesoVolume = peso,
                     CorredorInicio = grupoCorredorArmazenagem.CorredorInicial,
                     CorredorFim = grupoCorredorArmazenagem.CorredorFinal,
                     EtiquetaVolume = caixaEscolhida.TextoEtiqueta,
-                    IdImpressora = grupoCorredorArmazenagem.IdImpressora
+                    IdImpressora = grupoCorredorArmazenagem.IdImpressora,
+                    CubagemVolume = cubagem
                 };
 
 

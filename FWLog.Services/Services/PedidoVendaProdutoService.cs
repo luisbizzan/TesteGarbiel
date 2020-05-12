@@ -32,7 +32,9 @@ namespace FWLog.Services.Services
                     IdProduto = pedidoItem.Produto.IdProduto,
                     IdEnderecoArmazenagem = pedidoItem.IdEnderecoArmazenagem,
                     IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
+                    QtdSeparar = pedidoItem.Quantidade,
                     QtdSeparada = null,
+                    CubagemProduto = pedidoItem.Produto.CubagemProduto.Value,
                     PesoProduto = pedidoItem.Produto.PesoBruto,
                     DataHoraInicioSeparacao = null,
                     DataHoraFimSeparacao = null

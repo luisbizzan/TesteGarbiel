@@ -152,6 +152,7 @@
     <Compile Include="Model\Expedicao\DespachoTransportadoraResposta.cs" />
     <Compile Include="Model\Expedicao\EnderecosPorTransportadoraResposta.cs" />
     <Compile Include="Model\Expedicao\PedidoVendaVolumeResposta.cs" />
+    <Compile Include="Model\GrupoCorredorArmazenagem\GrupoCorredorArmazenagemViewModel.cs" />
     <Compile Include="Model\IntegracaoSankhya\PedidoNumeroNotaFiscalIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\PedidoItemIntegracao.cs" />
     <Compile Include="Model\IntegracaoSankhya\ClienteIntegracao.cs" />
@@ -179,6 +180,7 @@
     <Compile Include="Model\Lote\ProcessamentoTratativaDivergencia.cs" />
     <Compile Include="Model\Lote\ResumoFinalizarConferenciaResponse.cs" />
     <Compile Include="Model\Lote\TratarDivergenciaRequest.cs" />
+    <Compile Include="Model\ProdutoEstoque\ProdutoEstoqueViewModel.cs" />
     <Compile Include="Model\Produto\ProdutoEstoqueResposta.cs" />
     <Compile Include="Model\Produto\ProdutoViewModel.cs" />
     <Compile Include="Model\Relatorios\DetalhesNotaEntradaConferenciaRequest.cs" />

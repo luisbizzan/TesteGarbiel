@@ -651,6 +651,7 @@ namespace FWLog.Services.Services
             string caixaTextoEtiqueta = requisicao.CaixaTextoEtiqueta?.Normalizar();
             string corredoresInicio = requisicao.CorredoresInicio.PadLeft(2, '0')?.Normalizar();
             string corredoresIntervalo = $"{corredoresInicio} a {requisicao.CorredoresFim.PadLeft(2, '0')}"?.Normalizar();
+            string corredorInicioSeparacao = requisicao.CorredorInicioSeparacao.PadLeft(2, '0')?.Normalizar();
 
             var stringEtiqueta = new StringBuilder();
 
@@ -681,7 +682,7 @@ namespace FWLog.Services.Services
             stringEtiqueta.Append($"^FO570,260^A0B,80,70^FR^FD{caixaTextoEtiqueta}^FS");
 
             stringEtiqueta.Append("^FO550,347^A0B,20,20^FDINICIO^FS");
-            stringEtiqueta.Append($"^FO570,315^A0B,80,70^FR^FD{corredoresInicio}^FS");
+            stringEtiqueta.Append($"^FO570,315^A0B,80,70^FR^FD{corredorInicioSeparacao}^FS");
 
             stringEtiqueta.Append("^FO635,250^GBO,152,2^FS");
             stringEtiqueta.Append("^FO640,305^A0B,20,20^FDINTERVALO^FS");

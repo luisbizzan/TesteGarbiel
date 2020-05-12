@@ -5,8 +5,10 @@ using FWLog.Services.Integracao;
 using FWLog.Services.Model.Caixa;
 using FWLog.Services.Model.Coletor;
 using FWLog.Services.Model.Etiquetas;
+using FWLog.Services.Model.GrupoCorredorArmazenagem;
 using FWLog.Services.Model.IntegracaoSankhya;
 using FWLog.Services.Model.Produto;
+using FWLog.Services.Model.ProdutoEstoque;
 using FWLog.Services.Model.SeparacaoPedido;
 using log4net;
 using System;
@@ -28,8 +30,10 @@ namespace FWLog.Services.Services
         private PedidoVendaProdutoService _pedidoVendaProdutoService;
         private PedidoVendaVolumeService _pedidoVendaVolumeService;
         private EtiquetaService _etiquetaService;
+        private CaixaService _caixaService;
 
-        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService, ILog log, PedidoService pedidoService, PedidoVendaService pedidoVendaService, PedidoVendaProdutoService pedidoVendaProdutoService, PedidoVendaVolumeService pedidoVendaVolumeService, EtiquetaService etiquetaService)
+        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService, ILog log, PedidoService pedidoService, PedidoVendaService pedidoVendaService, 
+            PedidoVendaProdutoService pedidoVendaProdutoService, PedidoVendaVolumeService pedidoVendaVolumeService, EtiquetaService etiquetaService, CaixaService caixaService)
         {
             _unitOfWork = unitOfWork;
             _coletorHistoricoService = coletorHistoricoService;
@@ -39,6 +43,7 @@ namespace FWLog.Services.Services
             _pedidoVendaProdutoService = pedidoVendaProdutoService;
             _pedidoVendaVolumeService = pedidoVendaVolumeService;
             _etiquetaService = etiquetaService;
+            _caixaService = caixaService;
         }
 
         public List<long> ConsultaPedidoVendaEmSeparacao(string idUsuario, long idEmpresa)
@@ -729,10 +734,20 @@ namespace FWLog.Services.Services
                 {
                     //Captura o endereço de picking do produto.
                     //Posteriormente a lógica deverá ser alterada por ponto de separação.
-                    var enderecoArmazenagemProduto = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresaPicking(pedidoItem.Produto.IdProduto, idEmpresa);
+                    var produtoEstoqueRepository = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresaPicking(pedidoItem.Produto.IdProduto, idEmpresa);
 
-                    if (enderecoArmazenagemProduto == null)
+                    if (produtoEstoqueRepository == null)
                         break;
+
+                    var enderecoArmazenagemProduto = new ProdutoEstoqueViewModel()
+                    {
+                        IdProduto = produtoEstoqueRepository.IdProduto,
+                        IdEmpresa = produtoEstoqueRepository.IdEmpresa,
+                        IdEnderecoArmazenagem = produtoEstoqueRepository.IdEnderecoArmazenagem,
+                        Saldo = produtoEstoqueRepository.Saldo,
+                        IdProdutoEstoqueStatus = produtoEstoqueRepository.IdProdutoEstoqueStatus,
+                        EnderecoArmazenagem = produtoEstoqueRepository.EnderecoArmazenagem
+                    };
 
                     //Captura o grupo de corredores do item do pedido.
                     var grupoCorredorArmazenagemItemPedido = await BuscarGrupoCorredorArmazenagemItemPedido(enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
@@ -742,8 +757,8 @@ namespace FWLog.Services.Services
 
                     //Captura o indice do item na lista e atualizo os dados.
                     int index = listaItensDoPedido.IndexOf(pedidoItem);
-                    listaItensDoPedido[index].IdGrupoCorredorArmazenagem = grupoCorredorArmazenagemItemPedido.IdGrupoCorredorArmazenagem;
-                    listaItensDoPedido[index].IdEnderecoArmazenagem = enderecoArmazenagemProduto.IdEnderecoArmazenagem.Value;
+                    listaItensDoPedido[index].GrupoCorredorArmazenagem = grupoCorredorArmazenagemItemPedido;
+                    listaItensDoPedido[index].EnderecoSeparacao = enderecoArmazenagemProduto;
                 }
 
                 /*
@@ -753,10 +768,10 @@ namespace FWLog.Services.Services
                  */
                 foreach (var itemCorredorArmazenagem in grupoCorredorArmazenagem)
                 {
-                    int quantidadeVolume = 0;
+                    int quantidadeVolume = 0; //Variável utilizada para saber o número e a quantidade de volumes do pedido.
 
                     //Captura o corredor do item.
-                    var listaItensDoPedidoPorCorredor = listaItensDoPedido.Where(x => x.IdGrupoCorredorArmazenagem == itemCorredorArmazenagem.IdGrupoCorredorArmazenagem).ToList();
+                    var listaItensDoPedidoPorCorredor = listaItensDoPedido.Where(x => x.GrupoCorredorArmazenagem.IdGrupoCorredorArmazenagem == itemCorredorArmazenagem.IdGrupoCorredorArmazenagem).ToList();
 
                     //Se não houver nenhum item para o corredor, vai para o próximo.
                     if (listaItensDoPedidoPorCorredor == null)
@@ -769,25 +784,29 @@ namespace FWLog.Services.Services
                     if (listaItensDoPedidoDividido.Count > 0)
                     {
                         //Busca os volumes que serão utilizados.
-                        var listaVolumes = await BuscarCubagemVolumes(listaItensDoPedidoDividido);
+                        var listaVolumes = await BuscarCubagemVolumes(pedido.IdEmpresa, listaItensDoPedidoDividido);
 
                         foreach (var itemVolume in listaVolumes)
                         {
-                            //Implementar aqui dentro do método Salvar se CaixaFornecedor então IdCaixa é nulo.
-                            var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso);
+                            quantidadeVolume++;
+
+                            //Salva PedidoVendaVolume.
+                            var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
 
                             if (idPedidoVendaVolume == 0)
                                 break;
 
-                            quantidadeVolume++;
-
                             foreach (var item in listaItensDoPedidoDividido)
                             {
+                                //Salva PedidoVendaproduto.
                                 await _pedidoVendaProdutoService.Salvar(idPedidoVenda, idPedidoVendaVolume, item);
                             }
 
+                            //Captura o primeiro corredor de separação.
+                            int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
+
                             //Imprime a etiqueta de separação.
-                            await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, itemCorredorArmazenagem, pedido, idPedidoVendaVolume);
+                            await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, itemCorredorArmazenagem, pedido, idPedidoVendaVolume, corredorInicioSeparacao);
                         }
 
                         //Atualiza a quantidade de volumes na PedidoVenda.
@@ -803,7 +822,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagem grupoCorredorArmazenagem, Pedido pedido, long idPedidoVendaVolume)
+        public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagem grupoCorredorArmazenagem, Pedido pedido, long idPedidoVendaVolume, int corredorInicioSeparacao)
         {
             var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
             
@@ -818,28 +837,43 @@ namespace FWLog.Services.Services
                 ClienteTelefone = pedido.Cliente.Telefone,
                 ClienteCodigo = pedido.Cliente.IdCliente.ToString(),
                 RepresentanteCodigo = pedido.Representante.IdRepresentante.ToString(),
-                PedidoCodigo = pedido.IdPedido.ToString(),
+                PedidoCodigo = String.Format("{0:000000}", pedido.NroPedido.ToString()),
                 Centena = String.Format("{0:0000}", pedidoVendaVolume.NroCentena),
                 TransportadoraSigla = pedido.Transportadora.CodigoTransportadora,
-                TransportadoraCodigo = pedido.Transportadora.IdTransportadora.ToString(),
+                TransportadoraCodigo = String.Format("{0:000}", pedido.Transportadora.IdTransportadora.ToString()),
                 TransportadoraNome = pedido.Transportadora.RazaoSocial,
                 CorredoresInicio = grupoCorredorArmazenagem.CorredorInicial.ToString(),
                 CorredoresFim = grupoCorredorArmazenagem.CorredorFinal.ToString(),
-                CaixaTextoEtiqueta = volume.Caixa.TextoEtiqueta,
+                CorredorInicioSeparacao = corredorInicioSeparacao.ToString(),
+                CaixaTextoEtiqueta = String.Format("{0:000}", volume.Caixa.TextoEtiqueta),
                 Volume = numeroVolume.ToString(),
                 IdImpressora = grupoCorredorArmazenagem.IdImpressora
             },
             pedido.IdEmpresa);
         }
 
-        public async Task<GrupoCorredorArmazenagem> BuscarGrupoCorredorArmazenagemItemPedido(int corredor, List<GrupoCorredorArmazenagem> listaGrupoCorredorArmazenagem)
+        public async Task<GrupoCorredorArmazenagemViewModel> BuscarGrupoCorredorArmazenagemItemPedido(int corredor, List<GrupoCorredorArmazenagem> listaGrupoCorredorArmazenagem)
         {
-            GrupoCorredorArmazenagem grupoArmazenagem = new GrupoCorredorArmazenagem();
+            GrupoCorredorArmazenagemViewModel grupoArmazenagem = null;
 
             foreach (var item in listaGrupoCorredorArmazenagem)
             {
                 if (corredor >= item.CorredorInicial && corredor <= item.CorredorFinal)
-                    return item;
+                {
+                    grupoArmazenagem = new GrupoCorredorArmazenagemViewModel()
+                    {
+                        IdGrupoCorredorArmazenagem = item.IdGrupoCorredorArmazenagem,
+                        IdPontoArmazenagem = item.IdPontoArmazenagem,
+                        IdEmpresa = item.IdEmpresa,
+                        IdImpressora = item.IdImpressora,
+                        CorredorInicial = item.CorredorInicial,
+                        CorredorFinal = item.CorredorFinal,
+                        Ativo = item.Ativo
+                    };
+
+                    return grupoArmazenagem;
+                }
+                    
             }
 
             return grupoArmazenagem;
@@ -981,8 +1015,8 @@ namespace FWLog.Services.Services
                     CaixaEscolhida = null,
                     Quantidade = listaItensDoPedido[i].Quantidade,
                     Caixa = await CaixasQuePodemSerUtilizadas(listaItensDoPedido[i].Produto, listaCaixas),
-                    IdEnderecoArmazenagem = listaItensDoPedido[i].IdEnderecoArmazenagem,
-                    IdGrupoCorredorArmazenagem = listaItensDoPedido[i].IdGrupoCorredorArmazenagem
+                    EnderecoSeparacao = listaItensDoPedido[i].EnderecoSeparacao,
+                    GrupoCorredorArmazenagem = listaItensDoPedido[i].GrupoCorredorArmazenagem
                 });
             }
 
@@ -1060,9 +1094,7 @@ namespace FWLog.Services.Services
             bool retorno = false;
 
             //Valida se a largura, comprimento e peso bruto do produto é diferente de 0.
-            if (produto.Largura.HasValue == false || produto.Largura == 0 ||
-                produto.Comprimento.HasValue == false || produto.Comprimento == 0 ||
-                produto.PesoBruto == 0)
+            if (produto.Largura.HasValue == false || produto.Largura == 0 || produto.Comprimento.HasValue == false || produto.Comprimento == 0 || produto.PesoBruto == 0)
                 return false;
 
             //Valida se a largura, comprimento e e peso bruto do produto é menor os valores da caixa.
@@ -1482,7 +1514,7 @@ namespace FWLog.Services.Services
                     {
                         var cubagemProduto = await CalcularCubagemEntreCaixaProduto(listaItensDoPedido[i].Produto, caixaCorrente);
 
-                        if (!(cubagemProduto) || listaItensDoPedido[i].Caixa.Any(x => x.IdCaixa == caixaCorrente.IdCaixa) == false)
+                        if (!cubagemProduto || listaItensDoPedido[i].Caixa.Any(x => x.IdCaixa == caixaCorrente.IdCaixa) == false)
                         {
                             proximaCaixa = caixaCorrente != null ? await CalcularProximaCaixaMaior(caixaCorrente, listaCaixasMaisComum) : null;
 
@@ -1597,24 +1629,21 @@ namespace FWLog.Services.Services
                         }
 
                         if (!usouAgrupamento || nAuxQtde == 0)
-                        {
                             sair = true;
-                            usouAgrupamento = false;
-                        }
                         else
                         {
                             agrupador++;
                             usouAgrupamento = false;
                         }
                     } while (!sair);
+                }
 
-                    if (!usouAgrupamento)
-                        sairWhile = true;
-                    else
-                    {
-                        agrupador++;
-                        usouAgrupamento = false;
-                    }
+                if (!usouAgrupamento)
+                    sairWhile = true;
+                else
+                {
+                    agrupador++;
+                    usouAgrupamento = false;
                 }
 
             } while (!sairWhile);
@@ -1622,13 +1651,35 @@ namespace FWLog.Services.Services
             return listaItensDoPedido;
         }
 
-        public async Task<List<VolumeViewModel>> BuscarCubagemVolumes(List<PedidoItemViewModel> listaItensDoPedido)
+        public async Task<List<VolumeViewModel>> BuscarCubagemVolumes(long idEmpresa, List<PedidoItemViewModel> listaItensDoPedido)
         {
             List<VolumeViewModel> listaVolumes = new List<VolumeViewModel>();
             int nAuxAgrup = 0;
             long nAuxNrCx = 0;
+            CaixaViewModel nAuxCX = null;
+            CaixaViewModel caixaFornecedor = null;
 
-            CaixaViewModel nAuxCX = new CaixaViewModel();
+            var caixaRepository = _caixaService.BuscarCaixaFornecedor(idEmpresa);
+
+            if (caixaRepository != null)
+            {
+                caixaFornecedor = new CaixaViewModel()
+                {
+                    IdCaixa = caixaRepository.IdCaixa,
+                    IdCaixaTipo = caixaRepository.IdCaixaTipo,
+                    Nome = caixaRepository.Nome,
+                    TextoEtiqueta = caixaRepository.TextoEtiqueta,
+                    Largura = caixaRepository.Largura,
+                    Altura = caixaRepository.Altura,
+                    Comprimento = caixaRepository.Comprimento,
+                    Cubagem = caixaRepository.Cubagem,
+                    PesoCaixa = caixaRepository.PesoCaixa,
+                    PesoMaximo = caixaRepository.PesoMaximo,
+                    Sobra = caixaRepository.Sobra,
+                    Prioridade = caixaRepository.Prioridade,
+                    Ativo = caixaRepository.Ativo
+                };
+            }
 
             for (int i = 0; i < listaItensDoPedido.Count; i++)
             {
@@ -1641,7 +1692,9 @@ namespace FWLog.Services.Services
                         listaVolumes.Add(new VolumeViewModel()
                         {
                             IsCaixaFornecedor = true,
-                            Peso = +listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade
+                            Peso =+ listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade,
+                            Cubagem =+ listaItensDoPedido[i].Produto.CubagemProduto.Value * listaItensDoPedido[i].Quantidade,
+                            Caixa = caixaFornecedor
                         });
                     }
                 }
@@ -1654,7 +1707,8 @@ namespace FWLog.Services.Services
                         listaVolumes.Add(new VolumeViewModel()
                         {
                             Caixa = nAuxCX,
-                            Peso =+ listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade
+                            Peso =+ listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade,
+                            Cubagem = +listaItensDoPedido[i].Produto.CubagemProduto.Value * listaItensDoPedido[i].Quantidade
                         }); 
 
                         nAuxAgrup = listaItensDoPedido[i].Agrupador;
@@ -1665,7 +1719,9 @@ namespace FWLog.Services.Services
                         listaVolumes.Add(new VolumeViewModel()
                         {
                             IsCaixaFornecedor = true,
-                            Peso = +listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade
+                            Peso = +listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade,
+                            Cubagem = +listaItensDoPedido[i].Produto.CubagemProduto.Value * listaItensDoPedido[i].Quantidade,
+                            Caixa = caixaFornecedor
                         });
                     }
                 }
