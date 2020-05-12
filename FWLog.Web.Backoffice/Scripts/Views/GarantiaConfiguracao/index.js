@@ -33,8 +33,8 @@ $(document).ready(function (e) {
 });
 
 /* [GENÉRICO] mostrar mensagens */
-function Mensagem(mensagemSucesso, mensagem) {
-    if (mensagemSucesso) {
+function Mensagem(sucesso, mensagem) {
+    if (sucesso) {
         PNotify.success({ text: mensagem, delay: 1000 });
     }
     else {
@@ -56,7 +56,7 @@ function RegistroIncluir() {
         console.log(f);
     }).done(function (d) {
         //console.log(d);
-        });
+    });
 
     RegistroInclusao.Inclusao = [];
     _listaAutoComplete = [];

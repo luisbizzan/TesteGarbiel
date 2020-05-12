@@ -547,7 +547,7 @@ namespace FWLog.Data.Models
             /// <summary>
             /// {0} Top | {1} Id Negociacao | {2} Id Registro 
             /// </summary>
-            public static string SankhyaTopAtualizar { get { return String.Concat("UPDATE geral_sankhya_tops SET Top = UPPER('{0}'), Id_Negociacao = {1} WHERE Id = {2}"); } }
+            public static string SankhyaTopAtualizar { get { return String.Concat("UPDATE geral_sankhya_tops SET Top = {0}, Id_Negociacao = {1} WHERE Id = {2}"); } }
             #endregion
 
             #region Motivo Laudo

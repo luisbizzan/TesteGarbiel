@@ -180,7 +180,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         {
                             RegistroAtualizar.RegistroSankhyaTop.ToList().ForEach(delegate (GarantiaConfiguracao.SankhyaTop item)
                             {
-                                var comandoSQL = String.Format("SELECT COUNT(1) FROM geral_sankhya_tops WHERE Top = {0}", item.Top);
+                                var comandoSQL = String.Format("SELECT COUNT(1) FROM geral_sankhya_tops WHERE Id != {0} AND Top = {1}", item.Id, item.Top);
                                 if (RegistroPodeSerCadastrado(comandoSQL).Equals(false))
                                     throw new Exception(String.Format("Já consta um registro cadastrado com esse código de  Top {0}!", item.Top));
 
