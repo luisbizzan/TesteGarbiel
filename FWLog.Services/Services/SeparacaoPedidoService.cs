@@ -101,18 +101,18 @@ namespace FWLog.Services.Services
             }
 
             var usuarioEmpresa = _unitOfWork.UsuarioEmpresaRepository.Obter(idEmpresa, idUsuario);
-            IEnumerable<int> rangeDeCorredores;
+            IEnumerable<int> rangeDeCorredoresDoUsuario;
 
             if (!usuarioEmpresa.CorredorSeparacaoInicio.HasValue && !usuarioEmpresa.CorredorSeparacaoFim.HasValue && !temPermissaoF7)
             {
                 throw new BusinessException("O Usuário não possui corredor de separação vinculado no cadastro e não possui acesso a função F7.");
             }
 
-            rangeDeCorredores = Enumerable.Range(usuarioEmpresa.CorredorSeparacaoInicio.Value, (usuarioEmpresa.CorredorSeparacaoFim.Value - usuarioEmpresa.CorredorSeparacaoInicio.Value) + 1);
+            rangeDeCorredoresDoUsuario = Enumerable.Range(usuarioEmpresa.CorredorSeparacaoInicio.Value, (usuarioEmpresa.CorredorSeparacaoFim.Value - usuarioEmpresa.CorredorSeparacaoInicio.Value) + 1);
 
-            var corredores = pedidoVendaVolume.PedidoVendaProdutos.Select(x => x.EnderecoArmazenagem.Corredor).Distinct();
+            var corredoresDosProdutos = pedidoVendaVolume.PedidoVendaProdutos.Select(x => x.EnderecoArmazenagem.Corredor).Distinct();
 
-            if (rangeDeCorredores.Intersect(corredores).Count() == 0 && !temPermissaoF7)
+            if (rangeDeCorredoresDoUsuario.Intersect(corredoresDosProdutos).Count() == 0 && !temPermissaoF7)
             {
                 throw new BusinessException("Nenhum produto para separar.");
             }
@@ -133,7 +133,7 @@ namespace FWLog.Services.Services
                                                    enderecoArmazenagem.Corredor <= gca.CorredorFinal)
                                     where
                                         pedidoVendaProduto.QtdSeparada.GetValueOrDefault() < pedidoVendaProduto.QtdSeparar &&
-                                        (temPermissaoF7 == true || rangeDeCorredores.Contains(pedidoVendaProduto.EnderecoArmazenagem.Corredor))
+                                        (temPermissaoF7 == true || rangeDeCorredoresDoUsuario.Contains(pedidoVendaProduto.EnderecoArmazenagem.Corredor))
                                     select new
                                     {
                                         GrupoCorredorArmazenagem = new
