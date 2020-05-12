@@ -207,7 +207,7 @@ namespace FWLog.Web.Api.Controllers
                     IdEmpresa = IdEmpresa
                 };
 
-               var resposta = _etiquetaService.ValidarProdutoOuEnderecoPicking(request);
+                var resposta = _etiquetaService.ValidarProdutoOuEnderecoPicking(request);
 
                 return ApiOk(resposta);
 
