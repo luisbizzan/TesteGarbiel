@@ -8,7 +8,7 @@ namespace FWLog.Data.Models.DataTablesCtx
 
         public string ReferenciaProduto { get; set; }
 
-        public DateTime DataInicioConferenciaLote { get; set; }
+        public DateTime DataFinalConferenciaLote { get; set; }
 
         public int QuantidadeRecebidaLoteProduto { get; set; }
     }

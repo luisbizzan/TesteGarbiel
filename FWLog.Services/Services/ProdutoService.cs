@@ -419,7 +419,7 @@ namespace FWLog.Services.Services
 
             var entradasProduto = _uow.ProdutoRepository.ConsultarEntradasProduto(idProduto, idEmpresa);
 
-            var dadosAgrupados = entradasProduto.GroupBy(g => g.DataInicioConferenciaLote.Date).OrderBy(g => g.Key).ToList();
+            var dadosAgrupados = entradasProduto.GroupBy(g => g.DataFinalConferenciaLote.Date).OrderBy(g => g.Key).ToList();
 
             var resultado = new EntradasProdutoResposta
             {

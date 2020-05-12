@@ -193,7 +193,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                          {
                              IdProduto = produto.IdProduto,
                              ReferenciaProduto = produto.Referencia,
-                             DataInicioConferenciaLote = lote.DataInicioConferencia.Value,
+                             DataFinalConferenciaLote = lote.DataFinalConferencia.Value,
                              QuantidadeRecebidaLoteProduto = (int)loteProduto.QuantidadeRecebida
                          });
 
