@@ -19,14 +19,8 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
     public class GarantiaRemessaListVM
     {
-        [Display(Name = "Cnpj")]
-        public string Cli_Cnpj { get; set; }
-
-        [Display(Name = "Razão Social")]
-        public string Razao_Social { get; set; }
-
-        [Display(Name = "Repr.")]
-        public string Rep { get; set; }
+        [Display(Name = "Cod Fornecedor")]
+        public string Cod_Fornecedor { get; set; }
 
         [Display(Name = "Nr. Remessa")]
         public long Id { get; set; }
@@ -36,16 +30,10 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
         public String Tipo { get; set; }
 
-        [Display(Name = "Valor")]
-        public long Valor { get; set; }
-
         [Display(Name = "Status")]
         public long Id_Status { get; set; }
 
         public String Status { get; set; }
-
-        [Display(Name = "Nota Fiscal")]
-        public string Nota_Fiscal { get; set; }
 
         [Display(Name = "Filial")]
         public string Filial { get; set; }

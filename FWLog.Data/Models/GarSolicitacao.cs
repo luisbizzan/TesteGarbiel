@@ -22,6 +22,9 @@ namespace FWLog.Data.Models
         public long Legenda { get; set; }
         public long Id_Sav { get; set; }
         public String Nota_Fiscal { get; set; }
+        public String Chave_Acesso { get; set; }
+        public String Codigo_Postagem { get; set; }
+
         public String Serie { get; set; }
         public int Qtde { get; set; }
     }

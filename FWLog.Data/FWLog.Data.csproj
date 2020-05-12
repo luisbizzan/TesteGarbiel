@@ -107,6 +107,7 @@
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\ColetorAplicacao.cs" />
     <Compile Include="Models\GarConferencia.cs" />
+    <Compile Include="Models\GarRemessa.cs" />
     <Compile Include="Models\GarSolicitacao.cs" />
     <Compile Include="Models\GarantiaConfiguracao.cs" />
     <Compile Include="Models\GarMotivoLaudo.cs" />
@@ -123,7 +124,7 @@
     <Compile Include="Models\DataTablesCtx\QuarentenaHistoricoListRow.cs" />
     <Compile Include="Models\DataTablesCtx\TransportadoraPesquisaModalLinhaTabela.cs" />
     <Compile Include="Models\FilterCtx\EnderecoArmazenagemPesquisaModalFiltro.cs" />
-    <Compile Include="Models\FilterCtx\GarantiaFilter.cs" />
+    <Compile Include="Models\FilterCtx\GarantiaSolicitacaoFilter.cs" />
     <Compile Include="Models\FilterCtx\ClientePesquisaModalFiltro.cs" />
     <Compile Include="Models\FilterCtx\MotivoLaudoFiltro.cs" />
     <Compile Include="Models\FilterCtx\PerfilImpressoraFilter.cs" />

@@ -6,7 +6,7 @@
         let valor = $(this).val();
         $(".divTipo").hide();
 
-        if (valor == "30") {
+        if (valor == "30" || valor == "21") {
             $("#div1").show();
         } else if (valor == "31") {
             $("#div2").show();
