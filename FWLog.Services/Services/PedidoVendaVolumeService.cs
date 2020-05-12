@@ -81,7 +81,7 @@ namespace FWLog.Services.Services
                     if (centena.Numero == 9999)
                         numero = 1;
                     else
-                        numero = centena.Numero = +1;
+                        numero = centena.Numero + 1;
 
                     centena.Numero = numero;
                 }

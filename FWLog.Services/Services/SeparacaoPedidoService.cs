@@ -837,15 +837,15 @@ namespace FWLog.Services.Services
                 ClienteTelefone = pedido.Cliente.Telefone,
                 ClienteCodigo = pedido.Cliente.IdCliente.ToString(),
                 RepresentanteCodigo = pedido.Representante.IdRepresentante.ToString(),
-                PedidoCodigo = String.Format("{0:000000}", pedido.NroPedido.ToString()),
-                Centena = String.Format("{0:0000}", pedidoVendaVolume.NroCentena),
+                PedidoCodigo = pedido.NroPedido.ToString(),
+                Centena = pedidoVendaVolume.NroCentena.ToString(),
                 TransportadoraSigla = pedido.Transportadora.CodigoTransportadora,
-                TransportadoraCodigo = String.Format("{0:000}", pedido.Transportadora.IdTransportadora.ToString()),
+                TransportadoraCodigo = pedido.Transportadora.IdTransportadora.ToString(),
                 TransportadoraNome = pedido.Transportadora.RazaoSocial,
                 CorredoresInicio = grupoCorredorArmazenagem.CorredorInicial.ToString(),
                 CorredoresFim = grupoCorredorArmazenagem.CorredorFinal.ToString(),
                 CorredorInicioSeparacao = corredorInicioSeparacao.ToString(),
-                CaixaTextoEtiqueta = String.Format("{0:000}", volume.Caixa.TextoEtiqueta),
+                CaixaTextoEtiqueta = volume.Caixa.TextoEtiqueta,
                 Volume = numeroVolume.ToString(),
                 IdImpressora = grupoCorredorArmazenagem.IdImpressora
             },
@@ -1483,7 +1483,7 @@ namespace FWLog.Services.Services
             decimal? contadorCubagem; //Acumulador (auxiliar) para cubagem.
             decimal contadorPeso; //Acumulador (auxiliar) para peso.
             bool usarCaixaEncontrada; //Indica que os itens receberão a caixa encontrada.
-            bool usouAgrupamento = false; //Indica se o agrupamento foi utilizado.
+            bool usouAgrupamento = false; //Indica se o agrupamento atual tem alguma peça
             PedidoItemViewModel pedidoItem = new PedidoItemViewModel();
             List<PedidoItemViewModel> listaItensDoPedidoRetorno = new List<PedidoItemViewModel>();
             bool sairWhile = false;
@@ -1498,12 +1498,11 @@ namespace FWLog.Services.Services
 
                 for (int i = 0; i < listaItensDoPedido.Count; i++)
                 {
-                    if (listaItensDoPedido[i].Agrupador == 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume)
+                    if (listaItensDoPedido[i].Agrupador != 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume)
                         break;
 
                     caixaCorrente = await BuscarMaiorCaixa(listaCaixasMaisComum);
-
-                    caixaAnteriorEhMelhorQueAtual = false;
+                    caixaAnterior = null;
                     nAux2Cub = 0;
 
                     encontrouCaixaCorreta = false;
@@ -1607,7 +1606,7 @@ namespace FWLog.Services.Services
                             else
                             {
                                 listaItensDoPedido[i].Agrupador = agrupador;
-                                pedidoItem.CaixaEscolhida = caixaCorrente;
+                                listaItensDoPedido[i].CaixaEscolhida = caixaCorrente;
 
                                 usouAgrupamento = true;
                             }

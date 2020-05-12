@@ -642,10 +642,10 @@ namespace FWLog.Services.Services
             string clienteTelefone = string.Format("{0:(##) #####-####}", requisicao.ClienteTelefone);
             string clienteCodigo = requisicao.ClienteCodigo?.Normalizar();
             string representanteCodigo = requisicao.RepresentanteCodigo?.Normalizar();
-            string pedidoCodigo = requisicao.PedidoCodigo?.Normalizar();
-            string centena = requisicao.Centena?.Normalizar();
+            string pedidoCodigo = requisicao.PedidoCodigo?.PadLeft(6, '0')?.Normalizar();
+            string centena = requisicao.Centena?.PadLeft(4, '0')?.Normalizar();
             string transportadoraSigla = requisicao.TransportadoraSigla?.Normalizar();
-            string transportadoraCodigo = requisicao.TransportadoraCodigo?.Normalizar();
+            string transportadoraCodigo = requisicao.TransportadoraCodigo.PadLeft(3, '0')?.Normalizar();
             string transportadoraNome = requisicao.TransportadoraNome?.Normalizar();
             string volume = requisicao.Volume.PadLeft(3, '0')?.Normalizar();
             string caixaTextoEtiqueta = requisicao.CaixaTextoEtiqueta?.Normalizar();
