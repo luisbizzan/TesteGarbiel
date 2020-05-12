@@ -689,11 +689,11 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void ImprimirRomaneio(int nroRomaneio, long idImpressora, bool imprimeSegundaVia, long idEmpresa, string idUsuario)
+        public void ImprimirRomaneio(long idRomaneio, long idImpressora, bool imprimeSegundaVia, long idEmpresa, string idUsuario)
         {
-            if (nroRomaneio <= 0)
+            if (idRomaneio <= 0)
             {
-                throw new BusinessException("Número romaneio deve ser informado.");
+                throw new BusinessException("O romaneio deve ser informado.");
             }
 
             if (idImpressora <= 0)
@@ -701,7 +701,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Impressora deve ser informada.");
             }
 
-            var romaneio = _unitOfWork.RomaneioRepository.BuscarPorNumeroRomaneioEEmpresa(nroRomaneio, idEmpresa);
+            var romaneio = _unitOfWork.RomaneioRepository.BuscarPorIdRomaneioEEmpresa(idRomaneio, idEmpresa);
 
             if (romaneio == null)
             {
@@ -1003,8 +1003,7 @@ namespace FWLog.Services.Services
                     romaneioNotaFiscal.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
                     romaneioNotaFiscal.NroNotaFiscal = notaFiscal.Numero;
                     romaneioNotaFiscal.NroVolumes = pedidoVenda.NroVolumes;
-
-                    _unitOfWork.SaveChanges();
+                    romaneioNotaFiscal.IdCliente = pedidoVenda.IdCliente;
 
                     // tratamento especial pra empresas k1 e k2
                     var empresa = _unitOfWork.EmpresaRepository.GetById(idEmpresa);
@@ -1016,6 +1015,7 @@ namespace FWLog.Services.Services
                     }
 
                     _unitOfWork.RomaneioNotaFiscalRepository.Add(romaneioNotaFiscal);
+                    _unitOfWork.SaveChanges();
 
                     pedidoVenda.IdUsuarioRomaneio = idUsuario;
                     var dataHoraEmissaoRomaneio = DateTime.Now;
@@ -1041,7 +1041,7 @@ namespace FWLog.Services.Services
                     {
                         IdColetorAplicacao = ColetorAplicacaoEnum.Expedicao,
                         IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.Romaneio,
-                        Descricao = $"Log: Romaneio {romaneio.IdRomaneio} gerado para a transportadora {idTransportadora}. Usuário: {idUsuario}, Data/Hora: {dataHoraEmissaoRomaneio}.",
+                        Descricao = $"Romaneio {romaneio.NroRomaneio} gerado para a transportadora {pedido.Transportadora.NomeFantasia}.",
                         IdEmpresa = idEmpresa,
                         IdUsuario = idUsuario
                     });

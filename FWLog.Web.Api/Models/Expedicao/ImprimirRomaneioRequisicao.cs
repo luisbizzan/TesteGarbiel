@@ -5,7 +5,7 @@ namespace FWLog.Web.Api.Models.Expedicao
     public class ImprimirRomaneioRequisicao
     {
         [Required]
-        public int NroRomaneio { get; set; }
+        public long IdRomaneio { get; set; }
 
         [Required]
         public long IdImpressora { get; set; }
