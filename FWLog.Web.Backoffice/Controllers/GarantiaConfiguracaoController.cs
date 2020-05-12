@@ -88,18 +88,6 @@ namespace FWLog.Web.Backoffice.Controllers
                     errorView = () => { return View(RegistroConvertido.RegistroRemessaUsuario); };
                 #endregion
 
-                #region Sankhya Top
-                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop))
-                {
-                    RegistroConvertido.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop sankhya)
-                    {
-                        if (String.IsNullOrEmpty(sankhya.Top)) throw new Exception("Informe o Código da Top!");
-                        if (sankhya.Id_Negociacao.Equals(0)) throw new Exception("Informe o Id Negociaçã!");
-                    });
-                    errorView = () => { return View(RegistroConvertido.RegistroSankhyaTop); };
-                }
-                #endregion
-
                 #region Fornecedor Grupo
                 if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorGrupo))
                     errorView = () => { return View(RegistroConvertido.RegistroFornecedorGrupo); };
@@ -162,7 +150,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     RegistroConvertido.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop sankhya)
                     {
                         if (sankhya.Id.Equals(0)) throw new Exception("Informe o Id do Registro!");
-                        if (String.IsNullOrEmpty(sankhya.Top)) throw new Exception("Informe o Código da Top!");
+                        if (sankhya.Top.Equals(0)) throw new Exception("Informe o Código da Top!");
                         if (sankhya.Id_Negociacao.Equals(0)) throw new Exception("Informe o Id Negociação!");
                     });
                     errorView = () => { return View(RegistroConvertido.RegistroSankhyaTop); };

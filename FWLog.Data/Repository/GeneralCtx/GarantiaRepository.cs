@@ -213,7 +213,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     param.Add(name: "Id_Sav", value: solicitacao.Id_Sav, direction: ParameterDirection.Input);
                     param.Add(name: "Nota_Fiscal", value: solicitacao.Nota_Fiscal, direction: ParameterDirection.Input);
                     param.Add(name: "Serie", value: solicitacao.Serie, direction: ParameterDirection.Input);
-                    param.Add(name: "Id_Tipo_Doc", item.Id_Tipo_Doc, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Tipo_Doc", value: item.Id_Tipo_Doc, direction: ParameterDirection.Input);
                     param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                     conn.Execute(@"INSERT INTO gar_solicitacao (Filial, Dt_Criacao, Id_Tipo, Cli_Cnpj,Id_Status,Legenda,Id_Usr,Id_Sav,Nota_Fiscal,Serie,Id_Tipo_Doc)

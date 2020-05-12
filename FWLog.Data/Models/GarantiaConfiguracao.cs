@@ -177,7 +177,7 @@ namespace FWLog.Data.Models
             {
                 get
                 {
-                    return "<a onclick=\"RegistroEditar('{0}',{1},'{2}');\" class=\"btn btn-link btn-row-actions\" data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"Modificar Registro\"><i class=\"glyphicon glyphicon-edit text-success\"></i></a>";
+                    return "<a onclick=\"RegistroEditar('{0}',{1},'{2}');\" class=\"btn btn-link btn-row-actions\" data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"Modificar Registro\"><i class=\"glyphicon glyphicon-pencil text-success\"></i></a>";
                 }
             }
             public static string botaoCheked { get { return "<h4 class=\"text-center\"><i class=\"glyphicon glyphicon-ok-circle text-success\" data-toggle=\"tooltip\" data-original-title=\"Sim\"></i></h4>"; } }
@@ -261,7 +261,7 @@ namespace FWLog.Data.Models
             public long Id { get; set; }
             [Required]
             [Display(Name = "Nome Top")]
-            public string Top { get; set; }
+            public long Top { get; set; }
             [Display(Name = "Descrição da Top")]
             public string Descricao { get; set; }
             [Required]
