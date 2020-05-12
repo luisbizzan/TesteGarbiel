@@ -57,7 +57,9 @@ namespace FWLog.Data.Repository.GeneralCtx
                         {
                             RegistroIncluir.RegistroFornecedorQuebra.ToList().ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item)
                             {
-                                if (FornecedorQuebraPodeSerCadastrado(item.Cod_Fornecedor.Trim().ToUpper()))
+
+                                string comandoSQL = String.Format("SELECT COUNT(1) V FROM gar_forn_quebra WHERE cod_fornecedor='{0}'", item.Cod_Fornecedor.Trim().ToUpper());
+                                if (RegistroPodeSerCadastrado(comandoSQL).Equals(true))
                                     using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
                                     {
                                         conn.Open();
@@ -178,7 +180,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                         {
                             RegistroAtualizar.RegistroSankhyaTop.ToList().ForEach(delegate (GarantiaConfiguracao.SankhyaTop item)
                             {
-                                if (SankhyaTopPodeSerCadastrado(item.Top).Equals(false))
+                                var comandoSQL = String.Format("SELECT COUNT(1) FROM geral_sankhya_tops WHERE Top = {0}", item.Top);
+                                if (RegistroPodeSerCadastrado(comandoSQL).Equals(false))
                                     throw new Exception(String.Format("Já consta um registro cadastrado com esse código de  Top {0}!", item.Top));
 
                                 using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
@@ -513,8 +516,8 @@ namespace FWLog.Data.Repository.GeneralCtx
         }
         #endregion
 
-        #region [Sankhya Top] - Validar se código de top já consta cadastrado
-        private bool SankhyaTopPodeSerCadastrado(long CodigoTop)
+        #region [Genérico] - Validar se registro já consta cadastrado
+        private bool RegistroPodeSerCadastrado(string comandoSQL)
         {
             try
             {
@@ -524,38 +527,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                     conn.Open();
                     if (conn.State == System.Data.ConnectionState.Open)
                     {
-                        string cmdSQL = String.Format("SELECT COUNT(1) FROM geral_sankhya_tops WHERE Top = {0}", CodigoTop);
-                        _processamento = conn.ExecuteScalar<Int32>(cmdSQL);
+                        _processamento = conn.ExecuteScalar<Int32>(comandoSQL);
                     }
                     conn.Close();
                 }
-
-                return _processamento.Equals(0) ? true : false;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-        #endregion
-
-        #region [Fornecedor Quebra] - Validar se código de fornecedor já consta cadastrado
-        private bool FornecedorQuebraPodeSerCadastrado(string fornecedor)
-        {
-            try
-            {
-                var _processamento = 0;
-                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
-                {
-                    conn.Open();
-                    if (conn.State == System.Data.ConnectionState.Open)
-                    {
-                        string cmdSQL = String.Format("SELECT COUNT(1) V FROM gar_forn_quebra WHERE cod_fornecedor='{0}'", fornecedor);
-                        _processamento = conn.ExecuteScalar<Int32>(cmdSQL);
-                    }
-                    conn.Close();
-                }
-
                 return _processamento.Equals(0) ? true : false;
             }
             catch
