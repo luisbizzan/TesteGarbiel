@@ -195,6 +195,16 @@ namespace FWLog.Web.Backoffice.Controllers
                 ModelState.AddModelError(nameof(model.IdEmpresaGarantia), string.Format("A Empresa '{0}' não pode ser selecionada para Garantia, se não estiver marcada para fazer garantia.", model.NomeFantasiaEmpresaGarantia));
             }
 
+            if (!string.IsNullOrEmpty(model.NomeLogoEtiqueta) && !model.NomeLogoEtiqueta.ToUpper().Contains(".GRF"))
+            {
+                ModelState.AddModelError(nameof(model.NomeLogoEtiqueta), $"Nome do logo deve ter a extensão '.GRF'.");
+            }
+
+            if (!string.IsNullOrEmpty(model.NomeLogoEtiqueta) && (model.NomeLogoEtiqueta.Length < 5 || !model.NomeLogoEtiqueta.Substring(model.NomeLogoEtiqueta.Length - 4, 4).ToUpper().Contains(".GRF")))
+            {
+                ModelState.AddModelError(nameof(model.NomeLogoEtiqueta), $"Nome do logo inválido'.");
+            }
+
             if (!ModelState.IsValid)
             {
                 model.TiposConferencia = new SelectList(_unitOfWork.TipoConferenciaRepository.RetornarTodos().Select(x => new SelectListItem

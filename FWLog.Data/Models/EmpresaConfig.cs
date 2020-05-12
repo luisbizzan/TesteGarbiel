@@ -41,6 +41,9 @@ namespace FWLog.Data.Models
         [Index]
         public long? IdTransportadora { get; set; }
 
+        [StringLength(100)]
+        public string NomeLogoEtiqueta { get; set; }
+
         [ForeignKey(nameof(IdEmpresaTipo))]
         public virtual EmpresaTipo EmpresaTipo { get; set; }
         

@@ -1,5 +1,6 @@
 ﻿using FWLog.Data.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Web;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Models.EmpresaCtx
@@ -31,6 +32,9 @@ namespace FWLog.Web.Backoffice.Models.EmpresaCtx
         public long? IdTransportadora { get; set; }
 
         public EmpresaDetalhesViewModel Empresa { get; set; }
+
+        [Display(Name = "Logo Memória Zebra")]        
+        public string NomeLogoEtiqueta { get; set; }
 
         public string NomeFantasiaEmpresaMatriz { get; set; }
         public string NomeFantasiaEmpresaGarantia { get; set; }

@@ -1,5 +1,6 @@
 ALTER TABLE "EmpresaConfig" ADD "IdDiasDaSemana" NUMBER (10,0) NULL;
 ALTER TABLE "EmpresaConfig" ADD "IdTransportadora" NUMBER (19,0) NULL;
+ALTER TABLE "EmpresaConfig" ADD "NomeLogoEtiqueta" VARCHAR2(100);
 
 
 CREATE INDEX "EmpresaConfig_INDEX6" ON DART."EmpresaConfig" ("IdDiasDaSemana");

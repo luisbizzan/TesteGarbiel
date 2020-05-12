@@ -33,7 +33,6 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string IdRepresentanteExterno { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFPAR.AD_CLASSIF")]
-        [Required]
         public string Classificacao { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFCPL.CEPENTREGA")]
