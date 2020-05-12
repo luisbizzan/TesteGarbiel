@@ -165,7 +165,20 @@ namespace FWLog.Data.Models
             /// </summary>
             public static string botaoExcluirTemplate
             {
-                get { return "<a onclick=\"RegistroExcluir('{0}',{1});\" class=\"btn btn-link btn-row-actions\" data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"Excluir Registro\"><i class=\"glyphicon glyphicon-trash text-danger\"></i></a>"; }
+                get
+                {
+                    return "<a onclick=\"RegistroExcluir('{0}',{1});\" class=\"btn btn-link btn-row-actions\" data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"Excluir Registro\"><i class=\"glyphicon glyphicon-trash text-danger\"></i></a>";
+                }
+            }
+            /// <summary>
+            /// {0} Tag(Tabela) | {1} Id Registro | {2} Parametros (Separador ";")
+            /// </summary>
+            public static string botaoEditarTemplate
+            {
+                get
+                {
+                    return "<a onclick=\"RegistroEditar('{0}',{1},'{2}');\" class=\"btn btn-link btn-row-actions\" data-toggle=\"tooltip\" data-placement=\"top\" data-original-title=\"Modificar Registro\"><i class=\"glyphicon glyphicon-pencil text-success\"></i></a>";
+                }
             }
             public static string botaoCheked { get { return "<h4 class=\"text-center\"><i class=\"glyphicon glyphicon-ok-circle text-success\" data-toggle=\"tooltip\" data-original-title=\"Sim\"></i></h4>"; } }
             public static string botaoUnCheked { get { return "<h4 class=\"text-center\"><i class=\"glyphicon glyphicon-remove-circle text-danger\" data-toggle=\"tooltip\" data-original-title=\"Não\"></i></h4>"; } }
@@ -248,8 +261,7 @@ namespace FWLog.Data.Models
             public long Id { get; set; }
             [Required]
             [Display(Name = "Nome Top")]
-            public string Top { get; set; }
-            [Required]
+            public long Top { get; set; }
             [Display(Name = "Descrição da Top")]
             public string Descricao { get; set; }
             [Required]
@@ -528,13 +540,14 @@ namespace FWLog.Data.Models
                 {
                     return String.Concat("SELECT gst.Id, gst.Top, gst.Descricao, gst.Id_Negociacao, tgf.DescrTipVenda Id_NegociacaoView, tgf.VendaMin, tgf.VendaMax ",
                         "FROM geral_sankhya_tops gst ",
-                        "INNER JOIN tgftpv@sankhya tgf ON gst.Id_Negociacao = tgf.CodTipVenda ");
+                        "INNER JOIN tgftpv@sankhya tgf ON gst.Id_Negociacao = tgf.CodTipVenda ",
+                        "GROUP BY gst.Id, gst.Top, gst.Descricao, gst.Id_Negociacao, tgf.DescrTipVenda, tgf.VendaMin, tgf.VendaMax");
                 }
             }
             /// <summary>
-            /// {0} Top | {1} Descricao 
+            /// {0} Top | {1} Id Negociacao | {2} Id Registro 
             /// </summary>
-            public static string SankhyaTopIncluir { get { return String.Concat("INSERT INTO geral_sankhya_tops(Top, Descricao, Id_Negociacao) VALUES(UPPER('{0}'), UPPER('{1}'), {2} )"); } }
+            public static string SankhyaTopAtualizar { get { return String.Concat("UPDATE geral_sankhya_tops SET Top = UPPER('{0}'), Id_Negociacao = {1} WHERE Id = {2}"); } }
             #endregion
 
             #region Motivo Laudo

@@ -21,6 +21,13 @@ namespace FWLog.Services.Services
         }
         #endregion
 
+        #region [Genérico] Atualizar
+        public void RegistroAtualizar(GarantiaConfiguracao registroAtualizacao)
+        {
+            _uow.GarantiaConfiguracaoRepository.RegistroAtualizar(registroAtualizacao);
+        }
+        #endregion
+
         #region [Genérico] Excluir
         public void RegistroExcluir(GarantiaConfiguracao Registro)
         {

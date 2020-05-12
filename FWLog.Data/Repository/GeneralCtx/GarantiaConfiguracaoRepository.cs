@@ -57,7 +57,9 @@ namespace FWLog.Data.Repository.GeneralCtx
                         {
                             RegistroIncluir.RegistroFornecedorQuebra.ToList().ForEach(delegate (GarantiaConfiguracao.FornecedorQuebra item)
                             {
-                                if (FornecedorQuebraPodeSerCadastrado(item.Cod_Fornecedor.Trim().ToUpper()))
+
+                                string comandoSQL = String.Format("SELECT COUNT(1) V FROM gar_forn_quebra WHERE cod_fornecedor='{0}'", item.Cod_Fornecedor.Trim().ToUpper());
+                                if (RegistroPodeSerCadastrado(comandoSQL).Equals(true))
                                     using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
                                     {
                                         conn.Open();
@@ -84,25 +86,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                                     {
                                         conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.RemessaConfiguracaoIncluir,
                                             item.Id_Filial_Sankhya, item.Filial, item.Cod_Fornecedor, item.Automatica, item.Vlr_Minimo.ToString().Replace(",", "."), item.Total));
-                                    }
-                                    conn.Close();
-                                }
-                            });
-                        }
-                        break;
-                    #endregion
-
-                    #region Sankhya Top
-                    case GarantiaConfiguracao.GarantiaTag.SankhyaTop:
-                        {
-                            RegistroIncluir.RegistroSankhyaTop.ToList().ForEach(delegate (GarantiaConfiguracao.SankhyaTop item)
-                            {
-                                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
-                                {
-                                    conn.Open();
-                                    if (conn.State == System.Data.ConnectionState.Open)
-                                    {
-                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.SankhyaTopIncluir, item.Top, item.Descricao, item.Id_Negociacao));
                                     }
                                     conn.Close();
                                 }
@@ -184,6 +167,52 @@ namespace FWLog.Data.Repository.GeneralCtx
         }
         #endregion
 
+        #region [Genérico] - Atualização
+        public void RegistroAtualizar(GarantiaConfiguracao RegistroAtualizar)
+        {
+            try
+            {
+                #region Processamento 
+                switch (RegistroAtualizar.Tag)
+                {
+                    #region Sankhya Top
+                    case GarantiaConfiguracao.GarantiaTag.SankhyaTop:
+                        {
+                            RegistroAtualizar.RegistroSankhyaTop.ToList().ForEach(delegate (GarantiaConfiguracao.SankhyaTop item)
+                            {
+                                var comandoSQL = String.Format("SELECT COUNT(1) FROM geral_sankhya_tops WHERE Top = {0}", item.Top);
+                                if (RegistroPodeSerCadastrado(comandoSQL).Equals(false))
+                                    throw new Exception(String.Format("Já consta um registro cadastrado com esse código de  Top {0}!", item.Top));
+
+                                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                {
+                                    conn.Open();
+                                    if (conn.State == System.Data.ConnectionState.Open)
+                                    {
+                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.SankhyaTopAtualizar, item.Top, item.Id_Negociacao, item.Id));
+                                    }
+                                    conn.Close();
+                                }
+                            });
+                        }
+                        break;
+                    #endregion
+
+                    #region Default
+                    default:
+                        throw new Exception(String.Format("[RegistroAtualizar] A Tag {0} informada é inválida!", RegistroAtualizar.Tag));
+                        #endregion
+                }
+                #endregion
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
+
         #region [Genérico] - Exclusão
         public void RegistroExcluir(GarantiaConfiguracao Registro)
         {
@@ -197,7 +226,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                     Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaConfiguracao) ? String.Format(cmdSQL, "gar_remessa_config") :
                     Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.RemessaUsuario) ? String.Format(cmdSQL, "gar_remessa_usr") :
                     Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorQuebra) ? String.Format(cmdSQL, "gar_forn_quebra") :
-                    Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop) ? String.Format(cmdSQL, "geral_sankhya_tops") :
                     Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.FornecedorGrupo) ? String.Format(cmdSQL, "gar_forn_grupo") :
                     Registro.Tag.Equals(GarantiaConfiguracao.GarantiaTag.MotivoLaudo) ? String.Format(cmdSQL, "gar_motivo_laudo") :
                     String.Empty;
@@ -283,7 +311,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop))
                         {
                             _garantia.RegistroSankhyaTop = conn.Query<GarantiaConfiguracao.SankhyaTop>(comandoSQL).ToList();
-                            _garantia.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.Contexto.botaoExcluirTemplate, TAG, item.Id); });
+                            _garantia.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop item)
+                            {
+                                item.BotaoEvento = String.Format(GarantiaConfiguracao.Contexto.botaoEditarTemplate, TAG, item.Id, String.Concat(item.Id_Negociacao, ";", item.Top, ";", item.Descricao, ";"));
+                            });
                         }
                         #endregion
 
@@ -329,7 +360,7 @@ namespace FWLog.Data.Repository.GeneralCtx
         }
         #endregion
 
-        #region [Genérico] AutoComplete 
+        #region [Genérico] - AutoComplete 
         public List<GarantiaConfiguracao.AutoComplete> AutoComplete(GarantiaConfiguracao.AutoComplete _AutoComplete)
         {
             try
@@ -485,8 +516,8 @@ namespace FWLog.Data.Repository.GeneralCtx
         }
         #endregion
 
-        #region [Fornecedor Quebra] - Validar se código de fornecedor já esta cadastrado
-        private bool FornecedorQuebraPodeSerCadastrado(string fornecedor)
+        #region [Genérico] - Validar se registro já consta cadastrado
+        private bool RegistroPodeSerCadastrado(string comandoSQL)
         {
             try
             {
@@ -496,12 +527,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                     conn.Open();
                     if (conn.State == System.Data.ConnectionState.Open)
                     {
-                        string cmdSQL = String.Format("SELECT COUNT(1) V FROM gar_forn_quebra WHERE cod_fornecedor='{0}'", fornecedor);
-                        _processamento = conn.ExecuteScalar<Int32>(cmdSQL);
+                        _processamento = conn.ExecuteScalar<Int32>(comandoSQL);
                     }
                     conn.Close();
                 }
-
                 return _processamento.Equals(0) ? true : false;
             }
             catch

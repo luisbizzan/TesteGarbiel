@@ -58,15 +58,26 @@
                             <!-- Grid Fornecedor Quebra -->
                             <div class="x_title text-muted"><b>&emsp;</b></div>
                             <table id="gridFornecedorQuebra" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
-
                         </div>
                     </div>
                 </div>
                 <!-- TAB Sankhya Tops -->
                 <div class="tab-pane fade" id="TabSankhyaTop">
                     <div class="x_panel">
-                        <div class="col-md-4 col-sm-4">
+                        <div class="col-md-8 col-sm-8">
+                            <!-- Grid Sankhya Tops -->
                             <div class="x_title text-muted"><b>&emsp;</b></div>
+                            <table id="gridSankhyaTop" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
+                        </div>
+                        <div id="divEditarSankhyaTop" class="col-md-4 col-sm-4">
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
+                            
+                            <div class="col-md-12 col-sm-12">
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-addon"><b>Descrição</b></span>
+                                    <span class="form-control input-sm text-uppercase btn-default" id="spanSankhyaDescricao"></span>
+                                </div>
+                            </div>
                             <div class="col-md-12 col-sm-12">
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-addon"><b>Negociação</b></span>
@@ -76,29 +87,18 @@
 
                             <div class="col-md-12 col-sm-12">
                                 <div class="input-group input-group-sm">
-                                    <span class="input-group-addon"><b>Código</b></span>
-                                    <input id="txtSankhyaCodigo" type="text" placeholder="Código" class="form-control input-sm text-uppercase">
-                                </div>
-                            </div>
-                            <div class="col-md-12 col-sm-12">
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-addon"><b>Descrição</b></span>
-                                    <input id="txtSankhyaDescricao" type="text" placeholder="Descrição" class="form-control input-sm text-uppercase">
+                                    <span class="input-group-addon"><b>Código Top</b></span>
+                                    <input id="txtSankhyaCodigo" type="number" placeholder="Código Top" min="0" class="form-control input-sm">
                                 </div>
                             </div>
                             <div class="form-inline">
                                 <div class="x_content">
                                     <div id="controleSankhyaTop" class="btn-group col-sm-12" style="display:normal;">
                                         <a class="btn btn-default col-xs-6" onclick="CancelarShankhyaTop();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
-                                        <a class="btn btn-default col-xs-6" onclick="GravarShankhyaTop();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Top Sankhya"><i class="fa fa-save text-success"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="GravarShankhyaTop();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Alteração"><i class="fa fa-save text-success"></i></a>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-8 col-sm-8">
-                            <!-- Grid Sankhya Tops -->
-                            <div class="x_title text-muted"><b>&emsp;</b></div>
-                            <table id="gridSankhyaTop" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
                         </div>
                     </div>
                 </div>
@@ -255,7 +255,6 @@
                             <!-- Grid Fornecedor Grupo -->
                             <div class="x_title text-muted"><b>&emsp;</b></div>
                             <table id="gridFornecedorGrupo" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
-
                         </div>
                     </div>
                 </div>
