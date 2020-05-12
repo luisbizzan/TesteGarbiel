@@ -369,8 +369,10 @@
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemEditarViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemPesquisaModalViewModel.cs" />
+    <Compile Include="Models\ProdutoCtx\ProdutoConfirmaImpressaoViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoDetalhesViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoEditarViewModel.cs" />
+    <Compile Include="Models\ProdutoCtx\ProdutoImpressaoViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoImprimirDetalhes.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoListaViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoSearchModalViewModel.cs" />
@@ -562,6 +564,7 @@
     <Content Include="Scripts\Views\PontoArmazenagem\cadastrar.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\index.js" />
     <Content Include="Scripts\Views\PontoArmazenagem\pesquisaModal.js" />
+    <Content Include="Scripts\Views\Produto\confirmarImpressao.js" />
     <Content Include="Scripts\Views\Produto\detalhesProduto.js" />
     <Content Include="Scripts\Views\Produto\editarProduto.js" />
     <Content Include="Scripts\Views\Produto\index.js" />
@@ -654,6 +657,7 @@
     <Content Include="Views\Armazenagem\RelatorioLogisticaCorredor.cshtml" />
     <Content Include="Views\Armazenagem\RelatorioAtividadeEstoque.cshtml" />
     <Content Include="Views\EnderecoArmazenagem\ConfirmarImpressao.cshtml" />
+    <Content Include="Views\Produto\ConfirmarImpressao.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

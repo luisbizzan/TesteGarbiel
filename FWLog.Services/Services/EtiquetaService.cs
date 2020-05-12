@@ -531,7 +531,7 @@ namespace FWLog.Services.Services
             etiquetaZpl.Append($"^FO55,15^FB760,1,0,C,0^A0B,250,120^FR^FD{refProduto}^FS");
 
             // Texto do endereço de armazenagem
-            etiquetaZpl.Append($"^FO440,15^FB760,1,0,C,0^A0B,180,150^FD0{textoEndereco}^FS");
+            etiquetaZpl.Append($"^FO440,15^FB760,1,0,C,0^A0B,180,150^FD{textoEndereco}^FS");
 
             // Barcode do endereço de armazenagem
             etiquetaZpl.Append($"^FO600,250^BCR,85,N,N^FD{codEndereco}^FS");
@@ -604,31 +604,57 @@ namespace FWLog.Services.Services
             _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
         }
 
-        public void ValidarEnderecoPicking(ValidarEnderecoPickingRequest requisicao)
+        public ValidarEnderecoPickingResposta ValidarProdutoOuEnderecoPicking(ValidarEnderecoPickingRequest requisicao)
         {
-            if (requisicao.IdEnderecoArmazenagem <= 0)
+            if (string.IsNullOrEmpty(requisicao.referenciaProdutoOuEndereco))
             {
-                throw new BusinessException("O Endereço deve ser informado.");
+                throw new BusinessException("Endereço deve ser informado.");
             }
 
-            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(requisicao.IdEnderecoArmazenagem);
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPickingPorCodigo(requisicao.referenciaProdutoOuEndereco, requisicao.IdEmpresa);
+
+            if (enderecoArmazenagem == null && long.TryParse(requisicao.referenciaProdutoOuEndereco, out long id))
+            {
+                enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(id);
+            }
 
             if (enderecoArmazenagem == null)
             {
-                throw new BusinessException("O endereço não foi encontrado.");
+                var produto = _unitOfWork.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(requisicao.referenciaProdutoOuEndereco);
+
+                if (produto == null)
+                {
+                    throw new BusinessException("O endereço/produto não encontrado.");
+                }
+
+                var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto, requisicao.IdEmpresa);
+
+                if (produtoEstoque != null)
+                {
+                    enderecoArmazenagem = produtoEstoque.EnderecoArmazenagem;
+                }
+                else
+                {
+                    throw new BusinessException("Eendereço do produto não encontrado.");
+                }
+            }
+
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("Endereço não encontrado.");
             }
 
             if (!enderecoArmazenagem.IsPontoSeparacao)
             {
-                throw new BusinessException("O endereço informado não é um ponto de separação.");
+                throw new BusinessException("Endereço não é Picking.");
             }
 
-            var pontoArmazenagem = _unitOfWork.PontoArmazenagemRepository.GetById(enderecoArmazenagem.IdPontoArmazenagem);
-
-            if (pontoArmazenagem.Descricao != "Picking")
+            var resposta = new ValidarEnderecoPickingResposta()
             {
-                throw new BusinessException("O endereço informado não é endereço de Picking.");
-            }
+                IdEnderecoArmazenagem = enderecoArmazenagem.IdEnderecoArmazenagem,
+            };
+
+            return resposta;
         }
 
         private class CelulaEtiqueta

@@ -2,6 +2,7 @@
 {
     public class ProdutoListaLinhaTabela
     {
+        public long? IdEnderecoArmazenagem { get; set; }
         public long? IdProduto { get; set; }
         public string Referencia { get; set; }
         public string Descricao { get; set; }

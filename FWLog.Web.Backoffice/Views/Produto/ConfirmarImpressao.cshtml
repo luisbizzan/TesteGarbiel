@@ -1,4 +1,4 @@
-﻿@model FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx.EnderecoArmazenagemConfirmaImpressaoViewModel
+﻿@model FWLog.Web.Backoffice.Models.ProdutoCtx.ProdutoConfirmaImpressaoViewModel
 @{
     Layout = null;
 
@@ -14,10 +14,11 @@
             <div class="modal-body" style="overflow: auto; max-height: calc(90vh - 40px);">
                 <div class="row">
                     <div class="col-sm-12 col-lg-12">
-                        <span>Deseja imprimir a etiqueta do endereço <b>@Model.Codigo</b> com código <b>@Model.IdEnderecoArmazenagem</b>?</span>
+                        <span>Deseja imprimir a etiqueta do endereço <b>@Model.Codigo</b> com a referência <b>@Model.Referencia</b> (@Model.DescricaoProduto)?</span>
                     </div>
 
                     @Html.Hidden("IdEnderecoArmazenagem", Model.IdEnderecoArmazenagem)
+                    @Html.Hidden("IdProduto", Model.IdProduto)
                 </div>
             </div>
             <div class="modal-footer">

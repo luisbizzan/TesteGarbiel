@@ -5,9 +5,11 @@ using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
+using FWLog.Web.Backoffice.Models.BOQuarentenaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.ProdutoCtx;
 using log4net;
@@ -22,17 +24,20 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly UnitOfWork _unitOfWork;
         private readonly ProdutoEstoqueService _produtoEstoqueService;
         private readonly RelatorioService _relatorioService;
+        private readonly EtiquetaService _etiquetaService;
         private readonly ILog _log;
 
         public ProdutoController(
             UnitOfWork unitOfWork,
             ProdutoEstoqueService produtoEstoqueService,
             RelatorioService relatorioService,
+            EtiquetaService etiquetaService,
             ILog ilog)
         {
             _unitOfWork = unitOfWork;
             _produtoEstoqueService = produtoEstoqueService;
             _relatorioService = relatorioService;
+            _etiquetaService = etiquetaService;
             _log = ilog;
         }
 
@@ -293,6 +298,57 @@ namespace FWLog.Web.Backoffice.Controllers
                     Success = false,
                     Message = "Ocorreu um erro na impressão."
                 }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult ConfirmarImpressao(long idEnderecoArmazenagem, long idProduto)
+        {
+            var endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+
+            return View(new ProdutoConfirmaImpressaoViewModel
+            {
+                IdEnderecoArmazenagem = endereco.IdEnderecoArmazenagem,
+                Codigo = endereco.Codigo,
+                IdProduto = produto.IdProduto,
+                DescricaoProduto = produto.Descricao,
+                Referencia = produto.Referencia
+            });
+        }
+
+        [HttpPost]
+        public JsonResult ImprimirEtiqueta(ProdutoImpressaoViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                var request = new ImprimirEtiquetaPickingRequest
+                {
+                    IdEnderecoArmazenagem = viewModel.IdEnderecoArmazenagem,
+                    IdProduto = viewModel.IdProduto,
+                    QuantidadeEtiquetas = 1,
+                    IdImpressora = viewModel.IdImpressora
+                };
+
+                _etiquetaService.ImprimirEtiquetaPicking(request);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex.Message, ex);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = "Ocorreu um erro na impressão."
+                }, JsonRequestBehavior.AllowGet);
             }
         }
     }

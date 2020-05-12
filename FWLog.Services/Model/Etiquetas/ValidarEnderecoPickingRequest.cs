@@ -2,6 +2,7 @@
 {
     public class ValidarEnderecoPickingRequest
     {
-        public long IdEnderecoArmazenagem { get; set; }
+        public string referenciaProdutoOuEndereco { get; set; }
+        public long IdEmpresa { get; set; }
     }
 }

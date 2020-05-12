@@ -191,35 +191,34 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/v1/etiqueta/picking/validar-endereco")]
-        public IHttpActionResult ValidarEnderecoPicking(ValidarEnderecoPickingRequisicao requisicao)
+        [Route("api/v1/etiqueta/picking/validar-produto-endereco")]
+        public IHttpActionResult ValidarProdutoOuEnderecoPicking(ValidarEnderecoPickingRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
                 return ApiBadRequest(ModelState);
             }
-            else
+
+            try
             {
-                try
+                var request = new ValidarEnderecoPickingRequest
                 {
-                    var request = new ValidarEnderecoPickingRequest
-                    {
-                        IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
-                    };
+                    referenciaProdutoOuEndereco = requisicao.ReferenciaProdutoOuEndereco,
+                    IdEmpresa = IdEmpresa
+                };
 
-                    _etiquetaService.ValidarEnderecoPicking(request);
+               var resposta = _etiquetaService.ValidarProdutoOuEnderecoPicking(request);
 
-                    return ApiOk();
+                return ApiOk(resposta);
 
-                }
-                catch (BusinessException ex)
-                {
-                    return ApiBadRequest(ex.Message);
-                }
-                catch
-                {
-                    throw;
-                }
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+            catch
+            {
+                throw;
             }
         }
     }
