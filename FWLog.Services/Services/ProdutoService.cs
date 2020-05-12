@@ -1,7 +1,10 @@
-﻿using FWLog.Data;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
+using FWLog.Services.Model.Produto;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -9,9 +12,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using log4net;
-using DartDigital.Library.Exceptions;
-using FWLog.Services.Model.Produto;
 
 namespace FWLog.Services.Services
 {
@@ -62,10 +62,10 @@ namespace FWLog.Services.Services
             where.Append("WHERE DESCRPROD IS NOT NULL ");
             where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
             where.Append("AND AD_INTEGRARFWLOG = '1' ");
-            
+
             int quantidadeRegistro = 4999;
             int quantidadeChamada = 0;
-            
+
             List<ProdutoQuantidadeRegistroIntegracao> produtoQuantidadeRegistroIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoQuantidadeRegistroIntegracao>(where: where.ToString());
 
             if (produtoQuantidadeRegistroIntegracao != null)
@@ -156,8 +156,8 @@ namespace FWLog.Services.Services
                             }
                         }
                         else
-                        {   
-                           _uow.ProdutoRepository.Update(produto);
+                        {
+                            _uow.ProdutoRepository.Update(produto);
                         }
 
                         _uow.SaveChanges();
@@ -170,7 +170,7 @@ namespace FWLog.Services.Services
                 }
 
                 i++;
-            }            
+            }
         }
 
         public async Task LimparIntegracaoPrazoEntrega()
@@ -401,6 +401,39 @@ namespace FWLog.Services.Services
             }
 
             return resposta;
+        }
+
+        public EntradasProdutoResposta ConsultarEntradasProduto(long idProduto, long idEmpresa)
+        {
+            if (idProduto <= 0)
+            {
+                throw new BusinessException("Produto deve ser informado.");
+            }
+
+            var produto = _uow.ProdutoRepository.GetById(idProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("Produto não encontrado.");
+            }
+
+            var entradasProduto = _uow.ProdutoRepository.ConsultarEntradasProduto(idProduto, idEmpresa);
+
+            var dadosAgrupados = entradasProduto.GroupBy(g => g.DataInicioConferenciaLote.Date).OrderBy(g => g.Key).ToList();
+
+            var resultado = new EntradasProdutoResposta
+            {
+                IdProduto = produto.IdProduto,
+                ReferenciaProduto = produto.Referencia
+            };
+
+            resultado.ListaEntradas = dadosAgrupados.Select(da => new EntradasProdutoItemResposta
+            {
+                DataEntrada = da.Key,
+                QuantidadeEntrada = da.Sum(i => i.QuantidadeRecebidaLoteProduto)
+            }).ToList();
+
+            return resultado;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DartDigital.Library.Exceptions;
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Services;
@@ -156,6 +157,27 @@ namespace FWLog.Web.Api.Controllers
             var resposta = await _produtoService.ConsultarProdutoEstoque(id, IdEmpresa);
 
             return ApiOk(resposta);
+        }
+
+        [Route("api/v1/produto/consultar-entradas/{idProduto}")]
+        [HttpGet]
+        public IHttpActionResult ConsultarEntradasProduto(long idProduto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                var response = _produtoService.ConsultarEntradasProduto(idProduto, IdEmpresa);
+
+                return ApiOk(response);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
         }
     }
 }

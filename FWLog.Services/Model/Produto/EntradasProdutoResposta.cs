@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FWLog.Services.Model.SeparacaoPedido
+namespace FWLog.Services.Model.Produto
 {
-    public class ConsultarEntradasProdutoResposta
+    public class EntradasProdutoResposta
     {
         public long IdProduto { get; set; }
 
         public string ReferenciaProduto { get; set; }
 
-        public List<ConsultarEntradasProdutoEntradaResposta> ListaEntradas { get; set; }
+        public List<EntradasProdutoItemResposta> ListaEntradas { get; set; }
     }
 
-    public class ConsultarEntradasProdutoEntradaResposta
+    public class EntradasProdutoItemResposta
     {
         public DateTime DataEntrada { get; set; }
 

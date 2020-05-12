@@ -1673,38 +1673,5 @@ namespace FWLog.Services.Services
 
             return listaVolumes;
         }
-
-        public ConsultarEntradasProdutoResposta ConsultarEntradasProduto(long idProduto, long idEmpresa)
-        {
-            if (idProduto <= 0)
-            {
-                throw new BusinessException("Produto deve ser informado.");
-            }
-
-            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
-
-            if (produto == null)
-            {
-                throw new BusinessException("Produto não encontrado.");
-            }
-
-            var entradasProduto = _unitOfWork.ProdutoRepository.ConsultarEntradasProduto(idProduto, idEmpresa);
-
-            var dadosAgrupados = entradasProduto.GroupBy(g => g.DataInicioConferenciaLote.Date).OrderBy(g => g.Key).ToList();
-
-            var resultado = new ConsultarEntradasProdutoResposta
-            {
-                IdProduto = produto.IdProduto,
-                ReferenciaProduto = produto.Referencia
-            };
-
-            resultado.ListaEntradas = dadosAgrupados.Select(da => new ConsultarEntradasProdutoEntradaResposta
-            {
-                DataEntrada = da.Key,
-                QuantidadeEntrada = da.Sum(i => i.QuantidadeRecebidaLoteProduto)
-            }).ToList();
-
-            return resultado;
-        }
     }
 }
