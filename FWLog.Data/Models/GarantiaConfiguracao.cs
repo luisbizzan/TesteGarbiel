@@ -540,7 +540,8 @@ namespace FWLog.Data.Models
                 {
                     return String.Concat("SELECT gst.Id, gst.Top, gst.Descricao, gst.Id_Negociacao, tgf.DescrTipVenda Id_NegociacaoView, tgf.VendaMin, tgf.VendaMax ",
                         "FROM geral_sankhya_tops gst ",
-                        "INNER JOIN tgftpv@sankhya tgf ON gst.Id_Negociacao = tgf.CodTipVenda ");
+                        "INNER JOIN tgftpv@sankhya tgf ON gst.Id_Negociacao = tgf.CodTipVenda ",
+                        "GROUP BY gst.Id, gst.Top, gst.Descricao, gst.Id_Negociacao, tgf.DescrTipVenda, tgf.VendaMin, tgf.VendaMax");
                 }
             }
             /// <summary>

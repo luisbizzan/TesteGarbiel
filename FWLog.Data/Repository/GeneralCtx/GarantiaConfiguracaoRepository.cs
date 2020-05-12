@@ -360,7 +360,7 @@ namespace FWLog.Data.Repository.GeneralCtx
         }
         #endregion
 
-        #region [Genérico] AutoComplete 
+        #region [Genérico] - AutoComplete 
         public List<GarantiaConfiguracao.AutoComplete> AutoComplete(GarantiaConfiguracao.AutoComplete _AutoComplete)
         {
             try
