@@ -55,31 +55,31 @@
         ];
     });
 
-    $("#dataTable").on('click', "[action='visualizarSolicitacao']", visualizarSolicitacao);
-    $("#dataTable").on('click', "[action='estornarSolicitacao']", estornarSolicitacao);
-    $("#dataTable").on('click', "[action='conferirSolicitacao']", conferirSolicitacao);
+    //$("#dataTable").on('click', "[action='visualizarSolicitacao']", visualizarSolicitacao);
+    //$("#dataTable").on('click', "[action='estornarSolicitacao']", estornarSolicitacao);
+    //$("#dataTable").on('click', "[action='conferirSolicitacao']", conferirSolicitacao);
 
-    var $Data_Inicial = $('#Filter_Data_Inicial').closest('.date');
-    var $Data_Final = $('#Filter_Data_Final').closest('.date');
+    //var $Data_Inicial = $('#Filter_Data_Inicial').closest('.date');
+    //var $Data_Final = $('#Filter_Data_Final').closest('.date');
 
-    var createLinkedPickers = function () {
-        var dataInicial = $Data_Inicial.datetimepicker({
-            locale: moment.locale(),
-            format: 'L',
-            allowInputToggle: true
-        });
+    //var createLinkedPickers = function () {
+    //    var dataInicial = $Data_Inicial.datetimepicker({
+    //        locale: moment.locale(),
+    //        format: 'L',
+    //        allowInputToggle: true
+    //    });
 
-        var dataFinal = $Data_Final.datetimepicker({
-            locale: moment.locale(),
-            useCurrent: false,
-            format: 'L',
-            allowInputToggle: true
-        });
+    //    var dataFinal = $Data_Final.datetimepicker({
+    //        locale: moment.locale(),
+    //        useCurrent: false,
+    //        format: 'L',
+    //        allowInputToggle: true
+    //    });
 
-        new dart.DateTimePickerLink(dataInicial, dataFinal, { ignoreTime: true });
-    };
+    //    new dart.DateTimePickerLink(dataInicial, dataFinal, { ignoreTime: true });
+    //};
 
-    createLinkedPickers();
+    //createLinkedPickers();
 
     $('#dataTable').DataTable({
         ajax: {
@@ -99,11 +99,9 @@
             dart.dataTables.loadFilterFromData(data);
         },
         columns: [
-            { data: 'Cli_Cnpj', },
+            { data: 'Cod_Fornecedor', },
             { data: 'Id', },
             { data: 'Dt_Criacao', },
-            { data: 'Tipo', },
-            { data: 'Valor', },
             { data: 'Status', },
             actionsColumn
         ]

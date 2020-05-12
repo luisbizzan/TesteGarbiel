@@ -20,7 +20,7 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
         }
 
-        public List<GarSolicitacao> ListarSolicitacao(DataTableFilter<GarantiaFilter> filter, out int totalRecordsFiltered, out int totalRecords)
+        public List<GarSolicitacao> ListarSolicitacao(DataTableFilter<GarantiaSolicitacaoFilter> filter, out int totalRecordsFiltered, out int totalRecords)
         {
             List<GarSolicitacao> retorno = new List<GarSolicitacao>();
             var sQuery = new StringBuilder();
@@ -84,6 +84,69 @@ namespace FWLog.Data.Repository.GeneralCtx
             return retorno;
         }
 
+        public List<GarRemessa> ListarRemessa(DataTableFilter<GarantiaRemessaFilter> filter, out int totalRecordsFiltered, out int totalRecords)
+        {
+            List<GarRemessa> retorno = new List<GarRemessa>();
+            var sQuery = new StringBuilder();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    sQuery.AppendFormat(@"
+                    SELECT
+                        COUNT(*) OVER() AS Qtde,
+                        GR.Cod_Fornecedor,
+                        GR.Id,
+                        GR.Dt_Criacao,
+                        GR.Id_Tipo,
+                        GT1.descricao AS Tipo,
+                        GR.Filial,
+                        GR.Id_Status,
+                        GT2.descricao AS Status
+                    FROM
+                        gar_remessa GR
+                        LEFT JOIN geral_tipo GT1 ON GT1.Id = GR.Id_Tipo
+                        LEFT JOIN geral_tipo GT2 ON GT2.Id = GR.Id_Status
+                    WHERE
+                        GR.id != 0
+                    ");
+
+                    //TODO VERIFICAR FILTROS
+                    if (filter.CustomFilter.Id.HasValue)
+                        sQuery.AppendFormat(@" AND GR.id = {0}", filter.CustomFilter.Id);
+
+                    //if (filter.CustomFilter.Id_Status.HasValue)
+                    //    sQuery.AppendFormat(@" AND GT2.id = {0}", filter.CustomFilter.Id_Status);
+
+                    //if (!string.IsNullOrEmpty(filter.CustomFilter.Cli_Cnpj))
+                    //    sQuery.AppendFormat(@" AND GS.Cli_Cnpj LIKE '%{0}%' ", filter.CustomFilter.Cli_Cnpj);
+
+                    //if (!string.IsNullOrEmpty(filter.CustomFilter.Nota_Fiscal))
+                    //    sQuery.AppendFormat(@" AND GS.Nota_Fiscal LIKE '%{0}%' ", filter.CustomFilter.Nota_Fiscal);
+
+                    //if (!string.IsNullOrEmpty(filter.CustomFilter.Serie))
+                    //    sQuery.AppendFormat(@" AND GS.Nota_Fiscal LIKE '%{0}%' ", filter.CustomFilter.Serie);
+
+                    //if (filter.CustomFilter.Data_Inicial.HasValue && filter.CustomFilter.Data_Final.HasValue)
+                    //    sQuery.AppendFormat(@" AND GR.Dt_Criacao BETWEEN TO_DATE('{0}','DD/MM/YYYY') AND TO_DATE('{1}','DD/MM/YYYY') ", String.Format("{0:dd/MM/yyyy}", filter.CustomFilter.Data_Inicial), String.Format("{0:dd/MM/yyyy}", filter.CustomFilter.Data_Final));
+
+                    sQuery.AppendFormat(" ORDER BY {0} {1}", filter.OrderByColumn, filter.OrderByDirection);
+
+                    sQuery.AppendFormat(" OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", filter.Start, filter.Length);
+
+                    retorno = conn.Query<GarRemessa>(sQuery.ToString(), new { }).ToList();
+                }
+                conn.Close();
+            }
+
+            totalRecordsFiltered = retorno.Count();
+            totalRecords = totalRecordsFiltered > 0 ? retorno.FirstOrDefault().Qtde : 0;
+
+            return retorno;
+        }
+
         public GarSolicitacao SelecionaSolicitacao(long Id_Solicitacao)
         {
             GarSolicitacao retorno = new GarSolicitacao();
@@ -114,7 +177,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return retorno;
         }
 
-        public long ImportarSolicitacaoNfCartaManual(GarSolicitacao item, string Codigo_Postagem)
+        public long ImportarSolicitacaoNfCartaManual(GarSolicitacao item)
         {
             string sQuery = "";
             bool podeImportar = false;
@@ -200,7 +263,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                     //ATUALIZA CODIGO RASTREIO DO SAV
                     sQuery = @"UPDATE fdv_devgar@furacaophp SET correios = :Codigo_Postagem WHERE Id = :Id_DevGar";
-                    conn.Query<GarConferencia>(sQuery, new { Codigo_Postagem, Id_DevGar });
+                    conn.Query<GarConferencia>(sQuery, new { item.Codigo_Postagem, Id_DevGar });
 
                     var param = new DynamicParameters();
                     param.Add(name: "Filial", value: solicitacao.Filial, direction: ParameterDirection.Input);
@@ -229,7 +292,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             INSERT INTO gar_solicitacao_item (id_solicitacao, id_item_nf, refx, cod_fornecedor,quant,valor)
                             SELECT
                                 :Id_Solicitacao AS id_solicitacao,
-                                num_origem_nf AS id_item_nf,
+                                rownum AS id_item_nf,
                                 cod_produto AS refx,
                                 (SELECT codparcforn FROM tgfpro@sankhya WHERE ad_refx = cod_produto) AS cod_fornecedor,
                                 quantidade AS quant,
@@ -243,6 +306,150 @@ namespace FWLog.Data.Repository.GeneralCtx
                         {
                             Id_Solicitacao,
                             Id_DevGar
+                        });
+                    }
+                }
+                conn.Close();
+            }
+
+            return Id_Solicitacao;
+        }
+
+        public long ImportarSolicitacaoNfEletronicaPedido(GarSolicitacao item)
+        {
+            string sQuery = "";
+            bool podeImportar = false;
+            long Id_Solicitacao = 0;
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    //VERIFICA SE JA FOI IMPORTADO
+                    if (item.Id_Tipo_Doc == 30)
+                    {
+                        sQuery = @"SELECT COUNT(*) FROM gar_solicitacao WHERE Nota_Fiscal = SUBSTR(:Chave_Acesso,26,9) AND Cli_Cnpj = SUBSTR(:Chave_Acesso,7,14) AND Serie = SUBSTR(:Chave_Acesso,23,3)";
+                        podeImportar = conn.Query<int>(sQuery, new { item.Chave_Acesso }).SingleOrDefault() == 0;
+                    }
+                    else if (item.Id_Tipo_Doc == 21)
+                    {
+                        sQuery = @"SELECT COUNT(*) FROM gar_solicitacao WHERE Nota_Fiscal = LPAD(:Chave_Acesso,9,'0') ";
+                        podeImportar = conn.Query<int>(sQuery, new { item.Chave_Acesso }).SingleOrDefault() == 0;
+                    }
+
+                    if (!podeImportar)
+                        return 0;
+
+                    //VERIFICA SE TEM NOTA SANKYA
+                    sQuery = @"SELECT nunota FROM tgfCab@Sankhya WHERE ChaveNfe = :Chave_Acesso";
+                    var Nunota = conn.Query<int>(sQuery, new { item.Chave_Acesso }).SingleOrDefault();
+
+                    if (Nunota == 0)
+                        return 0;
+
+                    var solicitacao = new GarSolicitacao();
+
+                    if (item.Id_Tipo_Doc == 30)
+                    {
+                        //NF ELETRONICA
+                        sQuery = @"
+                        SELECT
+                            remetente_id AS filial,
+                            SYSDATE AS dt_criacao,
+                            Decode(tipo_ocorrencia,'D',17,18) AS id_tipo,
+                            cnpj AS cli_cnpj,
+                            22 AS id_status,
+                            :Id_Usr AS id_usr,
+                            Motivo_id AS legenda,
+                            id AS id_sav,
+                            nota_fiscal,
+                            serie,
+                            30 AS id_tipo_doc
+                        FROM
+                            fdv_devgar@furacaophp
+                        WHERE
+                            cnpj = SUBSTR(:Chave_Acesso,7,14)
+                            AND nota_fiscal = SUBSTR(:Chave_Acesso,26,9)
+                            AND serie = SUBSTR(:Chave_Acesso,23,3)
+                            AND finalizado NOT IN (0,5)
+                        ";
+                        solicitacao = conn.Query<GarSolicitacao>(sQuery, new { item.Id_Usr, item.Chave_Acesso }).SingleOrDefault();
+                    }
+                    else if (item.Id_Tipo_Doc == 21)
+                    {
+                        //PEDIDO
+                        sQuery = @"
+                        SELECT
+                        (SELECT ad_filial FROM tsiemp@sankhya s WHERE  s.codemp = n.codemp) AS filial,
+                            SYSDATE AS dt_criacao,
+                            17 AS id_tipo,
+                            (SELECT cgc_cpf FROM tgfpar@sankhya p WHERE n.codparc = p.codparc) AS cli_cnpj,
+                            22 AS id_status,
+                            :Id_Usr AS id_usr,
+                            3 AS legenda,
+                            0 AS id_sav,
+                            lpad(nunota,9,'0') AS Nota_fiscal,
+                            ' ' as serie,
+                            21 AS id_tipo_doc
+                        FROM
+                            tgfCab@Sankhya n
+                        WHERE
+                            nunota = :Nunota
+                         ";
+                        solicitacao = conn.Query<GarSolicitacao>(sQuery, new { item.Id_Usr, Nunota }).SingleOrDefault();
+                    }
+
+                    if (solicitacao == null)
+                        return 0;
+
+                    long Id_DevGar = solicitacao.Id_Sav;
+
+                    //ATUALIZA CODIGO RASTREIO DO SAV
+                    // sQuery = @"UPDATE fdv_devgar@furacaophp SET correios = :Codigo_Postagem WHERE Id = :Id_DevGar";
+                    //conn.Query<GarConferencia>(sQuery, new { item.Codigo_Postagem, Id_DevGar });
+
+                    var param = new DynamicParameters();
+                    param.Add(name: "Filial", value: solicitacao.Filial, direction: ParameterDirection.Input);
+                    param.Add(name: "Dt_Criacao", value: solicitacao.Dt_Criacao, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Tipo", value: solicitacao.Id_Tipo, direction: ParameterDirection.Input);
+                    param.Add(name: "Cli_Cnpj", value: solicitacao.Cli_Cnpj, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Status", value: solicitacao.Id_Status, direction: ParameterDirection.Input);
+                    param.Add(name: "Legenda", value: solicitacao.Legenda, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Usr", value: solicitacao.Id_Usr, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Sav", value: solicitacao.Id_Sav, direction: ParameterDirection.Input);
+                    param.Add(name: "Nota_Fiscal", value: solicitacao.Nota_Fiscal, direction: ParameterDirection.Input);
+                    param.Add(name: "Serie", value: solicitacao.Serie, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Tipo_Doc", value: item.Id_Tipo_Doc, direction: ParameterDirection.Input);
+                    param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                    conn.Execute(@"INSERT INTO gar_solicitacao (Filial, Dt_Criacao, Id_Tipo, Cli_Cnpj,Id_Status,Legenda,Id_Usr,Id_Sav,Nota_Fiscal,Serie,Id_Tipo_Doc)
+                            VALUES ( :Filial, :Dt_Criacao, :Id_Tipo, :Cli_Cnpj,:Id_Status,:Legenda,:Id_Usr,:Id_Sav,:Nota_Fiscal,:Serie,:Id_Tipo_Doc )
+                            returning Id into :Id", param);
+
+                    Id_Solicitacao = param.Get<int>("Id");
+
+                    if (Id_Solicitacao != 0)
+                    {
+                        //ITENS DA NF
+                        sQuery = @"
+                        INSERT INTO gar_solicitacao_item (id_solicitacao, id_item_nf, refx, cod_fornecedor,quant,valor)
+                        SELECT
+                            :Id_Solicitacao AS id_solicitacao,
+                            sequencia AS id_item_nf,
+                            (SELECT AD_REFX FROM tgfpro@sankhya p WHERE i.codprod = p.codprod) AS refx,
+                            (SELECT codparcforn FROM tgfpro@sankhya p WHERE i.codprod = p.codprod) AS cod_fornecedor,
+                            qtdneg AS quant,
+                            vlrunit AS valor
+                        FROM
+                            tgfite@sankhya i
+                        WHERE
+                            i.nunota = :Nunota
+                        ";
+                        conn.Query<GarConferenciaHist>(sQuery, new
+                        {
+                            Id_Solicitacao,
+                            Nunota
                         });
                     }
                 }

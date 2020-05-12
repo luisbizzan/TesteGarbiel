@@ -67,7 +67,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult SolicitacaoListar(DataTableFilter<GarantiaSolicitacaoFilterVM> model)
         {
             int recordsFiltered, totalRecords;
-            var filter = Mapper.Map<DataTableFilter<GarantiaFilter>>(model);
+            var filter = Mapper.Map<DataTableFilter<GarantiaSolicitacaoFilter>>(model);
 
             var teste = IdEmpresa;
 
@@ -150,28 +150,42 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 item.Codigo_Postagem = string.IsNullOrEmpty(item.Codigo_Postagem) ? "REPRESENTANTE" : item.Codigo_Postagem;
 
+                long idSolicitacao = 0;
+
                 if (item.Id_Tipo == 31 || item.Id_Tipo == 32)
                 {
                     //IMPORTA SOLICITAÇÃO SE FOR CARTA OU NOTA MANUAL
-                    var idSolicitacao = _uow.GarantiaRepository.ImportarSolicitacaoNfCartaManual(new GarSolicitacao
+                    idSolicitacao = _uow.GarantiaRepository.ImportarSolicitacaoNfCartaManual(new GarSolicitacao
                     {
                         Cli_Cnpj = item.Cnpj,
                         Nota_Fiscal = item.Numero_Interno == null ? item.Numero : item.Numero_Interno,
                         Id_Usr = IdUsuario,
                         Serie = item.Serie,
+                        Codigo_Postagem = item.Codigo_Postagem,
                         Id_Tipo_Doc = item.Id_Tipo
-                    }, item.Codigo_Postagem);
-
-                    if (idSolicitacao != 0)
+                    });
+                }
+                else if (item.Id_Tipo == 30 || item.Id_Tipo == 21)
+                {
+                    //IMPORTA SOLICITAÇÃO SE FOR PEDIDO OU NOTA ELETRONICA
+                    idSolicitacao = _uow.GarantiaRepository.ImportarSolicitacaoNfEletronicaPedido(new GarSolicitacao
                     {
-                        //CRIAR A CONFERENCIA DE ENTRADA
-                        _uow.GarantiaRepository.CriarConferencia(new GarConferencia
-                        {
-                            Id_Solicitacao = idSolicitacao,
-                            Id_Usr = IdUsuario,
-                            Id_Tipo_Conf = 5
-                        });
-                    }
+                        Chave_Acesso = item.Chave_Acesso,
+                        Id_Usr = IdUsuario,
+                        Id_Tipo_Doc = item.Id_Tipo,
+                        Codigo_Postagem = item.Codigo_Postagem
+                    });
+                }
+
+                if (idSolicitacao != 0)
+                {
+                    //CRIAR A CONFERENCIA DE ENTRADA
+                    _uow.GarantiaRepository.CriarConferencia(new GarConferencia
+                    {
+                        Id_Solicitacao = idSolicitacao,
+                        Id_Usr = IdUsuario,
+                        Id_Tipo_Conf = 5
+                    });
                 }
 
                 return Json(new AjaxGenericResultModel
@@ -459,9 +473,9 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult ListarRemessa(DataTableFilter<GarantiaRemessaFilterVM> model)
         {
             int recordsFiltered, totalRecords;
-            var filter = Mapper.Map<DataTableFilter<GarantiaFilter>>(model);
+            var filter = Mapper.Map<DataTableFilter<GarantiaRemessaFilter>>(model);
 
-            IEnumerable<GarSolicitacao> result = _uow.GarantiaRepository.ListarSolicitacao(filter, out recordsFiltered, out totalRecords);
+            IEnumerable<GarRemessa> result = _uow.GarantiaRepository.ListarRemessa(filter, out recordsFiltered, out totalRecords);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
