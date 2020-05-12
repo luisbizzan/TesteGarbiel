@@ -48,7 +48,7 @@ namespace FWLog.Services.Services
             throw new NotImplementedException();
         }
 
-        public BuscarPedidoVendaResposta BuscarPedidoVenda(string codigoBarrasPedido, long idEmpresa)
+        public BuscarPedidoVendaResposta BuscarPedidoVenda(string codigoBarrasPedido, long idEmpresa,string idUsuario,bool temPermissaoF7)
         {
             if (codigoBarrasPedido.NullOrEmpty())
             {
@@ -100,6 +100,23 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Volume já separado.");
             }
 
+            var usuarioEmpresa = _unitOfWork.UsuarioEmpresaRepository.Obter(idEmpresa, idUsuario);
+            IEnumerable<int> rangeDeCorredores;
+
+            if (!usuarioEmpresa.CorredorSeparacaoInicio.HasValue && !usuarioEmpresa.CorredorSeparacaoFim.HasValue && !temPermissaoF7)
+            {
+                throw new BusinessException("O Usuário não possui corredor de separação vinculado no cadastro e não possui acesso a função F7.");
+            }
+
+            rangeDeCorredores = Enumerable.Range(usuarioEmpresa.CorredorSeparacaoInicio.Value, (usuarioEmpresa.CorredorSeparacaoFim.Value - usuarioEmpresa.CorredorSeparacaoInicio.Value) + 1);
+
+            var corredores = pedidoVendaVolume.PedidoVendaProdutos.Select(x => x.EnderecoArmazenagem.Corredor).Distinct();
+
+            if (rangeDeCorredores.Intersect(corredores).Count() == 0 && !temPermissaoF7)
+            {
+                throw new BusinessException("Nenhum produto para separar.");
+            }
+
             var model = new BuscarPedidoVendaResposta();
 
             model.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
@@ -115,7 +132,8 @@ namespace FWLog.Services.Services
                                                    enderecoArmazenagem.Corredor >= gca.CorredorInicial &&
                                                    enderecoArmazenagem.Corredor <= gca.CorredorFinal)
                                     where
-                                        pedidoVendaProduto.QtdSeparada.GetValueOrDefault() < pedidoVendaProduto.QtdSeparar
+                                        pedidoVendaProduto.QtdSeparada.GetValueOrDefault() < pedidoVendaProduto.QtdSeparar &&
+                                        (temPermissaoF7 == true || rangeDeCorredores.Contains(pedidoVendaProduto.EnderecoArmazenagem.Corredor))
                                     select new
                                     {
                                         GrupoCorredorArmazenagem = new
