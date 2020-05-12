@@ -159,7 +159,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk(resposta);
         }
 
-        [Route("api/v1/produto/consultar-entradas/{idProduto}")]
+        [Route("api/v1/produto/entradas/{idProduto}")]
         [HttpGet]
         public IHttpActionResult ConsultarEntradasProduto(long idProduto)
         {
