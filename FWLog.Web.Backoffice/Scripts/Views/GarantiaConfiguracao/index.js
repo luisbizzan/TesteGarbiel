@@ -62,6 +62,26 @@ function RegistroIncluir() {
     _listaAutoComplete = [];
 }
 
+/* [GENÉRICO] incluir registro(s) no banco dados */
+function RegistroAtualizar() {
+    RegistroInclusao.Tag = TagPadrao;
+
+    $.post("/GarantiaConfiguracao/RegistroAtualizar", { Registro: RegistroInclusao }, function (s) {
+        if (s.Success) {
+            RegistroListar(TagPadrao);
+        }
+        Mensagem(s.Success, s.Message);
+
+    }).fail(function (f) {
+        console.log(f);
+    }).done(function (d) {
+        //console.log(d);
+    });
+
+    RegistroInclusao.Inclusao = [];
+    _listaAutoComplete = [];
+}
+
 /* [GENÉRICO] excluir no banco dados */
 function RegistroExcluir(TagSelecionada, IdSelecionado) {
     var _Registro = new Object();

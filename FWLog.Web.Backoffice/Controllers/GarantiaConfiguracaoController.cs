@@ -94,7 +94,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     RegistroConvertido.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop sankhya)
                     {
                         if (String.IsNullOrEmpty(sankhya.Top)) throw new Exception("Informe o Código da Top!");
-                        if (String.IsNullOrEmpty(sankhya.Descricao)) throw new Exception("Informe a Descrição da Top!");
+                        if (sankhya.Id_Negociacao.Equals(0)) throw new Exception("Informe o Id Negociaçã!");
                     });
                     errorView = () => { return View(RegistroConvertido.RegistroSankhyaTop); };
                 }
@@ -129,6 +129,56 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Success = true,
                     Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+        #endregion      
+
+        #region [Genérico] Atualizar
+        [HttpPost]
+        public ActionResult RegistroAtualizar(GarantiaConfiguracaoViewModel Registro)
+        {
+            try
+            {
+                #region Validações
+                Func<ViewResult> errorView = () => { return View(Registro); };
+
+                if (!ModelState.IsValid)
+                    throw new Exception(ModelState.Values.Where(x => x.Errors.Count > 0).Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />")));
+
+                var RegistroConvertido = ConverterRegistro(Registro);
+
+                #region Sankhya Top
+                if (RegistroConvertido.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop))
+                {
+                    RegistroConvertido.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop sankhya)
+                    {
+                        if (sankhya.Id.Equals(0)) throw new Exception("Informe o Id do Registro!");
+                        if (String.IsNullOrEmpty(sankhya.Top)) throw new Exception("Informe o Código da Top!");
+                        if (sankhya.Id_Negociacao.Equals(0)) throw new Exception("Informe o Id Negociação!");
+                    });
+                    errorView = () => { return View(RegistroConvertido.RegistroSankhyaTop); };
+                }
+                #endregion
+
+                if (!ModelState.IsValid)
+                    throw new Exception(ModelState.Values.Where(x => x.Errors.Count > 0).Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />")));
+                #endregion
+
+                _garantiaConfigService.RegistroAtualizar(RegistroConvertido);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterEditedSuccessMessage
                 });
             }
             catch (Exception ex)

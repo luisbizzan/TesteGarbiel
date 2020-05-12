@@ -92,25 +92,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                         break;
                     #endregion
 
-                    #region Sankhya Top
-                    case GarantiaConfiguracao.GarantiaTag.SankhyaTop:
-                        {
-                            RegistroIncluir.RegistroSankhyaTop.ToList().ForEach(delegate (GarantiaConfiguracao.SankhyaTop item)
-                            {
-                                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
-                                {
-                                    conn.Open();
-                                    if (conn.State == System.Data.ConnectionState.Open)
-                                    {
-                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.SankhyaTopIncluir, item.Top, item.Descricao, item.Id_Negociacao));
-                                    }
-                                    conn.Close();
-                                }
-                            });
-                        }
-                        break;
-                    #endregion
-
                     #region Remessa Usuário
                     case GarantiaConfiguracao.GarantiaTag.RemessaUsuario:
                         {
@@ -172,6 +153,48 @@ namespace FWLog.Data.Repository.GeneralCtx
                     #region Default
                     default:
                         throw new Exception(String.Format("[RegistroIncluir] A Tag {0} informada é inválida!", RegistroIncluir.Tag));
+                        #endregion
+                }
+                #endregion
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
+
+        #region [Genérico] - Atualização
+        public void RegistroAtualizar(GarantiaConfiguracao RegistroAtualizar)
+        {
+            try
+            {
+                #region Processamento 
+                switch (RegistroAtualizar.Tag)
+                {
+                    #region Sankhya Top
+                    case GarantiaConfiguracao.GarantiaTag.SankhyaTop:
+                        {
+                            RegistroAtualizar.RegistroSankhyaTop.ToList().ForEach(delegate (GarantiaConfiguracao.SankhyaTop item)
+                            {
+                                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                                {
+                                    conn.Open();
+                                    if (conn.State == System.Data.ConnectionState.Open)
+                                    {
+                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.SankhyaTopAtualizar, item.Top, item.Id_Negociacao, item.Id));
+                                    }
+                                    conn.Close();
+                                }
+                            });
+                        }
+                        break;
+                    #endregion
+
+                    #region Default
+                    default:
+                        throw new Exception(String.Format("[RegistroAtualizar] A Tag {0} informada é inválida!", RegistroAtualizar.Tag));
                         #endregion
                 }
                 #endregion
@@ -283,7 +306,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                         if (_garantia.Tag.Equals(GarantiaConfiguracao.GarantiaTag.SankhyaTop))
                         {
                             _garantia.RegistroSankhyaTop = conn.Query<GarantiaConfiguracao.SankhyaTop>(comandoSQL).ToList();
-                            _garantia.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop item) { item.BotaoEvento = String.Format(GarantiaConfiguracao.Contexto.botaoExcluirTemplate, TAG, item.Id); });
+                            _garantia.RegistroSankhyaTop.ForEach(delegate (GarantiaConfiguracao.SankhyaTop item)
+                            {
+                                item.BotaoEvento = String.Format(GarantiaConfiguracao.Contexto.botaoEditarTemplate, TAG, item.Id, String.Concat(item.Id_Negociacao, ";", item.Top, ";", item.Descricao, ";"));
+                            });
                         }
                         #endregion
 
