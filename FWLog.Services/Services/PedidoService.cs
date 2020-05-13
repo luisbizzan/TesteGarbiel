@@ -34,6 +34,8 @@ namespace FWLog.Services.Services
 
             var topSankhya = ConfigurationManager.AppSettings["IntegracaoSankhya_TOP_PedidoVenda"];
 
+            var topSankhyaRequisicao = ConfigurationManager.AppSettings["IntegracaoSankhya_TOP_PedidoVenda_Requisicao"];
+
             if (string.IsNullOrEmpty(topSankhya))
             {
                 throw new BusinessException("As tops de pedido venda não estão configuradas.");
@@ -58,7 +60,7 @@ namespace FWLog.Services.Services
                     {
                         throw new BusinessException(string.Format("Top inválida (CODTIPOPER: {0}). Configuração atual (TOPs: {1}).", pedidoCabecalho.TopSankhya,topSankhya));
                     }
-                    
+
                     var codEmp = Convert.ToInt32(pedidoCabecalho.CodigoIntegracaoEmpresa);
                     Empresa empresa = _uow.EmpresaRepository.ConsultaPorCodigoIntegracao(codEmp);
                     if (empresa == null)
@@ -105,6 +107,11 @@ namespace FWLog.Services.Services
                     else
                     {
                         pedido = new Pedido();
+                    }
+
+                    if (!string.IsNullOrEmpty(topSankhyaRequisicao) && topSankhyaRequisicao.Split(',').ToList().Contains(pedidoCabecalho.TopSankhya))
+                    {
+                        pedido.IsRequisicao = true;
                     }
 
                     pedido.NroPedido = numeroPedido;
