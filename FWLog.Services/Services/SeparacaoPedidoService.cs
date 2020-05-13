@@ -626,6 +626,20 @@ namespace FWLog.Services.Services
 
                 await AjustarQuantidadeVolume(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, quantidadeIncrementada * -1, idEmpresa, idUsuario);
 
+                if (quantidadeAjuste.HasValue)
+                {
+                    var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                    {
+                        IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
+                        IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.FinalizacaoSeparacao,
+                        Descricao = $"Ajustou manualmente a quantidade do produto {pedidoVendaProduto.Produto.Referencia} na separação do pedido venda {idPedidoVenda}, quantidade ajuste {quantidadeAjuste}, valor passou de  {quantidadeJaSeparada} para {qtdSeparada}.",
+                        IdEmpresa = idEmpresa,
+                        IdUsuario = idUsuario
+                    };
+
+                    _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+                }
+
                 transacao.Complete();
             }
 
