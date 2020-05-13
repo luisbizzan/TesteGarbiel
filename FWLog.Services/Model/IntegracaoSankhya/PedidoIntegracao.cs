@@ -6,6 +6,8 @@ namespace FWLog.Services.Model.IntegracaoSankhya
     [TabelaIntegracao(DisplayName = "TGFCAB")]
     public class PedidoIntegracao
     {
+        
+
         [TabelaIntegracao(DisplayName = "TGFCAB.NUNOTA")]
         [Required]
         public string CodigoIntegracao { get; set; }
@@ -44,6 +46,10 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TGFITE.SEQUENCIA")]
         [Required]
         public string Sequencia { get; set; }
+
+        [TabelaIntegracao(DisplayName = "TGFCAB.CODTIPOPER")]
+        [Required]
+        public string TopSankhya { get; set; }
     }
 }
 

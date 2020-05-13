@@ -1,4 +1,5 @@
-﻿using FWLog.Services.Services;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Services.Services;
 using System.Threading.Tasks;
 using System.Web.Http;
 
