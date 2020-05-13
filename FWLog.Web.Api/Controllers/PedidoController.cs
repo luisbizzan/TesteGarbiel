@@ -19,14 +19,7 @@ namespace FWLog.Web.Api.Controllers
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarPedido()
         {
-            try
-            {
-                await _pedidoService.ConsultarPedidoIntegracao();
-            }
-            catch (BusinessException ex)
-            {
-                return ApiBadRequest(ex.Message);
-            }
+            await _pedidoService.ConsultarPedidoIntegracao();
 
             return ApiOk();
         }
