@@ -35,4 +35,3 @@ CREATE INDEX "PedidoItem_INDEX2" ON DART."PedidoItem" ("IdProduto");
 
 ALTER TABLE DART."PedidoItem" ADD CONSTRAINT "PedidoItem_FK1" FOREIGN KEY ("IdPedido") REFERENCES DART."Pedido"("IdPedido");
 ALTER TABLE DART."PedidoItem" ADD CONSTRAINT "PedidoItem_FK2" FOREIGN KEY ("IdProduto") REFERENCES DART."Produto"("IdProduto");
-ALTER TABLE DART."PedidoItem" ADD CONSTRAINT "PedidoItemStatus_FK3" FOREIGN KEY ("IdPedidoItemStatus") REFERENCES DART."PedidoItemStatus"("IdPedidoItemStatus");

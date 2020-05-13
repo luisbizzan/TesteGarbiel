@@ -8,4 +8,4 @@ INSERT INTO "ColetorHistoricoTipo" ("IdColetorHistoricoTipo","Descricao") VALUES
 
 COMMIT;
 
-SELECT * FROM "ColetorHistoricoTipo" ORDER BY 1 DESC;
+SELECT * FROM "ColetorHistoricoTipo" ORDER BY 1 asc;

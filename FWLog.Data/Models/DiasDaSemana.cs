@@ -5,13 +5,13 @@ namespace FWLog.Data.Models
 {
     public enum DiasDaSemanaEnum
     {
-        Domingo = 1,
-        SegundaFeira = 2,
-        TercaFeira = 3,
-        QuartaFeira = 4,
-        QuintaFeira = 5,
-        SextaFeira = 6,
-        Sabado = 7,
+        Domingo = 0,
+        SegundaFeira = 1,
+        TercaFeira = 2,
+        QuartaFeira = 3,
+        QuintaFeira = 4,
+        SextaFeira = 5,
+        Sabado = 6,
     }
 
     public class DiasDaSemana
