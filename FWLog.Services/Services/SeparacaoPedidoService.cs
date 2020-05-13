@@ -533,7 +533,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, long idProdutoSeparacao, string idUsuario, long idEmpresa, int? quantidadeAjuste, bool temPermissaoF7)
+        public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, long idProdutoSeparacao, string idUsuario, long idEmpresa, int? quantidadeAjuste, bool temPermissaoF7, string idUsuarioAutorizacaoZerarPedido, bool temPermissaoF8)
         {
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedidoVendaEIdEmpresa(idPedidoVenda, idEmpresa);
 

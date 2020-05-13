@@ -228,6 +228,7 @@ namespace FWLog.AspNet.Identity
         {
             public const string CancelarSeparacao = "RFCancelarSeparacao";
             public const string FuncaoF7 = "RFFuncaoF7";
+            public const string RFFuncaoF8ZerarPedido = "RFFuncaoF8ZerarPedido";
             public const string FuncaoF9ConsultaEstoque = "RFFuncaoF9ConsultaEstoque";
             public const string RFFuncaoConsultaEntradasProduto = "RFFuncaoConsultaEntradasProduto";
 
@@ -235,6 +236,7 @@ namespace FWLog.AspNet.Identity
             {
                 Register(CancelarSeparacao, Display.FromString("Cancelar Separação"));
                 Register(FuncaoF7, Display.FromString("Função F7 - Ajustar Produto Pedido"));
+                Register(RFFuncaoF8ZerarPedido, Display.FromString("Função F8 - Zerar Pedido"));
                 Register(FuncaoF9ConsultaEstoque, Display.FromString("Função F9 -  Consulta Estoque"));
                 Register(RFFuncaoConsultaEntradasProduto, Display.FromString("Função F10 -  Consulta Entrada"));
             }

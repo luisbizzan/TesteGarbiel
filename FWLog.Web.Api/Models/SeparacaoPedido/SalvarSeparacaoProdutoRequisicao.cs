@@ -14,5 +14,7 @@ namespace FWLog.Web.Api.Models.SeparacaoPedido
         public long IdProdutoSeparacao { get; set; }
 
         public int? QtdAjuste { get; set; }
+
+        public string IdUsuarioAutorizacaoZerarPedido { get; set; }
     }
 }
