@@ -297,6 +297,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FWLog.AspNet.Identity\FWLog.AspNet.Identity.csproj">
+      <Project>{6E563F5C-5FE5-48DC-AE2C-7A49D8142E89}</Project>
+      <Name>FWLog.AspNet.Identity</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FWLog.Data\FWLog.Data.csproj">
       <Project>{cb5b241f-4bf3-439a-8995-4a05d9c3367e}</Project>
       <Name>FWLog.Data</Name>

@@ -1,4 +1,5 @@
 ﻿using DartDigital.Library.Exceptions;
+using FWLog.AspNet.Identity;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.SeparacaoPedido;
 using System.Threading.Tasks;
@@ -31,11 +32,15 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/separacao-pedido/consultar-pedido-venda/{referenciaPedido}")]
         [HttpGet]
-        public IHttpActionResult BuscarPedidoVenda(string referenciaPedido)
+        public async Task<IHttpActionResult> BuscarPedidoVenda(string referenciaPedido)
         {
             try
             {
-                var response = _separacaoPedidoService.BuscarPedidoVenda(referenciaPedido, IdEmpresa);
+                var permissions = await UserManager.GetPermissionsByIdEmpresaAsync(IdUsuario, IdEmpresa);
+
+                var temPermissaoF7 = permissions.Contains(Permissions.RFSeparacao.FuncaoF7);
+
+                var response = _separacaoPedidoService.BuscarPedidoVenda(referenciaPedido, IdEmpresa,IdUsuario, temPermissaoF7);
 
                 return ApiOk(response);
             }
