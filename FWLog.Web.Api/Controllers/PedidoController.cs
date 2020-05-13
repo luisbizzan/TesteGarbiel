@@ -1,4 +1,5 @@
-﻿using FWLog.Services.Services;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Services.Services;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -18,7 +19,14 @@ namespace FWLog.Web.Api.Controllers
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarPedido()
         {
-            await _pedidoService.ConsultarPedidoIntegracao();
+            try
+            {
+                await _pedidoService.ConsultarPedidoIntegracao();
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
 
             return ApiOk();
         }

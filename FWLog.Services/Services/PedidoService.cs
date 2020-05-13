@@ -39,7 +39,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("As tops de pedido venda não estão configuradas.");
             }
 
-            var where = $" WHERE TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSSEP = 0 OR TGFCAB.AD_STATUSSEP IS NULL) AND TGFCAB.CODTIPOPER IN ({topSankhya}) ";
+            var where = $" WHERE TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSSEP = 0 OR TGFCAB.AD_STATUSSEP IS NULL)) ";
             var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
 
             List<PedidoIntegracao> pedidosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<PedidoIntegracao>(where, inner);
@@ -53,7 +53,12 @@ namespace FWLog.Services.Services
                     var pedidoCabecalho = pedidoIntegracao.Value.First();
 
                     ValidarDadosIntegracao(pedidoCabecalho);
-
+                    
+                    if(!topSankhya.Split(',').ToList().Contains(pedidoCabecalho.TopSankhya))
+                    {
+                        throw new BusinessException(string.Format("Top do pedido (CODTIPOPER: {0}) não foi encontrada na configuração atual (TOPs: {1}).", pedidoCabecalho.TopSankhya,topSankhya));
+                    }
+                    
                     var codEmp = Convert.ToInt32(pedidoCabecalho.CodigoIntegracaoEmpresa);
                     Empresa empresa = _uow.EmpresaRepository.ConsultaPorCodigoIntegracao(codEmp);
                     if (empresa == null)
