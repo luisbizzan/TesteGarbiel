@@ -106,20 +106,23 @@ namespace FWLog.Services.Services
             }
 
             var usuarioEmpresa = _unitOfWork.UsuarioEmpresaRepository.Obter(idEmpresa, idUsuario);
-            IEnumerable<int> rangeDeCorredoresDoUsuario;
+            IEnumerable<int> rangeDeCorredoresDoUsuario = null;
 
             if (!usuarioEmpresa.CorredorSeparacaoInicio.HasValue && !usuarioEmpresa.CorredorSeparacaoFim.HasValue && !temPermissaoF7)
             {
                 throw new BusinessException("O Usuário não possui corredor de separação vinculado no cadastro e não possui acesso a função F7.");
             }
 
-            rangeDeCorredoresDoUsuario = Enumerable.Range(usuarioEmpresa.CorredorSeparacaoInicio.Value, (usuarioEmpresa.CorredorSeparacaoFim.Value - usuarioEmpresa.CorredorSeparacaoInicio.Value) + 1);
-
-            var corredoresDosProdutos = pedidoVendaVolume.PedidoVendaProdutos.Select(x => x.EnderecoArmazenagem.Corredor).Distinct();
-
-            if (rangeDeCorredoresDoUsuario.Intersect(corredoresDosProdutos).Count() == 0 && !temPermissaoF7)
+            if (usuarioEmpresa.CorredorSeparacaoInicio.HasValue && usuarioEmpresa.CorredorSeparacaoFim.HasValue)
             {
-                throw new BusinessException("Nenhum produto para separar.");
+                rangeDeCorredoresDoUsuario = Enumerable.Range(usuarioEmpresa.CorredorSeparacaoInicio.Value, (usuarioEmpresa.CorredorSeparacaoFim.Value - usuarioEmpresa.CorredorSeparacaoInicio.Value) + 1);
+
+                var corredoresDosProdutos = pedidoVendaVolume.PedidoVendaProdutos.Select(x => x.EnderecoArmazenagem.Corredor).Distinct();
+
+                if (rangeDeCorredoresDoUsuario.Intersect(corredoresDosProdutos).Count() == 0 && !temPermissaoF7)
+                {
+                    throw new BusinessException("Nenhum produto para separar.");
+                }
             }
 
             var model = new BuscarPedidoVendaResposta();
