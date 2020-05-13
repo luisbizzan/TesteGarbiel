@@ -132,6 +132,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             var selectedQuery = query.Select(e => new
             {
+                IdEnderecoArmazenagem = e.IdEnderecoArmazenagem,
                 IdProduto = e.IdProduto,
                 Referencia = e.Produto.Referencia,
                 Descricao = e.Produto.Descricao,
@@ -154,6 +155,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             var result = queryResult.Select(e => new ProdutoListaLinhaTabela
             {
+                IdEnderecoArmazenagem = e.IdEnderecoArmazenagem,
                 IdProduto = e.IdProduto == 0 ? (long?)null : e.IdProduto,
                 Referencia = e.Referencia,
                 Descricao = e.Descricao,

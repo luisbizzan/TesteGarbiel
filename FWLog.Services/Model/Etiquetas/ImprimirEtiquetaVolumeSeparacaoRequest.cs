@@ -18,6 +18,7 @@
         public string TransportadoraNome { get; set; }
         public string CorredoresInicio { get; set; }
         public string CorredoresFim { get; set; }
+        public string CorredorInicioSeparacao { get; set; }
         public string CaixaTextoEtiqueta { get; set; }
         public string Volume { get; set; }
         public long IdImpressora { get; set; }

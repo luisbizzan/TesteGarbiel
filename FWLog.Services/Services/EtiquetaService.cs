@@ -162,16 +162,23 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaPeca(ImprimirEtiquetaProdutoBase request)
         {
-            Produto produto = _unitOfWork.ProdutoRepository.Todos().First(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
-            ProdutoEstoque empresaProduto = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, request.IdEmpresa);
+            Produto produto = _unitOfWork.ProdutoRepository.Todos().FirstOrDefault(x => x.Referencia.ToUpper() == request.ReferenciaProduto.ToUpper());
+            ProdutoEstoque empresaProduto = null;
+
+            if (produto != null)
+            {
+                empresaProduto = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(produto.IdProduto, request.IdEmpresa);
+            }
 
             if (produto == null || empresaProduto == null)
             {
                 throw new BusinessException("Produto não encontrado.");
             }
 
-            string endereco = empresaProduto?.EnderecoArmazenagem?.Codigo ?? string.Empty;
-            string unidade = produto.UnidadeMedida?.Sigla ?? string.Empty;
+            var codigoEndereco = empresaProduto?.EnderecoArmazenagem?.Codigo ?? string.Empty;
+            var unidade = produto.UnidadeMedida?.Sigla ?? string.Empty;
+            var descricaoNormalizada = produto.Descricao.Normalizar();
+            var quantidadeFormatada = produto.MultiploVenda.ToString().PadLeft(3, '0');
 
             int linhas = (int)Math.Ceiling((decimal)request.QuantidadeEtiquetas / CelulasEtiqueta_102x22.Count);
             int etiquetasRestantes = request.QuantidadeEtiquetas;
@@ -189,40 +196,39 @@ namespace FWLog.Services.Services
                     etiquetasRestantes--;
                 }
 
-                etiquetaZpl.Append("^XA");
+                etiquetaZpl.AppendLine($"^XA");
+                etiquetaZpl.AppendLine($"^LH32,0");
+                etiquetaZpl.AppendLine($"^PRA^FS");
+                etiquetaZpl.AppendLine($"^PQ1^FS");
 
-                // Velocidade de impressão
-                etiquetaZpl.Append("^PRA^FS");
+                var imprimeEtiqueta2 = colunasImpressao.Count > 1;
+                var imprimeEtiqueta3 = colunasImpressao.Count > 2;
 
-                // Configuração padrão dos códigos de barras
-                etiquetaZpl.Append("^BY2,,164");
+                etiquetaZpl.AppendLine($"^FO0,45^GB146,26,30^FS");
+                if (imprimeEtiqueta2) etiquetaZpl.AppendLine($"^FO272,45^GB146,26,30^FS");
+                if (imprimeEtiqueta3) etiquetaZpl.AppendLine($"^FO544,45^GB146,26,30^FS");
 
-                foreach (CelulaEtiqueta celula in colunasImpressao)
-                {
-                    // Posição inicial de desenho da etiqueta
-                    etiquetaZpl.Append($"^LH{celula.X},{celula.Y}");
+                etiquetaZpl.AppendLine($"^FO0,49^A0N,30,25^FR^FD{produto.Referencia}^FS");
+                if (imprimeEtiqueta2) etiquetaZpl.AppendLine($"^FO272,49^A0N,30,25^FR^FD{produto.Referencia}^FS");
+                if (imprimeEtiqueta3) etiquetaZpl.AppendLine($"^FO544,49^A0N,30,25^FR^FD{produto.Referencia}^FS");
 
-                    // Label referência do produto
-                    etiquetaZpl.Append("^FO12,12^GB140,26,30^FS");
-                    etiquetaZpl.Append($"^FO14,16^A0N,30,25^FR^FD{produto.Referencia}^FS");
+                etiquetaZpl.AppendLine($"^FO154,45^A0N,25,20^FD{codigoEndereco}^FS");
+                if (imprimeEtiqueta2) etiquetaZpl.AppendLine($"^FO426,45^A0N,25,20^FD{codigoEndereco}^FS");
+                if (imprimeEtiqueta3) etiquetaZpl.AppendLine($"^FO698,45^A0N,25,20^FD{codigoEndereco}^FS");
 
-                    // Label endereço do produto
-                    etiquetaZpl.Append($"^FO145,16^FB120,1,,R,0^A0N,30,20^FD{endereco}^FS");
+                etiquetaZpl.AppendLine($"^FO16,78^A0N,16,16^FD{descricaoNormalizada}^FS");
+                if (imprimeEtiqueta2) etiquetaZpl.AppendLine($"^FO288,78^A0N,16,16^FD{descricaoNormalizada}^FS");
+                if (imprimeEtiqueta3) etiquetaZpl.AppendLine($"^FO560,78^A0N,16,16^FD{descricaoNormalizada}^FS");
 
-                    // Label descrição do produto
-                    etiquetaZpl.Append($"^FO12,44^FB260,1,,L,0^A0N,16,16^FD{produto.Descricao.Normalizar()}^FS");
+                etiquetaZpl.AppendLine($"^FO34,91^BY2,,164^BEN,73,Y,N^FD{produto.CodigoBarras}^FS");
+                if (imprimeEtiqueta2) etiquetaZpl.AppendLine($"^FO306,91^BY2,,164^BEN,73,Y,N^FD{produto.CodigoBarras}^FS");
+                if (imprimeEtiqueta3) etiquetaZpl.AppendLine($"^FO578,91^BY2,,164^BEN,73,Y,N^FD{produto.CodigoBarras}^FS");
 
-                    // Código de barras do produto
-                    etiquetaZpl.Append($"^FO42,62^BEN,74,Y,N^FD{produto.CodigoBarras}^FS");
+                etiquetaZpl.AppendLine($"^FO016,184^A0N,8,24^FDQuant.p/emb.: {quantidadeFormatada} { unidade}^FS");
+                if (imprimeEtiqueta2) etiquetaZpl.AppendLine($"^FO288,184^A0N,8,24^FDQuant.p/emb.: {quantidadeFormatada} { unidade}^FS");
+                if (imprimeEtiqueta3) etiquetaZpl.AppendLine($"^FO560,184^A0N,8,24^FDQuant.p/emb.: {quantidadeFormatada} { unidade}^FS");
 
-                    // Label quantidade por embalagem
-                    etiquetaZpl.Append($"^FO20,162^A0N,8,24^FDQuant.p/emb.: {produto.MultiploVenda.ToString().PadLeft(3, '0')} {unidade}^FS");
-                }
-
-                // Redefinir posição inicial de desenho
-                etiquetaZpl.Append("^LH0,0");
-
-                etiquetaZpl.Append("^XZ");
+                etiquetaZpl.AppendLine($"^XZ");
             }
 
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
@@ -531,7 +537,7 @@ namespace FWLog.Services.Services
             etiquetaZpl.Append($"^FO55,15^FB760,1,0,C,0^A0B,250,120^FR^FD{refProduto}^FS");
 
             // Texto do endereço de armazenagem
-            etiquetaZpl.Append($"^FO440,15^FB760,1,0,C,0^A0B,180,150^FD0{textoEndereco}^FS");
+            etiquetaZpl.Append($"^FO440,15^FB760,1,0,C,0^A0B,180,150^FD{textoEndereco}^FS");
 
             // Barcode do endereço de armazenagem
             etiquetaZpl.Append($"^FO600,250^BCR,85,N,N^FD{codEndereco}^FS");
@@ -604,31 +610,57 @@ namespace FWLog.Services.Services
             _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisciao);
         }
 
-        public void ValidarEnderecoPicking(ValidarEnderecoPickingRequest requisicao)
+        public ValidarEnderecoPickingResposta ValidarProdutoOuEnderecoPicking(ValidarEnderecoPickingRequest requisicao)
         {
-            if (requisicao.IdEnderecoArmazenagem <= 0)
+            if (string.IsNullOrEmpty(requisicao.referenciaProdutoOuEndereco))
             {
-                throw new BusinessException("O Endereço deve ser informado.");
+                throw new BusinessException("Endereço deve ser informado.");
             }
 
-            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(requisicao.IdEnderecoArmazenagem);
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPickingPorCodigo(requisicao.referenciaProdutoOuEndereco, requisicao.IdEmpresa);
+
+            if (enderecoArmazenagem == null && long.TryParse(requisicao.referenciaProdutoOuEndereco, out long id))
+            {
+                enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(id);
+            }
 
             if (enderecoArmazenagem == null)
             {
-                throw new BusinessException("O endereço não foi encontrado.");
+                var produto = _unitOfWork.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(requisicao.referenciaProdutoOuEndereco);
+
+                if (produto == null)
+                {
+                    throw new BusinessException("O endereço/produto não encontrado.");
+                }
+
+                var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto, requisicao.IdEmpresa);
+
+                if (produtoEstoque != null)
+                {
+                    enderecoArmazenagem = produtoEstoque.EnderecoArmazenagem;
+                }
+                else
+                {
+                    throw new BusinessException("Eendereço do produto não encontrado.");
+                }
+            }
+
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("Endereço não encontrado.");
             }
 
             if (!enderecoArmazenagem.IsPontoSeparacao)
             {
-                throw new BusinessException("O endereço informado não é um ponto de separação.");
+                throw new BusinessException("Endereço não é Picking.");
             }
 
-            var pontoArmazenagem = _unitOfWork.PontoArmazenagemRepository.GetById(enderecoArmazenagem.IdPontoArmazenagem);
-
-            if (pontoArmazenagem.Descricao != "Picking")
+            var resposta = new ValidarEnderecoPickingResposta()
             {
-                throw new BusinessException("O endereço informado não é endereço de Picking.");
-            }
+                IdEnderecoArmazenagem = enderecoArmazenagem.IdEnderecoArmazenagem,
+            };
+
+            return resposta;
         }
 
         public void ImprimirEtiquetaVolumeSeparacao(ImprimirEtiquetaVolumeSeparacaoRequest requisicao, long idEmpresa)
@@ -642,15 +674,16 @@ namespace FWLog.Services.Services
             string clienteTelefone = string.Format("{0:(##) #####-####}", requisicao.ClienteTelefone);
             string clienteCodigo = requisicao.ClienteCodigo?.Normalizar();
             string representanteCodigo = requisicao.RepresentanteCodigo?.Normalizar();
-            string pedidoCodigo = requisicao.PedidoCodigo?.Normalizar();
-            string centena = requisicao.Centena?.Normalizar();
+            string pedidoCodigo = requisicao.PedidoCodigo?.PadLeft(6, '0')?.Normalizar();
+            string centena = requisicao.Centena?.PadLeft(4, '0')?.Normalizar();
             string transportadoraSigla = requisicao.TransportadoraSigla?.Normalizar();
-            string transportadoraCodigo = requisicao.TransportadoraCodigo?.Normalizar();
+            string transportadoraCodigo = requisicao.TransportadoraCodigo.PadLeft(3, '0')?.Normalizar();
             string transportadoraNome = requisicao.TransportadoraNome?.Normalizar();
             string volume = requisicao.Volume.PadLeft(3, '0')?.Normalizar();
             string caixaTextoEtiqueta = requisicao.CaixaTextoEtiqueta?.Normalizar();
             string corredoresInicio = requisicao.CorredoresInicio.PadLeft(2, '0')?.Normalizar();
             string corredoresIntervalo = $"{corredoresInicio} a {requisicao.CorredoresFim.PadLeft(2, '0')}"?.Normalizar();
+            string corredorInicioSeparacao = requisicao.CorredorInicioSeparacao.PadLeft(2, '0')?.Normalizar();
 
             var stringEtiqueta = new StringBuilder();
 
@@ -681,7 +714,7 @@ namespace FWLog.Services.Services
             stringEtiqueta.Append($"^FO570,260^A0B,80,70^FR^FD{caixaTextoEtiqueta}^FS");
 
             stringEtiqueta.Append("^FO550,347^A0B,20,20^FDINICIO^FS");
-            stringEtiqueta.Append($"^FO570,315^A0B,80,70^FR^FD{corredoresInicio}^FS");
+            stringEtiqueta.Append($"^FO570,315^A0B,80,70^FR^FD{corredorInicioSeparacao}^FS");
 
             stringEtiqueta.Append("^FO635,250^GBO,152,2^FS");
             stringEtiqueta.Append("^FO640,305^A0B,20,20^FDINTERVALO^FS");

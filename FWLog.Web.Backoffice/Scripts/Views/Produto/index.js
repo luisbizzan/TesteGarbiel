@@ -14,10 +14,19 @@
                 href: view.editarProdutoUrl + '/' + full.IdProduto,
                 visible: view.edicaoEInsercaoVisivel
             },
+            {
+                action: 'imprimir',
+                icon: 'fa fa-print',
+                text: "Imprimir Etiqueta Picking",
+                attrs: { 'data-id': full.IdEnderecoArmazenagem, 'data-id-produto': full.IdProduto, 'action': 'imprimir' },
+                visible: true
+            },
         ];
     });
 
     $("#dataTable").on('click', "[action='detailsUrl']", detalhesEntradaConferencia);
+    $("#dataTable").on('click', "[action='imprimir']", imprimirEtiquetaPicking);
+    dart.dataTables.loadFormFilterEvents();
 
     $('#dataTable').DataTable({
         ajax: {
@@ -147,7 +156,21 @@
         $("#Filtros_IdPontoArmazenagem").val("");
     });
 
-    dart.dataTables.loadFormFilterEvents();
+    function imprimirEtiquetaPicking() {
+        let idEnderecoArmazenagem = $(this).data("id");
+        let idProduto = $(this).data("id-produto");
+
+        if (!idEnderecoArmazenagem || !idProduto) {
+            PNotify.warning({ text: "Para imprimir a etiqueta é necessário relcionar um endereço." });
+        }
+        else {
+            let $modal = $("#confirmarImpressao");
+
+            $modal.load(HOST_URL + CONTROLLER_PATH + "ConfirmarImpressao?idEnderecoArmazenagem=" + idEnderecoArmazenagem + "&idProduto=" + idProduto, function () {
+                $modal.modal();
+            });
+        }
+    }
 })();
 
 function detalhesEntradaConferencia() {
@@ -159,7 +182,7 @@ function detalhesEntradaConferencia() {
     });
 }
 
-function imprimir(acao, id) {
+function imprimir(acao, id, id2) {
     switch (acao) {
         case 'produtos':
             $.ajax({
@@ -198,6 +221,33 @@ function imprimir(acao, id) {
                 }
             });
             break;
+        case 'etiquetaPicking':
+            var idImpressora = $("#IdImpressora").val();
+
+            $.ajax({
+                url: HOST_URL + CONTROLLER_PATH + "ImprimirEtiqueta",
+                method: "POST",
+                cache: false,
+                data: {
+                    IdImpressora: idImpressora,
+                    IdEnderecoArmazenagem: id,
+                    IdProduto: id2
+                },
+                success: function (result) {
+                    if (result.Success) {
+                        PNotify.success({ text: result.Message });
+
+                        fechaModal();
+                    } else {
+                        PNotify.error({ text: result.Message });
+                    }
+                },
+                error: function (data) {
+                    PNotify.error({ text: "Ocorreu um erro na impressão." });
+                    NProgress.done();
+                }
+            });
+            break;
     }
 }
 
@@ -229,3 +279,13 @@ function selecionarEnderecoArmazenagem(IdEnderecoArmazenagem, codigo) {
     $("#modalPesquisaEnderecoArmazenagem").modal("hide");
     $("#modalPesquisaEnderecoArmazenagem").empty();
 }
+
+
+
+function fechaModal() {
+    var $modal = $("#modalImpressoras");
+
+    $modal.modal("hide");
+    $modal.empty();
+}
+

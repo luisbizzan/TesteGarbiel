@@ -235,7 +235,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult Selecionar(int idImpressaoItem, string acao, string id)
+        public ActionResult Selecionar(int idImpressaoItem, string acao, string id, string id2 = "")
         {
             ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(idImpressaoItem);
             List<Printer> impressoras = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem);
@@ -252,6 +252,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 ImpressaoItemDescricao = impressaoItem.Descricao,
                 Acao = acao,
                 Id = id,
+                Id2 = id2,
                 Impressoras = listaImpressoras
             });
         }
