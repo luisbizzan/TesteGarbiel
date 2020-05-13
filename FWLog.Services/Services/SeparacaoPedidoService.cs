@@ -53,7 +53,7 @@ namespace FWLog.Services.Services
             throw new NotImplementedException();
         }
 
-        public BuscarPedidoVendaResposta BuscarPedidoVenda(string codigoBarrasPedido, long idEmpresa,string idUsuario,bool temPermissaoF7)
+        public BuscarPedidoVendaResposta BuscarPedidoVenda(string codigoBarrasPedido, long idEmpresa, string idUsuario, bool temPermissaoF7)
         {
             if (codigoBarrasPedido.NullOrEmpty())
             {
@@ -571,14 +571,17 @@ namespace FWLog.Services.Services
 
             if (quantidadeAjuste.HasValue)
             {
+                if (quantidadeAjuste <= 0)
+                {
+                    throw new BusinessException("Quantidade ajuste deve ser informada.");
+                }
+
                 if (quantidadeAjuste < multiploProduto || (quantidadeAjuste.Value % pedidoVendaProduto.Produto.MultiploVenda) != 0)
                 {
-                    throw new BusinessException("A quantidade de ajuste informada está fora do múltiplo.");
+                    throw new BusinessException("Quantidade ajuste está fora do múltiplo.");
                 }
 
                 quantidadeIncrementada = quantidadeAjuste.Value;
-
-                throw new BusinessException("A quantidade separada é maior do que do pedido.");
             }
             else
             {

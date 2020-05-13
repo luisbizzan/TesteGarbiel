@@ -40,7 +40,7 @@ namespace FWLog.Web.Api.Controllers
 
                 var temPermissaoF7 = permissions.Contains(Permissions.RFSeparacao.FuncaoF7);
 
-                var response = _separacaoPedidoService.BuscarPedidoVenda(referenciaPedido, IdEmpresa,IdUsuario, temPermissaoF7);
+                var response = _separacaoPedidoService.BuscarPedidoVenda(referenciaPedido, IdEmpresa, IdUsuario, temPermissaoF7);
 
                 return ApiOk(response);
             }
