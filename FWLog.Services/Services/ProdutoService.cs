@@ -77,7 +77,7 @@ namespace FWLog.Services.Services
                 catch { }
             }
 
-            quantidadeChamada = quantidadeRegistro > 4999 ? quantidadeRegistro / 4999 : 1;
+           quantidadeChamada = quantidadeRegistro > 4999 ? quantidadeRegistro / 4999 : 1;
 
             where.Append("ORDER BY CODPROD OFFSET 0 ROWS FETCH NEXT 5000 ROWS ONLY ");
 

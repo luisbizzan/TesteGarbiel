@@ -517,32 +517,35 @@ namespace FWLog.Services.Services
         public void ImprimirEtiquetaPicking(ImprimirEtiquetaPickingRequest request)
         {
             Produto produto = _unitOfWork.ProdutoRepository.GetById(request.IdProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("Produto não encontrado.");
+            }
+
             EnderecoArmazenagem endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(request.IdEnderecoArmazenagem);
 
-            string refProduto = produto.Referencia;
-            string textoEndereco = endereco.Codigo ?? string.Empty;
-            string codEndereco = endereco.IdEnderecoArmazenagem.ToString().PadLeft(7, '0');
+            if (endereco == null)
+            {
+                throw new BusinessException("Endereço não encontrado.");
+            }
+
+            string referenciaProduto = produto.Referencia;
+            string codigoEndereco = endereco.Codigo ?? string.Empty;
+            string idEnderecoFormatado = endereco.IdEnderecoArmazenagem.ToString().PadLeft(7, '0');
 
             var etiquetaZpl = new StringBuilder();
 
-            etiquetaZpl.Append("^XA");
+            etiquetaZpl.AppendLine($"^XA");
+            etiquetaZpl.AppendLine($"^FO16,20^GB270,880,200^FS");
 
-            // Define quantidade de etiquetas a imprimir
-            etiquetaZpl.Append($"^PQ{request.QuantidadeEtiquetas}^FS");
+            etiquetaZpl.AppendLine($"^FO55,85^FB430,1,0,C,0^A0B,250,60^FR^FD{referenciaProduto}^FS");
 
-            etiquetaZpl.Append("^LL880");
+            etiquetaZpl.AppendLine($"^FO430,30^A0B,180,120^FD{codigoEndereco}^FS");
 
-            // Fundo e texto da referência do produto
-            etiquetaZpl.Append("^FO15,20^GB270,760,150^FS");
-            etiquetaZpl.Append($"^FO55,15^FB760,1,0,C,0^A0B,250,120^FR^FD{refProduto}^FS");
+            etiquetaZpl.AppendLine($"^FO600,100^BCR,85,N,N^FD{idEnderecoFormatado}^FS");
 
-            // Texto do endereço de armazenagem
-            etiquetaZpl.Append($"^FO440,15^FB760,1,0,C,0^A0B,180,150^FD{textoEndereco}^FS");
-
-            // Barcode do endereço de armazenagem
-            etiquetaZpl.Append($"^FO600,250^BCR,85,N,N^FD{codEndereco}^FS");
-
-            etiquetaZpl.Append("^XZ");
+            etiquetaZpl.AppendLine($"^XZ");
 
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
 
