@@ -109,7 +109,7 @@ namespace FWLog.Services.Services
                         pedido = new Pedido();
                     }
 
-                    if (topSankhyaRequisicao.Split(',').ToList().Contains(pedidoCabecalho.TopSankhya))
+                    if (!string.IsNullOrEmpty(topSankhyaRequisicao) && topSankhyaRequisicao.Split(',').ToList().Contains(pedidoCabecalho.TopSankhya))
                     {
                         pedido.IsRequisicao = true;
                     }
