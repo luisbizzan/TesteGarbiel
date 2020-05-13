@@ -41,6 +41,9 @@ namespace FWLog.Data.Models
         [Required]
         public DateTime DataCriacao { get; set; }
 
+        [Required]
+        public bool IsRequisicao { get; set; }
+
         [Index]
         public long? CodigoIntegracaoNotaFiscal { get; set; }
 
