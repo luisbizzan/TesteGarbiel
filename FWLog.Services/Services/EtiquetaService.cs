@@ -727,7 +727,7 @@ namespace FWLog.Services.Services
             var empresa = _unitOfWork.EmpresaConfigRepository.ConsultarPorIdEmpresa(idEmpresa);
 
             //Adcionando o logo somente para empresas com essa informação preenchida no cadastro
-            if(empresa != null && empresa.NomeLogoEtiqueta != null)
+            if (empresa != null && empresa.NomeLogoEtiqueta != null)
             {
                 stringEtiqueta.Append($"^FO70,214^{empresa.NomeLogoEtiqueta.Trim()},1,1^FS");
             }
