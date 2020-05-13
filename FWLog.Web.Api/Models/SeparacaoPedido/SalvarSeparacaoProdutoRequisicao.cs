@@ -12,5 +12,7 @@ namespace FWLog.Web.Api.Models.SeparacaoPedido
 
         [Required(ErrorMessage = "O IdProdutoSeparacao deve ser informado.")]
         public long IdProdutoSeparacao { get; set; }
+
+        public int? QtdAjuste { get; set; }
     }
 }

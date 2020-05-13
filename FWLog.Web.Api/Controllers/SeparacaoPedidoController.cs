@@ -136,7 +136,9 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                var response = await _separacaoPedidoService.SalvarSeparacaoProduto(requisicao.IdPedidoVenda, requisicao.IdProduto, requisicao.IdProdutoSeparacao, IdUsuario, IdEmpresa);
+                var usuarioTemPermissaoF7 = await UserManager.ValidatePermissionByIdEmpresaAsync(IdUsuario, IdEmpresa, AspNet.Identity.Permissions.RFSeparacao.FuncaoF7);
+
+                var response = await _separacaoPedidoService.SalvarSeparacaoProduto(requisicao?.IdPedidoVenda ?? 0, requisicao?.IdProduto ?? 0, requisicao?.IdProdutoSeparacao ?? 0, IdUsuario, IdEmpresa, requisicao?.QtdAjuste, usuarioTemPermissaoF7);
 
                 return ApiOk(response);
             }

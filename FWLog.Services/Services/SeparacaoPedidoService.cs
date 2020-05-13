@@ -23,16 +23,16 @@ namespace FWLog.Services.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly ColetorHistoricoService _coletorHistoricoService;
-        private ILog _log;
+        private readonly ILog _log;
         private List<CaixaViewModel> listaRankingCaixas;
-        private PedidoVendaService _pedidoVendaService;
-        private PedidoService _pedidoService;
-        private PedidoVendaProdutoService _pedidoVendaProdutoService;
-        private PedidoVendaVolumeService _pedidoVendaVolumeService;
-        private EtiquetaService _etiquetaService;
-        private CaixaService _caixaService;
+        private readonly PedidoVendaService _pedidoVendaService;
+        private readonly PedidoService _pedidoService;
+        private readonly PedidoVendaProdutoService _pedidoVendaProdutoService;
+        private readonly PedidoVendaVolumeService _pedidoVendaVolumeService;
+        private readonly EtiquetaService _etiquetaService;
+        private readonly CaixaService _caixaService;
 
-        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService, ILog log, PedidoService pedidoService, PedidoVendaService pedidoVendaService, 
+        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService, ILog log, PedidoService pedidoService, PedidoVendaService pedidoVendaService,
             PedidoVendaProdutoService pedidoVendaProdutoService, PedidoVendaVolumeService pedidoVendaVolumeService, EtiquetaService etiquetaService, CaixaService caixaService)
         {
             _unitOfWork = unitOfWork;
@@ -512,7 +512,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, long idProdutoSeparacao, string idUsuario, long idEmpresa)
+        public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, long idProdutoSeparacao, string idUsuario, long idEmpresa, int? quantidadeAjuste, bool temPermissaoF7)
         {
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedidoVendaEIdEmpresa(idPedidoVenda, idEmpresa);
 
@@ -542,20 +542,43 @@ namespace FWLog.Services.Services
                 QtdSeparar = pedidoVendaProduto.QtdSeparar,
             };
 
-            using (var transacao = _unitOfWork.CreateTransactionScope())
+            if (pedidoVendaProduto.EnderecoArmazenagem.IsPicking && !temPermissaoF7)
             {
-                var quantidadeIncrementada = (int)pedidoVendaProduto.Produto.MultiploVenda;
+                throw new BusinessException("Você não tem permissão para separar pedidos fora do picking.");
+            }
 
-                var qtdSeparada = pedidoVendaProduto.QtdSeparada.GetValueOrDefault() + quantidadeIncrementada;
+            var multiploProduto = pedidoVendaProduto.Produto.MultiploVenda;
+            var quantidadeJaSeparada = pedidoVendaProduto.QtdSeparada.GetValueOrDefault();
+            int quantidadeIncrementada;
 
-                if (qtdSeparada > pedidoVendaProduto.QtdSeparar)
+            if (quantidadeAjuste.HasValue)
+            {
+                if (quantidadeAjuste < multiploProduto || (quantidadeAjuste.Value % pedidoVendaProduto.Produto.MultiploVenda) != 0)
                 {
-                    throw new BusinessException("A quantidade separada é maior que o pedido.");
+                    throw new BusinessException("A quantidade de ajuste informada está fora do múltiplo.");
                 }
 
+                quantidadeIncrementada = quantidadeAjuste.Value;
+
+                throw new BusinessException("A quantidade separada é maior do que do pedido.");
+            }
+            else
+            {
+                quantidadeIncrementada = (int)multiploProduto;
+            }
+
+            var qtdSeparada = quantidadeJaSeparada + quantidadeIncrementada;
+
+            if (qtdSeparada > pedidoVendaProduto.QtdSeparar)
+            {
+                throw new BusinessException("A quantidade separada é maior que o pedido.");
+            }
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
                 var dataProcessamento = DateTime.Now;
 
-                if (pedidoVendaProduto.QtdSeparada.GetValueOrDefault() == 0)
+                if (quantidadeJaSeparada == 0)
                 {
                     pedidoVendaProduto.DataHoraInicioSeparacao = dataProcessamento;
                     pedidoVendaProduto.IdUsuarioSeparacao = idUsuario;
@@ -873,7 +896,6 @@ namespace FWLog.Services.Services
 
                     return grupoArmazenagem;
                 }
-                    
             }
 
             return grupoArmazenagem;
@@ -1691,8 +1713,8 @@ namespace FWLog.Services.Services
                         listaVolumes.Add(new VolumeViewModel()
                         {
                             IsCaixaFornecedor = true,
-                            Peso =+ listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade,
-                            Cubagem =+ listaItensDoPedido[i].Produto.CubagemProduto.Value * listaItensDoPedido[i].Quantidade,
+                            Peso = +listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade,
+                            Cubagem = +listaItensDoPedido[i].Produto.CubagemProduto.Value * listaItensDoPedido[i].Quantidade,
                             Caixa = caixaFornecedor
                         });
                     }
@@ -1706,9 +1728,9 @@ namespace FWLog.Services.Services
                         listaVolumes.Add(new VolumeViewModel()
                         {
                             Caixa = nAuxCX,
-                            Peso =+ listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade,
+                            Peso = +listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade,
                             Cubagem = +listaItensDoPedido[i].Produto.CubagemProduto.Value * listaItensDoPedido[i].Quantidade
-                        }); 
+                        });
 
                         nAuxAgrup = listaItensDoPedido[i].Agrupador;
                         nAuxNrCx = listaItensDoPedido[i].CaixaEscolhida.IdCaixa;
