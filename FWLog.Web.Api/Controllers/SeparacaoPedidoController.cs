@@ -142,9 +142,10 @@ namespace FWLog.Web.Api.Controllers
             try
             {
                 var usuarioTemPermissaoF7 = await UserManager.ValidatePermissionByIdEmpresaAsync(IdUsuario, IdEmpresa, Permissions.RFSeparacao.FuncaoF7);
-                var usuarioTemPermissaoF8 = await UserManager.ValidatePermissionByIdEmpresaAsync(IdUsuario, IdEmpresa, Permissions.RFSeparacao.RFFuncaoF8ZerarPedido);
+                var usuarioValidaPermissaoF8 = await UserManager.FindByNameAsync(requisicao.CodigoUsuarioAutorizacaoZerarPedido);
+                var usuarioTemPermissaoF8 = await UserManager.ValidatePermissionByIdEmpresaAsync(usuarioValidaPermissaoF8?.Id, IdEmpresa, Permissions.RFSeparacao.RFFuncaoF8ZerarPedido);
 
-                var response = await _separacaoPedidoService.SalvarSeparacaoProduto(requisicao?.IdPedidoVenda ?? 0, requisicao?.IdProduto ?? 0, requisicao?.IdProdutoSeparacao, IdUsuario, IdEmpresa, requisicao?.QtdAjuste, usuarioTemPermissaoF7, requisicao?.IdUsuarioAutorizacaoZerarPedido, usuarioTemPermissaoF8);
+                var response = await _separacaoPedidoService.SalvarSeparacaoProduto(requisicao?.IdPedidoVenda ?? 0, requisicao?.IdProduto ?? 0, requisicao?.IdProdutoSeparacao, IdUsuario, IdEmpresa, requisicao?.QtdAjuste, usuarioTemPermissaoF7, usuarioValidaPermissaoF8?.Id, usuarioTemPermissaoF8);
 
                 return ApiOk(response);
             }

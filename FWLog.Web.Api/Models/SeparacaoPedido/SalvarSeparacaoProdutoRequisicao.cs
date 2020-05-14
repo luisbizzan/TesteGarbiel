@@ -14,6 +14,6 @@ namespace FWLog.Web.Api.Models.SeparacaoPedido
 
         public int? QtdAjuste { get; set; }
 
-        public string IdUsuarioAutorizacaoZerarPedido { get; set; }
+        public string CodigoUsuarioAutorizacaoZerarPedido { get; set; }
     }
 }
