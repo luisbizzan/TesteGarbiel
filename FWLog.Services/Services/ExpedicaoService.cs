@@ -128,9 +128,9 @@ namespace FWLog.Services.Services
                 throw new BusinessException($"Volume já instalado em: {pedidoVendaVolume.EnderecoTransportadora.Codigo}");
             }
 
-            var codigoTransportadora = referenciaPedido.Substring(referenciaPedido.Length - 6).Replace(numeroVolumeString, "");
+            var codigoTransportadora = referenciaPedido.Substring(referenciaPedido.Length - 5).Replace(numeroVolumeString, "");
 
-            if (pedidoVenda.Transportadora.CodigoTransportadora != codigoTransportadora)
+            if (pedidoVenda.Transportadora.IdTransportadora != Convert.ToInt32(codigoTransportadora))
             {
                 throw new BusinessException("Transportadora da referência está incorreta");
             }
@@ -470,9 +470,9 @@ namespace FWLog.Services.Services
                 throw new BusinessException($"O volume não foi instalado.");
             }
 
-            var codigoTransportadora = referenciaPedido.Substring(referenciaPedido.Length - 6).Replace(numeroVolumeString, "");
+            var codigoTransportadora = referenciaPedido.Substring(referenciaPedido.Length - 5).Replace(numeroVolumeString, "");
 
-            if (pedidoVenda.Transportadora.CodigoTransportadora != codigoTransportadora)
+            if (pedidoVenda.Transportadora.IdTransportadora != Convert.ToInt32(codigoTransportadora))
             {
                 throw new BusinessException("Este volume não pertence a esta transportadora.");
             }
@@ -769,7 +769,7 @@ namespace FWLog.Services.Services
 
             if (!usuarioEmpresa.IdPerfilImpressoraPadrao.HasValue)
             {
-                throw new BusinessException("O usário não possui impressora configurada nessa empresa.");
+                throw new BusinessException("O usuário não possui impressora configurada nessa empresa.");
             }
 
             var perfilImpressoras = _unitOfWork.PerfilImpressoraItemRepository.ObterPorIdPerfilImpressora(usuarioEmpresa.IdPerfilImpressoraPadrao.Value);
