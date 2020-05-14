@@ -2,7 +2,6 @@
 using FWLog.Data;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Expedicao;
-using System;
 using System.Threading.Tasks;
 using System.Web.Http;
 
