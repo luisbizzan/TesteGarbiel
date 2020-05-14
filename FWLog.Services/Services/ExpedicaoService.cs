@@ -65,11 +65,12 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume não foi encontrado.");
             }
 
-            // TODO: melhorar validação quando Sankhya criar os status de Nota e Guia:
-            // - verificar se a NF do pedido foi emitida, e confirmada. Status: “A” no Sankhya e as guias foram pagas, status “Y” no Sankhya
-            if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
-                throw new BusinessException("NF e Guias não estão emitidas/pagas.");
+                if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
+                {
+                    throw new BusinessException("NF não está emitida.");
+                }
             }
 
             using (var transaction = _unitOfWork.CreateTransactionScope())
@@ -487,9 +488,12 @@ namespace FWLog.Services.Services
                 throw new BusinessException($"O volume não foi instalado.");
             }
 
-            if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
-                throw new BusinessException("Este volume não tem uma nota fiscal faturada.");
+                if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
+                {
+                    throw new BusinessException("Este volume não tem uma nota fiscal faturada.");
+                }
             }
 
             if (pedidoVendaVolume.DataHoraInstalacaoDOCA != null && pedidoVendaVolume.DataHoraInstalacaoDOCA != default)
@@ -573,9 +577,12 @@ namespace FWLog.Services.Services
                         throw new BusinessException($"Volume { volume.EtiquetaVolume } não pode ser intalado na doca.");
                     }
 
-                    if (volume.PedidoVenda.Pedido.CodigoIntegracaoNotaFiscal == null)
+                    if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
                     {
-                        throw new BusinessException($"Volume { volume.EtiquetaVolume } não tem nota fiscal faturada.");
+                        if (volume.PedidoVenda.Pedido.CodigoIntegracaoNotaFiscal == null)
+                        {
+                            throw new BusinessException($"Volume { volume.EtiquetaVolume } não tem nota fiscal faturada.");
+                        }
                     }
 
                     if (volume.PedidoVenda.IdTransportadora != idTransportadora)
