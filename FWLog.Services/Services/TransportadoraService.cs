@@ -112,9 +112,18 @@ namespace FWLog.Services.Services
             }
         }
 
-        public ConsultaTransportadoraResposta ConsultarTransportadora(string codigoTransportadora)
+        public ConsultaTransportadoraResposta ConsultarTransportadora(string codigoOuIdTransportadora)
         {
-            var transportadora = _uow.TransportadoraRepository.ConsultarPorCodigoTransportadora(codigoTransportadora);
+            Transportadora transportadora;
+
+            if (long.TryParse(codigoOuIdTransportadora, out long idTransportadora))
+            {
+                transportadora = _uow.TransportadoraRepository.GetById(idTransportadora);
+            }
+            else
+            {
+                transportadora = _uow.TransportadoraRepository.ConsultarPorCodigoTransportadora(codigoOuIdTransportadora);
+            }
 
             if (transportadora != null)
             {

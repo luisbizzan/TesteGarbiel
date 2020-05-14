@@ -35,11 +35,11 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/transportadora/pesquisar/{codigoTransportadora}")]
+        [Route("api/v1/transportadora/pesquisar/{codigoOuIdTransportadora}")]
         [HttpGet]
-        public IHttpActionResult ConsultarTransportadora(string codigoTransportadora)
+        public IHttpActionResult ConsultarTransportadora(string codigoOuIdTransportadora)
         {
-            var transportadora = _transportadoraService.ConsultarTransportadora(codigoTransportadora);
+            var transportadora = _transportadoraService.ConsultarTransportadora(codigoOuIdTransportadora);
 
             if (transportadora == null)
             {
