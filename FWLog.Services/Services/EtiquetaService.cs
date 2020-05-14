@@ -800,6 +800,62 @@ namespace FWLog.Services.Services
             }
         }
 
+        public void ImprimirEtiquetaFilete(long idProduto, long idEnderecoArmazenagem, long idImpressora)
+        {
+            if (idProduto <= 0)
+            {
+                throw new BusinessException("Produto deve ser informado.");
+            }
+
+            if (idEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("Endereço deve ser informado.");
+            }
+
+            if (idImpressora <= 0)
+            {
+                throw new BusinessException("Impressora deve ser informada.");
+            }
+
+            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("Produto não encontrado.");
+            }
+
+            var endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (endereco == null)
+            {
+                throw new BusinessException("Endereço não encontrado.");
+            }
+
+            var referenciaProduto = produto.Referencia;
+            var codigoEndereco = endereco.Codigo ?? string.Empty;
+            var idEnderecoFormatado = endereco.IdEnderecoArmazenagem.ToString().PadLeft(7, '0');
+
+            var etiquetaZpl = new StringBuilder();
+
+            etiquetaZpl.AppendLine($"^XA");
+            etiquetaZpl.AppendLine($"^LL880");
+            etiquetaZpl.AppendLine($"^FO8,20^GB792,168,4^FS");
+            etiquetaZpl.AppendLine($"^FO05,20^GB400,70,70^FS");
+            etiquetaZpl.AppendLine($"^FO400,120^GB400,70,70^FS");
+
+            etiquetaZpl.AppendLine($"^FO50,24^A0N,80,50^FR^FD{referenciaProduto}^FS");
+
+            etiquetaZpl.AppendLine($"^FO450,124^A0N,80,70^FR^FD{codigoEndereco}^FS");
+
+            etiquetaZpl.AppendLine($"^FO440,35^BY2,,96^BCN,72,N,N^FD{idEnderecoFormatado}^FS");
+
+            etiquetaZpl.AppendLine($"^XZ");
+
+            var etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, idImpressora);
+        }
+
         private class CelulaEtiqueta
         {
             internal CelulaEtiqueta(int x, int y = 0)
