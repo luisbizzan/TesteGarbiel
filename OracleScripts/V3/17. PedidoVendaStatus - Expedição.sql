@@ -7,3 +7,4 @@ INSERT INTO DART."PedidoVendaStatus" ("IdPedidoVendaStatus","Descricao") VALUES 
 INSERT INTO DART."PedidoVendaStatus" ("IdPedidoVendaStatus","Descricao") VALUES (13,'Romaneio Impresso');
 
 SELECT * FROM "PedidoVendaStatus";
+COMMIT
