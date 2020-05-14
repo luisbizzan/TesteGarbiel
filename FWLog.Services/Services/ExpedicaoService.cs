@@ -402,19 +402,9 @@ namespace FWLog.Services.Services
             }
         }
 
-        public EnderecosPorTransportadoraResposta BuscaEnderecosPorTransportadora(string codigoTransportadora, long idEmpresa)
+        public EnderecosPorTransportadoraResposta BuscaEnderecosPorTransportadora(long idTransportadora, long idEmpresa)
         {
-            if (string.IsNullOrWhiteSpace(codigoTransportadora))
-            {
-                throw new BusinessException("O código da transportadora deve ser informado.");
-            }
-
-            var transportadora = _unitOfWork.TransportadoraRepository.ConsultarPorCodigoTransportadora(codigoTransportadora);
-
-            if (transportadora == null)
-            {
-                throw new BusinessException("A tranportadora informada não foi encontrada.");
-            }
+            var transportadora = ValidarERetornarTransportadora(idTransportadora);
 
             var volumesInstalados = _unitOfWork.PedidoVendaVolumeRepository.ObterVolumesInstaladosPorTranportadoraEmpresa(transportadora.IdTransportadora, idEmpresa);
 
@@ -436,7 +426,7 @@ namespace FWLog.Services.Services
 
         }
 
-        public PedidoVendaVolumeResposta ValidarVolumeDoca(string referenciaPedido, string idUsuario, long idEmpresa)
+        public PedidoVendaVolumeResposta ValidarVolumeDoca(string referenciaPedido, long idEmpresa)
         {
             BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
 
@@ -503,24 +493,9 @@ namespace FWLog.Services.Services
             return resposta;
         }
 
-        public DespachoTransportadoraResposta ValidarDespachoTransportadora(string codigoTransportadora, string idUsuario, long idEmpresa)
+        public DespachoTransportadoraResposta ValidarDespachoTransportadora(long idTransportadora, long idEmpresa)
         {
-            if (string.IsNullOrWhiteSpace(codigoTransportadora))
-            {
-                throw new BusinessException("O código da transportadora deve ser informado.");
-            }
-
-            var transportadora = _unitOfWork.TransportadoraRepository.ConsultarPorCodigoTransportadora(codigoTransportadora);
-
-            if (transportadora == null)
-            {
-                throw new BusinessException("A tranportadora informada não foi encontrada.");
-            }
-
-            if (!transportadora.Ativo)
-            {
-                throw new BusinessException("A tranportadora está inativa.");
-            }
+            var transportadora = ValidarERetornarTransportadora(idTransportadora);
 
             var existemPedidosParaDespacho = _unitOfWork.PedidoVendaRepository.ExistemPedidosParaDespachoNaTransportadora(transportadora.IdTransportadora, idEmpresa);
 
@@ -622,7 +597,7 @@ namespace FWLog.Services.Services
 
         public async Task FinalizarDespachoNF(long idTransportadora, string chaveAcesso, string idUsuario, long idEmpresa)
         {
-            ValidarTransportadora(idTransportadora);
+            ValidarERetornarTransportadora(idTransportadora);
 
             ValidarChaveAcessoNF(chaveAcesso);
 
@@ -722,7 +697,7 @@ namespace FWLog.Services.Services
 
         public void ValidarNotaFiscalRomaneio(long idTransportadora, string chaveAcesso)
         {
-            ValidarTransportadora(idTransportadora);
+            ValidarERetornarTransportadora(idTransportadora);
 
             ValidarChaveAcessoNF(chaveAcesso);
 
@@ -791,34 +766,14 @@ namespace FWLog.Services.Services
             }
         }
 
-        private void ValidarTransportadora(long idTransportadora)
+        private Transportadora ValidarERetornarTransportadora(long idTransportadora)
         {
             if (idTransportadora <= 0)
             {
-                throw new BusinessException("Favor informar a tranportadora.");
+                throw new BusinessException("Informar a tranportadora.");
             }
 
-            Transportadora transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
-
-            if (transportadora == null)
-            {
-                throw new BusinessException("Transportadora não encontrada.");
-            }
-
-            if (!transportadora.Ativo)
-            {
-                throw new BusinessException("Transportadora não está ativa.");
-            }
-        }
-
-        private Transportadora ValidarTransportadoraPorCodigo(string codigoTransportadora)
-        {
-            if (string.IsNullOrEmpty(codigoTransportadora))
-            {
-                throw new BusinessException("Favor informar o código da tranportadora.");
-            }
-
-            Transportadora transportadora = _unitOfWork.TransportadoraRepository.ConsultarPorCodigoTransportadora(codigoTransportadora);
+            var transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
 
             if (transportadora == null)
             {
@@ -889,9 +844,9 @@ namespace FWLog.Services.Services
             return impressora;
         }
 
-        public RomaneioTransportadoraResposta ValidarRomaneioTransportadora(string codigoTransportadora, long idEmpresa)
+        public RomaneioTransportadoraResposta ValidarRomaneioTransportadora(long idTrasnportadora, long idEmpresa)
         {
-            var transportadora = ValidarTransportadoraPorCodigo(codigoTransportadora);
+            var transportadora = ValidarERetornarTransportadora(idTrasnportadora);
 
             Empresa empresa = _unitOfWork.EmpresaRepository.GetById(idEmpresa);
 
@@ -952,7 +907,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Favor informar as chaves de acesso.");
             }
 
-            ValidarTransportadora(idTransportadora);
+            ValidarERetornarTransportadora(idTransportadora);
             // ações
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {

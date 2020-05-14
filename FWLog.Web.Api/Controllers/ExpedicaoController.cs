@@ -130,13 +130,13 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/expedicao/busca-enderecos-transportadora/{codigoTransportadora}")]
+        [Route("api/v1/expedicao/busca-enderecos-transportadora/{idTransportadora}")]
         [HttpGet]
-        public IHttpActionResult BuscaEnderecosPorTransportadora(string codigoTransportadora)
+        public IHttpActionResult BuscaEnderecosPorTransportadora(long idTransportadora)
         {
             try
             {
-                var dadosVolumesInstalados = _expedicaoService.BuscaEnderecosPorTransportadora(codigoTransportadora, IdEmpresa);
+                var dadosVolumesInstalados = _expedicaoService.BuscaEnderecosPorTransportadora(idTransportadora, IdEmpresa);
 
                 return ApiOk(dadosVolumesInstalados);
             }
@@ -157,7 +157,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                var resposta = _expedicaoService.ValidarVolumeDoca(referenciaPedido, IdUsuario, IdEmpresa);
+                var resposta = _expedicaoService.ValidarVolumeDoca(referenciaPedido, IdEmpresa);
                 return ApiOk(resposta);
             }
             catch (BusinessException businessException)
@@ -167,10 +167,10 @@ namespace FWLog.Web.Api.Controllers
 
         }
 
-        [Route("api/v1/expedicao/validar-despacho-transportadora/{codigoTransportadora}")]
+        [Route("api/v1/expedicao/validar-despacho-transportadora/{idTransportadora}")]
         [HttpGet]
         [AllowAnonymous]
-        public IHttpActionResult ValidarDespachoTransportadora(string codigoTransportadora)
+        public IHttpActionResult ValidarDespachoTransportadora(long idTransportadora)
         {
             if (!ModelState.IsValid)
             {
@@ -179,7 +179,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                var resposta = _expedicaoService.ValidarDespachoTransportadora(codigoTransportadora, IdUsuario, IdEmpresa);
+                var resposta = _expedicaoService.ValidarDespachoTransportadora(idTransportadora, IdEmpresa);
 
                 return ApiOk(resposta);
             }
@@ -297,9 +297,9 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/expedicao/romaneio/validar-transportadora/{codigoTransportadora}")]
+        [Route("api/v1/expedicao/romaneio/validar-transportadora/{idTransportadora}")]
         [HttpPost]
-        public IHttpActionResult ValidarRomaneioTransportadora(string codigoTransportadora)
+        public IHttpActionResult ValidarRomaneioTransportadora(long idTransportadora)
         {
             if (!ModelState.IsValid)
             {
@@ -308,7 +308,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                var resposta = _expedicaoService.ValidarRomaneioTransportadora(codigoTransportadora, IdEmpresa);
+                var resposta = _expedicaoService.ValidarRomaneioTransportadora(idTransportadora, IdEmpresa);
 
                 return ApiOk(resposta);
             }
