@@ -13,7 +13,7 @@ CREATE TABLE "PedidoVendaProduto"
 , "DataHoraFimSeparacao" DATE
 , "DataHoraInicioSeparacao" DATE
 , "IdUsuarioAutorizacaoZerar" NVARCHAR2(128)
-, "DataHoraAutorizacaoZerarPedido" DATE
+, "DataHoraAutorizacaoZerarPedido" NVARCHAR2(128)
 , "IdLote" NUMBER(19)
 , "IdUsuarioSeparacao" VARCHAR2(128)
 , CONSTRAINT "PedidoVendaProduto_PK" PRIMARY KEY 
