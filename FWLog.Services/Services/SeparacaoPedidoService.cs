@@ -761,6 +761,8 @@ namespace FWLog.Services.Services
                     listaItensDoPedido[index].EnderecoSeparacao = enderecoArmazenagemProduto;
                 }
 
+                int quantidadeVolume = 0; //Variável utilizada para saber o número e a quantidade de volumes do pedido.
+
                 /*
                  * No foreach abaixo, capturamos quais e a quantidade de caixas (volumes) que serão utilizados.
                  * Além disso, através do método Cubicagem, saberemos a caixa de cada produto. 
@@ -768,13 +770,11 @@ namespace FWLog.Services.Services
                  */
                 foreach (var itemCorredorArmazenagem in grupoCorredorArmazenagem)
                 {
-                    int quantidadeVolume = 0; //Variável utilizada para saber o número e a quantidade de volumes do pedido.
-
                     //Captura o corredor do item.
                     var listaItensDoPedidoPorCorredor = listaItensDoPedido.Where(x => x.GrupoCorredorArmazenagem.IdGrupoCorredorArmazenagem == itemCorredorArmazenagem.IdGrupoCorredorArmazenagem).ToList();
 
                     //Se não houver nenhum item para o corredor, vai para o próximo.
-                    if (listaItensDoPedidoPorCorredor == null)
+                    if (listaItensDoPedidoPorCorredor.Count == 0)
                         break;
 
                     //Captura os itens do pedido com as caixas em que cada um deve ir.
@@ -1021,7 +1021,7 @@ namespace FWLog.Services.Services
             }
 
             //Classifica a listaRankingCaixas por Quantidade
-            listaRankingCaixas = listaRankingCaixas.OrderBy(x => x.QuantidadeRanking).ToList();
+            listaRankingCaixas = listaRankingCaixas.OrderByDescending(x => x.QuantidadeRanking).ToList();
 
             return listaItensDoPedidoCubicados;
         }
@@ -1372,7 +1372,7 @@ namespace FWLog.Services.Services
 
             //Ordena a lista de caixas mais comum por quantidade.
             if (listaCaixasMaisComum.Count > 0)
-                listaCaixasMaisComum = listaCaixasMaisComum.OrderBy(x => x.QuantidadeRanking).ToList();
+                listaCaixasMaisComum = listaCaixasMaisComum.OrderByDescending(x => x.QuantidadeRanking).ToList();
 
             return listaCaixasMaisComum;
         }
