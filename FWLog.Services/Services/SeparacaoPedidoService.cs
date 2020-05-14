@@ -533,26 +533,26 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, long idProdutoSeparacao, string idUsuario, long idEmpresa, int? quantidadeAjuste, bool temPermissaoF7, string idUsuarioAutorizacaoZerarPedido, bool temPermissaoF8)
+        public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, long? idProdutoSeparacao, string idUsuario, long idEmpresa, int? quantidadeAjuste, bool temPermissaoF7, string idUsuarioAutorizacaoZerarPedido, bool temPermissaoF8)
         {
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedidoVendaEIdEmpresa(idPedidoVenda, idEmpresa);
 
             ValidarPedidoVendaEmSeparacao(pedidoVenda, idEmpresa);
 
-            ValidarProdutoPorPedidoVenda(idPedidoVenda, idProdutoSeparacao);
+            ValidarProdutoPorPedidoVenda(idPedidoVenda, idProdutoSeparacao ?? idProduto);
 
-            var pedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVendaEIdProduto(pedidoVenda.IdPedidoVenda, idProdutoSeparacao);
+            var pedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVendaEIdProduto(pedidoVenda.IdPedidoVenda, idProdutoSeparacao ?? idProduto);
 
             ValidarPedidoVendaVolumeConcluidoCancelado(pedidoVendaProduto.PedidoVendaVolume);
+
+            if (pedidoVendaProduto.IdPedidoVendaStatus != PedidoVendaStatusEnum.PendenteSeparacao && pedidoVendaProduto.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao && pedidoVendaProduto.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
+            {
+                throw new BusinessException("Produto com status inválido para separação.");
+            }
 
             var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, idEmpresa);
 
             ValidarLoteProdutoEndereco(loteProdutoEndereco);
-
-            if (idProduto != idProdutoSeparacao)
-            {
-                throw new BusinessException("O produto informado é inválido para separação.");
-            }
 
             var salvarSeparacaoProdutoResposta = new SalvarSeparacaoProdutoResposta
             {
@@ -570,32 +570,51 @@ namespace FWLog.Services.Services
 
             var multiploProduto = pedidoVendaProduto.Produto.MultiploVenda;
             var quantidadeJaSeparada = pedidoVendaProduto.QtdSeparada.GetValueOrDefault();
-            int quantidadeIncrementada;
+            int qtdSeparada = quantidadeJaSeparada, quantidadeIncrementada = 0;
 
-            if (quantidadeAjuste.HasValue)
+            var zerarPedido = !idUsuarioAutorizacaoZerarPedido.NullOrEmpty();
+
+            if (zerarPedido == false)
             {
-                if (quantidadeAjuste <= 0)
+                if (idProdutoSeparacao == null)
                 {
-                    throw new BusinessException("Quantidade ajuste deve ser informada.");
+                    throw new BusinessException("Produto deve ser informado.");
                 }
 
-                if (quantidadeAjuste < multiploProduto || (quantidadeAjuste.Value % pedidoVendaProduto.Produto.MultiploVenda) != 0)
+                if (idProduto != idProdutoSeparacao)
                 {
-                    throw new BusinessException("Quantidade ajuste está fora do múltiplo.");
+                    throw new BusinessException("Produto informado inválido para separação.");
                 }
 
-                quantidadeIncrementada = quantidadeAjuste.Value;
-            }
-            else
-            {
-                quantidadeIncrementada = (int)multiploProduto;
-            }
+                if (quantidadeAjuste.HasValue)
+                {
+                    if (quantidadeAjuste <= 0)
+                    {
+                        throw new BusinessException("Quantidade ajuste deve ser informada.");
+                    }
 
-            var qtdSeparada = quantidadeJaSeparada + quantidadeIncrementada;
+                    if (quantidadeAjuste < multiploProduto || (quantidadeAjuste.Value % pedidoVendaProduto.Produto.MultiploVenda) != 0)
+                    {
+                        throw new BusinessException("Quantidade ajuste está fora do múltiplo.");
+                    }
 
-            if (qtdSeparada > pedidoVendaProduto.QtdSeparar)
+                    quantidadeIncrementada = quantidadeAjuste.Value;
+                }
+                else
+                {
+                    quantidadeIncrementada = (int)multiploProduto;
+                }
+
+                qtdSeparada += quantidadeIncrementada;
+
+                if (qtdSeparada > pedidoVendaProduto.QtdSeparar)
+                {
+                    throw new BusinessException("A quantidade separada é maior que o pedido.");
+                }
+            }
+            else if (!temPermissaoF8)
             {
-                throw new BusinessException("A quantidade separada é maior que o pedido.");
+                throw new BusinessException("Usuário informado não tem permissão para zerar.");
             }
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
@@ -609,7 +628,7 @@ namespace FWLog.Services.Services
                     pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
                 }
 
-                if (qtdSeparada == pedidoVendaProduto.QtdSeparar)
+                if (qtdSeparada == pedidoVendaProduto.QtdSeparar || zerarPedido)
                 {
                     pedidoVendaProduto.DataHoraFimSeparacao = dataProcessamento;
                     pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
@@ -621,18 +640,40 @@ namespace FWLog.Services.Services
 
                 salvarSeparacaoProdutoResposta.VolumeSeparado = !pedidoVendaProduto.PedidoVendaVolume.PedidoVendaProdutos.Any(pvv => pvv.QtdSeparada != pvv.QtdSeparar);
 
+                if (zerarPedido)
+                {
+                    pedidoVendaProduto.IdUsuarioAutorizacaoZerar = idUsuarioAutorizacaoZerarPedido;
+                    pedidoVendaProduto.DataHoraAutorizacaoZerarPedido = dataProcessamento;
+                }
+
                 _unitOfWork.PedidoVendaProdutoRepository.Update(pedidoVendaProduto);
                 await _unitOfWork.SaveChangesAsync();
 
-                await AjustarQuantidadeVolume(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, quantidadeIncrementada * -1, idEmpresa, idUsuario);
+                if (zerarPedido == false)
+                {
+                    await AjustarQuantidadeVolume(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, quantidadeIncrementada * -1, idEmpresa, idUsuario);
 
-                if (quantidadeAjuste.HasValue)
+                    if (quantidadeAjuste.HasValue)
+                    {
+                        var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
+                        {
+                            IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
+                            IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.FinalizacaoSeparacao,
+                            Descricao = $"Ajustou manualmente a quantidade do produto {pedidoVendaProduto.Produto.Referencia} na separação do pedido venda {idPedidoVenda}, quantidade ajuste {quantidadeAjuste}, valor passou de {quantidadeJaSeparada} para {qtdSeparada}.",
+                            IdEmpresa = idEmpresa,
+                            IdUsuario = idUsuario
+                        };
+
+                        _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+                    }
+                }
+                else
                 {
                     var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                     {
                         IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
                         IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.FinalizacaoSeparacao,
-                        Descricao = $"Ajustou manualmente a quantidade do produto {pedidoVendaProduto.Produto.Referencia} na separação do pedido venda {idPedidoVenda}, quantidade ajuste {quantidadeAjuste}, valor passou de  {quantidadeJaSeparada} para {qtdSeparada}.",
+                        Descricao = $"Zerou manualmente o produto {pedidoVendaProduto.Produto.Referencia} na separação do pedido venda {idPedidoVenda}, quantidade permaneceu em {quantidadeJaSeparada}, usuário autorização {idUsuarioAutorizacaoZerarPedido}",
                         IdEmpresa = idEmpresa,
                         IdUsuario = idUsuario
                     };
