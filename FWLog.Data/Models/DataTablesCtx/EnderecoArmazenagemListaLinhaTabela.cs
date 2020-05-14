@@ -6,6 +6,7 @@
         public string NivelArmazenagem { get; set; }
         public string PontoArmazenagem { get; set; }
         public string Codigo { get; set; }
+        public int? Corredor { get; set; }
         public string Fifo { get; set; }
         public string PontoSeparacao { get; set; }
         public string Picking { get; set; }

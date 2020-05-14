@@ -71,6 +71,7 @@
             { data: 'NivelArmazenagem' },
             { data: 'PontoArmazenagem' },
             { data: 'Codigo', render: iconeStatus },
+            { data: 'Corredor' },
             { data: 'Fifo' },
             { data: 'PontoSeparacao' },
             { data: 'Picking' },

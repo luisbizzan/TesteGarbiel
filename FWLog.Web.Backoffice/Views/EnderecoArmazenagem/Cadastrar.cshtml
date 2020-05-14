@@ -80,6 +80,13 @@
                 @Html.ValidationMessageFor(m => m.IsPontoSeparacao)
             </div>
             <div class="form-group col-sm-2 col-xs-12">
+                @Html.LabelFor(m => m.IsPicking, new { @class = "control-label" })
+                <div class="checkbox">
+                    @Html.CheckBoxFor(m => m.IsPicking, new { @class = "flat" })
+                </div>
+                @Html.ValidationMessageFor(m => m.IsPicking)
+            </div>
+            <div class="form-group col-sm-2 col-xs-12">
                 @Html.LabelFor(m => m.IsEntrada, new { @class = "control-label" })
                 <div class="checkbox">
                     @Html.CheckBoxFor(m => m.IsEntrada, new { @class = "flat" })

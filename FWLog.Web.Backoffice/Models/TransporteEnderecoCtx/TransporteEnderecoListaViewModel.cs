@@ -17,7 +17,7 @@ namespace FWLog.Web.Backoffice.Models.TransporteEnderecoCtx
 
     public class TransporteEnderecoListaItemViewModel
     {
-        [Display(Name = "")]
+        [Display(Name = "Transportadora")]
         public string DadosTransportadora { get; set; }
         [Display(Name = "Endereço")]
         public string Codigo { get; set; }

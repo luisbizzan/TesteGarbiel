@@ -46,6 +46,8 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         public string PontoArmazenagem { get; set; }
         [Display(Name = "Código")]
         public string Codigo { get; set; }
+        [Display(Name = "Corredor")]
+        public string Corredor { get; set; }
         [Display(Name = "FIFO")]
         public string Fifo { get; set; }
         [Display(Name = "Ponto Separação")]
