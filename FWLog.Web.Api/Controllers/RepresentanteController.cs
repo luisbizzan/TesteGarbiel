@@ -22,5 +22,14 @@ namespace FWLog.Web.Api.Controllers
 
             return ApiOk();
         }
+
+        [Route("api/v1/Representante/limpar-integracao")]
+        [HttpPost]
+        public async Task<IHttpActionResult> LimparIntegracao()
+        {
+            await _representanteService.LimparIntegracao();
+
+            return ApiOk();
+        }
     }
 }
