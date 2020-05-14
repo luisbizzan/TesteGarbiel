@@ -29,6 +29,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [AllowAnonymous]
         [Route("api/v1/produto/limpar-integracao")]
         [HttpPost]
         public async Task<IHttpActionResult> LimparIntegracao()
