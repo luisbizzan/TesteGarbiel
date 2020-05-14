@@ -84,7 +84,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public PedidoVendaVolumeResposta BuscaPedidoVendaVolume(string referenciaPedido, long idEmpresa)
+        private void BuscaEValidaDadosPorReferenciaPedido(string referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume)
         {
             if (referenciaPedido.NullOrEmpty())
             {
@@ -98,17 +98,29 @@ namespace FWLog.Services.Services
 
             var numeroPedidoString = referenciaPedido.Substring(0, referenciaPedido.Length - 6);
 
-            if (!int.TryParse(numeroPedidoString, out int numeroPedido))
+            if (!int.TryParse(numeroPedidoString, out numeroPedido))
+            {
+                throw new BusinessException("Código de Barras de pedido inválido.");
+            }
+
+            var idTransportadoraString = referenciaPedido.Substring(referenciaPedido.Length - 6, 3);
+
+            if (!long.TryParse(idTransportadoraString, out idTransportadora))
             {
                 throw new BusinessException("Código de Barras de pedido inválido.");
             }
 
             var numeroVolumeString = referenciaPedido.Substring(referenciaPedido.Length - 3);
 
-            if (!int.TryParse(numeroVolumeString, out int numeroVolume))
+            if (!int.TryParse(numeroVolumeString, out numeroVolume))
             {
                 throw new BusinessException("Código de Barras de pedido inválido.");
             }
+        }
+
+        public PedidoVendaVolumeResposta BuscaPedidoVendaVolume(string referenciaPedido, long idEmpresa)
+        {
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
@@ -129,9 +141,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException($"Volume já instalado em: {pedidoVendaVolume.EnderecoTransportadora.Codigo}");
             }
 
-            var codigoTransportadora = referenciaPedido.Substring(referenciaPedido.Length - 5).Replace(numeroVolumeString, "");
-
-            if (pedidoVenda.Transportadora.IdTransportadora != Convert.ToInt32(codigoTransportadora))
+            if (pedidoVenda.Transportadora.IdTransportadora != Convert.ToInt32(idTransportadora))
             {
                 throw new BusinessException("Transportadora da referência está incorreta");
             }
@@ -428,29 +438,7 @@ namespace FWLog.Services.Services
 
         public PedidoVendaVolumeResposta ValidarVolumeDoca(string referenciaPedido, string idUsuario, long idEmpresa)
         {
-            if (referenciaPedido.NullOrEmpty())
-            {
-                throw new BusinessException("Código de barras do pedido deve ser infomado.");
-            }
-
-            if (referenciaPedido.Length < 7)
-            {
-                throw new BusinessException("Código de Barras de pedido inválido.");
-            }
-
-            var numeroPedidoString = referenciaPedido.Substring(0, referenciaPedido.Length - 6);
-
-            if (!int.TryParse(numeroPedidoString, out int numeroPedido))
-            {
-                throw new BusinessException("Código de Barras de pedido inválido.");
-            }
-
-            var numeroVolumeString = referenciaPedido.Substring(referenciaPedido.Length - 3);
-
-            if (!int.TryParse(numeroVolumeString, out int numeroVolume))
-            {
-                throw new BusinessException("Código de Barras de pedido inválido.");
-            }
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
@@ -471,9 +459,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException($"O volume não foi instalado.");
             }
 
-            var codigoTransportadora = referenciaPedido.Substring(referenciaPedido.Length - 5).Replace(numeroVolumeString, "");
-
-            if (pedidoVenda.Transportadora.IdTransportadora != Convert.ToInt32(codigoTransportadora))
+            if (pedidoVenda.Transportadora.IdTransportadora != idTransportadora)
             {
                 throw new BusinessException("Este volume não pertence a esta transportadora.");
             }

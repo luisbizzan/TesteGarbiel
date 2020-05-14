@@ -32,7 +32,7 @@ namespace FWLog.Services.Services
         private EtiquetaService _etiquetaService;
         private CaixaService _caixaService;
 
-        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService, ILog log, PedidoService pedidoService, PedidoVendaService pedidoVendaService, 
+        public SeparacaoPedidoService(UnitOfWork unitOfWork, ColetorHistoricoService coletorHistoricoService, ILog log, PedidoService pedidoService, PedidoVendaService pedidoVendaService,
             PedidoVendaProdutoService pedidoVendaProdutoService, PedidoVendaVolumeService pedidoVendaVolumeService, EtiquetaService etiquetaService, CaixaService caixaService)
         {
             _unitOfWork = unitOfWork;
@@ -53,31 +53,43 @@ namespace FWLog.Services.Services
             throw new NotImplementedException();
         }
 
-        public BuscarPedidoVendaResposta BuscarPedidoVenda(string codigoBarrasPedido, long idEmpresa)
+        private void BuscaEValidaDadosPorReferenciaPedido(string referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume)
         {
-            if (codigoBarrasPedido.NullOrEmpty())
+            if (referenciaPedido.NullOrEmpty())
             {
                 throw new BusinessException("Código de barras do pedido deve ser infomado.");
             }
 
-            if (codigoBarrasPedido.Length < 7)
+            if (referenciaPedido.Length < 7)
             {
                 throw new BusinessException("Código de Barras de pedido inválido.");
             }
 
-            var numeroPedidoString = codigoBarrasPedido.Substring(0, codigoBarrasPedido.Length - 6);
+            var numeroPedidoString = referenciaPedido.Substring(0, referenciaPedido.Length - 6);
 
-            if (!int.TryParse(numeroPedidoString, out int numeroPedido))
+            if (!int.TryParse(numeroPedidoString, out numeroPedido))
             {
                 throw new BusinessException("Código de Barras de pedido inválido.");
             }
 
-            var numeroVolumeString = codigoBarrasPedido.Substring(codigoBarrasPedido.Length - 3);
+            var idTransportadoraString = referenciaPedido.Substring(referenciaPedido.Length - 6, 3);
 
-            if (!int.TryParse(numeroVolumeString, out int numeroVolume))
+            if (!long.TryParse(idTransportadoraString, out idTransportadora))
             {
                 throw new BusinessException("Código de Barras de pedido inválido.");
             }
+
+            var numeroVolumeString = referenciaPedido.Substring(referenciaPedido.Length - 3);
+
+            if (!int.TryParse(numeroVolumeString, out numeroVolume))
+            {
+                throw new BusinessException("Código de Barras de pedido inválido.");
+            }
+        }
+
+        public BuscarPedidoVendaResposta BuscarPedidoVenda(string referenciaPedido, long idEmpresa)
+        {
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
@@ -825,7 +837,7 @@ namespace FWLog.Services.Services
         public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagem grupoCorredorArmazenagem, Pedido pedido, long idPedidoVendaVolume, int corredorInicioSeparacao)
         {
             var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
-            
+
             _etiquetaService.ImprimirEtiquetaVolumeSeparacao(new ImprimirEtiquetaVolumeSeparacaoRequest()
             {
                 ClienteNome = pedido.Cliente.NomeFantasia,
@@ -873,7 +885,7 @@ namespace FWLog.Services.Services
 
                     return grupoArmazenagem;
                 }
-                    
+
             }
 
             return grupoArmazenagem;
@@ -1691,8 +1703,8 @@ namespace FWLog.Services.Services
                         listaVolumes.Add(new VolumeViewModel()
                         {
                             IsCaixaFornecedor = true,
-                            Peso =+ listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade,
-                            Cubagem =+ listaItensDoPedido[i].Produto.CubagemProduto.Value * listaItensDoPedido[i].Quantidade,
+                            Peso = +listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade,
+                            Cubagem = +listaItensDoPedido[i].Produto.CubagemProduto.Value * listaItensDoPedido[i].Quantidade,
                             Caixa = caixaFornecedor
                         });
                     }
@@ -1706,9 +1718,9 @@ namespace FWLog.Services.Services
                         listaVolumes.Add(new VolumeViewModel()
                         {
                             Caixa = nAuxCX,
-                            Peso =+ listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade,
+                            Peso = +listaItensDoPedido[i].Produto.PesoBruto * listaItensDoPedido[i].Quantidade,
                             Cubagem = +listaItensDoPedido[i].Produto.CubagemProduto.Value * listaItensDoPedido[i].Quantidade
-                        }); 
+                        });
 
                         nAuxAgrup = listaItensDoPedido[i].Agrupador;
                         nAuxNrCx = listaItensDoPedido[i].CaixaEscolhida.IdCaixa;
