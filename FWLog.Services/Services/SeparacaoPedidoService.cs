@@ -133,6 +133,11 @@ namespace FWLog.Services.Services
             model.IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume;
             model.NroVolume = pedidoVendaVolume.NroVolume;
 
+            var statusRetorno = new List<PedidoVendaStatusEnum>()
+            {
+                PedidoVendaStatusEnum.EnviadoSeparacao, PedidoVendaStatusEnum.ProcessandoSeparacao
+            };
+
             var consultaProdutos = (from pedidoVendaProduto in pedidoVendaVolume.PedidoVendaProdutos
                                     let enderecoArmazenagem = pedidoVendaProduto.EnderecoArmazenagem
                                     from grupoCorredorArmazenagem in _unitOfWork.GrupoCorredorArmazenagemRepository.Todos().Where(gca =>
@@ -141,6 +146,7 @@ namespace FWLog.Services.Services
                                                    enderecoArmazenagem.Corredor <= gca.CorredorFinal)
                                     where
                                         pedidoVendaProduto.QtdSeparada.GetValueOrDefault() < pedidoVendaProduto.QtdSeparar &&
+                                        statusRetorno.Contains(pedidoVendaProduto.IdPedidoVendaStatus) &&
                                         (temPermissaoF7 == true || rangeDeCorredoresDoUsuario.Contains(pedidoVendaProduto.EnderecoArmazenagem.Corredor))
                                     select new
                                     {
