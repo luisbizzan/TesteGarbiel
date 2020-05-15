@@ -635,7 +635,7 @@ namespace FWLog.Services.Services
 
                 if (produto == null)
                 {
-                    throw new BusinessException("O endereço/produto não encontrado.");
+                    throw new BusinessException("Endereço/produto não encontrado.");
                 }
 
                 produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto, requisicao.IdEmpresa);
@@ -657,7 +657,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Endereço não encontrado.");
             }
 
-            if (!enderecoArmazenagem.IsPontoSeparacao && !enderecoArmazenagem.IsPicking)
+            if (!enderecoArmazenagem.IsPontoSeparacao || !enderecoArmazenagem.IsPicking)
             {
                 throw new BusinessException("Endereço não é Picking.");
             }
