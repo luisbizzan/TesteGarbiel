@@ -1084,6 +1084,38 @@ namespace FWLog.Services.Services
             });
         }
 
+        public long ValidarRemoverDocaTransportadora(string idOuCodtransportadora, long idEmpresa)
+        {
+            Transportadora transportadora;
+            if (long.TryParse(idOuCodtransportadora, out long idTransportadora))
+            {
+                transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
+            }
+            else
+            {
+                transportadora = _unitOfWork.TransportadoraRepository.ConsultarPorCodigoTransportadora(idOuCodtransportadora);
+            }
+
+            if (transportadora == null)
+            {
+                throw new BusinessException("Transportadora não encontrada.");
+            }
+
+            if (!transportadora.Ativo)
+            {
+                throw new BusinessException("Transportadora não está ativa.");
+            }
+
+            var temPedidoVendaMovidoDoca = _unitOfWork.PedidoVendaRepository.TemPedidoVendaMovidoDoca(transportadora.IdTransportadora, idEmpresa);
+
+            if (!temPedidoVendaMovidoDoca)
+            {
+                throw new BusinessException("Não há volumes na DOCA.");
+            }
+
+            return transportadora.IdTransportadora;
+        }
+
         public void RemovendoVolumeDoca(long idPedidoVendaVolume, long idTransportadora, string idUsuario, long idEmpresa)
         {
             var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPedidoVendaVolumePorIdPorEmpresa(idPedidoVendaVolume, idEmpresa);

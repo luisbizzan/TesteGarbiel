@@ -382,6 +382,27 @@ namespace FWLog.Web.Api.Controllers
             }
         }
 
+        [Route("api/v1/expedicao/doca/validar-transportadora/{codigoTransportadora}")]
+        [HttpPost]
+        public IHttpActionResult ValidarRemoverDocaTransportadora(string idOuCodtransportadora)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                var resposta = _expedicaoService.ValidarRemoverDocaTransportadora(idOuCodtransportadora, IdEmpresa);
+
+                return ApiOk(resposta);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+        }
+
         [Route("api/v1/expedicao/doca/removendo-volume-doca")]
         [HttpPost]
         public IHttpActionResult RemovendoVolumeDoca(RemovendoVolumeDocaRequisicao requisicao)
