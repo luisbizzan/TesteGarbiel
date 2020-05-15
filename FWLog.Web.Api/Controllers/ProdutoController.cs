@@ -39,6 +39,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [AllowAnonymous]
         [Route("api/v1/produto-prazo-entrega/limpar-integracao")]
         [HttpPost]
         public async Task<IHttpActionResult> LimparIntegracaoPrazoEntrega()
@@ -48,6 +49,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [AllowAnonymous]
         [Route("api/v1/produto-prazo-entrega/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarProdutoPrazoEntrega()
@@ -57,6 +59,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [AllowAnonymous]
         [Route("api/v1/produto-media-venda/limpar-integracao")]
         [HttpPost]
         public async Task<IHttpActionResult> LimparIntegracaoMediaVenda()
@@ -66,6 +69,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [AllowAnonymous]
         [Route("api/v1/produto-media-venda/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarMeviaVenda()
@@ -75,6 +79,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [AllowAnonymous]
         [Route("api/v1/produto-quantidade-reservada/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarQuantidadeReservada(ProdutoReservadoModelRequest request)
@@ -145,6 +150,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk(produtoResposta);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("api/v1/produto/estoque/{id}")]
         public async Task<IHttpActionResult> ConsultarProdutoEstoque(long id)
