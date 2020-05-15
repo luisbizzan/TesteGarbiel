@@ -27,5 +27,10 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return query.ToList();
         }
+
+        public PedidoVendaVolume ObterPedidoVendaVolumePorIdPorEmpresa(long idPedidoVolume, long idEmpresa)
+        {
+            return Entities.PedidoVendaVolume.FirstOrDefault(pvv => pvv.IdPedidoVendaVolume == idPedidoVolume && pvv.PedidoVenda.IdEmpresa == idEmpresa);
+        }
     }
 }

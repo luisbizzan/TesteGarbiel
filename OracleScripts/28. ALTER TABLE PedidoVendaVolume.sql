@@ -1,1 +1,1 @@
-ALTER TABLE DART."PedidoVendaVolume" ADD "DataHoraRemocaoVolume" DATE NULL;
+ALTER TABLE DART."PedidoVendaVolume" ADD "DataHoraRemocaoVolume" TIMESTAMP(6) NULL;
