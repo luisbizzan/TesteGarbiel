@@ -1013,7 +1013,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
         }
 
-        public void CriarConferencia(GarConferencia item)
+        public void CriarConferenciaEntrada(GarConferencia item)
         {
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
             {

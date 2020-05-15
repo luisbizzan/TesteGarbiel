@@ -180,7 +180,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 if (retorno.Id != 0)
                 {
                     //CRIAR A CONFERENCIA DE ENTRADA
-                    _uow.GarantiaRepository.CriarConferencia(new GarConferencia
+                    _uow.GarantiaRepository.CriarConferenciaEntrada(new GarConferencia
                     {
                         Id_Solicitacao = retorno.Id,
                         Id_Usr = IdUsuario,
@@ -400,7 +400,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult Teste(long Id)
         {
             //GRAVA O HISTORICO
-            _uow.GarantiaRepository.CriarConferencia(new GarConferencia
+            _uow.GarantiaRepository.CriarConferenciaEntrada(new GarConferencia
             {
                 Id_Solicitacao = Id,
                 Id_Usr = IdUsuario,

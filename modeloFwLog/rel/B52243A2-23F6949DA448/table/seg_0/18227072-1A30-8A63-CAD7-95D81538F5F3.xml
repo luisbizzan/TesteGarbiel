@@ -60,18 +60,6 @@
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
-<Column name="ID_ITEM_NF" id="D8C2A5AA-BE1F-E0A9-3993-5E3A91163E99">
-<createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-15 12:09:01 UTC</createdTime>
-<ownerDesignName>modeloFwLog</ownerDesignName>
-<importedID>4CD5F9AF-4578-54FB-59DB-59427E91F412</importedID>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT026</logicalDatatype>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
 </columns>
 <indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
 <ind_PK_UK id="EC90BED6-4AE9-B58A-8E37-D3082F4864D9" name="GER_REMESSA_CONTROLE_PK">

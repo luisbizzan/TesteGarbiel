@@ -34,6 +34,16 @@
 <colAssociation fkAssociation="65EA3362-B2FE-FBDB-1C2F-CF51AAFCB50D" referredColumn="2255841F-88AE-F865-E600-A33039E46EAF"/>
 </associations>
 </Column>
+<Column name="ID_SOLICITACAO" id="94EF5E03-6AEF-5C6E-D28F-5A8C9E168B51">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 14:46:34 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
 <Column name="DT_CONF" id="7A1CDDCC-2954-7AB7-ADA7-1FF5F3748D21">
 <createdBy>henrique.pereira</createdBy>
 <createdTime>2020-05-15 12:09:01 UTC</createdTime>

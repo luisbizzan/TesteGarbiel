@@ -34,6 +34,16 @@
 <colAssociation fkAssociation="F0461A5D-BCB8-51AA-56AD-FAAC1A98138A" referredColumn="2255841F-88AE-F865-E600-A33039E46EAF"/>
 </associations>
 </Column>
+<Column name="ID_SOLICITACAO" id="8620C129-FE7E-F420-FE11-E8B121AA67F1">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 14:23:14 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
 <Column name="QUANT" id="1E029031-EC51-21FF-11B7-28BD4D7A51EF">
 <createdBy>henrique.pereira</createdBy>
 <createdTime>2020-05-15 12:09:01 UTC</createdTime>
@@ -55,18 +65,6 @@
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT007</logicalDatatype>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
-<Column name="ID_ITEM_NF" id="B118939D-E426-4860-80E8-B04070C49E53">
-<createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-15 12:09:01 UTC</createdTime>
-<ownerDesignName>modeloFwLog</ownerDesignName>
-<importedID>6A575F49-5968-68C8-ADD5-8534789BFD55</importedID>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT026</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
