@@ -384,7 +384,7 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/expedicao/doca/validar-transportadora/{codigoTransportadora}")]
         [HttpPost]
-        public IHttpActionResult ValidarRemoverDocaTransportadora(string codigoTransportadora)
+        public IHttpActionResult ValidarRemoverDocaTransportadora(string idOuCodtransportadora)
         {
             if (!ModelState.IsValid)
             {
@@ -393,7 +393,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                var resposta = _expedicaoService.ValidarRemoverDocaTransportadora(codigoTransportadora, IdEmpresa);
+                var resposta = _expedicaoService.ValidarRemoverDocaTransportadora(idOuCodtransportadora, IdEmpresa);
 
                 return ApiOk(resposta);
             }
