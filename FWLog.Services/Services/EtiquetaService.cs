@@ -657,7 +657,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Endereço não encontrado.");
             }
 
-            if (!enderecoArmazenagem.IsPicking)
+            if (!enderecoArmazenagem.IsPontoSeparacao && !enderecoArmazenagem.IsPicking)
             {
                 throw new BusinessException("Endereço não é Picking.");
             }
