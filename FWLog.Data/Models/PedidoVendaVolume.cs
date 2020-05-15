@@ -87,6 +87,8 @@ namespace FWLog.Data.Models
 
         public DateTime? DataHoraInstalacaoDOCA { get; set; }
 
+        public DateTime? DataHoraRemocaoVolume { get; set; }
+
         [ForeignKey(nameof(IdPedidoVenda))]
         public virtual PedidoVenda PedidoVenda { get; set; }
 
