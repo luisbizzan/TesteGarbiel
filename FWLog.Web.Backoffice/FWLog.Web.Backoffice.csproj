@@ -391,6 +391,7 @@
     <Compile Include="Models\ProdutoCtx\ProdutoListaViewModel.cs" />
     <Compile Include="Models\ProdutoCtx\ProdutoSearchModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\RecebimentoEtiquetaViewModel.cs" />
+    <Compile Include="Models\ProdutoCtx\TipoImpressaoEtiqueta.cs" />
     <Compile Include="Models\RecebimentoEtiquetaIndividualPersonalizadaCtx\RecebimentoEtiquetaIndividualListViewModel.cs" />
     <Compile Include="Models\TransportadoraCtx\TransportadoraSearchModalViewModel.cs" />
     <Compile Include="Models\TransporteEnderecoCtx\TransportadoraEnderecoCadastroViewModel.cs" />

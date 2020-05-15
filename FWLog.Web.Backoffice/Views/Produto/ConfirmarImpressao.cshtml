@@ -14,7 +14,13 @@
             <div class="modal-body" style="overflow: auto; max-height: calc(90vh - 40px);">
                 <div class="row">
                     <div class="col-sm-12 col-lg-12">
-                        <span>Deseja imprimir a etiqueta do endereço <b>@Model.Codigo</b> com a referência <b>@Model.Referencia</b> (@Model.DescricaoProduto)?</span>
+                        <span>Selecione o tipo de impressão para a etiqueta do endereço <b>@Model.Codigo</b> com a referência <b>@Model.Referencia</b> (@Model.DescricaoProduto):</span>
+                    </div>
+
+                    <div class="col-sm-12 col-lg-12">
+                        <label>@Html.RadioButtonFor(model => model.TipoImpressaoEtiqueta, FWLog.Web.Backoffice.Models.ProdutoCtx.TipoImpressaoEtiqueta.PICKING) Normal (90x70)</label>
+                        <br />
+                        <label>@Html.RadioButtonFor(model => model.TipoImpressaoEtiqueta, FWLog.Web.Backoffice.Models.ProdutoCtx.TipoImpressaoEtiqueta.FILETE) Filete (104x24)</label>
                     </div>
 
                     @Html.Hidden("IdEnderecoArmazenagem", Model.IdEnderecoArmazenagem)

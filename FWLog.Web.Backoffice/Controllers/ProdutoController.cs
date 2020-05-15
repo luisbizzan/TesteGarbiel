@@ -9,7 +9,6 @@ using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
-using FWLog.Web.Backoffice.Models.BOQuarentenaCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.ProdutoCtx;
 using log4net;
@@ -324,15 +323,22 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 ValidateModel(viewModel);
 
-                var request = new ImprimirEtiquetaPickingRequest
+                if (viewModel.TipoImpressaoEtiqueta == TipoImpressaoEtiqueta.PICKING)
                 {
-                    IdEnderecoArmazenagem = viewModel.IdEnderecoArmazenagem,
-                    IdProduto = viewModel.IdProduto,
-                    QuantidadeEtiquetas = 1,
-                    IdImpressora = viewModel.IdImpressora
-                };
+                    var request = new ImprimirEtiquetaPickingRequest
+                    {
+                        IdEnderecoArmazenagem = viewModel.IdEnderecoArmazenagem,
+                        IdProduto = viewModel.IdProduto,
+                        QuantidadeEtiquetas = 1,
+                        IdImpressora = viewModel.IdImpressora
+                    };
 
-                _etiquetaService.ImprimirEtiquetaPicking(request);
+                    _etiquetaService.ImprimirEtiquetaPicking(request);
+                }
+                else
+                {
+                    _etiquetaService.ImprimirEtiquetaFilete(viewModel.IdProduto, viewModel.IdEnderecoArmazenagem, viewModel.IdImpressora);
+                }
 
                 return Json(new AjaxGenericResultModel
                 {
@@ -340,15 +346,22 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Impressão enviada com sucesso."
                 }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                _log.Error(ex.Message, ex);
-
-                return Json(new AjaxGenericResultModel
+                if (exception is BusinessException)
                 {
-                    Success = false,
-                    Message = "Ocorreu um erro na impressão."
-                }, JsonRequestBehavior.AllowGet);
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = exception.Message
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    _log.Error(exception.Message, exception);
+
+                    throw;
+                }
             }
         }
     }

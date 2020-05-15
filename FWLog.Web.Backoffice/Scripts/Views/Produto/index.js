@@ -223,6 +223,9 @@ function imprimir(acao, id, id2) {
             break;
         case 'etiquetaPicking':
             var idImpressora = $("#IdImpressora").val();
+            var tipoImpressaoEtiqueta = $("#TipoImpressaoEtiqueta").val();
+
+            alert(tipoImpressaoEtiqueta);
 
             $.ajax({
                 url: HOST_URL + CONTROLLER_PATH + "ImprimirEtiqueta",
@@ -231,7 +234,8 @@ function imprimir(acao, id, id2) {
                 data: {
                     IdImpressora: idImpressora,
                     IdEnderecoArmazenagem: id,
-                    IdProduto: id2
+                    IdProduto: id2,
+                    TipoImpressaoEtiqueta: tipoImpressaoEtiqueta
                 },
                 success: function (result) {
                     if (result.Success) {
@@ -280,12 +284,9 @@ function selecionarEnderecoArmazenagem(IdEnderecoArmazenagem, codigo) {
     $("#modalPesquisaEnderecoArmazenagem").empty();
 }
 
-
-
 function fechaModal() {
     var $modal = $("#modalImpressoras");
 
     $modal.modal("hide");
     $modal.empty();
 }
-
