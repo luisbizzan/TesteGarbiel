@@ -182,7 +182,7 @@ function detalhesEntradaConferencia() {
     });
 }
 
-function imprimir(acao, id, id2) {
+function imprimir(acao, id, id2, id3) {
     switch (acao) {
         case 'produtos':
             $.ajax({
@@ -223,9 +223,7 @@ function imprimir(acao, id, id2) {
             break;
         case 'etiquetaPicking':
             var idImpressora = $("#IdImpressora").val();
-            var tipoImpressaoEtiqueta = $("#TipoImpressaoEtiqueta").val();
 
-            alert(tipoImpressaoEtiqueta);
 
             $.ajax({
                 url: HOST_URL + CONTROLLER_PATH + "ImprimirEtiqueta",
@@ -235,7 +233,7 @@ function imprimir(acao, id, id2) {
                     IdImpressora: idImpressora,
                     IdEnderecoArmazenagem: id,
                     IdProduto: id2,
-                    TipoImpressaoEtiqueta: tipoImpressaoEtiqueta
+                    TipoImpressaoEtiqueta: id3
                 },
                 success: function (result) {
                     if (result.Success) {

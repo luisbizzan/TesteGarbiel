@@ -1,4 +1,6 @@
 ﻿@model FWLog.Web.Backoffice.Models.ProdutoCtx.ProdutoConfirmaImpressaoViewModel
+@using FWLog.Web.Backoffice.Models.ProdutoCtx;
+
 @{
     Layout = null;
 
@@ -18,9 +20,13 @@
                     </div>
 
                     <div class="col-sm-12 col-lg-12">
-                        <label>@Html.RadioButtonFor(model => model.TipoImpressaoEtiqueta, FWLog.Web.Backoffice.Models.ProdutoCtx.TipoImpressaoEtiqueta.PICKING) Normal (90x70)</label>
+                        <label>
+                            @Html.RadioButtonFor(model => model.TipoImpressaoEtiqueta, TipoImpressaoEtiqueta.PICKING, new { Checked = "checked" }) Normal (90x70)
+                        </label>
                         <br />
-                        <label>@Html.RadioButtonFor(model => model.TipoImpressaoEtiqueta, FWLog.Web.Backoffice.Models.ProdutoCtx.TipoImpressaoEtiqueta.FILETE) Filete (104x24)</label>
+                        <label>
+                            @Html.RadioButtonFor(model => model.TipoImpressaoEtiqueta, TipoImpressaoEtiqueta.FILETE) Filete (104x24)
+                        </label>
                     </div>
 
                     @Html.Hidden("IdEnderecoArmazenagem", Model.IdEnderecoArmazenagem)

@@ -13,7 +13,7 @@
             $modal.modal("hide");
             $modal.empty();
 
-            $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=11&acao=etiquetaPicking&id=" + idEnderecoArmazenagem + "&id2=" + idProduto, function () {
+            $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=11&acao=etiquetaPicking&id=" + idEnderecoArmazenagem + "&id2=" + idProduto + "&id3=" + tipoImpressao, function () {
                 $("#modalImpressoras").modal();
             });
         }
