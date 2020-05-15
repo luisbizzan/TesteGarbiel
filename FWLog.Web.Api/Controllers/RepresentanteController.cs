@@ -14,6 +14,7 @@ namespace FWLog.Web.Api.Controllers
             _representanteService = representanteService;
         }
 
+        [AllowAnonymous]
         [Route("api/v1/Representante/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarRepresentante()
@@ -23,6 +24,7 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [AllowAnonymous]
         [Route("api/v1/Representante/limpar-integracao")]
         [HttpPost]
         public async Task<IHttpActionResult> LimparIntegracao()
