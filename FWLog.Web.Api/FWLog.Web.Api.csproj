@@ -259,6 +259,7 @@
     <Compile Include="Models\EnderecoArmazenagem\PesquisarEnderecoArmazenagemPorIdResposta.cs" />
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaEnderecoRequisicao.cs" />
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaLoteRequisicao.cs" />
+    <Compile Include="Models\Etiqueta\ImprimirEtiquetaFileteRequisicao.cs" />
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaPickingRequisicao.cs" />
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaProdutoRequisicao.cs" />
     <Compile Include="Models\Etiqueta\ValidarEnderecoPickingRequisicao.cs" />
