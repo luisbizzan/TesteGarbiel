@@ -627,6 +627,8 @@ namespace FWLog.Services.Services
                 enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(id);
             }
 
+            ProdutoEstoque produtoEstoque;
+
             if (enderecoArmazenagem == null)
             {
                 var produto = _unitOfWork.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(requisicao.referenciaProdutoOuEndereco);
@@ -636,16 +638,18 @@ namespace FWLog.Services.Services
                     throw new BusinessException("O endereço/produto não encontrado.");
                 }
 
-                var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto, requisicao.IdEmpresa);
+                produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto, requisicao.IdEmpresa);
 
-                if (produtoEstoque != null)
-                {
-                    enderecoArmazenagem = produtoEstoque.EnderecoArmazenagem;
-                }
-                else
-                {
-                    throw new BusinessException("Eendereço do produto não encontrado.");
-                }
+                enderecoArmazenagem = produtoEstoque?.EnderecoArmazenagem;
+            }
+            else
+            {
+                produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorEndereco(enderecoArmazenagem.IdEnderecoArmazenagem, requisicao.IdEmpresa);
+            }
+
+            if (produtoEstoque == null)
+            {
+                throw new BusinessException("Endereço do produto não encontrado.");
             }
 
             if (enderecoArmazenagem == null)
@@ -653,7 +657,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Endereço não encontrado.");
             }
 
-            if (!enderecoArmazenagem.IsPontoSeparacao)
+            if (!enderecoArmazenagem.IsPicking)
             {
                 throw new BusinessException("Endereço não é Picking.");
             }
@@ -661,6 +665,7 @@ namespace FWLog.Services.Services
             var resposta = new ValidarEnderecoPickingResposta()
             {
                 IdEnderecoArmazenagem = enderecoArmazenagem.IdEnderecoArmazenagem,
+                IdProduto = produtoEstoque.IdProduto,
             };
 
             return resposta;
