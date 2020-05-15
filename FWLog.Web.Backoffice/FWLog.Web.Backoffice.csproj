@@ -235,6 +235,7 @@
     <Compile Include="Controllers\EtiquetaController.cs" />
     <Compile Include="Controllers\GarantiaConfiguracaoController.cs" />
     <Compile Include="Controllers\GarantiaController.cs" />
+    <Compile Include="Controllers\GarantiaEtiquetaController.cs" />
     <Compile Include="Controllers\GeralController.cs" />
     <Compile Include="Controllers\MotivoLaudoController.cs" />
     <Compile Include="Controllers\NivelArmazenagemController.cs" />
@@ -342,6 +343,7 @@
     <Compile Include="Models\GarantiaCtx\GarantiaRemessaVM.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaSolicitacaoVM.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaRegistroRecebimentoViewModel.cs" />
+    <Compile Include="Models\GarantiaEtiquetaCtx\GarantiaEtiquetaViewModel.cs" />
     <Compile Include="Models\GeralCtx\GeralUploadVM.cs" />
     <Compile Include="Models\GeralCtx\GeralHistoricoVM.cs" />
     <Compile Include="Models\MotivoLaudoCtx\MotivoLaudoCreateViewModel.cs" />
@@ -636,14 +638,11 @@
     <Content Include="Scripts\Views\GarantiaConfiguracao\fornecedorquebra.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\fornecedorgrupo.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\index.js" />
-
     <Content Include="Scripts\Views\Garantia\solicitacaoImportar.js" />
-
     <Content Include="Scripts\Views\GarantiaConfiguracao\motivolaudo.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\remessaconfiguracao.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\remessausuario.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\sankhyatop.js" />
-
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\solicitacaoConferir.js" />
     <Content Include="Scripts\Views\Garantia\remessa.js" />
@@ -1008,6 +1007,7 @@
     <Folder Include="Areas\" />
     <Folder Include="bin\bin\en-US\" />
     <Folder Include="obj\Debug\TempPE\" />
+    <Folder Include="Views\GarantiaEtiqueta\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

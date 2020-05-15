@@ -106,6 +106,7 @@
     <Compile Include="Models\ApplicationSession.cs" />
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\ColetorAplicacao.cs" />
+    <Compile Include="Models\GarantiaEtiqueta.cs" />
     <Compile Include="Models\GarConferencia.cs" />
     <Compile Include="Models\GarRemessa.cs" />
     <Compile Include="Models\GarSolicitacao.cs" />
@@ -246,6 +247,7 @@
     <Compile Include="Repository\GeneralCtx\ColetorHistoricoTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaConferenciaTipoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaConfiguracaoRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\GarantiaEtiquetaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaProdutoRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaQuarentenaHisRepository.cs" />
     <Compile Include="Repository\GeneralCtx\GarantiaQuarentenaProdutoRepository.cs" />
