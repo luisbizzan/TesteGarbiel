@@ -117,20 +117,14 @@ namespace FWLog.Data.Repository.GeneralCtx
                     if (filter.CustomFilter.Id.HasValue)
                         sQuery.AppendFormat(@" AND GR.id = {0}", filter.CustomFilter.Id);
 
-                    //if (filter.CustomFilter.Id_Status.HasValue)
-                    //    sQuery.AppendFormat(@" AND GT2.id = {0}", filter.CustomFilter.Id_Status);
+                    if (filter.CustomFilter.Id_Status.HasValue)
+                        sQuery.AppendFormat(@" AND GT2.id = {0}", filter.CustomFilter.Id_Status);
 
-                    //if (!string.IsNullOrEmpty(filter.CustomFilter.Cli_Cnpj))
-                    //    sQuery.AppendFormat(@" AND GS.Cli_Cnpj LIKE '%{0}%' ", filter.CustomFilter.Cli_Cnpj);
+                    if (!string.IsNullOrEmpty(filter.CustomFilter.Cod_Fornecedor))
+                        sQuery.AppendFormat(@" AND GR.Cod_Fornecedor LIKE '%{0}%' ", filter.CustomFilter.Cod_Fornecedor);
 
-                    //if (!string.IsNullOrEmpty(filter.CustomFilter.Nota_Fiscal))
-                    //    sQuery.AppendFormat(@" AND GS.Nota_Fiscal LIKE '%{0}%' ", filter.CustomFilter.Nota_Fiscal);
-
-                    //if (!string.IsNullOrEmpty(filter.CustomFilter.Serie))
-                    //    sQuery.AppendFormat(@" AND GS.Nota_Fiscal LIKE '%{0}%' ", filter.CustomFilter.Serie);
-
-                    //if (filter.CustomFilter.Data_Inicial.HasValue && filter.CustomFilter.Data_Final.HasValue)
-                    //    sQuery.AppendFormat(@" AND GR.Dt_Criacao BETWEEN TO_DATE('{0}','DD/MM/YYYY') AND TO_DATE('{1}','DD/MM/YYYY') ", String.Format("{0:dd/MM/yyyy}", filter.CustomFilter.Data_Inicial), String.Format("{0:dd/MM/yyyy}", filter.CustomFilter.Data_Final));
+                    if (filter.CustomFilter.Data_Inicial.HasValue && filter.CustomFilter.Data_Final.HasValue)
+                        sQuery.AppendFormat(@" AND GR.Dt_Criacao BETWEEN TO_DATE('{0}','DD/MM/YYYY') AND TO_DATE('{1}','DD/MM/YYYY') ", String.Format("{0:dd/MM/yyyy}", filter.CustomFilter.Data_Inicial), String.Format("{0:dd/MM/yyyy}", filter.CustomFilter.Data_Final));
 
                     sQuery.AppendFormat(" ORDER BY {0} {1}", filter.OrderByColumn, filter.OrderByDirection);
 
@@ -145,6 +139,40 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRecords = totalRecordsFiltered > 0 ? retorno.FirstOrDefault().Qtde : 0;
 
             return retorno;
+        }
+
+        public DmlStatus CriarRemessa(GarRemessa item)
+        {
+            string sQuery = "";
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    bool ehFilho = false;
+                    sQuery = @"SELECT COUNT(*) AS ehFilho FROM gar_forn_grupo WHERE cod_forn_filho = :Cod_Fornecedor";
+                    ehFilho = conn.Query<int>(sQuery, new { item.Cod_Fornecedor }).SingleOrDefault() > 0;
+
+                    if (ehFilho)
+                        return new DmlStatus { Sucesso = false, Mensagem = "Esse é um fornecedor filho, busque pelo fornecedor pai." };
+
+                    bool ehPai = false;
+                    sQuery = @"SELECT COUNT(*) AS ehPai FROM gar_forn_grupo WHERE cod_forn_pai = :Cod_Fornecedor";
+                    ehPai = conn.Query<int>(sQuery, new { item.Cod_Fornecedor }).SingleOrDefault() > 0;
+
+                    if (ehPai)
+                    {
+                        //TODO GERAR REMESSA PARA O FORNECEDOR E TODOS OS FILHOS
+                    }
+                    else
+                    {
+                        //TODO GERAR REMESSA PARA O FORNECEDOR
+                    }
+                }
+                conn.Close();
+            }
+            return new DmlStatus { Sucesso = true, Mensagem = "Remessa criada com sucesso.", Id = 0 };
         }
 
         public GarSolicitacao SelecionaSolicitacao(long Id_Solicitacao)
@@ -177,7 +205,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return retorno;
         }
 
-        public long ImportarSolicitacaoNfCartaManual(GarSolicitacao item)
+        public DmlStatus ImportarSolicitacaoNfCartaManual(GarSolicitacao item)
         {
             string sQuery = "";
             bool podeImportar = false;
@@ -201,7 +229,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     }
 
                     if (!podeImportar)
-                        return 0;
+                        return new DmlStatus { Sucesso = false, Mensagem = "A solicitação já foi importada." };
 
                     var solicitacao = new GarSolicitacao();
 
@@ -257,7 +285,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     }
 
                     if (solicitacao == null)
-                        return 0;
+                        return new DmlStatus { Sucesso = false, Mensagem = "Erro ao carregar solicitação." };
 
                     long Id_DevGar = solicitacao.Id_Sav;
 
@@ -312,10 +340,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                 conn.Close();
             }
 
-            return Id_Solicitacao;
+            return new DmlStatus { Sucesso = true, Mensagem = "Solicitação importada com sucesso.", Id = Id_Solicitacao };
         }
 
-        public long ImportarSolicitacaoNfEletronicaPedido(GarSolicitacao item)
+        public DmlStatus ImportarSolicitacaoNfEletronicaPedido(GarSolicitacao item)
         {
             string sQuery = "";
             bool podeImportar = false;
@@ -326,28 +354,36 @@ namespace FWLog.Data.Repository.GeneralCtx
                 conn.Open();
                 if (conn.State == ConnectionState.Open)
                 {
+                    var Nunota = 0;
+
                     //VERIFICA SE JA FOI IMPORTADO
                     if (item.Id_Tipo_Doc == 30)
                     {
+                        sQuery = @"SELECT nunota FROM tgfCab@Sankhya WHERE ChaveNfe = :Chave_Acesso";
+                        Nunota = conn.Query<int>(sQuery, new { item.Chave_Acesso }).SingleOrDefault();
+
+                        if (Nunota == 0)
+                            return new DmlStatus { Sucesso = false, Mensagem = "Nota não encontrada no Sankya." };
+
                         sQuery = @"SELECT COUNT(*) FROM gar_solicitacao WHERE Nota_Fiscal = SUBSTR(:Chave_Acesso,26,9) AND Cli_Cnpj = SUBSTR(:Chave_Acesso,7,14) AND Serie = SUBSTR(:Chave_Acesso,23,3)";
                         podeImportar = conn.Query<int>(sQuery, new { item.Chave_Acesso }).SingleOrDefault() == 0;
                     }
                     else if (item.Id_Tipo_Doc == 21)
                     {
-                        sQuery = @"SELECT COUNT(*) FROM gar_solicitacao WHERE Nota_Fiscal = LPAD(:Chave_Acesso,9,'0') ";
-                        podeImportar = conn.Query<int>(sQuery, new { item.Chave_Acesso }).SingleOrDefault() == 0;
+                        sQuery = @"SELECT nunota FROM tgfCab@Sankhya WHERE nunota = :Id_Sav";
+                        Nunota = conn.Query<int>(sQuery, new { item.Id_Sav }).SingleOrDefault();
+
+                        if (Nunota == 0)
+                            return new DmlStatus { Sucesso = false, Mensagem = "Nota não encontrada no Sankya." };
+
+                        sQuery = @"SELECT COUNT(*) FROM gar_solicitacao WHERE Id_Sav = :Id_Sav ";
+                        podeImportar = conn.Query<int>(sQuery, new { item.Id_Sav }).SingleOrDefault() == 0;
                     }
 
                     if (!podeImportar)
-                        return 0;
+                        return new DmlStatus { Sucesso = false, Mensagem = "A solicitação já foi importada." };
 
                     //VERIFICA SE TEM NOTA SANKYA
-                    sQuery = @"SELECT nunota FROM tgfCab@Sankhya WHERE ChaveNfe = :Chave_Acesso";
-                    var Nunota = conn.Query<int>(sQuery, new { item.Chave_Acesso }).SingleOrDefault();
-
-                    if (Nunota == 0)
-                        return 0;
-
                     var solicitacao = new GarSolicitacao();
 
                     if (item.Id_Tipo_Doc == 30)
@@ -369,11 +405,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                         FROM
                             fdv_devgar@furacaophp
                         WHERE
-                            cnpj = SUBSTR(:Chave_Acesso,7,14)
+                            cnpj = (SELECT cgc_cpf FROM tgfpar@sankhya WHERE codparc = (SELECT CODPARC  FROM tgfCab@Sankhya WHERE ChaveNfe = :Chave_Acesso))
                             AND nota_fiscal = SUBSTR(:Chave_Acesso,26,9)
                             AND serie = SUBSTR(:Chave_Acesso,23,3)
-                            AND finalizado NOT IN (0,5)
                         ";
+                        //AND finalizado NOT IN(0,5)
                         solicitacao = conn.Query<GarSolicitacao>(sQuery, new { item.Id_Usr, item.Chave_Acesso }).SingleOrDefault();
                     }
                     else if (item.Id_Tipo_Doc == 21)
@@ -396,18 +432,22 @@ namespace FWLog.Data.Repository.GeneralCtx
                             tgfCab@Sankhya n
                         WHERE
                             nunota = :Nunota
+                            AND codtipoper IN (SELECT CODTIPOPER  FROM tgftop@sankhya WHERE tipmov = 'P')
                          ";
                         solicitacao = conn.Query<GarSolicitacao>(sQuery, new { item.Id_Usr, Nunota }).SingleOrDefault();
                     }
 
                     if (solicitacao == null)
-                        return 0;
+                        return new DmlStatus { Sucesso = false, Mensagem = "Erro ao carregar solicitação." };
 
                     long Id_DevGar = solicitacao.Id_Sav;
 
                     //ATUALIZA CODIGO RASTREIO DO SAV
-                    // sQuery = @"UPDATE fdv_devgar@furacaophp SET correios = :Codigo_Postagem WHERE Id = :Id_DevGar";
-                    //conn.Query<GarConferencia>(sQuery, new { item.Codigo_Postagem, Id_DevGar });
+                    if (Id_DevGar != 0)
+                    {
+                        sQuery = @"UPDATE fdv_devgar@furacaophp SET correios = :Codigo_Postagem WHERE Id = :Id_DevGar";
+                        conn.Query<GarConferencia>(sQuery, new { item.Codigo_Postagem, Id_DevGar });
+                    }
 
                     var param = new DynamicParameters();
                     param.Add(name: "Filial", value: solicitacao.Filial, direction: ParameterDirection.Input);
@@ -456,7 +496,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 conn.Close();
             }
 
-            return Id_Solicitacao;
+            return new DmlStatus { Sucesso = true, Mensagem = "Solicitação importada com sucesso.", Id = Id_Solicitacao };
         }
 
         public void EstornarSolicitacao(GarSolicitacao item)
@@ -691,7 +731,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                 GSI.Valor,
                                 15 Id_Tipo_Estoque,
                                 0 AS Id_Doc_Laudo,
-                                13 AS Id_Tipo,
+                                12 AS Id_Tipo,
                                 27 AS Id_Tipo_Movimentacao,
                                 CASE WHEN  GSIL.Id IS NULL THEN  GSI.Quant ELSE ( GSI.Quant - GSIL.Quant) END AS Quant
                             FROM

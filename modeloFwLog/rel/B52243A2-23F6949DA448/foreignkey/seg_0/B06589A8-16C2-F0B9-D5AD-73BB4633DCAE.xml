@@ -1,0 +1,17 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="B06589A8-16C2-F0B9-D5AD-73BB4633DCAE" containerWithKeyObject="18227072-1A30-8A63-CAD7-95D81538F5F3" localFKIndex="D5D88DBB-2263-810E-B4A6-EB0C32336663" name="GER_REMESSA_CONTROLE_FK2">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>B28A71E3-8ABF-E10B-7ADC-FD9C19F57A69</importedID>
+<referredTableLongName>GAR_MOVIMENTACAO</referredTableLongName>
+<deleteRule>NO ACTION</deleteRule>
+<referredTableID>D0F492A9-AE83-AA0A-F43C-1C8189CEFF5B</referredTableID>
+<keyObject>7D48A111-8FA8-8E99-3641-A65AC901CBEC</keyObject>
+<referredKeyID>7D48A111-8FA8-8E99-3641-A65AC901CBEC</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>ID</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

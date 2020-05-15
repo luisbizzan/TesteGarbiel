@@ -127,13 +127,13 @@ namespace FWLog.Web.Backoffice.Controllers
             if (item.Id_Tipo == 31 && string.IsNullOrEmpty(item.Cnpj))
                 ModelState.AddModelError("Cnpj", "O campo Cnpj é obrigatório.");
 
-            if (item.Id_Tipo == 31 && string.IsNullOrEmpty(item.Numero))
+            if (item.Id_Tipo == 31 && item.Numero == null)
                 ModelState.AddModelError("Numero", "O campo Número é obrigatório.");
 
             if (item.Id_Tipo == 31 && string.IsNullOrEmpty(item.Serie))
                 ModelState.AddModelError("Serie", "O campo Série é obrigatório.");
 
-            if (item.Id_Tipo == 32 && string.IsNullOrEmpty(item.Numero_Interno))
+            if ((item.Id_Tipo == 32 || item.Id_Tipo == 21) && item.Numero_Interno == null)
                 ModelState.AddModelError("Numero_Interno", "O campo Número Interno é obrigatório.");
 
             if (!ModelState.IsValid)
@@ -150,15 +150,15 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 item.Codigo_Postagem = string.IsNullOrEmpty(item.Codigo_Postagem) ? "REPRESENTANTE" : item.Codigo_Postagem;
 
-                long idSolicitacao = 0;
+                var retorno = new DmlStatus();
 
                 if (item.Id_Tipo == 31 || item.Id_Tipo == 32)
                 {
                     //IMPORTA SOLICITAÇÃO SE FOR CARTA OU NOTA MANUAL
-                    idSolicitacao = _uow.GarantiaRepository.ImportarSolicitacaoNfCartaManual(new GarSolicitacao
+                    retorno = _uow.GarantiaRepository.ImportarSolicitacaoNfCartaManual(new GarSolicitacao
                     {
                         Cli_Cnpj = item.Cnpj,
-                        Nota_Fiscal = item.Numero_Interno == null ? item.Numero : item.Numero_Interno,
+                        Nota_Fiscal = item.Numero_Interno == null ? item.Numero.ToString() : item.Numero_Interno.ToString(),
                         Id_Usr = IdUsuario,
                         Serie = item.Serie,
                         Codigo_Postagem = item.Codigo_Postagem,
@@ -168,31 +168,42 @@ namespace FWLog.Web.Backoffice.Controllers
                 else if (item.Id_Tipo == 30 || item.Id_Tipo == 21)
                 {
                     //IMPORTA SOLICITAÇÃO SE FOR PEDIDO OU NOTA ELETRONICA
-                    idSolicitacao = _uow.GarantiaRepository.ImportarSolicitacaoNfEletronicaPedido(new GarSolicitacao
+                    retorno = _uow.GarantiaRepository.ImportarSolicitacaoNfEletronicaPedido(new GarSolicitacao
                     {
-                        Chave_Acesso = item.Chave_Acesso,
+                        Id_Sav = item.Numero_Interno ?? 0,
                         Id_Usr = IdUsuario,
                         Id_Tipo_Doc = item.Id_Tipo,
                         Codigo_Postagem = item.Codigo_Postagem
                     });
                 }
 
-                if (idSolicitacao != 0)
+                if (retorno.Id != 0)
                 {
                     //CRIAR A CONFERENCIA DE ENTRADA
                     _uow.GarantiaRepository.CriarConferencia(new GarConferencia
                     {
-                        Id_Solicitacao = idSolicitacao,
+                        Id_Solicitacao = retorno.Id,
                         Id_Usr = IdUsuario,
                         Id_Tipo_Conf = 5
                     });
                 }
 
-                return Json(new AjaxGenericResultModel
+                if (retorno.Sucesso)
                 {
-                    Success = true,
-                    Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
-                });
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = true,
+                        Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                    });
+                }
+                else
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = retorno.Mensagem
+                    });
+                }
             }
         }
 
@@ -419,6 +430,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     {
                         Id = conferencia.Id,
                         Id_Usr = IdUsuario,
+                        Id_Tipo_Solicitacao = conferencia.Id_Tipo_Solicitacao,
                         Id_Solicitacao = conferencia.Id_Solicitacao
                     });
 
@@ -435,6 +447,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     {
                         Id = conferencia.Id,
                         Id_Usr = IdUsuario,
+                        Id_Tipo_Solicitacao = conferencia.Id_Tipo_Solicitacao,
                         Id_Solicitacao = conferencia.Id_Solicitacao
                     });
 
@@ -484,6 +497,57 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsFiltered = recordsFiltered,
                 Data = Mapper.Map<IEnumerable<GarantiaRemessaListVM>>(result)
             });
+        }
+
+        public ActionResult RemessaCriar()
+        {
+            var model = new GarantiaRemessa
+            {
+            };
+
+            return PartialView("_RemessaCriar", model);
+        }
+
+        [HttpPost]
+        public ActionResult RemessaCriarGravar(GarantiaRemessa item)
+        {
+            var retorno = new DmlStatus();
+
+            if (!ModelState.IsValid)
+            {
+                var erros = ModelState.Values.Where(x => x.Errors.Count > 0)
+                    .Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br />"));
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = erros
+                });
+            }
+            else
+            {
+                retorno = _uow.GarantiaRepository.CriarRemessa(new GarRemessa
+                {
+                    Cod_Fornecedor = item.Cod_Fornecedor,
+                    Id_Usr = IdUsuario,
+                });
+
+                if (retorno.Sucesso)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = true,
+                        Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                    });
+                }
+                else
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = retorno.Mensagem
+                    });
+                }
+            }
         }
     }
 }

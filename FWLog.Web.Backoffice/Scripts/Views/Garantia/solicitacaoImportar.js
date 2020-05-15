@@ -1,16 +1,16 @@
 ﻿(function () {
-    console.log('teste');
     $(".divTipo").hide();
+    $('.onlyNumber').mask('0#');
 
     $("#Id_Tipo").change(function () {
         let valor = $(this).val();
         $(".divTipo").hide();
 
-        if (valor == "30" || valor == "21") {
+        if (valor == "30") {
             $("#div1").show();
         } else if (valor == "31") {
             $("#div2").show();
-        } else if (valor == "32") {
+        } else if (valor == "32" || valor == "21") {
             $("#div3").show();
         }
     });

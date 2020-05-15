@@ -1,0 +1,137 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="D0F492A9-AE83-AA0A-F43C-1C8189CEFF5B" name="GAR_MOVIMENTACAO">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>C55FD86B-C95F-F94F-4087-2CF1B1700CAA</importedID>
+<ordsAlias>table_98</ordsAlias>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID" id="D4829CC8-98DB-D63F-AA45-CCD9887FC966">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>BBD99C3C-933B-9694-A44D-5F37C0E40B64</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_ITEM" id="A23B60A9-D762-5047-E072-C5364943A6F7">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>754DEEDE-849B-B163-FF62-5B5FC930E0B6</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="88F726D4-1632-32A5-DC68-F042C9DD3A53" referredColumn="EF2970C3-5712-456C-D747-FBC83764E359"/>
+</associations>
+</Column>
+<Column name="QUANT" id="DF6E8B9F-E84D-116B-D99F-562DF41D265D">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>8BDF2E97-372C-917C-F8F8-3BD14E1421CB</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="VALOR" id="8B18AB59-88EA-4A5C-27F9-B29E3B6EE7CB">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>839AC438-59CE-B458-CE3D-DE576AC0EB56</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_DOC_LAUDO" id="FB9FE5D3-1927-64A2-EA16-1FD3A1E2C351">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>900471CE-C06E-9618-7150-78DBEFAE0F4A</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_TIPO" id="0E00F025-2894-FF0D-6DDB-5579C533BA0B">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<commentInRDBMS>Fornecedor&lt;br/&gt;Cliente&lt;br/&gt;Movimentação&lt;br/&gt;</commentInRDBMS>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>1C399A17-BCE7-4C89-67BB-6BAF2BC8E76C</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_TIPO_ESTOQUE" id="D7A9FC9F-4243-1AE0-5B16-C43094C738B3">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<commentInRDBMS>Laudo&lt;br/&gt;Garantia</commentInRDBMS>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>9C9F1063-4C6D-5FEB-617C-C2F7AEF633CA</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_TIPO_MOVIMENTACAO" id="9AC1CFEB-246B-6F07-253F-7E3B29C44CB9">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<commentInRDBMS>Saida&lt;br/&gt;Entrada</commentInRDBMS>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>19949837-B672-4DDD-D3ED-DB52A0624809</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="7D48A111-8FA8-8E99-3641-A65AC901CBEC" name="GAR_MOVIMENTACAO_PK">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>3B2CB520-7E73-835D-8AB9-4741F1B03B6E</importedID>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="D4829CC8-98DB-D63F-AA45-CCD9887FC966"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="6CBF79F8-672C-F6C9-BA22-05C037C8689D" name="GAR_MOVIMENTACAO_GAR_SOLICITACAO_ITEM_FK">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="A23B60A9-D762-5047-E072-C5364943A6F7"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

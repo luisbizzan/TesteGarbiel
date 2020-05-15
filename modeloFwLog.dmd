@@ -1,0 +1,16 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<OSDM_Design class="oracle.dbtools.crest.model.design.Design" name="modeloFwLog" id="DAE69920-2006-0F4D-CE43-E1618855BAC1" version="3.5">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:07:50 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<capitalNames>false</capitalNames>
+<designId>DAE69920-2006-0F4D-CE43-E1618855BAC1</designId>
+<usedDesignStorageDescriptors>
+<designDescr class="oracle.dbtools.crest.model.design.Design$DesignStorageDesc" id="DE2DCC90-4171-7628-FBCF-52441D7637C9">
+<designStoragePath>C:\exportar</designStoragePath>
+</designDescr>
+<designDescr class="oracle.dbtools.crest.model.design.Design$DesignStorageDesc" id="B9521D78-ADB7-7C4B-8FF3-55431EE2FD60">
+<designStoragePath>C:\Henrique\dart\fur_net\superVModel</designStoragePath>
+</designDescr>
+</usedDesignStorageDescriptors>
+</OSDM_Design>
