@@ -119,7 +119,7 @@ namespace FWLog.Services.Services
                     {
                         var produtosConcatenados = string.Join(",", produtosComQtdePedidoZerado);
 
-                        throw new BusinessException(string.Format("Pedido inválido com produtos com QtdePedido zerado (CODPROD: {0})", produtosComQtdePedidoZerado));
+                        throw new BusinessException(string.Format("Pedido inválido com produtos com QtdePedido zerado (CODPROD: {0})", produtosConcatenados));
                     }
 
                     var pedidosItens = new List<PedidoItem>();
