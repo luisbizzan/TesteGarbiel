@@ -381,5 +381,26 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(businessException.Message);
             }
         }
+
+        [Route("api/v1/expedicao/doca/validar-transportadora/{codigoTransportadora}")]
+        [HttpPost]
+        public IHttpActionResult ValidarRemoverDocaTransportadora(string codigoTransportadora)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                var resposta = _expedicaoService.ValidarRemoverDocaTransportadora(codigoTransportadora, IdEmpresa);
+
+                return ApiOk(resposta);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+        }
     }
 }

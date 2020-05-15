@@ -47,5 +47,14 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.PedidoVenda.Where(x => x.IdTransportadora == idTransportadora && x.IdEmpresa == idEmpresa && x.IdPedidoVendaStatus == PedidoVendaStatusEnum.NFDespachada).ToList();
         }
+
+        public bool TemPedidoVendaMovidoDoca(long idTransportadora, long idEmpresa)
+        {
+            return Entities.PedidoVenda.Any(x => x.IdTransportadora == idTransportadora && 
+                                                    x.IdEmpresa == idEmpresa && 
+                                                    (x.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovendoDOCA ||
+                                                    x.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA) &&
+                                                    x.PedidoVendaVolumes.Any(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA));
+        }
     }
 }
