@@ -939,17 +939,11 @@ namespace FWLog.Services.Services
                         throw new BusinessException("Não existe pedido venda para chave de acesso informada.");
                     }
 
-                    NotaFiscal notaFiscal = _unitOfWork.NotaFiscalRepository.ObterPorChave(chaveAcesso);
-                    if (notaFiscal == null)
-                    {
-                        throw new BusinessException("Nota fiscal não encontrada.");
-                    }
-
                     // Notas do Romaneio
                     var romaneioNotaFiscal = new RomaneioNotaFiscal();
                     romaneioNotaFiscal.IdRomaneio = romaneio.IdRomaneio;
                     romaneioNotaFiscal.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
-                    romaneioNotaFiscal.NroNotaFiscal = notaFiscal.Numero;
+                    romaneioNotaFiscal.NroNotaFiscal = Convert.ToInt32(pedido.CodigoIntegracaoNotaFiscal);
                     romaneioNotaFiscal.NroVolumes = pedidoVenda.NroVolumes;
                     romaneioNotaFiscal.IdCliente = pedidoVenda.IdCliente;
 
@@ -1020,7 +1014,7 @@ namespace FWLog.Services.Services
 
             var impressora = ValidarIdImpressora(idImpressora);
 
-            ImprimirRomaneio(romaneio.NroRomaneio, impressora.Id, false, idEmpresa, idUsuario);
+            ImprimirRomaneio(romaneio.IdRomaneio, impressora.Id, false, idEmpresa, idUsuario);
 
             _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
             {
