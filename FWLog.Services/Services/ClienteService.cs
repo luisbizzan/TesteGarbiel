@@ -47,6 +47,7 @@ namespace FWLog.Services.Services
             where.Append("AND TSIEND.NOMEEND IS NOT NULL ");
             where.Append("AND TSIUFS.UF IS NOT NULL ");
             where.Append("AND TGFCPL.NUMENTREGA IS NOT NULL ");
+            where.Append("AND TGFPAR.TELEFONE IS NOT NULL ");
 
             List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString(), inner: inner.ToString());
 
@@ -103,6 +104,41 @@ namespace FWLog.Services.Services
 
                     continue;
                 }
+            }
+        }
+
+        public async Task LimparIntegracao()
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            StringBuilder inner = new StringBuilder();
+            inner.Append("INNER JOIN TGFCPL ON TGFPAR.CODPARC = TGFCPL.CODPARC ");
+            inner.Append("INNER JOIN TSIEND ON TGFCPL.CODENDENTREGA = TSIEND.CODEND ");
+            inner.Append("INNER JOIN TSICID ON TGFCPL.CODCIDENTREGA = TSICID.CODCID ");
+            inner.Append("INNER JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF ");
+
+            StringBuilder where = new StringBuilder();
+            where.Append("WHERE ");
+            where.Append("TGFPAR.CGC_CPF IS NOT NULL ");
+            where.Append("AND TGFPAR.RAZAOSOCIAL IS NOT NULL ");
+            where.Append("AND TGFPAR.CLIENTE = 'S' ");           
+            where.Append("AND CODCIDENTREGA > 0 ");
+            where.Append("AND CODENDENTREGA > 0 ");
+            where.Append("AND CEPENTREGA IS NOT NULL ");
+            where.Append("AND TSIEND.NOMEEND IS NOT NULL ");
+            where.Append("AND TSIUFS.UF IS NOT NULL ");
+            where.Append("AND TGFCPL.NUMENTREGA IS NOT NULL ");
+
+            List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString(), inner: inner.ToString());
+
+            foreach (var fornecInt in clientesIntegracao)
+            {
+                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", fornecInt.CodigoIntegracao.ToString() } };
+
+                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", '1');
             }
         }
     }

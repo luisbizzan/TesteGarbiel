@@ -35,15 +35,24 @@ namespace FWLog.Services.Services
             where.Append("CGC_CPF IS NOT NULL ");
             where.Append("AND RAZAOSOCIAL IS NOT NULL ");
             where.Append("AND TRANSPORTADORA = 'S' ");
-            where.Append("AND AD_INTEGRARFWLOG = '0' ");
+            where.Append("AND AD_ABREVTRANSP IS NOT NULL ");
 
             List<TransportadoraIntegracao> transportadorasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<TransportadoraIntegracao>(where: where.ToString());
 
             foreach (var transpInt in transportadorasIntegracao)
             {
-                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", transpInt.CodigoIntegracao.ToString() } };
+                try
+                {
+                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", transpInt.CodigoIntegracao.ToString() } };
 
-                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "1");
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "1");
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(string.Format("Erro na integração da Transportadora: {0}.", transpInt.CodigoIntegracao), ex);
+
+                    continue;
+                }
             }
         }
 

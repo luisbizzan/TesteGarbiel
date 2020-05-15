@@ -38,15 +38,42 @@ namespace FWLog.Services.Services
             where.Append("WHERE DESCRPROD IS NOT NULL ");
             where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
             where.Append("AND AD_INTEGRARFWLOG = '0' ");
+
+            int quantidadeRegistro = 4999;
+            int quantidadeChamada = 0;
+
+            List<ProdutoQuantidadeRegistroIntegracao> produtoQuantidadeRegistroIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoQuantidadeRegistroIntegracao>(where: where.ToString());
+
+            if (produtoQuantidadeRegistroIntegracao != null)
+            {
+                try
+                {
+                    quantidadeRegistro = Convert.ToInt32(produtoQuantidadeRegistroIntegracao[0].QuantidadeRegistro);
+                }
+                catch { }
+            }
+
+            quantidadeChamada = quantidadeRegistro > 4999 ? quantidadeRegistro / 4999 : 1;
+
             where.Append("ORDER BY CODPROD OFFSET 0 ROWS FETCH NEXT 5000 ROWS ONLY ");
 
-            List<Model.IntegracaoSankhya.ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoIntegracao>(where: where.ToString());
-
-            foreach (var produtoInt in produtosIntegracao)
+            for (int i = 0; i < quantidadeChamada; i++)
             {
-                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPROD", produtoInt.CodigoIntegracao.ToString() } };
+                List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoIntegracao>(where: where.ToString());
 
-                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", campoChave, "AD_INTEGRARFWLOG", "1");
+                foreach (var produtoInt in produtosIntegracao)
+                {
+                    try
+                    {
+                        Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPROD", produtoInt.CodigoIntegracao.ToString() } };
+
+                        await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", campoChave, "AD_INTEGRARFWLOG", "1");
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Error(string.Format("Erro na limpeza de integração do Produto: {0}.", produtoInt.CodigoIntegracao), ex);
+                    }
+                }
             }
         }
 
@@ -62,10 +89,10 @@ namespace FWLog.Services.Services
             where.Append("WHERE DESCRPROD IS NOT NULL ");
             where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
             where.Append("AND AD_INTEGRARFWLOG = '1' ");
-            
+
             int quantidadeRegistro = 4999;
             int quantidadeChamada = 0;
-            
+
             List<ProdutoQuantidadeRegistroIntegracao> produtoQuantidadeRegistroIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoQuantidadeRegistroIntegracao>(where: where.ToString());
 
             if (produtoQuantidadeRegistroIntegracao != null)
@@ -77,7 +104,7 @@ namespace FWLog.Services.Services
                 catch { }
             }
 
-           quantidadeChamada = quantidadeRegistro > 4999 ? quantidadeRegistro / 4999 : 1;
+            quantidadeChamada = quantidadeRegistro > 4999 ? quantidadeRegistro / 4999 : 1;
 
             where.Append("ORDER BY CODPROD OFFSET 0 ROWS FETCH NEXT 5000 ROWS ONLY ");
 
@@ -156,8 +183,8 @@ namespace FWLog.Services.Services
                             }
                         }
                         else
-                        {   
-                           _uow.ProdutoRepository.Update(produto);
+                        {
+                            _uow.ProdutoRepository.Update(produto);
                         }
 
                         _uow.SaveChanges();
@@ -170,7 +197,7 @@ namespace FWLog.Services.Services
                 }
 
                 i++;
-            }            
+            }
         }
 
         public async Task LimparIntegracaoPrazoEntrega()
