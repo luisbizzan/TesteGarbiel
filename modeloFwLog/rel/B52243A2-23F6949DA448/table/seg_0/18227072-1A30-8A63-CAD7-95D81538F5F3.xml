@@ -1,0 +1,110 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="18227072-1A30-8A63-CAD7-95D81538F5F3" name="GAR_REMESSA_CONTROLE">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>38C7F780-48FA-6305-13E6-3B447D723BB7</importedID>
+<ordsAlias>table_105</ordsAlias>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID" id="3249887A-7FFE-3FE9-E59F-C8555DA5B55B">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>A438BF59-E74F-8266-E857-F75B69386AAA</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_REMESSA" id="A298B5AE-86BE-B0FF-2C4A-2AF2492232A1">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>9248FFAF-3E26-881D-7B01-BCE5906FB1CE</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="95940487-8351-DCE7-BA42-E9D41CF22D50" referredColumn="588BA2F1-B361-3526-B17C-E789565C0D61"/>
+</associations>
+</Column>
+<Column name="ID_MOVIMENTACAO" id="A97243E5-BF37-7D66-8BCB-0C9C31827976">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>96292837-F31D-E73E-BFE5-0098B6DCA538</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="B06589A8-16C2-F0B9-D5AD-73BB4633DCAE" referredColumn="D4829CC8-98DB-D63F-AA45-CCD9887FC966"/>
+</associations>
+</Column>
+<Column name="QUANT_ENVIADO" id="88D00997-CFFD-CD3C-F13C-EC35563D0DAC">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>098B3A50-D20F-B28B-83C4-BF2F3BBF6B54</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_ITEM_NF" id="D8C2A5AA-BE1F-E0A9-3993-5E3A91163E99">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>4CD5F9AF-4578-54FB-59DB-59427E91F412</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="EC90BED6-4AE9-B58A-8E37-D3082F4864D9" name="GER_REMESSA_CONTROLE_PK">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>A6BB9A25-15F6-5885-23E2-05101EE57C10</importedID>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="3249887A-7FFE-3FE9-E59F-C8555DA5B55B"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="B779570A-25CF-A48D-744E-237AAF1BD69F" name="GER_REMESSA_CONTROLE_FK">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="A298B5AE-86BE-B0FF-2C4A-2AF2492232A1"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="D5D88DBB-2263-810E-B4A6-EB0C32336663" name="GER_REMESSA_CONTROLE_FK2">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="A97243E5-BF37-7D66-8BCB-0C9C31827976"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

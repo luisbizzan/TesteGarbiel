@@ -11,8 +11,8 @@
         new
         {
             detailsVisible = User.HasPermission(Permissions.Garantia.Listar),
-            estornarSolicitacao = User.HasPermission(Permissions.Garantia.EstornarSolicitacao),
-            conferirSolicitacao = User.HasPermission(Permissions.Garantia.ConferirSolicitacao),
+            estornarRemessa = User.HasPermission(Permissions.Garantia.EstornarSolicitacao),
+            conferirRemessa = User.HasPermission(Permissions.Garantia.ConferirSolicitacao),
             pageDataUrl = Url.Action("ListarRemessa")
         }
     )
@@ -21,29 +21,16 @@
 <form data-filter="form" data-filter-for="dataTable" class="form-filter">
     <div class="x_panel">
         <div class="x_title">
-            <h2 class="collapse-link">
-                <i class="fa fa-chevron-down fa-fw"></i> @Resources.CommonStrings.FilterHeader
-            </h2>
+            <h2>Solicitações de Garantia</h2>
+            <button type="button" id="btCriarRemessa" class="btn btn-primary pull-right"><i class="fa fa-gears"></i> Criar Remessa</button>
             <div class="clearfix"></div>
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
                 <div class="col-xs-12 col-md-2 col-lg-3 form-group">
-                    @Html.LabelFor(m => m.Filter.Cli_Cnpj)
-                    @Html.TextBoxFor(m => m.Filter.Cli_Cnpj, new { @class = "form-control onlyNumber", data_field = "Cli_Cnpj" })
-                </div>
-                <div class="col-xs-12 col-md-2 col-lg-3 form-group">
-                    @Html.LabelFor(m => m.Filter.Nota_Fiscal)
-                    @Html.TextBoxFor(m => m.Filter.Nota_Fiscal, new { @class = "form-control", data_field = "Nota_Fiscal" })
-                </div>
-                <div class="col-xs-12 col-md-5 col-lg-3 form-group">
-                    @Html.LabelFor(m => m.Filter.Serie)
-                    @Html.TextBoxFor(m => m.Filter.Serie, new { @class = "form-control onlyNumber", data_field = "Serie" })
-                </div>
-                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
-                    @Html.LabelFor(m => m.Filter.Id_Status)
-                    @Html.DropDownListFor(m => m.Filter.Id_Status, Model.Filter.Lista_Status, "Todos", new { @class = "form-control", data_field = "Id_Status" })
-                </div>
+                    @Html.LabelFor(m => m.Filter.Cod_Fornecedor)
+                    @Html.TextBoxFor(m => m.Filter.Cod_Fornecedor, new { @class = "form-control onlyNumber", data_field = "Cod_Fornecedor" })
+                </div>               
                 <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.Data_Inicial)
                     <div class='input-group date'>
@@ -132,5 +119,3 @@
         </div>
     </div>
 </div>
-
-<!-- /table -->

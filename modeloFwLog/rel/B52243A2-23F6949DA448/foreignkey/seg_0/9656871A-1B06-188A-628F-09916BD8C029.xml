@@ -1,0 +1,17 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="9656871A-1B06-188A-628F-09916BD8C029" containerWithKeyObject="7E90ECD3-0C5C-6A27-2B47-683B25793E0B" localFKIndex="922B4A79-46E9-3D38-C596-52356F43F7AA" name="GAR_SOLICITACAO_ITEM_LAUDO_FK2">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>E0143BD3-7423-9A9C-9959-01BC02CC4C2A</importedID>
+<referredTableLongName>GAR_MOTIVO_LAUDO</referredTableLongName>
+<deleteRule>NO ACTION</deleteRule>
+<referredTableID>FC3E964E-5FAE-F27D-FF44-98A962C8FDBE</referredTableID>
+<keyObject>4ACD4FF5-949E-DBFD-757E-F9E35A96CF12</keyObject>
+<referredKeyID>4ACD4FF5-949E-DBFD-757E-F9E35A96CF12</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>ID</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

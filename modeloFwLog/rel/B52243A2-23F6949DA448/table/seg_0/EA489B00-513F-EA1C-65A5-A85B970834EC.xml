@@ -1,0 +1,51 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="EA489B00-513F-EA1C-65A5-A85B970834EC" name="GAR_FORN_QUEBRA">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>238E9C82-8DEF-5794-F939-98705FD45763</importedID>
+<ordsAlias>table_102</ordsAlias>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID" id="57143928-0339-CB92-9730-FBE90407FAF2">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>71373A7A-2D1B-8D2A-8FEE-6B5606ACCA83</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="COD_FORNECEDOR" id="DB0175E5-BE90-47B2-98E6-58D1E9A80A8E">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>B597DA9E-37A0-80A9-67D4-3E66D3D5A09C</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>200</dataTypeSize>
+<ownDataTypeParameters>200,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="263DF39F-6BBD-D052-6FD7-58C55EC377BB" name="GAR_FORN_QUEBRA_PK">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>6A200080-DEE5-5720-1D4B-608F4F77817A</importedID>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="57143928-0339-CB92-9730-FBE90407FAF2"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

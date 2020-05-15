@@ -1,0 +1,77 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="9BBE6C86-3CA9-B23E-EE62-F34D1E9FD084" name="GERAL_UPLOAD_CATEGORIA">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>AAFC3126-1F10-3948-AA79-D7FFEFA4BCC5</importedID>
+<ordsAlias>table_109</ordsAlias>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID" id="3A65F51D-8565-49DC-50A5-00E1263F5157">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>732EB515-2109-8D39-A5B7-EAD44B5F5251</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="CATEGORIA" id="98BD29A3-FD9F-D553-6261-32F0FF9E87FE">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>82340A60-A139-9617-016D-5988AA8B6864</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>200</dataTypeSize>
+<ownDataTypeParameters>200,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="TABELA" id="330CD012-F4F3-7726-EDCC-0292A57DF77C">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>A5D90F40-EAE3-A96D-6F40-D3FE0C223EB3</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>200</dataTypeSize>
+<ownDataTypeParameters>200,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="FORMATOS" id="3F9F67A2-2C4F-7D28-E74B-812A69002DAD">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>AD6871AF-77E0-E230-CAC1-2CF71D2316CA</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>4000</dataTypeSize>
+<ownDataTypeParameters>4000,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="A04AAB23-A3CE-A3E6-317E-C33320B3926E" name="GERAL_UPLOAD_CATEGORIA_PK">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>9AEA3369-FFD6-3A44-18CC-3FE1548916E0</importedID>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="3A65F51D-8565-49DC-50A5-00E1263F5157"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

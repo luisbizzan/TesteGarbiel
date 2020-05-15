@@ -1,0 +1,173 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="BBBFCAAB-320F-E0CD-8621-8DC170E837FF" name="GAR_CONFERENCIA_EXCESSO">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>D3528AA3-154B-E5E0-94EE-D8647D1E957A</importedID>
+<ordsAlias>table_115</ordsAlias>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID" id="35AEFA62-9DBB-F3B6-2C3F-F5B08C2A4B00">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>F172C8A7-5651-7BA8-CED7-3C02858E451F</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_CONF" id="D9B6CA2C-4130-897A-75CB-2A5E579B719A">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>4F792304-4C56-68A3-9443-B4C46484208E</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="52CCD6CD-3C18-5993-54A3-652519DCC46C" referredColumn="2255841F-88AE-F865-E600-A33039E46EAF"/>
+</associations>
+</Column>
+<Column name="ID_ITEM" id="AFDBD42C-BDAD-518F-7060-4CFEB65F6B0C">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>D6647738-E78B-5BD3-B651-FFE143D6A171</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_TIPO" id="0A21A7E7-E8AB-10BD-8114-0CDC16434806">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<commentInRDBMS>Peças a +&lt;br/&gt;Peças a -</commentInRDBMS>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>D316D801-D179-875E-D5F3-915D24C9ACF3</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DT_CONF" id="0CDD6083-EDD7-A9DC-910C-D3458D691CCF">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>73C010CD-CBA9-7045-8F85-326ACF235D79</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="REFX" id="69080F35-C756-0082-5F71-CAB716B47DFB">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>169C9BE2-381D-4DF8-7B16-36D0BB07FC8F</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>200</dataTypeSize>
+<ownDataTypeParameters>200,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_USR" id="9BC5C8E7-AD9D-FEB6-DFD0-375EFD4FD4F4">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>30BF8104-3773-D165-723F-B4CF961CA7CA</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>200</dataTypeSize>
+<ownDataTypeParameters>200,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="QUANT_CONFERIDA" id="B1EDD95A-C7ED-0688-57EF-42645860FFB4">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>7ACC6C2D-6380-69B0-C8D4-B93605C1B63E</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DT_USR_ACAO" id="8A748870-1442-898F-4FC0-E75A5B788F1F">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>DCCBCEEC-D03A-A812-37FE-4E3289AD6942</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_USR_ACAO" id="ABB544DA-9624-E27C-874B-8FDECBAF7054">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>6E67AE1F-D84A-1C1F-EC19-22AEA721D71D</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>200</dataTypeSize>
+<ownDataTypeParameters>200,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_DOC" id="91193EE5-6F15-F144-A416-49E0DF180783">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>35168C17-B12A-D063-E338-F0556EC6DB29</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="681B06B6-ED43-7CBE-4721-9F9C24F75276" name="GAR_CONFERENCIA_EXCESSO_PK">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>C19C0F0B-A3D2-6417-64B2-F0698E35E099</importedID>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="35AEFA62-9DBB-F3B6-2C3F-F5B08C2A4B00"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="F3C69FAD-05C0-C2DA-38E5-A1ADF335C85F" name="GAR_CONFERENCIA_EXCESSO_FK">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="D9B6CA2C-4130-897A-75CB-2A5E579B719A"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>

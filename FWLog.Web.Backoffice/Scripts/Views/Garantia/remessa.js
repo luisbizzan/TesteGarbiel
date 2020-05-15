@@ -4,6 +4,10 @@
     $("dateFormat").mask("99/99/9999");
     $('.hourMinute').mask("99:99", { reverse: true });
 
+    $("#btCriarRemessa").click(function () {
+        criarRemessa();
+    });
+
     $.validator.addMethod('validateDateOrPrazoInicial', function (value, ele) {
         var dataInicial = $("#Filter_Data_Inicial").val();
 
@@ -27,59 +31,52 @@
     }, 'Data Final Obrigatório');
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        var visivelEstornar = view.estornarSolicitacao;
-        var visivelConferir = view.conferirSolicitacao && (full.Id_Status === 22 || full.Id_Status === 23);
+        var visivelEstornar = view.estornarRemessa;
+        var visivelConferir = view.conferirRemessa && (full.Id_Status === 22 || full.Id_Status === 23);
 
         return [
             {
                 text: "Visualizar",
                 color: "btn-info",
-                attrs: { 'data-id': full.Id, 'action': 'visualizarSolicitacao' },
+                attrs: { 'data-id': full.Id, 'action': 'visualizarRemessa' },
                 icon: 'fa fa-eye',
                 visible: view.detailsVisible
             },
-            {
-                text: "Estornar",
-                color: "btn-danger",
-                attrs: { 'data-id': full.Id, 'action': 'estornarSolicitacao' },
-                icon: 'fa fa-pencil-square',
-                visible: visivelEstornar
-            },
+            
             {
                 text: "Conferir",
                 color: "btn-primary",
-                attrs: { 'data-id': full.Id, 'action': 'conferirSolicitacao' },
+                attrs: { 'data-id': full.Id, 'action': 'conferirRemessa' },
                 icon: 'fa fa-check-square-o',
                 visible: visivelConferir
             }
         ];
     });
 
-    //$("#dataTable").on('click', "[action='visualizarSolicitacao']", visualizarSolicitacao);
-    //$("#dataTable").on('click', "[action='estornarSolicitacao']", estornarSolicitacao);
-    //$("#dataTable").on('click', "[action='conferirSolicitacao']", conferirSolicitacao);
+    $("#dataTable").on('click', "[action='visualizarRemessa']", visualizarRemessa);
+    $("#dataTable").on('click', "[action='conferirRemessa']", conferirRemessa);
 
-    //var $Data_Inicial = $('#Filter_Data_Inicial').closest('.date');
-    //var $Data_Final = $('#Filter_Data_Final').closest('.date');
+    var $Data_Inicial = $('#Filter_Data_Inicial').closest('.date');
+    var $Data_Final = $('#Filter_Data_Final').closest('.date');
 
-    //var createLinkedPickers = function () {
-    //    var dataInicial = $Data_Inicial.datetimepicker({
-    //        locale: moment.locale(),
-    //        format: 'L',
-    //        allowInputToggle: true
-    //    });
+    var createLinkedPickers = function () {
+        var dataInicial = $Data_Inicial.datetimepicker({
+            locale: moment.locale(),
+            format: 'L',
+            allowInputToggle: true
+        });
 
-    //    var dataFinal = $Data_Final.datetimepicker({
-    //        locale: moment.locale(),
-    //        useCurrent: false,
-    //        format: 'L',
-    //        allowInputToggle: true
-    //    });
+        var dataFinal = $Data_Final.datetimepicker({
+            locale: moment.locale(),
+            useCurrent: false,
+            format: 'L',
+            allowInputToggle: true
+        });
 
-    //    new dart.DateTimePickerLink(dataInicial, dataFinal, { ignoreTime: true });
-    //};
+        new dart.DateTimePickerLink(dataInicial, dataFinal, { ignoreTime: true });
+    };
 
-    //createLinkedPickers();
+    createLinkedPickers();
 
     $('#dataTable').DataTable({
         ajax: {
@@ -112,11 +109,11 @@
     dart.dataTables.loadFormFilterEvents();
 })();
 
-function visualizarSolicitacao() {
+function visualizarRemessa() {
     var id = $(this).data("id");
     let modal = $("#modalVisualizar");
 
-    modal.load(CONTROLLER_PATH + "VisualizarSolicitacao/" + id, function () {
+    modal.load(CONTROLLER_PATH + "VisualizarRemessa/" + id, function () {
         modal.modal();
 
         var botoes = ['selectAll', 'selectNone',
@@ -127,6 +124,7 @@ function visualizarSolicitacao() {
                     var ids = $.map(this.rows('.selected').data(), function (item) {
                         return item[1].split(" - ")[0];
                     });
+
                     console.log(ids)
 
                     if (ids.length == 0) {
@@ -170,7 +168,7 @@ function visualizarSolicitacao() {
             },
         ];
 
-        $('#tbSolicitacaoItens').DataTable({
+        $('#tbRemessaItens').DataTable({
             destroy: true,
             serverSide: false,
             stateSave: false,
@@ -196,37 +194,19 @@ function visualizarSolicitacao() {
     });
 }
 
-function conferirSolicitacao() {
+function conferirRemessa() {
     var id = $(this).data("id");
     let modal = $("#modalVisualizar");
 
-    modal.load(CONTROLLER_PATH + "ConferirSolicitacao/" + id, function () {
+    modal.load(CONTROLLER_PATH + "ConferirRemessa/" + id, function () {
         modal.modal();
     });
 }
 
-function estornarSolicitacao() {
-    var id = $(this).data("id");
+function criarRemessa() {
+    let modal = $("#modalVisualizar");
 
-    $.confirm({
-        type: 'red',
-        theme: 'material',
-        title: 'Estornar Solicitação',
-        content: 'Tem Certeza?',
-        typeAnimated: true,
-        autoClose: 'cancelar|10000',
-        buttons: {
-            confirmar: {
-                text: 'Estornar',
-                btnClass: 'btn-red',
-                action: function () {
-                }
-            },
-            cancelar: {
-                text: 'Cancelar',
-                action: function () {
-                }
-            }
-        }
+    modal.load("RemessaCriar/", function () {
+        modal.modal();
     });
 }

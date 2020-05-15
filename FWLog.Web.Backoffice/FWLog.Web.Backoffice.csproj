@@ -636,14 +636,12 @@
     <Content Include="Scripts\Views\GarantiaConfiguracao\fornecedorquebra.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\fornecedorgrupo.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\index.js" />
-
+    <Content Include="Scripts\Views\Garantia\remessaCriar.js" />
     <Content Include="Scripts\Views\Garantia\solicitacaoImportar.js" />
-
     <Content Include="Scripts\Views\GarantiaConfiguracao\motivolaudo.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\remessaconfiguracao.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\remessausuario.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\sankhyatop.js" />
-
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\solicitacaoConferir.js" />
     <Content Include="Scripts\Views\Garantia\remessa.js" />
@@ -754,6 +752,7 @@
     <Content Include="Views\Garantia\_ConferenciaItemPendente.cshtml" />
     <Content Include="Views\Garantia\_SolicitacaoImportar.cshtml" />
     <Content Include="Views\Garantia\_ConferenciaItemConferido.cshtml" />
+    <Content Include="Views\Garantia\_RemessaCriar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

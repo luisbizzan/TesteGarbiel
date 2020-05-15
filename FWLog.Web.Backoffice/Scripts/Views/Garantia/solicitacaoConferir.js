@@ -93,6 +93,7 @@ function divergencia() {
             destroy: true,
             serverSide: false,
             stateSave: false,
+            pageLength: 200,
             dom: "Bfrtip",
             buttons: [],
             searching: true,
@@ -207,6 +208,7 @@ function itensLaudo() {
             destroy: true,
             serverSide: false,
             stateSave: false,
+            pageLength: 200,
             columnDefs: [
                 {
                     orderable: false,
@@ -239,6 +241,7 @@ function itensLaudoDetalhe(refx) {
             destroy: true,
             serverSide: false,
             stateSave: false,
+            pageLength: 200,
             dom: "Bfrtip",
             order: [],
             buttons: [],
@@ -334,6 +337,7 @@ function itensPendentes() {
             destroy: true,
             serverSide: false,
             stateSave: false,
+            pageLength: 200,
             dom: "Bfrtip",
             order: [],
             buttons: [],

@@ -1,0 +1,7 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<BusinessInfoDesign class="oracle.dbtools.crest.model.businessinfo.BusinessInfoDesign" name="Business Information" id="3FBEAF27-68F1-60DE-3B29-6EC5BBB7571C">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:07:50 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<shouldBeOpen>false</shouldBeOpen>
+</BusinessInfoDesign>

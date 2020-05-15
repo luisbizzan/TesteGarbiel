@@ -111,6 +111,7 @@
     <Compile Include="Models\GarSolicitacao.cs" />
     <Compile Include="Models\GarantiaConfiguracao.cs" />
     <Compile Include="Models\GarMotivoLaudo.cs" />
+    <Compile Include="Models\DmlStatus.cs" />
     <Compile Include="Models\GeralTipo.cs" />
     <Compile Include="Models\GeralHistorico.cs" />
     <Compile Include="Models\ColetorHistorico.cs" />

@@ -1,0 +1,17 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="157E5DB9-359C-AF53-6C0F-EC0B1020DAB1" containerWithKeyObject="642956D3-C9B8-329F-C4DB-0C9A13901A68" localFKIndex="FC381CBE-20B5-8EEA-953A-5FADFFA88336" name="GAR_SOLICITACAO_ITEM_FK">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>5EEA10A0-E864-BE96-2831-AF24E7A47FEF</importedID>
+<referredTableLongName>GAR_SOLICITACAO</referredTableLongName>
+<deleteRule>NO ACTION</deleteRule>
+<referredTableID>26592587-3C75-567D-BC68-F501A10B93EC</referredTableID>
+<keyObject>FA149A6D-878E-6933-886D-F9C1CDF87D8C</keyObject>
+<referredKeyID>FA149A6D-878E-6933-886D-F9C1CDF87D8C</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>ID</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

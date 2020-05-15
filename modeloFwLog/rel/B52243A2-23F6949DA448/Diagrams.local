@@ -1,0 +1,5 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<oracle.dbtools.crest.model.design.relational.RelationalDesign>
+   <object objectType="main_view" objectID="9606E7B8-7D0D-1F9F-1C6E-90485FF53810" name="FwLog" visible="false"/>
+   <object objectType="sub_view" objectID="9A23CD2E-FCED-6007-2D85-13D19202A577" name="Garantia / Devolução" visible="true"/>
+</oracle.dbtools.crest.model.design.relational.RelationalDesign>

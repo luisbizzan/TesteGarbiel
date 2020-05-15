@@ -1,0 +1,17 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<FKIndexAssociation class="oracle.dbtools.crest.model.design.relational.FKIndexAssociation" directorySegmentName="seg_0" id="C86BAFE4-03B1-1CEC-99E8-800D10C5D493" containerWithKeyObject="897A8E30-AC5D-70E9-ED88-7042E7D9C804" localFKIndex="A5542EDD-0003-66BF-5438-D089C227204E" name="GERAL_HISTORICO_GERAL_FK">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>D83B9EDE-6CD3-6146-6CFA-FB6A1015F006</importedID>
+<referredTableLongName>GERAL_HISTORICO_CATEGORIA</referredTableLongName>
+<deleteRule>NO ACTION</deleteRule>
+<referredTableID>F9663C53-2F41-9FD7-5773-53971ED61137</referredTableID>
+<keyObject>45944ECA-8E9C-97C9-7BF5-B97DF9275E55</keyObject>
+<referredKeyID>45944ECA-8E9C-97C9-7BF5-B97DF9275E55</referredKeyID>
+<mandatory>true</mandatory>
+<refColNames>ID</refColNames>
+<transferable>true</transferable>
+<rely>false</rely>
+<columnDependencyConstraintGenerateInDDL>true</columnDependencyConstraintGenerateInDDL>
+</FKIndexAssociation>

@@ -101,13 +101,13 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public string Cnpj { get; set; }
 
         [Display(Name = "Número")]
-        public string Numero { get; set; }
+        public long? Numero { get; set; }
 
         [Display(Name = "Série")]
         public string Serie { get; set; }
 
         [Display(Name = "Número Interno")]
-        public string Numero_Interno { get; set; }
+        public long? Numero_Interno { get; set; }
 
         [Required]
         [Display(Name = "Tipo")]

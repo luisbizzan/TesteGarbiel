@@ -1,0 +1,148 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="7E90ECD3-0C5C-6A27-2B47-683B25793E0B" name="GAR_SOLICITACAO_ITEM_LAUDO">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>B6BD7470-92C4-2EE7-AA91-2023CF097F3E</importedID>
+<ordsAlias>table_97</ordsAlias>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID" id="87CAB6B8-E9B0-7E88-0522-DEDD8E1F3B11">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>63F66B62-7B21-C09C-7752-F1C773D6D813</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_ITEM" id="A62CF8AE-2CF4-FFC5-51C2-4B3E4D7915B6">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>90DC6ACA-5695-04E8-1E2E-44AB064ABB7F</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="1BBBB1E0-6231-8706-521E-C333E8B00EF8" referredColumn="EF2970C3-5712-456C-D747-FBC83764E359"/>
+</associations>
+</Column>
+<Column name="ID_MOTIVO" id="44FCCB67-946C-464B-7048-6972A85638F1">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>B2FCDCFB-C57C-B7D6-9856-EE71E437A127</importedID>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="9656871A-1B06-188A-628F-09916BD8C029" referredColumn="AC5F5D31-0CA2-E4FD-C10B-65D53D84D932"/>
+</associations>
+</Column>
+<Column name="ID_ITEM_NF" id="6D796517-A60D-F291-D2C2-6B6AA63B0A39">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>E8968EF1-8E73-364E-CA97-1300F92E945D</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="REFX" id="59DA8652-C40D-47EA-B169-1939C8244753">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>7A3D0E64-DC5F-BD9F-38F2-EC1E8C3078FF</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>200</dataTypeSize>
+<ownDataTypeParameters>200,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="QUANT" id="EA417174-8879-4195-CED5-090357CBFB34">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>0257A8E7-BD0E-798F-BAC3-EDF5A95907AC</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_DOC" id="09F0FF61-FF27-FCB0-F288-8D105585EBB2">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>CFB889BE-55A3-A21F-CB76-8BEB330C49D9</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_TIPO_RETORNO" id="A542882E-9C8D-8718-41CE-52B7C2554395">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<commentInRDBMS> Fornecedor&lt;br/&gt;Entrada</commentInRDBMS>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>E91EBA7C-D680-B86F-9AB0-BC6A3E064DCC</importedID>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="4D8BD0DE-BBDA-BD5F-DA8C-4F8E80269E55" name="GAR_SOLICITACAO_ITEM_LAUDO_PK">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<importedID>13DEAE30-1563-3485-69BE-241AAFD4BA6E</importedID>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="87CAB6B8-E9B0-7E88-0522-DEDD8E1F3B11"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="F6D6E0FC-CD5E-79D5-538C-F8DB1C8FA5AE" name="GAR_SOLICITACAO_ITEM_LAUDO_FK">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="A62CF8AE-2CF4-FFC5-51C2-4B3E4D7915B6"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="922B4A79-46E9-3D38-C596-52356F43F7AA" name="GAR_SOLICITACAO_ITEM_LAUDO_FK2">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-15 12:09:01 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="44FCCB67-946C-464B-7048-6972A85638F1"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>
