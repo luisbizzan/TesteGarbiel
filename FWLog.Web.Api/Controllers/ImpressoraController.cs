@@ -24,8 +24,6 @@ namespace FWLog.Web.Api.Controllers
         {
             long idPerfilImpressora = _unitOfWork.UsuarioEmpresaRepository.Tabela().FirstOrDefault(x => x.IdEmpresa == IdEmpresa && x.UserId == IdUsuario)?.IdPerfilImpressoraPadrao ?? 0;
 
-            tipoImpressao = ImpressaoItemEnum.RelatorioA4;
-
             ImpressorasResposta impressoras = new ImpressorasResposta { Lista = _unitOfWork.BOPrinterRepository.ObterPorPerfil(idPerfilImpressora, tipoImpressao).Select(x => new ImpressoraResposta { Id = x.Id, Name = x.Name }).ToList() };
 
             return ApiOk(impressoras);
