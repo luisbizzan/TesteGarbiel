@@ -381,5 +381,27 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(businessException.Message);
             }
         }
+
+        [Route("api/v1/expedicao/doca/removendo-volume-doca")]
+        [HttpPost]
+        public IHttpActionResult RemovendoVolumeDoca(RemovendoVolumeDocaRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _expedicaoService.RemovendoVolumeDoca(requisicao.IdPedidoVendaVolume,requisicao.IdTransprotadora,IdUsuario,IdEmpresa);
+
+                return ApiOk();
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
+
+        }
     }
 }

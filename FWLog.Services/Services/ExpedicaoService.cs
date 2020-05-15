@@ -1083,5 +1083,69 @@ namespace FWLog.Services.Services
                 IdUsuario = idUsuario
             });
         }
+
+        public void RemovendoVolumeDoca(long idPedidoVendaVolume, long idTransportadora, string idUsuario, long idEmpresa)
+        {
+            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPedidoVendaVolumePorIdPorEmpresa(idPedidoVendaVolume, idEmpresa);
+
+            if (pedidoVendaVolume == null)
+            {
+                throw new BusinessException("Volume não encontrado.");
+            }
+
+            var transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
+
+            if (transportadora == null)
+            {
+                throw new BusinessException("Transportadora não encontrada.");
+            }
+
+            if (pedidoVendaVolume.PedidoVenda.IdTransportadora != transportadora.IdTransportadora)
+            {
+                throw new BusinessException("Este volume não pertence a esta transportadora.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.RomaneioImpresso)
+            {
+                throw new BusinessException("Volume não pode ser removido, o Romaneio está impresso.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovidoDOCA)
+            {
+                throw new BusinessException("Volume não está na DOCA.");
+            }
+
+            var pedidoVenda = pedidoVendaVolume.PedidoVenda;
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
+                pedidoVendaVolume.DataHoraRemocaoVolume = DateTime.Now;
+
+                _unitOfWork.SaveChanges();
+
+                if (pedidoVenda.PedidoVendaVolumes.All(x => x.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora))
+                {
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
+                }
+                else if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA)
+                {
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovendoDOCA;
+                    _unitOfWork.SaveChanges();
+                };
+
+                _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Expedicao,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.RemoverDoca,
+                    Descricao = $"O pedido-volume {pedidoVendaVolume.IdPedidoVendaVolume} da transportadora {transportadora.RazaoSocial} foi removido da DOCA.",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuario
+                });
+
+                transacao.Complete();
+            }
+
+        }
     }
 }
