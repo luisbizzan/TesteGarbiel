@@ -11,7 +11,7 @@ namespace FWLog.Web.Api.Models.Etiqueta
         [Required(ErrorMessage = "A impressora deve ser informada.")]
         public long IdImpressora { get; set; }
 
-        //[Required(ErrorMessage = "Tipo impressão deve ser informado.")]
-        public EtiquetaEnderecoTipoImpressao TipoImpressao { get; set; } = EtiquetaEnderecoTipoImpressao.FILETE_104_24;
+        [Required(ErrorMessage = "Tipo impressão deve ser informado.")]
+        public EtiquetaEnderecoTipoImpressao TipoImpressao { get; set; }
     }
 }
