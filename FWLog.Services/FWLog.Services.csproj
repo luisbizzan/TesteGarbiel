@@ -135,6 +135,7 @@
     <Compile Include="Model\AtividadeEstoque\FinalizarConferenciaEnderecoRequisicao.cs" />
     <Compile Include="Model\Caixa\CaixaViewModel.cs" />
     <Compile Include="Model\Coletor\GravarHistoricoColetorRequisicao.cs" />
+    <Compile Include="Model\Etiquetas\EtiquetaEnderecoTipoImpressao.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaArmazenagemVolume.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaAvulsoRequest.cs" />
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaDevolucaoTotalRequest.cs" />

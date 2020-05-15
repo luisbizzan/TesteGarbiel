@@ -470,33 +470,57 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaEndereco(ImprimirEtiquetaEnderecoRequest request)
         {
-            EnderecoArmazenagem endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(request.IdEnderecoArmazenagem);
+            var endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(request.IdEnderecoArmazenagem);
 
-            string textoEndereco = endereco.Codigo ?? string.Empty;
-            string codEndereco = endereco.IdEnderecoArmazenagem.ToString().PadLeft(7, '0');
+            if (endereco == null)
+            {
+                throw new BusinessException("Endereço não encontrado.");
+            }
+
+            var codigoEnderecoFormatado = endereco.Codigo ?? string.Empty;
+            var idEnderecoFormatado = endereco.IdEnderecoArmazenagem.ToString().PadLeft(7, '0');
 
             var etiquetaZpl = new StringBuilder();
 
-            etiquetaZpl.Append("^XA");
+            if (request.TipoImpressao == EtiquetaEnderecoTipoImpressao.NORMAL_90_70)
+            {
+                etiquetaZpl.AppendLine("^XA");
+                etiquetaZpl.AppendLine("^LL880");
 
-            etiquetaZpl.Append("^LL176");
+                //Código diferente do Clipper que define quantidade de etiquetas a serem impressas
+                etiquetaZpl.AppendLine($"^PQ{request.QuantidadeEtiquetas}^FS");
 
-            // Define quantidade de etiquetas a imprimir
-            etiquetaZpl.Append($"^PQ{request.QuantidadeEtiquetas}^FS");
+                etiquetaZpl.AppendLine("^FO16,20^GB696,520,8^FS");
+                etiquetaZpl.AppendLine("^FO16,20^GB350,520,200^FS");
 
-            // Contorno da etiqueta
-            etiquetaZpl.Append("^FO5,10^GB900,180,8^FS");
+                etiquetaZpl.AppendLine($"^FO95,60^FB450,1,0,C,0^A0B,240,100^FR^FD{codigoEnderecoFormatado}^FS");
+                etiquetaZpl.AppendLine($"^FO450,160^BCB,135,Y,N^FD{idEnderecoFormatado}^FS");
 
-            // Fundo do texto de endereço
-            etiquetaZpl.Append("^FO5,10^GB380,180,170^FS");
+                etiquetaZpl.AppendLine("^XZ");
+            }
+            else
+            {
+                etiquetaZpl.AppendLine("^XA");
 
-            // Texto do endereço
-            etiquetaZpl.Append($"^FO5,20^FB380,1,0,C,0^A0N,200,85^FR^FD{textoEndereco}^FS");
+                etiquetaZpl.AppendLine("^LL176");
 
-            // Código de barras do endereço
-            etiquetaZpl.Append($"^FO415,35^BY3,,110^BCN,,Y,N^FD{codEndereco}^FS");
+                // Define quantidade de etiquetas a imprimir
+                etiquetaZpl.AppendLine($"^PQ{request.QuantidadeEtiquetas}^FS");
 
-            etiquetaZpl.Append("^XZ");
+                // Contorno da etiqueta
+                etiquetaZpl.AppendLine("^FO5,10^GB900,180,8^FS");
+
+                // Fundo do texto de endereço
+                etiquetaZpl.AppendLine("^FO5,10^GB380,180,170^FS");
+
+                // Texto do endereço
+                etiquetaZpl.AppendLine($"^FO5,20^FB380,1,0,C,0^A0N,200,85^FR^FD{codigoEnderecoFormatado}^FS");
+
+                // Código de barras do endereço
+                etiquetaZpl.AppendLine($"^FO415,35^BY3,,110^BCN,,Y,N^FD{idEnderecoFormatado}^FS");
+
+                etiquetaZpl.AppendLine("^XZ");
+            }
 
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
 
