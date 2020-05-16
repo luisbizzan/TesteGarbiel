@@ -203,7 +203,10 @@ function conferirRemessa() {
     var id = $(this).data("id");
     let modal = $("#modalVisualizar");
 
-    modal.load(CONTROLLER_PATH + "ConferirRemessa/" + id, function () {
+    modal.load("ConferenciaConferir", {
+        Id: id,
+        Tipo: 'remessa'
+    }, function () {
         modal.modal();
     });
 }

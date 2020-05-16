@@ -204,6 +204,36 @@ namespace FWLog.Data.Repository.GeneralCtx
             return new DmlStatus { Sucesso = true, Mensagem = "Remessa criada com sucesso.", Id = Id_Remessa };
         }
 
+        public GarRemessa SelecionaRemessa(long Id_Remessa)
+        {
+            GarRemessa retorno = new GarRemessa();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        GS.Id,                       
+                        GS.Filial,
+                        GS.Dt_Criacao,
+                        GT1.descricao AS Tipo,
+                        GS.Cod_Fornecedor
+                    FROM
+                        gar_remessa GS
+                        LEFT JOIN geral_tipo GT1 ON GT1.Id = GS.Id_Tipo
+                    WHERE
+                        GS.Id = :Id_Remessa
+                    ";
+                    retorno = conn.Query<GarRemessa>(sQuery, new { Id_Remessa }).SingleOrDefault();
+                }
+                conn.Close();
+            }
+            return retorno;
+        }
+
+
         public GarSolicitacao SelecionaSolicitacao(long Id_Solicitacao)
         {
             GarSolicitacao retorno = new GarSolicitacao();

@@ -11,10 +11,13 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public GarantiaSolicitacaoListVM Solicitacao { get; set; }
         public GarantiaConferencia Conferencia { get; set; }
 
+        public GarantiaRemessaListVM Remessa { get; set; }
+
         public GarantiaConferenciaVM()
         {
             Solicitacao = new GarantiaSolicitacaoListVM();
             Conferencia = new GarantiaConferencia();
+            Remessa = new GarantiaRemessaListVM();
         }
     }
 

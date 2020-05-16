@@ -645,7 +645,7 @@
     <Content Include="Scripts\Views\GarantiaConfiguracao\remessausuario.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\sankhyatop.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
-    <Content Include="Scripts\Views\Garantia\solicitacaoConferir.js" />
+    <Content Include="Scripts\Views\Garantia\conferenciaConferir.js" />
     <Content Include="Scripts\Views\Garantia\remessa.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
     <Content Include="Scripts\Views\Geral\formGeralUploads.js" />
@@ -755,6 +755,7 @@
     <Content Include="Views\Garantia\_SolicitacaoImportar.cshtml" />
     <Content Include="Views\Garantia\_ConferenciaItemConferido.cshtml" />
     <Content Include="Views\Garantia\_RemessaCriar.cshtml" />
+    <Content Include="Views\Garantia\_RemessaConferir.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

@@ -209,7 +209,10 @@ function conferirSolicitacao() {
     var id = $(this).data("id");
     let modal = $("#modalVisualizar");
 
-    modal.load(CONTROLLER_PATH + "SolicitacaoConferir/" + id, function () {
+    modal.load(CONTROLLER_PATH+"ConferenciaConferir", {
+        Id: id,
+        Tipo: 'solicitacao'
+    }, function () {
         modal.modal();
     });
 }

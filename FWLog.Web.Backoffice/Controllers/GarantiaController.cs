@@ -95,18 +95,27 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_SolicitacaoVisualizar", model);
         }
 
-        public ActionResult SolicitacaoConferir(long Id)
+        public ActionResult ConferenciaConferir(long Id, string Tipo)
         {
-            //Origem - Remessa | Solicitação
-            var idConferencia = _uow.GarantiaRepository.PegaIdUltimaConferenciaAtiva("solicitacao", Id);
+            //Tipo = Remessa | Solicitação
+            var idConferencia = _uow.GarantiaRepository.PegaIdUltimaConferenciaAtiva(Tipo, Id);
+            ViewBag.Tipo = Tipo;
 
             var model = new GarantiaConferenciaVM
             {
-                Conferencia = Mapper.Map<GarantiaConferencia>(_uow.GarantiaRepository.SelecionaConferencia(idConferencia)),
-                Solicitacao = Mapper.Map<GarantiaSolicitacaoListVM>(_uow.GarantiaRepository.SelecionaSolicitacao(Id))
+                Conferencia = Mapper.Map<GarantiaConferencia>(_uow.GarantiaRepository.SelecionaConferencia(idConferencia))                
             };
 
-            return PartialView("_SolicitacaoConferir", model);
+            if (Tipo == "solicitacao")
+            {
+                model.Solicitacao = Mapper.Map<GarantiaSolicitacaoListVM>(_uow.GarantiaRepository.SelecionaSolicitacao(Id));
+                return PartialView("_SolicitacaoConferir", model);
+            }
+            else
+            {
+                model.Remessa = Mapper.Map<GarantiaRemessaListVM>(_uow.GarantiaRepository.SelecionaRemessa(Id));
+                return PartialView("_RemessaConferir", model);
+            }
         }
 
         public ActionResult SolicitacaoImportar()
@@ -503,7 +512,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var model = new GarantiaRemessa
             {
-              
+
             };
 
             return PartialView("_RemessaCriar", model);
@@ -576,7 +585,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                     throw;
                 }
-               
+
             }
         }
     }

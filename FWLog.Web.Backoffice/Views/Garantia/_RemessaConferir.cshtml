@@ -11,12 +11,12 @@
 <input type="hidden" id="Origem" value="@ViewBag.Tipo" />
 
 <div class="modal-dialog modal-lg" style="width:95% !important;">
-    <div class="modal-content">
+    <div class="modal-content" >
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">
                 <span aria-hidden="true">×</span>
             </button>
-            <h4 class="modal-title">Conferência de Solicitação</h4>
+            <h4 class="modal-title">Conferência de Remessa</h4>
         </div>
         <div class="modal-body" style="overflow: auto; max-height: calc(100vh - 150px);">
 
@@ -30,30 +30,21 @@
                 <div class="x_content">
                     <div class="row" style="margin-bottom:10px;">
                         <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
-                            @Html.LabelFor(m => m.Solicitacao.Id): @Model.Solicitacao.Id
+                            @Html.LabelFor(m => m.Remessa.Id): @Model.Remessa.Id
+                        </div>              
+                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
+                            @Html.LabelFor(m => m.Remessa.Dt_Criacao): @Model.Remessa.Dt_Criacao
                         </div>
                         <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
-                            @Html.LabelFor(m => m.Solicitacao.Nota_Fiscal): @Model.Solicitacao.Nota_Fiscal
-                        </div>
-                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
-                            @Html.LabelFor(m => m.Solicitacao.Dt_Criacao): @Model.Solicitacao.Dt_Criacao
-                        </div>
-                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
-                            @Html.LabelFor(m => m.Solicitacao.Tipo): @Model.Solicitacao.Tipo
+                            @Html.LabelFor(m => m.Remessa.Tipo): @Model.Remessa.Tipo
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
-                            @Html.LabelFor(m => m.Solicitacao.Cli_Cnpj): @Model.Solicitacao.Cli_Cnpj
-                        </div>
+                            @Html.LabelFor(m => m.Remessa.Cod_Fornecedor): @Model.Remessa.Cod_Fornecedor
+                        </div>            
                         <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
-                            @Html.LabelFor(m => m.Solicitacao.Razao_Social): @Model.Solicitacao.Razao_Social
-                        </div>
-                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
-                            @Html.LabelFor(m => m.Solicitacao.Rep): @Model.Solicitacao.Rep
-                        </div>
-                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
-                            @Html.LabelFor(m => m.Solicitacao.Filial): @Model.Solicitacao.Filial
+                            @Html.LabelFor(m => m.Remessa.Filial): @Model.Remessa.Filial
                         </div>
                     </div>
                 </div>

@@ -21,7 +21,7 @@
 function conferir() {
     let div = $("#tabConferir");
 
-    div.load(CONTROLLER_PATH + "ConferenciaForm", {
+    div.load("/Garantia/ConferenciaForm", {
         Id_Conferencia: $("#Conferencia_Id").val(),
     }, function () {
         $("#Form_Quant").val("1");
@@ -61,7 +61,7 @@ function conferir() {
 function conferirItem() {
 
     $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "AtualizarItemConferencia",
+        url: "/Garantia/AtualizarItemConferencia",
         method: "POST",
         data: {
             Id_Conf: $("#Conferencia_Id").val(),
@@ -86,7 +86,7 @@ function conferirItem() {
 function divergencia() {
     let div = $("#tabDivergencia");
 
-    div.load(CONTROLLER_PATH + "ConferenciaDivergencia", {
+    div.load("/Garantia/ConferenciaDivergencia", {
         Id_Conferencia: $("#Conferencia_Id").val()
     }, function () {
         $('#tbDivergenciaItens').DataTable({
@@ -148,7 +148,7 @@ function finalizarConferenciaConfirmar() {
                 btnClass: 'btn-red',
                 action: function () {
                     $.ajax({
-                        url: HOST_URL + CONTROLLER_PATH + "ConferenciaFinalizar",
+                        url: "/Garantia/ConferenciaFinalizar",
                         method: "POST",
                         data: { Id_Conferencia: $("#Conferencia_Id").val() },
                         success: function (result) {
@@ -179,7 +179,7 @@ function itensLaudo() {
     let modal = $("#modalLaudo .modal-body");
     $("#modalLaudo .modal-title").html("Itens do Laudo");
 
-    modal.load(CONTROLLER_PATH + "ConferenciaLaudo", {
+    modal.load( "/Garantia/ConferenciaLaudo", {
         Id_Conferencia: $("#Conferencia_Id").val()
     }, function () {
         $("#modalLaudo").modal("show");
@@ -232,7 +232,7 @@ function itensLaudoDetalhe(refx) {
     let modal = $("#modalLaudoDetalhes .modal-body");
     $("#modalLaudoDetalhes .modal-title").html(refx + " - Itens");
 
-    modal.load(CONTROLLER_PATH + "ConferenciaLaudoDetalhe", {
+    modal.load("/Garantia/ConferenciaLaudoDetalhe", {
         Id_Conferencia: $("#Conferencia_Id").val(),
         Refx: refx
     }, function () {
@@ -262,7 +262,7 @@ function itensLaudoDetalhe(refx) {
             var formulario = $("form#formLaudoItensDetalhe").serialize();
 
             $.ajax({
-                url: HOST_URL + CONTROLLER_PATH + "ConferenciaLaudoDetalheGravar",
+                url: "/Garantia/ConferenciaLaudoDetalheGravar",
                 method: "POST",
                 data: formulario,
                 success: function (result) {
@@ -297,7 +297,7 @@ function excluirLaudo(id) {
                 btnClass: 'btn-red',
                 action: function () {
                     $.ajax({
-                        url: HOST_URL + CONTROLLER_PATH + "ConferenciaLaudoDetalheExcluir",
+                        url: "/Garantia/ConferenciaLaudoDetalheExcluir",
                         method: "POST",
                         data: { Id: id },
                         success: function (result) {
@@ -329,7 +329,7 @@ function itensPendentes() {
     let modal = $("#modalItensPendentes .modal-body");
     $("#modalItensPendentes .modal-title").html("Itens Pendentes");
 
-    modal.load(CONTROLLER_PATH + "ConferenciaItemPendente", {
+    modal.load("/Garantia/ConferenciaItemPendente", {
         Id_Conferencia: $("#Conferencia_Id").val()
     }, function () {
         $("#modalItensPendentes").modal("show");
@@ -353,7 +353,7 @@ function itensConferidos() {
     let modal = $("#modalItensPendentes .modal-body");
     $("#modalItensPendentes .modal-title").html("Itens Conferidos");
 
-    modal.load(CONTROLLER_PATH + "ConferenciaItemConferido", {
+    modal.load("/Garantia/ConferenciaItemConferido", {
         Id_Conferencia: $("#Conferencia_Id").val()
     }, function () {
         $("#modalItensPendentes").modal("show");
