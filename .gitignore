@@ -347,3 +347,7 @@ healthchecksdb
 /FWLog.Web.Backoffice/Uploads
 
 # End of https://www.gitignore.io/api/visualstudio
+**/*.localz
+**/*.local
+**/*.git
+**/*.DS_Store

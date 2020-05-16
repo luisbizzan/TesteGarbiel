@@ -78,8 +78,9 @@
 <nullsAllowed>true</nullsAllowed>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
-<logicalDatatype>LOGDT026</logicalDatatype>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>200</dataTypeSize>
+<ownDataTypeParameters>200,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
 <Column name="ID_DOC" id="F6150DF1-0BAE-9925-F712-6D03C00BFDA2">
@@ -97,7 +98,8 @@
 <Column name="ID_TIPO" id="4C8D48B9-BE48-E39A-53CE-D418BDEEDB6B">
 <createdBy>henrique.pereira</createdBy>
 <createdTime>2020-05-15 12:09:01 UTC</createdTime>
-<commentInRDBMS>Automatico&lt;br/&gt;Manual</commentInRDBMS>
+<commentInRDBMS><![CDATA[Automatico
+Manual]]></commentInRDBMS>
 <ownerDesignName>modeloFwLog</ownerDesignName>
 <importedID>2E7331FC-52F6-579E-B0E7-F67F99732D3F</importedID>
 <nullsAllowed>true</nullsAllowed>
@@ -110,7 +112,9 @@
 <Column name="ID_STATUS" id="082CA3A6-238D-D820-96A2-FEADF3480A57">
 <createdBy>henrique.pereira</createdBy>
 <createdTime>2020-05-15 12:09:01 UTC</createdTime>
-<commentInRDBMS>Aberto&lt;br/&gt;Em Conferência&lt;br/&gt;Fechado</commentInRDBMS>
+<commentInRDBMS><![CDATA[Aberto
+Em Conferência
+Fechado]]></commentInRDBMS>
 <ownerDesignName>modeloFwLog</ownerDesignName>
 <importedID>B7B342D4-86BC-3116-8C90-D92D0DED98A5</importedID>
 <nullsAllowed>true</nullsAllowed>

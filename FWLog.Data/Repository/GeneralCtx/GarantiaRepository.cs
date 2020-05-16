@@ -144,35 +144,64 @@ namespace FWLog.Data.Repository.GeneralCtx
         public DmlStatus CriarRemessa(GarRemessa item)
         {
             string sQuery = "";
+            var Id_Remessa = 0;
 
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
             {
                 conn.Open();
                 if (conn.State == ConnectionState.Open)
                 {
-                    bool ehFilho = false;
-                    sQuery = @"SELECT COUNT(*) AS ehFilho FROM gar_forn_grupo WHERE cod_forn_filho = :Cod_Fornecedor";
-                    ehFilho = conn.Query<int>(sQuery, new { item.Cod_Fornecedor }).SingleOrDefault() > 0;
+                    string codFornPai = "";
+                    sQuery = @"SELECT cod_forn_pai FROM gar_forn_grupo WHERE cod_forn_filho = :Cod_Fornecedor";
+                    codFornPai = conn.Query<string>(sQuery, new { item.Cod_Fornecedor }).SingleOrDefault();
 
-                    if (ehFilho)
-                        return new DmlStatus { Sucesso = false, Mensagem = "Esse é um fornecedor filho, busque pelo fornecedor pai." };
+                    if (!string.IsNullOrEmpty(codFornPai))
+                        return new DmlStatus { Sucesso = false, Mensagem = string.Format("Esse é um fornecedor filho, busque pelo fornecedor pai <strong>{0}</strong>.", codFornPai) };
 
-                    bool ehPai = false;
-                    sQuery = @"SELECT COUNT(*) AS ehPai FROM gar_forn_grupo WHERE cod_forn_pai = :Cod_Fornecedor";
-                    ehPai = conn.Query<int>(sQuery, new { item.Cod_Fornecedor }).SingleOrDefault() > 0;
+                    //VERIFICA SE TEM ALGUNS ITEM PARA A REMESSA
+                    bool temItens = false;
+                    sQuery = @"SELECT COUNT(*) FROM(
+                        SELECT 
+                           GSI.refx,
+                           GSI.id_solicitacao,
+                           SUM(GM.quant - NVL(Quant_Enviado,0)) AS quant   
+                        FROM 
+                            gar_movimentacao GM
+                            INNER JOIN gar_solicitacao_item GSI ON GSI.id = GM.id_item
+                            LEFT JOIN gar_remessa_controle GRC ON GRC.id = GM.id
+                        WHERE
+                            (
+                                GSI.cod_fornecedor = :Cod_Fornecedor
+                                OR GSI.cod_fornecedor IN(SELECT cod_forn_filho FROM gar_forn_grupo WHERE cod_forn_pai = :Cod_Fornecedor) 
+                            )
+                            AND GM.id_tipo_estoque = 15
+                            AND GM.id_tipo_movimentacao = 27
+                        GROUP BY  
+                            GSI.refx,
+                            GSI.id_solicitacao
+                    ) WHERE quant > 0";
+                    temItens = conn.Query<int>(sQuery, new { item.Cod_Fornecedor }).SingleOrDefault() > 0;
 
-                    if (ehPai)
-                    {
-                        //TODO GERAR REMESSA PARA O FORNECEDOR E TODOS OS FILHOS
-                    }
-                    else
-                    {
-                        //TODO GERAR REMESSA PARA O FORNECEDOR
-                    }
+                    if (!temItens)
+                        return new DmlStatus { Sucesso = false, Mensagem = string.Format("Não foram encontrados itens para esse fornecedor.") };
+
+                    //CRIA REMESSA
+                    var param = new DynamicParameters();
+                    param.Add(name: "Filial", value: item.Filial, direction: ParameterDirection.Input);
+                    param.Add(name: "Cod_Fornecedor", value: item.Cod_Fornecedor, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Tipo", value: item.Id_Tipo, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Status", value: item.Id_Status, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Usr", value: item.Id_Usr, direction: ParameterDirection.Input);
+                    param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
+                    conn.Execute(@"INSERT INTO gar_remessa (Filial, Cod_Fornecedor, Id_Tipo, Id_Status, Id_Usr, Dt_Criacao) 
+                    VALUES (:Filial, :Cod_Fornecedor, :Id_Tipo, :Id_Status, :Id_Usr, SYSDATE) returning Id into :Id", param);
+
+                    Id_Remessa = param.Get<int>("Id");
+
                 }
                 conn.Close();
             }
-            return new DmlStatus { Sucesso = true, Mensagem = "Remessa criada com sucesso.", Id = 0 };
+            return new DmlStatus { Sucesso = true, Mensagem = "Remessa criada com sucesso.", Id = Id_Remessa };
         }
 
         public GarSolicitacao SelecionaSolicitacao(long Id_Solicitacao)
@@ -1029,15 +1058,13 @@ namespace FWLog.Data.Repository.GeneralCtx
                     if (retorno == 0)
                     {
                         var param = new DynamicParameters();
-
                         param.Add(name: "Id_Solicitacao", value: item.Id_Solicitacao, direction: ParameterDirection.Input);
                         param.Add(name: "Id_Tipo_Conf", value: item.Id_Tipo_Conf, direction: ParameterDirection.Input);
                         param.Add(name: "Id_Usr", value: item.Id_Usr, direction: ParameterDirection.Input);
                         param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                         conn.Execute("INSERT INTO gar_conferencia (Id_Solicitacao, Id_Tipo_Conf, Id_Usr, Dt_Conf) VALUES (:Id_Solicitacao, :Id_Tipo_Conf, :Id_Usr, SYSDATE) returning Id into :Id", param);
-
-                        var Id_Conferencia = param.Get<int>("Id");
+                         var Id_Conferencia = param.Get<int>("Id");
 
                         sQuery = @"
                         INSERT INTO gar_conferencia_item (refx, id_conf, dt_conf, id_usr,quant)
@@ -1059,6 +1086,68 @@ namespace FWLog.Data.Repository.GeneralCtx
                             Id_Conferencia,
                             item.Id_Usr,
                             item.Id_Solicitacao
+                        });
+                    }
+                }
+                conn.Close();
+            }
+        }
+
+        public void CriarConferenciaRemessa(GarConferencia item)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    sQuery = @"SELECT COUNT(*) FROM gar_conferencia WHERE Id_Remessa = :Id_Remessa AND ativo = 1";
+                    var retorno = conn.Query<int>(sQuery, new { item.Id_Remessa }).SingleOrDefault();
+
+                    if (retorno == 0)
+                    {
+
+                        sQuery = @"SELECT cod_fornecedor FROM gar_remessa WHERE Id = :Id_Remessa";
+                        var fornecedor = conn.Query<string>(sQuery, new { item.Id_Remessa }).SingleOrDefault();
+
+                        var param = new DynamicParameters();
+                        param.Add(name: "Id_Remessa", value: item.Id_Remessa, direction: ParameterDirection.Input);
+                        param.Add(name: "Id_Tipo_Conf", value: item.Id_Tipo_Conf, direction: ParameterDirection.Input);
+                        param.Add(name: "Id_Usr", value: item.Id_Usr, direction: ParameterDirection.Input);
+                        param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                        conn.Execute(@"INSERT INTO gar_conferencia (Id_Remessa, Id_Tipo_Conf, Id_Usr, Dt_Conf) 
+                        VALUES (:Id_Remessa, :Id_Tipo_Conf, :Id_Usr, SYSDATE) returning Id into :Id", param);
+                        var Id_Conferencia = param.Get<int>("Id");
+
+                        sQuery = @"
+                        INSERT INTO gar_conferencia_item (refx, id_solicitacao, id_conf, dt_conf, id_usr,quant)
+                        SELECT refx, id_solicitacao, :Id_Conferencia, SYSDATE AS dt_conf, :id_usr, quant FROM(
+                            SELECT 
+                               GSI.refx,
+                               GSI.id_solicitacao,
+                               SUM(GM.quant - NVL(Quant_Enviado,0)) AS quant   
+                            FROM 
+                                gar_movimentacao GM
+                                INNER JOIN gar_solicitacao_item GSI ON GSI.id = GM.id_item
+                                LEFT JOIN gar_remessa_controle GRC ON GRC.id = GM.id
+                            WHERE
+                                (
+                                    GSI.cod_fornecedor = :fornecedor
+                                    OR GSI.cod_fornecedor IN(SELECT cod_forn_filho FROM gar_forn_grupo WHERE cod_forn_pai = :fornecedor) 
+                                )
+                                AND GM.id_tipo_estoque = 15
+                                AND GM.id_tipo_movimentacao = 27
+                            GROUP BY  
+                                GSI.refx,
+                                GSI.id_solicitacao
+                        ) WHERE quant > 0
+                        ";
+                        conn.Query<GarConferenciaHist>(sQuery, new
+                        {
+                            Id_Conferencia,
+                            item.Id_Usr,
+                            fornecedor
                         });
                     }
                 }

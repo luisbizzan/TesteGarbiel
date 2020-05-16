@@ -6,7 +6,7 @@
 })();
 
 function criarRemessa() {
-    var formulario = $("form#formImportarSolicitacao").serialize();
+    var formulario = $("form#formRemessaCriar").serialize();
 
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "RemessaCriarGravar",

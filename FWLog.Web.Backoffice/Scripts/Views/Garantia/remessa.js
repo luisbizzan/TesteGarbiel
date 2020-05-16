@@ -1,4 +1,9 @@
 ﻿(function () {
+
+    $('#modalVisualizar').on('hidden.bs.modal', function () {
+        location.reload();
+    });
+
     $.validator.setDefaults({ ignore: null });
     $('.onlyNumber').mask('0#');
     $("dateFormat").mask("99/99/9999");
@@ -48,7 +53,7 @@
                 color: "btn-primary",
                 attrs: { 'data-id': full.Id, 'action': 'conferirRemessa' },
                 icon: 'fa fa-check-square-o',
-                visible: visivelConferir
+                visible: true
             }
         ];
     });

@@ -22,7 +22,6 @@ namespace FWLog.Data.Models
         public long Id { get; set; }
         public long Id_Conf { get; set; }
         public long Id_Item { get; set; }
-        public long Id_Item_Nf { get; set; }
         public DateTime Dt_Conf { get; set; }
         public long? Quant_Conferida { get; set; }
         public long? Quant_Max { get; set; }
@@ -38,6 +37,7 @@ namespace FWLog.Data.Models
     {
         public long Id { get; set; }
         public long Id_Conf { get; set; }
+        public long Id_Solicitacao { get; set; }
         public DateTime Dt_Conf { get; set; }
         public String Refx { get; set; }
         public String Volume { get; set; }

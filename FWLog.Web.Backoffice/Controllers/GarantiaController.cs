@@ -503,6 +503,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var model = new GarantiaRemessa
             {
+              
             };
 
             return PartialView("_RemessaCriar", model);
@@ -525,28 +526,57 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             else
             {
-                retorno = _uow.GarantiaRepository.CriarRemessa(new GarRemessa
-                {
-                    Cod_Fornecedor = item.Cod_Fornecedor,
-                    Id_Usr = IdUsuario,
-                });
 
-                if (retorno.Sucesso)
+                try
                 {
-                    return Json(new AjaxGenericResultModel
+                    retorno = _uow.GarantiaRepository.CriarRemessa(new GarRemessa
                     {
-                        Success = true,
-                        Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                        Cod_Fornecedor = item.Cod_Fornecedor,
+                        Id_Status = 37,
+                        Id_Tipo = 2,
+                        Id_Usr = IdUsuario
                     });
+
+                    if (retorno.Id != 0)
+                    {
+                        //CRIAR A CONFERENCIA DE REMESSA
+                        _uow.GarantiaRepository.CriarConferenciaRemessa(new GarConferencia
+                        {
+                            Id_Remessa = retorno.Id,
+                            Id_Usr = IdUsuario,
+                            Id_Tipo_Conf = 26 //26 Envio Fornecedor ou 6 Retorno Fornecedor (perguntar)
+                        });
+                    }
+
+                    if (retorno.Sucesso)
+                    {
+
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = true,
+                            Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                        });
+                    }
+                    else
+                    {
+                        return Json(new AjaxGenericResultModel
+                        {
+                            Success = false,
+                            Message = retorno.Mensagem
+                        });
+                    }
                 }
-                else
+                catch (Exception e)
                 {
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = retorno.Mensagem
+                        Message = e.Message
                     });
+
+                    throw;
                 }
+               
             }
         }
     }
