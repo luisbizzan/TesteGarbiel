@@ -13,13 +13,6 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         }
 
-        public List<long> PesquisarIdsEmSeparacao(string idUsuario, long idEmpresa)
-        {
-            /* return Entities.PedidoVenda.Where(w => w.IdUsuarioSeparacao == idUsuario && w.IdEmpresa == idEmpresa && w.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao).Select(x => x.IdPedidoVenda).ToList();*/
-
-            throw new NotImplementedException();
-        }
-
         public PedidoVenda ObterPorNroPedidoEEmpresa(int nroPedido, long idEmpresa)
         {
             return Entities.PedidoVenda.FirstOrDefault(f => f.NroPedidoVenda == nroPedido && f.IdEmpresa == idEmpresa);
