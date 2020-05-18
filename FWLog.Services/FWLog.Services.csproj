@@ -212,6 +212,7 @@
     <Compile Include="Model\Relatorios\TermoResponsabilidadeRequest.cs" />
     <Compile Include="Model\SendRedefinePasswordEmailRequest.cs" />
     <Compile Include="Model\Produto\EntradasProdutoResposta.cs" />
+    <Compile Include="Model\SeparacaoPedido\PedidoVendaVolumeEmSeparacaoViewModel.cs" />
     <Compile Include="Model\SeparacaoPedido\BuscarPedidoVendaResposta.cs" />
     <Compile Include="Model\SeparacaoPedido\PedidoItemViewModel.cs" />
     <Compile Include="Model\SeparacaoPedido\VolumeViewModel.cs" />
