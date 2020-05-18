@@ -71,7 +71,7 @@ namespace FWLog.Web.Api.Controllers
                     usuarioTemPermissao = await UserManager.ValidatePermissionByIdEmpresaAsync(usuarioPermissao?.Id, IdEmpresa, Permissions.RFSeparacao.CancelarSeparacao);
                 }
 
-                await _separacaoPedidoService.CancelarPedidoSeparacao(requisicao?.IdPedidoVenda ?? 0, requisicao?.UsuarioPermissao, usuarioTemPermissao, usuarioPermissao?.Id, IdUsuario, IdEmpresa);
+                await _separacaoPedidoService.CancelarPedidoSeparacao(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.UsuarioPermissao, usuarioTemPermissao, usuarioPermissao?.Id, IdUsuario, IdEmpresa);
             }
             catch (BusinessException businessException)
             {

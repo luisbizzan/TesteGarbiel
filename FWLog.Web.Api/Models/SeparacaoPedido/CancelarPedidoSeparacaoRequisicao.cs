@@ -5,7 +5,7 @@ namespace FWLog.Web.Api.Models.SeparacaoPedido
     public class CancelarPedidoSeparacaoRequisicao
     {
         [Required]
-        public long IdPedidoVenda { get; set; }
+        public long IdPedidoVendaVolume { get; set; }
 
         [Required]
         public string UsuarioPermissao { get; set; }
