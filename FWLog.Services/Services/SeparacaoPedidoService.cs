@@ -51,8 +51,8 @@ namespace FWLog.Services.Services
             var pedidoVendas = _unitOfWork.PedidoVendaVolumeRepository.PesquisarIdsEmSeparacao(idUsuario, idEmpresa);
 
             var result = pedidoVendas.Select(x => new PedidoVendaVolumeEmSeparacaoViewModel
-            { 
-                IdPedidoVenda = x.IdPedidoVenda,                
+            {
+                IdPedidoVenda = x.IdPedidoVenda,
                 IdPedidoVendaVolume = x.IdPedidoVendaVolume
             }).ToList();
 
@@ -414,56 +414,64 @@ namespace FWLog.Services.Services
             // validações
             if (idPedidoVenda <= 0)
             {
-                throw new BusinessException("O pedido deve ser informado.");
+                throw new BusinessException("Pedido deve ser informado.");
             }
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedidoVendaEIdEmpresa(idPedidoVenda, idEmpresa);
+
             if (pedidoVenda == null)
             {
-                throw new BusinessException("O pedido não foi encontrado.");
+                throw new BusinessException("Pedido não encontrado.");
             }
 
             if (pedidoVenda.IdEmpresa != idEmpresa)
             {
-                throw new BusinessException("O pedido não pertence a empresa do usuário logado.");
+                throw new BusinessException("Pedido não pertence a empresa do usuário.");
             }
 
-            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao &&
-                pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
+            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao && pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
             {
-                throw new BusinessException("O pedido de venda não está liberado para separação.");
+                throw new BusinessException("Pedido não liberado para separação.");
             }
 
-            var dataProcessamento = DateTime.Now;
-
-            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
-            {
-                await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, PedidoVendaStatusEnum.ProcessandoSeparacao);
-
-                using (var transaction = _unitOfWork.CreateTransactionScope())
-                {
-                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
-                    pedidoVenda.DataHoraInicioSeparacao = dataProcessamento;
-                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
-
-                    _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
-
-                    _unitOfWork.SaveChanges();
-
-                    transaction.Complete();
-                }
-            }
+            var atualizaPedidoVenda = pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao;
 
             var pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.First(f => f.IdPedidoVendaVolume == idPedidoVendaVolume);
 
-            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
+            var atualizaPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao;
+
+            if (atualizaPedidoVenda || atualizaPedidoVendaVolume)
             {
-                pedidoVendaVolume.DataHoraInicioSeparacao = dataProcessamento;
-                pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+                var dataProcessamento = DateTime.Now;
 
-                _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
+                using (var transaction = _unitOfWork.CreateTransactionScope())
+                {
+                    if (atualizaPedidoVenda)
+                    {
+                        await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, PedidoVendaStatusEnum.ProcessandoSeparacao);
 
-                _unitOfWork.SaveChanges();
+                        pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+                        pedidoVenda.DataHoraInicioSeparacao = dataProcessamento;
+                        pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+
+                        _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+
+                        _unitOfWork.SaveChanges();
+                    }
+
+                    if (atualizaPedidoVendaVolume)
+                    {
+                        pedidoVendaVolume.DataHoraInicioSeparacao = dataProcessamento;
+                        pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoSeparacao;
+                        pedidoVendaVolume.IdUsuarioSeparacaoAndamento = idUsuarioOperacao;
+
+                        _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
+
+                        _unitOfWork.SaveChanges();
+                    }
+
+                    transaction.Complete();
+                }
             }
         }
 
@@ -517,6 +525,7 @@ namespace FWLog.Services.Services
                 pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
                 pedidoVendaVolume.DataHoraFimSeparacao = dataProcessamento;
                 pedidoVendaVolume.IdCaixaVolume = idCaixa;
+                pedidoVendaVolume.IdUsuarioSeparacaoAndamento = null;
 
                 _unitOfWork.SaveChanges();
 
