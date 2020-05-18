@@ -46,11 +46,17 @@ namespace FWLog.Services.Services
             _caixaService = caixaService;
         }
 
-        public List<long> ConsultaPedidoVendaEmSeparacao(string idUsuario, long idEmpresa)
+        public List<PedidoVendaVolumeEmSeparacaoViewModel> ConsultaPedidoVendaEmSeparacao(string idUsuario, long idEmpresa)
         {
-            //var ids = _unitOfWork.PedidoVendaRepository.PesquisarIdsEmSeparacao(idUsuario, idEmpresa);
-            //return ids;
-            throw new NotImplementedException();
+            var pedidoVendas = _unitOfWork.PedidoVendaVolumeRepository.PesquisarIdsEmSeparacao(idUsuario, idEmpresa);
+
+            var result = pedidoVendas.Select(x => new PedidoVendaVolumeEmSeparacaoViewModel
+            { 
+                IdPedidoVenda = x.IdPedidoVenda,                
+                IdPedidoVendaVolume = x.IdPedidoVendaVolume
+            }).ToList();
+
+            return result;
         }
 
         private void BuscaEValidaDadosPorReferenciaPedido(string referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume)

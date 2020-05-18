@@ -22,9 +22,9 @@ namespace FWLog.Web.Api.Controllers
         {
             var idsPedidosProcessoDeSeparacao = _separacaoPedidoService.ConsultaPedidoVendaEmSeparacao(IdUsuario, IdEmpresa);
 
-            var response = new SeparacaoPedidoResposta
+            var response = new ConsultaPedidoVendaEmSeparacaoResposta
             {
-                PedidosProcessoDeSeparacao = idsPedidosProcessoDeSeparacao
+                PedidoVendaVolumeEmSeparacaoViewModel = idsPedidosProcessoDeSeparacao
             };
 
             return ApiOk(response);
