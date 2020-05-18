@@ -323,28 +323,29 @@ namespace FWLog.Services.Services
             _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
         }
 
-        public async Task CancelarPedidoSeparacao(long idPedidoVenda, string usuarioPermissaoCancelamento, bool usuarioTemPermissao, string idUsuarioPermissao, string idUsuarioOperacao, long idEmpresa)
+        public async Task CancelarPedidoSeparacao(long idPedidoVendaVolume, string usuarioPermissaoCancelamento, bool usuarioTemPermissao, string idUsuarioPermissao, string idUsuarioOperacao, long idEmpresa)
         {
-            if (idPedidoVenda <= 0)
+            if (idPedidoVendaVolume <= 0)
             {
-                throw new BusinessException("Pedido deve ser informado.");
-            }
-            var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda);
-
-            if (pedidoVenda == null)
-            {
-                throw new BusinessException("Pedido não encontrado.");
+                throw new BusinessException("Volume deve ser informado.");
             }
 
-            if (pedidoVenda.IdEmpresa != idEmpresa)
+            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
+
+            if (pedidoVendaVolume == null)
             {
-                throw new BusinessException("Pedido não pertence a empresa do usuário.");
+                throw new BusinessException("Volume não encontrado.");
+            }
+
+            if (pedidoVendaVolume.PedidoVenda.IdEmpresa != idEmpresa)
+            {
+                throw new BusinessException("Volume não pertence a empresa do usuário.");
 
             }
 
-            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
+            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
             {
-                throw new BusinessException("Pedido não está em separação.");
+                throw new BusinessException("Volume não está em separação.");
             }
 
             if (usuarioPermissaoCancelamento.NullOrEmpty())
@@ -357,51 +358,47 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Usuário não tem permissão para cancelamento.");
             }
 
-            //TODO: Verificação de status de volumes (Aguardando dúvidas com Anderson)
-
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
                 var novoStatusSeparacao = PedidoVendaStatusEnum.EnviadoSeparacao;
 
-                pedidoVenda.IdPedidoVendaStatus = novoStatusSeparacao;
-                pedidoVenda.DataHoraInicioSeparacao = null;
-                pedidoVenda.DataHoraFimSeparacao = null;
+                pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
+                pedidoVendaVolume.DataHoraInicioSeparacao = null;
+                pedidoVendaVolume.DataHoraFimSeparacao = null;
+                pedidoVendaVolume.IdCaixaVolume = null;
+
+                foreach (var pedidoVendaProduto in pedidoVendaVolume.PedidoVendaProdutos.ToList())
+                {
+                    if (pedidoVendaProduto.QtdSeparada.GetValueOrDefault() > 0)
+                    {
+                        await AjustarQuantidadeVolume(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, pedidoVendaProduto.QtdSeparada.Value, idEmpresa, idUsuarioOperacao);
+                    }
+
+                    pedidoVendaProduto.QtdSeparada = 0;
+                    pedidoVendaProduto.IdPedidoVendaStatus = novoStatusSeparacao;
+                    pedidoVendaProduto.IdUsuarioSeparacao = null;
+                    pedidoVendaProduto.DataHoraInicioSeparacao = null;
+                    pedidoVendaProduto.DataHoraFimSeparacao = null;
+                    pedidoVendaProduto.IdUsuarioAutorizacaoZerar = null;
+                    pedidoVendaProduto.DataHoraAutorizacaoZerarPedido = null;
+                }
 
                 _unitOfWork.SaveChanges();
 
-                foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes.ToList())
+                if (!pedidoVendaVolume.PedidoVenda.PedidoVendaVolumes.Any(pvv => pvv.IdPedidoVendaVolume != idPedidoVendaVolume && (pvv.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao || pvv.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)))
                 {
-                    pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
-                    pedidoVendaVolume.DataHoraInicioSeparacao = null;
-                    pedidoVendaVolume.DataHoraFimSeparacao = null;
-                    pedidoVendaVolume.IdCaixaVolume = null;
-
-                    foreach (var pedidoVendaProduto in pedidoVendaVolume.PedidoVendaProdutos.ToList())
-                    {
-                        if (pedidoVendaProduto.QtdSeparada.GetValueOrDefault() > 0)
-                        {
-                            await AjustarQuantidadeVolume(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, pedidoVendaProduto.QtdSeparada.Value, idEmpresa, idUsuarioOperacao);
-                        }
-
-                        pedidoVendaProduto.QtdSeparada = 0;
-                        pedidoVendaProduto.IdPedidoVendaStatus = novoStatusSeparacao;
-                        pedidoVendaProduto.IdUsuarioSeparacao = null;
-                        pedidoVendaProduto.DataHoraInicioSeparacao = null;
-                        pedidoVendaProduto.DataHoraFimSeparacao = null;
-                        pedidoVendaProduto.IdUsuarioAutorizacaoZerar = null;
-                        pedidoVendaProduto.DataHoraAutorizacaoZerarPedido = null;
-                    }
+                    pedidoVendaVolume.PedidoVenda.IdPedidoVendaStatus = novoStatusSeparacao;
+                    pedidoVendaVolume.PedidoVenda.DataHoraInicioSeparacao = null;
+                    pedidoVendaVolume.PedidoVenda.DataHoraFimSeparacao = null;
 
                     _unitOfWork.SaveChanges();
                 }
-
-                await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, novoStatusSeparacao);
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
                 {
                     IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
                     IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.CancelamentoSeparacao,
-                    Descricao = $"Cancelou a separação do pedido {idPedidoVenda} com permissão do usuário {usuarioPermissaoCancelamento}",
+                    Descricao = $"Cancelou a separação do volume {pedidoVendaVolume.NroVolume} do pedidoVenda {pedidoVendaVolume.IdPedidoVenda} com permissão do usuário {usuarioPermissaoCancelamento}",
                     IdEmpresa = idEmpresa,
                     IdUsuario = idUsuarioOperacao
                 };
