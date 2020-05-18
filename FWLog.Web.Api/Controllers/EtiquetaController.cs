@@ -1,5 +1,4 @@
 ﻿using DartDigital.Library.Exceptions;
-using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Services;
@@ -32,6 +31,7 @@ namespace FWLog.Web.Api.Controllers
                 {
                     IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
                     IdImpressora = requisicao.IdImpressora,
+                    TipoImpressao = requisicao.TipoImpressao,
                     IdUsuario = IdUsuario,
                     IdEmpresa = IdEmpresa
                 };
@@ -40,11 +40,7 @@ namespace FWLog.Web.Api.Controllers
             }
             catch (BusinessException ex)
             {
-                return ApiInternalServerErrror("Erro na impressora", ex);
-            }
-            catch
-            {
-                throw;
+                return ApiBadRequest(ex.Message);
             }
 
             return ApiOk();
@@ -74,11 +70,7 @@ namespace FWLog.Web.Api.Controllers
             }
             catch (BusinessException ex)
             {
-                return ApiInternalServerErrror("Erro na impressora", ex);
-            }
-            catch
-            {
-                throw;
+                return ApiBadRequest(ex.Message);
             }
         }
 
@@ -110,10 +102,6 @@ namespace FWLog.Web.Api.Controllers
                 catch (BusinessException ex)
                 {
                     return ApiBadRequest(ex.Message);
-                }
-                catch
-                {
-                    throw;
                 }
 
                 return ApiOk();
@@ -177,10 +165,6 @@ namespace FWLog.Web.Api.Controllers
                 {
                     return ApiBadRequest(ex.Message);
                 }
-                catch
-                {
-                    throw;
-                }
 
                 return ApiOk();
             }
@@ -212,9 +196,28 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
+        }
+
+        [HttpPost]
+        [Route("api/v1/etiqueta/filete/imprimir")]
+        public IHttpActionResult ImprimirEtiquetaFilete(ImprimirEtiquetaFileteRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
             {
-                throw;
+                return ApiBadRequest(ModelState);
+            }
+            else
+            {
+                try
+                {
+                    _etiquetaService.ImprimirEtiquetaFilete(requisicao?.IdProduto ?? 0, requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdImpressora ?? 0);
+
+                    return ApiOk();
+                }
+                catch (BusinessException ex)
+                {
+                    return ApiBadRequest(ex.Message);
+                }
             }
         }
     }

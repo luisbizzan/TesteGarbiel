@@ -31,7 +31,7 @@ namespace FWLog.Services.Services
             }
 
             StringBuilder inner = new StringBuilder();
-            inner.Append("INNER JOIN TGFEMP ON TGFPAR.CODEMP = TGFEMP.CODEMP ");
+            //inner.Append("INNER JOIN TGFEMP ON TGFPAR.CODEMP = TGFEMP.CODEMP ");
             inner.Append("LEFT JOIN TSIEND ON TGFPAR.CODEND  = TSIEND.CODEND ");
             inner.Append("LEFT JOIN TSIBAI ON TGFPAR.CODBAI  = TSIBAI.CODBAI ");
             inner.Append("LEFT JOIN TSICID ON TGFPAR.CODCID  = TSICID.CODCID ");
@@ -48,9 +48,16 @@ namespace FWLog.Services.Services
 
             foreach (var fornecInt in fornecedoresIntegracao)
             {
-                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", fornecInt.CodigoIntegracao.ToString() } };
+                try
+                {
+                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", fornecInt.CodigoIntegracao.ToString() } };
 
-                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", '1');
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", '1');
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(string.Format("Erro na limpeza de integração do Fornecedor: {0}.", fornecInt.CodigoIntegracao), ex);
+                }
             }
         }
 
@@ -95,18 +102,18 @@ namespace FWLog.Services.Services
                     }
 
                     fornecedor.CodigoIntegracao = codParc;
-                    fornecedor.Ativo        = fornecInt.Ativo == "S" ? true : false;
-                    fornecedor.CNPJ         = fornecInt.CNPJ;
-                    fornecedor.RazaoSocial  = fornecInt.RazaoSocial;
+                    fornecedor.Ativo = fornecInt.Ativo == "S" ? true : false;
+                    fornecedor.CNPJ = fornecInt.CNPJ;
+                    fornecedor.RazaoSocial = fornecInt.RazaoSocial;
                     fornecedor.NomeFantasia = fornecInt.NomeFantasia;
-                    fornecedor.CEP          = fornecInt.CEP;
-                    fornecedor.Bairro       = fornecInt.Bairro;
-                    fornecedor.Cidade       = fornecInt.Cidade;
-                    fornecedor.Complemento  = fornecInt.Complemento;
-                    fornecedor.Endereco     = fornecInt.Endereco;
-                    fornecedor.Estado       = fornecInt.Estado;
-                    fornecedor.Numero       = fornecInt.Numero;
-                    fornecedor.Telefone     = fornecInt.Telefone;
+                    fornecedor.CEP = fornecInt.CEP;
+                    fornecedor.Bairro = fornecInt.Bairro;
+                    fornecedor.Cidade = fornecInt.Cidade;
+                    fornecedor.Complemento = fornecInt.Complemento;
+                    fornecedor.Endereco = fornecInt.Endereco;
+                    fornecedor.Estado = fornecInt.Estado;
+                    fornecedor.Numero = fornecInt.Numero;
+                    fornecedor.Telefone = fornecInt.Telefone;
 
                     if (fornecedorNovo)
                     {

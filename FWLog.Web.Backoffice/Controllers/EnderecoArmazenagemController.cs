@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DartDigital.Library.Exceptions;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models;
@@ -261,7 +262,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        public JsonResult ImprimirEtiqueta(BOImprimirTermoResponsabilidadeViewModel viewModel)
+        public JsonResult ImprimirEtiqueta(EnderecoArmazenagemEtiquetaViewModel viewModel)
         {
             try
             {
@@ -270,7 +271,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 var request = new ImprimirEtiquetaEnderecoRequest
                 {
                     IdEnderecoArmazenagem = viewModel.IdEnderecoArmazenagem,
-                    IdImpressora = viewModel.IdImpressora
+                    IdImpressora = viewModel.IdImpressora,
+                    TipoImpressao = viewModel.TipoImpressao
                 };
 
                 _etiquetaService.ImprimirEtiquetaEndereco(request);
@@ -281,15 +283,22 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = "Impressão enviada com sucesso."
                 }, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                _log.Error(ex.Message, ex);
-
-                return Json(new AjaxGenericResultModel
+                if (exception is BusinessException)
                 {
-                    Success = false,
-                    Message = "Ocorreu um erro na impressão."
-                }, JsonRequestBehavior.AllowGet);
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = exception.Message
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    _log.Error(exception.Message, exception);
+
+                    throw;
+                }
             }
         }
 

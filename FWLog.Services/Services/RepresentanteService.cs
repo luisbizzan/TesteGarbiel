@@ -84,5 +84,39 @@ namespace FWLog.Services.Services
                 }
             }
         }
+
+        public async Task LimparIntegracao()
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            StringBuilder where = new StringBuilder();
+            where.Append("WHERE ");
+            where.Append("TGFPAR.RAZAOSOCIAL IS NOT NULL ");
+            where.Append("AND TGFPAR.VENDEDOR = 'S' ");
+
+            var inner = "INNER JOIN TGFVEN ON TGFVEN.CODPARC = TGFPAR.CODPARC";
+
+            List<RepresentanteIntegracao> representantesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<RepresentanteIntegracao>(where: where.ToString(), inner: inner.ToString());
+
+
+            foreach (var transpInt in representantesIntegracao)
+            {
+                try
+                {
+                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", transpInt.CodigoIntegracao.ToString() } };
+
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "1");
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(string.Format("Erro na integração da Representante: {0}.", transpInt.CodigoIntegracao), ex);
+
+                    continue;
+                }
+            }
+        }
     }
 }

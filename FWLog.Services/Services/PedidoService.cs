@@ -113,6 +113,15 @@ namespace FWLog.Services.Services
 
                     var itens = pedidoIntegracao.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.QtdPedido, s.Sequencia }).ToList();
 
+                    var produtosComQtdePedidoZerado = itens.Where(x => x.QtdPedido == "0" || x.QtdPedido.NullOrEmpty()).Select(x => x.CodigoIntegracaoProduto).ToArray();
+
+                    if (produtosComQtdePedidoZerado.Any() && produtosComQtdePedidoZerado != null)
+                    {
+                        var produtosConcatenados = string.Join(",", produtosComQtdePedidoZerado);
+
+                        throw new BusinessException(string.Format("Pedido inválido com produtos com QtdePedido zerado (CODPROD: {0})", produtosConcatenados));
+                    }
+
                     var pedidosItens = new List<PedidoItem>();
 
                     foreach (var item in itens)

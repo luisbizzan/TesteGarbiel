@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FWLog.Services.Model.Etiquetas;
+using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Web.Api.Models.Etiqueta
 {
@@ -9,5 +10,8 @@ namespace FWLog.Web.Api.Models.Etiqueta
 
         [Required(ErrorMessage = "A impressora deve ser informada.")]
         public long IdImpressora { get; set; }
+
+        [Required(ErrorMessage = "Tipo impressão deve ser informado.")]
+        public EtiquetaEnderecoTipoImpressao TipoImpressao { get; set; }
     }
 }
