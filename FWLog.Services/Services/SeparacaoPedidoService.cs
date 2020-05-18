@@ -366,6 +366,7 @@ namespace FWLog.Services.Services
                 pedidoVendaVolume.DataHoraInicioSeparacao = null;
                 pedidoVendaVolume.DataHoraFimSeparacao = null;
                 pedidoVendaVolume.IdCaixaVolume = null;
+                pedidoVendaVolume.IdUsuarioSeparacaoAndamento = null;
 
                 foreach (var pedidoVendaProduto in pedidoVendaVolume.PedidoVendaProdutos.ToList())
                 {
