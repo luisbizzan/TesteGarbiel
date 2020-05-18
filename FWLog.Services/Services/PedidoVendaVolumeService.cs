@@ -84,6 +84,7 @@ namespace FWLog.Services.Services
                         numero = centena.Numero + 1;
 
                     centena.Numero = numero;
+                    _uow.CentenaVolumeRepository.Update(centena);
                 }
 
                 await _uow.SaveChangesAsync();

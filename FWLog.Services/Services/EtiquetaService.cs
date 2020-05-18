@@ -470,33 +470,57 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaEndereco(ImprimirEtiquetaEnderecoRequest request)
         {
-            EnderecoArmazenagem endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(request.IdEnderecoArmazenagem);
+            var endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(request.IdEnderecoArmazenagem);
 
-            string textoEndereco = endereco.Codigo ?? string.Empty;
-            string codEndereco = endereco.IdEnderecoArmazenagem.ToString().PadLeft(7, '0');
+            if (endereco == null)
+            {
+                throw new BusinessException("Endereço não encontrado.");
+            }
+
+            var codigoEnderecoFormatado = endereco.Codigo ?? string.Empty;
+            var idEnderecoFormatado = endereco.IdEnderecoArmazenagem.ToString().PadLeft(7, '0');
 
             var etiquetaZpl = new StringBuilder();
 
-            etiquetaZpl.Append("^XA");
+            if (request.TipoImpressao == EtiquetaEnderecoTipoImpressao.NORMAL_90_70)
+            {
+                etiquetaZpl.AppendLine("^XA");
+                etiquetaZpl.AppendLine("^LL880");
 
-            etiquetaZpl.Append("^LL176");
+                //Código diferente do Clipper que define quantidade de etiquetas a serem impressas
+                etiquetaZpl.AppendLine($"^PQ{request.QuantidadeEtiquetas}^FS");
 
-            // Define quantidade de etiquetas a imprimir
-            etiquetaZpl.Append($"^PQ{request.QuantidadeEtiquetas}^FS");
+                etiquetaZpl.AppendLine("^FO16,20^GB696,520,8^FS");
+                etiquetaZpl.AppendLine("^FO16,20^GB350,520,200^FS");
 
-            // Contorno da etiqueta
-            etiquetaZpl.Append("^FO5,10^GB900,180,8^FS");
+                etiquetaZpl.AppendLine($"^FO95,60^FB450,1,0,C,0^A0B,240,100^FR^FD{codigoEnderecoFormatado}^FS");
+                etiquetaZpl.AppendLine($"^FO450,160^BCB,135,Y,N^FD{idEnderecoFormatado}^FS");
 
-            // Fundo do texto de endereço
-            etiquetaZpl.Append("^FO5,10^GB380,180,170^FS");
+                etiquetaZpl.AppendLine("^XZ");
+            }
+            else
+            {
+                etiquetaZpl.AppendLine("^XA");
 
-            // Texto do endereço
-            etiquetaZpl.Append($"^FO5,20^FB380,1,0,C,0^A0N,200,85^FR^FD{textoEndereco}^FS");
+                etiquetaZpl.AppendLine("^LL176");
 
-            // Código de barras do endereço
-            etiquetaZpl.Append($"^FO415,35^BY3,,110^BCN,,Y,N^FD{codEndereco}^FS");
+                // Define quantidade de etiquetas a imprimir
+                etiquetaZpl.AppendLine($"^PQ{request.QuantidadeEtiquetas}^FS");
 
-            etiquetaZpl.Append("^XZ");
+                // Contorno da etiqueta
+                etiquetaZpl.AppendLine("^FO5,10^GB900,180,8^FS");
+
+                // Fundo do texto de endereço
+                etiquetaZpl.AppendLine("^FO5,10^GB380,180,170^FS");
+
+                // Texto do endereço
+                etiquetaZpl.AppendLine($"^FO5,20^FB380,1,0,C,0^A0N,200,85^FR^FD{codigoEnderecoFormatado}^FS");
+
+                // Código de barras do endereço
+                etiquetaZpl.AppendLine($"^FO415,35^BY3,,110^BCN,,Y,N^FD{idEnderecoFormatado}^FS");
+
+                etiquetaZpl.AppendLine("^XZ");
+            }
 
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
 
@@ -517,32 +541,35 @@ namespace FWLog.Services.Services
         public void ImprimirEtiquetaPicking(ImprimirEtiquetaPickingRequest request)
         {
             Produto produto = _unitOfWork.ProdutoRepository.GetById(request.IdProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("Produto não encontrado.");
+            }
+
             EnderecoArmazenagem endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(request.IdEnderecoArmazenagem);
 
-            string refProduto = produto.Referencia;
-            string textoEndereco = endereco.Codigo ?? string.Empty;
-            string codEndereco = endereco.IdEnderecoArmazenagem.ToString().PadLeft(7, '0');
+            if (endereco == null)
+            {
+                throw new BusinessException("Endereço não encontrado.");
+            }
+
+            string referenciaProduto = produto.Referencia;
+            string codigoEndereco = endereco.Codigo ?? string.Empty;
+            string idEnderecoFormatado = endereco.IdEnderecoArmazenagem.ToString().PadLeft(7, '0');
 
             var etiquetaZpl = new StringBuilder();
 
-            etiquetaZpl.Append("^XA");
+            etiquetaZpl.AppendLine($"^XA");
+            etiquetaZpl.AppendLine($"^FO16,20^GB270,880,200^FS");
 
-            // Define quantidade de etiquetas a imprimir
-            etiquetaZpl.Append($"^PQ{request.QuantidadeEtiquetas}^FS");
+            etiquetaZpl.AppendLine($"^FO55,85^FB430,1,0,C,0^A0B,250,60^FR^FD{referenciaProduto}^FS");
 
-            etiquetaZpl.Append("^LL880");
+            etiquetaZpl.AppendLine($"^FO370,30^A0B,180,120^FD{codigoEndereco}^FS");
 
-            // Fundo e texto da referência do produto
-            etiquetaZpl.Append("^FO15,20^GB270,760,150^FS");
-            etiquetaZpl.Append($"^FO55,15^FB760,1,0,C,0^A0B,250,120^FR^FD{refProduto}^FS");
+            etiquetaZpl.AppendLine($"^FO600,180^BCR,100,N,N^FD{idEnderecoFormatado}^FS");
 
-            // Texto do endereço de armazenagem
-            etiquetaZpl.Append($"^FO440,15^FB760,1,0,C,0^A0B,180,150^FD{textoEndereco}^FS");
-
-            // Barcode do endereço de armazenagem
-            etiquetaZpl.Append($"^FO600,250^BCR,85,N,N^FD{codEndereco}^FS");
-
-            etiquetaZpl.Append("^XZ");
+            etiquetaZpl.AppendLine($"^XZ");
 
             byte[] etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
 
@@ -624,25 +651,29 @@ namespace FWLog.Services.Services
                 enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(id);
             }
 
+            ProdutoEstoque produtoEstoque;
+
             if (enderecoArmazenagem == null)
             {
                 var produto = _unitOfWork.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(requisicao.referenciaProdutoOuEndereco);
 
                 if (produto == null)
                 {
-                    throw new BusinessException("O endereço/produto não encontrado.");
+                    throw new BusinessException("Endereço/produto não encontrado.");
                 }
 
-                var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto, requisicao.IdEmpresa);
+                produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(produto.IdProduto, requisicao.IdEmpresa);
 
-                if (produtoEstoque != null)
-                {
-                    enderecoArmazenagem = produtoEstoque.EnderecoArmazenagem;
-                }
-                else
-                {
-                    throw new BusinessException("Eendereço do produto não encontrado.");
-                }
+                enderecoArmazenagem = produtoEstoque?.EnderecoArmazenagem;
+            }
+            else
+            {
+                produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorEndereco(enderecoArmazenagem.IdEnderecoArmazenagem, requisicao.IdEmpresa);
+            }
+
+            if (produtoEstoque == null)
+            {
+                throw new BusinessException("Endereço do produto não encontrado.");
             }
 
             if (enderecoArmazenagem == null)
@@ -650,7 +681,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Endereço não encontrado.");
             }
 
-            if (!enderecoArmazenagem.IsPontoSeparacao)
+            if (!enderecoArmazenagem.IsPontoSeparacao || !enderecoArmazenagem.IsPicking)
             {
                 throw new BusinessException("Endereço não é Picking.");
             }
@@ -658,6 +689,7 @@ namespace FWLog.Services.Services
             var resposta = new ValidarEnderecoPickingResposta()
             {
                 IdEnderecoArmazenagem = enderecoArmazenagem.IdEnderecoArmazenagem,
+                IdProduto = produtoEstoque.IdProduto,
             };
 
             return resposta;
@@ -780,6 +812,62 @@ namespace FWLog.Services.Services
 
                 ImprimirEtiquetaVolumeSeparacao(requisicaoImpressao, volume.PedidoVenda.IdEmpresa);
             }
+        }
+
+        public void ImprimirEtiquetaFilete(long idProduto, long idEnderecoArmazenagem, long idImpressora)
+        {
+            if (idProduto <= 0)
+            {
+                throw new BusinessException("Produto deve ser informado.");
+            }
+
+            if (idEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("Endereço deve ser informado.");
+            }
+
+            if (idImpressora <= 0)
+            {
+                throw new BusinessException("Impressora deve ser informada.");
+            }
+
+            var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
+
+            if (produto == null)
+            {
+                throw new BusinessException("Produto não encontrado.");
+            }
+
+            var endereco = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (endereco == null)
+            {
+                throw new BusinessException("Endereço não encontrado.");
+            }
+
+            var referenciaProduto = produto.Referencia;
+            var codigoEndereco = endereco.Codigo ?? string.Empty;
+            var idEnderecoFormatado = endereco.IdEnderecoArmazenagem.ToString().PadLeft(7, '0');
+
+            var etiquetaZpl = new StringBuilder();
+
+            etiquetaZpl.AppendLine($"^XA");
+            etiquetaZpl.AppendLine($"^LL880");
+            etiquetaZpl.AppendLine($"^FO8,20^GB792,168,4^FS");
+            etiquetaZpl.AppendLine($"^FO05,20^GB400,70,70^FS");
+            etiquetaZpl.AppendLine($"^FO400,120^GB400,70,70^FS");
+
+            etiquetaZpl.AppendLine($"^FO50,24^A0N,80,50^FR^FD{referenciaProduto}^FS");
+
+            etiquetaZpl.AppendLine($"^FO450,124^A0N,80,70^FR^FD{codigoEndereco}^FS");
+
+            etiquetaZpl.AppendLine($"^FO440,35^BY2,,96^BCN,72,N,N^FD{idEnderecoFormatado}^FS");
+
+            etiquetaZpl.AppendLine($"^XZ");
+
+            var etiqueta = Encoding.ASCII.GetBytes(etiquetaZpl.ToString());
+
+            _impressoraService.Imprimir(etiqueta, idImpressora);
         }
 
         private class CelulaEtiqueta

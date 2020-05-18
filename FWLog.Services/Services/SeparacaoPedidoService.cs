@@ -53,31 +53,43 @@ namespace FWLog.Services.Services
             throw new NotImplementedException();
         }
 
-        public BuscarPedidoVendaResposta BuscarPedidoVenda(string codigoBarrasPedido, long idEmpresa, string idUsuario, bool temPermissaoF7)
+        private void BuscaEValidaDadosPorReferenciaPedido(string referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume)
         {
-            if (codigoBarrasPedido.NullOrEmpty())
+            if (referenciaPedido.NullOrEmpty())
             {
                 throw new BusinessException("Código de barras do pedido deve ser infomado.");
             }
 
-            if (codigoBarrasPedido.Length < 7)
+            if (referenciaPedido.Length < 7)
             {
                 throw new BusinessException("Código de Barras de pedido inválido.");
             }
 
-            var numeroPedidoString = codigoBarrasPedido.Substring(0, codigoBarrasPedido.Length - 6);
+            var numeroPedidoString = referenciaPedido.Substring(0, referenciaPedido.Length - 6);
 
-            if (!int.TryParse(numeroPedidoString, out int numeroPedido))
+            if (!int.TryParse(numeroPedidoString, out numeroPedido))
             {
                 throw new BusinessException("Código de Barras de pedido inválido.");
             }
 
-            var numeroVolumeString = codigoBarrasPedido.Substring(codigoBarrasPedido.Length - 3);
+            var idTransportadoraString = referenciaPedido.Substring(referenciaPedido.Length - 6, 3);
 
-            if (!int.TryParse(numeroVolumeString, out int numeroVolume))
+            if (!long.TryParse(idTransportadoraString, out idTransportadora))
             {
                 throw new BusinessException("Código de Barras de pedido inválido.");
             }
+
+            var numeroVolumeString = referenciaPedido.Substring(referenciaPedido.Length - 3);
+
+            if (!int.TryParse(numeroVolumeString, out numeroVolume))
+            {
+                throw new BusinessException("Código de Barras de pedido inválido.");
+            }
+        }
+
+        public BuscarPedidoVendaResposta BuscarPedidoVenda(string referenciaPedido, long idEmpresa, string idUsuario, bool temPermissaoF7)
+        {
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
@@ -823,7 +835,7 @@ namespace FWLog.Services.Services
             var grupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository.Todos().Where(x => x.IdEmpresa == idEmpresa).OrderBy(x => x.CorredorInicial).ToList();
 
             //Captura os pedidos por empresa e status pendente separação.
-            var listaPedidos = _unitOfWork.PedidoRepository.PesquisarPendenteSeparacao(idEmpresa).Where(x => x.IdPedido == 83).ToList();
+            var listaPedidos = _unitOfWork.PedidoRepository.PesquisarPendenteSeparacao(idEmpresa);
 
             foreach (var pedido in listaPedidos) //Percorre a lista de pedidos.
             {
@@ -869,6 +881,8 @@ namespace FWLog.Services.Services
                     listaItensDoPedido[index].EnderecoSeparacao = enderecoArmazenagemProduto;
                 }
 
+                int quantidadeVolume = 0; //Variável utilizada para saber o número e a quantidade de volumes do pedido.
+
                 /*
                  * No foreach abaixo, capturamos quais e a quantidade de caixas (volumes) que serão utilizados.
                  * Além disso, através do método Cubicagem, saberemos a caixa de cada produto. 
@@ -876,49 +890,47 @@ namespace FWLog.Services.Services
                  */
                 foreach (var itemCorredorArmazenagem in grupoCorredorArmazenagem)
                 {
-                    int quantidadeVolume = 0; //Variável utilizada para saber o número e a quantidade de volumes do pedido.
-
                     //Captura o corredor do item.
                     var listaItensDoPedidoPorCorredor = listaItensDoPedido.Where(x => x.GrupoCorredorArmazenagem.IdGrupoCorredorArmazenagem == itemCorredorArmazenagem.IdGrupoCorredorArmazenagem).ToList();
 
                     //Se não houver nenhum item para o corredor, vai para o próximo.
-                    if (listaItensDoPedidoPorCorredor == null)
-                        break;
-
-                    //Captura os itens do pedido com as caixas em que cada um deve ir.
-                    //A partir do método cubicagem, existem chamadas para vários outros.
-                    var listaItensDoPedidoDividido = await Cubagem(listaItensDoPedidoPorCorredor, idEmpresa);
-
-                    if (listaItensDoPedidoDividido.Count > 0)
+                    if (listaItensDoPedidoPorCorredor.Count != 0)
                     {
-                        //Busca os volumes que serão utilizados.
-                        var listaVolumes = await BuscarCubagemVolumes(pedido.IdEmpresa, listaItensDoPedidoDividido);
+                        //Captura os itens do pedido com as caixas em que cada um deve ir.
+                        //A partir do método cubicagem, existem chamadas para vários outros.
+                        var listaItensDoPedidoDividido = await Cubagem(listaItensDoPedidoPorCorredor, idEmpresa);
 
-                        foreach (var itemVolume in listaVolumes)
+                        if (listaItensDoPedidoDividido.Count > 0)
                         {
-                            quantidadeVolume++;
+                            //Busca os volumes que serão utilizados.
+                            var listaVolumes = await BuscarCubagemVolumes(pedido.IdEmpresa, listaItensDoPedidoDividido);
 
-                            //Salva PedidoVendaVolume.
-                            var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
-
-                            if (idPedidoVendaVolume == 0)
-                                break;
-
-                            foreach (var item in listaItensDoPedidoDividido)
+                            foreach (var itemVolume in listaVolumes)
                             {
-                                //Salva PedidoVendaproduto.
-                                await _pedidoVendaProdutoService.Salvar(idPedidoVenda, idPedidoVendaVolume, item);
+                                quantidadeVolume++;
+
+                                //Salva PedidoVendaVolume.
+                                var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
+
+                                if (idPedidoVendaVolume == 0)
+                                    break;
+
+                                foreach (var item in listaItensDoPedidoDividido)
+                                {
+                                    //Salva PedidoVendaproduto.
+                                    await _pedidoVendaProdutoService.Salvar(idPedidoVenda, idPedidoVendaVolume, item);
+                                }
+
+                                //Captura o primeiro corredor de separação.
+                                int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
+
+                                //Imprime a etiqueta de separação.
+                                await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, itemCorredorArmazenagem, pedido, idPedidoVendaVolume, corredorInicioSeparacao);
                             }
 
-                            //Captura o primeiro corredor de separação.
-                            int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
-
-                            //Imprime a etiqueta de separação.
-                            await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, itemCorredorArmazenagem, pedido, idPedidoVendaVolume, corredorInicioSeparacao);
+                            //Atualiza a quantidade de volumes na PedidoVenda.
+                            await _pedidoVendaService.AtualizarQuantidadeVolume(idPedidoVenda, quantidadeVolume);
                         }
-
-                        //Atualiza a quantidade de volumes na PedidoVenda.
-                        await _pedidoVendaService.AtualizarQuantidadeVolume(idPedidoVenda, quantidadeVolume);
                     }
                 }
 
@@ -1128,7 +1140,7 @@ namespace FWLog.Services.Services
             }
 
             //Classifica a listaRankingCaixas por Quantidade
-            listaRankingCaixas = listaRankingCaixas.OrderBy(x => x.QuantidadeRanking).ToList();
+            listaRankingCaixas = listaRankingCaixas.OrderByDescending(x => x.QuantidadeRanking).ToList();
 
             return listaItensDoPedidoCubicados;
         }
@@ -1479,7 +1491,7 @@ namespace FWLog.Services.Services
 
             //Ordena a lista de caixas mais comum por quantidade.
             if (listaCaixasMaisComum.Count > 0)
-                listaCaixasMaisComum = listaCaixasMaisComum.OrderBy(x => x.QuantidadeRanking).ToList();
+                listaCaixasMaisComum = listaCaixasMaisComum.OrderByDescending(x => x.QuantidadeRanking).ToList();
 
             return listaCaixasMaisComum;
         }

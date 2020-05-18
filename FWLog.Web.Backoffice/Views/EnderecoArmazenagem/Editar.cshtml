@@ -21,7 +21,7 @@
                 <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.IdNivelArmazenagem, new { @class = "control-label" })
                     <div class="input-group">
-                        @Html.TextBoxFor(m => m.DescricaoNivelArmazenagem, null, new { @class = "form-control", @readonly = "true" })
+                        @Html.TextBoxFor(m => m.DescricaoNivelArmazenagem, null, new { @class = "form-control", @readonly = "true", data_field = "DescricaoNivelArmazenagem" })
                         <span class="input-group-btn">
                             <a id="pesquisarNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
                             <a id="limparNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
@@ -33,7 +33,7 @@
                 <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.IdPontoArmazenagem, new { @class = "control-label" })
                     <div class="input-group">
-                        @Html.TextBoxFor(m => m.DescricaoPontoArmazenagem, null, new { @class = "form-control", @readonly = "true" })
+                        @Html.TextBoxFor(m => m.DescricaoPontoArmazenagem, null, new { @class = "form-control", @readonly = "true", data_field = "DescricaoPontoArmazenagem" })
                         <span class="input-group-btn">
                             <a id="pesquisarPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
                             <a id="limparPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>

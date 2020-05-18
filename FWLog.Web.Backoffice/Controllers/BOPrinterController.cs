@@ -4,7 +4,6 @@ using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
-using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.BOPrinterCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
@@ -235,7 +234,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        public ActionResult Selecionar(int idImpressaoItem, string acao, string id, string id2 = "")
+        public ActionResult Selecionar(int idImpressaoItem, string acao, string id, string id2 = "", string id3 = "")
         {
             ImpressaoItem impressaoItem = _uow.ImpressaoItemRepository.Obter(idImpressaoItem);
             List<Printer> impressoras = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, impressaoItem.IdImpressaoItem);
@@ -253,6 +252,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Acao = acao,
                 Id = id,
                 Id2 = id2,
+                Id3 = id3,
                 Impressoras = listaImpressoras
             });
         }

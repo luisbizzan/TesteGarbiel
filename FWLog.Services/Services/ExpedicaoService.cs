@@ -65,11 +65,12 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume não foi encontrado.");
             }
 
-            // TODO: melhorar validação quando Sankhya criar os status de Nota e Guia:
-            // - verificar se a NF do pedido foi emitida, e confirmada. Status: “A” no Sankhya e as guias foram pagas, status “Y” no Sankhya
-            if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
-                throw new BusinessException("NF e Guias não estão emitidas/pagas.");
+                if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
+                {
+                    throw new BusinessException("NF não está emitida.");
+                }
             }
 
             using (var transaction = _unitOfWork.CreateTransactionScope())
@@ -83,7 +84,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public PedidoVendaVolumeResposta BuscaPedidoVendaVolume(string referenciaPedido, long idEmpresa)
+        private void BuscaEValidaDadosPorReferenciaPedido(string referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume)
         {
             if (referenciaPedido.NullOrEmpty())
             {
@@ -97,17 +98,29 @@ namespace FWLog.Services.Services
 
             var numeroPedidoString = referenciaPedido.Substring(0, referenciaPedido.Length - 6);
 
-            if (!int.TryParse(numeroPedidoString, out int numeroPedido))
+            if (!int.TryParse(numeroPedidoString, out numeroPedido))
+            {
+                throw new BusinessException("Código de Barras de pedido inválido.");
+            }
+
+            var idTransportadoraString = referenciaPedido.Substring(referenciaPedido.Length - 6, 3);
+
+            if (!long.TryParse(idTransportadoraString, out idTransportadora))
             {
                 throw new BusinessException("Código de Barras de pedido inválido.");
             }
 
             var numeroVolumeString = referenciaPedido.Substring(referenciaPedido.Length - 3);
 
-            if (!int.TryParse(numeroVolumeString, out int numeroVolume))
+            if (!int.TryParse(numeroVolumeString, out numeroVolume))
             {
                 throw new BusinessException("Código de Barras de pedido inválido.");
             }
+        }
+
+        public PedidoVendaVolumeResposta BuscaPedidoVendaVolume(string referenciaPedido, long idEmpresa)
+        {
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
@@ -128,9 +141,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException($"Volume já instalado em: {pedidoVendaVolume.EnderecoTransportadora.Codigo}");
             }
 
-            var codigoTransportadora = referenciaPedido.Substring(referenciaPedido.Length - 6).Replace(numeroVolumeString, "");
-
-            if (pedidoVenda.Transportadora.CodigoTransportadora != codigoTransportadora)
+            if (pedidoVenda.Transportadora.IdTransportadora != Convert.ToInt32(idTransportadora))
             {
                 throw new BusinessException("Transportadora da referência está incorreta");
             }
@@ -391,19 +402,9 @@ namespace FWLog.Services.Services
             }
         }
 
-        public EnderecosPorTransportadoraResposta BuscaEnderecosPorTransportadora(string codigoTransportadora, long idEmpresa)
+        public EnderecosPorTransportadoraResposta BuscaEnderecosPorTransportadora(long idTransportadora, long idEmpresa)
         {
-            if (string.IsNullOrWhiteSpace(codigoTransportadora))
-            {
-                throw new BusinessException("O código da transportadora deve ser informado.");
-            }
-
-            var transportadora = _unitOfWork.TransportadoraRepository.ConsultarPorCodigoTransportadora(codigoTransportadora);
-
-            if (transportadora == null)
-            {
-                throw new BusinessException("A tranportadora informada não foi encontrada.");
-            }
+            var transportadora = ValidarERetornarTransportadora(idTransportadora);
 
             var volumesInstalados = _unitOfWork.PedidoVendaVolumeRepository.ObterVolumesInstaladosPorTranportadoraEmpresa(transportadora.IdTransportadora, idEmpresa);
 
@@ -425,31 +426,9 @@ namespace FWLog.Services.Services
 
         }
 
-        public PedidoVendaVolumeResposta ValidarVolumeDoca(string referenciaPedido, string idUsuario, long idEmpresa)
+        public PedidoVendaVolumeResposta ValidarVolumeDoca(string referenciaPedido, long idEmpresa)
         {
-            if (referenciaPedido.NullOrEmpty())
-            {
-                throw new BusinessException("Código de barras do pedido deve ser infomado.");
-            }
-
-            if (referenciaPedido.Length < 7)
-            {
-                throw new BusinessException("Código de Barras de pedido inválido.");
-            }
-
-            var numeroPedidoString = referenciaPedido.Substring(0, referenciaPedido.Length - 6);
-
-            if (!int.TryParse(numeroPedidoString, out int numeroPedido))
-            {
-                throw new BusinessException("Código de Barras de pedido inválido.");
-            }
-
-            var numeroVolumeString = referenciaPedido.Substring(referenciaPedido.Length - 3);
-
-            if (!int.TryParse(numeroVolumeString, out int numeroVolume))
-            {
-                throw new BusinessException("Código de Barras de pedido inválido.");
-            }
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
@@ -470,9 +449,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException($"O volume não foi instalado.");
             }
 
-            var codigoTransportadora = referenciaPedido.Substring(referenciaPedido.Length - 6).Replace(numeroVolumeString, "");
-
-            if (pedidoVenda.Transportadora.CodigoTransportadora != codigoTransportadora)
+            if (pedidoVenda.Transportadora.IdTransportadora != idTransportadora)
             {
                 throw new BusinessException("Este volume não pertence a esta transportadora.");
             }
@@ -487,9 +464,12 @@ namespace FWLog.Services.Services
                 throw new BusinessException($"O volume não foi instalado.");
             }
 
-            if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
-                throw new BusinessException("Este volume não tem uma nota fiscal faturada.");
+                if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
+                {
+                    throw new BusinessException("Este volume não tem uma nota fiscal faturada.");
+                }
             }
 
             if (pedidoVendaVolume.DataHoraInstalacaoDOCA != null && pedidoVendaVolume.DataHoraInstalacaoDOCA != default)
@@ -513,24 +493,9 @@ namespace FWLog.Services.Services
             return resposta;
         }
 
-        public DespachoTransportadoraResposta ValidarDespachoTransportadora(string codigoTransportadora, string idUsuario, long idEmpresa)
+        public DespachoTransportadoraResposta ValidarDespachoTransportadora(long idTransportadora, long idEmpresa)
         {
-            if (string.IsNullOrWhiteSpace(codigoTransportadora))
-            {
-                throw new BusinessException("O código da transportadora deve ser informado.");
-            }
-
-            var transportadora = _unitOfWork.TransportadoraRepository.ConsultarPorCodigoTransportadora(codigoTransportadora);
-
-            if (transportadora == null)
-            {
-                throw new BusinessException("A tranportadora informada não foi encontrada.");
-            }
-
-            if (!transportadora.Ativo)
-            {
-                throw new BusinessException("A tranportadora está inativa.");
-            }
+            var transportadora = ValidarERetornarTransportadora(idTransportadora);
 
             var existemPedidosParaDespacho = _unitOfWork.PedidoVendaRepository.ExistemPedidosParaDespachoNaTransportadora(transportadora.IdTransportadora, idEmpresa);
 
@@ -573,9 +538,12 @@ namespace FWLog.Services.Services
                         throw new BusinessException($"Volume { volume.EtiquetaVolume } não pode ser intalado na doca.");
                     }
 
-                    if (volume.PedidoVenda.Pedido.CodigoIntegracaoNotaFiscal == null)
+                    if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
                     {
-                        throw new BusinessException($"Volume { volume.EtiquetaVolume } não tem nota fiscal faturada.");
+                        if (volume.PedidoVenda.Pedido.CodigoIntegracaoNotaFiscal == null)
+                        {
+                            throw new BusinessException($"Volume { volume.EtiquetaVolume } não tem nota fiscal faturada.");
+                        }
                     }
 
                     if (volume.PedidoVenda.IdTransportadora != idTransportadora)
@@ -629,7 +597,7 @@ namespace FWLog.Services.Services
 
         public async Task FinalizarDespachoNF(long idTransportadora, string chaveAcesso, string idUsuario, long idEmpresa)
         {
-            ValidarTransportadora(idTransportadora);
+            ValidarERetornarTransportadora(idTransportadora);
 
             ValidarChaveAcessoNF(chaveAcesso);
 
@@ -729,7 +697,7 @@ namespace FWLog.Services.Services
 
         public void ValidarNotaFiscalRomaneio(long idTransportadora, string chaveAcesso)
         {
-            ValidarTransportadora(idTransportadora);
+            ValidarERetornarTransportadora(idTransportadora);
 
             ValidarChaveAcessoNF(chaveAcesso);
 
@@ -769,7 +737,7 @@ namespace FWLog.Services.Services
 
             if (!usuarioEmpresa.IdPerfilImpressoraPadrao.HasValue)
             {
-                throw new BusinessException("O usário não possui impressora configurada nessa empresa.");
+                throw new BusinessException("O usuário não possui impressora configurada nessa empresa.");
             }
 
             var perfilImpressoras = _unitOfWork.PerfilImpressoraItemRepository.ObterPorIdPerfilImpressora(usuarioEmpresa.IdPerfilImpressoraPadrao.Value);
@@ -798,34 +766,14 @@ namespace FWLog.Services.Services
             }
         }
 
-        private void ValidarTransportadora(long idTransportadora)
+        private Transportadora ValidarERetornarTransportadora(long idTransportadora)
         {
             if (idTransportadora <= 0)
             {
-                throw new BusinessException("Favor informar a tranportadora.");
+                throw new BusinessException("Informar a tranportadora.");
             }
 
-            Transportadora transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
-
-            if (transportadora == null)
-            {
-                throw new BusinessException("Transportadora não encontrada.");
-            }
-
-            if (!transportadora.Ativo)
-            {
-                throw new BusinessException("Transportadora não está ativa.");
-            }
-        }
-
-        private Transportadora ValidarTransportadoraPorCodigo(string codigoTransportadora)
-        {
-            if (string.IsNullOrEmpty(codigoTransportadora))
-            {
-                throw new BusinessException("Favor informar o código da tranportadora.");
-            }
-
-            Transportadora transportadora = _unitOfWork.TransportadoraRepository.ConsultarPorCodigoTransportadora(codigoTransportadora);
+            var transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
 
             if (transportadora == null)
             {
@@ -896,9 +844,9 @@ namespace FWLog.Services.Services
             return impressora;
         }
 
-        public RomaneioTransportadoraResposta ValidarRomaneioTransportadora(string codigoTransportadora, long idEmpresa)
+        public RomaneioTransportadoraResposta ValidarRomaneioTransportadora(long idTrasnportadora, long idEmpresa)
         {
-            var transportadora = ValidarTransportadoraPorCodigo(codigoTransportadora);
+            var transportadora = ValidarERetornarTransportadora(idTrasnportadora);
 
             Empresa empresa = _unitOfWork.EmpresaRepository.GetById(idEmpresa);
 
@@ -959,7 +907,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Favor informar as chaves de acesso.");
             }
 
-            ValidarTransportadora(idTransportadora);
+            ValidarERetornarTransportadora(idTransportadora);
             // ações
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
@@ -991,17 +939,11 @@ namespace FWLog.Services.Services
                         throw new BusinessException("Não existe pedido venda para chave de acesso informada.");
                     }
 
-                    NotaFiscal notaFiscal = _unitOfWork.NotaFiscalRepository.ObterPorChave(chaveAcesso);
-                    if (notaFiscal == null)
-                    {
-                        throw new BusinessException("Nota fiscal não encontrada.");
-                    }
-
                     // Notas do Romaneio
                     var romaneioNotaFiscal = new RomaneioNotaFiscal();
                     romaneioNotaFiscal.IdRomaneio = romaneio.IdRomaneio;
                     romaneioNotaFiscal.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
-                    romaneioNotaFiscal.NroNotaFiscal = notaFiscal.Numero;
+                    romaneioNotaFiscal.NroNotaFiscal = Convert.ToInt32(pedido.CodigoIntegracaoNotaFiscal);
                     romaneioNotaFiscal.NroVolumes = pedidoVenda.NroVolumes;
                     romaneioNotaFiscal.IdCliente = pedidoVenda.IdCliente;
 
@@ -1072,7 +1014,7 @@ namespace FWLog.Services.Services
 
             var impressora = ValidarIdImpressora(idImpressora);
 
-            ImprimirRomaneio(romaneio.NroRomaneio, impressora.Id, false, idEmpresa, idUsuario);
+            ImprimirRomaneio(romaneio.IdRomaneio, impressora.Id, false, idEmpresa, idUsuario);
 
             _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
             {

@@ -9,8 +9,14 @@ namespace FWLog.Web.Backoffice.Models.ProdutoCtx
 
         [Display(Name = "Endereco Armazenagem")]
         public string Codigo { get; set; }
+
         public long IdProduto { get; set; }
+
         public string DescricaoProduto { get; set; }
+
         public string Referencia { get; set; }
+
+        [Display(Name = "Tipo Impressão")]
+        public TipoImpressaoEtiqueta? TipoImpressaoEtiqueta { get; set; }
     }
 }

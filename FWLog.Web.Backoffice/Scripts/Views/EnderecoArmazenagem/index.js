@@ -71,6 +71,7 @@
             { data: 'NivelArmazenagem' },
             { data: 'PontoArmazenagem' },
             { data: 'Codigo', render: iconeStatus },
+            { data: 'Corredor' },
             { data: 'Fifo' },
             { data: 'PontoSeparacao' },
             { data: 'Picking' },
@@ -151,16 +152,14 @@ function selecionarPontoArmazenagem(idPontoArmazenagem, descricao) {
 function imprimir(acao, id) {
     var idImpressora = $("#IdImpressora").val();
 
-    var dados = $("#recebimentoEtiquetaIndividualPersonalizada").serializeArray();
-    dados.push({ name: "IdImpressora", value: idImpressora });
-
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "ImprimirEtiqueta",
         method: "POST",
         cache: false,
         data: {
             IdImpressora: idImpressora,
-            IdEnderecoArmazenagem: acao
+            IdEnderecoArmazenagem: acao,
+            TipoImpressao: id
         },
         success: function (result) {
             if (result.Success) {
