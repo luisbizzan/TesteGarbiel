@@ -89,6 +89,9 @@ namespace FWLog.Data.Models
 
         public DateTime? DataHoraRemocaoVolume { get; set; }
 
+        [Index]
+        public string IdUsuarioSeparacaoAndamento { get; set; }
+
         [ForeignKey(nameof(IdPedidoVenda))]
         public virtual PedidoVenda PedidoVenda { get; set; }
 
@@ -115,6 +118,9 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdUsuarioInstalacaoDOCA))]
         public virtual AspNetUsers UsuarioInstalacaoDOCA { get; set; }
+
+        [ForeignKey(nameof(IdUsuarioSeparacaoAndamento))]
+        public virtual AspNetUsers UsuarioSeparacaoAndamento { get; set; }
 
         public virtual ICollection<PedidoVendaProduto> PedidoVendaProdutos { get; set; }
     }
