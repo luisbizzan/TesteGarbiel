@@ -30,9 +30,9 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk(response);
         }
 
-        [Route("api/v1/separacao-pedido/consultar-pedido-venda/{referenciaPedido}")]
+        [Route("api/v1/separacao-pedido/consultar-pedido-venda")]
         [HttpGet]
-        public async Task<IHttpActionResult> BuscarPedidoVenda(string referenciaPedido)
+        public async Task<IHttpActionResult> BuscarPedidoVenda(BuscarPedidoVendaRequisicao requisicao)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace FWLog.Web.Api.Controllers
 
                 var temPermissaoF7 = permissions.Contains(Permissions.RFSeparacao.FuncaoF7);
 
-                var response = _separacaoPedidoService.BuscarPedidoVenda(referenciaPedido, IdEmpresa, IdUsuario, temPermissaoF7);
+                var response = _separacaoPedidoService.BuscarPedidoVenda(requisicao.ReferenciaPedido, requisicao.IdPedidoVendaVolume, IdEmpresa, IdUsuario, temPermissaoF7);
 
                 return ApiOk(response);
             }
