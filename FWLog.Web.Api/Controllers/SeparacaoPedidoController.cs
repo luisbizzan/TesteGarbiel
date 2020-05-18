@@ -22,9 +22,9 @@ namespace FWLog.Web.Api.Controllers
         {
             var idsPedidosProcessoDeSeparacao = _separacaoPedidoService.ConsultaPedidoVendaEmSeparacao(IdUsuario, IdEmpresa);
 
-            var response = new SeparacaoPedidoResposta
+            var response = new ConsultaPedidoVendaEmSeparacaoResposta
             {
-                PedidosProcessoDeSeparacao = idsPedidosProcessoDeSeparacao
+                PedidoVendaVolumeEmSeparacaoViewModel = idsPedidosProcessoDeSeparacao
             };
 
             return ApiOk(response);
@@ -61,7 +61,17 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                await _separacaoPedidoService.CancelarPedidoSeparacao(requisicao?.IdPedidoVenda ?? 0, requisicao?.UsuarioPermissao, IdUsuario, IdEmpresa);
+                ApplicationUser usuarioPermissao = null;
+                bool usuarioTemPermissao = false;
+
+                if (!string.IsNullOrWhiteSpace(requisicao.UsuarioPermissao))
+                {
+                    usuarioPermissao = await UserManager.FindByNameAsync(requisicao.UsuarioPermissao);
+
+                    usuarioTemPermissao = await UserManager.ValidatePermissionByIdEmpresaAsync(usuarioPermissao?.Id, IdEmpresa, Permissions.RFSeparacao.CancelarSeparacao);
+                }
+
+                await _separacaoPedidoService.CancelarPedidoSeparacao(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.UsuarioPermissao, usuarioTemPermissao, usuarioPermissao?.Id, IdUsuario, IdEmpresa);
             }
             catch (BusinessException businessException)
             {
