@@ -383,7 +383,7 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [Route("api/v1/expedicao/doca/validar-transportadora/{idOuCodtransportadora}")]
-        [HttpPost]
+        [HttpGet]
         public IHttpActionResult ValidarRemoverDocaTransportadora(string idOuCodtransportadora)
         {
             if (!ModelState.IsValid)
