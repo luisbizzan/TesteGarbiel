@@ -2,10 +2,10 @@
 
 namespace FWLog.Web.Api.Models.Expedicao
 {
-    public class RemovendoVolumeDocaRequisicao
+    public class RemoverVolumeDocaRequisicao
     {
         [Required] 
-        public long IdPedidoVendaVolume { get; set; }
+        public string ReferenciaPedido { get; set; }
         [Required]
         public long IdTransprotadora { get; set; }
     }
