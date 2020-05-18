@@ -48,9 +48,9 @@ namespace FWLog.Services.Services
 
         public List<PedidoVendaVolumeEmSeparacaoViewModel> ConsultaPedidoVendaEmSeparacao(string idUsuario, long idEmpresa)
         {
-            var pedidoVendas = _unitOfWork.PedidoVendaVolumeRepository.PesquisarIdsEmSeparacao(idUsuario, idEmpresa);
+            var pedidoVendaVolumes = _unitOfWork.PedidoVendaVolumeRepository.PesquisarIdsEmSeparacao(idUsuario, idEmpresa);
 
-            var result = pedidoVendas.Select(x => new PedidoVendaVolumeEmSeparacaoViewModel
+            var result = pedidoVendaVolumes.Select(x => new PedidoVendaVolumeEmSeparacaoViewModel
             {
                 IdPedidoVenda = x.IdPedidoVenda,
                 IdPedidoVendaVolume = x.IdPedidoVendaVolume
