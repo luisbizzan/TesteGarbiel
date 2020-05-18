@@ -323,39 +323,41 @@ namespace FWLog.Services.Services
             _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
         }
 
-        public async Task CancelarPedidoSeparacao(long idPedidoVenda, string usuarioPermissaoCancelamento, string idUsuarioOperacao, long idEmpresa)
+        public async Task CancelarPedidoSeparacao(long idPedidoVenda, string usuarioPermissaoCancelamento, bool usuarioTemPermissao, string idUsuarioPermissao, string idUsuarioOperacao, long idEmpresa)
         {
             if (idPedidoVenda <= 0)
             {
-                throw new BusinessException("O pedido deve ser informado.");
+                throw new BusinessException("Pedido deve ser informado.");
             }
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda);
 
             if (pedidoVenda == null)
             {
-                throw new BusinessException("O pedido não foi encontrado.");
+                throw new BusinessException("Pedido não encontrado.");
             }
 
             if (pedidoVenda.IdEmpresa != idEmpresa)
             {
-                throw new BusinessException("O pedido não pertence a empresa do usuário logado.");
+                throw new BusinessException("Pedido não pertence a empresa do usuário.");
 
             }
 
-            //if (pedidoVenda.IdUsuarioSeparacao != idUsuarioOperacao)
-            //{
-            //    throw new BusinessException("O pedido não pertence ao usuário logado.");
-            //}
-
             if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
             {
-                throw new BusinessException("O pedido não está em separação.");
+                throw new BusinessException("Pedido não está em separação.");
             }
 
             if (usuarioPermissaoCancelamento.NullOrEmpty())
             {
-                throw new BusinessException("O usuário da permissão deve ser informado.");
+                throw new BusinessException("Usuário deve ser informado.");
             }
+
+            if (usuarioTemPermissao == false || idUsuarioPermissao.NullOrEmpty())
+            {
+                throw new BusinessException("Usuário não tem permissão para cancelamento.");
+            }
+
+            //TODO: Verificação de status de volumes (Aguardando dúvidas com Anderson)
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
@@ -367,7 +369,6 @@ namespace FWLog.Services.Services
 
                 _unitOfWork.SaveChanges();
 
-
                 foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes.ToList())
                 {
                     pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
@@ -377,19 +378,18 @@ namespace FWLog.Services.Services
 
                     foreach (var pedidoVendaProduto in pedidoVendaVolume.PedidoVendaProdutos.ToList())
                     {
-                        if (pedidoVendaProduto.QtdSeparada.HasValue)
+                        if (pedidoVendaProduto.QtdSeparada.GetValueOrDefault() > 0)
                         {
                             await AjustarQuantidadeVolume(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, pedidoVendaProduto.QtdSeparada.Value, idEmpresa, idUsuarioOperacao);
                         }
 
+                        pedidoVendaProduto.QtdSeparada = 0;
                         pedidoVendaProduto.IdPedidoVendaStatus = novoStatusSeparacao;
                         pedidoVendaProduto.IdUsuarioSeparacao = null;
                         pedidoVendaProduto.DataHoraInicioSeparacao = null;
                         pedidoVendaProduto.DataHoraFimSeparacao = null;
-                        pedidoVendaProduto.IdUsuarioAutorizacaoZerar = idUsuarioOperacao;
-                        pedidoVendaProduto.DataHoraAutorizacaoZerarPedido = DateTime.Now;
-
-                        pedidoVendaProduto.QtdSeparada = 0;
+                        pedidoVendaProduto.IdUsuarioAutorizacaoZerar = null;
+                        pedidoVendaProduto.DataHoraAutorizacaoZerarPedido = null;
                     }
 
                     _unitOfWork.SaveChanges();
