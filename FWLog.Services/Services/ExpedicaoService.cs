@@ -67,7 +67,7 @@ namespace FWLog.Services.Services
 
             if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
-                if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
+                if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue && !pedidoVenda.Pedido.IsRequisicao)
                 {
                     throw new BusinessException("NF não está emitida.");
                 }
