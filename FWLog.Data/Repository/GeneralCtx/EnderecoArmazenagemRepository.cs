@@ -40,6 +40,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     NivelArmazenagem = s.NivelArmazenagem.Descricao ?? "-",
                     PontoArmazenagem = s.PontoArmazenagem.Descricao ?? "-",
                     Codigo = s.Codigo ?? "-",
+                    Corredor = s.Corredor == 0 ? (int?)null : s.Corredor,
                     Fifo = s.IsFifo ? "Sim" : "Não",
                     PontoSeparacao = s.IsPontoSeparacao ? "Sim" : "Não",
                     Picking = s.IsPicking ? "Sim" : "Não",

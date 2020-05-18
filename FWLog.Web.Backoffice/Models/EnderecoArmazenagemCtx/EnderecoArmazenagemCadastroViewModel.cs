@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
 {
-    [Bind(Exclude = "DescricaoNivelArmazenagem,DescricaoPontoArmazenagem")]
     public class EnderecoArmazenagemCadastroViewModel
     {
         [Required]

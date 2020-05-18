@@ -7,5 +7,6 @@
         public long IdImpressora { get; set; }
         public string IdUsuario { get; set; }
         public long IdEmpresa { get; set; }
+        public EtiquetaEnderecoTipoImpressao TipoImpressao { get; set; }
     }
 }

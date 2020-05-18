@@ -1,15 +1,14 @@
 ﻿using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Services.Model.Etiquetas;
+using FWLog.Services.Model.LogEtiquetagem;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.EtiquetaCtx;
+using log4net;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Linq;
 using System.Web.Mvc;
-using FWLog.Services.Model.LogEtiquetagem;
-using log4net;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
@@ -73,7 +72,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         Message = "O saldo do produto no lote é menor que a quantidade informada. Por favor, tente novamente!"
                     });
                 }
-                                
+
                 var produto = _unitOfWork.ProdutoRepository.GetById(viewModel.IdProduto);
 
                 var request = new ImprimirEtiquetaArmazenagemVolume
@@ -298,6 +297,5 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         #endregion
-
     }
 }

@@ -182,7 +182,7 @@ function detalhesEntradaConferencia() {
     });
 }
 
-function imprimir(acao, id, id2) {
+function imprimir(acao, id, id2, id3) {
     switch (acao) {
         case 'produtos':
             $.ajax({
@@ -224,6 +224,7 @@ function imprimir(acao, id, id2) {
         case 'etiquetaPicking':
             var idImpressora = $("#IdImpressora").val();
 
+
             $.ajax({
                 url: HOST_URL + CONTROLLER_PATH + "ImprimirEtiqueta",
                 method: "POST",
@@ -231,7 +232,8 @@ function imprimir(acao, id, id2) {
                 data: {
                     IdImpressora: idImpressora,
                     IdEnderecoArmazenagem: id,
-                    IdProduto: id2
+                    IdProduto: id2,
+                    TipoImpressaoEtiqueta: id3
                 },
                 success: function (result) {
                     if (result.Success) {
@@ -280,12 +282,9 @@ function selecionarEnderecoArmazenagem(IdEnderecoArmazenagem, codigo) {
     $("#modalPesquisaEnderecoArmazenagem").empty();
 }
 
-
-
 function fechaModal() {
     var $modal = $("#modalImpressoras");
 
     $modal.modal("hide");
     $modal.empty();
 }
-

@@ -1,5 +1,4 @@
-﻿using Dapper;
-using FWLog.Data.Models;
+﻿using FWLog.Data.Models;
 using FWLog.Data.Repository.CommonCtx;
 using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
@@ -46,6 +45,11 @@ namespace FWLog.Data.Repository.GeneralCtx
         public IQueryable<ProdutoEstoque> ObterProdutoEstoquePorEmpresa(long idEmpresa)
         {
             return Entities.ProdutoEstoque.Where(produtoEstoque => produtoEstoque.IdEmpresa == idEmpresa);
+        }
+
+        public ProdutoEstoque ConsultarPorEndereco(long idEnderecoArmazenagem, long idEmpresa)
+        {
+            return Entities.ProdutoEstoque.FirstOrDefault(x => x.IdEnderecoArmazenagem == idEnderecoArmazenagem && x.IdEmpresa == idEmpresa);
         }
     }
 }

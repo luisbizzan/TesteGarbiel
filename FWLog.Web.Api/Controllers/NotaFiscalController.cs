@@ -17,6 +17,7 @@ namespace FWLog.Web.Api.Controllers
             _notaFiscalService = notaFiscalService;
         }
 
+        [AllowAnonymous]
         [Route("api/v1/nota-fiscal/limpar-integracao")]
         [HttpPost]
         public async Task<IHttpActionResult> LimparIntegracao()

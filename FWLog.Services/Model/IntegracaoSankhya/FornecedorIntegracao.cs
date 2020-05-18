@@ -26,10 +26,6 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [Required]
         public string Ativo { get; set; }
 
-
-
-
-
         [TabelaIntegracao(DisplayName = "TGFPAR.CEP")]
         public string CEP { get; set; }
 
@@ -50,7 +46,6 @@ namespace FWLog.Services.Model.IntegracaoSankhya
 
         [TabelaIntegracao(DisplayName = "TGFPAR.TELEFONE")]
         public string Telefone { get; set; }
-
 
         [TabelaIntegracao(DisplayName = "TSIUFS.DESCRICAO")]
         public string Estado { get; set; }

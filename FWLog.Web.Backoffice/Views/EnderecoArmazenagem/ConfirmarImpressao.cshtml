@@ -1,4 +1,6 @@
 ﻿@model FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx.EnderecoArmazenagemConfirmaImpressaoViewModel
+@using FWLog.Services.Model.Etiquetas;
+
 @{
     Layout = null;
 
@@ -16,7 +18,15 @@
                     <div class="col-sm-12 col-lg-12">
                         <span>Deseja imprimir a etiqueta do endereço <b>@Model.Codigo</b> com código <b>@Model.IdEnderecoArmazenagem</b>?</span>
                     </div>
-
+                    <div class="col-sm-12 col-lg-12">
+                        <label>
+                            @Html.RadioButtonFor(model => model.TipoImpressao, EtiquetaEnderecoTipoImpressao.NORMAL_90_70, new { Checked = "checked" }) Normal (90x70)
+                        </label>
+                        <br />
+                        <label>
+                            @Html.RadioButtonFor(model => model.TipoImpressao, EtiquetaEnderecoTipoImpressao.FILETE_104_24) Filete (104x24)
+                        </label>
+                    </div>
                     @Html.Hidden("IdEnderecoArmazenagem", Model.IdEnderecoArmazenagem)
                 </div>
             </div>
