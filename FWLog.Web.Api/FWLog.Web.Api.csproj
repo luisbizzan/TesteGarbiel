@@ -264,7 +264,7 @@
     <Compile Include="Models\Etiqueta\ImprimirEtiquetaProdutoRequisicao.cs" />
     <Compile Include="Models\Etiqueta\ValidarEnderecoPickingRequisicao.cs" />
     <Compile Include="Models\Expedicao\FinalizarRomaneioNFRequisicao.cs" />
-    <Compile Include="Models\Expedicao\RemovendoVolumeDocaRequisicao.cs" />
+    <Compile Include="Models\Expedicao\RemoverVolumeDocaRequisicao.cs" />
     <Compile Include="Models\Expedicao\RomaneioReimprimirRequisicao.cs" />
     <Compile Include="Models\Expedicao\ValidarImpressoraRomaneioRequisicao.cs" />
     <Compile Include="Models\Expedicao\ValidarNotaFiscalRomaneioRequisicao.cs" />

@@ -1061,13 +1061,22 @@ namespace FWLog.Services.Services
             };
         }
 
-        public void RemovendoVolumeDoca(long idPedidoVendaVolume, long idTransportadora, string idUsuario, long idEmpresa)
+        public void RemoverVolumeDoca(string referenciaPedido, long idTransportadora, string idUsuario, long idEmpresa)
         {
-            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPedidoVendaVolumePorIdPorEmpresa(idPedidoVendaVolume, idEmpresa);
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long _, out int numeroVolume);
+
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
+
+            if (pedidoVenda == null)
+            {
+                throw new BusinessException("Pedido não encontrado.");
+            }
+
+            var pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.FirstOrDefault(volume => volume.NroVolume == numeroVolume);
 
             if (pedidoVendaVolume == null)
             {
-                throw new BusinessException("Volume não encontrado.");
+                throw new BusinessException("Volume fornecido não encontrado.");
             }
 
             var transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
@@ -1092,8 +1101,6 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Volume não está na DOCA.");
             }
 
-            var pedidoVenda = pedidoVendaVolume.PedidoVenda;
-
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
                 pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
@@ -1109,7 +1116,7 @@ namespace FWLog.Services.Services
                 {
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovendoDOCA;
                     _unitOfWork.SaveChanges();
-                };
+                }
 
                 _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
                 {
