@@ -93,34 +93,34 @@ namespace FWLog.Services.Services
             }
         }
 
-        public BuscarPedidoVendaResposta BuscarPedidoVenda(string referenciaPedido, long idEmpresa, string idUsuario, bool temPermissaoF7)
+        public BuscarPedidoVendaResposta BuscarPedidoVenda(string referenciaPedido, long idPedidoVendaVolume, long idEmpresa, string idUsuario, bool temPermissaoF7)
         {
-            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
+            PedidoVenda pedidoVenda;
+            PedidoVendaVolume pedidoVendaVolume;
 
-            var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
-
-            ValidarPedidoVenda(pedidoVenda, idEmpresa);
-
-            var pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.FirstOrDefault(volume => volume.NroVolume == numeroVolume);
-
-            if (pedidoVendaVolume == null)
+            if (idPedidoVendaVolume == default)
             {
-                throw new BusinessException("Volume não encontrado.");
+                //início do processo utiliza a referência pedido
+                BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
+
+                pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
+
+                ValidarPedidoVenda(pedidoVenda, idEmpresa);
+
+                pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.FirstOrDefault(volume => volume.NroVolume == numeroVolume);
+
+                ValidaPedidoVendaVolumeNaBuscaPedidoVenda(pedidoVendaVolume);
             }
-
-            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado || pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento)
+            else
             {
-                throw new BusinessException("Volume cancelado.");
-            }
+                // processo que pausou e reinicou utiliza o id do pedido venda volume diretamente
+                pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
 
-            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteSeparacao || pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoIntegracao)
-            {
-                throw new BusinessException("Volume não liberado para separação.");
-            }
+                ValidaPedidoVendaVolumeNaBuscaPedidoVenda(pedidoVendaVolume);
 
-            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao && pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
-            {
-                throw new BusinessException("Volume já separado.");
+                pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(pedidoVendaVolume.IdPedidoVenda);
+
+                ValidarPedidoVenda(pedidoVenda, idEmpresa);
             }
 
             var usuarioEmpresa = _unitOfWork.UsuarioEmpresaRepository.Obter(idEmpresa, idUsuario);
@@ -204,6 +204,29 @@ namespace FWLog.Services.Services
             }
 
             return model;
+        }
+
+        private static void ValidaPedidoVendaVolumeNaBuscaPedidoVenda(PedidoVendaVolume pedidoVendaVolume)
+        {
+            if (pedidoVendaVolume == null)
+            {
+                throw new BusinessException("Volume não encontrado.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado || pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento)
+            {
+                throw new BusinessException("Volume cancelado.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteSeparacao || pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoIntegracao)
+            {
+                throw new BusinessException("Volume não liberado para separação.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao && pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
+            {
+                throw new BusinessException("Volume já separado.");
+            }
         }
 
         private void ValidarPedidoVenda(PedidoVenda pedidoVenda, long idEmpresa)
