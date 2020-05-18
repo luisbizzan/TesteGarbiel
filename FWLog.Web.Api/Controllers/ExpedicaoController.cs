@@ -169,7 +169,6 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/expedicao/validar-despacho-transportadora/{idTransportadora}")]
         [HttpGet]
-        [AllowAnonymous]
         public IHttpActionResult ValidarDespachoTransportadora(long idTransportadora)
         {
             if (!ModelState.IsValid)
@@ -413,7 +412,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _expedicaoService.RemoverVolumeDoca(requisicao.ReferenciaPedido,requisicao.IdTransprotadora,IdUsuario,IdEmpresa);
+                _expedicaoService.RemoverVolumeDoca(requisicao.ReferenciaPedido, requisicao.IdTransprotadora, IdUsuario, IdEmpresa);
 
                 return ApiOk();
             }

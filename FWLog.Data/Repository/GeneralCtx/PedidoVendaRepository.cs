@@ -1,6 +1,6 @@
 ﻿using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Repository.CommonCtx;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,12 +28,20 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.PedidoVenda.FirstOrDefault(x => x.IdPedido == idPedido);
         }
 
-        public bool ExistemPedidosParaDespachoNaTransportadora(long idTransportadora, long idEmpresa)
+        public List<TransportadoraVolumeForaDoca> BuscarVolumesForaDoca(long idTransportadora, long idEmpresa)
         {
-            return Entities.PedidoVenda.Any(x => x.IdTransportadora == idTransportadora &&
-                                                    x.IdEmpresa == idEmpresa &&
-                                                    (x.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA
-                                                    || x.IdPedidoVendaStatus == PedidoVendaStatusEnum.DespachandoNF));
+            var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdTransportadora == idTransportadora &&
+                                                                                pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa &&
+                                                                                (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovendoDOCA || pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora) &&
+                                                                                pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora).Select(pedidoVendaVolume => new TransportadoraVolumeForaDoca
+                                                                                {
+                                                                                    IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume,
+                                                                                    NumeroPedido = pedidoVendaVolume.PedidoVenda.NroPedidoVenda,
+                                                                                    NumeroVolume = pedidoVendaVolume.NroVolume,
+                                                                                    EnderecoCodigo = pedidoVendaVolume.EnderecoTransportadora.Codigo
+                                                                                });
+
+            return query.ToList();
         }
 
         public List<PedidoVenda> ObterPorIdTransportadoraRomaneio(long idTransportadora, long idEmpresa)
@@ -43,8 +51,8 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public bool TemPedidoVendaMovidoDoca(long idTransportadora, long idEmpresa)
         {
-            return Entities.PedidoVenda.Any(x => x.IdTransportadora == idTransportadora && 
-                                                    x.IdEmpresa == idEmpresa && 
+            return Entities.PedidoVenda.Any(x => x.IdTransportadora == idTransportadora &&
+                                                    x.IdEmpresa == idEmpresa &&
                                                     (x.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovendoDOCA ||
                                                     x.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA) &&
                                                     x.PedidoVendaVolumes.Any(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA));

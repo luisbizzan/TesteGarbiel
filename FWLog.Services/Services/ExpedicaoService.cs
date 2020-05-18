@@ -497,16 +497,12 @@ namespace FWLog.Services.Services
         {
             var transportadora = ValidarERetornarTransportadora(idTransportadora);
 
-            var existemPedidosParaDespacho = _unitOfWork.PedidoVendaRepository.ExistemPedidosParaDespachoNaTransportadora(transportadora.IdTransportadora, idEmpresa);
-
-            if (!existemPedidosParaDespacho)
-            {
-                throw new BusinessException("Não existem volumes na DOCA para esta transportadora.");
-            }
+            var volumesForaDoca = _unitOfWork.PedidoVendaRepository.BuscarVolumesForaDoca(transportadora.IdTransportadora, idEmpresa);
 
             var resposta = new DespachoTransportadoraResposta()
             {
-                IdTransportadora = transportadora.IdTransportadora
+                IdTransportadora = transportadora.IdTransportadora,
+                VolumesForaDoca = volumesForaDoca
             };
 
             return resposta;
