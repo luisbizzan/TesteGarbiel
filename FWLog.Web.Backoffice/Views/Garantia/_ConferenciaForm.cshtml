@@ -6,6 +6,7 @@
             <div class="x_content">
                 <form id="formConferir">
                     @Html.HiddenFor(m => m.Form.Id)
+                    @Html.HiddenFor(m => m.Form.Id_Tipo_Conf)
                     <div class="row">
                         <div class="col-sm-3">
                             <div class="form-group">
@@ -33,6 +34,11 @@
                     <button type="button" id="btAlterarQuantidade" class="btn btn-success right"><i class="fa fa-exchange"></i>  Alterar Quantidade</button>
                     <button type="button" id="btItensPendentes" class="btn btn-warning right"><i class="fa fa-gears"></i>  Ver Peças Pendentes</button>
                     <button type="button" id="btItensConferidos" class="btn btn-primary right"><i class="fa fa-gears"></i>  Ver Peças Conferidas</button>
+
+                    @if (Model.Form.Id_Tipo_Conf == 26 || Model.Form.Id_Tipo_Conf == 6)
+                    {
+                        <button type="button" id="btConferirManual" class="btn btn-warning right"><i class="fa fa-check-square-o"></i>  Conferência Manual</button>
+                    }
                 </form>
             </div>
         </div>

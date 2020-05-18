@@ -1,0 +1,28 @@
+﻿@model FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaConferenciaFormVM
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="x_panel">
+            <div class="x_content">
+                <form id="formConferirManual">
+                    @Html.HiddenFor(m => m.Form.Id_Conf, new { id = "Id_Conf", Name = "Id_Conf" })
+                    <div class="col-xs-12 col-md-5 form-group">
+                        @Html.LabelFor(m => m.Form.Refx)
+                        @Html.DropDownListFor(m => m.Form.Refx, Model.Lista_Refx, "", new { id = "Refx", Name = "Refx", @class = "form-control" })
+                    </div>
+                    <div class="col-xs-12 col-md-5 form-group">
+                        @Html.LabelFor(m => m.Form.Id_Solicitacao)
+                        <select name="Id_Solicitacao" class="form-control" id="Id_Solicitacao"></select>
+                    </div>
+                    <div class="col-xs-12 col-md-2  form-group">
+                        @Html.LabelFor(m => m.Form.Quant_Conferida)
+                        @Html.TextBoxFor(m => m.Form.Quant_Conferida, new { id = "Quant_Conferida", Name = "Quant_Conferida", @class = "form-control onlyNumber" })
+                    </div>
+                    <div class="col-xs-12">
+                        <button type="submit" class="btn btn-primary pull-right">Gravar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

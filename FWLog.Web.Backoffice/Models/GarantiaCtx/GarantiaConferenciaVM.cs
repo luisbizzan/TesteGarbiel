@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 {
@@ -45,6 +46,11 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         [Display(Name = "Quant. NF.")]
         public long? Quant { get; set; }
 
+        [Display(Name = "Solicitação")]
+        public long? Id_Solicitacao { get; set; }
+
+        public long Id_Tipo_Conf { get; set; }
+
         public DateTime Dt_Conf { get; set; }
 
         [Display(Name = "Quant. Conf.")]
@@ -79,6 +85,9 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
     {
         public GarantiaConferenciaItem Form { get; set; }
         public List<GarantiaSolicitacaoItemListVM> Historicos { get; set; }
+
+        public SelectList Lista_Refx { get; set; }
+        public SelectList Lista_Solicitacao { get; set; }
 
         public GarantiaConferenciaFormVM()
         {

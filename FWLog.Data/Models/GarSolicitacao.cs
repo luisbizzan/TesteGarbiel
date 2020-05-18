@@ -32,7 +32,7 @@ namespace FWLog.Data.Models
     public class GarSolicitacaoItem
     {
         public long Id { get; set; }
-        public long Id_Solicitacao { get; set; }
+        public long? Id_Solicitacao { get; set; }
         public long Id_Item_Nf { get; set; }
         public String Refx { get; set; }
         public String Descricao { get; set; }

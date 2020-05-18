@@ -102,6 +102,10 @@ namespace FWLog.Web.Backoffice
             bundles.Add(new ScriptBundle("~/script-bundles/vendors/jquery-confirm").Include(
                  "~/Scripts/vendors/jquery-confirm/jquery-confirm.min.js"
             ));
+
+            bundles.Add(new ScriptBundle("~/script-bundles/vendors/select2").Include(
+                 "~/Scripts/vendors/select2/select2.min.js"
+            ));
         }
 
         private static void RegisterStyles(BundleCollection bundles)
@@ -155,6 +159,10 @@ namespace FWLog.Web.Backoffice
             bundles.Add(new StyleBundle("~/style-bundles/vendors/jquery-confirm").Include(
                "~/Content/vendors/jquery-confirm/jquery-confirm.min.css"
             ));
+
+            bundles.Add(new StyleBundle("~/style-bundles/vendors/select2").Include(
+              "~/Content/vendors/select2/select2.min.css"
+           ));
         }
 
         private static void RegisterViewScriptsBundle(BundleCollection bundles, string pathViews = "~/Scripts/Views/")

@@ -141,6 +141,59 @@ namespace FWLog.Data.Repository.GeneralCtx
             return retorno;
         }
 
+        public List<GarConferenciaItem> ListarRemessaSolicitacao(long Id_Conferencia, string Refx)
+        {
+            List<GarConferenciaItem> retorno = new List<GarConferenciaItem>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        DISTINCT GCI.id_solicitacao
+                    FROM
+                        gar_conferencia GC
+                        INNER JOIN gar_conferencia_item GCI ON GC.id = GCI.id_conf
+                    WHERE
+                        GC.Id = :Id_Conferencia
+                        AND GCI.Refx = :Refx
+                    ";
+                    retorno = conn.Query<GarConferenciaItem>(sQuery, new { Id_Conferencia, Refx }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
+        public List<GarConferenciaItem> ListarRemessaRefx(long Id_Conferencia)
+        {
+            List<GarConferenciaItem> retorno = new List<GarConferenciaItem>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        DISTINCT GCI.refx
+                    FROM
+                        gar_conferencia GC
+                        INNER JOIN gar_conferencia_item GCI ON GC.id = GCI.id_conf
+                    WHERE
+                        GC.Id = :Id_Conferencia
+                    ";
+                    retorno = conn.Query<GarConferenciaItem>(sQuery, new { Id_Conferencia }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
         public DmlStatus CriarRemessa(GarRemessa item)
         {
             string sQuery = "";
@@ -159,27 +212,34 @@ namespace FWLog.Data.Repository.GeneralCtx
                         return new DmlStatus { Sucesso = false, Mensagem = string.Format("Esse é um fornecedor filho, busque pelo fornecedor pai <strong>{0}</strong>.", codFornPai) };
 
                     //VERIFICA SE TEM ALGUNS ITEM PARA A REMESSA
+                    //NÃO PEGA ITENS QUE ESTÃO EM CONFERENCIA ABERTA E QUE JA FORAM TRATADOS EM REMESSAS ANTERIORES
                     bool temItens = false;
                     sQuery = @"SELECT COUNT(*) FROM(
-                        SELECT 
+                       SELECT
                            GSI.refx,
                            GSI.id_solicitacao,
-                           SUM(GM.quant - NVL(Quant_Enviado,0)) AS quant   
-                        FROM 
+                           SUM(GM.quant - NVL(GRC.Quant_Enviado,0) ) AS quant
+                        FROM
                             gar_movimentacao GM
                             INNER JOIN gar_solicitacao_item GSI ON GSI.id = GM.id_item
                             LEFT JOIN gar_remessa_controle GRC ON GRC.id = GM.id
                         WHERE
                             (
                                 GSI.cod_fornecedor = :Cod_Fornecedor
-                                OR GSI.cod_fornecedor IN(SELECT cod_forn_filho FROM gar_forn_grupo WHERE cod_forn_pai = :Cod_Fornecedor) 
+                                OR GSI.cod_fornecedor IN(SELECT cod_forn_filho FROM gar_forn_grupo WHERE cod_forn_pai = :Cod_Fornecedor)
                             )
                             AND GM.id_tipo_estoque = 15
                             AND GM.id_tipo_movimentacao = 27
-                        GROUP BY  
+                        GROUP BY
                             GSI.refx,
                             GSI.id_solicitacao
-                    ) WHERE quant > 0";
+                        ) GSI LEFT JOIN gar_conferencia_item GCI ON GCI.id_solicitacao = GSI.id_solicitacao AND GCI.refx = GSI.refx
+                        WHERE
+                            (
+                                ((GSI.quant - GCI.quant) > 0 AND (SELECT GC.ativo FROM gar_conferencia GC WHERE GC.id = GCI.id_conf ) = 1)
+                                OR
+                                ((GSI.quant - GCI.quant_conferida) > 0 AND (SELECT GC.ativo FROM gar_conferencia GC WHERE GC.id = GCI.id_conf ) = 0)
+                            )";
                     temItens = conn.Query<int>(sQuery, new { item.Cod_Fornecedor }).SingleOrDefault() > 0;
 
                     if (!temItens)
@@ -193,11 +253,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                     param.Add(name: "Id_Status", value: item.Id_Status, direction: ParameterDirection.Input);
                     param.Add(name: "Id_Usr", value: item.Id_Usr, direction: ParameterDirection.Input);
                     param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
-                    conn.Execute(@"INSERT INTO gar_remessa (Filial, Cod_Fornecedor, Id_Tipo, Id_Status, Id_Usr, Dt_Criacao) 
+                    conn.Execute(@"INSERT INTO gar_remessa (Filial, Cod_Fornecedor, Id_Tipo, Id_Status, Id_Usr, Dt_Criacao)
                     VALUES (:Filial, :Cod_Fornecedor, :Id_Tipo, :Id_Status, :Id_Usr, SYSDATE) returning Id into :Id", param);
 
                     Id_Remessa = param.Get<int>("Id");
-
                 }
                 conn.Close();
             }
@@ -215,7 +274,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 {
                     string sQuery = @"
                     SELECT
-                        GS.Id,                       
+                        GS.Id,
                         GS.Filial,
                         GS.Dt_Criacao,
                         GT1.descricao AS Tipo,
@@ -232,7 +291,6 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
             return retorno;
         }
-
 
         public GarSolicitacao SelecionaSolicitacao(long Id_Solicitacao)
         {
@@ -1072,6 +1130,44 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
         }
 
+        public void AtualizarItemConferenciaRemessa(GarConferenciaItem item)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    sQuery = @"
+                    SELECT
+                        (SELECT COUNT(*) FROM gar_conferencia_item WHERE id_conf = GC.id AND refx = :Refx AND Id_Solicitacao = :Id_Solicitacao ) AS tem_na_nota
+                    FROM
+                        gar_conferencia GC
+                    WHERE
+                        GC.id = :Id_Conf
+                    ";
+                    var retorno = conn.Query<GarConferenciaItem>(sQuery, new { item.Refx, item.Id_Solicitacao, item.Id_Conf }).SingleOrDefault();
+
+                    if (retorno.Tem_Na_Nota == 1)
+                    {
+                        sQuery = @"
+                        UPDATE gar_conferencia_item SET Quant_Conferida = Quant_Conferida + :Quant_Conferida, Id_Usr = :Id_Usr, Dt_Conf = SYSDATE
+                        WHERE Id_Conf = :Id_Conf AND Refx = :Refx AND Id_Solicitacao = :Id_Solicitacao
+                        ";
+                        conn.Query<GarConferenciaItem>(sQuery, new
+                        {
+                            item.Quant_Conferida,
+                            item.Id_Usr,
+                            item.Id_Conf,
+                            item.Refx,
+                            item.Id_Solicitacao
+                        });
+                    }
+                }
+                conn.Close();
+            }
+        }
+
         public void CriarConferenciaEntrada(GarConferencia item)
         {
             using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
@@ -1094,7 +1190,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                         conn.Execute("INSERT INTO gar_conferencia (Id_Solicitacao, Id_Tipo_Conf, Id_Usr, Dt_Conf) VALUES (:Id_Solicitacao, :Id_Tipo_Conf, :Id_Usr, SYSDATE) returning Id into :Id", param);
-                         var Id_Conferencia = param.Get<int>("Id");
+                        var Id_Conferencia = param.Get<int>("Id");
 
                         sQuery = @"
                         INSERT INTO gar_conferencia_item (refx, id_conf, dt_conf, id_usr,quant)
@@ -1136,7 +1232,6 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                     if (retorno == 0)
                     {
-
                         sQuery = @"SELECT cod_fornecedor FROM gar_remessa WHERE Id = :Id_Remessa";
                         var fornecedor = conn.Query<string>(sQuery, new { item.Id_Remessa }).SingleOrDefault();
 
@@ -1146,32 +1241,38 @@ namespace FWLog.Data.Repository.GeneralCtx
                         param.Add(name: "Id_Usr", value: item.Id_Usr, direction: ParameterDirection.Input);
                         param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-                        conn.Execute(@"INSERT INTO gar_conferencia (Id_Remessa, Id_Tipo_Conf, Id_Usr, Dt_Conf) 
+                        conn.Execute(@"INSERT INTO gar_conferencia (Id_Remessa, Id_Tipo_Conf, Id_Usr, Dt_Conf)
                         VALUES (:Id_Remessa, :Id_Tipo_Conf, :Id_Usr, SYSDATE) returning Id into :Id", param);
                         var Id_Conferencia = param.Get<int>("Id");
 
                         sQuery = @"
                         INSERT INTO gar_conferencia_item (refx, id_solicitacao, id_conf, dt_conf, id_usr,quant)
-                        SELECT refx, id_solicitacao, :Id_Conferencia, SYSDATE AS dt_conf, :id_usr, quant FROM(
-                            SELECT 
+                        SELECT GSI.refx, GSI.id_solicitacao, SYSDATE AS dt_conf, :id_usr, GSI.quant FROM(
+                            SELECT
                                GSI.refx,
                                GSI.id_solicitacao,
-                               SUM(GM.quant - NVL(Quant_Enviado,0)) AS quant   
-                            FROM 
+                               SUM(GM.quant - NVL(GRC.Quant_Enviado,0) ) AS quant
+                            FROM
                                 gar_movimentacao GM
                                 INNER JOIN gar_solicitacao_item GSI ON GSI.id = GM.id_item
                                 LEFT JOIN gar_remessa_controle GRC ON GRC.id = GM.id
                             WHERE
                                 (
-                                    GSI.cod_fornecedor = :fornecedor
-                                    OR GSI.cod_fornecedor IN(SELECT cod_forn_filho FROM gar_forn_grupo WHERE cod_forn_pai = :fornecedor) 
+                                    GSI.cod_fornecedor = :Cod_Fornecedor
+                                    OR GSI.cod_fornecedor IN(SELECT cod_forn_filho FROM gar_forn_grupo WHERE cod_forn_pai = :Cod_Fornecedor)
                                 )
                                 AND GM.id_tipo_estoque = 15
                                 AND GM.id_tipo_movimentacao = 27
-                            GROUP BY  
+                            GROUP BY
                                 GSI.refx,
                                 GSI.id_solicitacao
-                        ) WHERE quant > 0
+                            ) GSI LEFT JOIN gar_conferencia_item GCI ON GCI.id_solicitacao = GSI.id_solicitacao AND GCI.refx = GSI.refx
+                            WHERE
+                                (
+                                    ((GSI.quant - GCI.quant) > 0 AND (SELECT GC.ativo FROM gar_conferencia GC WHERE GC.id = GCI.id_conf ) = 1)
+                                    OR
+                                    ((GSI.quant - GCI.quant_conferida) > 0 AND (SELECT GC.ativo FROM gar_conferencia GC WHERE GC.id = GCI.id_conf ) = 0)
+                                )
                         ";
                         conn.Query<GarConferenciaHist>(sQuery, new
                         {

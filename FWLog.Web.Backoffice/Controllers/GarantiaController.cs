@@ -103,7 +103,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var model = new GarantiaConferenciaVM
             {
-                Conferencia = Mapper.Map<GarantiaConferencia>(_uow.GarantiaRepository.SelecionaConferencia(idConferencia))                
+                Conferencia = Mapper.Map<GarantiaConferencia>(_uow.GarantiaRepository.SelecionaConferencia(idConferencia))
             };
 
             if (Tipo == "solicitacao")
@@ -233,11 +233,13 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult ConferenciaForm(long Id_Conferencia)
         {
+            var conferencia = _uow.GarantiaRepository.SelecionaConferencia(Id_Conferencia);
             var model = new GarantiaConferenciaFormVM
             {
                 Form = new GarantiaConferenciaItem
                 {
-                    Id = Id_Conferencia
+                    Id = Id_Conferencia,
+                    Id_Tipo_Conf = conferencia.Id_Tipo_Conf,
                 }
             };
 
@@ -247,8 +249,16 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpPost]
         public ActionResult AtualizarItemConferencia(GarantiaConferenciaItem item)
         {
+            var conferencia = _uow.GarantiaRepository.SelecionaConferencia(item.Id_Conf);
+
             if (string.IsNullOrEmpty(item.Refx))
                 ModelState.AddModelError("Refx", "O campo Código é obrigatório.");
+
+            if (item.Quant_Conferida == 0 || item.Quant_Conferida == null)
+                ModelState.AddModelError("Quant_Conferida", "O campo Quantidade é obrigatório.");
+
+            if ((conferencia.Id_Tipo_Conf == 26 || conferencia.Id_Tipo_Conf == 6) && item.Id_Solicitacao == null)
+                ModelState.AddModelError("Id_Solicitacao", "O campo Solicitação é obrigatório.");
 
             if (!ModelState.IsValid)
             {
@@ -263,13 +273,27 @@ namespace FWLog.Web.Backoffice.Controllers
             else
             {
                 //ATUALIZA A QUANTIDADE CONFERIDA
-                _uow.GarantiaRepository.AtualizarItemConferencia(new GarConferenciaItem
+                if (conferencia.Id_Tipo_Conf == 26 || conferencia.Id_Tipo_Conf == 6)
                 {
-                    Quant_Conferida = item.Quant_Conferida,
-                    Refx = item.Refx,
-                    Id_Usr = IdUsuario,
-                    Id_Conf = item.Id_Conf
-                });
+                    _uow.GarantiaRepository.AtualizarItemConferenciaRemessa(new GarConferenciaItem
+                    {
+                        Quant_Conferida = item.Quant_Conferida,
+                        Refx = item.Refx,
+                        Id_Usr = IdUsuario,
+                        Id_Solicitacao = item.Id_Solicitacao,
+                        Id_Conf = item.Id_Conf
+                    });
+                }
+                else
+                {
+                    _uow.GarantiaRepository.AtualizarItemConferencia(new GarConferenciaItem
+                    {
+                        Quant_Conferida = item.Quant_Conferida,
+                        Refx = item.Refx,
+                        Id_Usr = IdUsuario,
+                        Id_Conf = item.Id_Conf
+                    });
+                }
 
                 //GRAVA O HISTORICO
                 _uow.GarantiaRepository.InserirConferenciaHistorico(new GarConferenciaHist
@@ -303,6 +327,33 @@ namespace FWLog.Web.Backoffice.Controllers
             var model = Mapper.Map<IEnumerable<GarantiaConferenciaItem>>(result).ToList();
 
             return PartialView("_ConferenciaItemConferido", model);
+        }
+
+        public ActionResult ConferenciaConferirManual(long Id_Conferencia)
+        {
+            var model = new GarantiaConferenciaFormVM
+            {
+                Form = new GarantiaConferenciaItem
+                {
+                    Id_Conf = Id_Conferencia
+                },
+                Lista_Refx = new SelectList(_uow.GarantiaRepository.ListarRemessaRefx(Id_Conferencia), "Refx", "Refx", 0)
+            };
+
+            return PartialView("_ConferenciaConferirManual", model);
+        }
+
+        public ActionResult ConferenciaListarRemessaSolicitacaoAjax(string Refx, long Id_Conferencia)
+        {
+            try
+            {
+                var dados = _uow.GarantiaRepository.ListarRemessaSolicitacao(Id_Conferencia, Refx);
+                return Json(dados, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+                return Json(new { success = false, errors = "Falha ao listar" });
+            }
         }
 
         public ActionResult ConferenciaLaudo(long Id_Conferencia)
@@ -512,7 +563,6 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var model = new GarantiaRemessa
             {
-
             };
 
             return PartialView("_RemessaCriar", model);
@@ -535,7 +585,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             else
             {
-
                 try
                 {
                     retorno = _uow.GarantiaRepository.CriarRemessa(new GarRemessa
@@ -559,7 +608,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
                     if (retorno.Sucesso)
                     {
-
                         return Json(new AjaxGenericResultModel
                         {
                             Success = true,
@@ -585,7 +633,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
                     throw;
                 }
-
             }
         }
     }

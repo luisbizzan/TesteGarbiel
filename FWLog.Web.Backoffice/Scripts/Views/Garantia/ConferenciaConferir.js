@@ -38,6 +38,9 @@ function conferir() {
             alterarQuantidade();
         });
 
+        $("#btConferirManual").click(function () {
+            conferirManual();
+        });
 
         onScan.attachTo($('#Form_Refx')[0], {
             onScan: function (sScancode, iQuatity) {
@@ -59,7 +62,6 @@ function conferir() {
 }
 
 function conferirItem() {
-
     $.ajax({
         url: "/Garantia/AtualizarItemConferencia",
         method: "POST",
@@ -179,7 +181,7 @@ function itensLaudo() {
     let modal = $("#modalLaudo .modal-body");
     $("#modalLaudo .modal-title").html("Itens do Laudo");
 
-    modal.load( "/Garantia/ConferenciaLaudo", {
+    modal.load("/Garantia/ConferenciaLaudo", {
         Id_Conferencia: $("#Conferencia_Id").val()
     }, function () {
         $("#modalLaudo").modal("show");
@@ -344,6 +346,79 @@ function itensPendentes() {
             searching: true,
             bInfo: true
         });
+    });
+}
+
+function conferirManual() {
+    $("#modalItensPendentes").modal("hide");
+    let modal = $("#modalItensPendentes .modal-body");
+    $("#modalItensPendentes .modal-title").html("Conferência Manual");
+
+    modal.load("/Garantia/ConferenciaConferirManual", {
+        Id_Conferencia: $("#Conferencia_Id").val()
+    }, function () {
+        $("#modalItensPendentes").modal("show");
+
+        $('.onlyNumber').mask("Z0999999.00", {
+            translation: {
+                '0': { pattern: /\d/ },
+                '9': { pattern: /\d/, optional: true },
+                'Z': { pattern: /[\-\+]/, optional: true }
+            }
+        });
+
+        $('#formConferirManual').submit(function (e) {
+            e.preventDefault();
+            conferirItemManual();
+        });
+
+        $("#formConferirManual #Refx").change(function () {
+            var $select = $("#formConferirManual #Id_Solicitacao");
+            $select.empty().select2();
+
+            $.ajax({
+                url: "/Garantia/ConferenciaListarRemessaSolicitacaoAjax",
+                type: "GET",
+                data: {
+                    Id_Conferencia: $("#Conferencia_Id").val(),
+                    Refx: $(this).val()
+                },
+                success: function (data) {
+                    $select.select2("destroy");
+
+                    $select.append("<option value=''></option>");
+                    $.each(data, function (obj) {
+                        $select.append("<option  value=" + data[obj].Id_Solicitacao + ">" + data[obj].Id_Solicitacao + "</option>");
+                    });
+                    $select.select2();
+                },
+                error: function (data) {
+                }
+            });
+
+
+        });
+    });
+}
+
+function conferirItemManual() {
+    var formulario = $("form#formConferirManual").serialize();
+
+    $.ajax({
+        url: "/Garantia/AtualizarItemConferencia",
+        method: "POST",
+        data: formulario,
+        success: function (result) {
+            if (result.Success) {
+                $("#modalItensPendentes").modal('hide');
+                PNotify.success({ text: result.Message, delay: 1000 });
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+        },
+        error: function (request, status, error) {
+            PNotify.warning({ text: result.Message });
+        }
     });
 }
 
