@@ -31,6 +31,7 @@ namespace FWLog.Web.Api.Controllers
                 {
                     IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
                     IdImpressora = requisicao.IdImpressora,
+                    TipoImpressao = requisicao.TipoImpressao,
                     IdUsuario = IdUsuario,
                     IdEmpresa = IdEmpresa
                 };
