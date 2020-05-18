@@ -466,7 +466,7 @@ namespace FWLog.Services.Services
 
             if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
-                if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
+                if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue && !pedidoVenda.Pedido.IsRequisicao)
                 {
                     throw new BusinessException("Este volume não tem uma nota fiscal faturada.");
                 }
@@ -540,7 +540,7 @@ namespace FWLog.Services.Services
 
                     if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
                     {
-                        if (volume.PedidoVenda.Pedido.CodigoIntegracaoNotaFiscal == null)
+                        if (volume.PedidoVenda.Pedido.CodigoIntegracaoNotaFiscal == null && !volume.PedidoVenda.Pedido.IsRequisicao)
                         {
                             throw new BusinessException($"Volume { volume.EtiquetaVolume } não tem nota fiscal faturada.");
                         }
