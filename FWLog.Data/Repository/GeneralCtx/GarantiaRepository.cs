@@ -583,6 +583,17 @@ namespace FWLog.Data.Repository.GeneralCtx
                     if (solicitacao.Id_Tipo == 18 && !empresaFazGarantia)
                         return new DmlStatus { Sucesso = false, Mensagem = "Essa empresa não faz garantia." };
 
+                    //VERIFICA SE A EMPRESA TEM PARAMETRO DE GARANTIA
+                    sQuery = @"SELECT E.""IdEmpresa"" FROM tgfemp@sankhya TE INNER JOIN ""Empresa"" E ON E.""CodigoIntegracao"" =  TE.ad_codempgarantia
+                    WHERE codemp = (SELECT codemp FROM tsiemp @sankhya WHERE ad_filial = :Filial";
+                    var dadosEmp = conn.Query<Empresa>(sQuery, new { solicitacao.Filial }).SingleOrDefault();
+
+                    if (solicitacao.Id_Tipo == 18 && dadosEmp == null)
+                        return new DmlStatus { Sucesso = false, Mensagem = string.Format("Garantia é da Filial '{0}', esta filial não tem parametro de garantia, favor parametrizar no cadastro de empresa do Sankhya.", solicitacao.Filial) };
+
+                    if (solicitacao.Id_Tipo == 18 && dadosEmp.IdEmpresa != item.Id_Filial_Sankhya)
+                        return new DmlStatus { Sucesso = false, Mensagem = string.Format("Empresa Não Autorizada a Fazer Garantia, a Filial '{0}' Tem que fazer garantia pela empresa '{1}'.", solicitacao.Filial, dadosEmp.Sigla) };
+
                     long Id_DevGar = solicitacao.Id_Sav;
 
                     //ATUALIZA CODIGO RASTREIO DO SAV
