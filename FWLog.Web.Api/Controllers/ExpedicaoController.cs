@@ -391,9 +391,9 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                var resposta = _expedicaoService.ValidarRemoverDocaTransportadora(idOuCodtransportadora, IdEmpresa);
+                _expedicaoService.ValidarRemoverDocaTransportadora(idOuCodtransportadora, IdEmpresa);
 
-                return ApiOk(resposta);
+                return ApiOk();
             }
             catch (BusinessException businessException)
             {

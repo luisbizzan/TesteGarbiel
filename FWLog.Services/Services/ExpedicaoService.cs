@@ -1028,7 +1028,7 @@ namespace FWLog.Services.Services
             });
         }
 
-        public ValidarRemoverDocaTransportadoraResposta ValidarRemoverDocaTransportadora(string idOuCodtransportadora, long idEmpresa)
+        public void ValidarRemoverDocaTransportadora(string idOuCodtransportadora, long idEmpresa)
         {
             Transportadora transportadora;
             if (long.TryParse(idOuCodtransportadora, out long idTransportadora))
@@ -1056,11 +1056,6 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("Não há volumes na DOCA.");
             }
-
-            return new ValidarRemoverDocaTransportadoraResposta
-            {
-                IdTransportadora = transportadora.IdTransportadora
-            };
         }
 
         public void RemoverVolumeDoca(string referenciaPedido, string idUsuario, long idEmpresa)
