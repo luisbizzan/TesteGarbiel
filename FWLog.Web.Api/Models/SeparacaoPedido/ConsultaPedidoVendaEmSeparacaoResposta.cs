@@ -5,6 +5,6 @@ namespace FWLog.Web.Api.Models.SeparacaoPedido
 {
     public class ConsultaPedidoVendaEmSeparacaoResposta
     {
-        public List<PedidoVendaVolumeEmSeparacaoViewModel> PedidoVendaVolumeEmSeparacaoViewModel { get; set; }
+        public List<PedidoVendaVolumeEmSeparacaoViewModel> PedidosVendaVolumeEmSeparacao { get; set; }
     }
 }

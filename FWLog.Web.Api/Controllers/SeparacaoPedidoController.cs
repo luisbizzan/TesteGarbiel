@@ -24,7 +24,7 @@ namespace FWLog.Web.Api.Controllers
 
             var response = new ConsultaPedidoVendaEmSeparacaoResposta
             {
-                PedidoVendaVolumeEmSeparacaoViewModel = idsPedidosProcessoDeSeparacao
+                PedidosVendaVolumeEmSeparacao = idsPedidosProcessoDeSeparacao
             };
 
             return ApiOk(response);
