@@ -110,11 +110,6 @@ namespace FWLog.Services.Services
                         }
                     }
 
-                    if (empInt.TelefoneSAC.NullOrEmpty())
-                    {
-                        throw new BusinessException("O campo do Telefone SAC está vazio");
-                    }
-
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODEMP", empresaConfig.Empresa.CodigoIntegracao.ToString() } };
 
                     await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", campoChave, "TSIEMP.AD_INTEGRARFWLOG", "0");
