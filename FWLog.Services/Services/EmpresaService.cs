@@ -97,7 +97,6 @@ namespace FWLog.Services.Services
 
                     _unitOfWork.SaveChanges();
 
-
                     if (!string.IsNullOrEmpty(empInt.EmpresaMatriz) && !empInt.EmpresaMatriz.Equals(codEmp.ToString()))
                     {
                         var codEmpMatriz = Convert.ToInt32(empInt.EmpresaMatriz);
@@ -111,14 +110,14 @@ namespace FWLog.Services.Services
                         }
                     }
 
+                    if (empInt.TelefoneSAC.NullOrEmpty())
+                    {
+                        throw new BusinessException("O campo do Telefone SAC está vazio");
+                    }
+
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODEMP", empresaConfig.Empresa.CodigoIntegracao.ToString() } };
 
                     await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", campoChave, "TSIEMP.AD_INTEGRARFWLOG", "0");
-
-                    if(empInt.TelefoneSAC.NullOrEmpty())
-                    {
-                        throw new BusinessException("O campo do TelefoneSac está vazio");
-                    }
                 }
                 catch (Exception ex)
                 {
