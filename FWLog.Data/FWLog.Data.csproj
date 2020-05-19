@@ -325,7 +325,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\FWLog.Data.dll.config" />
+    <None Include="Attributes\bin\Debug\FWLog.Data.dll.config" />
     <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
     <None Include="obj\Debug\FWLog.Data.csproj.CopyComplete" />
     <None Include="obj\Debug\FWLog.Data.csproj.GenerateResource.cache" />
@@ -373,24 +373,23 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Attributes\" />
-    <Folder Include="bin\Release\" />
+    <Folder Include="Attributes\bin\Release\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bin\Debug\Dapper.dll" />
-    <Content Include="bin\Debug\Dapper.xml" />
-    <Content Include="bin\Debug\Dart-Library.CORE.dll" />
-    <Content Include="bin\Debug\EntityFramework.dll" />
-    <Content Include="bin\Debug\EntityFramework.SqlServer.dll" />
-    <Content Include="bin\Debug\EntityFramework.SqlServer.xml" />
-    <Content Include="bin\Debug\EntityFramework.xml" />
-    <Content Include="bin\Debug\en\FWLog.Data.resources.dll" />
-    <Content Include="bin\Debug\FWLog.Data.dll" />
-    <Content Include="bin\Debug\FWLog.Data.pdb" />
-    <Content Include="bin\Debug\Newtonsoft.Json.dll" />
-    <Content Include="bin\Debug\Newtonsoft.Json.xml" />
-    <Content Include="bin\Debug\Oracle.ManagedDataAccess.dll" />
-    <Content Include="bin\Debug\Oracle.ManagedDataAccess.EntityFramework.dll" />
+    <Content Include="Attributes\bin\Debug\Dapper.dll" />
+    <Content Include="Attributes\bin\Debug\Dapper.xml" />
+    <Content Include="Attributes\bin\Debug\Dart-Library.CORE.dll" />
+    <Content Include="Attributes\bin\Debug\EntityFramework.dll" />
+    <Content Include="Attributes\bin\Debug\EntityFramework.SqlServer.dll" />
+    <Content Include="Attributes\bin\Debug\EntityFramework.SqlServer.xml" />
+    <Content Include="Attributes\bin\Debug\EntityFramework.xml" />
+    <Content Include="Attributes\bin\Debug\en\FWLog.Data.resources.dll" />
+    <Content Include="Attributes\bin\Debug\FWLog.Data.dll" />
+    <Content Include="Attributes\bin\Debug\FWLog.Data.pdb" />
+    <Content Include="Attributes\bin\Debug\Newtonsoft.Json.dll" />
+    <Content Include="Attributes\bin\Debug\Newtonsoft.Json.xml" />
+    <Content Include="Attributes\bin\Debug\Oracle.ManagedDataAccess.dll" />
+    <Content Include="Attributes\bin\Debug\Oracle.ManagedDataAccess.EntityFramework.dll" />
     <Content Include="obj\Debug\en\FWLog.Data.resources.dll" />
     <Content Include="obj\Debug\FWLog.Data.csproj.FileListAbsolute.txt" />
     <Content Include="obj\Debug\FWLog.Data.dll" />

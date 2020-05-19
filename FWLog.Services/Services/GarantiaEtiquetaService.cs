@@ -13,5 +13,12 @@ namespace FWLog.Services.Services
             _uow = uow;
         }
         #endregion
+         
+        #region Enviar Etiqueta para Impressão
+        public void ProcessarImpressaoEtiqueta(GarantiaEtiqueta.DocumentoImpressao dadosImpressao)
+        {
+            _uow.GarantiaEtiquetaRepository.ProcessarImpressaoEtiqueta(dadosImpressao);  
+        }
+        #endregion
     }
 }
