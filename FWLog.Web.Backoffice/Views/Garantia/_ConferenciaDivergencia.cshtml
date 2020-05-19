@@ -9,6 +9,10 @@
                         <tr>
                             <th>@Html.DisplayNameFor(m => m.Cabecalho.Refx)</th>
                             <th>@Html.DisplayNameFor(m => m.Cabecalho.Descricao)</th>
+                            @if (Model.Cabecalho.Id_Tipo_Conf == 26 || Model.Cabecalho.Id_Tipo_Conf == 6)
+                            {
+                                <th>@Html.DisplayNameFor(m => m.Cabecalho.Id_Solicitacao)</th>
+                            }
                             <th>@Html.DisplayNameFor(m => m.Cabecalho.Quant)</th>
                             <th>@Html.DisplayNameFor(m => m.Cabecalho.Quant_Conferida)</th>
                             <th>@Html.DisplayNameFor(m => m.Cabecalho.Divergencia)</th>
@@ -20,6 +24,10 @@
                             <tr style="@(item.Tem_No_Excesso == 1 ? "background-color:#bb110021" : "")">
                                 <td>@item.Refx</td>
                                 <td>@item.Descricao</td>
+                                @if (Model.Cabecalho.Id_Tipo_Conf == 26 || Model.Cabecalho.Id_Tipo_Conf == 6)
+                                {
+                                    <td>@item.Id_Solicitacao</td>
+                                }
                                 <td>@item.Quant</td>
                                 <td>@item.Quant_Conferida</td>
                                 <td>

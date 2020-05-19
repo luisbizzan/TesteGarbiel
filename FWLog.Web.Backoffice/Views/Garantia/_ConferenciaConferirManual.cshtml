@@ -8,7 +8,7 @@
                     @Html.HiddenFor(m => m.Form.Id_Conf, new { id = "Id_Conf", Name = "Id_Conf" })
                     <div class="col-xs-12 col-md-5 form-group">
                         @Html.LabelFor(m => m.Form.Refx)
-                        @Html.DropDownListFor(m => m.Form.Refx, Model.Lista_Refx, "", new { id = "Refx", Name = "Refx", @class = "form-control" })
+                        @Html.DropDownListFor(m => m.Form.Refx, Model.Lista_Refx, "", new { id = "Refx", Name = "Refx", @style = "width: 100%;", @class = "form-control select2" })
                     </div>
                     <div class="col-xs-12 col-md-5 form-group">
                         @Html.LabelFor(m => m.Form.Id_Solicitacao)

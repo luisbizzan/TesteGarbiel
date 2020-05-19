@@ -247,14 +247,14 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                     //CRIA REMESSA
                     var param = new DynamicParameters();
-                    param.Add(name: "Filial", value: item.Filial, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Filial_Sankhya", value: item.Id_Filial_Sankhya, direction: ParameterDirection.Input);
                     param.Add(name: "Cod_Fornecedor", value: item.Cod_Fornecedor, direction: ParameterDirection.Input);
                     param.Add(name: "Id_Tipo", value: item.Id_Tipo, direction: ParameterDirection.Input);
                     param.Add(name: "Id_Status", value: item.Id_Status, direction: ParameterDirection.Input);
                     param.Add(name: "Id_Usr", value: item.Id_Usr, direction: ParameterDirection.Input);
                     param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
-                    conn.Execute(@"INSERT INTO gar_remessa (Filial, Cod_Fornecedor, Id_Tipo, Id_Status, Id_Usr, Dt_Criacao)
-                    VALUES (:Filial, :Cod_Fornecedor, :Id_Tipo, :Id_Status, :Id_Usr, SYSDATE) returning Id into :Id", param);
+                    conn.Execute(@"INSERT INTO gar_remessa (Id_Filial_Sankhya, Filial, Cod_Fornecedor, Id_Tipo, Id_Status, Id_Usr, Dt_Criacao)
+                    VALUES (:Id_Filial_Sankhya, (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa"" = :Id_Filial_Sankhya ), :Cod_Fornecedor, :Id_Tipo, :Id_Status, :Id_Usr, SYSDATE) returning Id into :Id", param);
 
                     Id_Remessa = param.Get<int>("Id");
                 }
@@ -348,6 +348,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                     if (!podeImportar)
                         return new DmlStatus { Sucesso = false, Mensagem = "A solicitação já foi importada." };
 
+                    //VERIFICA SE EMPRESA FAZ GARANTIA
+                    sQuery = @"SELECT nvl(ad_fazgarantia,'N') FROM tgfemp@sankhya WHERE codemp = (SELECT codemp FROM tsiemp@sankhya WHERE ad_filial = (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa""  = :Id_Filial_Sankhya))";
+                    bool empresaFazGarantia = conn.Query<string>(sQuery, new { item.Id_Filial_Sankhya }).SingleOrDefault() == "S";
+
                     var solicitacao = new GarSolicitacao();
 
                     if (item.Id_Tipo_Doc == 31)
@@ -404,6 +408,20 @@ namespace FWLog.Data.Repository.GeneralCtx
                     if (solicitacao == null)
                         return new DmlStatus { Sucesso = false, Mensagem = "Erro ao carregar solicitação." };
 
+                    if (solicitacao.Id_Tipo == 18 && !empresaFazGarantia)
+                        return new DmlStatus { Sucesso = false, Mensagem = "Essa empresa não faz garantia." };
+
+                    //VERIFICA SE A EMPRESA TEM PARAMETRO DE GARANTIA
+                    sQuery = @"SELECT E.""IdEmpresa"" FROM tgfemp@sankhya TE INNER JOIN ""Empresa"" E ON E.""CodigoIntegracao"" =  TE.ad_codempgarantia
+                    WHERE codemp = (SELECT codemp FROM tsiemp @sankhya WHERE ad_filial = :Filial";
+                    var dadosEmp = conn.Query<Empresa>(sQuery, new { solicitacao.Filial }).SingleOrDefault();
+
+                    if (solicitacao.Id_Tipo == 18 && dadosEmp == null)
+                        return new DmlStatus { Sucesso = false, Mensagem = string.Format("Garantia é da Filial '{0}', esta filial não tem parametro de garantia, favor parametrizar no cadastro de empresa do Sankhya.", solicitacao.Filial) };
+
+                    if (solicitacao.Id_Tipo == 18 && dadosEmp.IdEmpresa != item.Id_Filial_Sankhya)
+                        return new DmlStatus { Sucesso = false, Mensagem = string.Format("Empresa Não Autorizada a Fazer Garantia, a Filial '{0}' Tem que fazer garantia pela empresa '{1}'.", solicitacao.Filial, dadosEmp.Sigla) };
+
                     long Id_DevGar = solicitacao.Id_Sav;
 
                     //ATUALIZA CODIGO RASTREIO DO SAV
@@ -424,8 +442,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                     param.Add(name: "Id_Tipo_Doc", value: item.Id_Tipo_Doc, direction: ParameterDirection.Input);
                     param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-                    conn.Execute(@"INSERT INTO gar_solicitacao (Filial, Dt_Criacao, Id_Tipo, Cli_Cnpj,Id_Status,Legenda,Id_Usr,Id_Sav,Nota_Fiscal,Serie,Id_Tipo_Doc)
-                            VALUES ( :Filial, :Dt_Criacao, :Id_Tipo, :Cli_Cnpj,:Id_Status,:Legenda,:Id_Usr,:Id_Sav,:Nota_Fiscal,:Serie,:Id_Tipo_Doc )
+                    conn.Execute(@"INSERT INTO gar_solicitacao (Filial, Id_Filial_Sankhya, Dt_Criacao, Id_Tipo, Cli_Cnpj,Id_Status,Legenda,Id_Usr,Id_Sav,Nota_Fiscal,Serie,Id_Tipo_Doc)
+                            VALUES ( :Filial, (SELECT ""IdEmpresa"" FROM ""Empresa"" WHERE ""Sigla"" = :Filial ), :Dt_Criacao, :Id_Tipo, :Cli_Cnpj,:Id_Status,:Legenda,:Id_Usr,:Id_Sav,:Nota_Fiscal,:Serie,:Id_Tipo_Doc )
                             returning Id into :Id", param);
 
                     Id_Solicitacao = param.Get<int>("Id");
@@ -500,6 +518,10 @@ namespace FWLog.Data.Repository.GeneralCtx
                     if (!podeImportar)
                         return new DmlStatus { Sucesso = false, Mensagem = "A solicitação já foi importada." };
 
+                    //VERIFICA SE EMPRESA FAZ GARANTIA
+                    sQuery = @"SELECT nvl(ad_fazgarantia,'N') FROM tgfemp@sankhya WHERE codemp = (SELECT codemp FROM tsiemp@sankhya WHERE ad_filial = (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa""  = :Id_Filial_Sankhya))";
+                    bool empresaFazGarantia = conn.Query<string>(sQuery, new { item.Id_Filial_Sankhya }).SingleOrDefault() == "S";
+
                     //VERIFICA SE TEM NOTA SANKYA
                     var solicitacao = new GarSolicitacao();
 
@@ -525,8 +547,9 @@ namespace FWLog.Data.Repository.GeneralCtx
                             cnpj = (SELECT cgc_cpf FROM tgfpar@sankhya WHERE codparc = (SELECT CODPARC  FROM tgfCab@Sankhya WHERE ChaveNfe = :Chave_Acesso))
                             AND nota_fiscal = SUBSTR(:Chave_Acesso,26,9)
                             AND serie = SUBSTR(:Chave_Acesso,23,3)
+                            AND finalizado NOT IN(0,5)
                         ";
-                        //AND finalizado NOT IN(0,5)
+                        //tirar pra funcionar AND finalizado NOT IN(0,5)
                         solicitacao = conn.Query<GarSolicitacao>(sQuery, new { item.Id_Usr, item.Chave_Acesso }).SingleOrDefault();
                     }
                     else if (item.Id_Tipo_Doc == 21)
@@ -556,6 +579,20 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                     if (solicitacao == null)
                         return new DmlStatus { Sucesso = false, Mensagem = "Erro ao carregar solicitação." };
+
+                    if (solicitacao.Id_Tipo == 18 && !empresaFazGarantia)
+                        return new DmlStatus { Sucesso = false, Mensagem = "Essa empresa não faz garantia." };
+
+                    //VERIFICA SE A EMPRESA TEM PARAMETRO DE GARANTIA
+                    sQuery = @"SELECT E.""IdEmpresa"" FROM tgfemp@sankhya TE INNER JOIN ""Empresa"" E ON E.""CodigoIntegracao"" =  TE.ad_codempgarantia
+                    WHERE codemp = (SELECT codemp FROM tsiemp @sankhya WHERE ad_filial = :Filial";
+                    var dadosEmp = conn.Query<Empresa>(sQuery, new { solicitacao.Filial }).SingleOrDefault();
+
+                    if (solicitacao.Id_Tipo == 18 && dadosEmp == null)
+                        return new DmlStatus { Sucesso = false, Mensagem = string.Format("Garantia é da Filial '{0}', esta filial não tem parametro de garantia, favor parametrizar no cadastro de empresa do Sankhya.", solicitacao.Filial) };
+
+                    if (solicitacao.Id_Tipo == 18 && dadosEmp.IdEmpresa != item.Id_Filial_Sankhya)
+                        return new DmlStatus { Sucesso = false, Mensagem = string.Format("Empresa Não Autorizada a Fazer Garantia, a Filial '{0}' Tem que fazer garantia pela empresa '{1}'.", solicitacao.Filial, dadosEmp.Sigla) };
 
                     long Id_DevGar = solicitacao.Id_Sav;
 
@@ -887,6 +924,62 @@ namespace FWLog.Data.Repository.GeneralCtx
                 }
                 conn.Close();
             }
+        }
+
+        public DmlStatus VerificarConferenciaRemessa(GarConferencia item)
+        {
+            string sQuery = "";
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    //VERIFICA SE TEM ITENS A MAIS
+                    decimal qtdItensAmais = 0;
+                    sQuery = @"
+                    SELECT
+                        COUNT(*) AS total
+                    FROM
+                        gar_conferencia_item
+                    WHERE
+                        Id_Conf = :Id
+                        AND (Quant_Conferida - Quant) > 0";
+                    qtdItensAmais = conn.Query<decimal>(sQuery, new { item.Id }).SingleOrDefault();
+
+                    if (qtdItensAmais > 0)
+                        return new DmlStatus { Sucesso = false, Mensagem = string.Format("Verifique as divergências, <strong>{0}</strong> itens a mais.", qtdItensAmais) };
+
+                    bool aceitaParcial = false;
+                    sQuery = @"
+                    SELECT COUNT(*) FROM
+                        gar_remessa GR
+                        INNER JOIN gar_remessa_config GRC ON GRC.cod_fornecedor = GR.cod_fornecedor AND GRC.filial = GR.filial
+                    WHERE GR.Id = :Id_Remessa AND GRC.total = 0";
+                    aceitaParcial = conn.Query<decimal>(sQuery, new { item.Id_Remessa }).SingleOrDefault() > 0;
+
+                    if (!aceitaParcial)
+                    {
+                        //FORNECEDOR TOTAL
+                        //VERIFICAR SE TEM DIVERGENCIA (ITENS A MAIS OU A MENOS)
+                        decimal qtdItensAmenos = 0;
+                        sQuery = @"
+                        SELECT
+                            COUNT(*) AS total
+                        FROM
+                            gar_conferencia_item
+                        WHERE
+                            Id_Conf = :Id
+                            AND (Quant_Conferida - Quant) < 0";
+                        qtdItensAmenos = conn.Query<decimal>(sQuery, new { item.Id }).SingleOrDefault();
+
+                        if (qtdItensAmenos > 0)
+                            return new DmlStatus { Sucesso = false, Mensagem = string.Format("Fornecedor só aceita entrega total, verifique as divergências, <strong>{0}</strong> itens a menos.", qtdItensAmenos) };
+                    }
+                }
+                conn.Close();
+            }
+            return new DmlStatus { Sucesso = true, Mensagem = "Ok, pode continuar.", Id = 0 };
         }
 
         public void CriarLaudo(GarSolicitacaoItemLaudo item)
@@ -1298,14 +1391,15 @@ namespace FWLog.Data.Repository.GeneralCtx
                 {
                     string sQuery = @"
                     INSERT INTO gar_conferencia_hist
-	                    ( Id_Conf, Refx, Volume, Id_Usr, Quant_Conferida, Dt_Conf )
+	                    ( Id_Conf, Refx, Id_Solicitacao, Volume, Id_Usr, Quant_Conferida, Dt_Conf )
                     VALUES
-	                    ( :Id_Conf, :Refx, :Volume, :Id_Usr, :Quant_Conferida, SYSDATE )
+	                    ( :Id_Conf, :Refx, :Id_Solicitacao, :Volume, :Id_Usr, :Quant_Conferida, SYSDATE )
                     ";
                     conn.Query<GarConferenciaHist>(sQuery, new
                     {
                         item.Id_Conf,
                         item.Refx,
+                        item.Id_Solicitacao,
                         item.Volume,
                         item.Id_Usr,
                         item.Quant_Conferida
@@ -1329,6 +1423,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                         GCH.Id,
                         GCH.Id_Conf,
                         GCH.Refx,
+                        TP.descrprod AS Descricao,
+                        GCH.Id_Solicitacao,
                         U.""UserName"" AS Usr,
                         GCH.Volume,
                         GCH.Dt_Conf,
@@ -1336,6 +1432,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     FROM
                         gar_conferencia_hist GCH
                         INNER JOIN ""AspNetUsers"" U ON U.""Id"" =  GCH.id_usr
+                        LEFT JOIN tgfpro@sankhya TP ON TP.ad_refx = GCH.refx
                     WHERE
                         GCH.Id_Conf = :Id_Conferencia
                     ORDER BY
@@ -1362,9 +1459,12 @@ namespace FWLog.Data.Repository.GeneralCtx
                     SELECT
                         GCI.Id,
                         GCI.Id_Conf,
+                        TP.descrprod AS Descricao,
+                        GCI.Id_Solicitacao,
                         GCI.Refx
                     FROM
                         gar_conferencia_item GCI
+                        LEFT JOIN tgfpro@sankhya TP ON TP.ad_refx = GCI.refx
                     WHERE
                         GCI.Id_Conf = :Id_Conferencia
                         AND GCI.Refx NOT IN(SELECT GCH.refx FROM gar_conferencia_hist GCH WHERE GCH.Id_Conf = GCI.Id_Conf)
@@ -1393,6 +1493,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         GC.Id,
                         GC.Id_Conf,
                         GC.Refx,
+                        GC.Id_Solicitacao,
                         GC.Divergencia,
                         GC.Quant,
                         TP.descrprod AS Descricao,
@@ -1403,6 +1504,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             Id,
                             Id_Conf,
                             Refx,
+                            Id_Solicitacao,
                             (Quant_Conferida - Quant) AS Divergencia,
                             Quant,
                             0 AS Tem_No_Excesso,
@@ -1416,6 +1518,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             Id,
                             Id_Conf,
                             Refx,
+                            0 AS Id_Solicitacao,
                             0 AS Divergencia,
                             0 AS Quant,
                             1 AS Tem_No_Excesso,
