@@ -53,7 +53,8 @@ namespace FWLog.Services.Services
             var result = pedidoVendaVolumes.Select(x => new PedidoVendaVolumeEmSeparacaoViewModel
             {
                 IdPedidoVenda = x.IdPedidoVenda,
-                IdPedidoVendaVolume = x.IdPedidoVendaVolume
+                IdPedidoVendaVolume = x.IdPedidoVendaVolume,
+                EtiquetaVolume = x.EtiquetaVolume
             }).ToList();
 
             return result;
@@ -93,35 +94,17 @@ namespace FWLog.Services.Services
             }
         }
 
-        public BuscarPedidoVendaResposta BuscarPedidoVenda(string referenciaPedido, long idPedidoVendaVolume, long idEmpresa, string idUsuario, bool temPermissaoF7)
+        public BuscarPedidoVendaResposta BuscarPedidoVenda(string referenciaPedido, long idEmpresa, string idUsuario, bool temPermissaoF7)
         {
-            PedidoVenda pedidoVenda;
-            PedidoVendaVolume pedidoVendaVolume;
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
 
-            if (idPedidoVendaVolume == default)
-            {
-                //início do processo utiliza a referência pedido
-                BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
-                pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
+            ValidarPedidoVenda(pedidoVenda, idEmpresa);
 
-                ValidarPedidoVenda(pedidoVenda, idEmpresa);
+            var pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.FirstOrDefault(volume => volume.NroVolume == numeroVolume);
 
-                pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.FirstOrDefault(volume => volume.NroVolume == numeroVolume);
-
-                ValidaPedidoVendaVolumeNaBuscaPedidoVenda(pedidoVendaVolume);
-            }
-            else
-            {
-                // processo que pausou e reinicou utiliza o id do pedido venda volume diretamente
-                pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
-
-                ValidaPedidoVendaVolumeNaBuscaPedidoVenda(pedidoVendaVolume);
-
-                pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(pedidoVendaVolume.IdPedidoVenda);
-
-                ValidarPedidoVenda(pedidoVenda, idEmpresa);
-            }
+            ValidaPedidoVendaVolumeNaBuscaPedidoVenda(pedidoVendaVolume);
 
             var usuarioEmpresa = _unitOfWork.UsuarioEmpresaRepository.Obter(idEmpresa, idUsuario);
             IEnumerable<int> rangeDeCorredoresDoUsuario = null;

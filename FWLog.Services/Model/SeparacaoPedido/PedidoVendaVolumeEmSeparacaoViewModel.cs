@@ -5,5 +5,7 @@
         public long IdPedidoVenda { get; set; }
 
         public long IdPedidoVendaVolume { get; set; }
+
+        public string EtiquetaVolume { get; set; }
     }
 }

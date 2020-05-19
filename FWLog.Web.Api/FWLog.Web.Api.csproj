@@ -281,7 +281,6 @@
     <Compile Include="Models\Lote\BuscarLotePorIdResposta.cs" />
     <Compile Include="Models\Produto\PesquisarPorCodigoBarrasReferenciaResposta.cs" />
     <Compile Include="Models\Produto\ProdutoReservadoModelRequest.cs" />
-    <Compile Include="Models\SeparacaoPedido\BuscarPedidoVendaRequisicao.cs" />
     <Compile Include="Models\SeparacaoPedido\ConsultaPedidoVendaEmSeparacaoResposta.cs" />
     <Compile Include="Models\SeparacaoPedido\IniciarSeparacaoVolumeRequisicao.cs" />
     <Compile Include="Models\SeparacaoPedido\FinalizarSeparacaoVolumeRequisicao.cs" />
