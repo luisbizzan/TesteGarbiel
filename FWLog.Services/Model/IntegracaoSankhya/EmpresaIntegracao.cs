@@ -55,7 +55,6 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string Estado { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFEMP.AD_FONE_SAC")]
-        [Required]
         public string TelefoneSAC { get; set; }
     }
 }
