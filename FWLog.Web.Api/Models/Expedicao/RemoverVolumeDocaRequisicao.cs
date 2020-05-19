@@ -6,7 +6,5 @@ namespace FWLog.Web.Api.Models.Expedicao
     {
         [Required] 
         public string ReferenciaPedido { get; set; }
-        [Required]
-        public long IdTransprotadora { get; set; }
     }
 }

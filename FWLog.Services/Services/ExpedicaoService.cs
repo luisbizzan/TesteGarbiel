@@ -502,7 +502,13 @@ namespace FWLog.Services.Services
             var resposta = new DespachoTransportadoraResposta()
             {
                 IdTransportadora = transportadora.IdTransportadora,
-                VolumesForaDoca = volumesForaDoca
+                VolumesForaDoca = volumesForaDoca.Select(vfd => new DespachoTransportadoraVolumeResposta()
+                {
+                    IdPedidoVendaVolume = vfd.IdPedidoVendaVolume,
+                    NumeroPedido = vfd.NumeroPedido.ToString(),
+                    NumeroVolume = vfd.NumeroVolume.ToString().PadLeft(3, '0'),
+                    EnderecoCodigo = vfd.EnderecoCodigo
+                }).ToList()
             };
 
             return resposta;
@@ -1057,9 +1063,9 @@ namespace FWLog.Services.Services
             };
         }
 
-        public void RemoverVolumeDoca(string referenciaPedido, long idTransportadora, string idUsuario, long idEmpresa)
+        public void RemoverVolumeDoca(string referenciaPedido, string idUsuario, long idEmpresa)
         {
-            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long _, out int numeroVolume);
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
@@ -1075,12 +1081,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Volume fornecido não encontrado.");
             }
 
-            var transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
-
-            if (transportadora == null)
-            {
-                throw new BusinessException("Transportadora não encontrada.");
-            }
+            var transportadora = ValidarERetornarTransportadora(idTransportadora);
 
             if (pedidoVendaVolume.PedidoVenda.IdTransportadora != transportadora.IdTransportadora)
             {

@@ -401,9 +401,9 @@ namespace FWLog.Web.Api.Controllers
             }
         }
 
-        [Route("api/v1/expedicao/doca/removendo-volume-doca")]
+        [Route("api/v1/expedicao/doca/remover")]
         [HttpPost]
-        public IHttpActionResult RemovendoVolumeDoca(RemoverVolumeDocaRequisicao requisicao)
+        public IHttpActionResult RemoverVolumeDoca(RemoverVolumeDocaRequisicao requisicao)
         {
             if (!ModelState.IsValid)
             {
@@ -412,7 +412,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _expedicaoService.RemoverVolumeDoca(requisicao.ReferenciaPedido, requisicao.IdTransprotadora, IdUsuario, IdEmpresa);
+                _expedicaoService.RemoverVolumeDoca(requisicao.ReferenciaPedido, IdUsuario, IdEmpresa);
 
                 return ApiOk();
             }
