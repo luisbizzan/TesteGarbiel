@@ -105,33 +105,47 @@ function divergencia() {
 }
 
 function finalizarConferencia() {
-    $.confirm({
-        type: 'red',
-        theme: 'material',
-        title: 'Finalização da Conferência',
-        content: 'Será finalizado a conferência e após este procedimento será abastecido o(s) estoque(s) e gerado(s) devido(s) documentos.',
-        typeAnimated: true,
-        autoClose: 'cancelar|10000',
-        buttons: {
-            laudo: {
-                text: 'Lançar Itens de Laudo',
-                btnClass: 'btn-blue',
-                action: function () {
-                    itensLaudo();
-                }
-            },
-            finalizar: {
-                text: 'Finalizar',
-                btnClass: 'btn-red',
-                action: function () {
-                    finalizarConferenciaConfirmar();
-                }
-            },
-            cancelar: {
-                text: 'Cancelar',
-                action: function () {
-                }
+    $.ajax({
+        url: "/Garantia/ConferenciaVerificacaoFinalizar",
+        method: "POST",
+        data: { Id_Conferencia: $("#Conferencia_Id").val() },
+        success: function (result) {
+            if (result.Success) {
+                $.confirm({
+                    type: 'red',
+                    theme: 'material',
+                    title: 'Finalização da Conferência',
+                    content: 'Será finalizado a conferência e após este procedimento será abastecido o(s) estoque(s) e gerado(s) devido(s) documentos.',
+                    typeAnimated: true,
+                    autoClose: 'cancelar|10000',
+                    buttons: {
+                        laudo: {
+                            text: 'Lançar Itens de Laudo',
+                            btnClass: 'btn-blue',
+                            action: function () {
+                                itensLaudo();
+                            }
+                        },
+                        finalizar: {
+                            text: 'Finalizar',
+                            btnClass: 'btn-red',
+                            action: function () {
+                                finalizarConferenciaConfirmar();
+                            }
+                        },
+                        cancelar: {
+                            text: 'Cancelar',
+                            action: function () {
+                            }
+                        }
+                    }
+                });
+            } else {
+                PNotify.error({ text: result.Message });
             }
+        },
+        error: function (request, status, error) {
+            PNotify.warning({ text: result.Message });
         }
     });
 }
@@ -359,6 +373,8 @@ function conferirManual() {
     }, function () {
         $("#modalItensPendentes").modal("show");
 
+        $('.select2').select2();
+
         $('.onlyNumber').mask("Z0999999.00", {
             translation: {
                 '0': { pattern: /\d/ },
@@ -395,8 +411,6 @@ function conferirManual() {
                 error: function (data) {
                 }
             });
-
-
         });
     });
 }

@@ -37,9 +37,10 @@ namespace FWLog.Data.Models
     {
         public long Id { get; set; }
         public long Id_Conf { get; set; }
-        public long Id_Solicitacao { get; set; }
+        public long? Id_Solicitacao { get; set; }
         public DateTime Dt_Conf { get; set; }
         public String Refx { get; set; }
+        public String Descricao { get; set; }
         public String Volume { get; set; }
         public String Id_Usr { get; set; }
         public long? Quant_Conferida { get; set; }

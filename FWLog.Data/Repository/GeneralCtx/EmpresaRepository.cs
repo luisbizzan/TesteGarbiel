@@ -1,8 +1,11 @@
-﻿using FWLog.Data.Models;
+﻿using Dapper;
+using FWLog.Data.Models;
 using FWLog.Data.Models.GeneralCtx;
 using FWLog.Data.Repository.CommonCtx;
+using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,7 +16,6 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public EmpresaRepository(Entities entities) : base(entities)
         {
-
         }
 
         public IQueryable<Empresa> Tabela()
@@ -38,6 +40,25 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
 
             return usuarioEmpresa.IdEmpresa;
+        }
+
+        public bool RetornarEmpresaFazGarantia(long idEmpresa)
+        {
+            bool retorno = false;
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT nvl(ad_fazgarantia,'N') FROM tgfemp@sankhya WHERE codemp = (SELECT codemp FROM tsiemp@sankhya WHERE ad_filial = (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa""  = :idEmpresa))
+                    ";
+                    retorno = conn.Query<string>(sQuery, new { idEmpresa }).SingleOrDefault() == "S";
+                }
+                conn.Close();
+            }
+
+            return retorno;
         }
 
         public IEnumerable<EmpresaSelectedItem> GetAllByUserId(string userId)

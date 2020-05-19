@@ -169,6 +169,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         Cli_Cnpj = item.Cnpj,
                         Nota_Fiscal = item.Numero_Interno == null ? item.Numero.ToString() : item.Numero_Interno.ToString(),
                         Id_Usr = IdUsuario,
+                        Id_Filial_Sankhya = IdEmpresa,
                         Serie = item.Serie,
                         Codigo_Postagem = item.Codigo_Postagem,
                         Id_Tipo_Doc = item.Id_Tipo
@@ -181,6 +182,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     {
                         Id_Sav = item.Numero_Interno ?? 0,
                         Id_Usr = IdUsuario,
+                        Id_Filial_Sankhya = IdEmpresa,
                         Id_Tipo_Doc = item.Id_Tipo,
                         Codigo_Postagem = item.Codigo_Postagem
                     });
@@ -275,6 +277,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 //ATUALIZA A QUANTIDADE CONFERIDA
                 if (conferencia.Id_Tipo_Conf == 26 || conferencia.Id_Tipo_Conf == 6)
                 {
+                    //Remessa - Envio Fornecedor ou Retorno Fornecedor
                     _uow.GarantiaRepository.AtualizarItemConferenciaRemessa(new GarConferenciaItem
                     {
                         Quant_Conferida = item.Quant_Conferida,
@@ -300,6 +303,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Quant_Conferida = item.Quant_Conferida,
                     Refx = item.Refx,
+                    Id_Solicitacao = item.Id_Solicitacao,
                     Volume = "",
                     Id_Usr = IdUsuario,
                     Id_Conf = item.Id_Conf
@@ -315,6 +319,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult ConferenciaItemPendente(long Id_Conferencia)
         {
+            var conferencia = _uow.GarantiaRepository.SelecionaConferencia(Id_Conferencia);
+            ViewBag.Id_Tipo_Conf = conferencia.Id_Tipo_Conf;
+
             var result = _uow.GarantiaRepository.ListarConferenciaItemPendente(Id_Conferencia);
             var model = Mapper.Map<IEnumerable<GarantiaConferenciaItem>>(result).ToList();
 
@@ -323,6 +330,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult ConferenciaItemConferido(long Id_Conferencia)
         {
+            var conferencia = _uow.GarantiaRepository.SelecionaConferencia(Id_Conferencia);
+            ViewBag.Id_Tipo_Conf = conferencia.Id_Tipo_Conf;
+
             var result = _uow.GarantiaRepository.ListarConferenciaHistorico(Id_Conferencia);
             var model = Mapper.Map<IEnumerable<GarantiaConferenciaItem>>(result).ToList();
 
@@ -448,9 +458,12 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult ConferenciaDivergencia(long Id_Conferencia)
         {
+            var conferencia = _uow.GarantiaRepository.SelecionaConferencia(Id_Conferencia);
+
             var result = _uow.GarantiaRepository.ListarConferenciaItem(Id_Conferencia);
             var model = new GarantiaConferenciaDivergenciaVM
             {
+                Cabecalho = new GarantiaConferenciaItem { Id_Tipo_Conf = conferencia.Id_Tipo_Conf },
                 Itens = Mapper.Map<IEnumerable<GarantiaConferenciaItem>>(result).ToList()
             };
 
@@ -512,6 +525,33 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
 
                     //TOOD PARTE DE NF SANKYA
+                }
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+            });
+        }
+
+        [HttpPost]
+        public ActionResult ConferenciaVerificacaoFinalizar(long Id_Conferencia)
+        {
+            var conferencia = _uow.GarantiaRepository.SelecionaConferencia(Id_Conferencia);
+
+            //Remessa - Envio Fornecedor ou Retorno Fornecedor
+            if (conferencia.Id_Tipo_Conf == 26 || conferencia.Id_Tipo_Conf == 6)
+            {
+                var retorno = _uow.GarantiaRepository.VerificarConferenciaRemessa(conferencia);
+
+                if (!retorno.Sucesso)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = retorno.Mensagem
+                    });
                 }
             }
 
@@ -590,6 +630,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     retorno = _uow.GarantiaRepository.CriarRemessa(new GarRemessa
                     {
                         Cod_Fornecedor = item.Cod_Fornecedor,
+                        Id_Filial_Sankhya = IdEmpresa,
                         Id_Status = 37,
                         Id_Tipo = 2,
                         Id_Usr = IdUsuario

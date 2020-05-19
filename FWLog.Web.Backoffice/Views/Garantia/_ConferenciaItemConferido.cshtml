@@ -9,6 +9,10 @@
                         <tr>
                             <th>Refx</th>
                             <th>Descrição</th>
+                            @if (ViewBag.Id_Tipo_Conf == 26 || ViewBag.Id_Tipo_Conf == 6)
+                            {
+                                <th>Solicitação</th>
+                            }
                             <th>Quant.</th>
                             <th>Usuário</th>
                             <th>Dt</th>
@@ -21,6 +25,10 @@
                             <tr>
                                 <td>@item.Refx</td>
                                 <td>@item.Descricao</td>
+                                @if (ViewBag.Id_Tipo_Conf == 26 || ViewBag.Id_Tipo_Conf == 6)
+                                {
+                                    <td>@item.Id_Solicitacao</td>
+                                }
                                 <td>
                                     @if (item.Quant_Conferida < 0)
                                     {
