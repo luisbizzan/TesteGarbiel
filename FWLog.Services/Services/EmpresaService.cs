@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
+using DartDigital.Library.Exceptions;
 
 namespace FWLog.Services.Services
 {
@@ -41,7 +42,6 @@ namespace FWLog.Services.Services
             inner.Append(" WHERE TSIEMP.AD_FILIAL IS NOT NULL ");
             inner.Append("AND TSIEMP.NOMEFANTASIA IS NOT NULL ");
             inner.Append("AND TSIEMP.AD_INTEGRARFWLOG = '1' ");
-            inner.Append("AND TGFEMP.AD_FONE_SAC IS NOT NULL ");
             inner.Append("ORDER BY TSIEMP.CODEMP ASC ");
 			
 			List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString());
@@ -97,7 +97,6 @@ namespace FWLog.Services.Services
 
                     _unitOfWork.SaveChanges();
 
-
                     if (!string.IsNullOrEmpty(empInt.EmpresaMatriz) && !empInt.EmpresaMatriz.Equals(codEmp.ToString()))
                     {
                         var codEmpMatriz = Convert.ToInt32(empInt.EmpresaMatriz);
@@ -110,6 +109,10 @@ namespace FWLog.Services.Services
                             _unitOfWork.SaveChanges();
                         }
                     }
+
+                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODEMP", empresaConfig.Empresa.CodigoIntegracao.ToString() } };
+
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", campoChave, "TSIEMP.AD_INTEGRARFWLOG", "0");
                 }
                 catch (Exception ex)
                 {

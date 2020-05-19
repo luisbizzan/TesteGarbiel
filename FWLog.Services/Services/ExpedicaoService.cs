@@ -65,13 +65,14 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume não foi encontrado.");
             }
 
-            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            {
-                if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue && !pedidoVenda.Pedido.IsRequisicao)
-                {
-                    throw new BusinessException("NF não está emitida.");
-                }
-            }
+            //Comentado porque na aparesentação do dia 15/05 Roberto disse que essa verificação não deve ser feita na instalação do volume.
+            //if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            //{
+            //    if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
+            //    {
+            //        throw new BusinessException("NF não está emitida.");
+            //    }
+            //}
 
             using (var transaction = _unitOfWork.CreateTransactionScope())
             {
@@ -917,7 +918,7 @@ namespace FWLog.Services.Services
                 var romaneio = new Romaneio();
                 romaneio.IdTransportadora = idTransportadora;
                 romaneio.IdEmpresa = idEmpresa;
-                romaneio.NroRomaneio = GetNextNroRomaneioByEmpresa(idEmpresa);
+                romaneio.NroRomaneio = GetNextNroRomaneioByEmpresa(idEmpresa); 
 
                 _unitOfWork.RomaneioRepository.Add(romaneio);
                 _unitOfWork.SaveChanges();
@@ -1007,7 +1008,16 @@ namespace FWLog.Services.Services
 
         private int GetNextNroRomaneioByEmpresa(long idEmpresa)
         {
-            return _unitOfWork.RomaneioRepository.BuscaUltimoNroRomaneioPorEmpresa(idEmpresa) + 1;
+            int? ultimoRomaneio;
+
+            ultimoRomaneio = _unitOfWork.RomaneioRepository.BuscaUltimoNroRomaneioPorEmpresa(idEmpresa);
+
+            if (ultimoRomaneio.HasValue)
+                ultimoRomaneio = +1;
+            else
+                ultimoRomaneio = 1;
+
+            return ultimoRomaneio.Value;
         }
 
         public void ReimprimirRomaneio(long idRomaneio, long idImpressora, long idEmpresa, string idUsuario)
