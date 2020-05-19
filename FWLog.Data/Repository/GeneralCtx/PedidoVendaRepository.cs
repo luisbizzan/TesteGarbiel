@@ -32,8 +32,9 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdTransportadora == idTransportadora &&
                                                                                 pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa &&
-                                                                                (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovendoDOCA || pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora) &&
-                                                                                pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora).Select(pedidoVendaVolume => new TransportadoraVolumeForaDoca
+                                                                                pedidoVendaVolume.PedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovendoDOCA &&
+                                                                                (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA)).
+                                                                                Select(pedidoVendaVolume => new TransportadoraVolumeForaDoca
                                                                                 {
                                                                                     IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume,
                                                                                     NumeroPedido = pedidoVendaVolume.PedidoVenda.NroPedidoVenda,
