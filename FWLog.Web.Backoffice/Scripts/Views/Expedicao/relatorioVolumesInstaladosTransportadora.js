@@ -27,11 +27,14 @@
             dart.dataTables.saveFilterToData(data);
         },
         columns: [
-            { data: 'Transportadora' },
+            { defaultContent: '' },
             { data: 'CodigoEndereco' },
             { data: 'NumeroPedido' },
             { data: 'NumeroVolume' }
-        ]
+        ],
+        rowGroup: {
+            dataSrc: ['Transportadora']
+        }
     });
 
     $('#dataTable').dataTable.error = function (settings, helpPage, message) {

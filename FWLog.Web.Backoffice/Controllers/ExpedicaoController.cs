@@ -37,17 +37,6 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var listaRetorno = new List<RelatorioVolumesInstaladosTransportadoraListItemViewModel>();
 
-            //if (!model.CustomFilter.IdTransportadora.HasValue && !model.CustomFilter.IdPedidoVenda.HasValue && !model.CustomFilter.IdProduto.HasValue)
-            //{
-            //    return DataTableResult.FromModel(new DataTableResponseModel
-            //    {
-            //        Draw = model.Draw,
-            //        RecordsTotal = 0,
-            //        RecordsFiltered = 0,
-            //        Data = listaRetorno
-            //    });
-            //}
-
             var filtro = Mapper.Map<DataTableFilter<RelatorioVolumesInstaladosTransportadoraFiltro>>(model);
 
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
