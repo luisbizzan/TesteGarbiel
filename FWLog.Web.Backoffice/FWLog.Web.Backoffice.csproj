@@ -602,6 +602,7 @@
     <Content Include="Scripts\Views\TransportadoraEndereco\cadastrar.js" />
     <Content Include="Scripts\Views\TransportadoraEndereco\editar.js" />
     <Content Include="Scripts\Views\TransportadoraEndereco\index.js" />
+    <Content Include="Scripts\Views\TransportadoraEndereco\pesquisaModal.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
     <Content Include="Views\Shared\_MudarEmpresa.cshtml" />
@@ -702,6 +703,7 @@
     <Content Include="Views\TransportadoraEndereco\Cadastrar.cshtml" />
     <Content Include="Views\TransportadoraEndereco\Editar.cshtml" />
     <Content Include="Views\Expedicao\RelatorioVolumesInstaladosTransportadora.cshtml" />
+    <Content Include="Views\TransportadoraEndereco\PesquisaModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

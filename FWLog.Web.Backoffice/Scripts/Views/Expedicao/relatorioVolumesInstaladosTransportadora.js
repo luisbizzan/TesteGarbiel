@@ -44,6 +44,8 @@
     dart.dataTables.loadFormFilterEvents();
 
     $("#pesquisarTransportadora").click(function () {
+        limpaModais();
+
         $("#modalPesquisaTransportadora").load(HOST_URL + "Transportadora/SearchModal", function () {
             $("#modalPesquisaTransportadora").modal();
         });
@@ -54,7 +56,22 @@
         $("#Filter_IdTransportadora").val("");
     });
 
+    $("#pesquisarTransportadoraEndereco").click(function () {
+        limpaModais();
+
+        $("#modalPesquisaTransportadoraEndereco").load(HOST_URL + "TransportadoraEndereco/PesquisaModal", function () {
+            $("#modalPesquisaTransportadoraEndereco").modal();
+        });
+    });
+
+    $("#limparTransportadoraEndereco").click(function () {
+        $("#Filter_TransportadoraEndereco").val("");
+        $("#Filter_EnderecoCodigo").val("");
+    });
+
     $("#pesquisarPedidoVenda").click(function () {
+        limpaModais();
+
         $("#modalPesquisaPedidoVenda").load(HOST_URL + "PedidoVenda/PesquisaModal/", function () {
             $("#modalPesquisaPedidoVenda").modal();
         });
@@ -105,11 +122,24 @@
 
 })();
 
+function limpaModais() {
+    $("#modalPesquisaTransportadora").empty();
+    $("#modalPesquisaTransportadoraEndereco").empty();
+    $("#modalPesquisaPedidoVenda").empty();
+}
+
 function setTransportadora(idTransportadora, nome) {
     $("#Filter_NomeTransportadora").val(nome);
     $("#Filter_IdTransportadora").val(idTransportadora);
     $("#modalPesquisaTransportadora").modal("hide");
     $("#modalPesquisaTransportadora").empty();
+}
+
+function selecionarTransportadoraEndereco(idEnderecoTransportadora, enderecoCodigo) {
+    $("#Filter_TransportadoraEndereco").val(enderecoCodigo);
+    $("#Filter_EnderecoCodigo").val(enderecoCodigo);
+    $("#modalPesquisaTransportadoraEndereco").modal("hide");
+    $("#modalPesquisaTransportadoraEndereco").empty();
 }
 
 function selecionarPedidoVenda(idPedidoVenda, numero) {

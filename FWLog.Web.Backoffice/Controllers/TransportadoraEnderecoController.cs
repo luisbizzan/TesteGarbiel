@@ -2,6 +2,7 @@
 using DartDigital.Library.Exceptions;
 using ExtensionMethods.String;
 using FWLog.AspNet.Identity;
+using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
@@ -20,11 +21,13 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly ILog _log;
         private readonly TransportadoraEnderecoService _transportadoraEnderecoService;
+        private readonly UnitOfWork _unitOfWork;
 
-        public TransportadoraEnderecoController(ILog log, TransportadoraEnderecoService transportadoraEnderecoService)
+        public TransportadoraEnderecoController(ILog log, TransportadoraEnderecoService transportadoraEnderecoService, UnitOfWork unitOfWork)
         {
             _log = log;
             _transportadoraEnderecoService = transportadoraEnderecoService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -90,7 +93,7 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 var transportadoraEndereco = Mapper.Map<TransportadoraEndereco>(viewModel);
 
-                _transportadoraEnderecoService.Cadastrar(transportadoraEndereco,IdEmpresa);
+                _transportadoraEnderecoService.Cadastrar(transportadoraEndereco, IdEmpresa);
 
                 Notify.Success("Transportadora x Endereço cadastrado com sucesso.");
             }
@@ -177,6 +180,52 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = exception.Message
                 }, JsonRequestBehavior.DenyGet);
             }
+        }
+
+        [HttpGet]
+        public ActionResult PesquisaModal()
+        {
+            var model = new TransporteEnderecoListaViewModel()
+            {
+                Filtros = new TransporteEnderecoListaFiltroViewModel()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize]
+        public ActionResult PesquisaModalDadosLista(DataTableFilter<TransporteEnderecoListaFiltroViewModel> model)
+        {
+            var filter = Mapper.Map<DataTableFilter<TransportadoraEnderecoListaFiltro>>(model);
+
+            filter.CustomFilter.IdEmpresa = IdEmpresa;
+
+            if (!filter.CustomFilter.CodigoEnderecoArmazenagem.NullOrEmpty())
+            {
+                var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.PesquisarPorCodigo(filter.CustomFilter.CodigoEnderecoArmazenagem, IdEmpresa).FirstOrDefault();
+
+                filter.CustomFilter.IdEnderecoArmazenagem = (enderecoArmazenagem?.IdEnderecoArmazenagem).GetValueOrDefault();
+            }
+
+            var transportadoraEnderecos = _transportadoraEnderecoService.BuscarDadosParaTabela(filter, out int registrosFiltrados, out int totalRegistros);
+
+            var list = new List<TransporteEnderecoListaItemViewModel>();
+
+            transportadoraEnderecos.OrderBy(x => x.IdTransportadora).ThenBy(x => x.Codigo).ForEach(te => list.Add(new TransporteEnderecoListaItemViewModel
+            {
+                DadosTransportadora = string.Concat(te.CnpjTransportadora.CnpjOuCpf(), " - ", te.RazaoSocialTransportadora),
+                Codigo = te.Codigo,
+                IdTransportadoraEndereco = te.IdTransportadoraEndereco
+            }));
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
+                Data = list
+            });
         }
     }
 }

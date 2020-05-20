@@ -6,6 +6,8 @@
 
         public long? IdTransportadora { get; set; }
 
+        public string EnderecoCodigo { get; set; }
+
         public long? IdPedidoVenda { get; set; }
     }
 }

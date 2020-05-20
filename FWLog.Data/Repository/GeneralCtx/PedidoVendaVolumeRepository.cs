@@ -1,6 +1,7 @@
 ﻿using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -25,9 +26,9 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public List<PedidoVendaVolume> ObterVolumesInstaladosPorTransportadoraEmpresa(long idTransportadora, long idEmpresa)
         {
-            var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora && 
-                                                                                pedidoVendaVolume.PedidoVenda.IdTransportadora == idTransportadora && 
-                                                                                pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa && 
+            var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora &&
+                                                                                pedidoVendaVolume.PedidoVenda.IdTransportadora == idTransportadora &&
+                                                                                pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa &&
                                                                                 pedidoVendaVolume.IdEnderecoArmazTransportadora.HasValue);
 
             return query.ToList();
@@ -54,6 +55,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                 var idTransportadora = filtro.IdTransportadora.Value;
 
                 baseQuery = baseQuery.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdTransportadora == idTransportadora);
+            }
+
+            if (!filtro.EnderecoCodigo.NullOrEmpty())
+            {
+                baseQuery = baseQuery.Where(pedidoVendaVolume => pedidoVendaVolume.EnderecoTransportadora.Codigo.Equals(filtro.EnderecoCodigo));
             }
 
             if (filtro.IdPedidoVenda.HasValue)
