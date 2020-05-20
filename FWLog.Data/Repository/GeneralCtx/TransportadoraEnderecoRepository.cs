@@ -50,5 +50,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.TransportadoraEndereco.Where(te => te.IdEnderecoArmazenagem == idEnderecoArmazenagem && te.IdTransportadora == idTransportadora && te.EnderecoArmazenagem.IdEmpresa == idEmpresa).FirstOrDefault();
         }
+
+        public List<TransportadoraEndereco> ObterPorIdTransportadoraEmpresa(long idTransportadora, long idEmpresa)
+        {
+            return Entities.TransportadoraEndereco.Where(te => te.IdTransportadora == idTransportadora && te.EnderecoArmazenagem.IdEmpresa == idEmpresa).ToList();
+        }
     }
 }
