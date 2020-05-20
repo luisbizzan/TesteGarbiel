@@ -53,8 +53,8 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [Route("api/v1/transportadora/busca-enderecos-transportadora")]
-        [HttpGet]
-        public IHttpActionResult BuscaEnderecosPorTransportadora(EnderecosTransportadoraResposta request)
+        [HttpPost]
+        public IHttpActionResult BuscaEnderecosPorTransportadora(EnderecosPorTransportadoraRequisicao request)
         {
             try
             {
