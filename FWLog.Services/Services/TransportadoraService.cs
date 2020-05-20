@@ -154,7 +154,7 @@ namespace FWLog.Services.Services
         {
             var transportadora = ValidarERetornarTransportadora(idTransportadora);
 
-            var volumesInstalados = _uow.PedidoVendaVolumeRepository.ObterVolumesInstaladosPorTranportadoraEmpresa(transportadora.IdTransportadora, idEmpresa);
+            var volumesInstalados = _uow.PedidoVendaVolumeRepository.ObterVolumesInstaladosPorTransportadoraEmpresa(transportadora.IdTransportadora, idEmpresa);
 
             if (validarVolumesInstalados)
             {
