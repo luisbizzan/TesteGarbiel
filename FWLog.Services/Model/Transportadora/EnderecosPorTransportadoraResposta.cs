@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FWLog.Services.Model.Expedicao
+namespace FWLog.Services.Model.Transportadora
 {
     public class EnderecosPorTransportadoraResposta
     {
@@ -16,5 +16,7 @@ namespace FWLog.Services.Model.Expedicao
         public long IdPedidoVendaVolume { get; set; }
 
         public string CodigoEndereco { get; set; }
+
+        public long IdEnderecoArmazenagem { get; set; }
     }
 }

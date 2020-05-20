@@ -24,8 +24,9 @@ namespace FWLog.Services.Services
         private readonly NotaFiscalService _notaFiscalService;
         private readonly PedidoService _pedidoService;
         private readonly RelatorioService _relatorioService;
+        private readonly TransportadoraService _transportadoraService;
 
-        public ExpedicaoService(UnitOfWork unitOfWork, ILog log, ColetorHistoricoService coletorHistoricoService, NotaFiscalService notaFiscalService, PedidoService pedidoService, RelatorioService relatorioService)
+        public ExpedicaoService(UnitOfWork unitOfWork, ILog log, ColetorHistoricoService coletorHistoricoService, NotaFiscalService notaFiscalService, PedidoService pedidoService, RelatorioService relatorioService, TransportadoraService transportadoraService)
         {
             _unitOfWork = unitOfWork;
             _log = log;
@@ -33,6 +34,7 @@ namespace FWLog.Services.Services
             _notaFiscalService = notaFiscalService;
             _pedidoService = pedidoService;
             _relatorioService = relatorioService;
+            _transportadoraService = transportadoraService;
         }
 
         public void IniciarExpedicaoPedidoVenda(long idPedidoVenda, long idPedidoVendaVolume, string idUsuario, long idEmpresa)
@@ -403,30 +405,6 @@ namespace FWLog.Services.Services
             }
         }
 
-        public EnderecosPorTransportadoraResposta BuscaEnderecosPorTransportadora(long idTransportadora, long idEmpresa)
-        {
-            var transportadora = ValidarERetornarTransportadora(idTransportadora);
-
-            var volumesInstalados = _unitOfWork.PedidoVendaVolumeRepository.ObterVolumesInstaladosPorTranportadoraEmpresa(transportadora.IdTransportadora, idEmpresa);
-
-            if (volumesInstalados.NullOrEmpty())
-            {
-                throw new BusinessException("VAGO.");
-            }
-
-            return new EnderecosPorTransportadoraResposta()
-            {
-                IdTransportadora = transportadora.IdTransportadora,
-                NomeTransportadora = transportadora.NomeFantasia,
-                ListaEnderecos = volumesInstalados.Select(enderecoInstalado => new EnderecosPorTransportadoraVolumeResposta
-                {
-                    IdPedidoVendaVolume = enderecoInstalado.IdPedidoVendaVolume,
-                    CodigoEndereco = enderecoInstalado.EnderecoTransportadora.Codigo
-                }).ToList()
-            };
-
-        }
-
         public PedidoVendaVolumeResposta ValidarVolumeDoca(string referenciaPedido, long idEmpresa)
         {
             BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
@@ -496,7 +474,7 @@ namespace FWLog.Services.Services
 
         public DespachoTransportadoraResposta ValidarDespachoTransportadora(long idTransportadora, long idEmpresa)
         {
-            var transportadora = ValidarERetornarTransportadora(idTransportadora);
+            var transportadora = _transportadoraService.ValidarERetornarTransportadora(idTransportadora);
 
             var volumesForaDoca = _unitOfWork.PedidoVendaRepository.BuscarVolumesForaDoca(transportadora.IdTransportadora, idEmpresa);
 
@@ -600,7 +578,7 @@ namespace FWLog.Services.Services
 
         public async Task FinalizarDespachoNF(long idTransportadora, string chaveAcesso, string idUsuario, long idEmpresa)
         {
-            ValidarERetornarTransportadora(idTransportadora);
+            _transportadoraService.ValidarERetornarTransportadora(idTransportadora);
 
             ValidarChaveAcessoNF(chaveAcesso);
 
@@ -700,7 +678,7 @@ namespace FWLog.Services.Services
 
         public void ValidarNotaFiscalRomaneio(long idTransportadora, string chaveAcesso)
         {
-            ValidarERetornarTransportadora(idTransportadora);
+            _transportadoraService.ValidarERetornarTransportadora(idTransportadora);
 
             ValidarChaveAcessoNF(chaveAcesso);
 
@@ -769,28 +747,6 @@ namespace FWLog.Services.Services
             }
         }
 
-        private Transportadora ValidarERetornarTransportadora(long idTransportadora)
-        {
-            if (idTransportadora <= 0)
-            {
-                throw new BusinessException("Informar a tranportadora.");
-            }
-
-            var transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
-
-            if (transportadora == null)
-            {
-                throw new BusinessException("Transportadora não encontrada.");
-            }
-
-            if (!transportadora.Ativo)
-            {
-                throw new BusinessException("Transportadora não está ativa.");
-            }
-
-            return transportadora;
-        }
-
         private Romaneio ValidarNroRomaneio(int nroRomaneio, long idEmpresa)
         {
             if (nroRomaneio <= 0)
@@ -849,7 +805,7 @@ namespace FWLog.Services.Services
 
         public RomaneioTransportadoraResposta ValidarRomaneioTransportadora(long idTrasnportadora, long idEmpresa)
         {
-            var transportadora = ValidarERetornarTransportadora(idTrasnportadora);
+            var transportadora = _transportadoraService.ValidarERetornarTransportadora(idTrasnportadora);
 
             Empresa empresa = _unitOfWork.EmpresaRepository.GetById(idEmpresa);
 
@@ -910,7 +866,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Favor informar as chaves de acesso.");
             }
 
-            ValidarERetornarTransportadora(idTransportadora);
+            _transportadoraService.ValidarERetornarTransportadora(idTransportadora);
             // ações
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
@@ -1087,7 +1043,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Volume fornecido não encontrado.");
             }
 
-            var transportadora = ValidarERetornarTransportadora(idTransportadora);
+            var transportadora = _transportadoraService.ValidarERetornarTransportadora(idTransportadora);
 
             if (pedidoVendaVolume.PedidoVenda.IdTransportadora != transportadora.IdTransportadora)
             {
