@@ -150,29 +150,26 @@ namespace FWLog.Services.Services
             return null;
         }
 
-        public EnderecosPorTransportadoraResposta BuscaEnderecosPorTransportadora(long idTransportadora, long idEmpresa, bool validarVolumesInstalados = true)
+        public EnderecosTransportadoraResposta BuscaEnderecosPorTransportadora(long idTransportadora, long idEmpresa)
         {
             var transportadora = ValidarERetornarTransportadora(idTransportadora);
 
-            var volumesInstalados = _uow.PedidoVendaVolumeRepository.ObterVolumesInstaladosPorTransportadoraEmpresa(transportadora.IdTransportadora, idEmpresa);
-
-            if (validarVolumesInstalados)
+            var enderecos = _uow.TransportadoraEnderecoRepository.ObterPorIdTransportadoraEmpresa(idTransportadora, idEmpresa);
+            
+            if (enderecos.NullOrEmpty())
             {
-                if (volumesInstalados.NullOrEmpty())
-                {
-                    throw new BusinessException("VAGO.");
-                } 
+                throw new BusinessException("Transportadora não contém nenhum endereço de armazenagem");
             }
 
-            return new EnderecosPorTransportadoraResposta()
+            return new EnderecosTransportadoraResposta()
             {
                 IdTransportadora = transportadora.IdTransportadora,
                 NomeTransportadora = transportadora.NomeFantasia,
-                ListaEnderecos = volumesInstalados.Select(enderecoInstalado => new EnderecosPorTransportadoraVolumeResposta
+                ListaEnderecos = enderecos.Select(enderecoInstalado => new EnderecosTransportadoraVolumeResposta
                 {
-                    IdPedidoVendaVolume = enderecoInstalado.IdPedidoVendaVolume,
-                    CodigoEndereco = enderecoInstalado.EnderecoTransportadora.Codigo,
-                    IdEnderecoArmazenagem = enderecoInstalado.IdEnderecoArmazTransportadora.Value
+                    IdPedidoVendaVolume = 0,
+                    CodigoEndereco = enderecoInstalado.EnderecoArmazenagem.Codigo,
+                    IdEnderecoArmazenagem = enderecoInstalado.IdEnderecoArmazenagem
                 }).ToList()
             };
 

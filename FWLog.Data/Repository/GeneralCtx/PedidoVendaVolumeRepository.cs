@@ -40,7 +40,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public List<PedidoVendaVolume> PesquisarIdsEmSeparacao(string idUsuario, long idEmpresa)
         {
-            return Entities.PedidoVendaVolume.Where(w => w.PedidoVenda.IdEmpresa == idEmpresa &&                                                             
+            return Entities.PedidoVendaVolume.Where(w => w.PedidoVenda.IdEmpresa == idEmpresa &&
                                                             w.IdUsuarioSeparacaoAndamento == idUsuario &&
                                                             w.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao).Select(x => x).ToList();
         }
@@ -82,7 +82,14 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             totalRecordsFiltered = query.Count();
 
-            var response = query.OrderBy(filtro.OrderByColumn, filtro.OrderByDirection)
+            var orderByColumn = filtro.OrderByColumn;
+
+            if (orderByColumn == "0")
+            {
+                orderByColumn = "Transportadora";
+            }
+
+            var response = query.OrderBy(orderByColumn, filtro.OrderByDirection)
                                 .Skip(filtro.Start)
                                 .Take(filtro.Length);
 

@@ -1017,6 +1017,30 @@ namespace FWLog.Services.Services
             });
         }
 
+        public EnderecosPorTransportadoraResposta BuscaEnderecosPorTransportadora(long idTransportadora, long idEmpresa)
+        {
+            var transportadora = ValidarERetornarTransportadora(idTransportadora);
+
+            var volumesInstalados = _unitOfWork.PedidoVendaVolumeRepository.ObterVolumesInstaladosPorTransportadoraEmpresa(transportadora.IdTransportadora, idEmpresa);
+
+            if (volumesInstalados.NullOrEmpty())
+            {
+                throw new BusinessException("VAGO.");
+            }
+
+            return new EnderecosPorTransportadoraResposta()
+            {
+                IdTransportadora = transportadora.IdTransportadora,
+                NomeTransportadora = transportadora.NomeFantasia,
+                ListaEnderecos = volumesInstalados.Select(enderecoInstalado => new EnderecosPorTransportadoraVolumeResposta
+                {
+                    IdPedidoVendaVolume = enderecoInstalado.IdPedidoVendaVolume,
+                    CodigoEndereco = enderecoInstalado.EnderecoTransportadora.Codigo
+                }).ToList()
+            };
+
+        }
+
         public void ValidarRemoverDocaTransportadora(string idOuCodtransportadora, long idEmpresa)
         {
             Transportadora transportadora;

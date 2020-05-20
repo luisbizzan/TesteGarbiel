@@ -2,16 +2,16 @@
 
 namespace FWLog.Services.Model.Transportadora
 {
-    public class EnderecosPorTransportadoraResposta
+    public class EnderecosTransportadoraResposta
     {
         public long IdTransportadora { get; set; }
 
         public string NomeTransportadora { get; set; }
 
-        public List<EnderecosPorTransportadoraVolumeResposta> ListaEnderecos { get; set; }
+        public List<EnderecosTransportadoraVolumeResposta> ListaEnderecos { get; set; }
     }
 
-    public class EnderecosPorTransportadoraVolumeResposta
+    public class EnderecosTransportadoraVolumeResposta
     {
         public long IdPedidoVendaVolume { get; set; }
 
