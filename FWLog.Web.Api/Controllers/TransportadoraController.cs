@@ -1,4 +1,6 @@
-﻿using FWLog.Data;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Data;
+using FWLog.Services.Model.Transportadora;
 using FWLog.Services.Services;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -48,6 +50,22 @@ namespace FWLog.Web.Api.Controllers
             }
 
             return ApiOk(transportadora);
+        }
+
+        [Route("api/v1/transportadora/busca-enderecos-transportadora")]
+        [HttpGet]
+        public IHttpActionResult BuscaEnderecosPorTransportadora(EnderecosPorTransportadoraRequisicao request)
+        {
+            try
+            {
+                var dadosVolumesInstalados = _transportadoraService.BuscaEnderecosPorTransportadora(request.IdTransportadora, IdEmpresa, request.ValidarVolumesInstalados);
+
+                return ApiOk(dadosVolumesInstalados);
+            }
+            catch (BusinessException businessException)
+            {
+                return ApiBadRequest(businessException.Message);
+            }
         }
     }
 }

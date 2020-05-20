@@ -152,7 +152,8 @@
     <Compile Include="Model\Expedicao\RomaneioFinalizarNFResposta.cs" />
     <Compile Include="Model\Expedicao\RomaneioTransportadoraResposta.cs" />
     <Compile Include="Model\Expedicao\DespachoTransportadoraResposta.cs" />
-    <Compile Include="Model\Expedicao\EnderecosPorTransportadoraResposta.cs" />
+    <Compile Include="Model\Transportadora\EnderecosPorTransportadoraRequisicao.cs" />
+    <Compile Include="Model\Transportadora\EnderecosPorTransportadoraResposta.cs" />
     <Compile Include="Model\Expedicao\PedidoVendaVolumeResposta.cs" />
     <Compile Include="Model\GrupoCorredorArmazenagem\GrupoCorredorArmazenagemViewModel.cs" />
     <Compile Include="Model\IntegracaoSankhya\PedidoNumeroNotaFiscalIntegracao.cs" />
