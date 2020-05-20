@@ -1,6 +1,8 @@
 ﻿using FWLog.Data.Models;
+using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace FWLog.Data.Repository.GeneralCtx
@@ -21,11 +23,55 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.PedidoVendaVolume.Where(x => x.IdPedidoVenda == idPedidoVenda).ToList();
         }
 
-        public List<PedidoVendaVolume> ObterVolumesInstaladosPorTranportadoraEmpresa(long idTransportadora, long idEmpresa)
+        public List<PedidoVendaVolume> ObterVolumesInstaladosPorTransportadoraEmpresa(long idTransportadora, long idEmpresa)
         {
             var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora && pedidoVendaVolume.PedidoVenda.IdTransportadora == idTransportadora && pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa && pedidoVendaVolume.IdEnderecoArmazTransportadora.HasValue);
 
             return query.ToList();
+        }
+
+        private IQueryable<RelatorioVolumesInstaladosTransportadoraItem> BuscarDadosVolumePorTransportadoraQuery(RelatorioVolumesInstaladosTransportadoraFiltro filtro)
+        {
+            var baseQuery = Entities.PedidoVendaVolume.AsNoTracking().Where(lpe => lpe.PedidoVenda.IdEmpresa == filtro.IdEmpresa);
+
+            if (filtro.IdTransportadora.HasValue)
+            {
+                var idTransportadora = filtro.IdTransportadora.Value;
+
+                baseQuery = baseQuery.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdTransportadora == idTransportadora);
+            }
+
+            if (filtro.IdPedidoVenda.HasValue)
+            {
+                var idPedidoVenda = filtro.IdPedidoVenda.Value;
+
+                baseQuery = baseQuery.Where(pedidoVendaVolume => pedidoVendaVolume.IdPedidoVenda == idPedidoVenda);
+            }
+
+            var query = baseQuery.Select(pedidoVendaVolume => new RelatorioVolumesInstaladosTransportadoraItem
+            {
+                Transportadora = pedidoVendaVolume.PedidoVenda.Transportadora.NomeFantasia,
+                CodigoEndereco = pedidoVendaVolume.EnderecoTransportadora.Codigo,
+                NumeroPedido = pedidoVendaVolume.PedidoVenda.NroPedidoVenda,
+                NumeroVolume = pedidoVendaVolume.NroVolume
+            });
+
+            return query;
+        }
+
+        public List<RelatorioVolumesInstaladosTransportadoraItem> BuscarDadosVolumePorTransportadora(DataTableFilter<RelatorioVolumesInstaladosTransportadoraFiltro> filtro, out int totalRecordsFiltered, out int totalRecords)
+        {
+            totalRecords = Entities.PedidoVendaVolume.AsNoTracking().Where(pvv => pvv.PedidoVenda.IdEmpresa == filtro.CustomFilter.IdEmpresa).Count();
+
+            var query = BuscarDadosVolumePorTransportadoraQuery(filtro.CustomFilter);
+
+            totalRecordsFiltered = query.Count();
+
+            var response = query.OrderBy(filtro.OrderByColumn, filtro.OrderByDirection)
+                                .Skip(filtro.Start)
+                                .Take(filtro.Length);
+
+            return response.ToList();
         }
     }
 }

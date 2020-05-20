@@ -1,6 +1,7 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.Coletor;
 using FWLog.Services.Model.Expedicao;
@@ -407,7 +408,7 @@ namespace FWLog.Services.Services
         {
             var transportadora = ValidarERetornarTransportadora(idTransportadora);
 
-            var volumesInstalados = _unitOfWork.PedidoVendaVolumeRepository.ObterVolumesInstaladosPorTranportadoraEmpresa(transportadora.IdTransportadora, idEmpresa);
+            var volumesInstalados = _unitOfWork.PedidoVendaVolumeRepository.ObterVolumesInstaladosPorTransportadoraEmpresa(transportadora.IdTransportadora, idEmpresa);
 
             if (volumesInstalados.NullOrEmpty())
             {
@@ -771,7 +772,7 @@ namespace FWLog.Services.Services
         {
             if (idTransportadora <= 0)
             {
-                throw new BusinessException("Informar a tranportadora.");
+                throw new BusinessException("Informar a transportadora.");
             }
 
             var transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
@@ -916,7 +917,7 @@ namespace FWLog.Services.Services
                 var romaneio = new Romaneio();
                 romaneio.IdTransportadora = idTransportadora;
                 romaneio.IdEmpresa = idEmpresa;
-                romaneio.NroRomaneio = GetNextNroRomaneioByEmpresa(idEmpresa); 
+                romaneio.NroRomaneio = GetNextNroRomaneioByEmpresa(idEmpresa);
 
                 _unitOfWork.RomaneioRepository.Add(romaneio);
                 _unitOfWork.SaveChanges();
@@ -1034,6 +1035,11 @@ namespace FWLog.Services.Services
                 IdEmpresa = idEmpresa,
                 IdUsuario = idUsuario
             });
+        }
+
+        public List<RelatorioVolumesInstaladosTransportadoraItem> BuscarDadosVolumePorTransportadora(DataTableFilter<RelatorioVolumesInstaladosTransportadoraFiltro> filtro, out int totalRecordsFiltered, out int totalRecords)
+        {
+            return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumePorTransportadora(filtro, out totalRecordsFiltered, out totalRecords);
         }
     }
 }
