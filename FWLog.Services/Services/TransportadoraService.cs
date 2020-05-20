@@ -1,12 +1,15 @@
-﻿using FWLog.Data;
+﻿using DartDigital.Library.Exceptions;
+using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
+using FWLog.Services.Model.Expedicao;
 using FWLog.Services.Model.IntegracaoSankhya;
 using FWLog.Services.Model.Transportadora;
 using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -145,6 +148,56 @@ namespace FWLog.Services.Services
             }
 
             return null;
+        }
+
+        public EnderecosPorTransportadoraResposta BuscaEnderecosPorTransportadora(long idTransportadora, long idEmpresa, bool validarVolumesInstalados = true)
+        {
+            var transportadora = ValidarERetornarTransportadora(idTransportadora);
+
+            var volumesInstalados = _uow.PedidoVendaVolumeRepository.ObterVolumesInstaladosPorTransportadoraEmpresa(transportadora.IdTransportadora, idEmpresa);
+
+            if (validarVolumesInstalados)
+            {
+                if (volumesInstalados.NullOrEmpty())
+                {
+                    throw new BusinessException("VAGO.");
+                } 
+            }
+
+            return new EnderecosPorTransportadoraResposta()
+            {
+                IdTransportadora = transportadora.IdTransportadora,
+                NomeTransportadora = transportadora.NomeFantasia,
+                ListaEnderecos = volumesInstalados.Select(enderecoInstalado => new EnderecosPorTransportadoraVolumeResposta
+                {
+                    IdPedidoVendaVolume = enderecoInstalado.IdPedidoVendaVolume,
+                    CodigoEndereco = enderecoInstalado.EnderecoTransportadora.Codigo,
+                    IdEnderecoArmazenagem = enderecoInstalado.IdEnderecoArmazTransportadora.Value
+                }).ToList()
+            };
+
+        }
+
+        public Transportadora ValidarERetornarTransportadora(long idTransportadora)
+        {
+            if (idTransportadora <= 0)
+            {
+                throw new BusinessException("Informar a tranportadora.");
+            }
+
+            var transportadora = _uow.TransportadoraRepository.GetById(idTransportadora);
+
+            if (transportadora == null)
+            {
+                throw new BusinessException("Transportadora não encontrada.");
+            }
+
+            if (!transportadora.Ativo)
+            {
+                throw new BusinessException("Transportadora não está ativa.");
+            }
+
+            return transportadora;
         }
     }
 }

@@ -11,11 +11,13 @@ namespace FWLog.Web.Api.Controllers
     {
         private readonly ExpedicaoService _expedicaoService;
         private readonly UnitOfWork _unitOfWork;
+        private readonly TransportadoraService _transportadoraService;
 
-        public ExpedicaoController(ExpedicaoService expedicaoService, UnitOfWork unitOfWork)
+        public ExpedicaoController(ExpedicaoService expedicaoService, UnitOfWork unitOfWork, TransportadoraService transportadoraService)
         {
             _expedicaoService = expedicaoService;
             _unitOfWork = unitOfWork;
+            _transportadoraService = transportadoraService;
         }
 
         [Route("api/v1/expedicao/consultar-volume/{referenciaPedido}")]
@@ -136,7 +138,7 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                var dadosVolumesInstalados = _expedicaoService.BuscaEnderecosPorTransportadora(idTransportadora, IdEmpresa);
+                var dadosVolumesInstalados = _transportadoraService.BuscaEnderecosPorTransportadora(idTransportadora, IdEmpresa);
 
                 return ApiOk(dadosVolumesInstalados);
             }
