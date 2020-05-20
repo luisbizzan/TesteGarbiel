@@ -52,11 +52,11 @@ namespace FWLog.Data.Models
                 get
                 {
                     return String.Concat(
-                        "^FO272,70^A0N,30,20^FR^FD{0}^FS",
-                        "^FO426,72^A0N,24,20^FD{1}^FS",
-                        "^FO288,98^A0N,16,16^FD{2}^FS",
-                        "^FO306,112^BY2,,164^BEN,52,Y,N^FD{3}^FS",
-                        "^FO288,174^A0N,8,24^FDQuant.p/emb.: {4}^FS");
+                        "^FO272,40^A0N,30,20^FR^FD{0}^FS",
+                        "^FO426,42^A0N,24,20^FD{1}^FS",
+                        "^FO288,68^A0N,16,16^FD{2}^FS",
+                        "^FO306,82^BY2,,164^BEN,52,Y,N^FD{3}^FS",
+                        "^FO288,164^A0N,8,24^FDQuant.p/emb.: {4}^FS");
                 }
             }
             #endregion
@@ -67,11 +67,11 @@ namespace FWLog.Data.Models
                 get
                 {
                     return String.Concat(
-                        "^FO544,70^A0N,30,20^FR^FD{0}^FS",
-                        "^FO698,72^A0N,24,20^FD{1}^FS",
-                        "^FO560,98^A0N,16,16^FD{2}^FS",
-                        "^FO578,112^BY2,,164^BEN,52,Y,N^FD{3}^FS",
-                        "^FO560,174^A0N,8,24^FDQuant.p/emb.: {4}^FS");
+                        "^FO544,40^A0N,30,20^FR^FD{0}^FS",
+                        "^FO698,42^A0N,24,20^FD{1}^FS",
+                        "^FO560,68^A0N,16,16^FD{2}^FS",
+                        "^FO578,82^BY2,,164^BEN,52,Y,N^FD{3}^FS",
+                        "^FO560,164^A0N,8,24^FDQuant.p/emb.: {4}^FS");
                 }
             }
             #endregion

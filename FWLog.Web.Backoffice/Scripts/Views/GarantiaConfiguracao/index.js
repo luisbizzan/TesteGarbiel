@@ -118,3 +118,22 @@ function RegistroListar(TagInformada) {
         }
     });
 }
+
+
+
+
+/* ENVIAR ETIQUETA PARA IMPRESSAO [TESTE] */
+function ImprimirEtiqueta() {
+    var registro = new Object();
+    registro.TipoEtiqueta = "Garantia";
+    registro.IdEtiqueta = 3;
+
+    $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { Etiqueta: registro }, function (s) {
+        console.log(s);
+        Mensagem(s.Success, s.Message);
+    }).fail(function (f) {
+        console.log(f);
+    }).done(function (d) {
+        //console.log(d);
+    });
+}

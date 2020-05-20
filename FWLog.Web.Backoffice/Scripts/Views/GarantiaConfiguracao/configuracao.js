@@ -4,8 +4,7 @@ function GravarConfiguracao() {
     RegistroInclusao.Inclusao = [];
 
     var registro = new Object();
-    registro.Id_Filial_Sankhya = $("#spanConfigIdFilial").html() == "" ? 0 : $("#spanConfigIdFilial").html();
-    registro.Filial = $("#spanConfigFilial").html();
+    registro.Id_Empresa = $("#spanConfigIdFilial").html() == "" ? 0 : $("#spanConfigIdFilial").html();
     registro.Pct_Estorno_Frete = $("#txtConfigEstFrete").val() == "" ? 0 : $("#txtConfigEstFrete").val();
     registro.Pct_Desvalorizacao = $("#txtConfigDesvalorizacao").val() == "" ? 0 : $("#txtConfigDesvalorizacao").val();
     registro.Vlr_Minimo_Envio = $("#txtConfigMinimo").val() == "" ? 0 : $("#txtConfigMinimo").val().replace(".", "").replace(",", ".");
@@ -70,7 +69,6 @@ $("#txtConfigFilial").autocomplete({
     },
 
     onSelect: function (config) {
-        CancelarTudo();
         $("#spanConfigIdFilial").html(config.data);
         $("#spanConfigFilial").html(config.value);
         $("#txtConfigFilial").val("");

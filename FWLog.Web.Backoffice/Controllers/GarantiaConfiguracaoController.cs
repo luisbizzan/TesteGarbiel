@@ -50,13 +50,10 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     RegistroConvertido.RegistroConfiguracao.ForEach(delegate (GarantiaConfiguracao.Configuracao config)
                     {
-                        if (config.Id_Filial_Sankhya.Equals(0)) throw new Exception("Código de Filial inválido!");
-                        if (String.IsNullOrEmpty(config.Filial)) throw new Exception("Filial inválida!");
+                        if (config.Id_Empresa.Equals(0)) throw new Exception("Código da Empresa inválido!");
                         if (config.Pct_Estorno_Frete.Equals(0)) throw new Exception("Percentual Estorno Frete inválido!");
                         if (config.Pct_Desvalorizacao.Equals(0)) throw new Exception("Percentual Desvalorização inválido!");
                         if (config.Vlr_Minimo_Envio.Equals(0)) throw new Exception("Valor Mínimo de Envio não pode ser zero!");
-
-                        config.Filial = config.Filial.Split(']').Length.Equals(2) ? config.Filial.Split(']')[0].Replace("[", String.Empty).Trim() : config.Filial;
                     });
                     errorView = () => { return View(RegistroConvertido.RegistroConfiguracao); };
                 }
@@ -72,12 +69,9 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     RegistroConvertido.RegistroRemessaConfiguracao.ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao remessaConfig)
                     {
-                        if (remessaConfig.Id_Filial_Sankhya.Equals(0)) throw new Exception("Código Filial inválido!");
-                        if (String.IsNullOrEmpty(remessaConfig.Filial)) throw new Exception("Filial inválida!");
+                        if (remessaConfig.Id_Empresa.Equals(0)) throw new Exception("Código da Empresa é inválido!");
                         if (String.IsNullOrEmpty(remessaConfig.Cod_Fornecedor)) throw new Exception("Informe o Fornecedor!");
                         if (remessaConfig.Vlr_Minimo.Equals(0)) throw new Exception("Valor Minímo deve ser maior que zero!");
-
-                        remessaConfig.Filial = remessaConfig.Filial.Split(']').Length.Equals(2) ? remessaConfig.Filial.Split(']')[0].Replace("[", String.Empty).Trim() : remessaConfig.Filial;
                     });
                     errorView = () => { return View(RegistroConvertido.RegistroRemessaConfiguracao); };
                 }

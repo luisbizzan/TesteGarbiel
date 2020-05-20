@@ -52,7 +52,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,
-                    Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
+                    Message = "Etiqueta enviado para impressão com sucesso."
                 });
             }
             catch (Exception ex)

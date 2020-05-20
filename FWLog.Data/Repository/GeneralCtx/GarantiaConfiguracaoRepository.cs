@@ -37,11 +37,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                                     conn.Open();
                                     if (conn.State == System.Data.ConnectionState.Open)
                                     {
-                                        var comandoSQL = conn.ExecuteScalar<Int32>(String.Format(GarantiaConfiguracao.SQL.ConfiguracaoJaConsta, item.Id_Filial_Sankhya)).Equals(0) ?
-                                        String.Format(GarantiaConfiguracao.SQL.ConfiguracaoIncluir, item.Id_Filial_Sankhya, item.Filial, item.Pct_Estorno_Frete.ToString().Replace(",", "."),
+                                        var comandoSQL = conn.ExecuteScalar<Int32>(String.Format(GarantiaConfiguracao.SQL.ConfiguracaoJaConsta, item.Id_Empresa)).Equals(0) ?
+                                        String.Format(GarantiaConfiguracao.SQL.ConfiguracaoIncluir, item.Id_Empresa, item.Pct_Estorno_Frete.ToString().Replace(",", "."),
                                         item.Pct_Desvalorizacao.ToString().Replace(",", "."), item.Vlr_Minimo_Envio.ToString().Replace(",", "."), item.Prazo_Envio_Automatico, item.Prazo_Descarte) :
                                         String.Format(GarantiaConfiguracao.SQL.ConfigurarAtualizar, item.Pct_Estorno_Frete, item.Pct_Desvalorizacao, item.Vlr_Minimo_Envio.ToString().Replace(",", "."),
-                                        item.Prazo_Envio_Automatico, item.Prazo_Descarte, item.Id_Filial_Sankhya);
+                                        item.Prazo_Envio_Automatico, item.Prazo_Descarte, item.Id_Empresa);
 
                                         conn.ExecuteScalar(comandoSQL);
                                     }
@@ -85,7 +85,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                     if (conn.State == System.Data.ConnectionState.Open)
                                     {
                                         conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.RemessaConfiguracaoIncluir,
-                                            item.Id_Filial_Sankhya, item.Filial, item.Cod_Fornecedor, item.Automatica, item.Vlr_Minimo.ToString().Replace(",", "."), item.Total));
+                                            item.Id_Empresa, item.Cod_Fornecedor, item.Automatica, item.Vlr_Minimo.ToString().Replace(",", "."), item.Total));
                                     }
                                     conn.Close();
                                 }
@@ -431,7 +431,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                     "c.Pct_Estorno_Frete, c.Pct_Desvalorizacao, c.Vlr_Minimo_Envio, c.Prazo_Envio_Automatico, c.Prazo_Descarte, ",
                                     "CASE WHEN c.Id IS NULL THEN 0 ELSE 1 END RegistroCadastrado ",
                                     "FROM \"Empresa\" e ",
-                                    "LEFT JOIN gar_config c ON  c.Id_Filial_Sankhya = e.\"IdEmpresa\" ",
+                                    "LEFT JOIN gar_config c ON  c.Id_Empresa = e.\"IdEmpresa\" ",
                                     "WHERE e.\"Ativo\" = 1 ",
                                     "AND ROWNUM <= 10 ",
                                     "AND e.\"NomeFantasia\" LIKE UPPER('%{0}%') ",

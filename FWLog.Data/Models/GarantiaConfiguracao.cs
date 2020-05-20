@@ -132,23 +132,21 @@ namespace FWLog.Data.Models
                     { GarantiaTag.RemessaConfiguracao, new object[]
                     {
                         new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
-                        new { data = "Id_Filial_Sankhya", title = "Id Filial" }, new { data = "Filial", title = "Filial" }, new { data = "Cod_Fornecedor", title = "Fornecedor (CNPJ)" },
+                        new { data = "Filial", title = "Filial" }, new { data = "Cod_Fornecedor", title = "Fornecedor (CNPJ)" },
                         new { data = "AutomaticaView", title = "Automática" }, new { data = "Vlr_MinimoView", title = "R$ Minímo" }, new { data = "TotalView", title = "Total" }
                     }},
 
                     { GarantiaTag.Configuracao, new object[]
                     {
                         new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
-                        new { data = "Id_Filial_Sankhya", title = "Id Filial Sankhya" }, new { data = "Filial", title = "Filial" }, new { data = "Pct_Estorno_FreteView", title = "Estorno Frete" },
+                        new { data = "Filial", title = "Filial" }, new { data = "Pct_Estorno_FreteView", title = "Estorno Frete" },
                         new { data = "Pct_DesvalorizacaoView", title = "Desvalorização" }, new { data = "Vlr_Minimo_EnvioView", title = "R$ Minímo Laudo" },
                         new { data = "Prazo_Envio_Automatico", title = "Prazo Envio Laudo" }, new { data = "Prazo_Descarte", title = "Prazo Descarte" }
                     }},
 
                     { GarantiaTag.FornecedorGrupo, new object[]
                     {
-                        //new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
-                        new { data = "Cod_Forn_Pai", title = "Fornecedor Pai" }, //new { data = "Cod_Forn_Filho", title = "Fornecedor Filho" },
-                        new { data = "divFilhos", title = "Fornecedor Filho" },
+                        new { data = "Cod_Forn_Pai", title = "Fornecedor Pai" },new { data = "divFilhos", title = "Fornecedor Filho" },
                     }},
 
                     { GarantiaTag.MotivoLaudo, new object[]
@@ -284,13 +282,13 @@ namespace FWLog.Data.Models
         {
             [Display(Name = "Código")]
             public long Id { get; set; }
-            [Required]
-
-            [Display(Name = "Código Filial")]
-            public long Id_Filial_Sankhya { get; set; }
-            [Required]
             [Display(Name = "Filial")]
             public string Filial { get; set; }
+            [Required]
+            [Display(Name = "Id Empresa")]
+            public long Id_Empresa { get; set; }
+            [Display(Name = "Empresa")]
+            public string Id_EmpresaView { get; set; }
             [Required]
             [Display(Name = "Percentual Estorno Frete")]
             public decimal Pct_Estorno_Frete { get; set; }
@@ -338,12 +336,13 @@ namespace FWLog.Data.Models
         {
             [Display(Name = "Código")]
             public long Id { get; set; }
-            [Required]
-            [Display(Name = "Código Filial")]
-            public long Id_Filial_Sankhya { get; set; }
-            [Required]
             [Display(Name = "Filial")]
             public string Filial { get; set; }
+            [Required]
+            [Display(Name = "Id Empresa")]
+            public long Id_Empresa { get; set; }
+            [Display(Name = "Empresa")]
+            public string Id_EmpresaView { get; set; }
             [Required]
             [Display(Name = "Fornecedor")]
             public string Cod_Fornecedor { get; set; }
@@ -451,18 +450,19 @@ namespace FWLog.Data.Models
                 get
                 {
                     return String.Concat(
-                        "SELECT 	rc.Id, rc.Id_Filial_Sankhya, rc.Filial, f.\"RazaoSocial\" Cod_Fornecedor, rc.Automatica, rc.Vlr_Minimo, rc.Total ",
+                        "SELECT 	rc.Id, rc.Id_Empresa, e.\"Sigla\" Filial, f.\"RazaoSocial\" Cod_Fornecedor, rc.Automatica, rc.Vlr_Minimo, rc.Total ",
                         "FROM gar_remessa_config rc ",
-                        "INNER JOIN \"Fornecedor\" f ON TRIM(f.cnpj)=TRIM(rc.Cod_Fornecedor)");
+                        "INNER JOIN \"Fornecedor\" f ON TRIM(f.cnpj)=TRIM(rc.Cod_Fornecedor) ",
+                        "INNER JOIN \"Empresa\" e ON rc.Id_Empresa=e.\"IdEmpresa\"");
                 }
             }
 
             /// <summary>
-            /// {0} Id_Filial_Sankhya | {1} Filial | {2} Cod_Fornecedor | {3} Automatica | {4} Vlr_Minimo | {5} Total
+            /// {0} Id_Empresa | {1} Cod_Fornecedor | {2} Automatica | {3} Vlr_Minimo | {4} Total
             /// </summary>
             public static string RemessaConfiguracaoIncluir
             {
-                get { return String.Concat("INSERT INTO gar_remessa_config(Id_Filial_Sankhya, Filial, Cod_Fornecedor, Automatica, Vlr_Minimo, Total) VALUES({0}, '{1}', {2}, {3}, {4}, {5})"); }
+                get { return String.Concat("INSERT INTO gar_remessa_config(Id_Empresa, Cod_Fornecedor, Automatica, Vlr_Minimo, Total) VALUES({0}, {1}, {2}, {3}, {4})"); }
             }
             #endregion
 
@@ -489,38 +489,38 @@ namespace FWLog.Data.Models
             {
                 get
                 {
-                    return String.Concat("SELECT c.Id, c.Id_Filial_Sankhya, e.\"NomeFantasia\" ||' (' || c.Filial ||')' Filial, c.Pct_Estorno_Frete, c.Pct_Desvalorizacao, ",
+                    return String.Concat("SELECT c.Id, e.\"NomeFantasia\" ||' (' || e.\"Sigla\" ||')' Filial, c.Pct_Estorno_Frete, c.Pct_Desvalorizacao, ",
                         "c.Vlr_Minimo_Envio, c.Prazo_Envio_Automatico, c.Prazo_Descarte ",
                         "FROM gar_config c ",
-                        "INNER JOIN \"Empresa\" e ON e.\"IdEmpresa\" = c.Id_Filial_Sankhya");
+                        "INNER JOIN \"Empresa\" e ON e.\"IdEmpresa\" = c.Id_Empresa");
                 }
             }
 
             /// <summary>
-            /// {0} Id Filial Sankhya
+            /// {0} Id Empresa
             /// </summary>
             public static string ConfiguracaoJaConsta
             {
                 get
                 {
-                    return String.Concat("SELECT COUNT(1) FROM gar_config WHERE Id_Filial_Sankhya = {0}");
+                    return String.Concat("SELECT COUNT(1) FROM gar_config WHERE Id_Empresa = {0}");
                 }
             }
 
             /// <summary>
-            /// {0} Id_Filial_Sankhya | {1} Filial | {2} Pct_Estorno_Frete | {3} Pct_Desvalorizacao | {4} Vlr_Minimo_Envio | {5} Prazo_Envio_Automatico | {6} Prazo_Descarte
+            /// {0} Id_Empresa | {1} Pct_Estorno_Frete | {2} Pct_Desvalorizacao | {3} Vlr_Minimo_Envio | {4} Prazo_Envio_Automatico | {5} Prazo_Descarte
             /// </summary>
             public static string ConfiguracaoIncluir
             {
                 get
                 {
-                    return String.Concat("INSERT INTO gar_config(Id_Filial_Sankhya, Filial, Pct_Estorno_Frete, Pct_Desvalorizacao, Vlr_Minimo_Envio, Prazo_Envio_Automatico, Prazo_Descarte) ",
-                        "VALUES({0}, '{1}', {2}, {3}, {4}, {5}, {6})");
+                    return String.Concat("INSERT INTO gar_config(Id_Empresa, Pct_Estorno_Frete, Pct_Desvalorizacao, Vlr_Minimo_Envio, Prazo_Envio_Automatico, Prazo_Descarte) ",
+                        "VALUES({0}, {1}, {2}, {3}, {4}, {5})");
                 }
             }
 
             /// <summary>
-            /// {0} Percentagem Estorno Frete | {1} Percetagem Desvalorizacao | {2} Valor Minimo Envio | {3} Prazo Envio Automatico | {4} Prazo Descarte | {5} Id Filial Sankhya
+            /// {0} Percentagem Estorno Frete | {1} Percetagem Desvalorizacao | {2} Valor Minimo Envio | {3} Prazo Envio Automatico | {4} Prazo Descarte | {5} Id Empresa
             /// </summary>
             public static string ConfigurarAtualizar
             {
@@ -528,7 +528,7 @@ namespace FWLog.Data.Models
                 {
                     return String.Concat("UPDATE gar_config ",
                         "SET Pct_Estorno_Frete = {0}, Pct_Desvalorizacao = {1}, Vlr_Minimo_Envio = {2}, Prazo_Envio_Automatico = {3}, Prazo_Descarte = {4} ",
-                        "WHERE Id_Filial_Sankhya = {5}");
+                        "WHERE Id_Empresa = {5}");
                 }
             }
             #endregion

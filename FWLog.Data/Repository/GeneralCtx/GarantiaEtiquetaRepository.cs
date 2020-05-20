@@ -44,21 +44,22 @@ namespace FWLog.Data.Repository.GeneralCtx
                 using (var ping = new Ping())
                 {
                     if (ping.Send(Impressao.EnderecoIP).Status == IPStatus.Success)
-                        using (var comandoImpressao = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
-                        {
-                            comandoImpressao.NoDelay = true;
-                            var bytesConteudoImpressao = Encoding.ASCII.GetBytes(Impressao.ConteudoImpressao.ToString());
-                            var IP = IPAddress.Parse(Impressao.EnderecoIP);
-                            var IPComPorta = new IPEndPoint(IP, Impressao.PortaConexao.Equals(0) ? 9100 : Impressao.PortaConexao);
-                            comandoImpressao.Connect(IPComPorta);
-                            iRetorno = comandoImpressao.Send(bytesConteudoImpressao);
-                        }
+                    {
+                        Socket comandoImpressao = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                        comandoImpressao.NoDelay = true;
+                        Byte[] bytesConteudoImpressao = Encoding.ASCII.GetBytes(Impressao.ConteudoImpressao.ToString());
+                        IPAddress IP = IPAddress.Parse(Impressao.EnderecoIP);
+                        IPEndPoint IPComPorta = new IPEndPoint(IP, Impressao.PortaConexao.Equals(0) ? 9100 : Impressao.PortaConexao);
+                        comandoImpressao.Connect(IPComPorta);
+                        comandoImpressao.Close();
+                        iRetorno = comandoImpressao.Send(bytesConteudoImpressao);
+                    }
                     else
                         throw new Exception(String.Format("Impressora {0} Offline!", Impressao.EnderecoIP));
                 }
                 #endregion
 
-                return true;
+                return iRetorno.Equals(0) ? false : true;
             }
             catch (Exception ex)
             {
@@ -72,9 +73,12 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             try
             {
-                dadosImpressao.ConteudoImpressao = new StringBuilder();
+                #region Consultar
+
+                #endregion
 
                 #region Inicio
+                dadosImpressao.ConteudoImpressao = new StringBuilder();
                 dadosImpressao.ConteudoImpressao.AppendLine("^XA");
                 dadosImpressao.ConteudoImpressao.AppendLine("^LH32,0");
                 dadosImpressao.ConteudoImpressao.AppendLine("^PRA^FS");
@@ -86,16 +90,14 @@ namespace FWLog.Data.Repository.GeneralCtx
                     //Codigo Barras 1
                     dadosImpressao.ConteudoImpressao.AppendLine("^FO0,36^GB146,26,30^FS");
                     //Codigo Barras 2
-                    dadosImpressao.ConteudoImpressao.AppendLine("^FO272,66^GB146,26,30^FS");
+                    dadosImpressao.ConteudoImpressao.AppendLine("^FO272,36^GB146,26,30^FS");
                     //Codigo Barras 3
-                    dadosImpressao.ConteudoImpressao.AppendLine("^FO544,66^GB146,26,30^FS");
+                    dadosImpressao.ConteudoImpressao.AppendLine("^FO544,36^GB146,26,30^FS");
 
                     //Coluna 1
                     dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaDevolucao.PrimeiraColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
-
                     //Coluna 2
                     dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaDevolucao.SegundaColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
-
                     //Coluna 3
                     dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaDevolucao.TerceiraColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
                 }
@@ -112,13 +114,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                     dadosImpressao.ConteudoImpressao.AppendLine("^FO544,45^GB146,26,30^FS");
 
                     //Coluna 1
-                    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.PrimeiraColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
-
+                    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.PrimeiraColuna, "ZEN501", "100", "PEDAL DA PARAFUSETA", "12545152452582", "10", "FW"));
                     //Coluna 2
-                    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.SegundaColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
-
+                    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.SegundaColuna, "ZEN501", "101", "MIOLO DA PARAFUSETA", "12545152452582", "11", "FW  "));
                     //Coluna 3
-                    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.TerceiraColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
+                    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.TerceiraColuna, "ZEN501", "102", "CENTRO DA PARAFUSETA", "12545152452582", "12", "FW"));
                 }
                 #endregion
 
@@ -129,10 +129,9 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                 var retornoProcessamento = ImprimirEtiqueta(dadosImpressao);
             }
-            catch (Exception erro)
+            catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine(erro.Message);
+                throw new Exception(String.Format("{0} - {1}", dadosImpressao.ConteudoImpressao.ToString(), ex.Message));
             }
         }
         #endregion
