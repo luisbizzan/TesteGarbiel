@@ -425,5 +425,15 @@ namespace FWLog.AspNet.Identity
                 Register(ExcluirTranportadoraEndereco, Display.FromString("Excluir Transportadora x Endereço"));
             }
         }
+
+        public class RelatoriosExpedicao : PermissionGroupBuildItem
+        {
+            public const string RelatorioVolumesInstaladosTransportadora = "RelatorioVolumesInstaladosTransportadora";
+
+            public RelatoriosExpedicao() : base(Display.FromString("Expedição - Relatórios"))
+            {
+                Register(RelatorioVolumesInstaladosTransportadora, Display.FromString("Relatório Volumes Instalados X Transportadora"));
+            }
+        }
     }
 }

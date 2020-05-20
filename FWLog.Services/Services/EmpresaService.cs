@@ -2,14 +2,13 @@
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using log4net;
-using DartDigital.Library.Exceptions;
 
 namespace FWLog.Services.Services
 {
@@ -43,10 +42,10 @@ namespace FWLog.Services.Services
             inner.Append("AND TSIEMP.NOMEFANTASIA IS NOT NULL ");
             inner.Append("AND TSIEMP.AD_INTEGRARFWLOG = '1' ");
             inner.Append("ORDER BY TSIEMP.CODEMP ASC ");
-			
-			List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString());
 
-			empresasIntegracao = empresasIntegracao.OrderBy("CodigoIntegracao", "ASC").ToList();
+            List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString());
+
+            empresasIntegracao = empresasIntegracao.OrderBy("CodigoIntegracao", "ASC").ToList();
 
             foreach (var empInt in empresasIntegracao)
             {
