@@ -918,7 +918,7 @@ namespace FWLog.Services.Services
                 var romaneio = new Romaneio();
                 romaneio.IdTransportadora = idTransportadora;
                 romaneio.IdEmpresa = idEmpresa;
-                romaneio.NroRomaneio = GetNextNroRomaneioByEmpresa(idEmpresa); 
+                romaneio.NroRomaneio = GetNextNroRomaneioByEmpresa(idEmpresa);
 
                 _unitOfWork.RomaneioRepository.Add(romaneio);
                 _unitOfWork.SaveChanges();
@@ -1041,6 +1041,7 @@ namespace FWLog.Services.Services
         public void ValidarRemoverDocaTransportadora(string idOuCodtransportadora, long idEmpresa)
         {
             Transportadora transportadora;
+            
             if (long.TryParse(idOuCodtransportadora, out long idTransportadora))
             {
                 transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
@@ -1107,12 +1108,15 @@ namespace FWLog.Services.Services
             {
                 pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
                 pedidoVendaVolume.DataHoraRemocaoVolume = DateTime.Now;
+                pedidoVendaVolume.IdUsuarioInstalacaoDOCA = null;
+                pedidoVendaVolume.DataHoraInstalacaoDOCA = null;
 
                 _unitOfWork.SaveChanges();
 
                 if (pedidoVenda.PedidoVendaVolumes.All(x => x.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora))
                 {
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
+                    _unitOfWork.SaveChanges();
                 }
                 else if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA)
                 {
