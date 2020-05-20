@@ -53,12 +53,12 @@ namespace FWLog.Web.Api.Controllers
         }
 
         [Route("api/v1/transportadora/busca-enderecos-transportadora")]
-        [HttpGet]
+        [HttpPost]
         public IHttpActionResult BuscaEnderecosPorTransportadora(EnderecosPorTransportadoraRequisicao request)
         {
             try
             {
-                var dadosVolumesInstalados = _transportadoraService.BuscaEnderecosPorTransportadora(request.IdTransportadora, IdEmpresa, request.ValidarVolumesInstalados);
+                var dadosVolumesInstalados = _transportadoraService.BuscaEnderecosPorTransportadora(request.IdTransportadora, IdEmpresa);
 
                 return ApiOk(dadosVolumesInstalados);
             }

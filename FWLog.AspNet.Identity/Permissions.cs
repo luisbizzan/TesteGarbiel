@@ -388,7 +388,8 @@ namespace FWLog.AspNet.Identity
 
         public class RFExpedicao : PermissionGroupBuildItem
         {
-            public const string RFExpedicaoInstalarVolumes = "RFExpedicaoInstalarVolumes";
+            public const string RFExpedicaoInstalarVolume = "RFExpedicaoInstalarVolume";
+            public const string RFExpedicaoInstalacaoMultipla = "RFExpedicaoInstalacaoMultipla";
             public const string RFExpedicaoMoverDoca = "RFExpedicaoMoverDoca";
             public const string RFExpedicaoRemoverDoca = "RFExpedicaoRemoverDoca";
             public const string RFExpedicaoDespacharNF = "RFExpedicaoDespacharNF";
@@ -397,12 +398,13 @@ namespace FWLog.AspNet.Identity
 
             public RFExpedicao() : base(Display.FromString("Coletor - Expedição"))
             {
-                Register(RFExpedicaoInstalarVolumes, Display.FromString("Instalar Volumes"));
+                Register(RFExpedicaoInstalarVolume, Display.FromString("Instalar Volume"));
                 Register(RFExpedicaoMoverDoca, Display.FromString("Mover para a DOCA"));
                 Register(RFExpedicaoRemoverDoca, Display.FromString("Remover da DOCA"));
                 Register(RFExpedicaoDespacharNF, Display.FromString("Despachar N.F.(s)"));
                 Register(RFExpedicaoImprimirRomaneio, Display.FromString("Imprimir Romaneio"));
                 Register(RFExpedicaoReimprimirRomaneio, Display.FromString("Reimp. de Romaneio"));
+                Register(RFExpedicaoInstalacaoMultipla, Display.FromString("Instalação Multipla"));
             }
         }
 
