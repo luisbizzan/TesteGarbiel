@@ -1,6 +1,8 @@
 ﻿using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
+using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -57,6 +59,51 @@ namespace FWLog.Data.Repository.GeneralCtx
                                                     (x.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovendoDOCA ||
                                                     x.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA) &&
                                                     x.PedidoVendaVolumes.Any(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA));
+        }
+
+        public List<PedidoVendaItem> BuscarDadosPedidoVendaParaTabela(DataTableFilter<PedidoVendaFiltro> filtro, out int registrosFiltrados, out int totalRegistros)
+        {
+            var totalQuery = Entities.PedidoVenda.AsNoTracking().Where(pvv => pvv.IdEmpresa == filtro.CustomFilter.IdEmpresa);
+
+            totalRegistros = totalQuery.Count();
+
+            var baseQuery = totalQuery;
+
+            if (filtro.CustomFilter.NumeroPedido.HasValue)
+            {
+                var numeroPedido = filtro.CustomFilter.NumeroPedido.Value;
+
+                baseQuery = baseQuery.Where(pedidoVenda => pedidoVenda.Pedido.NroPedido == numeroPedido);
+            }
+
+            if (filtro.CustomFilter.NumeroPedidoVenda.HasValue)
+            {
+                var numeroPedidoVenda = filtro.CustomFilter.NumeroPedidoVenda.Value;
+
+                baseQuery = baseQuery.Where(pedidoVenda => pedidoVenda.NroPedidoVenda == numeroPedidoVenda);
+            }
+
+            if (!filtro.CustomFilter.NomeTransportadora.NullOrEmpty())
+            {
+                baseQuery = baseQuery.Where(pedidoVenda => pedidoVenda.Transportadora.NomeFantasia.Contains(filtro.CustomFilter.NomeTransportadora));
+            }
+
+            var query = baseQuery.Select(pedidoVenda => new PedidoVendaItem
+            {
+                IdPedidoVenda = pedidoVenda.IdPedidoVenda,
+                NumeroPedido = pedidoVenda.Pedido.NroPedido,
+                NumeroPedidoVenda = pedidoVenda.NroPedidoVenda,
+                ClienteNome = pedidoVenda.Cliente.NomeFantasia,
+                TransportadoraNome = pedidoVenda.Transportadora.NomeFantasia
+            });
+
+            registrosFiltrados = query.Count();
+
+            var response = query.OrderBy(filtro.OrderByColumn, filtro.OrderByDirection)
+                                .Skip(filtro.Start)
+                                .Take(filtro.Length);
+
+            return response.ToList();
         }
     }
 }

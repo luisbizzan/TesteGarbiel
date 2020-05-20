@@ -361,6 +361,7 @@
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\LoteEtiquetaViewModel.cs" />
+    <Compile Include="Models\ExpedicaoCtx\PedidoVendaModalViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\RelatorioTotalizacaoLocalizacaoViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaDetailsViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaCreateViewModel.cs" />
@@ -578,6 +579,7 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
+    <Content Include="Scripts\Views\Expedicao\pedidoVendaPesquisaModal.js" />
     <Content Include="Scripts\Views\Expedicao\relatorioVolumesInstaladosTransportadora.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
@@ -704,6 +706,7 @@
     <Content Include="Views\TransportadoraEndereco\Editar.cshtml" />
     <Content Include="Views\Expedicao\RelatorioVolumesInstaladosTransportadora.cshtml" />
     <Content Include="Views\TransportadoraEndereco\PesquisaModal.cshtml" />
+    <Content Include="Views\Expedicao\PedidoVendaPesquisaModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

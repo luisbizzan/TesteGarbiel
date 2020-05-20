@@ -72,37 +72,40 @@ namespace FWLog.Web.Backoffice.Controllers
         //    return File(relatorio, "application/pdf", "Relatório - Posição para Inventário.pdf");
         //}
 
-        //[HttpPost]
-        //[ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioVolumesInstaladosTransportadora)]
-        //public JsonResult ImprimirRelatorioVolumesInstaladosTransportadora(ImprimirRelatorioVolumesInstaladosTransportadoraViewModel viewModel)
-        //{
-        //    try
-        //    {
-        //        ValidateModel(viewModel);
+        [HttpGet]
+        public ActionResult PedidoVendaPesquisaModal()
+        {
+            return View();
+        }
 
-        //        var request = Mapper.Map<ImprimirRelatorioVolumesInstaladosTransportadoraRequest>(viewModel);
+        [HttpPost]
+        [ApplicationAuthorize]
+        public ActionResult PedidoVendaPesquisaModalDadosLista(DataTableFilter<PedidoVendaModalViewModelFilterViewModel> model)
+        {
+            var filter = Mapper.Map<DataTableFilter<PedidoVendaFiltro>>(model);
 
-        //        request.IdEmpresa = IdEmpresa;
-        //        request.NomeUsuarioRequisicao = LabelUsuario;
+            filter.CustomFilter.IdEmpresa = IdEmpresa;
 
-        //        _relatorioService.ImprimirRelatorioPosicaoParaInventario(request);
+            var pedidosVendaTabela = _expedicaoService.BuscarDadosPedidoVendaParaTabela(filter, out int registrosFiltrados, out int totalRegistros);
 
-        //        return Json(new AjaxGenericResultModel
-        //        {
-        //            Success = true,
-        //            Message = "Impressão enviada com sucesso."
-        //        }, JsonRequestBehavior.AllowGet);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _log.Error(e.Message, e);
+            var listaPedidosVenda = new List<PedidoVendaModalViewModelListItemViewModel>();
 
-        //        return Json(new AjaxGenericResultModel
-        //        {
-        //            Success = false,
-        //            Message = "Ocorreu um erro na impressão."
-        //        }, JsonRequestBehavior.AllowGet);
-        //    }
-        //}
+            pedidosVendaTabela.ForEach(pv => listaPedidosVenda.Add(new PedidoVendaModalViewModelListItemViewModel
+            {
+                IdPedidoVenda = pv.IdPedidoVenda,
+                NumeroPedido = pv.NumeroPedido,
+                NumeroPedidoVenda = pv.NumeroPedidoVenda,
+                ClienteNome = pv.ClienteNome,
+                TransportadoraNome = pv.TransportadoraNome,
+            }));
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
+                Data = listaPedidosVenda
+            });
+        }
     }
 }

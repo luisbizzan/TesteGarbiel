@@ -72,7 +72,7 @@
     $("#pesquisarPedidoVenda").click(function () {
         limpaModais();
 
-        $("#modalPesquisaPedidoVenda").load(HOST_URL + "PedidoVenda/PesquisaModal/", function () {
+        $("#modalPesquisaPedidoVenda").load(HOST_URL + "Expedicao/PedidoVendaPesquisaModal/", function () {
             $("#modalPesquisaPedidoVenda").modal();
         });
     });
@@ -112,14 +112,6 @@
     //    }
     //});
 
-    //$("#imprimirRelatorioTotalizacaoLocalizacao").click(function () {
-    //    if ($("#relatorioTotalizacaoLocalizacaoForm").valid()) {
-    //        $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=totalLocalizacao", function () {
-    //            $("#modalImpressoras").modal();
-    //        });
-    //    }
-    //});
-
 })();
 
 function limpaModais() {
@@ -142,36 +134,9 @@ function selecionarTransportadoraEndereco(idEnderecoTransportadora, enderecoCodi
     $("#modalPesquisaTransportadoraEndereco").empty();
 }
 
-function selecionarPedidoVenda(idPedidoVenda, numero) {
-    $("#Filter_NumeroPedidoVenda").val(numero);
+function selecionarPedidoVenda(idPedidoVenda, numeroPedidoVenda) {
+    $("#Filter_NumeroPedidoVenda").val(numeroPedidoVenda);
     $("#Filter_IdPedidoVenda").val(idPedidoVenda);
     $("#modalPesquisaPedidoVenda").modal("hide");
     $("#modalPesquisaPedidoVenda").empty();
 }
-
-//function imprimir(acao, id) {
-//    switch (acao) {
-//        case 'totalLocalizacao':
-//            $.ajax({
-//                url: "/Armazenagem/ImprimirRelatorioVolumesInstaladosTransportadora",
-//                method: "POST",
-//                data: {
-//                    IdImpressora: $("#IdImpressora").val(),
-//                    IdTransportadora: $("#Filter_IdTransportadora").val(),
-//                    IdPedidoVenda: $("#Filter_IdPedidoVenda").val(),
-//                    CorredorInicial: $("#Filter_CorredorInicial").val(),
-//                    CorredorFinal: $("#Filter_CorredorFinal").val()
-//                },
-//                success: function (result) {
-//                    if (result.Success) {
-//                        PNotify.success({ text: result.Message });
-//                    } else {
-//                        PNotify.error({ text: result.Message });
-//                    }
-//                    $('#modalImpressoras').modal('toggle');
-//                    waitingDialog.hide();
-//                }
-//            });
-//            break;
-//    }
-//}

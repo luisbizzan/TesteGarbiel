@@ -1044,7 +1044,7 @@ namespace FWLog.Services.Services
         public void ValidarRemoverDocaTransportadora(string idOuCodtransportadora, long idEmpresa)
         {
             Transportadora transportadora;
-            
+
             if (long.TryParse(idOuCodtransportadora, out long idTransportadora))
             {
                 transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
@@ -1144,6 +1144,11 @@ namespace FWLog.Services.Services
         public List<RelatorioVolumesInstaladosTransportadoraItem> BuscarDadosVolumePorTransportadora(DataTableFilter<RelatorioVolumesInstaladosTransportadoraFiltro> filtro, out int totalRecordsFiltered, out int totalRecords)
         {
             return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumePorTransportadora(filtro, out totalRecordsFiltered, out totalRecords);
+        }
+
+        public List<PedidoVendaItem> BuscarDadosPedidoVendaParaTabela(DataTableFilter<PedidoVendaFiltro> filtro, out int registrosFiltrados, out int totalRegistros)
+        {
+            return _unitOfWork.PedidoVendaRepository.BuscarDadosPedidoVendaParaTabela(filtro, out registrosFiltrados, out totalRegistros);
         }
     }
 }
