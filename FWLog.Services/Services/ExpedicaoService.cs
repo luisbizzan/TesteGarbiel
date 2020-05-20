@@ -1,6 +1,7 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.Coletor;
 using FWLog.Services.Model.Expedicao;
@@ -747,6 +748,28 @@ namespace FWLog.Services.Services
             }
         }
 
+        private Transportadora ValidarERetornarTransportadora(long idTransportadora)
+        {
+            if (idTransportadora <= 0)
+            {
+                throw new BusinessException("Informar a transportadora.");
+            }
+
+            var transportadora = _unitOfWork.TransportadoraRepository.GetById(idTransportadora);
+
+            if (transportadora == null)
+            {
+                throw new BusinessException("Transportadora não encontrada.");
+            }
+
+            if (!transportadora.Ativo)
+            {
+                throw new BusinessException("Transportadora não está ativa.");
+            }
+
+            return transportadora;
+        }
+
         private Romaneio ValidarNroRomaneio(int nroRomaneio, long idEmpresa)
         {
             if (nroRomaneio <= 0)
@@ -1092,6 +1115,11 @@ namespace FWLog.Services.Services
                 transacao.Complete();
             }
 
+        }
+
+        public List<RelatorioVolumesInstaladosTransportadoraItem> BuscarDadosVolumePorTransportadora(DataTableFilter<RelatorioVolumesInstaladosTransportadoraFiltro> filtro, out int totalRecordsFiltered, out int totalRecords)
+        {
+            return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumePorTransportadora(filtro, out totalRecordsFiltered, out totalRecords);
         }
     }
 }

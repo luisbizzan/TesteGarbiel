@@ -36,7 +36,8 @@
             new MenuItem { Text = "Corredores x Impressora", Url = Url.Action("Index", "CorredorImpressora"), RequirePermission = Permissions.Separacao.ListarCorredorImpressora }
         ),
         new MenuGroup("Expedição", "fa fa-truck").SetItems(
-            new MenuItem { Text = "Transportadora X Endereços", Url = Url.Action("Index", "TransportadoraEndereco"), RequirePermission = Permissions.Expedicao.ListarTranportadoraEndereco }
+            new MenuItem { Text = "Transportadora X Endereços", Url = Url.Action("Index", "TransportadoraEndereco"), RequirePermission = Permissions.Expedicao.ListarTranportadoraEndereco },
+            new MenuItem { Text = "Relatório Volumes Instalados X Transportadora", Url = Url.Action("RelatorioVolumesInstaladosTransportadora", "Expedicao"), RequirePermission = Permissions.RelatoriosExpedicao.RelatorioVolumesInstaladosTransportadora }
         ),
         new MenuGroup(text: Res.GarantiaMenuItem, icon: "fa fa-shield").SetItems(
             new MenuItem { Text = "Solicitação de Garantia", Url = Url.Action("Index", "Garantia"), RequirePermission = Permissions.Garantia.Listar },
