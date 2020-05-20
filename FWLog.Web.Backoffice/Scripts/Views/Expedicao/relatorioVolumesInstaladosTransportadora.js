@@ -11,7 +11,6 @@
             "url": view.pageDataUrl,
             "type": "POST",
             "data": function (data) {
-                alert(JSON.stringify(data));
                 dart.dataTables.saveFilterToData(data);
             },
             "error": function (data) {
