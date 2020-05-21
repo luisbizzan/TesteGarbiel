@@ -67,25 +67,6 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("O volume não foi encontrado.");
             }
-
-            //Comentado porque na aparesentação do dia 15/05 Roberto disse que essa verificação não deve ser feita na instalação do volume.
-            //if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            //{
-            //    if (!pedidoVenda.Pedido.CodigoIntegracaoNotaFiscal.HasValue)
-            //    {
-            //        throw new BusinessException("NF não está emitida.");
-            //    }
-            //}
-
-            using (var transaction = _unitOfWork.CreateTransactionScope())
-            {
-                pedidoVendaVolume.DataHoraInstalTransportadora = DateTime.Now;
-                pedidoVendaVolume.IdUsuarioInstalTransportadora = idUsuario;
-
-                _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
-                _unitOfWork.SaveChanges();
-                transaction.Complete();
-            }
         }
 
         private void BuscaEValidaDadosPorReferenciaPedido(string referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume)
@@ -372,6 +353,10 @@ namespace FWLog.Services.Services
                 foreach (var pedidoVendaVolume in listaPedidoVendaVolume)
                 {
                     pedidoVendaVolume.IdEnderecoArmazTransportadora = idEnderecoArmazenagem;
+
+                    pedidoVendaVolume.IdUsuarioInstalTransportadora = idUsuario;
+
+                    pedidoVendaVolume.DataHoraInstalTransportadora = DateTime.Now;
 
                     pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
 
