@@ -213,7 +213,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                _etiquetaService.ImprimirEtiquetaVolumeRecebimento(viewModel.NroLote.GetValueOrDefault(), viewModel.IdImpressora.GetValueOrDefault(), viewModel.Quantide.GetValueOrDefault());
+                _etiquetaService.ImprimirEtiquetaVolumeRecebimento(viewModel.NroLote.GetValueOrDefault(), viewModel.IdImpressora.GetValueOrDefault(), viewModel.NroVolume.GetValueOrDefault(), 1);
 
                 // Lote: a quantidade salva é a quantidade de caixas/volume do lote.
                 var logEtiquetagem = new LogEtiquetagem
@@ -221,7 +221,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     //IdTipoEtiquetagem = viewModel.TipoEtiquetagem,
                     IdTipoEtiquetagem = Data.Models.TipoEtiquetagemEnum.Recebimento.GetHashCode(),
                     IdEmpresa = IdEmpresa,
-                    Quantidade = viewModel.Quantide.Value,
+                    Quantidade = 1,
                     IdUsuario = User.Identity.GetUserId()
                 };
 
@@ -250,12 +250,12 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             try
             {
-                if (!(viewModel.Quantide > 0))
+                if (!(viewModel.NroVolume > 0))
                 {
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "Quantidade deve ser maior que zero."
+                        Message = "Nro do Volume deve ser maior que zero."
                     });
                 }
 
@@ -270,12 +270,12 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
-                if (viewModel.Quantide > lote.QuantidadeVolume)
+                if (viewModel.NroVolume > lote.QuantidadeVolume)
                 {
                     return Json(new AjaxGenericResultModel
                     {
                         Success = false,
-                        Message = "Quantidade não pode ser maior que a quantidade de volumes do lote."
+                        Message = "Nro do Volume não pode ser maior que a quantidade de volumes do lote."
                     });
                 }
 

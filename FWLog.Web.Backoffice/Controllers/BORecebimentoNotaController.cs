@@ -1009,7 +1009,11 @@ namespace FWLog.Web.Backoffice.Controllers
                 ValidateModel(viewModel);
 
                 Lote lote = _uow.LoteRepository.ObterLoteNota(viewModel.IdNotaFiscal);
-                _etiquetaService.ImprimirEtiquetaVolumeRecebimento(lote.IdLote, viewModel.IdImpressora);
+
+                foreach (var item in lote.LoteVolumes)
+                {
+                    _etiquetaService.ImprimirEtiquetaVolumeRecebimento(lote.IdLote, viewModel.IdImpressora, item.NroVolume, 1);
+                }
 
                 //Registra a impressão da etiqueta de Recebimento
                 var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem

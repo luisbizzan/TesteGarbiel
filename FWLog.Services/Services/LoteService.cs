@@ -29,9 +29,11 @@ namespace FWLog.Services.Services
 
         public void CriarLoteRecebimento(NotaFiscal notaFiscal, string userId, DateTime dataRecebimento, int? qtdVolumes = null)
         {
+            var nroVolumes = qtdVolumes == null ? notaFiscal.Quantidade : qtdVolumes.Value;
+
             var volumes = new List<LoteVolume>();
 
-            for (var i = 1; i <= qtdVolumes; i++)
+            for (var i = 1; i <= nroVolumes; i++)
             {
                 volumes.Add(new LoteVolume()
                 {
@@ -45,7 +47,7 @@ namespace FWLog.Services.Services
                 IdNotaFiscal = notaFiscal.IdNotaFiscal,
                 DataRecebimento = dataRecebimento,
                 IdUsuarioRecebimento = userId,
-                QuantidadeVolume = qtdVolumes == null ? notaFiscal.Quantidade : qtdVolumes.Value,
+                QuantidadeVolume = nroVolumes,
                 QuantidadePeca = notaFiscal.NotaFiscalItens.Sum(s => s.Quantidade),
                 LoteVolumes = volumes
             };
