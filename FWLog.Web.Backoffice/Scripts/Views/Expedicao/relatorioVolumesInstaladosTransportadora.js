@@ -44,6 +44,8 @@
     dart.dataTables.loadFormFilterEvents();
 
     $("#pesquisarTransportadora").click(function () {
+        limpaModais();
+
         $("#modalPesquisaTransportadora").load(HOST_URL + "Transportadora/SearchModal", function () {
             $("#modalPesquisaTransportadora").modal();
         });
@@ -54,8 +56,23 @@
         $("#Filter_IdTransportadora").val("");
     });
 
+    $("#pesquisarTransportadoraEndereco").click(function () {
+        limpaModais();
+
+        $("#modalPesquisaTransportadoraEndereco").load(HOST_URL + "TransportadoraEndereco/PesquisaModal", function () {
+            $("#modalPesquisaTransportadoraEndereco").modal();
+        });
+    });
+
+    $("#limparTransportadoraEndereco").click(function () {
+        $("#Filter_TransportadoraEndereco").val("");
+        $("#Filter_EnderecoCodigo").val("");
+    });
+
     $("#pesquisarPedidoVenda").click(function () {
-        $("#modalPesquisaPedidoVenda").load(HOST_URL + "PedidoVenda/PesquisaModal/", function () {
+        limpaModais();
+
+        $("#modalPesquisaPedidoVenda").load(HOST_URL + "Expedicao/PedidoVendaPesquisaModal/", function () {
             $("#modalPesquisaPedidoVenda").modal();
         });
     });
@@ -65,45 +82,44 @@
         $("#Filter_IdPedidoVenda").val("");
     });
 
-    //$("#downloadRelatorioVolumesInstaladosTransportadora").click(function () {
+    $("#downloadRelatorioVolumesInstaladosTransportadora").click(function () {
 
-    //    if ($("#relatorioVolumesInstaladosTransportadoraForm").valid()) {
-    //        $.ajax({
-    //            url: "/Expedicao/DownloadRelatorioVolumesInstaladosTransportadora",
-    //            method: "POST",
-    //            data: {
-    //                IdTransportadora: $("#Filter_IdTransportadora").val(),
-    //                IdPedidoVenda: $("#Filter_IdPedidoVenda").val(),
-    //                CorredorInicial: $("#Filter_CorredorInicial").val(),
-    //                CorredorFinal: $("#Filter_CorredorFinal").val()
-    //            },
-    //            xhrFields: {
-    //                responseType: 'blob'
-    //            },
-    //            success: function (data) {
-    //                var a = document.createElement('a');
-    //                var url = window.URL.createObjectURL(data);
+        var form = $("#relatorioVolumesInstaladosTransportadoraForm");
 
-    //                a.href = url;
-    //                a.download = 'Relatório Totalização por Localização.pdf';
-    //                document.body.append(a);
-    //                a.click();
-    //                a.remove();
-    //                window.URL.revokeObjectURL(url);
-    //            }
-    //        });
-    //    }
-    //});
+        if (form.valid()) {
+            $.ajax({
+                url: "/Expedicao/DownloadRelatorioVolumesInstaladosTransportadora",
+                method: "POST",
+                data: {
+                    IdTransportadora: $("#Filter_IdTransportadora").val(),
+                    EnderecoCodigo: $("#Filter_EnderecoCodigo").val(),
+                    IdPedidoVenda: $("#Filter_IdPedidoVenda").val()
+                },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (data) {
+                    var a = document.createElement('a');
+                    var url = window.URL.createObjectURL(data);
 
-    //$("#imprimirRelatorioTotalizacaoLocalizacao").click(function () {
-    //    if ($("#relatorioTotalizacaoLocalizacaoForm").valid()) {
-    //        $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=1&acao=totalLocalizacao", function () {
-    //            $("#modalImpressoras").modal();
-    //        });
-    //    }
-    //});
+                    a.href = url;
+                    a.download = 'Relatório - Volumes Instalados X Transportadora.pdf';
+                    document.body.append(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                }
+            });
+        }
+    });
 
 })();
+
+function limpaModais() {
+    $("#modalPesquisaTransportadora").empty();
+    $("#modalPesquisaTransportadoraEndereco").empty();
+    $("#modalPesquisaPedidoVenda").empty();
+}
 
 function setTransportadora(idTransportadora, nome) {
     $("#Filter_NomeTransportadora").val(nome);
@@ -112,36 +128,16 @@ function setTransportadora(idTransportadora, nome) {
     $("#modalPesquisaTransportadora").empty();
 }
 
-function selecionarPedidoVenda(idPedidoVenda, numero) {
-    $("#Filter_NumeroPedidoVenda").val(numero);
+function selecionarTransportadoraEndereco(idEnderecoTransportadora, enderecoCodigo) {
+    $("#Filter_TransportadoraEndereco").val(enderecoCodigo);
+    $("#Filter_EnderecoCodigo").val(enderecoCodigo);
+    $("#modalPesquisaTransportadoraEndereco").modal("hide");
+    $("#modalPesquisaTransportadoraEndereco").empty();
+}
+
+function selecionarPedidoVenda(idPedidoVenda, numeroPedidoVenda) {
+    $("#Filter_NumeroPedidoVenda").val(numeroPedidoVenda);
     $("#Filter_IdPedidoVenda").val(idPedidoVenda);
     $("#modalPesquisaPedidoVenda").modal("hide");
     $("#modalPesquisaPedidoVenda").empty();
 }
-
-//function imprimir(acao, id) {
-//    switch (acao) {
-//        case 'totalLocalizacao':
-//            $.ajax({
-//                url: "/Armazenagem/ImprimirRelatorioVolumesInstaladosTransportadora",
-//                method: "POST",
-//                data: {
-//                    IdImpressora: $("#IdImpressora").val(),
-//                    IdTransportadora: $("#Filter_IdTransportadora").val(),
-//                    IdPedidoVenda: $("#Filter_IdPedidoVenda").val(),
-//                    CorredorInicial: $("#Filter_CorredorInicial").val(),
-//                    CorredorFinal: $("#Filter_CorredorFinal").val()
-//                },
-//                success: function (result) {
-//                    if (result.Success) {
-//                        PNotify.success({ text: result.Message });
-//                    } else {
-//                        PNotify.error({ text: result.Message });
-//                    }
-//                    $('#modalImpressoras').modal('toggle');
-//                    waitingDialog.hide();
-//                }
-//            });
-//            break;
-//    }
-//}

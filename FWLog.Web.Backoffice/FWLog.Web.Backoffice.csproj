@@ -293,6 +293,7 @@
     <Compile Include="Mapping\NivelArmazenagemProfile.cs" />
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
     <Compile Include="Mapping\ProdutoProfile.cs" />
+    <Compile Include="Mapping\RelatorioVolumesInstaladosTransportadoraFiltroProfile.cs" />
     <Compile Include="Mapping\TransportadoraEnderecoProfile.cs" />
     <Compile Include="Mapping\TransportadoraProfile.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioLogisticaCorredorViewModel.cs" />
@@ -361,6 +362,7 @@
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\LoteEtiquetaViewModel.cs" />
+    <Compile Include="Models\ExpedicaoCtx\PedidoVendaModalViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\RelatorioTotalizacaoLocalizacaoViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaDetailsViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaCreateViewModel.cs" />
@@ -578,6 +580,7 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
+    <Content Include="Scripts\Views\Expedicao\pedidoVendaPesquisaModal.js" />
     <Content Include="Scripts\Views\Expedicao\relatorioVolumesInstaladosTransportadora.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
@@ -602,6 +605,7 @@
     <Content Include="Scripts\Views\TransportadoraEndereco\cadastrar.js" />
     <Content Include="Scripts\Views\TransportadoraEndereco\editar.js" />
     <Content Include="Scripts\Views\TransportadoraEndereco\index.js" />
+    <Content Include="Scripts\Views\TransportadoraEndereco\pesquisaModal.js" />
     <Content Include="Views\BOAccountBase\LogOn.cshtml" />
     <Content Include="Views\BOAccountBase\_RecoverPassword.cshtml" />
     <Content Include="Views\Shared\_MudarEmpresa.cshtml" />
@@ -702,6 +706,8 @@
     <Content Include="Views\TransportadoraEndereco\Cadastrar.cshtml" />
     <Content Include="Views\TransportadoraEndereco\Editar.cshtml" />
     <Content Include="Views\Expedicao\RelatorioVolumesInstaladosTransportadora.cshtml" />
+    <Content Include="Views\TransportadoraEndereco\PesquisaModal.cshtml" />
+    <Content Include="Views\Expedicao\PedidoVendaPesquisaModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

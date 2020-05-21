@@ -349,6 +349,22 @@ namespace FWLog.Services.Relatorio
                     corredores.AddFormattedText(new Font("Verdana", 10));
                     corredores.AddText($"{_dataSource.Filtros.Transportadora}");
                 }
+
+                if (!string.IsNullOrWhiteSpace(_dataSource.Filtros.Endereco))
+                {
+                    var corredores = rowHeader.Cells[0].AddParagraph();
+                    corredores.AddFormattedText("Endereço: ", TextFormat.Bold);
+                    corredores.AddFormattedText(new Font("Verdana", 10));
+                    corredores.AddText($"{_dataSource.Filtros.Endereco}");
+                }
+
+                if (_dataSource.Filtros.NumeroPedidoVenda.HasValue)
+                {
+                    var corredores = rowHeader.Cells[0].AddParagraph();
+                    corredores.AddFormattedText("Nro. Pedido Venda: ", TextFormat.Bold);
+                    corredores.AddFormattedText(new Font("Verdana", 10));
+                    corredores.AddText($"{_dataSource.Filtros.NumeroPedidoVenda}");
+                }
             }
 
             var pImagem = rowHeader.Cells[1].AddParagraph();

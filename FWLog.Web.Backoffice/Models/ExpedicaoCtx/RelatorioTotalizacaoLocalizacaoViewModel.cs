@@ -36,6 +36,11 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         public string NomeTransportadora { get; set; }
 
+        [Display(Name = "Endereço Transportadora")]
+        public string EnderecoCodigo { get; set; }
+
+        public string TransportadoraEndereco { get; set; }
+
         [Display(Name = "Pedido")]
         public long? IdPedidoVenda { get; set; }
 
