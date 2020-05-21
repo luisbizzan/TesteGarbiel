@@ -40,5 +40,7 @@ namespace FWLog.Services.Relatorio
         public DateTime? DataHoraEmissaoRomaneio { get; set; }
         public int? NumeroRomaneio { get; set; }
         public string Transportadora { get; set; }
+        public string Endereco { get; set; }
+        public int? NumeroPedidoVenda { get; set; }
     }
 }

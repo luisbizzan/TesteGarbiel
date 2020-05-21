@@ -293,6 +293,7 @@
     <Compile Include="Mapping\NivelArmazenagemProfile.cs" />
     <Compile Include="Mapping\PontoArmazenagemProfile.cs" />
     <Compile Include="Mapping\ProdutoProfile.cs" />
+    <Compile Include="Mapping\RelatorioVolumesInstaladosTransportadoraFiltroProfile.cs" />
     <Compile Include="Mapping\TransportadoraEnderecoProfile.cs" />
     <Compile Include="Mapping\TransportadoraProfile.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioLogisticaCorredorViewModel.cs" />

@@ -5,7 +5,6 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.ExpedicaoCtx;
-using log4net;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
@@ -15,13 +14,11 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly ExpedicaoService _expedicaoService;
         private readonly RelatorioService _relatorioService;
-        private readonly ILog _log;
 
-        public ExpedicaoController(ExpedicaoService expedicaoService, RelatorioService relatorioService, ILog log)
+        public ExpedicaoController(ExpedicaoService expedicaoService, RelatorioService relatorioService)
         {
             _expedicaoService = expedicaoService;
             _relatorioService = relatorioService;
-            _log = log;
         }
 
         [HttpGet]
@@ -60,17 +57,18 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-        //[HttpPost]
-        //[ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioVolumesInstaladosTransportadora)]
-        //public ActionResult DownloadRelatorioVolumesInstaladosTransportadora(DownloadRelatorioVolumesInstaladosTransportadoraViewModel viewModel)
-        //{
-        //    var relatorioRequest = Mapper.Map<RelatorioVolumesInstaladosTransportadoraRequest>(viewModel);
-        //    relatorioRequest.IdEmpresa = IdEmpresa;
-        //    relatorioRequest.NomeUsuarioRequisicao = LabelUsuario;
-        //    byte[] relatorio = _relatorioService.GerarRelatorioPosicaoParaInventario(relatorioRequest);
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioVolumesInstaladosTransportadora)]
+        public ActionResult DownloadRelatorioVolumesInstaladosTransportadora(RelatorioVolumesInstaladosTransportadoraFilterViewModel filtro)
+        {
+            var requisicaoRelatorio = Mapper.Map<RelatorioVolumesInstaladosTransportadoraFiltro>(filtro);
 
-        //    return File(relatorio, "application/pdf", "Relatório - Posição para Inventário.pdf");
-        //}
+            requisicaoRelatorio.IdEmpresa = IdEmpresa;
+
+            var relatorio = _relatorioService.GerarRelatorioVolumesInstaladosTransportadora(requisicaoRelatorio, LabelUsuario);
+
+            return File(relatorio, "application/pdf", "Relatório - Volumes Instalados X Transportadora.pdf");
+        }
 
         [HttpGet]
         public ActionResult PedidoVendaPesquisaModal()

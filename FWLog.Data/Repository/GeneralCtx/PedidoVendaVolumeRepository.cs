@@ -101,5 +101,12 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return response.ToList();
         }
+
+        public List<RelatorioVolumesInstaladosTransportadoraItem> BuscarDadosVolumePorTransportadora(RelatorioVolumesInstaladosTransportadoraFiltro model)
+        {
+            var query = BuscarDadosVolumePorTransportadoraQuery(model);
+
+            return query.ToList();
+        }
     }
 }

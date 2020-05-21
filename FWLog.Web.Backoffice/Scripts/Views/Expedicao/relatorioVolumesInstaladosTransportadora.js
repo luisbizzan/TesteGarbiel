@@ -82,35 +82,36 @@
         $("#Filter_IdPedidoVenda").val("");
     });
 
-    //$("#downloadRelatorioVolumesInstaladosTransportadora").click(function () {
+    $("#downloadRelatorioVolumesInstaladosTransportadora").click(function () {
 
-    //    if ($("#relatorioVolumesInstaladosTransportadoraForm").valid()) {
-    //        $.ajax({
-    //            url: "/Expedicao/DownloadRelatorioVolumesInstaladosTransportadora",
-    //            method: "POST",
-    //            data: {
-    //                IdTransportadora: $("#Filter_IdTransportadora").val(),
-    //                IdPedidoVenda: $("#Filter_IdPedidoVenda").val(),
-    //                CorredorInicial: $("#Filter_CorredorInicial").val(),
-    //                CorredorFinal: $("#Filter_CorredorFinal").val()
-    //            },
-    //            xhrFields: {
-    //                responseType: 'blob'
-    //            },
-    //            success: function (data) {
-    //                var a = document.createElement('a');
-    //                var url = window.URL.createObjectURL(data);
+        var form = $("#relatorioVolumesInstaladosTransportadoraForm");
 
-    //                a.href = url;
-    //                a.download = 'Relatório Totalização por Localização.pdf';
-    //                document.body.append(a);
-    //                a.click();
-    //                a.remove();
-    //                window.URL.revokeObjectURL(url);
-    //            }
-    //        });
-    //    }
-    //});
+        if (form.valid()) {
+            $.ajax({
+                url: "/Expedicao/DownloadRelatorioVolumesInstaladosTransportadora",
+                method: "POST",
+                data: {
+                    IdTransportadora: $("#Filter_IdTransportadora").val(),
+                    EnderecoCodigo: $("#Filter_EnderecoCodigo").val(),
+                    IdPedidoVenda: $("#Filter_IdPedidoVenda").val()
+                },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (data) {
+                    var a = document.createElement('a');
+                    var url = window.URL.createObjectURL(data);
+
+                    a.href = url;
+                    a.download = 'Relatório - Volumes Instalados X Transportadora.pdf';
+                    document.body.append(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                }
+            });
+        }
+    });
 
 })();
 
