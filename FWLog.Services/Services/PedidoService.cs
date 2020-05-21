@@ -122,7 +122,7 @@ namespace FWLog.Services.Services
                     pedido.IdTransportadora = transportadora.IdTransportadora;
                     pedido.IdRepresentante = representante.IdRepresentante;
 
-                    if (int.TryParse(pedidoCabecalho.TipoPagamentoCodigo, out int tipoPagamentoCodigo))
+                    if (!int.TryParse(pedidoCabecalho.TipoPagamentoCodigo, out int tipoPagamentoCodigo))
                     {
                         throw new BusinessException(string.Format("Código do Tipo Pagamento (TGFTPV.CODTIPVENDA: {0}) inválido", pedidoCabecalho.TipoPagamentoCodigo));
                     }
