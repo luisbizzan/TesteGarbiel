@@ -737,12 +737,15 @@ namespace FWLog.Services.Services
             {
                 stringEtiqueta.AppendLine($"^FO440,70^A0B,90,80^FR^FDR^FS");
             }
-            //TODO: Fazer verificações de pagamento:
-            //     ElseIf 'DINHEIRO' $ PedVend->CONDPGTSAV
-            // stringEtiqueta.AppendLine($"^FO440,70^A0B,90,80^FR^FDD^FS");
-            //     ElseIf 'CARTAO' $ PedVend->CONDPGTSAV
-            // stringEtiqueta.AppendLine($"^FO440,70^A0B,90,80^FR^FDC^FS");
-            //     endif
+            //TODO: pegar código correto
+            else if (requisicao.PedidoPagamentoCodigoIntegracao == 1) //Tipo de pagamento'DINHEIRO'
+            {
+                stringEtiqueta.AppendLine($"^FO440,70^A0B,90,80^FR^FDD^FS");
+            }
+            else if (requisicao.PedidoPagamentoIsDebito || requisicao.PedidoPagamentoIsCredito)
+            {
+                stringEtiqueta.AppendLine($"^FO440,70^A0B,90,80^FR^FDC^FS");
+            }
 
             stringEtiqueta.AppendLine($"^FO650,130^BY2,164^BCB,143,Y,N^FD{codigoBarras}^FS");
             stringEtiqueta.AppendLine($"^FO650,130^BY2,164^BCB,70,Y,N^FD{codigoBarras}^FS");
@@ -811,6 +814,9 @@ namespace FWLog.Services.Services
                 requisicaoImpressao.ClienteCodigo = cliente.CodigoIntegracao.ToString();
                 requisicaoImpressao.RepresentanteCodigo = representante.CodigoIntegracao.ToString();
                 requisicaoImpressao.PedidoCodigo = pedido.CodigoIntegracao.ToString();
+                requisicaoImpressao.PedidoPagamentoCodigoIntegracao = pedido.PagamentoCodigoIntegracao;
+                requisicaoImpressao.PedidoPagamentoIsDebito = pedido.PagamentoIsDebitoIntegracao;
+                requisicaoImpressao.PedidoPagamentoIsCredito = pedido.PagamentoIsCreditoIntegracao;
                 requisicaoImpressao.PedidoIsRequisicao = pedido.IsRequisicao;
                 requisicaoImpressao.Centena = volume.NroCentena.ToString();
                 requisicaoImpressao.TransportadoraSigla = transportadora.CodigoTransportadora;
