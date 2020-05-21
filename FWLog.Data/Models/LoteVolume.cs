@@ -20,22 +20,11 @@ namespace FWLog.Data.Models
         [Index]
         public string IdUsuarioInstalacao { get; set; }
 
-        [Index]
-        public string IdUsuarioDesinstalacao { get; set; }
-
         public DateTime? DataInstalacao { get; set; }
-
-        public DateTime? DataDesinstalacao { get; set; }
 
         [ForeignKey(nameof(IdLote))]
         public virtual Lote Lote { get; set; }
         
-        [ForeignKey(nameof(IdUsuarioInstalacao))]
-        public virtual AspNetUsers UsuarioInstalacao { get; set; }
-
-        [ForeignKey(nameof(IdUsuarioDesinstalacao))]
-        public virtual AspNetUsers UsuarioDesinstalacao { get; set; }
-
         [ForeignKey(nameof(IdEnderecoArmazenagem))]
         public virtual EnderecoArmazenagem EnderecoArmazenagem { get; set; }
     }

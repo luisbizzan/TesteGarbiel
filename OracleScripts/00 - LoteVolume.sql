@@ -19,3 +19,7 @@ ALTER TABLE DART."LoteVolume" ADD CONSTRAINT "LoteVolume_FK1" FOREIGN KEY ("IdLo
 ALTER TABLE DART."LoteVolume" ADD CONSTRAINT "LoteVolume_FK2" FOREIGN KEY ("IdUsuarioInstalacao") REFERENCES DART."AspNetUsers"("Id");
 ALTER TABLE DART."LoteVolume" ADD CONSTRAINT "LoteVolume_FK3" FOREIGN KEY ("IdUsuarioDesinstalacao") REFERENCES DART."AspNetUsers"("Id");
 ALTER TABLE DART."LoteVolume" ADD CONSTRAINT "LoteVolume_FK4" FOREIGN KEY ("IdEnderecoArmazenagem") REFERENCES DART."EnderecoArmazenagem"("IdEnderecoArmazenagem");
+
+ALTER TABLE DART."LoteVolume" DROP COLUMN "DataDesinstalacao";
+ALTER TABLE DART."LoteVolume" DROP COLUMN "IdUsuarioDesinstalacao";
+

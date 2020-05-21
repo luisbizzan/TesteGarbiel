@@ -906,5 +906,189 @@ namespace FWLog.Services.Services
 
             return produtoLote;
         }
+
+        private void ValidarLoteVolume(long idEmpresa, int nroVolume, long idLote)
+        {
+            var lote = _uow.LoteRepository.PesquisarPorLoteEmpresa(idLote, idEmpresa);
+            if (lote == null)
+            {
+                throw new BusinessException("Lote não encontrado.");
+            }
+
+            var volume = lote.LoteVolumes.FirstOrDefault(f => f.NroVolume == nroVolume);
+            if (volume == null)
+            {
+                throw new BusinessException("Volume não encontrado.");
+            }
+
+            if (volume.IdEnderecoArmazenagem.HasValue)
+            {
+                throw new BusinessException("Volume já está instalado em outro local.");
+            }
+        }
+
+        public ConsultarLoteVolumeResposta ConsultarLoteVolume(string referencia, long idEmpresa)
+        {
+            if (referencia.NullOrEmpty())
+            {
+                throw new BusinessException("Código de barras do volume deve ser infomado.");
+            }
+
+            if (referencia.Length < 4)
+            {
+                throw new BusinessException("Código de Barras de volume inválido.");
+            }
+
+            var nroVolumeString = referencia.Substring(referencia.Length - 3);
+            if (!int.TryParse(nroVolumeString, out int nroVolume))
+            {
+                throw new BusinessException("Código de Barras de volume inválido.");
+            }
+
+            var nroLoteString = referencia.Replace(nroVolumeString, "");
+            if (!long.TryParse(nroLoteString, out long idLote))
+            {
+                throw new BusinessException("Código de Barras de volume inválido.");
+            }
+
+            ValidarLoteVolume(idEmpresa, nroVolume, idLote);
+
+            var resposta = new ConsultarLoteVolumeResposta()
+            {
+                IdLote = idLote,
+                NroVolume = nroVolume
+            };
+
+            return resposta;
+        }
+
+        public void ValidarEnderecoInstalacaoLoteVolume(long idEnderecoArmazenagem, long idEmpresa)
+        {
+            if (idEnderecoArmazenagem <= 0)
+            {
+                throw new BusinessException("O endereço deve ser informado.");
+            }
+
+            EnderecoArmazenagem enderecoArmazenagem = _uow.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
+
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("O endereço não foi encontrado.");
+            }
+
+            if (enderecoArmazenagem.IsPontoSeparacao)
+            {
+                throw new BusinessException("Não é possível instalar volume em um ponto de separação.");
+            }
+
+            if (enderecoArmazenagem.IsPicking)
+            {
+                throw new BusinessException("Não é possível instalar volume em um endereço de Picking.");
+            }
+
+            if (enderecoArmazenagem.PontoArmazenagem.IdTipoArmazenagem != TipoArmazenagemEnum.Volume)
+            {
+                throw new BusinessException("Tipo de Movimentação inválido.");
+            }
+
+            if (enderecoArmazenagem.Ativo == false)
+            {
+                throw new BusinessException("O endereço não está ativo.");
+            }
+
+            if (enderecoArmazenagem.PontoArmazenagem.Ativo == false)
+            {
+                throw new BusinessException("O ponto de armazenagem não está ativo.");
+            }
+
+            if (enderecoArmazenagem.PontoArmazenagem.NivelArmazenagem.Ativo == false)
+            {
+                throw new BusinessException("O nível de armazenagem não está ativo.");
+            }
+
+            if (enderecoArmazenagem.IdEmpresa != idEmpresa)
+            {
+                throw new BusinessException("Local não pertence a empresa selecionada.");
+            }
+        }
+
+        public void InstalarLoteVolume(LoteVolumeRequisicao requisicao, long idEmpresa, string idUsuario)
+        {
+            ValidarEnderecoInstalacaoLoteVolume(requisicao.IdEnderecoArmazenagem, idEmpresa);
+            ValidarLoteVolume(idEmpresa, requisicao.NroVolume, requisicao.IdLote);
+
+            var loteVolume = _uow.LoteVolumeRepository.Obter(requisicao.IdLote, requisicao.NroVolume);
+            if (loteVolume == null)
+            {
+                throw new BusinessException("Volume não encontrado.");
+            }
+
+            using (var transacao = _uow.CreateTransactionScope())
+            {
+                loteVolume.IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem;
+                loteVolume.DataInstalacao = DateTime.Now;
+                loteVolume.IdUsuarioInstalacao = idUsuario;
+
+                _uow.LoteVolumeRepository.Update(loteVolume);
+                _uow.SaveChanges();
+
+                _uow.ColetorHistoricoTipoRepository.GravarHistorico(new ColetorHistorico
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Recebimento,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.InstalarVolume,
+                    Descricao = $"Instalou o volume { requisicao.NroVolume} do lote {requisicao.IdLote} no endereço {loteVolume.EnderecoArmazenagem.Codigo}.",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuario
+                });
+
+                _uow.SaveChanges();
+                transacao.Complete();
+            }
+        }
+
+        public void RetirarLoteVolume(LoteVolumeRequisicao requisicao, long idEmpresa, string idUsuario)
+        {
+            ValidarLoteVolume(idEmpresa, requisicao.NroVolume, requisicao.IdLote);
+
+            var loteVolume = _uow.LoteVolumeRepository.Obter(requisicao.IdLote, requisicao.NroVolume);
+            if (loteVolume == null)
+            {
+                throw new BusinessException("Volume não encontrado.");
+            }
+
+            if (loteVolume.IdEnderecoArmazenagem != requisicao.IdEnderecoArmazenagem)
+            {
+                throw new BusinessException("O local do volume e o local informado estão divergentes.");
+            }
+
+            using (var transacao = _uow.CreateTransactionScope())
+            {
+                loteVolume.IdEnderecoArmazenagem = null;
+                loteVolume.DataInstalacao = null;
+                loteVolume.IdUsuarioInstalacao = null;
+
+                _uow.LoteVolumeRepository.Update(loteVolume);
+                _uow.SaveChanges();
+
+                _uow.ColetorHistoricoTipoRepository.GravarHistorico(new ColetorHistorico
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Recebimento,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.InstalarVolume,
+                    Descricao = $"Instalou o volume { requisicao.NroVolume} do lote {requisicao.IdLote} no endereço {loteVolume.EnderecoArmazenagem.Codigo}.",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuario
+                });
+
+                _uow.SaveChanges();
+                transacao.Complete();
+            }
+        }
     }
+}
+
+public class LoteVolumeRequisicao
+{
+    public long IdLote { get; set; }
+    public long IdEnderecoArmazenagem { get; set; }
+    public int NroVolume { get; set; }
 }

@@ -338,7 +338,7 @@
     <Compile Include="Repository\GeneralCtx\PerfilUsuarioRepository.cs" />
     <Compile Include="Repository\GeneralCtx\EmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ApplicationSessionRepository.cs" />
-    <Compile Include="Repository\LoteVolumeRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\LoteVolumeRepository.cs" />
     <Compile Include="Resources\ImagensResource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
