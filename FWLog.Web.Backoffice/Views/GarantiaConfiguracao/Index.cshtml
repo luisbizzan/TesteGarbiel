@@ -50,9 +50,17 @@
                                     <div id="controleFornecedor" class="btn-group col-sm-12" style="display:normal;">
                                         <a class="btn btn-default col-xs-6" onclick="CancelarFornecedorQuebra();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
                                         <a class="btn btn-default col-xs-6" onclick="GravarFornecedorQuebra();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Fornecedor"><i class="fa fa-save text-success"></i></a>
-                                        <!--
-                                        <a class="btn btn-default col-xs-12" onclick="ImprimirEtiqueta();" data-toggle="tooltip" data-placement="top" data-original-title="Imprimir"><i class="fa fa-print text-info"></i></a>
-                                        -->
+
+                                        <!-- botão imprimir -->
+                                        @*<div class="btn-group col-xs-12">
+                                            <a class="btn btn-default col-xs-3" onclick="ImprimirEtiqueta();" data-toggle="tooltip" data-placement="top" data-original-title="Imprimir"><i class="fa fa-print text-info"></i></a>
+                                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"> <span class="caret"></span> </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#" onclick="DefinirTipoEtiqueta('Garantia');">Garantia</a></li>
+                                                <li><a href="#" onclick="DefinirTipoEtiqueta('Devolucao');">Devolução</a></li>
+                                            </ul>
+                                        </div>*@
+
                                     </div>
                                 </div>
                             </div>
@@ -74,7 +82,7 @@
                         </div>
                         <div id="divEditarSankhyaTop" class="col-md-4 col-sm-4">
                             <div class="x_title text-muted"><b>&emsp;</b></div>
-                            
+
                             <div class="col-md-12 col-sm-12">
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-addon"><b>Descrição</b></span>
@@ -157,7 +165,7 @@
                             <div class="x_title text-muted"><b>&emsp;</b></div>
                             <div class="col-sm-12">
                                 <div class="input-group input-group-addon input-group-sm col-sm-12">
-                                    <div class="col-sm-12"><input id="txtRCFilial" class="form-control input-sm" placeholder="Filial"data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Filial"></div>
+                                    <div class="col-sm-12"><input id="txtRCFilial" class="form-control input-sm" placeholder="Filial" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Filial"></div>
                                     <div class="col-sm-12 text-center"><b id="spanIdFilial" hidden="hidden"></b><h3 id="spanFilial" class="label label-primary"></h3></div>
                                 </div>
                             </div>

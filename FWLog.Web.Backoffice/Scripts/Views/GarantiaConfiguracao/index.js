@@ -119,21 +119,22 @@ function RegistroListar(TagInformada) {
     });
 }
 
-
-
-
 /* ENVIAR ETIQUETA PARA IMPRESSAO [TESTE] */
-function ImprimirEtiqueta() {
-    var registro = new Object();
-    registro.TipoEtiqueta = "Garantia";
-    registro.IdEtiqueta = 3;
+//function ImprimirEtiqueta() {
+//    var registro = new Object();
+//    registro.TipoEtiqueta = _TipoEtiqueta;
+//    registro.IdEtiqueta = 3;
+//    console.log(registro);
+//    $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { Etiqueta: registro }, function (s) {
+//        console.log(s);
+//        Mensagem(s.Success, s.Message);
+//    }).fail(function (f) {
+//        console.log(f);
+//    }).done(function (d) {
+//    });
+//}
 
-    $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { Etiqueta: registro }, function (s) {
-        console.log(s);
-        Mensagem(s.Success, s.Message);
-    }).fail(function (f) {
-        console.log(f);
-    }).done(function (d) {
-        //console.log(d);
-    });
-}
+//var _TipoEtiqueta = "";
+//function DefinirTipoEtiqueta(ValorParametro) {
+//    _TipoEtiqueta = ValorParametro;
+//}

@@ -45,14 +45,14 @@ namespace FWLog.Data.Repository.GeneralCtx
                 {
                     if (ping.Send(Impressao.EnderecoIP).Status == IPStatus.Success)
                     {
-                        Socket comandoImpressao = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                        comandoImpressao.NoDelay = true;
-                        Byte[] bytesConteudoImpressao = Encoding.ASCII.GetBytes(Impressao.ConteudoImpressao.ToString());
-                        IPAddress IP = IPAddress.Parse(Impressao.EnderecoIP);
-                        IPEndPoint IPComPorta = new IPEndPoint(IP, Impressao.PortaConexao.Equals(0) ? 9100 : Impressao.PortaConexao);
-                        comandoImpressao.Connect(IPComPorta);
-                        comandoImpressao.Close();
-                        iRetorno = comandoImpressao.Send(bytesConteudoImpressao);
+                        using (var comandoImpressao = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true, SendTimeout = 5000 })
+                        {
+                            Byte[] bytesConteudoImpressao = Encoding.ASCII.GetBytes(Impressao.ConteudoImpressao.ToString());
+                            IPAddress IP = IPAddress.Parse(Impressao.EnderecoIP);
+                            IPEndPoint IPComPorta = new IPEndPoint(IP, Impressao.PortaConexao.Equals(0) ? 9100 : Impressao.PortaConexao);
+                            comandoImpressao.Connect(IPComPorta);
+                            iRetorno = comandoImpressao.Send(bytesConteudoImpressao);
+                        }
                     }
                     else
                         throw new Exception(String.Format("Impressora {0} Offline!", Impressao.EnderecoIP));
@@ -131,7 +131,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
             catch (Exception ex)
             {
-                throw new Exception(String.Format("{0} - {1}", dadosImpressao.ConteudoImpressao.ToString(), ex.Message));
+                throw new Exception(ex.Message);
             }
         }
         #endregion
