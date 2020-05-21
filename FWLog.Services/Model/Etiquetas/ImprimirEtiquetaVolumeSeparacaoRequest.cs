@@ -12,6 +12,7 @@
         public string ClienteCodigo { get; set; }
         public string RepresentanteCodigo { get; set; }
         public string PedidoCodigo { get; set; }
+        public bool PedidoIsRequisicao { get; set; }
         public string Centena { get; set; }
         public string TransportadoraSigla { get; set; }
         public string TransportadoraCodigo { get; set; }

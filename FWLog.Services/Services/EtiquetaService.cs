@@ -733,8 +733,11 @@ namespace FWLog.Services.Services
             stringEtiqueta.AppendLine($"^FO440,450^A0B,100,80^FR^FD{transportadoraSigla}^FS");
             stringEtiqueta.AppendLine($@"^FO440,50^FB390,4,0,L,0^A0B,30,20^FD{transportadoraCodigo}\&{transportadoraNome}^FS");
 
-            //     if pedvend->ped_req = "R"
-            //stringEtiqueta.AppendLine($"^FO440,70^A0B,90,80^FR^FDR^FS");
+            if (requisicao.PedidoIsRequisicao)
+            {
+                stringEtiqueta.AppendLine($"^FO440,70^A0B,90,80^FR^FDR^FS");
+            }
+            //TODO: Fazer verificações de pagamento:
             //     ElseIf 'DINHEIRO' $ PedVend->CONDPGTSAV
             // stringEtiqueta.AppendLine($"^FO440,70^A0B,90,80^FR^FDD^FS");
             //     ElseIf 'CARTAO' $ PedVend->CONDPGTSAV
@@ -808,6 +811,7 @@ namespace FWLog.Services.Services
                 requisicaoImpressao.ClienteCodigo = cliente.CodigoIntegracao.ToString();
                 requisicaoImpressao.RepresentanteCodigo = representante.CodigoIntegracao.ToString();
                 requisicaoImpressao.PedidoCodigo = pedido.CodigoIntegracao.ToString();
+                requisicaoImpressao.PedidoIsRequisicao = pedido.IsRequisicao;
                 requisicaoImpressao.Centena = volume.NroCentena.ToString();
                 requisicaoImpressao.TransportadoraSigla = transportadora.CodigoTransportadora;
                 requisicaoImpressao.TransportadoraCodigo = transportadora.CodigoIntegracao.ToString();
