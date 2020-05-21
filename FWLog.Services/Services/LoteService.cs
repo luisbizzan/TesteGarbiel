@@ -29,6 +29,16 @@ namespace FWLog.Services.Services
 
         public void CriarLoteRecebimento(NotaFiscal notaFiscal, string userId, DateTime dataRecebimento, int? qtdVolumes = null)
         {
+            var volumes = new List<LoteVolume>();
+
+            for (var i = 1; i <= qtdVolumes; i++)
+            {
+                volumes.Add(new LoteVolume()
+                {
+                    NroVolume = i
+                });
+            }
+
             var lote = new Lote
             {
                 IdLoteStatus = LoteStatusEnum.Recebido,
@@ -36,11 +46,17 @@ namespace FWLog.Services.Services
                 DataRecebimento = dataRecebimento,
                 IdUsuarioRecebimento = userId,
                 QuantidadeVolume = qtdVolumes == null ? notaFiscal.Quantidade : qtdVolumes.Value,
-                QuantidadePeca = notaFiscal.NotaFiscalItens.Sum(s => s.Quantidade)
+                QuantidadePeca = notaFiscal.NotaFiscalItens.Sum(s => s.Quantidade),
+                LoteVolumes = volumes
             };
 
             _uow.LoteRepository.Add(lote);
             _uow.SaveChanges();
+        }
+
+        private object List<T>()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task FinalizarConferencia(long idlote, string userId)
