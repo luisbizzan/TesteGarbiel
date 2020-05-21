@@ -1,5 +1,4 @@
 ﻿(function () {
-
     $('#modalVisualizar').on('hidden.bs.modal', function () {
         location.reload();
     });
@@ -47,7 +46,7 @@
                 icon: 'fa fa-eye',
                 visible: view.detailsVisible
             },
-            
+
             {
                 text: "Conferir",
                 color: "btn-primary",
@@ -118,59 +117,19 @@ function visualizarRemessa() {
     var id = $(this).data("id");
     let modal = $("#modalVisualizar");
 
-    modal.load(CONTROLLER_PATH + "VisualizarRemessa/" + id, function () {
+    modal.load("/Garantia/RemessaVisualizar/" + id, function () {
         modal.modal();
+        $("#modalVisualizar .modal-title").html("Detalhes da Remessa");
 
         var botoes = ['selectAll', 'selectNone',
             {
-                text: '<i class="fa fa-exchange"></i> Trocar Fornecedor',
+                text: '<i class="fa fa-list"></i> Detalhado',
                 className: 'btn-success ',
                 action: function (e, dt, node, config) {
-                    var ids = $.map(this.rows('.selected').data(), function (item) {
-                        return item[1].split(" - ")[0];
-                    });
-
-                    console.log(ids)
-
-                    if (ids.length == 0) {
-                        PNotify.error({ text: "Selecione um item." });
-                    } else {
-                        //criarAcao(ids.join());
-                    }
+                    visualizarRemessaDetalhado(id);
                 }
             },
-            {
-                text: '<i class="fa fa-qrcode"></i> Emitir Etiquetas',
-                className: 'btn-primary ',
-                action: function (e, dt, node, config) {
-                    var ids = $.map(this.rows('.selected').data(), function (item) {
-                        return item[1].split(" - ")[0];
-                    });
-                    console.log(ids)
 
-                    if (ids.length == 0) {
-                        PNotify.error({ text: "Selecione um item." });
-                    } else {
-                        //criarAcao(ids.join());
-                    }
-                }
-            },
-            {
-                text: '<i class="fa fa-ticket"></i> N.F. de Compra',
-                className: 'btn-success',
-                action: function (e, dt, node, config) {
-                    var ids = $.map(this.rows('.selected').data(), function (item) {
-                        return item[1].split(" - ")[0];
-                    });
-                    console.log(ids)
-
-                    if (ids.length == 0) {
-                        PNotify.error({ text: "Selecione um item." });
-                    } else {
-                        //criarAcao(ids.join());
-                    }
-                }
-            },
         ];
 
         $('#tbRemessaItens').DataTable({
@@ -196,6 +155,62 @@ function visualizarRemessa() {
             bInfo: true,
             buttons: botoes,
         });
+    });
+}
+
+function visualizarRemessaDetalhado(id) {
+    $("#modalItensPendentes").modal("hide");
+    let modal = $("#modalItensPendentes .modal-body");
+    $("#modalItensPendentes .modal-title").html("Itens Conferidos");
+
+    modal.load("/Garantia/RemessaDetalhadoVisualizar", {
+        Id: id
+    }, function () {
+            $("#modalItensPendentes").modal("show");
+            $("#modalItensPendentes .modal-title").html("Remessa Detalhado");
+
+            var botoes = ['selectAll', 'selectNone',
+                {
+                    text: '<i class="fa fa-qrcode"></i> Emitir Etiquetas',
+                    className: 'btn-primary ',
+                    action: function (e, dt, node, config) {
+                        var ids = $.map(this.rows('.selected').data(), function (item) {
+                            return item[1].split(" - ")[0];
+                        });
+                        console.log(ids)
+
+                        if (ids.length == 0) {
+                            PNotify.error({ text: "Selecione um item." });
+                        } else {
+                            //criarAcao(ids.join());
+                        }
+                    }
+                },
+            ];
+
+            $('#tbRemessaItensDetalhado').DataTable({
+                destroy: true,
+                serverSide: false,
+                stateSave: false,
+                columnDefs: [
+                    {
+                        targets: [1],
+                        visible: false
+                    },
+                    {
+                        orderable: false,
+                        className: 'select-checkbox',
+                        targets: [0]
+                    },
+                ],
+                select: {
+                    style: 'os',
+                    selector: 'td:first-child'
+                },
+                dom: "Bfrtip",
+                bInfo: true,
+                buttons: botoes,
+            });
     });
 }
 

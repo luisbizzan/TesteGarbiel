@@ -822,6 +822,8 @@
     <Content Include="Views\Garantia\_RemessaCriar.cshtml" />
     <Content Include="Views\Garantia\_RemessaConferir.cshtml" />
     <Content Include="Views\Garantia\_ConferenciaConferirManual.cshtml" />
+    <Content Include="Views\Garantia\_RemessaVisualizar.cshtml" />
+    <Content Include="Views\Garantia\_RemessaDetalhadoVisualizar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

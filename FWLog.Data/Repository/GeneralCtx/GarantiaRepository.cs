@@ -102,7 +102,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         GR.Dt_Criacao,
                         GR.Id_Tipo,
                         GT1.descricao AS Tipo,
-                        GR.Filial,
+                        (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa"" = GR.Id_Empresa ) AS empresa,
                         GR.Id_Status,
                         GT2.descricao AS Status
                     FROM
@@ -194,6 +194,72 @@ namespace FWLog.Data.Repository.GeneralCtx
             return retorno;
         }
 
+        public List<GarConferenciaItem> ListarRemessaItem(long Id_Remessa)
+        {
+            List<GarConferenciaItem> retorno = new List<GarConferenciaItem>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        GCI.Refx,
+                        TP.descrprod AS Descricao,
+                        SUM(GCI.Quant) AS Quant
+                    FROM
+                        gar_conferencia GC
+                        INNER JOIN gar_conferencia_item GCI ON GCI.id_conf = GC.id
+                        LEFT JOIN tgfpro@sankhya TP ON TP.ad_refx = GCI.refx
+                    WHERE
+                        GC.Id_Remessa = :Id_Remessa
+                    GROUP BY
+                        GCI.Refx,
+                        TP.descrprod
+                    ";
+                    retorno = conn.Query<GarConferenciaItem>(sQuery, new { Id_Remessa }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
+        public List<GarConferenciaItem> ListarRemessaItemDetalhado(long Id_Remessa)
+        {
+            List<GarConferenciaItem> retorno = new List<GarConferenciaItem>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        GCI.Refx,
+                        GCI.Id_Solicitacao,
+                        TP.descrprod AS Descricao,
+                        SUM(GCI.Quant) AS Quant
+                    FROM
+                        gar_conferencia GC
+                        INNER JOIN gar_conferencia_item GCI ON GCI.id_conf = GC.id
+                        LEFT JOIN tgfpro@sankhya TP ON TP.ad_refx = GCI.refx
+                    WHERE
+                        GC.Id_Remessa = :Id_Remessa
+                    GROUP BY
+                        GCI.Refx,
+                        GCI.Id_Solicitacao,
+                        TP.descrprod
+                    ";
+                    retorno = conn.Query<GarConferenciaItem>(sQuery, new { Id_Remessa }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
         public DmlStatus CriarRemessa(GarRemessa item)
         {
             string sQuery = "";
@@ -222,6 +288,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         FROM
                             gar_movimentacao GM
                             INNER JOIN gar_solicitacao_item GSI ON GSI.id = GM.id_item
+                            INNER JOIN gar_solicitacao GS ON GS.id = GSI.id_solicitacao
                             LEFT JOIN gar_remessa_controle GRC ON GRC.id = GM.id
                         WHERE
                             (
@@ -230,31 +297,32 @@ namespace FWLog.Data.Repository.GeneralCtx
                             )
                             AND GM.id_tipo_estoque = 15
                             AND GM.id_tipo_movimentacao = 27
+                            AND GS.id_empresa = :Id_Empresa
                         GROUP BY
                             GSI.refx,
                             GSI.id_solicitacao
                         ) GSI LEFT JOIN gar_conferencia_item GCI ON GCI.id_solicitacao = GSI.id_solicitacao AND GCI.refx = GSI.refx
                         WHERE
                             (
-                                ((GSI.quant - GCI.quant) > 0 AND (SELECT GC.ativo FROM gar_conferencia GC WHERE GC.id = GCI.id_conf ) = 1)
+                                ((GSI.quant - NVL(GCI.quant,0) ) > 0 AND (SELECT GC.ativo FROM gar_conferencia GC WHERE GC.id = GCI.id_conf ) = 1)
                                 OR
-                                ((GSI.quant - GCI.quant_conferida) > 0 AND (SELECT GC.ativo FROM gar_conferencia GC WHERE GC.id = GCI.id_conf ) = 0)
+                                ((GSI.quant - NVL(GCI.quant_conferida,0)) > 0 AND NVL((SELECT GC.ativo FROM gar_conferencia GC WHERE GC.id = GCI.id_conf ),0) = 0)
                             )";
-                    temItens = conn.Query<int>(sQuery, new { item.Cod_Fornecedor }).SingleOrDefault() > 0;
+                    temItens = conn.Query<int>(sQuery, new { item.Cod_Fornecedor, item.Id_Empresa }).SingleOrDefault() > 0;
 
                     if (!temItens)
                         return new DmlStatus { Sucesso = false, Mensagem = string.Format("Não foram encontrados itens para esse fornecedor.") };
 
                     //CRIA REMESSA
                     var param = new DynamicParameters();
-                    param.Add(name: "Id_Filial_Sankhya", value: item.Id_Filial_Sankhya, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Empresa", value: item.Id_Empresa, direction: ParameterDirection.Input);
                     param.Add(name: "Cod_Fornecedor", value: item.Cod_Fornecedor, direction: ParameterDirection.Input);
                     param.Add(name: "Id_Tipo", value: item.Id_Tipo, direction: ParameterDirection.Input);
                     param.Add(name: "Id_Status", value: item.Id_Status, direction: ParameterDirection.Input);
                     param.Add(name: "Id_Usr", value: item.Id_Usr, direction: ParameterDirection.Input);
                     param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
-                    conn.Execute(@"INSERT INTO gar_remessa (Id_Filial_Sankhya, Filial, Cod_Fornecedor, Id_Tipo, Id_Status, Id_Usr, Dt_Criacao)
-                    VALUES (:Id_Filial_Sankhya, (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa"" = :Id_Filial_Sankhya ), :Cod_Fornecedor, :Id_Tipo, :Id_Status, :Id_Usr, SYSDATE) returning Id into :Id", param);
+                    conn.Execute(@"INSERT INTO gar_remessa (Id_Empresa, Cod_Fornecedor, Id_Tipo, Id_Status, Id_Usr, Dt_Criacao)
+                    VALUES (:Id_Empresa, :Cod_Fornecedor, :Id_Tipo, :Id_Status, :Id_Usr, SYSDATE) returning Id into :Id", param);
 
                     Id_Remessa = param.Get<int>("Id");
                 }
@@ -275,7 +343,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     string sQuery = @"
                     SELECT
                         GS.Id,
-                        GS.Filial,
+                        (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa"" = GS.Id_Empresa ) AS empresa,
                         GS.Dt_Criacao,
                         GT1.descricao AS Tipo,
                         GS.Cod_Fornecedor
@@ -349,8 +417,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                         return new DmlStatus { Sucesso = false, Mensagem = "A solicitação já foi importada." };
 
                     //VERIFICA SE EMPRESA FAZ GARANTIA
-                    sQuery = @"SELECT nvl(ad_fazgarantia,'N') FROM tgfemp@sankhya WHERE codemp = (SELECT codemp FROM tsiemp@sankhya WHERE ad_filial = (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa""  = :Id_Filial_Sankhya))";
-                    bool empresaFazGarantia = conn.Query<string>(sQuery, new { item.Id_Filial_Sankhya }).SingleOrDefault() == "S";
+                    sQuery = @"SELECT nvl(ad_fazgarantia,'N') FROM tgfemp@sankhya WHERE codemp = (SELECT codemp FROM tsiemp@sankhya WHERE ad_filial = (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa""  = :Id_Empresa))";
+                    bool empresaFazGarantia = conn.Query<string>(sQuery, new { item.Id_Empresa }).SingleOrDefault() == "S";
 
                     var solicitacao = new GarSolicitacao();
 
@@ -419,7 +487,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     if (solicitacao.Id_Tipo == 18 && dadosEmp == null)
                         return new DmlStatus { Sucesso = false, Mensagem = string.Format("Garantia é da Filial '{0}', esta filial não tem parametro de garantia, favor parametrizar no cadastro de empresa do Sankhya.", solicitacao.Filial) };
 
-                    if (solicitacao.Id_Tipo == 18 && dadosEmp.IdEmpresa != item.Id_Filial_Sankhya)
+                    if (solicitacao.Id_Tipo == 18 && dadosEmp.IdEmpresa != item.Id_Empresa)
                         return new DmlStatus { Sucesso = false, Mensagem = string.Format("Empresa Não Autorizada a Fazer Garantia, a Filial '{0}' Tem que fazer garantia pela empresa '{1}'.", solicitacao.Filial, dadosEmp.Sigla) };
 
                     long Id_DevGar = solicitacao.Id_Sav;
@@ -430,6 +498,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                     var param = new DynamicParameters();
                     param.Add(name: "Filial", value: solicitacao.Filial, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Empresa", value: solicitacao.Id_Empresa, direction: ParameterDirection.Input);
                     param.Add(name: "Dt_Criacao", value: solicitacao.Dt_Criacao, direction: ParameterDirection.Input);
                     param.Add(name: "Id_Tipo", value: solicitacao.Id_Tipo, direction: ParameterDirection.Input);
                     param.Add(name: "Cli_Cnpj", value: solicitacao.Cli_Cnpj, direction: ParameterDirection.Input);
@@ -442,7 +511,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     param.Add(name: "Id_Tipo_Doc", value: item.Id_Tipo_Doc, direction: ParameterDirection.Input);
                     param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-                    conn.Execute(@"INSERT INTO gar_solicitacao (Filial, Id_Filial_Sankhya, Dt_Criacao, Id_Tipo, Cli_Cnpj,Id_Status,Legenda,Id_Usr,Id_Sav,Nota_Fiscal,Serie,Id_Tipo_Doc)
+                    conn.Execute(@"INSERT INTO gar_solicitacao (Filial, Id_Filial, Id_Empresa, Dt_Criacao, Id_Tipo, Cli_Cnpj,Id_Status,Legenda,Id_Usr,Id_Sav,Nota_Fiscal,Serie,Id_Tipo_Doc)
                             VALUES ( :Filial, (SELECT ""IdEmpresa"" FROM ""Empresa"" WHERE ""Sigla"" = :Filial ), :Dt_Criacao, :Id_Tipo, :Cli_Cnpj,:Id_Status,:Legenda,:Id_Usr,:Id_Sav,:Nota_Fiscal,:Serie,:Id_Tipo_Doc )
                             returning Id into :Id", param);
 
@@ -519,8 +588,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                         return new DmlStatus { Sucesso = false, Mensagem = "A solicitação já foi importada." };
 
                     //VERIFICA SE EMPRESA FAZ GARANTIA
-                    sQuery = @"SELECT nvl(ad_fazgarantia,'N') FROM tgfemp@sankhya WHERE codemp = (SELECT codemp FROM tsiemp@sankhya WHERE ad_filial = (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa""  = :Id_Filial_Sankhya))";
-                    bool empresaFazGarantia = conn.Query<string>(sQuery, new { item.Id_Filial_Sankhya }).SingleOrDefault() == "S";
+                    sQuery = @"SELECT nvl(ad_fazgarantia,'N') FROM tgfemp@sankhya WHERE codemp = (SELECT codemp FROM tsiemp@sankhya WHERE ad_filial = (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa""  = :Id_Empresa))";
+                    bool empresaFazGarantia = conn.Query<string>(sQuery, new { item.Id_Empresa }).SingleOrDefault() == "S";
 
                     //VERIFICA SE TEM NOTA SANKYA
                     var solicitacao = new GarSolicitacao();
@@ -591,7 +660,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     if (solicitacao.Id_Tipo == 18 && dadosEmp == null)
                         return new DmlStatus { Sucesso = false, Mensagem = string.Format("Garantia é da Filial '{0}', esta filial não tem parametro de garantia, favor parametrizar no cadastro de empresa do Sankhya.", solicitacao.Filial) };
 
-                    if (solicitacao.Id_Tipo == 18 && dadosEmp.IdEmpresa != item.Id_Filial_Sankhya)
+                    if (solicitacao.Id_Tipo == 18 && dadosEmp.IdEmpresa != item.Id_Empresa)
                         return new DmlStatus { Sucesso = false, Mensagem = string.Format("Empresa Não Autorizada a Fazer Garantia, a Filial '{0}' Tem que fazer garantia pela empresa '{1}'.", solicitacao.Filial, dadosEmp.Sigla) };
 
                     long Id_DevGar = solicitacao.Id_Sav;
@@ -605,6 +674,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                     var param = new DynamicParameters();
                     param.Add(name: "Filial", value: solicitacao.Filial, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Empresa", value: solicitacao.Id_Empresa, direction: ParameterDirection.Input);
                     param.Add(name: "Dt_Criacao", value: solicitacao.Dt_Criacao, direction: ParameterDirection.Input);
                     param.Add(name: "Id_Tipo", value: solicitacao.Id_Tipo, direction: ParameterDirection.Input);
                     param.Add(name: "Cli_Cnpj", value: solicitacao.Cli_Cnpj, direction: ParameterDirection.Input);
@@ -617,8 +687,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                     param.Add(name: "Id_Tipo_Doc", value: item.Id_Tipo_Doc, direction: ParameterDirection.Input);
                     param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-                    conn.Execute(@"INSERT INTO gar_solicitacao (Filial, Dt_Criacao, Id_Tipo, Cli_Cnpj,Id_Status,Legenda,Id_Usr,Id_Sav,Nota_Fiscal,Serie,Id_Tipo_Doc)
-                            VALUES ( :Filial, :Dt_Criacao, :Id_Tipo, :Cli_Cnpj,:Id_Status,:Legenda,:Id_Usr,:Id_Sav,:Nota_Fiscal,:Serie,:Id_Tipo_Doc )
+                    conn.Execute(@"INSERT INTO gar_solicitacao (Filial, Id_Filial, Id_Empresa, Dt_Criacao, Id_Tipo, Cli_Cnpj,Id_Status,Legenda,Id_Usr,Id_Sav,Nota_Fiscal,Serie,Id_Tipo_Doc)
+                            VALUES ( :Filial, (SELECT ""IdEmpresa"" FROM ""Empresa"" WHERE ""Sigla"" = :Filial ), :Dt_Criacao, :Id_Tipo, :Cli_Cnpj,:Id_Status,:Legenda,:Id_Usr,:Id_Sav,:Nota_Fiscal,:Serie,:Id_Tipo_Doc )
                             returning Id into :Id", param);
 
                     Id_Solicitacao = param.Get<int>("Id");
@@ -954,7 +1024,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     sQuery = @"
                     SELECT COUNT(*) FROM
                         gar_remessa GR
-                        INNER JOIN gar_remessa_config GRC ON GRC.cod_fornecedor = GR.cod_fornecedor AND GRC.filial = GR.filial
+                        INNER JOIN gar_remessa_config GRC ON GRC.cod_fornecedor = GR.cod_fornecedor AND GRC.id_empresa = GR.id_empresa
                     WHERE GR.Id = :Id_Remessa AND GRC.total = 0";
                     aceitaParcial = conn.Query<decimal>(sQuery, new { item.Id_Remessa }).SingleOrDefault() > 0;
 
@@ -1070,6 +1140,24 @@ namespace FWLog.Data.Repository.GeneralCtx
                         sQuery = @"SELECT id FROM gar_conferencia WHERE Ativo = 1 AND Id_Remessa = :Id ORDER BY id DESC FETCH FIRST 1 ROWS ONLY";
 
                     retorno = conn.Query<long>(sQuery, new { Id }).SingleOrDefault();
+                }
+                conn.Close();
+            }
+            return retorno;
+        }
+
+        public bool ItemExiste(string Refx)
+        {
+            bool retorno = false;
+            string sQuery = "";
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    sQuery = @"SELECT COUNT(*) FROM tgfpro@sankhya WHERE ad_refx = :Refx";
+                    retorno = conn.Query<int>(sQuery, new { Refx }).SingleOrDefault() > 0;
                 }
                 conn.Close();
             }
@@ -1340,7 +1428,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                         sQuery = @"
                         INSERT INTO gar_conferencia_item (refx, id_solicitacao, id_conf, dt_conf, id_usr,quant)
-                        SELECT GSI.refx, GSI.id_solicitacao, SYSDATE AS dt_conf, :id_usr, GSI.quant FROM(
+                        SELECT GSI.refx, GSI.id_solicitacao, :Id_Conferencia, SYSDATE AS dt_conf, :Id_Usr, GSI.quant FROM(
                             SELECT
                                GSI.refx,
                                GSI.id_solicitacao,
@@ -1348,30 +1436,33 @@ namespace FWLog.Data.Repository.GeneralCtx
                             FROM
                                 gar_movimentacao GM
                                 INNER JOIN gar_solicitacao_item GSI ON GSI.id = GM.id_item
+                                INNER JOIN gar_solicitacao GS ON GS.id = GSI.id_solicitacao
                                 LEFT JOIN gar_remessa_controle GRC ON GRC.id = GM.id
                             WHERE
                                 (
-                                    GSI.cod_fornecedor = :Cod_Fornecedor
-                                    OR GSI.cod_fornecedor IN(SELECT cod_forn_filho FROM gar_forn_grupo WHERE cod_forn_pai = :Cod_Fornecedor)
+                                    GSI.cod_fornecedor = :fornecedor
+                                    OR GSI.cod_fornecedor IN(SELECT cod_forn_filho FROM gar_forn_grupo WHERE cod_forn_pai = :fornecedor)
                                 )
                                 AND GM.id_tipo_estoque = 15
                                 AND GM.id_tipo_movimentacao = 27
+                                AND GS.id_empresa = :Id_Empresa
                             GROUP BY
                                 GSI.refx,
                                 GSI.id_solicitacao
                             ) GSI LEFT JOIN gar_conferencia_item GCI ON GCI.id_solicitacao = GSI.id_solicitacao AND GCI.refx = GSI.refx
                             WHERE
                                 (
-                                    ((GSI.quant - GCI.quant) > 0 AND (SELECT GC.ativo FROM gar_conferencia GC WHERE GC.id = GCI.id_conf ) = 1)
+                                    ((GSI.quant - NVL(GCI.quant,0) ) > 0 AND (SELECT GC.ativo FROM gar_conferencia GC WHERE GC.id = GCI.id_conf ) = 1)
                                     OR
-                                    ((GSI.quant - GCI.quant_conferida) > 0 AND (SELECT GC.ativo FROM gar_conferencia GC WHERE GC.id = GCI.id_conf ) = 0)
+                                    ((GSI.quant - NVL(GCI.quant_conferida,0)) > 0 AND NVL((SELECT GC.ativo FROM gar_conferencia GC WHERE GC.id = GCI.id_conf ),0) = 0)
                                 )
                         ";
                         conn.Query<GarConferenciaHist>(sQuery, new
                         {
                             Id_Conferencia,
                             item.Id_Usr,
-                            fornecedor
+                            fornecedor,
+                            item.Id_Empresa
                         });
                     }
                 }

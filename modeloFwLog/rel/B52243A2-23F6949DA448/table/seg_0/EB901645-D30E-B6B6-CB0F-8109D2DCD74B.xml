@@ -20,7 +20,7 @@
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
-<Column name="ID_FILIAL_SANKHYA" id="5368EE84-004F-45A7-16F2-9D4B91597311">
+<Column name="ID_EMPRESA" id="5368EE84-004F-45A7-16F2-9D4B91597311">
 <createdBy>henrique.pereira</createdBy>
 <createdTime>2020-05-15 12:09:01 UTC</createdTime>
 <ownerDesignName>modeloFwLog</ownerDesignName>
@@ -30,19 +30,6 @@
 <use>1</use>
 <logicalDatatype>LOGDT026</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
-<Column name="FILIAL" id="57B6C78C-072D-B274-F817-DB3F2586FE5C">
-<createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-15 12:09:01 UTC</createdTime>
-<ownerDesignName>modeloFwLog</ownerDesignName>
-<importedID>AE3B6671-FAED-9D17-DC81-34A5B07C0BD0</importedID>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>2</dataTypeSize>
-<ownDataTypeParameters>2,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
 <Column name="PCT_ESTORNO_FRETE" id="AC6F63B9-F586-98F3-6079-6526DD823A17">

@@ -36,7 +36,7 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public String Status { get; set; }
 
         [Display(Name = "Filial")]
-        public string Filial { get; set; }
+        public string Empresa { get; set; }
     }
 
     public class GarantiaRemessaFilterVM
@@ -81,6 +81,6 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public String Status { get; set; }
 
         [Display(Name = "Filial")]
-        public string Filial { get; set; }
+        public string Empresa { get; set; }
     }
 }
