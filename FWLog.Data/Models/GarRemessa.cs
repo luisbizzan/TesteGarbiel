@@ -5,8 +5,8 @@ namespace FWLog.Data.Models
     public class GarRemessa
     {
         public long Id { get; set; }
-        public long Id_Filial_Sankhya { get; set; }
-        public String Filial { get; set; }
+        public long Id_Empresa { get; set; }
+        public String Empresa { get; set; }
         public DateTime Dt_Criacao { get; set; }
         public long Id_Tipo { get; set; }
         public String Tipo { get; set; }

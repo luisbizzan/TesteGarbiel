@@ -1,0 +1,38 @@
+﻿@model FWLog.Web.Backoffice.Models.GarantiaCtx.GarantiaSolicitacaoItemVM
+@{
+    Layout = null;
+}
+
+<div class="x_panel">
+    <div class="x_title">
+        <h2>Itens da Remessa</h2>
+        <div class="clearfix"></div>
+    </div>
+    <div class="x_content">
+        <table id="tbRemessaItensDetalhado" class="table table-striped table-bordered dt-responsive" style="width:100%">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>@Html.DisplayNameFor(m => m.ItensCabecalho.Id)</th>
+                    <th>@Html.DisplayNameFor(m => m.ItensCabecalho.Refx)</th>
+                    <th>@Html.DisplayNameFor(m => m.ItensCabecalho.Descricao)</th>
+                    <th>@Html.DisplayNameFor(m => m.ItensCabecalho.Id_Solicitacao)</th>
+                    <th>@Html.DisplayNameFor(m => m.ItensCabecalho.Quant)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Itens)
+                {
+                    <tr>
+                        <td></td>
+                        <td>@item.Id</td>
+                        <td>@item.Refx</td>
+                        <td>@item.Descricao</td>
+                        <td>@item.Id_Solicitacao</td>
+                        <td>@item.Quant</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

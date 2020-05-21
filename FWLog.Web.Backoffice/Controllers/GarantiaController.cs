@@ -169,7 +169,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         Cli_Cnpj = item.Cnpj,
                         Nota_Fiscal = item.Numero_Interno == null ? item.Numero.ToString() : item.Numero_Interno.ToString(),
                         Id_Usr = IdUsuario,
-                        Id_Filial_Sankhya = IdEmpresa,
+                        Id_Empresa = IdEmpresa,
                         Serie = item.Serie,
                         Codigo_Postagem = item.Codigo_Postagem,
                         Id_Tipo_Doc = item.Id_Tipo
@@ -182,7 +182,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     {
                         Id_Sav = item.Numero_Interno ?? 0,
                         Id_Usr = IdUsuario,
-                        Id_Filial_Sankhya = IdEmpresa,
+                        Id_Empresa = IdEmpresa,
                         Id_Tipo_Doc = item.Id_Tipo,
                         Codigo_Postagem = item.Codigo_Postagem
                     });
@@ -274,6 +274,14 @@ namespace FWLog.Web.Backoffice.Controllers
             }
             else
             {
+                //VERIFICA SE ITEM EXISTE
+                if (!_uow.GarantiaRepository.ItemExiste(item.Refx))
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = string.Format("Item {0} não existe!", item.Refx)
+                    });
+
                 //ATUALIZA A QUANTIDADE CONFERIDA
                 if (conferencia.Id_Tipo_Conf == 26 || conferencia.Id_Tipo_Conf == 6)
                 {
@@ -608,6 +616,31 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_RemessaCriar", model);
         }
 
+        public ActionResult RemessaVisualizar(long Id)
+        {
+            var itens = _uow.GarantiaRepository.ListarRemessaItem(Id);
+
+            var model = new GarantiaSolicitacaoItemVM
+            {
+                Remessa = Mapper.Map<GarantiaRemessaListVM>(_uow.GarantiaRepository.SelecionaRemessa(Id)),
+                Itens = Mapper.Map<List<GarantiaSolicitacaoItemListVM>>(itens)
+            };
+
+            return PartialView("_RemessaVisualizar", model);
+        }
+
+        public ActionResult RemessaDetalhadoVisualizar(long Id)
+        {
+            var itens = _uow.GarantiaRepository.ListarRemessaItemDetalhado(Id);
+
+            var model = new GarantiaSolicitacaoItemVM
+            {
+                Itens = Mapper.Map<List<GarantiaSolicitacaoItemListVM>>(itens)
+            };
+
+            return PartialView("_RemessaDetalhadoVisualizar", model);
+        }
+
         [HttpPost]
         public ActionResult RemessaCriarGravar(GarantiaRemessa item)
         {
@@ -630,7 +663,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     retorno = _uow.GarantiaRepository.CriarRemessa(new GarRemessa
                     {
                         Cod_Fornecedor = item.Cod_Fornecedor,
-                        Id_Filial_Sankhya = IdEmpresa,
+                        Id_Empresa = IdEmpresa,
                         Id_Status = 37,
                         Id_Tipo = 2,
                         Id_Usr = IdUsuario
@@ -642,6 +675,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         _uow.GarantiaRepository.CriarConferenciaRemessa(new GarConferencia
                         {
                             Id_Remessa = retorno.Id,
+                            Id_Empresa = IdEmpresa,
                             Id_Usr = IdUsuario,
                             Id_Tipo_Conf = 26 //26 Envio Fornecedor ou 6 Retorno Fornecedor (perguntar)
                         });

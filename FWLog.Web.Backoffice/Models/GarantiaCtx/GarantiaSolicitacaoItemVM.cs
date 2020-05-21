@@ -8,12 +8,15 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
     public class GarantiaSolicitacaoItemVM
     {
         public GarantiaSolicitacaoListVM Solicitacao { get; set; }
+
+        public GarantiaRemessaListVM Remessa { get; set; }
         public List<GarantiaSolicitacaoItemListVM> Itens { get; set; }
         public GarantiaSolicitacaoItemListVM ItensCabecalho { get; set; }
 
         public GarantiaSolicitacaoItemVM()
         {
             Solicitacao = new GarantiaSolicitacaoListVM();
+            Remessa = new GarantiaRemessaListVM();
             Itens = new List<GarantiaSolicitacaoItemListVM>();
             ItensCabecalho = new GarantiaSolicitacaoItemListVM();
         }
@@ -29,7 +32,8 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
         public long Id { get; set; }
 
-        public long Id_solicitacao { get; set; }
+        [Display(Name = "Solicitação")]
+        public long Id_Solicitacao { get; set; }
 
         [Display(Name = "Quant")]
         public long Quant { get; set; }

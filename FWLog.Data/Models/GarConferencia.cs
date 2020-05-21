@@ -5,6 +5,7 @@ namespace FWLog.Data.Models
     public class GarConferencia
     {
         public long Id { get; set; }
+        public long Id_Empresa { get; set; }
         public long Id_Tipo_Conf { get; set; }
         public String Tipo_Conf { get; set; }
         public DateTime Dt_Conf { get; set; }
