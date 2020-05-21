@@ -5,7 +5,6 @@ using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
 using log4net;
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
@@ -42,7 +41,7 @@ namespace FWLog.Services.Services
             }
 
             var where = $" WHERE TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSSEP = 0 OR TGFCAB.AD_STATUSSEP IS NULL) ";
-            var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
+            var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA INNER JOIN TGFTPV ON TGFTPV.CODTIPVENDA = TGFCAB.CODTIPVENDA";
 
             List<PedidoIntegracao> pedidosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<PedidoIntegracao>(where, inner);
 
@@ -55,10 +54,10 @@ namespace FWLog.Services.Services
                     var pedidoCabecalho = pedidoIntegracao.Value.First();
 
                     ValidarDadosIntegracao(pedidoCabecalho);
-                    
-                    if(!topSankhya.Split(',').ToList().Contains(pedidoCabecalho.TopSankhya))
+
+                    if (!topSankhya.Split(',').ToList().Contains(pedidoCabecalho.TopSankhya))
                     {
-                        throw new BusinessException(string.Format("Top inválida (CODTIPOPER: {0}). Configuração atual (TOPs: {1}).", pedidoCabecalho.TopSankhya,topSankhya));
+                        throw new BusinessException(string.Format("Top inválida (CODTIPOPER: {0}). Configuração atual (TOPs: {1}).", pedidoCabecalho.TopSankhya, topSankhya));
                     }
 
                     var codEmp = Convert.ToInt32(pedidoCabecalho.CodigoIntegracaoEmpresa);
@@ -122,6 +121,16 @@ namespace FWLog.Services.Services
                     pedido.IdEmpresa = empresa.IdEmpresa;
                     pedido.IdTransportadora = transportadora.IdTransportadora;
                     pedido.IdRepresentante = representante.IdRepresentante;
+
+                    if (int.TryParse(pedidoCabecalho.TipoPagamentoCodigo, out int tipoPagamentoCodigo))
+                    {
+                        throw new BusinessException(string.Format("Código do Tipo Pagamento (TGFTPV.CODTIPVENDA: {0}) inválido", pedidoCabecalho.TipoPagamentoCodigo));
+                    }
+
+                    pedido.PagamentoCodigoIntegracao = tipoPagamentoCodigo;
+                    pedido.PagamentoDescricaoIntegracao = pedidoCabecalho.TipoPagamentoDescricao.TrimOrNull();
+                    pedido.PagamentoIsDebitoIntegracao = pedidoCabecalho.TipoPagamentoCartaoDebito == "S";
+                    pedido.PagamentoIsCreditoIntegracao = pedidoCabecalho.TipoPagamentoCartaoCredito == "S";
 
                     var itens = pedidoIntegracao.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.QtdPedido, s.Sequencia }).ToList();
 
