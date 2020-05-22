@@ -166,51 +166,51 @@ function visualizarRemessaDetalhado(id) {
     modal.load("/Garantia/RemessaDetalhadoVisualizar", {
         Id: id
     }, function () {
-            $("#modalItensPendentes").modal("show");
-            $("#modalItensPendentes .modal-title").html("Remessa Detalhado");
+        $("#modalItensPendentes").modal("show");
+        $("#modalItensPendentes .modal-title").html("Remessa Detalhado");
 
-            var botoes = ['selectAll', 'selectNone',
-                {
-                    text: '<i class="fa fa-qrcode"></i> Emitir Etiquetas',
-                    className: 'btn-primary ',
-                    action: function (e, dt, node, config) {
-                        var ids = $.map(this.rows('.selected').data(), function (item) {
-                            return item[1].split(" - ")[0];
-                        });
-                        console.log(ids)
+        var botoes = ['selectAll', 'selectNone',
+            {
+                text: '<i class="fa fa-qrcode"></i> Emitir Etiquetas',
+                className: 'btn-primary ',
+                action: function (e, dt, node, config) {
+                    var ids = $.map(this.rows('.selected').data(), function (item) {
+                        return item[1].split(" - ")[0];
+                    });
+                    console.log(ids)
 
-                        if (ids.length == 0) {
-                            PNotify.error({ text: "Selecione um item." });
-                        } else {
-                            //criarAcao(ids.join());
-                        }
+                    if (ids.length == 0) {
+                        PNotify.error({ text: "Selecione um item." });
+                    } else {
+                        //criarAcao(ids.join());
                     }
-                },
-            ];
+                }
+            },
+        ];
 
-            $('#tbRemessaItensDetalhado').DataTable({
-                destroy: true,
-                serverSide: false,
-                stateSave: false,
-                columnDefs: [
-                    {
-                        targets: [1],
-                        visible: false
-                    },
-                    {
-                        orderable: false,
-                        className: 'select-checkbox',
-                        targets: [0]
-                    },
-                ],
-                select: {
-                    style: 'os',
-                    selector: 'td:first-child'
+        $('#tbRemessaItensDetalhado').DataTable({
+            destroy: true,
+            serverSide: false,
+            stateSave: false,
+            columnDefs: [
+                {
+                    targets: [1],
+                    visible: false
                 },
-                dom: "Bfrtip",
-                bInfo: true,
-                buttons: botoes,
-            });
+                {
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets: [0]
+                },
+            ],
+            select: {
+                style: 'os',
+                selector: 'td:first-child'
+            },
+            dom: "Bfrtip",
+            bInfo: true,
+            buttons: botoes,
+        });
     });
 }
 
