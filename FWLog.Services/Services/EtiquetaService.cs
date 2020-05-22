@@ -36,7 +36,7 @@ namespace FWLog.Services.Services
         public void ImprimirEtiquetaVolumeRecebimento(long idLote, long idImpressora, int volume, int quantidade)
         {
             Lote lote = _unitOfWork.LoteRepository.GetById(idLote);
-            
+
             var etiquetaImprimir = new StringBuilder();
 
             etiquetaImprimir.Append("^XA");
@@ -491,7 +491,7 @@ namespace FWLog.Services.Services
                 etiquetaZpl.AppendLine("^FO16,20^GB696,520,8^FS");
                 etiquetaZpl.AppendLine("^FO16,20^GB350,520,200^FS");
 
-                etiquetaZpl.AppendLine($"^FO95,60^FB450,1,0,C,0^A0B,240,100^FR^FD{codigoEnderecoFormatado}^FS");
+                etiquetaZpl.AppendLine($"^FO95,20^FB500,1,0,C,0^A0B,240,100^FR^FD{codigoEnderecoFormatado}^FS");
                 etiquetaZpl.AppendLine($"^FO450,160^BCB,135,Y,N^FD{idEnderecoFormatado}^FS");
 
                 etiquetaZpl.AppendLine("^XZ");
