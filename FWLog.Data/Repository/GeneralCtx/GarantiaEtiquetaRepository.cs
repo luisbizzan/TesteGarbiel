@@ -74,60 +74,81 @@ namespace FWLog.Data.Repository.GeneralCtx
             try
             {
                 #region Consultar
-
-                #endregion
-
-                #region Inicio
-                dadosImpressao.ConteudoImpressao = new StringBuilder();
-                dadosImpressao.ConteudoImpressao.AppendLine("^XA");
-                dadosImpressao.ConteudoImpressao.AppendLine("^LH32,0");
-                dadosImpressao.ConteudoImpressao.AppendLine("^PRA^FS");
-                #endregion
-
-                #region Devolução
-                if (dadosImpressao.TipoEtiqueta == GarantiaEtiqueta.ETIQUETA.Devolucao)
+                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
                 {
-                    //Codigo Barras 1
-                    dadosImpressao.ConteudoImpressao.AppendLine("^FO0,36^GB146,26,30^FS");
-                    //Codigo Barras 2
-                    dadosImpressao.ConteudoImpressao.AppendLine("^FO272,36^GB146,26,30^FS");
-                    //Codigo Barras 3
-                    dadosImpressao.ConteudoImpressao.AppendLine("^FO544,36^GB146,26,30^FS");
-
-                    //Coluna 1
-                    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaDevolucao.PrimeiraColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
-                    //Coluna 2
-                    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaDevolucao.SegundaColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
-                    //Coluna 3
-                    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaDevolucao.TerceiraColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
+                    conn.Open();
+                    if (conn.State == System.Data.ConnectionState.Open)
+                    {
+                        var comandoSQL = String.Format(GarantiaEtiqueta.SQL.ConsultaEtiquetas, dadosImpressao.IdsEtiquetasImprimir);
+                        dadosImpressao.ListaImprimir = new List<GarantiaEtiqueta.ItemEtiqueta>(conn.Query<GarantiaEtiqueta.ItemEtiqueta>(comandoSQL).ToList());
+                    }
+                    conn.Close();
                 }
                 #endregion
 
-                #region Garantia
-                if (dadosImpressao.TipoEtiqueta == GarantiaEtiqueta.ETIQUETA.Garantia)
+                #region Processamento
+                if (!dadosImpressao.ListaImprimir.Count.Equals(0))
                 {
-                    //Codigo Barras 1
-                    dadosImpressao.ConteudoImpressao.AppendLine("^FO000,45^GB146,26,30^FS");
-                    //Codigo Barras 2
-                    dadosImpressao.ConteudoImpressao.AppendLine("^FO272,45^GB146,26,30^FS");
-                    //Codigo Barras 3
-                    dadosImpressao.ConteudoImpressao.AppendLine("^FO544,45^GB146,26,30^FS");
 
-                    //Coluna 1
-                    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.PrimeiraColuna, "ZEN501", "100", "PEDAL DA PARAFUSETA", "12545152452582", "10", "FW"));
-                    //Coluna 2
-                    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.SegundaColuna, "ZEN501", "101", "MIOLO DA PARAFUSETA", "12545152452582", "11", "FW  "));
-                    //Coluna 3
-                    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.TerceiraColuna, "ZEN501", "102", "CENTRO DA PARAFUSETA", "12545152452582", "12", "FW"));
+                    dadosImpressao.ListaImprimir.ForEach(delegate(GarantiaEtiqueta.ItemEtiqueta item) {
+                        
+                    });
+
+                    #region Inicio
+                    dadosImpressao.ConteudoImpressao = new StringBuilder();
+                    dadosImpressao.ConteudoImpressao.AppendLine("^XA");
+                    dadosImpressao.ConteudoImpressao.AppendLine("^LH32,0");
+                    dadosImpressao.ConteudoImpressao.AppendLine("^PRA^FS");
+                    #endregion
+
+                    #region Devolução
+                    if (dadosImpressao.TipoEtiqueta == GarantiaEtiqueta.ETIQUETA.Devolução)
+                    {
+                        //Codigo Barras 1
+                        dadosImpressao.ConteudoImpressao.AppendLine("^FO0,36^GB146,26,30^FS");
+                        //Codigo Barras 2
+                        dadosImpressao.ConteudoImpressao.AppendLine("^FO272,36^GB146,26,30^FS");
+                        //Codigo Barras 3
+                        dadosImpressao.ConteudoImpressao.AppendLine("^FO544,36^GB146,26,30^FS");
+
+                        //Coluna 1
+                        dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaDevolucao.PrimeiraColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
+                        //Coluna 2
+                        dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaDevolucao.SegundaColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
+                        //Coluna 3
+                        dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaDevolucao.TerceiraColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
+                    }
+                    #endregion
+
+                    #region Garantia
+                    if (dadosImpressao.TipoEtiqueta == GarantiaEtiqueta.ETIQUETA.Garantia)
+                    {
+                        //Codigo Barras 1
+                        dadosImpressao.ConteudoImpressao.AppendLine("^FO000,45^GB146,26,30^FS");
+                        //Codigo Barras 2
+                        dadosImpressao.ConteudoImpressao.AppendLine("^FO272,45^GB146,26,30^FS");
+                        //Codigo Barras 3
+                        dadosImpressao.ConteudoImpressao.AppendLine("^FO544,45^GB146,26,30^FS");
+
+                        //Coluna 1
+                        dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.PrimeiraColuna, "ZEN501", "100", "PEDAL DA PARAFUSETA", "12545152452582", "10", "FW"));
+                        //Coluna 2
+                        dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.SegundaColuna, "ZEN501", "101", "MIOLO DA PARAFUSETA", "12545152452582", "11", "FW  "));
+                        //Coluna 3
+                        dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.TerceiraColuna, "ZEN501", "102", "CENTRO DA PARAFUSETA", "12545152452582", "12", "FW"));
+                    }
+                    #endregion
+
+                    #region Final
+                    dadosImpressao.ConteudoImpressao.AppendLine("^XZ");
+                    dadosImpressao.ConteudoImpressao.AppendLine(" ");
+                    #endregion
+
+                    var retornoProcessamento = ImprimirEtiqueta(dadosImpressao);
                 }
+                else
+                    throw new Exception("Nenhuma Etiqueta selecionada para Impressão!");
                 #endregion
-
-                #region Final
-                dadosImpressao.ConteudoImpressao.AppendLine("^XZ");
-                dadosImpressao.ConteudoImpressao.AppendLine(" ");
-                #endregion
-
-                var retornoProcessamento = ImprimirEtiqueta(dadosImpressao);
             }
             catch (Exception ex)
             {

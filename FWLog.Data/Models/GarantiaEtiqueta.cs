@@ -14,13 +14,50 @@ namespace FWLog.Data.Models
         {
             public string EnderecoIP { get; set; }
             public int PortaConexao { get; set; }
-            public GarantiaEtiqueta.ETIQUETA TipoEtiqueta { get; set; }
+            public ETIQUETA TipoEtiqueta { get; set; }
             public StringBuilder ConteudoImpressao { get; set; }
+            public List<ItemEtiqueta> ListaImprimir { get; set; }
+            public string IdsEtiquetasImprimir { get; set; }
+        }
+        #endregion
+
+        public static class SQL
+        {
+            public static string ConsultaEtiquetas
+            {
+                get
+                {
+                    return String.Concat("SELECT s.id CodigoEtiqueta, si.id CodigoRegistro, t.descricao TipoEtiqueta, si.refx, null Localizacao, p.descrprod Descricao,null CodigoBarras,si.quant QtdeEmbalagem ",
+                        "FROM gar_solicitacao s ",
+                        "INNER JOIN gar_solicitacao_item si ON (si.id_solicitacao = s.id) ",
+                        "INNER JOIN geral_tipo t ON (t.id = s.id_tipo) ",
+                        "INNER JOIN tgfpro@sankhya p ON (p.ad_refx = si.refx) ",
+                        "WHERE si.id IN ({0}) ",
+                        "ORDER BY s.id ASC");
+                }
+            }
+        }
+
+        #region Colunas Banco Dados
+        public class ItemEtiqueta
+        {
+            public int CodigoEtiqueta { get; set; }
+            public int CodigoRegistro { get; set; }
+            public ETIQUETA TipoEtiqueta { get; set; }
+
+            public string Refx { get; set; }
+            public string Localizacao { get; set; }
+            public string Descricao { get; set; }
+            public string CodigoBarras { get; set; }
+            public int QtdeEmbalagem { get; set; }
+            public int CodigoSolicitacao { get; set; }
+            public string Cliente { get; set; }
+            public string Representante { get; set; }
         }
         #endregion
 
         #region Enums
-        public enum ETIQUETA { Devolucao, Garantia }
+        public enum ETIQUETA { Devolução, Garantia }
         public enum EtiquetaDevolucaoCodigoBarras { CodigoBarrasDOIS, CodigoBarrasTRES }
         public enum EtiquetaDevolucaoMiolo { CodigoReferenciaUM, CodigoReferenciaDOIS, CodigoReferenciaTRES }
         #endregion
