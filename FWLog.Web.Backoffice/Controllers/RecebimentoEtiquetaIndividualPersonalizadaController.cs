@@ -69,7 +69,8 @@ namespace FWLog.Web.Backoffice.Controllers
                         IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
                         IdEmpresa = IdEmpresa,
                         QuantidadeEtiquetas = viewModel.Quantidade.Value,
-                        ReferenciaProduto = produto.Referencia
+                        ReferenciaProduto = produto.Referencia,
+                        IdUsuario = IdUsuario
                     };
 
                     _etiquetaService.ImprimirEtiquetaPeca(request);
@@ -92,7 +93,8 @@ namespace FWLog.Web.Backoffice.Controllers
                         IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
                         IdEmpresa = IdEmpresa,
                         QuantidadeEtiquetas = viewModel.Quantidade.Value,
-                        ReferenciaProduto = produto.Referencia
+                        ReferenciaProduto = produto.Referencia,
+                        IdUsuario = IdUsuario
                     };
 
                     _etiquetaService.ImprimirEtiquetaPersonalizada(request);
@@ -103,7 +105,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     {
                         IdEmpresa = IdEmpresa,
                         IdImpressora = viewModel.IdImpressora.GetValueOrDefault(),
-                        QuantidadeEtiquetas = viewModel.Quantidade.Value
+                        QuantidadeEtiquetas = viewModel.Quantidade.Value,
+                        IdUsuario = IdUsuario
                     };
 
                     _etiquetaService.ImprimirEtiquetaAvulso(requestAvulso);

@@ -364,6 +364,16 @@ namespace FWLog.AspNet.Identity
             }
         }
 
+        public class Armazenagem : PermissionGroupBuildItem
+        {
+            public const string ImprimirEtiquetaLocacao = "ImprimirEtiquetaLocacao";
+
+            public Armazenagem() : base(Display.FromString("Armazenagem"))
+            {
+                Register(ImprimirEtiquetaLocacao, Display.FromString("Imprimir Etiqueta Locação"));
+            }
+        }
+
         public class Separacao : PermissionGroupBuildItem
         {
             public const string ListarCorredorImpressora = "CorredorImpressoraListar";

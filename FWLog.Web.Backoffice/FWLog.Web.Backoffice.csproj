@@ -297,6 +297,7 @@
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioLogisticaCorredorViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioPosicaoInventarioViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioTotalPorAlaViewModel.cs" />
+    <Compile Include="Models\EtiquetaCtx\EtiquetaLocacaoViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioLogisticaCorredorViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioPosicaoInventarioViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioTotalPorAlaViewModel.cs" />
@@ -575,6 +576,7 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\confirmarImpressao.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
+    <Content Include="Scripts\Views\Etiqueta\locacao.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
@@ -698,6 +700,7 @@
     <Content Include="Views\TransportadoraEndereco\Detalhes.cshtml" />
     <Content Include="Views\TransportadoraEndereco\Cadastrar.cshtml" />
     <Content Include="Views\TransportadoraEndereco\Editar.cshtml" />
+    <Content Include="Views\Etiqueta\Locacao.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
