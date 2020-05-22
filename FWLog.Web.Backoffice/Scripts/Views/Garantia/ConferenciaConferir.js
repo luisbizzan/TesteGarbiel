@@ -42,6 +42,10 @@ function conferir() {
             conferirManual();
         });
 
+        $("#btAtualizarItemRemessa").click(function () {
+            atualizarItemRemessa();
+        });
+
         onScan.attachTo($('#Form_Refx')[0], {
             onScan: function (sScancode, iQuatity) {
                 console.log(sScancode);
@@ -199,7 +203,6 @@ function itensLaudo() {
     modal.load("/Garantia/ConferenciaLaudo", {
         Id_Conferencia: $("#Conferencia_Id").val()
     }, function () {
-        
         $('.btn-row-actions').tooltip();
 
         var botoes = ['selectAll', 'selectNone',
@@ -253,8 +256,8 @@ function itensLaudoDetalhe(refx) {
         Id_Conferencia: $("#Conferencia_Id").val(),
         Refx: refx
     }, function () {
-            $("#modalLaudoDetalhes").modal("show");
-            $("#modalLaudo").modal("hide");
+        $("#modalLaudoDetalhes").modal("show");
+        $("#modalLaudo").modal("hide");
         $('#tbLaudoItensDetalhe').DataTable({
             destroy: true,
             serverSide: false,
@@ -504,6 +507,26 @@ function alterarQuantidade() {
                 e.preventDefault();
                 jc.$$gravar.trigger('click');
             });
+        }
+    });
+}
+
+function atualizarItemRemessa() {
+    $.ajax({
+        url: "/Garantia/RemessaAtualizarItemGravar",
+        method: "POST",
+        data: {
+            Id_Conferencia: $("#Conferencia_Id").val()
+        },
+        success: function (result) {
+            if (result.Success) {
+                PNotify.success({ text: result.Message, delay: 1000 });
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+        },
+        error: function (request, status, error) {
+            PNotify.warning({ text: result.Message });
         }
     });
 }
