@@ -17,8 +17,11 @@
             cache: false,
             data: dados,
             success: function (result) {
+                debugger;
                 if (result.Success) {
-                    $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=2", function () {
+                    var tipo = $('input[type=radio]:checked').val();
+
+                    $("#modalImpressoras").load(HOST_URL + "BOPrinter/Selecionar?idImpressaoItem=" + parseInt(tipo), function () {
                         $("#modalImpressoras").modal();
                     });
                 } else {
