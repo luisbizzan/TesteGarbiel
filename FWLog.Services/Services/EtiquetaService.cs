@@ -563,7 +563,7 @@ namespace FWLog.Services.Services
 
             etiquetaZpl.AppendLine($"^FO55,85^FB430,1,0,C,0^A0B,250,60^FR^FD{referenciaProduto}^FS");
 
-            etiquetaZpl.AppendLine($"^FO370,30^A0B,180,120^FD{codigoEndereco}^FS");
+            etiquetaZpl.AppendLine($"^FO370,45^A0B,180,110^FD{codigoEndereco}^FS");
 
             etiquetaZpl.AppendLine($"^FO600,180^BCR,100,N,N^FD{idEnderecoFormatado}^FS");
 
