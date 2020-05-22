@@ -67,5 +67,21 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(exception.Message);
             }
         }
+
+        [Route("api/v1/lote/volume/validar-endereco/{referencia}")]
+        [HttpGet]
+        public IHttpActionResult ConsultarLoteVolume(string referencia)
+        {
+            try
+            {
+                var resposta = _loteService.ConsultarLoteVolume(referencia, IdEmpresa);
+
+                return ApiOk(resposta);
+            }
+            catch (BusinessException exception)
+            {
+                return ApiBadRequest(exception.Message);
+            }
+        }
     }
 }

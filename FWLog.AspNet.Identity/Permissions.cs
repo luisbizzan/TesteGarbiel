@@ -183,12 +183,14 @@ namespace FWLog.AspNet.Identity
             public const string AcessarRFArmazenagem = "RFAcessoArmazenagem";
             public const string AcessarRFSeparacao = "RFAcessoSeparacao";
             public const string AcessarRFExpedicao = "RFAcessoExpedicao";
+            public const string AcessarRFRecebimento = "RFAcessoRecebimento";
 
             public ColetorAcesso() : base(Display.FromString("Coletor - Aplicações"))
             {
                 Register(AcessarRFArmazenagem, Display.FromString("Acessar Armazenagem"));
                 Register(AcessarRFSeparacao, Display.FromString("Acessar Separação"));
                 Register(AcessarRFExpedicao, Display.FromString("Acessar Expedição"));
+                Register(AcessarRFRecebimento, Display.FromString("Acessar Recebimento"));
             }
         }
 
@@ -427,6 +429,19 @@ namespace FWLog.AspNet.Identity
                 Register(EditarTranportadoraEndereco, Display.FromString("Editar Transportadora x Endereço"));
                 Register(VisualizarTranportadoraEndereco, Display.FromString("Visualizar Transportadora x Endereço"));
                 Register(ExcluirTranportadoraEndereco, Display.FromString("Excluir Transportadora x Endereço"));
+            }
+        }
+
+        public class RFRecebimento : PermissionGroupBuildItem
+        {
+            public const string RFRecebimentoInstalarVolumes = "RFRecebimentoInstalarVolumes";
+            public const string RFRecebimentoRetirarVolumes = "RFRecebimentoRetirarVolumes";
+
+
+            public RFRecebimento() : base(Display.FromString("Coletor - Recebimento"))
+            {
+                Register(RFRecebimentoInstalarVolumes, Display.FromString("Instalar Volumes"));
+                Register(RFRecebimentoRetirarVolumes, Display.FromString("Retirar Volumes"));
             }
         }
     }

@@ -209,7 +209,7 @@ namespace FWLog.Services.Services
                         }
                     }
 
-                    int diasPrazoEntrega = 0;
+                    int diasPrazoEntrega = _uow.ProdutoEstoqueRepository.ObterDiasPrazoEntrega(notafiscal.IdEmpresa, notafiscal.NotaFiscalItens.Select(s => s.IdProduto).ToList());
 
                     notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento;
                     notafiscal.PrazoEntregaFornecedor = notafiscal.DataEmissao.AddDays(diasPrazoEntrega);

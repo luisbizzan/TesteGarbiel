@@ -168,6 +168,7 @@
     <Compile Include="Models\LoteMovimentacaoTipo.cs" />
     <Compile Include="Models\LoteProdutoEndereco.cs" />
     <Compile Include="Models\LoteProduto.cs" />
+    <Compile Include="Models\LoteVolume.cs" />
     <Compile Include="Models\MotivoLaudo.cs" />
     <Compile Include="Models\IntegracaoLog.cs" />
     <Compile Include="Models\AtividadeEstoque.cs" />
@@ -337,6 +338,7 @@
     <Compile Include="Repository\GeneralCtx\PerfilUsuarioRepository.cs" />
     <Compile Include="Repository\GeneralCtx\EmpresaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ApplicationSessionRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\LoteVolumeRepository.cs" />
     <Compile Include="Resources\ImagensResource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -33,23 +33,21 @@ namespace FWLog.Services.Services
         /// </summary>
         private ReadOnlyCollection<CelulaEtiqueta> CelulasEtiqueta_102x22 { get; } = new List<CelulaEtiqueta> { new CelulaEtiqueta(0), new CelulaEtiqueta(272), new CelulaEtiqueta(545) }.AsReadOnly();
 
-        public void ImprimirEtiquetaVolumeRecebimento(long idLote, long idImpressora, int? quantidade = null)
+        public void ImprimirEtiquetaVolumeRecebimento(long idLote, long idImpressora, int volume, int quantidade)
         {
             Lote lote = _unitOfWork.LoteRepository.GetById(idLote);
-
-            int _quantidade = quantidade ?? lote.QuantidadeVolume;
-
+            
             var etiquetaImprimir = new StringBuilder();
 
             etiquetaImprimir.Append("^XA");
             // Define quantidade de etiquetas a imprimir
-            etiquetaImprimir.Append($"^PQ{_quantidade}^FS");
+            etiquetaImprimir.Append($"^PQ{quantidade}^FS");
             // Contorno da etiqueta
             etiquetaImprimir.Append("^FO15,20^GB690,520^FS");
             // Linha de Fornecedor
             etiquetaImprimir.Append($"^FO30,30^FB510,1,0,C,0^A0B,200,70^FDFOR.{lote.NotaFiscal.Fornecedor.IdFornecedor}^FS");
             // Linha de Barcode
-            etiquetaImprimir.Append($"^FO210,70^FWB^BY3,8,120^BC^FD{idLote.ToString().PadLeft(10, '0')}^FS");
+            etiquetaImprimir.Append($"^FO210,70^FWB^BY3,8,120^BC^FD{idLote.ToString().PadLeft(7, '0')}{volume.ToString().PadLeft(3, '0')}^FS");
             // Linha da Nota Fiscal
             etiquetaImprimir.Append($"^FO390,30^FB510,1,0,C,0^A0B,200,80^FDNF.{lote.NotaFiscal.Numero}^FS");
             // Linha da Data de recebimento
