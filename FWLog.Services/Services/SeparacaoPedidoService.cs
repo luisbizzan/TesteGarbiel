@@ -1870,6 +1870,43 @@ namespace FWLog.Services.Services
             return listaVolumes;
         }
 
+        private string PreparaStatusParaColetor(PedidoVendaStatusEnum status)
+        {
+            switch (status)
+            {
+                case PedidoVendaStatusEnum.ProcessandoIntegracao:
+                    return "Preparando";
+                case PedidoVendaStatusEnum.PendenteSeparacao:
+                    return "Pendente";
+                case PedidoVendaStatusEnum.EnviadoSeparacao:
+                    return "Enviado";
+                case PedidoVendaStatusEnum.ProcessandoSeparacao:
+                    return "Separando";
+                case PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso:
+                    return "Separado";
+                case PedidoVendaStatusEnum.PendenteCancelamento:
+                    return "Cancelando";
+                case PedidoVendaStatusEnum.Cancelado:
+                    return "Cancelado";
+                case PedidoVendaStatusEnum.InstalandoVolumeTransportadora:
+                    return "Instalando";
+                case PedidoVendaStatusEnum.VolumeInstaladoTransportadora:
+                    return "Instalado";
+                case PedidoVendaStatusEnum.MovendoDOCA:
+                    return "Movendo";
+                case PedidoVendaStatusEnum.MovidoDOCA:
+                    return "Movido";
+                case PedidoVendaStatusEnum.DespachandoNF:
+                    return "Despachando";
+                case PedidoVendaStatusEnum.NFDespachada:
+                    return "Despachado";
+                case PedidoVendaStatusEnum.RomaneioImpresso:
+                    return "Impresso";
+                default:
+                    return null;
+            }
+        }
+
         public DetalhePedidoVendaResposta ConsultarDetalhesPedidoVenda(string referenciaOuNumeroPedido, long idEmpresa)
         {
             PedidoVenda pedidoVenda = null;
@@ -1892,15 +1929,43 @@ namespace FWLog.Services.Services
             {
                 IdPedidoVenda = pedidoVenda.IdPedidoVenda,
                 NroPedidoVenda = pedidoVenda.NroPedidoVenda,
-                NroVolumes = pedidoVenda.NroVolumes,
-                Status = pedidoVenda.PedidoVendaStatus.Descricao,
-                ListaProdutos = pedidoVenda.PedidoVendaVolumes.SelectMany(pvv => pvv.PedidoVendaProdutos.Select(p => new DetalhePedidoVendaItemResposta
+                DataCriacao = pedidoVenda.Pedido.DataCriacao,
+                Status = PreparaStatusParaColetor(pedidoVenda.IdPedidoVendaStatus),
+                PesoTotal = pedidoVenda.PedidoVendaVolumes.Sum(pvv => pvv.PesoVolume),
+                ListaVolumes = pedidoVenda.PedidoVendaVolumes.Select(pvv => new DetalhePedidoVendaVolumeResposta()
                 {
-                    ReferenciaProduto = p.Produto.Referencia,
-                    QuantidadeSeparar = p.QtdSeparar,
-                    QuantidadeSeparada = p.QtdSeparada.GetValueOrDefault()
-                })).ToList()
+                    IdPedidoVendaVolume = pvv.IdPedidoVendaVolume,
+                    Numero = pvv.NroVolume,
+                    Status = PreparaStatusParaColetor(pvv.IdPedidoVendaStatus),
+                    ListaProdutos = pvv.PedidoVendaProdutos.Select(pvp => new DetalhePedidoVendaVolumeProdutoResposta()
+                    {
+                        IdPedidoVendaProduto = pvp.IdPedidoVendaProduto,
+                        IdProduto = pvp.IdProduto,
+                        ReferenciaProduto = pvp.Produto.Referencia,
+                        QuantidadeSeparar = pvp.QtdSeparar,
+                        QuantidadeSeparada = pvp.QtdSeparada.GetValueOrDefault(),
+                        Corredor = 2,
+                        UsuarioConferencia = pvp.IdUsuarioSeparacao,
+                        DataHoraConferencia = pvp.DataHoraFimSeparacao,
+                        Peso = pvp.PesoProduto
+                    }).ToList()
+                }).ToList()
             };
+
+            retorno.ListaVolumes.SelectMany(v => v.ListaProdutos).ToList().ForEach(pvp =>
+            {
+                pvp.Corredor = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(pvp.IdProduto, idEmpresa)?.EnderecoArmazenagem?.Corredor;
+
+                if (!pvp.UsuarioConferencia.NullOrEmpty())
+                {
+                    var perfilUsuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(pvp.UsuarioConferencia);
+
+                    if (perfilUsuario != null)
+                    {
+                        pvp.UsuarioConferencia = $"{perfilUsuario.Usuario.UserName} - {perfilUsuario.Nome}";
+                    }
+                }
+            });
 
             return retorno;
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace FWLog.Services.Model.SeparacaoPedido
 {
@@ -8,19 +9,44 @@ namespace FWLog.Services.Model.SeparacaoPedido
 
         public int NroPedidoVenda { get; set; }
 
+        public DateTime DataCriacao { get; set; }
+
         public string Status { get; set; }
 
-        public int NroVolumes { get; set; }
+        public decimal PesoTotal { get; set; }
 
-        public List<DetalhePedidoVendaItemResposta> ListaProdutos { get; set; }
+        public List<DetalhePedidoVendaVolumeResposta> ListaVolumes { get; set; }
     }
 
-    public class DetalhePedidoVendaItemResposta
+    public class DetalhePedidoVendaVolumeResposta
     {
+        public long IdPedidoVendaVolume { get; set; }
+
+        public int Numero { get; set; }
+
+        public string Status { get; set; }
+
+        public List<DetalhePedidoVendaVolumeProdutoResposta> ListaProdutos { get; set; }
+    }
+
+    public class DetalhePedidoVendaVolumeProdutoResposta
+    {
+        public long IdPedidoVendaProduto { get; set; }
+
+        public long IdProduto { get; set; }
+
         public string ReferenciaProduto { get; set; }
 
         public int QuantidadeSeparar { get; set; }
 
         public int QuantidadeSeparada { get; set; }
+
+        public int? Corredor { get; set; }
+
+        public string UsuarioConferencia { get; set; }
+
+        public DateTime? DataHoraConferencia { get; set; }
+
+        public decimal Peso { get; set; }
     }
 }
