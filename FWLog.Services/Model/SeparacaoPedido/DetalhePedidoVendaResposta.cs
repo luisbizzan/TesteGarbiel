@@ -21,6 +21,6 @@ namespace FWLog.Services.Model.SeparacaoPedido
 
         public int QuantidadeSeparar { get; set; }
 
-        public int? QuantidadeSeparada { get; set; }
+        public int QuantidadeSeparada { get; set; }
     }
 }

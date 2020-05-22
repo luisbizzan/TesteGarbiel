@@ -1898,7 +1898,7 @@ namespace FWLog.Services.Services
                 {
                     ReferenciaProduto = p.Produto.Referencia,
                     QuantidadeSeparar = p.QtdSeparar,
-                    QuantidadeSeparada = p.QtdSeparada
+                    QuantidadeSeparada = p.QtdSeparada.GetValueOrDefault()
                 })).ToList()
             };
 
