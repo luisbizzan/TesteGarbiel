@@ -216,12 +216,12 @@ namespace FWLog.Services.Services
         {
             if (pedidoVenda == null)
             {
-                throw new BusinessException("O pedido informado não foi encontrado.");
+                throw new BusinessException("Pedido não foi encontrado.");
             }
 
             if (pedidoVenda.IdEmpresa != idEmpresa)
             {
-                throw new BusinessException("O pedido informado não pertence a empresa do usuário logado.");
+                throw new BusinessException("Pedido não pertence a empresa do usuário logado.");
             }
         }
 
@@ -1868,6 +1868,41 @@ namespace FWLog.Services.Services
             }
 
             return listaVolumes;
+        }
+
+        public DetalhePedidoVendaResposta ConsultarDetalhesPedidoVenda(string referenciaOuNumeroPedido, long idEmpresa)
+        {
+            PedidoVenda pedidoVenda = null;
+
+            if (int.TryParse(referenciaOuNumeroPedido, out int numeroPedido))
+            {
+                pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
+            }
+
+            if (pedidoVenda == null)
+            {
+                BuscaEValidaDadosPorReferenciaPedido(referenciaOuNumeroPedido, out numeroPedido, out long _idTransportadora, out int _numeroVolume);
+
+                pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
+            }
+
+            ValidarPedidoVenda(pedidoVenda, idEmpresa);
+
+            var retorno = new DetalhePedidoVendaResposta()
+            {
+                IdPedidoVenda = pedidoVenda.IdPedidoVenda,
+                NroPedidoVenda = pedidoVenda.NroPedidoVenda,
+                NroVolumes = pedidoVenda.NroVolumes,
+                Status = pedidoVenda.PedidoVendaStatus.Descricao,
+                ListaProdutos = pedidoVenda.PedidoVendaVolumes.SelectMany(pvv => pvv.PedidoVendaProdutos.Select(p => new DetalhePedidoVendaItemResposta
+                {
+                    ReferenciaProduto = p.Produto.Referencia,
+                    QuantidadeSeparar = p.QtdSeparar,
+                    QuantidadeSeparada = p.QtdSeparada
+                })).ToList()
+            };
+
+            return retorno;
         }
     }
 }

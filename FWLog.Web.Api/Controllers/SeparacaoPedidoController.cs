@@ -172,5 +172,21 @@ namespace FWLog.Web.Api.Controllers
                 return ApiBadRequest(businessException.Message);
             }
         }
+
+        [Route("api/v1/separacao-pedido/consultar-detalhes-pedido-venda/{referenciaOuNumeroPedido}")]
+        [HttpGet]
+        public IHttpActionResult ConsultarDetalhesPedidoVenda(string referenciaOuNumeroPedido)
+        {
+            try
+            {
+                var response = _separacaoPedidoService.ConsultarDetalhesPedidoVenda(referenciaOuNumeroPedido, IdEmpresa);
+
+                return ApiOk(response);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+        }
     }
 }
