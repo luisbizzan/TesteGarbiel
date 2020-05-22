@@ -33,20 +33,23 @@ namespace FWLog.Web.Backoffice.Controllers
 
         #region Enviar Etiqueta para Impressão
         [HttpPost]
-        public JsonResult ProcessarImpressaoEtiqueta(GarantiaEtiquetaViewModel Etiqueta)
+        public JsonResult ProcessarImpressaoEtiqueta(GarantiaEtiquetaViewModel EtiquetaImpressao)
         {
             try
             {
                 #region Validações
-                Func<ViewResult> errorView = () => { return View(Etiqueta); };
+                Func<ViewResult> errorView = () => { return View(EtiquetaImpressao); };
 
                 if (!ModelState.IsValid)
                     throw new Exception(ModelState.Values.Where(x => x.Errors.Count > 0).Aggregate("", (current, s) => current + (s.Errors[0].ErrorMessage + "<br/>")));
+
+                if (EtiquetaImpressao.EtiquetaImpressaoIds.Count.Equals(0))
+                    throw new Exception("Nenhuma etiqueta selecionada para Impressão!");
                 #endregion
 
                 _garantiaEtiquetaService.ProcessarImpressaoEtiqueta(new GarantiaEtiqueta.DocumentoImpressao()
                 {
-                    TipoEtiqueta = Etiqueta.TipoEtiqueta
+                    IdsEtiquetasImprimir = String.Join(",", EtiquetaImpressao.EtiquetaImpressaoIds)
                 });
 
                 return Json(new AjaxGenericResultModel

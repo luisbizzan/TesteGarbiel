@@ -157,7 +157,19 @@ function visualizarSolicitacao() {
                     if (ids.length == 0) {
                         PNotify.error({ text: "Selecione um item." });
                     } else {
-                        //criarAcao(ids.join());
+
+                        /* # Imprimir Etiqueta # */
+                        var registro = new Object();
+                        registro.EtiquetaImpressaoIds = ids;
+
+                        $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { EtiquetaImpressao: registro }, function (s) {
+                            console.log(s);
+                            Mensagem(s.Success, s.Message);
+                        }).fail(function (f) {
+                            console.log(f);
+                        }).done(function (d) {
+                        });
+
                     }
                 }
             },
@@ -209,7 +221,7 @@ function conferirSolicitacao() {
     var id = $(this).data("id");
     let modal = $("#modalVisualizar");
 
-    modal.load(CONTROLLER_PATH+"ConferenciaConferir", {
+    modal.load(CONTROLLER_PATH + "ConferenciaConferir", {
         Id: id,
         Tipo: 'solicitacao'
     }, function () {
