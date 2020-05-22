@@ -10,6 +10,10 @@
                             <th></th>
                             <th>@Html.DisplayNameFor(m => m.Form.Refx)</th>
                             <th>@Html.DisplayNameFor(m => m.Form.Descricao)</th>
+                            @if (Model.Conferencia.Id_Tipo_Conf == 26 || Model.Conferencia.Id_Tipo_Conf == 6)
+                            {
+                                <th>@Html.DisplayNameFor(m => m.Form.Id_Solicitacao)</th>
+                            }
                             <th>@Html.DisplayNameFor(m => m.Form.Quant)</th>
                             <th></th>
                         </tr>
@@ -22,6 +26,10 @@
                                 <td></td>
                                 <td>@item.Refx</td>
                                 <td>@item.Descricao</td>
+                                @if (Model.Conferencia.Id_Tipo_Conf == 26 || Model.Conferencia.Id_Tipo_Conf == 6)
+                                {
+                                    <td>@item.Id_Solicitacao</td>
+                                }
                                 <td>
                                     @item.Quant
                                 </td>

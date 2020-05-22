@@ -37,6 +37,9 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         [Display(Name = "Motivo")]
         public long Id_Motivo { get; set; }
 
+        [Display(Name = "Solicitação")]
+        public long Id_Solicitacao { get; set; }
+
         public string Motivo { get; set; }
 
         [Display(Name = "Referência")]

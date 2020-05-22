@@ -193,12 +193,13 @@ function finalizarConferenciaConfirmar() {
 function itensLaudo() {
     var id = 0;
     let modal = $("#modalLaudo .modal-body");
+    $("#modalLaudo").modal("show");
     $("#modalLaudo .modal-title").html("Itens do Laudo");
 
     modal.load("/Garantia/ConferenciaLaudo", {
         Id_Conferencia: $("#Conferencia_Id").val()
     }, function () {
-        $("#modalLaudo").modal("show");
+        
         $('.btn-row-actions').tooltip();
 
         var botoes = ['selectAll', 'selectNone',
@@ -252,7 +253,8 @@ function itensLaudoDetalhe(refx) {
         Id_Conferencia: $("#Conferencia_Id").val(),
         Refx: refx
     }, function () {
-        $("#modalLaudoDetalhes").modal("show");
+            $("#modalLaudoDetalhes").modal("show");
+            $("#modalLaudo").modal("hide");
         $('#tbLaudoItensDetalhe').DataTable({
             destroy: true,
             serverSide: false,

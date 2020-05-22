@@ -376,11 +376,14 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult ConferenciaLaudo(long Id_Conferencia)
         {
+            var conferencia = _uow.GarantiaRepository.SelecionaConferencia(Id_Conferencia);
+
             var result = _uow.GarantiaRepository.ListarConferenciaSolicitacaoLaudo(Id_Conferencia);
             var lista = Mapper.Map<IEnumerable<GarantiaLaudo>>(result).ToList();
 
             var model = new GarantiaLaudoVM
             {
+                Conferencia = new GarantiaConferenciaItem { Id_Tipo_Conf = conferencia.Id_Tipo_Conf },
                 Lista = lista
             };
 
@@ -616,31 +619,6 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_RemessaCriar", model);
         }
 
-        public ActionResult RemessaVisualizar(long Id)
-        {
-            var itens = _uow.GarantiaRepository.ListarRemessaItem(Id);
-
-            var model = new GarantiaSolicitacaoItemVM
-            {
-                Remessa = Mapper.Map<GarantiaRemessaListVM>(_uow.GarantiaRepository.SelecionaRemessa(Id)),
-                Itens = Mapper.Map<List<GarantiaSolicitacaoItemListVM>>(itens)
-            };
-
-            return PartialView("_RemessaVisualizar", model);
-        }
-
-        public ActionResult RemessaDetalhadoVisualizar(long Id)
-        {
-            var itens = _uow.GarantiaRepository.ListarRemessaItemDetalhado(Id);
-
-            var model = new GarantiaSolicitacaoItemVM
-            {
-                Itens = Mapper.Map<List<GarantiaSolicitacaoItemListVM>>(itens)
-            };
-
-            return PartialView("_RemessaDetalhadoVisualizar", model);
-        }
-
         [HttpPost]
         public ActionResult RemessaCriarGravar(GarantiaRemessa item)
         {
@@ -672,13 +650,24 @@ namespace FWLog.Web.Backoffice.Controllers
                     if (retorno.Id != 0)
                     {
                         //CRIAR A CONFERENCIA DE REMESSA
-                        _uow.GarantiaRepository.CriarConferenciaRemessa(new GarConferencia
+                        var Id_Conferencia = _uow.GarantiaRepository.CriarConferenciaRemessa(new GarConferencia
                         {
                             Id_Remessa = retorno.Id,
                             Id_Empresa = IdEmpresa,
                             Id_Usr = IdUsuario,
                             Id_Tipo_Conf = 26 //26 Envio Fornecedor ou 6 Retorno Fornecedor (perguntar)
                         });
+
+                        if (Id_Conferencia != 0)
+                        {
+                            //ADICIONAR ITENS DA CONFERENCIA DE REMESSA
+                            _uow.GarantiaRepository.AdicionarConferenciaRemessaItem(new GarConferencia
+                            {
+                                Id_Empresa = IdEmpresa,
+                                Id_Usr = IdUsuario,
+                                Id = Id_Conferencia
+                            });
+                        }
                     }
 
                     if (retorno.Sucesso)
@@ -709,6 +698,62 @@ namespace FWLog.Web.Backoffice.Controllers
                     throw;
                 }
             }
+        }
+
+        [HttpPost]
+        public ActionResult RemessaAtualizarItemGravar(long Id_Conferencia)
+        {
+            try
+            {
+                //ADICIONA ITENS DA CONFERENCIA DE REMESSA
+                _uow.GarantiaRepository.AdicionarConferenciaRemessaItem(new GarConferencia
+                {
+                    Id_Empresa = IdEmpresa,
+                    Id_Usr = IdUsuario,
+                    Id = Id_Conferencia
+                });
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                });
+            }
+            catch (Exception e)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = e.Message
+                });
+
+                throw;
+            }
+        }
+
+        public ActionResult RemessaVisualizar(long Id)
+        {
+            var itens = _uow.GarantiaRepository.ListarRemessaItem(Id);
+
+            var model = new GarantiaSolicitacaoItemVM
+            {
+                Remessa = Mapper.Map<GarantiaRemessaListVM>(_uow.GarantiaRepository.SelecionaRemessa(Id)),
+                Itens = Mapper.Map<List<GarantiaSolicitacaoItemListVM>>(itens)
+            };
+
+            return PartialView("_RemessaVisualizar", model);
+        }
+
+        public ActionResult RemessaDetalhadoVisualizar(long Id)
+        {
+            var itens = _uow.GarantiaRepository.ListarRemessaItemDetalhado(Id);
+
+            var model = new GarantiaSolicitacaoItemVM
+            {
+                Itens = Mapper.Map<List<GarantiaSolicitacaoItemListVM>>(itens)
+            };
+
+            return PartialView("_RemessaDetalhadoVisualizar", model);
         }
     }
 }

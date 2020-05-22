@@ -34,15 +34,19 @@
 <colAssociation fkAssociation="F0461A5D-BCB8-51AA-56AD-FAAC1A98138A" referredColumn="2255841F-88AE-F865-E600-A33039E46EAF"/>
 </associations>
 </Column>
-<Column name="ID_SOLICITACAO" id="8620C129-FE7E-F420-FE11-E8B121AA67F1">
+<Column name="ID_SOLICITACAO" id="DC33B02B-3246-EA0C-01EB-85AC44C2C404">
 <createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-15 14:23:14 UTC</createdTime>
+<createdTime>2020-05-21 15:15:39 UTC</createdTime>
 <ownerDesignName>modeloFwLog</ownerDesignName>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT026</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
+<previousColumn>false</previousColumn>
 <autoIncrementCycle>false</autoIncrementCycle>
+<associations>
+<colAssociation fkAssociation="B4814483-A4D1-61EE-D9EA-156C982D4ABC" referredColumn="059865EA-58AE-F1DE-32E6-F7346EF60094"/>
+</associations>
 </Column>
 <Column name="QUANT" id="1E029031-EC51-21FF-11B7-28BD4D7A51EF">
 <createdBy>henrique.pereira</createdBy>
@@ -128,6 +132,16 @@
 <isSurrogateKey>false</isSurrogateKey>
 <indexColumnUsage>
 <colUsage columnID="9C4CEB39-942A-167D-66FF-BF8001F7638D"/>
+</indexColumnUsage>
+</ind_PK_UK>
+<ind_PK_UK id="EF6C1F28-E3B3-12FD-A458-EAAF53C80C1C" name="GAR_CONFERENCIA_ITEM_FK2v2">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-21 15:15:39 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<indexState>Foreign Key</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="DC33B02B-3246-EA0C-01EB-85AC44C2C404"/>
 </indexColumnUsage>
 </ind_PK_UK>
 </indexes>

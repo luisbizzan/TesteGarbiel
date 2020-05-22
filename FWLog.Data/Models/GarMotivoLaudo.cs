@@ -15,7 +15,9 @@ namespace FWLog.Data.Models
         public long Id { get; set; }
         public long Id_Item { get; set; }
         public long Id_Motivo { get; set; }
+        public long Id_Solicitacao { get; set; }
         public string Motivo { get; set; }
+        public string Descricao { get; set; }
         public long Id_Item_Nf { get; set; }
         public string Refx { get; set; }
         public long Quant { get; set; }
