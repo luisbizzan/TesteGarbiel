@@ -165,6 +165,7 @@ function visualizarSolicitacao() {
                         $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { EtiquetaImpressao: registro }, function (s) {
                             console.log(s);
                             Mensagem(s.Success, s.Message);
+                            location.reload();
                         }).fail(function (f) {
                             console.log(f);
                         }).done(function (d) {
