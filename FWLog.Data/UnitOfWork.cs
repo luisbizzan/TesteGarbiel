@@ -89,11 +89,18 @@ namespace FWLog.Data
         private RomaneioNotaFiscalRepository _romaneioNotaFiscalRepository;
         private DiasDaSemanaRepository _diasDaSemanaRepository;
         private CentenaVolumeRepository _centenaVolumeRepository;
+        private LoteVolumeRepository _loteVolumeRepository;
 
         public UnitOfWork()
         {
             _context = new Entities();
         }
+
+        public LoteVolumeRepository LoteVolumeRepository
+        {
+            get => _loteVolumeRepository ?? (_loteVolumeRepository = new LoteVolumeRepository(_context));
+        }
+
         public PedidoVendaVolumeRepository PedidoVendaVolumeRepository
         {
             get => _pedidoVendaVolumeRepository ?? (_pedidoVendaVolumeRepository = new PedidoVendaVolumeRepository(_context));

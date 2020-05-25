@@ -1,0 +1,92 @@
+﻿@model FWLog.Web.Backoffice.Models.EtiquetaCtx.LocacaoEtiquetaViewModel
+
+@{
+    ViewBag.Title = "Impressão em Lote";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript()
+}
+
+<style>
+    .pointer {
+        cursor: pointer;
+    }
+
+    .tipo > div {
+        margin-bottom: 10px;
+    }
+</style>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "locacaoEtiqueta" }))
+{
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>Impressão em Lote</h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="row">
+                <div class="form-group col-sm-2 col-xs-6">
+                    @Html.RadioButtonFor(model => model.TipoEtiqueta, 11, new { @checked = true, id = "11" })
+                    @Html.Label("Picking", new { @class = "pointer", @for = "11" })
+                </div>
+                <div class="form-group col-sm-2 col-xs-6">
+                    @Html.RadioButtonFor(model => model.TipoEtiqueta, 6, new { id = "6" })
+                    @Html.Label("Endereço", new { @class = "pointer", @for = "6" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.RadioButtonFor(model => model.TamanhoEtiqueta, 1, new { @checked = true, id = "1" })
+                    @Html.Label("Normal (90x70)", new { @class = "pointer", @for = "1" })
+                </div>
+                <div class="form-group col-sm-2 col-xs-12">
+                    @Html.RadioButtonFor(model => model.TamanhoEtiqueta, 2, new { id = "2" })
+                    @Html.Label("Filete (104x24)", new { @class = "pointer", @for = "2" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-3 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.IdPontoArmazenagem, new { @class = "control-label" })
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.DescricaoPontoArmazenagem, null, new { @class = "form-control", @readonly = "true", data_field = "DescricaoPontoArmazenagem" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.IdPontoArmazenagem, new { data_field = "IdPontoArmazenagem" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-3 col-lg-3">
+                    @Html.LabelFor(m => m.Corredor, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Corredor, new { @class = "form-control onlyNumber" })
+                    @Html.ValidationMessageFor(m => m.Corredor)
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-3 col-lg-3">
+                    @Html.LabelFor(m => m.VerticalInicio, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.VerticalInicio, new { @class = "form-control onlyNumber" })
+                    @Html.ValidationMessageFor(m => m.VerticalInicio)
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-3 col-lg-3">
+                    @Html.LabelFor(m => m.VerticalFim, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.VerticalFim, new { @class = "form-control onlyNumber" })
+                    @Html.ValidationMessageFor(m => m.VerticalFim)
+                </div>
+            </div>
+            <div class="ln_solid"></div>
+            <div class="row col-xs-12 form-buttons">
+                <button id="submit" class="btn btn-primary">Imprimir</button>
+            </div>
+        </div>
+    </div>
+}
+<div class="modal" id="modalImpressoras"></div>
+<div class="modal" id="modalPesquisaPontoArmazenagem"></div>

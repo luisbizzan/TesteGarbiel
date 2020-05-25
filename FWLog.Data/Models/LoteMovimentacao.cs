@@ -16,8 +16,7 @@ namespace FWLog.Data.Models
         [Required]
         public long IdLote { get; set; }
         [Index]
-        [Required]
-        public long IdProduto { get; set; }
+        public long? IdProduto { get; set; }
         [Index]
         [Required]
         public long IdEnderecoArmazenagem { get; set; }
@@ -29,6 +28,7 @@ namespace FWLog.Data.Models
         public int Quantidade { get; set; }
         [Required]
         public DateTime DataHora { get; set; }
+        public int? NroVolume { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }

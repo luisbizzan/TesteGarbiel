@@ -23,6 +23,7 @@
             new MenuItem { Text = "Pontos de Armazenagem", Url = Url.Action("Index", "PontoArmazenagem"), RequirePermission = Permissions.PontoArmazenagem.Listar },
             new MenuItem { Text = "Endereços de Armazenagem", Url = Url.Action("Index", "EnderecoArmazenagem"), RequirePermission = Permissions.EnderecoArmazenagem.Listar },
             new MenuItem { Text = "Lista de Produtos", Url = Url.Action("Index", "Produto"), RequirePermission = Permissions.Produto.Listar },
+            new MenuItem { Text = "Etiquetas de Locação", Url = Url.Action("Locacao", "Etiqueta"), RequirePermission = Permissions.Armazenagem.ImprimirEtiquetaLocacao },
             new MenuItem { Text = "Relatório - Atividades de Estoque", Url = Url.Action("RelatorioAtividadeEstoque", "Armazenagem"), RequirePermission = Permissions.RelatoriosArmazenagem.RelatorioAtividadeEstoque },
             new MenuItem { Text = "Relatório - Rastreabilidade de Lotes", Url = Url.Action("RelatorioRastreabilidadeLote", "Armazenagem"), RequirePermission = Permissions.RelatoriosArmazenagem.RelatorioRastreabilidadeLote },
             new MenuItem { Text = "Relatório - Movimentações de Lotes", Url = Url.Action("RelatorioLoteMovimentacao", "Armazenagem"), RequirePermission = Permissions.RelatoriosArmazenagem.RelatorioLoteMovimentacao },

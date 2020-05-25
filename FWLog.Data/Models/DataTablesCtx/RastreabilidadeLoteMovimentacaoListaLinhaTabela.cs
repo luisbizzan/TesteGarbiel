@@ -4,7 +4,7 @@ namespace FWLog.Data.Models.DataTablesCtx
 {
     public class RastreabilidadeLoteMovimentacaoListaLinhaTabela
     {
-        public long IdProduto { get; set; }
+        public long? IdProduto { get; set; }
 
         public long IdLote { get; set; }
 

@@ -19,7 +19,7 @@ namespace FWLog.Web.Backoffice.Models.ArmazenagemCtx
 
     public class RelatorioRastreabilidadeLoteMovimentacaoListItemViewModel
     {
-        public long IdProduto { get; set; }
+        public long? IdProduto { get; set; }
 
         public long IdLote { get; set; }
 
