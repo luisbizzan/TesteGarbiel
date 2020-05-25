@@ -352,7 +352,7 @@
       <Name>FWLog.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\FWLog.Services\FWLog.Services.csproj">
-      <Project>{3BC140DE-F1D9-42DA-B04A-5E2F49C9C039}</Project>
+      <Project>{3bc140de-f1d9-42da-b04a-5e2f49c9c039}</Project>
       <Name>FWLog.Services</Name>
     </ProjectReference>
   </ItemGroup>

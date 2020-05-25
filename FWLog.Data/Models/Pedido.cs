@@ -55,6 +55,14 @@ namespace FWLog.Data.Models
 
         public string ChaveAcessoNotaFiscal { get; set; }
 
+        public int? PagamentoCodigoIntegracao { get; set; }
+
+        public string PagamentoDescricaoIntegracao { get; set; }
+
+        public bool PagamentoIsDebitoIntegracao { get; set; }
+
+        public bool PagamentoIsCreditoIntegracao { get; set; }
+
         public virtual ICollection<PedidoItem> PedidoItens { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]

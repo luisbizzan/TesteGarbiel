@@ -216,12 +216,12 @@ namespace FWLog.Services.Services
         {
             if (pedidoVenda == null)
             {
-                throw new BusinessException("O pedido informado não foi encontrado.");
+                throw new BusinessException("Pedido não foi encontrado.");
             }
 
             if (pedidoVenda.IdEmpresa != idEmpresa)
             {
-                throw new BusinessException("O pedido informado não pertence a empresa do usuário logado.");
+                throw new BusinessException("Pedido não pertence a empresa do usuário logado.");
             }
         }
 
@@ -977,13 +977,16 @@ namespace FWLog.Services.Services
                 ClienteCodigo = pedido.Cliente.IdCliente.ToString(),
                 RepresentanteCodigo = pedido.Representante.IdRepresentante.ToString(),
                 PedidoCodigo = pedido.NroPedido.ToString(),
+                PedidoIsRequisicao = pedido.IsRequisicao,
+                PedidoPagamentoCodigoIntegracao = pedido.PagamentoCodigoIntegracao,
+                PedidoPagamentoIsDebito = pedido.PagamentoIsDebitoIntegracao,
+                PedidoPagamentoIsCredito = pedido.PagamentoIsCreditoIntegracao,
                 Centena = pedidoVendaVolume.NroCentena.ToString(),
                 TransportadoraSigla = pedido.Transportadora.CodigoTransportadora,
                 TransportadoraCodigo = pedido.Transportadora.IdTransportadora.ToString(),
                 TransportadoraNome = pedido.Transportadora.RazaoSocial,
                 CorredoresInicio = grupoCorredorArmazenagem.CorredorInicial.ToString(),
                 CorredoresFim = grupoCorredorArmazenagem.CorredorFinal.ToString(),
-                CorredorInicioSeparacao = corredorInicioSeparacao.ToString(),
                 CaixaTextoEtiqueta = volume.Caixa.TextoEtiqueta,
                 Volume = numeroVolume.ToString(),
                 IdImpressora = grupoCorredorArmazenagem.IdImpressora
@@ -1865,6 +1868,106 @@ namespace FWLog.Services.Services
             }
 
             return listaVolumes;
+        }
+
+        private string PreparaStatusParaColetor(PedidoVendaStatusEnum status)
+        {
+            switch (status)
+            {
+                case PedidoVendaStatusEnum.ProcessandoIntegracao:
+                    return "Preparando";
+                case PedidoVendaStatusEnum.PendenteSeparacao:
+                    return "Pendente";
+                case PedidoVendaStatusEnum.EnviadoSeparacao:
+                    return "Enviado";
+                case PedidoVendaStatusEnum.ProcessandoSeparacao:
+                    return "Separando";
+                case PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso:
+                    return "Separado";
+                case PedidoVendaStatusEnum.PendenteCancelamento:
+                    return "Cancelando";
+                case PedidoVendaStatusEnum.Cancelado:
+                    return "Cancelado";
+                case PedidoVendaStatusEnum.InstalandoVolumeTransportadora:
+                    return "Instalando";
+                case PedidoVendaStatusEnum.VolumeInstaladoTransportadora:
+                    return "Instalado";
+                case PedidoVendaStatusEnum.MovendoDOCA:
+                    return "Movendo";
+                case PedidoVendaStatusEnum.MovidoDOCA:
+                    return "Movido";
+                case PedidoVendaStatusEnum.DespachandoNF:
+                    return "Despachando";
+                case PedidoVendaStatusEnum.NFDespachada:
+                    return "Despachado";
+                case PedidoVendaStatusEnum.RomaneioImpresso:
+                    return "Impresso";
+                default:
+                    return null;
+            }
+        }
+
+        public DetalhePedidoVendaResposta ConsultarDetalhesPedidoVenda(string referenciaOuNumeroPedido, long idEmpresa)
+        {
+            PedidoVenda pedidoVenda = null;
+
+            if (int.TryParse(referenciaOuNumeroPedido, out int numeroPedido))
+            {
+                pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
+            }
+
+            if (pedidoVenda == null)
+            {
+                BuscaEValidaDadosPorReferenciaPedido(referenciaOuNumeroPedido, out numeroPedido, out long _idTransportadora, out int _numeroVolume);
+
+                pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
+            }
+
+            ValidarPedidoVenda(pedidoVenda, idEmpresa);
+
+            var retorno = new DetalhePedidoVendaResposta()
+            {
+                IdPedidoVenda = pedidoVenda.IdPedidoVenda,
+                NroPedidoVenda = pedidoVenda.NroPedidoVenda,
+                DataCriacao = pedidoVenda.Pedido.DataCriacao,
+                Status = PreparaStatusParaColetor(pedidoVenda.IdPedidoVendaStatus),
+                PesoTotal = pedidoVenda.PedidoVendaVolumes.Sum(pvv => pvv.PesoVolume),
+                ListaVolumes = pedidoVenda.PedidoVendaVolumes.Select(pvv => new DetalhePedidoVendaVolumeResposta()
+                {
+                    IdPedidoVendaVolume = pvv.IdPedidoVendaVolume,
+                    Numero = pvv.NroVolume,
+                    Status = PreparaStatusParaColetor(pvv.IdPedidoVendaStatus),
+                    ListaProdutos = pvv.PedidoVendaProdutos.Select(pvp => new DetalhePedidoVendaVolumeProdutoResposta()
+                    {
+                        IdPedidoVendaProduto = pvp.IdPedidoVendaProduto,
+                        IdProduto = pvp.IdProduto,
+                        ReferenciaProduto = pvp.Produto.Referencia,
+                        QuantidadeSeparar = pvp.QtdSeparar,
+                        QuantidadeSeparada = pvp.QtdSeparada.GetValueOrDefault(),
+                        Corredor = 2,
+                        UsuarioConferencia = pvp.IdUsuarioSeparacao,
+                        DataHoraConferencia = pvp.DataHoraFimSeparacao,
+                        Peso = pvp.PesoProduto
+                    }).ToList()
+                }).ToList()
+            };
+
+            retorno.ListaVolumes.SelectMany(v => v.ListaProdutos).ToList().ForEach(pvp =>
+            {
+                pvp.Corredor = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(pvp.IdProduto, idEmpresa)?.EnderecoArmazenagem?.Corredor;
+
+                if (!pvp.UsuarioConferencia.NullOrEmpty())
+                {
+                    var perfilUsuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(pvp.UsuarioConferencia);
+
+                    if (perfilUsuario != null)
+                    {
+                        pvp.UsuarioConferencia = $"{perfilUsuario.Usuario.UserName} - {perfilUsuario.Nome}";
+                    }
+                }
+            });
+
+            return retorno;
         }
     }
 }
