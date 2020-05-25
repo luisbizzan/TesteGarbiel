@@ -17,6 +17,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace FWLog.Data.Repository.GeneralCtx
 {
@@ -44,19 +45,15 @@ namespace FWLog.Data.Repository.GeneralCtx
                 {
                     if (ping.Send(Impressao.EnderecoIP).Status == IPStatus.Success)
                     {
-                        using (var comandoImpressao = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true })
-                        {
-                            Byte[] bytesConteudoImpressao = Encoding.ASCII.GetBytes(Impressao.ConteudoImpressao.ToString());
-                            IPAddress IP = IPAddress.Parse(Impressao.EnderecoIP);
-                            IPEndPoint IPComPorta = new IPEndPoint(IP, Impressao.PortaConexao.Equals(0) ? 9100 : Impressao.PortaConexao);
-                            comandoImpressao.Connect(IPComPorta);
-                            if (comandoImpressao.Connected)
-                                if (comandoImpressao.Send(bytesConteudoImpressao).Equals(0))
-                                    throw new Exception("Etiqueta não foi processada!");
-                            comandoImpressao.Shutdown(SocketShutdown.Both);
-                            comandoImpressao.Disconnect(false);
-                            comandoImpressao.Close();
-                        }
+                        Socket comandoImpressao = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true };
+                        Byte[] bytesConteudoImpressao = Encoding.ASCII.GetBytes(Impressao.ConteudoImpressao.ToString());
+                        IPAddress IP = IPAddress.Parse(Impressao.EnderecoIP);
+                        IPEndPoint IPComPorta = new IPEndPoint(IP, Impressao.PortaConexao.Equals(0) ? 9100 : Impressao.PortaConexao);
+                        comandoImpressao.Connect(IPComPorta);
+                        if (comandoImpressao.Connected)
+                            comandoImpressao.Send(bytesConteudoImpressao);
+                        comandoImpressao.Shutdown(SocketShutdown.Both);
+                        comandoImpressao.Close();
                     }
                     else
                         throw new Exception(String.Format("Impressora {0} Offline!", Impressao.EnderecoIP));
@@ -189,6 +186,5 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
         }
         #endregion
-
     }
 }
