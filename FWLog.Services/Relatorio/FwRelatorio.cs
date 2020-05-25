@@ -115,6 +115,14 @@ namespace FWLog.Services.Relatorio
         {
             if (!_dataSource.DadosTotalizacaoFinal.NullOrEmpty())
             {
+                Paragraph separador = _document.Sections[0].AddParagraph();
+
+                separador.Format.Borders.Bottom = new Border
+                {
+                    Width = "1pt",
+                    Color = Colors.DarkGreen
+                };
+
                 var tabela = _document.Sections[0].AddTable();
                 tabela.Format.Font = new Font(fonte, new Unit(12));
 
@@ -145,6 +153,14 @@ namespace FWLog.Services.Relatorio
 
             if (!_dataSource.DadosTextoFinal.NullOrEmpty())
             {
+                Paragraph separador = _document.Sections[0].AddParagraph();
+
+                separador.Format.Borders.Bottom = new Border
+                {
+                    Width = "1pt",
+                    Color = Colors.DarkGreen
+                };
+
                 var tabela = _document.Sections[0].AddTable();
                 tabela.Format.Font = new Font(fonte, new Unit(12));
 

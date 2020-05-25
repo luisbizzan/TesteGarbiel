@@ -1703,7 +1703,7 @@ namespace FWLog.Services.Services
                 Orientacao = Orientation.Portrait,
                 Filtros = new FwRelatorioDadosFiltro()
                 {
-                    Transportadora = $"{transportadora.IdTransportadora} - {transportadora.NomeFantasia}",
+                    Transportadora = $"{(transportadora.IdTransportadora).ToString().PadLeft(3,'0')} - {transportadora.NomeFantasia}",
                     NumeroRomaneio = dadosRelatorio.Romaneio.NroRomaneio,
                     DataHoraEmissaoRomaneio = dadosRelatorio.DataHoraEmissaoRomaneio
                 },
