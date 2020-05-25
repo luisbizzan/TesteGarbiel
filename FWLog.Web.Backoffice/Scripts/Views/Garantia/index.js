@@ -165,7 +165,9 @@ function visualizarSolicitacao() {
                         $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { EtiquetaImpressao: registro }, function (s) {
                             console.log(s);
                             Mensagem(s.Success, s.Message);
-                            location.reload();
+                            if (s.Success) {
+                                location.reload();
+                            }
                         }).fail(function (f) {
                             console.log(f);
                         }).done(function (d) {
@@ -278,4 +280,14 @@ function estornarSolicitacao() {
             }
         }
     });
+}
+
+/* [GENÉRICO] mostrar mensagens */
+function Mensagem(sucesso, mensagem) {
+    if (sucesso) {
+        PNotify.success({ text: mensagem, delay: 1000 });
+    }
+    else {
+        PNotify.error({ text: mensagem, delay: 5000 });
+    }
 }

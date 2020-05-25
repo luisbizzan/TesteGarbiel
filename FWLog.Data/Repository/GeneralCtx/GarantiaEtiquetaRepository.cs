@@ -44,14 +44,18 @@ namespace FWLog.Data.Repository.GeneralCtx
                 {
                     if (ping.Send(Impressao.EnderecoIP).Status == IPStatus.Success)
                     {
-                        using (var comandoImpressao = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true, SendTimeout = 5000 })
+                        using (var comandoImpressao = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true })
                         {
                             Byte[] bytesConteudoImpressao = Encoding.ASCII.GetBytes(Impressao.ConteudoImpressao.ToString());
                             IPAddress IP = IPAddress.Parse(Impressao.EnderecoIP);
                             IPEndPoint IPComPorta = new IPEndPoint(IP, Impressao.PortaConexao.Equals(0) ? 9100 : Impressao.PortaConexao);
                             comandoImpressao.Connect(IPComPorta);
-                            if (comandoImpressao.Send(bytesConteudoImpressao).Equals(0))
-                                throw new Exception("Etiqueta não foi processada!");
+                            if (comandoImpressao.Connected)
+                                if (comandoImpressao.Send(bytesConteudoImpressao).Equals(0))
+                                    throw new Exception("Etiqueta não foi processada!");
+                            comandoImpressao.Shutdown(SocketShutdown.Both);
+                            comandoImpressao.Disconnect(false);
+                            comandoImpressao.Close();
                         }
                     }
                     else
@@ -87,16 +91,17 @@ namespace FWLog.Data.Repository.GeneralCtx
                 #region Processamento
                 if (!dadosImpressao.ListaImprimir.Count.Equals(0))
                 {
+                    int coluna = 1;
+                    int i = 1;
+                    dadosImpressao.ConteudoImpressao = new StringBuilder();
                     dadosImpressao.ListaImprimir.ForEach(delegate (GarantiaEtiqueta.ItemEtiqueta item)
                     {
-                        int coluna = 1;
-                        for (var i = 0; i <= item.QtdeEmbalagem; i++)
+                        for (int vai = 1; vai <= item.QtdeEmbalagem; vai++)
                         {
                             #region Coluna 1
                             if (coluna.Equals(1))
                             {
                                 #region Cabeçalho Etiqueta
-                                dadosImpressao.ConteudoImpressao = new StringBuilder();
                                 dadosImpressao.ConteudoImpressao.AppendLine("^XA");
                                 dadosImpressao.ConteudoImpressao.AppendLine("^LH32,0");
                                 dadosImpressao.ConteudoImpressao.AppendLine("^PRA^FS");
@@ -156,76 +161,23 @@ namespace FWLog.Data.Repository.GeneralCtx
                             }
                             #endregion
 
-                            if (i == item.QtdeEmbalagem || coluna == 3)
+                            if (i == dadosImpressao.ListaImprimir.Sum(c => c.QtdeEmbalagem) || coluna == 3)
                             {
                                 #region Rodapé Etiqueta
                                 dadosImpressao.ConteudoImpressao.AppendLine("^XZ");
                                 dadosImpressao.ConteudoImpressao.AppendLine(" ");
-                                #endregion
-
-                                #region Enviar Impressão
-                                ImprimirEtiqueta(dadosImpressao);
-                                #endregion
+                                #endregion                              
 
                                 coluna = 0;
                             }
-                            
 
+                            i++;
                             coluna++;
                         }
                     });
-
-                    #region Inicio
-                    //dadosImpressao.ConteudoImpressao = new StringBuilder();
-                    //dadosImpressao.ConteudoImpressao.AppendLine("^XA");
-                    //dadosImpressao.ConteudoImpressao.AppendLine("^LH32,0");
-                    //dadosImpressao.ConteudoImpressao.AppendLine("^PRA^FS");
+                    #region Enviar Impressão
+                    ImprimirEtiqueta(dadosImpressao);
                     #endregion
-
-                    #region Devolução
-                    //if (dadosImpressao.TipoEtiqueta == GarantiaEtiqueta.ETIQUETA.Devolução)
-                    //{
-                    //    //Codigo Barras 1
-                    //    dadosImpressao.ConteudoImpressao.AppendLine("^FO0,36^GB146,26,30^FS");
-                    //    //Codigo Barras 2
-                    //    dadosImpressao.ConteudoImpressao.AppendLine("^FO272,36^GB146,26,30^FS");
-                    //    //Codigo Barras 3
-                    //    dadosImpressao.ConteudoImpressao.AppendLine("^FO544,36^GB146,26,30^FS");
-
-                    //    //Coluna 1
-                    //    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaDevolucao.PrimeiraColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
-                    //    //Coluna 2
-                    //    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaDevolucao.SegundaColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
-                    //    //Coluna 3
-                    //    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaDevolucao.TerceiraColuna, "ZEN501", "01.A.30.01", "PEDAL DA PARAFUSETA", "12545152452582", "12"));
-                    //}
-                    #endregion
-
-                    #region Garantia
-                    //if (dadosImpressao.TipoEtiqueta == GarantiaEtiqueta.ETIQUETA.Garantia)
-                    //{
-                    //    //Codigo Barras 1
-                    //    dadosImpressao.ConteudoImpressao.AppendLine("^FO000,45^GB146,26,30^FS");
-                    //    //Codigo Barras 2
-                    //    dadosImpressao.ConteudoImpressao.AppendLine("^FO272,45^GB146,26,30^FS");
-                    //    //Codigo Barras 3
-                    //    dadosImpressao.ConteudoImpressao.AppendLine("^FO544,45^GB146,26,30^FS");
-
-                    //    //Coluna 1
-                    //    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.PrimeiraColuna, "ZEN501", "100", "PEDAL DA PARAFUSETA", "12545152452582", "10", "FW"));
-                    //    //Coluna 2
-                    //    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.SegundaColuna, "ZEN501", "101", "MIOLO DA PARAFUSETA", "12545152452582", "11", "FW  "));
-                    //    //Coluna 3
-                    //    dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.TerceiraColuna, "ZEN501", "102", "CENTRO DA PARAFUSETA", "12545152452582", "12", "FW"));
-                    //}
-                    #endregion
-
-                    #region Final
-                    //dadosImpressao.ConteudoImpressao.AppendLine("^XZ");
-                    //dadosImpressao.ConteudoImpressao.AppendLine(" ");
-                    #endregion
-
-                    //ImprimirEtiqueta(dadosImpressao);
                 }
                 else
                     throw new Exception("Nenhuma Etiqueta selecionada para Impressão!");
