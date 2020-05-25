@@ -458,10 +458,12 @@ namespace FWLog.AspNet.Identity
         public class RelatoriosExpedicao : PermissionGroupBuildItem
         {
             public const string RelatorioVolumesInstaladosTransportadora = "RelatorioVolumesInstaladosTransportadora";
+            public const string MovimentacaoVolumes = "MovimentacaoVolumes";
 
             public RelatoriosExpedicao() : base(Display.FromString("Expedição - Relatórios"))
             {
                 Register(RelatorioVolumesInstaladosTransportadora, Display.FromString("Relatório Volumes Instalados X Transportadora"));
+                Register(MovimentacaoVolumes, Display.FromString("Movimentação de Volumes"));
             }
         }
     }
