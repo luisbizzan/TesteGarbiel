@@ -9,6 +9,7 @@ using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace FWLog.Services.Services
@@ -1615,26 +1616,6 @@ namespace FWLog.Services.Services
 
             var listaNFRomaneios = dadosRelatorio.Romaneio.RomaneioNotaFiscal.ToList();
 
-            foreach (var romaneioNotaFiscal in listaNFRomaneios)
-            {
-                var cliente = romaneioNotaFiscal.Cliente;
-                var pedido = romaneioNotaFiscal.PedidoVenda.Pedido;
-
-                var separadorLinha = Environment.NewLine;
-
-                var itemRelatorio = new DadosRelatorioRomaneio
-                {
-                    NumeroNotaFiscal = pedido.CodigoIntegracaoNotaFiscal.ToString(),
-                    Cliente = $"{cliente.RazaoSocial}{separadorLinha}{cliente.CodigoIntegracao} - {pedido.CodigoIntegracao}",
-                    Endereco = $"{cliente.Endereco}{separadorLinha}{cliente.Cidade}",
-                    Telefone = $"{cliente.Telefone}",
-                    QauntidadeVolumes = $"{romaneioNotaFiscal.NroVolumes}",
-                    TipoFrete = $"{pedido.CodigoIntegracaoTipoFrete}"
-                };
-
-                listaDadosRelatorio.Add(itemRelatorio);
-            };
-
             var totalizadores = new List<RelatorioTotalizadorFinal>();
 
             totalizadores.Add(new RelatorioTotalizadorFinal()
@@ -1642,6 +1623,59 @@ namespace FWLog.Services.Services
                 Texto = "Total de Volumes:",
                 Valor = listaNFRomaneios.Sum(nfr => nfr.NroVolumes)
             });
+
+            if (dadosRelatorio.Romaneio.Empresa.Sigla == "K1" || dadosRelatorio.Romaneio.Empresa.Sigla == "K3")
+            {
+                foreach (var romaneioNotaFiscal in listaNFRomaneios)
+                {
+                    var cliente = romaneioNotaFiscal.Cliente;
+                    var pedido = romaneioNotaFiscal.PedidoVenda.Pedido;
+                    var peso = romaneioNotaFiscal.TotalPesoBrutoVolumes;
+
+                    var separadorLinha = Environment.NewLine;
+
+                    var itemRelatorio = new DadosRelatorioRomaneioCampinasBateria
+                    {
+                        NumeroNotaFiscal = pedido.CodigoIntegracaoNotaFiscal.ToString(),
+                        Cliente = $"{cliente.RazaoSocial}{separadorLinha}{cliente.CodigoIntegracao} - {pedido.CodigoIntegracao}",
+                        Endereco = $"{cliente.Endereco}{separadorLinha}{cliente.Cidade}",
+                        Telefone = $"{cliente.Telefone}",
+                        QuantidadeVolumes = $"{romaneioNotaFiscal.NroVolumes}",
+                        Peso = peso.ToString("n2"),
+                        TipoFrete = $"{pedido.CodigoIntegracaoTipoFrete}"
+                    };
+
+                    listaDadosRelatorio.Add(itemRelatorio);
+                };
+
+                totalizadores.Add(new RelatorioTotalizadorFinal()
+                {
+                    Texto = "Peso Total:",
+                    Valor = listaNFRomaneios.Sum(nrf => decimal.ToInt32(Math.Round(nrf.TotalPesoLiquidoVolumes)))
+                });
+            }
+            else
+            {
+                foreach (var romaneioNotaFiscal in listaNFRomaneios)
+                {
+                    var cliente = romaneioNotaFiscal.Cliente;
+                    var pedido = romaneioNotaFiscal.PedidoVenda.Pedido;
+                    
+                    var separadorLinha = Environment.NewLine;
+
+                    var itemRelatorio = new DadosRelatorioRomaneio
+                    {
+                        NumeroNotaFiscal = pedido.CodigoIntegracaoNotaFiscal.ToString(),
+                        Cliente = $"{cliente.RazaoSocial}{separadorLinha}{cliente.CodigoIntegracao} - {pedido.CodigoIntegracao}",
+                        Endereco = $"{cliente.Endereco}{separadorLinha}{cliente.Cidade}",
+                        Telefone = $"{cliente.Telefone}",
+                        QuantidadeVolumes = $"{romaneioNotaFiscal.NroVolumes}",
+                        TipoFrete = $"{pedido.CodigoIntegracaoTipoFrete}"
+                    };
+
+                    listaDadosRelatorio.Add(itemRelatorio);
+                };
+            }
 
             totalizadores.Add(new RelatorioTotalizadorFinal()
             {
@@ -1666,7 +1700,7 @@ namespace FWLog.Services.Services
                 DataCriacao = dataImpressao,
                 NomeEmpresa = _unitiOfWork.EmpresaRepository.GetById(dadosRelatorio.IdEmpresa).RazaoSocial,
                 NomeUsuario = labelUsuario,
-                Orientacao = Orientation.Landscape,
+                Orientacao = Orientation.Portrait,
                 Filtros = new FwRelatorioDadosFiltro()
                 {
                     Transportadora = $"{transportadora.IdTransportadora} - {transportadora.NomeFantasia}",
@@ -1680,7 +1714,7 @@ namespace FWLog.Services.Services
 
             var fwRelatorio = new FwRelatorio();
 
-            return fwRelatorio.Gerar(fwRelatorioDados);
+            return fwRelatorio.Gerar(fwRelatorioDados,"Agency FB",false);
         }
 
         public void ImprimirRomaneio(RelatorioRomaneioRequest dadosRelatorio, long idImpressora, bool imprimeSegundaVia)
