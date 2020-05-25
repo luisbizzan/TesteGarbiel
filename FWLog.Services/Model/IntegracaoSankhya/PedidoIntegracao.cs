@@ -49,16 +49,16 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [Required]
         public string TopSankhya { get; set; }
 
-        //[TabelaIntegracao(DisplayName = "TGFTPV.CODTIPVENDA")]
-        //public string TipoPagamentoCodigo { get; set; }
+        [TabelaIntegracao(DisplayName = "TGFTPV.CODTIPVENDA")]
+        public string TipoPagamentoCodigo { get; set; }
 
-        //[TabelaIntegracao(DisplayName = "TGFTPV.DESCRTIPVENDA")]
-        //public string TipoPagamentoDescricao { get; set; }
+        [TabelaIntegracao(DisplayName = "TGFTPV.DESCRTIPVENDA")]
+        public string TipoPagamentoDescricao { get; set; }
 
-        //[TabelaIntegracao(DisplayName = "TGFTPV.AD_CARTAODEBITO")]
-        //public string TipoPagamentoCartaoDebito { get; set; }
+        [TabelaIntegracao(DisplayName = "TGFTPV.AD_CARTAODEBITO")]
+        public string TipoPagamentoCartaoDebito { get; set; }
 
-        //[TabelaIntegracao(DisplayName = "TGFTPV.AD_CARTAOCREDITO")]
-        //public string TipoPagamentoCartaoCredito { get; set; }
+        [TabelaIntegracao(DisplayName = "TGFTPV.AD_CARTAOCREDITO")]
+        public string TipoPagamentoCartaoCredito { get; set; }
     }
 }

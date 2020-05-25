@@ -41,7 +41,7 @@ namespace FWLog.Services.Services
             }
 
             var where = $" WHERE TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSSEP = 0 OR TGFCAB.AD_STATUSSEP IS NULL) ";
-            var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
+            var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA INNER JOIN TGFTPV ON TGFTPV.CODTIPVENDA = TGFCAB.CODTIPVENDA AND TGFTPV.DHALTER = TGFCAB.DHTIPVENDA";
 
             List<PedidoIntegracao> pedidosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<PedidoIntegracao>(where, inner);
 
@@ -122,15 +122,15 @@ namespace FWLog.Services.Services
                     pedido.IdTransportadora = transportadora.IdTransportadora;
                     pedido.IdRepresentante = representante.IdRepresentante;
 
-                    //if (!int.TryParse(pedidoCabecalho.TipoPagamentoCodigo, out int tipoPagamentoCodigo))
-                    //{
-                    //    throw new BusinessException(string.Format("Código do Tipo Pagamento (TGFTPV.CODTIPVENDA: {0}) inválido", pedidoCabecalho.TipoPagamentoCodigo));
-                    //}
+                    if (!int.TryParse(pedidoCabecalho.TipoPagamentoCodigo, out int tipoPagamentoCodigo))
+                    {
+                        throw new BusinessException(string.Format("Código do Tipo Pagamento (TGFTPV.CODTIPVENDA: {0}) inválido", pedidoCabecalho.TipoPagamentoCodigo));
+                    }
 
-                    //pedido.PagamentoCodigoIntegracao = tipoPagamentoCodigo;
-                    //pedido.PagamentoDescricaoIntegracao = pedidoCabecalho.TipoPagamentoDescricao.TrimOrNull();
-                    //pedido.PagamentoIsDebitoIntegracao = pedidoCabecalho.TipoPagamentoCartaoDebito == "S";
-                    //pedido.PagamentoIsCreditoIntegracao = pedidoCabecalho.TipoPagamentoCartaoCredito == "S";
+                    pedido.PagamentoCodigoIntegracao = tipoPagamentoCodigo;
+                    pedido.PagamentoDescricaoIntegracao = pedidoCabecalho.TipoPagamentoDescricao.TrimOrNull();
+                    pedido.PagamentoIsDebitoIntegracao = pedidoCabecalho.TipoPagamentoCartaoDebito == "S";
+                    pedido.PagamentoIsCreditoIntegracao = pedidoCabecalho.TipoPagamentoCartaoCredito == "S";
 
                     var itens = pedidoIntegracao.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.QtdPedido, s.Sequencia }).ToList();
 
