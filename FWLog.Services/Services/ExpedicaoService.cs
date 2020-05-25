@@ -656,7 +656,7 @@ namespace FWLog.Services.Services
             _relatorioService.ImprimirRomaneio(new RelatorioRomaneioRequest()
             {
                 Romaneio = romaneio,
-                DataHoraEmissaoRomaneio = DateTime.Now,
+                DataHoraEmissaoRomaneio = romaneio.RomaneioNotaFiscal.FirstOrDefault().PedidoVenda.DataHoraRomaneio.Value,
                 IdEmpresa = idEmpresa,
                 IdUsuarioExecucao = idUsuario
             }, idImpressora, imprimeSegundaVia);
