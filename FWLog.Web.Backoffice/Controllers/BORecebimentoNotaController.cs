@@ -1391,6 +1391,11 @@ namespace FWLog.Web.Backoffice.Controllers
             if (empresaConfig == null)
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "As configurações da empresa não foram encontradas. Por favor, tente novamente!");
 
+            if (lote.LoteVolumes.Any(a => a.IdEnderecoArmazenagem.HasValue))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Existem volumes do lote instalados. Favor desinstalar todos antes de conferir.");
+            }
+
             var model = new BOEntradaConferenciaViewModel
             {
                 IdNotaFiscal = lote.NotaFiscal.IdNotaFiscal,
@@ -2270,6 +2275,15 @@ namespace FWLog.Web.Backoffice.Controllers
                     {
                         Success = false,
                         Message = $"A conferência do lote: {lote.IdLote} já foi finalizada.",
+                    });
+                }
+
+                if (lote.LoteVolumes.Any(a => a.IdEnderecoArmazenagem.HasValue))
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = $"Existem volumes do lote instalados. Favor desinstalar todos antes de conferir.",
                     });
                 }
 

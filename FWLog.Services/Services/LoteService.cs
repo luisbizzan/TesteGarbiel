@@ -907,12 +907,22 @@ namespace FWLog.Services.Services
             return produtoLote;
         }
 
-        private void ValidarLoteVolume(long idEmpresa, int nroVolume, long idLote)
+        private LoteVolume ValidarLoteVolume(long idEmpresa, int nroVolume, long idLote)
         {
             var lote = _uow.LoteRepository.PesquisarPorLoteEmpresa(idLote, idEmpresa);
             if (lote == null)
             {
                 throw new BusinessException("Lote não encontrado.");
+            }
+
+            if (lote.IdLoteStatus == LoteStatusEnum.Conferencia)
+            {
+                throw new BusinessException("Lote não pode ser instalado. Lote em processo de conferência.");
+            }
+
+            if (lote.IdLoteStatus != LoteStatusEnum.Recebido)
+            {
+                throw new BusinessException("Lote não pode ser instalado. Conferência já finalizada.");
             }
 
             var volume = lote.LoteVolumes.FirstOrDefault(f => f.NroVolume == nroVolume);
@@ -921,10 +931,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Volume não encontrado.");
             }
 
-            if (volume.IdEnderecoArmazenagem.HasValue)
-            {
-                throw new BusinessException("Volume já está instalado em outro local.");
-            }
+            return volume;
         }
 
         public ConsultarLoteVolumeResposta ConsultarLoteVolume(string referencia, long idEmpresa)
@@ -945,7 +952,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Código de Barras de volume inválido.");
             }
 
-            var nroLoteString = referencia.Replace(nroVolumeString, "");
+            var nroLoteString = referencia.Substring(0, referencia.Length - 3);
             if (!long.TryParse(nroLoteString, out long idLote))
             {
                 throw new BusinessException("Código de Barras de volume inválido.");
@@ -1015,12 +1022,11 @@ namespace FWLog.Services.Services
         public void InstalarLoteVolume(LoteVolumeRequisicao requisicao, long idEmpresa, string idUsuario)
         {
             ValidarEnderecoInstalacaoLoteVolume(requisicao.IdEnderecoArmazenagem, idEmpresa);
-            ValidarLoteVolume(idEmpresa, requisicao.NroVolume, requisicao.IdLote);
+            LoteVolume loteVolume = ValidarLoteVolume(idEmpresa, requisicao.NroVolume, requisicao.IdLote);
 
-            var loteVolume = _uow.LoteVolumeRepository.Obter(requisicao.IdLote, requisicao.NroVolume);
-            if (loteVolume == null)
+            if (loteVolume.IdEnderecoArmazenagem.HasValue)
             {
-                throw new BusinessException("Volume não encontrado.");
+                throw new BusinessException("Volume já está instalado em outro local.");
             }
 
             using (var transacao = _uow.CreateTransactionScope())
@@ -1031,6 +1037,18 @@ namespace FWLog.Services.Services
 
                 _uow.LoteVolumeRepository.Update(loteVolume);
                 _uow.SaveChanges();
+
+                _uow.LoteMovimentacaoRepository.Add(new LoteMovimentacao
+                {
+                    IdEmpresa = idEmpresa,
+                    IdLote = loteVolume.IdLote,
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = idUsuario,
+                    Quantidade = 1,
+                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Entrada,
+                    DataHora = DateTime.Now,
+                    NroVolume = requisicao.NroVolume
+                });
 
                 _uow.ColetorHistoricoTipoRepository.GravarHistorico(new ColetorHistorico
                 {
@@ -1056,13 +1074,26 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Volume não encontrado.");
             }
 
-            if (loteVolume.IdEnderecoArmazenagem != requisicao.IdEnderecoArmazenagem)
+            if (!loteVolume.IdEnderecoArmazenagem.HasValue)
+            {
+                throw new BusinessException("Volume já está desinstalado.");
+            }
+            else if (loteVolume.IdEnderecoArmazenagem != requisicao.IdEnderecoArmazenagem)
             {
                 throw new BusinessException("O local do volume e o local informado estão divergentes.");
             }
 
             using (var transacao = _uow.CreateTransactionScope())
             {
+                _uow.ColetorHistoricoTipoRepository.GravarHistorico(new ColetorHistorico
+                {
+                    IdColetorAplicacao = ColetorAplicacaoEnum.Recebimento,
+                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.InstalarVolume,
+                    Descricao = $"Retirou o volume {requisicao.NroVolume} do lote {requisicao.IdLote} no endereço {loteVolume.EnderecoArmazenagem.Codigo}.",
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuario
+                });
+
                 loteVolume.IdEnderecoArmazenagem = null;
                 loteVolume.DataInstalacao = null;
                 loteVolume.IdUsuarioInstalacao = null;
@@ -1070,13 +1101,16 @@ namespace FWLog.Services.Services
                 _uow.LoteVolumeRepository.Update(loteVolume);
                 _uow.SaveChanges();
 
-                _uow.ColetorHistoricoTipoRepository.GravarHistorico(new ColetorHistorico
+                _uow.LoteMovimentacaoRepository.Add(new LoteMovimentacao
                 {
-                    IdColetorAplicacao = ColetorAplicacaoEnum.Recebimento,
-                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.InstalarVolume,
-                    Descricao = $"Instalou o volume { requisicao.NroVolume} do lote {requisicao.IdLote} no endereço {loteVolume.EnderecoArmazenagem.Codigo}.",
                     IdEmpresa = idEmpresa,
-                    IdUsuario = idUsuario
+                    IdLote = loteVolume.IdLote,
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = idUsuario,
+                    Quantidade = 1,
+                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Saida,
+                    DataHora = DateTime.Now,
+                    NroVolume = requisicao.NroVolume
                 });
 
                 _uow.SaveChanges();
@@ -1086,9 +1120,3 @@ namespace FWLog.Services.Services
     }
 }
 
-public class LoteVolumeRequisicao
-{
-    public long IdLote { get; set; }
-    public long IdEnderecoArmazenagem { get; set; }
-    public int NroVolume { get; set; }
-}

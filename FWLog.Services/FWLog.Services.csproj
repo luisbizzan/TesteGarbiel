@@ -179,6 +179,7 @@
     <Compile Include="Model\IntegracaoSankhya\UnidadeMedidaIntegracao.cs" />
     <Compile Include="Model\LogEtiquetagem\LogEtiquetagem.cs" />
     <Compile Include="Model\Conferencia\ConferenciaResponse.cs" />
+    <Compile Include="Model\Lote\LoteVolumeRequisicao.cs" />
     <Compile Include="Model\Lote\ConsultarLoteVolumeResposta.cs" />
     <Compile Include="Model\Lote\ProcessamentoTratativaDivergencia.cs" />
     <Compile Include="Model\Lote\ResumoFinalizarConferenciaResponse.cs" />

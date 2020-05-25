@@ -2,6 +2,7 @@
 using DartDigital.Library.Exceptions;
 using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Services.Model.Lote;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Lote;
 using Microsoft.AspNet.Identity;
@@ -77,6 +78,38 @@ namespace FWLog.Web.Api.Controllers
                 var resposta = _loteService.ConsultarLoteVolume(referencia, IdEmpresa);
 
                 return ApiOk(resposta);
+            }
+            catch (BusinessException exception)
+            {
+                return ApiBadRequest(exception.Message);
+            }
+        }
+
+        [Route("api/v1/lote/volume/instalar")]
+        [HttpPost]
+        public IHttpActionResult InstalarLoteVolume(LoteVolumeRequisicao requisicao)
+        {
+            try
+            {
+                _loteService.InstalarLoteVolume(requisicao, IdEmpresa, IdUsuario);
+
+                return ApiOk();
+            }
+            catch (BusinessException exception)
+            {
+                return ApiBadRequest(exception.Message);
+            }
+        }
+
+        [Route("api/v1/lote/volume/retirar")]
+        [HttpPost]
+        public IHttpActionResult RetirarLoteVolume(LoteVolumeRequisicao requisicao)
+        {
+            try
+            {
+                _loteService.RetirarLoteVolume(requisicao, IdEmpresa, IdUsuario);
+
+                return ApiOk();
             }
             catch (BusinessException exception)
             {
