@@ -26,8 +26,17 @@ namespace FWLog.Services.Services
         private readonly PedidoService _pedidoService;
         private readonly RelatorioService _relatorioService;
         private readonly TransportadoraService _transportadoraService;
+        private readonly RomaneioService _romaneioService;
 
-        public ExpedicaoService(UnitOfWork unitOfWork, ILog log, ColetorHistoricoService coletorHistoricoService, NotaFiscalService notaFiscalService, PedidoService pedidoService, RelatorioService relatorioService, TransportadoraService transportadoraService)
+        public ExpedicaoService(
+            UnitOfWork unitOfWork, 
+            ILog log, 
+            ColetorHistoricoService coletorHistoricoService, 
+            NotaFiscalService notaFiscalService, 
+            PedidoService pedidoService, 
+            RelatorioService relatorioService, 
+            TransportadoraService transportadoraService,
+            RomaneioService romaneioService)
         {
             _unitOfWork = unitOfWork;
             _log = log;
@@ -36,9 +45,10 @@ namespace FWLog.Services.Services
             _pedidoService = pedidoService;
             _relatorioService = relatorioService;
             _transportadoraService = transportadoraService;
+            _romaneioService = romaneioService;
         }
 
-        public void IniciarExpedicaoPedidoVenda(long idPedidoVenda, long idPedidoVendaVolume, string idUsuario, long idEmpresa)
+        public void IniciarExpedicaoPedidoVenda(long idPedidoVenda, long idPedidoVendaVolume, long idEmpresa)
         {
             // validações
             if (idPedidoVenda <= 0)
@@ -884,8 +894,12 @@ namespace FWLog.Services.Services
                 romaneio.IdEmpresa = idEmpresa;
                 romaneio.NroRomaneio = GetNextNroRomaneioByEmpresa(idEmpresa);
 
+                var dataHoraEmissaoRomaneio = DateTime.Now;
+
                 _unitOfWork.RomaneioRepository.Add(romaneio);
                 _unitOfWork.SaveChanges();
+
+                await _romaneioService.InserirRomaneioSankhya(romaneio.NroRomaneio, dataHoraEmissaoRomaneio);
 
                 foreach (var chaveAcesso in chavesAcessos)
                 {
@@ -910,7 +924,7 @@ namespace FWLog.Services.Services
                     var romaneioNotaFiscal = new RomaneioNotaFiscal();
                     romaneioNotaFiscal.IdRomaneio = romaneio.IdRomaneio;
                     romaneioNotaFiscal.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
-                    romaneioNotaFiscal.NroNotaFiscal = Convert.ToInt32(pedido.CodigoIntegracaoNotaFiscal);
+                    romaneioNotaFiscal.NroNotaFiscal = Convert.ToInt32(pedido.CodigoIntegracaoNotaFiscal);//ALTERAR 
                     romaneioNotaFiscal.NroVolumes = pedidoVenda.NroVolumes;
                     romaneioNotaFiscal.IdCliente = pedidoVenda.IdCliente;
 
@@ -927,11 +941,13 @@ namespace FWLog.Services.Services
                     _unitOfWork.SaveChanges();
 
                     pedidoVenda.IdUsuarioRomaneio = idUsuario;
-                    var dataHoraEmissaoRomaneio = DateTime.Now;
                     pedidoVenda.DataHoraRomaneio = dataHoraEmissaoRomaneio;
 
                     // atualiza status no Sankhya e nas entidades do pedido
                     await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, PedidoVendaStatusEnum.RomaneioImpresso);
+
+                    //Atualizando o numero do Romaneio no Sankhya nas entidade de Pedido
+                    await _pedidoService.AtualizarRomaneioPedido(pedidoVenda.Pedido, romaneio.NroRomaneio);
 
                     pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.RomaneioImpresso;
                     _unitOfWork.PedidoRepository.Update(pedido);
@@ -957,6 +973,8 @@ namespace FWLog.Services.Services
 
                     _unitOfWork.SaveChanges();
                 }
+
+                
 
                 transacao.Complete();
                 idRomaneioResultado = romaneio.IdRomaneio;

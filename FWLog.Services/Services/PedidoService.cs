@@ -225,6 +225,27 @@ namespace FWLog.Services.Services
             }
         }
 
+        public async Task AtualizarRomaneioPedido(Pedido pedido, int nroRomaneio)
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            try
+            {
+                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", pedido.CodigoIntegracaoNotaFiscal.ToString() } };
+
+                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_NUMROMANEIO", nroRomaneio);
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = string.Format("Erro na atualização do pedido de venda: {0}.", pedido.CodigoIntegracao);
+                _log.Error(errorMessage, ex);
+                throw new BusinessException(errorMessage);
+            }
+        }
+
         public async Task AtualizarStatus(long idPedido, PedidoVendaStatusEnum status)
         {
             try

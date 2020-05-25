@@ -336,6 +336,47 @@ namespace FWLog.Services.Integracao
             }
         }
 
+        public async Task InserirInformacaoIntegracao(string entidade, Dictionary<string, object> fields)
+        {
+            List<XElement> localFields = new List<XElement>();
+
+            foreach (KeyValuePair<string, object> field in fields)
+            {
+                localFields.Add(new XElement(field.Key, field.Value));
+            }
+
+            XElement dataRow = new XElement("dataRow", new XElement("localFields", localFields));
+
+            XAttribute[] attArray = {
+                new XAttribute("rootEntity", entidade),
+                new XAttribute("includePresentationFields", "S"),
+            };
+
+            var entity = new XElement("entity", new XAttribute("path", ""));
+            entity.Add(new XElement("fieldset", new XAttribute("list", "*")));
+
+            XElement datset = new XElement("dataSet", attArray);
+            datset.Add(entity);
+            datset.Add(dataRow);
+
+            XElement serviceRequest = new XElement("serviceRequest", new XAttribute("serviceName", "CRUDServiceProvider.saveRecord"));
+            serviceRequest.Add(new XElement("requestBody", datset));
+
+            string responseContent = await Instance.ExecutarServicoSankhya(serviceRequest.ToString(), "CRUDServiceProvider.saveRecord", "mge");
+
+            XDocument doc = XDocument.Parse(responseContent);
+            XElement root = doc.Root;
+
+            string status = root.Attribute("status")?.Value;
+            if (status == null || status != "1")
+            {
+                var erro = DeserializarXML<IntegracaoErroResposta>(root.ToString());
+                byte[] erroData = Convert.FromBase64String(erro.Mensagem);
+                string decodedString = Encoding.UTF8.GetString(erroData);
+                throw new BusinessException(string.Format("Erro na inserção dos dados na Entidade: {0} Erro: {1}", entidade, decodedString));
+            }
+        }
+
         public async Task ConfirmarNotaFiscal(long condigoIntegracao)
         {
             string confirmarNotaXML = SerializarXML(new ConfirmarNotaFiscalXML(condigoIntegracao.ToString()));
