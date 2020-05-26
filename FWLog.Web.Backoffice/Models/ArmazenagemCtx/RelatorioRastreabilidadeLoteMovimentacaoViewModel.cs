@@ -19,7 +19,7 @@ namespace FWLog.Web.Backoffice.Models.ArmazenagemCtx
 
     public class RelatorioRastreabilidadeLoteMovimentacaoListItemViewModel
     {
-        public long IdProduto { get; set; }
+        public long? IdProduto { get; set; }
 
         public long IdLote { get; set; }
 
@@ -41,6 +41,9 @@ namespace FWLog.Web.Backoffice.Models.ArmazenagemCtx
 
         [Display(Name = "Usuário")]
         public string UsuarioMovimentacao { get; set; }
+
+        [Display(Name = "Nro. Volume")]
+        public string NroVolume { get; set; }
     }
 
     public class RelatorioRastreabilidadeLoteMovimentacaoFilterViewModel

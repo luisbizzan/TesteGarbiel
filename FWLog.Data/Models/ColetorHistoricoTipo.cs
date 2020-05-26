@@ -17,7 +17,10 @@ namespace FWLog.Data.Models
         DespachoNF = 10,
         Romaneio = 11,
         ReimpressaoRomaneio = 12,
-        InstalarMultiplo = 13
+        InstalarMultiplo = 13,
+        RemoverDoca = 14,
+        InstalarVolume = 15,
+        RetirarVolume = 16
     }
 
     public class ColetorHistoricoTipo

@@ -1009,7 +1009,11 @@ namespace FWLog.Web.Backoffice.Controllers
                 ValidateModel(viewModel);
 
                 Lote lote = _uow.LoteRepository.ObterLoteNota(viewModel.IdNotaFiscal);
-                _etiquetaService.ImprimirEtiquetaVolumeRecebimento(lote.IdLote, viewModel.IdImpressora);
+
+                foreach (var item in lote.LoteVolumes)
+                {
+                    _etiquetaService.ImprimirEtiquetaVolumeRecebimento(lote.IdLote, viewModel.IdImpressora, item.NroVolume, 1);
+                }
 
                 //Registra a impressão da etiqueta de Recebimento
                 var logEtiquetagem = new Services.Model.LogEtiquetagem.LogEtiquetagem
@@ -1386,6 +1390,11 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (empresaConfig == null)
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "As configurações da empresa não foram encontradas. Por favor, tente novamente!");
+
+            if (lote.LoteVolumes.Any(a => a.IdEnderecoArmazenagem.HasValue))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Existem volumes do lote instalados. Favor desinstalar todos antes de conferir.");
+            }
 
             var model = new BOEntradaConferenciaViewModel
             {
@@ -2269,6 +2278,15 @@ namespace FWLog.Web.Backoffice.Controllers
                     });
                 }
 
+                if (lote.LoteVolumes.Any(a => a.IdEnderecoArmazenagem.HasValue))
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = $"Existem volumes do lote instalados. Favor desinstalar todos antes de conferir.",
+                    });
+                }
+
                 await _loteService.FinalizarConferencia(id, User.Identity.GetUserId()).ConfigureAwait(false);
             }
             catch (Exception e)
@@ -2459,7 +2477,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     QuantidadeVolumes = lote.QuantidadeVolume.ToString(),
 
                     //Temporário - Verificar depois com o Shankya qual o campo referente a sigla do transportador.
-                    SiglaTransportador = lote.NotaFiscal.Transportadora.RazaoSocial.Substring(0, 3),
+                    SiglaTransportador = lote.NotaFiscal.Transportadora.CodigoTransportadora,
 
                     IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
                 };

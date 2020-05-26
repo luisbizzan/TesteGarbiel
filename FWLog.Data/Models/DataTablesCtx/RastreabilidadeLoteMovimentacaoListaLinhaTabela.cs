@@ -4,7 +4,7 @@ namespace FWLog.Data.Models.DataTablesCtx
 {
     public class RastreabilidadeLoteMovimentacaoListaLinhaTabela
     {
-        public long IdProduto { get; set; }
+        public long? IdProduto { get; set; }
 
         public long IdLote { get; set; }
 
@@ -12,7 +12,7 @@ namespace FWLog.Data.Models.DataTablesCtx
 
         public string DescricaoProduto { get; set; }
 
-        public LoteMovimentacaoTipoEnum Tipo { get; set; }
+        public string Tipo { get; set; }
 
         public int Quantidade { get; set; }
 
@@ -21,5 +21,6 @@ namespace FWLog.Data.Models.DataTablesCtx
         public string Endereco { get; set; }
 
         public string IdUsuarioMovimentacao { get; set; }
+        public int? NroVolume { get; set; }
     }
 }
