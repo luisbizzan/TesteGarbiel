@@ -1136,9 +1136,9 @@ namespace FWLog.Services.Services
             return _unitOfWork.PedidoVendaRepository.BuscarDadosPedidoVendaParaTabela(filtro, out registrosFiltrados, out totalRegistros);
         }
 
-        public List<MovimentacaoVolumesModel> BuscarDadosMovimentacaoVolumes(DateTime dataInicial, DateTime dataFinal)
+        public List<MovimentacaoVolumesModel> BuscarDadosMovimentacaoVolumes(DateTime dataInicial, DateTime dataFinal, long idEmpresa)
         {
-            var dados = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumeGrupoArmazenagem(dataInicial, dataFinal);
+            var dados = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumeGrupoArmazenagem(dataInicial, dataFinal, idEmpresa);
 
             var dadosAgrupados = dados.GroupBy(g => new
             {
@@ -1160,6 +1160,17 @@ namespace FWLog.Services.Services
                 Doca = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.DespachandoNF || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.NFDespachada),
                 EnviadoTransportadora = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.RomaneioImpresso),
             }));
+
+            return dadosRetorno;
+        }
+
+        public async Task<MovimentacaoVolumesIntegracoesModel> BuscarDadosMovimentacaoVolumesIntegracoes(long idEmpresa)
+        {
+            var dadosRetorno = new MovimentacaoVolumesIntegracoesModel();
+
+            dadosRetorno.AguardandoIntegracao = (await _pedidoService.ConsultarPedidosPendentesSankhya(idEmpresa)).GetValueOrDefault();
+
+            dadosRetorno.Integrados = _unitOfWork.PedidoRepository.PesquisarTotalPendenteSeparacao(idEmpresa);
 
             return dadosRetorno;
         }

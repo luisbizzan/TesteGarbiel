@@ -142,6 +142,7 @@
     <Compile Include="Models\FilterCtx\LoteMovimentacaoListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\HistoricoAcaoUsuarioFilter.cs" />
     <Compile Include="Models\FilterCtx\MotivoLaudoFiltro.cs" />
+    <Compile Include="Models\FilterCtx\MovimentacaoVolumesIntegracoesModel.cs" />
     <Compile Include="Models\FilterCtx\MovimentacaoVolumesModel.cs" />
     <Compile Include="Models\FilterCtx\PerfilImpressoraFilter.cs" />
     <Compile Include="Models\FilterCtx\ProdutoListaFiltro.cs" />

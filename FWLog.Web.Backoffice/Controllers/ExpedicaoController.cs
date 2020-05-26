@@ -7,6 +7,7 @@ using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.ExpedicaoCtx;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -125,19 +126,20 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        public ActionResult MovimentacaoVolumes(MovimentacaoVolumesViewModel viewModel)
+        public async Task<ActionResult> MovimentacaoVolumes(MovimentacaoVolumesViewModel viewModel)
         {
-            //TODO: Validar viewModel
+            if (ModelState.IsValid)
+            {
+                var dadosMovimentacaoVolumesIntegracoes = await _expedicaoService.BuscarDadosMovimentacaoVolumesIntegracoes(IdEmpresa).ConfigureAwait(false);
 
-            //TODO: Carregar de Sankya
-            viewModel.AguardandoIntegracao = new Random().Next(0, 350);
+                viewModel.AguardandoIntegracao = dadosMovimentacaoVolumesIntegracoes.AguardandoIntegracao;
 
-            //TODO: Carregar de Pedido
-            viewModel.IntegradoOK = new Random().Next(0, 100);
+                viewModel.IntegradoOK = dadosMovimentacaoVolumesIntegracoes.Integrados;
 
-            var dadosRetorno = _expedicaoService.BuscarDadosMovimentacaoVolumes(viewModel.Filter.DataInicial.Value, viewModel.Filter.DataFinal.Value);
+                var dadosRetorno = _expedicaoService.BuscarDadosMovimentacaoVolumes(viewModel.Filter.DataInicial.Value, viewModel.Filter.DataFinal.Value, IdEmpresa);
 
-            viewModel.Items = Mapper.Map<List<MovimentacaoVolumesListItemViewModel>>(dadosRetorno);
+                viewModel.Items = Mapper.Map<List<MovimentacaoVolumesListItemViewModel>>(dadosRetorno);
+            }
 
             return View(viewModel);
         }

@@ -241,5 +241,31 @@ namespace FWLog.Services.Services
                 _log.Error(String.Format("Erro ao atualizar o status do pedido {0}.", idPedido), ex);
             }
         }
+
+        public async Task<int?> ConsultarPedidosPendentesSankhya(long idEmpresa)
+        {
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                var empresa = _uow.EmpresaRepository.GetById(idEmpresa);
+
+                if (empresa != null)
+                {
+                    try
+                    {
+                        var where = $"WHERE TGFCAB.CODEMP = {empresa.CodigoIntegracao} AND TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSSEP = 0 OR TGFCAB.AD_STATUSSEP IS NULL)";
+
+                        var pedidosIntegracaoPendentes = await IntegracaoSankhya.Instance.PreExecutarQuery<PedidoIntegracaoPendente>(where);
+
+                        return pedidosIntegracaoPendentes.Count;
+                    }
+                    catch (Exception exception)
+                    {
+                        _log.Error("Erro consultando pedidos pendentes no Sankhya: {0}.", exception);
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }
