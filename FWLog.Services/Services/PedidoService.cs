@@ -41,7 +41,7 @@ namespace FWLog.Services.Services
             }
 
             var where = $" WHERE TGFCAB.TIPMOV = 'P' AND TGFCAB.STATUSNOTA = 'L' AND (TGFCAB.AD_STATUSSEP = 0 OR TGFCAB.AD_STATUSSEP IS NULL) ";
-            var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA INNER JOIN TGFTPV ON TGFTPV.CODTIPVENDA = TGFCAB.CODTIPVENDA";
+            var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA INNER JOIN TGFTPV ON TGFTPV.CODTIPVENDA = TGFCAB.CODTIPVENDA AND TGFTPV.DHALTER = TGFCAB.DHTIPVENDA";
 
             List<PedidoIntegracao> pedidosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<PedidoIntegracao>(where, inner);
 
