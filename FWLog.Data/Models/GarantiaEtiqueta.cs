@@ -27,7 +27,8 @@ namespace FWLog.Data.Models
             {
                 get
                 {
-                    return String.Concat("SELECT s.id CodigoEtiqueta, si.id CodigoRegistro, t.descricao TipoEtiqueta, si.refx, null Localizacao, p.descrprod Descricao,null CodigoBarras,si.quant QtdeEmbalagem ",
+                    return String.Concat("SELECT s.id CodigoEtiqueta, si.id CodigoRegistro, t.descricao TipoEtiqueta, si.refx, null Localizacao, p.descrprod Descricao, ",
+                        "LPAD(TO_CHAR(s.id), 7) || RPAD(si.refx, 15) CodigoBarras, si.quant QtdeEmbalagem ",
                         "FROM gar_solicitacao s ",
                         "INNER JOIN gar_solicitacao_item si ON (si.id_solicitacao = s.id) ",
                         "INNER JOIN geral_tipo t ON (t.id = s.id_tipo) ",
