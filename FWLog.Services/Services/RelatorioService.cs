@@ -9,7 +9,6 @@ using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace FWLog.Services.Services
