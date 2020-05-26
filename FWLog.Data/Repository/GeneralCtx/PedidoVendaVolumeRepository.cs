@@ -112,6 +112,8 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public List<PedidoVendaVolumeGrupoArmazenagemLinhaTabela> BuscarDadosVolumeGrupoArmazenagem(DateTime dataInicial, DateTime dataFinal)
         {
+            dataFinal = dataFinal.Date.AddDays(1).Subtract(new TimeSpan(0, 0, 1));
+
             var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao >= dataInicial && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao <= dataFinal);
 
             var selectQuery = query.Select(q => new PedidoVendaVolumeGrupoArmazenagemLinhaTabela
