@@ -12,15 +12,9 @@
 @using (Html.BeginForm())
 {
     <div class="x_panel">
-        <div class="x_title">
-            <h2 class="collapse-link">
-                <i class="fa fa-chevron-down fa-fw"></i> @Resources.CommonStrings.FilterHeader
-            </h2>
-            <div class="clearfix"></div>
-        </div>
         <div class="x_content" style="display: block;">
-            <div class="row" style="margin-bottom: 20px;">
-                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+            <div class="row">
+                <div class="col-xs-12 col-md-4 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataInicial)
                     <div class='input-group date'>
                         @Html.TextBoxFor(m => m.Filter.DataInicial, new { @class = "form-control dateFormat", data_field = "DataInicial" })
@@ -30,7 +24,7 @@
                     </div>
                     @Html.ValidationMessageFor(m => m.Filter.DataInicial)
                 </div>
-                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-4 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataFinal)
                     <div class='input-group date'>
                         @Html.TextBoxFor(m => m.Filter.DataFinal, new { @class = "form-control dateFormat", data_field = "DataFinal" })
@@ -40,12 +34,10 @@
                     </div>
                     @Html.ValidationMessageFor(m => m.Filter.DataFinal)
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12 form-buttons">
-                <button type="button" class="btn btn-default clearButton" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
-                <button type="submit" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                <div class="col-xs-12 col-md-4 col-lg-3 form-buttons" style="margin-top:12px">
+                    <button type="submit" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                    <button type="button" class="btn btn-default clearButton" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
+                </div>
             </div>
         </div>
     </div>
@@ -53,12 +45,11 @@
 @{
     var temItens = !Model.Items.NullOrEmpty() && Model.Items.Count > 0;
 
-    if (temItens || Model.AguardandoIntegracao.HasValue || Model.IntegradoOK.HasValue)
+    if (temItens || Model.AguardandoIntegracao.HasValue || Model.AguardandoRobo.HasValue)
     {
         <div id="tabelaResultado" class="row">
-            <div class="col-xs-12">
+            <div class="col-xs-12 col-lg-12 col-md-12">
                 <div class="x_panel">
-
                     <div class="x_title">
                         <h2>Movimentação de Volumes</h2>
                         <div class="clearfix"></div>
@@ -66,19 +57,19 @@
                     <br />
                     @if (Model.AguardandoIntegracao.HasValue)
                     {
-                        <div class="animated flipInY col-lg-2 col-md-3 col-sm-6">
+                        <div class="animated flipInY col-lg-6 col-md-6 col-sm-6">
                             <div class="tile-stats">
                                 <div class="count">@Model.AguardandoIntegracao</div>
                                 <h3>Aguardando Integração</h3>
                             </div>
                         </div>
                     }
-                    @if (Model.IntegradoOK.HasValue)
+                    @if (Model.AguardandoRobo.HasValue)
                     {
-                        <div class="animated flipInY col-lg-2 col-md-3 col-sm-6">
+                        <div class="animated flipInY col-lg-6 col-md-6 col-sm-6">
                             <div class="tile-stats">
-                                <div class="count">@Model.IntegradoOK</div>
-                                <h3>Integrado Ok</h3>
+                                <div class="count">@Model.AguardandoRobo</div>
+                                <h3>Aguardando Robô</h3>
                             </div>
                         </div>
                     }
@@ -88,7 +79,7 @@
                             <table id="dataTable" class="table table-bordered dt-responsive" style="width:100%">
                                 <thead>
                                     <tr>
-                                        <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().Corredores)</th>
+                                        <th style="width:8%">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().Corredores)</th>
                                         <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().EnviadoSeparacao)</th>
                                         <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().EmSeparacao)</th>
                                         <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().FinalizadoSeparacao)</th>
@@ -104,7 +95,7 @@
 
                                         foreach (var pontoArmazenagemItems in groupedItems)
                                         {
-                                            <tr @*style="background-color: #6C757D"*@>
+                                            <tr style="background-color: #f9f9f9">
                                                 <th colspan="8">
                                                     @pontoArmazenagemItems.Key
                                                 </th>
@@ -114,26 +105,26 @@
                                             {
                                                 <tr>
                                                     <td>@item.Corredores</td>
-                                                    <td>@item.EnviadoSeparacao</td>
-                                                    <td>@item.EmSeparacao</td>
-                                                    <td>@item.FinalizadoSeparacao</td>
-                                                    <td>@item.InstaladoTransportadora</td>
-                                                    <td>@item.Doca</td>
-                                                    <td>@item.EnviadoTransportadora</td>
-                                                    <td>@item.Total</td>
+                                                    <td align="center">@item.EnviadoSeparacao</td>
+                                                    <td align="center">@item.EmSeparacao</td>
+                                                    <td align="center">@item.FinalizadoSeparacao</td>
+                                                    <td align="center">@item.InstaladoTransportadora</td>
+                                                    <td align="center">@item.Doca</td>
+                                                    <td align="center">@item.EnviadoTransportadora</td>
+                                                    <td align="center">@item.Total</td>
                                                 </tr>
                                             }
                                         }
                                     }
                                     <tr>
-                                        <th>Total</th>
-                                        <th>@Model.Items.Sum(s => s.EnviadoSeparacao)</th>
-                                        <th>@Model.Items.Sum(s => s.EmSeparacao)</th>
-                                        <th>@Model.Items.Sum(s => s.FinalizadoSeparacao)</th>
-                                        <th>@Model.Items.Sum(s => s.InstaladoTransportadora)</th>
-                                        <th>@Model.Items.Sum(s => s.Doca)</th>
-                                        <th>@Model.Items.Sum(s => s.EnviadoTransportadora)</th>
-                                        <th>@Model.Items.Sum(s => s.Total)</th>
+                                        <td><b>Total</b></td>
+                                        <td align="center"><b>@Model.Items.Sum(s => s.EnviadoSeparacao)</b></td>
+                                        <td align="center"><b>@Model.Items.Sum(s => s.EmSeparacao)</b></td>
+                                        <td align="center"><b>@Model.Items.Sum(s => s.FinalizadoSeparacao)</b></td>
+                                        <td align="center"><b>@Model.Items.Sum(s => s.InstaladoTransportadora)</b></td>
+                                        <td align="center"><b>@Model.Items.Sum(s => s.Doca)</b></td>
+                                        <td align="center"><b>@Model.Items.Sum(s => s.EnviadoTransportadora)</b></td>
+                                        <td align="center"><b>@Model.Items.Sum(s => s.Total)</b></td>
                                     </tr>
                                 </tbody>
                             </table>

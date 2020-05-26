@@ -4,6 +4,6 @@
     {
         public int AguardandoIntegracao { get; set; }
 
-        public int Integrados { get; set; }
+        public int AguardandoRobo { get; set; }
     }
 }

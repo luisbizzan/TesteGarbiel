@@ -29,12 +29,12 @@ namespace FWLog.Services.Services
         private readonly RomaneioService _romaneioService;
 
         public ExpedicaoService(
-            UnitOfWork unitOfWork, 
-            ILog log, 
-            ColetorHistoricoService coletorHistoricoService, 
-            NotaFiscalService notaFiscalService, 
-            PedidoService pedidoService, 
-            RelatorioService relatorioService, 
+            UnitOfWork unitOfWork,
+            ILog log,
+            ColetorHistoricoService coletorHistoricoService,
+            NotaFiscalService notaFiscalService,
+            PedidoService pedidoService,
+            RelatorioService relatorioService,
             TransportadoraService transportadoraService,
             RomaneioService romaneioService)
         {
@@ -182,7 +182,7 @@ namespace FWLog.Services.Services
                             salvaPedido = true;
                         }
 
-                        if(int.TryParse(dadosNotaFiscal.NumeroNotaFiscal, out int numeroNotaFiscal) && !string.IsNullOrWhiteSpace(dadosNotaFiscal.SerieNotaFiscal))
+                        if (int.TryParse(dadosNotaFiscal.NumeroNotaFiscal, out int numeroNotaFiscal) && !string.IsNullOrWhiteSpace(dadosNotaFiscal.SerieNotaFiscal))
                         {
                             pedido.NumeroNotaFiscal = numeroNotaFiscal;
                             pedido.SerieNotaFiscal = dadosNotaFiscal.SerieNotaFiscal;
@@ -1196,6 +1196,8 @@ namespace FWLog.Services.Services
                 EnviadoTransportadora = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.RomaneioImpresso),
             }));
 
+            dadosRetorno.ForEach(dr => dr.Total = dr.EnviadoSeparacao + dr.EmSeparacao + dr.FinalizadoSeparacao + dr.InstaladoTransportadora + dr.Doca + dr.EnviadoTransportadora);
+
             return dadosRetorno;
         }
 
@@ -1205,7 +1207,7 @@ namespace FWLog.Services.Services
 
             dadosRetorno.AguardandoIntegracao = (await _pedidoService.ConsultarPedidosPendentesSankhya(idEmpresa)).GetValueOrDefault();
 
-            dadosRetorno.Integrados = _unitOfWork.PedidoRepository.PesquisarTotalPendenteSeparacao(idEmpresa);
+            dadosRetorno.AguardandoRobo = _unitOfWork.PedidoRepository.PesquisarTotalPendenteSeparacao(idEmpresa);
 
             return dadosRetorno;
         }

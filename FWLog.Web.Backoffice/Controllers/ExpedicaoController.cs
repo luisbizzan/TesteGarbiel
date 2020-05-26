@@ -134,7 +134,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 viewModel.AguardandoIntegracao = dadosMovimentacaoVolumesIntegracoes.AguardandoIntegracao;
 
-                viewModel.IntegradoOK = dadosMovimentacaoVolumesIntegracoes.Integrados;
+                viewModel.AguardandoRobo = dadosMovimentacaoVolumesIntegracoes.AguardandoRobo;
 
                 var dadosRetorno = _expedicaoService.BuscarDadosMovimentacaoVolumes(viewModel.Filter.DataInicial.Value, viewModel.Filter.DataFinal.Value, IdEmpresa);
 
