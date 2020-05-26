@@ -100,20 +100,29 @@
                                 </thead>
                                 <tbody>
                                     @{
-                                        var indice = 0;
+                                        var groupedItems = Model.Items.GroupBy(g => g.PontoArmazenagemDescricao).OrderBy(g => g.Key).ToList();
 
-                                        foreach (var item in Model.Items)
+                                        foreach (var pontoArmazenagemItems in groupedItems)
                                         {
-                                            <tr role="row" class="@(indice++ % 2 == 0? "odd" : "even") trRow">
-                                                <td>@item.Corredores - @item.PontoArmazenagemDescricao</td>
-                                                <td>@item.EnviadoSeparacao</td>
-                                                <td>@item.EmSeparacao</td>
-                                                <td>@item.FinalizadoSeparacao</td>
-                                                <td>@item.InstaladoTransportadora</td>
-                                                <td>@item.Doca</td>
-                                                <td>@item.EnviadoTransportadora</td>
-                                                <td>@item.Total</td>
+                                            <tr role="row" class="odd trRow">
+                                                <td colspan="8">
+                                                    @pontoArmazenagemItems.Key
+                                                </td>
                                             </tr>
+
+                                            foreach (var item in pontoArmazenagemItems.ToList())
+                                            {
+                                                <tr role="row" class="even trRow">
+                                                    <td>@item.Corredores</td>
+                                                    <td>@item.EnviadoSeparacao</td>
+                                                    <td>@item.EmSeparacao</td>
+                                                    <td>@item.FinalizadoSeparacao</td>
+                                                    <td>@item.InstaladoTransportadora</td>
+                                                    <td>@item.Doca</td>
+                                                    <td>@item.EnviadoTransportadora</td>
+                                                    <td>@item.Total</td>
+                                                </tr>
+                                            }
                                         }
                                     }
                                     <tr>
