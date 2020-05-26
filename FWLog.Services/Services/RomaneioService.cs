@@ -1,4 +1,5 @@
 ﻿using DartDigital.Library.Exceptions;
+using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using log4net;
 using System;
@@ -37,6 +38,27 @@ namespace FWLog.Services.Services
             catch (Exception ex)
             {
                 var errorMessage = string.Format("Erro na inserção do romaneio: {0}.", nroRomaneio);
+                _log.Error(errorMessage, ex);
+                throw new BusinessException(errorMessage);
+            }
+        }
+
+        public async Task AtualizarRomaneioNotaFiscal(Pedido pedido, int nroRomaneio)
+        {
+            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                return;
+            }
+
+            try
+            {
+                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", pedido.CodigoIntegracaoNotaFiscal.ToString() } };
+
+                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_NUMROMANEIO", nroRomaneio);
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = string.Format("Erro na atualização da nota fiscal de venda: {0}.", pedido.CodigoIntegracaoNotaFiscal);
                 _log.Error(errorMessage, ex);
                 throw new BusinessException(errorMessage);
             }

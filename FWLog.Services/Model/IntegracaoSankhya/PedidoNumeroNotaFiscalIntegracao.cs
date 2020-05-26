@@ -9,7 +9,13 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         public string CodigoIntegracao { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFCAB.NUNOTA")]
+        public string CodigoIntegracaoNotaFiscal { get; set; }
+
+        [TabelaIntegracao(DisplayName = "TGFCAB.NUMNOTA")]
         public string NumeroNotaFiscal { get; set; }
+
+        [TabelaIntegracao(DisplayName = "TGFCAB.SERIENOTA")]
+        public string SerieNotaFiscal { get; set; }
 
         [TabelaIntegracao(DisplayName = "TGFCAB.CHAVENFE")]
         public string ChaveAcesso { get; set; }

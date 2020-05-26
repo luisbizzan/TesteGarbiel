@@ -17,6 +17,7 @@ namespace FWLog.Data.Models
         [Required]
         public long IdPedidoVenda { get; set; }
 
+        [Index]
         [Required]
         public int NroNotaFiscal { get; set; }
 
@@ -30,6 +31,11 @@ namespace FWLog.Data.Models
         public decimal TotalPesoLiquidoVolumes { get; set; }
 
         public decimal TotalPesoBrutoVolumes { get; set; }
+
+        [Index]
+        [Required]
+        [StringLength(3)]
+        public string SerieNotaFiscal { get; set; }
 
         [ForeignKey(nameof(IdRomaneio))]
         public virtual Romaneio Romaneio { get; set; }
