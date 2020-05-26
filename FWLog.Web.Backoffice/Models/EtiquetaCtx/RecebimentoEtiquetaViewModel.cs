@@ -12,7 +12,7 @@ namespace FWLog.Web.Backoffice.Models.EtiquetaCtx
         [Display(Name = "Número do Lote")]
         public long? NroLote { get; set; }
 
-        [Display(Name = "Quantidade")]
-        public int? Quantide { get; set; }
+        [Display(Name = "Nro. Volume")]
+        public int? NroVolume { get; set; }
     }
 }

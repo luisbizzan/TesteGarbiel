@@ -5,6 +5,7 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.ExpedicaoCtx;
+using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
@@ -104,6 +105,41 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsFiltered = registrosFiltrados,
                 Data = listaPedidosVenda
             });
+        }
+
+        [HttpGet]
+        public ActionResult MovimentacaoVolumes()
+        {
+            var today = DateTime.Today;
+
+            var viewModel = new MovimentacaoVolumesViewModel
+            {
+                Filter = new MovimentacaoVolumesFilterViewModel()
+                {
+                    DataInicial = today,
+                    DataFinal = today
+                }
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public ActionResult MovimentacaoVolumes(MovimentacaoVolumesViewModel viewModel)
+        {
+            var random = new Random();
+
+            viewModel.AguardandoIntegracao = random.Next(0, 999);
+            viewModel.IntegradoOK = random.Next(0, 999);
+
+            viewModel.Items = new List<MovimentacaoVolumesListItemViewModel>();
+
+            for (int indice = 0; indice < random.Next(1, 10); indice++)
+            {
+                viewModel.Items.Add(new MovimentacaoVolumesListItemViewModel());
+            }
+
+            return View(viewModel);
         }
     }
 }

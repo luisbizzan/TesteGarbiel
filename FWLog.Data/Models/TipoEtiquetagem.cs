@@ -11,7 +11,9 @@ namespace FWLog.Data.Models
         Avulso             = 4,
         Devolucao          = 5,
         Recebimento        = 6,
-        RecebimentoSemNota = 7
+        RecebimentoSemNota = 7,
+        Endereco           = 8,
+        Picking            = 9
     }
 
     public class TipoEtiquetagem

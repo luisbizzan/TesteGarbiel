@@ -8,6 +8,7 @@ namespace FWLog.Data.Models
         Armazenagem = 1,
         Separacao = 2,
         Expedicao = 3,
+        Recebimento = 4
     }
 
     public class ColetorAplicacao

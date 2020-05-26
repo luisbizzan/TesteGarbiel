@@ -299,6 +299,7 @@
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioLogisticaCorredorViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioPosicaoInventarioViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioTotalPorAlaViewModel.cs" />
+    <Compile Include="Models\EtiquetaCtx\EtiquetaLocacaoViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioLogisticaCorredorViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioPosicaoInventarioViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioTotalPorAlaViewModel.cs" />
@@ -363,6 +364,7 @@
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\LoteEtiquetaViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\PedidoVendaModalViewModel.cs" />
+    <Compile Include="Models\ExpedicaoCtx\MovimentacaoVolumesViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\RelatorioTotalizacaoLocalizacaoViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaDetailsViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaCreateViewModel.cs" />
@@ -579,11 +581,13 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\confirmarImpressao.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\index.js" />
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
+    <Content Include="Scripts\Views\Etiqueta\locacao.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\Expedicao\pedidoVendaPesquisaModal.js" />
     <Content Include="Scripts\Views\Expedicao\relatorioVolumesInstaladosTransportadora.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
+    <Content Include="Scripts\Views\Expedicao\movimentacaoVolumes.js" />
     <Content Include="Scripts\Views\HistoricoAcaoUsuario\index.js" />
     <Content Include="Scripts\Views\MotivoLaudo\motivoLaudo.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
@@ -705,9 +709,11 @@
     <Content Include="Views\TransportadoraEndereco\Detalhes.cshtml" />
     <Content Include="Views\TransportadoraEndereco\Cadastrar.cshtml" />
     <Content Include="Views\TransportadoraEndereco\Editar.cshtml" />
+    <Content Include="Views\Etiqueta\Locacao.cshtml" />
     <Content Include="Views\Expedicao\RelatorioVolumesInstaladosTransportadora.cshtml" />
     <Content Include="Views\TransportadoraEndereco\PesquisaModal.cshtml" />
     <Content Include="Views\Expedicao\PedidoVendaPesquisaModal.cshtml" />
+    <Content Include="Views\Expedicao\MovimentacaoVolumes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

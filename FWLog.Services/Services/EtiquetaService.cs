@@ -33,23 +33,21 @@ namespace FWLog.Services.Services
         /// </summary>
         private ReadOnlyCollection<CelulaEtiqueta> CelulasEtiqueta_102x22 { get; } = new List<CelulaEtiqueta> { new CelulaEtiqueta(0), new CelulaEtiqueta(272), new CelulaEtiqueta(545) }.AsReadOnly();
 
-        public void ImprimirEtiquetaVolumeRecebimento(long idLote, long idImpressora, int? quantidade = null)
+        public void ImprimirEtiquetaVolumeRecebimento(long idLote, long idImpressora, int volume, int quantidade)
         {
             Lote lote = _unitOfWork.LoteRepository.GetById(idLote);
-
-            int _quantidade = quantidade ?? lote.QuantidadeVolume;
 
             var etiquetaImprimir = new StringBuilder();
 
             etiquetaImprimir.Append("^XA");
             // Define quantidade de etiquetas a imprimir
-            etiquetaImprimir.Append($"^PQ{_quantidade}^FS");
+            etiquetaImprimir.Append($"^PQ{quantidade}^FS");
             // Contorno da etiqueta
             etiquetaImprimir.Append("^FO15,20^GB690,520^FS");
             // Linha de Fornecedor
             etiquetaImprimir.Append($"^FO30,30^FB510,1,0,C,0^A0B,200,70^FDFOR.{lote.NotaFiscal.Fornecedor.IdFornecedor}^FS");
             // Linha de Barcode
-            etiquetaImprimir.Append($"^FO210,70^FWB^BY3,8,120^BC^FD{idLote.ToString().PadLeft(10, '0')}^FS");
+            etiquetaImprimir.Append($"^FO210,70^FWB^BY3,8,120^BC^FD{idLote.ToString().PadLeft(7, '0')}{volume.ToString().PadLeft(3, '0')}^FS");
             // Linha da Nota Fiscal
             etiquetaImprimir.Append($"^FO390,30^FB510,1,0,C,0^A0B,200,80^FDNF.{lote.NotaFiscal.Numero}^FS");
             // Linha da Data de recebimento
@@ -493,7 +491,7 @@ namespace FWLog.Services.Services
                 etiquetaZpl.AppendLine("^FO16,20^GB696,520,8^FS");
                 etiquetaZpl.AppendLine("^FO16,20^GB350,520,200^FS");
 
-                etiquetaZpl.AppendLine($"^FO95,60^FB450,1,0,C,0^A0B,240,100^FR^FD{codigoEnderecoFormatado}^FS");
+                etiquetaZpl.AppendLine($"^FO95,20^FB500,1,0,C,0^A0B,240,100^FR^FD{codigoEnderecoFormatado}^FS");
                 etiquetaZpl.AppendLine($"^FO450,160^BCB,135,Y,N^FD{idEnderecoFormatado}^FS");
 
                 etiquetaZpl.AppendLine("^XZ");
@@ -565,7 +563,7 @@ namespace FWLog.Services.Services
 
             etiquetaZpl.AppendLine($"^FO55,85^FB430,1,0,C,0^A0B,250,60^FR^FD{referenciaProduto}^FS");
 
-            etiquetaZpl.AppendLine($"^FO370,30^A0B,180,120^FD{codigoEndereco}^FS");
+            etiquetaZpl.AppendLine($"^FO370,45^A0B,180,110^FD{codigoEndereco}^FS");
 
             etiquetaZpl.AppendLine($"^FO600,180^BCR,100,N,N^FD{idEnderecoFormatado}^FS");
 
