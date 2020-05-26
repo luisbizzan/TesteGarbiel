@@ -34,7 +34,13 @@
         ),
         new MenuGroup("Separação", "fa fa-cubes").SetItems(
             new MenuItem { Text = "Caixas de Separação", Url = Url.Action("Index", "Caixa"), RequirePermission = Permissions.Caixa.Listar },
-            new MenuItem { Text = "Corredores x Impressora", Url = Url.Action("Index", "CorredorImpressora"), RequirePermission = Permissions.Separacao.ListarCorredorImpressora }
+            new MenuItem { Text = "Corredores x Impressora", Url = Url.Action("Index", "CorredorImpressora"), RequirePermission = Permissions.Separacao.ListarCorredorImpressora },
+            new MenuItem
+            {
+                Text = "Movimentação de Volumes",
+                Url = Url.Action("MovimentacaoVolumes", "Expedicao"),
+                RequirePermission = Permissions.RelatoriosSeparacao.MovimentacaoVolumes
+            }
         ),
         new MenuGroup("Expedição", "fa fa-truck").SetItems(
             new MenuItem { Text = "Transportadora X Endereços", Url = Url.Action("Index", "TransportadoraEndereco"), RequirePermission = Permissions.Expedicao.ListarTranportadoraEndereco },

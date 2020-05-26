@@ -109,6 +109,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.MovimentacaoVolumes)]
         public ActionResult MovimentacaoVolumes()
         {
             var today = DateTime.Today;
@@ -126,6 +127,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.MovimentacaoVolumes)]
         public async Task<ActionResult> MovimentacaoVolumes(MovimentacaoVolumesViewModel viewModel)
         {
             if (ModelState.IsValid)

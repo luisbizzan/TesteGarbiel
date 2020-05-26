@@ -466,5 +466,15 @@ namespace FWLog.AspNet.Identity
                 Register(MovimentacaoVolumes, Display.FromString("Movimentação de Volumes"));
             }
         }
+
+        public class RelatoriosSeparacao : PermissionGroupBuildItem
+        {
+            public const string MovimentacaoVolumes = "MovimentacaoVolumes";
+
+            public RelatoriosSeparacao() : base(Display.FromString("Separação - Relatórios"))
+            {
+                Register(MovimentacaoVolumes, Display.FromString("Movimentação de Volumes"));
+            }
+        }
     }
 }
