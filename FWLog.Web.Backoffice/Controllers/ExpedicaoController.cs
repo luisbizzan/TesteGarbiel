@@ -125,9 +125,21 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        public ActionResult MovimentacaoVolumes(MovimentacaoVolumesViewModel filtro)
+        public ActionResult MovimentacaoVolumes(MovimentacaoVolumesViewModel viewModel)
         {
-            return RedirectToAction("MovimentacaoVolumes");
+            var random = new Random();
+
+            viewModel.AguardandoIntegracao = random.Next(0, 999);
+            viewModel.IntegradoOK = random.Next(0, 999);
+
+            viewModel.Items = new List<MovimentacaoVolumesListItemViewModel>();
+
+            for (int indice = 0; indice < random.Next(1, 10); indice++)
+            {
+                viewModel.Items.Add(new MovimentacaoVolumesListItemViewModel());
+            }
+
+            return View(viewModel);
         }
     }
 }

@@ -11,8 +11,6 @@
 
 @using (Html.BeginForm())
 {
-    @*@Html.ValidationSummary();*@
-    @*<form id="movimentacaoVolumesForm" data-filter="form" data-filter-for="dataTable" class="form-filter">*@
     <div class="x_panel">
         <div class="x_title">
             <h2 class="collapse-link">
@@ -51,27 +49,79 @@
             </div>
         </div>
     </div>
-    @*</form>*@
 }
-@*<div id="tabelaResultado" class="row">
-        <div class="col-xs-12">
-            <div class="x_panel">
-                <div class="x_title">
-                    <h2>Movimentação de Volumes</h2>
-                    <div class="clearfix"></div>
-                </div>
-                <div class="x_content">
-                    <table id="dataTable" class="table table-striped table-bordered dt-responsive" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>@Html.DisplayNameFor(m => m.EmptyItem.Transportadora)</th>
-                                <th>@Html.DisplayNameFor(m => m.EmptyItem.CodigoEndereco)</th>
-                                <th>@Html.DisplayNameFor(m => m.EmptyItem.NumeroPedido)</th>
-                                <th>@Html.DisplayNameFor(m => m.EmptyItem.NumeroVolume)</th>
-                            </tr>
-                        </thead>
-                    </table>
+@{
+    var temItens = !Model.Items.NullOrEmpty() && Model.Items.Count > 0;
+
+    if (temItens || Model.AguardandoIntegracao.HasValue || Model.IntegradoOK.HasValue)
+    {
+        <div id="tabelaResultado" class="row">
+            <div class="col-xs-12">
+                <div class="x_panel">
+
+                    <div class="x_title">
+                        <h2>Movimentação de Volumes</h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <br />
+                    @if (Model.AguardandoIntegracao.HasValue)
+                    {
+                        <div class="animated flipInY col-lg-2 col-md-3 col-sm-6">
+                            <div class="tile-stats">
+                                <div class="count">@Model.AguardandoIntegracao</div>
+                                <h3>Aguardando Integração</h3>
+                            </div>
+                        </div>
+                    }
+                    @if (Model.IntegradoOK.HasValue)
+                    {
+                        <div class="animated flipInY col-lg-2 col-md-3 col-sm-6">
+                            <div class="tile-stats">
+                                <div class="count">@Model.IntegradoOK</div>
+                                <h3>Integrado Ok</h3>
+                            </div>
+                        </div>
+                    }
+                    @if (temItens)
+                    {
+                        <div class="x_content">
+                            <table id="dataTable" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().Corredores)</th>
+                                        <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().EnviadoSeparacao)</th>
+                                        <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().EmSeparacao)</th>
+                                        <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().FinalizadoSeparacao)</th>
+                                        <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().InstaladoTransportadora)</th>
+                                        <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().Doca)</th>
+                                        <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().EnviadoTransportadora)</th>
+                                        <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().Total)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        var indice = 0;
+
+                                        foreach (var item in Model.Items)
+                                        {
+                                            <tr role="row" class="@(indice++ % 2 == 0? "odd" : "even") trRow">
+                                                <td>01 à 01</td>
+                                                <td>9</td>
+                                                <td>8</td>
+                                                <td>7</td>
+                                                <td>6</td>
+                                                <td>5</td>
+                                                <td>4</td>
+                                                <td>39</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
-    </div>*@
+    }
+}
