@@ -9,7 +9,7 @@
     @FWLog.Web.Backoffice.Helpers.Bundling.BundleHelper.RenderViewScript()
 }
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("MovimentacaoVolumes", "Expedicao", FormMethod.Get))
 {
     <div class="x_panel">
         <div class="x_content" style="display: block;">
@@ -17,7 +17,7 @@
                 <div class="col-xs-12 col-md-4 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataInicial)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.DataInicial, new { @class = "form-control dateFormat", data_field = "DataInicial" })
+                        @Html.TextBox("DataInicial", Model.Filter.DataInicial, new { @class = "form-control dateFormat", id = "Filter_DataInicial" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -27,7 +27,7 @@
                 <div class="col-xs-12 col-md-4 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataFinal)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.DataFinal, new { @class = "form-control dateFormat", data_field = "DataFinal" })
+                        @Html.TextBox("DataFinal", Model.Filter.DataFinal, new { @class = "form-control dateFormat", id = "Filter_DataFinal" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
