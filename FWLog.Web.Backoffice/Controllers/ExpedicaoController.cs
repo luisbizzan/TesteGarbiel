@@ -127,17 +127,17 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpPost]
         public ActionResult MovimentacaoVolumes(MovimentacaoVolumesViewModel viewModel)
         {
-            var random = new Random();
+            //TODO: Validar viewModel
 
-            viewModel.AguardandoIntegracao = random.Next(0, 999);
-            viewModel.IntegradoOK = random.Next(0, 999);
+            //TODO: Carregar de Sankya
+            viewModel.AguardandoIntegracao = new Random().Next(0, 350);
 
-            viewModel.Items = new List<MovimentacaoVolumesListItemViewModel>();
+            //TODO: Carregar de Pedido
+            viewModel.IntegradoOK = new Random().Next(0, 100);
 
-            for (int indice = 0; indice < random.Next(1, 10); indice++)
-            {
-                viewModel.Items.Add(new MovimentacaoVolumesListItemViewModel());
-            }
+            var dadosRetorno = _expedicaoService.BuscarDadosMovimentacaoVolumes(viewModel.Filter.DataInicial.Value, viewModel.Filter.DataFinal.Value);
+
+            viewModel.Items = Mapper.Map<List<MovimentacaoVolumesListItemViewModel>>(dadosRetorno);
 
             return View(viewModel);
         }

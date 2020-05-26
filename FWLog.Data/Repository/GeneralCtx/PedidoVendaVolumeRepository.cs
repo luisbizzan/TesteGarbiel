@@ -1,4 +1,5 @@
 ﻿using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
 using System;
@@ -107,6 +108,23 @@ namespace FWLog.Data.Repository.GeneralCtx
             var query = BuscarDadosVolumePorTransportadoraQuery(model);
 
             return query.ToList();
+        }
+
+        public List<PedidoVendaVolumeGrupoArmazenagemLinhaTabela> BuscarDadosVolumeGrupoArmazenagem(DateTime dataInicial, DateTime dataFinal)
+        {
+            var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao >= dataInicial && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao <= dataFinal);
+
+            var selectQuery = query.Select(q => new PedidoVendaVolumeGrupoArmazenagemLinhaTabela
+            {
+                IdGrupoCorredorArmazenagem = q.GrupoCorredorArmazenagem.IdGrupoCorredorArmazenagem,
+                PontoArmazenagemDescricao = q.GrupoCorredorArmazenagem.PontoArmazenagem.Descricao,
+                CorredorInicial = q.GrupoCorredorArmazenagem.CorredorInicial,
+                CorredorFinal = q.GrupoCorredorArmazenagem.CorredorFinal,
+                IdPedidoVendaVolume = q.IdPedidoVendaVolume,
+                IdPedidoVendaStatus = q.IdPedidoVendaStatus
+            });
+
+            return selectQuery.ToList();
         }
     }
 }

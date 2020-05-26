@@ -105,17 +105,27 @@
                                         foreach (var item in Model.Items)
                                         {
                                             <tr role="row" class="@(indice++ % 2 == 0? "odd" : "even") trRow">
-                                                <td>01 à 01</td>
-                                                <td>9</td>
-                                                <td>8</td>
-                                                <td>7</td>
-                                                <td>6</td>
-                                                <td>5</td>
-                                                <td>4</td>
-                                                <td>39</td>
+                                                <td>@item.Corredores - @item.PontoArmazenagemDescricao</td>
+                                                <td>@item.EnviadoSeparacao</td>
+                                                <td>@item.EmSeparacao</td>
+                                                <td>@item.FinalizadoSeparacao</td>
+                                                <td>@item.InstaladoTransportadora</td>
+                                                <td>@item.Doca</td>
+                                                <td>@item.EnviadoTransportadora</td>
+                                                <td>@item.Total</td>
                                             </tr>
                                         }
                                     }
+                                    <tr>
+                                        <th>Total</th>
+                                        <th>@Model.Items.Sum(s => s.EnviadoSeparacao)</th>
+                                        <th>@Model.Items.Sum(s => s.EmSeparacao)</th>
+                                        <th>@Model.Items.Sum(s => s.FinalizadoSeparacao)</th>
+                                        <th>@Model.Items.Sum(s => s.InstaladoTransportadora)</th>
+                                        <th>@Model.Items.Sum(s => s.Doca)</th>
+                                        <th>@Model.Items.Sum(s => s.EnviadoTransportadora)</th>
+                                        <th>@Model.Items.Sum(s => s.Total)</th>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

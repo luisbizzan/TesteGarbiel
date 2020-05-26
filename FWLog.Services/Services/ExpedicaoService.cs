@@ -1135,5 +1135,33 @@ namespace FWLog.Services.Services
         {
             return _unitOfWork.PedidoVendaRepository.BuscarDadosPedidoVendaParaTabela(filtro, out registrosFiltrados, out totalRegistros);
         }
+
+        public List<MovimentacaoVolumesModel> BuscarDadosMovimentacaoVolumes(DateTime dataInicial, DateTime dataFinal)
+        {
+            var dados = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumeGrupoArmazenagem(dataInicial, dataFinal);
+
+            var dadosAgrupados = dados.GroupBy(g => new
+            {
+                g.IdGrupoCorredorArmazenagem,
+                g.CorredorInicial,
+                g.CorredorFinal
+            }).OrderBy(o => o.Key.CorredorInicial).ThenBy(o => o.Key.CorredorFinal).ToList();
+
+            var dadosRetorno = new List<MovimentacaoVolumesModel>();
+
+            dadosAgrupados.ForEach(g => dadosRetorno.Add(new MovimentacaoVolumesModel
+            {
+                Corredores = $"{g.Key.CorredorInicial} à {g.Key.CorredorFinal}",
+                PontoArmazenagemDescricao = g.FirstOrDefault()?.PontoArmazenagemDescricao,
+                EnviadoSeparacao = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao),
+                EmSeparacao = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao),
+                FinalizadoSeparacao = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso),
+                InstaladoTransportadora = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovendoDOCA),
+                Doca = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.DespachandoNF || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.NFDespachada),
+                EnviadoTransportadora = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.RomaneioImpresso),
+            }));
+
+            return dadosRetorno;
+        }
     }
 }
