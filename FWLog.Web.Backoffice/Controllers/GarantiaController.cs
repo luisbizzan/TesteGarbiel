@@ -60,6 +60,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             model.Filter.Data_Inicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(-7);
             model.Filter.Data_Final = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
+            model.Filter.Id_Empresa = IdEmpresa;
 
             return View(model);
         }
@@ -68,8 +69,6 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             int recordsFiltered, totalRecords;
             var filter = Mapper.Map<DataTableFilter<GarantiaSolicitacaoFilter>>(model);
-
-            var teste = IdEmpresa;
 
             IEnumerable<GarSolicitacao> result = _uow.GarantiaRepository.ListarSolicitacao(filter, out recordsFiltered, out totalRecords);
 
@@ -503,39 +502,64 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             var conferencia = _uow.GarantiaRepository.SelecionaConferencia(Id_Conferencia);
 
-            //Tipo Solicitação => 17 = Devolução | 18 = Garantia
-            if (conferencia.Id_Tipo_Solicitacao == 18)
+            if (conferencia.Id_Remessa == 0)
             {
-                //GARANTIA
-                if (conferencia.Id_Tipo_Conf == 5)
+                //SOLICITAÇÃO
+                //Tipo Solicitação => 17 = Devolução | 18 = Garantia
+                if (conferencia.Id_Tipo_Solicitacao == 18)
                 {
-                    //CONFERENCIA DE ENTRADA
-                    _uow.GarantiaRepository.FinalizarConferenciaEntrada(new GarConferencia
+                    //GARANTIA
+                    if (conferencia.Id_Tipo_Conf == 5)
                     {
-                        Id = conferencia.Id,
-                        Id_Usr = IdUsuario,
-                        Id_Tipo_Solicitacao = conferencia.Id_Tipo_Solicitacao,
-                        Id_Solicitacao = conferencia.Id_Solicitacao
-                    });
+                        //CONFERENCIA DE ENTRADA
+                        _uow.GarantiaRepository.FinalizarConferenciaEntrada(new GarConferencia
+                        {
+                            Id = conferencia.Id,
+                            Id_Usr = IdUsuario,
+                            Id_Tipo_Solicitacao = conferencia.Id_Tipo_Solicitacao,
+                            Id_Solicitacao = conferencia.Id_Solicitacao
+                        });
 
-                    //TOOD PARTE DE NF SANKYA
+                        //TOOD PARTE DE NF SANKYA
+                    }
+                }
+                else if (conferencia.Id_Tipo_Solicitacao == 17)
+                {
+                    //DEVOLUÇÃO
+                    if (conferencia.Id_Tipo_Conf == 5)
+                    {
+                        //CONFERENCIA DE ENTRADA
+                        _uow.GarantiaRepository.FinalizarConferenciaEntrada(new GarConferencia
+                        {
+                            Id = conferencia.Id,
+                            Id_Usr = IdUsuario,
+                            Id_Tipo_Solicitacao = conferencia.Id_Tipo_Solicitacao,
+                            Id_Solicitacao = conferencia.Id_Solicitacao
+                        });
+
+                        //TOOD PARTE DE NF SANKYA
+                    }
                 }
             }
-            else if (conferencia.Id_Tipo_Solicitacao == 17)
+            else
             {
-                //DEVOLUÇÃO
-                if (conferencia.Id_Tipo_Conf == 5)
+                //REMESSA
+
+                if (conferencia.Id_Tipo_Conf == 26)
                 {
-                    //CONFERENCIA DE ENTRADA
-                    _uow.GarantiaRepository.FinalizarConferenciaEntrada(new GarConferencia
+                    //CONFERENCIA DE REMESSA ENVIO FORNECEDOR
+
+                    //TODO MANDAR NOTA PRO SANYKA E MUDAR O STATUS PARA AGUARDANDO NF
+                    //_uow.GarantiaRepository.AtualizaStatusConferenciaRemessa(new GarConferencia
+                    //{
+                    //    Id_Remessa = conferencia.Id_Remessa
+                    //});
+
+                    _uow.GarantiaRepository.FinalizarConferenciaRemessa(new GarConferencia
                     {
                         Id = conferencia.Id,
-                        Id_Usr = IdUsuario,
-                        Id_Tipo_Solicitacao = conferencia.Id_Tipo_Solicitacao,
-                        Id_Solicitacao = conferencia.Id_Solicitacao
+                        Id_Remessa = conferencia.Id_Remessa
                     });
-
-                    //TOOD PARTE DE NF SANKYA
                 }
             }
 
@@ -590,6 +614,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             model.Filter.Data_Inicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(-7);
             model.Filter.Data_Final = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
+            model.Filter.Id_Empresa = IdEmpresa;
 
             return View(model);
         }
@@ -642,7 +667,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     {
                         Cod_Fornecedor = item.Cod_Fornecedor,
                         Id_Empresa = IdEmpresa,
-                        Id_Status = 37,
+                        Id_Status = 38,
                         Id_Tipo = 2,
                         Id_Usr = IdUsuario
                     });

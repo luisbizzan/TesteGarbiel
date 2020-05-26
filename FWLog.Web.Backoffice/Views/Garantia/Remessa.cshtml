@@ -19,6 +19,7 @@
 }
 
 <form data-filter="form" data-filter-for="dataTable" class="form-filter">
+    @Html.TextBoxFor(m => m.Filter.Id_Empresa, new { data_field = "Id_Empresa" })
     <div class="x_panel">
         <div class="x_title">
             <h2>Solicitações de Garantia</h2>
@@ -119,7 +120,6 @@
         </div>
     </div>
 </div>
-
 
 <div class="modal fade" data-backdrop="static" id="modalItensPendentes" style="overflow-y: scroll;">
     <div class="modal-dialog modal-lg">

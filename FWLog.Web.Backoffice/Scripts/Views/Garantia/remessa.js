@@ -36,7 +36,7 @@
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         var visivelEstornar = view.estornarRemessa;
-        var visivelConferir = view.conferirRemessa && (full.Id_Status === 22 || full.Id_Status === 23);
+        var visivelConferir = view.conferirRemessa && (full.Id_Status === 38);
 
         return [
             {
@@ -52,7 +52,7 @@
                 color: "btn-primary",
                 attrs: { 'data-id': full.Id, 'action': 'conferirRemessa' },
                 icon: 'fa fa-check-square-o',
-                visible: true
+                visible: visivelConferir
             }
         ];
     });

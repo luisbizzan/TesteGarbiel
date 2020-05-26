@@ -20,6 +20,7 @@
 }
 
 <form data-filter="form" data-filter-for="dataTable" class="form-filter">
+    @Html.TextBoxFor(m => m.Filter.Id_Empresa, new { data_field = "Id_Empresa" })
     <div class="x_panel">
         <div class="x_title">
             <h2 class="collapse-link">
@@ -28,6 +29,7 @@
             <div class="clearfix"></div>
         </div>
         <div class="x_content" style="display: block;">
+
             <div class="row">
                 <div class="col-xs-12 col-md-2 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.Cli_Cnpj)

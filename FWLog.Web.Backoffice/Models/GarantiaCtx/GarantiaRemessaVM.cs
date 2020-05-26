@@ -50,6 +50,8 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         [Display(Name = "Status")]
         public long? Id_Status { get; set; }
 
+        public long? Id_Empresa { get; set; }
+
         public String Status { get; set; }
 
         [Display(Name = "Data Inicial")]
