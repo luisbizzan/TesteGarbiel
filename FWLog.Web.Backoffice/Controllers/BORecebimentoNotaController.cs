@@ -2477,7 +2477,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     QuantidadeVolumes = lote.QuantidadeVolume.ToString(),
 
                     //Temporário - Verificar depois com o Shankya qual o campo referente a sigla do transportador.
-                    SiglaTransportador = lote.NotaFiscal.Transportadora.RazaoSocial.Substring(0, 3),
+                    SiglaTransportador = lote.NotaFiscal.Transportadora.CodigoTransportadora,
 
                     IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
                 };
