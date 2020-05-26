@@ -45,18 +45,21 @@ namespace FWLog.Data.Repository.GeneralCtx
                 {
                     if (ping.Send(Impressao.EnderecoIP).Status == IPStatus.Success)
                     {
-                        Socket comandoImpressao = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true };
-                        Byte[] bytesConteudoImpressao = Encoding.ASCII.GetBytes(Impressao.ConteudoImpressao.ToString());
-                        IPAddress IP = IPAddress.Parse(Impressao.EnderecoIP);
-                        IPEndPoint IPComPorta = new IPEndPoint(IP, Impressao.PortaConexao.Equals(0) ? 9100 : Impressao.PortaConexao);
-                        comandoImpressao.Connect(IPComPorta);
-                        if (comandoImpressao.Connected)
+                        using (Socket comandoImpressao = new Socket(SocketType.Stream, ProtocolType.Tcp))
+                        {
+                            Byte[] bytesConteudoImpressao = Encoding.ASCII.GetBytes(Impressao.ConteudoImpressao.ToString());
+                            IPAddress IP = IPAddress.Parse(Impressao.EnderecoIP);
+                            IPEndPoint IPComPorta = new IPEndPoint(IP, Impressao.PortaConexao.Equals(0) ? 9100 : Impressao.PortaConexao);
+                            comandoImpressao.Connect(IPComPorta);
                             comandoImpressao.Send(bytesConteudoImpressao);
-                        comandoImpressao.Shutdown(SocketShutdown.Both);
-                        comandoImpressao.Close();
+                            // delay de 5seg antes de fechar o comando para que a impressora receba todo conteúdo enviado.
+                            Thread.Sleep(5000);
+                            comandoImpressao.Shutdown(SocketShutdown.Both);
+                            comandoImpressao.Close();
+                        }
                     }
                     else
-                        throw new Exception(String.Format("Impressora {0} Offline!", Impressao.EnderecoIP));
+                        throw new Exception(String.Format("Impressora {0}:{1} Offline!", Impressao.EnderecoIP, Impressao.PortaConexao));
                 }
                 #endregion
             }
@@ -113,6 +116,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                                 if (item.TipoEtiqueta == GarantiaEtiqueta.ETIQUETA.Garantia)
                                 {
+                                    dadosImpressao.ConteudoImpressao.AppendLine("^PQ1^FS");
                                     dadosImpressao.ConteudoImpressao.AppendLine("^FO000,45^GB146,26,30^FS");
                                     dadosImpressao.ConteudoImpressao.AppendLine(String.Format(GarantiaEtiqueta.EtiquetaGarantia.PrimeiraColuna, item.Refx, item.CodigoSolicitacao, item.Descricao, item.CodigoBarras, item.Cliente, item.Representante));
                                 }
