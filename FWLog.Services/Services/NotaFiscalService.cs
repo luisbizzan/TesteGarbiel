@@ -98,7 +98,7 @@ namespace FWLog.Services.Services
                         throw new Exception(string.Format("Código da Fornecedor (CODPARC: {0}) inválido", notafiscalIntegracao.CodigoIntegracaoFornecedor));
                     }
 
-                    DateTime dataVencimento;
+                    DateTime? dataVencimento = null;
 
                     try
                     {
@@ -117,8 +117,6 @@ namespace FWLog.Services.Services
                     if (notafiscal != null)
                     {
                         notaNova = false;
-                        notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.ProcessandoIntegracao;
-
                         var lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(notafiscal.IdNotaFiscal);
 
                         if (lote != null)
@@ -151,7 +149,7 @@ namespace FWLog.Services.Services
                     notafiscal.IdNotaFiscalTipo = NotaFiscalTipoEnum.Compra;
                     notafiscal.NumeroFicticioNF = notafiscalIntegracao.NumeroFicticioNF;
                     notafiscal.DataVencimento = dataVencimento;
-
+                    
                     FreteTipo freteTipo = tiposFrete.FirstOrDefault(f => f.Sigla == notafiscalIntegracao.FreteTipo);
                     if (freteTipo != null)
                     {
@@ -180,17 +178,7 @@ namespace FWLog.Services.Services
                             throw new Exception(string.Format("Código da Unidade de Medida (CODVOL: {0}) inválido", item.UnidadeMedida));
                         }
 
-                        bool itemNovo = false;
-                        NotaFiscalItem notaFiscalItem;
-
-                        notaFiscalItem = notafiscal.NotaFiscalItens.FirstOrDefault(f => f.IdProduto == produto.IdProduto && f.Sequencia == sequencia);
-
-                        if (notaFiscalItem == null)
-                        {
-                            notaFiscalItem = new NotaFiscalItem();
-                            itemNovo = true;
-                        }
-
+                        NotaFiscalItem notaFiscalItem = new NotaFiscalItem();
                         notaFiscalItem.IdUnidadeMedida = unidade.IdUnidadeMedida;
                         notaFiscalItem.IdProduto = produto.IdProduto;
                         notaFiscalItem.Quantidade = qtdNeg;
@@ -200,24 +188,12 @@ namespace FWLog.Services.Services
                         notaFiscalItem.Sequencia = sequencia;
                         notaFiscalItem.QuantidadeDevolucao = item.QuantidadeDevolucao.NullOrEmpty() ? 0 : Convert.ToInt32(item.QuantidadeDevolucao);
 
-
-                        if (itemNovo)
-                        {
-                            itemsNotaFsical.Add(notaFiscalItem);
-
-                            notafiscal.NotaFiscalItens = itemsNotaFsical;
-                        }
+                        itemsNotaFsical.Add(notaFiscalItem);
                     }
 
-                    int diasPrazoEntrega = _uow.ProdutoEstoqueRepository.ObterDiasPrazoEntrega(notafiscal.IdEmpresa, notafiscal.NotaFiscalItens.Select(s => s.IdProduto).ToList());
+                    int diasPrazoEntrega = _uow.ProdutoEstoqueRepository.ObterDiasPrazoEntrega(notafiscal.IdEmpresa, itemsNotaFsical.Select(s => s.IdProduto).ToList());
 
-                    notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento;
                     notafiscal.PrazoEntregaFornecedor = notafiscal.DataEmissao.AddDays(diasPrazoEntrega);
-
-                    if (notaNova)
-                    {
-                        _uow.NotaFiscalRepository.Add(notafiscal);
-                    }
 
                     try
                     {
@@ -228,11 +204,36 @@ namespace FWLog.Services.Services
                         throw new Exception(string.Format("Erro ao atualizar a nota fiscal de recebimento de sequinte chave de acesso: {0}.", notafiscal.ChaveAcesso));
                     }
 
-                    _uow.SaveChanges();
+                    using (var transacao = _uow.CreateTransactionScope())
+                    {
+                        if (!notafiscal.NotaFiscalItens.NullOrEmpty())
+                        {
+                            _uow.NotaFiscalItemRepository.DeleteRange(notafiscal.NotaFiscalItens.ToList());
+                        }
+
+                        notafiscal.NotaFiscalItens = itemsNotaFsical;
+
+                        if (notaNova)
+                        {
+                            _uow.NotaFiscalRepository.Add(notafiscal);
+                        }
+                        else
+                        {
+                            _uow.NotaFiscalRepository.Update(notafiscal);
+                        }
+
+                        _uow.SaveChanges();
+
+                        transacao.Complete();
+                    }
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", notafiscal.CodigoIntegracao.ToString() } };
 
                     await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "AD_STATUSREC", NotaFiscalStatusEnum.AguardandoRecebimento.GetHashCode());
+
+                    notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.AguardandoRecebimento;
+
+                    _uow.SaveChanges();
 
                 }
                 catch (Exception ex)
@@ -449,9 +450,9 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task<DateTime> ConsultarDataVencimento(string codigoIntegracao)
+        public async Task<DateTime?> ConsultarDataVencimento(string codigoIntegracao)
         {
-            DateTime dataVencimento;
+            DateTime? dataVencimento = null;
 
             string where = string.Format("WHERE NUNOTA = {0} ", codigoIntegracao);
 
@@ -466,11 +467,14 @@ namespace FWLog.Services.Services
                     listaDataVencimento.Add(DateTime.ParseExact(item.DataVencimento, "ddMMyyyy HH:mm:ss", CultureInfo.InvariantCulture));
                 }
 
-                dataVencimento = listaDataVencimento.Min();
+                if (!listaDataVencimento.NullOrEmpty())
+                {
+                    dataVencimento = listaDataVencimento.Min();
+                }
             }
             catch (Exception e)
             {
-                throw;
+                throw e;
             }
 
             return dataVencimento;

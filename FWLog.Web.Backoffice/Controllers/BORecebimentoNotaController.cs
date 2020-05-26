@@ -292,6 +292,7 @@ namespace FWLog.Web.Backoffice.Controllers
             totalRecordsFiltered = boRecebimentoNotaListItemViewModel.Count;
 
             var result = boRecebimentoNotaListItemViewModel
+                .OrderBy(model.OrderByColumn, model.OrderByDirection)
                 .Skip(model.Start)
                 .Take(model.Length);
 
