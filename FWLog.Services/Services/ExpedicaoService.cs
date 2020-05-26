@@ -26,8 +26,17 @@ namespace FWLog.Services.Services
         private readonly PedidoService _pedidoService;
         private readonly RelatorioService _relatorioService;
         private readonly TransportadoraService _transportadoraService;
+        private readonly RomaneioService _romaneioService;
 
-        public ExpedicaoService(UnitOfWork unitOfWork, ILog log, ColetorHistoricoService coletorHistoricoService, NotaFiscalService notaFiscalService, PedidoService pedidoService, RelatorioService relatorioService, TransportadoraService transportadoraService)
+        public ExpedicaoService(
+            UnitOfWork unitOfWork, 
+            ILog log, 
+            ColetorHistoricoService coletorHistoricoService, 
+            NotaFiscalService notaFiscalService, 
+            PedidoService pedidoService, 
+            RelatorioService relatorioService, 
+            TransportadoraService transportadoraService,
+            RomaneioService romaneioService)
         {
             _unitOfWork = unitOfWork;
             _log = log;
@@ -36,9 +45,10 @@ namespace FWLog.Services.Services
             _pedidoService = pedidoService;
             _relatorioService = relatorioService;
             _transportadoraService = transportadoraService;
+            _romaneioService = romaneioService;
         }
 
-        public void IniciarExpedicaoPedidoVenda(long idPedidoVenda, long idPedidoVendaVolume, string idUsuario, long idEmpresa)
+        public void IniciarExpedicaoPedidoVenda(long idPedidoVenda, long idPedidoVendaVolume, long idEmpresa)
         {
             // validações
             if (idPedidoVenda <= 0)
@@ -165,9 +175,17 @@ namespace FWLog.Services.Services
                     {
                         var salvaPedido = false;
 
-                        if (long.TryParse(dadosNotaFiscal.NumeroNotaFiscal, out long numeroNotaFiscal))
+                        if (long.TryParse(dadosNotaFiscal.CodigoIntegracaoNotaFiscal, out long codigoIntegracaoNotaFiscal))
                         {
-                            pedido.CodigoIntegracaoNotaFiscal = numeroNotaFiscal;
+                            pedido.CodigoIntegracaoNotaFiscal = codigoIntegracaoNotaFiscal;
+
+                            salvaPedido = true;
+                        }
+
+                        if(int.TryParse(dadosNotaFiscal.NumeroNotaFiscal, out int numeroNotaFiscal) && !string.IsNullOrWhiteSpace(dadosNotaFiscal.SerieNotaFiscal))
+                        {
+                            pedido.NumeroNotaFiscal = numeroNotaFiscal;
+                            pedido.SerieNotaFiscal = dadosNotaFiscal.SerieNotaFiscal;
 
                             salvaPedido = true;
                         }
@@ -228,7 +246,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException($"Nota Fiscal {pedido.CodigoIntegracaoNotaFiscal} não foi encontrada no Sankhya.");
             }
 
-            if (!(long.TryParse(dadosNotaFiscal.NumeroNotaFiscal, out long numeroNotaFiscal) && pedido.CodigoIntegracaoNotaFiscal == numeroNotaFiscal))
+            if (!(long.TryParse(dadosNotaFiscal.CodigoIntegracaoNotaFiscal, out long numeroNotaFiscal) && pedido.CodigoIntegracaoNotaFiscal == numeroNotaFiscal))
             {
                 return false;
             }
@@ -884,8 +902,12 @@ namespace FWLog.Services.Services
                 romaneio.IdEmpresa = idEmpresa;
                 romaneio.NroRomaneio = GetNextNroRomaneioByEmpresa(idEmpresa);
 
+                var dataHoraEmissaoRomaneio = DateTime.Now;
+
                 _unitOfWork.RomaneioRepository.Add(romaneio);
                 _unitOfWork.SaveChanges();
+
+                await _romaneioService.InserirRomaneioSankhya(romaneio.NroRomaneio, dataHoraEmissaoRomaneio);
 
                 foreach (var chaveAcesso in chavesAcessos)
                 {
@@ -899,6 +921,16 @@ namespace FWLog.Services.Services
                         throw new BusinessException("Nota fiscal não pertence a transportadora informada.");
                     }
 
+                    if (!pedido.NumeroNotaFiscal.HasValue)
+                    {
+                        throw new BusinessException("Não foi encontrado número da nota fiscal informada.");
+                    }
+
+                    if (pedido.SerieNotaFiscal.NullOrEmpty())
+                    {
+                        throw new BusinessException("Não foi encontrado número de série da nota fiscal informada.");
+                    }
+
                     PedidoVenda pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedido(pedido.IdPedido);
 
                     if (pedidoVenda == null)
@@ -910,7 +942,8 @@ namespace FWLog.Services.Services
                     var romaneioNotaFiscal = new RomaneioNotaFiscal();
                     romaneioNotaFiscal.IdRomaneio = romaneio.IdRomaneio;
                     romaneioNotaFiscal.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
-                    romaneioNotaFiscal.NroNotaFiscal = Convert.ToInt32(pedido.CodigoIntegracaoNotaFiscal);
+                    romaneioNotaFiscal.NroNotaFiscal = pedido.NumeroNotaFiscal.Value;
+                    romaneioNotaFiscal.SerieNotaFiscal = pedido.SerieNotaFiscal;
                     romaneioNotaFiscal.NroVolumes = pedidoVenda.NroVolumes;
                     romaneioNotaFiscal.IdCliente = pedidoVenda.IdCliente;
 
@@ -927,11 +960,13 @@ namespace FWLog.Services.Services
                     _unitOfWork.SaveChanges();
 
                     pedidoVenda.IdUsuarioRomaneio = idUsuario;
-                    var dataHoraEmissaoRomaneio = DateTime.Now;
                     pedidoVenda.DataHoraRomaneio = dataHoraEmissaoRomaneio;
 
                     // atualiza status no Sankhya e nas entidades do pedido
                     await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, PedidoVendaStatusEnum.RomaneioImpresso);
+
+                    //Atualizando o numero do Romaneio no Sankhya da Nota Fiscal de Venda atraves do pedido
+                    await _romaneioService.AtualizarRomaneioNotaFiscal(pedidoVenda.Pedido, romaneio.NroRomaneio);
 
                     pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.RomaneioImpresso;
                     _unitOfWork.PedidoRepository.Update(pedido);

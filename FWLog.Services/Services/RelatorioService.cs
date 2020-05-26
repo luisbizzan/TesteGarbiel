@@ -9,7 +9,6 @@ using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace FWLog.Services.Services
@@ -1636,7 +1635,7 @@ namespace FWLog.Services.Services
 
                     var itemRelatorio = new DadosRelatorioRomaneioCampinasBateria
                     {
-                        NumeroNotaFiscal = pedido.CodigoIntegracaoNotaFiscal.ToString(),
+                        NumeroNotaFiscal = string.Concat(romaneioNotaFiscal.NroNotaFiscal.ToString(),"-", romaneioNotaFiscal.SerieNotaFiscal),
                         Cliente = $"{cliente.RazaoSocial}{separadorLinha}{cliente.CodigoIntegracao} - {pedido.CodigoIntegracao}",
                         Endereco = $"{cliente.Endereco}{separadorLinha}{cliente.Cidade}",
                         Telefone = $"{cliente.Telefone}",
@@ -1665,7 +1664,7 @@ namespace FWLog.Services.Services
 
                     var itemRelatorio = new DadosRelatorioRomaneio
                     {
-                        NumeroNotaFiscal = pedido.CodigoIntegracaoNotaFiscal.ToString(),
+                        NumeroNotaFiscal = string.Concat(romaneioNotaFiscal.NroNotaFiscal.ToString(),"-", romaneioNotaFiscal.SerieNotaFiscal),
                         Cliente = $"{cliente.RazaoSocial}{separadorLinha}{cliente.CodigoIntegracao} - {pedido.CodigoIntegracao}",
                         Endereco = $"{cliente.Endereco}{separadorLinha}{cliente.Cidade}",
                         Telefone = $"{cliente.Telefone}",

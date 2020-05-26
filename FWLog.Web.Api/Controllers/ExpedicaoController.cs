@@ -120,7 +120,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _expedicaoService.IniciarExpedicaoPedidoVenda(requisicao.IdPedidoVenda, requisicao.IdPedidoVendaVolume, IdUsuario, IdEmpresa);
+                _expedicaoService.IniciarExpedicaoPedidoVenda(requisicao.IdPedidoVenda, requisicao.IdPedidoVendaVolume, IdEmpresa);
             }
             catch (BusinessException businessException)
             {

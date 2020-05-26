@@ -65,6 +65,13 @@ namespace FWLog.Data.Models
 
         public virtual ICollection<PedidoItem> PedidoItens { get; set; }
 
+        [Index]
+        public int? NumeroNotaFiscal { get; set; }
+
+        [Index]
+        [StringLength(3)]
+        public string SerieNotaFiscal { get; set; }
+
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
 

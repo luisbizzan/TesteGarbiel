@@ -248,6 +248,7 @@
     <Compile Include="Services\PedidoService.cs" />
     <Compile Include="Services\PedidoVendaProdutoService.cs" />
     <Compile Include="Services\PedidoVendaVolumeService.cs" />
+    <Compile Include="Services\RomaneioService.cs" />
     <Compile Include="Services\SeparacaoPedidoService.cs" />
     <Compile Include="Services\ArmazenagemService.cs" />
     <Compile Include="Services\BaseService.cs" />
