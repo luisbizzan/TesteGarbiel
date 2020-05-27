@@ -105,7 +105,7 @@
 
                                             routeValueDictionary.Add("dataInicial", Model.Filter.DataInicial);
                                             routeValueDictionary.Add("dataFinal", Model.Filter.DataFinal);
-                                            routeValueDictionary.Add("idGrupoCorredorArmazenagem", pontoArmazenagemItems.First().IdGrupoCorredorArmazenagem);
+                                            routeValueDictionary.Add("idGrupoCorredorArmazenagem", string.Empty);
                                             routeValueDictionary.Add("status", string.Empty);
 
                                             var htmlAttributes = new Dictionary<string, object>();
@@ -114,6 +114,8 @@
 
                                             foreach (var item in pontoArmazenagemItems.ToList())
                                             {
+                                                routeValueDictionary["idGrupoCorredorArmazenagem"] = item.IdGrupoCorredorArmazenagem;
+
                                                 <tr>
                                                     <td>@item.Corredores</td>
                                                     <td align="center">

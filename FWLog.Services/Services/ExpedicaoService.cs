@@ -1283,7 +1283,7 @@ namespace FWLog.Services.Services
                     break;
                 case "EnviadoTransportadora":
                     listaStatus.Add(PedidoVendaStatusEnum.RomaneioImpresso);
-                    statusDescricao = "Enviado Transportador";
+                    statusDescricao = "Enviado Transportadora";
                     break;
                 default:
                     statusDescricao = "Todos";
