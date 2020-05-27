@@ -30,7 +30,7 @@ namespace Identity
         {
             BackofficeUserManager userManager;
             ApplicationRoleManager roleManager;
-            
+
             using (CreateManagers(out userManager, out roleManager))
             {
                 CreatePermissions(roleManager);
@@ -64,7 +64,7 @@ namespace Identity
             }
 
             var permissionsBuildItens = PermissionManager.Groups.SelectMany(x => x.Permissions);
-            IEnumerable<string> permissions = permissionsBuildItens.Select(x => x.Name).ToList();
+            IEnumerable<string> permissions = permissionsBuildItens.Select(x => x.Name).Distinct().ToList();
 
             userManager.AddToPermissions(adminUser, permissions);
         }
