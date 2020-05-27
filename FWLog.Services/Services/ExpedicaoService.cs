@@ -1,6 +1,7 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.Coletor;
@@ -896,13 +897,14 @@ namespace FWLog.Services.Services
             // ações
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
+                var dataHoraEmissaoRomaneio = DateTime.Now;
+
                 // Romaneio
                 var romaneio = new Romaneio();
                 romaneio.IdTransportadora = idTransportadora;
                 romaneio.IdEmpresa = idEmpresa;
                 romaneio.NroRomaneio = GetNextNroRomaneioByEmpresa(idEmpresa);
-
-                var dataHoraEmissaoRomaneio = DateTime.Now;
+                romaneio.DataHoraCriacao = dataHoraEmissaoRomaneio;
 
                 _unitOfWork.RomaneioRepository.Add(romaneio);
                 _unitOfWork.SaveChanges();
@@ -1212,6 +1214,42 @@ namespace FWLog.Services.Services
             dadosRetorno.AguardandoRobo = _unitOfWork.PedidoRepository.PesquisarTotalPendenteSeparacao(idEmpresa);
 
             return dadosRetorno;
+        }
+
+        public List<RelatorioPedidosExpedidosLinhaTabela> BuscarDadosPedidosExpedidos(DataTableFilter<RelatorioPedidosExpedidosFilter> filtro, out int totalRecordsFiltered, out int totalRecords)
+        {
+            var pedidosExpedidos = _unitOfWork.PedidoVendaRepository.BuscarPedidosExpedidosPorEmpresa(filtro.CustomFilter.IdEmpresa).AsQueryable();
+
+            var dataInicial = new DateTime(filtro.CustomFilter.DataInicial.Value.Year, filtro.CustomFilter.DataInicial.Value.Month, filtro.CustomFilter.DataInicial.Value.Day, 00, 00, 00);
+            var dataFinal = new DateTime(filtro.CustomFilter.DataFinal.Value.Year, filtro.CustomFilter.DataFinal.Value.Month, filtro.CustomFilter.DataFinal.Value.Day, 23, 59, 59);
+
+            pedidosExpedidos = pedidosExpedidos.Where(pe => pe.Pedido.DataCriacao >= dataInicial);
+            pedidosExpedidos = pedidosExpedidos.Where(pe => pe.Pedido.DataCriacao <= dataFinal);
+
+            totalRecords = pedidosExpedidos.Count();
+
+            if (filtro.CustomFilter.IdTransportadora.HasValue)
+            {
+                pedidosExpedidos = pedidosExpedidos.Where(pv => pv.IdTransportadora == filtro.CustomFilter.IdTransportadora.Value);
+            }
+
+            var query = pedidosExpedidos.Select(pedidoVenda => new RelatorioPedidosExpedidosLinhaTabela
+            {
+               NroPedido = pedidoVenda.NroPedidoVenda,
+               NroVolume = pedidoVenda.PedidoVendaVolumes.Where(x => x.IdPedidoVenda == pedidoVenda.IdPedidoVenda).Select(y => y.NroVolume).First().ToString().PadLeft(3,'0'),
+               IdENomeTransportadora = string.Concat(pedidoVenda.IdTransportadora.ToString().PadLeft(3,'0'),"-",pedidoVenda.Transportadora.RazaoSocial),
+               NotaFiscalESerie = string.Concat(pedidoVenda.Pedido.NumeroNotaFiscal,"-",pedidoVenda.Pedido.SerieNotaFiscal),
+               DataDoPedido = pedidoVenda.Pedido.DataCriacao.ToString("dd/MM/yyyy HH:mm"),
+               DataSaidaDoPedido = pedidoVenda.DataHoraRomaneio.Value.ToString("dd/MM/yyyy HH:mm")
+            }).OrderBy(x => x.NroPedido).ThenBy(x => x.NroVolume);
+
+            totalRecordsFiltered = query.Count();
+
+            var response = query.OrderBy(filtro.OrderByColumn, filtro.OrderByDirection)
+                                .Skip(filtro.Start)
+                                .Take(filtro.Length);
+
+           return response.ToList();
         }
 
         public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string tipo, long idEmpresa, out string statusDescricao)

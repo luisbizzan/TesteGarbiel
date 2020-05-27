@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
@@ -157,6 +158,32 @@ namespace FWLog.Web.Backoffice.Controllers
             viewModel.Items = Mapper.Map<List<MovimentacaoVolumesListItemViewModel>>(dadosRetorno);
 
             return View(viewModel);
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosExpedidos)]
+        public ActionResult RelatorioPedidosExpedidos()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosExpedidos)]
+        public ActionResult RelatorioPedidosExpedidosPageData(DataTableFilter<RelatorioPedidosExpedidosFilterViewModel> model)
+        {
+            var filter = Mapper.Map<DataTableFilter<RelatorioPedidosExpedidosFilter>>(model);
+
+            filter.CustomFilter.IdEmpresa = IdEmpresa;
+
+            IEnumerable<RelatorioPedidosExpedidosLinhaTabela> result = _expedicaoService.BuscarDadosPedidosExpedidos(filter, out int recordsFiltered, out int totalRecords);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = recordsFiltered,
+                Data = Mapper.Map<IEnumerable<RelatorioPedidosExpedidosListItemViewModel>>(result)
+            });
         }
 
         [HttpGet]

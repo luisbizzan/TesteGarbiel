@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,6 +21,8 @@ namespace FWLog.Data.Models
 
         [Required]
         public int NroRomaneio { get; set; }
+
+        public DateTime? DataHoraCriacao { get; set; }
 
         [ForeignKey(nameof(IdTransportadora))]
         public virtual Transportadora Transportadora { get; set; }
