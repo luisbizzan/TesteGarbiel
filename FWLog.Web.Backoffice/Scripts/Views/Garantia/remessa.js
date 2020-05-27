@@ -175,14 +175,30 @@ function visualizarRemessaDetalhado(id) {
                 className: 'btn-primary ',
                 action: function (e, dt, node, config) {
                     var ids = $.map(this.rows('.selected').data(), function (item) {
-                        return item[1].split(" - ")[0];
+                        var s = item[2].split(" - ")[0] + ";" + item[4].split(" - ")[0];
+                        return s;
                     });
                     console.log(ids)
 
                     if (ids.length == 0) {
                         PNotify.error({ text: "Selecione um item." });
                     } else {
-                        //criarAcao(ids.join());
+
+                        /* # Imprimir Etiqueta # */
+                        var registro = new Object();
+                        registro.EtiquetaImpressaoIds = ids;
+
+                        $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { EtiquetaImpressao: registro }, function (s) {
+                            console.log(s);
+                            Mensagem(s.Success, s.Message);
+                            if (s.Success) {
+                                location.reload();
+                            }
+                        }).fail(function (f) {
+                            console.log(f);
+                        }).done(function (d) {
+                        });
+
                     }
                 }
             },
@@ -232,4 +248,15 @@ function criarRemessa() {
     modal.load("RemessaCriar/", function () {
         modal.modal();
     });
+}
+
+
+/* [GENÉRICO] mostrar mensagens */
+function Mensagem(sucesso, mensagem) {
+    if (sucesso) {
+        PNotify.success({ text: mensagem, delay: 1000 });
+    }
+    else {
+        PNotify.error({ text: mensagem, delay: 5000 });
+    }
 }
