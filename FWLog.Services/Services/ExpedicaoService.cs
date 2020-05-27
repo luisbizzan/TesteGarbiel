@@ -30,12 +30,12 @@ namespace FWLog.Services.Services
         private readonly RomaneioService _romaneioService;
 
         public ExpedicaoService(
-            UnitOfWork unitOfWork, 
-            ILog log, 
-            ColetorHistoricoService coletorHistoricoService, 
-            NotaFiscalService notaFiscalService, 
-            PedidoService pedidoService, 
-            RelatorioService relatorioService, 
+            UnitOfWork unitOfWork,
+            ILog log,
+            ColetorHistoricoService coletorHistoricoService,
+            NotaFiscalService notaFiscalService,
+            PedidoService pedidoService,
+            RelatorioService relatorioService,
             TransportadoraService transportadoraService,
             RomaneioService romaneioService)
         {
@@ -183,7 +183,7 @@ namespace FWLog.Services.Services
                             salvaPedido = true;
                         }
 
-                        if(int.TryParse(dadosNotaFiscal.NumeroNotaFiscal, out int numeroNotaFiscal) && !string.IsNullOrWhiteSpace(dadosNotaFiscal.SerieNotaFiscal))
+                        if (int.TryParse(dadosNotaFiscal.NumeroNotaFiscal, out int numeroNotaFiscal) && !string.IsNullOrWhiteSpace(dadosNotaFiscal.SerieNotaFiscal))
                         {
                             pedido.NumeroNotaFiscal = numeroNotaFiscal;
                             pedido.SerieNotaFiscal = dadosNotaFiscal.SerieNotaFiscal;
@@ -1171,6 +1171,47 @@ namespace FWLog.Services.Services
         public List<PedidoVendaItem> BuscarDadosPedidoVendaParaTabela(DataTableFilter<PedidoVendaFiltro> filtro, out int registrosFiltrados, out int totalRegistros)
         {
             return _unitOfWork.PedidoVendaRepository.BuscarDadosPedidoVendaParaTabela(filtro, out registrosFiltrados, out totalRegistros);
+        }
+
+        public List<MovimentacaoVolumesModel> BuscarDadosMovimentacaoVolumes(DateTime dataInicial, DateTime dataFinal, long idEmpresa)
+        {
+            var dados = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumeGrupoArmazenagem(dataInicial, dataFinal, idEmpresa);
+
+            var dadosAgrupados = dados.GroupBy(g => new
+            {
+                g.IdGrupoCorredorArmazenagem,
+                g.CorredorInicial,
+                g.CorredorFinal
+            }).OrderBy(o => o.Key.CorredorInicial).ThenBy(o => o.Key.CorredorFinal).ToList();
+
+            var dadosRetorno = new List<MovimentacaoVolumesModel>();
+
+            dadosAgrupados.ForEach(g => dadosRetorno.Add(new MovimentacaoVolumesModel
+            {
+                Corredores = $"{g.Key.CorredorInicial} à {g.Key.CorredorFinal}",
+                PontoArmazenagemDescricao = g.FirstOrDefault()?.PontoArmazenagemDescricao,
+                EnviadoSeparacao = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao),
+                EmSeparacao = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao),
+                FinalizadoSeparacao = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso),
+                InstaladoTransportadora = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovendoDOCA),
+                Doca = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.DespachandoNF || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.NFDespachada),
+                EnviadoTransportadora = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.RomaneioImpresso),
+            }));
+
+            dadosRetorno.ForEach(dr => dr.Total = dr.EnviadoSeparacao + dr.EmSeparacao + dr.FinalizadoSeparacao + dr.InstaladoTransportadora + dr.Doca + dr.EnviadoTransportadora);
+
+            return dadosRetorno;
+        }
+
+        public async Task<MovimentacaoVolumesIntegracoesModel> BuscarDadosMovimentacaoVolumesIntegracoes(long idEmpresa)
+        {
+            var dadosRetorno = new MovimentacaoVolumesIntegracoesModel();
+
+            dadosRetorno.AguardandoIntegracao = (await _pedidoService.ConsultarPedidosPendentesSankhya(idEmpresa)).GetValueOrDefault();
+
+            dadosRetorno.AguardandoRobo = _unitOfWork.PedidoRepository.PesquisarTotalPendenteSeparacao(idEmpresa);
+
+            return dadosRetorno;
         }
 
         public List<RelatorioPedidosExpedidosLinhaTabela> BuscarDadosPedidosExpedidos(DataTableFilter<RelatorioPedidosExpedidosFilter> filtro, out int totalRecordsFiltered, out int totalRecords)

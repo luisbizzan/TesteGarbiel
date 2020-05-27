@@ -27,6 +27,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.Pedido.Where(pv => pv.IdEmpresa == idEmpresa && pv.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteSeparacao).ToList();
         }
 
+        public int PesquisarTotalPendenteSeparacao(long idEmpresa)
+        {
+            return Entities.Pedido.Count(pv => pv.IdEmpresa == idEmpresa && pv.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteSeparacao);
+        }
+
         public List<Pedido> ObterPedidosSemNotaFiscal()
         {
             var query = Entities.Pedido.Where(f => f.CodigoIntegracaoNotaFiscal == null);

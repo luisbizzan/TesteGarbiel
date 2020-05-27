@@ -16,7 +16,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         public int? AguardandoIntegracao { get; set; }
 
         [Display(Name = "Integrado OK")]
-        public int? IntegradoOK { get; set; }
+        public int? AguardandoRobo { get; set; }
 
         public MovimentacaoVolumesFilterViewModel Filter { get; set; }
         public List<MovimentacaoVolumesListItemViewModel> Items { get; set; }
@@ -38,6 +38,8 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         [Display(Name = "")]
         public string Corredores { get; set; }
 
+        public string PontoArmazenagemDescricao { get; set; }
+
         [Display(Name = "Enviado Separação")]
         public int EnviadoSeparacao { get; set; }
 
@@ -47,7 +49,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         [Display(Name = "Finalizado Separação")]
         public int FinalizadoSeparacao { get; set; }
 
-        [Display(Name = "Instalado Endereço Transportadora")]
+        [Display(Name = "Instalado Transportadora")]
         public int InstaladoTransportadora { get; set; }
 
         [Display(Name = "DOCA")]

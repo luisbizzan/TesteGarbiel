@@ -8,6 +8,8 @@ using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.ExpedicaoCtx;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -108,37 +110,52 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-        [HttpGet]
-        public ActionResult MovimentacaoVolumes()
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.MovimentacaoVolumes)]
+        public async Task<ActionResult> MovimentacaoVolumes(string dataInicial, string dataFinal)
         {
-            var today = DateTime.Today;
-
-            var viewModel = new MovimentacaoVolumesViewModel
+            if (dataInicial.NullOrEmpty() || dataFinal.NullOrEmpty())
             {
-                Filter = new MovimentacaoVolumesFilterViewModel()
+                if (!dataInicial.NullOrEmpty())
                 {
-                    DataInicial = today,
-                    DataFinal = today
+                    dataFinal = dataInicial;
                 }
+                else if (!dataFinal.NullOrEmpty())
+                {
+                    dataInicial = dataFinal;
+                }
+                else
+                {
+                    var today = DateTime.Today;
+
+                    dataInicial = today.ToString("dd/MM/yyyy");
+                    dataFinal = today.ToString("dd/MM/yyyy");
+                }
+
+                var urlRedirecionamento = $"MovimentacaoVolumes?dataInicial={dataInicial}&dataFinal={dataFinal}";
+
+                return Redirect(urlRedirecionamento);
+            }
+
+            var dataInicialPtBr = DateTime.Parse(dataInicial, new CultureInfo("pt-BR"), DateTimeStyles.None);
+            var dataFinalPtBr = DateTime.Parse(dataFinal, new CultureInfo("pt-BR"), DateTimeStyles.None);
+
+            var viewModel = new MovimentacaoVolumesViewModel();
+
+            viewModel.Filter = new MovimentacaoVolumesFilterViewModel()
+            {
+                DataInicial = dataInicialPtBr,
+                DataFinal = dataFinalPtBr
             };
 
-            return View(viewModel);
-        }
+            var dadosMovimentacaoVolumesIntegracoes = await _expedicaoService.BuscarDadosMovimentacaoVolumesIntegracoes(IdEmpresa).ConfigureAwait(false);
 
-        [HttpPost]
-        public ActionResult MovimentacaoVolumes(MovimentacaoVolumesViewModel viewModel)
-        {
-            var random = new Random();
+            viewModel.AguardandoIntegracao = dadosMovimentacaoVolumesIntegracoes.AguardandoIntegracao;
 
-            viewModel.AguardandoIntegracao = random.Next(0, 999);
-            viewModel.IntegradoOK = random.Next(0, 999);
+            viewModel.AguardandoRobo = dadosMovimentacaoVolumesIntegracoes.AguardandoRobo;
 
-            viewModel.Items = new List<MovimentacaoVolumesListItemViewModel>();
+            var dadosRetorno = _expedicaoService.BuscarDadosMovimentacaoVolumes(viewModel.Filter.DataInicial.Value, viewModel.Filter.DataFinal.Value, IdEmpresa);
 
-            for (int indice = 0; indice < random.Next(1, 10); indice++)
-            {
-                viewModel.Items.Add(new MovimentacaoVolumesListItemViewModel());
-            }
+            viewModel.Items = Mapper.Map<List<MovimentacaoVolumesListItemViewModel>>(dadosRetorno);
 
             return View(viewModel);
         }

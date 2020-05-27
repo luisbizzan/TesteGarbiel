@@ -143,6 +143,8 @@
     <Compile Include="Models\FilterCtx\LoteMovimentacaoListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\HistoricoAcaoUsuarioFilter.cs" />
     <Compile Include="Models\FilterCtx\MotivoLaudoFiltro.cs" />
+    <Compile Include="Models\FilterCtx\MovimentacaoVolumesIntegracoesModel.cs" />
+    <Compile Include="Models\FilterCtx\MovimentacaoVolumesModel.cs" />
     <Compile Include="Models\FilterCtx\PerfilImpressoraFilter.cs" />
     <Compile Include="Models\FilterCtx\ProdutoListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\RastreabilidadeLoteListaFiltro.cs" />
@@ -151,6 +153,7 @@
     <Compile Include="Models\FilterCtx\RelatorioPedidosExpedidosFilter.cs" />
     <Compile Include="Models\FilterCtx\RelatorioVolumesInstaladosTransportadoraFiltro.cs" />
     <Compile Include="Models\FilterCtx\PedidoVendaItem.cs" />
+    <Compile Include="Models\DataTablesCtx\PedidoVendaVolumeGrupoArmazenagemLinhaTabela.cs" />
     <Compile Include="Models\FilterCtx\RelatorioVolumesInstaladosTransportadoraItem.cs" />
     <Compile Include="Models\FilterCtx\RelatorioTotalizacaoLocalizacaoItem.cs" />
     <Compile Include="Models\FilterCtx\RelatorioTotalizacaoLocalizacaoFiltro.cs" />
