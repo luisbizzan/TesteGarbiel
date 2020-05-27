@@ -128,5 +128,27 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return selectQuery.ToList();
         }
+
+        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, List<PedidoVendaStatusEnum> listaStatus, long idEmpresa)
+        {
+            dataFinal = dataFinal.Date.AddDays(1).Subtract(new TimeSpan(0, 0, 1));
+
+            var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao >= dataInicial && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao <= dataFinal && pedidoVendaVolume.IdGrupoCorredorArmazenagem == idGrupoCorredorArmazenagem);
+
+            if (!listaStatus.NullOrEmpty())
+            {
+                query = query.Where(pedidoVendaVolume => listaStatus.Contains(pedidoVendaVolume.IdPedidoVendaStatus));
+            }
+
+            var selectQuery = query.Select(pvv => new MovimentacaoVolumesDetalhesModel
+            {
+                PedidoNumero = pvv.PedidoVenda.Pedido.NroPedido,
+                VolumeNumero = pvv.NroVolume,
+                QuantidadeProdutos = pvv.PedidoVendaProdutos.Count,
+                PedidoData = pvv.PedidoVenda.Pedido.DataCriacao
+            });
+
+            return selectQuery.ToList();
+        }
     }
 }

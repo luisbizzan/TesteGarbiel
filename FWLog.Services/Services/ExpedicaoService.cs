@@ -1178,6 +1178,7 @@ namespace FWLog.Services.Services
             var dadosAgrupados = dados.GroupBy(g => new
             {
                 g.IdGrupoCorredorArmazenagem,
+                g.PontoArmazenagemDescricao,
                 g.CorredorInicial,
                 g.CorredorFinal
             }).OrderBy(o => o.Key.CorredorInicial).ThenBy(o => o.Key.CorredorFinal).ToList();
@@ -1187,7 +1188,8 @@ namespace FWLog.Services.Services
             dadosAgrupados.ForEach(g => dadosRetorno.Add(new MovimentacaoVolumesModel
             {
                 Corredores = $"{g.Key.CorredorInicial} à {g.Key.CorredorFinal}",
-                PontoArmazenagemDescricao = g.FirstOrDefault()?.PontoArmazenagemDescricao,
+                IdGrupoCorredorArmazenagem = g.Key.IdGrupoCorredorArmazenagem,
+                PontoArmazenagemDescricao = g.Key.PontoArmazenagemDescricao,
                 EnviadoSeparacao = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao),
                 EmSeparacao = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao),
                 FinalizadoSeparacao = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso),
@@ -1210,6 +1212,47 @@ namespace FWLog.Services.Services
             dadosRetorno.AguardandoRobo = _unitOfWork.PedidoRepository.PesquisarTotalPendenteSeparacao(idEmpresa);
 
             return dadosRetorno;
+        }
+
+        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string tipo, long idEmpresa, out string statusDescricao)
+        {
+            var listaStatus = new List<PedidoVendaStatusEnum>();
+
+            switch (tipo)
+            {
+                case "EnviadoSeparacao":
+                    listaStatus.Add(PedidoVendaStatusEnum.EnviadoSeparacao);
+                    statusDescricao = "Enviado Separação";
+                    break;
+                case "EmSeparacao":
+                    listaStatus.Add(PedidoVendaStatusEnum.ProcessandoSeparacao);
+                    statusDescricao = "Em Separação";
+                    break;
+                case "FinalizadoSeparacao":
+                    listaStatus.Add(PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso);
+                    statusDescricao = "Finalizado Separação";
+                    break;
+                case "InstaladoTransportadora":
+                    listaStatus.Add(PedidoVendaStatusEnum.VolumeInstaladoTransportadora);
+                    listaStatus.Add(PedidoVendaStatusEnum.MovendoDOCA);
+                    statusDescricao = "Instalado Transportadora	";
+                    break;
+                case "Doca":
+                    listaStatus.Add(PedidoVendaStatusEnum.MovidoDOCA);
+                    listaStatus.Add(PedidoVendaStatusEnum.DespachandoNF);
+                    listaStatus.Add(PedidoVendaStatusEnum.NFDespachada);
+                    statusDescricao = "DOCA";
+                    break;
+                case "EnviadoTransportadora":
+                    listaStatus.Add(PedidoVendaStatusEnum.RomaneioImpresso);
+                    statusDescricao = "Enviado Transportador";
+                    break;
+                default:
+                    statusDescricao = "Todos";
+                    break;
+            }
+
+            return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, idEmpresa);
         }
     }
 }

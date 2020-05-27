@@ -29,4 +29,18 @@
         $('#Filter_DataInicial').val("");
         $('#Filter_DataFinal').val("");
     });
+
+    $(".abrirDetalhes").click(function (e) {
+
+        e.preventDefault();
+
+        $("#modalDetalhes").empty();
+
+        var link = $(this).attr("href");
+
+        $("#modalDetalhes").load(link, function () {
+
+            $("#modalDetalhes").modal();
+        });
+    });
 })();

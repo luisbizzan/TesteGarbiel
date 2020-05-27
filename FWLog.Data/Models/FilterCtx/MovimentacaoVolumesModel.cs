@@ -4,6 +4,8 @@
     {
         public string Corredores { get; set; }
 
+        public long IdGrupoCorredorArmazenagem { get; set; }
+
         public string PontoArmazenagemDescricao { get; set; }
 
         public int EnviadoSeparacao { get; set; }
