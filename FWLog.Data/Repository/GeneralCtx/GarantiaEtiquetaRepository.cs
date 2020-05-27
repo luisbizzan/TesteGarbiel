@@ -75,14 +75,28 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             try
             {
+                #region Definição do Comando SQL
+                if (String.Join(",", dadosImpressao.IdsEtiquetasImprimir).Contains(";"))
+                {
+                    var sqlWhere = string.Empty;
+                    dadosImpressao.IdsEtiquetasImprimir.ForEach(delegate (string i)
+                    {
+                        sqlWhere += String.Format("(si.refx = '{0}' AND s.id = {1}) OR ", i.Split(';')[0].ToString(), i.Split(';')[1].ToString());
+                    });
+                    dadosImpressao.ComandoSQL = String.Format(GarantiaEtiqueta.SQL.ConsultaEtiquetas,
+                        String.Format("WHERE {0}", sqlWhere.Substring(0, sqlWhere.Length - 4)));
+                }
+                else
+                    dadosImpressao.ComandoSQL = String.Format(GarantiaEtiqueta.SQL.ConsultaEtiquetas, String.Format("WHERE si.id IN ({0})", String.Join(",", dadosImpressao.IdsEtiquetasImprimir)));
+                #endregion
+
                 #region Consultar
                 using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
                 {
                     conn.Open();
                     if (conn.State == System.Data.ConnectionState.Open)
                     {
-                        var comandoSQL = String.Format(GarantiaEtiqueta.SQL.ConsultaEtiquetas, dadosImpressao.IdsEtiquetasImprimir);
-                        dadosImpressao.ListaImprimir = new List<GarantiaEtiqueta.ItemEtiqueta>(conn.Query<GarantiaEtiqueta.ItemEtiqueta>(comandoSQL).ToList());
+                        dadosImpressao.ListaImprimir = new List<GarantiaEtiqueta.ItemEtiqueta>(conn.Query<GarantiaEtiqueta.ItemEtiqueta>(dadosImpressao.ComandoSQL).ToList());
                     }
                     conn.Close();
                 }

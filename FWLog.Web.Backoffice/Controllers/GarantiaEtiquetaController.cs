@@ -49,7 +49,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 _garantiaEtiquetaService.ProcessarImpressaoEtiqueta(new GarantiaEtiqueta.DocumentoImpressao()
                 {
-                    IdsEtiquetasImprimir = String.Join(",", EtiquetaImpressao.EtiquetaImpressaoIds)
+                    IdsEtiquetasImprimir = EtiquetaImpressao.EtiquetaImpressaoIds
                 });
 
                 return Json(new AjaxGenericResultModel

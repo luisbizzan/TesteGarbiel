@@ -17,7 +17,8 @@ namespace FWLog.Data.Models
             public ETIQUETA TipoEtiqueta { get; set; }
             public StringBuilder ConteudoImpressao { get; set; }
             public List<ItemEtiqueta> ListaImprimir { get; set; }
-            public string IdsEtiquetasImprimir { get; set; }
+            public List<string> IdsEtiquetasImprimir { get; set; }
+            public string ComandoSQL { get; set; }
         }
         #endregion
 
@@ -33,7 +34,7 @@ namespace FWLog.Data.Models
                         "INNER JOIN gar_solicitacao_item si ON (si.id_solicitacao = s.id) ",
                         "INNER JOIN geral_tipo t ON (t.id = s.id_tipo) ",
                         "INNER JOIN tgfpro@sankhya p ON (p.ad_refx = si.refx) ",
-                        "WHERE si.id IN ({0}) ",
+                        "{0} ",
                         "ORDER BY s.id ASC");
                 }
             }
