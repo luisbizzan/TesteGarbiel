@@ -49,6 +49,12 @@
                 Text = "Movimentação de Volumes",
                 Url = Url.Action("MovimentacaoVolumes", "Expedicao"),
                 RequirePermission = Permissions.RelatoriosExpedicao.MovimentacaoVolumes
+            },
+            new MenuItem
+            {
+                Text="Relatório - Pedidos Expedidos",
+                Url = Url.Action("RelatorioPedidosExpedidos", "Expedicao"),
+                RequirePermission = Permissions.RelatoriosExpedicao.RelatorioPedidosExpedidos
             }
         ),
         new MenuGroup(text: Res.GarantiaMenuItem, icon: "fa fa-shield").SetItems(

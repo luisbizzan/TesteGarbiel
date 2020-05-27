@@ -30,3 +30,18 @@
         $('#Filter_DataFinal').val("");
     });
 })();
+
+
+function limparTransportadora() {
+    let razaoSocial = $("#Filter_RazaoSocialTransportadora");
+    let cliente = $("#Filter_IdTransportadora");
+    razaoSocial.val("");
+    cliente.val("");
+}
+
+function setTransportadora(idTransportadora, nomeFantasia) {
+    $("#Filter_RazaoSocialTransportadora").val(nomeFantasia);
+    $("#Filter_IdTransportadora").val(idTransportadora);
+    $("#modalTransportadora").modal("hide");
+    $("#modalTransportadora").empty();
+}

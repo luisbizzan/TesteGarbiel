@@ -459,11 +459,13 @@ namespace FWLog.AspNet.Identity
         {
             public const string RelatorioVolumesInstaladosTransportadora = "RelatorioVolumesInstaladosTransportadora";
             public const string MovimentacaoVolumes = "MovimentacaoVolumes";
+            public const string RelatorioPedidosExpedidos = "RelatorioPedidosExpedidos";
 
             public RelatoriosExpedicao() : base(Display.FromString("Expedição - Relatórios"))
             {
                 Register(RelatorioVolumesInstaladosTransportadora, Display.FromString("Relatório Volumes Instalados X Transportadora"));
                 Register(MovimentacaoVolumes, Display.FromString("Movimentação de Volumes"));
+                Register(RelatorioPedidosExpedidos, Display.FromString("Relatório Pedidos Expedidos"));
             }
         }
     }
