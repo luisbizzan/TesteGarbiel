@@ -40,6 +40,8 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         public string PontoArmazenagemDescricao { get; set; }
 
+        public long IdGrupoCorredorArmazenagem { get; set; }
+
         [Display(Name = "Enviado Separação")]
         public int EnviadoSeparacao { get; set; }
 

@@ -185,5 +185,22 @@ namespace FWLog.Web.Backoffice.Controllers
                 Data = Mapper.Map<IEnumerable<RelatorioPedidosExpedidosListItemViewModel>>(result)
             });
         }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.MovimentacaoVolumes)]
+        public ActionResult MovimentacaoVolumesDetalhes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string status)
+        {
+            var dadosRetorno = _expedicaoService.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, status, IdEmpresa, out string statusDescricao);
+
+            var items = Mapper.Map<List<MovimentacaoVolumesDetalheListItemViewModel>>(dadosRetorno);
+
+            var viewModel = new MovimentacaoVolumesDetalheViewModel
+            {
+                Status = statusDescricao,
+                Items = items
+            };
+
+            return View(viewModel);
+        }
     }
 }
