@@ -45,9 +45,9 @@
         },
         columns: [
             { data: 'NroPedido', },
+            { data: 'NroVolume', },
             { data: 'DataDoPedido', },
-            { data: 'NomeTransportadora', },
-            { data: 'IdPedidoVendaVolume', },
+            { data: 'IdENomeTransportadora', },
             { data: 'NotaFiscalESerie', },
             { data: 'DataSaidaDoPedido', },
         ]

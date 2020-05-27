@@ -23,7 +23,7 @@
             <div class="clearfix"></div>
         </div>
         <div class="x_content" style="display: block;">
-            <div class="row" style="margin-bottom: 20px;">
+            <div class="row">
                 <div class="col-xs-12 col-sm-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataInicial)
                     <div class='input-group date'>
@@ -55,11 +55,11 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12 form-buttons">
-                <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
-                <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+            <div class="row">
+                <div class="col-xs-12 form-buttons">
+                    <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
+                    <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                </div>
             </div>
         </div>
     </div>
@@ -76,9 +76,9 @@
                     <thead>
                         <tr>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.NroPedido)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.NroVolume)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.DataDoPedido)</th>
-                            <th>@Html.DisplayNameFor(m => m.EmptyItem.NomeTransportadora)</th>
-                            <th>@Html.DisplayNameFor(m => m.EmptyItem.IdPedidoVendaVolume)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.IdENomeTransportadora)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.NotaFiscalESerie)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.DataSaidaDoPedido)</th>
                         </tr>

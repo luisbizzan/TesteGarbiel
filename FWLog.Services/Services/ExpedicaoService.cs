@@ -1218,6 +1218,12 @@ namespace FWLog.Services.Services
         {
             var pedidosExpedidos = _unitOfWork.PedidoVendaRepository.BuscarPedidosExpedidosPorEmpresa(filtro.CustomFilter.IdEmpresa).AsQueryable();
 
+            var dataInicial = new DateTime(filtro.CustomFilter.DataInicial.Value.Year, filtro.CustomFilter.DataInicial.Value.Month, filtro.CustomFilter.DataInicial.Value.Day, 00, 00, 00);
+            var dataFinal = new DateTime(filtro.CustomFilter.DataFinal.Value.Year, filtro.CustomFilter.DataFinal.Value.Month, filtro.CustomFilter.DataFinal.Value.Day, 23, 59, 59);
+
+            pedidosExpedidos = pedidosExpedidos.Where(pe => pe.Pedido.DataCriacao >= dataInicial);
+            pedidosExpedidos = pedidosExpedidos.Where(pe => pe.Pedido.DataCriacao <= dataFinal);
+
             totalRecords = pedidosExpedidos.Count();
 
             if (filtro.CustomFilter.IdTransportadora.HasValue)
@@ -1228,12 +1234,12 @@ namespace FWLog.Services.Services
             var query = pedidosExpedidos.Select(pedidoVenda => new RelatorioPedidosExpedidosLinhaTabela
             {
                NroPedido = pedidoVenda.NroPedidoVenda,
-               IdPedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.Where(x => x.IdPedidoVenda == pedidoVenda.IdPedidoVenda).Select(y => y.IdPedidoVendaVolume).First(),
-               NomeTransportadora = pedidoVenda.Transportadora.RazaoSocial,
+               NroVolume = pedidoVenda.PedidoVendaVolumes.Where(x => x.IdPedidoVenda == pedidoVenda.IdPedidoVenda).Select(y => y.NroVolume).First().ToString().PadLeft(3,'0'),
+               IdENomeTransportadora = string.Concat(pedidoVenda.IdTransportadora.ToString().PadLeft(3,'0'),"-",pedidoVenda.Transportadora.RazaoSocial),
                NotaFiscalESerie = string.Concat(pedidoVenda.Pedido.NumeroNotaFiscal,"-",pedidoVenda.Pedido.SerieNotaFiscal),
-               DataDoPedido = pedidoVenda.Pedido.DataCriacao,
-               DataSaidaDoPedido = null
-            });
+               DataDoPedido = pedidoVenda.Pedido.DataCriacao.ToString("dd/MM/yyyy HH:mm"),
+               DataSaidaDoPedido = pedidoVenda.DataHoraRomaneio.Value.ToString("dd/MM/yyyy HH:mm")
+            }).OrderBy(x => x.NroPedido).ThenBy(x => x.NroVolume);
 
             totalRecordsFiltered = query.Count();
 
