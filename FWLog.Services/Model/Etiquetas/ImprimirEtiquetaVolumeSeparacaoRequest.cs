@@ -16,6 +16,7 @@
         public int? PedidoPagamentoCodigoIntegracao { get; set; }
         public bool PedidoPagamentoIsDebito { get; set; }
         public bool PedidoPagamentoIsCredito { get; set; }
+        public bool PedidoPagamentoIsDinheiro { get; set; }
         public string Centena { get; set; }
         public string TransportadoraSigla { get; set; }
         public string TransportadoraCodigo { get; set; }

@@ -735,8 +735,7 @@ namespace FWLog.Services.Services
             {
                 stringEtiqueta.AppendLine($"^FO440,70^A0B,90,80^FR^FDR^FS");
             }
-            //TODO: pegar código correto
-            else if (requisicao.PedidoPagamentoCodigoIntegracao == 1) //Tipo de pagamento'DINHEIRO'
+            else if (requisicao.PedidoPagamentoIsDinheiro)
             {
                 stringEtiqueta.AppendLine($"^FO440,70^A0B,90,80^FR^FDD^FS");
             }
@@ -815,6 +814,7 @@ namespace FWLog.Services.Services
                 requisicaoImpressao.PedidoPagamentoCodigoIntegracao = pedido.PagamentoCodigoIntegracao;
                 requisicaoImpressao.PedidoPagamentoIsDebito = pedido.PagamentoIsDebitoIntegracao;
                 requisicaoImpressao.PedidoPagamentoIsCredito = pedido.PagamentoIsCreditoIntegracao;
+                requisicaoImpressao.PedidoPagamentoIsDinheiro = pedido.PagamentoIsDinheiroIntegracao;
                 requisicaoImpressao.PedidoIsRequisicao = pedido.IsRequisicao;
                 requisicaoImpressao.Centena = volume.NroCentena.ToString();
                 requisicaoImpressao.TransportadoraSigla = transportadora.CodigoTransportadora;
