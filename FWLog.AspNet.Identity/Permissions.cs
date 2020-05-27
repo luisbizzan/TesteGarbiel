@@ -277,12 +277,19 @@ namespace FWLog.AspNet.Identity
             public const string EstornarSolicitacao = "EstornarSolicitacao";
             public const string ConferirSolicitacao = "ConferirSolicitacao";
 
+            public const string ListarRemessa = "ListarRemessa";
+            public const string EstornarRemessa = "EstornarRemessa";
+            public const string ConferirRemessa = "ConferirRemessa";
+
             public Garantia() : base(Display.FromString("Solicitação de Garantia"))
             {
                 Register(Listar, Display.FromString("Listar Solicitações de Garantia"));
                 Register(EstornarSolicitacao, Display.FromString("Estornar Solicitação"));
                 Register(ConferirSolicitacao, Display.FromString("Conferir Solicitação"));
-                //Register(Editar, Display.FromString("Editar Solicitações de Garantia"));
+
+                Register(ListarRemessa, Display.FromString("Listar Remessa de Garantia"));
+                Register(EstornarRemessa, Display.FromString("Estornar Remessa"));
+                Register(ConferirRemessa, Display.FromString("Conferir Remessa"));
             }
         }
 

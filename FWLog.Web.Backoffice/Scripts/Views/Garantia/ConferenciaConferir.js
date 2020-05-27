@@ -445,7 +445,7 @@ function itensConferidos() {
     var id = 0;
     $("#modalItensPendentes").modal("hide");
     let modal = $("#modalItensPendentes .modal-body");
-    $("#modalItensPendentes .modal-title").html("Itens Conferidos");
+    $("#modalItensPendentes .modal-title").html("Peças Conferidas");
 
     modal.load("/Garantia/ConferenciaItemConferido", {
         Id_Conferencia: $("#Conferencia_Id").val()

@@ -346,6 +346,17 @@ namespace FWLog.Web.Backoffice.Controllers
             return PartialView("_ConferenciaItemConferido", model);
         }
 
+        public ActionResult ConferenciaItemConferidoRemessa(long Id_Remessa)
+        {
+            var conferencia = _uow.GarantiaRepository.SelecionaConferenciaDaRemessa(Id_Remessa);
+            ViewBag.Id_Tipo_Conf = conferencia.Id_Tipo_Conf;
+
+            var result = _uow.GarantiaRepository.ListarConferenciaHistorico(conferencia.Id);
+            var model = Mapper.Map<IEnumerable<GarantiaConferenciaItem>>(result).ToList();
+
+            return PartialView("_ConferenciaItemConferido", model);
+        }
+
         public ActionResult ConferenciaConferirManual(long Id_Conferencia)
         {
             var model = new GarantiaConferenciaFormVM
@@ -779,6 +790,21 @@ namespace FWLog.Web.Backoffice.Controllers
             };
 
             return PartialView("_RemessaDetalhadoVisualizar", model);
+        }
+
+        [HttpPost]
+        public ActionResult RemessaEstornar(long Id)
+        {
+            _uow.GarantiaRepository.EstornarRemessa(new GarConferencia
+            {
+                Id_Remessa = Id
+            });
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Message = "Estorno efetuado com sucesso."
+            });
         }
     }
 }

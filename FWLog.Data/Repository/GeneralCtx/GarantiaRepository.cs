@@ -285,7 +285,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                     //VERIFICA SE TEM REMESSA ATIVA PARA ESSE FORNECEDOR
                     bool temRemessa = false;
-                    sQuery = @"SELECT COUNT(*) FROM gar_remessa WHERE Cod_Fornecedor = :Cod_Fornecedor AND id_status != 39 ";
+                    sQuery = @"SELECT COUNT(*) FROM gar_remessa WHERE Cod_Fornecedor = :Cod_Fornecedor AND id_status NOT IN(39,41) ";
                     temRemessa = conn.Query<long>(sQuery, new { item.Cod_Fornecedor }).SingleOrDefault() > 0;
 
                     if (temRemessa)
@@ -541,11 +541,12 @@ namespace FWLog.Data.Repository.GeneralCtx
                     {
                         //ITENS DA NF
                         sQuery = @"
-                            INSERT INTO gar_solicitacao_item (id_solicitacao, id_item_nf, refx, cod_fornecedor,quant,valor)
+                            INSERT INTO gar_solicitacao_item (id_solicitacao, id_item_nf, refx, id_prod_skw, cod_fornecedor,quant,valor)
                             SELECT
                                 :Id_Solicitacao AS id_solicitacao,
                                 rownum AS id_item_nf,
                                 cod_produto AS refx,
+                                (SELECT codprod FROM tgfpro@sankhya WHERE ad_refx = cod_produto) AS id_prod_skw,
                                 (SELECT codparcforn FROM tgfpro@sankhya WHERE ad_refx = cod_produto) AS cod_fornecedor,
                                 quantidade AS quant,
                                 vlr_unitario AS valor
@@ -717,11 +718,12 @@ namespace FWLog.Data.Repository.GeneralCtx
                     {
                         //ITENS DA NF
                         sQuery = @"
-                        INSERT INTO gar_solicitacao_item (id_solicitacao, id_item_nf, refx, cod_fornecedor,quant,valor)
+                        INSERT INTO gar_solicitacao_item (id_solicitacao, id_item_nf, refx, id_prod_skw, cod_fornecedor,quant,valor)
                         SELECT
                             :Id_Solicitacao AS id_solicitacao,
                             sequencia AS id_item_nf,
                             (SELECT AD_REFX FROM tgfpro@sankhya p WHERE i.codprod = p.codprod) AS refx,
+                            i.codprod AS id_prod_skw,
                             (SELECT codparcforn FROM tgfpro@sankhya p WHERE i.codprod = p.codprod) AS cod_fornecedor,
                             qtdneg AS quant,
                             vlrunit AS valor
@@ -1135,6 +1137,26 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
         }
 
+        public void EstornarRemessa(GarConferencia item)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    //atualizar status para estornado
+                    sQuery = @"UPDATE gar_remessa SET Id_Status = 41 WHERE Id = :Id_Remessa";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id_Remessa });
+
+                    //Fecha a conferencia
+                    sQuery = @"UPDATE gar_conferencia SET Ativo = 0 WHERE Id_Remessa = :Id_Remessa";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id_Remessa });
+                }
+                conn.Close();
+            }
+        }
+
         public DmlStatus VerificarConferenciaRemessa(GarConferencia item)
         {
             string sQuery = "";
@@ -1328,6 +1350,37 @@ namespace FWLog.Data.Repository.GeneralCtx
                         GC.Id = :Id_Conferencia
                     ";
                     retorno = conn.Query<GarConferencia>(sQuery, new { Id_Conferencia }).SingleOrDefault();
+                }
+                conn.Close();
+            }
+            return retorno;
+        }
+
+        public GarConferencia SelecionaConferenciaDaRemessa(long Id_Remessa)
+        {
+            GarConferencia retorno = new GarConferencia();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        GC.Id,
+                        GT.Descricao AS Tipo_Conf,
+                        GC.Id_Tipo_Conf,
+                        GC.Id_Remessa,
+                        GC.Id_Solicitacao,
+                        GS.Id_Tipo AS Id_Tipo_Solicitacao
+                    FROM
+                        gar_conferencia GC
+                        INNER JOIN geral_tipo GT ON GT.id = GC.Id_Tipo_Conf AND GT.tabela = 'GAR_CONFERENCIA' AND GT.coluna = 'ID_TIPO_CONF'
+                        LEFT JOIN gar_solicitacao GS ON GS.id = GC.Id_Solicitacao
+                    WHERE
+                        GC.Id_Remessa = :Id_Remessa
+                    ";
+                    retorno = conn.Query<GarConferencia>(sQuery, new { Id_Remessa }).SingleOrDefault();
                 }
                 conn.Close();
             }
