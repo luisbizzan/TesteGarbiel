@@ -23,7 +23,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             IQueryable<ClientePesquisaModalLinhaTabela> query = Entities.Cliente.AsNoTracking()
                 .Where(x => (filter.CustomFilter.IdCliente.HasValue == false || x.IdCliente == filter.CustomFilter.IdCliente) &&
-                (filter.CustomFilter.NomeFantasia.Equals(string.Empty) || x.NomeFantasia.Contains(filter.CustomFilter.NomeFantasia)) &&
+                (filter.CustomFilter.RazaoSocial.Equals(string.Empty) || x.RazaoSocial.Contains(filter.CustomFilter.RazaoSocial)) &&
                 (filter.CustomFilter.CNPJCPF.Equals(string.Empty) || x.CNPJCPF.Contains(filter.CustomFilter.CNPJCPF.Replace(".", "").Replace("/", "").Replace("-", ""))))
                 .Select(e => new ClientePesquisaModalLinhaTabela
                 {

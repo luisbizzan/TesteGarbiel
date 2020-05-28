@@ -75,7 +75,6 @@
     $("#limparTransportadora").click(function () {
         limparTransportadora();
     });
-
 })();
 
 function limparTransportadora() {

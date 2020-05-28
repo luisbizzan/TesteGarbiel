@@ -48,6 +48,7 @@
                 }
             }
         },
+        ordering: false,
         deferLoading: 0,
         initComplete: function (settings, json) {
             dart.dataTables.addEventsForDropdownAutoposition($('#dataTable'));
@@ -56,15 +57,13 @@
             dart.dataTables.saveFilterToData(data);
         },
         columns: [
-            { "defaultContent": "", width: '10%' },
-            { data: 'NroVolume', width: '10%' },
-            { data: 'NomeTransportadora', width: '15%' },
-            { data: 'DataDoPedido' },
-            { data: 'DataSaidaDoPedido' },
-            { data: 'Status' },
+            { "defaultContent": "", width: '8%' },
+            { data: 'NroVolume', width: '8%' },
+            { data: 'DataCriacao' },
+            { data: 'DataSaida' },
+            { data: 'Status', width: '20%' },
             actionsColumn
         ],
-        order: [[2, 'asc']],
         rowGroup: {
             dataSrc: 'NroPedido'
         }
@@ -98,7 +97,33 @@
         $("#Filter_IdPedidoVenda").val("");
     });
 
+    $("#pesquisarCliente").click(function () {
+        $("#modalCliente").load(HOST_URL + "Cliente/SearchModal", function () {
+            $("#modalCliente").modal();
+        });
+    });
+
+    $("#limparCliente").click(function () {
+        limparCliente();
+    });
+
+    $("#pesquisarTransportadora").click(function () {
+        $("#modalTransportadora").load(HOST_URL + "Transportadora/SearchModal", function () {
+            $("#modalTransportadora").modal();
+        });
+    });
+
+    $("#limparTransportadora").click(function () {
+        limparTransportadora();
+    });
 })();
+
+function setCliente(idCliente, nomeFantasia) {
+    $("#Filter_NomeCliente").val(nomeFantasia);
+    $("#Filter_IdCliente").val(idCliente);
+    $("#modalCliente").modal("hide");
+    $("#modalCliente").empty();
+}
 
 function selecionarPedidoVenda(idPedidoVenda, numeroPedidoVenda) {
     $("#Filter_NumeroPedidoVenda").val(numeroPedidoVenda);
@@ -114,4 +139,31 @@ function detalhesPedido() {
     modalDetalhesPedidoVolume.load(CONTROLLER_PATH + "DetalhesPedidoVolume/" + id, function () {
         modalDetalhesPedidoVolume.modal();
     });
+}
+
+function limparCliente() {
+    let razaoSocial = $("#Filter_NomeCliente");
+    let cliente = $("#Filter_IdCliente");
+    razaoSocial.val("");
+    cliente.val("");
+}
+
+function limpaModais() {
+    $("#modalPesquisaTransportadora").empty();
+    $("#modalPesquisaTransportadoraEndereco").empty();
+    $("#modalPesquisaPedidoVenda").empty();
+}
+
+function limparTransportadora() {
+    let razaoSocial = $("#Filter_NomeTransportadora");
+    let cliente = $("#Filter_IdTransportadora");
+    razaoSocial.val("");
+    cliente.val("");
+}
+
+function setTransportadora(idTransportadora, nomeFantasia) {
+    $("#Filter_NomeTransportadora").val(nomeFantasia);
+    $("#Filter_IdTransportadora").val(idTransportadora);
+    $("#modalTransportadora").modal("hide");
+    $("#modalTransportadora").empty();
 }

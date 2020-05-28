@@ -1321,29 +1321,47 @@ namespace FWLog.Services.Services
                 pedidos = pedidos.Where(pv => pv.IdPedidoVenda == filtro.CustomFilter.IdPedidoVenda.Value);
             }
 
-            if (filtro.CustomFilter.IdPedidoVendaVolume.HasValue)
+            if (filtro.CustomFilter.IdCliente.HasValue)
             {
-                pedidos = pedidos.Where(pv => pv.IdPedidoVendaVolume == filtro.CustomFilter.IdPedidoVendaVolume.Value);
+                pedidos = pedidos.Where(pv => pv.PedidoVenda.IdCliente == filtro.CustomFilter.IdCliente.Value);
             }
 
-            var query = pedidos.Select(s => new RelatorioPedidosLinhaTabela
+            if (filtro.CustomFilter.IdStatus.HasValue)
             {
-                NroPedido = s.PedidoVenda.NroPedidoVenda.ToString(),
-                NroVolume = s.NroVolume.ToString(),
+                pedidos = pedidos.Where(pv => (int)pv.IdPedidoVendaStatus == filtro.CustomFilter.IdStatus.Value);
+            }
+
+            var query = pedidos.Select(s => new
+            {
+                NroPedido = s.PedidoVenda.NroPedidoVenda,
+                NroVolume = s.NroVolume,
                 IdPedidoVendaVolume = s.IdPedidoVendaVolume,
-                NomeTransportadora = s.PedidoVenda.Transportadora.RazaoSocial,
-                DataDoPedido = s.PedidoVenda.Pedido.DataCriacao,
-                DataSaidaDoPedido = null,
-                Status = s.PedidoVenda.PedidoVendaStatus.Descricao,
+                DataCriacao = s.PedidoVenda.Pedido.DataCriacao,
+                DataSaida = s.PedidoVenda.DataHoraRomaneio,
+                Status = s.PedidoVendaStatus.Descricao,
+                NomeCliente = s.PedidoVenda.Cliente.RazaoSocial               
             });
 
             registrosFiltrados = query.Count();
 
-            var response = query.OrderBy(filtro.OrderByColumn, filtro.OrderByDirection)
-                                .Skip(filtro.Start)
-                                .Take(filtro.Length);
+            query = query.OrderBy(o => o.NroPedido).ThenBy(o => o.NroVolume).Skip(filtro.Start).Take(filtro.Length);
 
-            return response.ToList();
+            List<RelatorioPedidosLinhaTabela> resultado = new List<RelatorioPedidosLinhaTabela>();
+
+            query.ToList().ForEach(s =>
+            {
+                resultado.Add(new RelatorioPedidosLinhaTabela
+                {
+                    NroPedido = $"Pedido: {s.NroPedido} - Cliente: {s.NomeCliente}",
+                    NroVolume = s.NroVolume.ToString().PadLeft(3, '0'),
+                    IdPedidoVendaVolume = s.IdPedidoVendaVolume,
+                    DataCriacao = s.DataCriacao.ToString("dd/MM/yyyy"),
+                    DataSaida = s.DataSaida.HasValue ? s.DataSaida.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty,
+                    Status = s.Status,
+                });
+            });
+
+            return resultado;
         }
 
         public DetalhesPedidoVolume BuscarDadosPedidoVolume(long idPedidoVendaVolume, long idEmpresa)

@@ -96,7 +96,7 @@ namespace FWLog.Data.Models
         public virtual PedidoVenda PedidoVenda { get; set; }
 
         [ForeignKey(nameof(IdPedidoVendaStatus))]
-        public virtual PedidoVendaStatus PedidoVendaProdutoStatus { get; set; }
+        public virtual PedidoVendaStatus PedidoVendaStatus { get; set; }
 
         [ForeignKey(nameof(IdCaixaCubagem))]
         public virtual Caixa CaixaCubagem { get; set; }

@@ -38,9 +38,7 @@
         columns: [
             { data: 'IdCliente' },
             { data: 'RazaoSocial' },
-            { data: 'NomeFantasia' },
-            { data: 'CNPJCPF' },
-            { data: 'Status' },
+            { data: 'CNPJCPF' },            
             actionsColumn
         ],
         "bInfo": false
