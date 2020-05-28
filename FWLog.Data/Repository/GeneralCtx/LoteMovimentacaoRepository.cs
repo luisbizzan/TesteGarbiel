@@ -22,12 +22,12 @@ namespace FWLog.Data.Repository.GeneralCtx
             IQueryable<RastreabilidadeLoteMovimentacaoListaLinhaTabela> query =
                 Entities.LoteMovimentacao.AsNoTracking().Where(
                     w => w.IdEmpresa == model.CustomFilter.IdEmpresa &&
-                    (model.CustomFilter.IdLote.HasValue == false ||  w.IdLote == model.CustomFilter.IdLote) &&
-                    (model.CustomFilter.IdProduto.HasValue == false ||  w.IdProduto == model.CustomFilter.IdProduto) &&
+                    (model.CustomFilter.IdLote.HasValue == false || w.IdLote == model.CustomFilter.IdLote) &&
+                    (model.CustomFilter.IdProduto.HasValue == false || w.IdProduto == model.CustomFilter.IdProduto) &&
                     (dataHoraInicial.HasValue == false || w.DataHora >= dataHoraInicial) &&
                     (dataHoraFinal.HasValue == false || w.DataHora <= dataHoraFinal) &&
                     (String.IsNullOrEmpty(model.CustomFilter.IdUsuarioMovimentacao) || w.IdUsuarioMovimentacao.Contains(model.CustomFilter.IdUsuarioMovimentacao)) &&
-                    (model.CustomFilter.IdEnderecoArmazenagem.HasValue == false ||  w.IdEnderecoArmazenagem == model.CustomFilter.IdEnderecoArmazenagem) &&
+                    (model.CustomFilter.IdEnderecoArmazenagem.HasValue == false || w.IdEnderecoArmazenagem == model.CustomFilter.IdEnderecoArmazenagem) &&
                     (model.CustomFilter.IdLoteMovimentacaoTipo.HasValue == false || w.IdLoteMovimentacaoTipo == (LoteMovimentacaoTipoEnum)model.CustomFilter.IdLoteMovimentacaoTipo.Value))
                 .Select(s => new RastreabilidadeLoteMovimentacaoListaLinhaTabela
                 {
@@ -35,11 +35,12 @@ namespace FWLog.Data.Repository.GeneralCtx
                     IdProduto = s.IdProduto,
                     ReferenciaProduto = s.Produto.Referencia,
                     DescricaoProduto = s.Produto.Descricao,
-                    Tipo = s.LoteMovimentacaoTipo.IdLoteMovimentacaoTipo,
+                    Tipo = s.LoteMovimentacaoTipo.Descricao,
                     Quantidade = s.Quantidade,
                     DataHora = s.DataHora,
                     Endereco = s.EnderecoArmazenagem.Codigo,
-                    IdUsuarioMovimentacao = s.IdUsuarioMovimentacao
+                    IdUsuarioMovimentacao = s.IdUsuarioMovimentacao,
+                    NroVolume = s.NroVolume
                 });
 
             totalRecordsFiltered = query.Count();
@@ -57,7 +58,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRecords = Entities.LoteMovimentacao.Where(x => x.IdEmpresa == model.CustomFilter.IdEmpresa && x.IdLote == model.CustomFilter.IdLote && x.IdProduto == model.CustomFilter.IdProduto).Count();
 
             DateTime? dataHoraInicial = model.CustomFilter.DataHoraInicial.HasValue ? new DateTime(model.CustomFilter.DataHoraInicial.Value.Year, model.CustomFilter.DataHoraInicial.Value.Month, model.CustomFilter.DataHoraInicial.Value.Day, 0, 0, 0) : (DateTime?)null;
-            DateTime? dataHoraFinal = model.CustomFilter.DataHoraFinal.HasValue ?  new DateTime(model.CustomFilter.DataHoraFinal.Value.Year, model.CustomFilter.DataHoraFinal.Value.Month, model.CustomFilter.DataHoraFinal.Value.Day, 23, 59, 59) : (DateTime?)null; 
+            DateTime? dataHoraFinal = model.CustomFilter.DataHoraFinal.HasValue ? new DateTime(model.CustomFilter.DataHoraFinal.Value.Year, model.CustomFilter.DataHoraFinal.Value.Month, model.CustomFilter.DataHoraFinal.Value.Day, 23, 59, 59) : (DateTime?)null;
 
             IQueryable<RastreabilidadeLoteMovimentacaoListaLinhaTabela> query =
                 Entities.LoteMovimentacao.AsNoTracking().Where(
@@ -76,11 +77,12 @@ namespace FWLog.Data.Repository.GeneralCtx
                     IdProduto = s.IdProduto,
                     ReferenciaProduto = s.Produto.Referencia,
                     DescricaoProduto = s.Produto.Descricao,
-                    Tipo = s.LoteMovimentacaoTipo.IdLoteMovimentacaoTipo,
+                    Tipo = s.LoteMovimentacaoTipo.Descricao,
                     Quantidade = s.Quantidade,
                     DataHora = s.DataHora,
                     Endereco = s.EnderecoArmazenagem.Codigo,
-                    IdUsuarioMovimentacao = s.IdUsuarioMovimentacao
+                    IdUsuarioMovimentacao = s.IdUsuarioMovimentacao,
+                    NroVolume = s.NroVolume
                 });
 
             totalRecordsFiltered = query.Count();

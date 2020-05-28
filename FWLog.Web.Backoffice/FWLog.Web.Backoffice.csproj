@@ -366,6 +366,7 @@
     <Compile Include="Models\ExpedicaoCtx\MovimentacaoVolumesDetalheViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\PedidoVendaModalViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\MovimentacaoVolumesViewModel.cs" />
+    <Compile Include="Models\ExpedicaoCtx\RelatorioPedidosViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\RelatorioPedidodsExpedidosViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\RelatorioTotalizacaoLocalizacaoViewModel.cs" />
     <Compile Include="Models\GarantiaCtx\GarantiaDetailsViewModel.cs" />
@@ -588,6 +589,7 @@
     <Content Include="Scripts\Views\Expedicao\movimentacaoVolumesDetalhes.js" />
     <Content Include="Scripts\Views\Expedicao\pedidoVendaPesquisaModal.js" />
     <Content Include="Scripts\Views\Expedicao\relatorioPedidosExpedidos.js" />
+    <Content Include="Scripts\Views\Expedicao\relatorioPedidos.js" />
     <Content Include="Scripts\Views\Expedicao\relatorioVolumesInstaladosTransportadora.js" />
     <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
@@ -720,6 +722,7 @@
     <Content Include="Views\Expedicao\MovimentacaoVolumes.cshtml" />
     <Content Include="Views\Expedicao\RelatorioPedidosExpedidos.cshtml" />
     <Content Include="Views\Expedicao\MovimentacaoVolumesDetalhes.cshtml" />
+    <Content Include="Views\Expedicao\RelatorioPedidos.cshtml" />
     <Content Include="Views\Expedicao\DetalhesPedidoVolume.cshtml" />
   </ItemGroup>
   <ItemGroup>

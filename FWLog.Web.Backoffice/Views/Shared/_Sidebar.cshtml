@@ -40,7 +40,7 @@
                 Text = "Movimentação de Volumes",
                 Url = Url.Action("MovimentacaoVolumes", "Expedicao"),
                 RequirePermission = Permissions.RelatoriosSeparacao.MovimentacaoVolumes
-            }
+            }         
         ),
         new MenuGroup("Expedição", "fa fa-truck").SetItems(
             new MenuItem { Text = "Transportadora X Endereços", Url = Url.Action("Index", "TransportadoraEndereco"), RequirePermission = Permissions.Expedicao.ListarTranportadoraEndereco },
@@ -61,6 +61,13 @@
                 Text="Relatório - Pedidos Expedidos",
                 Url = Url.Action("RelatorioPedidosExpedidos", "Expedicao"),
                 RequirePermission = Permissions.RelatoriosExpedicao.RelatorioPedidosExpedidos
+            }
+            ,
+            new MenuItem
+            {
+                Text = "Relatório de Pedidos",
+                Url = Url.Action("RelatorioPedidos", "Expedicao"),
+                RequirePermission = Permissions.RelatoriosExpedicao.RelatorioPedidos
             }
         ),
         new MenuGroup(text: Res.GarantiaMenuItem, icon: "fa fa-shield").SetItems(

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
+using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
@@ -9,6 +11,7 @@ using FWLog.Web.Backoffice.Models.ExpedicaoCtx;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -18,11 +21,13 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly ExpedicaoService _expedicaoService;
         private readonly RelatorioService _relatorioService;
+        private readonly UnitOfWork _uow;
 
-        public ExpedicaoController(ExpedicaoService expedicaoService, RelatorioService relatorioService)
+        public ExpedicaoController(ExpedicaoService expedicaoService, RelatorioService relatorioService, UnitOfWork uow)
         {
             _expedicaoService = expedicaoService;
             _relatorioService = relatorioService;
+            _uow = uow;
         }
 
         [HttpGet]
@@ -201,6 +206,49 @@ namespace FWLog.Web.Backoffice.Controllers
             };
 
             return View(viewModel);
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidos)]
+        public ActionResult RelatorioPedidos()
+        {
+            var model = new RelatorioPedidosViewModel
+            {
+                Filter = new RelatorioPedidosFilterViewModel()
+                {
+                    ListaStatus = new SelectList(
+                    _uow.PedidoVendaStatusRepository.Todos().OrderBy(o => o.IdPedidoVendaStatus).Select(x => new SelectListItem
+                    {
+                        Value = x.IdPedidoVendaStatus.GetHashCode().ToString(),
+                        Text = x.Descricao,
+                    }), "Value", "Text"
+                )
+                }
+            };
+
+            model.Filter.DataInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(-10);
+            model.Filter.DataFinal = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidos)]
+        public ActionResult RelatorioPedidosPageData(DataTableFilter<RelatorioPedidosFilterViewModel> model)
+        {
+            var filter = Mapper.Map<DataTableFilter<RelatorioPedidosFiltro>>(model);
+
+            filter.CustomFilter.IdEmpresa = IdEmpresa;
+
+            IEnumerable<RelatorioPedidosLinhaTabela> result = _expedicaoService.BuscarDadosPedidos(filter, out int recordsFiltered, out int totalRecords);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRecords,
+                RecordsFiltered = recordsFiltered,
+                Data = Mapper.Map<IEnumerable<RelatorioPedidosListItemViewModel>>(result)
+            });
         }
 
         [HttpGet]
