@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
-using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
@@ -252,8 +251,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpGet]
-        //TODO: Verificar permissão correta
-        //[ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosExpedidos)]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidos)]
         public ActionResult DetalhesPedidoVolume(long idPedidoVendaVolume)
         {
             var dadosRetorno = _expedicaoService.BuscarDadosPedidoVolume(idPedidoVendaVolume, IdEmpresa);

@@ -34,7 +34,7 @@
             }
         ];
     });
-       
+
     $('#dataTable').DataTable({
         ajax: {
             "url": view.pageDataUrl,
@@ -57,11 +57,11 @@
         },
         columns: [
             { "defaultContent": "", width: '10%' },
-            { data: 'NroVolume', width: '10%'  },
+            { data: 'NroVolume', width: '10%' },
             { data: 'NomeTransportadora', width: '15%' },
             { data: 'DataDoPedido' },
-            { data: 'DataSaidaDoPedido' },      
-            { data: 'Status' },   
+            { data: 'DataSaidaDoPedido' },
+            { data: 'Status' },
             actionsColumn
         ],
         order: [[2, 'asc']],
@@ -84,7 +84,7 @@
         $('#Filter_DataInicial').val("");
         $('#Filter_DataFinal').val("");
     });
- 
+
     $("#pesquisarPedidoVenda").click(function () {
         limpaModais();
 
@@ -110,7 +110,7 @@ function selecionarPedidoVenda(idPedidoVenda, numeroPedidoVenda) {
 function detalhesPedido() {
     var id = $(this).data("id");
     let modalDetalhesPedidoVolume = $("#modalDetalhesPedidoVolume");
-
+    alert(id);
     modalDetalhesPedidoVolume.load(CONTROLLER_PATH + "DetalhesPedidoVolume/" + id, function () {
         modalDetalhesPedidoVolume.modal();
     });
