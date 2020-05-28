@@ -50,7 +50,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 //Instância a lote produto.
-                var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLote(viewModel.NroLote.Value);
+                var loteProduto = _unitOfWork.LoteProdutoRepository.PesquisarProdutoNoLote(IdEmpresa, viewModel.NroLote.Value, viewModel.IdProduto);
 
                 if (loteProduto == null)
                 {

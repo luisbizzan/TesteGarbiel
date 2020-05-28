@@ -56,6 +56,7 @@
         columns: [
             { data: 'ReferenciaProduto' },
             { data: 'DescricaoProduto' },
+            { data: 'NroVolume' },
             { data: 'Tipo' },
             { data: 'Quantidade' },
             { data: 'Endereco' },

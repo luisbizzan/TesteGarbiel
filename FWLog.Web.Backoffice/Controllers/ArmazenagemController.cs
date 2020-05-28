@@ -47,8 +47,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 )
                 }
             };
-            
-            return View(model); 
+
+            return View(model);
         }
 
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosArmazenagem.RelatorioAtividadeEstoque)]
@@ -60,7 +60,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var result = _uow.AtividadeEstoqueRepository.PesquisarPageData(filtro, out int registrosFiltrados, out int totalRegistros);
 
             var list = new List<RelatorioAtividadeEstoqueListItemViewModel>();
-            
+
             List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
 
             foreach (var item in result)
@@ -69,7 +69,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     CodigoEndereco = item.CodigoEndereco,
                     DataSolicitacao = item.DataSolicitacao.HasValue ? item.DataSolicitacao.Value.ToString("dd/MM/yyyy") : "",
-                    DataExecucao = item.DataExecucao.HasValue ? item.DataExecucao.Value.ToString("dd/MM/yyyy"): "",
+                    DataExecucao = item.DataExecucao.HasValue ? item.DataExecucao.Value.ToString("dd/MM/yyyy") : "",
                     DescricaoProduto = item.DescricaoProduto,
                     ReferenciaProduto = item.ReferenciaProduto,
                     Finalizado = item.Finalizado ? "Sim" : "Não",
@@ -267,7 +267,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     Tipo = item.Tipo.ToString(),
                     Endereco = item.Endereco,
                     Quantidade = item.Quantidade.ToString(),
-                    DataHora = item.DataHora.ToString("dd/MM/yyyy hh:mm:ss")
+                    DataHora = item.DataHora.ToString("dd/MM/yyyy hh:mm:ss"),
+                    NroVolume = item.NroVolume.ToString()
                 });
             }
 
@@ -325,7 +326,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     Tipo = item.Tipo.ToString(),
                     Endereco = item.Endereco,
                     Quantidade = item.Quantidade.ToString(),
-                    DataHora = item.DataHora.ToString("dd/MM/yyyy hh:mm:ss")
+                    DataHora = item.DataHora.ToString("dd/MM/yyyy hh:mm:ss"),
+                    NroVolume = item.NroVolume.HasValue ? item.NroVolume.ToString() : string.Empty
                 });
             }
 
