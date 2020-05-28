@@ -252,9 +252,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidos)]
-        public ActionResult DetalhesPedidoVolume(long idPedidoVendaVolume)
+        public ActionResult DetalhesPedidoVolume(long id)
         {
-            var dadosRetorno = _expedicaoService.BuscarDadosPedidoVolume(idPedidoVendaVolume, IdEmpresa);
+            var dadosRetorno = _expedicaoService.BuscarDadosPedidoVolume(id, IdEmpresa);
 
             return View(dadosRetorno);
         }
