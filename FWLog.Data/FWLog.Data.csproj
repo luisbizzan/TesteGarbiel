@@ -129,6 +129,7 @@
     <Compile Include="Models\DataTablesCtx\RastreabilidadeLoteListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\RastreabilidadeLoteMovimentacaoListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\RastreabilidadeLoteProdutoListaLinhaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\RelatorioPedidosLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\RelatorioPedidosExpedidosLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\TransportadoraEnderecoListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\TransportadoraPesquisaModalLinhaTabela.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="Models\FilterCtx\RastreabilidadeLoteListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\RastreabilidadeLoteMovimentacaoListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\RastreabilidadeLoteProdutoListaFiltro.cs" />
+    <Compile Include="Models\FilterCtx\RelatorioPedidosFiltro.cs" />
     <Compile Include="Models\FilterCtx\RelatorioPedidosExpedidosFilter.cs" />
     <Compile Include="Models\FilterCtx\RelatorioVolumesInstaladosTransportadoraFiltro.cs" />
     <Compile Include="Models\FilterCtx\PedidoVendaItem.cs" />

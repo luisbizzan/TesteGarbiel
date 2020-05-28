@@ -1243,5 +1243,58 @@ namespace FWLog.Services.Services
 
            return response.ToList();
         }
+
+        public List<RelatorioPedidosLinhaTabela> BuscarDadosPedidos(DataTableFilter<RelatorioPedidosFiltro> filtro, out int registrosFiltrados, out int totalRegistros)
+        {
+            var pedidos = _unitOfWork.PedidoVendaRepository.BuscarPedidosVolumePorEmpresa(filtro.CustomFilter.IdEmpresa);
+
+            totalRegistros = pedidos.Count();
+
+            if (filtro.CustomFilter.IdTransportadora.HasValue)
+            {
+                pedidos = pedidos.Where(pv => pv.PedidoVenda.IdTransportadora == filtro.CustomFilter.IdTransportadora.Value);
+            }
+
+            if (filtro.CustomFilter.DataInicial.HasValue)
+            {
+                DateTime dataInicial = new DateTime(filtro.CustomFilter.DataInicial.Value.Year, filtro.CustomFilter.DataInicial.Value.Month, filtro.CustomFilter.DataInicial.Value.Day, 00, 00, 00);
+                pedidos = pedidos.Where(x => x.PedidoVenda.Pedido.DataCriacao >= dataInicial);
+            }
+
+            if (filtro.CustomFilter.DataFinal.HasValue)
+            {
+                DateTime dataFinal = new DateTime(filtro.CustomFilter.DataFinal.Value.Year, filtro.CustomFilter.DataFinal.Value.Month, filtro.CustomFilter.DataFinal.Value.Day, 23, 59, 59);
+                pedidos = pedidos.Where(x => x.PedidoVenda.Pedido.DataCriacao <= dataFinal);
+            }
+
+            if (filtro.CustomFilter.IdPedidoVenda.HasValue)
+            {
+                pedidos = pedidos.Where(pv => pv.IdPedidoVenda == filtro.CustomFilter.IdPedidoVenda.Value);
+            }
+
+            if (filtro.CustomFilter.IdPedidoVendaVolume.HasValue)
+            {
+                pedidos = pedidos.Where(pv => pv.IdPedidoVendaVolume == filtro.CustomFilter.IdPedidoVendaVolume.Value);
+            }
+
+            var query = pedidos.Select(s => new RelatorioPedidosLinhaTabela
+            {
+                NroPedido = s.PedidoVenda.NroPedidoVenda.ToString(),
+                NroVolume = s.NroVolume.ToString(),
+                IdPedidoVendaVolume = s.IdPedidoVendaVolume,
+                NomeTransportadora = s.PedidoVenda.Transportadora.RazaoSocial,
+                DataDoPedido = s.PedidoVenda.Pedido.DataCriacao,
+                DataSaidaDoPedido = null,
+                Status = s.PedidoVenda.PedidoVendaStatus.Descricao,
+            });
+
+            registrosFiltrados = query.Count();
+
+            var response = query.OrderBy(filtro.OrderByColumn, filtro.OrderByDirection)
+                                .Skip(filtro.Start)
+                                .Take(filtro.Length);
+
+            return response.ToList();
+        }
     }
 }
