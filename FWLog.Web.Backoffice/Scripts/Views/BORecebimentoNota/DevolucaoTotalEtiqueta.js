@@ -23,7 +23,6 @@ function ExibirModalAcessoCoordenadorDevolucaoTotal() {
 }
 
 function ValidarAcessoDevolucaoTotal() {
-    debugger
     var usuario = $("#UsuarioDevolucaoTotal").val();
     var senha = $("#SenhaDevolucaoTotal").val();
 
@@ -38,7 +37,7 @@ function ValidarAcessoDevolucaoTotal() {
         },
         success: function (result) {
             if (result.Success) {
-                RegistrarDevolucaoTotal();
+                VerificarStatusLote();
 
                 $('#modalAcessoCoordenadorDevolucaoTotal').modal('toggle');
 
@@ -57,7 +56,6 @@ function ValidarAcessoDevolucaoTotal() {
     });
 };
 
-
 function ValidarPermissaoDevolucaoTotal() {
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "validarPermissaoDevolucaoTotal",
@@ -65,7 +63,7 @@ function ValidarPermissaoDevolucaoTotal() {
         method: "POST",
         success: function (result) {
             if (result.Success) {
-                RegistrarDevolucaoTotal();
+                VerificarStatusLote();
             }
             else {
                 ExibirModalAcessoCoordenadorDevolucaoTotal();
@@ -74,45 +72,11 @@ function ValidarPermissaoDevolucaoTotal() {
     });
 };
 
-function RegistrarDevolucaoTotal() {
+function VerificarStatusLote() {
     debugger
-    var idLote = $('#IdLote').val();
-    
-    $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "/RegistrarDevolucaoTotal",
-        cache: false,
-        method: "POST",
-        data: {
-            idLote: idLote
-        },
-        success: function (result) {
-            if (!result.Success) {
-                PNotify.error({ text: result.Message });
-                $("#modalDevolucaoTotal").modal("hide");
-            } else {
-                PNotify.success({ text: result.Message });
-                VerificarStatusLote($("#IdNotaFiscal").val());
-            }
+    let id = $("#IdNotaFiscal").val()
+    let quantidadeEtiqueta = $('#QuantidadeEtiqueta').val();
 
-
-            //if (!result.Success) {
-            //    $('#modalDevolucaoTotal').modal('toggle');
-            //    PNotify.error({ text: result.Message });
-            //} else {
-            //    $(".close").click();
-            //    $('#modalDevolucaoTotal').modal('toggle');
-            //    $("#dataTable").DataTable().ajax.reload();
-            //    PNotify.success({ text: result.Message });
-            //    VerificarStatusLoteDev($("#IdNotaFiscal").val());
-            //    ExibirResumoTratativaDivergencia($("#IdNotaFiscal").val());
-            //}
-        }
-    });
-}
-
-function VerificarStatusLote(id) {
-    debugger
-    var quantidadeEtiqueta = $('#QuantidadeEtiqueta').val();
     $.ajax({
         url: HOST_URL + "BORecebimentoNota/ContinuarProcessamentoLote/" + id,
         cache: false,
@@ -127,12 +91,10 @@ function VerificarStatusLote(id) {
                     return;
                 }
 
-                PNotify.info({ text: "Continuando processo de devolução total..." });
                 let $modal = $("#modalProcessamentoDevolucaoTotal");
                 $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoProcessamentoDevolucaoTotal?id=" + id + "&quantidadeEtiqueta=" + quantidadeEtiqueta, function () {
                     $modal.modal();
                     $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
-                    FinalizarDevolucaoTotal();
                 });
             }
         }

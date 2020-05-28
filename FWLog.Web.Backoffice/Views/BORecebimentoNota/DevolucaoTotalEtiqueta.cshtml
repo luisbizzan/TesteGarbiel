@@ -14,7 +14,7 @@
             <div class="modal-body" style="overflow: auto; max-height: calc(90vh - 40px);">
                 <div class="row">
                     <div class="col-sm-12 col-lg-12">
-                        <p>O sistema identificou que todos os itens da nota <b>@Model.NumeroNF</b>-<b>@Model.Serie</b> deverão ser devolvidos. Informe a quantidade de etiquetas e clique na opção Confirmar.</p>
+                        <p>Para prosseguir, informe a quantidade de etiquetas e clique na opção Confirmar.</p>
                     </div>
                 </div>
                 <div class="row">
@@ -31,7 +31,7 @@
                 @Html.Hidden("IdNotaFiscal", Model.IdNotaFiscal)
             </div>
             <div class="modal-footer">
-                <a href="#" class="btn btn-default close" data-dismiss="modal">Cancelar</a>
+                <a href="#" class="btn btn-default fecharModal" data-dismiss="modal">Cancelar</a>
                 <a id="finalizarDevolucaoTotal" class="btn btn-primary"><i class="fa fa-fw fa-floppy-o"></i>Confirmar</a>
             </div>
         </div>
