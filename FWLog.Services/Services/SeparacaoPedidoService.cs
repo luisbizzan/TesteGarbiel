@@ -981,6 +981,7 @@ namespace FWLog.Services.Services
                 PedidoPagamentoCodigoIntegracao = pedido.PagamentoCodigoIntegracao,
                 PedidoPagamentoIsDebito = pedido.PagamentoIsDebitoIntegracao,
                 PedidoPagamentoIsCredito = pedido.PagamentoIsCreditoIntegracao,
+                PedidoPagamentoIsDinheiro = pedido.PagamentoIsDinheiroIntegracao,
                 Centena = pedidoVendaVolume.NroCentena.ToString(),
                 TransportadoraSigla = pedido.Transportadora.CodigoTransportadora,
                 TransportadoraCodigo = pedido.Transportadora.IdTransportadora.ToString(),

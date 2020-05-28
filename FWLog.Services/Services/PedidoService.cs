@@ -131,6 +131,7 @@ namespace FWLog.Services.Services
                     pedido.PagamentoDescricaoIntegracao = pedidoCabecalho.TipoPagamentoDescricao.TrimOrNull();
                     pedido.PagamentoIsDebitoIntegracao = pedidoCabecalho.TipoPagamentoCartaoDebito == "S";
                     pedido.PagamentoIsCreditoIntegracao = pedidoCabecalho.TipoPagamentoCartaoCredito == "S";
+                    pedido.PagamentoIsDinheiroIntegracao = pedidoCabecalho.TipoPagamentoCartaoDinheiro == "S";
 
                     var itens = pedidoIntegracao.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.QtdPedido, s.Sequencia }).ToList();
 

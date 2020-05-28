@@ -63,6 +63,8 @@ namespace FWLog.Data.Models
 
         public bool PagamentoIsCreditoIntegracao { get; set; }
 
+        public bool PagamentoIsDinheiroIntegracao { get; set; }
+
         public virtual ICollection<PedidoItem> PedidoItens { get; set; }
 
         [Index]

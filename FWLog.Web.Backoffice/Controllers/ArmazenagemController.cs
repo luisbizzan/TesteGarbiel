@@ -267,7 +267,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     Tipo = item.Tipo.ToString(),
                     Endereco = item.Endereco,
                     Quantidade = item.Quantidade.ToString(),
-                    DataHora = item.DataHora.ToString("dd/MM/yyyy hh:mm:ss")
+                    DataHora = item.DataHora.ToString("dd/MM/yyyy hh:mm:ss"),
+                    NroVolume = item.NroVolume.ToString()
                 });
             }
 
@@ -325,7 +326,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     Tipo = item.Tipo.ToString(),
                     Endereco = item.Endereco,
                     Quantidade = item.Quantidade.ToString(),
-                    DataHora = item.DataHora.ToString("dd/MM/yyyy hh:mm:ss")
+                    DataHora = item.DataHora.ToString("dd/MM/yyyy hh:mm:ss"),
+                    NroVolume = item.NroVolume.HasValue ? item.NroVolume.ToString() : string.Empty
                 });
             }
 

@@ -60,5 +60,8 @@ namespace FWLog.Services.Model.IntegracaoSankhya
 
         [TabelaIntegracao(DisplayName = "TGFTPV.AD_CARTAOCREDITO")]
         public string TipoPagamentoCartaoCredito { get; set; }
+
+        [TabelaIntegracao(DisplayName = "TGFTPV.AD_DINHEIRO")]
+        public string TipoPagamentoCartaoDinheiro { get; set; }
     }
 }

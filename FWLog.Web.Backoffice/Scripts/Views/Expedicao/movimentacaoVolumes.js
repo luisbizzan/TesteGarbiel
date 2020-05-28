@@ -29,19 +29,18 @@
         $('#Filter_DataInicial').val("");
         $('#Filter_DataFinal').val("");
     });
+
+    $(".abrirDetalhes").click(function (e) {
+
+        e.preventDefault();
+
+        $("#modalDetalhes").empty();
+
+        var link = $(this).attr("href");
+
+        $("#modalDetalhes").load(link, function () {
+
+            $("#modalDetalhes").modal();
+        });
+    });
 })();
-
-
-function limparTransportadora() {
-    let razaoSocial = $("#Filter_RazaoSocialTransportadora");
-    let cliente = $("#Filter_IdTransportadora");
-    razaoSocial.val("");
-    cliente.val("");
-}
-
-function setTransportadora(idTransportadora, nomeFantasia) {
-    $("#Filter_RazaoSocialTransportadora").val(nomeFantasia);
-    $("#Filter_IdTransportadora").val(idTransportadora);
-    $("#modalTransportadora").modal("hide");
-    $("#modalTransportadora").empty();
-}

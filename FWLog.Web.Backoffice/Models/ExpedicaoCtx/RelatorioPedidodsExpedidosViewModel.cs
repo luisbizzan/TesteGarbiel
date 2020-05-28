@@ -20,20 +20,20 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         [Display(Name = "Nro. Pedido")]
         public long NroPedido { get; set; }
 
+        [Display(Name = "Volume")]
+        public string NroVolume { get; set; }
+
         [Display(Name = "Data do Pedido")]
-        public DateTime DataDoPedido { get; set; }
+        public string DataDoPedido { get; set; }
 
         [Display(Name = "Transportadora")]
-        public string NomeTransportadora { get; set; }
-
-        [Display(Name = "Volume")]
-        public long IdPedidoVendaVolume { get; set; }
+        public string IdENomeTransportadora { get; set; }
 
         [Display(Name = "Nota Fiscal")]
         public string NotaFiscalESerie { get; set; }
 
         [Display(Name = "Data Saída do Pedido")]
-        public DateTime DataSaidaDoPedido { get; set; }
+        public string DataSaidaDoPedido { get; set; }
     }
 
     public class RelatorioPedidosExpedidosFilterViewModel

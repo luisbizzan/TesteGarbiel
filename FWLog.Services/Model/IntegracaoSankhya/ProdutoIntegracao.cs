@@ -43,7 +43,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "M3")]
         public string MetroCubico { get; set; }
 
-        [TabelaIntegracao(DisplayName = "AGRUPCOMPMINIMO")]
+        [TabelaIntegracao(DisplayName = "AGRUPMIN")]
         [Required]
         public string MultiploVenda { get; set; }
 

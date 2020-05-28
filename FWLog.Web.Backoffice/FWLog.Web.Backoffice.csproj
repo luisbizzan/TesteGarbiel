@@ -363,6 +363,7 @@
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\LoteEtiquetaViewModel.cs" />
+    <Compile Include="Models\ExpedicaoCtx\MovimentacaoVolumesDetalheViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\PedidoVendaModalViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\MovimentacaoVolumesViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\RelatorioPedidosViewModel.cs" />
@@ -585,6 +586,7 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Etiqueta\locacao.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
+    <Content Include="Scripts\Views\Expedicao\movimentacaoVolumesDetalhes.js" />
     <Content Include="Scripts\Views\Expedicao\pedidoVendaPesquisaModal.js" />
     <Content Include="Scripts\Views\Expedicao\relatorioPedidosExpedidos.js" />
     <Content Include="Scripts\Views\Expedicao\relatorioPedidos.js" />
@@ -719,6 +721,7 @@
     <Content Include="Views\Expedicao\PedidoVendaPesquisaModal.cshtml" />
     <Content Include="Views\Expedicao\MovimentacaoVolumes.cshtml" />
     <Content Include="Views\Expedicao\RelatorioPedidosExpedidos.cshtml" />
+    <Content Include="Views\Expedicao\MovimentacaoVolumesDetalhes.cshtml" />
     <Content Include="Views\Expedicao\RelatorioPedidos.cshtml" />
   </ItemGroup>
   <ItemGroup>
