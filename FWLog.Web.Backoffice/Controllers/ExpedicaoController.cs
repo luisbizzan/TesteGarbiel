@@ -202,5 +202,15 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return View(viewModel);
         }
+
+        [HttpGet]
+        //TODO: Verificar permissão correta
+        //[ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosExpedidos)]
+        public ActionResult DetalhesPedidoVolume(long idPedidoVendaVolume)
+        {
+            var dadosRetorno = _expedicaoService.BuscarDadosPedidoVolume(idPedidoVendaVolume, IdEmpresa);
+
+            return View(dadosRetorno);
+        }
     }
 }

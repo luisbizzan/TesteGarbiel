@@ -1235,12 +1235,12 @@ namespace FWLog.Services.Services
 
             var query = pedidosExpedidos.Select(pedidoVenda => new RelatorioPedidosExpedidosLinhaTabela
             {
-               NroPedido = pedidoVenda.NroPedidoVenda,
-               NroVolume = pedidoVenda.PedidoVendaVolumes.Where(x => x.IdPedidoVenda == pedidoVenda.IdPedidoVenda).Select(y => y.NroVolume).First().ToString().PadLeft(3,'0'),
-               IdENomeTransportadora = string.Concat(pedidoVenda.IdTransportadora.ToString().PadLeft(3,'0'),"-",pedidoVenda.Transportadora.RazaoSocial),
-               NotaFiscalESerie = string.Concat(pedidoVenda.Pedido.NumeroNotaFiscal,"-",pedidoVenda.Pedido.SerieNotaFiscal),
-               DataDoPedido = pedidoVenda.Pedido.DataCriacao.ToString("dd/MM/yyyy HH:mm"),
-               DataSaidaDoPedido = pedidoVenda.DataHoraRomaneio.Value.ToString("dd/MM/yyyy HH:mm")
+                NroPedido = pedidoVenda.NroPedidoVenda,
+                NroVolume = pedidoVenda.PedidoVendaVolumes.Where(x => x.IdPedidoVenda == pedidoVenda.IdPedidoVenda).Select(y => y.NroVolume).First().ToString().PadLeft(3, '0'),
+                IdENomeTransportadora = string.Concat(pedidoVenda.IdTransportadora.ToString().PadLeft(3, '0'), "-", pedidoVenda.Transportadora.RazaoSocial),
+                NotaFiscalESerie = string.Concat(pedidoVenda.Pedido.NumeroNotaFiscal, "-", pedidoVenda.Pedido.SerieNotaFiscal),
+                DataDoPedido = pedidoVenda.Pedido.DataCriacao.ToString("dd/MM/yyyy HH:mm"),
+                DataSaidaDoPedido = pedidoVenda.DataHoraRomaneio.Value.ToString("dd/MM/yyyy HH:mm")
             }).OrderBy(x => x.NroPedido).ThenBy(x => x.NroVolume);
 
             totalRecordsFiltered = query.Count();
@@ -1249,7 +1249,7 @@ namespace FWLog.Services.Services
                                 .Skip(filtro.Start)
                                 .Take(filtro.Length);
 
-           return response.ToList();
+            return response.ToList();
         }
 
         public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string tipo, long idEmpresa, out string statusDescricao)
@@ -1291,6 +1291,39 @@ namespace FWLog.Services.Services
             }
 
             return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, idEmpresa);
+        }
+
+        public DetalhesPedidoVolume BuscarDadosPedidoVolume(long idPedidoVendaVolume, long idEmpresa)
+        {
+            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
+
+            if (pedidoVendaVolume == null || pedidoVendaVolume.PedidoVenda?.IdEmpresa != idEmpresa)
+            {
+                return null;
+            }
+
+            var retorno = new DetalhesPedidoVolume();
+
+            var pedido = pedidoVendaVolume.PedidoVenda.Pedido;
+
+            retorno.PedidoNumero = pedido.NroPedido;
+
+            retorno.VolumeNroVolume = pedidoVendaVolume.NroVolume;
+            retorno.VolumeNroCentena = pedidoVendaVolume.NroCentena;
+
+
+            retorno.ListaProdutos = pedidoVendaVolume.PedidoVendaProdutos.Select(pvp => new DetalhesPedidoProdutoVolume
+            {
+                ProdutoReferencia = pvp.Produto.Referencia,
+                QuantidadeSeparar = pvp.QtdSeparar,
+                QuantidadeSeparada = pvp.QtdSeparada.GetValueOrDefault(),
+                DataHoraInicioSeparacao = pvp.DataHoraInicioSeparacao,
+                DataHoraFimSeparacao = pvp.DataHoraFimSeparacao,
+                //UsuarioSeparacao = $"{pvp.UsuarioSeparacao.UserName}-{pvp.UsuarioSeparacao.
+
+            }).ToList();
+
+            return retorno;
         }
     }
 }

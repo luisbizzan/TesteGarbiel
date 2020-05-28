@@ -720,6 +720,7 @@
     <Content Include="Views\Expedicao\MovimentacaoVolumes.cshtml" />
     <Content Include="Views\Expedicao\RelatorioPedidosExpedidos.cshtml" />
     <Content Include="Views\Expedicao\MovimentacaoVolumesDetalhes.cshtml" />
+    <Content Include="Views\Expedicao\DetalhesPedidoVolume.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
