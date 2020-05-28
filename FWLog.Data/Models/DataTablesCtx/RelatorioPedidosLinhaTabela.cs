@@ -9,7 +9,7 @@ namespace FWLog.Data.Models.DataTablesCtx
         public string NomeTransportadora { get; set; }
         public string Status { get; set; }
         public string NroVolume { get; set; }
-        public DateTime DataDoPedido { get; set; }
-        public DateTime? DataSaidaDoPedido { get; set; }
+        public string DataCriacao { get; set; }
+        public string DataSaida { get; set; }
     }
 }

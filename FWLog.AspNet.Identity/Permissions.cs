@@ -474,12 +474,12 @@ namespace FWLog.AspNet.Identity
         public class RelatoriosSeparacao : PermissionGroupBuildItem
         {
             public const string MovimentacaoVolumes = "MovimentacaoVolumes";
-            //public const string RelatorioPedidos = "RelatorioPedidos";
+            public const string RelatorioPedidos = "RelatorioPedidos";
 
             public RelatoriosSeparacao() : base(Display.FromString("Separação - Relatórios"))
             {
                 Register(MovimentacaoVolumes, Display.FromString("Movimentação de Volumes"));
-                //Register(RelatorioPedidos, Display.FromString("Relatório de Pedidos"));
+                Register(RelatorioPedidos, Display.FromString("Relatório de Pedidos"));
             }
         }
     }

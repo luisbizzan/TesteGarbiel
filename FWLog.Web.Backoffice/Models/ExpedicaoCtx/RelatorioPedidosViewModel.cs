@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
-using System.Web.Services.Description;
 
 namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 {
@@ -22,7 +21,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         public long IdPedidoVendaVolume { get; set; }
 
         [Display(Name = "Nro. Pedido")]
-        public long NroPedido { get; set; }
+        public string NroPedido { get; set; }
 
         [Display(Name = "Nro. Volume")]
         public string NroVolume { get; set; }
@@ -34,10 +33,10 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         public string Status { get; set; }
 
         [Display(Name = "Data Criação")]
-        public DateTime DataDoPedido { get; set; }
+        public string DataCriacao { get; set; }
 
         [Display(Name = "Data Saída")]
-        public DateTime? DataSaidaDoPedido { get; set; }
+        public string DataSaida { get; set; }
     }
 
     public class RelatorioPedidosFilterViewModel
@@ -47,11 +46,11 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         public string NumeroPedidoVenda { get; set; }
 
-        [Display(Name="Data Inícial")]
+        [Display(Name="Dt. Criação Inícial")]
         [Required]
         public DateTime? DataInicial { get; set; }
 
-        [Display(Name = "Data Final")]
+        [Display(Name = "Dt. Criação Final")]
         [Required]
         public DateTime? DataFinal { get; set; }
 
@@ -60,12 +59,13 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         public string NomeTransportadora { get; set; }
 
-        [Display(Name = "Nro. Pedido")]
-        public int NroVolume { get; set; }
+        [Display(Name = "Cliente")]
+        public long? IdCliente { get; set; }
+
+        public string NomeCliente { get; set; }
 
         public SelectList ListaStatus { get; set; }
         [Display(Name = "Status")]
         public long? IdStatus { get; set; }
-
     }
 }
