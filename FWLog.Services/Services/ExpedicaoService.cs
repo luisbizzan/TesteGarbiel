@@ -1339,7 +1339,7 @@ namespace FWLog.Services.Services
                 DataCriacao = s.PedidoVenda.Pedido.DataCriacao,
                 DataSaida = s.PedidoVenda.DataHoraRomaneio,
                 Status = s.PedidoVendaStatus.Descricao,
-                NomeCliente = s.PedidoVenda.Cliente.RazaoSocial               
+                NomeCliente = s.PedidoVenda.Cliente.RazaoSocial
             });
 
             registrosFiltrados = query.Count();
@@ -1377,11 +1377,63 @@ namespace FWLog.Services.Services
 
             var pedido = pedidoVendaVolume.PedidoVenda.Pedido;
 
-            retorno.PedidoNumero = pedido.NroPedido;
+            retorno.PedidoNro = pedido.NroPedido;
+
+            retorno.PedidoCliente = pedido.Cliente?.NomeFantasia;
+
+            retorno.PedidoTransportadora = pedido.Transportadora?.NomeFantasia;
+
+            retorno.PedidoCodigoIntegracao = pedido.CodigoIntegracao;
+
+            retorno.PedidoRepresentante = pedido.Representante.Nome;
+
+            retorno.PedidoDataCriacao = pedido.DataCriacao;
+
+            retorno.PedidoIsRequisicao = pedido.IsRequisicao;
+
+            retorno.PedidoCodigoIntegracaoNotaFiscal = pedido.CodigoIntegracaoNotaFiscal;
+
+            retorno.PedidoVendaStatus = pedido.PedidoVendaStatus.Descricao;
+
+            retorno.PedidoChaveAcessoNotaFiscal = pedido.ChaveAcessoNotaFiscal;
+
+            retorno.PedidoPagamentoDescricaoIntegracao = pedido.PagamentoDescricaoIntegracao;
 
             retorno.VolumeNroVolume = pedidoVendaVolume.NroVolume;
+
             retorno.VolumeNroCentena = pedidoVendaVolume.NroCentena;
 
+            retorno.VolumeCaixaCubagem = pedidoVendaVolume.CaixaCubagem?.Nome;
+
+            retorno.VolumeCubagem = pedidoVendaVolume.CubagemVolume;
+
+            retorno.VolumePeso = pedidoVendaVolume.PesoVolume;
+
+            retorno.VolumeCorredorInicio = pedidoVendaVolume.CorredorInicio;
+
+            retorno.VolumeCorredorFim = pedidoVendaVolume.CorredorFim;
+
+            retorno.VolumeCaixaVolume = pedidoVendaVolume.CaixaVolume?.Nome;
+
+            retorno.VolumePedidoVendaStatus = pedidoVendaVolume.PedidoVendaStatus.Descricao;
+
+            if (!pedidoVendaVolume.IdUsuarioInstalTransportadora.NullOrEmpty())
+            {
+                retorno.VolumeUsuarioInstalTransportadora = _unitOfWork.PerfilUsuarioRepository.GetByUserId(pedidoVendaVolume.IdUsuarioInstalTransportadora)?.Nome;
+            }
+
+            retorno.VolumeDataHoraInstalTransportadora = pedidoVendaVolume.DataHoraInstalTransportadora;
+
+            retorno.VolumeEnderecoArmazTransportadora = pedidoVendaVolume.EnderecoTransportadora?.Codigo;
+
+            if (!pedidoVendaVolume.IdUsuarioInstalacaoDOCA.NullOrEmpty())
+            {
+                retorno.VolumeUsuarioInstalacaoDOCA = _unitOfWork.PerfilUsuarioRepository.GetByUserId(pedidoVendaVolume.IdUsuarioInstalacaoDOCA)?.Nome;
+            }
+
+            retorno.VolumeDataHoraInstalacaoDOCA = pedidoVendaVolume.DataHoraInstalacaoDOCA;
+
+            retorno.VolumeDataHoraRemocaoVolume = pedidoVendaVolume.DataHoraRemocaoVolume;
 
             retorno.ListaProdutos = pedidoVendaVolume.PedidoVendaProdutos.Select(pvp => new DetalhesPedidoProdutoVolume
             {
@@ -1390,8 +1442,7 @@ namespace FWLog.Services.Services
                 QuantidadeSeparada = pvp.QtdSeparada.GetValueOrDefault(),
                 DataHoraInicioSeparacao = pvp.DataHoraInicioSeparacao,
                 DataHoraFimSeparacao = pvp.DataHoraFimSeparacao,
-                //UsuarioSeparacao = $"{pvp.UsuarioSeparacao.UserName}-{pvp.UsuarioSeparacao.
-
+                UsuarioSeparacao = !pvp.IdUsuarioSeparacao.NullOrEmpty() ? $"{_unitOfWork.PerfilUsuarioRepository.GetByUserId(pvp.IdUsuarioSeparacao)?.Nome}" : null
             }).ToList();
 
             return retorno;
