@@ -221,7 +221,6 @@ function visualizarRemessaDetalhado(id) {
                     if (ids.length == 0) {
                         PNotify.error({ text: "Selecione um item." });
                     } else {
-
                         /* # Imprimir Etiqueta # */
                         var registro = new Object();
                         registro.EtiquetaImpressaoIds = ids;
@@ -236,7 +235,6 @@ function visualizarRemessaDetalhado(id) {
                             console.log(f);
                         }).done(function (d) {
                         });
-
                     }
                 }
             },
@@ -328,13 +326,14 @@ function estornarRemessa() {
             }
         }
     });
-
-/* [GENÉRICO] mostrar mensagens */
-function Mensagem(sucesso, mensagem) {
-    if (sucesso) {
-        PNotify.success({ text: mensagem, delay: 1000 });
-    }
-    else {
-        PNotify.error({ text: mensagem, delay: 5000 });
-    }
 }
+
+    /* [GENÉRICO] mostrar mensagens */
+    function Mensagem(sucesso, mensagem) {
+        if (sucesso) {
+            PNotify.success({ text: mensagem, delay: 1000 });
+        }
+        else {
+            PNotify.error({ text: mensagem, delay: 5000 });
+        }
+    }

@@ -709,7 +709,6 @@
     <Content Include="Scripts\Views\GarantiaConfiguracao\remessaconfiguracao.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\remessausuario.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\sankhyatop.js" />
-    <Content Include="Scripts\Views\Garantia\entradaConferenciaGarantia.js" />
     <Content Include="Scripts\Views\Garantia\conferenciaConferir.js" />
     <Content Include="Scripts\Views\Garantia\remessa.js" />
     <Content Include="Scripts\Views\Garantia\index.js" />
