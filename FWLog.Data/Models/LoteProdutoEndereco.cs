@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -37,6 +36,8 @@ namespace FWLog.Data.Models
 
         [Required]
         public decimal PesoTotal { get; set; }
+
+        public int? QuantidadeCaixas { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
