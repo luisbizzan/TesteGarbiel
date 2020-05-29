@@ -35,7 +35,8 @@
     }, 'Data Final Obrigatório');
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        var visivelEstornar = view.estornarRemessa;
+        var visivelEstornar = view.estornarRemessa && (full.Id_Status === 38);
+        var visivelVisualizar = view.listarRemessa;
         var visivelConferir = view.conferirRemessa && (full.Id_Status === 38);
 
         return [
@@ -44,7 +45,14 @@
                 color: "btn-info",
                 attrs: { 'data-id': full.Id, 'action': 'visualizarRemessa' },
                 icon: 'fa fa-eye',
-                visible: view.detailsVisible
+                visible: visivelVisualizar
+            },
+            {
+                text: "Estornar",
+                color: "btn-danger",
+                attrs: { 'data-id': full.Id, 'action': 'estornarRemessa' },
+                icon: 'fa fa-pencil-square',
+                visible: visivelEstornar
             },
 
             {
@@ -59,6 +67,7 @@
 
     $("#dataTable").on('click', "[action='visualizarRemessa']", visualizarRemessa);
     $("#dataTable").on('click', "[action='conferirRemessa']", conferirRemessa);
+    $("#dataTable").on('click', "[action='estornarRemessa']", estornarRemessa);
 
     var $Data_Inicial = $('#Filter_Data_Inicial').closest('.date');
     var $Data_Final = $('#Filter_Data_Final').closest('.date');
@@ -129,6 +138,13 @@ function visualizarRemessa() {
                     visualizarRemessaDetalhado(id);
                 }
             },
+            {
+                text: '<i class="fa fa-gears"></i> Peças Conferidas',
+                className: 'btn-primary ',
+                action: function (e, dt, node, config) {
+                    visualizarRemessaItensConferidos(id);
+                }
+            },
 
         ];
 
@@ -158,6 +174,28 @@ function visualizarRemessa() {
     });
 }
 
+function visualizarRemessaItensConferidos(id) {
+    $("#modalItensPendentes").modal("hide");
+    let modal = $("#modalItensPendentes .modal-body");
+    $("#modalItensPendentes .modal-title").html("Peças Conferidas");
+
+    modal.load("/Garantia/ConferenciaItemConferidoRemessa", {
+        Id_Remessa: id
+    }, function () {
+        $("#modalItensPendentes").modal("show");
+        $('#tbItensPendentes').DataTable({
+            destroy: true,
+            serverSide: false,
+            stateSave: false,
+            dom: "Bfrtip",
+            order: [],
+            buttons: [],
+            searching: true,
+            bInfo: true
+        });
+    });
+}
+
 function visualizarRemessaDetalhado(id) {
     $("#modalItensPendentes").modal("hide");
     let modal = $("#modalItensPendentes .modal-body");
@@ -183,7 +221,6 @@ function visualizarRemessaDetalhado(id) {
                     if (ids.length == 0) {
                         PNotify.error({ text: "Selecione um item." });
                     } else {
-
                         /* # Imprimir Etiqueta # */
                         var registro = new Object();
                         registro.IdPerfilImpressora = Impressora.IdPerfilImpressora;
@@ -200,7 +237,6 @@ function visualizarRemessaDetalhado(id) {
                             console.log(f);
                         }).done(function (d) {
                         });
-
                     }
                 }
             },
@@ -252,6 +288,47 @@ function criarRemessa() {
     });
 }
 
+function estornarRemessa() {
+    var id = $(this).data("id");
+
+    $.confirm({
+        type: 'red',
+        theme: 'material',
+        title: 'Estornar Remessa',
+        content: 'Serão excluidos todos os dados da remessa, e você terá que cria-la novamente, continuar?',
+        typeAnimated: true,
+        autoClose: 'cancelar|10000',
+        buttons: {
+            confirmar: {
+                text: 'Estornar',
+                btnClass: 'btn-red',
+                action: function () {
+                    $.ajax({
+                        url: "RemessaEstornar/",
+                        method: "POST",
+                        data: { Id: id },
+                        success: function (result) {
+                            if (result.Success) {
+                                location.reload();
+                                PNotify.success({ text: result.Message, delay: 1000 });
+                            } else {
+                                PNotify.error({ text: result.Message });
+                            }
+                        },
+                        error: function (request, status, error) {
+                            PNotify.warning({ text: result.Message });
+                        }
+                    });
+                }
+            },
+            cancelar: {
+                text: 'Cancelar',
+                action: function () {
+                }
+            }
+        }
+    });
+}
 
 /* [GENÉRICO] mostrar mensagens */
 function Mensagem(sucesso, mensagem) {

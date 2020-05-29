@@ -52,6 +52,9 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
         [Display(Name = "Filial")]
         public string Empresa { get; set; }
+
+        [Display(Name = "Filial")]
+        public string Filial { get; set; }
     }
 
     public class GarantiaSolicitacaoFilterVM

@@ -48,31 +48,6 @@
 <colAssociation fkAssociation="9656871A-1B06-188A-628F-09916BD8C029" referredColumn="AC5F5D31-0CA2-E4FD-C10B-65D53D84D932"/>
 </associations>
 </Column>
-<Column name="ID_ITEM_NF" id="6D796517-A60D-F291-D2C2-6B6AA63B0A39">
-<createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-15 12:09:01 UTC</createdTime>
-<ownerDesignName>modeloFwLog</ownerDesignName>
-<importedID>E8968EF1-8E73-364E-CA97-1300F92E945D</importedID>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT026</logicalDatatype>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
-<Column name="REFX" id="59DA8652-C40D-47EA-B169-1939C8244753">
-<createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-15 12:09:01 UTC</createdTime>
-<ownerDesignName>modeloFwLog</ownerDesignName>
-<importedID>7A3D0E64-DC5F-BD9F-38F2-EC1E8C3078FF</importedID>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT024</logicalDatatype>
-<dataTypeSize>200</dataTypeSize>
-<ownDataTypeParameters>200,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
 <Column name="QUANT" id="EA417174-8879-4195-CED5-090357CBFB34">
 <createdBy>henrique.pereira</createdBy>
 <createdTime>2020-05-15 12:09:01 UTC</createdTime>

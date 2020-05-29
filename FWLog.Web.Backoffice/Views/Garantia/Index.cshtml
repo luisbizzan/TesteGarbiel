@@ -20,7 +20,7 @@
 }
 
 <form data-filter="form" data-filter-for="dataTable" class="form-filter">
-    @Html.TextBoxFor(m => m.Filter.Id_Empresa, new { data_field = "Id_Empresa" })
+    @Html.HiddenFor(m => m.Filter.Id_Empresa, new { data_field = "Id_Empresa" })
     <div class="x_panel">
         <div class="x_title">
             <h2 class="collapse-link">

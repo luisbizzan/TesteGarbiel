@@ -10,19 +10,19 @@
     @BundleHelper.RenderViewScript(
         new
         {
-            detailsVisible = User.HasPermission(Permissions.Garantia.Listar),
-            estornarRemessa = User.HasPermission(Permissions.Garantia.EstornarSolicitacao),
-            conferirRemessa = User.HasPermission(Permissions.Garantia.ConferirSolicitacao),
+            listarRemessa = User.HasPermission(Permissions.Garantia.ListarRemessa),
+            estornarRemessa = User.HasPermission(Permissions.Garantia.EstornarRemessa),
+            conferirRemessa = User.HasPermission(Permissions.Garantia.ConferirRemessa),
             pageDataUrl = Url.Action("ListarRemessa")
         }
     )
 }
 
 <form data-filter="form" data-filter-for="dataTable" class="form-filter">
-    @Html.TextBoxFor(m => m.Filter.Id_Empresa, new { data_field = "Id_Empresa" })
+    @Html.HiddenFor(m => m.Filter.Id_Empresa, new { data_field = "Id_Empresa" })
     <div class="x_panel">
         <div class="x_title">
-            <h2>Solicitações de Garantia</h2>
+            <h2>Criação de Remessa</h2>
             <button type="button" id="btCriarRemessa" class="btn btn-primary pull-right"><i class="fa fa-gears"></i> Criar Remessa</button>
             <div class="clearfix"></div>
         </div>
