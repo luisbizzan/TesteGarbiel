@@ -40,7 +40,7 @@ namespace FWLog.Services.Services
             where.Append("TGFPAR.CGC_CPF IS NOT NULL ");
             where.Append("AND TGFPAR.RAZAOSOCIAL IS NOT NULL ");
             where.Append("AND TGFPAR.CLIENTE = 'S' ");
-            where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
+            //where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
             where.Append("AND CODCIDENTREGA > 0 ");
             where.Append("AND CODENDENTREGA > 0 ");
             where.Append("AND CEPENTREGA IS NOT NULL ");
@@ -48,6 +48,7 @@ namespace FWLog.Services.Services
             where.Append("AND TSIUFS.UF IS NOT NULL ");
             where.Append("AND TGFCPL.NUMENTREGA IS NOT NULL ");
             where.Append("AND TGFPAR.TELEFONE IS NOT NULL ");
+            where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET 30000 ROWS FETCH NEXT 5000 ROWS ONLY ");
 
             List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString(), inner: inner.ToString());
 
@@ -96,7 +97,7 @@ namespace FWLog.Services.Services
 
                     _unitOfWork.SaveChanges();
 
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
+                    //await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
                 }
                 catch (Exception ex)
                 {
