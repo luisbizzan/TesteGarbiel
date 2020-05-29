@@ -967,7 +967,7 @@ namespace FWLog.Services.Services
 
             _etiquetaService.ImprimirEtiquetaVolumeSeparacao(new ImprimirEtiquetaVolumeSeparacaoRequest()
             {
-                ClienteNome = pedido.Cliente.NomeFantasia,
+                ClienteNomeFantasia = pedido.Cliente.NomeFantasia,
                 ClienteEndereco = pedido.Cliente.Endereco,
                 ClienteEnderecoNumero = pedido.Cliente.Numero,
                 ClienteCEP = pedido.Cliente.CEP,
@@ -977,6 +977,7 @@ namespace FWLog.Services.Services
                 ClienteCodigo = pedido.Cliente.IdCliente.ToString(),
                 RepresentanteCodigo = pedido.Representante.IdRepresentante.ToString(),
                 PedidoCodigo = pedido.NroPedido.ToString(),
+                PedidoDataCriacao = pedido.DataCriacao,
                 PedidoIsRequisicao = pedido.IsRequisicao,
                 PedidoPagamentoCodigoIntegracao = pedido.PagamentoCodigoIntegracao,
                 PedidoPagamentoIsDebito = pedido.PagamentoIsDebitoIntegracao,
