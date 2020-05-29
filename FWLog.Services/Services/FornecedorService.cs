@@ -31,16 +31,13 @@ namespace FWLog.Services.Services
             }
 
             StringBuilder inner = new StringBuilder();
-            //inner.Append("INNER JOIN TGFEMP ON TGFPAR.CODEMP = TGFEMP.CODEMP ");
-            inner.Append("LEFT JOIN TSIEND ON TGFPAR.CODEND  = TSIEND.CODEND ");
-            inner.Append("LEFT JOIN TSIBAI ON TGFPAR.CODBAI  = TSIBAI.CODBAI ");
-            inner.Append("LEFT JOIN TSICID ON TGFPAR.CODCID  = TSICID.CODCID ");
-            inner.Append("LEFT JOIN TSIUFS ON TSICID.UF      = TSIUFS.CODUF");
+            inner.Append("LEFT JOIN TSIEND ON TGFPAR.CODEND = TSIEND.CODEND ");
+            inner.Append("LEFT JOIN TSIBAI ON TGFPAR.CODBAI = TSIBAI.CODBAI ");
+            inner.Append("LEFT JOIN TSICID ON TGFPAR.CODCID = TSICID.CODCID ");
+            inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF");
 
             StringBuilder where = new StringBuilder();
-            where.Append("WHERE ");
-            where.Append("TGFPAR.CGC_CPF IS NOT NULL ");
-            where.Append("AND TGFPAR.RAZAOSOCIAL IS NOT NULL ");
+            where.Append("WHERE ");        
             where.Append("AND TGFPAR.FORNECEDOR = 'S' ");
             where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
 
@@ -69,17 +66,13 @@ namespace FWLog.Services.Services
             }
 
             StringBuilder inner = new StringBuilder();
-            //inner.Append("INNER JOIN TGFEMP ON TGFPAR.CODEMP = TGFEMP.CODEMP ");
-            inner.Append("LEFT JOIN TSIEND ON TGFPAR.CODEND  = TSIEND.CODEND ");
-            inner.Append("LEFT JOIN TSIBAI ON TGFPAR.CODBAI  = TSIBAI.CODBAI ");
-            inner.Append("LEFT JOIN TSICID ON TGFPAR.CODCID  = TSICID.CODCID ");
-            inner.Append("LEFT JOIN TSIUFS ON TSICID.UF      = TSIUFS.CODUF");
+            inner.Append("LEFT JOIN TSIEND ON TGFPAR.CODEND = TSIEND.CODEND ");
+            inner.Append("LEFT JOIN TSIBAI ON TGFPAR.CODBAI = TSIBAI.CODBAI ");
+            inner.Append("LEFT JOIN TSICID ON TGFPAR.CODCID = TSICID.CODCID ");
+            inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF");
 
             StringBuilder where = new StringBuilder();
-            where.Append("WHERE ");
-            where.Append("TGFPAR.CGC_CPF IS NOT NULL ");
-            where.Append("AND TGFPAR.RAZAOSOCIAL IS NOT NULL ");
-            where.Append("AND TGFPAR.FORNECEDOR = 'S' ");
+            where.Append("WHERE TGFPAR.FORNECEDOR = 'S' ");
             where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
 
             List<FornecedorIntegracao> fornecedoresIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<FornecedorIntegracao>(where.ToString(), inner.ToString());

@@ -30,9 +30,7 @@ namespace FWLog.Services.Services
             }
 
             StringBuilder where = new StringBuilder();
-            where.Append("WHERE ");
-            where.Append("TGFPAR.RAZAOSOCIAL IS NOT NULL ");
-            where.Append("AND TGFPAR.VENDEDOR = 'S' ");
+            where.Append("WHERE TGFPAR.VENDEDOR = 'S' ");
             where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
 
             var inner = "INNER JOIN TGFVEN ON TGFVEN.CODPARC = TGFPAR.CODPARC";

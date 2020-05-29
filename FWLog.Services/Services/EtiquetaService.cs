@@ -713,7 +713,7 @@ namespace FWLog.Services.Services
             var corredoresInicio = requisicao.CorredoresInicio.PadLeft(2, '0')?.Trim().Normalizar();
             var corredoresIntervalo = $"{corredoresInicio} a {requisicao.CorredoresFim.PadLeft(2, '0')}"?.Trim().Normalizar();
             var codigoBarras = $"{pedidoCodigo}{transportadoraCodigo}{volume}";
-            var infoTransportadoraDataHora = $"{transportadoraCodigo} Hr: {requisicao.PedidoDataCriacao.ToShortTimeString()} Etiqueta: {DateTime.Now.ToShortTimeString()}";
+            var infoTransportadoraDataHora = $"{transportadoraCodigo} Etiqueta: {DateTime.Now.ToShortTimeString()}";
 
             var stringEtiqueta = new StringBuilder();
 

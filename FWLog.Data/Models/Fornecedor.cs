@@ -20,14 +20,16 @@ namespace FWLog.Data.Models
 
         [Index]
         [StringLength(75)]
+        [Required]
         public string RazaoSocial { get; set; }
 
         [Index]
         [StringLength(14)]
+        [Required]
         public string CNPJ { get; set; }
 
         [Required]
-        public bool   Ativo          { get; set; }
+        public bool Ativo { get; set; }
 
         [StringLength(8)]
         public string CEP { get; set; }
@@ -52,9 +54,5 @@ namespace FWLog.Data.Models
 
         [StringLength(15)]
         public string Telefone { get; set; }
-
-
-        //TODO criar configuração de não paga garantia e transportadora padrão
-
     }
 }
