@@ -858,106 +858,113 @@ namespace FWLog.Services.Services
 
             foreach (var pedido in listaPedidos) //Percorre a lista de pedidos.
             {
-                var idPedidoVenda = await _pedidoVendaService.Salvar(pedido);
-
-                if (idPedidoVenda == 0)
-                    break;
-
-                //Agrupa os itens do pedido por produto. 
-                var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido);
-
-                /*
-                 * Usamos o foreach abaixo para capturar e atualizar o IdGrupoCorredorArmazenagem e IdEnderecoArmazenagem de cada item.
-                 */
-                foreach (var pedidoItem in listaItensDoPedido)
+                try
                 {
-                    //Captura o endereço de picking do produto.
-                    //Posteriormente a lógica deverá ser alterada por ponto de separação.
-                    var produtoEstoqueRepository = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresaPicking(pedidoItem.Produto.IdProduto, idEmpresa);
+                    var idPedidoVenda = await _pedidoVendaService.Salvar(pedido);
 
-                    if (produtoEstoqueRepository == null)
+                    if (idPedidoVenda == 0)
                         break;
 
-                    var enderecoArmazenagemProduto = new ProdutoEstoqueViewModel()
+                    //Agrupa os itens do pedido por produto. 
+                    var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido);
+
+                    /*
+                     * Usamos o foreach abaixo para capturar e atualizar o IdGrupoCorredorArmazenagem e IdEnderecoArmazenagem de cada item.
+                     */
+                    foreach (var pedidoItem in listaItensDoPedido)
                     {
-                        IdProduto = produtoEstoqueRepository.IdProduto,
-                        IdEmpresa = produtoEstoqueRepository.IdEmpresa,
-                        IdEnderecoArmazenagem = produtoEstoqueRepository.IdEnderecoArmazenagem,
-                        Saldo = produtoEstoqueRepository.Saldo,
-                        IdProdutoEstoqueStatus = produtoEstoqueRepository.IdProdutoEstoqueStatus,
-                        EnderecoArmazenagem = produtoEstoqueRepository.EnderecoArmazenagem
-                    };
+                        //Captura o endereço de picking do produto.
+                        //Posteriormente a lógica deverá ser alterada por ponto de separação.
+                        var produtoEstoqueRepository = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresaPicking(pedidoItem.Produto.IdProduto, idEmpresa);
 
-                    //Captura o grupo de corredores do item do pedido.
-                    var grupoCorredorArmazenagemItemPedido = await BuscarGrupoCorredorArmazenagemItemPedido(enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
+                        if (produtoEstoqueRepository == null)
+                            break;
 
-                    if (grupoCorredorArmazenagemItemPedido == null)
-                        break;
-
-                    //Captura o indice do item na lista e atualizo os dados.
-                    int index = listaItensDoPedido.IndexOf(pedidoItem);
-                    listaItensDoPedido[index].GrupoCorredorArmazenagem = grupoCorredorArmazenagemItemPedido;
-                    listaItensDoPedido[index].EnderecoSeparacao = enderecoArmazenagemProduto;
-                }
-
-                int quantidadeVolume = 0; //Variável utilizada para saber o número e a quantidade de volumes do pedido.
-
-                /*
-                 * No foreach abaixo, capturamos quais e a quantidade de caixas (volumes) que serão utilizados.
-                 * Além disso, através do método Cubicagem, saberemos a caixa de cada produto. 
-                 * É importante saber que o processo é feito por corredor.
-                 */
-                foreach (var itemCorredorArmazenagem in grupoCorredorArmazenagem)
-                {
-                    //Captura o corredor do item.
-                    var listaItensDoPedidoPorCorredor = listaItensDoPedido.Where(x => x.GrupoCorredorArmazenagem.IdGrupoCorredorArmazenagem == itemCorredorArmazenagem.IdGrupoCorredorArmazenagem).ToList();
-
-                    //Se não houver nenhum item para o corredor, vai para o próximo.
-                    if (listaItensDoPedidoPorCorredor.Count != 0)
-                    {
-                        //Captura os itens do pedido com as caixas em que cada um deve ir.
-                        //A partir do método cubicagem, existem chamadas para vários outros.
-                        var listaItensDoPedidoDividido = await Cubagem(listaItensDoPedidoPorCorredor, idEmpresa);
-
-                        if (listaItensDoPedidoDividido.Count > 0)
+                        var enderecoArmazenagemProduto = new ProdutoEstoqueViewModel()
                         {
-                            //Busca os volumes que serão utilizados.
-                            var listaVolumes = await BuscarCubagemVolumes(pedido.IdEmpresa, listaItensDoPedidoDividido);
+                            IdProduto = produtoEstoqueRepository.IdProduto,
+                            IdEmpresa = produtoEstoqueRepository.IdEmpresa,
+                            IdEnderecoArmazenagem = produtoEstoqueRepository.IdEnderecoArmazenagem,
+                            Saldo = produtoEstoqueRepository.Saldo,
+                            IdProdutoEstoqueStatus = produtoEstoqueRepository.IdProdutoEstoqueStatus,
+                            EnderecoArmazenagem = produtoEstoqueRepository.EnderecoArmazenagem
+                        };
 
-                            foreach (var itemVolume in listaVolumes)
+                        //Captura o grupo de corredores do item do pedido.
+                        var grupoCorredorArmazenagemItemPedido = await BuscarGrupoCorredorArmazenagemItemPedido(enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
+
+                        if (grupoCorredorArmazenagemItemPedido == null)
+                            break;
+
+                        //Captura o indice do item na lista e atualizo os dados.
+                        int index = listaItensDoPedido.IndexOf(pedidoItem);
+                        listaItensDoPedido[index].GrupoCorredorArmazenagem = grupoCorredorArmazenagemItemPedido;
+                        listaItensDoPedido[index].EnderecoSeparacao = enderecoArmazenagemProduto;
+                    }
+
+                    int quantidadeVolume = 0; //Variável utilizada para saber o número e a quantidade de volumes do pedido.
+
+                    /*
+                     * No foreach abaixo, capturamos quais e a quantidade de caixas (volumes) que serão utilizados.
+                     * Além disso, através do método Cubicagem, saberemos a caixa de cada produto. 
+                     * É importante saber que o processo é feito por corredor.
+                     */
+                    foreach (var itemCorredorArmazenagem in grupoCorredorArmazenagem)
+                    {
+                        //Captura o corredor do item.
+                        var listaItensDoPedidoPorCorredor = listaItensDoPedido.Where(x => x.GrupoCorredorArmazenagem.IdGrupoCorredorArmazenagem == itemCorredorArmazenagem.IdGrupoCorredorArmazenagem).ToList();
+
+                        //Se não houver nenhum item para o corredor, vai para o próximo.
+                        if (listaItensDoPedidoPorCorredor.Count != 0)
+                        {
+                            //Captura os itens do pedido com as caixas em que cada um deve ir.
+                            //A partir do método cubicagem, existem chamadas para vários outros.
+                            var listaItensDoPedidoDividido = await Cubagem(listaItensDoPedidoPorCorredor, idEmpresa);
+
+                            if (listaItensDoPedidoDividido.Count > 0)
                             {
-                                quantidadeVolume++;
+                                //Busca os volumes que serão utilizados.
+                                var listaVolumes = await BuscarCubagemVolumes(pedido.IdEmpresa, listaItensDoPedidoDividido);
 
-                                //Salva PedidoVendaVolume.
-                                var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
-
-                                if (idPedidoVendaVolume == 0)
-                                    break;
-
-                                foreach (var item in listaItensDoPedidoDividido)
+                                foreach (var itemVolume in listaVolumes)
                                 {
-                                    //Salva PedidoVendaproduto.
-                                    await _pedidoVendaProdutoService.Salvar(idPedidoVenda, idPedidoVendaVolume, item);
+                                    quantidadeVolume++;
+
+                                    //Salva PedidoVendaVolume.
+                                    var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
+
+                                    if (idPedidoVendaVolume == 0)
+                                        break;
+
+                                    foreach (var item in listaItensDoPedidoDividido)
+                                    {
+                                        //Salva PedidoVendaproduto.
+                                        await _pedidoVendaProdutoService.Salvar(idPedidoVenda, idPedidoVendaVolume, item);
+                                    }
+
+                                    //Captura o primeiro corredor de separação.
+                                    int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
+
+                                    //Imprime a etiqueta de separação.
+                                    await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, itemCorredorArmazenagem, pedido, idPedidoVendaVolume, corredorInicioSeparacao);
                                 }
 
-                                //Captura o primeiro corredor de separação.
-                                int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
-
-                                //Imprime a etiqueta de separação.
-                                await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, itemCorredorArmazenagem, pedido, idPedidoVendaVolume, corredorInicioSeparacao);
+                                //Atualiza a quantidade de volumes na PedidoVenda.
+                                await _pedidoVendaService.AtualizarQuantidadeVolume(idPedidoVenda, quantidadeVolume);
                             }
-
-                            //Atualiza a quantidade de volumes na PedidoVenda.
-                            await _pedidoVendaService.AtualizarQuantidadeVolume(idPedidoVenda, quantidadeVolume);
                         }
                     }
+
+                    //Atualiza o status do PedidoVenda para Enviado Separação.
+                    await _pedidoVendaService.AtualizarStatus(idPedidoVenda, PedidoVendaStatusEnum.EnviadoSeparacao);
+
+                    //Atualiza o status do Pedido para Enviado Separação.
+                    await _pedidoService.AtualizarStatus(pedido.IdPedido, PedidoVendaStatusEnum.EnviadoSeparacao);
                 }
-
-                //Atualiza o status do PedidoVenda para Enviado Separação.
-                await _pedidoVendaService.AtualizarStatus(idPedidoVenda, PedidoVendaStatusEnum.EnviadoSeparacao);
-
-                //Atualiza o status do Pedido para Enviado Separação.
-                await _pedidoService.AtualizarStatus(pedido.IdPedido, PedidoVendaStatusEnum.EnviadoSeparacao);
+                catch (Exception exception)
+                {
+                    _log.Error($"Erro dividindo pedido id {pedido.IdPedido} para separação", exception);
+                }
             }
         }
 
