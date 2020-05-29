@@ -50,6 +50,7 @@ namespace FWLog.Services.Services
                     IdProduto = requisicao.IdProduto,
                     IdUsuarioInstalacao = requisicao.IdUsuarioInstalacao,
                     Quantidade = requisicao.Quantidade,
+                    QuantidadeCaixas = requisicao.QuantidadeCaixas,
                     PesoTotal = pesoInstalacao
                 };
 
