@@ -1,21 +1,13 @@
 ﻿using Dapper;
-using ExtensionMethods.String;
 using FWLog.Data.Models;
-using FWLog.Data.Models.DataTablesCtx;
-using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
-using Microsoft.Win32.SafeHandles;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
@@ -52,7 +44,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                             IPEndPoint IPComPorta = new IPEndPoint(IP, Impressao.PortaConexao.Equals(0) ? 9100 : Impressao.PortaConexao);
                             comandoImpressao.Connect(IPComPorta);
                             comandoImpressao.Send(bytesConteudoImpressao);
-                            // delay de 5seg antes de fechar o comando para que a impressora receba todo conteúdo enviado.
+                            // Delay de 5 segundos antes de fechar o comando permitindo que a impressora receba todo conteúdo enviado.
                             Thread.Sleep(5000);
                             comandoImpressao.Shutdown(SocketShutdown.Both);
                             comandoImpressao.Close();
@@ -83,8 +75,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     {
                         sqlWhere += String.Format("(si.refx = '{0}' AND s.id = {1}) OR ", i.Split(';')[0].ToString(), i.Split(';')[1].ToString());
                     });
-                    dadosImpressao.ComandoSQL = String.Format(GarantiaEtiqueta.SQL.ConsultaEtiquetas,
-                        String.Format("WHERE {0}", sqlWhere.Substring(0, sqlWhere.Length - 4)));
+                    dadosImpressao.ComandoSQL = String.Format(GarantiaEtiqueta.SQL.ConsultaEtiquetas, String.Format("WHERE {0}", sqlWhere.Substring(0, sqlWhere.Length - 4)));
                 }
                 else
                     dadosImpressao.ComandoSQL = String.Format(GarantiaEtiqueta.SQL.ConsultaEtiquetas, String.Format("WHERE si.id IN ({0})", String.Join(",", dadosImpressao.IdsEtiquetasImprimir)));
