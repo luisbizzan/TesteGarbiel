@@ -1,4 +1,6 @@
-﻿namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
 {
     public class BOImprimirDevolucaoTotalViewModel
     {
@@ -8,5 +10,8 @@
         public long    IdNotaFiscal { get; set; }
         public string  Usuario      { get; set; }
         public string  Senha        { get; set; }
+        [Required]
+        [Display(Name ="Qtde. Etiquetas")]
+        public int? QuantidadeEtiqueta { get; set; }
     }                                                            
 }

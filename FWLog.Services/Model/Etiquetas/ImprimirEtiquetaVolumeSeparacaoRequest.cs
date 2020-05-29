@@ -1,8 +1,10 @@
-﻿namespace FWLog.Services.Model.Etiquetas
+﻿using System;
+
+namespace FWLog.Services.Model.Etiquetas
 {
     public class ImprimirEtiquetaVolumeSeparacaoRequest
     {
-        public string ClienteNome { get; set; }
+        public string ClienteNomeFantasia { get; set; }
         public string ClienteEndereco { get; set; }
         public string ClienteEnderecoNumero { get; set; }
         public string ClienteCEP { get; set; }
@@ -12,6 +14,7 @@
         public string ClienteCodigo { get; set; }
         public string RepresentanteCodigo { get; set; }
         public string PedidoCodigo { get; set; }
+        public DateTime PedidoDataCriacao { get; set; }
         public bool PedidoIsRequisicao { get; set; }
         public int? PedidoPagamentoCodigoIntegracao { get; set; }
         public bool PedidoPagamentoIsDebito { get; set; }

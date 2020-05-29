@@ -73,17 +73,17 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public Produto PesquisarPorCodigoBarras(string codigoBarras)
         {
-            return Entities.Produto.Where(w => w.CodigoBarras.Equals(codigoBarras)).FirstOrDefault();
+            return Entities.Produto.Where(w => w.CodigoBarras.Trim().Contains(codigoBarras.Trim())).FirstOrDefault();
         }
 
         public Produto PesquisarPorCodigoBarras2(string codigoBarras2)
         {
-            return Entities.Produto.Where(w => w.CodigoBarras2.Equals(codigoBarras2)).FirstOrDefault();
+            return Entities.Produto.Where(w => w.CodigoBarras2.Trim().Contains(codigoBarras2.Trim())).FirstOrDefault();
         }
 
         public Produto PesquisarPorReferencia(string referencia)
         {
-            return Entities.Produto.Where(w => w.Referencia.Equals(referencia)).FirstOrDefault();
+            return Entities.Produto.Where(w => w.Referencia.Trim().ToUpper().Contains(referencia.Trim().ToUpper())).FirstOrDefault();
         }
 
         public IEnumerable<ProdutoListaLinhaTabela> FormatarDadosParaDataTable(DataTableFilter<ProdutoListaFiltro> filter, out int totalRecordsFiltered, out int totalRecords, IQueryable<ProdutoEstoque> produtoEstoque)

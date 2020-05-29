@@ -141,7 +141,8 @@ namespace FWLog.Web.Api.Controllers
                     Quantidade = requisicao.Quantidade,
                     IdEmpresa = IdEmpresa,
                     IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
-                    IdUsuarioInstalacao = IdUsuario
+                    IdUsuarioInstalacao = IdUsuario,
+                    QuantidadeCaixas = requisicao.QuantidadeCaixas
                 };
 
                 await _armazenagemService.InstalarVolumeLote(instalarVolumeLoteRequisicao);
