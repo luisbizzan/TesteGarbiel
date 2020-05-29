@@ -91,6 +91,7 @@ namespace FWLog.Services.Services
                     else
                     {
                         _unitOfWork.EmpresaRepository.Update(empresaConfig.Empresa);
+                        _unitOfWork.SaveChanges();
                         _unitOfWork.EmpresaConfigRepository.Update(empresaConfig);
                     }
 
