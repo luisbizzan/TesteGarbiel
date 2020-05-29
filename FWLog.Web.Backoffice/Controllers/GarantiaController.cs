@@ -566,6 +566,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     //    Id_Remessa = conferencia.Id_Remessa
                     //});
 
+                    //TODO DEPOIS ESSA ROTINA SÓ VAI SER CHAMADO QDO TIVER RETORNO DA NOTA DO SANKYA
                     _uow.GarantiaRepository.FinalizarConferenciaRemessa(new GarConferencia
                     {
                         Id = conferencia.Id,

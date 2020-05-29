@@ -20,72 +20,7 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
         }
 
-        public List<GarSolicitacao> ListarSolicitacao(DataTableFilter<GarantiaSolicitacaoFilter> filter, out int totalRecordsFiltered, out int totalRecords)
-        {
-            List<GarSolicitacao> retorno = new List<GarSolicitacao>();
-            var sQuery = new StringBuilder();
-
-            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
-            {
-                conn.Open();
-                if (conn.State == ConnectionState.Open)
-                {
-                    sQuery.AppendFormat(@"
-                    SELECT
-                        COUNT(*) OVER() AS Qtde,
-                        GS.Cli_Cnpj,
-                        GS.Id,
-                        GS.Dt_Criacao,
-                        GS.Id_Tipo,
-                        GT1.descricao AS Tipo,
-                        GS.Id_Status,
-                        GT2.descricao AS Status
-                    FROM
-                        gar_solicitacao GS
-                        LEFT JOIN geral_tipo GT1 ON GT1.Id = GS.Id_Tipo
-                        LEFT JOIN geral_tipo GT2 ON GT2.Id = GS.Id_Status
-                    WHERE
-                        GS.id != 0
-                    ");
-
-                    if (filter.CustomFilter.Id_Empresa.HasValue)
-                        sQuery.AppendFormat(@" AND GS.Id_Empresa = {0}", filter.CustomFilter.Id_Empresa);
-
-                    if (filter.CustomFilter.Id.HasValue)
-                        sQuery.AppendFormat(@" AND GS.id = {0}", filter.CustomFilter.Id);
-
-                    if (filter.CustomFilter.Id_Status.HasValue)
-                        sQuery.AppendFormat(@" AND GT2.id = {0}", filter.CustomFilter.Id_Status);
-
-                    if (filter.CustomFilter.Id_Tipo.HasValue)
-                        sQuery.AppendFormat(@" AND GT1.id = {0}", filter.CustomFilter.Id_Tipo);
-
-                    if (!string.IsNullOrEmpty(filter.CustomFilter.Cli_Cnpj))
-                        sQuery.AppendFormat(@" AND GS.Cli_Cnpj LIKE '%{0}%' ", filter.CustomFilter.Cli_Cnpj);
-
-                    if (!string.IsNullOrEmpty(filter.CustomFilter.Nota_Fiscal))
-                        sQuery.AppendFormat(@" AND GS.Nota_Fiscal LIKE '%{0}%' ", filter.CustomFilter.Nota_Fiscal);
-
-                    if (!string.IsNullOrEmpty(filter.CustomFilter.Serie))
-                        sQuery.AppendFormat(@" AND GS.Nota_Fiscal LIKE '%{0}%' ", filter.CustomFilter.Serie);
-
-                    if (filter.CustomFilter.Data_Inicial.HasValue && filter.CustomFilter.Data_Final.HasValue)
-                        sQuery.AppendFormat(@" AND GS.Dt_Criacao BETWEEN TO_DATE('{0}','DD/MM/YYYY') AND TO_DATE('{1}','DD/MM/YYYY') ", String.Format("{0:dd/MM/yyyy}", filter.CustomFilter.Data_Inicial), String.Format("{0:dd/MM/yyyy}", filter.CustomFilter.Data_Final));
-
-                    sQuery.AppendFormat(" ORDER BY {0} {1}", filter.OrderByColumn, filter.OrderByDirection);
-
-                    sQuery.AppendFormat(" OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", filter.Start, filter.Length);
-
-                    retorno = conn.Query<GarSolicitacao>(sQuery.ToString(), new { }).ToList();
-                }
-                conn.Close();
-            }
-
-            totalRecordsFiltered = retorno.Count();
-            totalRecords = totalRecordsFiltered > 0 ? retorno.FirstOrDefault().Qtde : 0;
-
-            return retorno;
-        }
+        #region Remessa
 
         public List<GarRemessa> ListarRemessa(DataTableFilter<GarantiaRemessaFilter> filter, out int totalRecordsFiltered, out int totalRecords)
         {
@@ -377,6 +312,97 @@ namespace FWLog.Data.Repository.GeneralCtx
                 }
                 conn.Close();
             }
+            return retorno;
+        }
+
+        public void EstornarRemessa(GarConferencia item)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    //atualizar status para estornado
+                    sQuery = @"UPDATE gar_remessa SET Id_Status = 41 WHERE Id = :Id_Remessa";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id_Remessa });
+
+                    //Fecha a conferencia
+                    sQuery = @"UPDATE gar_conferencia SET Ativo = 0 WHERE Id_Remessa = :Id_Remessa";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id_Remessa });
+                }
+                conn.Close();
+            }
+        }
+
+        #endregion Remessa
+
+        #region Solicitação
+
+        public List<GarSolicitacao> ListarSolicitacao(DataTableFilter<GarantiaSolicitacaoFilter> filter, out int totalRecordsFiltered, out int totalRecords)
+        {
+            List<GarSolicitacao> retorno = new List<GarSolicitacao>();
+            var sQuery = new StringBuilder();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    sQuery.AppendFormat(@"
+                    SELECT
+                        COUNT(*) OVER() AS Qtde,
+                        GS.Cli_Cnpj,
+                        GS.Id,
+                        GS.Dt_Criacao,
+                        GS.Id_Tipo,
+                        GT1.descricao AS Tipo,
+                        GS.Id_Status,
+                        GT2.descricao AS Status
+                    FROM
+                        gar_solicitacao GS
+                        LEFT JOIN geral_tipo GT1 ON GT1.Id = GS.Id_Tipo
+                        LEFT JOIN geral_tipo GT2 ON GT2.Id = GS.Id_Status
+                    WHERE
+                        GS.id != 0
+                    ");
+
+                    if (filter.CustomFilter.Id_Empresa.HasValue)
+                        sQuery.AppendFormat(@" AND GS.Id_Empresa = {0}", filter.CustomFilter.Id_Empresa);
+
+                    if (filter.CustomFilter.Id.HasValue)
+                        sQuery.AppendFormat(@" AND GS.id = {0}", filter.CustomFilter.Id);
+
+                    if (filter.CustomFilter.Id_Status.HasValue)
+                        sQuery.AppendFormat(@" AND GT2.id = {0}", filter.CustomFilter.Id_Status);
+
+                    if (filter.CustomFilter.Id_Tipo.HasValue)
+                        sQuery.AppendFormat(@" AND GT1.id = {0}", filter.CustomFilter.Id_Tipo);
+
+                    if (!string.IsNullOrEmpty(filter.CustomFilter.Cli_Cnpj))
+                        sQuery.AppendFormat(@" AND GS.Cli_Cnpj LIKE '%{0}%' ", filter.CustomFilter.Cli_Cnpj);
+
+                    if (!string.IsNullOrEmpty(filter.CustomFilter.Nota_Fiscal))
+                        sQuery.AppendFormat(@" AND GS.Nota_Fiscal LIKE '%{0}%' ", filter.CustomFilter.Nota_Fiscal);
+
+                    if (!string.IsNullOrEmpty(filter.CustomFilter.Serie))
+                        sQuery.AppendFormat(@" AND GS.Nota_Fiscal LIKE '%{0}%' ", filter.CustomFilter.Serie);
+
+                    if (filter.CustomFilter.Data_Inicial.HasValue && filter.CustomFilter.Data_Final.HasValue)
+                        sQuery.AppendFormat(@" AND GS.Dt_Criacao BETWEEN TO_DATE('{0}','DD/MM/YYYY') AND TO_DATE('{1}','DD/MM/YYYY') ", String.Format("{0:dd/MM/yyyy}", filter.CustomFilter.Data_Inicial), String.Format("{0:dd/MM/yyyy}", filter.CustomFilter.Data_Final));
+
+                    sQuery.AppendFormat(" ORDER BY {0} {1}", filter.OrderByColumn, filter.OrderByDirection);
+
+                    sQuery.AppendFormat(" OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", filter.Start, filter.Length);
+
+                    retorno = conn.Query<GarSolicitacao>(sQuery.ToString(), new { }).ToList();
+                }
+                conn.Close();
+            }
+
+            totalRecordsFiltered = retorno.Count();
+            totalRecords = totalRecordsFiltered > 0 ? retorno.FirstOrDefault().Qtde : 0;
+
             return retorno;
         }
 
@@ -799,6 +825,10 @@ namespace FWLog.Data.Repository.GeneralCtx
             return retorno;
         }
 
+        #endregion Solicitação
+
+        #region Conferencia
+
         public List<GarMotivoLaudo> ListarMotivoLaudo(long Id_Tipo)
         {
             List<GarMotivoLaudo> retorno = new List<GarMotivoLaudo>();
@@ -1131,26 +1161,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                 {
                     //Fecha a remessa
                     sQuery = @"UPDATE gar_remessa SET Id_Status = 37 WHERE Id = :Id_Remessa";
-                    conn.Query<GarConferencia>(sQuery, new { item.Id_Remessa });
-                }
-                conn.Close();
-            }
-        }
-
-        public void EstornarRemessa(GarConferencia item)
-        {
-            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
-            {
-                string sQuery = "";
-                conn.Open();
-                if (conn.State == ConnectionState.Open)
-                {
-                    //atualizar status para estornado
-                    sQuery = @"UPDATE gar_remessa SET Id_Status = 41 WHERE Id = :Id_Remessa";
-                    conn.Query<GarConferencia>(sQuery, new { item.Id_Remessa });
-
-                    //Fecha a conferencia
-                    sQuery = @"UPDATE gar_conferencia SET Ativo = 0 WHERE Id_Remessa = :Id_Remessa";
                     conn.Query<GarConferencia>(sQuery, new { item.Id_Remessa });
                 }
                 conn.Close();
@@ -1696,8 +1706,6 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
         }
 
-        #region Conferencia Historico
-
         public void InserirConferenciaHistorico(GarConferenciaHist item)
         {
             //TODO VERIFICAR SE ITEM EXISTE NA TABELA DE ESTOQUE
@@ -1794,8 +1802,6 @@ namespace FWLog.Data.Repository.GeneralCtx
             return retorno;
         }
 
-        #endregion Conferencia Historico
-
         public List<GarConferenciaItem> ListarConferenciaItem(long Id_Conferencia)
         {
             List<GarConferenciaItem> retorno = new List<GarConferenciaItem>();
@@ -1853,5 +1859,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return retorno;
         }
+
+        #endregion Conferencia
     }
 }
