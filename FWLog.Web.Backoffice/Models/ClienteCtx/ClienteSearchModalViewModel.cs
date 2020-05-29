@@ -41,8 +41,8 @@ namespace FWLog.Web.Backoffice.Models.ClienteCtx
         [Display(Name = "Código")]
         public long? IdCliente { get; set; }
 
-        [Display(Name = "Nome Fantasia")]
-        public string NomeFantasia { get; set; }
+        [Display(Name = "Razão Social")]
+        public string RazaoSocial { get; set; }
 
         [Display(Name = "CNPJ/CPF")]
         public string CNPJCPF { get; set; }

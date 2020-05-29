@@ -1235,12 +1235,12 @@ namespace FWLog.Services.Services
 
             var query = pedidosExpedidos.Select(pedidoVenda => new RelatorioPedidosExpedidosLinhaTabela
             {
-               NroPedido = pedidoVenda.NroPedidoVenda,
-               NroVolume = pedidoVenda.PedidoVendaVolumes.Where(x => x.IdPedidoVenda == pedidoVenda.IdPedidoVenda).Select(y => y.NroVolume).First().ToString().PadLeft(3,'0'),
-               IdENomeTransportadora = string.Concat(pedidoVenda.IdTransportadora.ToString().PadLeft(3,'0'),"-",pedidoVenda.Transportadora.RazaoSocial),
-               NotaFiscalESerie = string.Concat(pedidoVenda.Pedido.NumeroNotaFiscal,"-",pedidoVenda.Pedido.SerieNotaFiscal),
-               DataDoPedido = pedidoVenda.Pedido.DataCriacao.ToString("dd/MM/yyyy HH:mm"),
-               DataSaidaDoPedido = pedidoVenda.DataHoraRomaneio.Value.ToString("dd/MM/yyyy HH:mm")
+                NroPedido = pedidoVenda.NroPedidoVenda,
+                NroVolume = pedidoVenda.PedidoVendaVolumes.Where(x => x.IdPedidoVenda == pedidoVenda.IdPedidoVenda).Select(y => y.NroVolume).First().ToString().PadLeft(3, '0'),
+                IdENomeTransportadora = string.Concat(pedidoVenda.IdTransportadora.ToString().PadLeft(3, '0'), "-", pedidoVenda.Transportadora.RazaoSocial),
+                NotaFiscalESerie = string.Concat(pedidoVenda.Pedido.NumeroNotaFiscal, "-", pedidoVenda.Pedido.SerieNotaFiscal),
+                DataDoPedido = pedidoVenda.Pedido.DataCriacao.ToString("dd/MM/yyyy HH:mm"),
+                DataSaidaDoPedido = pedidoVenda.DataHoraRomaneio.Value.ToString("dd/MM/yyyy HH:mm")
             }).OrderBy(x => x.NroPedido).ThenBy(x => x.NroVolume);
 
             totalRecordsFiltered = query.Count();
@@ -1249,7 +1249,7 @@ namespace FWLog.Services.Services
                                 .Skip(filtro.Start)
                                 .Take(filtro.Length);
 
-           return response.ToList();
+            return response.ToList();
         }
 
         public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string tipo, long idEmpresa, out string statusDescricao)
@@ -1291,6 +1291,161 @@ namespace FWLog.Services.Services
             }
 
             return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, idEmpresa);
+        }
+
+        public List<RelatorioPedidosLinhaTabela> BuscarDadosPedidos(DataTableFilter<RelatorioPedidosFiltro> filtro, out int registrosFiltrados, out int totalRegistros)
+        {
+            var pedidos = _unitOfWork.PedidoVendaRepository.BuscarPedidosVolumePorEmpresa(filtro.CustomFilter.IdEmpresa);
+
+            totalRegistros = pedidos.Count();
+
+            if (filtro.CustomFilter.IdTransportadora.HasValue)
+            {
+                pedidos = pedidos.Where(pv => pv.PedidoVenda.IdTransportadora == filtro.CustomFilter.IdTransportadora.Value);
+            }
+
+            if (filtro.CustomFilter.DataInicial.HasValue)
+            {
+                DateTime dataInicial = new DateTime(filtro.CustomFilter.DataInicial.Value.Year, filtro.CustomFilter.DataInicial.Value.Month, filtro.CustomFilter.DataInicial.Value.Day, 00, 00, 00);
+                pedidos = pedidos.Where(x => x.PedidoVenda.Pedido.DataCriacao >= dataInicial);
+            }
+
+            if (filtro.CustomFilter.DataFinal.HasValue)
+            {
+                DateTime dataFinal = new DateTime(filtro.CustomFilter.DataFinal.Value.Year, filtro.CustomFilter.DataFinal.Value.Month, filtro.CustomFilter.DataFinal.Value.Day, 23, 59, 59);
+                pedidos = pedidos.Where(x => x.PedidoVenda.Pedido.DataCriacao <= dataFinal);
+            }
+
+            if (filtro.CustomFilter.IdPedidoVenda.HasValue)
+            {
+                pedidos = pedidos.Where(pv => pv.IdPedidoVenda == filtro.CustomFilter.IdPedidoVenda.Value);
+            }
+
+            if (filtro.CustomFilter.IdCliente.HasValue)
+            {
+                pedidos = pedidos.Where(pv => pv.PedidoVenda.IdCliente == filtro.CustomFilter.IdCliente.Value);
+            }
+
+            if (filtro.CustomFilter.IdStatus.HasValue)
+            {
+                pedidos = pedidos.Where(pv => (int)pv.IdPedidoVendaStatus == filtro.CustomFilter.IdStatus.Value);
+            }
+
+            var query = pedidos.Select(s => new
+            {
+                NroPedido = s.PedidoVenda.NroPedidoVenda,
+                NroVolume = s.NroVolume,
+                IdPedidoVendaVolume = s.IdPedidoVendaVolume,
+                DataCriacao = s.PedidoVenda.Pedido.DataCriacao,
+                DataSaida = s.PedidoVenda.DataHoraRomaneio,
+                Status = s.PedidoVendaStatus.Descricao,
+                NomeCliente = s.PedidoVenda.Cliente.RazaoSocial
+            });
+
+            registrosFiltrados = query.Count();
+
+            query = query.OrderBy(o => o.NroPedido).ThenBy(o => o.NroVolume).Skip(filtro.Start).Take(filtro.Length);
+
+            List<RelatorioPedidosLinhaTabela> resultado = new List<RelatorioPedidosLinhaTabela>();
+
+            query.ToList().ForEach(s =>
+            {
+                resultado.Add(new RelatorioPedidosLinhaTabela
+                {
+                    NroPedido = $"Pedido: {s.NroPedido} - Cliente: {s.NomeCliente}",
+                    NroVolume = s.NroVolume.ToString().PadLeft(3, '0'),
+                    IdPedidoVendaVolume = s.IdPedidoVendaVolume,
+                    DataCriacao = s.DataCriacao.ToString("dd/MM/yyyy"),
+                    DataSaida = s.DataSaida.HasValue ? s.DataSaida.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty,
+                    Status = s.Status,
+                });
+            });
+
+            return resultado;
+        }
+
+        public DetalhesPedidoVolume BuscarDadosPedidoVolume(long idPedidoVendaVolume, long idEmpresa)
+        {
+            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
+
+            if (pedidoVendaVolume == null || pedidoVendaVolume.PedidoVenda?.IdEmpresa != idEmpresa)
+            {
+                return null;
+            }
+
+            var retorno = new DetalhesPedidoVolume();
+
+            var pedido = pedidoVendaVolume.PedidoVenda.Pedido;
+
+            retorno.PedidoNro = pedido.NroPedido;
+
+            retorno.PedidoCliente = pedido.Cliente?.NomeFantasia;
+
+            retorno.PedidoTransportadora = pedido.Transportadora?.NomeFantasia;
+
+            retorno.PedidoCodigoIntegracao = pedido.CodigoIntegracao;
+
+            retorno.PedidoRepresentante = pedido.Representante.Nome;
+
+            retorno.PedidoDataCriacao = pedido.DataCriacao;
+
+            retorno.PedidoIsRequisicao = pedido.IsRequisicao;
+
+            retorno.PedidoCodigoIntegracaoNotaFiscal = pedido.CodigoIntegracaoNotaFiscal;
+
+            retorno.PedidoVendaStatus = pedido.PedidoVendaStatus.Descricao;
+
+            retorno.PedidoChaveAcessoNotaFiscal = pedido.ChaveAcessoNotaFiscal;
+
+            retorno.PedidoPagamentoDescricaoIntegracao = pedido.PagamentoDescricaoIntegracao;
+
+            retorno.VolumeNroVolume = pedidoVendaVolume.NroVolume;
+
+            retorno.VolumeNroCentena = pedidoVendaVolume.NroCentena;
+
+            retorno.VolumeCaixaCubagem = pedidoVendaVolume.CaixaCubagem?.Nome;
+
+            retorno.VolumeCubagem = pedidoVendaVolume.CubagemVolume;
+
+            retorno.VolumePeso = pedidoVendaVolume.PesoVolume;
+
+            retorno.VolumeCorredorInicio = pedidoVendaVolume.CorredorInicio;
+
+            retorno.VolumeCorredorFim = pedidoVendaVolume.CorredorFim;
+
+            retorno.VolumeCaixaVolume = pedidoVendaVolume.CaixaVolume?.Nome;
+
+            retorno.VolumePedidoVendaStatus = pedidoVendaVolume.PedidoVendaStatus.Descricao;
+
+            if (!pedidoVendaVolume.IdUsuarioInstalTransportadora.NullOrEmpty())
+            {
+                retorno.VolumeUsuarioInstalTransportadora = _unitOfWork.PerfilUsuarioRepository.GetByUserId(pedidoVendaVolume.IdUsuarioInstalTransportadora)?.Nome;
+            }
+
+            retorno.VolumeDataHoraInstalTransportadora = pedidoVendaVolume.DataHoraInstalTransportadora;
+
+            retorno.VolumeEnderecoArmazTransportadora = pedidoVendaVolume.EnderecoTransportadora?.Codigo;
+
+            if (!pedidoVendaVolume.IdUsuarioInstalacaoDOCA.NullOrEmpty())
+            {
+                retorno.VolumeUsuarioInstalacaoDOCA = _unitOfWork.PerfilUsuarioRepository.GetByUserId(pedidoVendaVolume.IdUsuarioInstalacaoDOCA)?.Nome;
+            }
+
+            retorno.VolumeDataHoraInstalacaoDOCA = pedidoVendaVolume.DataHoraInstalacaoDOCA;
+
+            retorno.VolumeDataHoraRemocaoVolume = pedidoVendaVolume.DataHoraRemocaoVolume;
+
+            retorno.ListaProdutos = pedidoVendaVolume.PedidoVendaProdutos.Select(pvp => new DetalhesPedidoProdutoVolume
+            {
+                ProdutoReferencia = pvp.Produto.Referencia,
+                QuantidadeSeparar = pvp.QtdSeparar,
+                QuantidadeSeparada = pvp.QtdSeparada.GetValueOrDefault(),
+                DataHoraInicioSeparacao = pvp.DataHoraInicioSeparacao,
+                DataHoraFimSeparacao = pvp.DataHoraFimSeparacao,
+                UsuarioSeparacao = !pvp.IdUsuarioSeparacao.NullOrEmpty() ? $"{_unitOfWork.PerfilUsuarioRepository.GetByUserId(pvp.IdUsuarioSeparacao)?.Nome}" : null
+            }).ToList();
+
+            return retorno;
         }
     }
 }

@@ -538,7 +538,7 @@
                                     }
                                 }
 
-                                if ($tipoConferencia.text() != "Por Quantidade" || ($tipoConferencia.text() == "Por Quantidade" && qtdePecasHaMais > 0 && $quantidadeCaixa > 0)) {
+                                if ($tipoConferencia.text() != "Por Quantidade" || ($tipoConferencia.text() == "Por Quantidade" && qtdePecasHaMais > 0 && $quantidadeCaixa.val() > 0)) {
                                     $('#modalRegistrarConferencia').modal('show');
 
                                     var total = $quantidadePorCaixa.val() * $quantidadeCaixa.val();
