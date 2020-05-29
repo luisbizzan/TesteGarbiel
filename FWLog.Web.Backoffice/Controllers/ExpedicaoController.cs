@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
-using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Services;
@@ -249,6 +248,15 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsFiltered = recordsFiltered,
                 Data = Mapper.Map<IEnumerable<RelatorioPedidosListItemViewModel>>(result)
             });
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidos)]
+        public ActionResult DetalhesPedidoVolume(long id)
+        {
+            var dadosRetorno = _expedicaoService.BuscarDadosPedidoVolume(id, IdEmpresa);
+
+            return View(dadosRetorno);
         }
     }
 }

@@ -304,6 +304,7 @@
     <Compile Include="Models\CaixaCtx\CaixaSearchModalViewModel.cs" />
     <Compile Include="Models\CaixaRecusaCtx\CaixaRecusaCadastroViewModel.cs" />
     <Compile Include="Models\CaixaRecusaCtx\CaixaRecusaListaViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\ExibirDevolucaoTotalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\EtiquetaLocacaoViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioLogisticaCorredorViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioPosicaoInventarioViewModel.cs" />
@@ -555,6 +556,7 @@
     <Content Include="Scripts\Views\Armazenagem\relatorioTotalizacaoAlas.js" />
     <Content Include="Scripts\Views\BOAccount\searchModal.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\devolucaoTotal.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\DevolucaoTotalEtiqueta.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\notaRecebimentoList.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\notaRecebimento.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoEtiquetagem.js" />
@@ -562,6 +564,7 @@
     <Content Include="Scripts\Views\BORecebimentoNota\resumoDivergenciaConferencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\resumoFinalizarConferencia.js" />
     <Content Include="Scripts\Views\BOQuarentena\detalhesQuarentena.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\resumoProcessamentoDevolucaoTotal.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\resumoProcessamentoDivergencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\pesquisaLote.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\tratarDivergencia.js" />
@@ -735,6 +738,9 @@
     <Content Include="Views\CaixaRecusa\Index.cshtml" />
     <Content Include="Views\Caixa\SearchModal.cshtml" />
     <Content Include="Views\CaixaRecusa\Cadastrar.cshtml" />
+    <Content Include="Views\Expedicao\DetalhesPedidoVolume.cshtml" />
+    <Content Include="Views\BORecebimentoNota\ResumoProcessamentoDevolucaoTotal.cshtml" />
+    <Content Include="Views\BORecebimentoNota\DevolucaoTotalEtiqueta.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

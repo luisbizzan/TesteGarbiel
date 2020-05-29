@@ -3,7 +3,7 @@
 namespace FWLog.Services.Model.IntegracaoSankhya
 {
     public class ExecuteQueryResponse
-    {//TODO ARRUMAR
+    {
         public string serviceName { get; set; }
         public string status { get; set; }
         public string pendingPrinting { get; set; }

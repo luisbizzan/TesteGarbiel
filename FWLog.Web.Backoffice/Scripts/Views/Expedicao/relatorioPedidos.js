@@ -28,7 +28,7 @@
         return [
             {
                 text: "Detalhes do Volume",
-                attrs: { 'data-id': full.IdPedidoVendaVolume, 'action': 'detalhesPedidoVolume' },
+                attrs: { 'data-id': full.IdPedidoVendaVolume, 'action': 'detailsUrl' },
                 icon: 'fa fa-eye',
                 visible: view.detailsVisible
             }
@@ -135,8 +135,7 @@ function selecionarPedidoVenda(idPedidoVenda, numeroPedidoVenda) {
 function detalhesPedido() {
     var id = $(this).data("id");
     let modalDetalhesPedidoVolume = $("#modalDetalhesPedidoVolume");
-
-    modalDetalhesPedidoVolume.load(CONTROLLER_PATH + "DetalhesPedidoVolume/" + id, function () {
+    modalDetalhesPedidoVolume.load("DetalhesPedidoVolume/" + id, function () {
         modalDetalhesPedidoVolume.modal();
     });
 }

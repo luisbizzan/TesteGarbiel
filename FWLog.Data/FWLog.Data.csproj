@@ -116,6 +116,7 @@
     <Compile Include="Models\DataTablesCtx\CaixaListaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\CaixaRecusaListaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\CorredorImpressoraListaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\DetalhesPedidoVolume.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemTotalPorAlasLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoProdutoListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemPesquisaModalListaLinhaTabela.cs" />

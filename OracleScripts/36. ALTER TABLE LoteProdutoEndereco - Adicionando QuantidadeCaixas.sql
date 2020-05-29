@@ -1,0 +1,1 @@
+ALTER TABLE DART."LoteProdutoEndereco" ADD "QuantidadeCaixas" NUMBER (10,0) NULL;

@@ -86,9 +86,7 @@ namespace FWLog.Services.Services
 
             StringBuilder where = new StringBuilder();
 
-            where.Append("WHERE DESCRPROD IS NOT NULL ");
-            where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
-            where.Append("AND AD_INTEGRARFWLOG = '1' ");
+            where.Append("WHERE AD_INTEGRARFWLOG = '1' ");
 
             int quantidadeRegistro = 4999;
             int quantidadeChamada = 0;
@@ -121,15 +119,19 @@ namespace FWLog.Services.Services
                         ValidarDadosIntegracao(produtoInt);
 
                         var unidade = unidadesMedida.FirstOrDefault(f => f.Sigla == produtoInt.UnidadeMedidaSigla);
-
                         if (unidade == null)
                         {
-                            throw new Exception("Código da Unidade de Medida (CODVOL) inválido");
+                            throw new Exception("Código da Unidade de Medida (CODVOL) inválido.");
                         }
 
                         bool produtoNovo = false;
 
                         var codProd = Convert.ToInt64(produtoInt.CodigoIntegracao);
+                        if (codProd == 0)
+                        {
+                            throw new Exception("Código da Produto (CODPROD: 0) inválido.");
+                        }
+
                         Produto produto = _uow.ProdutoRepository.ConsultarPorCodigoIntegracao(codProd);
 
                         if (produto == null)
@@ -178,7 +180,7 @@ namespace FWLog.Services.Services
                                     IdEmpresa = empresa.IdEmpresa,
                                     Saldo = 0,
                                     IdProdutoEstoqueStatus = ProdutoEstoqueStatusEnum.Ativo,
-                                    DiasPrazoEntrega = 10
+                                    DiasPrazoEntrega = 0
                                 };
 
                                 _uow.ProdutoEstoqueRepository.Add(produtoEstoque);

@@ -695,24 +695,25 @@ namespace FWLog.Services.Services
 
         public void ImprimirEtiquetaVolumeSeparacao(ImprimirEtiquetaVolumeSeparacaoRequest requisicao, long idEmpresa)
         {
-            var clienteNome = requisicao.ClienteNome?.Normalizar();
-            var clienteEndereco = $"{requisicao.ClienteEndereco}, {requisicao.ClienteEnderecoNumero}".Normalizar();
-            var clienteCEP = Convert.ToUInt64(requisicao.ClienteCEP).ToString(@"00000\-000");
-            var clienteCidade = requisicao.ClienteCidade?.Normalizar();
-            var clienteEstado = requisicao.ClienteUF?.Normalizar();
+            var clienteNome = requisicao.ClienteNomeFantasia?.Trim().Normalizar().Truncate(39);
+            var clienteEndereco = $"{requisicao.ClienteEndereco}, {requisicao.ClienteEnderecoNumero}".Trim().Normalizar().Truncate(39);
+            var clienteCEP = Convert.ToUInt64(requisicao.ClienteCEP).ToString(@"00000-000").Truncate(36);
+            var clienteCidade = requisicao.ClienteCidade?.Trim().Normalizar();
+            var clienteEstado = requisicao.ClienteUF?.Trim().Normalizar();
             var clienteTelefone = string.Format("{0:(##) #####-####}", requisicao.ClienteTelefone);
-            var clienteCodigo = requisicao.ClienteCodigo?.Normalizar();
-            var representanteCodigo = requisicao.RepresentanteCodigo?.Normalizar();
-            var pedidoCodigo = requisicao.PedidoCodigo?.PadLeft(6, '0')?.Normalizar();
-            var centena = requisicao.Centena?.PadLeft(4, '0')?.Normalizar();
-            var transportadoraSigla = requisicao.TransportadoraSigla?.Normalizar();
-            var transportadoraCodigo = requisicao.TransportadoraCodigo.PadLeft(3, '0')?.Normalizar();
-            var transportadoraNome = requisicao.TransportadoraNome?.Normalizar();
-            var volume = requisicao.Volume.PadLeft(3, '0')?.Normalizar();
-            var caixaTextoEtiqueta = requisicao.CaixaTextoEtiqueta?.Normalizar();
-            var corredoresInicio = requisicao.CorredoresInicio.PadLeft(2, '0')?.Normalizar();
-            var corredoresIntervalo = $"{corredoresInicio} a {requisicao.CorredoresFim.PadLeft(2, '0')}"?.Normalizar();
+            var clienteCodigo = requisicao.ClienteCodigo?.Trim().Normalizar();
+            var representanteCodigo = requisicao.RepresentanteCodigo?.Trim().Normalizar();
+            var pedidoCodigo = requisicao.PedidoCodigo?.PadLeft(6, '0')?.Trim().Normalizar();
+            var centena = requisicao.Centena?.PadLeft(4, '0')?.Trim().Normalizar();
+            var transportadoraSigla = requisicao.TransportadoraSigla?.Trim().Normalizar();
+            var transportadoraCodigo = requisicao.TransportadoraCodigo.PadLeft(3, '0')?.Trim().Normalizar();
+            var transportadoraNome = requisicao.TransportadoraNome?.Trim().Normalizar();
+            var volume = requisicao.Volume.PadLeft(3, '0')?.Trim().Normalizar();
+            var caixaTextoEtiqueta = requisicao.CaixaTextoEtiqueta?.Trim().Normalizar();
+            var corredoresInicio = requisicao.CorredoresInicio.PadLeft(2, '0')?.Trim().Normalizar();
+            var corredoresIntervalo = $"{corredoresInicio} a {requisicao.CorredoresFim.PadLeft(2, '0')}"?.Trim().Normalizar();
             var codigoBarras = $"{pedidoCodigo}{transportadoraCodigo}{volume}";
+            var infoTransportadoraDataHora = $"{transportadoraCodigo} Etiqueta: {DateTime.Now.ToShortTimeString()}";
 
             var stringEtiqueta = new StringBuilder();
 
@@ -729,7 +730,7 @@ namespace FWLog.Services.Services
 
             stringEtiqueta.AppendLine($"^FO425,445^GB,130,100,4^FS");
             stringEtiqueta.AppendLine($"^FO440,450^A0B,100,80^FR^FD{transportadoraSigla}^FS");
-            stringEtiqueta.AppendLine($@"^FO440,50^FB390,4,0,L,0^A0B,30,20^FD{transportadoraCodigo}\&{transportadoraNome}^FS");
+            stringEtiqueta.AppendLine($@"^FO440,50^FB390,4,0,L,0^A0B,30,20^FD{infoTransportadoraDataHora}\&{transportadoraNome}^FS");
 
             if (requisicao.PedidoIsRequisicao)
             {
@@ -744,11 +745,10 @@ namespace FWLog.Services.Services
                 stringEtiqueta.AppendLine($"^FO440,70^A0B,90,80^FR^FDC^FS");
             }
 
-            stringEtiqueta.AppendLine($"^FO650,130^BY2,164^BCB,143,Y,N^FD{codigoBarras}^FS");
             stringEtiqueta.AppendLine($"^FO650,130^BY2,164^BCB,70,Y,N^FD{codigoBarras}^FS");
 
             stringEtiqueta.AppendLine($"^FO550,260^A0B,20,20^FDCAIXA^FS");
-            stringEtiqueta.AppendLine($"^FO570,235^A0B,80,70^FR^FD{caixaTextoEtiqueta}^FS");
+            stringEtiqueta.AppendLine($"^FO570,260^A0B,80,70^FR^FD{caixaTextoEtiqueta}^FS");
 
             stringEtiqueta.AppendLine($"^FO550,347^A0B,20,20^FDINICIO^FS");
             stringEtiqueta.AppendLine($"^FO570,315^A0B,80,70^FR^FD{corredoresInicio}^FS");
@@ -801,7 +801,7 @@ namespace FWLog.Services.Services
                 var caixa = volume.CaixaCubagem;
                 var grupoCorredorArmazenagem = volume.GrupoCorredorArmazenagem;
 
-                requisicaoImpressao.ClienteNome = cliente.NomeFantasia;
+                requisicaoImpressao.ClienteNomeFantasia = cliente.NomeFantasia;
                 requisicaoImpressao.ClienteEndereco = cliente.Endereco;
                 requisicaoImpressao.ClienteEnderecoNumero = cliente.Numero;
                 requisicaoImpressao.ClienteCEP = cliente.CEP;
@@ -810,7 +810,8 @@ namespace FWLog.Services.Services
                 requisicaoImpressao.ClienteTelefone = cliente.Telefone;
                 requisicaoImpressao.ClienteCodigo = cliente.CodigoIntegracao.ToString();
                 requisicaoImpressao.RepresentanteCodigo = representante.CodigoIntegracao.ToString();
-                requisicaoImpressao.PedidoCodigo = pedido.CodigoIntegracao.ToString();
+                requisicaoImpressao.PedidoCodigo = pedido.NroPedido.ToString();
+                requisicaoImpressao.PedidoDataCriacao = pedido.DataCriacao;
                 requisicaoImpressao.PedidoPagamentoCodigoIntegracao = pedido.PagamentoCodigoIntegracao;
                 requisicaoImpressao.PedidoPagamentoIsDebito = pedido.PagamentoIsDebitoIntegracao;
                 requisicaoImpressao.PedidoPagamentoIsCredito = pedido.PagamentoIsCreditoIntegracao;

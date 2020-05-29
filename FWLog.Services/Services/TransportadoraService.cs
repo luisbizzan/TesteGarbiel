@@ -34,10 +34,7 @@ namespace FWLog.Services.Services
             }
 
             StringBuilder where = new StringBuilder();
-            where.Append("WHERE ");
-            where.Append("CGC_CPF IS NOT NULL ");
-            where.Append("AND RAZAOSOCIAL IS NOT NULL ");
-            where.Append("AND TRANSPORTADORA = 'S' ");
+            where.Append("WHERE TRANSPORTADORA = 'S' ");
             where.Append("AND AD_ABREVTRANSP IS NOT NULL ");
 
             List<TransportadoraIntegracao> transportadorasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<TransportadoraIntegracao>(where: where.ToString());
@@ -67,12 +64,8 @@ namespace FWLog.Services.Services
             }
 
             StringBuilder where = new StringBuilder();
-            where.Append("WHERE ");
-            where.Append("CGC_CPF IS NOT NULL ");
-            where.Append("AND RAZAOSOCIAL IS NOT NULL ");
-            where.Append("AND TRANSPORTADORA = 'S' ");
+            where.Append("WHERE TRANSPORTADORA = 'S' ");
             where.Append("AND AD_INTEGRARFWLOG = '1' ");
-            where.Append("AND AD_ABREVTRANSP IS NOT NULL ");
 
             List<TransportadoraIntegracao> transportadorasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<TransportadoraIntegracao>(where: where.ToString());
 
