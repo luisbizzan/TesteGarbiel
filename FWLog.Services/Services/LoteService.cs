@@ -202,107 +202,19 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task<ProcessamentoTratativaDivergencia> DevolucaoTotal(long idlote, string userId)
+        public async Task<ProcessamentoDevolucaoTotal> FinalizarProcessamentoDevolucaoTotal(Lote lote, string userId)
         {
-            Lote lote = _uow.LoteRepository.GetById(idlote);
-            NotaFiscal notafiscal = _uow.NotaFiscalRepository.GetById(lote.IdNotaFiscal);
-            List<LoteDivergencia> loteDivergencias = new List<LoteDivergencia>();
-            List<LoteConferencia> loteConferencias = new List<LoteConferencia>();
-
-            var nfItens = notafiscal.NotaFiscalItens.GroupBy(g => g.IdProduto).ToDictionary(g => g.Key, g => g.ToList());
-
-            foreach (var nfItem in nfItens)
-            {
-                LoteConferencia conferencia = null;
-                LoteDivergencia divergencia = null;
-
-                var qtdOriginal = nfItem.Value.Sum(s => s.Quantidade);
-                var qtdDevolucao = nfItem.Value.Sum(s => s.QuantidadeDevolucao);
-
-                var loteConferencia = new LoteConferencia()
-                {
-                    IdLote = lote.IdLote,
-                    IdTipoConferencia = notafiscal.Empresa.EmpresaConfig.IdTipoConferencia.Value,
-                    IdProduto = nfItem.Key,
-                    Quantidade = 0,
-                    QuantidadeDevolucao = qtdDevolucao,
-                    DataHoraInicio = DateTime.Now,
-                    DataHoraFim = DateTime.Now,
-                    Tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0),
-                    IdUsuarioConferente = userId
-                };
-
-                var loteDivergencia = new LoteDivergencia()
-                {
-                    IdLote = lote.IdLote,
-                    IdProduto = nfItem.Key,
-                    IdNotaFiscal = lote.IdNotaFiscal,
-                    IdLoteDivergenciaStatus = LoteDivergenciaStatusEnum.AguardandoTratativa,
-                    IdUsuarioDivergencia = userId,
-                    QuantidadeConferencia = qtdOriginal,
-                    QuantidadeConferenciaMais = 0,
-                    QuantidadeConferenciaMenos = 0,
-                    QuantidadeDivergenciaMais = 0,
-                    QuantidadeDivergenciaMenos = 0,
-                    QuantidadeDevolucao = qtdDevolucao,
-                    DataTratamentoDivergencia = DateTime.Now
-                };
-
-                loteConferencias.Add(loteConferencia);
-                loteDivergencias.Add(loteDivergencia);
-            };
-
-            var tempoTotal = new TimeSpan(0, 0, 0);
-            loteConferencias.ForEach(f => { tempoTotal = tempoTotal.Add(new TimeSpan(f.Tempo.Hour, f.Tempo.Minute, f.Tempo.Second)); });
-            lote.TempoTotalConferencia = Convert.ToInt64(tempoTotal.TotalSeconds);
-
-            NotaFiscalStatusEnum notaStatus;
-            LoteStatusEnum loteStatus;
-
-            loteStatus = LoteStatusEnum.Finalizado;
-            notaStatus = NotaFiscalStatusEnum.Confirmada;
-
-            await AtualizarNotaFiscalIntegracao(notafiscal, loteStatus);
-            await ConfirmarNotaFiscalIntegracao(notafiscal.CodigoIntegracao);
-
-            using (TransactionScope transactionScope = _uow.CreateTransactionScope())
-            {
-                lote.IdLoteStatus = loteStatus;
-                lote.DataFinalConferencia = DateTime.Now;
-                notafiscal.IdNotaFiscalStatus = notaStatus;
-
-                _uow.LoteConferenciaRepository.AddRange(loteConferencias
-                    );
-                _uow.LoteDivergenciaRepository.AddRange(loteDivergencias);
-                _uow.SaveChanges();
-
-                if (notaStatus == NotaFiscalStatusEnum.Confirmada)
-                {
-                    //Registrar quantidade recebida na entidade LoteProduto.
-                    RegistrarLoteProduto(nfItens, lote, null);
-
-                    AtualizarSaldoArmazenagem(nfItens, notafiscal, null);
-                }
-
-                transactionScope.Complete();
-            }
-
-            ///    Novo Finalizar
-            ProcessamentoTratativaDivergencia processamento = new ProcessamentoTratativaDivergencia()
+            ProcessamentoDevolucaoTotal processamento = new ProcessamentoDevolucaoTotal()
             {
                 AtualizacaoNFCompra = true,
                 ConfirmacaoNFCompra = true,
-                AtualizacaoEstoque = true,
                 ProcessamentoErro = false
             };
 
             try
             {
-
-                //Quarentena
                 if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))//TODO Temporário
                 {
-                    // Este trecho de código está assim para finalizar a tratativa de divergencia quando nao estava comunicando com sankhya
                     lote.IdLoteStatus = LoteStatusEnum.FinalizadoDevolucaoTotal;
                     CriarQuarentena(lote, userId);
 
@@ -341,8 +253,7 @@ namespace FWLog.Services.Services
                 processamento.ConfirmacaoNFDevolucao = true;
 
                 await VerificarNotaFiscalAutorizada(lote.NotaFiscal.CodigoIntegracaoNFDevolucao.Value);
-                processamento.AutorizaçãoNFDevolucaoSefaz = true;
-
+                processamento.AutorizacaoNFDevolucaoSefaz = true;
 
                 lote.IdLoteStatus = LoteStatusEnum.FinalizadoDevolucaoTotal;
                 CriarQuarentena(lote, userId);
@@ -356,9 +267,99 @@ namespace FWLog.Services.Services
                 _log.Error(e.Message, e);
 
                 processamento.ProcessamentoErro = true;
+                processamento.ProcessamentoErroMensagem = e.Message;
             }
 
             return processamento;
+        }
+
+        public async Task<LoteStatusEnum> RegistrarDevolucaoTotal(Lote lote, string userId)
+        {
+            NotaFiscal notafiscal = _uow.NotaFiscalRepository.GetById(lote.IdNotaFiscal);
+            
+            List<LoteDivergencia> loteDivergencias = new List<LoteDivergencia>();
+            List<LoteConferencia> loteConferencias = new List<LoteConferencia>();
+
+            var nfItens = notafiscal.NotaFiscalItens.GroupBy(g => g.IdProduto).ToDictionary(g => g.Key, g => g.ToList());
+
+            foreach (var nfItem in nfItens)
+            {
+                LoteConferencia conferencia = null;
+                LoteDivergencia divergencia = null;
+
+                //Captura quantidade e quantidade devolução da nota.
+                var quantidade = nfItem.Value.Sum(s => s.Quantidade);
+                var quantidadeDevolucao = nfItem.Value.Sum(s => s.QuantidadeDevolucao);
+
+                conferencia = new LoteConferencia()
+                {
+                    IdLote = lote.IdLote,
+                    IdTipoConferencia = notafiscal.Empresa.EmpresaConfig.IdTipoConferencia.Value,
+                    IdProduto = nfItem.Key,
+                    Quantidade = 0,
+                    QuantidadeDevolucao = quantidadeDevolucao,
+                    DataHoraInicio = DateTime.Now,
+                    DataHoraFim = DateTime.Now,
+                    Tempo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0),
+                    IdUsuarioConferente = userId
+                };
+
+                divergencia = new LoteDivergencia()
+                {
+                    IdLote = lote.IdLote,
+                    IdProduto = nfItem.Key,
+                    IdNotaFiscal = lote.IdNotaFiscal,
+                    IdLoteDivergenciaStatus = LoteDivergenciaStatusEnum.AguardandoTratativa,
+                    IdUsuarioDivergencia = userId,
+                    QuantidadeConferencia = quantidade,
+                    QuantidadeConferenciaMais = 0,
+                    QuantidadeConferenciaMenos = 0,
+                    QuantidadeDivergenciaMais = 0,
+                    QuantidadeDivergenciaMenos = 0,
+                    QuantidadeDevolucao = quantidadeDevolucao,
+                    DataTratamentoDivergencia = DateTime.Now
+                };
+
+                loteConferencias.Add(conferencia);
+                loteDivergencias.Add(divergencia);
+            };
+
+            //Captura o tempo total da conferência. Neste caso, 0.
+            var tempoTotal = new TimeSpan(0, 0, 0);
+            loteConferencias.ForEach(f => { tempoTotal = tempoTotal.Add(new TimeSpan(f.Tempo.Hour, f.Tempo.Minute, f.Tempo.Second)); });
+            lote.TempoTotalConferencia = Convert.ToInt64(tempoTotal.TotalSeconds);
+
+            NotaFiscalStatusEnum notaStatus;
+            LoteStatusEnum loteStatus;
+
+            //Atribui diretamente que o status do lote e da nota é ConferidoDivergencia.
+            loteStatus = LoteStatusEnum.ConferidoDivergencia;
+            notaStatus = NotaFiscalStatusEnum.ConferidaDivergencia;
+
+            await AtualizarNotaFiscalIntegracao(notafiscal, loteStatus);
+
+            using (TransactionScope transactionScope = _uow.CreateTransactionScope())
+            {
+                lote.IdLoteStatus = loteStatus;
+                lote.DataFinalConferencia = DateTime.Now;
+                notafiscal.IdNotaFiscalStatus = notaStatus;
+
+                _uow.LoteConferenciaRepository.AddRange(loteConferencias);
+                _uow.LoteDivergenciaRepository.AddRange(loteDivergencias);
+                _uow.SaveChanges();
+
+                transactionScope.Complete();
+            }
+
+            lote.IdLoteStatus = LoteStatusEnum.AguardandoCriacaoNFDevolucao;
+
+            await AtualizarNotaFiscalIntegracao(notafiscal, lote.IdLoteStatus);
+            await ConfirmarNotaFiscalIntegracao(notafiscal.CodigoIntegracao);
+
+            notafiscal.IdNotaFiscalStatus = NotaFiscalStatusEnum.Confirmada;
+            _uow.SaveChanges();
+
+            return lote.IdLoteStatus;
         }
 
         public async Task<LoteStatusEnum> TratarDivergencia(TratarDivergenciaRequest request, string IdUsuario)

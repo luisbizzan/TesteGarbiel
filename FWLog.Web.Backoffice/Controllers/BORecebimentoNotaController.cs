@@ -432,6 +432,7 @@ namespace FWLog.Web.Backoffice.Controllers
             Lote lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
             List<NotaFiscalItem> notaFiscalItens = _uow.NotaFiscalItemRepository.ObterItens(id);
             bool devolucaoTotal = true;
+            
             foreach (var item in notaFiscalItens)
             {
                 if (item.Quantidade != item.QuantidadeDevolucao)
@@ -1361,12 +1362,31 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult DevolucaoTotal(long id)
         {
             Lote lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+
             var model = new BOImprimirDevolucaoTotalViewModel
             {
                 NumeroNF = lote.NotaFiscal.Numero.ToString(),
                 Serie = lote.NotaFiscal.Serie,
                 IdLote = lote.IdLote,
                 IdNotaFiscal = lote.IdNotaFiscal,
+                QuantidadeEtiqueta = lote.QuantidadeVolume
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult DevolucaoTotalEtiqueta(long id)
+        {
+            Lote lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
+
+            var model = new BOImprimirDevolucaoTotalViewModel
+            {
+                NumeroNF = lote.NotaFiscal.Numero.ToString(),
+                Serie = lote.NotaFiscal.Serie,
+                IdLote = lote.IdLote,
+                IdNotaFiscal = lote.IdNotaFiscal,
+                QuantidadeEtiqueta = lote.QuantidadeVolume
             };
 
             return View(model);
@@ -2449,61 +2469,98 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.DevolucaoTotal)]
-        public async Task<JsonResult> FinalizarDevolucaoTotal(long idLote)
+        public async Task<JsonResult> RegistrarDevolucaoTotal(long idLote)
         {
             Lote lote = _uow.LoteRepository.GetById(idLote);
+
             try
             {
-                ProcessamentoTratativaDivergencia processamento = await _loteService.DevolucaoTotal(lote.IdLote, IdUsuario).ConfigureAwait(false);
+                if (lote == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Data = "false",
+                        Message = "Lote não encontrado. Por favor, tente novamente."
+                    }, JsonRequestBehavior.DenyGet);
+                }
+
+                LoteStatusEnum statusLote = await _loteService.RegistrarDevolucaoTotal(lote, IdUsuario).ConfigureAwait(false);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = statusLote == LoteStatusEnum.AguardandoCriacaoNFDevolucao ? "Iniciando a criação da nota fiscal de devolução." : "Registro da devolução total finalizado."
+                }, JsonRequestBehavior.DenyGet);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = e is BusinessException ? e.Message : "Não foi possível registrar a devolução total."
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.DevolucaoTotal)]
+        public async Task<JsonResult> FinalizarProcessamentoDevolucaoTotal(long idLote, int quantidadeEtiqueta)
+        {
+            Lote lote = _uow.LoteRepository.GetById(idLote);
+
+            try
+            {
+                ProcessamentoDevolucaoTotal processamento = await _loteService.FinalizarProcessamentoDevolucaoTotal(lote, IdUsuario).ConfigureAwait(false);
                 string json = JsonConvert.SerializeObject(processamento);
 
-
-                //Novo Para Impressão
-                #region Impressão Automática de Etiquetas
-
-                var etiquetaDevolucaoRequest = new ImprimirEtiquetaDevolucaoTotalRequest
+                #region Impressao_Etiqueta_Devolucao
+                for (int i = 0; i < quantidadeEtiqueta; i++)
                 {
-                    NomeFornecedor = lote.NotaFiscal.Fornecedor.RazaoSocial,
-                    EnderecoFornecedor = lote.NotaFiscal.Fornecedor.Endereco,
-                    CidadeFornecedor = lote.NotaFiscal.Fornecedor.Cidade,
-                    EstadoFornecedor = lote.NotaFiscal.Fornecedor.Estado,
-                    CepFornecedor = lote.NotaFiscal.Fornecedor.CEP,
-                    TelefoneFornecedor = lote.NotaFiscal.Fornecedor.Telefone,
-                    NumeroFornecedor = lote.NotaFiscal.Fornecedor.Numero,
-                    BairroFornecedor = lote.NotaFiscal.Fornecedor.Bairro,
-                    IdFornecedor = lote.NotaFiscal.IdFornecedor.ToString(),
-                    IdTransportadora = lote.NotaFiscal.IdTransportadora.ToString(),
-                    NomeTransportadora = lote.NotaFiscal.Transportadora.RazaoSocial,
-                    IdLote = lote.IdLote.ToString(),
-                    QuantidadeVolumes = lote.QuantidadeVolume.ToString(),
+                    var etiquetaDevolucaoRequest = new ImprimirEtiquetaDevolucaoTotalRequest
+                    {
+                        NomeFornecedor = lote.NotaFiscal.Fornecedor.RazaoSocial,
+                        EnderecoFornecedor = lote.NotaFiscal.Fornecedor.Endereco,
+                        CidadeFornecedor = lote.NotaFiscal.Fornecedor.Cidade,
+                        EstadoFornecedor = lote.NotaFiscal.Fornecedor.Estado,
+                        CepFornecedor = lote.NotaFiscal.Fornecedor.CEP,
+                        TelefoneFornecedor = lote.NotaFiscal.Fornecedor.Telefone,
+                        NumeroFornecedor = lote.NotaFiscal.Fornecedor.Numero,
+                        BairroFornecedor = lote.NotaFiscal.Fornecedor.Bairro,
+                        IdFornecedor = lote.NotaFiscal.IdFornecedor.ToString(),
+                        IdTransportadora = lote.NotaFiscal.IdTransportadora.ToString(),
+                        NomeTransportadora = lote.NotaFiscal.Transportadora.RazaoSocial,
+                        IdLote = lote.IdLote.ToString(),
+                        QuantidadeVolumes = lote.QuantidadeVolume.ToString(),
+                        SiglaTransportador = lote.NotaFiscal.Transportadora.CodigoTransportadora,
+                        IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
+                    };
 
-                    //Temporário - Verificar depois com o Shankya qual o campo referente a sigla do transportador.
-                    SiglaTransportador = lote.NotaFiscal.Transportadora.CodigoTransportadora,
-
-                    IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(7).IdImpressaoItem).First().Id
-                };
-
-                _etiquetaService.ImprimirEtiquetaDevolucaoTotal(etiquetaDevolucaoRequest);
+                    _etiquetaService.ImprimirEtiquetaDevolucaoTotal(etiquetaDevolucaoRequest);
+                }
 
                 //Registra o Log da impressão da etiqueta de Devolução
                 var logEtiquetagemDevolucao = new Services.Model.LogEtiquetagem.LogEtiquetagem
                 {
                     IdTipoEtiquetagem = TipoEtiquetagemEnum.Devolucao.GetHashCode(),
                     IdEmpresa = IdEmpresa,
-                    IdUsuario = User.Identity.GetUserId()
+                    IdUsuario = User.Identity.GetUserId(),
+                    Quantidade = quantidadeEtiqueta,
+                    DataHora = DateTime.Now
                 };
 
                 _logEtiquetagemService.Registrar(logEtiquetagemDevolucao);
 
                 #endregion
 
-
                 return Json(new AjaxGenericResultModel
                 {
                     Success = !processamento.ProcessamentoErro,
-                    Message = processamento.ProcessamentoErro ? "Não foi possivel finalizar a devolução total." : "Devolução total finalizado com sucesso.",
+                    Message = processamento.ProcessamentoErro ? "Não foi possivel finalizar a devolução total." + processamento.ProcessamentoErroMensagem : "Devolução total finalizado com sucesso.",
                     Data = json
-                }, JsonRequestBehavior.DenyGet); ;
+                }, JsonRequestBehavior.DenyGet);
             }
             catch (Exception e)
             {
@@ -2513,9 +2570,36 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Success = false,
                     Data = "false",
-                    Message = e is BusinessException ? e.Message : "Não foi possivel finalizar a devolução total."
+                    Message = e is BusinessException ? e.Message : "Não foi possivel finalizar a devolução total do lote " + lote.IdLote + "."
                 }, JsonRequestBehavior.DenyGet);
             }
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.DevolucaoTotal)]
+        public ActionResult ResumoProcessamentoDevolucaoTotal(long id, int quantidadeEtiqueta)
+        {
+            NotaFiscal notaFiscal = _uow.NotaFiscalRepository.GetById(id);
+            Lote lote = _uow.LoteRepository.ObterLoteNota(id);
+
+            var exibirDevolucaoTotalViewModel = new ExibirDevolucaoTotalViewModel()
+            {
+                IdLote = lote.IdLote,
+                StatusNotasFiscal = lote.LoteStatus.Descricao,
+                NotaFiscal = string.Concat(notaFiscal.Numero.ToString(), "-", notaFiscal.Serie),
+                QuantidadeEtiqueta = quantidadeEtiqueta,
+                Processamento = new ProcessamentoDevolucaoTotalViewModel()
+                {
+                    AtualizacaoNFCompra = true,
+                    ConfirmacaoNFCompra = true,
+                    CriacaoQuarentena = _uow.QuarentenaRepository.ExisteQuarentena(lote.IdLote),
+                    CriacaoNFDevolucao = notaFiscal.CodigoIntegracaoNFDevolucao.HasValue,
+                    ConfirmacaoNFDevolucao = notaFiscal.CodigoIntegracaoNFDevolucao.HasValue && notaFiscal.NFDevolucaoConfirmada,
+                    AutorizacaoNFDevolucaoSefaz = false
+                }
+            };
+
+            return View(exibirDevolucaoTotalViewModel);
         }
 
         [HttpGet]

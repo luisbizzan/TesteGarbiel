@@ -12,6 +12,7 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         }
 
         public long IdLote { get; set; }
+        [Display(Name = "Nota Fiscal")]
         public string NotaFiscal { get; set; }
         public string Serie { get; set; }
         [Display(Name = "Status")]

@@ -583,8 +583,6 @@ function conferirNota() {
                             $modalDev.load(HOST_URL + CONTROLLER_PATH + "DevolucaoTotal/" + id, function (result) {
                                 $modalDev.modal();
                             });
-                            $(".close").click();
-                            $("#dataTable").DataTable().ajax.reload();
                         }
                         else {
                             //Chama a tela de conferência
@@ -668,9 +666,27 @@ function exibirProcessamento() {
     let id = $(this).data("id");
 
     let $modal = $("#modalProcessamentoTratativaDivergencia");
+    let $modalDevolucaoTotalEtiqueta = $("#modalDevolucaoTotalEtiqueta");
 
-    $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoProcessamentoDivergencia/" + id, function () {
-        $modal.modal();
-        $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
-    });
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "VerificarDevolucaoTotal/" + id,
+        cache: false,
+        method: "POST",
+        data: {
+            idNota: id
+        },
+        success: function (result) {
+            if (result.Success) {
+                $modalDevolucaoTotalEtiqueta.load(HOST_URL + CONTROLLER_PATH + "DevolucaoTotalEtiqueta/" + id, function (result) {
+                    $modalDevolucaoTotalEtiqueta.modal();
+                });
+            }
+            else {
+                $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoProcessamentoDivergencia/" + id, function () {
+                    $modal.modal();
+                    $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
+                });
+            }
+        }
+    }); 
 }
