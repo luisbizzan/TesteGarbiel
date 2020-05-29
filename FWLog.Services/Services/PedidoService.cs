@@ -88,7 +88,6 @@ namespace FWLog.Services.Services
                     }
 
                     var numeroPedido = Convert.ToInt32(pedidoCabecalho.NroPedidoVenda);
-
                     if (numeroPedido == 0)
                     {
                         throw new BusinessException($"Código do Pedido (NUMNOTA: {pedidoCabecalho.NroPedidoVenda}) inválido");

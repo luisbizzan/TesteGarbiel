@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
+using DartDigital.Library.Exceptions;
 
 namespace FWLog.Services.Services
 {
@@ -36,18 +37,8 @@ namespace FWLog.Services.Services
             inner.Append("INNER JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF ");
 
             StringBuilder where = new StringBuilder();
-            where.Append("WHERE ");
-            where.Append("TGFPAR.CGC_CPF IS NOT NULL ");
-            where.Append("AND TGFPAR.RAZAOSOCIAL IS NOT NULL ");
-            where.Append("AND TGFPAR.CLIENTE = 'S' ");
+            where.Append("WHERE TGFPAR.CLIENTE = 'S' ");
             where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
-            where.Append("AND CODCIDENTREGA > 0 ");
-            where.Append("AND CODENDENTREGA > 0 ");
-            where.Append("AND CEPENTREGA IS NOT NULL ");
-            where.Append("AND TSIEND.NOMEEND IS NOT NULL ");
-            where.Append("AND TSIUFS.UF IS NOT NULL ");
-            where.Append("AND TGFCPL.NUMENTREGA IS NOT NULL ");
-            where.Append("AND TGFPAR.TELEFONE IS NOT NULL ");
 
             List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString(), inner: inner.ToString());
 
@@ -56,6 +47,16 @@ namespace FWLog.Services.Services
                 try
                 {
                     ValidarDadosIntegracao(clienteInt);
+
+                    if (clienteInt.CodigoIntgracaoEndereco == "0")
+                    {
+                        throw new BusinessException($"Código do Endereço de Entrega (CODENDENTREGA: 0) inválido.");
+                    }
+
+                    if (clienteInt.CodigoIntegracaoCidade == "0")
+                    {
+                        throw new BusinessException($"Código da Cidade de Entrega (CODCIDENTREGA: 0) inválido.");
+                    }
 
                     bool clienteNovo = false;
 
@@ -74,8 +75,8 @@ namespace FWLog.Services.Services
                     cliente.CNPJCPF = clienteInt.CNPJ;
                     cliente.RazaoSocial = clienteInt.RazaoSocial;
                     cliente.Classificacao = clienteInt.Classificacao;
-                    cliente.IdRepresentanteInterno =  _unitOfWork.RepresentanteRepository.BuscarCodigoPeloCodigoIntegracaoVendedor(clienteInt.IdRepresentanteInterno);
-                    cliente.IdRepresentanteExterno =  _unitOfWork.RepresentanteRepository.BuscarCodigoPeloCodigoIntegracaoVendedor(clienteInt.IdRepresentanteExterno);
+                    cliente.IdRepresentanteInterno = _unitOfWork.RepresentanteRepository.BuscarCodigoPeloCodigoIntegracaoVendedor(clienteInt.IdRepresentanteInterno);
+                    cliente.IdRepresentanteExterno = _unitOfWork.RepresentanteRepository.BuscarCodigoPeloCodigoIntegracaoVendedor(clienteInt.IdRepresentanteExterno);
                     cliente.CEP = clienteInt.CEP;
                     cliente.Telefone = clienteInt.Telefone;
                     cliente.UF = clienteInt.UF;
@@ -121,17 +122,9 @@ namespace FWLog.Services.Services
             inner.Append("INNER JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF ");
 
             StringBuilder where = new StringBuilder();
-            where.Append("WHERE ");
-            where.Append("TGFPAR.CGC_CPF IS NOT NULL ");
-            where.Append("AND TGFPAR.RAZAOSOCIAL IS NOT NULL ");
-            where.Append("AND TGFPAR.CLIENTE = 'S' ");           
-            where.Append("AND CODCIDENTREGA > 0 ");
-            where.Append("AND CODENDENTREGA > 0 ");
-            where.Append("AND CEPENTREGA IS NOT NULL ");
-            where.Append("AND TSIEND.NOMEEND IS NOT NULL ");
-            where.Append("AND TSIUFS.UF IS NOT NULL ");
-            where.Append("AND TGFCPL.NUMENTREGA IS NOT NULL ");
-
+            where.Append("WHERE ");       
+            where.Append("AND TGFPAR.CLIENTE = 'S' ");
+       
             List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString(), inner: inner.ToString());
 
             foreach (var fornecInt in clientesIntegracao)

@@ -1,6 +1,5 @@
 ﻿using DartDigital.Library.Exceptions;
 using FWLog.Data;
-using FWLog.Data.EnumsAndConsts;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
 using FWLog.Services.Model.IntegracaoSankhya;
@@ -58,7 +57,7 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            var where = " WHERE TGFCAB.CHAVENFE IS NOT NULL AND TGFCAB.TIPMOV = 'C' AND TGFCAB.STATUSNOTA <> 'L' AND (TGFCAB.AD_STATUSREC = 0 OR TGFCAB.AD_STATUSREC IS NULL)";
+            var where = " WHERE TGFCAB.TIPMOV = 'C' AND TGFCAB.STATUSNOTA <> 'L' AND (TGFCAB.AD_STATUSREC = 0 OR TGFCAB.AD_STATUSREC IS NULL)";
             var inner = " INNER JOIN TGFITE ON TGFCAB.NUNOTA = TGFITE.NUNOTA";
 
             List<NotaFiscalIntegracao> notasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<NotaFiscalIntegracao>(where, inner);
@@ -121,7 +120,7 @@ namespace FWLog.Services.Services
 
                         if (lote != null)
                         {
-                            throw new Exception("Já existe um lote aberto para esta nota fiscal, portanto não é possível integra-la novamente");
+                            throw new Exception("Já existe um lote aberto para esta nota fiscal, portanto não é possível integrá-la novamente.");
                         }
                     }
                     else

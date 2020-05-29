@@ -37,11 +37,7 @@ namespace FWLog.Services.Services
             inner.Append("LEFT JOIN TSICID ON TSIEMP.CODCID = TSICID.CODCID ");
             inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF");
 
-            StringBuilder where = new StringBuilder();
-            inner.Append(" WHERE TSIEMP.AD_FILIAL IS NOT NULL ");
-            inner.Append("AND TSIEMP.NOMEFANTASIA IS NOT NULL ");
-            inner.Append("AND TSIEMP.AD_INTEGRARFWLOG = '1' ");
-            inner.Append("ORDER BY TSIEMP.CODEMP ASC ");
+            var where = "WHERE TSIEMP.AD_INTEGRARFWLOG = '1'";
 
             List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString());
 
