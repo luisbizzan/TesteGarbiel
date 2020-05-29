@@ -1099,7 +1099,7 @@ namespace FWLog.Services.Services
                 listaItensDoPedidoRetorno = await CalcularCubagemVolume(listaItensDoPedidoRetorno);
 
                 //Agrupa os itens por caixa e agrupamento.
-                listaItensDoPedidoRetorno = listaItensDoPedidoRetorno.Where(c => c.CaixaEscolhida != null).OrderBy(x => x.CaixaEscolhida.IdCaixa).OrderBy(y => y.Agrupador).ToList();
+                listaItensDoPedidoRetorno = listaItensDoPedidoRetorno.OrderBy(x => x.CaixaEscolhida).OrderBy(y => y.Agrupador).ToList();
             }
 
             return listaItensDoPedidoRetorno;
