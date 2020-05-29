@@ -90,10 +90,16 @@ namespace FWLog.Data
         private DiasDaSemanaRepository _diasDaSemanaRepository;
         private CentenaVolumeRepository _centenaVolumeRepository;
         private LoteVolumeRepository _loteVolumeRepository;
+        private CaixaRecusaRepository _caixaRecusaRepository;
 
         public UnitOfWork()
         {
             _context = new Entities();
+        }
+
+        public CaixaRecusaRepository CaixaRecusaRepository
+        {
+            get => _caixaRecusaRepository ?? (_caixaRecusaRepository = new CaixaRecusaRepository(_context));
         }
 
         public LoteVolumeRepository LoteVolumeRepository

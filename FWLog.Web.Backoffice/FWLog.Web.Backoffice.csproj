@@ -230,6 +230,7 @@
     <Compile Include="App_Start\NinjectModules\GeneralModule.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
+    <Compile Include="Controllers\CaixaRecusaController.cs" />
     <Compile Include="Controllers\ExpedicaoController.cs" />
     <Compile Include="Controllers\ArmazenagemController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
@@ -282,6 +283,7 @@
     <Compile Include="Mapping\BOPrinterProfile.cs" />
     <Compile Include="Mapping\BORecebimentoNotaProfile.cs" />
     <Compile Include="Mapping\CaixaProfile.cs" />
+    <Compile Include="Mapping\CaixaRecusaProfile.cs" />
     <Compile Include="Mapping\CorredorImpressoraProfile.cs" />
     <Compile Include="Mapping\GarantiaProfile.cs" />
     <Compile Include="Mapping\ClienteProfile.cs" />
@@ -299,6 +301,9 @@
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioLogisticaCorredorViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioPosicaoInventarioViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioTotalPorAlaViewModel.cs" />
+    <Compile Include="Models\CaixaCtx\CaixaSearchModalViewModel.cs" />
+    <Compile Include="Models\CaixaRecusaCtx\CaixaRecusaCadastroViewModel.cs" />
+    <Compile Include="Models\CaixaRecusaCtx\CaixaRecusaListaViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\EtiquetaLocacaoViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioLogisticaCorredorViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\ImprimirRelatorioPosicaoInventarioViewModel.cs" />
@@ -564,8 +569,12 @@
     <Content Include="Scripts\Views\BOPrinter\create.js" />
     <Content Include="Scripts\Views\BOPrinter\edit.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioRastreioPeca.js" />
+    <Content Include="Scripts\Views\CaixaRecusa\cadastrar.js" />
+    <Content Include="Scripts\Views\CaixaRecusa\editar.js" />
+    <Content Include="Scripts\Views\CaixaRecusa\index.js" />
     <Content Include="Scripts\Views\Caixa\cadastrar.js" />
     <Content Include="Scripts\Views\Caixa\editar.js" />
+    <Content Include="Scripts\Views\Caixa\searchModal.js" />
     <Content Include="Scripts\Views\Cliente\searchModal.js" />
     <Content Include="Scripts\Views\CorredorImpressora\cadastrar.js" />
     <Content Include="Scripts\Views\CorredorImpressora\editar.js" />
@@ -723,6 +732,9 @@
     <Content Include="Views\Expedicao\RelatorioPedidosExpedidos.cshtml" />
     <Content Include="Views\Expedicao\MovimentacaoVolumesDetalhes.cshtml" />
     <Content Include="Views\Expedicao\RelatorioPedidos.cshtml" />
+    <Content Include="Views\CaixaRecusa\Index.cshtml" />
+    <Content Include="Views\Caixa\SearchModal.cshtml" />
+    <Content Include="Views\CaixaRecusa\Cadastrar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

@@ -15,5 +15,6 @@ namespace FWLog.Services.Model.SeparacaoPedido
         public GrupoCorredorArmazenagemViewModel GrupoCorredorArmazenagem { get; set; }
         public ProdutoEstoqueViewModel EnderecoSeparacao { get; set; } //Endereço de separação.
         public int Quantidade { get; set; } //Quantidades do produto.
+        public bool IsSeparacaoNoPikcing { get; set; }
     }
 }

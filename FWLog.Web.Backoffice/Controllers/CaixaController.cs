@@ -189,5 +189,38 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.DenyGet);
             }
         }
+
+        [ApplicationAuthorize]
+        public ActionResult SearchModal(long? id = null)
+        {
+            var model = new CaixaSearchModalViewModel();
+
+            model.ListaStatus = new SelectList(new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Ativo", Value = "true"},
+                new SelectListItem { Text = "Inativo", Value = "false"}
+            }, "Value", "Text");
+
+
+            model.ListaCaixaTipo = BuscarCaixaTipoSelectList();
+
+            return View(model);
+        }
+
+        [ApplicationAuthorize]
+        public ActionResult SearchModalPageData(DataTableFilter<CaixaListaFiltro> filtro)
+        {
+            filtro.CustomFilter.IdEmpresa = IdEmpresa;
+
+            var result = _caixaService.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = filtro.Draw,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
+                Data = Mapper.Map<IEnumerable<CaixaListaTabela>>(result)
+            });
+        }
     }
 }
