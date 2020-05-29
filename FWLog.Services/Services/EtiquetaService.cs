@@ -787,48 +787,45 @@ namespace FWLog.Services.Services
             _impressoraService.Imprimir(arrayBytesEtiqueta, requisicao.IdImpressora);
         }
 
-        public void ImprimirEtiquetaVolumes(List<PedidoVendaVolume> listaVolumes)
+        public void ImprimirEtiquetaVolume(PedidoVendaVolume volume, long idImpressora)
         {
-            foreach (var volume in listaVolumes)
-            {
-                var requisicaoImpressao = new ImprimirEtiquetaVolumeSeparacaoRequest();
+            var requisicaoImpressao = new ImprimirEtiquetaVolumeSeparacaoRequest();
 
-                var pedidoVenda = volume.PedidoVenda;
-                var cliente = pedidoVenda.Pedido.Cliente;
-                var representante = pedidoVenda.Representante;
-                var pedido = pedidoVenda.Pedido;
-                var transportadora = pedidoVenda.Transportadora;
-                var caixa = volume.CaixaCubagem;
-                var grupoCorredorArmazenagem = volume.GrupoCorredorArmazenagem;
+            var pedidoVenda = volume.PedidoVenda;
+            var cliente = pedidoVenda.Pedido.Cliente;
+            var representante = pedidoVenda.Representante;
+            var pedido = pedidoVenda.Pedido;
+            var transportadora = pedidoVenda.Transportadora;
+            var caixa = volume.CaixaCubagem;
+            var grupoCorredorArmazenagem = volume.GrupoCorredorArmazenagem;
 
-                requisicaoImpressao.ClienteNomeFantasia = cliente.NomeFantasia;
-                requisicaoImpressao.ClienteEndereco = cliente.Endereco;
-                requisicaoImpressao.ClienteEnderecoNumero = cliente.Numero;
-                requisicaoImpressao.ClienteCEP = cliente.CEP;
-                requisicaoImpressao.ClienteCidade = cliente.Cidade;
-                requisicaoImpressao.ClienteUF = cliente.UF;
-                requisicaoImpressao.ClienteTelefone = cliente.Telefone;
-                requisicaoImpressao.ClienteCodigo = cliente.CodigoIntegracao.ToString();
-                requisicaoImpressao.RepresentanteCodigo = representante.CodigoIntegracao.ToString();
-                requisicaoImpressao.PedidoCodigo = pedido.NroPedido.ToString();
-                requisicaoImpressao.PedidoDataCriacao = pedido.DataCriacao;
-                requisicaoImpressao.PedidoPagamentoCodigoIntegracao = pedido.PagamentoCodigoIntegracao;
-                requisicaoImpressao.PedidoPagamentoIsDebito = pedido.PagamentoIsDebitoIntegracao;
-                requisicaoImpressao.PedidoPagamentoIsCredito = pedido.PagamentoIsCreditoIntegracao;
-                requisicaoImpressao.PedidoPagamentoIsDinheiro = pedido.PagamentoIsDinheiroIntegracao;
-                requisicaoImpressao.PedidoIsRequisicao = pedido.IsRequisicao;
-                requisicaoImpressao.Centena = volume.NroCentena.ToString();
-                requisicaoImpressao.TransportadoraSigla = transportadora.CodigoTransportadora;
-                requisicaoImpressao.TransportadoraCodigo = transportadora.CodigoIntegracao.ToString();
-                requisicaoImpressao.TransportadoraNome = transportadora.NomeFantasia;
-                requisicaoImpressao.CorredoresInicio = grupoCorredorArmazenagem.CorredorInicial.ToString();
-                requisicaoImpressao.CorredoresFim = grupoCorredorArmazenagem.CorredorFinal.ToString();
-                requisicaoImpressao.CaixaTextoEtiqueta = caixa.TextoEtiqueta;
-                requisicaoImpressao.Volume = volume.NroVolume.ToString();
-                requisicaoImpressao.IdImpressora = grupoCorredorArmazenagem.IdImpressora;
+            requisicaoImpressao.ClienteNomeFantasia = cliente.NomeFantasia;
+            requisicaoImpressao.ClienteEndereco = cliente.Endereco;
+            requisicaoImpressao.ClienteEnderecoNumero = cliente.Numero;
+            requisicaoImpressao.ClienteCEP = cliente.CEP;
+            requisicaoImpressao.ClienteCidade = cliente.Cidade;
+            requisicaoImpressao.ClienteUF = cliente.UF;
+            requisicaoImpressao.ClienteTelefone = cliente.Telefone;
+            requisicaoImpressao.ClienteCodigo = cliente.CodigoIntegracao.ToString();
+            requisicaoImpressao.RepresentanteCodigo = representante.CodigoIntegracao.ToString();
+            requisicaoImpressao.PedidoCodigo = pedido.NroPedido.ToString();
+            requisicaoImpressao.PedidoDataCriacao = pedido.DataCriacao;
+            requisicaoImpressao.PedidoPagamentoCodigoIntegracao = pedido.PagamentoCodigoIntegracao;
+            requisicaoImpressao.PedidoPagamentoIsDebito = pedido.PagamentoIsDebitoIntegracao;
+            requisicaoImpressao.PedidoPagamentoIsCredito = pedido.PagamentoIsCreditoIntegracao;
+            requisicaoImpressao.PedidoPagamentoIsDinheiro = pedido.PagamentoIsDinheiroIntegracao;
+            requisicaoImpressao.PedidoIsRequisicao = pedido.IsRequisicao;
+            requisicaoImpressao.Centena = volume.NroCentena.ToString();
+            requisicaoImpressao.TransportadoraSigla = transportadora.CodigoTransportadora;
+            requisicaoImpressao.TransportadoraCodigo = transportadora.CodigoIntegracao.ToString();
+            requisicaoImpressao.TransportadoraNome = transportadora.NomeFantasia;
+            requisicaoImpressao.CorredoresInicio = grupoCorredorArmazenagem.CorredorInicial.ToString();
+            requisicaoImpressao.CorredoresFim = grupoCorredorArmazenagem.CorredorFinal.ToString();
+            requisicaoImpressao.CaixaTextoEtiqueta = caixa.TextoEtiqueta;
+            requisicaoImpressao.Volume = volume.NroVolume.ToString();
+            requisicaoImpressao.IdImpressora = idImpressora;
 
-                ImprimirEtiquetaVolumeSeparacao(requisicaoImpressao, volume.PedidoVenda.IdEmpresa);
-            }
+            ImprimirEtiquetaVolumeSeparacao(requisicaoImpressao, volume.PedidoVenda.IdEmpresa);
         }
 
         public void ImprimirEtiquetaFilete(long idProduto, long idEnderecoArmazenagem, long idImpressora)
