@@ -4,6 +4,7 @@ using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
+using Microsoft.SqlServer.Server;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
@@ -333,6 +334,133 @@ namespace FWLog.Data.Repository.GeneralCtx
                 }
                 conn.Close();
             }
+        }
+
+        public void CriarRemessaAutomatica()
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    sQuery = @"
+                    INSERT INTO gar_remessa_lista (cod_fornecedor, id_empresa, dia, vlr_atingido, vlr_minimo, id_status, id_usr)
+                    WITH cte_fornecedores AS
+                    (
+                        SELECT 
+                            id_empresa,
+                            cod_fornecedor,
+                            vlr_minimo
+                        FROM 
+                            gar_remessa_config
+                        WHERE
+                            automatica = 1
+                    ),
+                    cte_itens AS
+                    (
+                        SELECT * FROM(
+                            SELECT
+                               GSI.refx,
+                               GSI.id_solicitacao,
+                               GSI.valor,
+                               GSI.cod_fornecedor,
+                               GS.id_empresa,
+                               SUM(GM.quant - NVL(GRC.Quant_Enviado,0) ) AS quant
+                            FROM
+                                gar_movimentacao GM
+                                INNER JOIN gar_solicitacao_item GSI ON GSI.id = GM.id_item
+                                INNER JOIN gar_solicitacao GS ON GS.id = GSI.id_solicitacao
+                                LEFT JOIN gar_remessa_controle GRC ON GRC.id_movimentacao = GM.id
+                            WHERE
+                                (
+                                    GSI.cod_fornecedor IN(SELECT cod_fornecedor FROM cte_fornecedores)
+                                    OR GSI.cod_fornecedor IN(SELECT cod_forn_filho FROM gar_forn_grupo WHERE cod_forn_pai IN(SELECT cod_fornecedor FROM cte_fornecedores))
+                                )
+                                AND GM.id_tipo_estoque = 15
+                                AND GM.id_tipo_movimentacao = 27
+                            GROUP BY
+                                GSI.refx,
+                                GSI.id_solicitacao,
+                                GSI.valor,
+                                GSI.cod_fornecedor,
+                                GS.id_empresa
+                            HAVING (SELECT COUNT(*) FROM gar_conferencia_item GCI INNER JOIN gar_conferencia GC ON GCI.id_conf = GC.id AND GC.ativo = 1
+                                WHERE GCI.id_solicitacao = GSI.id_solicitacao AND GCI.refx = GSI.refx ) = 0
+                        ) WHERE quant > 0
+                    ),
+                    cte_fornecedores_soma AS
+                    (
+                        SELECT
+                            CI.cod_fornecedor,
+                            CI.id_empresa,
+                            NVL(SUM(CI.valor * CI.quant),0) AS valor
+                        FROM
+                            cte_itens CI
+                        GROUP BY
+                            CI.cod_fornecedor,
+                            CI.id_empresa
+                    )
+                    SELECT
+                        CF.cod_fornecedor,
+                        CF.id_empresa,
+                        SYSDATE AS dia,
+                        NVL(CFS.valor,0) AS vlr_atingido,
+                        CF.vlr_minimo,
+                        (CASE WHEN CFS.valor > CF.vlr_minimo THEN 42 ELSE 44 END) AS id_status,
+                        '' AS id_usr   
+                    FROM
+                        cte_fornecedores CF
+                        LEFT JOIN cte_fornecedores_soma CFS ON CF.cod_fornecedor = CFS.cod_fornecedor AND CF.id_empresa = CFS.id_empresa
+                    ";
+                    conn.Query<GarConferencia>(sQuery, new {  });
+
+                }
+                conn.Close();
+            }
+        }
+
+        //ELE SÓ PODE PROCESSEGUIR SE O RETORNO FOR TRUE
+        public DmlStatus ProcessarUsrRemessaAutomatica(GarRemessaLista item)
+        {
+            string sQuery = "";
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    //pode ter uma remessa aberta em um dia e não fechada no mesmo dia?
+                    //se sim terei que criar uma coluna de dt_finalizacao na gar_remessa pra saber se uma remessa foi fechada hoje, ou usar a dt_criacao
+
+                    //PEGA A ULTIMA REMESSA ATIVA DO USUARIO QUE NÃO FOI CONCLUIDA OU SEM USUARIO
+                    var remessaPendente = new GarRemessaLista();
+                    sQuery = @"SELECT GRL.cod_fornecedor, GRL.id
+                    FROM gar_remessa_lista GRL WHERE ( 
+                        ( GRL.Id_Usr = :Id_Usr AND (SELECT COUNT(*) FROM gar_remessa GR WHERE GR.cod_fornecedor = GRL.cod_fornecedor AND GR.id_empresa = GRL.id_empresa AND GR.id_status = 39) = 0 )
+                        OR GRL.Id_Usr IS NULL
+                    ) AND GRL.id_empresa = :Id_Empresa ORDER BY GRL.id DESC FETCH FIRST 1 ROWS ONLY";
+                    remessaPendente = conn.Query<GarRemessaLista>(sQuery, new { item.Id_Usr, item.Id_Empresa }).SingleOrDefault();
+
+                    //NENHUMA REMESSA PENDENTE
+                    if (remessaPendente == null)
+                        return new DmlStatus { Sucesso = true, Mensagem = string.Format("Nada pendente.") };
+
+                    //SE O USUARIO JA FOI VINCULADO A UMA PENCIA E AINDA NÃO FEZ A REMESSA
+                    if(!string.IsNullOrEmpty(remessaPendente.Cod_Fornecedor))                    
+                        return new DmlStatus { Sucesso = false, Mensagem = string.Format("Você já tem uma remessa pendente para o fornecedor <strong>{0}</strong>.", remessaPendente.Cod_Fornecedor) };
+
+                    //VINCULA O USUARIO A PENDENCIA
+                    sQuery = @"UPDATE gar_remessa_lista SET Id_Usr = :Id_Usr WHERE Id = :Id";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id_Usr, remessaPendente.Id });
+
+                    return new DmlStatus { Sucesso = false, Mensagem = string.Format("Você tem uma remessa pendente para o fornecedor <strong>{0}</strong>.", remessaPendente.Cod_Fornecedor) };
+
+
+                }
+                conn.Close();
+            }
+            return new DmlStatus { Sucesso = true, Mensagem = "", Id = 0 };
         }
 
         #endregion Remessa
