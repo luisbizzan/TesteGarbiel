@@ -66,6 +66,7 @@ namespace FWLog.Services.Services
             StringBuilder where = new StringBuilder();
             where.Append("WHERE TRANSPORTADORA = 'S' ");
             where.Append("AND AD_INTEGRARFWLOG = '1' ");
+            //where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET 0 ROWS FETCH NEXT 5000 ROWS ONLY ");
 
             List<TransportadoraIntegracao> transportadorasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<TransportadoraIntegracao>(where: where.ToString());
 
