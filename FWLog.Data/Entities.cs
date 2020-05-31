@@ -96,6 +96,7 @@ namespace FWLog.Data
         public virtual DbSet<DiasDaSemana> DiasDaSemana { get; set; }
         public virtual DbSet<CentenaVolume> CentenaVolume { get; set; }
         public virtual DbSet<LoteVolume> LoteVolume { get; set; }
+        public virtual DbSet<CaixaRecusa> CaixaRecusa { get; set; }
 
         public int SaveChangesWithoutLog()
         {

@@ -31,10 +31,10 @@ namespace FWLog.Services.Services
             }
 
             StringBuilder inner = new StringBuilder();
-            inner.Append("INNER JOIN TGFCPL ON TGFPAR.CODPARC = TGFCPL.CODPARC ");
-            inner.Append("INNER JOIN TSIEND ON TGFCPL.CODENDENTREGA = TSIEND.CODEND ");
-            inner.Append("INNER JOIN TSICID ON TGFCPL.CODCIDENTREGA = TSICID.CODCID ");
-            inner.Append("INNER JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF ");
+            inner.Append("LEFT JOIN TGFCPL ON TGFPAR.CODPARC = TGFCPL.CODPARC ");
+            inner.Append("LEFT JOIN TSIEND ON TGFCPL.CODENDENTREGA = TSIEND.CODEND ");
+            inner.Append("LEFT JOIN TSICID ON TGFCPL.CODCIDENTREGA = TSICID.CODCID ");
+            inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF ");
 
             StringBuilder where = new StringBuilder();
             where.Append("WHERE TGFPAR.CLIENTE = 'S' ");

@@ -11,26 +11,25 @@
             <button type="button" class="close" data-dismiss="modal">
                 <span aria-hidden="true">×</span>
             </button>
-            <h4 class="modal-title" id="myModalLabel">Nro. Volume: @Model.VolumeNroVolume.ToString().PadLeft(3, '0')</h4>
+            <h4 class="modal-title" id="myModalLabel">Pedido: @Model.PedidoNro - Volume: @Model.VolumeNroVolume.ToString().PadLeft(3, '0')</h4>
         </div>
         <div class="modal-body">
             <div class="row">
-                <h2>Dados Pedido</h2>
                 <div class="tab-content col-xs-12" id="myTabContent">
                     <div class="informacoes">
                         <div class="row" style="margin-bottom:4px;">
                             <div class="col-xs-6 col-sm-6 col-lg-6">
-                                @Html.LabelFor(m => m.PedidoNro): @Model.PedidoNro
+                                @Html.LabelFor(m => m.PedidoCodigoIntegracao): @Model.PedidoCodigoIntegracao
                             </div>
                             <div class="col-xs-6 col-sm-6 col-lg-6">
                                 @Html.LabelFor(m => m.PedidoVendaStatus): @Model.PedidoVendaStatus
                             </div>
                         </div>
                         <div class="row" style="margin-bottom:4px;">
-                            <div class="col-xs-6 col-sm-6 col-lg-6">
-                                @Html.LabelFor(m => m.PedidoCodigoIntegracao): @Model.PedidoCodigoIntegracao
+                            <div class="col-xs-12 col-sm-6 col-lg-6">
+                                @Html.LabelFor(m => m.PedidoPagamentoDescricaoIntegracao): @Model.PedidoPagamentoDescricaoIntegracao
                             </div>
-                            <div class="col-xs-6 col-sm-6 col-lg-6">
+                            <div class="col-xs-12 col-sm-6 col-lg-6">
                                 @Html.LabelFor(m => m.PedidoDataCriacao): @Model.PedidoDataCriacao.ToString("dd/MM/yyyy HH:mm")
                             </div>
                         </div>
@@ -46,20 +45,17 @@
                             <div class="col-xs-12 col-sm-6 col-lg-6">
                                 @Html.LabelFor(m => m.PedidoRepresentante): @Model.PedidoRepresentante
                             </div>
-                            <div class="col-xs-12 col-sm-6 col-lg-6">
-                                @Html.LabelFor(m => m.PedidoPagamentoDescricaoIntegracao): @Model.PedidoPagamentoDescricaoIntegracao
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <h2>Dados Volume</h2>
+                <h2>Volume</h2>
                 <div class="tab-content col-xs-12" id="myTabContent">
                     <div class="informacoes">
                         <div class="row" style="margin-bottom:4px;">
                             <div class="col-xs-4 col-sm-4 col-lg-4">
-                                @Html.LabelFor(m => m.VolumeNroCentena): @Model.VolumeNroCentena
+                                @Html.LabelFor(m => m.VolumeNroCentena): @Model.VolumeNroCentena.ToString().PadLeft(4, '0')
                             </div>
                             <div class="col-xs-4 col-sm-4 col-lg-4">
                                 @Html.LabelFor(m => m.VolumeCaixaCubagem): @Model.VolumeCaixaCubagem
@@ -81,10 +77,10 @@
                         </div>
                         <div class="row" style="margin-bottom:4px;">
                             <div class="col-xs-4 col-sm-4 col-lg-4">
-                                @Html.LabelFor(m => m.VolumeCorredorInicio): @Model.VolumeCorredorInicio
+                                @Html.LabelFor(m => m.VolumeCorredorInicio): @Model.VolumeCorredorInicio.ToString().PadLeft(2, '0')
                             </div>
                             <div class="col-xs-4 col-sm-4 col-lg-4">
-                                @Html.LabelFor(m => m.VolumeCorredorFim): @Model.VolumeCorredorFim
+                                @Html.LabelFor(m => m.VolumeCorredorFim): @Model.VolumeCorredorFim.ToString().PadLeft(2, '0')
                             </div>
                         </div>
                         <div class="row" style="margin-bottom:4px;">
@@ -98,27 +94,17 @@
                                 @Html.LabelFor(m => m.VolumeEnderecoArmazTransportadora): @Model.VolumeEnderecoArmazTransportadora
                             </div>
                         </div>
-                        <div class="row" style="margin-bottom:4px;">
-                            <div class="col-xs-4 col-sm-4 col-lg-4">
-                                @Html.LabelFor(m => m.VolumeUsuarioInstalacaoDOCA): @Model.VolumeUsuarioInstalacaoDOCA
-                            </div>
-                            <div class="col-xs-4 col-sm-4 col-lg-4">
-                                @Html.LabelFor(m => m.VolumeDataHoraInstalacaoDOCA): @(Model.VolumeDataHoraInstalacaoDOCA != null ? Model.VolumeDataHoraInstalacaoDOCA.Value.ToString("dd/MM/yyyy HH:mm") : null)
-                            </div>
-                            <div class="col-xs-4 col-sm-4 col-lg-4">
-                                @Html.LabelFor(m => m.VolumeDataHoraRemocaoVolume): @(Model.VolumeDataHoraRemocaoVolume != null ? Model.VolumeDataHoraRemocaoVolume.Value.ToString("dd/MM/yyyy HH:mm") : null)
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <h2>Dados Produtos</h2>
+                <h2>Produtos</h2>
                 <div class="col-xs-12">
                     <table id="dataTablePedidoVendaModal" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
                         <thead>
                             <tr>
                                 <th>@Html.DisplayNameFor(m => m.ListaProdutos.FirstOrDefault().ProdutoReferencia)</th>
+                                <th>@Html.DisplayNameFor(m => m.ListaProdutos.FirstOrDefault().CodigoEnderecoPicking)</th>
                                 <th>@Html.DisplayNameFor(m => m.ListaProdutos.FirstOrDefault().QuantidadeSeparar)</th>
                                 <th>@Html.DisplayNameFor(m => m.ListaProdutos.FirstOrDefault().QuantidadeSeparada)</th>
                                 <th>@Html.DisplayNameFor(m => m.ListaProdutos.FirstOrDefault().DataHoraInicioSeparacao)</th>
@@ -134,6 +120,7 @@
                                     <tbody>
                                         <tr>
                                             <td>@item.ProdutoReferencia</td>
+                                            <td>@item.CodigoEnderecoPicking</td>
                                             <td>@item.QuantidadeSeparar</td>
                                             <td>@item.QuantidadeSeparada</td>
                                             <td>@(item.DataHoraInicioSeparacao.HasValue ? item.DataHoraInicioSeparacao.Value.ToString("dd/MM/yyyy HH:mm") : null)</td>

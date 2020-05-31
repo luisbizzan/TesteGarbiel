@@ -15,7 +15,7 @@ namespace FWLog.Data.Models.DataTablesCtx
         [Display(Name = "Transportadora")]
         public string PedidoTransportadora { get; set; }
 
-        [Display(Name = "Cód. Integração Pedido")]
+        [Display(Name = "Cód. Sankhya")]
         public int PedidoCodigoIntegracao { get; set; }
 
         [Display(Name = "Representante")]
@@ -42,10 +42,10 @@ namespace FWLog.Data.Models.DataTablesCtx
         [Display(Name = "Volume")]
         public int VolumeNroVolume { get; set; }
 
-        [Display(Name = "Número Centena")]
+        [Display(Name = "Centena")]
         public int VolumeNroCentena { get; set; }
 
-        [Display(Name = "Cx. Cubagem")]
+        [Display(Name = "Cx. Robô")]
         public string VolumeCaixaCubagem { get; set; }
 
         [Display(Name = "Cubagem")]
@@ -60,7 +60,7 @@ namespace FWLog.Data.Models.DataTablesCtx
         [Display(Name = "Corredor Fim")]
         public int VolumeCorredorFim { get; set; }
 
-        [Display(Name = "Cx. Volume")]
+        [Display(Name = "Cx. Separação")]
         public string VolumeCaixaVolume { get; set; }
 
         [Display(Name = "Status")]
@@ -91,6 +91,9 @@ namespace FWLog.Data.Models.DataTablesCtx
     {
         [Display(Name = "Referência")]
         public string ProdutoReferencia { get; set; }
+
+        [Display(Name = "Endereço Picking")]
+        public string CodigoEnderecoPicking { get; set; }
 
         [Display(Name = "Planejado")]
         public int QuantidadeSeparar { get; set; }

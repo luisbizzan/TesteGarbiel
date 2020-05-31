@@ -374,6 +374,24 @@ namespace FWLog.AspNet.Identity
             }
         }
 
+        public class CaixaRecusa : PermissionGroupBuildItem
+        {
+            public const string Listar = "CaixaRecusaListar";
+            public const string Cadastrar = "CaixaRecusaCadastrar";
+            public const string Editar = "CaixaRecusaEditar";
+            public const string Excluir = "CaixaRecusaExcluir";
+            public const string Visualizar = "CaixaRecusaVisualizar";
+
+            public CaixaRecusa() : base(Display.FromString("Separação - Caixas de Recusa"))
+            {
+                Register(Listar, Display.FromString("Listar Caixas Recusa"));
+                Register(Cadastrar, Display.FromString("Cadastrar Caixa Recusa"));
+                Register(Editar, Display.FromString("Editar Caixa Recusa"));
+                Register(Excluir, Display.FromString("Excluir Caixa Recusa"));
+                Register(Visualizar, Display.FromString("Visualizar Caixa Recusa"));
+            }
+        }
+
         public class Armazenagem : PermissionGroupBuildItem
         {
             public const string ImprimirEtiquetaLocacao = "ImprimirEtiquetaLocacao";

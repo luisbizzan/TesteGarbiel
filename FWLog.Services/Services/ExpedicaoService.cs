@@ -1438,6 +1438,7 @@ namespace FWLog.Services.Services
             retorno.ListaProdutos = pedidoVendaVolume.PedidoVendaProdutos.Select(pvp => new DetalhesPedidoProdutoVolume
             {
                 ProdutoReferencia = pvp.Produto.Referencia,
+                CodigoEnderecoPicking = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(pvp.IdProduto, idEmpresa)?.EnderecoArmazenagem?.Codigo,
                 QuantidadeSeparar = pvp.QtdSeparar,
                 QuantidadeSeparada = pvp.QtdSeparada.GetValueOrDefault(),
                 DataHoraInicioSeparacao = pvp.DataHoraInicioSeparacao,

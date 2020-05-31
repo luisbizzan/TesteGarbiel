@@ -858,106 +858,113 @@ namespace FWLog.Services.Services
 
             foreach (var pedido in listaPedidos) //Percorre a lista de pedidos.
             {
-                var idPedidoVenda = await _pedidoVendaService.Salvar(pedido);
-
-                if (idPedidoVenda == 0)
-                    break;
-
-                //Agrupa os itens do pedido por produto. 
-                var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido);
-
-                /*
-                 * Usamos o foreach abaixo para capturar e atualizar o IdGrupoCorredorArmazenagem e IdEnderecoArmazenagem de cada item.
-                 */
-                foreach (var pedidoItem in listaItensDoPedido)
+                try
                 {
-                    //Captura o endereço de picking do produto.
-                    //Posteriormente a lógica deverá ser alterada por ponto de separação.
-                    var produtoEstoqueRepository = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresaPicking(pedidoItem.Produto.IdProduto, idEmpresa);
+                    var idPedidoVenda = await _pedidoVendaService.Salvar(pedido);
 
-                    if (produtoEstoqueRepository == null)
+                    if (idPedidoVenda == 0)
                         break;
 
-                    var enderecoArmazenagemProduto = new ProdutoEstoqueViewModel()
+                    //Agrupa os itens do pedido por produto. 
+                    var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido);
+
+                    /*
+                     * Usamos o foreach abaixo para capturar e atualizar o IdGrupoCorredorArmazenagem e IdEnderecoArmazenagem de cada item.
+                     */
+                    foreach (var pedidoItem in listaItensDoPedido)
                     {
-                        IdProduto = produtoEstoqueRepository.IdProduto,
-                        IdEmpresa = produtoEstoqueRepository.IdEmpresa,
-                        IdEnderecoArmazenagem = produtoEstoqueRepository.IdEnderecoArmazenagem,
-                        Saldo = produtoEstoqueRepository.Saldo,
-                        IdProdutoEstoqueStatus = produtoEstoqueRepository.IdProdutoEstoqueStatus,
-                        EnderecoArmazenagem = produtoEstoqueRepository.EnderecoArmazenagem
-                    };
+                        //Captura o endereço de picking do produto.
+                        //Posteriormente a lógica deverá ser alterada por ponto de separação.
+                        var produtoEstoqueRepository = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresaPicking(pedidoItem.Produto.IdProduto, idEmpresa);
 
-                    //Captura o grupo de corredores do item do pedido.
-                    var grupoCorredorArmazenagemItemPedido = await BuscarGrupoCorredorArmazenagemItemPedido(enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
+                        if (produtoEstoqueRepository == null)
+                            break;
 
-                    if (grupoCorredorArmazenagemItemPedido == null)
-                        break;
-
-                    //Captura o indice do item na lista e atualizo os dados.
-                    int index = listaItensDoPedido.IndexOf(pedidoItem);
-                    listaItensDoPedido[index].GrupoCorredorArmazenagem = grupoCorredorArmazenagemItemPedido;
-                    listaItensDoPedido[index].EnderecoSeparacao = enderecoArmazenagemProduto;
-                }
-
-                int quantidadeVolume = 0; //Variável utilizada para saber o número e a quantidade de volumes do pedido.
-
-                /*
-                 * No foreach abaixo, capturamos quais e a quantidade de caixas (volumes) que serão utilizados.
-                 * Além disso, através do método Cubicagem, saberemos a caixa de cada produto. 
-                 * É importante saber que o processo é feito por corredor.
-                 */
-                foreach (var itemCorredorArmazenagem in grupoCorredorArmazenagem)
-                {
-                    //Captura o corredor do item.
-                    var listaItensDoPedidoPorCorredor = listaItensDoPedido.Where(x => x.GrupoCorredorArmazenagem.IdGrupoCorredorArmazenagem == itemCorredorArmazenagem.IdGrupoCorredorArmazenagem).ToList();
-
-                    //Se não houver nenhum item para o corredor, vai para o próximo.
-                    if (listaItensDoPedidoPorCorredor.Count != 0)
-                    {
-                        //Captura os itens do pedido com as caixas em que cada um deve ir.
-                        //A partir do método cubicagem, existem chamadas para vários outros.
-                        var listaItensDoPedidoDividido = await Cubagem(listaItensDoPedidoPorCorredor, idEmpresa);
-
-                        if (listaItensDoPedidoDividido.Count > 0)
+                        var enderecoArmazenagemProduto = new ProdutoEstoqueViewModel()
                         {
-                            //Busca os volumes que serão utilizados.
-                            var listaVolumes = await BuscarCubagemVolumes(pedido.IdEmpresa, listaItensDoPedidoDividido);
+                            IdProduto = produtoEstoqueRepository.IdProduto,
+                            IdEmpresa = produtoEstoqueRepository.IdEmpresa,
+                            IdEnderecoArmazenagem = produtoEstoqueRepository.IdEnderecoArmazenagem,
+                            Saldo = produtoEstoqueRepository.Saldo,
+                            IdProdutoEstoqueStatus = produtoEstoqueRepository.IdProdutoEstoqueStatus,
+                            EnderecoArmazenagem = produtoEstoqueRepository.EnderecoArmazenagem
+                        };
 
-                            foreach (var itemVolume in listaVolumes)
+                        //Captura o grupo de corredores do item do pedido.
+                        var grupoCorredorArmazenagemItemPedido = await BuscarGrupoCorredorArmazenagemItemPedido(enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
+
+                        if (grupoCorredorArmazenagemItemPedido == null)
+                            break;
+
+                        //Captura o indice do item na lista e atualizo os dados.
+                        int index = listaItensDoPedido.IndexOf(pedidoItem);
+                        listaItensDoPedido[index].GrupoCorredorArmazenagem = grupoCorredorArmazenagemItemPedido;
+                        listaItensDoPedido[index].EnderecoSeparacao = enderecoArmazenagemProduto;
+                    }
+
+                    int quantidadeVolume = 0; //Variável utilizada para saber o número e a quantidade de volumes do pedido.
+
+                    /*
+                     * No foreach abaixo, capturamos quais e a quantidade de caixas (volumes) que serão utilizados.
+                     * Além disso, através do método Cubicagem, saberemos a caixa de cada produto. 
+                     * É importante saber que o processo é feito por corredor.
+                     */
+                    foreach (var itemCorredorArmazenagem in grupoCorredorArmazenagem)
+                    {
+                        //Captura o corredor do item.
+                        var listaItensDoPedidoPorCorredor = listaItensDoPedido.Where(x => x.GrupoCorredorArmazenagem.IdGrupoCorredorArmazenagem == itemCorredorArmazenagem.IdGrupoCorredorArmazenagem).ToList();
+
+                        //Se não houver nenhum item para o corredor, vai para o próximo.
+                        if (listaItensDoPedidoPorCorredor.Count != 0)
+                        {
+                            //Captura os itens do pedido com as caixas em que cada um deve ir.
+                            //A partir do método cubicagem, existem chamadas para vários outros.
+                            var listaItensDoPedidoDividido = await Cubagem(listaItensDoPedidoPorCorredor, idEmpresa);
+
+                            if (listaItensDoPedidoDividido.Count > 0)
                             {
-                                quantidadeVolume++;
+                                //Busca os volumes que serão utilizados.
+                                var listaVolumes = await BuscarCubagemVolumes(pedido.IdEmpresa, listaItensDoPedidoDividido);
 
-                                //Salva PedidoVendaVolume.
-                                var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
-
-                                if (idPedidoVendaVolume == 0)
-                                    break;
-
-                                foreach (var item in listaItensDoPedidoDividido)
+                                foreach (var itemVolume in listaVolumes)
                                 {
-                                    //Salva PedidoVendaproduto.
-                                    await _pedidoVendaProdutoService.Salvar(idPedidoVenda, idPedidoVendaVolume, item);
+                                    quantidadeVolume++;
+
+                                    //Salva PedidoVendaVolume.
+                                    var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
+
+                                    if (idPedidoVendaVolume == 0)
+                                        break;
+
+                                    foreach (var item in listaItensDoPedidoDividido)
+                                    {
+                                        //Salva PedidoVendaproduto.
+                                        await _pedidoVendaProdutoService.Salvar(idPedidoVenda, idPedidoVendaVolume, item);
+                                    }
+
+                                    //Captura o primeiro corredor de separação.
+                                    int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
+
+                                    //Imprime a etiqueta de separação.
+                                    await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, itemCorredorArmazenagem, pedido, idPedidoVendaVolume, corredorInicioSeparacao);
                                 }
 
-                                //Captura o primeiro corredor de separação.
-                                int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
-
-                                //Imprime a etiqueta de separação.
-                                await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, itemCorredorArmazenagem, pedido, idPedidoVendaVolume, corredorInicioSeparacao);
+                                //Atualiza a quantidade de volumes na PedidoVenda.
+                                await _pedidoVendaService.AtualizarQuantidadeVolume(idPedidoVenda, quantidadeVolume);
                             }
-
-                            //Atualiza a quantidade de volumes na PedidoVenda.
-                            await _pedidoVendaService.AtualizarQuantidadeVolume(idPedidoVenda, quantidadeVolume);
                         }
                     }
+
+                    //Atualiza o status do PedidoVenda para Enviado Separação.
+                    await _pedidoVendaService.AtualizarStatus(idPedidoVenda, PedidoVendaStatusEnum.EnviadoSeparacao);
+
+                    //Atualiza o status do Pedido para Enviado Separação.
+                    await _pedidoService.AtualizarStatus(pedido.IdPedido, PedidoVendaStatusEnum.EnviadoSeparacao);
                 }
-
-                //Atualiza o status do PedidoVenda para Enviado Separação.
-                await _pedidoVendaService.AtualizarStatus(idPedidoVenda, PedidoVendaStatusEnum.EnviadoSeparacao);
-
-                //Atualiza o status do Pedido para Enviado Separação.
-                await _pedidoService.AtualizarStatus(pedido.IdPedido, PedidoVendaStatusEnum.EnviadoSeparacao);
+                catch (Exception exception)
+                {
+                    _log.Error($"Erro dividindo pedido id {pedido.IdPedido} para separação", exception);
+                }
             }
         }
 
@@ -1057,15 +1064,6 @@ namespace FWLog.Services.Services
         {
             List<PedidoItemViewModel> listaItensDoPedidoRetorno = new List<PedidoItemViewModel>();
 
-            /*
-             * Lista dos endereços e corredores com seus respectivos produtos.
-             * São considerados endereços de separação aqueles com a flag Ponto de Separação (IsPontoSeparacao).
-             * Inicialmente, estou capturando somente endereços de Picking pois, considerar pontos de separação será feito numa próxima versão.
-             * Posteriormente, descomentar a linha listaEnderecosSeparacao(IsPicking == true).
-            */
-            //var listaEnderecosSeparacao = _unitOfWork.ProdutoEstoqueRepository.ObterProdutoEstoquePorEmpresa(pedido.IdEmpresa).Where(x => x.EnderecoArmazenagem.IsPontoSeparacao == true && x.EnderecoArmazenagem.Ativo == true).ToList();
-            var listaEnderecosSeparacao = _unitOfWork.ProdutoEstoqueRepository.ObterProdutoEstoquePorEmpresa(idEmpresa).Where(x => x.EnderecoArmazenagem.IsPicking == true && x.EnderecoArmazenagem.Ativo == true).ToList();
-
             List<CaixaViewModel> listaCaixas = new List<CaixaViewModel>();
 
             //Lista das caixas ATIVAS cadastradas no sistema.
@@ -1094,14 +1092,14 @@ namespace FWLog.Services.Services
             //Inicializa a lista do ranking de caixas.
             listaRankingCaixas = new List<CaixaViewModel>();
 
-            listaItensDoPedidoRetorno = await BuscarPesoCubagemItensPedido(listaItensDoPedido, listaEnderecosSeparacao, listaCaixas);
+            listaItensDoPedidoRetorno = await BuscarPesoCubagemItensPedido(listaItensDoPedido, listaCaixas, idEmpresa);
 
             if (listaItensDoPedidoRetorno.Count > 0)
             {
                 listaItensDoPedidoRetorno = await CalcularCubagemVolume(listaItensDoPedidoRetorno);
 
                 //Agrupa os itens por caixa e agrupamento.
-                listaItensDoPedidoRetorno = listaItensDoPedidoRetorno.OrderBy(x => x.CaixaEscolhida.IdCaixa).OrderBy(y => y.Agrupador).ToList();
+                listaItensDoPedidoRetorno = listaItensDoPedidoRetorno.OrderBy(x => x.CaixaEscolhida).OrderBy(y => y.Agrupador).ToList();
             }
 
             return listaItensDoPedidoRetorno;
@@ -1115,52 +1113,48 @@ namespace FWLog.Services.Services
         /// <param name="listaPedidoAgrupado"></param>
         /// <param name="listaEnderecosSeparacao"></param>
         /// <returns></returns>
-        public async Task<List<PedidoItemViewModel>> BuscarPesoCubagemItensPedido(List<PedidoItemViewModel> listaItensDoPedido, List<ProdutoEstoque> listaEnderecosSeparacao, List<CaixaViewModel> listaCaixas) //getInfoIt
+        public async Task<List<PedidoItemViewModel>> BuscarPesoCubagemItensPedido(List<PedidoItemViewModel> listaItensDoPedido, List<CaixaViewModel> listaCaixas, long idEmpresa) //getInfoIt
         {
             var listaItensDoPedidoCubicados = new List<PedidoItemViewModel>();
 
             for (int i = 0; i < listaItensDoPedido.Count; i++)
             {
-                /*Busca todos os endereços de separação do produto.
-                 * Como foi dito anteriormente, nessa primeira versão, vamos capturar somente o endereço de picking, deixando de ser uma lista.
-                 * Posteriormente, substituir enderecoArmazenagemPicking por listaEnderecosSeparacaoDoProduto.
-                 */
-                //var listaEnderecosSeparacaoDoProduto = listaEnderecosSeparacao.Where(x => x.IdProduto == listaItensDoPedidoAgrupadaPorProduto[i].Produto.IdProduto).ToList();
-                var enderecoArmazenagemPicking = listaEnderecosSeparacao.Where(x => x.IdProduto == listaItensDoPedido[i].Produto.IdProduto).FirstOrDefault();
-
-                //Aqui é feito uma verificação para ignorar itens que estão sem localização.
-                //O motivo é que foi dito na reunião com Veronezzi e Beatriz que a chance disso acontecer é pequena, pois ao cadastrar um produto será informado um endereço de picking para ele.
-                //Mantive a verificação comentada pois, se tiver algum erro perante a isso basta descomentar.
-                //if (listaEnderecosSeparacaoDoProduto == null)
-                //    break;
+                var produtosSeparados = await BuscarLocalProdutoSeparacao(listaItensDoPedido[i], idEmpresa);
 
                 decimal? larguraProduto = listaItensDoPedido[i].Produto.Largura;
                 decimal? comprimentoProduto = listaItensDoPedido[i].Produto.Comprimento;
                 decimal? alturaProduto = listaItensDoPedido[i].Produto.Altura;
 
-                listaItensDoPedidoCubicados.Add(new PedidoItemViewModel()
+                var caixasQuePodemSerUsadas = await CaixasQuePodemSerUtilizadas(listaItensDoPedido[i].Produto, listaCaixas, idEmpresa);
+
+                foreach (var item in produtosSeparados)
                 {
-                    Produto = new ProdutoViewModel()
+                    listaItensDoPedidoCubicados.Add(new PedidoItemViewModel()
                     {
-                        IdProduto = listaItensDoPedido[i].Produto.IdProduto,
-                        IdEnderecoArmazenagem = enderecoArmazenagemPicking.IdEnderecoArmazenagem,
-                        CodigoEnderecoArmazenagem = enderecoArmazenagemPicking.EnderecoArmazenagem.Codigo,
-                        CubagemProduto = (larguraProduto * comprimentoProduto) * alturaProduto,
-                        PesoBruto = listaItensDoPedido[i].Produto.PesoBruto,
-                        MultiploVenda = listaItensDoPedido[i].Produto.MultiploVenda,
-                        Altura = alturaProduto,
-                        Largura = larguraProduto,
-                        Comprimento = comprimentoProduto
-                        //IsEmbalagemFornecedor (posteriormente, capturar o valor da entidade produto).
-                        //IsEmbalagemFornecedorVolume (posteriormente, capturar o valor da entidade produto).
-                    },
-                    Agrupador = 0,
-                    CaixaEscolhida = null,
-                    Quantidade = listaItensDoPedido[i].Quantidade,
-                    Caixa = await CaixasQuePodemSerUtilizadas(listaItensDoPedido[i].Produto, listaCaixas),
-                    EnderecoSeparacao = listaItensDoPedido[i].EnderecoSeparacao,
-                    GrupoCorredorArmazenagem = listaItensDoPedido[i].GrupoCorredorArmazenagem
-                });
+                        Produto = new ProdutoViewModel()
+                        {
+                            IdProduto = listaItensDoPedido[i].Produto.IdProduto,
+                            IdEnderecoArmazenagem = item.IdEnderecoArmazenagem,
+                            CodigoEnderecoArmazenagem = item.CodigoEndereco,
+                            CubagemProduto = (larguraProduto * comprimentoProduto) * alturaProduto,
+                            PesoBruto = listaItensDoPedido[i].Produto.PesoBruto,
+                            MultiploVenda = listaItensDoPedido[i].Produto.MultiploVenda,
+                            Altura = alturaProduto,
+                            Largura = larguraProduto,
+                            Comprimento = comprimentoProduto,
+                            IsEmbalagemFornecedor = listaItensDoPedido[i].Produto.IsEmbalagemFornecedor,
+                            IsEmbalagemFornecedorVolume = listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume,
+                        },
+                        Agrupador = 0,
+                        CaixaEscolhida = null,
+                        Quantidade = item.Quantidade,
+                        Caixa = caixasQuePodemSerUsadas,
+                        EnderecoSeparacao = listaItensDoPedido[i].EnderecoSeparacao,
+                        GrupoCorredorArmazenagem = listaItensDoPedido[i].GrupoCorredorArmazenagem,
+                        IsSeparacaoNoPikcing = item.IsSeparacaoNoPikcing
+                    });
+                }
+                
             }
 
             //Classifica a listaRankingCaixas por Quantidade
@@ -1169,29 +1163,267 @@ namespace FWLog.Services.Services
             return listaItensDoPedidoCubicados;
         }
 
-        /// <summary>
-        /// Analisa as caixas de recusa e inverte o resultado para agregar aos itens as caixas que PODEM ser utilizadas
-        /// </summary>
-        /// <param name="referencia"></param>
-        /// <param name="ListaCaixas"></param>
-        /// <param name="LarguraAlturaComprimento"></param>
-        /// <returns></returns>
-        public async Task<List<CaixaViewModel>> CaixasQuePodemSerUtilizadas(ProdutoViewModel produto, List<CaixaViewModel> listaCaixas) //getCaixasOK
+        public async Task<List<LoteProdutoEnderecoViewModel>> BuscarLocalProdutoSeparacao(PedidoItemViewModel item, long idEmpresa)
+        {
+            int quantidadePedido = item.Quantidade;
+            var enderecoPicking = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresaPicking(item.Produto.IdProduto, idEmpresa);
+            LoteProdutoEndereco pontoSeparacaoEscolhido;
+            bool encontrou = false;
+            List<LoteProdutoEnderecoViewModel> listaProdutoEndereco = new List<LoteProdutoEnderecoViewModel>();
+                 
+            //Aqui é feito uma verificação para ignorar itens que estão sem localização.
+            //O motivo é que foi dito na reunião com Veronezzi e Beatriz que a chance disso acontecer é pequena, pois ao cadastrar um produto será informado um endereço de picking para ele.
+            //Mantive a verificação comentada pois, se tiver algum erro perante a isso basta descomentar.
+            //if (enderecoPicking == null)
+            //    break;
+
+            var listaEnderecoSeparacao = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorProdutoComLote(item.Produto.IdProduto, idEmpresa)
+                .OrderBy(x => x.DataHoraInstalacao);
+
+            //Verifica se o endereço de Picking é controlado por FIFO.
+            if (enderecoPicking.EnderecoArmazenagem.IsFifo)
+            {
+                //Primeiro caso: se a quantidade do pedido for igual a quantidade de pelo menos um endereço de separação.
+                if (listaEnderecoSeparacao.Any(x => x.Quantidade == quantidadePedido))
+                {
+                    pontoSeparacaoEscolhido = listaEnderecoSeparacao.Where(x => x.Quantidade == quantidadePedido).OrderBy(o => o.DataHoraInstalacao).FirstOrDefault();
+                    
+                    if (pontoSeparacaoEscolhido != null)
+                    {
+                        listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
+                        {
+                           Quantidade = quantidadePedido,
+                           IdEnderecoArmazenagem = pontoSeparacaoEscolhido.IdEnderecoArmazenagem,
+                            CodigoEndereco = pontoSeparacaoEscolhido.EnderecoArmazenagem.Codigo,
+                            IsSeparacaoNoPikcing = false
+                        }); 
+                        
+                        encontrou = true;
+                    }
+                }
+
+                List<int> listaQuantidadeEnderecoSeparacao = new List<int>();
+
+                foreach (var pontoSeparacao in listaEnderecoSeparacao)
+                {
+                    listaQuantidadeEnderecoSeparacao.Add(pontoSeparacao.Quantidade);
+                }
+
+                //Segundo caso: se a quantidade do pedido for igual a SOMA das quantidades dos de separação.
+                if (encontrou == false)
+                {
+                    var endecosSomados = BuscarEnderecoSomado(listaQuantidadeEnderecoSeparacao, quantidadePedido, false);
+
+                    if (endecosSomados != null)
+                    {
+                        pontoSeparacaoEscolhido = listaEnderecoSeparacao.Where(x => x.Quantidade == 1).OrderBy(o => o.DataHoraInstalacao).FirstOrDefault();
+
+                        listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
+                        {
+                            Quantidade = pontoSeparacaoEscolhido.Quantidade,
+                            IdEnderecoArmazenagem = pontoSeparacaoEscolhido.IdEnderecoArmazenagem,
+                            CodigoEndereco = pontoSeparacaoEscolhido.EnderecoArmazenagem.Codigo,
+                            IsSeparacaoNoPikcing = false
+                        });
+
+                        encontrou = true;
+                    }
+                }
+
+                //Terceiro caso: se a quantidade do pedido for diferente da soma de N endereços, captura o maior número de endereços de separação.
+                if (encontrou == false)
+                {
+                    foreach (var pontoSeparacao in listaEnderecoSeparacao)
+                    {
+                        listaQuantidadeEnderecoSeparacao.Add(pontoSeparacao.Quantidade);
+                    }
+
+                    var endecosSomados = BuscarEnderecoSomado(listaQuantidadeEnderecoSeparacao, quantidadePedido, false);
+
+                    if (endecosSomados != null)
+                    {
+                        pontoSeparacaoEscolhido = listaEnderecoSeparacao.Where(x => x.Quantidade == 1).OrderBy(o => o.DataHoraInstalacao).FirstOrDefault();
+
+                        listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
+                        {
+                            Quantidade = pontoSeparacaoEscolhido.Quantidade,
+                            IdEnderecoArmazenagem = pontoSeparacaoEscolhido.IdEnderecoArmazenagem,
+                            CodigoEndereco = pontoSeparacaoEscolhido.EnderecoArmazenagem.Codigo,
+                            IsSeparacaoNoPikcing = false
+                        });
+
+                        encontrou = true;
+                    }
+                }
+
+                var quantidadeFaltante = quantidadePedido - listaProdutoEndereco.Sum(x => x.Quantidade);
+
+                //Captura o restante do picking.
+                if (quantidadeFaltante > 0)
+                {
+                    listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
+                    {
+                        Quantidade = quantidadeFaltante,
+                        IdEnderecoArmazenagem = enderecoPicking.IdEnderecoArmazenagem.Value,
+                        CodigoEndereco = enderecoPicking.EnderecoArmazenagem.Codigo,
+                        IsSeparacaoNoPikcing = true
+                    });
+                }
+            }
+            else
+            {
+                //Primeiro caso: se a quantidade do pedido for igual a quantidade de pelo menos um endereço de separação.
+                if (listaEnderecoSeparacao.Any(x => x.Quantidade == quantidadePedido))
+                {
+                    pontoSeparacaoEscolhido = listaEnderecoSeparacao.Where(x => x.Quantidade == quantidadePedido).OrderBy(o => o.DataHoraInstalacao).FirstOrDefault();
+
+                    if (pontoSeparacaoEscolhido != null)
+                    {
+                        listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
+                        {
+                            Quantidade = quantidadePedido,
+                            IdEnderecoArmazenagem = pontoSeparacaoEscolhido.IdEnderecoArmazenagem,
+                            CodigoEndereco = pontoSeparacaoEscolhido.EnderecoArmazenagem.Codigo,
+                            IsSeparacaoNoPikcing = false
+                        });
+                    }
+                }
+                else
+                {
+                    listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
+                    {
+                        Quantidade = quantidadePedido,
+                        IdEnderecoArmazenagem = enderecoPicking.IdEnderecoArmazenagem.Value,
+                        CodigoEndereco = enderecoPicking.EnderecoArmazenagem.Codigo,
+                        IsSeparacaoNoPikcing = true
+                    });
+                }
+            }
+
+            return listaProdutoEndereco;
+        }
+
+        public List<int[]> BuscarEnderecoSomado(List<int> listaQuantidadeEnderecoSeparacao, int objetivo, bool buscaBinaria)
+        {
+            var array = listaQuantidadeEnderecoSeparacao.ToArray();
+
+            int soma = 0;
+
+            // a pilha pode ser pré-alocada
+            int tampilha;
+            for (tampilha = 0; tampilha < array.Length; tampilha++)
+            {
+                soma += array[tampilha];
+                if (soma > objetivo)
+                    break;
+            }
+
+            var pilha = new Stack<int>(tampilha);
+
+            var combos = new List<int[]>(array.Length * array.Length);
+            soma = 0;
+            var idx = array.Length - 1;
+            pilha.Push(idx);
+            soma += array[idx];
+
+            while (pilha.Count > 0)
+            {
+                if (soma == objetivo)
+                {
+                    combos.Add(pilha.Reverse().ToArray());
+                    while (pilha.Count > 0)
+                    {
+                        idx = pilha.Pop();
+                        soma -= array[idx];
+                        idx--;
+                        if (idx >= 0)
+                        {
+                            pilha.Push(idx);
+                            soma += array[idx];
+                            break;
+                        }
+                    }
+                }
+                else if (soma < objetivo)
+                {
+                    var top = pilha.Peek() - 1;
+                    idx = buscaBinaria ? BuscaBinaria(array, objetivo - soma, 0, top) : BuscaComRegressao(array, objetivo - soma, 0, top);
+                    if (idx < 0) idx = ~idx - 1;
+                    if (idx >= 0 && idx <= top && array[idx] + soma <= objetivo)
+                    {
+                        pilha.Push(idx);
+                        soma += array[idx];
+                    }
+                    else
+                    {
+                        while (pilha.Count > 0)
+                        {
+                            idx = pilha.Pop();
+                            soma -= array[idx];
+                            idx--;
+                            if (idx >= 0)
+                            {
+                                pilha.Push(idx);
+                                soma += array[idx];
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return combos;
+        }
+
+        private static int BuscaBinaria(int[] array, int valor, int a, int b)
+        {
+            if (b - a + 1 < 0) return ~a;
+            return Array.BinarySearch(array, a, b - a + 1, valor);
+        }
+
+        public static int BuscaComRegressao(int[] array, int valor, int a, int b)
+        {
+            if (b < a) return ~a;
+
+            var x = a == b ? a : (valor - array[a]) * (b - a) / (array[b] - array[a]);
+            if (x > b) return ~(b + 1);
+            if (x < a) return ~a;
+
+            // a regressão se beneficia da localidade de cache do processador
+            // com as varreduras sequenciais abaixo
+            while (array[x] > valor)
+            {
+                if (x == a) return ~a;
+                x--;
+            }
+            while (array[x] < valor)
+            {
+                x++;
+                if (x > b) return ~(b + 1);
+            }
+            return array[x] == valor ? x : ~x;
+        }
+
+    /// <summary>
+    /// Analisa as caixas de recusa e inverte o resultado para agregar aos itens as caixas que PODEM ser utilizadas
+    /// </summary>
+    /// <param name="referencia"></param>
+    /// <param name="ListaCaixas"></param>
+    /// <param name="LarguraAlturaComprimento"></param>
+    /// <returns></returns>
+    public async Task<List<CaixaViewModel>> CaixasQuePodemSerUtilizadas(ProdutoViewModel produto, List<CaixaViewModel> listaCaixas, long idEmpresa) //getCaixasOK
         {
             List<CaixaViewModel> listaCaixasQuePodemSerUtilizadas = new List<CaixaViewModel>();
+            
+            var caixasRecusa = _unitOfWork.CaixaRecusaRepository.BuscarPorEmpresaProduto(idEmpresa, produto.IdProduto).GroupBy(x => x.IdCaixa);
 
-            /*
-             * Aqui deverá ser implementado a verificação das caixas de recusa. Mas o que é isso?
-             * A caixa de recusas é uma estrutura onde são armazenadas as caixas que um determinado produto NÃO pode utilizar.
-             * Sabendo disso, será necessário executar as seguintes atividades:
-             *  1. Criar a tabela CaixaProdutoRecusa no banco de dados.
-             *  2. Possíveis campos da tabela: IdCaixaProdutoRecusa, IdProduto, IdCaixa
-             *  3. Implementar um CRUD para cadastrar, editar e excluir essas verificações.
-             *  4. Levar em consideração que o mesmo produto pode possuir várias caixas de recusa. 
-             *  5. Depois de criar o CRUD, capturar as caixas de recursa do banco.
-             *  6. Em seguida, remover da listaCaixas o ID das caixas que forem iguais da tabela de recusa.
-             *  7. Caso a lista de recusa seja vazia ou o ID não exista na listaCaixas, vida que segue.
-             * */
+            foreach (var item in caixasRecusa)
+            {
+                var caixa = listaCaixas.Where(x => x.IdCaixa == item.Key).FirstOrDefault();
+
+                if (caixa != null)
+                    listaCaixas.Remove(caixa);
+            }
 
             for (int i = 0; i < listaCaixas.Count; i++)
             {
@@ -1279,7 +1511,7 @@ namespace FWLog.Services.Services
             for (int i = 0; i < listaItensDoPedido.Count; i++)
             {
                 //Para cada item do pedido, se não existir caixa ou for embalagem do fornecedor, vai adicionando o agrupador.
-                if ((listaItensDoPedido[i].Agrupador == 0 && listaItensDoPedido[i].Caixa == null) || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume)
+                if ((listaItensDoPedido[i].Agrupador == 0 && listaItensDoPedido[i].Caixa == null) || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume || listaItensDoPedido[i].IsSeparacaoNoPikcing == false)
                 {
                     listaItensDoPedido[i].Agrupador = agrupador;
                     agrupador++;
@@ -1302,7 +1534,7 @@ namespace FWLog.Services.Services
                      * Se o item já estiver agrupado ou as caixas do item for nulo 
                      * ou se o item for um volume do fornecedor (IsEmbalagemFornecedorVolume).
                      */
-                    if (listaItensDoPedido[i].Agrupador != 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume)
+                    if (listaItensDoPedido[i].Agrupador != 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume || listaItensDoPedido[i].IsSeparacaoNoPikcing == false)
                         break;
 
                     //Verifica se o item cabe na caixa indicada.
@@ -1414,7 +1646,7 @@ namespace FWLog.Services.Services
                     {
                         for (int i = 0; i < listaItensDoPedido.Count; i++)
                         {
-                            if (listaItensDoPedido[i].Agrupador == 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume)
+                            if (listaItensDoPedido[i].Agrupador == 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume || listaItensDoPedido[i].IsSeparacaoNoPikcing == false)
                                 break;
 
                             if (listaItensDoPedido[i].Agrupador == agrupador)
@@ -1596,7 +1828,7 @@ namespace FWLog.Services.Services
         {
             for (int i = 0; i < listaItensDoPedido.Count; i++)
             {
-                if (listaItensDoPedido[i].Agrupador == 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume)
+                if (listaItensDoPedido[i].Agrupador == 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume || listaItensDoPedido[i].IsSeparacaoNoPikcing == false)
                     break;
 
                 if (listaItensDoPedido[i].Agrupador == agrupador)
@@ -1641,7 +1873,7 @@ namespace FWLog.Services.Services
 
                 for (int i = 0; i < listaItensDoPedido.Count; i++)
                 {
-                    if (listaItensDoPedido[i].Agrupador != 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume)
+                    if (listaItensDoPedido[i].Agrupador != 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume || listaItensDoPedido[i].IsSeparacaoNoPikcing == false)
                         break;
 
                     caixaCorrente = await BuscarMaiorCaixa(listaCaixasMaisComum);

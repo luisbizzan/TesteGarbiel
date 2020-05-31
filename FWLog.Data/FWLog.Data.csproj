@@ -104,6 +104,7 @@
     <Compile Include="Models\Application.cs" />
     <Compile Include="Models\ApplicationSession.cs" />
     <Compile Include="Models\Caixa.cs" />
+    <Compile Include="Models\CaixaRecusa.cs" />
     <Compile Include="Models\CentenaVolume.cs" />
     <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\ColetorAplicacao.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="Models\DataTablesCtx\AtividadeEstoqueListaLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\AtividadeEstoqueListaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\CaixaListaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\CaixaRecusaListaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\CorredorImpressoraListaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\DetalhesPedidoVolume.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemTotalPorAlasLinhaTabela.cs" />
@@ -138,6 +140,7 @@
     <Compile Include="Models\DiasDaSemana.cs" />
     <Compile Include="Models\FilterCtx\AtividadeEstoqueListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\CaixaListaFiltro.cs" />
+    <Compile Include="Models\FilterCtx\CaixaRecusaListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\CorredorImpressoraListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\EnderecoArmazenagemPesquisaModalFiltro.cs" />
     <Compile Include="Models\FilterCtx\GarantiaFilter.cs" />
@@ -278,6 +281,7 @@
     <Compile Include="Repository\CommonCtx\BaseRepository.cs" />
     <Compile Include="Repository\CommonCtx\CacheRepository.cs" />
     <Compile Include="Repository\CommonCtx\GenericRepository.cs" />
+    <Compile Include="Repository\GeneralCtx\CaixaRecusaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\CaixaRepository.cs" />
     <Compile Include="Repository\GeneralCtx\CentenaVolumeRepository.cs" />
     <Compile Include="Repository\GeneralCtx\ClienteRepository.cs" />

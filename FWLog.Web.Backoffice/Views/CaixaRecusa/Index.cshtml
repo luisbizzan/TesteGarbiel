@@ -1,0 +1,92 @@
+﻿@model FWLog.Web.Backoffice.Models.CaixaRecusaCtx.CaixaRecusaListaViewModel
+@using FWLog.AspNet.Identity
+
+@{
+    ViewBag.Title = "Caixas de Recusa de Separação";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+            urlDetalhes = Url.Action("Detalhes"),
+            destalhesVisivel = User.HasPermission(Permissions.CaixaRecusa.Visualizar),
+            urlEditar = Url.Action("Editar"),
+            editarVisivel = User.HasPermission(Permissions.CaixaRecusa.Editar),
+            urlExcluir = Url.Action("ExcluirAjax"),
+            excluirVisivel = User.HasPermission(Permissions.CaixaRecusa.Excluir),
+            urlDadosLista = Url.Action("DadosLista")
+        })
+}
+
+<form data-filter="form" data-filter-for="dataTable" class="form-filter">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2 class="collapse-link">
+                <i class="fa fa-chevron-down fa-fw"></i> Filtros
+            </h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <div class="row">
+                <div class="form-group col-md-4 col-xs-12">
+                    @Html.LabelFor(m => m.Filtros.DescricaoProduto)
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filtros.DescricaoProduto, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarProduto" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparProduto" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filtros.IdProduto, new { data_field = "IdProduto" })
+                </div>
+                <div class="form-group col-md-4 col-xs-12">
+                    @Html.LabelFor(m => m.Filtros.DescricaoCaixa)
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filtros.DescricaoCaixa, null, new { @class = "form-control", @readonly = "true" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarCaixa" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparCaixa" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filtros.IdCaixa, new { data_field = "IdCaixa" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 form-buttons">
+                    <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
+                    <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Lista de Caixas</h2>
+                <div class="nav navbar-right panel_toolbox">
+                    @if (User.HasPermission(Permissions.CaixaRecusa.Cadastrar))
+                    {
+                        <a class="btn btn-primary btn-dt-action" href="@Url.Action("Cadastrar")"><i class="fa fa-fw fa-plus"></i> Cadastrar</a>
+                    }
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <table id="dataTable" class="table table-striped table-bordered dt-responsive" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(m => m.ItemVazio.NomeCaixa)</th>
+                            <th>@Resources.CommonStrings.ActionsLabel</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="modalProduto"></div>
+<div class="modal" id="modalCaixa"></div>

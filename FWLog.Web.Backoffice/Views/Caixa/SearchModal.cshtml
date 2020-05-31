@@ -1,0 +1,66 @@
+﻿@model FWLog.Web.Backoffice.Models.CaixaCtx.CaixaSearchModalViewModel
+@{
+    Layout = null;
+    @BundleHelper.RenderViewScriptModal(
+                        new
+                        {
+                            detailsVisible = false,
+                            editVisible = false,
+                            deleteVisible = false,
+                            pageDataUrl = Url.Action("SearchModalPageData")
+                        }
+
+                    )
+}
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">×</span>
+            </button>
+            <h4 class="modal-title" id="myModalLabel">Selecione a Caixa</h4>
+        </div>
+        <div class="modal-body">
+            <form data-filter="form" data-filter-for="dataTableModal" class="form-filter" id="form-datatable-modal">
+                <div class="row">
+                    <div class="form-group col-md-6 col-lg-6">
+                        @Html.LabelFor(m => m.Filtros.Nome)
+                        @Html.TextBoxFor(m => m.Filtros.Nome, new { @class = "form-control", data_field = "Nome" })
+                    </div>
+                    <div class="form-group col-md-6 col-lg-3">
+                        @Html.LabelFor(m => m.Filtros.IdCaixaTipo)
+                        @Html.DropDownListFor(m => m.Filtros.IdCaixaTipo, Model.ListaCaixaTipo, "Todos...", new { @class = "form-control", data_field = "IdCaixaTipo" });
+                    </div>
+                    <div class="form-group col-md-6 col-lg-3">
+                        @Html.LabelFor(m => m.Filtros.Status)
+                        @Html.DropDownListFor(m => m.Filtros.Status, Model.ListaStatus, "Todos...", new { @class = "form-control", data_field = "Status" });
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 form-buttons">
+                        <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
+                        <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                    </div>
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-xs-12">
+                    <table id="dataTableModal" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(m => m.ItemVazio.Nome)</th>
+                                <th>@Html.DisplayNameFor(m => m.ItemVazio.PesoMaximo)</th>
+                                <th>@Html.DisplayNameFor(m => m.ItemVazio.Sobra)</th>
+                                <th>@Html.DisplayNameFor(m => m.ItemVazio.CaixaTipoDescricao)</th>
+                                <th>@Html.DisplayNameFor(m => m.ItemVazio.PesoCaixa)</th>
+                                <th>@Html.DisplayNameFor(m => m.ItemVazio.Status)</th>
+                                <th>@Resources.CommonStrings.ActionsLabel</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -156,6 +156,7 @@
     <Compile Include="Model\IntegracaoSankhya\PedidoIntegracaoPendente.cs" />
     <Compile Include="Model\SeparacaoPedido\DetalhePedidoVendaResposta.cs" />
     <Compile Include="Model\Relatorios\DadosRelatorioRomaneioCampinasBateria.cs" />
+    <Compile Include="Model\SeparacaoPedido\LoteProdutoEnderecoViewModel.cs" />
     <Compile Include="Model\Transportadora\EnderecosPorTransportadoraRequisicao.cs" />
     <Compile Include="Model\Transportadora\EnderecosTransportadoraResposta.cs" />
     <Compile Include="Model\Expedicao\PedidoVendaVolumeResposta.cs" />
@@ -246,6 +247,7 @@
     <Compile Include="Relatorio\Model\RelatorioTotalizadorFinal.cs" />
     <Compile Include="Relatorio\Model\ResumoEtiquetagem.cs" />
     <Compile Include="Services\AccountService.cs" />
+    <Compile Include="Services\CaixaRecusaService.cs" />
     <Compile Include="Services\ExpedicaoService.cs" />
     <Compile Include="Services\PedidoService.cs" />
     <Compile Include="Services\PedidoVendaProdutoService.cs" />

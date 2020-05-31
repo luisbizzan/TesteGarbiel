@@ -61,6 +61,10 @@ namespace FWLog.Data.Models
 
         public decimal MultiploVenda { get; set; }
 
+        public bool? IsEmbalagemFornecedor { get; set; }
+
+        public bool? IsEmbalagemFornecedorVolume { get; set; }
+
         [Required]
         public bool Ativo { get; set; }
 

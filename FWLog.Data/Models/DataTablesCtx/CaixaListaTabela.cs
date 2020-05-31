@@ -24,7 +24,7 @@ namespace FWLog.Data.Models.DataTablesCtx
         [Display(Name = "Peso Máximo (Kg)")]
         public decimal PesoMaximo { get; set; }
 
-        [Display(Name = "Cubicagem (CM³)")]
+        [Display(Name = "Cubagem (CM³)")]
         public decimal Cubagem { get; set; }
 
         [Display(Name = "Sobra (%)")]
@@ -33,13 +33,13 @@ namespace FWLog.Data.Models.DataTablesCtx
         [Display(Name = "Caixa para")]
         public string CaixaTipoDescricao { get; set; }
 
-        [Display(Name = "Peso da Caixa (Kg)")]
+        [Display(Name = "Peso (Kg)")]
         public decimal PesoCaixa { get; set; }
 
         [Display(Name = "Prioridade")]
         public int Prioridade { get; set; }
 
-        [Display(Name = "Status da Caixa")]
+        [Display(Name = "Status")]
         public string Status { get; set; }
     }
 }

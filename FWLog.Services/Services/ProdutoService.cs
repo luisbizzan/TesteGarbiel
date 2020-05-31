@@ -159,6 +159,8 @@ namespace FWLog.Services.Services
                         produto.CodigoBarras = produtoInt.CodigoBarras;
                         produto.IdUnidadeMedida = unidade.IdUnidadeMedida;
                         produto.CodigoBarras2 = produtoInt.CodigoBarras2;
+                        produto.IsEmbalagemFornecedor = produtoInt.IsEmbalagemFornecedor == "S" ? true : false;
+                        produto.IsEmbalagemFornecedorVolume = produtoInt.IsEmbalagemFornecedorVolume == "S" ? true : false;
 
                         Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() } };
 
