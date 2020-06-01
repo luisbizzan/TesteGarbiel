@@ -10,7 +10,8 @@
         new
         {
             pageDataUrl = Url.Action("RelatorioPedidosPageData"),
-            detailsVisible = User.HasPermission(Permissions.RelatoriosExpedicao.RelatorioPedidos),
+            detailsVisible = true,
+            imprimirVisivel = true
         })
 }
 <!-- filter -->
@@ -112,3 +113,5 @@
 <div class="modal" id="modalTransportadora"></div>
 <div class="modal" id="modalDetalhesPedidoVolume"></div>
 <div class="modal" id="modalCliente"></div>
+<div class="modal fade" id="modalImpressoras" data-backdrop="static"></div>
+<div class="modal" id="confirmarReimpressao"></div>

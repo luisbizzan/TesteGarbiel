@@ -21,6 +21,11 @@ namespace FWLog.Services.Services
             return _unitOfWork.CaixaRecusaRepository.BuscarLista(filtro, out registrosFiltrados, out totalRegistros);
         }
 
+        public List<CaixaRecusa> BuscarCaixaPorEmpresa(long idEmpresa, long idCaixa)
+        {
+            return _unitOfWork.CaixaRecusaRepository.BuscarCaixaPorEmpresa(idEmpresa, idCaixa);
+        }
+
         public bool ExisteCaixaRecusa(long idEmpresa, long idCaixa)
         {
             var caixaRecusa = _unitOfWork.CaixaRecusaRepository.BuscarCaixaPorEmpresa(idEmpresa, idCaixa);
@@ -34,7 +39,7 @@ namespace FWLog.Services.Services
         public void Cadastrar(List<CaixaRecusa> caixaRecusa, long idEmpresa)
         {
             if (caixaRecusa== null)
-                throw new BusinessException("Nenhum item identificado para cadastro da caixa de recusa.");
+                throw new BusinessException("Nenhum produto adicionado no cadastro da caixa de recusa.");
 
             //Capturo o id da primeira caixa (os outros são iguais).
             long idCaixa = caixaRecusa[0].IdCaixa;
@@ -44,6 +49,34 @@ namespace FWLog.Services.Services
             _unitOfWork.CaixaRecusaRepository.DeleteRange(caixaRecusaCadastrado);
 
             _unitOfWork.CaixaRecusaRepository.AddRange(caixaRecusa);
+            _unitOfWork.SaveChanges();
+        }
+
+        public void Editar(List<CaixaRecusa> caixaRecusa, long idEmpresa)
+        {
+            if (caixaRecusa == null)
+                throw new BusinessException("Nenhum produto adicionado no cadastro da caixa de recusa.");
+
+            //Capturo o id da primeira caixa (os outros são iguais).
+            long idCaixa = caixaRecusa[0].IdCaixa;
+
+            var caixaRecusaCadastrado = _unitOfWork.CaixaRecusaRepository.BuscarCaixaPorEmpresa(idEmpresa, idCaixa);
+
+            _unitOfWork.CaixaRecusaRepository.DeleteRange(caixaRecusaCadastrado);
+
+            _unitOfWork.CaixaRecusaRepository.AddRange(caixaRecusa);
+            _unitOfWork.SaveChanges();
+        }
+
+        public void Excluir(long idEmpresa, long idCaixa)
+        {
+            var caixaRecusaCadastrado = _unitOfWork.CaixaRecusaRepository.BuscarCaixaPorEmpresa(idEmpresa, idCaixa);
+
+            if (caixaRecusaCadastrado == null)
+                throw new BusinessException("Caixa não encontrada.");
+
+            _unitOfWork.CaixaRecusaRepository.DeleteRange(caixaRecusaCadastrado);
+
             _unitOfWork.SaveChanges();
         }
     }

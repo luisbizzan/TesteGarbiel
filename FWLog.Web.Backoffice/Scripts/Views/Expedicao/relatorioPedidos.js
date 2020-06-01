@@ -57,6 +57,13 @@
                 attrs: { 'data-id': full.IdPedidoVendaVolume, 'action': 'detailsUrl' },
                 icon: 'fa fa-eye',
                 visible: view.detailsVisible
+            },
+            {
+                text: "Reimprimir Etiqueta Separação",
+                action: 'reimprimir',
+                icon: 'fa fa-print',
+                attrs: { 'data-id': full.IdPedidoVendaVolume, 'action': 'reimprimir' },
+                visible: view.imprimirVisivel
             }
         ];
     });
@@ -132,6 +139,18 @@
     $("#limparTransportadora").click(function () {
         limparTransportadora();
     });
+
+    $("#dataTable").on('click', "[action='reimprimir']", confirmarReimpressaoEtiqueta);
+
+    function confirmarReimpressaoEtiqueta() {
+        let id = $(this).data("id");
+
+        let $modal = $("#confirmarReimpressao");
+
+        $modal.load(HOST_URL + CONTROLLER_PATH + "ConfirmarReimpressaoEtiquetaVolume?IdPedidoVendaVolume=" + id, function () {
+            $modal.modal();
+        });
+    }
 })();
 
 function setCliente(idCliente, nomeFantasia) {
@@ -173,4 +192,38 @@ function setTransportadora(idTransportadora, nomeFantasia) {
     $("#Filter_IdTransportadora").val(idTransportadora);
     $("#modalTransportadora").modal("hide");
     $("#modalTransportadora").empty();
+}
+
+function imprimir(acao, id) {
+    var idImpressora = $("#IdImpressora").val();
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + acao,
+        method: "POST",
+        cache: false,
+        data: {
+            IdImpressora: idImpressora,
+            IdPedidoVendaVolume: id
+        },
+        success: function (result) {
+            if (result.Success) {
+                PNotify.success({ text: result.Message });
+
+                fechaModalImpressoras();
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+        },
+        error: function (data) {
+            PNotify.error({ text: "Ocorreu um erro na impressão." });
+            NProgress.done();
+        }
+    });
+}
+
+function fechaModalImpressoras() {
+    var $modal = $("#modalImpressoras");
+
+    $modal.modal("hide");
+    $modal.empty();
 }

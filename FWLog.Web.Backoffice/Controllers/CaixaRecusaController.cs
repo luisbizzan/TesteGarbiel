@@ -118,64 +118,92 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = "Erro ao salvar caixa e produtos de recusa."
+                    Message = !String.IsNullOrEmpty(businessException.Message) ? businessException.Message : "Erro ao salvar caixa e produtos de recusa."
                 });
             }
         }
 
-        //[HttpGet]
-        //[ApplicationAuthorize(Permissions = Permissions.Caixa.Editar)]
-        //public ActionResult Editar(long id)
-        //{
-        //    var caixa = _caixaService.GetCaixaById(id);
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.CaixaRecusa.Editar)]
+        public ActionResult Editar(long id)
+        {
+            var caixa = _caixaRecusaService.BuscarCaixaPorEmpresa(IdEmpresa, id);
 
-        //    var viewModel = Mapper.Map<CaixaEdicaoViewModel>(caixa);
+            var model = new CaixaRecusaEdicaoViewModel()
+            {
+                IdEmpresa = IdEmpresa,
+                Lista = Mapper.Map<List<CaixaRecusaEdicaoItemViewModel>>(caixa)
+            };
 
-        //    viewModel.ListaCaixaTipo = BuscarCaixaTipoSelectList();
+            return View(model);
+        }
 
-        //    return View(viewModel);
-        //}
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.CaixaRecusa.Editar)]
+        public ActionResult Editar(List<CaixaRecusaEdicaoViewModel> listaCaixaRecusa)
+        {
+            try
+            {
+                var caixaRecusa = Mapper.Map<List<CaixaRecusa>>(listaCaixaRecusa);
 
-        //[HttpPost]
-        //[ApplicationAuthorize(Permissions = Permissions.Caixa.Editar)]
-        //public ActionResult Editar(CaixaEdicaoViewModel viewModel)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        viewModel.ListaCaixaTipo = BuscarCaixaTipoSelectList();
+                _caixaRecusaService.Editar(caixaRecusa, IdEmpresa);
 
-        //        return View(viewModel);
-        //    }
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Caixa e produtos de recusa atualizados com sucesso."
+                });
+            }
+            catch (BusinessException businessException)
+            {
+                ModelState.AddModelError(string.Empty, businessException.Message);
 
-        //    try
-        //    {
-        //        var caixa = Mapper.Map<Caixa>(viewModel);
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = !String.IsNullOrEmpty(businessException.Message) ? businessException.Message :  "Erro ao atualizar caixa e produtos de recusa."
+                });
+            }
+        }
 
-        //        _caixaService.Editar(caixa, IdEmpresa);
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.CaixaRecusa.Visualizar)]
+        public ActionResult Detalhes(long id)
+        {
+            var caixa = _caixaRecusaService.BuscarCaixaPorEmpresa(IdEmpresa, id);
 
-        //        Notify.Success("Caixa editada com sucesso.");
+            var model = new CaixaRecusaEdicaoViewModel()
+            {
+                IdEmpresa = IdEmpresa,
+                IdCaixa = id,
+                Lista = Mapper.Map<List<CaixaRecusaEdicaoItemViewModel>>(caixa)
+            };
 
-        //        return RedirectToAction("Index");
-        //    }
-        //    catch (BusinessException businessException)
-        //    {
-        //        ModelState.AddModelError(string.Empty, businessException.Message);
+            return View(model);
+        }
 
-        //        viewModel.ListaCaixaTipo = BuscarCaixaTipoSelectList();
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.CaixaRecusa.Excluir)]
+        public JsonResult ExcluirAjax(int id)
+        {
+            try
+            {
+                _caixaRecusaService.Excluir(IdEmpresa, id);
 
-        //        return View(viewModel);
-        //    }
-        //}
-
-        //[HttpGet]
-        //[ApplicationAuthorize(Permissions = Permissions.Caixa.Visualizar)]
-        //public ActionResult Detalhes(long id)
-        //{
-        //    var caixa = _caixaService.GetCaixaById(id);
-
-        //    var viewModel = Mapper.Map<CaixaDetalhesViewModel>(caixa);
-
-        //    return View(viewModel);
-        //}
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterDeletedSuccessMessage
+                }, JsonRequestBehavior.DenyGet);
+            }
+            catch (BusinessException exception)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = exception.Message
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
     }
 }

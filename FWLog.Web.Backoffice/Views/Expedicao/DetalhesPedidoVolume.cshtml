@@ -77,10 +77,10 @@
                         </div>
                         <div class="row" style="margin-bottom:4px;">
                             <div class="col-xs-4 col-sm-4 col-lg-4">
-                                @Html.LabelFor(m => m.VolumeCorredorInicio): @Model.VolumeCorredorInicio
+                                @Html.LabelFor(m => m.VolumeCorredorInicio): @Model.VolumeCorredorInicio.ToString().PadLeft(2, '0')
                             </div>
                             <div class="col-xs-4 col-sm-4 col-lg-4">
-                                @Html.LabelFor(m => m.VolumeCorredorFim): @Model.VolumeCorredorFim
+                                @Html.LabelFor(m => m.VolumeCorredorFim): @Model.VolumeCorredorFim.ToString().PadLeft(2, '0')
                             </div>
                         </div>
                         <div class="row" style="margin-bottom:4px;">

@@ -154,6 +154,7 @@
     <Compile Include="Model\Expedicao\RomaneioTransportadoraResposta.cs" />
     <Compile Include="Model\Expedicao\DespachoTransportadoraResposta.cs" />
     <Compile Include="Model\IntegracaoSankhya\PedidoIntegracaoPendente.cs" />
+    <Compile Include="Model\SeparacaoPedido\DadosLoteProdutoEnderecoViewModel.cs" />
     <Compile Include="Model\SeparacaoPedido\DetalhePedidoVendaResposta.cs" />
     <Compile Include="Model\Relatorios\DadosRelatorioRomaneioCampinasBateria.cs" />
     <Compile Include="Model\SeparacaoPedido\LoteProdutoEnderecoViewModel.cs" />
