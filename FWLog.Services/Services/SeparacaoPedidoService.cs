@@ -1077,7 +1077,6 @@ namespace FWLog.Services.Services
                         PesoCaixa = item.PesoCaixa,
                         PesoMaximo = item.PesoMaximo,
                         Sobra = item.Sobra,
-                        Prioridade = item.Prioridade,
                         Ativo = item.Ativo
                     });
                 }
@@ -2044,7 +2043,6 @@ namespace FWLog.Services.Services
                     PesoCaixa = caixaRepository.PesoCaixa,
                     PesoMaximo = caixaRepository.PesoMaximo,
                     Sobra = caixaRepository.Sobra,
-                    Prioridade = caixaRepository.Prioridade,
                     Ativo = caixaRepository.Ativo
                 };
             }

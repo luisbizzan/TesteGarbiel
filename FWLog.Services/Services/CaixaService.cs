@@ -45,18 +45,8 @@ namespace FWLog.Services.Services
             caixa.Cubagem = caixa.Largura * caixa.Altura * caixa.Comprimento;
         }
 
-        private void ValidaPrioridadeCaixa(Caixa caixa)
-        {
-            if (_unitOfWork.CaixaRepository.ExistePrioridadeCadastrada(caixa.Prioridade, caixa.IdCaixa != 0 ? new Nullable<long>(caixa.IdCaixa) : null))
-            {
-                throw new BusinessException("Já existe caixa cadastrada com essa prioridade.");
-            }
-        }
-
         public void Cadastrar(Caixa caixa, long idEmpresaUsuarioLogado)
         {
-            ValidaPrioridadeCaixa(caixa);
-
             caixa.IdEmpresa = idEmpresaUsuarioLogado;
 
             CalculaCubagem(caixa);
@@ -84,8 +74,6 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Usuário não tem permissão para editar caixa");
             }
 
-            ValidaPrioridadeCaixa(caixa);
-
             caixaAntiga.IdCaixaTipo = caixa.IdCaixaTipo;
             caixaAntiga.Nome = caixa.Nome;
             caixaAntiga.TextoEtiqueta = caixa.TextoEtiqueta;
@@ -98,7 +86,6 @@ namespace FWLog.Services.Services
             caixaAntiga.PesoCaixa = caixa.PesoCaixa;
             caixaAntiga.PesoMaximo = caixa.PesoMaximo;
             caixaAntiga.Sobra = caixa.Sobra;
-            caixaAntiga.Prioridade = caixa.Prioridade;
             caixaAntiga.Ativo = caixa.Ativo;
 
             _unitOfWork.CaixaRepository.Update(caixaAntiga);

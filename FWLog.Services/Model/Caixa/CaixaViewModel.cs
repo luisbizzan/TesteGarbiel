@@ -15,7 +15,6 @@ namespace FWLog.Services.Model.Caixa
         public decimal PesoCaixa { get; set; }
         public decimal PesoMaximo { get; set; }
         public decimal Sobra { get; set; }
-        public int Prioridade { get; set; }
         public bool Ativo { get; set; }
         public int QuantidadeRanking { get; set; }
     }

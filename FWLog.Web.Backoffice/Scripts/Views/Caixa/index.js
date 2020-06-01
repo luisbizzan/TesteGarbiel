@@ -45,7 +45,6 @@
             { data: 'Sobra' },
             { data: 'CaixaTipoDescricao' },
             { data: 'PesoCaixa' },
-            { data: 'Prioridade' },
             { data: 'Status' },
             actionsColumn
         ]

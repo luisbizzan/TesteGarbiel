@@ -46,11 +46,6 @@ namespace FWLog.Web.Backoffice.Models.CaixaCtx
         [Range(0, 100)]
         public decimal? Sobra { get; set; }
 
-        [Display(Name = "Prioridade")]
-        [Required]
-        [Range(0, 999)]
-        public int? Prioridade { get; set; }
-
         [Display(Name = "Ativo")]
         [Required]
         public bool Ativo { get; set; }

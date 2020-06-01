@@ -36,9 +36,6 @@ namespace FWLog.Web.Backoffice.Models.CaixaCtx
         [Display(Name = "Sobra (%)")]
         public decimal Sobra { get; set; }
 
-        [Display(Name = "Prioridade")]
-        public int Prioridade { get; set; }
-
         [Display(Name = "Ativo")]
         public string Ativo { get; set; }
     }
