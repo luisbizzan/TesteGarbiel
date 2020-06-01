@@ -60,10 +60,6 @@
                     @Html.LabelFor(m => m.Filtros.PesoCaixa)
                     @Html.TextBoxFor(m => m.Filtros.PesoCaixa, new { @class = "form-control", data_field = "PesoCaixa" })
                 </div>
-                <div class="form-group col-md-6 col-lg-3">
-                    @Html.LabelFor(m => m.Filtros.Prioridade)
-                    @Html.TextBoxFor(m => m.Filtros.Prioridade, new { @class = "form-control", data_field = "Prioridade" })
-                </div>
             </div>
             <div class="row">
                 <div class="form-group col-md-4 col-lg-2">
@@ -104,7 +100,6 @@
                             <th>@Html.DisplayNameFor(m => m.ItemVazio.Sobra)</th>
                             <th>@Html.DisplayNameFor(m => m.ItemVazio.CaixaTipoDescricao)</th>
                             <th>@Html.DisplayNameFor(m => m.ItemVazio.PesoCaixa)</th>
-                            <th>@Html.DisplayNameFor(m => m.ItemVazio.Prioridade)</th>
                             <th>@Html.DisplayNameFor(m => m.ItemVazio.Status)</th>
                             <th>@Resources.CommonStrings.ActionsLabel</th>
                         </tr>

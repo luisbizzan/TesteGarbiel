@@ -8,5 +8,7 @@ namespace FWLog.Services.Model.SeparacaoPedido
         public int Quantidade { get; set; }
         public ProdutoEstoqueViewModel EnderecoSeparacao { get; set; }
         public bool IsSeparacaoNoPikcing { get; set; }
+
+        public long? IdLote { get; set; }
     }
 }

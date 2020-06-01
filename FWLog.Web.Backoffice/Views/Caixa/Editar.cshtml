@@ -72,11 +72,6 @@
                     @Html.ValidationMessageFor(m => m.IdCaixaTipo)
                 </div>
                 <div class="form-group col-sm-4 col-xs-12">
-                    @Html.LabelFor(m => m.Prioridade, new { @class = "control-label" })
-                    @Html.TextBoxFor(m => m.Prioridade, new { @class = "form-control integer" })
-                    @Html.ValidationMessageFor(m => m.Prioridade)
-                </div>
-                <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.Ativo, new { @class = "control-label" })
                     <div class="checkbox">
                         @Html.CheckBoxFor(m => m.Ativo, new { @class = "flat" })

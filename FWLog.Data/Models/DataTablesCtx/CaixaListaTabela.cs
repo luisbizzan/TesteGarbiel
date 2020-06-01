@@ -36,9 +36,6 @@ namespace FWLog.Data.Models.DataTablesCtx
         [Display(Name = "Peso (Kg)")]
         public decimal PesoCaixa { get; set; }
 
-        [Display(Name = "Prioridade")]
-        public int Prioridade { get; set; }
-
         [Display(Name = "Status")]
         public string Status { get; set; }
     }

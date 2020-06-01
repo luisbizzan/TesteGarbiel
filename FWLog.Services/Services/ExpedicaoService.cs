@@ -383,7 +383,7 @@ namespace FWLog.Services.Services
 
                     await _unitOfWork.SaveChangesAsync();
 
-                    listaVolumesString.Add(pedidoVendaVolume.EtiquetaVolume);
+                    listaVolumesString.Add(GerarReferenciaPedidoVolume(pedidoVendaVolume));
                 }
 
                 var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(listaPedidoVendaVolume.First().IdPedidoVenda);
@@ -514,27 +514,29 @@ namespace FWLog.Services.Services
             {
                 foreach (var volume in pedidoVolumes)
                 {
+                    var referenciaVolume = GerarReferenciaPedidoVolume(volume);
+
                     if (volume.DataHoraInstalacaoDOCA != null)
                     {
-                        throw new BusinessException($"Volume {volume.EtiquetaVolume} ja foi lido ou está em duplicidade.");
+                        throw new BusinessException($"Volume { referenciaVolume } ja foi lido ou está em duplicidade.");
                     }
 
                     if (volume.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA && volume.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeInstaladoTransportadora)
                     {
-                        throw new BusinessException($"Volume { volume.EtiquetaVolume } não pode ser intalado na doca.");
+                        throw new BusinessException($"Volume { referenciaVolume } não pode ser instalado na doca.");
                     }
 
                     if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
                     {
                         if (volume.PedidoVenda.Pedido.CodigoIntegracaoNotaFiscal == null && !volume.PedidoVenda.Pedido.IsRequisicao)
                         {
-                            throw new BusinessException($"Volume { volume.EtiquetaVolume } não tem nota fiscal faturada.");
+                            throw new BusinessException($"Volume { referenciaVolume } não tem nota fiscal faturada.");
                         }
                     }
 
                     if (volume.PedidoVenda.IdTransportadora != idTransportadora)
                     {
-                        throw new BusinessException($"Volume { volume.EtiquetaVolume } não pertence a transportadora: {transportadora.NomeFantasia}.");
+                        throw new BusinessException($"Volume { referenciaVolume } não pertence a transportadora: {transportadora.NomeFantasia}.");
                     }
 
                     volume.IdUsuarioInstalacaoDOCA = idUsuario;
@@ -562,13 +564,13 @@ namespace FWLog.Services.Services
             {
                 var ultimoVolume = pedidoVolumes.Last();
 
-                stringVolumes = string.Join(", ", pedidoVolumes.Where(w => w.IdPedidoVendaVolume != ultimoVolume.IdPedidoVendaVolume).Select(s => s.EtiquetaVolume).ToArray());
+                stringVolumes = string.Join(", ", pedidoVolumes.Where(w => w.IdPedidoVendaVolume != ultimoVolume.IdPedidoVendaVolume).Select(s => GerarReferenciaPedidoVolume(s)).ToArray());
 
-                stringVolumes = string.Concat(stringVolumes, $" e { ultimoVolume.EtiquetaVolume }");
+                stringVolumes = string.Concat(stringVolumes, $" e { GerarReferenciaPedidoVolume(ultimoVolume) }");
             }
             else
             {
-                stringVolumes = pedidoVolumes.First().EtiquetaVolume;
+                stringVolumes = GerarReferenciaPedidoVolume(pedidoVolumes.First());
             }
 
             _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
@@ -1447,6 +1449,11 @@ namespace FWLog.Services.Services
             }).ToList();
 
             return retorno;
+        }
+
+        public string GerarReferenciaPedidoVolume(PedidoVendaVolume volume)
+        {
+            return $"{volume.PedidoVenda.NroPedidoVenda.ToString().PadLeft(7, '0')}{volume.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3, '0')}{volume.NroVolume.ToString().PadLeft(3, '0')}";
         }
     }
 }

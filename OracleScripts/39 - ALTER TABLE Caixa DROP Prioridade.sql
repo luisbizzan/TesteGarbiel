@@ -1,0 +1,1 @@
+ALTER TABLE "Caixa" DROP COLUMN "Prioridade";

@@ -59,11 +59,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                 query = query.Where(caixa => caixa.PesoCaixa == filtro.CustomFilter.PesoCaixa);
             }
 
-            if (filtro.CustomFilter.Prioridade.HasValue)
-            {
-                query = query.Where(caixa => caixa.Prioridade == filtro.CustomFilter.Prioridade);
-            }
-
             if (filtro.CustomFilter.Status.HasValue)
             {
                 query = query.Where(caixa => caixa.Ativo == filtro.CustomFilter.Status);
@@ -82,7 +77,6 @@ namespace FWLog.Data.Repository.GeneralCtx
                 Sobra = caixa.Sobra,
                 CaixaTipoDescricao = caixa.CaixaTipo.Descricao,
                 PesoCaixa = caixa.PesoCaixa,
-                Prioridade = caixa.Prioridade,
                 Status = caixa.Ativo ? "Ativo" : "Inativo"
             });
 
@@ -99,20 +93,6 @@ namespace FWLog.Data.Repository.GeneralCtx
         public List<Caixa> BuscarCaixaTipoSeparacao(long idEmpresa)
         {
             return Entities.Caixa.Include("CaixaTipo").Where(x => x.IdEmpresa == idEmpresa && x.IdCaixaTipo == CaixaTipoEnum.Separacao && x.Ativo == true).OrderBy(o => o.Nome).ToList();
-        }
-
-        public bool ExistePrioridadeCadastrada(int prioridade, long? idCaixaVerificacao)
-        {
-            var query = Entities.Caixa.Where(caixa => caixa.Prioridade == prioridade && caixa.Ativo);
-
-            if (idCaixaVerificacao.HasValue)
-            {
-                var valorConvertido = idCaixaVerificacao.Value;
-
-                query = query.Where(caixa => caixa.IdCaixa != valorConvertido);
-            }
-
-            return query.Any();
         }
 
         public Caixa BuscarCaixaAtivaPorEmpresa(long idCaixa, long idEmpresa, CaixaTipoEnum? caixaTipo)

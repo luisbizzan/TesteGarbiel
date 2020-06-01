@@ -27,9 +27,6 @@ namespace FWLog.Data.Models.FilterCtx
         [Display(Name = "Peso da Caixa (Kg)")]
         public decimal? PesoCaixa { get; set; }
 
-        [Display(Name = "Prioridade")]
-        public decimal? Prioridade { get; set; }
-
         [Display(Name = "Status da Caixa")]
         public bool? Status { get; set; }
     }
