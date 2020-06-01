@@ -47,5 +47,7 @@ namespace FWLog.Services.Model.SeparacaoPedido
         public int QtdePedido { get; set; }
 
         public int QtdSeparada { get; set; }
+
+        public bool Picking { get; set; }
     }
 }
