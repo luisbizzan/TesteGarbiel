@@ -930,8 +930,10 @@ namespace FWLog.Services.Services
                                 {
                                     quantidadeVolume++;
 
+                                    var grupoCorredorItem = await BuscarGrupoCorredorArmazenagemItemPedido(itemVolume.ListaItensDoPedido[0].EnderecoSeparacao.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
+
                                     //Salva PedidoVendaVolume.
-                                    var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
+                                    var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, grupoCorredorItem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
 
                                     if (idPedidoVendaVolume == 0)
                                         continue;
@@ -946,7 +948,7 @@ namespace FWLog.Services.Services
                                     int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
 
                                     //Imprime a etiqueta de separação.
-                                    await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, itemCorredorArmazenagem, pedido, idPedidoVendaVolume, corredorInicioSeparacao);
+                                    await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, grupoCorredorItem, pedido, idPedidoVendaVolume, corredorInicioSeparacao);
                                 }
 
                                 //Atualiza a quantidade de volumes na PedidoVenda.
@@ -968,7 +970,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagem grupoCorredorArmazenagem, Pedido pedido, long idPedidoVendaVolume, int corredorInicioSeparacao)
+        public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, Pedido pedido, long idPedidoVendaVolume, int corredorInicioSeparacao)
         {
             var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
 
@@ -1158,7 +1160,8 @@ namespace FWLog.Services.Services
                         Caixa = caixasQuePodemSerUsadas,
                         EnderecoSeparacao = item.EnderecoSeparacao,
                         GrupoCorredorArmazenagem = listaItensDoPedido[i].GrupoCorredorArmazenagem,
-                        IsSeparacaoNoPikcing = item.IsSeparacaoNoPikcing
+                        IsSeparacaoNoPikcing = item.IsSeparacaoNoPikcing,
+                        IdLote = item.IdLote
                     });
                 }
             }
@@ -1181,7 +1184,7 @@ namespace FWLog.Services.Services
             //O motivo é que foi dito na reunião com Veronezzi e Beatriz que a chance disso acontecer é pequena, pois ao cadastrar um produto será informado um endereço de picking para ele.
             //Mantive a verificação comentada pois, se tiver algum erro perante a isso basta descomentar.
             //if (enderecoPicking == null)
-            //    break;
+            //    continue;
 
             var listaEnderecoSeparacao = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorProdutoComLote(item.Produto.IdProduto, idEmpresa)
                 .Where(x => x.Quantidade > 0).OrderBy(x => x.DataHoraInstalacao).ToList();
@@ -1199,6 +1202,7 @@ namespace FWLog.Services.Services
                         listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
                         {
                             Quantidade = quantidadePedido,
+                            IdLote = pontoSeparacaoEscolhido.IdLote,
                             EnderecoSeparacao = new ProdutoEstoqueViewModel()
                             {
                                 EnderecoArmazenagem = pontoSeparacaoEscolhido.EnderecoArmazenagem,
@@ -1224,6 +1228,7 @@ namespace FWLog.Services.Services
                         listaQuantidadeEnderecoSeparacao.Add(new LoteProdutoEnderecoViewModel()
                         {
                             Id = i,
+                            IdLote = pontoSeparacao.IdLote,
                             EnderecoSeparacao = new ProdutoEstoqueViewModel()
                             {
                                 EnderecoArmazenagem = pontoSeparacao.EnderecoArmazenagem,
@@ -1257,6 +1262,7 @@ namespace FWLog.Services.Services
                             listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
                             {
                                 Quantidade = pontoEscolhido.Quantidade,
+                                IdLote = pontoEscolhido.IdLote,
                                 EnderecoSeparacao = pontoEscolhido.EnderecoSeparacao,
                                 IsSeparacaoNoPikcing = false
                             });
@@ -1293,6 +1299,7 @@ namespace FWLog.Services.Services
                             listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
                             {
                                 Quantidade = pontoEscolhido.Quantidade,
+                                IdLote = pontoEscolhido.IdLote,
                                 EnderecoSeparacao = pontoEscolhido.EnderecoSeparacao,
                                 IsSeparacaoNoPikcing = false
                             });
@@ -1310,6 +1317,7 @@ namespace FWLog.Services.Services
                     listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
                     {
                         Quantidade = quantidadeFaltante,
+                        IdLote = null,
                         EnderecoSeparacao = new ProdutoEstoqueViewModel()
                         {
                             EnderecoArmazenagem = enderecoPicking.EnderecoArmazenagem,
@@ -1335,6 +1343,7 @@ namespace FWLog.Services.Services
                         listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
                         {
                             Quantidade = quantidadePedido,
+                            IdLote = pontoSeparacaoEscolhido.IdLote,
                             EnderecoSeparacao = new ProdutoEstoqueViewModel()
                             {
                                 EnderecoArmazenagem = pontoSeparacaoEscolhido.EnderecoArmazenagem,
@@ -1351,6 +1360,7 @@ namespace FWLog.Services.Services
                     listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
                     {
                         Quantidade = quantidadePedido,
+                        IdLote = null,
                         EnderecoSeparacao = new ProdutoEstoqueViewModel()
                         {
                             EnderecoArmazenagem = enderecoPicking.EnderecoArmazenagem,
@@ -2079,7 +2089,8 @@ namespace FWLog.Services.Services
                             EnderecoSeparacao = listaItensDoPedido[i].EnderecoSeparacao,
                             GrupoCorredorArmazenagem = listaItensDoPedido[i].GrupoCorredorArmazenagem,
                             IsSeparacaoNoPikcing = listaItensDoPedido[i].IsSeparacaoNoPikcing,
-                            Quantidade = Convert.ToInt32(listaItensDoPedido[i].Produto.MultiploVenda)
+                            Quantidade = Convert.ToInt32(listaItensDoPedido[i].Produto.MultiploVenda),
+                            IdLote = listaItensDoPedido[i].IdLote
                         });
                     }
                 }
