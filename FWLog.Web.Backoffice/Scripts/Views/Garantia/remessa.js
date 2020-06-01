@@ -223,6 +223,8 @@ function visualizarRemessaDetalhado(id) {
                     } else {
                         /* # Imprimir Etiqueta # */
                         var registro = new Object();
+                        registro.IdPerfilImpressora = Impressora.IdPerfilImpressora;
+                        registro.IdEmpresa = Impressora.IdEmpresa;
                         registro.EtiquetaImpressaoIds = ids;
 
                         $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { EtiquetaImpressao: registro }, function (s) {
@@ -328,12 +330,34 @@ function estornarRemessa() {
     });
 }
 
-    /* [GENÉRICO] mostrar mensagens */
-    function Mensagem(sucesso, mensagem) {
-        if (sucesso) {
-            PNotify.success({ text: mensagem, delay: 1000 });
-        }
-        else {
-            PNotify.error({ text: mensagem, delay: 5000 });
-        }
+/* [GENÉRICO] mostrar mensagens */
+function Mensagem(sucesso, mensagem) {
+    if (sucesso) {
+        PNotify.success({ text: mensagem, delay: 1000 });
     }
+    else {
+        PNotify.error({ text: mensagem, delay: 5000 });
+    }
+}
+
+/* Selecionar Impressora */
+var Impressora = new Object();
+$(function () {
+
+    $(document).ready(function () {
+        Impressora = new Object();
+        var ddlImpressoras = $('#ddlPerfilImpressora option:selected')[0];
+        var ddlEmpresa = $('#ddlEmpresa option:selected')[0];
+        Impressora.IdPerfilImpressora = ddlImpressoras.value;
+        Impressora.IdEmpresa = ddlEmpresa.value;
+    });
+
+    $('#ddlPerfilImpressora').on('change', function () {
+        Impressora = new Object();
+        var ddlImpressoras = $('#ddlPerfilImpressora option:selected')[0];
+        var ddlEmpresa = $('#ddlEmpresa option:selected')[0];
+        Impressora.IdPerfilImpressora = ddlImpressoras.value;
+        Impressora.IdEmpresa = ddlEmpresa.value;
+    })
+
+})
