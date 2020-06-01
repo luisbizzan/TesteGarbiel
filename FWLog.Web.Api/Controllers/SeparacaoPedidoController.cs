@@ -163,7 +163,7 @@ namespace FWLog.Web.Api.Controllers
                     usuarioTemPermissaoF8 = await UserManager.ValidatePermissionByIdEmpresaAsync(usuarioValidaPermissaoF8?.Id, IdEmpresa, Permissions.RFSeparacao.RFFuncaoF8ZerarPedido);
                 }
 
-                var response = await _separacaoPedidoService.SalvarSeparacaoProduto(requisicao?.IdPedidoVenda ?? 0, requisicao?.IdProduto ?? 0, requisicao?.IdProdutoSeparacao, IdUsuario, IdEmpresa, requisicao?.QtdAjuste, usuarioTemPermissaoF7, usuarioValidaPermissaoF8?.Id, usuarioTemPermissaoF8);
+                var response = await _separacaoPedidoService.SalvarSeparacaoProduto(requisicao?.IdPedidoVendaVolume ?? 0, requisicao?.IdProduto ?? 0, requisicao?.IdProdutoSeparacao, IdUsuario, IdEmpresa, requisicao?.QtdAjuste, usuarioTemPermissaoF7, usuarioValidaPermissaoF8?.Id, usuarioTemPermissaoF8);
 
                 return ApiOk(response);
             }

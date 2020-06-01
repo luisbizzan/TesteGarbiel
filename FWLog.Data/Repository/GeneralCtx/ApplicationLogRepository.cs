@@ -44,7 +44,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                    
             if (!String.IsNullOrEmpty(model.CustomFilter.Message))
             {
-                query = query.Where(x => x.Message.Contains(model.CustomFilter.Message));
+                query = query.Where(x => x.Message.ToLower().Contains(model.CustomFilter.Message.ToLower()));
             }
 
             if (!String.IsNullOrEmpty(model.CustomFilter.Level))

@@ -37,7 +37,8 @@ namespace FWLog.Services.Services
                     CubagemProduto = pedidoItem.Produto.CubagemProduto.Value,
                     PesoProduto = pedidoItem.Produto.PesoBruto,
                     DataHoraInicioSeparacao = null,
-                    DataHoraFimSeparacao = null
+                    DataHoraFimSeparacao = null,
+                    IdLote = pedidoItem.IdLote
                 });
 
                 await _uow.SaveChangesAsync();

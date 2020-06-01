@@ -1,6 +1,7 @@
 ﻿using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Model.Caixa;
+using FWLog.Services.Model.GrupoCorredorArmazenagem;
 using log4net;
 using System;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task<long> Salvar(long idPedidoVenda, CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagem grupoCorredorArmazenagem, int numeroVolume, long idEmpresa, decimal peso, decimal cubagem)
+        public async Task<long> Salvar(long idPedidoVenda, CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, int numeroVolume, long idEmpresa, decimal peso, decimal cubagem)
         {
             long idPedidoVendaVolume = 0;
 
