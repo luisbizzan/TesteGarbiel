@@ -20,5 +20,13 @@ namespace FWLog.Services.Services
             _uow.GarantiaEtiquetaRepository.ProcessarImpressaoEtiqueta(dadosImpressao);  
         }
         #endregion
+
+        #region Enviar Etiqueta para Impressão
+        public List<GarantiaEtiqueta.Impressora> ImpressoraUsuario(int IdEmpresa, int IdPerfilImpressora)
+        {
+            return _uow.GarantiaEtiquetaRepository.ImpressoraUsuario(IdEmpresa, IdPerfilImpressora);
+        }
+        #endregion
+        
     }
 }

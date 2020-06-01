@@ -22,6 +22,15 @@ namespace FWLog.Data.Models
         }
         #endregion
 
+        #region Drop Down Impressora
+        public class Impressora
+        {
+            public string Ip { get; set; }
+            public string NomeImpressora { get; set; }
+        }
+        #endregion
+
+        #region SQL
         public static class SQL
         {
             public static string ConsultaEtiquetas
@@ -38,7 +47,25 @@ namespace FWLog.Data.Models
                         "ORDER BY s.id ASC");
                 }
             }
+
+            /// <summary>
+            /// IdEmpresa | IdPerfilImpressora
+            /// </summary>
+            public static string ConsultaImpressorasUsuario
+            {
+                get
+                {
+                    return String.Concat(" SELECT DISTINCT ",
+                        "p.\"IP\" Ip, p.\"Name\" NomeImpressora ",
+                        "FROM \"Printer\" p ",
+                        "INNER JOIN \"PerfilImpressoraItem\" pii ON pii.\"IdImpressora\" = p.\"Id\" ",
+                        "WHERE p.\"Ativa\" = 1 ",
+                        "AND p.\"CompanyId\" = :IdEmpresa ",
+                        "AND pii.\"IdPerfilImpressora\" = :IdPerfilImpressora");
+                }
+            }
         }
+        #endregion
 
         #region Colunas Banco Dados
         public class ItemEtiqueta

@@ -222,21 +222,9 @@ function visualizarRemessaDetalhado(id) {
                         PNotify.error({ text: "Selecione um item." });
                     } else {
                         /* # Imprimir Etiqueta # */
-                        var registro = new Object();
-                        registro.IdPerfilImpressora = Impressora.IdPerfilImpressora;
-                        registro.IdEmpresa = Impressora.IdEmpresa;
-                        registro.EtiquetaImpressaoIds = ids;
-
-                        $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { EtiquetaImpressao: registro }, function (s) {
-                            console.log(s);
-                            Mensagem(s.Success, s.Message);
-                            if (s.Success) {
-                                location.reload();
-                            }
-                        }).fail(function (f) {
-                            console.log(f);
-                        }).done(function (d) {
-                        });
+                        IdsSelecionados = new Object();
+                        IdsSelecionados = ids;
+                        listarImpressoras();
                     }
                 }
             },
@@ -361,3 +349,39 @@ $(function () {
     })
 
 })
+
+/* Listar Impressoras do Usuario  */
+function listarImpressoras() {
+    $.post("/GarantiaEtiqueta/ImpressoraUsuario", { IdEmpresa: Impressora.IdEmpresa, IdPerfilImpressora: Impressora.IdPerfilImpressora }, function (s) {
+        $("#ddlImpressorasUsuario").empty();
+        if (s.Success) {
+            $("#ddlImpressorasUsuario").html(s.Data);
+            $("#modalImprimir").modal("show");
+        }
+    }).fail(function (f) {
+        console.log(f);
+    }).done(function (d) {
+    });
+}
+
+/*  Imprimiri Registros  */
+var IdsSelecionados = new Object();
+function Imprimir() {
+    var ddlImpressoraSelecionada = $('#ddlImpressorasUsuario option:selected')[0];
+
+    var registro = new Object();
+    registro.Impressora = ddlImpressoraSelecionada.value;
+    registro.EtiquetaImpressaoIds = IdsSelecionados;
+
+    $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { EtiquetaImpressao: registro }, function (s) {
+        console.log(s);
+        Mensagem(s.Success, s.Message);
+        if (s.Success) {
+            location.reload();
+        }
+    }).fail(function (f) {
+        console.log(f);
+    }).done(function (d) {
+    });
+
+}

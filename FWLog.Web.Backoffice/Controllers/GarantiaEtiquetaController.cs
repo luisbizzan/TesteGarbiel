@@ -48,6 +48,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 _garantiaEtiquetaService.ProcessarImpressaoEtiqueta(new GarantiaEtiqueta.DocumentoImpressao()
                 {
+                    EnderecoIP = EtiquetaImpressao.Impressora.Split(':')[0],
+                    PortaConexao = Convert.ToInt32(EtiquetaImpressao.Impressora.Split(':')[1].ToString()),
                     IdsEtiquetasImprimir = EtiquetaImpressao.EtiquetaImpressaoIds
                 });
 
@@ -68,5 +70,42 @@ namespace FWLog.Web.Backoffice.Controllers
         }
         #endregion
 
+        #region Listar Impressoras do Usuário
+        [HttpPost]
+        public JsonResult ImpressoraUsuario(int IdEmpresa, int IdPerfilImpressora)
+        {
+            try
+            {
+                #region Validações
+                if (IdEmpresa.Equals(0))
+                    throw new Exception("Código da Empresa inválido!");
+                if (IdPerfilImpressora.Equals(0))
+                    throw new Exception("Código do Perfil da Impressora inválido!");
+                #endregion
+
+                var listaImpressoras = _garantiaEtiquetaService.ImpressoraUsuario(IdEmpresa, IdPerfilImpressora);
+
+                var itens = String.Empty;
+                listaImpressoras.ForEach(delegate (GarantiaEtiqueta.Impressora i)
+                {
+                    itens += String.Format("<option value=\"{0}\">{1}</option>", i.Ip, i.NomeImpressora);
+                });
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Data = itens
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+        #endregion
     }
 }

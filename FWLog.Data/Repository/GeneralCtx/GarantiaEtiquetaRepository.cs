@@ -4,6 +4,7 @@ using FWLog.Data.Repository.CommonCtx;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -25,8 +26,8 @@ namespace FWLog.Data.Repository.GeneralCtx
             try
             {
                 #region Validações
-                Impressao.EnderecoIP = String.IsNullOrEmpty(Impressao.EnderecoIP) ? "10.201.0.155" : Impressao.EnderecoIP;
                 if (String.IsNullOrEmpty(Impressao.EnderecoIP)) throw new Exception("Endereço de IP não pode estar em branco!");
+                if (Impressao.PortaConexao.Equals(0)) throw new Exception("Porta de Conexão da Impressora não pode ser Zero (0)!");
                 if (Impressao == null) throw new Exception("Documento de impressão inválido!");
                 if (String.IsNullOrEmpty(Impressao.ConteudoImpressao.ToString())) throw new Exception("Etiqueta não pode estar em branco!");
                 if (!Enum.IsDefined(typeof(GarantiaEtiqueta.ETIQUETA), Impressao.TipoEtiqueta)) throw new Exception("Tipo de etiqueta não é válido!");
@@ -41,7 +42,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         {
                             Byte[] bytesConteudoImpressao = Encoding.ASCII.GetBytes(Impressao.ConteudoImpressao.ToString());
                             IPAddress IP = IPAddress.Parse(Impressao.EnderecoIP);
-                            IPEndPoint IPComPorta = new IPEndPoint(IP, Impressao.PortaConexao.Equals(0) ? 9100 : Impressao.PortaConexao);
+                            IPEndPoint IPComPorta = new IPEndPoint(IP, Impressao.PortaConexao);
                             comandoImpressao.Connect(IPComPorta);
                             comandoImpressao.Send(bytesConteudoImpressao);
                             // Delay de 5 segundos antes de fechar o comando permitindo que a impressora receba todo conteúdo enviado.
@@ -85,7 +86,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
                 {
                     conn.Open();
-                    if (conn.State == System.Data.ConnectionState.Open)
+                    if (conn.State == ConnectionState.Open)
                     {
                         dadosImpressao.ListaImprimir = new List<GarantiaEtiqueta.ItemEtiqueta>(conn.Query<GarantiaEtiqueta.ItemEtiqueta>(dadosImpressao.ComandoSQL).ToList());
                     }
@@ -195,5 +196,33 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
         }
         #endregion
+
+        #region Impressoras do Usuário
+        public List<GarantiaEtiqueta.Impressora> ImpressoraUsuario(int IdEmpresa, int IdPerfilImpressora)
+        {
+            try
+            {
+                var retorno = new List<GarantiaEtiqueta.Impressora>();
+
+                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                {
+                    conn.Open();
+                    if (conn.State == ConnectionState.Open)
+                    {
+                        retorno = conn.Query<GarantiaEtiqueta.Impressora>(GarantiaEtiqueta.SQL.ConsultaImpressorasUsuario, new { IdEmpresa, IdPerfilImpressora }).ToList();
+                    }
+                    conn.Close();
+                }
+
+                return retorno;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
+
     }
 }
