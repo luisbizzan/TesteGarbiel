@@ -21,9 +21,9 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.PedidoVendaProduto.FirstOrDefault(x => x.IdProduto == idProduto);
         }
 
-        public PedidoVendaProduto ObterPorIdPedidoVendaEIdProduto(long idPedidoVenda, long idProduto)
+        public PedidoVendaProduto ObterPorIdPedidoVendaVolumeEIdProduto(long idPedidoVendaVolume, long idProduto)
         {
-            return Entities.PedidoVendaProduto.FirstOrDefault(pvp => pvp.IdPedidoVenda == idPedidoVenda && pvp.IdProduto == idProduto);
+            return Entities.PedidoVendaProduto.FirstOrDefault(pvp => pvp.IdPedidoVendaVolume == idPedidoVendaVolume && pvp.IdProduto == idProduto);
         }
     }
 }
