@@ -35,23 +35,22 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         [Display(Name = "Data Criação")]
         public string DataCriacao { get; set; }
 
-        [Display(Name = "Data Saída")]
-        public string DataSaida { get; set; }
+        [Display(Name = "Data Expedição")]
+        public string DataExpedicao { get; set; }
     }
 
     public class RelatorioPedidosFilterViewModel
     {
-        [Display(Name = "Nro. Pedido")]
-        public long? IdPedidoVenda { get; set; }
+        //[Display(Name = "Nro. Pedido")]
+        //public long? IdPedidoVenda { get; set; }
 
-        public string NumeroPedidoVenda { get; set; }
+        [Display(Name = "Nro. Pedido")]
+        public long? NumeroPedido { get; set; }
 
         [Display(Name="Dt. Criação Inícial")]
-        [Required]
         public DateTime? DataInicial { get; set; }
 
         [Display(Name = "Dt. Criação Final")]
-        [Required]
         public DateTime? DataFinal { get; set; }
 
         [Display(Name = "Transportadora")]
