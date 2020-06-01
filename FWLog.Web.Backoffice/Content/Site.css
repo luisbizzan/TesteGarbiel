@@ -220,19 +220,29 @@ footer {
     overflow: auto;
     margin: 0 auto;
 }
-   
+
+.textAreaAlturaAuto {
+    resize: vertical;
+    height: auto !important;
+    padding-top: 10px;
+    padding-bottom: 25px; /* increased! */
+    /* height:16px; */
+    /* line-height:16px; */
+    width: 100%; /* changed from 96 to 100% */
+    display: block;
+}
+
 .btn-secondary-selected:hover {
     color: white;
 
-@media (max-width: 1024px) 
-{
-    .table > thead > tr > th,
-    .table > tbody > tr > th,
-    .table > tfoot > tr > th,
-    .table > thead > tr > td,
-    .table > tbody > tr > td,
-    .table > tfoot > tr > td {
-        padding: 6px !important;
+    @media (max-width: 1024px) {
+        .table > thead > tr > th,
+        .table > tbody > tr > th,
+        .table > tfoot > tr > th,
+        .table > thead > tr > td,
+        .table > tbody > tr > td,
+        .table > tfoot > tr > td {
+            padding: 6px !important;
+        }
     }
-}
 

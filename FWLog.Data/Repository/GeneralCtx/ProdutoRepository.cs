@@ -178,9 +178,13 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             var listaStatusFiltragem = new List<LoteStatusEnum>
             {
-                LoteStatusEnum.Finalizado,
-                LoteStatusEnum.ConferidoDivergencia,
-                LoteStatusEnum.FinalizadoDivergenciaNegativa
+                LoteStatusEnum.Finalizado,                
+                LoteStatusEnum.FinalizadoDivergenciaNegativa,
+                LoteStatusEnum.FinalizadoDivergenciaPositiva,
+                LoteStatusEnum.FinalizadoDivergenciaTodas,
+                LoteStatusEnum.AguardandoAutorizacaoSefaz,
+                LoteStatusEnum.AguardandoConfirmacaoNFDevolucao,
+                LoteStatusEnum.AguardandoCriacaoNFDevolucao
             };
 
             var query = (from produto in Entities.Produto

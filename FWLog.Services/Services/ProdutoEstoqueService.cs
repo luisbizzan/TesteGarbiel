@@ -26,7 +26,7 @@ namespace FWLog.Services.Services
 
             if (produtoEstoque.IdEnderecoArmazenagem.HasValue)
             {
-                loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(produtoEstoque.IdEnderecoArmazenagem.Value, produtoEstoque.IdProduto, produtoEstoque.IdEmpresa);
+                loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresaPicking(produtoEstoque.IdEnderecoArmazenagem.Value, produtoEstoque.IdProduto, produtoEstoque.IdEmpresa);
             }
 
             if (loteProdutoEndereco?.Quantidade > 0)

@@ -37,7 +37,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.LoteProdutoEndereco.Where(w => w.IdEnderecoArmazenagem == idEnderecoArmazenagem).ToList();
         }
 
-        public LoteProdutoEndereco PesquisarPorEnderecoProdutoEmpresa(long idEnderecoArmazenagem, long idProduto, long IdEmpresa)
+        public LoteProdutoEndereco PesquisarPorEnderecoProdutoEmpresaPicking(long idEnderecoArmazenagem, long idProduto, long IdEmpresa)
         {
             return Entities.LoteProdutoEndereco.Where(w => w.IdEnderecoArmazenagem == idEnderecoArmazenagem &&
                                                              w.IdProduto == idProduto &&

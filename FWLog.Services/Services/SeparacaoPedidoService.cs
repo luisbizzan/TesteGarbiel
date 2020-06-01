@@ -54,7 +54,7 @@ namespace FWLog.Services.Services
             {
                 IdPedidoVenda = x.IdPedidoVenda,
                 IdPedidoVendaVolume = x.IdPedidoVendaVolume,
-                EtiquetaVolume = x.EtiquetaVolume
+                EtiquetaVolume = $"{x.PedidoVenda.NroPedidoVenda.ToString().PadLeft(7, '0')}{x.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3,'0')}{x.NroVolume.ToString().PadLeft(3,'0')}"
             }).ToList();
 
             return result;
@@ -279,7 +279,7 @@ namespace FWLog.Services.Services
 
         private async Task AjustarQuantidadeVolume(long idEnderecoArmazenagem, long idProduto, int quantidadeAdicionar, long idEmpresa, string idUsuarioAjuste)
         {
-            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(idEnderecoArmazenagem, idProduto, idEmpresa);
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresaPicking(idEnderecoArmazenagem, idProduto, idEmpresa);
 
             var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
 
@@ -570,24 +570,31 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVenda, long idProduto, long? idProdutoSeparacao, string idUsuario, long idEmpresa, int? quantidadeAjuste, bool temPermissaoF7, string idUsuarioAutorizacaoZerarPedido, bool temPermissaoF8)
+        public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVendaVolume, long idProduto, long? idProdutoSeparacao, string idUsuario, long idEmpresa, int? quantidadeAjuste, bool temPermissaoF7, string idUsuarioAutorizacaoZerarPedido, bool temPermissaoF8)
         {
-            var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedidoVendaEIdEmpresa(idPedidoVenda, idEmpresa);
+            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPedidoVendaVolumePorIdPorEmpresa(idPedidoVendaVolume, idEmpresa);
+
+            ValidarPedidoVendaVolumeConcluidoCancelado(pedidoVendaVolume);
+
+            var pedidoVenda = pedidoVendaVolume.PedidoVenda;
 
             ValidarPedidoVendaEmSeparacao(pedidoVenda, idEmpresa);
 
-            ValidarProdutoPorPedidoVenda(idPedidoVenda, idProdutoSeparacao ?? idProduto);
+            var pedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVendaVolumeEIdProduto(idPedidoVendaVolume, idProdutoSeparacao ?? idProduto);
 
-            var pedidoVendaProduto = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVendaEIdProduto(pedidoVenda.IdPedidoVenda, idProdutoSeparacao ?? idProduto);
+            if (pedidoVendaProduto == null)
+            {
+                throw new BusinessException("O produto informado não faz parte do pedido em separação.");
+            }
 
-            ValidarPedidoVendaVolumeConcluidoCancelado(pedidoVendaProduto.PedidoVendaVolume);
+            ValidarPedidoVendaVolumeConcluidoCancelado(pedidoVendaVolume);
 
             if (pedidoVendaProduto.IdPedidoVendaStatus != PedidoVendaStatusEnum.PendenteSeparacao && pedidoVendaProduto.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao && pedidoVendaProduto.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
             {
                 throw new BusinessException("Produto com status inválido para separação.");
             }
 
-            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, idEmpresa);
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresaPicking(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, idEmpresa);
 
             ValidarLoteProdutoEndereco(loteProdutoEndereco);
 
@@ -686,6 +693,9 @@ namespace FWLog.Services.Services
                 _unitOfWork.PedidoVendaProdutoRepository.Update(pedidoVendaProduto);
                 await _unitOfWork.SaveChangesAsync();
 
+                var numeroVolume = pedidoVendaVolume.NroVolume.ToString().PadLeft(3, '0');
+                var numeroPedido = pedidoVenda.Pedido.NroPedido;
+
                 if (zerarPedido == false)
                 {
                     await AjustarQuantidadeVolume(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, quantidadeIncrementada * -1, idEmpresa, idUsuario);
@@ -696,7 +706,7 @@ namespace FWLog.Services.Services
                         {
                             IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
                             IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.FinalizacaoSeparacao,
-                            Descricao = $"Ajustou manualmente a quantidade do produto {pedidoVendaProduto.Produto.Referencia} na separação do pedido venda {idPedidoVenda}, quantidade ajuste {quantidadeAjuste}, valor passou de {quantidadeJaSeparada} para {qtdSeparada}.",
+                            Descricao = $"Ajustou manualmente a quantidade do produto {pedidoVendaProduto.Produto.Referencia} na separação do volume {numeroVolume} no pedido {numeroPedido}, quantidade ajuste {quantidadeAjuste}, valor passou de {quantidadeJaSeparada} para {qtdSeparada}.",
                             IdEmpresa = idEmpresa,
                             IdUsuario = idUsuario
                         };
@@ -710,7 +720,7 @@ namespace FWLog.Services.Services
                     {
                         IdColetorAplicacao = ColetorAplicacaoEnum.Separacao,
                         IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.FinalizacaoSeparacao,
-                        Descricao = $"Zerou manualmente o produto {pedidoVendaProduto.Produto.Referencia} na separação do pedido venda {idPedidoVenda}, quantidade permaneceu em {quantidadeJaSeparada}, usuário autorização {idUsuarioAutorizacaoZerarPedido}",
+                        Descricao = $"Zerou manualmente o produto {pedidoVendaProduto.Produto.Referencia} na separação do volume {numeroVolume} no pedido {numeroPedido}, quantidade permaneceu em {quantidadeJaSeparada}, usuário autorização {idUsuarioAutorizacaoZerarPedido}",
                         IdEmpresa = idEmpresa,
                         IdUsuario = idUsuario
                     };
@@ -722,27 +732,6 @@ namespace FWLog.Services.Services
             }
 
             return salvarSeparacaoProdutoResposta;
-        }
-
-        //TODO: Será utilizado no momento que precisar validar PedidosVenda em aberto para separação por usuário
-        //public void ValidarPedidoVendaPorUsuario(string idUsuario, long idEmpresa, PedidoVenda pedidoVenda)
-        //{
-        //    var pedidoVendaPorUsuario = _unitOfWork.PedidoVendaRepository.ObterPorIdUsuarioEIdEmpresa(idUsuario, idEmpresa);
-
-        //    if (pedidoVendaPorUsuario.Any(x => x.PedidoVendaStatus.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao && x.IdPedidoVenda != pedidoVenda.IdPedidoVenda))
-        //    {
-        //        throw new BusinessException("Existe um pedido em separação pelo usuário logado que não foi concluído.");
-        //    }
-        //}
-
-        public void ValidarProdutoPorPedidoVenda(long idPedidoVenda, long idProduto)
-        {
-            var pedidoVendaProdutos = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
-
-            if (!pedidoVendaProdutos.Any(pvp => pvp.IdProduto == idProduto))
-            {
-                throw new BusinessException("O produto informado não faz parte do pedido em separação.");
-            }
         }
 
         public void ValidarLoteProdutoEndereco(LoteProdutoEndereco loteProdutoEndereco)
@@ -930,8 +919,10 @@ namespace FWLog.Services.Services
                                 {
                                     quantidadeVolume++;
 
+                                    var grupoCorredorItem = await BuscarGrupoCorredorArmazenagemItemPedido(itemVolume.ListaItensDoPedido[0].EnderecoSeparacao.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
+
                                     //Salva PedidoVendaVolume.
-                                    var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, itemCorredorArmazenagem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
+                                    var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, grupoCorredorItem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
 
                                     if (idPedidoVendaVolume == 0)
                                         continue;
@@ -946,7 +937,7 @@ namespace FWLog.Services.Services
                                     int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
 
                                     //Imprime a etiqueta de separação.
-                                    await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, itemCorredorArmazenagem, pedido, idPedidoVendaVolume, corredorInicioSeparacao);
+                                    await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, grupoCorredorItem, pedido, idPedidoVendaVolume, corredorInicioSeparacao);
                                 }
 
                                 //Atualiza a quantidade de volumes na PedidoVenda.
@@ -968,7 +959,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagem grupoCorredorArmazenagem, Pedido pedido, long idPedidoVendaVolume, int corredorInicioSeparacao)
+        public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, Pedido pedido, long idPedidoVendaVolume, int corredorInicioSeparacao)
         {
             var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
 
@@ -1158,7 +1149,8 @@ namespace FWLog.Services.Services
                         Caixa = caixasQuePodemSerUsadas,
                         EnderecoSeparacao = item.EnderecoSeparacao,
                         GrupoCorredorArmazenagem = listaItensDoPedido[i].GrupoCorredorArmazenagem,
-                        IsSeparacaoNoPikcing = item.IsSeparacaoNoPikcing
+                        IsSeparacaoNoPikcing = item.IsSeparacaoNoPikcing,
+                        IdLote = item.IdLote
                     });
                 }
             }
@@ -1176,12 +1168,12 @@ namespace FWLog.Services.Services
             LoteProdutoEndereco pontoSeparacaoEscolhido;
             bool encontrou = false;
             List<LoteProdutoEnderecoViewModel> listaProdutoEndereco = new List<LoteProdutoEnderecoViewModel>();
-                 
+
             //Aqui é feito uma verificação para ignorar itens que estão sem localização.
             //O motivo é que foi dito na reunião com Veronezzi e Beatriz que a chance disso acontecer é pequena, pois ao cadastrar um produto será informado um endereço de picking para ele.
             //Mantive a verificação comentada pois, se tiver algum erro perante a isso basta descomentar.
             //if (enderecoPicking == null)
-            //    break;
+            //    continue;
 
             var listaEnderecoSeparacao = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorProdutoComLote(item.Produto.IdProduto, idEmpresa)
                 .Where(x => x.Quantidade > 0).OrderBy(x => x.DataHoraInstalacao).ToList();
@@ -1190,15 +1182,16 @@ namespace FWLog.Services.Services
             if (!enderecoPicking.EnderecoArmazenagem.IsFifo)
             {
                 //Primeiro caso: se a quantidade do pedido for igual a quantidade de pelo menos um endereço de separação.
-                if (listaEnderecoSeparacao.Any(x => quantidadePedido == (x.Quantidade/x.QuantidadeCaixas)))
+                if (listaEnderecoSeparacao.Any(x => quantidadePedido == (x.Quantidade / x.QuantidadeCaixas)))
                 {
                     pontoSeparacaoEscolhido = listaEnderecoSeparacao.Where(x => x.Quantidade == quantidadePedido).OrderBy(o => o.DataHoraInstalacao).FirstOrDefault();
-                    
+
                     if (pontoSeparacaoEscolhido != null)
                     {
                         listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
                         {
                             Quantidade = quantidadePedido,
+                            IdLote = pontoSeparacaoEscolhido.IdLote,
                             EnderecoSeparacao = new ProdutoEstoqueViewModel()
                             {
                                 EnderecoArmazenagem = pontoSeparacaoEscolhido.EnderecoArmazenagem,
@@ -1207,8 +1200,8 @@ namespace FWLog.Services.Services
                                 IdProduto = pontoSeparacaoEscolhido.IdProduto
                             },
                             IsSeparacaoNoPikcing = false
-                        }); 
-                        
+                        });
+
                         encontrou = true;
                     }
                 }
@@ -1224,6 +1217,7 @@ namespace FWLog.Services.Services
                         listaQuantidadeEnderecoSeparacao.Add(new LoteProdutoEnderecoViewModel()
                         {
                             Id = i,
+                            IdLote = pontoSeparacao.IdLote,
                             EnderecoSeparacao = new ProdutoEstoqueViewModel()
                             {
                                 EnderecoArmazenagem = pontoSeparacao.EnderecoArmazenagem,
@@ -1257,6 +1251,7 @@ namespace FWLog.Services.Services
                             listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
                             {
                                 Quantidade = pontoEscolhido.Quantidade,
+                                IdLote = pontoEscolhido.IdLote,
                                 EnderecoSeparacao = pontoEscolhido.EnderecoSeparacao,
                                 IsSeparacaoNoPikcing = false
                             });
@@ -1271,7 +1266,7 @@ namespace FWLog.Services.Services
                 {
                     List<string> listaCombinacoes = new List<string>();
 
-                    for (int i = quantidadePedido; i > 0 ; i--)
+                    for (int i = quantidadePedido; i > 0; i--)
                     {
                         foreach (string s in ObterCombinacoes(listaQuantidadeEnderecoSeparacao, i, ""))
                         {
@@ -1293,6 +1288,7 @@ namespace FWLog.Services.Services
                             listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
                             {
                                 Quantidade = pontoEscolhido.Quantidade,
+                                IdLote = pontoEscolhido.IdLote,
                                 EnderecoSeparacao = pontoEscolhido.EnderecoSeparacao,
                                 IsSeparacaoNoPikcing = false
                             });
@@ -1310,6 +1306,7 @@ namespace FWLog.Services.Services
                     listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
                     {
                         Quantidade = quantidadeFaltante,
+                        IdLote = null,
                         EnderecoSeparacao = new ProdutoEstoqueViewModel()
                         {
                             EnderecoArmazenagem = enderecoPicking.EnderecoArmazenagem,
@@ -1335,6 +1332,7 @@ namespace FWLog.Services.Services
                         listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
                         {
                             Quantidade = quantidadePedido,
+                            IdLote = pontoSeparacaoEscolhido.IdLote,
                             EnderecoSeparacao = new ProdutoEstoqueViewModel()
                             {
                                 EnderecoArmazenagem = pontoSeparacaoEscolhido.EnderecoArmazenagem,
@@ -1351,6 +1349,7 @@ namespace FWLog.Services.Services
                     listaProdutoEndereco.Add(new LoteProdutoEnderecoViewModel()
                     {
                         Quantidade = quantidadePedido,
+                        IdLote = null,
                         EnderecoSeparacao = new ProdutoEstoqueViewModel()
                         {
                             EnderecoArmazenagem = enderecoPicking.EnderecoArmazenagem,
@@ -1402,7 +1401,7 @@ namespace FWLog.Services.Services
         public async Task<List<CaixaViewModel>> CaixasQuePodemSerUtilizadas(ProdutoViewModel produto, List<CaixaViewModel> listaCaixas, long idEmpresa) //getCaixasOK
         {
             List<CaixaViewModel> listaCaixasQuePodemSerUtilizadas = new List<CaixaViewModel>();
-            
+
             var caixasRecusa = _unitOfWork.CaixaRecusaRepository.BuscarPorEmpresaProduto(idEmpresa, produto.IdProduto).GroupBy(x => x.IdCaixa);
 
             foreach (var item in caixasRecusa)
@@ -2079,7 +2078,8 @@ namespace FWLog.Services.Services
                             EnderecoSeparacao = listaItensDoPedido[i].EnderecoSeparacao,
                             GrupoCorredorArmazenagem = listaItensDoPedido[i].GrupoCorredorArmazenagem,
                             IsSeparacaoNoPikcing = listaItensDoPedido[i].IsSeparacaoNoPikcing,
-                            Quantidade = Convert.ToInt32(listaItensDoPedido[i].Produto.MultiploVenda)
+                            Quantidade = Convert.ToInt32(listaItensDoPedido[i].Produto.MultiploVenda),
+                            IdLote = listaItensDoPedido[i].IdLote
                         });
                     }
                 }
