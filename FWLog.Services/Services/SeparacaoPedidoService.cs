@@ -2141,11 +2141,11 @@ namespace FWLog.Services.Services
             switch (status)
             {
                 case PedidoVendaStatusEnum.ProcessandoIntegracao:
-                    return "Preparando";
+                    return "Preparando Ped.";
                 case PedidoVendaStatusEnum.PendenteSeparacao:
-                    return "Pendente";
+                    return "Ped. Pendente";
                 case PedidoVendaStatusEnum.EnviadoSeparacao:
-                    return "Enviado";
+                    return "Enviado Sep.";
                 case PedidoVendaStatusEnum.ProcessandoSeparacao:
                     return "Separando";
                 case PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso:
@@ -2155,19 +2155,19 @@ namespace FWLog.Services.Services
                 case PedidoVendaStatusEnum.Cancelado:
                     return "Cancelado";
                 case PedidoVendaStatusEnum.InstalandoVolumeTransportadora:
-                    return "Instalando";
+                    return "Instalando Vol.";
                 case PedidoVendaStatusEnum.VolumeInstaladoTransportadora:
-                    return "Instalado";
+                    return "Vol. Instalado";
                 case PedidoVendaStatusEnum.MovendoDOCA:
-                    return "Movendo";
+                    return "Movendo DOCA";
                 case PedidoVendaStatusEnum.MovidoDOCA:
-                    return "Movido";
+                    return "Movido DOCA";
                 case PedidoVendaStatusEnum.DespachandoNF:
-                    return "Despachando";
+                    return "Despachando NF.";
                 case PedidoVendaStatusEnum.NFDespachada:
-                    return "Despachado";
+                    return "NF. Despachada";
                 case PedidoVendaStatusEnum.RomaneioImpresso:
-                    return "Impresso";
+                    return "Env. Transp.";
                 default:
                     return null;
             }
@@ -2208,11 +2208,13 @@ namespace FWLog.Services.Services
                         IdPedidoVendaProduto = pvp.IdPedidoVendaProduto,
                         IdProduto = pvp.IdProduto,
                         ReferenciaProduto = pvp.Produto.Referencia,
+                        CodigoEndereco = pvp.EnderecoArmazenagem.Codigo,
+                        DescricaoPontoArmazenagem = pvp.EnderecoArmazenagem.PontoArmazenagem.Descricao,
                         QuantidadeSeparar = pvp.QtdSeparar,
                         QuantidadeSeparada = pvp.QtdSeparada.GetValueOrDefault(),
                         Corredor = 2,
-                        UsuarioConferencia = pvp.IdUsuarioSeparacao,
-                        DataHoraConferencia = pvp.DataHoraFimSeparacao,
+                        UsuarioSeparacao = pvp.IdUsuarioSeparacao,
+                        DataHoraSeparacao = pvp.DataHoraFimSeparacao,
                         Peso = pvp.PesoProduto
                     }).ToList()
                 }).ToList()
@@ -2222,13 +2224,13 @@ namespace FWLog.Services.Services
             {
                 pvp.Corredor = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresa(pvp.IdProduto, idEmpresa)?.EnderecoArmazenagem?.Corredor;
 
-                if (!pvp.UsuarioConferencia.NullOrEmpty())
+                if (!pvp.UsuarioSeparacao.NullOrEmpty())
                 {
-                    var perfilUsuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(pvp.UsuarioConferencia);
+                    var perfilUsuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(pvp.UsuarioSeparacao);
 
                     if (perfilUsuario != null)
                     {
-                        pvp.UsuarioConferencia = $"{perfilUsuario.Usuario.UserName} - {perfilUsuario.Nome}";
+                        pvp.UsuarioSeparacao = $"{perfilUsuario.Usuario.UserName} - {perfilUsuario.Nome}";
                     }
                 }
             });
