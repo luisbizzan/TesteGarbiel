@@ -54,7 +54,7 @@ namespace FWLog.Services.Services
             {
                 IdPedidoVenda = x.IdPedidoVenda,
                 IdPedidoVendaVolume = x.IdPedidoVendaVolume,
-                EtiquetaVolume = x.EtiquetaVolume
+                EtiquetaVolume = $"{x.PedidoVenda.NroPedidoVenda.ToString().PadLeft(7, '0')}{x.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3,'0')}{x.NroVolume.ToString().PadLeft(3,'0')}"
             }).ToList();
 
             return result;

@@ -44,7 +44,7 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.PedidoVendaVolume.Where(w => w.PedidoVenda.IdEmpresa == idEmpresa &&
                                                             w.IdUsuarioSeparacaoAndamento == idUsuario &&
-                                                            w.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao).Select(x => x).ToList();
+                                                            w.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao).OrderBy(o => o.DataHoraInicioSeparacao).Select(x => x).ToList();
         }
 
         private IQueryable<RelatorioVolumesInstaladosTransportadoraItem> BuscarDadosVolumePorTransportadoraQuery(RelatorioVolumesInstaladosTransportadoraFiltro filtro)
