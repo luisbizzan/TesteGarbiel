@@ -1,0 +1,93 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="C65317C7-751D-4268-5665-6A655AB7173A" name="GAR_REMESSA_LISTA">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-28 18:33:09 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<ordsAlias>table_23</ordsAlias>
+<allowColumnReorder>false</allowColumnReorder>
+<existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
+<parsed>true</parsed>
+<columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
+<Column name="ID" id="D0394F9B-7F8A-8678-92A8-2A437E1C6A84">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-28 18:33:28 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="COD_FORNECEDOR" id="598625A2-11E9-C7C3-393C-F7C9863F3DFB">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-29 10:06:09 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>200</dataTypeSize>
+<ownDataTypeParameters>200,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="DIA" id="9840D738-B801-F204-5082-50776714D619">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-29 10:06:09 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT007</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_USR" id="52E005CD-0FFC-9C39-AD1E-F18BF1B4E011">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-29 10:06:09 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_STATUS" id="0371DA71-4340-0361-B3F4-0ABF847D22DD">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-29 10:06:09 UTC</createdTime>
+<commentInRDBMS>Aberto&lt;br/&gt;Em Conferência&lt;br/&gt;Fechado</commentInRDBMS>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="ID_EMPRESA" id="AA23FA5A-CA73-3995-A32D-9A5B35B0B825">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-29 10:06:18 UTC</createdTime>
+<commentInRDBMS>Empresa que gerou a remessa</commentInRDBMS>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+</columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="E077A896-2BBE-5CB9-F2FF-5B2E9313027F" name="GAR_REMESSA_LISTA_PK">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-05-28 18:33:28 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="D0394F9B-7F8A-8678-92A8-2A437E1C6A84"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
+</Table>
