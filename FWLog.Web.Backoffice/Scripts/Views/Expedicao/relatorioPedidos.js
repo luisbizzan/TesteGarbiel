@@ -4,6 +4,32 @@
 
     $("dateFormat").mask("99/99/9999");
 
+    $.validator.addMethod('validarDataInicial', function (value, ele) {
+        var idPedidoVenda = $("#Filter_NumeroPedido").val();
+        var dataInicial = $("#Filter_DataInicial").val();
+        var dataFinal = $("#Filter_DataFinal").val();
+
+        if (dataInicial == "" && idPedidoVenda == "")
+            return false
+        else if (dataInicial == "" && idPedidoVenda != "" && dataFinal != "")
+            return false
+        else
+            return true;
+    }, 'Informe a data criação inicial para pesquisar');
+
+    $.validator.addMethod('validarDataFinal', function (value, ele) {
+        var idPedidoVenda = $("#Filter_NumeroPedido").val();
+        var dataFinal = $("#Filter_DataFinal").val();
+        var dataInicial = $("#Filter_DataInicial").val();
+
+        if (dataFinal == "" && idPedidoVenda == "")
+            return false
+        else if (dataFinal == "" && idPedidoVenda != "" && dataInicial != "")
+            return false
+        else
+            return true;
+    }, 'Informe a data criação final para pesquisar');
+
     var $DataInicial = $('#Filter_DataInicial').closest('.date');
     var $DataFinal = $('#Filter_DataFinal').closest('.date');
 
@@ -56,16 +82,19 @@
         stateSaveParams: function (settings, data) {
             dart.dataTables.saveFilterToData(data);
         },
+        rowCallback: function (row, data, index) {
+            $('tr:eq(0)', row).html('<b>' + data[0] + '</b>');
+        },
         columns: [
             { "defaultContent": "", width: '8%' },
             { data: 'NroVolume', width: '8%' },
             { data: 'DataCriacao' },
-            { data: 'DataSaida' },
+            { data: 'DataExpedicao' },
             { data: 'Status', width: '20%' },
             actionsColumn
         ],
         rowGroup: {
-            dataSrc: 'NroPedido'
+            dataSrc: 'NroPedido',
         }
     });
 
@@ -82,19 +111,6 @@
     $(".clearButton").click(function () {
         $('#Filter_DataInicial').val("");
         $('#Filter_DataFinal').val("");
-    });
-
-    $("#pesquisarPedidoVenda").click(function () {
-        limpaModais();
-
-        $("#modalPesquisaPedidoVenda").load(HOST_URL + "Expedicao/PedidoVendaPesquisaModal/", function () {
-            $("#modalPesquisaPedidoVenda").modal();
-        });
-    });
-
-    $("#limparPedidoVenda").click(function () {
-        $("#Filter_NumeroPedidoVenda").val("");
-        $("#Filter_IdPedidoVenda").val("");
     });
 
     $("#pesquisarCliente").click(function () {
@@ -125,13 +141,6 @@ function setCliente(idCliente, nomeFantasia) {
     $("#modalCliente").empty();
 }
 
-function selecionarPedidoVenda(idPedidoVenda, numeroPedidoVenda) {
-    $("#Filter_NumeroPedidoVenda").val(numeroPedidoVenda);
-    $("#Filter_IdPedidoVenda").val(idPedidoVenda);
-    $("#modalPesquisaPedidoVenda").modal("hide");
-    $("#modalPesquisaPedidoVenda").empty();
-}
-
 function detalhesPedido() {
     var id = $(this).data("id");
     let modalDetalhesPedidoVolume = $("#modalDetalhesPedidoVolume");
@@ -150,7 +159,6 @@ function limparCliente() {
 function limpaModais() {
     $("#modalPesquisaTransportadora").empty();
     $("#modalPesquisaTransportadoraEndereco").empty();
-    $("#modalPesquisaPedidoVenda").empty();
 }
 
 function limparTransportadora() {

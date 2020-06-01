@@ -1316,9 +1316,9 @@ namespace FWLog.Services.Services
                 pedidos = pedidos.Where(x => x.PedidoVenda.Pedido.DataCriacao <= dataFinal);
             }
 
-            if (filtro.CustomFilter.IdPedidoVenda.HasValue)
+            if (filtro.CustomFilter.NumeroPedido.HasValue)
             {
-                pedidos = pedidos.Where(pv => pv.IdPedidoVenda == filtro.CustomFilter.IdPedidoVenda.Value);
+                pedidos = pedidos.Where(pv => pv.PedidoVenda.Pedido.NroPedido == filtro.CustomFilter.NumeroPedido.Value);
             }
 
             if (filtro.CustomFilter.IdCliente.HasValue)
@@ -1356,7 +1356,7 @@ namespace FWLog.Services.Services
                     NroVolume = s.NroVolume.ToString().PadLeft(3, '0'),
                     IdPedidoVendaVolume = s.IdPedidoVendaVolume,
                     DataCriacao = s.DataCriacao.ToString("dd/MM/yyyy"),
-                    DataSaida = s.DataSaida.HasValue ? s.DataSaida.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty,
+                    DataExpedicao = s.DataSaida.HasValue ? s.DataSaida.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty,
                     Status = s.Status,
                 });
             });

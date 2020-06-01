@@ -23,18 +23,10 @@
             <div class="clearfix"></div>
         </div>
         <div class="x_content" style="display: block;">
-            <div class="row" style="margin-bottom: 20px;">
+            <div class="row">
                 <div class="form-group col-sm-3 col-xs-12 col-lg-3 col-md-3">
-                    @Html.LabelFor(m => m.Filter.IdPedidoVenda, new { @class = "control-label" })
-                    <div class="input-group">
-                        @Html.TextBoxFor(m => m.Filter.NumeroPedidoVenda, null, new { @class = "form-control", @readonly = "true" })
-                        <span class="input-group-btn">
-                            <a id="pesquisarPedidoVenda" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
-                            <a id="limparPedidoVenda" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
-                        </span>
-                    </div>
-                    @Html.HiddenFor(m => m.Filter.IdPedidoVenda, new { data_field = "IdPedidoVenda" })
-                    @Html.ValidationMessageFor(m => m.Filter.IdPedidoVenda)
+                    @Html.LabelFor(m => m.Filter.NumeroPedido, new { @class = "control-label" })
+                    @Html.TextBoxFor(m => m.Filter.NumeroPedido, null, new { @class = "form-control onlyNumber", data_field = "NumeroPedido" })
                 </div>
                 <div class="form-group col-sm-3 col-xs-12 col-lg-3 col-md-3">
                     @Html.LabelFor(m => m.Filter.IdCliente, new { @class = "control-label" })
@@ -65,7 +57,7 @@
                 <div class="col-xs-12 col-sm-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataInicial)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.DataInicial, new { @class = "form-control dateFormat", data_field = "DataInicial" })
+                        @Html.TextBoxFor(m => m.Filter.DataInicial, new { @class = "form-control dateFormat validarDataInicial", data_field = "DataInicial" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -75,7 +67,7 @@
                 <div class="col-xs-12 col-sm-6 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filter.DataFinal)
                     <div class='input-group date'>
-                        @Html.TextBoxFor(m => m.Filter.DataFinal, new { @class = "form-control dateFormat", data_field = "DataFinal" })
+                        @Html.TextBoxFor(m => m.Filter.DataFinal, new { @class = "form-control dateFormat validarDataFinal", data_field = "DataFinal" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
@@ -107,7 +99,7 @@
                             <th></th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.NroVolume)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.DataCriacao)</th>
-                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataSaida)</th>
+                            <th>@Html.DisplayNameFor(m => m.EmptyItem.DataExpedicao)</th>
                             <th>@Html.DisplayNameFor(m => m.EmptyItem.Status)</th>
                             <th>@Resources.CommonStrings.ActionsLabel</th>
                         </tr>
@@ -117,6 +109,6 @@
         </div>
     </div>
 </div>
-<div class="modal" id="modalPesquisaPedidoVenda"></div>
+<div class="modal" id="modalTransportadora"></div>
 <div class="modal" id="modalDetalhesPedidoVolume"></div>
 <div class="modal" id="modalCliente"></div>
