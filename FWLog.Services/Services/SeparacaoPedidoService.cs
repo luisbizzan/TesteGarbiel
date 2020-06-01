@@ -2230,7 +2230,7 @@ namespace FWLog.Services.Services
 
                     if (perfilUsuario != null)
                     {
-                        pvp.UsuarioSeparacao = $"{perfilUsuario.Usuario.UserName} - {perfilUsuario.Nome}";
+                        pvp.UsuarioSeparacao = $"{perfilUsuario.Usuario.UserName}";
                     }
                 }
             });
