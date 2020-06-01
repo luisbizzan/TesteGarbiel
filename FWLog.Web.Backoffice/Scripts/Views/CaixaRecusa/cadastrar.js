@@ -142,10 +142,10 @@ function salvarCaixaRecusa() {
         success: function (result) {
             if (result.Success) {
                 PNotify.success({ text: result.Message });
-                window.location.href = HOST_URL + CONTROLLER_PATH + "Index";
+                setTimeout(redirecionar, 2000);
             }
             else {
-                PNotify.success({ text: result.Message });
+                PNotify.error({ text: result.Message });
             }
         },
         error: function (data) {
@@ -153,6 +153,10 @@ function salvarCaixaRecusa() {
             NProgress.done();
         }
     });
+}
+
+function redirecionar() {
+    window.location.href = HOST_URL + CONTROLLER_PATH + "Index"
 }
 
 function validarCaixaDiferente(novaCaixa) {

@@ -303,6 +303,8 @@
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioTotalPorAlaViewModel.cs" />
     <Compile Include="Models\CaixaCtx\CaixaSearchModalViewModel.cs" />
     <Compile Include="Models\CaixaRecusaCtx\CaixaRecusaCadastroViewModel.cs" />
+    <Compile Include="Models\CaixaRecusaCtx\CaixaRecusaDetalhesViewModel.cs" />
+    <Compile Include="Models\CaixaRecusaCtx\CaixaRecusaEdicaoViewModel.cs" />
     <Compile Include="Models\CaixaRecusaCtx\CaixaRecusaListaViewModel.cs" />
     <Compile Include="Models\BORecebimentoNotaCtx\ExibirDevolucaoTotalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\EtiquetaLocacaoViewModel.cs" />
@@ -741,6 +743,8 @@
     <Content Include="Views\Expedicao\DetalhesPedidoVolume.cshtml" />
     <Content Include="Views\BORecebimentoNota\ResumoProcessamentoDevolucaoTotal.cshtml" />
     <Content Include="Views\BORecebimentoNota\DevolucaoTotalEtiqueta.cshtml" />
+    <Content Include="Views\CaixaRecusa\Editar.cshtml" />
+    <Content Include="Views\CaixaRecusa\Detalhes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

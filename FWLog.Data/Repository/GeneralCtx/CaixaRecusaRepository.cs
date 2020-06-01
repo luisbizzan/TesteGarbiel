@@ -15,7 +15,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public List<CaixaRecusaListaTabela> BuscarLista(DataTableFilter<CaixaRecusaListaFiltro> filtro, out int totalRecordsFiltered, out int totalRecords)
         {
-            totalRecords = Entities.CaixaRecusa.Where(w => w.IdEmpresa == filtro.CustomFilter.IdEmpresa).Count();
+            totalRecords = Entities.CaixaRecusa.Where(w => w.IdEmpresa == filtro.CustomFilter.IdEmpresa).GroupBy(g => g.IdCaixa).Count();
 
             var query = Entities.CaixaRecusa.AsNoTracking().Where(w => w.IdEmpresa == filtro.CustomFilter.IdEmpresa);
 

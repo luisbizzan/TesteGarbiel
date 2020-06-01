@@ -1,17 +1,12 @@
-﻿using FWLog.Services.Model.Produto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FWLog.Services.Model.ProdutoEstoque;
 
 namespace FWLog.Services.Model.SeparacaoPedido
 {
     public class LoteProdutoEnderecoViewModel
     {
+        public long Id { get; set; }
         public int Quantidade { get; set; }
-        public long IdEnderecoArmazenagem { get; set; }
-        public string CodigoEndereco { get; set; }
+        public ProdutoEstoqueViewModel EnderecoSeparacao { get; set; }
         public bool IsSeparacaoNoPikcing { get; set; }
     }
 }

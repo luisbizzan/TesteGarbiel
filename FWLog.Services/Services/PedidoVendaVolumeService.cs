@@ -3,6 +3,7 @@ using FWLog.Data.Models;
 using FWLog.Services.Model.Caixa;
 using log4net;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
@@ -24,6 +25,13 @@ namespace FWLog.Services.Services
 
             try
             {
+                var pedidoVendaVolumeRepository = _uow.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(idPedidoVenda)
+                    .Where(x => x.IdGrupoCorredorArmazenagem == grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem && x.NroVolume == numeroVolume
+                    && x.PesoVolume == peso && x.CubagemVolume == cubagem).FirstOrDefault();
+
+                if (pedidoVendaVolumeRepository != null)
+                    return pedidoVendaVolumeRepository.IdPedidoVendaVolume;
+
                 int numeroCentena = await GerarNumeroCentena(idEmpresa, idPedidoVenda);
 
                 var pedidoVendaVolume = new PedidoVendaVolume()
