@@ -74,6 +74,7 @@ namespace FWLog.Services.Services
             StringBuilder where = new StringBuilder();
             where.Append("WHERE TGFPAR.FORNECEDOR = 'S' ");
             where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
+            //where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET 4999 ROWS FETCH NEXT 5000 ROWS ONLY ");
 
             List<FornecedorIntegracao> fornecedoresIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<FornecedorIntegracao>(where.ToString(), inner.ToString());
 

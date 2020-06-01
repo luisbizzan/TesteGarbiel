@@ -371,6 +371,8 @@
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\LoteEtiquetaViewModel.cs" />
+    <Compile Include="Models\ExpedicaoCtx\ConfirmaReimpressaoVolumeViewModel.cs" />
+    <Compile Include="Models\ExpedicaoCtx\ReimpressaoEtiquetaVolumeViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\MovimentacaoVolumesDetalheViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\PedidoVendaModalViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\MovimentacaoVolumesViewModel.cs" />
@@ -600,6 +602,7 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Etiqueta\locacao.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
+    <Content Include="Scripts\Views\Expedicao\confirmarReimpressaoEtiquetaVolume.js" />
     <Content Include="Scripts\Views\Expedicao\movimentacaoVolumesDetalhes.js" />
     <Content Include="Scripts\Views\Expedicao\pedidoVendaPesquisaModal.js" />
     <Content Include="Scripts\Views\Expedicao\relatorioPedidosExpedidos.js" />
@@ -745,6 +748,7 @@
     <Content Include="Views\BORecebimentoNota\DevolucaoTotalEtiqueta.cshtml" />
     <Content Include="Views\CaixaRecusa\Editar.cshtml" />
     <Content Include="Views\CaixaRecusa\Detalhes.cshtml" />
+    <Content Include="Views\Expedicao\ConfirmarReimpressaoEtiquetaVolume.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

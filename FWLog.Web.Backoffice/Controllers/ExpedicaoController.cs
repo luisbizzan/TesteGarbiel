@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DartDigital.Library.Exceptions;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models.DataTablesCtx;
@@ -20,12 +21,15 @@ namespace FWLog.Web.Backoffice.Controllers
     {
         private readonly ExpedicaoService _expedicaoService;
         private readonly RelatorioService _relatorioService;
+        private readonly EtiquetaService _etiquetaService;
+
         private readonly UnitOfWork _uow;
 
-        public ExpedicaoController(ExpedicaoService expedicaoService, RelatorioService relatorioService, UnitOfWork uow)
+        public ExpedicaoController(ExpedicaoService expedicaoService, RelatorioService relatorioService, EtiquetaService etiquetaService, UnitOfWork uow)
         {
             _expedicaoService = expedicaoService;
             _relatorioService = relatorioService;
+            _etiquetaService = etiquetaService;
             _uow = uow;
         }
 
@@ -257,6 +261,51 @@ namespace FWLog.Web.Backoffice.Controllers
             var dadosRetorno = _expedicaoService.BuscarDadosPedidoVolume(id, IdEmpresa);
 
             return View(dadosRetorno);
+        }
+
+        [HttpGet]
+        public ActionResult ConfirmarReimpressaoEtiquetaVolume(long idPedidoVendaVolume)
+        {
+            var pedidoVendaVolume = _uow.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
+
+            return View(new ConfirmaReimpressaoVolumeViewModel
+            {
+                IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume,
+                NroPedido = pedidoVendaVolume.PedidoVenda.Pedido.NroPedido,
+                Volume = pedidoVendaVolume.NroVolume
+            });
+        }
+
+        [HttpPost]
+        public JsonResult ReimprimirEtiquetaVolume(ReimpressaoEtiquetaVolumeViewModel viewModel)
+        {
+            try
+            {
+                ValidateModel(viewModel);
+
+                var pedidoVendaVolume = _uow.PedidoVendaVolumeRepository.GetById(viewModel.IdPedidoVendaVolume);
+
+                if (pedidoVendaVolume == null)
+                {
+                    throw new BusinessException("Volume não encontrado");
+                }
+
+                _etiquetaService.ImprimirEtiquetaVolume(pedidoVendaVolume, viewModel.IdImpressora);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Impressão enviada com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (BusinessException exception)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = exception.Message
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

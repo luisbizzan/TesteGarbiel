@@ -39,7 +39,7 @@ namespace FWLog.Services.Services
             StringBuilder where = new StringBuilder();
             where.Append("WHERE TGFPAR.CLIENTE = 'S' ");
             where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
-            where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET 0 ROWS FETCH NEXT 5000 ROWS ONLY ");
+            //where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET 0 ROWS FETCH NEXT 5000 ROWS ONLY ");
 
             List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString(), inner: inner.ToString());
 
