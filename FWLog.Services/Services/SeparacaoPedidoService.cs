@@ -279,7 +279,7 @@ namespace FWLog.Services.Services
 
         private async Task AjustarQuantidadeVolume(long idEnderecoArmazenagem, long idProduto, int quantidadeAdicionar, long idEmpresa, string idUsuarioAjuste)
         {
-            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(idEnderecoArmazenagem, idProduto, idEmpresa);
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresaPicking(idEnderecoArmazenagem, idProduto, idEmpresa);
 
             var produto = _unitOfWork.ProdutoRepository.GetById(idProduto);
 
@@ -594,7 +594,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Produto com status inválido para separação.");
             }
 
-            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresa(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, idEmpresa);
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresaPicking(pedidoVendaProduto.IdEnderecoArmazenagem, pedidoVendaProduto.IdProduto, idEmpresa);
 
             ValidarLoteProdutoEndereco(loteProdutoEndereco);
 
