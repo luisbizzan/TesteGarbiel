@@ -64,7 +64,14 @@ namespace FWLog.Data.Repository.GeneralCtx
                 query = query.Where(caixa => caixa.Ativo == filtro.CustomFilter.Status);
             }
 
-            var selectedQuery = query.Select(caixa => new CaixaListaTabela
+            totalRecordsFiltered = query.Count();
+
+            query = query
+                .OrderBy(filtro.OrderByColumn, filtro.OrderByDirection)
+                .Skip(filtro.Start)
+                .Take(filtro.Length);
+
+            var resultado = query.ToList().Select(caixa => new CaixaListaTabela
             {
                 IdCaixa = caixa.IdCaixa,
                 Nome = caixa.Nome,
@@ -72,22 +79,15 @@ namespace FWLog.Data.Repository.GeneralCtx
                 Largura = caixa.Largura,
                 Altura = caixa.Altura,
                 Comprimento = caixa.Comprimento,
-                PesoMaximo = caixa.PesoMaximo,
+                PesoMaximo = caixa.PesoMaximo.ToString("N2"),
                 Cubagem = caixa.Cubagem,
-                Sobra = caixa.Sobra,
+                Sobra = caixa.Sobra.ToString("N2"),
                 CaixaTipoDescricao = caixa.CaixaTipo.Descricao,
-                PesoCaixa = caixa.PesoCaixa,
+                PesoCaixa = caixa.PesoCaixa.ToString("N2"),
                 Status = caixa.Ativo ? "Ativo" : "Inativo"
-            });
+            }).ToList();
 
-            totalRecordsFiltered = selectedQuery.Count();
-
-            selectedQuery = selectedQuery
-                .OrderBy(filtro.OrderByColumn, filtro.OrderByDirection)
-                .Skip(filtro.Start)
-                .Take(filtro.Length);
-
-            return selectedQuery.ToList();
+            return resultado;
         }
 
         public List<Caixa> BuscarCaixaTipoSeparacao(long idEmpresa)

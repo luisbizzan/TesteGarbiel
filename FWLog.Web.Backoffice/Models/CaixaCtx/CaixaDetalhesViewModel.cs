@@ -34,7 +34,7 @@ namespace FWLog.Web.Backoffice.Models.CaixaCtx
         public string PesoMaximo { get; set; }
 
         [Display(Name = "Sobra (%)")]
-        public decimal Sobra { get; set; }
+        public string Sobra { get; set; }
 
         [Display(Name = "Ativo")]
         public string Ativo { get; set; }
