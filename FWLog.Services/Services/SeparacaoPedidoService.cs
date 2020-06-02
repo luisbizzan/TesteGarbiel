@@ -553,7 +553,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume informado ainda não está liberado para a separação.");
             }
 
-            if (pedidoVendaVolume.PedidoVendaProdutos.Any(pedidoVendaProduto => pedidoVendaProduto.QtdSeparada.GetValueOrDefault() < pedidoVendaProduto.QtdSeparar))
+            if (pedidoVendaVolume.PedidoVendaProdutos.Any(pedidoVendaProduto => pedidoVendaProduto.IdUsuarioAutorizacaoZerar.NullOrEmpty() && pedidoVendaProduto.QtdSeparada.GetValueOrDefault() < pedidoVendaProduto.QtdSeparar))
             {
                 throw new BusinessException("Ainda existem itens a serem separados no pedido.");
             }
@@ -581,7 +581,7 @@ namespace FWLog.Services.Services
 
                 var finalizouPedidoVenda = false;
 
-                if (!todosProdutosVenda.Any(produtoVendaProduto => produtoVendaProduto.QtdSeparada != produtoVendaProduto.QtdSeparar))
+                if (!todosProdutosVenda.Any(produtoVendaProduto => produtoVendaProduto.IdUsuarioAutorizacaoZerar.NullOrEmpty() && produtoVendaProduto.QtdSeparada != produtoVendaProduto.QtdSeparar))
                 {
                     pedidoVenda.IdPedidoVendaStatus = novoStatusSeparacao;
                     pedidoVenda.Pedido.IdPedidoVendaStatus = novoStatusSeparacao;
@@ -729,7 +729,15 @@ namespace FWLog.Services.Services
 
                 pedidoVendaProduto.QtdSeparada = salvarSeparacaoProdutoResposta.QtdSeparada = qtdSeparada;
 
-                salvarSeparacaoProdutoResposta.VolumeSeparado = !pedidoVendaProduto.PedidoVendaVolume.PedidoVendaProdutos.Any(pvv => pvv.QtdSeparada != pvv.QtdSeparar);
+                if (salvarSeparacaoProdutoResposta.ProdutoSeparado)
+                {
+                    salvarSeparacaoProdutoResposta.VolumeSeparado = !pedidoVendaProduto.PedidoVendaVolume.PedidoVendaProdutos.Any(pvv => pvv.IdPedidoVendaProduto != pedidoVendaProduto.IdPedidoVendaProduto &&
+                        (
+                            pvv.IdUsuarioAutorizacaoZerar.NullOrEmpty() &&
+                            pvv.QtdSeparada != pvv.QtdSeparar
+                        )
+                    );
+                }
 
                 if (zerarPedido)
                 {
