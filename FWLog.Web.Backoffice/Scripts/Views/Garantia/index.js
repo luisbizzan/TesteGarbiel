@@ -308,7 +308,13 @@ function listarImpressoras() {
         $("#ddlImpressorasUsuario").empty();
         if (s.Success) {
             $("#ddlImpressorasUsuario").html(s.Data);
-            $("#modalImprimir").modal("show");
+            if (s.RecordQuantity == 1) {
+                Imprimir();
+            }
+            else {
+                $("#modalImprimir").modal("show");
+            }
+            console.log(s);
         }
     }).fail(function (f) {
         console.log(f);
@@ -326,7 +332,6 @@ function Imprimir() {
     registro.EtiquetaImpressaoIds = IdsSelecionados;
 
     $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { EtiquetaImpressao: registro }, function (s) {
-        console.log(s);
         Mensagem(s.Success, s.Message);
         if (s.Success) {
             location.reload();

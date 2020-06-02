@@ -216,7 +216,6 @@ function visualizarRemessaDetalhado(id) {
                         var s = item[2].split(" - ")[0] + ";" + item[4].split(" - ")[0];
                         return s;
                     });
-                    console.log(ids)
 
                     if (ids.length == 0) {
                         PNotify.error({ text: "Selecione um item." });
@@ -356,7 +355,13 @@ function listarImpressoras() {
         $("#ddlImpressorasUsuario").empty();
         if (s.Success) {
             $("#ddlImpressorasUsuario").html(s.Data);
-            $("#modalImprimir").modal("show");
+            if (s.RecordQuantity == 1) {
+                Imprimir();
+            }
+            else {
+                $("#modalImprimir").modal("show");
+            }
+            console.log(s);
         }
     }).fail(function (f) {
         console.log(f);
@@ -374,7 +379,6 @@ function Imprimir() {
     registro.EtiquetaImpressaoIds = IdsSelecionados;
 
     $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { EtiquetaImpressao: registro }, function (s) {
-        console.log(s);
         Mensagem(s.Success, s.Message);
         if (s.Success) {
             location.reload();

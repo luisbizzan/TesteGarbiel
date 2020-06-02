@@ -83,18 +83,15 @@ namespace FWLog.Web.Backoffice.Controllers
                     throw new Exception("Código do Perfil da Impressora inválido!");
                 #endregion
 
-                var listaImpressoras = _garantiaEtiquetaService.ImpressoraUsuario(IdEmpresa, IdPerfilImpressora);
-
-                var itens = String.Empty;
-                listaImpressoras.ForEach(delegate (GarantiaEtiqueta.Impressora i)
-                {
-                    itens += String.Format("<option value=\"{0}\">{1}</option>", i.Ip, i.NomeImpressora);
-                });
+                var impressoras = String.Empty;
+                var lista = _garantiaEtiquetaService.ImpressoraUsuario(IdEmpresa, IdPerfilImpressora);
+                lista.ForEach(delegate (GarantiaEtiqueta.Impressora i) { impressoras += String.Format("<option value=\"{0}\">{1}</option>", i.Ip, i.NomeImpressora); });
 
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,
-                    Data = itens
+                    Data = impressoras,
+                    RecordQuantity = lista.Count
                 });
             }
             catch (Exception ex)
