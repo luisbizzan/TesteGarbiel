@@ -157,3 +157,25 @@
         </div>
     </div>
 </div>
+
+<!-- Impressora Usuário -->
+<div class="modal fade" data-backdrop="static" id="modalImprimir" style="overflow-y: scroll; z-index: 1060; display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="max-width:80%">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title"> Imprimir </h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <select id="ddlImpressorasUsuario" class="form-control form-control-lg"></select>
+                    <span class="input-group-btn">
+                        <button type="button" id="btnImprimir" onclick="Imprimir();" class="btn btn-default pull-right"><i class="fa fa-print"></i> Imprimir</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

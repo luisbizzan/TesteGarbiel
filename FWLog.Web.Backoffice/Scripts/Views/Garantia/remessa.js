@@ -288,27 +288,14 @@ function visualizarRemessaDetalhado(id) {
                         var s = item[2].split(" - ")[0] + ";" + item[4].split(" - ")[0];
                         return s;
                     });
-                    console.log(ids)
 
                     if (ids.length == 0) {
                         PNotify.error({ text: "Selecione um item." });
                     } else {
                         /* # Imprimir Etiqueta # */
-                        var registro = new Object();
-                        registro.IdPerfilImpressora = Impressora.IdPerfilImpressora;
-                        registro.IdEmpresa = Impressora.IdEmpresa;
-                        registro.EtiquetaImpressaoIds = ids;
-
-                        $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { EtiquetaImpressao: registro }, function (s) {
-                            console.log(s);
-                            Mensagem(s.Success, s.Message);
-                            if (s.Success) {
-                                location.reload();
-                            }
-                        }).fail(function (f) {
-                            console.log(f);
-                        }).done(function (d) {
-                        });
+                        IdsSelecionados = new Object();
+                        IdsSelecionados = ids;
+                        listarImpressoras();
                     }
                 }
             },
@@ -431,4 +418,47 @@ $(function () {
         Impressora.IdPerfilImpressora = ddlImpressoras.value;
         Impressora.IdEmpresa = ddlEmpresa.value;
     })
+
+
 })
+
+/* Listar Impressoras do Usuario  */
+function listarImpressoras() {
+    $.post("/GarantiaEtiqueta/ImpressoraUsuario", { IdEmpresa: Impressora.IdEmpresa, IdPerfilImpressora: Impressora.IdPerfilImpressora }, function (s) {
+        $("#ddlImpressorasUsuario").empty();
+        if (s.Success) {
+            $("#ddlImpressorasUsuario").html(s.Data);
+            if (s.RecordQuantity == 1) {
+                Imprimir();
+            }
+            else {
+                $("#modalImprimir").modal("show");
+            }
+            console.log(s);
+        }
+    }).fail(function (f) {
+        console.log(f);
+    }).done(function (d) {
+    });
+}
+
+/*  Imprimiri Registros  */
+var IdsSelecionados = new Object();
+function Imprimir() {
+    var ddlImpressoraSelecionada = $('#ddlImpressorasUsuario option:selected')[0];
+
+    var registro = new Object();
+    registro.Impressora = ddlImpressoraSelecionada.value;
+    registro.EtiquetaImpressaoIds = IdsSelecionados;
+
+    $.post("/GarantiaEtiqueta/ProcessarImpressaoEtiqueta", { EtiquetaImpressao: registro }, function (s) {
+        Mensagem(s.Success, s.Message);
+        if (s.Success) {
+            location.reload();
+        }
+    }).fail(function (f) {
+        console.log(f);
+    }).done(function (d) {
+    });
+
+}
