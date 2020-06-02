@@ -14,6 +14,8 @@ namespace FWLog.Services.Model.SeparacaoPedido
 
         public int NroVolume { get; set; }
 
+        public long IdCaixaVolume { get; set; }
+
         public List<BuscarPedidoVendaGrupoCorredorResposta> ListaCorredoresSeparacao { get; set; }
     }
 
@@ -47,5 +49,7 @@ namespace FWLog.Services.Model.SeparacaoPedido
         public int QtdePedido { get; set; }
 
         public int QtdSeparada { get; set; }
+
+        public bool Picking { get; set; }
     }
 }
