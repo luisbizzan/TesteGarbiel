@@ -1,4 +1,8 @@
-﻿(function () {
+﻿document.addEventListener("DOMContentLoaded", function (event) {
+    validarRemessaAutomatica();
+});
+
+(function () {
     $('#modalVisualizar').on('hidden.bs.modal', function () {
         location.reload();
     });
@@ -35,9 +39,9 @@
     }, 'Data Final Obrigatório');
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
-        var visivelEstornar = view.estornarRemessa && (full.Id_Status === 38);
+        var visivelEstornar = view.estornarRemessa && (full.Id_Status === 38) && full.Do_Usr_Logado == 1;
         var visivelVisualizar = view.listarRemessa;
-        var visivelConferir = view.conferirRemessa && (full.Id_Status === 38);
+        var visivelConferir = view.conferirRemessa && (full.Id_Status === 38) && full.Do_Usr_Logado == 1;
 
         return [
             {
@@ -121,6 +125,74 @@
 
     dart.dataTables.loadFormFilterEvents();
 })();
+
+function validarRemessaAutomatica() {
+    $.ajax({
+        url: "/Garantia/RemessaAutomaticaCriarUsr",
+        method: "POST",
+        success: function (result) {
+            console.log(result);
+            if (!result.Success) {
+                if (result.DataObject.Id_Remessa == 0) {
+                    $.confirm({
+                        type: 'red',
+                        theme: 'material',
+                        closeIcon: function () {
+                            return false;
+                        },
+                        title: 'Remessa Automática',
+                        content: result.Message,
+                        typeAnimated: true,
+
+                        buttons: {
+                            confirmar: {
+                                text: 'Criar Conferência',
+                                btnClass: 'btn-red',
+                                action: function () {
+                                    $.ajax({
+                                        url: "/Garantia/RemessaCriarGravar",
+                                        method: "POST",
+                                        data: { Cod_Fornecedor: result.DataObject.Cod_Fornecedor },
+                                        success: function (result2) {
+                                            if (result2.Success) {
+                                                //ABRIR CONFERENCIA DA REMESSA
+                                                let modal = $("#modalVisualizar");
+                                                modal.load("ConferenciaConferir", {
+                                                    Id: result2.Data,
+                                                    Tipo: 'remessa'
+                                                }, function () {
+                                                    modal.modal();
+                                                });
+                                                PNotify.success({ text: result2.Message });
+                                            } else {
+                                                PNotify.error({ text: result2.Message });
+                                            }
+                                        },
+                                        error: function (request, status, error) {
+                                            PNotify.warning({ text: result2.Message });
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    //ABRIR CONFERENCIA DA REMESSA
+                    let modal = $("#modalVisualizar");
+                    modal.load("ConferenciaConferir", {
+                        Id: result.DataObject.Id_Remessa,
+                        Tipo: 'remessa'
+                    }, function () {
+                        modal.modal();
+                    });
+                }
+            }
+        },
+        error: function (request, status, error) {
+            PNotify.warning({ text: result.Message });
+        }
+    });
+}
 
 function visualizarRemessa() {
     var id = $(this).data("id");
@@ -288,8 +360,9 @@ function criarRemessa() {
     });
 }
 
-function estornarRemessa() {
-    var id = $(this).data("id");
+function estornarRemessa(idParam) {
+    var id = typeof idParam === 'undefined' ? $(this).data("id") : idParam;
+    console.log(id);
 
     $.confirm({
         type: 'red',
@@ -343,7 +416,6 @@ function Mensagem(sucesso, mensagem) {
 /* Selecionar Impressora */
 var Impressora = new Object();
 $(function () {
-
     $(document).ready(function () {
         Impressora = new Object();
         var ddlImpressoras = $('#ddlPerfilImpressora option:selected')[0];
@@ -359,5 +431,4 @@ $(function () {
         Impressora.IdPerfilImpressora = ddlImpressoras.value;
         Impressora.IdEmpresa = ddlEmpresa.value;
     })
-
 })

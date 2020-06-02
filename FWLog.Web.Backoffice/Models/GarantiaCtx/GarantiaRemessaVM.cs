@@ -26,6 +26,8 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         public long Id { get; set; }
 
         [Display(Name = "Data")]
+        public long Do_Usr_Logado { get; set; }
+
         public DateTime? Dt_Criacao { get; set; }
 
         public String Tipo { get; set; }
@@ -49,6 +51,8 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
 
         [Display(Name = "Status")]
         public long? Id_Status { get; set; }
+
+        public string Id_User { get; set; }
 
         public long? Id_Empresa { get; set; }
 

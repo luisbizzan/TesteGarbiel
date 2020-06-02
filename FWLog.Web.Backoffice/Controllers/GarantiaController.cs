@@ -561,17 +561,21 @@ namespace FWLog.Web.Backoffice.Controllers
                     //CONFERENCIA DE REMESSA ENVIO FORNECEDOR
 
                     //TODO MANDAR NOTA PRO SANYKA E MUDAR O STATUS PARA AGUARDANDO NF
-                    //_uow.GarantiaRepository.AtualizaStatusConferenciaRemessa(new GarConferencia
+                    _uow.GarantiaRepository.AtualizaStatusConferenciaRemessa(conferencia.Id_Remessa);
+
+                    //SE VEIO DE UMA REMESSA AUTOMATICA, FINALIZA A LISTA
+                    _uow.GarantiaRepository.FinalizarRemessaAutomatica(conferencia.Id_Remessa);
+
+                    //TODO DEPOIS ESSA ROTINA SÓ VAI SER CHAMADO QDO TIVER RETORNO DA NOTA DO SANKYA
+                    //_uow.GarantiaRepository.FinalizarConferenciaRemessa(new GarConferencia
                     //{
+                    //    Id = conferencia.Id,
+                    //    Id_Empresa = IdEmpresa,
+                    //    Id_Usr = IdUsuario,
                     //    Id_Remessa = conferencia.Id_Remessa
                     //});
 
-                    //TODO DEPOIS ESSA ROTINA SÓ VAI SER CHAMADO QDO TIVER RETORNO DA NOTA DO SANKYA
-                    _uow.GarantiaRepository.FinalizarConferenciaRemessa(new GarConferencia
-                    {
-                        Id = conferencia.Id,
-                        Id_Remessa = conferencia.Id_Remessa
-                    });
+                    //todo finalizar remessa lista
                 }
             }
 
@@ -628,11 +632,19 @@ namespace FWLog.Web.Backoffice.Controllers
             model.Filter.Data_Final = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00).AddDays(10);
             model.Filter.Id_Empresa = IdEmpresa;
 
+            //PROCESSA A FILA DE REMESSA AUTOMATICA PRO USUARIO
+            _uow.GarantiaRepository.ProcessarUsrRemessaAutomatica(new GarRemessaLista
+            {
+                Id_Usr = IdUsuario,
+                Id_Empresa = IdEmpresa
+            });
+
             return View(model);
         }
 
         public ActionResult ListarRemessa(DataTableFilter<GarantiaRemessaFilterVM> model)
         {
+            model.CustomFilter.Id_User = IdUsuario;
             int recordsFiltered, totalRecords;
             var filter = Mapper.Map<DataTableFilter<GarantiaRemessaFilter>>(model);
 
@@ -712,6 +724,7 @@ namespace FWLog.Web.Backoffice.Controllers
                         return Json(new AjaxGenericResultModel
                         {
                             Success = true,
+                            Data = retorno.Id.ToString(),
                             Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
                         });
                     }
@@ -801,10 +814,46 @@ namespace FWLog.Web.Backoffice.Controllers
                 Id_Remessa = Id
             });
 
+            //SE VEIO DE UMA REMESSA AUTOMATICA, FINALIZA A LISTA
+            _uow.GarantiaRepository.FinalizarRemessaAutomatica(Id);
+
             return Json(new AjaxGenericResultModel
             {
                 Success = true,
                 Message = "Estorno efetuado com sucesso."
+            });
+        }
+
+        [HttpPost]
+        public ActionResult RemessaAutomaticaProcessarUsr()
+        {
+            var conferencia = _uow.GarantiaRepository.ProcessarUsrRemessaAutomatica(new GarRemessaLista
+            {
+                Id_Usr = IdUsuario,
+                Id_Empresa = IdEmpresa
+            });
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = conferencia.Sucesso,
+                Message = conferencia.Mensagem
+            });
+        }
+
+        [HttpPost]
+        public ActionResult RemessaAutomaticaCriarUsr()
+        {
+            var conferencia = _uow.GarantiaRepository.CriarUsrRemessaAutomatica(new GarRemessaLista
+            {
+                Id_Usr = IdUsuario,
+                Id_Empresa = IdEmpresa
+            });
+
+            return Json(new AjaxGenericResultModel
+            {
+                DataObject = conferencia.DadosObjeto,
+                Success = conferencia.Sucesso,
+                Message = conferencia.Mensagem
             });
         }
     }

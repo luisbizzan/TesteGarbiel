@@ -76,6 +76,28 @@
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
+<Column name="VLR_ATINGIDO" id="3D555D84-6934-6960-B008-ECD8BC84AB66">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-06-01 11:38:09 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
+<Column name="VLR_MINIMO" id="F4E07C42-0E79-6EAA-9C19-A91BAE4CA507">
+<createdBy>henrique.pereira</createdBy>
+<createdTime>2020-06-01 11:38:09 UTC</createdTime>
+<ownerDesignName>modeloFwLog</ownerDesignName>
+<nullsAllowed>true</nullsAllowed>
+<useDomainConstraints>false</useDomainConstraints>
+<use>1</use>
+<logicalDatatype>LOGDT026</logicalDatatype>
+<ownDataTypeParameters>,,</ownDataTypeParameters>
+<autoIncrementCycle>false</autoIncrementCycle>
+</Column>
 </columns>
 <indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
 <ind_PK_UK id="E077A896-2BBE-5CB9-F2FF-5B2E9313027F" name="GAR_REMESSA_LISTA_PK">

@@ -21,6 +21,7 @@ namespace FWLog.Data.Models.FilterCtx
         public long? Id { get; set; }
         public long? Id_Status { get; set; }
         public long? Id_Empresa { get; set; }
+        public string Id_Usr { get; set; }
         public DateTime? Data_Inicial { get; set; }
         public DateTime? Data_Final { get; set; }
     }
