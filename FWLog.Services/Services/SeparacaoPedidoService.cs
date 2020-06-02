@@ -54,7 +54,7 @@ namespace FWLog.Services.Services
             {
                 IdPedidoVenda = x.IdPedidoVenda,
                 IdPedidoVendaVolume = x.IdPedidoVendaVolume,
-                EtiquetaVolume = $"{x.PedidoVenda.NroPedidoVenda.ToString().PadLeft(7, '0')}{x.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3,'0')}{x.NroVolume.ToString().PadLeft(3,'0')}"
+                EtiquetaVolume = $"{x.PedidoVenda.NroPedidoVenda.ToString().PadLeft(7, '0')}{x.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3, '0')}{x.NroVolume.ToString().PadLeft(3, '0')}"
             }).ToList();
 
             return result;
@@ -289,17 +289,19 @@ namespace FWLog.Services.Services
 
             var produto = loteProdutoEndereco.Produto;
 
-            var pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * novaQuantidade;
+            var novoPesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * novaQuantidade;
+
+            var pesoAnterior = loteProdutoEndereco.PesoTotal;
 
             loteProdutoEndereco.Quantidade = novaQuantidade;
-            loteProdutoEndereco.PesoTotal = pesoInstalacao;
+            loteProdutoEndereco.PesoTotal = novoPesoInstalacao;
 
             _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
             await _unitOfWork.SaveChangesAsync();
 
             var idColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade;
 
-            string descricaoColetorHistorico = string.Empty;
+            string descricaoColetorHistorico;
 
             if (loteProdutoEndereco.IdLote.HasValue)
             {
@@ -314,38 +316,42 @@ namespace FWLog.Services.Services
 
                 await _unitOfWork.SaveChangesAsync();
 
-                //var idLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Ajuste;
+                var idLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Ajuste;
 
-                //if (loteProdutoEndereco.Quantidade == 0)
-                //{
-                //    idColetorHistoricoTipo = ColetorHistoricoTipoEnum.RetirarProduto;
+                var idLote = loteProdutoEndereco.IdLote.Value;
+                var idProduto = loteProdutoEndereco.IdProduto;
+                var idEnderecoArmazenagem = loteProdutoEndereco.IdEnderecoArmazenagem;
 
-                //    idLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Saida;
+                if (loteProdutoEndereco.Quantidade == 0)
+                {
+                    idColetorHistoricoTipo = ColetorHistoricoTipoEnum.RetirarProduto;
 
-                //    descricaoColetorHistorico = $"Retirou o produto {loteProdutoEndereco.Produto.Referencia} quantidade {loteProdutoEndereco.Quantidade} peso {loteProdutoEndereco.PesoTotal} do lote {loteProdutoEndereco.IdLote} do endereço {loteProdutoEndereco.EnderecoArmazenagem.Codigo} devido a separação";
+                    idLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Saida;
 
-                //    _unitOfWork.LoteProdutoEnderecoRepository.Delete(loteProdutoEndereco);
-                //    await _unitOfWork.SaveChangesAsync();
-                //}
-                //else
-                //{
+                    descricaoColetorHistorico = $"Retirou o produto {loteProdutoEndereco.Produto.Referencia} quantidade {quantidadeAnterior} peso {pesoAnterior} do lote {loteProdutoEndereco.IdLote} do endereço {loteProdutoEndereco.EnderecoArmazenagem.Codigo} devido a separação";
+
+                    _unitOfWork.LoteProdutoEnderecoRepository.Delete(loteProdutoEndereco);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+                else
+                {
                     descricaoColetorHistorico = $"Ajustou a quantidade de {quantidadeAnterior} para {loteProdutoEndereco.Quantidade} unidade(s) do produto {loteProdutoEndereco.Produto.Referencia} do lote {loteProdutoEndereco.IdLote} do endereço {loteProdutoEndereco.EnderecoArmazenagem.Codigo} devido a separação";
-                //}
+                }
 
-                //var loteMovimentacao = new LoteMovimentacao
-                //{
-                //    IdEmpresa = idEmpresa,
-                //    IdLote = loteProdutoEndereco.IdLote.Value,
-                //    IdProduto = loteProdutoEndereco.IdProduto,
-                //    IdEnderecoArmazenagem = loteProdutoEndereco.IdEnderecoArmazenagem,
-                //    IdUsuarioMovimentacao = idUsuarioAjuste,
-                //    Quantidade = loteProdutoEndereco.Quantidade,
-                //    IdLoteMovimentacaoTipo = idLoteMovimentacaoTipo,
-                //    DataHora = DateTime.Now
-                //};
+                var loteMovimentacao = new LoteMovimentacao
+                {
+                    IdEmpresa = idEmpresa,
+                    IdLote = idLote,
+                    IdProduto = idProduto,
+                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = idUsuarioAjuste,
+                    Quantidade = novaQuantidade,
+                    IdLoteMovimentacaoTipo = idLoteMovimentacaoTipo,
+                    DataHora = DateTime.Now
+                };
 
-                //_unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
-                //await _unitOfWork.SaveChangesAsync();
+                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                await _unitOfWork.SaveChangesAsync();
             }
             else
             {
