@@ -136,6 +136,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var viewModel = Mapper.Map<CorredorImpressoraDetalhesViewModel>(corredorImpressora);
 
+            viewModel.CorredorInicial = viewModel.CorredorInicial.PadLeft(2, '0');
+            viewModel.CorredorFinal = viewModel.CorredorFinal.PadLeft(2, '0');
+
             return View(viewModel);
         }
 

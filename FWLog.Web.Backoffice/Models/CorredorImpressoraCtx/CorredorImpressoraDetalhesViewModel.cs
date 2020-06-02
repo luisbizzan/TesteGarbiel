@@ -9,11 +9,11 @@ namespace FWLog.Web.Backoffice.Models.CorredorImpressoraCtx
         public long IdEmpresa { get; set; }
         [Display(Name = "Corredor Inicial")]
         [Required]
-        public int? CorredorInicial { get; set; }
+        public string CorredorInicial { get; set; }
 
         [Display(Name = "Corredor Final")]
         [Required]
-        public int? CorredorFinal { get; set; }
+        public string CorredorFinal { get; set; }
 
         [Display(Name = "Ponto de Armazenagem")]
         [Required]

@@ -32,22 +32,22 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             totalRecords = Entities.GrupoCorredorArmazenagem.Where(w => w.IdEmpresa == model.CustomFilter.IdEmpresa).Count();
 
-            IQueryable<CorredorImpressoraListaTabela> query =
+            var query =
                 Entities.GrupoCorredorArmazenagem.AsNoTracking().Where(w => w.IdEmpresa == model.CustomFilter.IdEmpresa &&
                     (model.CustomFilter.IdPontoArmazenagem.HasValue == false || w.IdPontoArmazenagem == model.CustomFilter.IdPontoArmazenagem.Value) &&
                     (model.CustomFilter.CorredorInicial.HasValue == false || w.CorredorInicial >= model.CustomFilter.CorredorInicial.Value) &&
                     (model.CustomFilter.CorredorFinal.HasValue == false || w.CorredorFinal <= model.CustomFilter.CorredorFinal.Value) &&
                     (model.CustomFilter.IdImpressora.HasValue == false || w.IdImpressora == model.CustomFilter.IdImpressora.Value) &&
                     (model.CustomFilter.Status.HasValue == false || w.Ativo == model.CustomFilter.Status.Value))
-                .Select(s => new CorredorImpressoraListaTabela
+                .Select(s => new
                 {
-                    IdEmpresa = s.IdEmpresa,
-                    IdGrupoCorredorArmazenagem = s.IdGrupoCorredorArmazenagem,
+                    s.IdEmpresa,
+                    s.IdGrupoCorredorArmazenagem,
                     DescricaoPontoArmazenagem = s.PontoArmazenagem.Descricao,
-                    CorredorInicial = s.CorredorInicial,
-                    CorredorFinal = s.CorredorFinal,
+                    s.CorredorInicial,
+                    s.CorredorFinal,
                     Impressora = s.Impressora.Name,
-                    Status = s.Ativo ? "Sim" : "Não"
+                    Status = s.Ativo
                 });
 
             totalRecordsFiltered = query.Count();
@@ -57,7 +57,18 @@ namespace FWLog.Data.Repository.GeneralCtx
                 .Skip(model.Start)
                 .Take(model.Length);
 
-            return query.ToList();
+            var list = query.ToList();
+
+            return list.Select(q => new CorredorImpressoraListaTabela
+            {
+                IdEmpresa = q.IdEmpresa,
+                IdGrupoCorredorArmazenagem = q.IdGrupoCorredorArmazenagem,
+                DescricaoPontoArmazenagem = q.DescricaoPontoArmazenagem,
+                CorredorInicial = q.CorredorInicial.ToString().PadLeft(2, '0'),
+                CorredorFinal = q.CorredorFinal.ToString().PadLeft(2, '0'),
+                Impressora = q.Impressora,
+                Status = q.Status ? "Sim" : "Não"
+            }).ToList();
         }
 
         public List<GrupoCorredorArmazenagem> BuscarPorEmpresaEPontoArmazenagem(long idEmpresa, long idPontoArmazenagem)
