@@ -302,6 +302,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                         GS.Id,
                         (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa"" = GS.Id_Empresa ) AS empresa,
                         GS.Dt_Criacao,
+                        GS.id_status,
+                        ( SELECT GT2.descricao FROM geral_tipo GT2 WHERE GT2.Id = GS.Id_status) AS status,
                         GT1.descricao AS Tipo,
                         GS.Cod_Fornecedor
                     FROM
@@ -479,7 +481,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 {
                     //PEGA A ULTIMA REMESSA ATIVA E DO DIA DO USUARIO
                     var remessaPendente = new GarRemessaLista();
-                    sQuery = @"SELECT GRL.cod_fornecedor, GRL.id_usr, GRL.id, NVL((SELECT GR.id FROM gar_remessa GR WHERE GR.cod_fornecedor = GRL.cod_fornecedor AND GR.Id_Usr = GRL.Id_Usr AND GR.id_empresa = GRL.id_empresa AND TO_DATE(GR.dt_criacao,'DD/MM/YYYY') = TO_DATE(SYSDATE,'DD/MM/YYYY') ),0) AS id_remessa
+                    sQuery = @"SELECT GRL.cod_fornecedor, GRL.id_usr, GRL.id, NVL((SELECT GR.id FROM gar_remessa GR WHERE GR.cod_fornecedor = GRL.cod_fornecedor AND GR.Id_Usr = GRL.Id_Usr AND GR.id_empresa = GRL.id_empresa AND GR.id_status = 38 AND TO_DATE(GR.dt_criacao,'DD/MM/YYYY') = TO_DATE(SYSDATE,'DD/MM/YYYY') ),0) AS id_remessa
                     FROM gar_remessa_lista GRL
                     WHERE
                         GRL.Id_Usr = :Id_Usr
@@ -493,7 +495,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         return new DmlStatus { Sucesso = true, Mensagem = string.Format("Nada pendente.") };
 
                     //SE REMESSA NÃO FOI CRIADA, CRIA ELA
-                    if (remessaPendente.Remessa_Criada == 0)
+                    if (remessaPendente.Id_Remessa == 0)
                         return new DmlStatus { Sucesso = false, DadosObjeto = new { Id_Remessa = remessaPendente.Id_Remessa, Cod_Fornecedor = remessaPendente.Cod_Fornecedor }, Mensagem = string.Format("Remessa ainda não criada para o fornecedor <strong>{0}</strong>.", remessaPendente.Cod_Fornecedor) };
 
                     return new DmlStatus { Sucesso = false, DadosObjeto = new { Id_Remessa = remessaPendente.Id_Remessa, Cod_Fornecedor = remessaPendente.Cod_Fornecedor }, Mensagem = string.Format("Você tem uma remessa pendente para o fornecedor <strong>{0}</strong>.", remessaPendente.Cod_Fornecedor) };
@@ -786,6 +788,57 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
 
             return new DmlStatus { Sucesso = true, Mensagem = "Solicitação importada com sucesso.", Id = Id_Solicitacao };
+        }
+
+        public List<GarRemessaLista> ListarRemessaAutomaticaDia(long Id_Empresa)
+        {
+            List<GarRemessaLista> retorno = new List<GarRemessaLista>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        GRL.cod_fornecedor,
+                        GT1.descricao AS status,
+                        GRL.id_status,
+                        GRL.id_usr,
+                        GRL.vlr_atingido,
+                        GRL.vlr_minimo,
+                        GRL.id_empresa,
+                        (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa"" = GRL.Id_Empresa ) AS empresa,
+                        (SELECT U.""UserName"" FROM ""AspNetUsers"" U WHERE U.""Id"" = GRL.id_usr) AS Usr,
+                      GRL.id
+                    FROM
+                        gar_remessa_lista GRL
+                        INNER JOIN geral_tipo GT1 ON GT1.Id = GRL.id_status
+                    WHERE
+                        TO_DATE(GRL.dia, 'DD/MM/YYYY') = TO_DATE(SYSDATE, 'DD/MM/YYYY')
+                        AND GRL.Id_Empresa = :Id_Empresa
+                    ";
+                    retorno = conn.Query<GarRemessaLista>(sQuery, new { Id_Empresa }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
+        public void AtualizaStatusRemessaAutomatica(long Id, long Id_Status)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    sQuery = @"UPDATE gar_remessa_lista SET Id_Status = :Id_Status WHERE Id = :Id";
+                    conn.Query<GarConferencia>(sQuery, new { Id_Status, Id });
+                }
+                conn.Close();
+            }
         }
 
         public DmlStatus ImportarSolicitacaoNfEletronicaPedido(GarSolicitacao item)

@@ -856,5 +856,43 @@ namespace FWLog.Web.Backoffice.Controllers
                 Message = conferencia.Mensagem
             });
         }
+
+        public ActionResult RemessaAutomatica()
+        {
+            return View();
+        }
+
+        public ActionResult RemessaAutomaticaListar()
+        {
+            var result = _uow.GarantiaRepository.ListarRemessaAutomaticaDia(IdEmpresa);
+            var model = Mapper.Map<IEnumerable<GarRemessaListaVM>>(result).ToList();
+
+            return PartialView("_RemessaAutomaticaLista", model);
+        }
+
+        [HttpPost]
+        public ActionResult RemessaAutomaticaAlterarStatus(long Id, long Id_Status)
+        {
+            try
+            {
+                _uow.GarantiaRepository.AtualizaStatusRemessaAutomatica(Id, Id_Status);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                });
+            }
+            catch (Exception e)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = e.Message
+                });
+
+                throw;
+            }
+        }
     }
 }

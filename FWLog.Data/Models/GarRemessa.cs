@@ -28,6 +28,7 @@ namespace FWLog.Data.Models
         public String Empresa { get; set; }
         public DateTime Dia { get; set; }
         public String Cod_Fornecedor { get; set; }
+        public String Nome_Fornecedor { get; set; }
         public String Id_Usr { get; set; }
         public String Usr { get; set; }
         public long Id_Status { get; set; }

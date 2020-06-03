@@ -1,0 +1,28 @@
+﻿@using FWLog.AspNet.Identity
+
+@{
+    ViewBag.Title = "Lista de Garantia";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    @BundleHelper.RenderViewScript(
+        new
+        {
+
+        }
+    )
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Remessa</h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content" id="listaRemessa">
+            </div>
+        </div>
+    </div>
+</div>

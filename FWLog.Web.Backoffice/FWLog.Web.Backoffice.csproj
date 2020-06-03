@@ -704,6 +704,7 @@
     <Content Include="Scripts\Views\GarantiaConfiguracao\fornecedorquebra.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\fornecedorgrupo.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\index.js" />
+    <Content Include="Scripts\Views\Garantia\remessaAutomatica.js" />
     <Content Include="Scripts\Views\Garantia\remessaCriar.js" />
     <Content Include="Scripts\Views\Garantia\solicitacaoImportar.js" />
     <Content Include="Scripts\Views\GarantiaConfiguracao\motivolaudo.js" />
@@ -824,6 +825,8 @@
     <Content Include="Views\Garantia\_ConferenciaConferirManual.cshtml" />
     <Content Include="Views\Garantia\_RemessaVisualizar.cshtml" />
     <Content Include="Views\Garantia\_RemessaDetalhadoVisualizar.cshtml" />
+    <Content Include="Views\Garantia\RemessaAutomatica.cshtml" />
+    <Content Include="Views\Garantia\_RemessaAutomaticaLista.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

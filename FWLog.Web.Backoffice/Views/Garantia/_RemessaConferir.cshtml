@@ -10,6 +10,8 @@
 @Html.HiddenFor(m => m.Conferencia.Id)
 <input type="hidden" id="Origem" value="@ViewBag.Tipo" />
 
+
+
 <div class="modal-dialog modal-lg" style="width:95% !important;">
     <div class="modal-content">
         <div class="modal-header">
@@ -20,57 +22,74 @@
         </div>
         <div class="modal-body" style="overflow: auto; max-height: calc(100vh - 150px);">
 
-            <div class="x_panel">
-                <div class="x_content">
-                    <h3>Tipo: @Model.Conferencia.Tipo_Conf  <button onclick="estornarRemessa( @Model.Remessa.Id)" type="button" class="btn btn-danger right"><i class="fa fa-pencil-square"></i> Estornar Remessa</button></h3>
+            @if (Model.Remessa.Id_Status == 38)
+            {
+                <div class="x_panel">
+                    <div class="x_content">
+                        <h3>Tipo: @Model.Conferencia.Tipo_Conf  <button onclick="estornarRemessa( @Model.Remessa.Id)" type="button" class="btn btn-danger right"><i class="fa fa-pencil-square"></i> Estornar Remessa</button></h3>
+                    </div>
                 </div>
-            </div>
 
-            <div class="x_panel">
-                <div class="x_content">
-                    <div class="row" style="margin-bottom:10px;">
-                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
-                            @Html.LabelFor(m => m.Remessa.Id): @Model.Remessa.Id
+                <div class="x_panel">
+                    <div class="x_content">
+                        <div class="row" style="margin-bottom:10px;">
+                            <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
+                                @Html.LabelFor(m => m.Remessa.Id): @Model.Remessa.Id
+                            </div>
+                            <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
+                                @Html.LabelFor(m => m.Remessa.Dt_Criacao): @Model.Remessa.Dt_Criacao
+                            </div>
+                            <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
+                                @Html.LabelFor(m => m.Remessa.Tipo): @Model.Remessa.Tipo
+                            </div>
                         </div>
-                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
-                            @Html.LabelFor(m => m.Remessa.Dt_Criacao): @Model.Remessa.Dt_Criacao
-                        </div>
-                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
-                            @Html.LabelFor(m => m.Remessa.Tipo): @Model.Remessa.Tipo
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
-                            @Html.LabelFor(m => m.Remessa.Cod_Fornecedor): @Model.Remessa.Cod_Fornecedor
-                        </div>
-                        <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
-                            @Html.LabelFor(m => m.Remessa.Empresa): @Model.Remessa.Empresa
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
+                                @Html.LabelFor(m => m.Remessa.Cod_Fornecedor): @Model.Remessa.Cod_Fornecedor
+                            </div>
+                            <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
+                                @Html.LabelFor(m => m.Remessa.Empresa): @Model.Remessa.Empresa
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="x_panel">
-                <div class="x_content">
-                    <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
-                        <li class="nav-item active">
-                            <a class="nav-link" id="conferir-tab" data-toggle="tab" href="#tabConferir" role="tab">1 - Conferência</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="divergencia-tab" data-toggle="tab" href="#tabDivergencia" role="tab">2 - Divergência</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane fade active in" id="tabConferir" role="tabpanel">
-                        </div>
-                        <div class="tab-pane fade" id="tabDivergencia" role="tabpanel">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
+                            <li class="nav-item active">
+                                <a class="nav-link" id="conferir-tab" data-toggle="tab" href="#tabConferir" role="tab">1 - Conferência</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="divergencia-tab" data-toggle="tab" href="#tabDivergencia" role="tab">2 - Divergência</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade active in" id="tabConferir" role="tabpanel">
+                            </div>
+                            <div class="tab-pane fade" id="tabDivergencia" role="tabpanel">
+                            </div>
                         </div>
                     </div>
                 </div>
+            }
+            else
+            {
+                <div class="x_panel">
+                    <div class="x_content">
+                        <div class="alert alert-danger " role="alert">
+                            <strong>Atenção!</strong> Remessa com o status @(Model.Remessa.Status).
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (Model.Remessa.Id_Status == 38)
+        {
+            <div class="modal-footer">
+                <button id="btFinalizarConferencia" type="button" class="btn btn-primary right"><i class="fa fa-save"></i> Finalizar Conferência</button>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button id="btFinalizarConferencia" type="button" class="btn btn-primary right"><i class="fa fa-save"></i> Finalizar Conferência</button>
-        </div>
+        }
     </div>
 </div>
+
