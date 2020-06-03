@@ -54,7 +54,7 @@ namespace FWLog.Services.Services
             {
                 IdPedidoVenda = x.IdPedidoVenda,
                 IdPedidoVendaVolume = x.IdPedidoVendaVolume,
-                EtiquetaVolume = $"{x.PedidoVenda.NroPedidoVenda.ToString().PadLeft(7, '0')}{x.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3,'0')}{x.NroVolume.ToString().PadLeft(3,'0')}"
+                EtiquetaVolume = $"{x.PedidoVenda.NroPedidoVenda.ToString().PadLeft(7, '0')}{x.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3, '0')}{x.NroVolume.ToString().PadLeft(3, '0')}"
             }).ToList();
 
             return result;
@@ -132,6 +132,7 @@ namespace FWLog.Services.Services
             model.NroPedidoVenda = pedidoVenda.NroPedidoVenda;
             model.SeparacaoIniciada = pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao;
             model.IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume;
+            model.IdCaixaVolume = pedidoVendaVolume.IdCaixaCubagem;
             model.NroVolume = pedidoVendaVolume.NroVolume;
 
             var statusRetorno = new List<PedidoVendaStatusEnum>()
@@ -286,17 +287,14 @@ namespace FWLog.Services.Services
 
             var novaQuantidade = loteProdutoEndereco.Quantidade += quantidadeAdicionar;
 
-            if (novaQuantidade <= 0)
-            {
-                throw new BusinessException("Quantidade inválida no endereço.");
-            }
-
             var produto = loteProdutoEndereco.Produto;
 
-            var pesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * novaQuantidade;
+            var novoPesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * novaQuantidade;
+
+            var pesoAnterior = loteProdutoEndereco.PesoTotal;
 
             loteProdutoEndereco.Quantidade = novaQuantidade;
-            loteProdutoEndereco.PesoTotal = pesoInstalacao;
+            loteProdutoEndereco.PesoTotal = novoPesoInstalacao;
 
             _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
             await _unitOfWork.SaveChangesAsync();
@@ -320,13 +318,17 @@ namespace FWLog.Services.Services
 
                 var idLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Ajuste;
 
+                var idLote = loteProdutoEndereco.IdLote.Value;
+                var idProduto = loteProdutoEndereco.IdProduto;
+                var idEnderecoArmazenagem = loteProdutoEndereco.IdEnderecoArmazenagem;
+
                 if (loteProdutoEndereco.Quantidade == 0)
                 {
                     idColetorHistoricoTipo = ColetorHistoricoTipoEnum.RetirarProduto;
 
                     idLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Saida;
 
-                    descricaoColetorHistorico = $"Retirou o produto {loteProdutoEndereco.Produto.Referencia} quantidade {loteProdutoEndereco.Quantidade} peso {loteProdutoEndereco.PesoTotal} do lote {loteProdutoEndereco.IdLote} do endereço {loteProdutoEndereco.EnderecoArmazenagem.Codigo} devido a separação";
+                    descricaoColetorHistorico = $"Retirou o produto {loteProdutoEndereco.Produto.Referencia} quantidade {quantidadeAnterior} peso {pesoAnterior} do lote {loteProdutoEndereco.IdLote} do endereço {loteProdutoEndereco.EnderecoArmazenagem.Codigo} devido a separação";
 
                     _unitOfWork.LoteProdutoEnderecoRepository.Delete(loteProdutoEndereco);
                     await _unitOfWork.SaveChangesAsync();
@@ -339,11 +341,11 @@ namespace FWLog.Services.Services
                 var loteMovimentacao = new LoteMovimentacao
                 {
                     IdEmpresa = idEmpresa,
-                    IdLote = loteProdutoEndereco.IdLote.Value,
-                    IdProduto = loteProdutoEndereco.IdProduto,
-                    IdEnderecoArmazenagem = loteProdutoEndereco.IdEnderecoArmazenagem,
+                    IdLote = idLote,
+                    IdProduto = idProduto,
+                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
                     IdUsuarioMovimentacao = idUsuarioAjuste,
-                    Quantidade = loteProdutoEndereco.Quantidade,
+                    Quantidade = novaQuantidade,
                     IdLoteMovimentacaoTipo = idLoteMovimentacaoTipo,
                     DataHora = DateTime.Now
                 };
@@ -551,7 +553,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume informado ainda não está liberado para a separação.");
             }
 
-            if (pedidoVendaVolume.PedidoVendaProdutos.Any(pedidoVendaProduto => pedidoVendaProduto.QtdSeparada.GetValueOrDefault() < pedidoVendaProduto.QtdSeparar))
+            if (pedidoVendaVolume.PedidoVendaProdutos.Any(pedidoVendaProduto => pedidoVendaProduto.IdUsuarioAutorizacaoZerar.NullOrEmpty() && pedidoVendaProduto.QtdSeparada.GetValueOrDefault() < pedidoVendaProduto.QtdSeparar))
             {
                 throw new BusinessException("Ainda existem itens a serem separados no pedido.");
             }
@@ -579,7 +581,7 @@ namespace FWLog.Services.Services
 
                 var finalizouPedidoVenda = false;
 
-                if (!todosProdutosVenda.Any(produtoVendaProduto => produtoVendaProduto.QtdSeparada != produtoVendaProduto.QtdSeparar))
+                if (!todosProdutosVenda.Any(produtoVendaProduto => produtoVendaProduto.IdUsuarioAutorizacaoZerar.NullOrEmpty() && produtoVendaProduto.QtdSeparada != produtoVendaProduto.QtdSeparar))
                 {
                     pedidoVenda.IdPedidoVendaStatus = novoStatusSeparacao;
                     pedidoVenda.Pedido.IdPedidoVendaStatus = novoStatusSeparacao;
@@ -727,7 +729,15 @@ namespace FWLog.Services.Services
 
                 pedidoVendaProduto.QtdSeparada = salvarSeparacaoProdutoResposta.QtdSeparada = qtdSeparada;
 
-                salvarSeparacaoProdutoResposta.VolumeSeparado = !pedidoVendaProduto.PedidoVendaVolume.PedidoVendaProdutos.Any(pvv => pvv.QtdSeparada != pvv.QtdSeparar);
+                if (salvarSeparacaoProdutoResposta.ProdutoSeparado)
+                {
+                    salvarSeparacaoProdutoResposta.VolumeSeparado = !pedidoVendaProduto.PedidoVendaVolume.PedidoVendaProdutos.Any(pvv => pvv.IdPedidoVendaProduto != pedidoVendaProduto.IdPedidoVendaProduto &&
+                        (
+                            pvv.IdUsuarioAutorizacaoZerar.NullOrEmpty() &&
+                            pvv.QtdSeparada != pvv.QtdSeparar
+                        )
+                    );
+                }
 
                 if (zerarPedido)
                 {

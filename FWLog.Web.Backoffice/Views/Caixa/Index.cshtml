@@ -28,7 +28,7 @@
             </h2>
             <div class="clearfix"></div>
         </div>
-        <div class="x_content">
+        <div class="x_content" style="display: block;">
             <div class="row">
                 <div class="form-group col-md-6 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.Nome)
@@ -40,7 +40,7 @@
                 </div>
                 <div class="form-group col-md-6 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.PesoMaximo)
-                    @Html.TextBoxFor(m => m.Filtros.PesoMaximo, new { @class = "form-control", data_field = "PesoMaximo" })
+                    @Html.TextBoxFor(m => m.Filtros.PesoMaximo, new { @class = "form-control decimal", data_field = "PesoMaximo" })
                 </div>
                 <div class="form-group col-md-6 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.Cubagem)
@@ -50,7 +50,7 @@
             <div class="row">
                 <div class="form-group col-md-6 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.Sobra)
-                    @Html.TextBoxFor(m => m.Filtros.Sobra, new { @class = "form-control", data_field = "Sobra" })
+                    @Html.TextBoxFor(m => m.Filtros.Sobra, new { @class = "form-control decimal", data_field = "Sobra" })
                 </div>
                 <div class="form-group col-md-6 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.IdCaixaTipo)
@@ -58,7 +58,7 @@
                 </div>
                 <div class="form-group col-md-6 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.PesoCaixa)
-                    @Html.TextBoxFor(m => m.Filtros.PesoCaixa, new { @class = "form-control", data_field = "PesoCaixa" })
+                    @Html.TextBoxFor(m => m.Filtros.PesoCaixa, new { @class = "form-control decimal", data_field = "PesoCaixa" })
                 </div>
             </div>
             <div class="row">

@@ -56,7 +56,7 @@ namespace FWLog.Web.Backoffice.Controllers
         {
             model.CustomFilter.IdEmpresa = IdEmpresa;
 
-            var result = _caixaService.BuscarLista(model, out int registrosFiltrados, out int totalRegistros);
+            List<CaixaListaTabela> result = _caixaService.BuscarLista(model, out int registrosFiltrados, out int totalRegistros);
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
