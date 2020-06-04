@@ -44,6 +44,8 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
         [Display(Name = "Valor Total")]
         public long Valor_Total { get; set; }
 
+        public long Quant_Upload { get; set; }
+
         [Display(Name = "Fornecedor")]
         public String Cod_Fornecedor { get; set; }
     }

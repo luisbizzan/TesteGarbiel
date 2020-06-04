@@ -35,6 +35,7 @@ namespace FWLog.Data.Models
         public long Id { get; set; }
         public long? Id_Solicitacao { get; set; }
         public long Id_Item_Nf { get; set; }
+        public long Quant_Upload { get; set; }
         public String Refx { get; set; }
         public String Descricao { get; set; }
         public String Cod_Fornecedor { get; set; }

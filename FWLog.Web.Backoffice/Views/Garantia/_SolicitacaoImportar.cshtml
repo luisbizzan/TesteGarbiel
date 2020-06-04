@@ -27,6 +27,7 @@
                                             <option value="30">Nota Fiscal Eletrônica</option>
                                             <option value="31">Nota Mod. 1 (Manual)</option>
                                             <option value="32">Processo Carta</option>
+                                            <option value="20">Quebra</option>
                                         </select>
                                     </div>
                                 </div>
@@ -60,8 +61,8 @@
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-2 col-lg-3 form-group">
+                                <div class="row" >
+                                    <div id="divPostagem" class="col-xs-12 col-md-2 col-lg-3 form-group">
                                         @Html.LabelFor(m => m.Codigo_Postagem)
                                         @Html.TextBoxFor(m => m.Codigo_Postagem, new { @class = "form-control" })
                                     </div>

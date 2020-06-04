@@ -10,9 +10,16 @@
             $("#div1").show();
         } else if (valor == "31") {
             $("#div2").show();
-        } else if (valor == "32" || valor == "21") {
+        } else if (valor == "32" || valor == "21" || valor == "20") {
             $("#div3").show();
         }
+
+        if (valor == "20") {
+            $("#divPostagem").hide();
+        } else {
+            $("#divPostagem").show();
+        }
+
     });
 
     $('#formImportarSolicitacao').submit(function (e) {
