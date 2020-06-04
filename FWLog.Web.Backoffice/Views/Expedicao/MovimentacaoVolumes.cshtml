@@ -57,7 +57,7 @@
                     <br />
                     @if (Model.AguardandoIntegracao.HasValue)
                     {
-                        <div class="animated flipInY col-lg-6 col-md-6 col-sm-6">
+                        <div class="animated flipInY col-lg-6 col-md-6 col-sm-6 col-xs-12">
                             <div class="tile-stats">
                                 <div class="count">@Model.AguardandoIntegracao</div>
                                 <h3>Aguardando Integração</h3>
@@ -66,7 +66,7 @@
                     }
                     @if (Model.AguardandoRobo.HasValue)
                     {
-                        <div class="animated flipInY col-lg-6 col-md-6 col-sm-6">
+                        <div class="animated flipInY col-lg-6 col-md-6 col-sm-6 col-xs-12">
                             <div class="tile-stats">
                                 <div class="count">@Model.AguardandoRobo</div>
                                 <h3>Aguardando Robô</h3>
@@ -183,5 +183,6 @@
             </div>
         </div>
         <div class="modal" id="modalDetalhes"></div>
+        <div class="modal" id="modalDetalhesPedidoVolume"></div>
     }
 }

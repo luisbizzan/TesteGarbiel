@@ -10,6 +10,8 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         public string Status { get; set; }
 
         public List<MovimentacaoVolumesDetalheListItemViewModel> Items { get; set; }
+
+        public string Url { get; set; }
     }
 
     public class MovimentacaoVolumesDetalheListItemViewModel
@@ -25,5 +27,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         [Display(Name = "Data Pedido")]
         public DateTime PedidoData { get; set; }
+
+        public long IdPedidoVendaVolume { get; set; }
     }
 }

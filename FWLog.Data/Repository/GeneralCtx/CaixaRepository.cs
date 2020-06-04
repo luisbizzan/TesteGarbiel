@@ -111,7 +111,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public Caixa BuscarCaixaSeparacaoFornecedor(long idEmpresa)
         {
-            return Entities.Caixa.FirstOrDefault(x => x.Nome.Contains("Caixa Fornecedor"));
+            return Entities.Caixa.FirstOrDefault(x => x.Nome.ToLower().Contains("Caixa Fornecedor".ToLower()) && x.IdEmpresa == idEmpresa);
         }
     }
 }

@@ -205,7 +205,8 @@ namespace FWLog.Web.Backoffice.Controllers
             var viewModel = new MovimentacaoVolumesDetalheViewModel
             {
                 Status = statusDescricao,
-                Items = items
+                Items = items,
+                Url = HttpContext.Request.Url.AbsoluteUri
             };
 
             return View(viewModel);

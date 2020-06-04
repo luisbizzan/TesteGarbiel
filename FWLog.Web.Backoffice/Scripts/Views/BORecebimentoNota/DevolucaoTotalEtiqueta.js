@@ -77,27 +77,12 @@ function VerificarStatusLote() {
     let id = $("#IdNotaFiscal").val()
     let quantidadeEtiqueta = $('#QuantidadeEtiqueta').val();
 
-    $.ajax({
-        url: HOST_URL + "BORecebimentoNota/ContinuarProcessamentoLote/" + id,
-        cache: false,
-        method: "POST",
-        success: function (result) {
-            if (!result.Success) {
-                PNotify.error({ text: result.Message });
-            } else {
-                $(".fecharModal").click();
+    $(".fecharModal").click();
 
-                if (result.Data !== "True") {
-                    return;
-                }
-
-                let $modal = $("#modalProcessamentoDevolucaoTotal");
-                $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoProcessamentoDevolucaoTotal?id=" + id + "&quantidadeEtiqueta=" + quantidadeEtiqueta, function () {
-                    $modal.modal();
-                    $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
-                });
-            }
-        }
+    let $modal = $("#modalProcessamentoDevolucaoTotal");
+    $modal.load(HOST_URL + CONTROLLER_PATH + "ResumoProcessamentoDevolucaoTotal?id=" + id + "&quantidadeEtiqueta=" + quantidadeEtiqueta, function () {
+        $modal.modal();
+        $('input').iCheck({ checkboxClass: 'icheckbox_flat-green' });
     });
 }
 

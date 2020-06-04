@@ -145,7 +145,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                 PedidoNumero = pvv.PedidoVenda.Pedido.NroPedido,
                 VolumeNumero = pvv.NroVolume,
                 QuantidadeProdutos = pvv.PedidoVendaProdutos.Count,
-                PedidoData = pvv.PedidoVenda.Pedido.DataCriacao
+                PedidoData = pvv.PedidoVenda.Pedido.DataCriacao,
+                IdPedidoVendaVolume = pvv.IdPedidoVendaVolume
             });
 
             return selectQuery.ToList();

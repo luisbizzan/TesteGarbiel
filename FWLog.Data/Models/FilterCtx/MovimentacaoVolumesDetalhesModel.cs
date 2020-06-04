@@ -11,5 +11,7 @@ namespace FWLog.Data.Models.FilterCtx
         public int QuantidadeProdutos { get; set; }
 
         public DateTime PedidoData { get; set; }
+
+        public long IdPedidoVendaVolume { get; set; }
     }
 }

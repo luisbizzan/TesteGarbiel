@@ -2558,7 +2558,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 return Json(new AjaxGenericResultModel
                 {
                     Success = !processamento.ProcessamentoErro,
-                    Message = processamento.ProcessamentoErro ? "Não foi possivel finalizar a devolução total." + processamento.ProcessamentoErroMensagem : "Devolução total finalizado com sucesso.",
+                    Message = processamento.ProcessamentoErro ? "Não foi possivel finalizar a devolução total. " + processamento.ProcessamentoErroMensagem : "Devolução total finalizado com sucesso.",
                     Data = json
                 }, JsonRequestBehavior.DenyGet);
             }
