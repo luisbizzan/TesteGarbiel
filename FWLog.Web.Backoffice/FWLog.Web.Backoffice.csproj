@@ -604,6 +604,7 @@
     <Content Include="Scripts\Views\Etiqueta\locacao.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
     <Content Include="Scripts\Views\Expedicao\confirmarReimpressaoEtiquetaVolume.js" />
+    <Content Include="Scripts\Views\Expedicao\detalhesPedidoVolume.js" />
     <Content Include="Scripts\Views\Expedicao\movimentacaoVolumesDetalhes.js" />
     <Content Include="Scripts\Views\Expedicao\pedidoVendaPesquisaModal.js" />
     <Content Include="Scripts\Views\Expedicao\relatorioPedidosExpedidos.js" />

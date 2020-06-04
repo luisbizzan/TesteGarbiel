@@ -23,6 +23,7 @@
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().VolumeNumero)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().QuantidadeProdutos)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().PedidoData)</th>
+                                <th style="width: 50px;">@Resources.CommonStrings.ActionsLabel</th>
                             </tr>
                         </thead>
                         @foreach (var item in Model.Items)
@@ -33,12 +34,16 @@
                                     <td>@item.VolumeNumero.ToString().PadLeft(3, '0')</td>
                                     <td>@item.QuantidadeProdutos</td>
                                     <td>@item.PedidoData.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td class=" row-actions">
+                                        <p data-id="@item.IdPedidoVendaVolume" action="exibirDetalhesVolume" class="btn btn-row-actions btn-default" title="Detalhes do Volume"><i class="fa fa-eye"></i></p>
+                                    </td>
                                 </tr>
                             </tbody>
                         }
                     </table>
                 </div>
             </div>
+            @Html.HiddenFor(x => x.Url);
         </div>
     </div>
 </div>
