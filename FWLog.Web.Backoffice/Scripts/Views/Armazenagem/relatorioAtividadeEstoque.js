@@ -44,7 +44,7 @@
     };
 
     createLinkedPickers2();
-    
+
     dart.dataTables.loadFormFilterEvents();
 
     $(document.body).on('click', "#pesquisar", function () {
@@ -115,12 +115,13 @@
         order: [[0, "ASC"]],
         columns: [
             { data: 'TipoAtividade' },
-            { data: 'CodigoEndereco' },
             { data: 'ReferenciaProduto' },
             { data: 'DescricaoProduto' },
+            { data: 'CodigoEndereco' },
             { data: 'QuantidadeInicial' },
-            { data: 'DataSolicitacao' },
             { data: 'QuantidadeFinal' },
+            { data: 'PorcentagemDivergencia', orderable: false },
+            { data: 'DataSolicitacao' },
             { data: 'DataExecucao' },
             { data: 'UsuarioExecucao' },
             { data: 'Finalizado' }
@@ -130,7 +131,7 @@
     $('#dataTable').dataTable.error = function (settings, helpPage, message) {
         console.log(message)
     };
-    
+
     $("#pesquisarProduto").on('click', function () {
         if (!$(this).attr('disabled')) {
             $("#modalProduto").load(HOST_URL + "Produto/SearchModal", function () {
