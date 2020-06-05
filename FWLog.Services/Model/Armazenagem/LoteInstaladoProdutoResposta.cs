@@ -26,7 +26,7 @@ namespace FWLog.Services.Model.Armazenagem
 
     public class LoteInstaladoProdutoLoteNivelPonto
     {
-        public long IdLote { get; set; }
+        public long? IdLote { get; set; }
 
         public long IdNivelArmazenagem { get; set; }
 

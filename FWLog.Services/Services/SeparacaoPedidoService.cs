@@ -1,4 +1,5 @@
 ﻿using DartDigital.Library.Exceptions;
+using DartDigital.Library.Mail;
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
@@ -15,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
@@ -781,6 +783,58 @@ namespace FWLog.Services.Services
                     };
 
                     _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+
+                    try
+                    {
+                        var idsUsuario = ConfigurationManager.AppSettings["Separacao_ZerarProduto_IdsUsuario"];
+                        var emailFrom = ConfigurationManager.AppSettings["Separacao_ZerarProduto_EmailFrom"];
+
+                        if (string.IsNullOrEmpty(idsUsuario) || string.IsNullOrEmpty(emailFrom))
+                        {
+                            _log.Info("Separar Pedido. Ação Zerar Produto. Não foi encontrada a configuração para envio de e-mail");
+                        }
+                        else
+                        {
+                            var usuarioAutorizacao = _unitOfWork.PerfilUsuarioRepository.Tabela().Where(w => w.UsuarioId == idUsuarioAutorizacaoZerarPedido).FirstOrDefault();
+                            var usuario = _unitOfWork.PerfilUsuarioRepository.Tabela().Where(w => w.UsuarioId == idUsuario).FirstOrDefault();
+                            var produtoestoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(pedidoVendaProduto.IdProduto, idEmpresa);
+
+                            var listaUsuarios = idsUsuario.Split(',');
+                            var listEmail = _unitOfWork.PerfilUsuarioRepository.Tabela().Where(w => listaUsuarios.Contains(w.UsuarioId)).Select(s => s.Usuario.Email).ToList();
+
+                            StringBuilder str = new StringBuilder();
+                            str.AppendLine("<table style=\"border-collapse:collapse; text-align:center;\" >");
+                            str.AppendLine($"<tr style =\"color:#555555; text-align:left;\"> Pedido: {numeroPedido} </tr>");
+                            str.AppendLine($"<tr style =\"color:#555555; text-align:left;\"> Volume: {numeroVolume} </tr>");
+                            str.AppendLine($"<tr style =\"color:#555555; text-align:left;\"> Produto: {pedidoVendaProduto.Produto.Referencia} </tr>");
+                            str.AppendLine($"<tr style =\"color:#555555; text-align:left;\"> Qtde.Planejada: {pedidoVendaProduto.QtdSeparar} </tr>");
+                            str.AppendLine($"<tr style =\"color:#555555; text-align:left;\"> Qtde.Separada: {quantidadeJaSeparada} </tr>");
+                            str.AppendLine($"<tr style =\"color:#555555; text-align:left;\"> Qtde.Zerada: {pedidoVendaProduto.QtdSeparar - quantidadeJaSeparada} </tr>");
+                            str.AppendLine($"<tr style =\"color:#555555; text-align:left;\"> Saldo Estoque: {produtoestoque.Saldo} </tr>");
+                            str.AppendLine($"<tr style =\"color:#555555; text-align:left;\"> Usuário: {usuario.Usuario.UserName} - {usuario.Nome} </tr>");
+                            str.AppendLine($"<tr style =\"color:#555555; text-align:left;\"> Autorização: {usuarioAutorizacao.Usuario.UserName} - {usuarioAutorizacao.Nome} </tr>");
+                            str.AppendLine($"<tr style =\"color:#555555; text-align:left;\"> Data: {dataProcessamento} </tr>");
+                            str.AppendLine("</table>");
+
+                            var mailParams = new SendMailParams
+                            {
+                                Subject = $"Produto Zerado na Separação do Pedido: {numeroPedido}",
+                                Body = str.ToString(),
+                                IsBodyHtml = true,
+                                EmailFrom = emailFrom,
+                                EmailsTo = string.Join(",", listEmail.ToArray()),
+                                Attachments = null,
+                                BodyEncoding = Encoding.Default
+                            };
+
+                            var client = new MailClient();
+                            await client.SendMailAsync(mailParams);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.Error("Ocorreu um erro ao enviar e-mail", ex);
+                    }
                 }
 
                 transacao.Complete();
