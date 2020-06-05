@@ -1,11 +1,11 @@
-﻿
-/* gravar banco dados */
+﻿/* gravar banco dados */
 function GravarFornecedorGrupo() {
     RegistroInclusao.Inclusao = [];
 
     var registro = new Object();
     registro.Cod_Forn_Pai = $("#spanIdFornecedorPai").html() == "" ? 0 : $("#spanIdFornecedorPai").html();
     registro.Cod_Forn_Filho = $("#spanIdFornecedorFilho").html() == "" ? 0 : $("#spanIdFornecedorFilho").html();
+    registro.Id_Empresa = $('#ddlEmpresa option:selected')[0].value;
 
     RegistroInclusao.Inclusao.push(JSON.stringify(registro));
     CancelarFornecedorGrupo();

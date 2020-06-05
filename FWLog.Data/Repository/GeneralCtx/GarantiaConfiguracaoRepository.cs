@@ -65,7 +65,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                         conn.Open();
                                         if (conn.State == System.Data.ConnectionState.Open)
                                         {
-                                            conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.FornecedorQuebraIncluir, item.Cod_Fornecedor));
+                                            conn.ExecuteScalar(GarantiaConfiguracao.SQL.FornecedorQuebraIncluir, new { item.Cod_Fornecedor, item.Id_Empresa });
                                         }
                                         conn.Close();
                                     }
@@ -79,13 +79,14 @@ namespace FWLog.Data.Repository.GeneralCtx
                         {
                             RegistroIncluir.RegistroRemessaConfiguracao.ToList().ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao item)
                             {
+                                var Vlr_Minimo = item.Vlr_Minimo.ToString().Replace(",", ".");
                                 using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
                                 {
                                     conn.Open();
                                     if (conn.State == System.Data.ConnectionState.Open)
                                     {
-                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.RemessaConfiguracaoIncluir,
-                                            item.Id_Empresa, item.Cod_Fornecedor, item.Automatica, item.Vlr_Minimo.ToString().Replace(",", "."), item.Total));
+                                        conn.ExecuteScalar(GarantiaConfiguracao.SQL.RemessaConfiguracaoIncluir,
+                                            new { item.Id_Empresa, item.Cod_Fornecedor, item.Automatica, Vlr_Minimo, item.Total });
                                     }
                                     conn.Close();
                                 }
@@ -104,7 +105,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                     conn.Open();
                                     if (conn.State == System.Data.ConnectionState.Open)
                                     {
-                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.RemessaUsuarioIncluir, item.Id_Usr));
+                                        conn.ExecuteScalar(GarantiaConfiguracao.SQL.RemessaUsuarioIncluir, new { item.Id_Usr, item.Id_Empresa });
                                     }
                                     conn.Close();
                                 }
@@ -124,7 +125,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                         conn.Open();
                                         if (conn.State == System.Data.ConnectionState.Open)
                                         {
-                                            conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.FornecedorGrupoIncluir, item.Cod_Forn_Pai, item.Cod_Forn_Filho));
+                                            conn.ExecuteScalar(GarantiaConfiguracao.SQL.FornecedorGrupoIncluir, new { item.Cod_Forn_Pai, item.Cod_Forn_Filho, item.Id_Empresa });
                                         }
                                         conn.Close();
                                     }
@@ -138,12 +139,13 @@ namespace FWLog.Data.Repository.GeneralCtx
                         {
                             RegistroIncluir.RegistroMotivoLaudo.ToList().ForEach(delegate (GarantiaConfiguracao.MotivoLaudo item)
                             {
+                                var MotivoLaudoDescricao = item.MotivoLaudoDescricao.ToUpper();
                                 using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
                                 {
                                     conn.Open();
                                     if (conn.State == System.Data.ConnectionState.Open)
                                     {
-                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.MotivoLaudoIncluir, Convert.ToInt32(item.Id_Tipo), item.MotivoLaudoDescricao.ToUpper()));
+                                        conn.ExecuteScalar(GarantiaConfiguracao.SQL.MotivoLaudoIncluir, new { item.Id_Tipo, MotivoLaudoDescricao });
                                     }
                                     conn.Close();
                                 }
@@ -588,6 +590,32 @@ namespace FWLog.Data.Repository.GeneralCtx
             catch (Exception erro)
             {
                 throw new Exception(erro.Message);
+            }
+        }
+        #endregion
+
+        #region [Genérico] - Validar se usuário tem permissao de cadastro
+        public Boolean UsuarioComPermissaoCadastro(long IdEmpresaUsuario)
+        {
+            try
+            {
+                var _processamento = 0;
+
+                using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+                {
+                    conn.Open();
+                    if (conn.State == System.Data.ConnectionState.Open)
+                    {
+                        _processamento = conn.ExecuteScalar<Int32>(GarantiaConfiguracao.SQL.ValidarPermissaoUsuario, new { IdEmpresaUsuario });
+                    }
+                    conn.Close();
+                }
+
+                return _processamento.Equals(0) ? false : true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
         #endregion

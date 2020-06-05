@@ -126,7 +126,7 @@ namespace FWLog.Data.Models
                     { GarantiaTag.RemessaUsuario, new object[]
                     {
                         new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
-                        new { data = "Usuario", title = "Usuário" }, new { data = "Email", title = "E-mail" }
+                        new { data = "Usuario", title = "Usuário" }, new { data = "Filial", title = "Filial" }, new { data = "Nome", title = "Nome" }, new { data = "Email", title = "E-mail" }
                     } },
 
                     { GarantiaTag.RemessaConfiguracao, new object[]
@@ -239,6 +239,10 @@ namespace FWLog.Data.Models
             public long Id { get; set; }
 
             [Required]
+            [Display(Name = "Id Empresa")]
+            public long Id_Empresa { get; set; }
+
+            [Required]
             [Display(Name = "Código do Fornecedor")]
             public string Cod_Fornecedor { get; set; }
 
@@ -249,6 +253,7 @@ namespace FWLog.Data.Models
             public string RazaoSocial { get; set; }
 
             public string BotaoEvento { get; set; }
+            public static string MenuConfiguracao { get; set; }
         }
         #endregion
 
@@ -320,11 +325,18 @@ namespace FWLog.Data.Models
         {
             [Display(Name = "Código")]
             public long Id { get; set; }
+
+            [Required]
+            [Display(Name = "Id Empresa")]
+            public long Id_Empresa { get; set; }
+
             [Required]
             [Display(Name = "Código de Usuário")]
             public string Id_Usr { get; set; }
 
             public string Usuario { get; set; }
+            public string Filial { get; set; }
+            public string Nome { get; set; }
             public string Email { get; set; }
 
             public string BotaoEvento { get; set; }
@@ -370,6 +382,10 @@ namespace FWLog.Data.Models
             public long Id { get; set; }
 
             [Required]
+            [Display(Name = "Id Empresa")]
+            public long Id_Empresa { get; set; }
+
+            [Required]
             [Display(Name = "Fornecedor Pai")]
             public string Cod_Forn_Pai { get; set; }
             public string divFilhos { get; set; }
@@ -406,6 +422,20 @@ namespace FWLog.Data.Models
         #region Catálogo Comandos SQL
         public static class SQL
         {
+            #region Validar Permissão de Cadastro do Usuário
+            public static string ValidarPermissaoUsuario
+            {
+                get
+                {
+                    return String.Concat("SELECT COUNT(1) isTemPermissaoCadastro ",
+                        "FROM tgfemp@sankhya te ",
+                        "INNER JOIN \"Empresa\" e ON e.\"CodigoIntegracao\" = te.ad_codempgarantia ",
+                        "INNER JOIN tsiemp@sankhya ts ON ts.codemp = te.codemp AND ts.ad_filial = e.\"Sigla\" ",
+                        "WHERE e.\"IdEmpresa\" = :IdEmpresaUsuario ");
+                }
+            }
+            #endregion
+
             #region Fornecedor Grupo
             public static string FornecedorGrupoListar
             {
@@ -421,9 +451,9 @@ namespace FWLog.Data.Models
             }
 
             /// <summary>
-            /// {0} Código Fornecedor Pai | {1} Código Fornecedor Filho
+            /// {0} Código Fornecedor Pai | {1} Código Fornecedor Filho | {2} Id Empresa
             /// </summary>
-            public static string FornecedorGrupoIncluir { get { return String.Concat("INSERT INTO gar_forn_grupo(Cod_Forn_Pai, Cod_Forn_Filho) VALUES('{0}','{1}')"); } }
+            public static string FornecedorGrupoIncluir { get { return String.Concat("INSERT INTO gar_forn_grupo(Cod_Forn_Pai, Cod_Forn_Filho, Id_Empresa) VALUES(:Cod_Forn_Pai, :Cod_Forn_Filho, :Id_Empresa)"); } }
             #endregion
 
             #region Fornecedor Quebra
@@ -439,9 +469,9 @@ namespace FWLog.Data.Models
             }
 
             /// <summary>
-            /// {0} Código Fornecedor
+            /// {0} Código Fornecedor | {1} Id Empresa
             /// </summary>
-            public static string FornecedorQuebraIncluir { get { return String.Concat("INSERT INTO gar_forn_quebra(Cod_Fornecedor) VALUES('{0}')"); } }
+            public static string FornecedorQuebraIncluir { get { return String.Concat("INSERT INTO gar_forn_quebra(Cod_Fornecedor, Id_Empresa) VALUES(:Cod_Fornecedor, :Id_Empresa)"); } }
             #endregion
 
             #region Remessa Configuração
@@ -462,7 +492,11 @@ namespace FWLog.Data.Models
             /// </summary>
             public static string RemessaConfiguracaoIncluir
             {
-                get { return String.Concat("INSERT INTO gar_remessa_config(Id_Empresa, Cod_Fornecedor, Automatica, Vlr_Minimo, Total) VALUES({0}, {1}, {2}, {3}, {4})"); }
+                get
+                {
+                    return String.Concat("INSERT INTO gar_remessa_config(Id_Empresa, Cod_Fornecedor, Automatica, Vlr_Minimo, Total) ",
+                  "VALUES(:Id_Empresa, :Cod_Fornecedor, :Automatica, :Vlr_Minimo, :Total)");
+                }
             }
             #endregion
 
@@ -472,16 +506,18 @@ namespace FWLog.Data.Models
                 get
                 {
                     return String.Concat(
-                        "SELECT usr.Id, asp.\"UserName\" Usuario, asp.\"Email\" Email ",
-                        "FROM \"AspNetUsers\" asp ",
-                        "INNER JOIN gar_remessa_usr usr ON usr.Id_Usr = asp.\"Id\"");
+                        "SELECT gru.Id, asp.\"UserName\" Usuario, e.\"NomeFantasia\" ||' ('|| e.\"Sigla\"||')' Filial, pu.\"Nome\", asp.\"Email\" Email ",
+                        "FROM GAR_REMESSA_USR gru ",
+                        "INNER JOIN \"PerfilUsuario\" pu ON gru.ID_USR = pu.\"UsuarioId\" ",
+                        "INNER JOIN \"AspNetUsers\" asp ON gru.ID_USR = asp.\"Id\" ",
+                        "INNER JOIN \"Empresa\" e ON e.\"IdEmpresa\" = pu.\"EmpresaId\" ");
                 }
             }
 
             /// <summary>
-            /// {0} Id_Usr
+            /// {0} Id Usuario | {1} Id Empresa
             /// </summary>
-            public static string RemessaUsuarioIncluir { get { return String.Concat("INSERT INTO gar_remessa_usr(Id_Usr) VALUES('{0}')"); } }
+            public static string RemessaUsuarioIncluir { get { return String.Concat("INSERT INTO gar_remessa_usr(Id_Usr, Id_Empresa) VALUES(:Id_Usr, :Id_Empresa)"); } }
             #endregion
 
             #region Configuração
@@ -515,7 +551,7 @@ namespace FWLog.Data.Models
                 get
                 {
                     return String.Concat("INSERT INTO gar_config(Id_Empresa, Pct_Estorno_Frete, Pct_Desvalorizacao, Vlr_Minimo_Envio, Prazo_Envio_Automatico, Prazo_Descarte) ",
-                        "VALUES({0}, {1}, {2}, {3}, {4}, {5})");
+                        "VALUES(:Id_Empresa, :Pct_Estorno_Frete, :Pct_Desvalorizacao, :Vlr_Minimo_Envio, :Prazo_Envio_Automatico, :Prazo_Descarte)");
                 }
             }
 
@@ -527,8 +563,9 @@ namespace FWLog.Data.Models
                 get
                 {
                     return String.Concat("UPDATE gar_config ",
-                        "SET Pct_Estorno_Frete = {0}, Pct_Desvalorizacao = {1}, Vlr_Minimo_Envio = {2}, Prazo_Envio_Automatico = {3}, Prazo_Descarte = {4} ",
-                        "WHERE Id_Empresa = {5}");
+                        "SET Pct_Estorno_Frete = :Pct_Estorno_Frete, Pct_Desvalorizacao = :Pct_Desvalorizacao, Vlr_Minimo_Envio = :Vlr_Minimo_Envio, ",
+                        "Prazo_Envio_Automatico = :Prazo_Envio_Automatico, Prazo_Descarte = :Prazo_Descarte ",
+                        "WHERE Id_Empresa = :Id_Empresa");
                 }
             }
             #endregion
@@ -547,7 +584,7 @@ namespace FWLog.Data.Models
             /// <summary>
             /// {0} Top | {1} Id Negociacao | {2} Id Registro 
             /// </summary>
-            public static string SankhyaTopAtualizar { get { return String.Concat("UPDATE geral_sankhya_tops SET Top = {0}, Id_Negociacao = {1} WHERE Id = {2}"); } }
+            public static string SankhyaTopAtualizar { get { return String.Concat("UPDATE geral_sankhya_tops SET Top = :Top, Id_Negociacao = :Id_Negociacao WHERE Id = :Id"); } }
             #endregion
 
             #region Motivo Laudo
@@ -565,9 +602,24 @@ namespace FWLog.Data.Models
             /// <summary>
             /// {0} Id Tipo | {1} Descrição
             /// </summary>
-            public static string MotivoLaudoIncluir { get { return String.Concat("INSERT INTO gar_motivo_laudo(Id_Tipo, Descricao) VALUES({0},'{1}')"); } }
+            public static string MotivoLaudoIncluir { get { return String.Concat("INSERT INTO gar_motivo_laudo(Id_Tipo, Descricao) VALUES(:Id_Tipo, :Descricao)"); } }
             #endregion
         }
         #endregion        
+
+        public static string modeloMenu
+        {
+            get
+            {
+                return String.Concat("<li class=\"nav-item active\"><a id=\"SankhyaTop\" class=\"nav-link\" data-toggle=\"tab\" href=\"#TabSankhyaTop\" role=\"tab\" aria-selected=\"false\">Sankhya Tops</a></li>",
+              "<li class=\"nav-item\"><a id=\"Configuracao\" class=\"nav-link\" data-toggle=\"tab\" href=\"#TabConfiguracao\" role=\"tab\" aria-selected=\"false\">Configuração</a></li>",
+              "<li class=\"nav-item\"><a id=\"MotivoLaudo\" class=\"nav-link\" data-toggle=\"tab\" href=\"#TabMotivoLaudo\" role=\"tab\" aria-selected=\"false\">Motivo Laudo</a></li>",
+              "<li class=\"nav-item\"><a id=\"FornecedorQuebra\" class=\"nav-link\" data-toggle=\"tab\" href=\"#TabFornecedorQuebra\" role=\"tab\" aria-selected=\"true\" aria-expanded=\"true\" {0}>Fornecedor Quebra</a></li>",
+              "<li class=\"nav-item\"><a id=\"RemessaConfiguracao\" class=\"nav-link\" data-toggle=\"tab\" href=\"#TabRemessaConfiguracao\" role=\"tab\" aria-selected=\"false\" {0}>Remessa Configuração</a></li>",
+              "<li class=\"nav-item\"><a id=\"RemessaUsuario\" class=\"nav-link\" data-toggle=\"tab\" href=\"#TabRemessaUsuario\" role=\"tab\" aria-selected=\"false\" {0}>Remessa Usuário</a></li>",
+              "<li class=\"nav-item\"><a id=\"RemessaUsuario\" class=\"nav-link\" data-toggle=\"tab\" href=\"#TabRemessaUsuario\" role=\"tab\" aria-selected=\"false\" {0}>Remessa Usuário</a></li>");
+            }
+        }
+
     }
 }

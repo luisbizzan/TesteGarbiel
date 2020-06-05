@@ -27,6 +27,7 @@ namespace FWLog.Web.Backoffice.Controllers
         #region Views
         public ActionResult Index()
         {
+            UsuarioComPermissaoCadastro(IdEmpresa.Equals(0) ? 219 : IdEmpresa);
             return View();
         }
         #endregion
@@ -409,6 +410,14 @@ namespace FWLog.Web.Backoffice.Controllers
                     Message = ex.Message
                 }, JsonRequestBehavior.AllowGet);
             }
+        }
+        #endregion
+
+        #region [Genérico] - Validar se Usuário tem Permissao de Cadastro
+        private void UsuarioComPermissaoCadastro(long IdEmpresaUsuario)
+        {
+            GarantiaConfiguracao.FornecedorQuebra.MenuConfiguracao = _garantiaConfigService.UsuarioComPermissaoCadastro(IdEmpresaUsuario) ?
+                String.Format(GarantiaConfiguracao.modeloMenu, String.Empty) : String.Format(GarantiaConfiguracao.modeloMenu, "style=\"display:none;\"");
         }
         #endregion
     }

@@ -1,5 +1,6 @@
 ﻿using FWLog.Data;
 using FWLog.Data.Models;
+using System;
 using System.Collections.Generic;
 
 namespace FWLog.Services.Services
@@ -53,6 +54,13 @@ namespace FWLog.Services.Services
         public GarantiaConfiguracao ListarIdNegociacao()
         {
             return _uow.GarantiaConfiguracaoRepository.ListarIdNegociacao();
+        }
+        #endregion
+
+        #region [Genérico] Validar se usuário tem permissão de Cadastro
+        public Boolean UsuarioComPermissaoCadastro(long IdEmpresaUsuario)
+        {
+            return _uow.GarantiaConfiguracaoRepository.UsuarioComPermissaoCadastro(IdEmpresaUsuario);
         }
         #endregion
     }
