@@ -7,13 +7,25 @@ namespace FWLog.Data.Models
 {
     public class GarantiaConfiguracao
     {
-
+        #region Geral
         [Required]
         [Display(Name = "TAG")]
         public GarantiaTag Tag { get; set; }
 
         [Display(Name = "Código")]
         public long Id { get; set; }
+
+        [Display(Name = "Código da Empresa")]
+        public static long Id_Empresa { get; set; }
+
+        public string BotaoEvento { get; set; }
+        #endregion
+
+        #region Enums
+        public enum GarantiaTag { RemessaConfiguracao, RemessaUsuario, Configuracao, FornecedorQuebra, SankhyaTop, FornecedorGrupo, MotivoLaudo }
+        public enum AutoCompleteTag { Fornecedor, Filial }
+        public enum TipoGeral { Automatico = 1, Manual = 2, Fornecedor = 3, Entrada = 4, Origem = 5, RetornoFornecedor = 6, EnvioCliente = 7, Defeito = 8, Sinistro = 9 }
+        #endregion
 
         #region Listas de Inclusão
         public List<FornecedorQuebra> RegistroFornecedorQuebra { get; set; }
@@ -25,14 +37,6 @@ namespace FWLog.Data.Models
         public List<MotivoLaudo> RegistroMotivoLaudo { get; set; }
         public List<AutoComplete> ListaAutoComplete { get; set; }
         #endregion
-
-        public string BotaoEvento { get; set; }
-        public enum GarantiaTag { RemessaConfiguracao, RemessaUsuario, Configuracao, FornecedorQuebra, SankhyaTop, FornecedorGrupo, MotivoLaudo }
-        public enum AutoCompleteTag { Fornecedor, Filial }
-        public enum TipoGeral
-        {
-            Automatico = 1, Manual = 2, Fornecedor = 3, Entrada = 4, Origem = 5, RetornoFornecedor = 6, EnvioCliente = 7, Defeito = 8, Sinistro = 9
-        }
 
         #region Variáveis de Contexto
         public static class Contexto
@@ -232,30 +236,6 @@ namespace FWLog.Data.Models
         }
         #endregion
 
-        #region [GAR_FORN_QUEBRA]
-        public class FornecedorQuebra
-        {
-            [Display(Name = "Codigo")]
-            public long Id { get; set; }
-
-            [Required]
-            [Display(Name = "Id Empresa")]
-            public long Id_Empresa { get; set; }
-
-            [Required]
-            [Display(Name = "Código do Fornecedor")]
-            public string Cod_Fornecedor { get; set; }
-
-            [Display(Name = "Nome Fantasia")]
-            public string NomeFantasia { get; set; }
-
-            [Display(Name = "Razão Social")]
-            public string RazaoSocial { get; set; }
-
-            public string BotaoEvento { get; set; }
-            public static string MenuConfiguracao { get; set; }
-        }
-        #endregion
 
         #region [GERAL_SANKHYA_TOPS]
         public class SankhyaTop
@@ -289,9 +269,8 @@ namespace FWLog.Data.Models
             public long Id { get; set; }
             [Display(Name = "Filial")]
             public string Filial { get; set; }
-            [Required]
-            [Display(Name = "Id Empresa")]
-            public long Id_Empresa { get; set; }
+            //[Display(Name = "Id Empresa")]
+            //public long Id_Empresa { get; set; }
             [Display(Name = "Empresa")]
             public string Id_EmpresaView { get; set; }
             [Required]
@@ -326,9 +305,8 @@ namespace FWLog.Data.Models
             [Display(Name = "Código")]
             public long Id { get; set; }
 
-            [Required]
-            [Display(Name = "Id Empresa")]
-            public long Id_Empresa { get; set; }
+            //[Display(Name = "Id Empresa")]
+            //public long Id_Empresa { get; set; }
 
             [Required]
             [Display(Name = "Código de Usuário")]
@@ -350,7 +328,6 @@ namespace FWLog.Data.Models
             public long Id { get; set; }
             [Display(Name = "Filial")]
             public string Filial { get; set; }
-            [Required]
             [Display(Name = "Id Empresa")]
             public long Id_Empresa { get; set; }
             [Display(Name = "Empresa")]
@@ -381,9 +358,8 @@ namespace FWLog.Data.Models
             [Display(Name = "Codigo")]
             public long Id { get; set; }
 
-            [Required]
-            [Display(Name = "Id Empresa")]
-            public long Id_Empresa { get; set; }
+            //[Display(Name = "Id Empresa")]
+            //public long Id_Empresa { get; set; }
 
             [Required]
             [Display(Name = "Fornecedor Pai")]
@@ -395,6 +371,30 @@ namespace FWLog.Data.Models
             public string Cod_Forn_Filho { get; set; }
 
             public string BotaoEvento { get; set; }
+        }
+        #endregion
+
+        #region [GAR_FORN_QUEBRA]
+        public class FornecedorQuebra
+        {
+            [Display(Name = "Codigo")]
+            public long Id { get; set; }
+
+            //[Display(Name = "Id Empresa")]
+            //public long Id_Empresa { get; set; }
+
+            [Required]
+            [Display(Name = "Código do Fornecedor")]
+            public string Cod_Fornecedor { get; set; }
+
+            [Display(Name = "Nome Fantasia")]
+            public string NomeFantasia { get; set; }
+
+            [Display(Name = "Razão Social")]
+            public string RazaoSocial { get; set; }
+
+            public string BotaoEvento { get; set; }
+            public static string MenuConfiguracao { get; set; }
         }
         #endregion
 
@@ -605,8 +605,9 @@ namespace FWLog.Data.Models
             public static string MotivoLaudoIncluir { get { return String.Concat("INSERT INTO gar_motivo_laudo(Id_Tipo, Descricao) VALUES(:Id_Tipo, :Descricao)"); } }
             #endregion
         }
-        #endregion        
+        #endregion
 
+        #region Menu Configuração (TAB)
         public static string modeloMenu
         {
             get
@@ -617,9 +618,9 @@ namespace FWLog.Data.Models
               "<li class=\"nav-item\"><a id=\"FornecedorQuebra\" class=\"nav-link\" data-toggle=\"tab\" href=\"#TabFornecedorQuebra\" role=\"tab\" aria-selected=\"true\" aria-expanded=\"true\" {0}>Fornecedor Quebra</a></li>",
               "<li class=\"nav-item\"><a id=\"RemessaConfiguracao\" class=\"nav-link\" data-toggle=\"tab\" href=\"#TabRemessaConfiguracao\" role=\"tab\" aria-selected=\"false\" {0}>Remessa Configuração</a></li>",
               "<li class=\"nav-item\"><a id=\"RemessaUsuario\" class=\"nav-link\" data-toggle=\"tab\" href=\"#TabRemessaUsuario\" role=\"tab\" aria-selected=\"false\" {0}>Remessa Usuário</a></li>",
-              "<li class=\"nav-item\"><a id=\"RemessaUsuario\" class=\"nav-link\" data-toggle=\"tab\" href=\"#TabRemessaUsuario\" role=\"tab\" aria-selected=\"false\" {0}>Remessa Usuário</a></li>");
+              "<li class=\"nav-item\"><a id=\"FornecedorGrupo\" class=\"nav-link\" data-toggle=\"tab\" href=\"#TabFornecedorGrupo\" role=\"tab\" aria-selected=\"false\" {0}>Fornecedor Grupo</a></li>");
             }
         }
-
+        #endregion
     }
 }

@@ -27,7 +27,6 @@ function GravarRemessaUsuario() {
     $.each(_remessaUsuarioGravar, function (i, item) {
         var registro = new Object();
         registro.Id_Usr = item;
-        registro.Id_Empresa = $('#ddlEmpresa option:selected')[0].value;
 
         RegistroInclusao.Inclusao.push(JSON.stringify(registro));
     });

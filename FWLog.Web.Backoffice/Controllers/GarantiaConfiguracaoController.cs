@@ -39,6 +39,7 @@ namespace FWLog.Web.Backoffice.Controllers
             try
             {
                 #region Validações
+                GarantiaConfiguracao.Id_Empresa = IdEmpresa;
                 Func<ViewResult> errorView = () => { return View(Registro); };
 
                 if (!ModelState.IsValid)
@@ -51,7 +52,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     RegistroConvertido.RegistroConfiguracao.ForEach(delegate (GarantiaConfiguracao.Configuracao config)
                     {
-                        if (config.Id_Empresa.Equals(0)) throw new Exception("Código da Empresa inválido!");
                         if (config.Pct_Estorno_Frete.Equals(0)) throw new Exception("Percentual Estorno Frete inválido!");
                         if (config.Pct_Desvalorizacao.Equals(0)) throw new Exception("Percentual Desvalorização inválido!");
                         if (config.Vlr_Minimo_Envio.Equals(0)) throw new Exception("Valor Mínimo de Envio não pode ser zero!");
@@ -70,7 +70,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     RegistroConvertido.RegistroRemessaConfiguracao.ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao remessaConfig)
                     {
-                        if (remessaConfig.Id_Empresa.Equals(0)) throw new Exception("Código da Empresa é inválido!");
                         if (String.IsNullOrEmpty(remessaConfig.Cod_Fornecedor)) throw new Exception("Informe o Fornecedor!");
                         if (remessaConfig.Vlr_Minimo.Equals(0)) throw new Exception("Valor Minímo deve ser maior que zero!");
                     });

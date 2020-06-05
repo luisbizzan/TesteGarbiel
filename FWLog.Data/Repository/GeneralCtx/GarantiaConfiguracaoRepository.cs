@@ -37,11 +37,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                                     conn.Open();
                                     if (conn.State == System.Data.ConnectionState.Open)
                                     {
-                                        var comandoSQL = conn.ExecuteScalar<Int32>(String.Format(GarantiaConfiguracao.SQL.ConfiguracaoJaConsta, item.Id_Empresa)).Equals(0) ?
-                                        String.Format(GarantiaConfiguracao.SQL.ConfiguracaoIncluir, item.Id_Empresa, item.Pct_Estorno_Frete.ToString().Replace(",", "."),
+                                        var comandoSQL = conn.ExecuteScalar<Int32>(String.Format(GarantiaConfiguracao.SQL.ConfiguracaoJaConsta, GarantiaConfiguracao.Id_Empresa)).Equals(0) ?
+                                        String.Format(GarantiaConfiguracao.SQL.ConfiguracaoIncluir, GarantiaConfiguracao.Id_Empresa, item.Pct_Estorno_Frete.ToString().Replace(",", "."),
                                         item.Pct_Desvalorizacao.ToString().Replace(",", "."), item.Vlr_Minimo_Envio.ToString().Replace(",", "."), item.Prazo_Envio_Automatico, item.Prazo_Descarte) :
                                         String.Format(GarantiaConfiguracao.SQL.ConfigurarAtualizar, item.Pct_Estorno_Frete, item.Pct_Desvalorizacao, item.Vlr_Minimo_Envio.ToString().Replace(",", "."),
-                                        item.Prazo_Envio_Automatico, item.Prazo_Descarte, item.Id_Empresa);
+                                        item.Prazo_Envio_Automatico, item.Prazo_Descarte, GarantiaConfiguracao.Id_Empresa);
 
                                         conn.ExecuteScalar(comandoSQL);
                                     }
@@ -65,7 +65,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                         conn.Open();
                                         if (conn.State == System.Data.ConnectionState.Open)
                                         {
-                                            conn.ExecuteScalar(GarantiaConfiguracao.SQL.FornecedorQuebraIncluir, new { item.Cod_Fornecedor, item.Id_Empresa });
+                                            conn.ExecuteScalar(GarantiaConfiguracao.SQL.FornecedorQuebraIncluir, new { item.Cod_Fornecedor, GarantiaConfiguracao.Id_Empresa });
                                         }
                                         conn.Close();
                                     }
@@ -105,7 +105,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                     conn.Open();
                                     if (conn.State == System.Data.ConnectionState.Open)
                                     {
-                                        conn.ExecuteScalar(GarantiaConfiguracao.SQL.RemessaUsuarioIncluir, new { item.Id_Usr, item.Id_Empresa });
+                                        conn.ExecuteScalar(GarantiaConfiguracao.SQL.RemessaUsuarioIncluir, new { item.Id_Usr, GarantiaConfiguracao.Id_Empresa });
                                     }
                                     conn.Close();
                                 }
@@ -125,7 +125,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                         conn.Open();
                                         if (conn.State == System.Data.ConnectionState.Open)
                                         {
-                                            conn.ExecuteScalar(GarantiaConfiguracao.SQL.FornecedorGrupoIncluir, new { item.Cod_Forn_Pai, item.Cod_Forn_Filho, item.Id_Empresa });
+                                            conn.ExecuteScalar(GarantiaConfiguracao.SQL.FornecedorGrupoIncluir, new { item.Cod_Forn_Pai, item.Cod_Forn_Filho, GarantiaConfiguracao.Id_Empresa });
                                         }
                                         conn.Close();
                                     }
@@ -191,7 +191,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                     conn.Open();
                                     if (conn.State == System.Data.ConnectionState.Open)
                                     {
-                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.SankhyaTopAtualizar, item.Top, item.Id_Negociacao, item.Id));
+                                        conn.ExecuteScalar(GarantiaConfiguracao.SQL.SankhyaTopAtualizar, new { item.Top, item.Id_Negociacao, item.Id });
                                     }
                                     conn.Close();
                                 }

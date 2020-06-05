@@ -4,7 +4,6 @@ function GravarRemessaConfiguracao() {
     RegistroInclusao.Inclusao = [];
 
     var registro = new Object();
-    registro.Id_Empresa = $("#spanIdFilial").html() == "" ? 0 : $("#spanIdFilial").html();
     registro.Cod_Fornecedor = $("#spanIdFornecedor").html() == "" ? 0 : $("#spanIdFornecedor").html();
     registro.Automatica = $("#chkRCAutomatica")[0].checked ? 1 : 0;
     registro.Vlr_Minimo = $("#txtRCMinimoEnvio").val() == "" ? 0 : $("#txtRCMinimoEnvio").val().replace(".", "").replace(",", ".");
