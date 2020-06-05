@@ -1403,6 +1403,8 @@ namespace FWLog.Services.Services
 
             retorno.PedidoNumeroNotaFiscal = pedido.NumeroNotaFiscal;
 
+            retorno.PedidoSerieNotaFiscal = pedido.SerieNotaFiscal;
+
             retorno.VolumeNroVolume = pedidoVendaVolume.NroVolume;
 
             retorno.VolumeNroCentena = pedidoVendaVolume.NroCentena;
