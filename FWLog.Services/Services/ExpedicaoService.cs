@@ -1175,9 +1175,9 @@ namespace FWLog.Services.Services
             return _unitOfWork.PedidoVendaRepository.BuscarDadosPedidoVendaParaTabela(filtro, out registrosFiltrados, out totalRegistros);
         }
 
-        public List<MovimentacaoVolumesModel> BuscarDadosMovimentacaoVolumes(DateTime dataInicial, DateTime dataFinal, long idEmpresa)
+        public List<MovimentacaoVolumesModel> BuscarDadosMovimentacaoVolumes(DateTime dataInicial, DateTime dataFinal, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa)
         {
-            var dados = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumeGrupoArmazenagem(dataInicial, dataFinal, idEmpresa);
+            var dados = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumeGrupoArmazenagem(dataInicial, dataFinal, cartaoCredito, cartaoDebito, dinheiro, requisicao, idEmpresa);
 
             var dadosAgrupados = dados.GroupBy(g => new
             {
@@ -1254,7 +1254,7 @@ namespace FWLog.Services.Services
             return response.ToList();
         }
 
-        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string tipo, long idEmpresa, out string statusDescricao)
+        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string tipo, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa, out string statusDescricao)
         {
             var listaStatus = new List<PedidoVendaStatusEnum>();
 
@@ -1292,7 +1292,7 @@ namespace FWLog.Services.Services
                     break;
             }
 
-            return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, idEmpresa);
+            return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, cartaoCredito, cartaoDebito, dinheiro, requisicao, idEmpresa);
         }
 
         public List<RelatorioPedidosLinhaTabela> BuscarDadosPedidos(DataTableFilter<RelatorioPedidosFiltro> filtro, out int registrosFiltrados, out int totalRegistros)

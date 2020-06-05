@@ -14,7 +14,7 @@
     <div class="x_panel">
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="col-xs-12 col-md-4 col-lg-3 form-group">
+                <div class="col-xs-3 col-md-3 col-lg-3">
                     @Html.LabelFor(m => m.Filter.DataInicial)
                     <div class='input-group date'>
                         @Html.TextBox("DataInicial", Model.Filter.DataInicial, new { @class = "form-control dateFormat", id = "Filter_DataInicial" })
@@ -24,7 +24,7 @@
                     </div>
                     @Html.ValidationMessageFor(m => m.Filter.DataInicial)
                 </div>
-                <div class="col-xs-12 col-md-4 col-lg-3 form-group">
+                <div class="col-xs-3 col-md-2 col-lg-2">
                     @Html.LabelFor(m => m.Filter.DataFinal)
                     <div class='input-group date'>
                         @Html.TextBox("DataFinal", Model.Filter.DataFinal, new { @class = "form-control dateFormat", id = "Filter_DataFinal" })
@@ -34,8 +34,16 @@
                     </div>
                     @Html.ValidationMessageFor(m => m.Filter.DataFinal)
                 </div>
-                <div class="col-xs-12 col-md-4 col-lg-3 form-buttons" style="margin-top:12px">
-                    <button type="submit" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
+                <div class="col-xs-2 col-md-2 col-lg-2">
+                    @Html.LabelFor(m => m.Filter.TipoPagamento)
+                    @Html.DropDownList("TipoPagamento", Model.ListaTiposPagamento, "Todos", new { @class = "form-control", data_field = "Filter_TipoPagamento" })
+                </div>
+                <div class="col-xs-2 col-md-2 col-lg-2">
+                    @Html.LabelFor(m => m.Filter.Requisicao)
+                    @Html.DropDownList("Requisicao", Model.ListaRequisicao, "Todos", new { @class = "form-control", data_field = "Filter_Requisicao" })
+                </div>
+                <div class="col-xs-2 col-md-2 col-lg-2 form-buttons" style="margin-top:12px">
+                    <button type="submit" class="btn btn-primary" id="submitButton" data-filter="search">@Resources.CommonStrings.SearchAction</button>
                     <button type="button" class="btn btn-default clearButton" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
                 </div>
             </div>
@@ -107,6 +115,8 @@
                                             routeValueDictionary.Add("dataFinal", Model.Filter.DataFinal);
                                             routeValueDictionary.Add("idGrupoCorredorArmazenagem", string.Empty);
                                             routeValueDictionary.Add("status", string.Empty);
+                                            routeValueDictionary.Add("tipoPagamento", Model.Filter.TipoPagamento);
+                                            routeValueDictionary.Add("requisicao", Model.Filter.Requisicao);
 
                                             var htmlAttributes = new Dictionary<string, object>();
 

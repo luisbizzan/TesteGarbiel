@@ -26,8 +26,10 @@
     createLinkedPickers();
 
     $(".clearButton").click(function () {
-        $('#Filter_DataInicial').val("");
-        $('#Filter_DataFinal').val("");
+        $('.form-control').val("");
+        $('.form-control').empty();
+
+        $("#submitButton").click();
     });
 
     $(".abrirDetalhes").click(function (e) {
