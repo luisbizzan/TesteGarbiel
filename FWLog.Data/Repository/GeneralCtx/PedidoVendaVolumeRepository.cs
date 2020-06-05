@@ -148,7 +148,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                 QuantidadeProdutos = pvv.PedidoVendaProdutos.Count,
                 PedidoData = pvv.PedidoVenda.Pedido.DataCriacao,
                 VolumeCentena = pvv.NroCentena,
-                TransportadoraNomeFantasia = pvv.PedidoVenda.Transportadora.NomeFantasia
+                TransportadoraNomeFantasia = pvv.PedidoVenda.Transportadora.NomeFantasia,
+                TipoPagamentoDescricao = pvv.PedidoVenda.Pedido.PagamentoDescricaoIntegracao
             });
 
             return selectQuery.ToList();

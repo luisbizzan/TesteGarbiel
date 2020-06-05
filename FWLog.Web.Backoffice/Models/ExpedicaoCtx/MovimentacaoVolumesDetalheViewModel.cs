@@ -35,5 +35,8 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         [Display(Name = "Transportadora")]
         public string TransportadoraNomeFantasia { get; set; }
+
+        [Display(Name = "Tipo Pagamento")]
+        public string TipoPagamentoDescricao { get; set; }
     }
 }

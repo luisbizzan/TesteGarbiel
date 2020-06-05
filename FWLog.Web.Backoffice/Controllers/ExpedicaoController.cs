@@ -106,7 +106,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 NumeroPedido = pv.NumeroPedido,
                 NumeroPedidoVenda = pv.NumeroPedidoVenda,
                 ClienteNome = pv.ClienteNome,
-                TransportadoraNome = pv.TransportadoraNome,
+                TransportadoraNome = pv.TransportadoraNome
             }));
 
             return DataTableResult.FromModel(new DataTableResponseModel

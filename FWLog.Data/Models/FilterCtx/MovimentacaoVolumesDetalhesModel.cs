@@ -17,5 +17,7 @@ namespace FWLog.Data.Models.FilterCtx
         public int VolumeCentena { get; set; }
 
         public string TransportadoraNomeFantasia { get; set; }
+
+        public string TipoPagamentoDescricao { get; set; }
     }
 }
