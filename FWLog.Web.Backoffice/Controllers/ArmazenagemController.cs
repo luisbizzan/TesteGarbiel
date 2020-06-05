@@ -484,10 +484,29 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 Codigo = lpe.Codigo,
                 IdLote = lpe.IdLote != null ? lpe.IdLote.ToString() : "-",
-                QuantidadeProdutoPorEndereco = lpe.QuantidadeProdutoPorEndereco.ToString(),
+                QuantidadeProdutoPorEndereco = lpe.QuantidadeProdutoPorEndereco,
                 Referencia = string.Concat(lpe.Referencia, " - ", lpe.DescricaoProduto)
-
             }));
+
+            var produtosAgrupados = list.GroupBy(l => l.Referencia).ToList();
+
+            foreach (var itemAgrupado in produtosAgrupados)
+            {
+                var referenciaProduto = itemAgrupado.Key;
+
+                var saldoQuantidade = itemAgrupado.Sum(ia => ia.QuantidadeProdutoPorEndereco);
+
+                var ultimoProduto = list.Last(l => l.Referencia == referenciaProduto);
+
+                var indiceUltimoProduto = list.IndexOf(ultimoProduto);
+
+                list.Insert(indiceUltimoProduto + 1, new RelatorioPosicaoInventarioListItemViewModel
+                {
+                    Referencia = referenciaProduto,
+                    Codigo  = "<b>Saldo</b>",
+                    QuantidadeProdutoPorEndereco = saldoQuantidade
+                });
+            }
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {
