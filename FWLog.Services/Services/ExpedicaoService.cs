@@ -1401,6 +1401,8 @@ namespace FWLog.Services.Services
 
             retorno.PedidoPagamentoDescricaoIntegracao = pedido.PagamentoDescricaoIntegracao;
 
+            retorno.PedidoNumeroNotaFiscal = pedido.NumeroNotaFiscal;
+
             retorno.VolumeNroVolume = pedidoVendaVolume.NroVolume;
 
             retorno.VolumeNroCentena = pedidoVendaVolume.NroCentena;
