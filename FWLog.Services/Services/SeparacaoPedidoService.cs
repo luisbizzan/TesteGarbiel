@@ -968,27 +968,55 @@ namespace FWLog.Services.Services
 
                                     var grupoCorredorItem = await BuscarGrupoCorredorArmazenagemItemPedido(itemVolume.ListaItensDoPedido[0].EnderecoSeparacao.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
 
-                                    //Salva PedidoVendaVolume.
-                                    var idPedidoVendaVolume = await _pedidoVendaVolumeService.Salvar(idPedidoVenda, itemVolume.Caixa, grupoCorredorItem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
-
-                                    if (idPedidoVendaVolume == 0)
-                                        continue;
-
-                                    foreach (var item in itemVolume.ListaItensDoPedido)
+                                    using (var transacao = _unitOfWork.CreateTransactionScope())
                                     {
-                                        //Salva PedidoVendaProduto.
-                                        await _pedidoVendaProdutoService.Salvar(idPedidoVenda, idPedidoVendaVolume, item);
+                                        var pedidoVendaVolume = _pedidoVendaVolumeService.RetornarParaSalvar(idPedidoVenda, itemVolume.Caixa, grupoCorredorItem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
+
+                                        var pedidoVendaProdutos = new List<PedidoVendaProduto>();
+
+                                        foreach (var item in itemVolume.ListaItensDoPedido)
+                                        {
+                                            pedidoVendaProdutos.Add(new PedidoVendaProduto()
+                                            {
+                                                IdPedidoVenda = idPedidoVenda,
+                                                IdProduto = item.Produto.IdProduto,
+                                                IdEnderecoArmazenagem = item.EnderecoSeparacao.IdEnderecoArmazenagem.Value,
+                                                IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
+                                                QtdSeparar = item.Quantidade,
+                                                QtdSeparada = null,
+                                                CubagemProduto = item.Produto.CubagemProduto.Value,
+                                                PesoProduto = item.Produto.PesoBruto,
+                                                DataHoraInicioSeparacao = null,
+                                                DataHoraFimSeparacao = null,
+                                                IdLote = item.IdLote
+                                            });
+                                        }
+
+                                        pedidoVendaVolume.PedidoVendaProdutos = pedidoVendaProdutos;
+
+                                        _unitOfWork.PedidoVendaVolumeRepository.Add(pedidoVendaVolume);
+
+                                        //Captura o primeiro corredor de separação.
+                                        int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
+
+                                        //Atualiza a quantidade de volumes na PedidoVenda.
+                                        var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(idPedidoVenda);
+
+                                        pedidoVenda.NroVolumes = pedidoVenda.NroVolumes + 1;
+
+                                        _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+                                        //await _pedidoVendaService.AtualizarQuantidadeVolume(idPedidoVenda, quantidadeVolume);
+
+                                        _unitOfWork.SaveChanges();
+
+                                        //throw new Exception("");
+
+                                        //Imprime a etiqueta de separação.
+                                        await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, grupoCorredorItem, pedido, pedidoVendaVolume.IdPedidoVendaVolume, corredorInicioSeparacao);
+
+                                        transacao.Complete();
                                     }
-
-                                    //Captura o primeiro corredor de separação.
-                                    int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
-
-                                    //Imprime a etiqueta de separação.
-                                    await ImprimirEtiquetaVolumeSeparacao(itemVolume, quantidadeVolume, grupoCorredorItem, pedido, idPedidoVendaVolume, corredorInicioSeparacao);
                                 }
-
-                                //Atualiza a quantidade de volumes na PedidoVenda.
-                                await _pedidoVendaService.AtualizarQuantidadeVolume(idPedidoVenda, quantidadeVolume);
                             }
                         }
                     }
@@ -1519,106 +1547,134 @@ namespace FWLog.Services.Services
         /// <returns></returns>
         public async Task<List<PedidoItemViewModel>> CalcularCubagemVolume(List<PedidoItemViewModel> listaItensDoPedido) //calcCub
         {
-            //Declaração das variáveis que serão utilizadas.
-            bool caixaAnteriorEhMelhorQueAtual = false; //Indica que a caixa anterior é melhor que a atual.
-            bool encontrouCaixaCorreta = false; //Indica que a caixa correta foi encontrada.
-            bool usarCaixaEncontrada = false; //Indica que os itens receberão a caixa encontrada.
-            CaixaViewModel caixaMaior = null; //Caixa corrente.
-            CaixaViewModel caixaAnterior = null; //Controle da caixa anterior.
-            CaixaViewModel proximaCaixa = null; //Próxima caixa na escala de grandeza.
-            decimal contadorCubagem2 = 0;
-            bool usouAgrupamento; //Indica se o agrupamento foi utilizado.
-            decimal contadorCubagem; //Acumulador (auxiliar) para cubagem.
-            decimal contadorPeso; //Acumulador (auxiliar) para peso.
-            bool sair = false;
-
-            //Captura a lista de caixas mais comum.
-            var listaCaixasMaisComum = await BuscarCaixaMaisComum(listaItensDoPedido);
-
-            //Valida se a lista de caixas mais comum é nula.
-            if (listaCaixasMaisComum == null)
-                return listaItensDoPedido;
-
-            int agrupador = 1;
-
-            for (int i = 0; i < listaItensDoPedido.Count; i++)
+            try
             {
-                //Para cada item do pedido, se não existir caixa ou for embalagem do fornecedor, vai adicionando o agrupador.
-                if ((listaItensDoPedido[i].Agrupador == 0 && listaItensDoPedido[i].Caixa == null) || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume || listaItensDoPedido[i].IsSeparacaoNoPikcing == false)
-                {
-                    listaItensDoPedido[i].Agrupador = agrupador;
-                    agrupador++;
-                }
-            }
+                //Declaração das variáveis que serão utilizadas.
+                bool caixaAnteriorEhMelhorQueAtual = false; //Indica que a caixa anterior é melhor que a atual.
+                bool encontrouCaixaCorreta = false; //Indica que a caixa correta foi encontrada.
+                bool usarCaixaEncontrada = false; //Indica que os itens receberão a caixa encontrada.
+                CaixaViewModel caixaMaior = null; //Caixa corrente.
+                CaixaViewModel caixaAnterior = null; //Controle da caixa anterior.
+                CaixaViewModel proximaCaixa = null; //Próxima caixa na escala de grandeza.
+                decimal contadorCubagem2 = 0;
+                bool usouAgrupamento; //Indica se o agrupamento foi utilizado.
+                decimal contadorCubagem; //Acumulador (auxiliar) para cubagem.
+                decimal contadorPeso; //Acumulador (auxiliar) para peso.
+                bool sair = false;
 
-            caixaMaior = await BuscarMaiorCaixa(listaCaixasMaisComum);
+                //Captura a lista de caixas mais comum.
+                var listaCaixasMaisComum = await BuscarCaixaMaisComum(listaItensDoPedido);
 
-            do
-            {
-                usouAgrupamento = false;
+                //Valida se a lista de caixas mais comum é nula.
+                if (listaCaixasMaisComum == null)
+                    return listaItensDoPedido;
 
-                contadorCubagem = 0;
-                contadorPeso = 0;
+                int agrupador = 1;
 
-                //Primeira triagem dos itens - não há consideração pelos multiplos
                 for (int i = 0; i < listaItensDoPedido.Count; i++)
                 {
-                    /*
-                     * Se o item já estiver agrupado ou as caixas do item for nulo 
-                     * ou se o item for um volume do fornecedor (IsEmbalagemFornecedorVolume).
-                     */
-                    if (listaItensDoPedido[i].Agrupador != 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume || listaItensDoPedido[i].IsSeparacaoNoPikcing == false)
-                        continue;
-
-                    //Verifica se o item cabe na caixa indicada.
-                    if (!await CalcularCubagemEntreCaixaProduto(listaItensDoPedido[i].Produto, caixaMaior))
-                        continue;
-
-                    //Calcula a cubagem do item (produto) do pedido.
-                    var cubagemPedidoItem = await CalcularCubagemPedidoItem(listaItensDoPedido[i]);
-
-                    //Calcula o peso do item (produto) do pedido.
-                    var pesoPedidoItem = await CalcularPesoItemPedido(listaItensDoPedido[i]);
-                    decimal valor = 1.05M; //Variavel utilizada no calculo da sobra da caixa. Existe uma margem de 5% por conta do plástico bolha.
-
-                    //Verifica se a cubagem total (contadorCubagem + cubagemPedidoItem) é menor ou igual a cubagem da caixa.
-                    //Verifica se o peso total (contadorCubagem + cubagemPedidoItem) é menor ou igual ao peso maximo da caixa.
-                    if ((contadorCubagem + cubagemPedidoItem.Value) <= (caixaMaior.Cubagem * ((100 - caixaMaior.Sobra) / 100)) &&
-                        (contadorPeso + pesoPedidoItem.Value) <= (caixaMaior.PesoMaximo * valor))
+                    //Para cada item do pedido, se não existir caixa ou for embalagem do fornecedor, vai adicionando o agrupador.
+                    if ((listaItensDoPedido[i].Agrupador == 0 && listaItensDoPedido[i].Caixa == null) || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume || listaItensDoPedido[i].IsSeparacaoNoPikcing == false)
                     {
-                        //Verifica se a caixa identificada está na lista de caixas dos itens do pedido;
-                        if (listaItensDoPedido[i].Caixa.Any(x => x == caixaMaior))
-                        {
-                            //Soma a cubagem do item do pedido ao contador.
-                            contadorCubagem += cubagemPedidoItem.Value;
-
-                            //Soma o peso do item do pedido ao contador.
-                            contadorPeso += pesoPedidoItem.Value;
-
-                            listaItensDoPedido[i].Agrupador = agrupador;
-                            usouAgrupamento = true;
-                        }
+                        listaItensDoPedido[i].Agrupador = agrupador;
+                        agrupador++;
                     }
                 }
 
-                usarCaixaEncontrada = true;
+                caixaMaior = await BuscarMaiorCaixa(listaCaixasMaisComum);
 
-                if (!encontrouCaixaCorreta)
+                do
                 {
-                    //Analisa a sobra da caixa
-                    if (contadorCubagem < (caixaMaior.Cubagem * ((100 - caixaMaior.Sobra) / 100)))
+                    usouAgrupamento = false;
+
+                    contadorCubagem = 0;
+                    contadorPeso = 0;
+
+                    //Primeira triagem dos itens - não há consideração pelos multiplos
+                    for (int i = 0; i < listaItensDoPedido.Count; i++)
                     {
-                        if (caixaAnteriorEhMelhorQueAtual && contadorCubagem != contadorCubagem2)
+                        /*
+                         * Se o item já estiver agrupado ou as caixas do item for nulo 
+                         * ou se o item for um volume do fornecedor (IsEmbalagemFornecedorVolume).
+                         */
+                        if (listaItensDoPedido[i].Agrupador != 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume || listaItensDoPedido[i].IsSeparacaoNoPikcing == false)
+                            continue;
+
+                        //Verifica se o item cabe na caixa indicada.
+                        if (!await CalcularCubagemEntreCaixaProduto(listaItensDoPedido[i].Produto, caixaMaior))
+                            continue;
+
+                        //Calcula a cubagem do item (produto) do pedido.
+                        var cubagemPedidoItem = await CalcularCubagemPedidoItem(listaItensDoPedido[i]);
+
+                        //Calcula o peso do item (produto) do pedido.
+                        var pesoPedidoItem = await CalcularPesoItemPedido(listaItensDoPedido[i]);
+                        decimal valor = 1.05M; //Variavel utilizada no calculo da sobra da caixa. Existe uma margem de 5% por conta do plástico bolha.
+
+                        //Verifica se a cubagem total (contadorCubagem + cubagemPedidoItem) é menor ou igual a cubagem da caixa.
+                        //Verifica se o peso total (contadorCubagem + cubagemPedidoItem) é menor ou igual ao peso maximo da caixa.
+                        if ((contadorCubagem + cubagemPedidoItem.Value) <= (caixaMaior.Cubagem * ((100 - caixaMaior.Sobra) / 100)) &&
+                            (contadorPeso + pesoPedidoItem.Value) <= (caixaMaior.PesoMaximo * valor))
                         {
-                            encontrouCaixaCorreta = true;
+                            //Verifica se a caixa identificada está na lista de caixas dos itens do pedido;
+                            if (listaItensDoPedido[i].Caixa.Any(x => x == caixaMaior))
+                            {
+                                //Soma a cubagem do item do pedido ao contador.
+                                contadorCubagem += cubagemPedidoItem.Value;
 
-                            caixaMaior = caixaAnterior;
-                            caixaAnteriorEhMelhorQueAtual = false;
+                                //Soma o peso do item do pedido ao contador.
+                                contadorPeso += pesoPedidoItem.Value;
 
-                            await ZerarAgrupamento(agrupador, listaItensDoPedido);
+                                listaItensDoPedido[i].Agrupador = agrupador;
+                                usouAgrupamento = true;
+                            }
+                        }
+                    }
 
-                            usarCaixaEncontrada = false;
-                            usouAgrupamento = true;
+                    usarCaixaEncontrada = true;
+
+                    if (!encontrouCaixaCorreta)
+                    {
+                        //Analisa a sobra da caixa
+                        if (contadorCubagem < (caixaMaior.Cubagem * ((100 - caixaMaior.Sobra) / 100)))
+                        {
+                            if (caixaAnteriorEhMelhorQueAtual && contadorCubagem != contadorCubagem2)
+                            {
+                                encontrouCaixaCorreta = true;
+
+                                caixaMaior = caixaAnterior;
+                                caixaAnteriorEhMelhorQueAtual = false;
+
+                                await ZerarAgrupamento(agrupador, listaItensDoPedido);
+
+                                usarCaixaEncontrada = false;
+                                usouAgrupamento = true;
+                            }
+                            else
+                            {
+                                proximaCaixa = await CalcularProximaCaixaMaior(caixaMaior, listaCaixasMaisComum);
+
+                                if (caixaMaior == proximaCaixa)
+                                    encontrouCaixaCorreta = true;
+
+                                caixaAnterior = caixaMaior;
+
+                                if (proximaCaixa != null)
+                                    caixaMaior = proximaCaixa;
+                                else
+                                {
+                                    caixaMaior = caixaAnterior;
+                                    encontrouCaixaCorreta = true;
+                                }
+
+                                contadorCubagem2 = contadorCubagem;
+                                caixaAnteriorEhMelhorQueAtual = true;
+
+                                await ZerarAgrupamento(agrupador, listaItensDoPedido);
+
+                                usarCaixaEncontrada = false;
+                                usouAgrupamento = true;
+                            }
                         }
                         else
                         {
@@ -1646,68 +1702,47 @@ namespace FWLog.Services.Services
                             usouAgrupamento = true;
                         }
                     }
-                    else
+
+                    if (usarCaixaEncontrada)
                     {
-                        proximaCaixa = await CalcularProximaCaixaMaior(caixaMaior, listaCaixasMaisComum);
-
-                        if (caixaMaior == proximaCaixa)
-                            encontrouCaixaCorreta = true;
-
-                        caixaAnterior = caixaMaior;
-
-                        if (proximaCaixa != null)
-                            caixaMaior = proximaCaixa;
-                        else
+                        if (contadorCubagem > 0)
                         {
-                            caixaMaior = caixaAnterior;
-                            encontrouCaixaCorreta = true;
-                        }
-
-                        contadorCubagem2 = contadorCubagem;
-                        caixaAnteriorEhMelhorQueAtual = true;
-
-                        await ZerarAgrupamento(agrupador, listaItensDoPedido);
-
-                        usarCaixaEncontrada = false;
-                        usouAgrupamento = true;
-                    }
-                }
-
-                if (usarCaixaEncontrada)
-                {
-                    if (contadorCubagem > 0)
-                    {
-                        for (int i = 0; i < listaItensDoPedido.Count; i++)
-                        {
-                            if (listaItensDoPedido[i].Agrupador == 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume || listaItensDoPedido[i].IsSeparacaoNoPikcing == false)
-                                continue;
-
-                            if (listaItensDoPedido[i].Agrupador == agrupador)
+                            for (int i = 0; i < listaItensDoPedido.Count; i++)
                             {
-                                listaItensDoPedido[i].CaixaEscolhida = caixaMaior;
+                                if (listaItensDoPedido[i].Agrupador == 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume || listaItensDoPedido[i].IsSeparacaoNoPikcing == false)
+                                    continue;
 
-                                if (!usouAgrupamento)
-                                    usouAgrupamento = true;
+                                if (listaItensDoPedido[i].Agrupador == agrupador)
+                                {
+                                    listaItensDoPedido[i].CaixaEscolhida = caixaMaior;
+
+                                    if (!usouAgrupamento)
+                                        usouAgrupamento = true;
+                                }
                             }
                         }
+
+                        caixaMaior = await BuscarMaiorCaixa(listaCaixasMaisComum);
+
+                        caixaAnterior = null;
+                        contadorCubagem2 = 0;
+
+                        caixaAnteriorEhMelhorQueAtual = false;
+                        encontrouCaixaCorreta = false;
                     }
 
-                    caixaMaior = await BuscarMaiorCaixa(listaCaixasMaisComum);
+                    if (!usouAgrupamento)
+                        sair = true;
+                    else
+                        agrupador++;
+                } while (!sair);
 
-                    caixaAnterior = null;
-                    contadorCubagem2 = 0;
-
-                    caixaAnteriorEhMelhorQueAtual = false;
-                    encontrouCaixaCorreta = false;
-                }
-
-                if (!usouAgrupamento)
-                    sair = true;
-                else
-                    agrupador++;
-            } while (!sair);
-
-            return await BuscaItensNaoCubicadosSemFrancionamento(agrupador, listaItensDoPedido, listaCaixasMaisComum);
+                return await BuscaItensNaoCubicadosSemFrancionamento(agrupador, listaItensDoPedido, listaCaixasMaisComum);
+            }
+            catch (Exception)
+            { 
+                throw;
+            }
         }
 
         /// <summary>
@@ -1879,190 +1914,197 @@ namespace FWLog.Services.Services
         /// <returns></returns>
         public async Task<List<PedidoItemViewModel>> BuscaItensNaoCubicadosSemFrancionamento(int agrupador, List<PedidoItemViewModel> listaItensDoPedido, List<CaixaViewModel> listaCaixasMaisComum) //calcFracVol
         {
-            //Declaração das variáveis que serão utilizadas.
-            CaixaViewModel caixaCorrente = null; // Caixa corrente.
-            CaixaViewModel proximaCaixa = null; //Próxima caixa na escala de grandeza.
-            CaixaViewModel caixaAnterior = null; //Controle da caixa anterior.
-            bool caixaAnteriorEhMelhorQueAtual = false; //Indica que a caixa anterior é melhor que a atual.
-            decimal? nAux2Cub;
-            bool encontrouCaixaCorreta; //Indica que a caixa correta foi encontrada.
-            bool sair;
-            int nAuxQtde = 0;
-            decimal? contadorCubagem; //Acumulador (auxiliar) para cubagem.
-            decimal contadorPeso; //Acumulador (auxiliar) para peso.
-            bool usarCaixaEncontrada; //Indica que os itens receberão a caixa encontrada.
-            bool usouAgrupamento = false; //Indica se o agrupamento atual tem alguma peça
-            List<PedidoItemViewModel> listaItensDoPedidoRetorno = new List<PedidoItemViewModel>();
-            bool sairWhile = false;
-
-            //Pra garantir que o agrupamento a ser usado não é o mesmo
-            agrupador++;
-
-            //Controle das peças que estão sem agrupamento
-            do
+            try
             {
-                usouAgrupamento = false;
+                //Declaração das variáveis que serão utilizadas.
+                CaixaViewModel caixaCorrente = null; // Caixa corrente.
+                CaixaViewModel proximaCaixa = null; //Próxima caixa na escala de grandeza.
+                CaixaViewModel caixaAnterior = null; //Controle da caixa anterior.
+                bool caixaAnteriorEhMelhorQueAtual = false; //Indica que a caixa anterior é melhor que a atual.
+                decimal? nAux2Cub;
+                bool encontrouCaixaCorreta; //Indica que a caixa correta foi encontrada.
+                bool sair;
+                int nAuxQtde = 0;
+                decimal? contadorCubagem; //Acumulador (auxiliar) para cubagem.
+                decimal contadorPeso; //Acumulador (auxiliar) para peso.
+                bool usarCaixaEncontrada; //Indica que os itens receberão a caixa encontrada.
+                bool usouAgrupamento = false; //Indica se o agrupamento atual tem alguma peça
+                List<PedidoItemViewModel> listaItensDoPedidoRetorno = new List<PedidoItemViewModel>();
+                bool sairWhile = false;
 
-                for (int i = 0; i < listaItensDoPedido.Count; i++)
+                //Pra garantir que o agrupamento a ser usado não é o mesmo
+                agrupador++;
+
+                //Controle das peças que estão sem agrupamento
+                do
                 {
-                    if (listaItensDoPedido[i].Agrupador != 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume || listaItensDoPedido[i].IsSeparacaoNoPikcing == false)
-                        continue;
+                    usouAgrupamento = false;
 
-                    caixaCorrente = await BuscarMaiorCaixa(listaCaixasMaisComum);
-                    caixaAnterior = null;
-                    nAux2Cub = 0;
-
-                    encontrouCaixaCorreta = false;
-                    sair = false;
-
-                    //Laço para controle da caixa
-                    do
+                    for (int i = 0; i < listaItensDoPedido.Count; i++)
                     {
-                        var cubagemProduto = await CalcularCubagemEntreCaixaProduto(listaItensDoPedido[i].Produto, caixaCorrente);
+                        if (listaItensDoPedido[i].Agrupador != 0 || listaItensDoPedido[i].Caixa == null || listaItensDoPedido[i].Produto.IsEmbalagemFornecedorVolume || listaItensDoPedido[i].IsSeparacaoNoPikcing == false)
+                            continue;
 
-                        if (!cubagemProduto || listaItensDoPedido[i].Caixa.Any(x => x.IdCaixa == caixaCorrente.IdCaixa) == false)
-                        {
-                            proximaCaixa = caixaCorrente != null ? await CalcularProximaCaixaMaior(caixaCorrente, listaCaixasMaisComum) : null;
+                        caixaCorrente = await BuscarMaiorCaixa(listaCaixasMaisComum);
+                        caixaAnterior = null;
+                        nAux2Cub = 0;
 
-                            if (proximaCaixa == null)
-                            {
-                                if (!caixaAnteriorEhMelhorQueAtual)
-                                    sairWhile = true;
-                            }
-                            else
-                            {
-                                caixaCorrente = proximaCaixa;
-                                continue;
-                            }
-                        }
+                        encontrouCaixaCorreta = false;
+                        sair = false;
 
-                        //Laço que coloca os itens dentro da caixa
-                        nAuxQtde = 0;
-
-                        decimal valor = 1.05M;
-
+                        //Laço para controle da caixa
                         do
                         {
-                            nAuxQtde += listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : Convert.ToInt32(listaItensDoPedido[i].Produto.MultiploVenda);
-                            contadorCubagem = (listaItensDoPedido[i].Produto.CubagemProduto * nAuxQtde) / listaItensDoPedido[i].Produto.MultiploVenda;
-                            contadorPeso = (listaItensDoPedido[i].Produto.PesoBruto * nAuxQtde) / listaItensDoPedido[i].Produto.MultiploVenda;
-                        } while (
-                            (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda)) <= listaItensDoPedido[i].Quantidade &&
-                            (((listaItensDoPedido[i].Produto.CubagemProduto * (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda))) / listaItensDoPedido[i].Produto.MultiploVenda) <= (caixaCorrente.Cubagem * ((100 - caixaCorrente.Sobra) / 100)) &&
-                            ((listaItensDoPedido[i].Produto.PesoBruto * (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda)) <= (caixaCorrente.PesoMaximo * valor))))
-                        );
+                            var cubagemProduto = await CalcularCubagemEntreCaixaProduto(listaItensDoPedido[i].Produto, caixaCorrente);
 
-                        usarCaixaEncontrada = true;
-
-                        if (!encontrouCaixaCorreta)
-                        {
-                            if (contadorCubagem.Value != 0 && contadorCubagem < (caixaCorrente.Cubagem * ((100 - caixaCorrente.Sobra) / 100)) &&
-                                listaItensDoPedido[i].Caixa != null)
+                            if (!cubagemProduto || listaItensDoPedido[i].Caixa.Any(x => x.IdCaixa == caixaCorrente.IdCaixa) == false)
                             {
-                                if (caixaAnteriorEhMelhorQueAtual && contadorCubagem != nAux2Cub)
+                                proximaCaixa = caixaCorrente != null ? await CalcularProximaCaixaMaior(caixaCorrente, listaCaixasMaisComum) : null;
+
+                                if (proximaCaixa == null)
                                 {
-                                    encontrouCaixaCorreta = true;
-
-                                    caixaCorrente = caixaAnterior;
-                                    caixaAnteriorEhMelhorQueAtual = false;
-
-                                    usarCaixaEncontrada = false;
-                                    usouAgrupamento = true;
+                                    if (!caixaAnteriorEhMelhorQueAtual)
+                                        sairWhile = true;
                                 }
                                 else
                                 {
-                                    proximaCaixa = await CalcularProximaCaixaMaior(caixaCorrente, listaCaixasMaisComum);
-
-                                    if (caixaCorrente == proximaCaixa)
-                                        encontrouCaixaCorreta = true;
-
-                                    caixaAnterior = caixaCorrente;
-
-                                    if (proximaCaixa != null && await CalcularCubagemEntreCaixaProduto(listaItensDoPedido[i].Produto, proximaCaixa))
-                                        caixaCorrente = proximaCaixa;
-                                    else
-                                    {
-                                        caixaCorrente = caixaAnterior;
-                                        encontrouCaixaCorreta = true;
-                                    }
-
-                                    nAux2Cub = contadorCubagem;
-                                    caixaAnteriorEhMelhorQueAtual = true;
-
-                                    usarCaixaEncontrada = false;
-                                    usouAgrupamento = true;
+                                    caixaCorrente = proximaCaixa;
+                                    continue;
                                 }
                             }
-                        }
 
-                        if (usarCaixaEncontrada && nAuxQtde > 0)
-                        {
-                            if (nAuxQtde != listaItensDoPedido[i].Quantidade)
+                            //Laço que coloca os itens dentro da caixa
+                            nAuxQtde = 0;
+
+                            decimal valor = 1.05M;
+
+                            do
                             {
-                                int quantidadePedido = listaItensDoPedido[i].Quantidade;
+                                nAuxQtde += listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : Convert.ToInt32(listaItensDoPedido[i].Produto.MultiploVenda);
+                                contadorCubagem = (listaItensDoPedido[i].Produto.CubagemProduto * nAuxQtde) / listaItensDoPedido[i].Produto.MultiploVenda;
+                                contadorPeso = (listaItensDoPedido[i].Produto.PesoBruto * nAuxQtde) / listaItensDoPedido[i].Produto.MultiploVenda;
+                            } while (
+                                (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda)) <= listaItensDoPedido[i].Quantidade &&
+                                (((listaItensDoPedido[i].Produto.CubagemProduto * (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda))) / listaItensDoPedido[i].Produto.MultiploVenda) <= (caixaCorrente.Cubagem * ((100 - caixaCorrente.Sobra) / 100)) &&
+                                ((listaItensDoPedido[i].Produto.PesoBruto * (nAuxQtde + (listaItensDoPedido[i].Produto.MultiploVenda <= 0 ? 1 : listaItensDoPedido[i].Produto.MultiploVenda)) <= (caixaCorrente.PesoMaximo * valor))))
+                            );
 
-                                listaItensDoPedido.Add(new PedidoItemViewModel()
+                            usarCaixaEncontrada = true;
+
+                            if (!encontrouCaixaCorreta)
+                            {
+                                if (contadorCubagem.Value != 0 && contadorCubagem < (caixaCorrente.Cubagem * ((100 - caixaCorrente.Sobra) / 100)) &&
+                                    listaItensDoPedido[i].Caixa != null)
                                 {
-                                    Produto = listaItensDoPedido[i].Produto,
-                                    Agrupador = agrupador,
-                                    CaixaEscolhida = caixaCorrente,
-                                    Quantidade = nAuxQtde,
-                                    Caixa = listaItensDoPedido[i].Caixa,
-                                    EnderecoSeparacao = listaItensDoPedido[i].EnderecoSeparacao,
-                                    GrupoCorredorArmazenagem = listaItensDoPedido[i].GrupoCorredorArmazenagem,
-                                    IsSeparacaoNoPikcing = listaItensDoPedido[i].IsSeparacaoNoPikcing
+                                    if (caixaAnteriorEhMelhorQueAtual && contadorCubagem != nAux2Cub)
+                                    {
+                                        encontrouCaixaCorreta = true;
 
-                                });
+                                        caixaCorrente = caixaAnterior;
+                                        caixaAnteriorEhMelhorQueAtual = false;
 
-                                usouAgrupamento = true;
+                                        usarCaixaEncontrada = false;
+                                        usouAgrupamento = true;
+                                    }
+                                    else
+                                    {
+                                        proximaCaixa = await CalcularProximaCaixaMaior(caixaCorrente, listaCaixasMaisComum);
 
-                                listaItensDoPedido[i].Quantidade = quantidadePedido - nAuxQtde;
+                                        if (caixaCorrente == proximaCaixa)
+                                            encontrouCaixaCorreta = true;
+
+                                        caixaAnterior = caixaCorrente;
+
+                                        if (proximaCaixa != null && await CalcularCubagemEntreCaixaProduto(listaItensDoPedido[i].Produto, proximaCaixa))
+                                            caixaCorrente = proximaCaixa;
+                                        else
+                                        {
+                                            caixaCorrente = caixaAnterior;
+                                            encontrouCaixaCorreta = true;
+                                        }
+
+                                        nAux2Cub = contadorCubagem;
+                                        caixaAnteriorEhMelhorQueAtual = true;
+
+                                        usarCaixaEncontrada = false;
+                                        usouAgrupamento = true;
+                                    }
+                                }
+                            }
+
+                            if (usarCaixaEncontrada && nAuxQtde > 0)
+                            {
+                                if (nAuxQtde != listaItensDoPedido[i].Quantidade)
+                                {
+                                    int quantidadePedido = listaItensDoPedido[i].Quantidade;
+
+                                    listaItensDoPedido.Add(new PedidoItemViewModel()
+                                    {
+                                        Produto = listaItensDoPedido[i].Produto,
+                                        Agrupador = agrupador,
+                                        CaixaEscolhida = caixaCorrente,
+                                        Quantidade = nAuxQtde,
+                                        Caixa = listaItensDoPedido[i].Caixa,
+                                        EnderecoSeparacao = listaItensDoPedido[i].EnderecoSeparacao,
+                                        GrupoCorredorArmazenagem = listaItensDoPedido[i].GrupoCorredorArmazenagem,
+                                        IsSeparacaoNoPikcing = listaItensDoPedido[i].IsSeparacaoNoPikcing
+
+                                    });
+
+                                    usouAgrupamento = true;
+
+                                    listaItensDoPedido[i].Quantidade = quantidadePedido - nAuxQtde;
+                                }
+                                else
+                                {
+                                    listaItensDoPedido[i].Agrupador = agrupador;
+                                    listaItensDoPedido[i].CaixaEscolhida = caixaCorrente;
+
+                                    usouAgrupamento = true;
+                                }
+
+                                caixaAnterior = null;
+                                nAux2Cub = 0;
+                                nAuxQtde = 0;
+
+                                caixaAnteriorEhMelhorQueAtual = false;
+                                encontrouCaixaCorreta = false;
                             }
                             else
                             {
-                                listaItensDoPedido[i].Agrupador = agrupador;
-                                listaItensDoPedido[i].CaixaEscolhida = caixaCorrente;
-
-                                usouAgrupamento = true;
+                                if (usarCaixaEncontrada)
+                                {
+                                    listaItensDoPedido[i].Agrupador = agrupador;
+                                    usouAgrupamento = true;
+                                }
                             }
 
-                            caixaAnterior = null;
-                            nAux2Cub = 0;
-                            nAuxQtde = 0;
-
-                            caixaAnteriorEhMelhorQueAtual = false;
-                            encontrouCaixaCorreta = false;
-                        }
-                        else
-                        {
-                            if (usarCaixaEncontrada)
+                            if (!usouAgrupamento || nAuxQtde == 0)
+                                sair = true;
+                            else
                             {
-                                listaItensDoPedido[i].Agrupador = agrupador;
-                                usouAgrupamento = true;
+                                agrupador++;
+                                usouAgrupamento = false;
                             }
-                        }
+                        } while (!sair);
+                    }
 
-                        if (!usouAgrupamento || nAuxQtde == 0)
-                            sair = true;
-                        else
-                        {
-                            agrupador++;
-                            usouAgrupamento = false;
-                        }
-                    } while (!sair);
-                }
+                    if (!usouAgrupamento)
+                        sairWhile = true;
+                    else
+                    {
+                        agrupador++;
+                        usouAgrupamento = false;
+                    }
 
-                if (!usouAgrupamento)
-                    sairWhile = true;
-                else
-                {
-                    agrupador++;
-                    usouAgrupamento = false;
-                }
+                } while (!sairWhile);
 
-            } while (!sairWhile);
-
-            return listaItensDoPedido;
+                return listaItensDoPedido;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<List<VolumeViewModel>> BuscarCubagemVolumes(long idEmpresa, List<PedidoItemViewModel> listaItensDoPedido)
