@@ -61,8 +61,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var list = new List<RelatorioAtividadeEstoqueListItemViewModel>();
 
-            List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
-
             foreach (var item in result)
             {
                 list.Add(new RelatorioAtividadeEstoqueListItemViewModel()
@@ -76,7 +74,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     QuantidadeInicial = item.QuantidadeInicial.HasValue ? item.QuantidadeInicial.ToString() : "",
                     QuantidadeFinal = item.QuantidadeFinal.HasValue ? item.QuantidadeFinal.ToString() : "",
                     TipoAtividade = item.TipoAtividade,
-                    UsuarioExecucao = usuarios.Where(x => x.UserId.Equals(item.UsuarioExecucao)).FirstOrDefault()?.PerfilUsuario.Nome,
+                    UsuarioExecucao = !item.UsuarioExecucao.NullOrEmpty() ? _uow.PerfilUsuarioRepository.GetByUserId(item.UsuarioExecucao)?.Nome : string.Empty
                 });
             }
 
@@ -503,7 +501,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 list.Insert(indiceUltimoProduto + 1, new RelatorioPosicaoInventarioListItemViewModel
                 {
                     Referencia = referenciaProduto,
-                    Codigo  = "<b>Saldo</b>",
+                    Codigo = "<b>Saldo</b>",
                     QuantidadeProdutoPorEndereco = saldoQuantidade
                 });
             }
