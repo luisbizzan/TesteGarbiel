@@ -142,11 +142,13 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             var selectQuery = query.Select(pvv => new MovimentacaoVolumesDetalhesModel
             {
+                IdPedidoVendaVolume = pvv.IdPedidoVendaVolume,
                 PedidoNumero = pvv.PedidoVenda.Pedido.NroPedido,
                 VolumeNumero = pvv.NroVolume,
                 QuantidadeProdutos = pvv.PedidoVendaProdutos.Count,
                 PedidoData = pvv.PedidoVenda.Pedido.DataCriacao,
-                IdPedidoVendaVolume = pvv.IdPedidoVendaVolume
+                VolumeCentena = pvv.NroCentena,
+                TransportadoraNomeFantasia = pvv.PedidoVenda.Transportadora.NomeFantasia
             });
 
             return selectQuery.ToList();

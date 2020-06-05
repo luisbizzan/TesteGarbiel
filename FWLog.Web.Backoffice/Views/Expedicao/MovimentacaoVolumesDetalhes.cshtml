@@ -21,8 +21,10 @@
                             <tr>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().PedidoNumero)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().VolumeNumero)</th>
+                                <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().VolumeCentena)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().QuantidadeProdutos)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().PedidoData)</th>
+                                <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().TransportadoraNomeFantasia)</th>
                                 <th style="width: 50px;">@Resources.CommonStrings.ActionsLabel</th>
                             </tr>
                         </thead>
@@ -32,8 +34,10 @@
                                 <tr>
                                     <td>@item.PedidoNumero</td>
                                     <td>@item.VolumeNumero.ToString().PadLeft(3, '0')</td>
+                                    <td>@item.VolumeCentena.ToString().PadLeft(4, '0')</td>
                                     <td>@item.QuantidadeProdutos</td>
                                     <td>@item.PedidoData.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@item.TransportadoraNomeFantasia</td>
                                     <td class=" row-actions">
                                         <p data-id="@item.IdPedidoVendaVolume" action="exibirDetalhesVolume" class="btn btn-row-actions btn-default" title="Detalhes do Volume"><i class="fa fa-eye"></i></p>
                                     </td>
@@ -43,7 +47,7 @@
                     </table>
                 </div>
             </div>
-            @Html.HiddenFor(x => x.Url);
+            @Html.HiddenFor(x => x.Url)
         </div>
     </div>
 </div>
