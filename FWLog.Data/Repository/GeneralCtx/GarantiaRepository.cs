@@ -302,6 +302,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                         GS.Id,
                         (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa"" = GS.Id_Empresa ) AS empresa,
                         GS.Dt_Criacao,
+                        GS.id_status,
+                        ( SELECT GT2.descricao FROM geral_tipo GT2 WHERE GT2.Id = GS.Id_status) AS status,
                         GT1.descricao AS Tipo,
                         GS.Cod_Fornecedor
                     FROM
@@ -479,7 +481,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 {
                     //PEGA A ULTIMA REMESSA ATIVA E DO DIA DO USUARIO
                     var remessaPendente = new GarRemessaLista();
-                    sQuery = @"SELECT GRL.cod_fornecedor, GRL.id_usr, GRL.id, NVL((SELECT GR.id FROM gar_remessa GR WHERE GR.cod_fornecedor = GRL.cod_fornecedor AND GR.Id_Usr = GRL.Id_Usr AND GR.id_empresa = GRL.id_empresa AND TO_DATE(GR.dt_criacao,'DD/MM/YYYY') = TO_DATE(SYSDATE,'DD/MM/YYYY') ),0) AS id_remessa
+                    sQuery = @"SELECT GRL.cod_fornecedor, GRL.id_usr, GRL.id, NVL((SELECT GR.id FROM gar_remessa GR WHERE GR.cod_fornecedor = GRL.cod_fornecedor AND GR.Id_Usr = GRL.Id_Usr AND GR.id_empresa = GRL.id_empresa AND GR.id_status = 38 AND TO_DATE(GR.dt_criacao,'DD/MM/YYYY') = TO_DATE(SYSDATE,'DD/MM/YYYY') ),0) AS id_remessa
                     FROM gar_remessa_lista GRL
                     WHERE
                         GRL.Id_Usr = :Id_Usr
@@ -493,7 +495,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         return new DmlStatus { Sucesso = true, Mensagem = string.Format("Nada pendente.") };
 
                     //SE REMESSA NÃO FOI CRIADA, CRIA ELA
-                    if (remessaPendente.Remessa_Criada == 0)
+                    if (remessaPendente.Id_Remessa == 0)
                         return new DmlStatus { Sucesso = false, DadosObjeto = new { Id_Remessa = remessaPendente.Id_Remessa, Cod_Fornecedor = remessaPendente.Cod_Fornecedor }, Mensagem = string.Format("Remessa ainda não criada para o fornecedor <strong>{0}</strong>.", remessaPendente.Cod_Fornecedor) };
 
                     return new DmlStatus { Sucesso = false, DadosObjeto = new { Id_Remessa = remessaPendente.Id_Remessa, Cod_Fornecedor = remessaPendente.Cod_Fornecedor }, Mensagem = string.Format("Você tem uma remessa pendente para o fornecedor <strong>{0}</strong>.", remessaPendente.Cod_Fornecedor) };
@@ -738,7 +740,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                     var param = new DynamicParameters();
                     param.Add(name: "Filial", value: solicitacao.Filial, direction: ParameterDirection.Input);
-                    param.Add(name: "Id_Empresa", value: solicitacao.Id_Empresa, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Empresa", value: item.Id_Empresa, direction: ParameterDirection.Input);
                     param.Add(name: "Dt_Criacao", value: solicitacao.Dt_Criacao, direction: ParameterDirection.Input);
                     param.Add(name: "Id_Tipo", value: solicitacao.Id_Tipo, direction: ParameterDirection.Input);
                     param.Add(name: "Cli_Cnpj", value: solicitacao.Cli_Cnpj, direction: ParameterDirection.Input);
@@ -752,7 +754,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                     conn.Execute(@"INSERT INTO gar_solicitacao (Filial, Id_Filial, Id_Empresa, Dt_Criacao, Id_Tipo, Cli_Cnpj,Id_Status,Legenda,Id_Usr,Id_Sav,Nota_Fiscal,Serie,Id_Tipo_Doc)
-                            VALUES ( :Filial, (SELECT ""IdEmpresa"" FROM ""Empresa"" WHERE ""Sigla"" = :Filial ), :Dt_Criacao, :Id_Tipo, :Cli_Cnpj,:Id_Status,:Legenda,:Id_Usr,:Id_Sav,:Nota_Fiscal,:Serie,:Id_Tipo_Doc )
+                            VALUES ( :Filial, (SELECT ""IdEmpresa"" FROM ""Empresa"" WHERE ""Sigla"" = :Filial ), :Id_Empresa, :Dt_Criacao, :Id_Tipo, :Cli_Cnpj,:Id_Status,:Legenda,:Id_Usr,:Id_Sav,:Nota_Fiscal,:Serie,:Id_Tipo_Doc )
                             returning Id into :Id", param);
 
                     Id_Solicitacao = param.Get<int>("Id");
@@ -786,6 +788,57 @@ namespace FWLog.Data.Repository.GeneralCtx
             }
 
             return new DmlStatus { Sucesso = true, Mensagem = "Solicitação importada com sucesso.", Id = Id_Solicitacao };
+        }
+
+        public List<GarRemessaLista> ListarRemessaAutomaticaDia(long Id_Empresa)
+        {
+            List<GarRemessaLista> retorno = new List<GarRemessaLista>();
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    string sQuery = @"
+                    SELECT
+                        GRL.cod_fornecedor,
+                        GT1.descricao AS status,
+                        GRL.id_status,
+                        GRL.id_usr,
+                        GRL.vlr_atingido,
+                        GRL.vlr_minimo,
+                        GRL.id_empresa,
+                        (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa"" = GRL.Id_Empresa ) AS empresa,
+                        (SELECT U.""UserName"" FROM ""AspNetUsers"" U WHERE U.""Id"" = GRL.id_usr) AS Usr,
+                      GRL.id
+                    FROM
+                        gar_remessa_lista GRL
+                        INNER JOIN geral_tipo GT1 ON GT1.Id = GRL.id_status
+                    WHERE
+                        TO_DATE(GRL.dia, 'DD/MM/YYYY') = TO_DATE(SYSDATE, 'DD/MM/YYYY')
+                        AND GRL.Id_Empresa = :Id_Empresa
+                    ";
+                    retorno = conn.Query<GarRemessaLista>(sQuery, new { Id_Empresa }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
+        }
+
+        public void AtualizaStatusRemessaAutomatica(long Id, long Id_Status)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    sQuery = @"UPDATE gar_remessa_lista SET Id_Status = :Id_Status WHERE Id = :Id";
+                    conn.Query<GarConferencia>(sQuery, new { Id_Status, Id });
+                }
+                conn.Close();
+            }
         }
 
         public DmlStatus ImportarSolicitacaoNfEletronicaPedido(GarSolicitacao item)
@@ -867,7 +920,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         //PEDIDO
                         sQuery = @"
                         SELECT
-                        (SELECT ad_filial FROM tsiemp@sankhya s WHERE  s.codemp = n.codemp) AS filial,
+                            (SELECT ad_filial FROM tsiemp@sankhya s WHERE  s.codemp = n.codemp) AS filial,
                             SYSDATE AS dt_criacao,
                             17 AS id_tipo,
                             (SELECT cgc_cpf FROM tgfpar@sankhya p WHERE n.codparc = p.codparc) AS cli_cnpj,
@@ -915,7 +968,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
                     var param = new DynamicParameters();
                     param.Add(name: "Filial", value: solicitacao.Filial, direction: ParameterDirection.Input);
-                    param.Add(name: "Id_Empresa", value: solicitacao.Id_Empresa, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Empresa", value: item.Id_Empresa, direction: ParameterDirection.Input);
                     param.Add(name: "Dt_Criacao", value: solicitacao.Dt_Criacao, direction: ParameterDirection.Input);
                     param.Add(name: "Id_Tipo", value: solicitacao.Id_Tipo, direction: ParameterDirection.Input);
                     param.Add(name: "Cli_Cnpj", value: solicitacao.Cli_Cnpj, direction: ParameterDirection.Input);
@@ -929,7 +982,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
                     conn.Execute(@"INSERT INTO gar_solicitacao (Filial, Id_Filial, Id_Empresa, Dt_Criacao, Id_Tipo, Cli_Cnpj,Id_Status,Legenda,Id_Usr,Id_Sav,Nota_Fiscal,Serie,Id_Tipo_Doc)
-                            VALUES ( :Filial, (SELECT ""IdEmpresa"" FROM ""Empresa"" WHERE ""Sigla"" = :Filial ), :Dt_Criacao, :Id_Tipo, :Cli_Cnpj,:Id_Status,:Legenda,:Id_Usr,:Id_Sav,:Nota_Fiscal,:Serie,:Id_Tipo_Doc )
+                            VALUES ( :Filial, (SELECT ""IdEmpresa"" FROM ""Empresa"" WHERE ""Sigla"" = :Filial ), :Id_Empresa, :Dt_Criacao, :Id_Tipo, :Cli_Cnpj,:Id_Status,:Legenda,:Id_Usr,:Id_Sav,:Nota_Fiscal,:Serie,:Id_Tipo_Doc )
                             returning Id into :Id", param);
 
                     Id_Solicitacao = param.Get<int>("Id");
@@ -956,6 +1009,112 @@ namespace FWLog.Data.Repository.GeneralCtx
                         {
                             Id_Solicitacao,
                             Nunota
+                        });
+                    }
+                }
+                conn.Close();
+            }
+
+            return new DmlStatus { Sucesso = true, Mensagem = "Solicitação importada com sucesso.", Id = Id_Solicitacao };
+        }
+
+        public DmlStatus ImportarSolicitacaoQuebra(GarSolicitacao item)
+        {
+            string sQuery = "";
+            bool podeImportar = false;
+            long Id_Solicitacao = 0;
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    //VERIFICA SE JA FOI IMPORTADO
+                    sQuery = @"SELECT COUNT(ID) FROM GAR_SOLICITACAO WHERE ID_TIPO_DOC = 20 AND NOTA_FISCAL = :Nota_Fiscal";
+                    podeImportar = conn.Query<int>(sQuery, new { item.Nota_Fiscal }).SingleOrDefault() == 0;
+
+                    if (!podeImportar)
+                        return new DmlStatus { Sucesso = false, Mensagem = "A solicitação já foi importada." };
+
+                    sQuery = @"SELECT COUNT(NUOCORRENCIA)  FROM ad_saccab@sankhya WHERE nuocorrencia = :Nota_Fiscal AND codmot = 87 AND status = 'P' AND CIENCIA = 1";
+                    podeImportar = conn.Query<int>(sQuery, new { item.Nota_Fiscal }).SingleOrDefault() > 0;
+
+                    if (!podeImportar)
+                        return new DmlStatus { Sucesso = false, Mensagem = "Solicitação Não Encontrada." };
+
+                    //VERIFICA SE TEM ITENS
+                    sQuery = @"SELECT Count(*) AS Qtd FROM AD_SACITE@sankhya WHERE nuocorrencia = :Nota_Fiscal";
+                    podeImportar = conn.Query<int>(sQuery, new { item.Nota_Fiscal }).SingleOrDefault() > 0;
+
+                    if (!podeImportar)
+                        return new DmlStatus { Sucesso = false, Mensagem = "Não ha Itens na Solicitação." };
+
+                    //VERIFICA SE TEM NOTA SANKYA
+                    var solicitacao = new GarSolicitacao();
+                    sQuery = @"
+                        SELECT
+                            (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa""  = :Id_Empresa) AS filial,
+                            SYSDATE AS dt_criacao,
+                            36 AS id_tipo,
+                            (SELECT cgc FROM tsiemp@sankhya WHERE ad_filial = (SELECT ""Sigla"" FROM ""Empresa"" WHERE ""IdEmpresa""  = :Id_Empresa)) AS Cli_Cnpj,
+                            22 AS id_status,
+                            :Id_Usr AS id_usr,
+                            3 AS legenda,
+                            0 AS id_sav,
+                            :Nota_Fiscal AS Nota_fiscal,
+                            ' ' as serie,
+                            20 AS id_tipo_doc
+                        FROM
+                            dual
+                         ";
+                    solicitacao = conn.Query<GarSolicitacao>(sQuery, new { item.Id_Usr, item.Nota_Fiscal, item.Id_Empresa }).SingleOrDefault();
+
+                    if (solicitacao == null)
+                        return new DmlStatus { Sucesso = false, Mensagem = "Erro ao carregar solicitação." };
+
+                    var param = new DynamicParameters();
+                    param.Add(name: "Filial", value: solicitacao.Filial, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Empresa", value: item.Id_Empresa, direction: ParameterDirection.Input);
+                    param.Add(name: "Dt_Criacao", value: solicitacao.Dt_Criacao, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Tipo", value: solicitacao.Id_Tipo, direction: ParameterDirection.Input);
+                    param.Add(name: "Cli_Cnpj", value: solicitacao.Cli_Cnpj, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Status", value: solicitacao.Id_Status, direction: ParameterDirection.Input);
+                    param.Add(name: "Legenda", value: solicitacao.Legenda, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Usr", value: solicitacao.Id_Usr, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Sav", value: solicitacao.Id_Sav, direction: ParameterDirection.Input);
+                    param.Add(name: "Nota_Fiscal", value: solicitacao.Nota_Fiscal, direction: ParameterDirection.Input);
+                    param.Add(name: "Serie", value: solicitacao.Serie, direction: ParameterDirection.Input);
+                    param.Add(name: "Id_Tipo_Doc", value: item.Id_Tipo_Doc, direction: ParameterDirection.Input);
+                    param.Add(name: "Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                    conn.Execute(@"INSERT INTO gar_solicitacao (Filial, Id_Filial, Id_Empresa, Dt_Criacao, Id_Tipo, Cli_Cnpj,Id_Status,Legenda,Id_Usr,Id_Sav,Nota_Fiscal,Serie,Id_Tipo_Doc)
+                            VALUES ( :Filial, (SELECT ""IdEmpresa"" FROM ""Empresa"" WHERE ""Sigla"" = :Filial ), :Id_Empresa, :Dt_Criacao, :Id_Tipo, :Cli_Cnpj,:Id_Status,:Legenda,:Id_Usr,:Id_Sav,:Nota_Fiscal,:Serie,:Id_Tipo_Doc )
+                            returning Id into :Id", param);
+
+                    Id_Solicitacao = param.Get<int>("Id");
+
+                    if (Id_Solicitacao != 0)
+                    {
+                        //ITENS DA NF
+                        sQuery = @"
+                        INSERT INTO gar_solicitacao_item (id_solicitacao, id_item_nf, refx, id_prod_skw, cod_fornecedor,quant,valor)
+                        SELECT
+                             :Id_Solicitacao AS id_solicitacao,
+                            Rownum AS Id_Item_nf,
+                            (SELECT Prd.Ad_Refx FROM Tgfpro@Sankhya Prd WHERE Prd.CODPROD = Sci.CODPROD) AS Refx,
+                            Sci.CODPROD AS Id_Prod_skw,
+                            (SELECT Prd.CODPARCFORN FROM Tgfpro@Sankhya Prd WHERE Prd.CODPROD = Sci.CODPROD) AS Refx,
+                            Sci.QTD AS Quant,
+                            (obtemcusto_frc@sankhya(sci.codprod,'S',2,'N',0,'N',0,sysdate,5)) AS Valor
+                        FROM
+                            AD_SACITE@Sankhya Sci
+                        WHERE
+                            Sci.NUOCORRENCIA = :Nota_Fiscal
+                        ";
+                        conn.Query<GarConferenciaHist>(sQuery, new
+                        {
+                            Id_Solicitacao,
+                            item.Nota_Fiscal
                         });
                     }
                 }
@@ -1000,6 +1159,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                         GSI.Id_Solicitacao,
                         GSI.Id_Item_Nf,
                         GSI.Refx,
+                        (SELECT COUNT(*) FROM geral_upload WHERE id_categoria = 1 AND id_ref = GSI.Id ) AS quant_upload,
                         GSI.Cod_Fornecedor,
                         GSI.Quant,
                         TP.descrprod AS descricao,
@@ -1192,7 +1352,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     ";
                     conn.Query<GarConferencia>(sQuery, new { item.Id, item.Id_Usr });
 
-                    //Tipo Solicitação => 17 = Devolução | 18 = Garantia
+                    //Tipo Solicitação => 18 = Garantia
                     if (item.Id_Tipo_Solicitacao == 18)
                     {
                         //Se for Garantia Abastece Estoque Laudo e Garantia

@@ -18,7 +18,7 @@
         <div class="modal-body" style="overflow: auto; max-height: calc(100vh - 150px);">
 
             <div class="x_panel">
-
+               @Html.HiddenFor(m => m.Solicitacao.Id)
                 <div class="x_content">
                     <div class="row" style="margin-bottom:10px;">
                         <div class="col-xs-12 col-sm-3 col-lg-3 col-md-3">
@@ -65,21 +65,23 @@
                                 <th>@Html.DisplayNameFor(m => m.ItensCabecalho.Valor)</th>
                                 <th>@Html.DisplayNameFor(m => m.ItensCabecalho.Valor_Total)</th>
                                 <th>@Html.DisplayNameFor(m => m.ItensCabecalho.Cod_Fornecedor)</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model.Itens)
                             {
-                            <tr>
-                                <td></td>
-                                <td>@item.Id</td>
-                                <td>@item.Refx</td>
-                                <td>@item.Descricao</td>
-                                <td>@item.Quant</td>
-                                <td>@String.Format("{0:C}", item.Valor)</td>
-                                <td>@String.Format("{0:C}", item.Valor_Total)</td>
-                                <td>@item.Cod_Fornecedor</td>
-                            </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>@item.Id</td>
+                                    <td>@item.Refx</td>
+                                    <td>@item.Descricao</td>
+                                    <td>@item.Quant</td>
+                                    <td>@String.Format("{0:C}", item.Valor)</td>
+                                    <td>@String.Format("{0:C}", item.Valor_Total)</td>
+                                    <td>@item.Cod_Fornecedor</td>
+                                    <td><a data-toggle="tooltip" title="" data-original-title="Uploads" href="javascript:void(0)" onclick="visualizarUploads(@item.Id)" class="btn btn-row-actions btn-sm @(item.Quant_Upload > 0 ? "btn-success" : "btn-default")"><i class="fa fa-sticky-note"></i> @item.Quant_Upload</a></td>
+                                </tr>
                             }
                         </tbody>
                     </table>

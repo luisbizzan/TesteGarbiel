@@ -59,7 +59,9 @@
         ];
     });
 
+
     $("#dataTable").on('click', "[action='visualizarSolicitacao']", visualizarSolicitacao);
+
     $("#dataTable").on('click', "[action='estornarSolicitacao']", estornarSolicitacao);
     $("#dataTable").on('click', "[action='conferirSolicitacao']", conferirSolicitacao);
 
@@ -122,7 +124,14 @@
 })();
 
 function visualizarSolicitacao() {
-    var id = $(this).data("id");
+    visualizarSolicitacaoConteudo($(this).data("id"));
+}
+
+function visualizarSolicitacaoAtualizar(id) {
+    visualizarSolicitacaoConteudo(id);
+}
+
+function visualizarSolicitacaoConteudo(id) {
     let modal = $("#modalVisualizar");
 
     modal.load(CONTROLLER_PATH + "SolicitacaoVisualizar/" + id, function () {
@@ -208,6 +217,25 @@ function visualizarSolicitacao() {
     });
 }
 
+function visualizarUploads(id) {
+    let Id_Categoria = 1;
+    let Id_Ref = id;
+
+    $("#modalPadrao").load("/Geral/ListarUploads", {
+        Id_Categoria: Id_Categoria,
+        Id_Ref: Id_Ref,
+    }, function () {
+        $("#modalPadrao").modal();
+
+        $("#modalVisualizar").css("z-index", "1050");
+
+        $("#modalPadrao").unbind("hidden.bs.modal");
+        $('#modalPadrao').on('hidden.bs.modal', function () {
+            visualizarSolicitacaoAtualizar($("#Solicitacao_Id").val());
+        });
+    });
+}
+
 function conferirSolicitacao() {
     var id = $(this).data("id");
     let modal = $("#modalVisualizar");
@@ -283,7 +311,6 @@ function Mensagem(sucesso, mensagem) {
 /* Selecionar Impressora */
 var Impressora = new Object();
 $(function () {
-
     $(document).ready(function () {
         Impressora = new Object();
         var ddlImpressoras = $('#ddlPerfilImpressora option:selected')[0];
@@ -299,7 +326,6 @@ $(function () {
         Impressora.IdPerfilImpressora = ddlImpressoras.value;
         Impressora.IdEmpresa = ddlEmpresa.value;
     })
-
 })
 
 /* Listar Impressoras do Usuario  */
@@ -339,5 +365,4 @@ function Imprimir() {
         console.log(f);
     }).done(function (d) {
     });
-
 }

@@ -1,16 +1,16 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
-<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="C65317C7-751D-4268-5665-6A655AB7173A" name="GAR_REMESSA_LISTA">
+<Table class="oracle.dbtools.crest.model.design.relational.Table" directorySegmentName="seg_0" id="1C749F49-11CF-0595-4FCC-F1F4FAC0834E" name="USUARIO">
 <createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-28 18:33:09 UTC</createdTime>
+<createdTime>2020-06-02 10:31:18 UTC</createdTime>
 <ownerDesignName>modeloFwLog</ownerDesignName>
-<ordsAlias>table_23</ordsAlias>
+<ordsAlias>table_24</ordsAlias>
 <allowColumnReorder>false</allowColumnReorder>
 <existDependencyGenerateInDDl>true</existDependencyGenerateInDDl>
 <parsed>true</parsed>
 <columns itemClass="oracle.dbtools.crest.model.design.relational.Column">
-<Column name="ID" id="D0394F9B-7F8A-8678-92A8-2A437E1C6A84">
+<Column name="ID" id="FC216D0D-32F4-2BAC-B0DB-3C516DB5D30A">
 <createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-28 18:33:28 UTC</createdTime>
+<createdTime>2020-06-02 10:31:39 UTC</createdTime>
 <ownerDesignName>modeloFwLog</ownerDesignName>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
@@ -18,9 +18,9 @@
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
-<Column name="COD_FORNECEDOR" id="598625A2-11E9-C7C3-393C-F7C9863F3DFB">
+<Column name="NOME" id="433EDB18-00B6-E4CB-B13E-4A652A2DCF16">
 <createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-29 10:06:09 UTC</createdTime>
+<createdTime>2020-06-02 10:31:52 UTC</createdTime>
 <ownerDesignName>modeloFwLog</ownerDesignName>
 <nullsAllowed>true</nullsAllowed>
 <useDomainConstraints>false</useDomainConstraints>
@@ -30,20 +30,20 @@
 <ownDataTypeParameters>200,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
-<Column name="DIA" id="9840D738-B801-F204-5082-50776714D619">
+<Column name="TELEFONE" id="AD9EAE9B-0EB7-FD7C-3258-7878EC31797F">
 <createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-29 10:06:09 UTC</createdTime>
+<createdTime>2020-06-02 10:32:13 UTC</createdTime>
 <ownerDesignName>modeloFwLog</ownerDesignName>
 <nullsAllowed>true</nullsAllowed>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
-<logicalDatatype>LOGDT007</logicalDatatype>
+<logicalDatatype>LOGDT019</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
-<Column name="ID_USR" id="52E005CD-0FFC-9C39-AD1E-F18BF1B4E011">
+<Column name="EMAIL" id="3B74C3FD-9960-B348-FAA7-523A36DC0262">
 <createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-29 10:06:09 UTC</createdTime>
+<createdTime>2020-06-02 10:32:13 UTC</createdTime>
 <ownerDesignName>modeloFwLog</ownerDesignName>
 <nullsAllowed>true</nullsAllowed>
 <useDomainConstraints>false</useDomainConstraints>
@@ -53,63 +53,40 @@
 <ownDataTypeParameters>200,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
-<Column name="ID_STATUS" id="0371DA71-4340-0361-B3F4-0ABF847D22DD">
+<Column name="CPF" id="BD1F4A9C-2CCD-C4DF-74B1-ADC9AE82B8FA">
 <createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-29 10:06:09 UTC</createdTime>
-<commentInRDBMS>Aberto&lt;br/&gt;Em Conferência&lt;br/&gt;Fechado</commentInRDBMS>
+<createdTime>2020-06-02 10:32:13 UTC</createdTime>
 <ownerDesignName>modeloFwLog</ownerDesignName>
 <nullsAllowed>true</nullsAllowed>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
-<logicalDatatype>LOGDT026</logicalDatatype>
+<logicalDatatype>LOGDT019</logicalDatatype>
 <ownDataTypeParameters>,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
-<Column name="ID_EMPRESA" id="AA23FA5A-CA73-3995-A32D-9A5B35B0B825">
+<Column name="ENDERECO" id="B8F1DB23-373C-9008-00CA-A10E6138C623">
 <createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-29 10:06:18 UTC</createdTime>
-<commentInRDBMS>Empresa que gerou a remessa</commentInRDBMS>
+<createdTime>2020-06-02 10:32:13 UTC</createdTime>
 <ownerDesignName>modeloFwLog</ownerDesignName>
 <nullsAllowed>true</nullsAllowed>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
-<logicalDatatype>LOGDT026</logicalDatatype>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
-<Column name="VLR_ATINGIDO" id="3D555D84-6934-6960-B008-ECD8BC84AB66">
-<createdBy>henrique.pereira</createdBy>
-<createdTime>2020-06-01 11:38:09 UTC</createdTime>
-<ownerDesignName>modeloFwLog</ownerDesignName>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT026</logicalDatatype>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
-<autoIncrementCycle>false</autoIncrementCycle>
-</Column>
-<Column name="VLR_MINIMO" id="F4E07C42-0E79-6EAA-9C19-A91BAE4CA507">
-<createdBy>henrique.pereira</createdBy>
-<createdTime>2020-06-01 11:38:09 UTC</createdTime>
-<ownerDesignName>modeloFwLog</ownerDesignName>
-<nullsAllowed>true</nullsAllowed>
-<useDomainConstraints>false</useDomainConstraints>
-<use>1</use>
-<logicalDatatype>LOGDT026</logicalDatatype>
-<ownDataTypeParameters>,,</ownDataTypeParameters>
+<logicalDatatype>LOGDT024</logicalDatatype>
+<dataTypeSize>2000</dataTypeSize>
+<ownDataTypeParameters>2000,,</ownDataTypeParameters>
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
 </columns>
 <indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
-<ind_PK_UK id="E077A896-2BBE-5CB9-F2FF-5B2E9313027F" name="GAR_REMESSA_LISTA_PK">
+<ind_PK_UK id="187F1C5B-1646-8891-A6DF-A4810EA1D0B0" name="USUARIO_PK">
 <createdBy>henrique.pereira</createdBy>
-<createdTime>2020-05-28 18:33:28 UTC</createdTime>
+<createdTime>2020-06-02 10:31:39 UTC</createdTime>
 <ownerDesignName>modeloFwLog</ownerDesignName>
 <pk>true</pk>
 <indexState>Primary Constraint</indexState>
 <isSurrogateKey>false</isSurrogateKey>
 <indexColumnUsage>
-<colUsage columnID="D0394F9B-7F8A-8678-92A8-2A437E1C6A84"/>
+<colUsage columnID="FC216D0D-32F4-2BAC-B0DB-3C516DB5D30A"/>
 </indexColumnUsage>
 </ind_PK_UK>
 </indexes>

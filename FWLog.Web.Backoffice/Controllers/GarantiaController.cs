@@ -141,7 +141,7 @@ namespace FWLog.Web.Backoffice.Controllers
             if (item.Id_Tipo == 31 && string.IsNullOrEmpty(item.Serie))
                 ModelState.AddModelError("Serie", "O campo Série é obrigatório.");
 
-            if ((item.Id_Tipo == 32 || item.Id_Tipo == 21) && item.Numero_Interno == null)
+            if ((item.Id_Tipo == 32 || item.Id_Tipo == 21 || item.Id_Tipo == 20) && item.Numero_Interno == null)
                 ModelState.AddModelError("Numero_Interno", "O campo Número Interno é obrigatório.");
 
             if (!ModelState.IsValid)
@@ -184,6 +184,17 @@ namespace FWLog.Web.Backoffice.Controllers
                         Id_Empresa = IdEmpresa,
                         Id_Tipo_Doc = item.Id_Tipo,
                         Codigo_Postagem = item.Codigo_Postagem
+                    });
+                }
+                else if (item.Id_Tipo == 20)
+                {
+                    //IMPORTA SOLICITAÇÃO SE FOR PEDIDO OU NOTA ELETRONICA
+                    retorno = _uow.GarantiaRepository.ImportarSolicitacaoQuebra(new GarSolicitacao
+                    {
+                        Nota_Fiscal = item.Numero_Interno == null ? item.Numero.ToString() : item.Numero_Interno.ToString(),
+                        Id_Usr = IdUsuario,
+                        Id_Empresa = IdEmpresa,
+                        Id_Tipo_Doc = item.Id_Tipo
                     });
                 }
 
@@ -555,7 +566,6 @@ namespace FWLog.Web.Backoffice.Controllers
             else
             {
                 //REMESSA
-
                 if (conferencia.Id_Tipo_Conf == 26)
                 {
                     //CONFERENCIA DE REMESSA ENVIO FORNECEDOR
@@ -855,6 +865,44 @@ namespace FWLog.Web.Backoffice.Controllers
                 Success = conferencia.Sucesso,
                 Message = conferencia.Mensagem
             });
+        }
+
+        public ActionResult RemessaAutomatica()
+        {
+            return View();
+        }
+
+        public ActionResult RemessaAutomaticaListar()
+        {
+            var result = _uow.GarantiaRepository.ListarRemessaAutomaticaDia(IdEmpresa);
+            var model = Mapper.Map<IEnumerable<GarRemessaListaVM>>(result).ToList();
+
+            return PartialView("_RemessaAutomaticaLista", model);
+        }
+
+        [HttpPost]
+        public ActionResult RemessaAutomaticaAlterarStatus(long Id, long Id_Status)
+        {
+            try
+            {
+                _uow.GarantiaRepository.AtualizaStatusRemessaAutomatica(Id, Id_Status);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = Resources.CommonStrings.RegisterCreatedSuccessMessage
+                });
+            }
+            catch (Exception e)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = e.Message
+                });
+
+                throw;
+            }
         }
     }
 }

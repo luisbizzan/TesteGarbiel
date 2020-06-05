@@ -27,7 +27,8 @@
           new MenuGroup(text: Res.GarantiaMenuItem, icon: "fa fa-shield").SetItems(
             new MenuItem { Text = "Solicitação de Garantia", Url = Url.Action("Index", "Garantia"), RequirePermission = Permissions.Garantia.Listar },
             new MenuItem { Text = "Remessa", Url = Url.Action("Remessa", "Garantia"), RequirePermission = Permissions.Garantia.Listar },
-            new MenuItem { Text = "Motivo do Laudo", Url = Url.Action("MotivoLaudo", "MotivoLaudo"), RequirePermission = Permissions.MotivoLaudo.Listar },
+            new MenuItem { Text = "Remessa Automática", Url = Url.Action("RemessaAutomatica", "Garantia"), RequirePermission = Permissions.Garantia.Listar },
+            
             new MenuItem { Text = "Configuração", Url = Url.Action("Index", "GarantiaConfiguracao"), RequirePermission = Permissions.Garantia.Listar }
         ),
         new MenuGroup(text: Res.UserMenuGroup, icon: "fa fa-user").SetItems(
