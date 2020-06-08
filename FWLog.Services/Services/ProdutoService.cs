@@ -77,7 +77,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task ConsultarProdutoIntegracao()
+        public async Task ConsultarProdutoIntegracao(bool somenteNovos = true)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
@@ -86,10 +86,12 @@ namespace FWLog.Services.Services
 
             StringBuilder where = new StringBuilder();
 
-            where.Append("WHERE AD_INTEGRARFWLOG = '1' ");
+            if (somenteNovos)
+            {
+                where.Append("WHERE AD_INTEGRARFWLOG = '1' ");
+            }
 
-            int quantidadeRegistro = 4999;
-            int quantidadeChamada = 0;
+            int quantidadeChamadas = 0;
 
             List<ProdutoQuantidadeRegistroIntegracao> produtoQuantidadeRegistroIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoQuantidadeRegistroIntegracao>(where: where.ToString());
 
@@ -97,18 +99,33 @@ namespace FWLog.Services.Services
             {
                 try
                 {
-                    quantidadeRegistro = Convert.ToInt32(produtoQuantidadeRegistroIntegracao[0].QuantidadeRegistro);
+                    decimal contadorRegistros = Convert.ToInt32(produtoQuantidadeRegistroIntegracao[0].QuantidadeRegistro);
+
+                    if (contadorRegistros < 4999)
+                    {
+                        quantidadeChamadas = 1;
+                    }
+                    else
+                    {
+                        decimal div = contadorRegistros / 4999;
+                        quantidadeChamadas = Convert.ToInt32(Math.Ceiling(div));
+                    }
+
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    _log.Error("Erro na integração de Produtos", ex);
+                    return;
+                }
             }
 
-            quantidadeChamada = quantidadeRegistro > 4999 ? quantidadeRegistro / 4999 : 1;
+            int offsetRows = 0;
 
-            where.Append("ORDER BY CODPROD OFFSET 0 ROWS FETCH NEXT 5000 ROWS ONLY ");
-
-            for (int i = 0; i < quantidadeChamada; i++)
+            for (int i = 0; i < quantidadeChamadas; i++)
             {
-                List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoIntegracao>(where: where.ToString());
+                where.Append("ORDER BY CODPROD OFFSET " + offsetRows + " ROWS FETCH NEXT 4999 ROWS ONLY ");
+
+                List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoIntegracao>(where: where.ToString());
 
                 var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
 
@@ -201,6 +218,7 @@ namespace FWLog.Services.Services
                 }
 
                 i++;
+                offsetRows += 4999;
             }
         }
 

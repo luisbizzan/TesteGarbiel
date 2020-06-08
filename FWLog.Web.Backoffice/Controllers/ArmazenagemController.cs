@@ -74,7 +74,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     QuantidadeInicial = item.QuantidadeInicial.HasValue ? item.QuantidadeInicial.ToString() : "",
                     QuantidadeFinal = item.QuantidadeFinal.HasValue ? item.QuantidadeFinal.ToString() : "",
                     TipoAtividade = item.TipoAtividade,
-                    UsuarioExecucao = !item.UsuarioExecucao.NullOrEmpty() ? _uow.PerfilUsuarioRepository.GetByUserId(item.UsuarioExecucao)?.Nome : string.Empty
+                    UsuarioExecucao = !item.UsuarioExecucao.NullOrEmpty() ? _uow.PerfilUsuarioRepository.GetByUserId(item.UsuarioExecucao)?.Nome : string.Empty,
+                    PorcentagemDivergencia = item.QuantidadeInicial.HasValue && item.QuantidadeInicial != 0 && item.QuantidadeFinal.HasValue ? ((decimal)(item.QuantidadeFinal - item.QuantidadeInicial) / item.QuantidadeInicial * 100).Value.ToString("N2") : string.Empty
                 });
             }
 

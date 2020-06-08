@@ -11,7 +11,7 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [Required]
         public string CodigoIntegracao { get; set; }
 
-        [Display(Name = "GFPAR.NOMEPARC")]
+        [Display(Name = "TGFPAR.NOMEPARC")]
         [TabelaIntegracao(DisplayName = "TGFPAR.NOMEPARC")]
         [Required]
         public string NomeFantasia { get; set; }

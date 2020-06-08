@@ -96,6 +96,7 @@
             { "defaultContent": "", width: '8%' },
             { data: 'NroVolume', width: '8%' },
             { data: 'DataCriacao' },
+            { data: 'NumeroSerieNotaFiscal' },
             { data: 'DataExpedicao' },
             { data: 'Status', width: '20%' },
             actionsColumn

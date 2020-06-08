@@ -1572,7 +1572,8 @@ namespace FWLog.Services.Services
                 CodigoEndereco = x.CodigoEndereco,
                 DataExecucao = x.DataExecucao.HasValue ? x.DataExecucao.Value.ToString("dd/MM/yyyy") : "",
                 UsuarioExecucao = usuarios.Where(y => y.UserId.Equals(x.UsuarioExecucao)).FirstOrDefault()?.PerfilUsuario.Nome ?? "",
-                Finalizado = x.Finalizado ? "Sim" : "Não"
+                Finalizado = x.Finalizado ? "Sim" : "Não",
+                PorcentagemDivergencia = x.QuantidadeInicial.HasValue && x.QuantidadeInicial != 0 && x.QuantidadeFinal.HasValue ? ((decimal)(x.QuantidadeFinal - x.QuantidadeInicial) / x.QuantidadeInicial * 100).Value.ToString("N2") : string.Empty
             }).ToList();
 
             var dados = new List<IFwRelatorioDados>();
@@ -1635,7 +1636,7 @@ namespace FWLog.Services.Services
 
                     var itemRelatorio = new DadosRelatorioRomaneioCampinasBateria
                     {
-                        NumeroNotaFiscal = string.Concat(romaneioNotaFiscal.NroNotaFiscal.ToString(),"-", romaneioNotaFiscal.SerieNotaFiscal),
+                        NumeroNotaFiscal = string.Concat(romaneioNotaFiscal.NroNotaFiscal.ToString(), "-", romaneioNotaFiscal.SerieNotaFiscal),
                         Cliente = $"{cliente.RazaoSocial}{separadorLinha}{cliente.CodigoIntegracao} - {pedido.CodigoIntegracao}",
                         Endereco = $"{cliente.Endereco}{separadorLinha}{cliente.Cidade}",
                         Telefone = $"{cliente.Telefone}",
@@ -1659,12 +1660,12 @@ namespace FWLog.Services.Services
                 {
                     var cliente = romaneioNotaFiscal.Cliente;
                     var pedido = romaneioNotaFiscal.PedidoVenda.Pedido;
-                    
+
                     var separadorLinha = Environment.NewLine;
 
                     var itemRelatorio = new DadosRelatorioRomaneio
                     {
-                        NumeroNotaFiscal = string.Concat(romaneioNotaFiscal.NroNotaFiscal.ToString(),"-", romaneioNotaFiscal.SerieNotaFiscal),
+                        NumeroNotaFiscal = string.Concat(romaneioNotaFiscal.NroNotaFiscal.ToString(), "-", romaneioNotaFiscal.SerieNotaFiscal),
                         Cliente = $"{cliente.RazaoSocial}{separadorLinha}{cliente.CodigoIntegracao} - {pedido.CodigoIntegracao}",
                         Endereco = $"{cliente.Endereco}{separadorLinha}{cliente.Cidade}",
                         Telefone = $"{cliente.Telefone}",
@@ -1702,7 +1703,7 @@ namespace FWLog.Services.Services
                 Orientacao = Orientation.Portrait,
                 Filtros = new FwRelatorioDadosFiltro()
                 {
-                    Transportadora = $"{(transportadora.IdTransportadora).ToString().PadLeft(3,'0')} - {transportadora.NomeFantasia}",
+                    Transportadora = $"{(transportadora.IdTransportadora).ToString().PadLeft(3, '0')} - {transportadora.NomeFantasia}",
                     NumeroRomaneio = dadosRelatorio.Romaneio.NroRomaneio,
                     DataHoraEmissaoRomaneio = dadosRelatorio.DataHoraEmissaoRomaneio
                 },
@@ -1713,7 +1714,7 @@ namespace FWLog.Services.Services
 
             var fwRelatorio = new FwRelatorio();
 
-            return fwRelatorio.Gerar(fwRelatorioDados,"Agency FB",false);
+            return fwRelatorio.Gerar(fwRelatorioDados, "Agency FB", false);
         }
 
         public void ImprimirRomaneio(RelatorioRomaneioRequest dadosRelatorio, long idImpressora, bool imprimeSegundaVia)

@@ -91,9 +91,9 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRecords = produtoEstoque.Count();
 
             var query = produtoEstoque.Where(x =>
-               (string.IsNullOrEmpty(filter.CustomFilter.Referencia) == true || x.Produto.Referencia == filter.CustomFilter.Referencia) &&
-               (string.IsNullOrEmpty(filter.CustomFilter.Descricao) == true || x.Produto.Descricao == filter.CustomFilter.Descricao) &&
-               (string.IsNullOrEmpty(filter.CustomFilter.CodigoDeBarras) == true || x.Produto.CodigoBarras == filter.CustomFilter.CodigoDeBarras)
+               (string.IsNullOrEmpty(filter.CustomFilter.Referencia) == true || x.Produto.Referencia.ToLower().Contains(filter.CustomFilter.Referencia.Trim().ToLower())) &&
+               (string.IsNullOrEmpty(filter.CustomFilter.Descricao) == true || x.Produto.Descricao.ToLower().Contains(filter.CustomFilter.Descricao.ToLower())) &&
+               (string.IsNullOrEmpty(filter.CustomFilter.CodigoDeBarras) == true || x.Produto.CodigoBarras.Contains(filter.CustomFilter.CodigoDeBarras.Trim()))
             );
 
             if (filter.CustomFilter.ProdutoStatus.HasValue)

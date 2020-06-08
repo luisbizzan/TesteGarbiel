@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 {
@@ -18,6 +19,10 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         [Display(Name = "Integrado OK")]
         public int? AguardandoRobo { get; set; }
 
+        public SelectList ListaTiposPagamento { get; set; }
+
+        public SelectList ListaRequisicao { get; set; }
+
         public MovimentacaoVolumesFilterViewModel Filter { get; set; }
         public List<MovimentacaoVolumesListItemViewModel> Items { get; set; }
     }
@@ -31,6 +36,12 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         [Display(Name = "Data Final")]
         [Required]
         public DateTime? DataFinal { get; set; }
+
+        [Display(Name = "Tipo de Pagamento")]
+        public string TipoPagamento { get; set; }
+
+        [Display(Name = "Requisição")]
+        public bool? Requisicao { get; set; }
     }
 
     public class MovimentacaoVolumesListItemViewModel
