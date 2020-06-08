@@ -123,8 +123,7 @@ namespace FWLog.Data.Models
                     { GarantiaTag.SankhyaTop, new object[]
                     {
                         new { data = "BotaoEvento" }, new { data = "Id", title = "Id Registro" },
-                        new { data = "Top", title = "Top" }, new { data = "Descricao", title = "Descrição" }, new { data = "Id_NegociacaoView", title = "Negociação" },
-                        new { data = "VendaMin", title = "Venda Mínima" }, new { data = "VendaMax", title = "Venda Máxima" }
+                        new { data = "Top", title = "Top" }, new { data = "Descricao", title = "Descrição" }, new { data = "Id_NegociacaoView", title = "Negociação" }
                     }},
 
                     { GarantiaTag.RemessaUsuario, new object[]
@@ -251,11 +250,6 @@ namespace FWLog.Data.Models
             public long Id_Negociacao { get; set; }
             [Display(Name = "Negociação")]
             public string Id_NegociacaoView { get; set; }
-
-            [Display(Name = "Venda Mínima")]
-            public string VendaMin { get; set; }
-            [Display(Name = "Venda Máxima")]
-            public string VendaMax { get; set; }
 
             public string BotaoEvento { get; set; }
         }
@@ -562,10 +556,10 @@ namespace FWLog.Data.Models
             {
                 get
                 {
-                    return String.Concat("SELECT gst.Id, gst.Top, gst.Descricao, gst.Id_Negociacao, tgf.DescrTipVenda Id_NegociacaoView, tgf.VendaMin, tgf.VendaMax ",
+                    return String.Concat("SELECT gst.Id, gst.Top, gst.Descricao, gst.Id_Negociacao, tgf.DescrTipVenda Id_NegociacaoView ",
                         "FROM geral_sankhya_tops gst ",
                         "INNER JOIN tgftpv@sankhya tgf ON gst.Id_Negociacao = tgf.CodTipVenda ",
-                        "GROUP BY gst.Id, gst.Top, gst.Descricao, gst.Id_Negociacao, tgf.DescrTipVenda, tgf.VendaMin, tgf.VendaMax");
+                        "GROUP BY gst.Id, gst.Top, gst.Descricao, gst.Id_Negociacao, tgf.DescrTipVenda");
                 }
             }
             /// <summary>
