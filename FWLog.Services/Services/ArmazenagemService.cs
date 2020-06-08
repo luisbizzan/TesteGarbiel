@@ -915,7 +915,7 @@ namespace FWLog.Services.Services
 
             resposta.ListaDatasUsuarios = new List<LoteInstaladoProdutoDataUsuario>();
 
-            var listaLoteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorProdutoComLote(idProduto, idEmpresa);
+            var listaLoteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorProduto(idProduto, idEmpresa);
 
             var agrupamentoDataUsuario = listaLoteProdutoEndereco.GroupBy(g => new { DataInstalacao = g.DataHoraInstalacao.Date, g.AspNetUsers }).ToList();
 
@@ -928,7 +928,7 @@ namespace FWLog.Services.Services
 
                 var agrupamentoLoteNivelPonto = itemDataUsuario.ToList().GroupBy(g => new
                 {
-                    IdLote = g.IdLote.Value,
+                    g.IdLote,
                     g.EnderecoArmazenagem.IdNivelArmazenagem,
                     NivelArmazenagemDescricao = g.EnderecoArmazenagem.NivelArmazenagem.Descricao,
                     g.EnderecoArmazenagem.IdPontoArmazenagem,

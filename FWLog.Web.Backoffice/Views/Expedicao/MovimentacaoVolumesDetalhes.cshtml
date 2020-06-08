@@ -14,15 +14,19 @@
             <h4 class="modal-title" id="myModalLabel">Detalhes Volumes - @Model.Status</h4>
         </div>
         <div class="modal-body">
-            <div class="row">
+            <div class="row" style="overflow-y: auto; max-height: 600px">
                 <div class="col-xs-12">
                     <table id="dataTablePedidoVendaModal" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
                         <thead>
                             <tr>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().PedidoNumero)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().VolumeNumero)</th>
+                                <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().VolumeCentena)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().QuantidadeProdutos)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().PedidoData)</th>
+                                <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().TipoPagamentoDescricao)</th>
+                                <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().TransportadoraNomeFantasia)</th>
+                                <th style="width: 50px;">@Resources.CommonStrings.ActionsLabel</th>
                             </tr>
                         </thead>
                         @foreach (var item in Model.Items)
@@ -31,14 +35,21 @@
                                 <tr>
                                     <td>@item.PedidoNumero</td>
                                     <td>@item.VolumeNumero.ToString().PadLeft(3, '0')</td>
+                                    <td>@item.VolumeCentena.ToString().PadLeft(4, '0')</td>
                                     <td>@item.QuantidadeProdutos</td>
-                                    <td>@item.PedidoData.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@item.PedidoData.ToShortDateString()</td>
+                                    <td>@item.TipoPagamentoDescricao</td>
+                                    <td>@item.TransportadoraNomeFantasia</td>
+                                    <td class=" row-actions">
+                                        <p data-id="@item.IdPedidoVendaVolume" action="exibirDetalhesVolume" class="btn btn-row-actions btn-default" title="Detalhes do Volume"><i class="fa fa-eye"></i></p>
+                                    </td>
                                 </tr>
                             </tbody>
                         }
                     </table>
                 </div>
             </div>
+            @Html.HiddenFor(x => x.Url)
         </div>
     </div>
 </div>

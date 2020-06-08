@@ -110,11 +110,31 @@ namespace FWLog.Data.Repository.GeneralCtx
             return query.ToList();
         }
 
-        public List<PedidoVendaVolumeGrupoArmazenagemLinhaTabela> BuscarDadosVolumeGrupoArmazenagem(DateTime dataInicial, DateTime dataFinal, long idEmpresa)
+        public List<PedidoVendaVolumeGrupoArmazenagemLinhaTabela> BuscarDadosVolumeGrupoArmazenagem(DateTime dataInicial, DateTime dataFinal, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa)
         {
             dataFinal = dataFinal.Date.AddDays(1).Subtract(new TimeSpan(0, 0, 1));
 
             var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao >= dataInicial && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao <= dataFinal);
+
+            if (cartaoCredito.HasValue)
+            {
+                query = query.Where(q => q.PedidoVenda.Pedido.PagamentoIsCreditoIntegracao == cartaoCredito.Value);
+            }
+
+            if (cartaoDebito.HasValue)
+            {
+                query = query.Where(q => q.PedidoVenda.Pedido.PagamentoIsDebitoIntegracao == cartaoDebito.Value);
+            }
+
+            if (dinheiro.HasValue)
+            {
+                query = query.Where(q => q.PedidoVenda.Pedido.PagamentoIsDinheiroIntegracao == dinheiro.Value);
+            }
+
+            if (requisicao.HasValue)
+            {
+                query = query.Where(q => q.PedidoVenda.Pedido.IsRequisicao == requisicao.Value);
+            }
 
             var selectQuery = query.Select(q => new PedidoVendaVolumeGrupoArmazenagemLinhaTabela
             {
@@ -129,11 +149,31 @@ namespace FWLog.Data.Repository.GeneralCtx
             return selectQuery.ToList();
         }
 
-        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, List<PedidoVendaStatusEnum> listaStatus, long idEmpresa)
+        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, List<PedidoVendaStatusEnum> listaStatus, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa)
         {
             dataFinal = dataFinal.Date.AddDays(1).Subtract(new TimeSpan(0, 0, 1));
 
             var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao >= dataInicial && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao <= dataFinal && pedidoVendaVolume.IdGrupoCorredorArmazenagem == idGrupoCorredorArmazenagem);
+
+            if (cartaoCredito.HasValue)
+            {
+                query = query.Where(q => q.PedidoVenda.Pedido.PagamentoIsCreditoIntegracao == cartaoCredito.Value);
+            }
+
+            if (cartaoDebito.HasValue)
+            {
+                query = query.Where(q => q.PedidoVenda.Pedido.PagamentoIsDebitoIntegracao == cartaoDebito.Value);
+            }
+
+            if (dinheiro.HasValue)
+            {
+                query = query.Where(q => q.PedidoVenda.Pedido.PagamentoIsDinheiroIntegracao == dinheiro.Value);
+            }
+
+            if (requisicao.HasValue)
+            {
+                query = query.Where(q => q.PedidoVenda.Pedido.IsRequisicao == requisicao.Value);
+            }
 
             if (!listaStatus.NullOrEmpty())
             {
@@ -142,10 +182,14 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             var selectQuery = query.Select(pvv => new MovimentacaoVolumesDetalhesModel
             {
+                IdPedidoVendaVolume = pvv.IdPedidoVendaVolume,
                 PedidoNumero = pvv.PedidoVenda.Pedido.NroPedido,
                 VolumeNumero = pvv.NroVolume,
                 QuantidadeProdutos = pvv.PedidoVendaProdutos.Count,
-                PedidoData = pvv.PedidoVenda.Pedido.DataCriacao
+                PedidoData = pvv.PedidoVenda.Pedido.DataCriacao,
+                VolumeCentena = pvv.NroCentena,
+                TransportadoraNomeFantasia = pvv.PedidoVenda.Transportadora.NomeFantasia,
+                TipoPagamentoDescricao = pvv.PedidoVenda.Pedido.PagamentoDescricaoIntegracao
             });
 
             return selectQuery.ToList();

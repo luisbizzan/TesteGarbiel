@@ -8,7 +8,6 @@ using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.PontoArmazenagemCtx;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -22,7 +21,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public object Filtros { get; private set; }
 
-        public PontoArmazenagemController (
+        public PontoArmazenagemController(
             UnitOfWork unitOfWork,
             PontoArmazenagemService pontoArmazenagemService)
         {
@@ -37,15 +36,15 @@ namespace FWLog.Web.Backoffice.Controllers
             var viewModel = new PontoArmazenagemListaViewModel
             {
                 TiposArmazenagem = new SelectList(_unitOfWork.TipoArmazenagemRepository.RetornarTodos().Select(x => new SelectListItem
-                                    {
-                                        Value = x.IdTipoArmazenagem.GetHashCode().ToString(),
-                                        Text = x.Descricao,
-                                    }), "Value", "Text"),
+                {
+                    Value = x.IdTipoArmazenagem.GetHashCode().ToString(),
+                    Text = x.Descricao,
+                }), "Value", "Text"),
                 TiposMovimentacao = new SelectList(_unitOfWork.TipoMovimentacaoRepository.RetornarTodos().Select(x => new SelectListItem
-                                    {
-                                        Value = x.IdTipoMovimentacao.GetHashCode().ToString(),
-                                        Text = x.Descricao,
-                                    }), "Value", "Text"),
+                {
+                    Value = x.IdTipoMovimentacao.GetHashCode().ToString(),
+                    Text = x.Descricao,
+                }), "Value", "Text"),
                 Status = new SelectList(new List<SelectListItem>
                         {
                             new SelectListItem { Text = "Ativo", Value = "1"},
@@ -117,11 +116,11 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             var pontoArmazenagemExistente = _unitOfWork.PontoArmazenagemRepository
-                .BuscarPontoArmazenagemPorIdEmpresaPorPontoEPorNivel(viewModel.IdNivelArmazenagem.Value, 
-                                                                     viewModel.Descricao, 
+                .BuscarPontoArmazenagemPorIdEmpresaPorPontoEPorNivel(viewModel.IdNivelArmazenagem.Value,
+                                                                     viewModel.Descricao,
                                                                      IdEmpresa);
 
-            if(pontoArmazenagemExistente != null)
+            if (pontoArmazenagemExistente != null)
             {
                 Notify.Warning("Ponto de armazenagem já existente, por favor verifique e tente novamente!");
             }
@@ -142,7 +141,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 Notify.Success("Ponto de Armazenagem cadastrado com sucesso.");
             }
-            
+
             return RedirectToAction("Index");
         }
 
@@ -227,7 +226,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     new SelectListItem { Text = "Ativo", Value = "1"},
                     new SelectListItem { Text = "Inativo", Value = "0"}
                 }, "Value", "Text"),
-                
+
             };
 
             viewModel.Filtros.IdNivelArmazenagem = id;

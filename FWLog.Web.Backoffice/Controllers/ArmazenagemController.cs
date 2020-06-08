@@ -61,8 +61,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var list = new List<RelatorioAtividadeEstoqueListItemViewModel>();
 
-            List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
-
             foreach (var item in result)
             {
                 list.Add(new RelatorioAtividadeEstoqueListItemViewModel()
@@ -76,7 +74,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     QuantidadeInicial = item.QuantidadeInicial.HasValue ? item.QuantidadeInicial.ToString() : "",
                     QuantidadeFinal = item.QuantidadeFinal.HasValue ? item.QuantidadeFinal.ToString() : "",
                     TipoAtividade = item.TipoAtividade,
-                    UsuarioExecucao = usuarios.Where(x => x.UserId.Equals(item.UsuarioExecucao)).FirstOrDefault()?.PerfilUsuario.Nome,
+                    UsuarioExecucao = !item.UsuarioExecucao.NullOrEmpty() ? _uow.PerfilUsuarioRepository.GetByUserId(item.UsuarioExecucao)?.Nome : string.Empty,
+                    PorcentagemDivergencia = item.QuantidadeInicial.HasValue && item.QuantidadeInicial != 0 && item.QuantidadeFinal.HasValue ? ((decimal)(item.QuantidadeFinal - item.QuantidadeInicial) / item.QuantidadeInicial * 100).Value.ToString("N2") : string.Empty
                 });
             }
 
@@ -484,10 +483,29 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 Codigo = lpe.Codigo,
                 IdLote = lpe.IdLote != null ? lpe.IdLote.ToString() : "-",
-                QuantidadeProdutoPorEndereco = lpe.QuantidadeProdutoPorEndereco.ToString(),
+                QuantidadeProdutoPorEndereco = lpe.QuantidadeProdutoPorEndereco,
                 Referencia = string.Concat(lpe.Referencia, " - ", lpe.DescricaoProduto)
-
             }));
+
+            var produtosAgrupados = list.GroupBy(l => l.Referencia).ToList();
+
+            foreach (var itemAgrupado in produtosAgrupados)
+            {
+                var referenciaProduto = itemAgrupado.Key;
+
+                var saldoQuantidade = itemAgrupado.Sum(ia => ia.QuantidadeProdutoPorEndereco);
+
+                var ultimoProduto = list.Last(l => l.Referencia == referenciaProduto);
+
+                var indiceUltimoProduto = list.IndexOf(ultimoProduto);
+
+                list.Insert(indiceUltimoProduto + 1, new RelatorioPosicaoInventarioListItemViewModel
+                {
+                    Referencia = referenciaProduto,
+                    Codigo = "<b>Saldo</b>",
+                    QuantidadeProdutoPorEndereco = saldoQuantidade
+                });
+            }
 
             return DataTableResult.FromModel(new DataTableResponseModel
             {

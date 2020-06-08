@@ -157,6 +157,7 @@
     <Compile Include="Model\SeparacaoPedido\DadosLoteProdutoEnderecoViewModel.cs" />
     <Compile Include="Model\SeparacaoPedido\DetalhePedidoVendaResposta.cs" />
     <Compile Include="Model\Relatorios\DadosRelatorioRomaneioCampinasBateria.cs" />
+    <Compile Include="Model\SeparacaoPedido\ImpressaoSeparacaoViewModel.cs" />
     <Compile Include="Model\SeparacaoPedido\LoteProdutoEnderecoViewModel.cs" />
     <Compile Include="Model\Transportadora\EnderecosPorTransportadoraRequisicao.cs" />
     <Compile Include="Model\Transportadora\EnderecosTransportadoraResposta.cs" />

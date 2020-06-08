@@ -106,7 +106,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 NumeroPedido = pv.NumeroPedido,
                 NumeroPedidoVenda = pv.NumeroPedidoVenda,
                 ClienteNome = pv.ClienteNome,
-                TransportadoraNome = pv.TransportadoraNome,
+                TransportadoraNome = pv.TransportadoraNome
             }));
 
             return DataTableResult.FromModel(new DataTableResponseModel
@@ -119,7 +119,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.MovimentacaoVolumes)]
-        public async Task<ActionResult> MovimentacaoVolumes(string dataInicial, string dataFinal)
+        public async Task<ActionResult> MovimentacaoVolumes(string dataInicial, string dataFinal, string tipoPagamento, bool? requisicao)
         {
             if (dataInicial.NullOrEmpty() || dataFinal.NullOrEmpty())
             {
@@ -152,8 +152,23 @@ namespace FWLog.Web.Backoffice.Controllers
             viewModel.Filter = new MovimentacaoVolumesFilterViewModel()
             {
                 DataInicial = dataInicialPtBr,
-                DataFinal = dataFinalPtBr
+                DataFinal = dataFinalPtBr,
+                TipoPagamento = tipoPagamento,
+                Requisicao = requisicao
             };
+
+            viewModel.ListaTiposPagamento = new SelectList(new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Cartão Débito", Value = "CD" },
+                new SelectListItem { Text = "Cartão Crédito", Value = "CC" },
+                new SelectListItem { Text = "Dinheiro", Value = "D"},
+            }, "Value", "Text");
+
+            viewModel.ListaRequisicao = new SelectList(new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Não", Value = "false"},
+                new SelectListItem { Text = "Sim", Value = "true"},
+            }, "Value", "Text");
 
             var dadosMovimentacaoVolumesIntegracoes = await _expedicaoService.BuscarDadosMovimentacaoVolumesIntegracoes(IdEmpresa).ConfigureAwait(false);
 
@@ -161,7 +176,27 @@ namespace FWLog.Web.Backoffice.Controllers
 
             viewModel.AguardandoRobo = dadosMovimentacaoVolumesIntegracoes.AguardandoRobo;
 
-            var dadosRetorno = _expedicaoService.BuscarDadosMovimentacaoVolumes(viewModel.Filter.DataInicial.Value, viewModel.Filter.DataFinal.Value, IdEmpresa);
+            bool? dinheiro = null, cartaoCredito = null, cartaoDebito = null;
+
+            if (!tipoPagamento.NullOrEmpty())
+            {
+                if (tipoPagamento == "CC")
+                {
+                    cartaoCredito = true;
+                }
+
+                if (tipoPagamento == "CD")
+                {
+                    cartaoDebito = true;
+                }
+
+                if (tipoPagamento == "D")
+                {
+                    dinheiro = true;
+                }
+            }
+
+            var dadosRetorno = _expedicaoService.BuscarDadosMovimentacaoVolumes(viewModel.Filter.DataInicial.Value, viewModel.Filter.DataFinal.Value, cartaoCredito, cartaoDebito, dinheiro, requisicao, IdEmpresa);
 
             viewModel.Items = Mapper.Map<List<MovimentacaoVolumesListItemViewModel>>(dadosRetorno);
 
@@ -196,16 +231,37 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.MovimentacaoVolumes)]
-        public ActionResult MovimentacaoVolumesDetalhes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string status)
+        public ActionResult MovimentacaoVolumesDetalhes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string status, string tipoPagamento, bool? requisicao)
         {
-            var dadosRetorno = _expedicaoService.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, status, IdEmpresa, out string statusDescricao);
+            bool? dinheiro = null, cartaoCredito = null, cartaoDebito = null;
+
+            if (!tipoPagamento.NullOrEmpty())
+            {
+                if (tipoPagamento == "CC")
+                {
+                    cartaoCredito = true;
+                }
+
+                if (tipoPagamento == "CD")
+                {
+                    cartaoDebito = true;
+                }
+
+                if (tipoPagamento == "D")
+                {
+                    dinheiro = true;
+                }
+            }
+
+            var dadosRetorno = _expedicaoService.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, status, cartaoCredito, cartaoDebito, dinheiro, requisicao, IdEmpresa, out string statusDescricao);
 
             var items = Mapper.Map<List<MovimentacaoVolumesDetalheListItemViewModel>>(dadosRetorno);
 
             var viewModel = new MovimentacaoVolumesDetalheViewModel
             {
                 Status = statusDescricao,
-                Items = items
+                Items = items,
+                Url = HttpContext.Request.Url.AbsoluteUri
             };
 
             return View(viewModel);

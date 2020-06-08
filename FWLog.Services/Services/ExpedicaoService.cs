@@ -1175,9 +1175,9 @@ namespace FWLog.Services.Services
             return _unitOfWork.PedidoVendaRepository.BuscarDadosPedidoVendaParaTabela(filtro, out registrosFiltrados, out totalRegistros);
         }
 
-        public List<MovimentacaoVolumesModel> BuscarDadosMovimentacaoVolumes(DateTime dataInicial, DateTime dataFinal, long idEmpresa)
+        public List<MovimentacaoVolumesModel> BuscarDadosMovimentacaoVolumes(DateTime dataInicial, DateTime dataFinal, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa)
         {
-            var dados = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumeGrupoArmazenagem(dataInicial, dataFinal, idEmpresa);
+            var dados = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumeGrupoArmazenagem(dataInicial, dataFinal, cartaoCredito, cartaoDebito, dinheiro, requisicao, idEmpresa);
 
             var dadosAgrupados = dados.GroupBy(g => new
             {
@@ -1254,7 +1254,7 @@ namespace FWLog.Services.Services
             return response.ToList();
         }
 
-        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string tipo, long idEmpresa, out string statusDescricao)
+        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string tipo, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa, out string statusDescricao)
         {
             var listaStatus = new List<PedidoVendaStatusEnum>();
 
@@ -1292,7 +1292,7 @@ namespace FWLog.Services.Services
                     break;
             }
 
-            return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, idEmpresa);
+            return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, cartaoCredito, cartaoDebito, dinheiro, requisicao, idEmpresa);
         }
 
         public List<RelatorioPedidosLinhaTabela> BuscarDadosPedidos(DataTableFilter<RelatorioPedidosFiltro> filtro, out int registrosFiltrados, out int totalRegistros)
@@ -1339,6 +1339,8 @@ namespace FWLog.Services.Services
                 NroVolume = s.NroVolume,
                 IdPedidoVendaVolume = s.IdPedidoVendaVolume,
                 DataCriacao = s.PedidoVenda.Pedido.DataCriacao,
+                PedidoNumeroNotaFiscal = s.PedidoVenda.Pedido.NumeroNotaFiscal,
+                PedidoSerieNotaFiscal = s.PedidoVenda.Pedido.SerieNotaFiscal,
                 DataSaida = s.PedidoVenda.DataHoraRomaneio,
                 Status = s.PedidoVendaStatus.Descricao,
                 NomeCliente = s.PedidoVenda.Cliente.RazaoSocial
@@ -1358,6 +1360,7 @@ namespace FWLog.Services.Services
                     NroVolume = s.NroVolume.ToString().PadLeft(3, '0'),
                     IdPedidoVendaVolume = s.IdPedidoVendaVolume,
                     DataCriacao = s.DataCriacao.ToString("dd/MM/yyyy"),
+                    NumeroSerieNotaFiscal = s.PedidoNumeroNotaFiscal.HasValue ? $"{s.PedidoNumeroNotaFiscal}/{s.PedidoSerieNotaFiscal}" : "Aguardando Faturamento",
                     DataExpedicao = s.DataSaida.HasValue ? s.DataSaida.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty,
                     Status = s.Status,
                 });
@@ -1400,6 +1403,10 @@ namespace FWLog.Services.Services
             retorno.PedidoChaveAcessoNotaFiscal = pedido.ChaveAcessoNotaFiscal;
 
             retorno.PedidoPagamentoDescricaoIntegracao = pedido.PagamentoDescricaoIntegracao;
+
+            retorno.PedidoNumeroNotaFiscal = pedido.NumeroNotaFiscal;
+
+            retorno.PedidoSerieNotaFiscal = pedido.SerieNotaFiscal;
 
             retorno.VolumeNroVolume = pedidoVendaVolume.NroVolume;
 

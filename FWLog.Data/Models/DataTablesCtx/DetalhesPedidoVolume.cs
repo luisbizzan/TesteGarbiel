@@ -39,6 +39,12 @@ namespace FWLog.Data.Models.DataTablesCtx
         [Display(Name = "Pagamento")]
         public string PedidoPagamentoDescricaoIntegracao { get; set; }
 
+        [Display(Name = "Número NF")]
+        public int? PedidoNumeroNotaFiscal { get; set; }
+
+        [Display(Name = "Série")]
+        public string PedidoSerieNotaFiscal { get; set; }
+
         [Display(Name = "Volume")]
         public int VolumeNroVolume { get; set; }
 

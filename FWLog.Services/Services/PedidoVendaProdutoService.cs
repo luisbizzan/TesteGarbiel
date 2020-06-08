@@ -21,11 +21,13 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task Salvar(long idPedidoVenda, long idPedidoVendaVolume, PedidoItemViewModel pedidoItem)
+        public PedidoVendaProduto RetornarParaSalvar(long idPedidoVenda, long idPedidoVendaVolume, PedidoItemViewModel pedidoItem)
         {
+            PedidoVendaProduto pedidoVendaProduto = new PedidoVendaProduto();
+
             try
             {
-                _uow.PedidoVendaProdutoRepository.Add(new PedidoVendaProduto()
+                pedidoVendaProduto = new PedidoVendaProduto()
                 {
                     IdPedidoVenda = idPedidoVenda,
                     IdPedidoVendaVolume = idPedidoVendaVolume,
@@ -39,14 +41,14 @@ namespace FWLog.Services.Services
                     DataHoraInicioSeparacao = null,
                     DataHoraFimSeparacao = null,
                     IdLote = pedidoItem.IdLote
-                });
-
-                await _uow.SaveChangesAsync();
+                };
             }
             catch (Exception ex)
             {
                 _log.Error(String.Format("Erro ao salvar produto do pedido de venda {0}.", idPedidoVenda), ex);
             }
+
+            return pedidoVendaProduto;
         }
     }
 }

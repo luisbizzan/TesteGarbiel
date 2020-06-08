@@ -20,24 +20,16 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task<long> Salvar(long idPedidoVenda, CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, int numeroVolume, long idEmpresa, decimal peso, decimal cubagem)
+        public PedidoVendaVolume RetornarParaSalvar(CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, int numeroVolume, long idEmpresa, decimal peso, decimal cubagem)
         {
-            long idPedidoVendaVolume = 0;
+            PedidoVendaVolume pedidoVendaVolume = new PedidoVendaVolume();
 
             try
             {
-                var pedidoVendaVolumeRepository = _uow.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(idPedidoVenda)
-                    .Where(x => x.IdGrupoCorredorArmazenagem == grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem && x.NroVolume == numeroVolume
-                    && x.PesoVolume == peso && x.CubagemVolume == cubagem).FirstOrDefault();
+                int numeroCentena = GerarNumeroCentena(idEmpresa);
 
-                if (pedidoVendaVolumeRepository != null)
-                    return pedidoVendaVolumeRepository.IdPedidoVendaVolume;
-
-                int numeroCentena = await GerarNumeroCentena(idEmpresa, idPedidoVenda);
-
-                var pedidoVendaVolume = new PedidoVendaVolume()
+                pedidoVendaVolume = new PedidoVendaVolume()
                 {
-                    IdPedidoVenda = idPedidoVenda,
                     IdCaixaCubagem = caixaEscolhida.IdCaixa,
                     IdGrupoCorredorArmazenagem = grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem,
                     DataHoraInicioSeparacao = null,
@@ -52,22 +44,16 @@ namespace FWLog.Services.Services
                     IdImpressora = grupoCorredorArmazenagem.IdImpressora,
                     CubagemVolume = cubagem
                 };
-
-
-                _uow.PedidoVendaVolumeRepository.Add(pedidoVendaVolume);
-                await _uow.SaveChangesAsync();
-
-                idPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume;
             }
             catch (Exception ex)
             {
-                _log.Error(String.Format("Erro ao salvar o volume do pedido de venda {0}.", idPedidoVenda), ex);
+                _log.Error("Erro ao salvar o volume do pedido de venda.", ex);
             }
 
-            return idPedidoVendaVolume;
+            return pedidoVendaVolume;
         }
 
-        public async Task<int> GerarNumeroCentena(long idEmpresa, long idPedidoVenda)
+        public int GerarNumeroCentena(long idEmpresa)
         {
             int numero = 0;
 
@@ -96,11 +82,11 @@ namespace FWLog.Services.Services
                     _uow.CentenaVolumeRepository.Update(centena);
                 }
 
-                await _uow.SaveChangesAsync();
+                _uow.SaveChanges();
             }
             catch (Exception ex)
             {
-                _log.Error(String.Format("Erro ao salvar a centena do pedido de venda {0}.", idPedidoVenda), ex);
+                _log.Error("Erro ao salvar a centena do pedido de venda.", ex);
             }
 
             return numero;
