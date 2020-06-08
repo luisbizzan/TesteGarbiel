@@ -79,14 +79,13 @@ namespace FWLog.Data.Repository.GeneralCtx
                         {
                             RegistroIncluir.RegistroRemessaConfiguracao.ToList().ForEach(delegate (GarantiaConfiguracao.RemessaConfiguracao item)
                             {
-                                var Vlr_Minimo = item.Vlr_Minimo.ToString().Replace(",", ".");
                                 using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
                                 {
                                     conn.Open();
                                     if (conn.State == System.Data.ConnectionState.Open)
                                     {
-                                        conn.ExecuteScalar(GarantiaConfiguracao.SQL.RemessaConfiguracaoIncluir,
-                                            new { item.Id_Empresa, item.Cod_Fornecedor, item.Automatica, Vlr_Minimo, item.Total });
+                                        conn.ExecuteScalar(String.Format(GarantiaConfiguracao.SQL.RemessaConfiguracaoIncluir,
+                                            GarantiaConfiguracao.Id_Empresa, item.Cod_Fornecedor, item.Automatica, item.Vlr_Minimo.ToString().Replace(",", "."), item.Total));
                                     }
                                     conn.Close();
                                 }

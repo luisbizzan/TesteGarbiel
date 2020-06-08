@@ -27,10 +27,7 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly GarantiaService _garantiaService;
         private readonly ApplicationLogService _applicationLogService;
 
-        public GarantiaController(
-            UnitOfWork uow,
-            GarantiaService garantiaService,
-            ApplicationLogService applicationLogService)
+        public GarantiaController(UnitOfWork uow, GarantiaService garantiaService, ApplicationLogService applicationLogService)
         {
             _uow = uow;
             _garantiaService = garantiaService;

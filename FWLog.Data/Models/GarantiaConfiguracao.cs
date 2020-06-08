@@ -483,8 +483,7 @@ namespace FWLog.Data.Models
             {
                 get
                 {
-                    return String.Concat("INSERT INTO gar_remessa_config(Id_Empresa, Cod_Fornecedor, Automatica, Vlr_Minimo, Total) ",
-                  "VALUES(:Id_Empresa, :Cod_Fornecedor, :Automatica, :Vlr_Minimo, :Total)");
+                    return String.Concat("INSERT INTO gar_remessa_config(Id_Empresa, Cod_Fornecedor, Automatica, Vlr_Minimo, Total) VALUES({0}, '{1}', {2}, {3}, {4})");
                 }
             }
             #endregion
