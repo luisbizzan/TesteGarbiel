@@ -1326,6 +1326,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 if (conn.State == ConnectionState.Open)
                 {
                     //Grava itens a mais e a menos na tebela de excesso
+
                     sQuery = @"
                     INSERT INTO gar_conferencia_excesso (Id_Conf, Id_Usr, Dt_Conf, Id_Item, Quant_Conferida, Refx, Id_Tipo)
                     SELECT
@@ -1403,6 +1404,86 @@ namespace FWLog.Data.Repository.GeneralCtx
                 }
                 conn.Close();
             }
+        }
+
+        public void FinalizarConferenciaEntradaQuebra(GarConferencia item)
+        {
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                string sQuery = "";
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    //Se for Garantia Abastece Estoque Garantia só dos fornecedores que pagam quebra
+                    sQuery = @"
+                        INSERT INTO gar_movimentacao ( Id_Item, Valor, Id_Tipo_Estoque, Id_Doc_Laudo, Id_Tipo, Id_Tipo_Movimentacao, Quant)
+                        SELECT * FROM(
+                            SELECT
+                                GSI.Id AS Id_Item,
+                                GSI.Valor,
+                                15 Id_Tipo_Estoque,
+                                0 AS Id_Doc_Laudo,
+                                13 AS Id_Tipo,
+                                27 AS Id_Tipo_Movimentacao,
+                               GCI.quant_conferida AS Quant
+                            FROM
+                                gar_conferencia GC
+                                INNER JOIN gar_conferencia_item GCI ON GCI.id_conf = GC.id
+                                INNER JOIN gar_solicitacao_item GSI ON GSI.id_solicitacao = GCI.id_solicitacao AND GSI.refx = GCI.refx
+                            WHERE
+                                GC.Id = :Id
+                                AND GSI.cod_fornecedor IN(SELECT cod_fornecedor FROM gar_forn_quebra)
+                        ) WHERE Quant != 0
+                        ";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id });
+
+                    //Fecha a conferencia
+                    sQuery = @"UPDATE gar_conferencia SET Ativo = 0 WHERE Id = :Id";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id });
+
+                    //Fecha a solicitação
+                    sQuery = @"UPDATE gar_solicitacao SET Id_Status = 24 WHERE Id = :Id_Solicitacao";
+                    conn.Query<GarConferencia>(sQuery, new { item.Id_Solicitacao });
+                }
+                conn.Close();
+            }
+        }
+
+        public List<GarSolicitacaoItem> ListarConferenciaSolicitacaoEntradaQuebra(GarConferencia iteM)
+        {
+            List<GarSolicitacaoItem> retorno = new List<GarSolicitacaoItem>();
+
+            //TODO VALIDAR ITENS PARA SANKYA
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    //pega todos os itens que foram conferidos que o fornecedor não paga quebra
+                    string sQuery = @"
+                    SELECT
+                        GSI.Id AS Id_Item,
+                        GSI.Valor,
+                        15 Id_Tipo_Estoque,
+                        0 AS Id_Doc_Laudo,
+                        13 AS Id_Tipo,
+                        27 AS Id_Tipo_Movimentacao,
+                       GCI.quant_conferida AS Quant
+                    FROM
+                        gar_conferencia GC
+                        INNER JOIN gar_conferencia_item GCI ON GCI.id_conf = GC.id
+                        INNER JOIN gar_solicitacao_item GSI ON GSI.id_solicitacao = GCI.id_solicitacao AND GSI.refx = GCI.refx
+                    WHERE
+                        GC.Id = :Id
+                        AND GSI.cod_fornecedor NOT IN(SELECT cod_fornecedor FROM gar_forn_quebra)
+                        AND GCI.quant_conferida > 0
+                    ";
+                    retorno = conn.Query<GarSolicitacaoItem>(sQuery, new { iteM.Id }).ToList();
+                }
+                conn.Close();
+            }
+
+            return retorno;
         }
 
         public void FinalizarConferenciaRemessa(GarConferencia item)
@@ -1571,6 +1652,35 @@ namespace FWLog.Data.Repository.GeneralCtx
                         if (qtdItensAmenos > 0)
                             return new DmlStatus { Sucesso = false, Mensagem = string.Format("Fornecedor só aceita entrega total, verifique as divergências, <strong>{0}</strong> itens a menos.", qtdItensAmenos) };
                     }
+                }
+                conn.Close();
+            }
+            return new DmlStatus { Sucesso = true, Mensagem = "Ok, pode continuar.", Id = 0 };
+        }
+
+        public DmlStatus VerificarConferenciaSolicitacaoQuebra(GarConferencia item)
+        {
+            string sQuery = "";
+
+            using (var conn = new OracleConnection(Entities.Database.Connection.ConnectionString))
+            {
+                conn.Open();
+                if (conn.State == ConnectionState.Open)
+                {
+                    //VERIFICA SE TEM ITENS A MAIS
+                    decimal qtdItensAmais = 0;
+                    sQuery = @"
+                    SELECT
+                        COUNT(*) AS total
+                    FROM
+                        gar_conferencia_item
+                    WHERE
+                        Id_Conf = :Id
+                        AND (Quant_Conferida - Quant) > 0";
+                    qtdItensAmais = conn.Query<decimal>(sQuery, new { item.Id }).SingleOrDefault();
+
+                    if (qtdItensAmais > 0)
+                        return new DmlStatus { Sucesso = false, Mensagem = string.Format("Verifique as divergências, <strong>{0}</strong> itens a mais.", qtdItensAmais) };
                 }
                 conn.Close();
             }

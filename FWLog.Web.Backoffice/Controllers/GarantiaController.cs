@@ -526,14 +526,14 @@ namespace FWLog.Web.Backoffice.Controllers
 
             if (conferencia.Id_Remessa == 0)
             {
-                //SOLICITAÇÃO
-                //Tipo Solicitação => 17 = Devolução | 18 = Garantia
-                if (conferencia.Id_Tipo_Solicitacao == 18)
+                //CONFERENCIA DE ENTRADA
+                if (conferencia.Id_Tipo_Conf == 5)
                 {
-                    //GARANTIA
-                    if (conferencia.Id_Tipo_Conf == 5)
+                    //SOLICITAÇÃO
+                    //Tipo Solicitação => 17 = Devolução | 18 = Garantia | 36 = Solicitação
+                    if (conferencia.Id_Tipo_Solicitacao == 18)
                     {
-                        //CONFERENCIA DE ENTRADA
+                        //GARANTIA
                         _uow.GarantiaRepository.FinalizarConferenciaEntrada(new GarConferencia
                         {
                             Id = conferencia.Id,
@@ -541,16 +541,11 @@ namespace FWLog.Web.Backoffice.Controllers
                             Id_Tipo_Solicitacao = conferencia.Id_Tipo_Solicitacao,
                             Id_Solicitacao = conferencia.Id_Solicitacao
                         });
-
                         //TOOD PARTE DE NF SANKYA
                     }
-                }
-                else if (conferencia.Id_Tipo_Solicitacao == 17)
-                {
-                    //DEVOLUÇÃO
-                    if (conferencia.Id_Tipo_Conf == 5)
+                    else if (conferencia.Id_Tipo_Solicitacao == 17)
                     {
-                        //CONFERENCIA DE ENTRADA
+                        //DEVOLUÇÃO
                         _uow.GarantiaRepository.FinalizarConferenciaEntrada(new GarConferencia
                         {
                             Id = conferencia.Id,
@@ -558,8 +553,29 @@ namespace FWLog.Web.Backoffice.Controllers
                             Id_Tipo_Solicitacao = conferencia.Id_Tipo_Solicitacao,
                             Id_Solicitacao = conferencia.Id_Solicitacao
                         });
-
                         //TOOD PARTE DE NF SANKYA
+                    }
+                    else if (conferencia.Id_Tipo_Solicitacao == 36)
+                    {
+                        //SOLICITAÇÃO QUEBRA
+                        var itensNaoPagaQuebra = _uow.GarantiaRepository.ListarConferenciaSolicitacaoEntradaQuebra(new GarConferencia
+                        {
+                            Id = conferencia.Id,
+                            Id_Usr = IdUsuario,
+                            Id_Tipo_Solicitacao = conferencia.Id_Tipo_Solicitacao,
+                            Id_Solicitacao = conferencia.Id_Solicitacao
+                        });
+
+                        //TOOD ENVIAR OS ITENS CONFERIDOS QUE NAO PAGAM QUEBRA PRO SANKYA
+
+                        //SE PARTE DO SANKYA OK FAZ ESSA PARTE
+                        _uow.GarantiaRepository.FinalizarConferenciaEntradaQuebra(new GarConferencia
+                        {
+                            Id = conferencia.Id,
+                            Id_Usr = IdUsuario,
+                            Id_Tipo_Solicitacao = conferencia.Id_Tipo_Solicitacao,
+                            Id_Solicitacao = conferencia.Id_Solicitacao
+                        });
                     }
                 }
             }
@@ -605,6 +621,21 @@ namespace FWLog.Web.Backoffice.Controllers
             if (conferencia.Id_Tipo_Conf == 26 || conferencia.Id_Tipo_Conf == 6)
             {
                 var retorno = _uow.GarantiaRepository.VerificarConferenciaRemessa(conferencia);
+
+                if (!retorno.Sucesso)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = retorno.Mensagem
+                    });
+                }
+            }
+            else if (conferencia.Id_Tipo_Solicitacao == 36)
+            {
+                //SOLICITAÇÃO QUEBRA
+                //solicitação de quebra não pode ter itens a mais
+                var retorno = _uow.GarantiaRepository.VerificarConferenciaSolicitacaoQuebra(conferencia);
 
                 if (!retorno.Sucesso)
                 {

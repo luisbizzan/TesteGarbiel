@@ -126,6 +126,7 @@ function finalizarConferencia() {
                         laudo: {
                             text: 'Lançar Itens de Laudo',
                             btnClass: 'btn-blue',
+                            isHidden: $("#Conferencia_Id_Tipo_Solicitacao").val() == "36" ? true : false,
                             action: function () {
                                 itensLaudo();
                             }
