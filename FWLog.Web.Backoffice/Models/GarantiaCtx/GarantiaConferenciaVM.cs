@@ -26,6 +26,8 @@ namespace FWLog.Web.Backoffice.Models.GarantiaCtx
     {
         public long Id_Tipo_Conf { get; set; }
         public String Tipo_Conf { get; set; }
+        public long Id_Tipo_Solicitacao { get; set; }
+
         public DateTime Dt_Conf { get; set; }
         public long Id_Remessa { get; set; }
         public long Id_Solicitacao { get; set; }
