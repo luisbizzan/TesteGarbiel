@@ -68,6 +68,11 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido não pertence a empresa do usuário logado.");
             }
 
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeExcluido)
+            {
+                throw new BusinessException("O pedido foi excluído.");
+            }
+
             if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora)
             {
                 throw new BusinessException("A separação do volume não está finalizada.");
@@ -77,6 +82,16 @@ namespace FWLog.Services.Services
             if (pedidoVendaVolume == null)
             {
                 throw new BusinessException("O volume não foi encontrado.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeExcluido)
+            {
+                throw new BusinessException("O volume foi excluído.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora)
+            {
+                throw new BusinessException("A separação do volume não está finalizada.");
             }
         }
 
@@ -388,9 +403,10 @@ namespace FWLog.Services.Services
 
                 var pedidoVenda = _unitOfWork.PedidoVendaRepository.GetById(listaPedidoVendaVolume.First().IdPedidoVenda);
 
-                if (pedidoVenda.PedidoVendaVolumes.All(pvv => pvv.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora))
+                if (pedidoVenda.PedidoVendaVolumes.Where(w => w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido).All(pvv => pvv.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora))
                 {
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
+                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
 
                     await _unitOfWork.SaveChangesAsync();
                 }
@@ -543,13 +559,15 @@ namespace FWLog.Services.Services
                     volume.DataHoraInstalacaoDOCA = dataProcessamento;
                     volume.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovidoDOCA;
 
-                    if (!volume.PedidoVenda.PedidoVendaVolumes.Any(a => a.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovidoDOCA))
+                    if (!volume.PedidoVenda.PedidoVendaVolumes.Where(w => w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido).Any(a => a.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovidoDOCA))
                     {
                         volume.PedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovidoDOCA;
+                        volume.PedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovidoDOCA;
                     }
                     else
                     {
                         volume.PedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovendoDOCA;
+                        volume.PedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovendoDOCA;
                     }
 
                     _unitOfWork.SaveChanges();
@@ -942,6 +960,8 @@ namespace FWLog.Services.Services
                         throw new BusinessException("Não existe pedido venda para chave de acesso informada.");
                     }
 
+                    var volumes = pedidoVenda.PedidoVendaVolumes.Where(w => w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido && w.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProdutoZerado).ToList();
+
                     // Notas do Romaneio
                     var romaneioNotaFiscal = new RomaneioNotaFiscal();
                     romaneioNotaFiscal.IdRomaneio = romaneio.IdRomaneio;
@@ -955,7 +975,7 @@ namespace FWLog.Services.Services
                     var empresa = _unitOfWork.EmpresaRepository.GetById(idEmpresa);
                     if (empresa.Sigla == "K1" || empresa.Sigla == "K2")
                     {
-                        var somaDosVolumes = pedidoVenda.PedidoVendaVolumes.Aggregate(default(decimal), (x, y) => x + y.PesoVolume);
+                        var somaDosVolumes = volumes.Aggregate(default(decimal), (x, y) => x + y.PesoVolume);
                         romaneioNotaFiscal.TotalPesoLiquidoVolumes = somaDosVolumes;
                         romaneioNotaFiscal.TotalPesoBrutoVolumes = somaDosVolumes;
                     }
@@ -978,11 +998,12 @@ namespace FWLog.Services.Services
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.RomaneioImpresso;
                     _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
 
-                    foreach (var pedidoVendaVolume in pedidoVenda.PedidoVendaVolumes)
+                    foreach (var pedidoVendaVolume in volumes)
                     {
                         pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.RomaneioImpresso;
                         _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
                     }
+
                     _unitOfWork.SaveChanges();
 
                     _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
@@ -1200,9 +1221,10 @@ namespace FWLog.Services.Services
                 InstaladoTransportadora = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovendoDOCA),
                 Doca = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.DespachandoNF || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.NFDespachada),
                 EnviadoTransportadora = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.RomaneioImpresso),
+                VolumeExcluido = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeExcluido),
             }));
 
-            dadosRetorno.ForEach(dr => dr.Total = dr.EnviadoSeparacao + dr.EmSeparacao + dr.FinalizadoSeparacao + dr.InstaladoTransportadora + dr.Doca + dr.EnviadoTransportadora);
+            dadosRetorno.ForEach(dr => dr.Total = dr.EnviadoSeparacao + dr.EmSeparacao + dr.FinalizadoSeparacao + dr.InstaladoTransportadora + dr.Doca + dr.EnviadoTransportadora + dr.VolumeExcluido);
 
             return dadosRetorno;
         }
@@ -1286,6 +1308,10 @@ namespace FWLog.Services.Services
                 case "EnviadoTransportadora":
                     listaStatus.Add(PedidoVendaStatusEnum.RomaneioImpresso);
                     statusDescricao = "Enviado Transportadora";
+                    break;
+                case "VolumeExcluido":
+                    listaStatus.Add(PedidoVendaStatusEnum.VolumeExcluido);
+                    statusDescricao = "Volume Excluído";
                     break;
                 default:
                     statusDescricao = "Todos";

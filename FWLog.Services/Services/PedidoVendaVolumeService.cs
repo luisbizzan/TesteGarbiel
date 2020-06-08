@@ -20,13 +20,13 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public PedidoVendaVolume RetornarParaSalvar(CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, int numeroVolume, long idEmpresa, decimal peso, decimal cubagem)
+        public async Task<PedidoVendaVolume> RetornarParaSalvar(CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, int numeroVolume, long idEmpresa, decimal peso, decimal cubagem)
         {
             PedidoVendaVolume pedidoVendaVolume = new PedidoVendaVolume();
 
             try
             {
-                int numeroCentena = GerarNumeroCentena(idEmpresa);
+                int numeroCentena = await GerarNumeroCentena(idEmpresa);
 
                 pedidoVendaVolume = new PedidoVendaVolume()
                 {
@@ -45,15 +45,15 @@ namespace FWLog.Services.Services
                     CubagemVolume = cubagem
                 };
             }
-            catch (Exception ex)
+            catch 
             {
-                _log.Error("Erro ao salvar o volume do pedido de venda.", ex);
+                throw new Exception("Erro ao salvar o volume do pedido de venda.");
             }
 
             return pedidoVendaVolume;
         }
 
-        public int GerarNumeroCentena(long idEmpresa)
+        public async Task<int> GerarNumeroCentena(long idEmpresa)
         {
             int numero = 0;
 
@@ -82,11 +82,11 @@ namespace FWLog.Services.Services
                     _uow.CentenaVolumeRepository.Update(centena);
                 }
 
-                _uow.SaveChanges();
+                _uow.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                _log.Error("Erro ao salvar a centena do pedido de venda.", ex);
+                throw new Exception("Erro ao salvar a centena do pedido de venda.");
             }
 
             return numero;

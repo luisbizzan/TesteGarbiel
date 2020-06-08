@@ -16,6 +16,7 @@ namespace FWLog.Web.Api.Controllers
             _unidadeMedidaService = unidadeMedidaService;
         }
 
+        [AllowAnonymous]
         [Route("api/v1/unidade-medida/integrar")]
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarUnidadeMedida()

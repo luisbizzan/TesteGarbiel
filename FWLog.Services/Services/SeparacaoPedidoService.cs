@@ -243,6 +243,11 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido informado já foi separado.");
             }
 
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeExcluido)
+            {
+                throw new BusinessException("O pedido foi excluído.");
+            }
+
             if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento || pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado)
             {
                 throw new BusinessException("O pedido informado teve a separação cancelada.");
@@ -259,6 +264,11 @@ namespace FWLog.Services.Services
             if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
             {
                 throw new BusinessException("O volume informado já foi separado.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeExcluido)
+            {
+                throw new BusinessException("O pedido foi excluído.");
             }
 
             if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento || pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado)
@@ -569,8 +579,17 @@ namespace FWLog.Services.Services
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                var novoStatusSeparacao = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
+                PedidoVendaStatusEnum novoStatusSeparacao;
                 var dataProcessamento = DateTime.Now;
+
+                if (pedidoVendaVolume.PedidoVendaProdutos.Where(w => w.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProdutoZerado).Count() == pedidoVendaVolume.PedidoVendaProdutos.Count)
+                {
+                    novoStatusSeparacao = PedidoVendaStatusEnum.VolumeExcluido;
+                }
+                else
+                {
+                    novoStatusSeparacao = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
+                }
 
                 pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
                 pedidoVendaVolume.DataHoraFimSeparacao = dataProcessamento;
@@ -592,6 +611,18 @@ namespace FWLog.Services.Services
                     _unitOfWork.SaveChanges();
 
                     await AtualizarQtdConferidaIntegracao(pedidoVenda);
+
+                    await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, novoStatusSeparacao);
+
+                    finalizouPedidoVenda = true;
+                }
+                else if (todosProdutosVenda.Where(produtoVendaProduto => produtoVendaProduto.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProdutoZerado).Count() == todosProdutosVenda.Count)
+                {
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeExcluido;
+                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeExcluido;
+                    pedidoVenda.DataHoraFimSeparacao = dataProcessamento;
+
+                    _unitOfWork.SaveChanges();
 
                     await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, novoStatusSeparacao);
 
@@ -745,6 +776,11 @@ namespace FWLog.Services.Services
                 {
                     pedidoVendaProduto.IdUsuarioAutorizacaoZerar = idUsuarioAutorizacaoZerarPedido;
                     pedidoVendaProduto.DataHoraAutorizacaoZerarPedido = dataProcessamento;
+
+                    if (qtdSeparada == 0)
+                    {
+                        pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProdutoZerado;
+                    }
                 }
 
                 _unitOfWork.PedidoVendaProdutoRepository.Update(pedidoVendaProduto);
@@ -950,136 +986,137 @@ namespace FWLog.Services.Services
             {
                 try
                 {
-                    using (var transacao = _unitOfWork.CreateTransactionScope())
+                    PedidoVenda pedidoVenda = new PedidoVenda();
+
+                    pedidoVenda.IdPedido = pedido.IdPedido;
+                    pedidoVenda.IdCliente = pedido.IdCliente;
+                    pedidoVenda.IdEmpresa = pedido.IdEmpresa;
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao;
+                    pedidoVenda.IdRepresentante = pedido.IdRepresentante;
+                    pedidoVenda.IdTransportadora = pedido.IdTransportadora;
+                    pedidoVenda.NroPedidoVenda = pedido.NroPedido;
+
+                    //Agrupa os itens do pedido por produto. 
+                    var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido);
+
+                    //Usamos o foreach abaixo para capturar e atualizar o IdGrupoCorredorArmazenagem e IdEnderecoArmazenagem de cada item.
+                    foreach (var pedidoItem in listaItensDoPedido)
                     {
-                        var pedidoVenda = new PedidoVenda()
+                        //Captura o endereço de picking do produto.
+                        var produtoEstoqueRepository = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresaPicking(pedidoItem.Produto.IdProduto, idEmpresa);
+
+                        if (produtoEstoqueRepository == null)
+                            throw new Exception("O endereço de picking do produto " + pedidoItem.Produto.Referencia + " - " + pedidoItem.Produto.Descricao + " não foi encontrado.");
+
+                        var enderecoArmazenagemProduto = new ProdutoEstoqueViewModel()
                         {
-                            IdPedido = pedido.IdPedido,
-                            IdCliente = pedido.IdCliente,
-                            IdEmpresa = pedido.IdEmpresa,
-                            IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao,
-                            IdRepresentante = pedido.IdRepresentante,
-                            IdTransportadora = pedido.IdTransportadora,
-                            NroPedidoVenda = pedido.NroPedido,
-                            NroVolumes = 0 //Inicialmente salva com 0. Posteriormente, o valor é atualizado.
+                            IdProduto = produtoEstoqueRepository.IdProduto,
+                            IdEmpresa = produtoEstoqueRepository.IdEmpresa,
+                            IdEnderecoArmazenagem = produtoEstoqueRepository.IdEnderecoArmazenagem,
+                            Saldo = produtoEstoqueRepository.Saldo,
+                            IdProdutoEstoqueStatus = produtoEstoqueRepository.IdProdutoEstoqueStatus,
+                            EnderecoArmazenagem = produtoEstoqueRepository.EnderecoArmazenagem
                         };
 
-                        //Agrupa os itens do pedido por produto. 
-                        var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido);
+                        //Captura o grupo de corredores do item do pedido.
+                        var grupoCorredorArmazenagemItemPedido = await BuscarGrupoCorredorArmazenagemItemPedido(enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
 
-                        //Usamos o foreach abaixo para capturar e atualizar o IdGrupoCorredorArmazenagem e IdEnderecoArmazenagem de cada item.
-                        foreach (var pedidoItem in listaItensDoPedido)
+                        if (grupoCorredorArmazenagemItemPedido == null)
+                            throw new Exception("O corredor do endereço " + enderecoArmazenagemProduto.EnderecoArmazenagem.Codigo + " não foi encontrado.");
+
+                        //Captura o indice do item na lista e atualizo os dados.
+                        int index = listaItensDoPedido.IndexOf(pedidoItem);
+                        listaItensDoPedido[index].GrupoCorredorArmazenagem = grupoCorredorArmazenagemItemPedido;
+                        listaItensDoPedido[index].EnderecoSeparacao = enderecoArmazenagemProduto;
+                    }
+
+                    //Variável utilizada para saber o número e a quantidade de volumes do pedido.
+                    int quantidadeVolume = 0;
+
+                    var pedidoVendaVolumes = new List<PedidoVendaVolume>();
+
+                    var listaImpressaoSeparacao = new List<ImpressaoSeparacaoViewModel>();
+
+                    /*
+                     * No foreach abaixo, capturamos quais e a quantidade de caixas (volumes) que serão utilizados.
+                     * Além disso, através do método Cubicagem, saberemos a caixa de cada produto. 
+                     * É importante saber que o processo é feito por corredor.
+                     */
+                    foreach (var itemCorredorArmazenagem in grupoCorredorArmazenagem)
+                    {
+                        //Captura o corredor do item.
+                        var listaItensDoPedidoPorCorredor = listaItensDoPedido.Where(x => x.GrupoCorredorArmazenagem.IdGrupoCorredorArmazenagem == itemCorredorArmazenagem.IdGrupoCorredorArmazenagem).ToList();
+
+                        //Se não houver nenhum item para o corredor, vai para o próximo.
+                        if (listaItensDoPedidoPorCorredor.Count != 0)
                         {
-                            //Captura o endereço de picking do produto.
-                            var produtoEstoqueRepository = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresaPicking(pedidoItem.Produto.IdProduto, idEmpresa);
+                            //Captura os itens do pedido com as caixas em que cada um deve ir.
+                            //A partir do método cubicagem, existem chamadas para vários outros.
+                            var listaItensDoPedidoDividido = await Cubagem(listaItensDoPedidoPorCorredor, idEmpresa);
 
-                            if (produtoEstoqueRepository == null)
-                                throw new Exception("O endereço de picking do produto " + pedidoItem.Produto.Referencia + " - " + pedidoItem.Produto.Descricao + " não foi encontrado.");
-
-                            var enderecoArmazenagemProduto = new ProdutoEstoqueViewModel()
+                            if (listaItensDoPedidoDividido.Count > 0)
                             {
-                                IdProduto = produtoEstoqueRepository.IdProduto,
-                                IdEmpresa = produtoEstoqueRepository.IdEmpresa,
-                                IdEnderecoArmazenagem = produtoEstoqueRepository.IdEnderecoArmazenagem,
-                                Saldo = produtoEstoqueRepository.Saldo,
-                                IdProdutoEstoqueStatus = produtoEstoqueRepository.IdProdutoEstoqueStatus,
-                                EnderecoArmazenagem = produtoEstoqueRepository.EnderecoArmazenagem
-                            };
+                                //Busca os volumes que serão utilizados.
+                                var listaVolumes = await BuscarCubagemVolumes(pedido.IdEmpresa, listaItensDoPedidoDividido);
 
-                            //Captura o grupo de corredores do item do pedido.
-                            var grupoCorredorArmazenagemItemPedido = await BuscarGrupoCorredorArmazenagemItemPedido(enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
-
-                            if (grupoCorredorArmazenagemItemPedido == null)
-                                throw new Exception("O corredor do endereço " + enderecoArmazenagemProduto.EnderecoArmazenagem.Codigo + " não foi encontrado.");
-
-                            //Captura o indice do item na lista e atualizo os dados.
-                            int index = listaItensDoPedido.IndexOf(pedidoItem);
-                            listaItensDoPedido[index].GrupoCorredorArmazenagem = grupoCorredorArmazenagemItemPedido;
-                            listaItensDoPedido[index].EnderecoSeparacao = enderecoArmazenagemProduto;
-                        }
-
-                        //Variável utilizada para saber o número e a quantidade de volumes do pedido.
-                        int quantidadeVolume = 0; 
-
-                        var pedidoVendaVolumes = new List<PedidoVendaVolume>();
-
-                        var listaImpressaoSeparacao = new List<ImpressaoSeparacaoViewModel>();
-
-                        /*
-                         * No foreach abaixo, capturamos quais e a quantidade de caixas (volumes) que serão utilizados.
-                         * Além disso, através do método Cubicagem, saberemos a caixa de cada produto. 
-                         * É importante saber que o processo é feito por corredor.
-                         */
-                        foreach (var itemCorredorArmazenagem in grupoCorredorArmazenagem)
-                        {
-                            //Captura o corredor do item.
-                            var listaItensDoPedidoPorCorredor = listaItensDoPedido.Where(x => x.GrupoCorredorArmazenagem.IdGrupoCorredorArmazenagem == itemCorredorArmazenagem.IdGrupoCorredorArmazenagem).ToList();
-
-                            //Se não houver nenhum item para o corredor, vai para o próximo.
-                            if (listaItensDoPedidoPorCorredor.Count != 0)
-                            {
-                                //Captura os itens do pedido com as caixas em que cada um deve ir.
-                                //A partir do método cubicagem, existem chamadas para vários outros.
-                                var listaItensDoPedidoDividido = await Cubagem(listaItensDoPedidoPorCorredor, idEmpresa);
-
-                                if (listaItensDoPedidoDividido.Count > 0)
+                                foreach (var itemVolume in listaVolumes)
                                 {
-                                    //Busca os volumes que serão utilizados.
-                                    var listaVolumes = await BuscarCubagemVolumes(pedido.IdEmpresa, listaItensDoPedidoDividido);
+                                    quantidadeVolume++;
 
-                                    foreach (var itemVolume in listaVolumes)
+                                    var grupoCorredorItem = await BuscarGrupoCorredorArmazenagemItemPedido(itemVolume.ListaItensDoPedido[0].EnderecoSeparacao.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
+
+                                    var pedidoVendaVolume = await _pedidoVendaVolumeService.RetornarParaSalvar(itemVolume.Caixa, grupoCorredorItem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
+
+                                    var pedidoVendaProdutos = new List<PedidoVendaProduto>();
+
+                                    foreach (var item in itemVolume.ListaItensDoPedido)
                                     {
-                                        quantidadeVolume++;
-
-                                        var grupoCorredorItem = await BuscarGrupoCorredorArmazenagemItemPedido(itemVolume.ListaItensDoPedido[0].EnderecoSeparacao.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
-
-                                        var pedidoVendaVolume = _pedidoVendaVolumeService.RetornarParaSalvar(itemVolume.Caixa, grupoCorredorItem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
-
-                                        var pedidoVendaProdutos = new List<PedidoVendaProduto>();
-
-                                        foreach (var item in itemVolume.ListaItensDoPedido)
+                                        pedidoVendaProdutos.Add(new PedidoVendaProduto()
                                         {
-                                            pedidoVendaProdutos.Add(new PedidoVendaProduto()
-                                            {
-                                                IdProduto = item.Produto.IdProduto,
-                                                IdEnderecoArmazenagem = item.EnderecoSeparacao.IdEnderecoArmazenagem.Value,
-                                                IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
-                                                QtdSeparar = item.Quantidade,
-                                                QtdSeparada = null,
-                                                CubagemProduto = item.Produto.CubagemProduto.Value,
-                                                PesoProduto = item.Produto.PesoBruto,
-                                                DataHoraInicioSeparacao = null,
-                                                DataHoraFimSeparacao = null,
-                                                IdLote = item.IdLote
-                                            });
-                                        }
-
-                                        pedidoVendaVolume.PedidoVendaProdutos = pedidoVendaProdutos;
-
-                                        pedidoVendaVolumes.Add(pedidoVendaVolume);
-
-                                        //Captura o primeiro corredor de separação.
-                                        int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
-
-                                        //Atualiza a quantidade de volumes na PedidoVenda.
-                                        pedidoVenda.NroVolumes = quantidadeVolume;
-
-                                        listaImpressaoSeparacao.Add(new ImpressaoSeparacaoViewModel()
-                                        {
-                                            Volume = itemVolume,
-                                            NumeroVolume = quantidadeVolume,
-                                            GrupoCorredor = grupoCorredorItem,
-                                            Centena = pedidoVendaVolume.NroCentena,
-                                            CorredorinicioSeparacao = corredorInicioSeparacao
+                                            IdPedidoVenda = pedidoVenda.IdPedidoVenda,
+                                            IdProduto = item.Produto.IdProduto,
+                                            IdEnderecoArmazenagem = item.EnderecoSeparacao.IdEnderecoArmazenagem.Value,
+                                            IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
+                                            QtdSeparar = item.Quantidade,
+                                            QtdSeparada = null,
+                                            CubagemProduto = item.Produto.CubagemProduto.Value,
+                                            PesoProduto = item.Produto.PesoBruto,
+                                            DataHoraInicioSeparacao = null,
+                                            DataHoraFimSeparacao = null,
+                                            IdLote = item.IdLote
                                         });
                                     }
+
+                                    pedidoVendaVolume.PedidoVendaProdutos = pedidoVendaProdutos;
+
+                                    pedidoVendaVolumes.Add(pedidoVendaVolume);
+
+                                    //Captura o primeiro corredor de separação.
+                                    int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
+
+                                    //Atualiza a quantidade de volumes na PedidoVenda.
+                                    pedidoVenda.NroVolumes = quantidadeVolume;
+
+                                    listaImpressaoSeparacao.Add(new ImpressaoSeparacaoViewModel()
+                                    {
+                                        Volume = itemVolume,
+                                        NumeroVolume = quantidadeVolume,
+                                        GrupoCorredor = grupoCorredorItem,
+                                        Centena = pedidoVendaVolume.NroCentena,
+                                        CorredorinicioSeparacao = corredorInicioSeparacao
+                                    });
                                 }
                             }
                         }
+                    }
 
-                        pedidoVenda.PedidoVendaVolumes = pedidoVendaVolumes;
+                    pedidoVenda.PedidoVendaVolumes = pedidoVendaVolumes;
 
-                        pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
+
+                    using (var transacao = _unitOfWork.CreateTransactionScope())
+                    {
+                        _unitOfWork.PedidoVendaRepository.Add(pedidoVenda);
 
                         _unitOfWork.SaveChanges();
 
@@ -1093,7 +1130,7 @@ namespace FWLog.Services.Services
                         await _pedidoService.AtualizarStatus(pedido.IdPedido, PedidoVendaStatusEnum.EnviadoSeparacao);
 
                         transacao.Complete();
-                    }                    
+                    }                 
                 }
                 catch (Exception exception)
                 {
@@ -1350,9 +1387,10 @@ namespace FWLog.Services.Services
 
                 foreach (var pontoSeparacao in listaEnderecoSeparacao)
                 {
-                    int quantidade = (pontoSeparacao.Quantidade / pontoSeparacao.QuantidadeCaixas).Value;
+                    int quantidadeCaixa = pontoSeparacao.QuantidadeCaixas.HasValue ? pontoSeparacao.QuantidadeCaixas.Value : 1;
+                    int quantidade = pontoSeparacao.Quantidade / quantidadeCaixa;
 
-                    for (int i = 0; i < pontoSeparacao.QuantidadeCaixas; i++)
+                    for (int i = 0; i < quantidadeCaixa; i++)
                     {
                         listaQuantidadeEnderecoSeparacao.Add(new LoteProdutoEnderecoViewModel()
                         {
@@ -1806,7 +1844,7 @@ namespace FWLog.Services.Services
                 return await BuscaItensNaoCubicadosSemFrancionamento(agrupador, listaItensDoPedido, listaCaixasMaisComum);
             }
             catch (Exception)
-            { 
+            {
                 throw;
             }
         }
@@ -2321,6 +2359,10 @@ namespace FWLog.Services.Services
                     return "NF. Despachada";
                 case PedidoVendaStatusEnum.RomaneioImpresso:
                     return "Env. Transp.";
+                case PedidoVendaStatusEnum.VolumeExcluido:
+                    return "Vol. Excluído.";
+                case PedidoVendaStatusEnum.ProdutoZerado:
+                    return "Prod. Zerardo.";
                 default:
                     return null;
             }

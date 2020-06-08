@@ -81,4 +81,11 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "CODCIDENTREGA")]
         public string CodigoIntegracaoCidade { get; set; }
     }
+
+    [TabelaIntegracao(DisplayName = "TGFPAR")]
+    public class ClienteContadorIntegracao
+    {
+        [TabelaIntegracao(DisplayName = "COUNT(1)")]
+        public string Quantidade { get; set; }
+    }
 }
