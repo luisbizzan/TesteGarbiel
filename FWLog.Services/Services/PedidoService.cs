@@ -93,6 +93,12 @@ namespace FWLog.Services.Services
                         throw new BusinessException($"Código do Pedido (NUMNOTA: {pedidoCabecalho.NroPedidoVenda}) inválido");
                     }
 
+                    var pedidoRepository = _uow.PedidoRepository.ObterPorNumero(empresa.IdEmpresa, numeroPedido);
+                    if (pedidoRepository != null)
+                    {
+                        throw new BusinessException($"Já existe um pedido com o código (NUMNOTA: {pedidoCabecalho.NroPedidoVenda})");
+                    }
+
                     bool pedidoNovo = true;
 
                     var codPedido = Convert.ToInt32(pedidoCabecalho.CodigoIntegracao);

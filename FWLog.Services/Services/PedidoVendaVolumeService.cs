@@ -20,24 +20,16 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public PedidoVendaVolume RetornarParaSalvar(long idPedidoVenda, CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, int numeroVolume, long idEmpresa, decimal peso, decimal cubagem)
+        public PedidoVendaVolume RetornarParaSalvar(CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, int numeroVolume, long idEmpresa, decimal peso, decimal cubagem)
         {
             PedidoVendaVolume pedidoVendaVolume = new PedidoVendaVolume();
 
             try
             {
-                var pedidoVendaVolumeRepository = _uow.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(idPedidoVenda)
-                    .Where(x => x.IdGrupoCorredorArmazenagem == grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem && x.NroVolume == numeroVolume
-                    && x.PesoVolume == peso && x.CubagemVolume == cubagem).FirstOrDefault();
-
-                if (pedidoVendaVolumeRepository != null)
-                    return pedidoVendaVolumeRepository;
-
-                int numeroCentena = GerarNumeroCentena(idEmpresa, idPedidoVenda);
+                int numeroCentena = GerarNumeroCentena(idEmpresa);
 
                 pedidoVendaVolume = new PedidoVendaVolume()
                 {
-                    IdPedidoVenda = idPedidoVenda,
                     IdCaixaCubagem = caixaEscolhida.IdCaixa,
                     IdGrupoCorredorArmazenagem = grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem,
                     DataHoraInicioSeparacao = null,
@@ -55,13 +47,13 @@ namespace FWLog.Services.Services
             }
             catch (Exception ex)
             {
-                _log.Error(String.Format("Erro ao salvar o volume do pedido de venda {0}.", idPedidoVenda), ex);
+                _log.Error("Erro ao salvar o volume do pedido de venda.", ex);
             }
 
             return pedidoVendaVolume;
         }
 
-        public int GerarNumeroCentena(long idEmpresa, long idPedidoVenda)
+        public int GerarNumeroCentena(long idEmpresa)
         {
             int numero = 0;
 
@@ -94,7 +86,7 @@ namespace FWLog.Services.Services
             }
             catch (Exception ex)
             {
-                _log.Error(String.Format("Erro ao salvar a centena do pedido de venda {0}.", idPedidoVenda), ex);
+                _log.Error("Erro ao salvar a centena do pedido de venda.", ex);
             }
 
             return numero;
