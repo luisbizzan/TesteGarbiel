@@ -18,7 +18,9 @@ namespace FWLog.Data.Models
         MovidoDOCA = 10,
         DespachandoNF = 11,
         NFDespachada = 12,
-        RomaneioImpresso = 13
+        RomaneioImpresso = 13,
+        VolumeExcluido = 14,
+        ProdutoZerado = 15
     }
 
     public class PedidoVendaStatus
