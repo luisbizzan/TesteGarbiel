@@ -950,17 +950,15 @@ namespace FWLog.Services.Services
             {
                 try
                 {
-                    var pedidoVenda = new PedidoVenda()
-                    {
-                        IdPedido = pedido.IdPedido,
-                        IdCliente = pedido.IdCliente,
-                        IdEmpresa = pedido.IdEmpresa,
-                        IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao,
-                        IdRepresentante = pedido.IdRepresentante,
-                        IdTransportadora = pedido.IdTransportadora,
-                        NroPedidoVenda = pedido.NroPedido,
-                        NroVolumes = 0 //Inicialmente salva com 0. Posteriormente, o valor é atualizado.
-                    };
+                    PedidoVenda pedidoVenda = new PedidoVenda();
+
+                    pedidoVenda.IdPedido = pedido.IdPedido;
+                    pedidoVenda.IdCliente = pedido.IdCliente;
+                    pedidoVenda.IdEmpresa = pedido.IdEmpresa;
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao;
+                    pedidoVenda.IdRepresentante = pedido.IdRepresentante;
+                    pedidoVenda.IdTransportadora = pedido.IdTransportadora;
+                    pedidoVenda.NroPedidoVenda = pedido.NroPedido;
 
                     //Agrupa os itens do pedido por produto. 
                     var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido);
@@ -1039,6 +1037,7 @@ namespace FWLog.Services.Services
                                     {
                                         pedidoVendaProdutos.Add(new PedidoVendaProduto()
                                         {
+                                            IdPedidoVenda = pedidoVenda.IdPedidoVenda,
                                             IdProduto = item.Produto.IdProduto,
                                             IdEnderecoArmazenagem = item.EnderecoSeparacao.IdEnderecoArmazenagem.Value,
                                             IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
