@@ -23,9 +23,9 @@ namespace FWLog.Web.Api.Controllers
         [AllowAnonymous]
         [Route("api/v1/produto/integrar")]
         [HttpPost]
-        public async Task<IHttpActionResult> ConsultarProduto()
+        public async Task<IHttpActionResult> ConsultarProduto(bool somenteNovos = true)
         {
-            await _produtoService.ConsultarProdutoIntegracao();
+            await _produtoService.ConsultarProdutoIntegracao(somenteNovos);
 
             return ApiOk();
         }
