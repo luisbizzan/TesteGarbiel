@@ -170,7 +170,7 @@ namespace FWLog.Web.Backoffice
             var applicationUser = userManager.FindById(User.Identity.GetUserId());
 
             long idEmpresa = 0;
-            if (applicationUser != null)
+            if (applicationUser != null && applicationUser.IdApplicationSession != null)
             {
                 var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
 

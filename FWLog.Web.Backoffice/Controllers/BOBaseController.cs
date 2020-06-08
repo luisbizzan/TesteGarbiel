@@ -81,6 +81,12 @@ namespace FWLog.Web.Backoffice.Controllers
                 ApplicationUser applicationUser = UserManager.FindById(User.Identity.GetUserId());
                 var uow = (UnitOfWork)DependencyResolver.Current.GetService(typeof(UnitOfWork));
 
+                if (applicationUser.IdApplicationSession == null)
+                {
+                    Response.Redirect("BOAccount/LogOff", false);
+                    return 0;
+                }
+
                 ApplicationSession applicationSession = uow.ApplicationSessionRepository.GetById(applicationUser.IdApplicationSession.Value);
 
                 if (applicationSession.IdEmpresa.HasValue)
