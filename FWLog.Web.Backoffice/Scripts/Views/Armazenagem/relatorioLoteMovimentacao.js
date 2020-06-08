@@ -35,7 +35,7 @@
             return false
         else
             return true;
-    }, 'Informe a data inicial, lembrando que o limite máximo para pesquisa é de um mês.');
+    }, 'Informe a data inicial, lembrando que o período máximo para pesquisa é de um mês.');
 
     $.validator.addMethod('teste1', function (value, ele) {
         var startDate = $DataInicial.data('DateTimePicker');
@@ -58,7 +58,7 @@
         else
             return true;
 
-    }, 'Informe a data final, lembrando que o limite máximo para pesquisa é de um mês.');
+    }, 'Informe a data final, lembrando que o período máximo para pesquisa é de um mês.');
 
     var createLinkedPickers = function () {
         var dataInicial = $DataInicial.datetimepicker({
