@@ -802,6 +802,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     string sQuery = @"
                     SELECT
                         GRL.cod_fornecedor,
+                        TF.razaosocial AS nome_fornecedor,
                         GT1.descricao AS status,
                         GRL.id_status,
                         GRL.id_usr,
@@ -814,6 +815,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     FROM
                         gar_remessa_lista GRL
                         INNER JOIN geral_tipo GT1 ON GT1.Id = GRL.id_status
+                        INNER JOIN tgfpar@sankhya TF ON TF.fornecedor = 'S' AND TF.ativo = 'S' AND TF.codparc = GRL.cod_fornecedor
                     WHERE
                         TO_DATE(GRL.dia, 'DD/MM/YYYY') = TO_DATE(SYSDATE, 'DD/MM/YYYY')
                         AND GRL.Id_Empresa = :Id_Empresa
