@@ -11,58 +11,12 @@
         <div class="x_content">
             <!-- menu -->
             <ul class="nav nav-tabs bar_tabs" id="ulMenuConfig" role="tablist">
-                <li class="nav-item active">
-                    <a id="FornecedorQuebra" class="nav-link" data-toggle="tab" href="#TabFornecedorQuebra" role="tab" aria-selected="true" aria-expanded="true">Fornecedor Quebra</a>
-                </li>
-                <li class="nav-item">
-                    <a id="SankhyaTop" class="nav-link" data-toggle="tab" href="#TabSankhyaTop" role="tab" aria-selected="false">Sankhya Tops</a>
-                </li>
-                <li class="nav-item">
-                    <a id="Configuracao" class="nav-link" data-toggle="tab" href="#TabConfiguracao" role="tab" aria-selected="false">Configuração</a>
-                </li>
-                <li class="nav-item">
-                    <a id="RemessaConfiguracao" class="nav-link" data-toggle="tab" href="#TabRemessaConfiguracao" role="tab" aria-selected="false">Remessa Configuração</a>
-                </li>
-                <li class="nav-item">
-                    <a id="RemessaUsuario" class="nav-link" data-toggle="tab" href="#TabRemessaUsuario" role="tab" aria-selected="false">Remessa Usuário</a>
-                </li>
-                <li class="nav-item">
-                    <a id="FornecedorGrupo" class="nav-link" data-toggle="tab" href="#TabFornecedorGrupo" role="tab" aria-selected="false">Fornecedor Grupo</a>
-                </li>
-                <li class="nav-item">
-                    <a id="MotivoLaudo" class="nav-link" data-toggle="tab" href="#TabMotivoLaudo" role="tab" aria-selected="false">Motivo Laudo</a>
-                </li>
+                @Html.Raw(@FWLog.Data.Models.GarantiaConfiguracao.FornecedorQuebra.MenuConfiguracao)
             </ul>
             <!-- panels -->
             <div class="tab-content">
-                <!-- TAB Fornecedor Quebra -->
-                <div class="tab-pane fade active in" id="TabFornecedorQuebra">
-                    <div class="x_panel">
-                        <div class="col-md-4 col-sm-4">
-                            <div class="x_title text-muted"><b>&emsp;</b></div>
-                            @Html.TextBoxFor(m => m.Cod_Fornecedor, new { @class = "form-control text-uppercase input-sm", data_field = "Cod_Fornecedor", placeholder = "Fornecedor", data_toggle = "tooltip", data_original_title = "Nome do Fornecedor a ser cadastrado" })
-                            <div>
-                                <div class="x_panel">
-                                    <div class="x_title text-muted"><b>Fornecedores selecionados</b></div>
-                                    <div class="x_content">
-                                        <ul id="listaFornecedor" class="to_do" style="overflow:auto; height:240px"></ul>
-                                    </div>
-                                    <div id="controleFornecedor" class="btn-group col-sm-12" style="display:normal;">
-                                        <a class="btn btn-default col-xs-6" onclick="CancelarFornecedorQuebra();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
-                                        <a class="btn btn-default col-xs-6" onclick="GravarFornecedorQuebra();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Fornecedor"><i class="fa fa-save text-success"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-8 col-sm-8">
-                            <!-- Grid Fornecedor Quebra -->
-                            <div class="x_title text-muted"><b>&emsp;</b></div>
-                            <table id="gridFornecedorQuebra" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
-                        </div>
-                    </div>
-                </div>
                 <!-- TAB Sankhya Tops -->
-                <div class="tab-pane fade" id="TabSankhyaTop">
+                <div class="tab-pane fade active in" id="TabSankhyaTop">
                     <div class="x_panel">
                         <div class="col-md-8 col-sm-8">
                             <!-- Grid Sankhya Tops -->
@@ -144,6 +98,59 @@
                             <!-- Grid Configuração -->
                             <div class="x_title text-muted"><b>&emsp;</b></div>
                             <table id="gridConfiguracao" class="table table-striped table-bordered" style="width:100%"></table>
+                        </div>
+                    </div>
+                </div>
+                <!-- TAB Motivo Laudo -->
+                <div class="tab-pane fade" id="TabMotivoLaudo">
+                    <div class="x_panel">
+                        <div class="col-md-4 col-sm-4">
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
+                            <div class="col-sm-12">
+                                <span id="spanIdTipo" hidden="hidden">8</span>
+                                <div class="input-group input-group-addon input-group-sm col-sm-12">
+                                    <div class="col-sm-12"><input id="txtDescricaoMotivoLaudo" class="form-control input-sm text-uppercase" placeholder="Motivo Laudo Descrição" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Descrição Motivo Laudo"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="x_panel">
+                                    <div id="controleMotivoLaudo" class="btn-group col-sm-12" style="display:normal;">
+                                        <a class="btn btn-default col-xs-6" onclick="CancelarMotivoLaudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="GravarMotivoLaudo();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Motivo Laudo"><i class="fa fa-save text-success"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 col-sm-8">
+                            <!-- Grid Motivo Laudo -->
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
+                            <table id="gridMotivoLaudo" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
+                        </div>
+                    </div>
+                </div>
+                <!-- TAB Fornecedor Quebra -->
+                <div class="tab-pane fade" id="TabFornecedorQuebra">
+                    <div class="x_panel">
+                        <div class="col-md-4 col-sm-4">
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
+                            @Html.TextBoxFor(m => m.Cod_Fornecedor, new { @class = "form-control text-uppercase input-sm", data_field = "Cod_Fornecedor", placeholder = "Fornecedor", data_toggle = "tooltip", data_original_title = "Nome do Fornecedor a ser cadastrado" })
+                            <div>
+                                <div class="x_panel">
+                                    <div class="x_title text-muted"><b>Fornecedores selecionados</b></div>
+                                    <div class="x_content">
+                                        <ul id="listaFornecedor" class="to_do" style="overflow:auto; height:240px"></ul>
+                                    </div>
+                                    <div id="controleFornecedor" class="btn-group col-sm-12" style="display:normal;">
+                                        <a class="btn btn-default col-xs-6" onclick="CancelarFornecedorQuebra();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
+                                        <a class="btn btn-default col-xs-6" onclick="GravarFornecedorQuebra();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Fornecedor"><i class="fa fa-save text-success"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8 col-sm-8">
+                            <!-- Grid Fornecedor Quebra -->
+                            <div class="x_title text-muted"><b>&emsp;</b></div>
+                            <table id="gridFornecedorQuebra" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
                         </div>
                     </div>
                 </div>
@@ -255,33 +262,6 @@
                             <!-- Grid Fornecedor Grupo -->
                             <div class="x_title text-muted"><b>&emsp;</b></div>
                             <table id="gridFornecedorGrupo" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
-                        </div>
-                    </div>
-                </div>
-                <!-- TAB Motivo Laudo -->
-                <div class="tab-pane fade" id="TabMotivoLaudo">
-                    <div class="x_panel">
-                        <div class="col-md-4 col-sm-4">
-                            <div class="x_title text-muted"><b>&emsp;</b></div>
-                            <div class="col-sm-12">
-                                <span id="spanIdTipo" hidden="hidden">8</span>
-                                <div class="input-group input-group-addon input-group-sm col-sm-12">
-                                    <div class="col-sm-12"><input id="txtDescricaoMotivoLaudo" class="form-control input-sm text-uppercase" placeholder="Motivo Laudo Descrição" data-placement="bottom" data-toggle="tooltip" title="" data-original-title="Descrição Motivo Laudo"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="x_panel">
-                                    <div id="controleMotivoLaudo" class="btn-group col-sm-12" style="display:normal;">
-                                        <a class="btn btn-default col-xs-6" onclick="CancelarMotivoLaudo();" data-toggle="tooltip" data-placement="top" data-original-title="Cancelar Inclusão"><i class="glyphicon glyphicon-ban-circle text-danger"></i></a>
-                                        <a class="btn btn-default col-xs-6" onclick="GravarMotivoLaudo();" data-toggle="tooltip" data-placement="top" data-original-title="Gravar Motivo Laudo"><i class="fa fa-save text-success"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-8 col-sm-8">
-                            <!-- Grid Motivo Laudo -->
-                            <div class="x_title text-muted"><b>&emsp;</b></div>
-                            <table id="gridMotivoLaudo" class="table table-striped table-bordered dt-responsive" style="width:100%"></table>
                         </div>
                     </div>
                 </div>

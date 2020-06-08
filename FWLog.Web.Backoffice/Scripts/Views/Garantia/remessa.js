@@ -434,7 +434,6 @@ function listarImpressoras() {
             else {
                 $("#modalImprimir").modal("show");
             }
-            console.log(s);
         }
     }).fail(function (f) {
         console.log(f);

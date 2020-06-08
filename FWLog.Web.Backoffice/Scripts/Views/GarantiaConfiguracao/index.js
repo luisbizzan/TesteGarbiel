@@ -1,22 +1,21 @@
 ﻿
 /***  GENÉRICO  ***/
 var RegistroInclusao = new Object();
-var TagPadrao = $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != null && $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id != "" ?
-    $("#ulMenuConfig")[0].firstElementChild.firstElementChild.id : "FornecedorQuebra";
+var TagPadrao = "SankhyaTop";
+
 var _listaAutoComplete = [];
 $('.onlyNumber').mask('0#');
 
 $("#txtConfigEstFrete").on('change', function (e) {
-    FormatarPercentagem($("#txtConfigEstFrete")[0].id);
+    FormatarPercentagem("#txtConfigEstFrete");
 });
 
 $("#txtConfigDesvalorizacao").on('change', function (e) {
-    FormatarPercentagem($("#txtConfigDesvalorizacao")[0].id);
+    FormatarPercentagem("#txtConfigDesvalorizacao");
 });
 
 /* [GENÉRICO] formatar percentagem configuração */
 function FormatarPercentagem(IdControle) {
-    IdControle = "#" + IdControle;
     var valor = $(IdControle).val().replace(",", ".");
     valor = (valor > 99.99) ? 100 : valor;
     $(IdControle).val(valor);
@@ -26,6 +25,7 @@ function FormatarPercentagem(IdControle) {
 $(document).ready(function (e) {
     ListarNegociacao();
     RegistroListar(TagPadrao);
+
     $("#ulMenuConfig").click(function (c) {
         TagPadrao = c.target.id.toString();
         RegistroListar(TagPadrao);
