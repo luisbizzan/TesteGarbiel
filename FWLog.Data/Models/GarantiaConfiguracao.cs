@@ -236,7 +236,6 @@ namespace FWLog.Data.Models
         }
         #endregion
 
-
         #region [GERAL_SANKHYA_TOPS]
         public class SankhyaTop
         {
@@ -469,7 +468,7 @@ namespace FWLog.Data.Models
                 get
                 {
                     return String.Concat(
-                        "SELECT 	rc.Id, rc.Id_Empresa, e.\"Sigla\" Filial, f.\"RazaoSocial\" Cod_Fornecedor, rc.Automatica, rc.Vlr_Minimo, rc.Total ",
+                        "SELECT rc.Id, rc.Id_Empresa, e.\"Sigla\" Filial, f.\"RazaoSocial\" Cod_Fornecedor, rc.Automatica, rc.Vlr_Minimo, rc.Total ",
                         "FROM gar_remessa_config rc ",
                         "INNER JOIN \"Fornecedor\" f ON TRIM(f.cnpj)=TRIM(rc.Cod_Fornecedor) ",
                         "INNER JOIN \"Empresa\" e ON rc.Id_Empresa=e.\"IdEmpresa\"");
