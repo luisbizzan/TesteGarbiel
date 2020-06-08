@@ -1,6 +1,7 @@
 ﻿(function () {
     $.validator.setDefaults({ ignore: null });
     $('.onlyNumber').mask('0#');
+    let message = '';
 
     $.validator.addMethod('validateFilters', function (value, ele) {
         var produto = $("#Filter_DescricaoProduto").val();
@@ -25,6 +26,39 @@
 
     var $DataInicial = $('#Filter_DataHoraInicial').closest('.date');
     var $DataFinal = $('#Filter_DataHoraFinal').closest('.date');
+
+    $.validator.addMethod('validateInitialDateWithUser', function (value, ele) {
+        var dataHoraInicial = $("#Filter_DataHoraInicial").val();
+        var userNameMovimentacao = $("#Filter_UserNameMovimentacao").val();
+       
+        if (userNameMovimentacao != "" && dataHoraInicial == "")
+            return false
+        else
+            return true;
+    }, 'Informe a data inicial, lembrando que o limite máximo para pesquisa é de um mês.');
+
+    $.validator.addMethod('teste1', function (value, ele) {
+        var startDate = $DataInicial.data('DateTimePicker');
+        var endDate = $DataFinal.data('DateTimePicker');
+        var userNameMovimentacao = $("#Filter_UserNameMovimentacao").val();
+        var period = Math.round((endDate.date() - startDate.date()) / (1000 * 60 * 60 * 24));
+       
+        if (userNameMovimentacao != "" && period > 31) 
+            return false
+        else
+            return true;
+    }, 'Período da data tem que ser no máximo um mês.');
+
+    $.validator.addMethod('validateEndDateWithUser', function (value, ele) {
+        var dataHoraFinal = $("#Filter_DataHoraFinal").val();
+        var userNameMovimentacao = $("#Filter_UserNameMovimentacao").val();
+       
+        if (userNameMovimentacao != "" && dataHoraFinal == "")
+            return false
+        else
+            return true;
+
+    }, 'Informe a data final, lembrando que o limite máximo para pesquisa é de um mês.');
 
     var createLinkedPickers = function () {
         var dataInicial = $DataInicial.datetimepicker({
@@ -96,7 +130,7 @@
             else if (data.Tipo == 'Abastecimento') {
                 $(row).addClass('row-dark-green');
             }
-        }
+        },
     });
 
     $('#dataTable').dataTable.error = function (settings, helpPage, message) {
