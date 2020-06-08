@@ -33,16 +33,19 @@ namespace FWLog.Data.Repository.GeneralCtx
         public List<TransportadoraVolumeForaDoca> BuscarVolumesForaDoca(long idTransportadora, long idEmpresa)
         {
             var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdTransportadora == idTransportadora &&
-                                                                                pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa &&
-                                                                                pedidoVendaVolume.PedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovendoDOCA &&
-                                                                                (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA)).
-                                                                                Select(pedidoVendaVolume => new TransportadoraVolumeForaDoca
-                                                                                {
-                                                                                    IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume,
-                                                                                    NumeroPedido = pedidoVendaVolume.PedidoVenda.NroPedidoVenda,
-                                                                                    NumeroVolume = pedidoVendaVolume.NroVolume,
-                                                                                    EnderecoCodigo = pedidoVendaVolume.EnderecoTransportadora.Codigo
-                                                                                });
+                                                                              pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa &&
+                                                                              pedidoVendaVolume.PedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovendoDOCA &&
+                                                                              pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovidoDOCA &&
+                                                                              pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA &&
+                                                                              pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProdutoZerado &&
+                                                                              pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido).
+                                                                              Select(pedidoVendaVolume => new TransportadoraVolumeForaDoca
+                                                                              {
+                                                                                  IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume,
+                                                                                  NumeroPedido = pedidoVendaVolume.PedidoVenda.NroPedidoVenda,
+                                                                                  NumeroVolume = pedidoVendaVolume.NroVolume,
+                                                                                  EnderecoCodigo = pedidoVendaVolume.EnderecoTransportadora.Codigo
+                                                                              });
 
             return query.ToList();
         }

@@ -30,13 +30,7 @@ namespace FWLog.Services.Services
                 return;
             }
 
-            StringBuilder inner = new StringBuilder();
-            inner.Append("LEFT JOIN TGFCPL ON TGFPAR.CODPARC = TGFCPL.CODPARC ");
-            inner.Append("LEFT JOIN TSIEND ON TGFCPL.CODENDENTREGA = TSIEND.CODEND ");
-            inner.Append("LEFT JOIN TSICID ON TGFCPL.CODCIDENTREGA = TSICID.CODCID ");
-            inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF ");
-
-            StringBuilder where = new StringBuilder();
+            var where = new StringBuilder();
             where.Append("WHERE TGFPAR.CLIENTE = 'S' ");
 
             if (somenteNovos)
@@ -73,12 +67,25 @@ namespace FWLog.Services.Services
             }
 
             int offsetRows = 0;
+            var join = new StringBuilder();
+            join.Append("LEFT JOIN TGFCPL ON TGFPAR.CODPARC = TGFCPL.CODPARC ");
+            join.Append("LEFT JOIN TSIEND ON TGFCPL.CODENDENTREGA = TSIEND.CODEND ");
+            join.Append("LEFT JOIN TSICID ON TGFCPL.CODCIDENTREGA = TSICID.CODCID ");
+            join.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF ");
 
             for (int i = 0; i < quantidadeChamadas; i++)
-            {                
+            {
+                where = new StringBuilder();
+                where.Append("WHERE TGFPAR.CLIENTE = 'S' ");
+
+                if (somenteNovos)
+                {
+                    where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
+                }
+
                 where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET "+ offsetRows + " ROWS FETCH NEXT 4999 ROWS ONLY ");
 
-                List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString(), inner: inner.ToString());
+                List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString(), inner: join.ToString());
 
                 foreach (var clienteInt in clientesIntegracao)
                 {
@@ -143,10 +150,10 @@ namespace FWLog.Services.Services
 
                         continue;
                     }
-
-                    i++;
-                    offsetRows += 4999;
                 }
+
+                i++;
+                offsetRows += 4999;
             }
         }
 

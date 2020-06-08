@@ -21,5 +21,6 @@
         public int EnviadoTransportadora { get; set; }
 
         public int Total { get; set; }
+        public int VolumeExcluido { get; set; }
     }
 }
