@@ -269,8 +269,6 @@ namespace FWLog.Data.Models
             public long Id { get; set; }
             [Display(Name = "Filial")]
             public string Filial { get; set; }
-            //[Display(Name = "Id Empresa")]
-            //public long Id_Empresa { get; set; }
             [Display(Name = "Empresa")]
             public string Id_EmpresaView { get; set; }
             [Required]
@@ -304,9 +302,6 @@ namespace FWLog.Data.Models
         {
             [Display(Name = "Código")]
             public long Id { get; set; }
-
-            //[Display(Name = "Id Empresa")]
-            //public long Id_Empresa { get; set; }
 
             [Required]
             [Display(Name = "Código de Usuário")]
@@ -358,9 +353,6 @@ namespace FWLog.Data.Models
             [Display(Name = "Codigo")]
             public long Id { get; set; }
 
-            //[Display(Name = "Id Empresa")]
-            //public long Id_Empresa { get; set; }
-
             [Required]
             [Display(Name = "Fornecedor Pai")]
             public string Cod_Forn_Pai { get; set; }
@@ -379,9 +371,6 @@ namespace FWLog.Data.Models
         {
             [Display(Name = "Codigo")]
             public long Id { get; set; }
-
-            //[Display(Name = "Id Empresa")]
-            //public long Id_Empresa { get; set; }
 
             [Required]
             [Display(Name = "Código do Fornecedor")]
