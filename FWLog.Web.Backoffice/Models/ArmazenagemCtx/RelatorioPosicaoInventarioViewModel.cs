@@ -29,8 +29,7 @@ namespace FWLog.Web.Backoffice.Models.ArmazenagemCtx
         public string Codigo { get; set; }
 
         [Display(Name = "Quantidade")]
-        public string QuantidadeProdutoPorEndereco { get; set; }
-
+        public int QuantidadeProdutoPorEndereco { get; set; }
     }
 
     public class RelatorioPosicaoInventarioFilterViewModel

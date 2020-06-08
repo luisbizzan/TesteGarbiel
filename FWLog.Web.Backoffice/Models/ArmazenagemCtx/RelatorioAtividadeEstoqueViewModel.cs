@@ -46,6 +46,9 @@ namespace FWLog.Web.Backoffice.Models.ArmazenagemCtx
         [Display(Name = "Usuário")]
         public string UsuarioExecucao { get; set; }
 
+        [Display(Name = "% Divergência")]
+        public string PorcentagemDivergencia { get; set; }
+
         public string Finalizado { get; set; }
     }
 

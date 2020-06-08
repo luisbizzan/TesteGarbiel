@@ -11,7 +11,7 @@
             <button type="button" class="close" data-dismiss="modal">
                 <span aria-hidden="true">×</span>
             </button>
-            <h4 class="modal-title" id="myModalLabel">Pedido: @Model.PedidoNro - Volume: @Model.VolumeNroVolume.ToString().PadLeft(3, '0')</h4>
+            <h4 class="modal-title" id="myModalLabel">Pedido: @Model.PedidoNro</h4>
         </div>
         <div class="modal-body">
             <div class="row">
@@ -30,18 +30,21 @@
                                 @Html.LabelFor(m => m.PedidoPagamentoDescricaoIntegracao): @Model.PedidoPagamentoDescricaoIntegracao
                             </div>
                             <div class="col-xs-12 col-sm-6 col-lg-6">
-                                @Html.LabelFor(m => m.PedidoDataCriacao): @Model.PedidoDataCriacao.ToString("dd/MM/yyyy HH:mm")
+                                @Html.LabelFor(m => m.PedidoDataCriacao): @Model.PedidoDataCriacao.ToShortDateString()
                             </div>
                         </div>
                         <div class="row" style="margin-bottom:4px;">
+                            <div class="col-xs-12 col-sm-6 col-lg-6">
+                                @Html.LabelFor(m => m.PedidoNumeroNotaFiscal): @Model.PedidoNumeroNotaFiscal @Html.LabelFor(m => m.PedidoSerieNotaFiscal): @Model.PedidoSerieNotaFiscal
+                            </div>
                             <div class="col-xs-12 col-sm-6 col-lg-6">
                                 @Html.LabelFor(m => m.PedidoCliente): @Model.PedidoCliente
                             </div>
+                        </div>
+                        <div class="row" style="margin-bottom:4px;">
                             <div class="col-xs-12 col-sm-6 col-lg-6">
                                 @Html.LabelFor(m => m.PedidoTransportadora): @Model.PedidoTransportadora
                             </div>
-                        </div>
-                        <div class="row" style="margin-bottom:4px;">
                             <div class="col-xs-12 col-sm-6 col-lg-6">
                                 @Html.LabelFor(m => m.PedidoRepresentante): @Model.PedidoRepresentante
                             </div>
@@ -51,7 +54,7 @@
             </div>
             <div class="row">
                 <div class="col-xs-12">
-                    <h2>Volume</h2>
+                    <h2>Volume: @Model.VolumeNroVolume.ToString().PadLeft(3, '0')</h2>
                 </div>
                 <div class="tab-content col-xs-12" id="myTabContent">
                     <div class="informacoes">

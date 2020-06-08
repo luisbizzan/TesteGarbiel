@@ -8,6 +8,7 @@
         public string Status { get; set; }
         public string NroVolume { get; set; }
         public string DataCriacao { get; set; }
+        public string NumeroSerieNotaFiscal { get; set; }
         public string DataExpedicao { get; set; }
     }
 }

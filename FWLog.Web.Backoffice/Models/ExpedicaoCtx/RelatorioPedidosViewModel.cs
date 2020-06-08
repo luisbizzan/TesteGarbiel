@@ -28,12 +28,15 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         [Display(Name = "Transportadora")]
         public string NomeTransportadora { get; set; }
- 
+
         [Display(Name = "Status")]
         public string Status { get; set; }
 
         [Display(Name = "Data Criação")]
         public string DataCriacao { get; set; }
+
+        [Display(Name = "Número/Série NF")]
+        public string NumeroSerieNotaFiscal { get; set; }
 
         [Display(Name = "Data Expedição")]
         public string DataExpedicao { get; set; }
@@ -41,13 +44,10 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
     public class RelatorioPedidosFilterViewModel
     {
-        //[Display(Name = "Nro. Pedido")]
-        //public long? IdPedidoVenda { get; set; }
-
         [Display(Name = "Nro. Pedido")]
         public long? NumeroPedido { get; set; }
 
-        [Display(Name="Dt. Criação Inícial")]
+        [Display(Name = "Dt. Criação Inícial")]
         public DateTime? DataInicial { get; set; }
 
         [Display(Name = "Dt. Criação Final")]

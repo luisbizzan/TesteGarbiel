@@ -26,10 +26,10 @@
             dart.dataTables.saveFilterToData(data);
         },
         columns: [
-            { "defaultContent": "", width:'40%'},
-            { data: 'Codigo'},
-            { data: 'IdLote'},
-            { data: 'QuantidadeProdutoPorEndereco'}
+            { "defaultContent": "", width: '40%' },
+            { data: 'Codigo' },
+            { data: 'IdLote' },
+            { data: 'QuantidadeProdutoPorEndereco' }
         ],
         order: [[2, 'asc']],
         rowGroup: {
@@ -217,11 +217,11 @@ function imprimir(acao, id) {
                         PNotify.success({ text: result.Message });
                     } else {
                         PNotify.error({ text: result.Message });
-                    }                    $('#modalImpressoras').modal('toggle');
+                    }
+                    $('#modalImpressoras').modal('toggle');
                     waitingDialog.hide();
                 }
             });
             break;
     }
 }
-
