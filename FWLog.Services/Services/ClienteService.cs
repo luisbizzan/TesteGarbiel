@@ -143,10 +143,10 @@ namespace FWLog.Services.Services
 
                         continue;
                     }
-
-                    i++;
-                    offsetRows += 4999;
                 }
+
+                i++;
+                offsetRows += 4999;
             }
         }
 
