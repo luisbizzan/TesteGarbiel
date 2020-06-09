@@ -224,9 +224,76 @@ namespace FWLog.Services.Services
                             salvaPedido = true;
                         }
 
-                        if (salvaPedido)
+                        if (!salvaPedido)
+                        {
+                            return;
+                        }
+
+                        var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedido(pedido.IdPedido);
+
+                        if (pedidoVenda == null)
+                        {
+                            throw new BusinessException($"Não foi encontrado pedido de venda para o pedido. Código Integração do Pedido: {pedido.CodigoIntegracao}");
+                        }
+
+                        if (pedidoVenda.PedidoVendaVolumes == null)
+                        {
+                            throw new BusinessException($"O pedido de venda não tem volumes. Código Integração do Pedido: {pedido.CodigoIntegracao}");
+                        }
+
+                        if (!pedidoVenda.PedidoVendaVolumes.Any(a => a.PedidoVendaProdutos != null))
+                        {
+                            throw new BusinessException($"Os volumes do pedido de venda não tem produtos. Código Integração do Pedido: {pedido.CodigoIntegracao}");
+                        }
+
+                        List<PedidoVendaProduto> produtos = new List<PedidoVendaProduto>();
+
+                        pedidoVenda.PedidoVendaVolumes.Where(w => w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido)
+                            .ForEach(f => f.PedidoVendaProdutos.Where(w => w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido && w.QtdSeparada > 0)
+                                .ForEach(ff => produtos.Add(ff)));
+
+                        if (produtos == null)
+                        {
+                            throw new BusinessException("Produto não tem configuração de estoque.");
+                        }
+
+                        var produtosAgrupados = produtos.GroupBy(g => g.IdProduto).ToDictionary(d => d.Key, d => d.ToList());
+
+                        foreach (var produto in produtosAgrupados)
+                        {
+                            var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(produto.Key, pedido.IdEmpresa);
+
+                            if (produtoEstoque == null)
+                            {
+                                throw new BusinessException("Produto não tem configuração de estoque.");
+                            }
+
+                            var qtdSeparadaTotal = produto.Value.Sum(s => s.QtdSeparada);
+
+                            if ((produtoEstoque.Saldo - qtdSeparadaTotal) < 0)
+                            {
+                                throw new BusinessException("Produto não tem saldo suficiente.");
+                            }
+                        }
+
+                        using (var transacao = _unitOfWork.CreateTransactionScope())
                         {
                             await _unitOfWork.SaveChangesAsync();
+
+                            foreach (var produto in produtosAgrupados)
+                            {
+                                var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorProduto(produto.Key, pedido.IdEmpresa);
+
+                                var qtdSeparadaTotal = produto.Value.Sum(s => s.QtdSeparada);
+
+                                produtoEstoque.Saldo -= qtdSeparadaTotal.Value;
+
+                                _unitOfWork.ProdutoEstoqueRepository.Update(produtoEstoque);
+
+                                await _unitOfWork.SaveChangesAsync();
+                            }
+
+                            transacao.Complete();
                         }
                     }
                 }
@@ -277,7 +344,7 @@ namespace FWLog.Services.Services
                 return null;
             }
 
-            var where = $"WHERE TGFVAR.NUNOTAORIG = {pedido.CodigoIntegracao} AND TGFCAB.STATUSNFE = 'A' AND TGFCAN.NUNOTA IS NULL";
+            var where = $"WHERE TGFVAR.NUNOTAORIG = {pedido.CodigoIntegracao} AND TGFCAB.STATUSNFE IN ('A','S') AND TGFCAN.NUNOTA IS NULL";
             var inner = "INNER JOIN TGFVAR ON TGFVAR.NUNOTA = TGFCAB.NUNOTA";
             inner += " LEFT JOIN TGFCAN ON TGFCAN.NUNOTA = TGFCAB.NUNOTA";
 
