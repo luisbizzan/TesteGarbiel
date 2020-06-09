@@ -194,13 +194,6 @@ namespace FWLog.Web.Backoffice.Controllers
                         }, "Value", "Text");
 
 
-            ViewBag.ProdutoStatus = new SelectList(new List<SelectListItem>
-                        {
-                            new SelectListItem { Text = "Ativo", Value = "1"},
-                            new SelectListItem { Text = "Inativo", Value = "0"},
-                            new SelectListItem { Text = "Sem Locação", Value = "2"}
-                        }, "Value", "Text");
-
             ViewBag.ImprimirVazia = new SelectList(new List<SelectListItem>
                         {
                             new SelectListItem { Text = "Não", Value = "false"},

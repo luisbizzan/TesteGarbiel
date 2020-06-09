@@ -308,7 +308,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var filtro = Mapper.Map<DataTableFilter<LoteMovimentacaoListaFiltro>>(model);
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
 
-            var result = _uow.LoteMovimentacaoRepository.Consultar(filtro, out int registrosFiltrados, out int totalRegistros);
+            var result = _uow.LoteMovimentacaoRepository.Consultar(filtro, out int registrosFiltrados, out int totalRegistros).OrderBy(x => x.IdUsuarioMovimentacao);
 
             var list = new List<RelatorioLoteMovimentacaoListItemViewModel>();
             List<UsuarioEmpresa> usuarios = _uow.UsuarioEmpresaRepository.ObterPorEmpresa(IdEmpresa);
@@ -317,8 +317,9 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 list.Add(new RelatorioLoteMovimentacaoListItemViewModel()
                 {
+                    IdUsuario = item.IdUsuarioMovimentacao,
                     IdProduto = item.IdProduto,
-                    IdLote = item.IdLote,
+                    IdLote = item.IdLote.ToString(),
                     ReferenciaProduto = item.ReferenciaProduto,
                     DescricaoProduto = item.DescricaoProduto,
                     UsuarioMovimentacao = usuarios.Where(x => x.UserId.Equals(item.IdUsuarioMovimentacao)).FirstOrDefault()?.PerfilUsuario.Nome,
@@ -327,6 +328,28 @@ namespace FWLog.Web.Backoffice.Controllers
                     Quantidade = item.Quantidade.ToString(),
                     DataHora = item.DataHora.ToString("dd/MM/yyyy hh:mm:ss"),
                     NroVolume = item.NroVolume.HasValue ? item.NroVolume.ToString() : string.Empty
+                });
+            }
+
+            var usuariosAgrupados = list.GroupBy(l => l.UsuarioMovimentacao).ToList();
+
+            foreach (var itemAgrupado in usuariosAgrupados)
+            {
+                var referenciaProduto = itemAgrupado.Key;
+
+                var saldoQuantidadeMovimentacao = itemAgrupado.Sum(ia => int.Parse(ia.Quantidade));
+
+                var ultimoRegistro = list.Last(l => l.UsuarioMovimentacao == referenciaProduto);
+
+                var indiceUltimoRegistro = list.IndexOf(ultimoRegistro);
+
+                list.Insert(indiceUltimoRegistro + 1 , new RelatorioLoteMovimentacaoListItemViewModel
+                {
+                    IdLote = string.Empty,
+                    ReferenciaProduto = string.Empty,
+                    DescricaoProduto = string.Empty,
+                    NroVolume = "<b>Saldo</b>",
+                    Quantidade = saldoQuantidadeMovimentacao.ToString()
                 });
             }
 

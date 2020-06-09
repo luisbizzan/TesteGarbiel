@@ -79,6 +79,10 @@
                     </div>
                     @Html.HiddenFor(m => m.Filtros.IdEnderecoArmazenagem, new { data_field = "IdEnderecoArmazenagem" })
                 </div>
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
+                    @Html.LabelFor(m => m.Filtros.LocacaoSaldo)
+                    @Html.DropDownListFor(m => m.Filtros.LocacaoSaldo, (IEnumerable<SelectListItem>)ViewBag.LocacaoSaldo, "Todos", new { @class = "form-control", data_field = "LocacaoSaldo" })
+                </div>
             </div>
         </div>
         <div class="row">
@@ -110,6 +114,7 @@
                             <th>@Html.DisplayNameFor(m => m.Itens.Referencia)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Descricao)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Peso)</th>
+                            <th>@Html.DisplayNameFor(m => m.Itens.Saldo)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Largura)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Altura)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Comprimento)</th>
