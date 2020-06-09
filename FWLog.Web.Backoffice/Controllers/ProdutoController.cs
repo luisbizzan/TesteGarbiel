@@ -63,11 +63,25 @@ namespace FWLog.Web.Backoffice.Controllers
 
         public ActionResult Index()
         {
-            SetViewBags();
+            ViewBag.ProdutoStatus = new SelectList(new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "Ativo", Value = "1"},
+                            new SelectListItem { Text = "Inativo", Value = "0"},
+                        }, "Value", "Text");
+
+            ViewBag.LocacaoSaldo = new SelectList(new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "Sem Locação/Sem Saldo", Value = "0"},
+                            new SelectListItem { Text = "Sem Locação/Com Saldo", Value = "1"},
+                            new SelectListItem { Text = "Com Locação/Sem Saldo", Value = "2"},
+                            new SelectListItem { Text = "Com Locação/Com Saldo", Value = "3"},
+                        }, "Value", "Text");
 
             var model = new ProdutoListaViewModel();
 
-            model.Filtros.ProdutoStatus = 2;
+            model.Filtros.ProdutoStatus = 1;
+
+            model.Filtros.LocacaoSaldo = 0;
 
             return View(model);
         }
@@ -141,6 +155,11 @@ namespace FWLog.Web.Backoffice.Controllers
                 Largura = produtoEstoque.Produto.Largura?.ToString("n2"),
                 Peso = produtoEstoque.Produto.PesoBruto.ToString("n2"),
                 Referencia = produtoEstoque.Produto.Referencia,
+                Cubagem = produtoEstoque.Produto.MetroCubico?.ToString("n2"),
+                Unidade = produtoEstoque.Produto.UnidadeMedida.Sigla,
+                Multiplo = produtoEstoque.Produto.MultiploVenda.ToString(),
+                Status = produtoEstoque.ProdutoEstoqueStatus.Descricao,
+                Saldo = produtoEstoque.Saldo.ToString(),
                 ImagemSrc = produtoEstoque.Produto.EnderecoImagem != "0" ? produtoEstoque.Produto.EnderecoImagem : null,
             };
 

@@ -17,6 +17,16 @@ namespace FWLog.Web.Backoffice.Models.ProdutoCtx
         public string Comprimento { get; set; }
         [Display(Name = "Peso")]
         public string Peso { get; set; }
+        [Display(Name = "Cubagem")]
+        public string Cubagem { get; set; }
+        [Display(Name = "Unidade de Medida")]
+        public string Unidade { get; set; }
+        [Display(Name = "Multiplo")]
+        public string Multiplo { get; set; }
+        [Display(Name = "Status")]
+        public string Status { get; set; }
+        [Display(Name = "Saldo")]
+        public string Saldo { get; set; }
         public string ImagemSrc { get; set; }
         [Display(Name = "Endereco Armazenagem")]
         public string EnderecoArmazenagem { get; set; }
