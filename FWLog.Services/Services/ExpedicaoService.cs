@@ -559,7 +559,7 @@ namespace FWLog.Services.Services
                     volume.DataHoraInstalacaoDOCA = dataProcessamento;
                     volume.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovidoDOCA;
 
-                    if (!volume.PedidoVenda.PedidoVendaVolumes.Where(w=> w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido).Any(a => a.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovidoDOCA))
+                    if (!volume.PedidoVenda.PedidoVendaVolumes.Where(w => w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido).Any(a => a.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovidoDOCA))
                     {
                         volume.PedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovidoDOCA;
                         volume.PedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovidoDOCA;

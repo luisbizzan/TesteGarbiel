@@ -1747,7 +1747,6 @@ namespace FWLog.Services.Services
                 NomeUsuario = labelUsuario,
                 Orientacao = Orientation.Portrait,
                 Titulo = "Relatório Volumes Instalados X Transportadora",
-
                 Filtros = new FwRelatorioDadosFiltro()
                 {
                     Transportadora = transportadora != null ? $"{transportadora.IdTransportadora} - {transportadora.NomeFantasia}" : null,
@@ -1767,13 +1766,14 @@ namespace FWLog.Services.Services
                 var tabela = document.Sections[0].AddTable();
 
                 tabela.Format.Font = new Font("Verdana", new Unit(9));
-                tabela.AddColumn(new Unit(185));
-                tabela.AddColumn(new Unit(185));
-                tabela.AddColumn(new Unit(185));
+                tabela.AddColumn(new Unit(115));
+                tabela.AddColumn(new Unit(115));
+                tabela.AddColumn(new Unit(115));
+                tabela.AddColumn(new Unit(180));
 
                 var row = tabela.AddRow();
 
-                var agrupamentoTransportadora = listaVolumesPorTransportadora.GroupBy(g => g.Transportadora).ToList();
+                var agrupamentoTransportadora = listaVolumesPorTransportadora.GroupBy(g => new { g.IdTransportadora, g.TransportadoraNome }).ToList();
 
                 foreach (var transportadoraVolumes in agrupamentoTransportadora)
                 {
@@ -1784,7 +1784,8 @@ namespace FWLog.Services.Services
                     {
                         Bold = true
                     };
-                    paragraph.AddText(transportadoraVolumes.Key);
+
+                    paragraph.AddText($"{transportadoraVolumes.Key.IdTransportadora} - {transportadoraVolumes.Key.TransportadoraNome}");
 
                     row.Cells[0].AddParagraph("Endereço");
                     row.Cells[0].Format.Font.Bold = true;
@@ -1792,6 +1793,8 @@ namespace FWLog.Services.Services
                     row.Cells[1].Format.Font.Bold = true;
                     row.Cells[2].AddParagraph("Volume");
                     row.Cells[2].Format.Font.Bold = true;
+                    row.Cells[3].AddParagraph("Status Volume");
+                    row.Cells[3].Format.Font.Bold = true;
 
                     var volumes = transportadoraVolumes.ToList();
 
@@ -1800,21 +1803,17 @@ namespace FWLog.Services.Services
                         row = tabela.AddRow();
 
                         paragraph = row.Cells[0].AddParagraph();
-                        paragraph.AddText(volume.CodigoEndereco ?? string.Empty);
+                        paragraph.AddText(volume.CodigoEndereco ?? "Não instalado");
 
                         paragraph = row.Cells[1].AddParagraph();
                         paragraph.AddText(volume.NumeroPedido.ToString());
 
                         paragraph = row.Cells[2].AddParagraph();
                         paragraph.AddText(volume.NumeroVolume.ToString());
-                    }
 
-                    //row = tabela.AddRow();
-                    //row = tabela.AddRow();
-                    //paragraph = row.Cells[0].AddParagraph(string.Concat("Saldo: "));
-                    //paragraph.Format.Font.Bold = true;
-                    //paragraph = row.Cells[2].AddParagraph(qtdeTotal.ToString());
-                    //paragraph.Format.Font.Bold = true;
+                        paragraph = row.Cells[3].AddParagraph();
+                        paragraph.AddText(volume.StatusVolume.ToString());
+                    }
 
                     row = tabela.AddRow();
                     row = tabela.AddRow();
@@ -1823,9 +1822,10 @@ namespace FWLog.Services.Services
                     tabela = document.Sections[0].AddTable();
                     tabela.Format.Font = new Font("Verdana", new Unit(9));
 
-                    tabela.AddColumn(new Unit(185));
-                    tabela.AddColumn(new Unit(185));
-                    tabela.AddColumn(new Unit(185));
+                    tabela.AddColumn(new Unit(115));
+                    tabela.AddColumn(new Unit(115));
+                    tabela.AddColumn(new Unit(115));
+                    tabela.AddColumn(new Unit(180));
 
                     row = tabela.AddRow();
                 }

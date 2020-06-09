@@ -54,10 +54,11 @@ namespace FWLog.Web.Backoffice.Controllers
 
             volumesTransportadora.ForEach(volume => listaRetorno.Add(new RelatorioVolumesInstaladosTransportadoraListItemViewModel
             {
-                Transportadora = volume.Transportadora,
-                CodigoEndereco = volume.CodigoEndereco,
+                Transportadora = $"{volume.IdTransportadora.ToString().PadLeft(3, '0')} - {volume.TransportadoraNome}",
+                CodigoEndereco = volume.CodigoEndereco ?? "Não instalado",
                 NumeroPedido = volume.NumeroPedido.ToString(),
-                NumeroVolume = volume.NumeroVolume.ToString()
+                NumeroVolume = volume.NumeroVolume.ToString(),
+                StatusVolume = volume.StatusVolume
             }));
 
             return DataTableResult.FromModel(new DataTableResponseModel

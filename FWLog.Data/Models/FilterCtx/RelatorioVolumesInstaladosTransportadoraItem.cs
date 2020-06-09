@@ -2,12 +2,16 @@
 {
     public class RelatorioVolumesInstaladosTransportadoraItem
     {
-        public string Transportadora { get; set; }
+        public long IdTransportadora { get; set; }
+
+        public string TransportadoraNome { get; set; }
 
         public string CodigoEndereco { get; set; }
 
         public int NumeroPedido { get; set; }
 
         public int NumeroVolume { get; set; }
+
+        public string StatusVolume { get; set; }
     }
 }
