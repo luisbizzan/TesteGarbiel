@@ -38,10 +38,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -61,10 +57,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -83,10 +75,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
 
             return ApiOk();
@@ -113,10 +101,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
         }
 
@@ -177,10 +161,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
         }
 
