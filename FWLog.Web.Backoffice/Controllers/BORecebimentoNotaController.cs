@@ -432,7 +432,7 @@ namespace FWLog.Web.Backoffice.Controllers
             Lote lote = _uow.LoteRepository.PesquisarLotePorNotaFiscal(id);
             List<NotaFiscalItem> notaFiscalItens = _uow.NotaFiscalItemRepository.ObterItens(id);
             bool devolucaoTotal = true;
-            
+
             foreach (var item in notaFiscalItens)
             {
                 if (item.Quantidade != item.QuantidadeDevolucao)
@@ -1412,11 +1412,6 @@ namespace FWLog.Web.Backoffice.Controllers
             if (empresaConfig == null)
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "As configurações da empresa não foram encontradas. Por favor, tente novamente!");
 
-            if (lote.LoteVolumes.Any(a => a.IdEnderecoArmazenagem.HasValue))
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Existem volumes do lote instalados. Favor desinstalar todos antes de conferir.");
-            }
-
             var model = new BOEntradaConferenciaViewModel
             {
                 IdNotaFiscal = lote.NotaFiscal.IdNotaFiscal,
@@ -1681,8 +1676,6 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-
-
         [HttpPost]
         public async Task<JsonResult> ValidarPermissaoDevolucaoTotal()
         {
@@ -1719,9 +1712,6 @@ namespace FWLog.Web.Backoffice.Controllers
 
         }
 
-
-
-
         [HttpPost]
         public async Task<JsonResult> ValidarAcessoDevolucaoTotal(string usuario, string senha)
         {
@@ -1755,7 +1745,6 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
-
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
         public async Task<JsonResult> RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo, int idTipoConferencia)
         {
@@ -1774,7 +1763,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 //Registrar conferência.
-                var conferenciaRegistro = await _conferenciaService.RegistrarConferencia(conferencia.Lote, conferencia.Produto, IdUsuario, inicioConferencia, idTipoConferencia, quantidadePorCaixa, quantidadeCaixa).ConfigureAwait(false);
+                var conferenciaRegistro = await _conferenciaService.RegistrarConferencia(conferencia.Lote, conferencia.Produto, IdUsuario, inicioConferencia, idTipoConferencia, quantidadePorCaixa, quantidadeCaixa, IdEmpresa).ConfigureAwait(false);
 
                 #region Impressão Automática de Etiquetas
 
@@ -2703,6 +2692,5 @@ namespace FWLog.Web.Backoffice.Controllers
                 Data = result
             });
         }
-
     }
 }
