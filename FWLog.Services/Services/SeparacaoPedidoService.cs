@@ -986,17 +986,15 @@ namespace FWLog.Services.Services
             {
                 try
                 {
-                    var pedidoVenda = new PedidoVenda()
-                    {
-                        IdPedido = pedido.IdPedido,
-                        IdCliente = pedido.IdCliente,
-                        IdEmpresa = pedido.IdEmpresa,
-                        IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao,
-                        IdRepresentante = pedido.IdRepresentante,
-                        IdTransportadora = pedido.IdTransportadora,
-                        NroPedidoVenda = pedido.NroPedido,
-                        NroVolumes = 0 //Inicialmente salva com 0. Posteriormente, o valor é atualizado.
-                    };
+                    PedidoVenda pedidoVenda = new PedidoVenda();
+
+                    pedidoVenda.IdPedido = pedido.IdPedido;
+                    pedidoVenda.IdCliente = pedido.IdCliente;
+                    pedidoVenda.IdEmpresa = pedido.IdEmpresa;
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao;
+                    pedidoVenda.IdRepresentante = pedido.IdRepresentante;
+                    pedidoVenda.IdTransportadora = pedido.IdTransportadora;
+                    pedidoVenda.NroPedidoVenda = pedido.NroPedido;
 
                     //Agrupa os itens do pedido por produto. 
                     var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido);
@@ -1075,6 +1073,8 @@ namespace FWLog.Services.Services
                                     {
                                         pedidoVendaProdutos.Add(new PedidoVendaProduto()
                                         {
+                                            IdPedidoVenda = pedidoVenda.IdPedidoVenda,
+                                            IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume,
                                             IdProduto = item.Produto.IdProduto,
                                             IdEnderecoArmazenagem = item.EnderecoSeparacao.IdEnderecoArmazenagem.Value,
                                             IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
@@ -1114,10 +1114,13 @@ namespace FWLog.Services.Services
                     pedidoVenda.PedidoVendaVolumes = pedidoVendaVolumes;
 
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
+                    pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
 
                     using (var transacao = _unitOfWork.CreateTransactionScope())
                     {
                         _unitOfWork.PedidoVendaRepository.Add(pedidoVenda);
+
+                        _unitOfWork.PedidoRepository.Update(pedido);
 
                         _unitOfWork.SaveChanges();
 
@@ -1126,9 +1129,6 @@ namespace FWLog.Services.Services
                         {
                             await ImprimirEtiquetaVolumeSeparacao(item.Volume, item.NumeroVolume, item.GrupoCorredor, pedido, item.Centena, item.CorredorinicioSeparacao);
                         }
-
-                        //Atualiza o status do Pedido para Enviado Separação.
-                        await _pedidoService.AtualizarStatus(pedido.IdPedido, PedidoVendaStatusEnum.EnviadoSeparacao);
 
                         transacao.Complete();
                     }                 

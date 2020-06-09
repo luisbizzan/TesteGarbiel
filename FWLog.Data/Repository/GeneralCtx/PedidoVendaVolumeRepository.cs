@@ -72,13 +72,15 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             var query = baseQuery.Select(pedidoVendaVolume => new RelatorioVolumesInstaladosTransportadoraItem
             {
-                Transportadora = pedidoVendaVolume.PedidoVenda.Transportadora.NomeFantasia,
+                IdTransportadora = pedidoVendaVolume.PedidoVenda.IdTransportadora,
+                TransportadoraNome = pedidoVendaVolume.PedidoVenda.Transportadora.NomeFantasia,
                 CodigoEndereco = pedidoVendaVolume.EnderecoTransportadora.Codigo,
                 NumeroPedido = pedidoVendaVolume.PedidoVenda.NroPedidoVenda,
-                NumeroVolume = pedidoVendaVolume.NroVolume
+                NumeroVolume = pedidoVendaVolume.NroVolume,
+                StatusVolume = pedidoVendaVolume.PedidoVendaStatus.Descricao
             });
 
-            return query;
+            return query.OrderBy(q => q.IdTransportadora).ThenBy(q => q.NumeroPedido).ThenBy(q => q.NumeroVolume);
         }
 
         public List<RelatorioVolumesInstaladosTransportadoraItem> BuscarDadosVolumePorTransportadora(DataTableFilter<RelatorioVolumesInstaladosTransportadoraFiltro> filtro, out int totalRecordsFiltered, out int totalRecords)
@@ -89,15 +91,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             totalRecordsFiltered = query.Count();
 
-            var orderByColumn = filtro.OrderByColumn;
-
-            if (orderByColumn == "0")
-            {
-                orderByColumn = "Transportadora";
-            }
-
-            var response = query.OrderBy(orderByColumn, filtro.OrderByDirection)
-                                .Skip(filtro.Start)
+            var response = query.Skip(filtro.Start)
                                 .Take(filtro.Length);
 
             return response.ToList();

@@ -9,6 +9,8 @@
         public string CodigoDeBarras { get; set; }
         public int? ProdutoStatusId { get; set; }
         public string ProdutoStatus { get; set; }
+        public int? LocacaoSaldoId { get; set; }
+        public string LocacaoSaldo { get; set; }
         public long? IdPontoArmazenagem { get; set; }
         public long? IdNivelArmazenagem { get; set; }
         public long? IdEnderecoArmazenagem { get; set; }

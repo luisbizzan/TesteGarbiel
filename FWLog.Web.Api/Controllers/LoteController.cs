@@ -107,7 +107,7 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                _loteService.RetirarLoteVolume(requisicao, IdEmpresa, IdUsuario);
+                _loteService.ValidarERetirarLoteVolume(requisicao, IdEmpresa, IdUsuario);
 
                 return ApiOk();
             }

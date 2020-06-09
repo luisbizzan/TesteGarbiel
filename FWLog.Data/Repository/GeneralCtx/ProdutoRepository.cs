@@ -98,13 +98,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             if (filter.CustomFilter.ProdutoStatus.HasValue)
             {
-                //Sem Locação
-                if (filter.CustomFilter.ProdutoStatus == 2)
-                {
-                    query = query.Where(x => x.EnderecoArmazenagem == null);
-                }
-                //Ativo
-                else if (filter.CustomFilter.ProdutoStatus == 1)
+                if (filter.CustomFilter.ProdutoStatus == 1)
                 {
                     query = query.Where(x => x.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.Ativo);
                 }
@@ -112,6 +106,30 @@ namespace FWLog.Data.Repository.GeneralCtx
                 else
                 {
                     query = query.Where(x => x.IdProdutoEstoqueStatus != ProdutoEstoqueStatusEnum.Ativo);
+                }
+            }
+
+            if (filter.CustomFilter.LocacaoSaldo.HasValue)
+            {
+                //Sem Locação/Sem Saldo
+                if (filter.CustomFilter.LocacaoSaldo == 0)
+                {
+                    query = query.Where(x => x.EnderecoArmazenagem == null && x.Saldo == 0);
+                }
+                //Sem Locação/Com Saldo
+                else if (filter.CustomFilter.LocacaoSaldo == 1)
+                {
+                    query = query.Where(x => x.EnderecoArmazenagem == null && x.Saldo > 0);
+                }
+                //Com Locação/Sem Saldo
+                else if (filter.CustomFilter.LocacaoSaldo == 2)
+                {
+                    query = query.Where(x => x.EnderecoArmazenagem != null && x.Saldo == 0);
+                }
+                //Com Locação/Com Saldo
+                else if (filter.CustomFilter.LocacaoSaldo == 3)
+                {
+                    query = query.Where(x => x.EnderecoArmazenagem != null && x.Saldo > 0);
                 }
             }
 
@@ -137,6 +155,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 Referencia = e.Produto.Referencia,
                 Descricao = e.Produto.Descricao,
                 Peso = e.Produto.PesoBruto,
+                Saldo = e.Saldo,
                 Largura = e.Produto.Largura,
                 Altura = e.Produto.Altura,
                 Comprimento = e.Produto.Comprimento,
@@ -160,6 +179,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 Referencia = e.Referencia,
                 Descricao = e.Descricao,
                 Peso = e.Peso.ToString("n2"),
+                Saldo = e.Saldo.ToString(),
                 Largura = e.Largura?.ToString("n2"),
                 Altura = e.Altura?.ToString("n2"),
                 Comprimento = e.Comprimento?.ToString("n2"),
