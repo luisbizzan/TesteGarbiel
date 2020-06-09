@@ -36,10 +36,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -114,18 +110,18 @@ namespace FWLog.Web.Api.Controllers
                     IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem
                 };
 
-                _armazenagemService.ValidarEnderecoInstalacao(validarEnderecoRequisicao);
+                var temOutrosProdutosInstalados = _armazenagemService.ValidarEnderecoInstalacao(validarEnderecoRequisicao);
+
+                return ApiOk(new ValidarEnderecoInstalacaoModelResposta
+                {
+                    TemOutrosProdutosInstalados = temOutrosProdutosInstalados
+                });
             }
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
-            return ApiOk();
         }
 
         [Route("api/v1/armazenagem/instalar")]
@@ -150,10 +146,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
 
             return ApiOk();
@@ -265,10 +257,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -285,10 +273,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -304,10 +288,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
 
             return ApiOk();
@@ -333,10 +313,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
 
             return ApiOk();
@@ -364,10 +340,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -383,10 +355,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
 
             return ApiOk();
@@ -419,10 +387,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
         }
 
@@ -479,10 +443,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException exception)
             {
                 return ApiBadRequest(exception.Message);
-            }
-            catch
-            {
-                throw;
             }
 
             return ApiOk();
@@ -660,7 +620,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-
         }
     }
 }
