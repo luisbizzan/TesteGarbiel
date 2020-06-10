@@ -207,7 +207,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var viewModel = Mapper.Map<EnderecoArmazenagemDetalhesViewModel>(enderecoArmazenagem);
 
-            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarRegistrosPorEndereco(viewModel.IdEnderecoArmazenagem);
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(viewModel.IdEnderecoArmazenagem);
 
             // Popula Itens na lista de produtos do Endereço Armazenagem
             loteProdutoEndereco.ForEach(lpe =>

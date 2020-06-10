@@ -249,7 +249,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                await _atividadeEstoqueService.FinalizarConferenciaProdutoForaLinhaRequisicao(requisicao?.Corredor ?? 0,
+                await _atividadeEstoqueService.FinalizarConferenciaProdutoForaLinha(requisicao?.Corredor ?? 0,
                                                                                     requisicao?.IdEnderecoArmazenagem ?? 0,
                                                                                     requisicao?.IdProduto ?? 0,
                                                                                     requisicao?.Quantidade,
@@ -276,7 +276,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                await _atividadeEstoqueService.FinalizarConferenciaEnderecoRequisicao(requisicao, IdEmpresa, IdUsuario);
+                await _atividadeEstoqueService.FinalizarConferenciaEndereco(requisicao, IdEmpresa, IdUsuario);
 
                 return ApiOk();
             }

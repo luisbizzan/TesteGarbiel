@@ -370,16 +370,19 @@ namespace FWLog.Web.Api.Controllers
 
                 var response = new ConsultaDetalhesEnderecoArmazenagemResposta
                 {
-                    IdLoteProdutoEndereco = detalhesEnderecoArmazenagem.IdLoteProdutoEndereco,
-                    IdEmpresa = detalhesEnderecoArmazenagem.IdEmpresa,
-                    IdLote = detalhesEnderecoArmazenagem.IdLote,
-                    IdProduto = detalhesEnderecoArmazenagem.IdProduto,
-                    ReferenciaProduto = detalhesEnderecoArmazenagem.Produto.Referencia,
-                    IdEnderecoArmazenagem = detalhesEnderecoArmazenagem.IdEnderecoArmazenagem,
-                    Quantidade = detalhesEnderecoArmazenagem.Quantidade,
-                    CodigoUsuarioInstalacao = detalhesEnderecoArmazenagem.AspNetUsers.UserName,
-                    DataHoraInstalacao = detalhesEnderecoArmazenagem.DataHoraInstalacao,
-                    PesoTotal = detalhesEnderecoArmazenagem.PesoTotal
+                    ListaDetalhes = detalhesEnderecoArmazenagem.Select(item => new DetalhesEnderecoArmazenagemItem
+                    {
+                        IdLoteProdutoEndereco = item.IdLoteProdutoEndereco,
+                        IdEmpresa = item.IdEmpresa,
+                        IdLote = item.IdLote,
+                        IdProduto = item.IdProduto,
+                        ReferenciaProduto = item.Produto.Referencia,
+                        IdEnderecoArmazenagem = item.IdEnderecoArmazenagem,
+                        Quantidade = item.Quantidade,
+                        CodigoUsuarioInstalacao = item.AspNetUsers.UserName,
+                        DataHoraInstalacao = item.DataHoraInstalacao,
+                        PesoTotal = item.PesoTotal
+                    }).ToList()
                 };
 
                 return ApiOk(response);
@@ -415,7 +418,8 @@ namespace FWLog.Web.Api.Controllers
                 _armazenagemService.ValidarQuantidadeAbastecer(requisicao?.IdEnderecoArmazenagem ?? 0,
                                                                 requisicao?.IdLote ?? 0,
                                                                 requisicao?.IdProduto ?? 0,
-                                                                requisicao?.Quantidade ?? 0);
+                                                                requisicao?.Quantidade ?? 0,
+                                                                IdEmpresa);
             }
             catch (BusinessException ex)
             {

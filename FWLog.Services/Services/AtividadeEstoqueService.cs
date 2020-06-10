@@ -36,7 +36,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public void ValidarAtualizacaoAtividade(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao, string IdUsuario)
+        public void ValidarAtualizacaoAtividade(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao, string idUsuario)
         {
             if (atividadeEstoqueRequisicao.IdAtividadeEstoque <= 0)
             {
@@ -50,7 +50,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("A atividade informada não foi encontrada.");
             }
 
-            var usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(IdUsuario);
+            var usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(idUsuario);
 
             if (usuario == null)
             {
@@ -185,7 +185,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public bool AtualizarAtividadeAbastecerPicking(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao, long IdEmpresa, string IdUsuario)
+        public bool AtualizarAtividadeAbastecerPicking(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao, long idEmpresa, string idUsuario)
         {
             bool finalizouuAtividadeEstoque = false;
 
@@ -195,11 +195,11 @@ namespace FWLog.Services.Services
 
             _armazenagemService.ValidarLoteAbastecer(atividade.IdEnderecoArmazenagem, atividadeEstoqueRequisicao.IdLote, atividade.IdProduto);
 
-            _armazenagemService.ValidarQuantidadeAbastecer(atividade.IdEnderecoArmazenagem, atividadeEstoqueRequisicao.IdLote, atividade.IdProduto, atividadeEstoqueRequisicao.QuantidadeFinal);
+            _armazenagemService.ValidarQuantidadeAbastecer(atividade.IdEnderecoArmazenagem, atividadeEstoqueRequisicao.IdLote, atividade.IdProduto, atividadeEstoqueRequisicao.QuantidadeFinal, idEmpresa);
 
             var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(atividadeEstoqueRequisicao.IdLote, atividade.IdProduto);
 
-            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(atividade.IdEnderecoArmazenagem);
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(atividade.IdEnderecoArmazenagem, atividadeEstoqueRequisicao.IdLote, atividade.IdProduto, idEmpresa);
 
             var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(atividade.IdEnderecoArmazenagem);
 
@@ -219,11 +219,11 @@ namespace FWLog.Services.Services
 
                     var loteMovimentacao = new LoteMovimentacao
                     {
-                        IdEmpresa = IdEmpresa,
+                        IdEmpresa = idEmpresa,
                         IdLote = atividadeEstoqueRequisicao.IdLote,
                         IdProduto = atividade.IdProduto,
                         IdEnderecoArmazenagem = atividade.IdEnderecoArmazenagem,
-                        IdUsuarioMovimentacao = IdUsuario,
+                        IdUsuarioMovimentacao = idUsuario,
                         Quantidade = atividadeEstoqueRequisicao.QuantidadeFinal,
                         IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Abastecimento,
                         DataHora = DateTime.Now
@@ -236,7 +236,7 @@ namespace FWLog.Services.Services
                     {
                         atividade.QuantidadeInicial = atividadeEstoqueRequisicao.QuantidadeInicial;
                         atividade.QuantidadeFinal = atividade.QuantidadeInicial + atividadeEstoqueRequisicao.QuantidadeFinal;
-                        atividade.IdUsuarioExecucao = IdUsuario;
+                        atividade.IdUsuarioExecucao = idUsuario;
                         atividade.DataExecucao = DateTime.Now;
                         atividade.Finalizado = true;
 
@@ -253,8 +253,8 @@ namespace FWLog.Services.Services
                     IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                     IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade,
                     Descricao = $"Abasteceu o produto {loteProdutoEndereco.Produto.Referencia} do lote {loteProduto.Lote.IdLote} no endereço de picking {loteProdutoEndereco.EnderecoArmazenagem.Codigo}",
-                    IdEmpresa = IdEmpresa,
-                    IdUsuario = IdUsuario
+                    IdEmpresa = idEmpresa,
+                    IdUsuario = idUsuario
                 };
 
                 _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
@@ -365,7 +365,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task FinalizarConferenciaProdutoForaLinhaRequisicao(int corredor, long idEnderecoArmazenagem, long idProduto, int? quantidade, long idEmpresa, string idUsuarioExecucao)
+        public async Task FinalizarConferenciaProdutoForaLinha(int corredor, long idEnderecoArmazenagem, long idProduto, int? quantidade, long idEmpresa, string idUsuarioExecucao)
         {
             if (quantidade.HasValue)
             {
@@ -388,6 +388,8 @@ namespace FWLog.Services.Services
                 }
             }
 
+            var idLote = 0; //TODO: Recuperar IdLote
+
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
                 var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(idEmpresa,
@@ -396,7 +398,7 @@ namespace FWLog.Services.Services
                                                                                             idProduto,
                                                                                             false);
 
-                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
 
                 var quantidadeFinal = quantidade ?? 0;
 
@@ -452,11 +454,13 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task FinalizarConferenciaEnderecoRequisicao(FinalizarConferenciaEnderecoRequisicao requisicao, long idEmpresa, string idUsuarioExecucao)
+        public async Task FinalizarConferenciaEndereco(FinalizarConferenciaEnderecoRequisicao requisicao, long idEmpresa, string idUsuarioExecucao)
         {
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                LoteProdutoEndereco loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(requisicao.IdEnderecoArmazenagem);
+                var idLote = 0; //TODO: Recuperar IdLote
+
+                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(requisicao.IdEnderecoArmazenagem, idLote, requisicao.IdProduto, idEmpresa);
 
                 if (loteProdutoEndereco == null)
                 {
