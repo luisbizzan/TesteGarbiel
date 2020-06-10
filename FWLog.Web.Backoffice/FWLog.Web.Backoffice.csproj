@@ -371,6 +371,7 @@
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\LoteEtiquetaViewModel.cs" />
+    <Compile Include="Models\ExpedicaoCtx\CadastrarVolumeViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\ConfirmaReimpressaoVolumeViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\ReimpressaoEtiquetaVolumeViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\MovimentacaoVolumesDetalheViewModel.cs" />
@@ -751,6 +752,7 @@
     <Content Include="Views\CaixaRecusa\Editar.cshtml" />
     <Content Include="Views\CaixaRecusa\Detalhes.cshtml" />
     <Content Include="Views\Expedicao\ConfirmarReimpressaoEtiquetaVolume.cshtml" />
+    <Content Include="Views\Expedicao\CadastrarVolume.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

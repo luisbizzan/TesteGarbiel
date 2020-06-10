@@ -364,5 +364,45 @@ namespace FWLog.Web.Backoffice.Controllers
                 }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.CaixaRecusa.Cadastrar)]
+        public ActionResult CadastrarVolume()
+        {
+            var model = new CadastrarVolumeViewModel()
+            {
+                IdEmpresa = IdEmpresa
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Caixa.Cadastrar)]
+        public JsonResult CadastrarVolume(List<CadastrarVolumeViewModel> listaCaixaRecusa)
+        {
+            try
+            {
+                //var caixaRecusa = Mapper.Map<List<CaixaRecusa>>(listaCaixaRecusa);
+
+                //_caixaRecusaService.Cadastrar(caixaRecusa, IdEmpresa);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Caixa e produtos de recusa cadastradros com sucesso."
+                });
+            }
+            catch (BusinessException businessException)
+            {
+                ModelState.AddModelError(string.Empty, businessException.Message);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = !String.IsNullOrEmpty(businessException.Message) ? businessException.Message : "Erro ao salvar caixa e produtos de recusa."
+                });
+            }
+        }
     }
 }
