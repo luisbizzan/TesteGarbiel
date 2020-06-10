@@ -73,5 +73,8 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         [Display(Name = "Total")]
         public int Total { get; set; }
+
+        [Display(Name = "Excluído")]
+        public int VolumeExcluido { get; set; }
     }
 }

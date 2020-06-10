@@ -27,6 +27,9 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         [Display(Name = "Volume")]
         public string NumeroVolume { get; set; }
+
+        [Display(Name = "Status Volume")]
+        public string StatusVolume { get; set; }
     }
 
     public class RelatorioVolumesInstaladosTransportadoraFilterViewModel

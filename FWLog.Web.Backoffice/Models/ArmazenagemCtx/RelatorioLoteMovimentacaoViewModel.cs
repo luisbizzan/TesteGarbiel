@@ -21,8 +21,10 @@ namespace FWLog.Web.Backoffice.Models.ArmazenagemCtx
     {
         public long? IdProduto { get; set; }
 
+        public string IdUsuario { get; set; }
+
         [Display(Name = "Lote")]
-        public long IdLote { get; set; }
+        public string IdLote { get; set; }
 
         [Display(Name = "Referência")]
         public string ReferenciaProduto { get; set; }

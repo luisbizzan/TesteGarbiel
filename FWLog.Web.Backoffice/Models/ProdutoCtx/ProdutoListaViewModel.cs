@@ -24,6 +24,8 @@ namespace FWLog.Web.Backoffice.Models.ProdutoCtx
         public string Descricao { get; set; }
         [Display(Name = "Peso")]
         public string Peso { get; set; }
+        [Display(Name = "Saldo")]
+        public string Saldo { get; set; }
         [Display(Name = "Largura")]
         public string Largura { get; set; }
         [Display(Name = "Altura")]
@@ -60,5 +62,7 @@ namespace FWLog.Web.Backoffice.Models.ProdutoCtx
         public string CodigoDeBarras { get; set; }
         [Display(Name = "Status")]
         public int? ProdutoStatus { get; set; }
+        [Display(Name = "Locação/Saldo")]
+        public int? LocacaoSaldo { get; set; }
     }
 }

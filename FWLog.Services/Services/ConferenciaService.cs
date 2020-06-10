@@ -299,14 +299,19 @@ namespace FWLog.Services.Services
             return conferenciaResponse;
         }
 
-        public async Task<ConferenciaResponse> RegistrarConferencia(Lote lote, Produto produto, string idUsuario, string inicioConferencia, int idTipoConferencia, int quantidadePorCaixa, int quantidadeCaixa)
+        public async Task<ConferenciaResponse> RegistrarConferencia(Lote lote, Produto produto, string idUsuario, string inicioConferencia, int idTipoConferencia, int quantidadePorCaixa, int quantidadeCaixa, long idEmpresa)
         {
-            try
+            using (var transacao = _uow.CreateTransactionScope())
             {
                 if (lote.IdLoteStatus != LoteStatusEnum.Conferencia)
                 {
                     lote.IdLoteStatus = LoteStatusEnum.Conferencia;
                     _uow.LoteRepository.Update(lote);
+
+                    foreach (var volume in lote.LoteVolumes.Where(lv => lv.IdEnderecoArmazenagem.HasValue))
+                    {
+                        _loteService.RetirarLoteVolume(volume, idEmpresa, idUsuario);
+                    }
 
                     await _loteService.AtualizarNotaFiscalIntegracao(lote.NotaFiscal, lote.IdLoteStatus);
                 }
@@ -320,7 +325,7 @@ namespace FWLog.Services.Services
                 TimeSpan _tempoConferencia = dataHoraFimConferencia - dataHoraInicioConferencia;
                 DateTime tempoConferencia = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, _tempoConferencia.Hours, _tempoConferencia.Minutes, _tempoConferencia.Seconds);
 
-                LoteConferencia loteConferencia = new LoteConferencia()
+                var loteConferencia = new LoteConferencia()
                 {
                     IdLote = lote.IdLote,
                     IdTipoConferencia = (TipoConferenciaEnum)idTipoConferencia,
@@ -336,13 +341,11 @@ namespace FWLog.Services.Services
 
                 _uow.SaveChanges();
 
-                conferenciaResponse.Lote = lote;
-                conferenciaResponse.Produto = produto;
+                transacao.Complete();
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            conferenciaResponse.Lote = lote;
+            conferenciaResponse.Produto = produto;
 
             return conferenciaResponse;
         }

@@ -243,6 +243,11 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido informado já foi separado.");
             }
 
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeExcluido)
+            {
+                throw new BusinessException("O pedido foi excluído.");
+            }
+
             if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento || pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado)
             {
                 throw new BusinessException("O pedido informado teve a separação cancelada.");
@@ -259,6 +264,11 @@ namespace FWLog.Services.Services
             if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
             {
                 throw new BusinessException("O volume informado já foi separado.");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeExcluido)
+            {
+                throw new BusinessException("O pedido foi excluído.");
             }
 
             if (pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.PendenteCancelamento || pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.Cancelado)
@@ -569,8 +579,17 @@ namespace FWLog.Services.Services
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                var novoStatusSeparacao = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
+                PedidoVendaStatusEnum novoStatusSeparacao;
                 var dataProcessamento = DateTime.Now;
+
+                if (pedidoVendaVolume.PedidoVendaProdutos.Where(w => w.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProdutoZerado).Count() == pedidoVendaVolume.PedidoVendaProdutos.Count)
+                {
+                    novoStatusSeparacao = PedidoVendaStatusEnum.VolumeExcluido;
+                }
+                else
+                {
+                    novoStatusSeparacao = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
+                }
 
                 pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
                 pedidoVendaVolume.DataHoraFimSeparacao = dataProcessamento;
@@ -592,6 +611,18 @@ namespace FWLog.Services.Services
                     _unitOfWork.SaveChanges();
 
                     await AtualizarQtdConferidaIntegracao(pedidoVenda);
+
+                    await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, novoStatusSeparacao);
+
+                    finalizouPedidoVenda = true;
+                }
+                else if (todosProdutosVenda.Where(produtoVendaProduto => produtoVendaProduto.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProdutoZerado).Count() == todosProdutosVenda.Count)
+                {
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeExcluido;
+                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeExcluido;
+                    pedidoVenda.DataHoraFimSeparacao = dataProcessamento;
+
+                    _unitOfWork.SaveChanges();
 
                     await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, novoStatusSeparacao);
 
@@ -745,6 +776,11 @@ namespace FWLog.Services.Services
                 {
                     pedidoVendaProduto.IdUsuarioAutorizacaoZerar = idUsuarioAutorizacaoZerarPedido;
                     pedidoVendaProduto.DataHoraAutorizacaoZerarPedido = dataProcessamento;
+
+                    if (qtdSeparada == 0)
+                    {
+                        pedidoVendaProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProdutoZerado;
+                    }
                 }
 
                 _unitOfWork.PedidoVendaProdutoRepository.Update(pedidoVendaProduto);
@@ -950,17 +986,15 @@ namespace FWLog.Services.Services
             {
                 try
                 {
-                    var pedidoVenda = new PedidoVenda()
-                    {
-                        IdPedido = pedido.IdPedido,
-                        IdCliente = pedido.IdCliente,
-                        IdEmpresa = pedido.IdEmpresa,
-                        IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao,
-                        IdRepresentante = pedido.IdRepresentante,
-                        IdTransportadora = pedido.IdTransportadora,
-                        NroPedidoVenda = pedido.NroPedido,
-                        NroVolumes = 0 //Inicialmente salva com 0. Posteriormente, o valor é atualizado.
-                    };
+                    PedidoVenda pedidoVenda = new PedidoVenda();
+
+                    pedidoVenda.IdPedido = pedido.IdPedido;
+                    pedidoVenda.IdCliente = pedido.IdCliente;
+                    pedidoVenda.IdEmpresa = pedido.IdEmpresa;
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao;
+                    pedidoVenda.IdRepresentante = pedido.IdRepresentante;
+                    pedidoVenda.IdTransportadora = pedido.IdTransportadora;
+                    pedidoVenda.NroPedidoVenda = pedido.NroPedido;
 
                     //Agrupa os itens do pedido por produto. 
                     var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido);
@@ -1039,6 +1073,8 @@ namespace FWLog.Services.Services
                                     {
                                         pedidoVendaProdutos.Add(new PedidoVendaProduto()
                                         {
+                                            IdPedidoVenda = pedidoVenda.IdPedidoVenda,
+                                            IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume,
                                             IdProduto = item.Produto.IdProduto,
                                             IdEnderecoArmazenagem = item.EnderecoSeparacao.IdEnderecoArmazenagem.Value,
                                             IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
@@ -1078,10 +1114,13 @@ namespace FWLog.Services.Services
                     pedidoVenda.PedidoVendaVolumes = pedidoVendaVolumes;
 
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
+                    pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
 
                     using (var transacao = _unitOfWork.CreateTransactionScope())
                     {
                         _unitOfWork.PedidoVendaRepository.Add(pedidoVenda);
+
+                        _unitOfWork.PedidoRepository.Update(pedido);
 
                         _unitOfWork.SaveChanges();
 
@@ -1090,9 +1129,6 @@ namespace FWLog.Services.Services
                         {
                             await ImprimirEtiquetaVolumeSeparacao(item.Volume, item.NumeroVolume, item.GrupoCorredor, pedido, item.Centena, item.CorredorinicioSeparacao);
                         }
-
-                        //Atualiza o status do Pedido para Enviado Separação.
-                        await _pedidoService.AtualizarStatus(pedido.IdPedido, PedidoVendaStatusEnum.EnviadoSeparacao);
 
                         transacao.Complete();
                     }                 
@@ -1809,7 +1845,7 @@ namespace FWLog.Services.Services
                 return await BuscaItensNaoCubicadosSemFrancionamento(agrupador, listaItensDoPedido, listaCaixasMaisComum);
             }
             catch (Exception)
-            { 
+            {
                 throw;
             }
         }
@@ -2324,6 +2360,10 @@ namespace FWLog.Services.Services
                     return "NF. Despachada";
                 case PedidoVendaStatusEnum.RomaneioImpresso:
                     return "Env. Transp.";
+                case PedidoVendaStatusEnum.VolumeExcluido:
+                    return "Vol. Excluído.";
+                case PedidoVendaStatusEnum.ProdutoZerado:
+                    return "Prod. Zerardo.";
                 default:
                     return null;
             }

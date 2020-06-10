@@ -770,7 +770,9 @@ namespace FWLog.Services.Services
                 Descricao = request.Descricao,
                 IdEmpresa = request.IdEmpresa,
                 NomeUsuario = request.NomeUsuario,
-                ProdutoStatusId = request.ProdutoStatus,
+                ProdutoStatusId = request.ProdutoStatusId,
+                ProdutoStatus = request.ProdutoStatus,
+                LocacaoSaldoId = request.LocacaoSaldoId,
                 Referencia = request.Referencia,
                 IdEnderecoArmazenagem = request.IdEnderecoArmazenagem,
                 IdNivelArmazenagem = request.IdNivelArmazenagem,
@@ -803,13 +805,9 @@ namespace FWLog.Services.Services
 
             if (filter.ProdutoStatusId.HasValue)
             {
-                //Sem Locação
-                if (filter.ProdutoStatusId == 2)
-                {
-                    query = query.Where(x => x.EnderecoArmazenagem == null);
-                }
+                
                 //Ativo
-                else if (filter.ProdutoStatusId == 1)
+                if (filter.ProdutoStatusId == 1)
                 {
                     query = query.Where(x => x.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.Ativo);
                 }
@@ -817,6 +815,30 @@ namespace FWLog.Services.Services
                 else
                 {
                     query = query.Where(x => x.IdProdutoEstoqueStatus != ProdutoEstoqueStatusEnum.Ativo);
+                }
+            }
+
+            if (filter.LocacaoSaldoId.HasValue)
+            {
+                //Sem Locação/Sem Saldo
+                if (filter.LocacaoSaldoId == 0)
+                {
+                    query = query.Where(x => x.EnderecoArmazenagem == null && x.Saldo == 0);
+                }
+                //Sem Locação/Com Saldo
+                else if (filter.LocacaoSaldoId == 1)
+                {
+                    query = query.Where(x => x.EnderecoArmazenagem == null && x.Saldo > 0);
+                }
+                //Com Locação/Sem Saldo
+                else if (filter.LocacaoSaldoId == 2)
+                {
+                    query = query.Where(x => x.EnderecoArmazenagem != null && x.Saldo == 0);
+                }
+                //Com Locação/Com Saldo
+                else if (filter.LocacaoSaldoId == 3)
+                {
+                    query = query.Where(x => x.EnderecoArmazenagem != null && x.Saldo > 0);
                 }
             }
 
@@ -851,6 +873,7 @@ namespace FWLog.Services.Services
                         Endereco = item.EnderecoArmazenagem?.Codigo ?? string.Empty,
                         Multiplo = item.Produto.MultiploVenda.ToString() ?? string.Empty,
                         Peso = item.Produto.PesoBruto.ToString("n2") ?? string.Empty,
+                        Saldo = item.Saldo.ToString(),
                         Status = item.IdProdutoEstoqueStatus.ToString() ?? string.Empty,
                         UnidadeMedida = item.Produto?.UnidadeMedida.Sigla ?? string.Empty,
                     };
@@ -953,7 +976,7 @@ namespace FWLog.Services.Services
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Comprimento: ", TextFormat.Bold);
-            paragraph.AddText(produtoEstoque.Produto.Comprimento?.ToString("n2"));
+            paragraph.AddText(produtoEstoque.Produto.Comprimento.HasValue ? produtoEstoque.Produto.Comprimento?.ToString("n2"): "-");
 
             row = tabela.AddRow();
             row.Cells[0].MergeRight = 1;
@@ -964,7 +987,40 @@ namespace FWLog.Services.Services
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Largura: ", TextFormat.Bold);
-            paragraph.AddText(produtoEstoque.Produto.Largura?.ToString("n2"));
+            paragraph.AddText(produtoEstoque.Produto.Largura.HasValue ? produtoEstoque.Produto.Largura?.ToString("n2"): "-");
+
+            row = tabela.AddRow();
+            row.Cells[0].MergeRight = 1;
+            paragraph = row.Cells[0].AddParagraph();
+            paragraph.AddFormattedText("Cubagem: ", TextFormat.Bold);
+            paragraph.AddText(produtoEstoque.Produto.MetroCubico.HasValue ? produtoEstoque.Produto.MetroCubico?.ToString("n2"): "-");
+
+            row.Cells[2].MergeRight = 1;
+            paragraph = row.Cells[2].AddParagraph();
+            paragraph.AddFormattedText("Altura: ", TextFormat.Bold);
+            paragraph.AddText(produtoEstoque.Produto.Altura.HasValue ? produtoEstoque.Produto.Altura?.ToString("n2") : "-");
+
+            row = tabela.AddRow();
+            row.Cells[0].MergeRight = 1;
+            paragraph = row.Cells[0].AddParagraph();
+            paragraph.AddFormattedText("Unidade de Medida: ", TextFormat.Bold);
+            paragraph.AddText(produtoEstoque.Produto.UnidadeMedida.Sigla);
+
+            row.Cells[2].MergeRight = 1;
+            paragraph = row.Cells[2].AddParagraph();
+            paragraph.AddFormattedText("Múltiplo: ", TextFormat.Bold);
+            paragraph.AddText(produtoEstoque.Produto.MultiploVenda.ToString("n2"));
+
+            row = tabela.AddRow();
+            row.Cells[0].MergeRight = 1;
+            paragraph = row.Cells[0].AddParagraph();
+            paragraph.AddFormattedText("Status: ", TextFormat.Bold);
+            paragraph.AddText(produtoEstoque.ProdutoEstoqueStatus.Descricao);
+
+            row.Cells[2].MergeRight = 1;
+            paragraph = row.Cells[2].AddParagraph();
+            paragraph.AddFormattedText("Saldo: ", TextFormat.Bold);
+            paragraph.AddText(produtoEstoque.Saldo.ToString());
 
             if (request.EnderecoImagem != null)
             {
@@ -1747,7 +1803,6 @@ namespace FWLog.Services.Services
                 NomeUsuario = labelUsuario,
                 Orientacao = Orientation.Portrait,
                 Titulo = "Relatório Volumes Instalados X Transportadora",
-
                 Filtros = new FwRelatorioDadosFiltro()
                 {
                     Transportadora = transportadora != null ? $"{transportadora.IdTransportadora} - {transportadora.NomeFantasia}" : null,
@@ -1767,13 +1822,14 @@ namespace FWLog.Services.Services
                 var tabela = document.Sections[0].AddTable();
 
                 tabela.Format.Font = new Font("Verdana", new Unit(9));
-                tabela.AddColumn(new Unit(185));
-                tabela.AddColumn(new Unit(185));
-                tabela.AddColumn(new Unit(185));
+                tabela.AddColumn(new Unit(115));
+                tabela.AddColumn(new Unit(115));
+                tabela.AddColumn(new Unit(115));
+                tabela.AddColumn(new Unit(180));
 
                 var row = tabela.AddRow();
 
-                var agrupamentoTransportadora = listaVolumesPorTransportadora.GroupBy(g => g.Transportadora).ToList();
+                var agrupamentoTransportadora = listaVolumesPorTransportadora.GroupBy(g => new { g.IdTransportadora, g.TransportadoraNome }).ToList();
 
                 foreach (var transportadoraVolumes in agrupamentoTransportadora)
                 {
@@ -1784,7 +1840,8 @@ namespace FWLog.Services.Services
                     {
                         Bold = true
                     };
-                    paragraph.AddText(transportadoraVolumes.Key);
+
+                    paragraph.AddText($"{transportadoraVolumes.Key.IdTransportadora} - {transportadoraVolumes.Key.TransportadoraNome}");
 
                     row.Cells[0].AddParagraph("Endereço");
                     row.Cells[0].Format.Font.Bold = true;
@@ -1792,6 +1849,8 @@ namespace FWLog.Services.Services
                     row.Cells[1].Format.Font.Bold = true;
                     row.Cells[2].AddParagraph("Volume");
                     row.Cells[2].Format.Font.Bold = true;
+                    row.Cells[3].AddParagraph("Status Volume");
+                    row.Cells[3].Format.Font.Bold = true;
 
                     var volumes = transportadoraVolumes.ToList();
 
@@ -1800,21 +1859,17 @@ namespace FWLog.Services.Services
                         row = tabela.AddRow();
 
                         paragraph = row.Cells[0].AddParagraph();
-                        paragraph.AddText(volume.CodigoEndereco ?? string.Empty);
+                        paragraph.AddText(volume.CodigoEndereco ?? "Não instalado");
 
                         paragraph = row.Cells[1].AddParagraph();
                         paragraph.AddText(volume.NumeroPedido.ToString());
 
                         paragraph = row.Cells[2].AddParagraph();
                         paragraph.AddText(volume.NumeroVolume.ToString());
-                    }
 
-                    //row = tabela.AddRow();
-                    //row = tabela.AddRow();
-                    //paragraph = row.Cells[0].AddParagraph(string.Concat("Saldo: "));
-                    //paragraph.Format.Font.Bold = true;
-                    //paragraph = row.Cells[2].AddParagraph(qtdeTotal.ToString());
-                    //paragraph.Format.Font.Bold = true;
+                        paragraph = row.Cells[3].AddParagraph();
+                        paragraph.AddText(volume.StatusVolume.ToString());
+                    }
 
                     row = tabela.AddRow();
                     row = tabela.AddRow();
@@ -1823,9 +1878,10 @@ namespace FWLog.Services.Services
                     tabela = document.Sections[0].AddTable();
                     tabela.Format.Font = new Font("Verdana", new Unit(9));
 
-                    tabela.AddColumn(new Unit(185));
-                    tabela.AddColumn(new Unit(185));
-                    tabela.AddColumn(new Unit(185));
+                    tabela.AddColumn(new Unit(115));
+                    tabela.AddColumn(new Unit(115));
+                    tabela.AddColumn(new Unit(115));
+                    tabela.AddColumn(new Unit(180));
 
                     row = tabela.AddRow();
                 }
