@@ -347,7 +347,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     {
                         var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorEndereco(item.IdEnderecoArmazenagem, IdEmpresa);
 
-                        if (produtoEstoque != null && produtoEstoque.IdEnderecoArmazenagem.HasValue)
+                        if (produtoEstoque != null)
                         {
                             if (viewModel.TamanhoEtiqueta == 1)
                             {
