@@ -231,6 +231,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
     <Compile Include="Controllers\CaixaRecusaController.cs" />
+    <Compile Include="Controllers\PedidoVendaVolumeController.cs" />
     <Compile Include="Controllers\ExpedicaoController.cs" />
     <Compile Include="Controllers\ArmazenagemController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
@@ -396,6 +397,7 @@
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemDetailsViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemListViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemPesquisaModalViewModel.cs" />
+    <Compile Include="Models\PedidoVendaVolumeCtx\PedidoVendaVolumeSearchModalViewModel.cs" />
     <Compile Include="Models\PerfilImpressoraCtx\PerfilImpressoraCreateViewModel.cs" />
     <Compile Include="Models\PerfilImpressoraCtx\PerfilImpressoraListViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemCadastroViewModel.cs" />
@@ -604,6 +606,7 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Etiqueta\locacao.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
+    <Content Include="Scripts\Views\Expedicao\cadastrarVolume.js" />
     <Content Include="Scripts\Views\Expedicao\confirmarReimpressaoEtiquetaVolume.js" />
     <Content Include="Scripts\Views\Expedicao\detalhesPedidoVolume.js" />
     <Content Include="Scripts\Views\Expedicao\movimentacaoVolumesDetalhes.js" />

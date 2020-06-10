@@ -188,5 +188,25 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return selectQuery.ToList();
         }
+
+        public IEnumerable<PedidoVendaVolumePesquisaModalLinhaTabela> ObterDadosParaDataTable(DataTableFilter<ClientePesquisaModalFiltro> filter, out int totalRecordsFiltered, out int totalRecords)
+        {
+            totalRecords = Entities.Cliente.Count();
+
+            IQueryable<PedidoVendaVolumePesquisaModalLinhaTabela> query = Entities.PedidoVendaVolume.AsNoTracking()
+                .Where(x => x.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido && x.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProdutoZerado)
+                //(filter.CustomFilter.IdCliente.HasValue == false || x.IdCliente == filter.CustomFilter.IdCliente) &&
+                //(filter.CustomFilter.RazaoSocial.Equals(string.Empty) || x.RazaoSocial.Contains(filter.CustomFilter.RazaoSocial)) &&
+                //(filter.CustomFilter.CNPJCPF.Equals(string.Empty) || x.CNPJCPF.Contains(filter.CustomFilter.CNPJCPF.Replace(".", "").Replace("/", "").Replace("-", ""))))
+                .Select(e => new PedidoVendaVolumePesquisaModalLinhaTabela
+                {
+                    IdPedido = e.PedidoVenda.IdPedidoVenda,
+                    NroVolume = e.NroVolume
+                });
+
+            totalRecordsFiltered = query.Count();
+
+            return query.PaginationResult(filter);
+        }
     }
 }

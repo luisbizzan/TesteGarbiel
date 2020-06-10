@@ -1,4 +1,6 @@
 ﻿using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
+using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +26,34 @@ namespace FWLog.Data.Repository.GeneralCtx
         public PedidoVendaProduto ObterPorIdPedidoVendaVolumeEIdProduto(long idPedidoVendaVolume, long idProduto)
         {
             return Entities.PedidoVendaProduto.FirstOrDefault(pvp => pvp.IdPedidoVendaVolume == idPedidoVendaVolume && pvp.IdProduto == idProduto);
+        }
+
+        public List<ProdutoPesquisaModalListaLinhaTabela> BuscarLista(DataTableFilter<ProdutoPesquisaModalFiltro> model, out int totalRecordsFiltered, out int totalRecords)
+        {
+            totalRecords = Entities.LoteConferencia.Where(w => w.IdLote == model.CustomFilter.IdLote).Count();
+
+            IQueryable<ProdutoPesquisaModalListaLinhaTabela> query = Entities.PedidoVendaProduto.AsNoTracking()
+               .Where(w => w.IdPedidoVendaVolume == model.CustomFilter.IdPedidoVendaVolume.Value && 
+               w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido && w.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProdutoZerado &&
+               (model.CustomFilter.Referencia.Equals(string.Empty) || w.Produto.Referencia.Contains(model.CustomFilter.Referencia)) &&
+               (model.CustomFilter.Descricao.Equals(string.Empty) || w.Produto.Descricao.Contains(model.CustomFilter.Descricao)) &&
+               (model.CustomFilter.Status.HasValue == false || w.Produto.Ativo == model.CustomFilter.Status))
+               .Select(s => new ProdutoPesquisaModalListaLinhaTabela
+               {
+                   IdProduto = s.IdProduto,
+                   Referencia = s.Produto.Referencia,
+                   Descricao = s.Produto.Descricao,
+                   Status = s.Produto.Ativo ? "Ativo" : "Inativo"
+               });
+
+            totalRecordsFiltered = query.Count();
+
+            query = query
+                .OrderBy(model.OrderByColumn, model.OrderByDirection)
+                .Skip(model.Start)
+                .Take(model.Length);
+
+            return query.ToList();
         }
     }
 }

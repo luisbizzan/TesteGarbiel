@@ -87,7 +87,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize]
-        public ActionResult SearchModal(long? id = null)
+        public ActionResult SearchModal(long? id = null, long? idPedidoVendaVolume = null)
         {
             var lista = new[]
             {
@@ -100,6 +100,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 Filter = new ProdutoSearchModalFilterViewModel()
                 {
                     IdLote = id,
+                    IdPedidoVendaVolume = idPedidoVendaVolume,
                     ListaStatus = new SelectList(lista, "Value", "Text")
                 }
             };
@@ -120,6 +121,12 @@ namespace FWLog.Web.Backoffice.Controllers
             if (filtro.CustomFilter.IdLote.HasValue)
             {
                 result = _unitOfWork.LoteConferenciaRepository.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);
+                _registrosFiltrados = registrosFiltrados;
+                _totalRegistros = totalRegistros;
+            }
+            else if (filtro.CustomFilter.IdPedidoVendaVolume.HasValue)
+            {
+                result = _unitOfWork.PedidoVendaProdutoRepository.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);
                 _registrosFiltrados = registrosFiltrados;
                 _totalRegistros = totalRegistros;
             }
