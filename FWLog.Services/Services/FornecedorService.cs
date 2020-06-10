@@ -23,60 +23,80 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task LimparIntegracao()
+        public async Task ConsultarFornecedor(bool somenteNovos = true)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
                 return;
             }
 
-            StringBuilder inner = new StringBuilder();
-            inner.Append("LEFT JOIN TSIEND ON TGFPAR.CODEND = TSIEND.CODEND ");
-            inner.Append("LEFT JOIN TSIBAI ON TGFPAR.CODBAI = TSIBAI.CODBAI ");
-            inner.Append("LEFT JOIN TSICID ON TGFPAR.CODCID = TSICID.CODCID ");
-            inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF");
+            var where = new StringBuilder();
+            where.Append("WHERE TGFPAR.FORNECEDOR = 'S' ");
 
-            StringBuilder where = new StringBuilder();
-            where.Append("WHERE ");        
-            where.Append("AND TGFPAR.FORNECEDOR = 'S' ");
-            where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
+            if (somenteNovos)
+            {
+                where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
+            }
+            else
+            {
+                where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
+            }
 
-            List<FornecedorIntegracao> fornecedoresIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<FornecedorIntegracao>(where.ToString(), inner.ToString());
+            int quantidadeChamadas = 0;
 
-            foreach (var fornecInt in fornecedoresIntegracao)
+            var fornecedorContadorIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<FornecedorContadorIntegracao>(where: where.ToString());
+
+            if (fornecedorContadorIntegracao != null)
             {
                 try
                 {
-                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", fornecInt.CodigoIntegracao.ToString() } };
+                    decimal contadorRegistros = Convert.ToInt32(fornecedorContadorIntegracao[0].Quantidade);
 
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", '1');
+                    if (contadorRegistros < 4999)
+                    {
+                        quantidadeChamadas = 1;
+                    }
+                    else
+                    {
+                        decimal div = contadorRegistros / 4999;
+                        quantidadeChamadas = Convert.ToInt32(Math.Ceiling(div));
+                    }
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(string.Format("Erro na limpeza de integração do Fornecedor: {0}.", fornecInt.CodigoIntegracao), ex);
+                    _log.Error("Erro na integração de Fornecedor", ex);
+                    return;
                 }
             }
-        }
 
-        public async Task ConsultarFornecedor()
-        {
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            {
-                return;
-            }
-
-            StringBuilder inner = new StringBuilder();
+            int offsetRows = 0;
+            var fornecedoresIntegracao = new List<FornecedorIntegracao>();
+            var inner = new StringBuilder();
             inner.Append("LEFT JOIN TSIEND ON TGFPAR.CODEND = TSIEND.CODEND ");
             inner.Append("LEFT JOIN TSIBAI ON TGFPAR.CODBAI = TSIBAI.CODBAI ");
             inner.Append("LEFT JOIN TSICID ON TGFPAR.CODCID = TSICID.CODCID ");
             inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF");
 
-            StringBuilder where = new StringBuilder();
-            where.Append("WHERE TGFPAR.FORNECEDOR = 'S' ");
-            where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
-            //where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET 4999 ROWS FETCH NEXT 5000 ROWS ONLY ");
+            for (int i = 0; i < quantidadeChamadas; i++)
+            {
+                where = new StringBuilder();
+                where.Append("WHERE TGFPAR.FORNECEDOR = 'S' ");
 
-            List<FornecedorIntegracao> fornecedoresIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<FornecedorIntegracao>(where.ToString(), inner.ToString());
+                if (somenteNovos)
+                {
+                    where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
+                }
+                else
+                {
+                    where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
+                }
+
+                where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET " + offsetRows + " ROWS FETCH NEXT 4999 ROWS ONLY ");
+
+                fornecedoresIntegracao.AddRange(await IntegracaoSankhya.Instance.PreExecutarQuery<FornecedorIntegracao>(where.ToString(), inner.ToString()));
+
+                offsetRows += 4999;
+            }
 
             foreach (var fornecInt in fornecedoresIntegracao)
             {
@@ -120,9 +140,11 @@ namespace FWLog.Services.Services
 
                     _uow.SaveChanges();
 
-                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", fornecedor.CodigoIntegracao.ToString() } };
-
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", '0');
+                    if (somenteNovos)
+                    {
+                        Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", fornecedor.CodigoIntegracao.ToString() } };
+                        await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", '0');
+                    }
                 }
                 catch (Exception ex)
                 {

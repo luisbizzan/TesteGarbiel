@@ -21,19 +21,9 @@ namespace FWLog.Web.Api.Controllers
         [AllowAnonymous]
         [Route("api/v1/transportadora/integrar")]
         [HttpPost]
-        public async Task<IHttpActionResult> ConsultarTransportadora()
+        public async Task<IHttpActionResult> ConsultarTransportadora(bool somenteNovos = true)
         {
-            await _transportadoraService.ConsultarTransportadora();
-
-            return ApiOk();
-        }
-
-        [AllowAnonymous]
-        [Route("api/v1/transportadora/limpar-integracao")]
-        [HttpPost]
-        public async Task<IHttpActionResult> LimparIntegracao()
-        {
-            await _transportadoraService.LimparIntegracao();
+            await _transportadoraService.ConsultarTransportadora(somenteNovos);
 
             return ApiOk();
         }
