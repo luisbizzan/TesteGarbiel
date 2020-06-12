@@ -913,6 +913,7 @@ namespace FWLog.Services.Services
                 {
                     var itemIntegracao = new PedidoItemIntegracao()
                     {
+                        //TODO Ajustar essa quantidade quando o 
                         QtdSeparada = qtdSeparada,
                         Sequencia = pedidoItens.First().Sequencia,
                         IdProduto = pedidoItens.First().IdProduto
@@ -1040,6 +1041,8 @@ namespace FWLog.Services.Services
 
                     var listaImpressaoSeparacao = new List<ImpressaoSeparacaoViewModel>();
 
+                    int numeroCentena = await _pedidoVendaVolumeService.GerarNumeroCentena(idEmpresa);
+
                     /*
                      * No foreach abaixo, capturamos quais e a quantidade de caixas (volumes) que serão utilizados.
                      * Além disso, através do método Cubicagem, saberemos a caixa de cada produto. 
@@ -1072,7 +1075,7 @@ namespace FWLog.Services.Services
                                     if (grupoCorredorItem == null)
                                         throw new Exception("Na criação do volume, o corredor do endereço " + itemVolume.ListaItensDoPedido[0].EnderecoSeparacao.EnderecoArmazenagem.Codigo + " não foi encontrado.");
 
-                                    var pedidoVendaVolume = await _pedidoVendaVolumeService.RetornarParaSalvar(itemVolume.Caixa, grupoCorredorItem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
+                                    var pedidoVendaVolume = await _pedidoVendaVolumeService.RetornarParaSalvar(itemVolume.Caixa, grupoCorredorItem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem, numeroCentena);
 
                                     var pedidoVendaProdutos = new List<PedidoVendaProduto>();
 

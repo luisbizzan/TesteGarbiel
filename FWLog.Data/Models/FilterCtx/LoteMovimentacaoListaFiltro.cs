@@ -20,6 +20,10 @@ namespace FWLog.Data.Models.FilterCtx
         
         public long? IdEnderecoArmazenagem { get; set; }
 
+        public long? IdPontoArmazenagem { get; set; }
+
+        public long? IdNivelArmazenagem { get; set; }
+
         public int? IdLoteMovimentacaoTipo { get; set; }
     }
 }
