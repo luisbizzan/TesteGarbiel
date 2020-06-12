@@ -913,6 +913,7 @@ namespace FWLog.Services.Services
                 {
                     var itemIntegracao = new PedidoItemIntegracao()
                     {
+                        //TODO Ajustar essa quantidade quando o 
                         QtdSeparada = qtdSeparada,
                         Sequencia = pedidoItens.First().Sequencia,
                         IdProduto = pedidoItens.First().IdProduto
