@@ -2400,6 +2400,30 @@ namespace FWLog.Web.Backoffice.Controllers
             });
         }
 
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioValidadePeca)]
+        public ActionResult RelatorioValidadePeca()
+        {
+            return View(new RelatorioValidadePecaViewModel());
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioValidadePeca)]
+        public ActionResult RelatorioValidadePecaPageData(DataTableFilter<RelatorioValidadePecaListaFiltro> model)
+        {
+            model.CustomFilter.IdEmpresa = IdEmpresa;
+
+            List<RelatorioValidadePecaListaTabela> result = _relatorioService.BuscarListaRelatorioValidadePeca(model, out int registrosFiltrados, out int totalRegistros);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
+                Data = Mapper.Map<IEnumerable<RelatorioValidadePecaListaTabela>>(result)
+            });
+        }
+
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.TratarDivergencia)]
         public async Task<JsonResult> ContinuarProcessamentoLote(long id)

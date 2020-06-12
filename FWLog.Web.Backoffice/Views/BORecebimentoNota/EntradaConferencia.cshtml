@@ -1,4 +1,5 @@
 ﻿@model FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx.BOEntradaConferenciaViewModel
+@using FWLog.AspNet.Identity
 @{
     Layout = null;
 
@@ -231,7 +232,10 @@
                 </div>
                 <div class="col-sm-12 col-md-6" style="text-align: right;">
                     <button type="button" id="finalizarConferencia" class="btn btn-info">Finalizar</button>
-                    <button type="button" id="exibirDivergencia" class="btn btn-default">Divergências</button>
+                    @if (User.HasPermission(Permissions.Recebimento.VisualizarDivergenciaConferencia))
+                    {
+                        <button type="button" id="exibirDivergencia" class="btn btn-default">Divergências</button>
+                    }
                     <button id="confirmarConferencia" data-toggle="tooltip" tabindex="4" title="Confirmar" class="btn btn-primary">Registrar</button>
                 </div>
             </div>
