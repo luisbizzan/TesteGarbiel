@@ -237,9 +237,9 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O endereço não foi encontrado.");
             }
 
-            if (enderecoArmazenagem.IsPontoSeparacao)
+            if (enderecoArmazenagem.IsPontoSeparacao || enderecoArmazenagem.IsPicking)
             {
-                throw new BusinessException("Não é possível instalar volume em um endereço de Picking.");
+                throw new BusinessException("Não é possível instalar volume em endereço de Picking.");
             }
 
             if (enderecoArmazenagem.PontoArmazenagem.IdTipoArmazenagem != TipoArmazenagemEnum.Volume)
@@ -641,24 +641,24 @@ namespace FWLog.Services.Services
         {
             if (idEnderecoArmazenagem <= 0)
             {
-                throw new BusinessException("O endereço deve ser informado.");
+                throw new BusinessException("Endereço deve ser informado.");
             }
 
             var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
 
             if (enderecoArmazenagem == null)
             {
-                throw new BusinessException("O endereço não foi encontrado.");
+                throw new BusinessException("Endereço não encontrado.");
             }
 
             if (!enderecoArmazenagem.Ativo)
             {
-                throw new BusinessException("O endereço não está ativo.");
+                throw new BusinessException("Endereço não está ativo.");
             }
 
             if (!enderecoArmazenagem.IsPontoSeparacao || !enderecoArmazenagem.IsPicking)
             {
-                throw new BusinessException("O endereço não é um ponto de separação/picking.");
+                throw new BusinessException("Endereço não é picking.");
             }
 
             var listaProdutosEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
