@@ -50,12 +50,12 @@
             { data: 'Referencia', },
             { data: 'Descricao', },
             { data: 'Peso', },
-            { data: 'Saldo', },
             { data: 'Largura', },
             { data: 'Altura', },
             { data: 'Comprimento', },
             { data: 'Unidade', },
             { data: 'Multiplo', },
+            { data: 'Saldo', },
             { data: 'Endereco', },
             { data: 'Status', },
             actionsColumn
