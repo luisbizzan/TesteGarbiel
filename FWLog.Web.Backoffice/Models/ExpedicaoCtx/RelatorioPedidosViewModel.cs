@@ -66,5 +66,8 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         public SelectList ListaStatus { get; set; }
         [Display(Name = "Status")]
         public long? IdStatus { get; set; }
+
+        public long? IdProduto { get; set; }
+        public string DescricaoProduto { get; set; }
     }
 }

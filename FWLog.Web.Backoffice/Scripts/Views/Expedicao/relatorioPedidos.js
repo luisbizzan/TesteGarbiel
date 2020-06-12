@@ -4,6 +4,21 @@
 
     $("dateFormat").mask("99/99/9999");
 
+    $("#pesquisarProduto").click(function () {
+        $("#modalProduto").load(HOST_URL + "Produto/SearchModal", function () {
+            $("#modalProduto").modal();
+        });
+    });
+
+    function limparProduto() {
+        $("#Filtros_DescricaoProduto").val("");
+        $("#Filtros_IdProduto").val("");
+    }
+
+    $("#limparProduto").click(function () {
+        limparProduto();
+    });
+
     $.validator.addMethod('validarDataInicial', function (value, ele) {
         var idPedidoVenda = $("#Filter_NumeroPedido").val();
         var dataInicial = $("#Filter_DataInicial").val();
@@ -227,4 +242,11 @@ function fechaModalImpressoras() {
 
     $modal.modal("hide");
     $modal.empty();
+}
+
+function setProduto(idProduto, descricao) {
+    $("#Filtros_DescricaoProduto").val(descricao);
+    $("#Filtros_IdProduto").val(idProduto);
+    $("#modalProduto").modal("hide");
+    $("#modalProduto").empty();
 }
