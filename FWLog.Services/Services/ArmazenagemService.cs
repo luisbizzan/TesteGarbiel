@@ -656,9 +656,9 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O endereço não está ativo.");
             }
 
-            if (!enderecoArmazenagem.IsPontoSeparacao)
+            if (!enderecoArmazenagem.IsPontoSeparacao || !enderecoArmazenagem.IsPicking)
             {
-                throw new BusinessException("O endereço não é um ponto de separação.");
+                throw new BusinessException("O endereço não é um ponto de separação/picking.");
             }
 
             var listaProdutosEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
@@ -817,53 +817,46 @@ namespace FWLog.Services.Services
 
             var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(idLote, idProduto);
 
-            try
+            using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                using (var transacao = _unitOfWork.CreateTransactionScope())
+                loteProduto.Saldo -= quantidade;
+
+                _unitOfWork.LoteProdutoRepository.Update(loteProduto);
+                await _unitOfWork.SaveChangesAsync();
+
+                loteProdutoEndereco.Quantidade += quantidade;
+
+                _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
+                await _unitOfWork.SaveChangesAsync();
+
+                var loteMovimentacao = new LoteMovimentacao
                 {
-                    loteProduto.Saldo -= quantidade;
-
-                    _unitOfWork.LoteProdutoRepository.Update(loteProduto);
-                    await _unitOfWork.SaveChangesAsync();
-
-                    loteProdutoEndereco.Quantidade += quantidade;
-
-                    _unitOfWork.LoteProdutoEnderecoRepository.Update(loteProdutoEndereco);
-                    await _unitOfWork.SaveChangesAsync();
-
-                    var loteMovimentacao = new LoteMovimentacao
-                    {
-                        IdEmpresa = idEmpresa,
-                        IdLote = idLote,
-                        IdProduto = idProduto,
-                        IdEnderecoArmazenagem = idEnderecoArmazenagem,
-                        IdUsuarioMovimentacao = idUsuarioOperacao,
-                        Quantidade = quantidade,
-                        IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Abastecimento,
-                        DataHora = DateTime.Now
-                    };
-
-                    _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
-                    await _unitOfWork.SaveChangesAsync();
-
-                    transacao.Complete();
-                }
-
-                var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
-                {
-                    IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
-                    IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade,
-                    Descricao = $"Abasteceu o produto {loteProdutoEndereco.Produto.Referencia} do lote {loteProduto.Lote.IdLote} no endereço de picking {loteProdutoEndereco.EnderecoArmazenagem.Codigo}",
                     IdEmpresa = idEmpresa,
-                    IdUsuario = idUsuarioOperacao
+                    IdLote = idLote,
+                    IdProduto = idProduto,
+                    IdEnderecoArmazenagem = idEnderecoArmazenagem,
+                    IdUsuarioMovimentacao = idUsuarioOperacao,
+                    Quantidade = quantidade,
+                    IdLoteMovimentacaoTipo = LoteMovimentacaoTipoEnum.Abastecimento,
+                    DataHora = DateTime.Now
                 };
 
-                _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
+                _unitOfWork.LoteMovimentacaoRepository.Add(loteMovimentacao);
+                await _unitOfWork.SaveChangesAsync();
+
+                transacao.Complete();
             }
-            catch
+
+            var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
             {
-                throw new BusinessException($"Erro ao abastecer o picking com o produto {loteProduto.Produto.Referencia} do lote {loteProduto.Lote.IdLote}");
-            }
+                IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
+                IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.AjustarQuantidade,
+                Descricao = $"Abasteceu o produto {loteProdutoEndereco.Produto.Referencia} do lote {loteProduto.Lote.IdLote} no endereço de picking {loteProdutoEndereco.EnderecoArmazenagem.Codigo}",
+                IdEmpresa = idEmpresa,
+                IdUsuario = idUsuarioOperacao
+            };
+
+            _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
         }
 
         public LoteInstaladoProdutoResposta PesquisaLotesInstaladosProduto(long idProduto, long idEmpresa)
