@@ -23,7 +23,7 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task ConsultarCliente(bool somenteNovos = true)
+        public async Task ConsultarCliente(bool somenteNovos)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
@@ -37,10 +37,14 @@ namespace FWLog.Services.Services
             {
                 where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
             }
+            else
+            {
+                where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
+            }
 
             int quantidadeChamadas = 0;
 
-            List<ClienteContadorIntegracao> clienteContadorIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteContadorIntegracao>(where: where.ToString());
+            var clienteContadorIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteContadorIntegracao>(where: where.ToString());
 
             if (clienteContadorIntegracao != null)
             {
@@ -67,6 +71,7 @@ namespace FWLog.Services.Services
             }
 
             int offsetRows = 0;
+            var clientesIntegracao = new List<ClienteIntegracao>();
             var join = new StringBuilder();
             join.Append("LEFT JOIN TGFCPL ON TGFPAR.CODPARC = TGFCPL.CODPARC ");
             join.Append("LEFT JOIN TSIEND ON TGFCPL.CODENDENTREGA = TSIEND.CODEND ");
@@ -82,105 +87,81 @@ namespace FWLog.Services.Services
                 {
                     where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
                 }
-
-                where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET "+ offsetRows + " ROWS FETCH NEXT 4999 ROWS ONLY ");
-
-                List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString(), inner: join.ToString());
-
-                foreach (var clienteInt in clientesIntegracao)
+                else
                 {
-                    try
-                    {
-                        ValidarDadosIntegracao(clienteInt);
-
-                        if (clienteInt.CodigoIntgracaoEndereco == "0")
-                        {
-                            throw new BusinessException($"Código do Endereço de Entrega (CODENDENTREGA: 0) inválido.");
-                        }
-
-                        if (clienteInt.CodigoIntegracaoCidade == "0")
-                        {
-                            throw new BusinessException($"Código da Cidade de Entrega (CODCIDENTREGA: 0) inválido.");
-                        }
-
-                        bool clienteNovo = false;
-
-                        var codParc = Convert.ToInt64(clienteInt.CodigoIntegracao);
-                        Cliente cliente = _unitOfWork.ClienteRepository.ConsultarPorCodigoIntegracao(codParc);
-
-                        if (cliente == null)
-                        {
-                            clienteNovo = true;
-                            cliente = new Cliente();
-                        }
-
-                        cliente.CodigoIntegracao = codParc;
-                        cliente.Ativo = clienteInt.Ativo == "S" ? true : false;
-                        cliente.NomeFantasia = clienteInt.NomeFantasia;
-                        cliente.CNPJCPF = clienteInt.CNPJ;
-                        cliente.RazaoSocial = clienteInt.RazaoSocial;
-                        cliente.Classificacao = clienteInt.Classificacao;
-                        cliente.IdRepresentanteInterno = _unitOfWork.RepresentanteRepository.BuscarCodigoPeloCodigoIntegracaoVendedor(clienteInt.IdRepresentanteInterno);
-                        cliente.IdRepresentanteExterno = _unitOfWork.RepresentanteRepository.BuscarCodigoPeloCodigoIntegracaoVendedor(clienteInt.IdRepresentanteExterno);
-                        cliente.CEP = clienteInt.CEP;
-                        cliente.Telefone = clienteInt.Telefone;
-                        cliente.UF = clienteInt.UF;
-                        cliente.Endereco = clienteInt.Endereco;
-                        cliente.Numero = clienteInt.Numero;
-                        cliente.Cidade = clienteInt.Cidade;
-
-                        Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", cliente.CodigoIntegracao.ToString() } };
-
-                        if (clienteNovo)
-                        {
-                            _unitOfWork.ClienteRepository.Add(cliente);
-                        }
-                        else
-                        {
-                            _unitOfWork.ClienteRepository.Update(cliente);
-                        }
-
-                        _unitOfWork.SaveChanges();
-
-                        await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
-                    }
-                    catch (Exception ex)
-                    {
-                        _log.Error(string.Format("Erro na integração do Cliente: {0}.", clienteInt.CodigoIntegracao), ex);
-
-                        continue;
-                    }
+                    where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
                 }
 
-                i++;
+                where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET " + offsetRows + " ROWS FETCH NEXT 4999 ROWS ONLY ");
+
+                clientesIntegracao.AddRange(await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString(), inner: join.ToString()));
+                
                 offsetRows += 4999;
             }
-        }
 
-        public async Task LimparIntegracao()
-        {
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            foreach (var clienteInt in clientesIntegracao)
             {
-                return;
-            }
+                try
+                {
+                    ValidarDadosIntegracao(clienteInt);
 
-            StringBuilder inner = new StringBuilder();
-            inner.Append("INNER JOIN TGFCPL ON TGFPAR.CODPARC = TGFCPL.CODPARC ");
-            inner.Append("INNER JOIN TSIEND ON TGFCPL.CODENDENTREGA = TSIEND.CODEND ");
-            inner.Append("INNER JOIN TSICID ON TGFCPL.CODCIDENTREGA = TSICID.CODCID ");
-            inner.Append("INNER JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF ");
+                    if (clienteInt.CodigoIntgracaoEndereco == "0")
+                    {
+                        throw new BusinessException($"Código do Endereço de Entrega (CODENDENTREGA: 0) inválido.");
+                    }
 
-            StringBuilder where = new StringBuilder();
-            where.Append("WHERE ");       
-            where.Append("AND TGFPAR.CLIENTE = 'S' ");
-       
-            List<ClienteIntegracao> clientesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ClienteIntegracao>(where: where.ToString(), inner: inner.ToString());
+                    if (clienteInt.CodigoIntegracaoCidade == "0")
+                    {
+                        throw new BusinessException($"Código da Cidade de Entrega (CODCIDENTREGA: 0) inválido.");
+                    }
 
-            foreach (var fornecInt in clientesIntegracao)
-            {
-                Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", fornecInt.CodigoIntegracao.ToString() } };
+                    bool clienteNovo = false;
 
-                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", '1');
+                    var codParc = Convert.ToInt64(clienteInt.CodigoIntegracao);
+                    Cliente cliente = _unitOfWork.ClienteRepository.ConsultarPorCodigoIntegracao(codParc);
+
+                    if (cliente == null)
+                    {
+                        clienteNovo = true;
+                        cliente = new Cliente();
+                    }
+
+                    cliente.CodigoIntegracao = codParc;
+                    cliente.Ativo = clienteInt.Ativo == "S" ? true : false;
+                    cliente.NomeFantasia = clienteInt.NomeFantasia;
+                    cliente.CNPJCPF = clienteInt.CNPJ;
+                    cliente.RazaoSocial = clienteInt.RazaoSocial;
+                    cliente.Classificacao = clienteInt.Classificacao;
+                    //cliente.IdRepresentanteInterno = _unitOfWork.RepresentanteRepository.BuscarCodigoPeloCodigoIntegracaoVendedor(clienteInt.IdRepresentanteInterno);
+                    //cliente.IdRepresentanteExterno = _unitOfWork.RepresentanteRepository.BuscarCodigoPeloCodigoIntegracaoVendedor(clienteInt.IdRepresentanteExterno);
+                    cliente.CEP = clienteInt.CEP;
+                    cliente.Telefone = clienteInt.Telefone;
+                    cliente.UF = clienteInt.UF;
+                    cliente.Endereco = clienteInt.Endereco;
+                    cliente.Numero = clienteInt.Numero;
+                    cliente.Cidade = clienteInt.Cidade;
+
+                    if (clienteNovo)
+                    {
+                        _unitOfWork.ClienteRepository.Add(cliente);
+                    }
+                    else
+                    {
+                        _unitOfWork.ClienteRepository.Update(cliente);
+                    }
+
+                    _unitOfWork.SaveChanges();
+
+                    if (somenteNovos)
+                    {
+                        var campoChave = new Dictionary<string, string> { { "CODPARC", cliente.CodigoIntegracao.ToString() } };
+                        await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(string.Format("Erro na integração do Cliente: {0}.", clienteInt.CodigoIntegracao), ex);
+                }
             }
         }
     }

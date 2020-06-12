@@ -36,4 +36,11 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [Required]
         public string CodigoTransportadora { get; set; }
     }
+
+    [TabelaIntegracao(DisplayName = "TGFPAR")]
+    public class TransportadoraContadorIntegracao
+    {
+        [TabelaIntegracao(DisplayName = "COUNT(1)")]
+        public string Quantidade { get; set; }
+    }
 }

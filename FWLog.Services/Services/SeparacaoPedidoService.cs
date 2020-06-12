@@ -1018,8 +1018,8 @@ namespace FWLog.Services.Services
                             EnderecoArmazenagem = produtoEstoqueRepository.EnderecoArmazenagem
                         };
 
-                        //Captura o grupo de corredores do item do pedido.
-                        var grupoCorredorArmazenagemItemPedido = await BuscarGrupoCorredorArmazenagemItemPedido(enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
+                        //Captura o grupo de corredores do item do pedido - FOI ADICIONADO PONTO DE ARMAZENAGEM PELO CLÁUDIO.
+                        var grupoCorredorArmazenagemItemPedido = await BuscarGrupoCorredorArmazenagemItemPedido(enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor,enderecoArmazenagemProduto.EnderecoArmazenagem.IdPontoArmazenagem, grupoCorredorArmazenagem);
 
                         if (grupoCorredorArmazenagemItemPedido == null)
                             throw new Exception("O corredor do endereço " + enderecoArmazenagemProduto.EnderecoArmazenagem.Codigo + " não foi encontrado.");
@@ -1063,7 +1063,11 @@ namespace FWLog.Services.Services
                                 {
                                     quantidadeVolume++;
 
-                                    var grupoCorredorItem = await BuscarGrupoCorredorArmazenagemItemPedido(itemVolume.ListaItensDoPedido[0].EnderecoSeparacao.EnderecoArmazenagem.Corredor, grupoCorredorArmazenagem);
+                                    var grupoCorredorItem = await BuscarGrupoCorredorArmazenagemItemPedido(itemVolume.ListaItensDoPedido[0].EnderecoSeparacao.EnderecoArmazenagem.Corredor, itemVolume.ListaItensDoPedido[0].EnderecoSeparacao.EnderecoArmazenagem.IdPontoArmazenagem, grupoCorredorArmazenagem);
+
+                                    //Adicionado pelo Ponto de Armazenagem pelo Cláudio
+                                    if (grupoCorredorItem == null)
+                                        throw new Exception("Na criação do volume, o corredor do endereço " + itemVolume.ListaItensDoPedido[0].EnderecoSeparacao.EnderecoArmazenagem.Codigo + " não foi encontrado.");
 
                                     var pedidoVendaVolume = await _pedidoVendaVolumeService.RetornarParaSalvar(itemVolume.Caixa, grupoCorredorItem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem);
 
@@ -1173,13 +1177,13 @@ namespace FWLog.Services.Services
             pedido.IdEmpresa);
         }
 
-        public async Task<GrupoCorredorArmazenagemViewModel> BuscarGrupoCorredorArmazenagemItemPedido(int corredor, List<GrupoCorredorArmazenagem> listaGrupoCorredorArmazenagem)
+        public async Task<GrupoCorredorArmazenagemViewModel> BuscarGrupoCorredorArmazenagemItemPedido(int corredor,long idPontoArmazenagem, List<GrupoCorredorArmazenagem> listaGrupoCorredorArmazenagem)
         {
             GrupoCorredorArmazenagemViewModel grupoArmazenagem = null;
 
             foreach (var item in listaGrupoCorredorArmazenagem)
             {
-                if (corredor >= item.CorredorInicial && corredor <= item.CorredorFinal)
+                if (corredor >= item.CorredorInicial && corredor <= item.CorredorFinal && idPontoArmazenagem == item.IdPontoArmazenagem)
                 {
                     grupoArmazenagem = new GrupoCorredorArmazenagemViewModel()
                     {
