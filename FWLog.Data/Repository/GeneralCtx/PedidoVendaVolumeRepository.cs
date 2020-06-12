@@ -1,4 +1,5 @@
-﻿using FWLog.Data.Models;
+﻿using ExtensionMethods.List;
+using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
@@ -189,15 +190,13 @@ namespace FWLog.Data.Repository.GeneralCtx
             return selectQuery.ToList();
         }
 
-        public IEnumerable<PedidoVendaVolumePesquisaModalLinhaTabela> ObterDadosParaDataTable(DataTableFilter<ClientePesquisaModalFiltro> filter, out int totalRecordsFiltered, out int totalRecords)
+        public IEnumerable<PedidoVendaVolumePesquisaModalLinhaTabela> ObterDadosParaDataTable(DataTableFilter<PedidoVendaVolumePesquisaModalFiltro> filter, out int totalRecordsFiltered, out int totalRecords)
         {
             totalRecords = Entities.Cliente.Count();
 
             IQueryable<PedidoVendaVolumePesquisaModalLinhaTabela> query = Entities.PedidoVendaVolume.AsNoTracking()
-                .Where(x => x.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido && x.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProdutoZerado)
-                //(filter.CustomFilter.IdCliente.HasValue == false || x.IdCliente == filter.CustomFilter.IdCliente) &&
-                //(filter.CustomFilter.RazaoSocial.Equals(string.Empty) || x.RazaoSocial.Contains(filter.CustomFilter.RazaoSocial)) &&
-                //(filter.CustomFilter.CNPJCPF.Equals(string.Empty) || x.CNPJCPF.Contains(filter.CustomFilter.CNPJCPF.Replace(".", "").Replace("/", "").Replace("-", ""))))
+                .Where(x => x.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido && x.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProdutoZerado &&
+                (filter.CustomFilter.NroVolume.HasValue == false || x.NroVolume == filter.CustomFilter.NroVolume))
                 .Select(e => new PedidoVendaVolumePesquisaModalLinhaTabela
                 {
                     IdPedido = e.PedidoVenda.IdPedidoVenda,

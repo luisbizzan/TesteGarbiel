@@ -4,7 +4,6 @@ using FWLog.Data;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Web.Backoffice.Helpers;
-using FWLog.Web.Backoffice.Models.ClienteCtx;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.PedidoVendaVolumeCtx;
 using System.Collections.Generic;
@@ -31,13 +30,10 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        public ActionResult SearchModalPageData(DataTableFilter<ClientePesquisaModalFiltro> model)
+        public ActionResult SearchModalPageData(DataTableFilter<PedidoVendaVolumePesquisaModalFiltro> model)
         {
             IEnumerable<PedidoVendaVolumePesquisaModalLinhaTabela> result = _unitOfWork.PedidoVendaVolumeRepository.ObterDadosParaDataTable(model, out int recordsFiltered, out int totalRecords);
             
-            //Formatando a informação de cnpj ou cpf para o datatable
-            result.ForEach(x => x.CNPJCPF = x.CNPJCPF.CnpjOuCpf());
-
             return DataTableResult.FromModel(new DataTableResponseModel
             {
                 Draw = model.Draw,

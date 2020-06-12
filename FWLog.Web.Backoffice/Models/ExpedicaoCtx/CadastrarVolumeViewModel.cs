@@ -19,6 +19,8 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         [Display(Name = "Nro Volume")]
         public string Volume { get; set; }
 
+        public long? IdPedidoVendaVolume { get; set; }
+
         [Display(Name = "Qtd. Original")]
         public int QuantidadeOriginal { get; set; }
 

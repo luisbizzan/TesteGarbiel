@@ -50,14 +50,23 @@
         }
     });
 
-    function limparProduto() {
-        $("#IdProduto").val("");
-        $("#DescricaoProduto").val("");
-    }
-
     $("#limparProduto").click(function () {
         if (!$(this).attr('disabled')) {
             limparProduto();
+        }
+    });
+
+    $("#pesquisarVolume").on('click', function () {
+        if (!$(this).attr('disabled')) {
+            $("#modalVolume").load(HOST_URL + "PedidoVendaVolume/SearchModal", function () {
+                $("#modalVolume").modal();
+            });
+        }
+    });
+
+    $("#limparVolume").click(function () {
+        if (!$(this).attr('disabled')) {
+            limparVolume();
         }
     });
 
@@ -181,4 +190,21 @@ function setProduto(idProduto, descricao) {
     $("#DescricaoProduto").val(descricao);
     $("#modalProduto").modal("hide");
     $("#modalProduto").empty();
+}
+
+function setVolume(idPedidoVendaVolume, nroVolume) {
+    $("#IdPedidoVendaVolume").val(idPedidoVendaVolume);
+    $("#NroVolume").val(nroVolume);
+    $("#modalVolume").modal("hide");
+    $("#modalVolume").empty();
+}
+
+function limparProduto() {
+    $("#IdProduto").val("");
+    $("#DescricaoProduto").val("");
+}
+
+function limparVolume() {
+    $("#NroVolume").val("");
+    $("#IdPedidoVendaVolume").val("");
 }

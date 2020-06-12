@@ -621,6 +621,7 @@
     <Content Include="Scripts\Views\MotivoLaudo\motivoLaudo.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\pesquisaModal.js" />
+    <Content Include="Scripts\Views\PedidoVendaVolume\searchModal.js" />
     <Content Include="Scripts\Views\PerfilImpressora\cadastrar.js" />
     <Content Include="Scripts\Views\PerfilImpressora\editar.js" />
     <Content Include="Scripts\Views\PerfilImpressora\index.js" />
@@ -756,6 +757,7 @@
     <Content Include="Views\CaixaRecusa\Detalhes.cshtml" />
     <Content Include="Views\Expedicao\ConfirmarReimpressaoEtiquetaVolume.cshtml" />
     <Content Include="Views\Expedicao\CadastrarVolume.cshtml" />
+    <Content Include="Views\PedidoVendaVolume\SearchModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />
