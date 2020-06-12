@@ -75,11 +75,20 @@ namespace FWLog.Web.Backoffice.Models.ArmazenagemCtx
         [Display(Name = "Endereço")]
         public long? IdEnderecoArmazenagem { get; set; }
 
+        [Display(Name = "Nível Armazenagem")]
+        public long? IdNivelArmazenagem { get; set; }
+
+        [Display(Name = "Ponto Armazenagem")]
+        public long? IdPontoArmazenagem { get; set; }
+
         public string CodigoEnderecoArmazenagem { get; set; }
 
         [Display(Name = "Tipo Movimentação")]
         public int? IdLoteMovimentacaoTipo { get; set; }
 
         public SelectList ListaLoteMovimentacaoTipo { get; set; }
+
+        public string DescricaoNivelArmazenagem { get; set; }
+        public string DescricaoPontoArmazenagem { get; set; }
     }
 }
