@@ -76,7 +76,29 @@
                     </div>
                     @Html.HiddenFor(m => m.Filter.IdUsuarioMovimentacao, new { data_field = "IdUsuarioMovimentacao" })
                 </div>
-                <div class="form-group col-sm-3 col-xs-12 col-lg-3">
+                <div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                    @Html.LabelFor(m => m.Filter.IdNivelArmazenagem)
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.DescricaoNivelArmazenagem, null, new { @class = "form-control", @readonly = "true", data_field = "DescricaoNivelArmazenagem" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparNivelArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdNivelArmazenagem, new { data_field = "IdNivelArmazenagem" })
+                </div>
+                <div class="form-group col-xs-12 col-sm-6 col-md-3 col-lg-3">
+                    @Html.LabelFor(m => m.Filter.IdPontoArmazenagem)
+                    <div class="input-group">
+                        @Html.TextBoxFor(m => m.Filter.DescricaoPontoArmazenagem, null, new { @class = "form-control", @readonly = "true", data_field = "DescricaoPontoArmazenagem" })
+                        <span class="input-group-btn">
+                            <a id="pesquisarPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
+                            <a id="limparPontoArmazenagem" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
+                        </span>
+                    </div>
+                    @Html.HiddenFor(m => m.Filter.IdPontoArmazenagem, new { data_field = "IdPontoArmazenagem" })
+                </div>
+                <div class="form-group col-sm-3 col-md-3 col-xs-12 col-lg-3">
                     @Html.LabelFor(m => m.Filter.IdEnderecoArmazenagem, new { @class = "control-label" })
                     <div class="input-group">
                         @Html.TextBoxFor(m => m.Filter.CodigoEnderecoArmazenagem, null, new { @class = "form-control", @readonly = "true" })
@@ -88,6 +110,8 @@
                     @Html.HiddenFor(m => m.Filter.IdEnderecoArmazenagem, new { data_field = "IdEnderecoArmazenagem" })
                     @Html.ValidationMessageFor(m => m.Filter.IdEnderecoArmazenagem)
                 </div>
+            </div>
+            <div class="row">
                 <div class="form-group col-xs-12 col-md-3 col-lg-3">
                     @Html.LabelFor(m => m.Filter.IdLoteMovimentacaoTipo)
                     @Html.DropDownListFor(m => m.Filter.IdLoteMovimentacaoTipo, Model.Filter.ListaLoteMovimentacaoTipo, "Todos", new { @class = "form-control", data_field = "IdLoteMovimentacaoTipo" })
@@ -160,4 +184,6 @@
 <div class="modal" id="modalProduto"></div>
 <div class="modal" id="modalUsuarioMovimentacao" data-toggle="modal" data-myvalue="1"></div>
 <div class="modal" id="modalPesquisaEnderecoArmazenagem"></div>
+<div class="modal" id="modalPesquisaPontoArmazenagem"></div>
+<div class="modal" id="modalPesquisaNivelArmazenagem"></div>
 
