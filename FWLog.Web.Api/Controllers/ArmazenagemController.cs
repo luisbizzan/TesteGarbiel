@@ -481,6 +481,27 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
+        [Route("api/v1/armazenagem/conferir/validar-lote")]
+        [HttpPost]
+        public IHttpActionResult ValidarLoteConferir(ValidarLoteConferirModelRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _armazenagemService.ValidarLoteConferir(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0, requisicao?.IdLote ?? 0, IdEmpresa);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+
+            return ApiOk();
+        }
+
         [Route("api/v1/armazenagem/conferir/validar-produto")]
         [HttpPost]
         public IHttpActionResult ValidarProdutoConferir(ValidarProdutoConferirModelRequisicao requisicao)
@@ -513,7 +534,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                await _armazenagemService.FinalizarConferencia(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0, requisicao?.Quantidade ?? 0, IdEmpresa, IdUsuario, requisicao.ConferenciaManual);
+                await _armazenagemService.FinalizarConferencia(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0, requisicao?.IdLote ?? 0, requisicao?.Quantidade ?? 0, IdEmpresa, IdUsuario, requisicao.ConferenciaManual);
             }
             catch (BusinessException ex)
             {

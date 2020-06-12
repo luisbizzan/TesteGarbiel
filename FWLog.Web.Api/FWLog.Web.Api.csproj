@@ -228,6 +228,7 @@
     <Compile Include="Models\Armazenagem\EnderecosProdutosResposta.cs" />
     <Compile Include="Models\Armazenagem\GravarHistoricoRequisicao.cs" />
     <Compile Include="Models\Armazenagem\ValidarEnderecoInstalacaoModelResposta.cs" />
+    <Compile Include="Models\Armazenagem\ValidarLoteConferirModelRequisicao.cs" />
     <Compile Include="Models\AtividadeEstoque\AtualizarAtividadeEstoqueAbastecerPickingResposta.cs" />
     <Compile Include="Models\AtividadeEstoque\AtividadesEstoqueResposta.cs" />
     <Compile Include="Models\Armazenagem\ValidarProdutoConferirModelRequisicao.cs" />
