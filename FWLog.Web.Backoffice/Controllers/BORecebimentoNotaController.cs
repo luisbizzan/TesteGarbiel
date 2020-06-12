@@ -1746,7 +1746,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
-        public async Task<JsonResult> RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo, int idTipoConferencia)
+        public async Task<JsonResult> RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo, int idTipoConferencia, DateTime? dataValidade)
         {
             try
             {
@@ -1763,7 +1763,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 //Registrar conferência.
-                var conferenciaRegistro = await _conferenciaService.RegistrarConferencia(conferencia.Lote, conferencia.Produto, IdUsuario, inicioConferencia, idTipoConferencia, quantidadePorCaixa, quantidadeCaixa, IdEmpresa).ConfigureAwait(false);
+                var conferenciaRegistro = await _conferenciaService.RegistrarConferencia(conferencia.Lote, conferencia.Produto, IdUsuario, inicioConferencia, idTipoConferencia, quantidadePorCaixa, quantidadeCaixa, IdEmpresa, dataValidade).ConfigureAwait(false);
 
                 #region Impressão Automática de Etiquetas
 
@@ -2397,6 +2397,30 @@ namespace FWLog.Web.Backoffice.Controllers
                 RecordsTotal = total,
                 RecordsFiltered = list.Count(),
                 Data = list
+            });
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioValidadePeca)]
+        public ActionResult RelatorioValidadePeca()
+        {
+            return View(new RelatorioValidadePecaViewModel());
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Recebimento.RelatorioValidadePeca)]
+        public ActionResult RelatorioValidadePecaPageData(DataTableFilter<RelatorioValidadePecaListaFiltro> model)
+        {
+            model.CustomFilter.IdEmpresa = IdEmpresa;
+
+            List<RelatorioValidadePecaListaTabela> result = _relatorioService.BuscarListaRelatorioValidadePeca(model, out int registrosFiltrados, out int totalRegistros);
+
+            return DataTableResult.FromModel(new DataTableResponseModel
+            {
+                Draw = model.Draw,
+                RecordsTotal = totalRegistros,
+                RecordsFiltered = registrosFiltrados,
+                Data = Mapper.Map<IEnumerable<RelatorioValidadePecaListaTabela>>(result)
             });
         }
 

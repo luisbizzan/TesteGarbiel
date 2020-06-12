@@ -751,6 +751,8 @@ namespace FWLog.Services.Services
                     qtdNF = qtdNF - divergencia.QuantidadeDivergenciaMenos.Value;
                 }
 
+                var conferencia = _uow.LoteConferenciaRepository.ObterPorProduto(lote.IdLote, nfItem.Key);
+
                 loteProduto = new LoteProduto();
 
                 loteProduto.IdEmpresa = lote.NotaFiscal.IdEmpresa;
@@ -758,6 +760,7 @@ namespace FWLog.Services.Services
                 loteProduto.IdProduto = nfItem.Key;
                 loteProduto.QuantidadeRecebida = qtdNF;
                 loteProduto.Saldo = qtdNF;
+                loteProduto.DataValidade = conferencia.Min(x => x.DataValidade);
 
                 _uow.LoteProdutoRepository.Add(loteProduto);
             }

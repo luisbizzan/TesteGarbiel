@@ -92,5 +92,50 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return query.ToList();
         }
+
+        public List<RelatorioValidadePecaListaTabela> BuscarListaRelatorioValidadePeca(DataTableFilter<RelatorioValidadePecaListaFiltro> filtro, out int totalRecordsFiltered, out int totalRecords)
+        {
+            totalRecords = Entities.LoteProduto.Where(w => w.IdEmpresa == filtro.CustomFilter.IdEmpresa && w.Saldo > 0 && w.DataValidade.HasValue).Count();
+
+            var query = Entities.LoteProduto.AsNoTracking().Where(w => w.IdEmpresa == filtro.CustomFilter.IdEmpresa && w.Saldo > 0 && w.DataValidade.HasValue);
+
+            if (filtro.CustomFilter.IdLote.HasValue)
+            {
+                query = query.Where(lp => lp.IdLote == filtro.CustomFilter.IdLote.Value);
+            }
+
+            if (filtro.CustomFilter.IdProduto.HasValue)
+            {
+                query = query.Where(lp => lp.IdProduto == filtro.CustomFilter.IdProduto);
+            }
+
+            if (filtro.CustomFilter.DataInicial.HasValue)
+            {
+                query = query.Where(lp => lp.DataValidade >= filtro.CustomFilter.DataInicial.Value);
+            }
+
+            if (filtro.CustomFilter.DataFinal.HasValue)
+            {
+                query = query.Where(lp => lp.DataValidade <= filtro.CustomFilter.DataFinal.Value);
+            }
+
+            totalRecordsFiltered = query.Count();
+
+            query = query
+                .OrderBy(filtro.OrderByColumn, filtro.OrderByDirection)
+                .Skip(filtro.Start)
+                .Take(filtro.Length);
+
+            var resultado = query.ToList().Select(rvp => new RelatorioValidadePecaListaTabela
+            {
+                IdLote = rvp.IdLote,
+                ReferenciaProduto = rvp.Produto.Referencia,
+                DescricaoProduto = rvp.Produto.Descricao,
+                DataValidade = rvp.DataValidade.HasValue ? rvp.DataValidade.Value.ToString("dd/MM/yyyy") : "",
+                Saldo = rvp.Saldo
+            }).ToList();
+
+            return resultado;
+        }
     }
 }

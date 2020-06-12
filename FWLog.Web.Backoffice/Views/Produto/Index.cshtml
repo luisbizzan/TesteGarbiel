@@ -30,15 +30,15 @@
         <div class="x_content" style="display: block;">
             <div class="row">
                 @Html.HiddenFor(m => m.Itens.IdProduto, new { data_field = "IdProduto" })
-                <div class="col-xs-12 col-md-2 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filtros.Referencia)
                     @Html.TextBoxFor(m => m.Filtros.Referencia, new { @class = "form-control onlyNumber", data_field = "Referencia" })
                 </div>
-                <div class="col-xs-12 col-md-2 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filtros.Descricao)
                     @Html.TextBoxFor(m => m.Filtros.Descricao, new { @class = "form-control onlyNumber", data_field = "Descricao" })
                 </div>
-                <div class="col-xs-12 col-md-5 col-lg-3 form-group">
+                <div class="col-xs-12 col-md-3 col-lg-3 form-group">
                     @Html.LabelFor(m => m.Filtros.CodigoDeBarras)
                     @Html.TextBoxFor(m => m.Filtros.CodigoDeBarras, new { @class = "form-control onlyNumber", data_field = "CodigoDeBarras" })
                 </div>
@@ -46,7 +46,7 @@
                     @Html.LabelFor(m => m.Filtros.ProdutoStatus)
                     @Html.DropDownListFor(m => m.Filtros.ProdutoStatus, (IEnumerable<SelectListItem>)ViewBag.ProdutoStatus, "Todos", new { @class = "form-control", data_field = "ProdutoStatus" })
                 </div>
-                <div class="form-group col-sm-3 col-xs-12 col-lg-3">
+                <div class="form-group col-sm-3 col-md-3 col-xs-12 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.IdNivelArmazenagem, new { @class = "control-label" })
                     <div class="input-group">
                         @Html.TextBoxFor(m => m.Filtros.DescricaoNivelArmazenagem, null, new { @class = "form-control", @readonly = "true", data_field = "DescricaoNivelArmazenagem" })
@@ -57,7 +57,7 @@
                     </div>
                     @Html.HiddenFor(m => m.Filtros.IdNivelArmazenagem, new { data_field = "IdNivelArmazenagem" })
                 </div>
-                <div class="form-group col-sm-3 col-xs-12 col-lg-3">
+                <div class="form-group col-sm-3 col-md-3 col-xs-12 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.IdPontoArmazenagem, new { @class = "control-label" })
                     <div class="input-group">
                         @Html.TextBoxFor(m => m.Filtros.DescricaoPontoArmazenagem, null, new { @class = "form-control", @readonly = "true", data_field = "DescricaoPontoArmazenagem" })
@@ -68,7 +68,7 @@
                     </div>
                     @Html.HiddenFor(m => m.Filtros.IdPontoArmazenagem, new { data_field = "IdPontoArmazenagem" })
                 </div>
-                <div class="form-group col-sm-3 col-xs-12 col-lg-3">
+                <div class="form-group col-sm-3 col-md-3 col-xs-12 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.IdEnderecoArmazenagem, new { @class = "control-label" })
                     <div class="input-group">
                         @Html.TextBoxFor(m => m.Filtros.CodigoEnderecoArmazenagem, null, new { @class = "form-control", @readonly = "true", data_field = "CodigoEnderecoArmazenagem" })
@@ -114,12 +114,12 @@
                             <th>@Html.DisplayNameFor(m => m.Itens.Referencia)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Descricao)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Peso)</th>
-                            <th>@Html.DisplayNameFor(m => m.Itens.Saldo)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Largura)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Altura)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Comprimento)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Unidade)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Multiplo)</th>
+                            <th>@Html.DisplayNameFor(m => m.Itens.Saldo)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Endereco)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Status)</th>
                             <th>@Resources.CommonStrings.ActionsLabel</th>

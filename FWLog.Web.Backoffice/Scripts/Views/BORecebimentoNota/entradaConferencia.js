@@ -19,8 +19,18 @@
     let $validarAcessoCoordenador = $("#validarAcessoCoordenador");
     let $validarAcessoCoordenadorTipoConferencia = $("#validarAcessoCoordenadorTipoConferencia");
     let $descricaoReferencia = $("#DescricaoReferencia");
+    let $dataValidade = $("#DataValidade");
 
     $('.onlyNumber').mask('0#');
+    $(".dateFormat").mask("99/99/9999");
+
+    $dataValidade.datetimepicker({
+        locale: moment.locale(),
+        format: 'L',
+        allowInputToggle: true,
+        minDate: moment(),
+        useCurrent: false
+    });
 
     $quantidadePorCaixa.mask("S#############", {
         translation: {
@@ -67,9 +77,9 @@
 
         $validarAcessoCoordenadorTipoConferencia.on('click', validarAcessoCoordenadorTipoConferencia_Click);
 
-        onScan.attachTo($multiplo[0], {
+        onScan.attachTo($dataValidade[0], {
             onScan: function (sScancode, iQuatity) {
-                $multiplo.val('');
+                $dataValidade.val('');
             }
         });
 
@@ -129,7 +139,7 @@
         removeEventosCoordenador();
 
         try {
-            onScan.detachFrom($multiplo[0]);
+            onScan.detachFrom($dataValidade[0]);
             onScan.detachFrom($quantidadePorCaixa[0]);
         } catch (e) { }
 
@@ -168,7 +178,7 @@
                     $("#DescricaoReferencia").val(model.DescricaoReferencia);
                     $("#Embalagem").val(model.Embalagem);
                     $("#Unidade").val(model.Unidade);
-                    $("#Multiplo").val('');
+                    $("#DataValidade").val('');
                     $("#QuantidadeEstoque").text(model.QuantidadeEstoque);
                     $("#Localizacao").text(model.Localizacao);
                     $("#QuantidadeNaoConferida").text(model.QuantidadeNaoConferida);
@@ -192,7 +202,7 @@
 
                     overlay(false);
 
-                    $("#Multiplo").focus();
+                    $("#DataValidade").focus();
 
                     permiteRegistrar = true;
                 } else {
@@ -225,6 +235,7 @@
         let inicioConferencia = $("#InicioConferencia").val();
         let idTipoConferencia = $("#IdTipoConferencia").val();
         let idLote = $("#IdLote").val();
+        let dataValidade = $("#DataValidade").val();
 
         if (!multiplo)
             multiplo = 0;
@@ -254,7 +265,7 @@
                         $("#Usuario").focus();
                     }, 150);
                 } else {
-                    registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia);
+                    registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia, dataValidade);
                 }
             },
             error: function (request, status, error) {
@@ -263,7 +274,7 @@
         });
     }
 
-    function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia) {
+    function registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia, dataValidade) {
         overlay(true);
 
         if (quantidadePorCaixa === '')
@@ -284,7 +295,8 @@
                 quantidadeCaixa: quantidadeCaixa,
                 inicioConferencia: inicioConferencia,
                 multiplo: multiplo,
-                idTipoConferencia: idTipoConferencia
+                idTipoConferencia: idTipoConferencia,
+                dataValidade: dataValidade
             },
             success: function (result) {
                 if (result.Success) {
@@ -455,8 +467,9 @@
                     let quantidadeCaixa = $("#QuantidadeCaixa").val();
                     let inicioConferencia = $("#InicioConferencia").val();
                     let idTipoConferencia = $("#IdTipoConferencia").val();
+                    let dataValidade = $("#DataValidade").val();
 
-                    registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia);
+                    registrarConferencia(referencia, quantidadePorCaixa, quantidadeCaixa, inicioConferencia, multiplo, idTipoConferencia, dataValidade);
 
                     $('#modalAcessoCoordenador').modal('toggle');
 

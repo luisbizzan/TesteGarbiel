@@ -80,6 +80,7 @@ namespace FWLog.AspNet.Identity
             public const string PermitirConferenciaManual = "PermitirConferenciaManual";
             public const string DevolucaoTotal = "PermitirDevolucaoTotal";
             public const string VisualizarDivergenciaConferencia = "VisualizarDivergenciaConferencia";
+            public const string RelatorioValidadePeca = "RelatorioValidadePeca";
 
             public Recebimento() : base(Display.FromString("Recebimento - Notas Fiscais"))
             {
@@ -95,7 +96,8 @@ namespace FWLog.AspNet.Identity
                 Register(Imprimir, Display.FromString("Imprimir Etiqueta Individual e Personalizada"));
                 Register(PermitirConferenciaManual, Display.FromString("Permitir Conferência Manual"));
                 Register(DevolucaoTotal, Display.FromString("Permitir Devolução Total"));
-                Register(DevolucaoTotal, Display.FromString("Visualizar Divergências na Conferência"));
+                Register(VisualizarDivergenciaConferencia, Display.FromString("Visualizar Divergências na Conferência"));
+                Register(RelatorioValidadePeca, Display.FromString("Relatório Validade de Peça"));
             }
         }
 

@@ -301,6 +301,7 @@
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioLogisticaCorredorViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioPosicaoInventarioViewModel.cs" />
     <Compile Include="Models\ArmazenagemCtx\DownloadRelatorioTotalPorAlaViewModel.cs" />
+    <Compile Include="Models\BORecebimentoNotaCtx\RelatorioValidadePecaViewModel.cs" />
     <Compile Include="Models\CaixaCtx\CaixaSearchModalViewModel.cs" />
     <Compile Include="Models\CaixaRecusaCtx\CaixaRecusaCadastroViewModel.cs" />
     <Compile Include="Models\CaixaRecusaCtx\CaixaRecusaDetalhesViewModel.cs" />
@@ -566,6 +567,7 @@
     <Content Include="Scripts\Views\BORecebimentoNota\notaRecebimento.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoEtiquetagem.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\relatorioResumoProducao.js" />
+    <Content Include="Scripts\Views\BORecebimentoNota\relatorioValidadePeca.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\resumoDivergenciaConferencia.js" />
     <Content Include="Scripts\Views\BORecebimentoNota\resumoFinalizarConferencia.js" />
     <Content Include="Scripts\Views\BOQuarentena\detalhesQuarentena.js" />
@@ -751,6 +753,7 @@
     <Content Include="Views\CaixaRecusa\Editar.cshtml" />
     <Content Include="Views\CaixaRecusa\Detalhes.cshtml" />
     <Content Include="Views\Expedicao\ConfirmarReimpressaoEtiquetaVolume.cshtml" />
+    <Content Include="Views\BORecebimentoNota\RelatorioValidadePeca.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

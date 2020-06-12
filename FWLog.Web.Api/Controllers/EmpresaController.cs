@@ -19,9 +19,9 @@ namespace FWLog.Web.Api.Controllers
         [AllowAnonymous]
         [Route("api/v1/empresa/integrar")]
         [HttpPost]
-        public async Task<IHttpActionResult> ConsultarEmpresa()
+        public async Task<IHttpActionResult> ConsultarEmpresa(bool somenteNovos = true)
         {
-            await _empresaService.ConsultarEmpresaIntegracao();
+            await _empresaService.ConsultarEmpresaIntegracao(somenteNovos);
 
             return ApiOk();
         }

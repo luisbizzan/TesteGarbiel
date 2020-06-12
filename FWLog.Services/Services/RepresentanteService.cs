@@ -22,7 +22,7 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task ConsultarRepresentante()
+        public async Task ConsultarRepresentante(bool somenteNovos)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
@@ -31,11 +31,69 @@ namespace FWLog.Services.Services
 
             StringBuilder where = new StringBuilder();
             where.Append("WHERE TGFPAR.VENDEDOR = 'S' ");
-            where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
 
-            var inner = "INNER JOIN TGFVEN ON TGFVEN.CODPARC = TGFPAR.CODPARC";
+            if (somenteNovos)
+            {
+                where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
+            }
+            else
+            {
+                where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
+            }
 
-            List<RepresentanteIntegracao> representantesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<RepresentanteIntegracao>(where: where.ToString(), inner:inner.ToString());
+            string join = "INNER JOIN TGFVEN ON TGFVEN.CODPARC = TGFPAR.CODPARC ";
+
+            int quantidadeChamadas = 0;
+
+            var representanteContadorIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<RepresentanteContadorIntegracao>(where: where.ToString(), inner: join);
+
+            if (representanteContadorIntegracao != null)
+            {
+                try
+                {
+                    decimal contadorRegistros = Convert.ToInt32(representanteContadorIntegracao[0].Quantidade);
+
+                    if (contadorRegistros < 4999)
+                    {
+                        quantidadeChamadas = 1;
+                    }
+                    else
+                    {
+                        decimal div = contadorRegistros / 4999;
+                        quantidadeChamadas = Convert.ToInt32(Math.Ceiling(div));
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    _log.Error("Erro na integração de Representante", ex);
+                    return;
+                }
+            }
+
+            int offsetRows = 0;
+            var representantesIntegracao = new List<RepresentanteIntegracao>();
+
+            for (int i = 0; i < quantidadeChamadas; i++)
+            {
+                where = new StringBuilder();
+                where.Append("WHERE TGFPAR.VENDEDOR = 'S' ");
+
+                if (somenteNovos)
+                {
+                    where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
+                }
+                else
+                {
+                    where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
+                }
+
+                where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET " + offsetRows + " ROWS FETCH NEXT 4999 ROWS ONLY ");
+
+                representantesIntegracao.AddRange(await IntegracaoSankhya.Instance.PreExecutarQuery<RepresentanteIntegracao>(where: where.ToString(), inner: join.ToString()));
+
+                offsetRows += 4999;
+            }
 
             foreach (var representanteInt in representantesIntegracao)
             {
@@ -59,8 +117,6 @@ namespace FWLog.Services.Services
                     representante.Nome = representanteInt.RazaoSocial;
                     representante.CodigoIntegracaoVendedor = Convert.ToInt32(representanteInt.CodigoIntegracaoVendedor);
 
-                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", representante.CodigoIntegracao.ToString() } };
-
                     if (representanteNovo)
                     {
                         _unitOfWork.RepresentanteRepository.Add(representante);
@@ -72,47 +128,15 @@ namespace FWLog.Services.Services
 
                     _unitOfWork.SaveChanges();
 
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
+                    if (somenteNovos)
+                    {
+                        var campoChave = new Dictionary<string, string> { { "CODPARC", representante.CodigoIntegracao.ToString() } };
+                        await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
+                    }
                 }
                 catch (Exception ex)
                 {
                     _log.Error(string.Format("Erro na integração da Representante: {0}.", representanteInt.CodigoIntegracao), ex);
-
-                    continue;
-                }
-            }
-        }
-
-        public async Task LimparIntegracao()
-        {
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            {
-                return;
-            }
-
-            StringBuilder where = new StringBuilder();
-            where.Append("WHERE ");
-            where.Append("TGFPAR.RAZAOSOCIAL IS NOT NULL ");
-            where.Append("AND TGFPAR.VENDEDOR = 'S' ");
-
-            var inner = "INNER JOIN TGFVEN ON TGFVEN.CODPARC = TGFPAR.CODPARC";
-
-            List<RepresentanteIntegracao> representantesIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<RepresentanteIntegracao>(where: where.ToString(), inner: inner.ToString());
-
-
-            foreach (var transpInt in representantesIntegracao)
-            {
-                try
-                {
-                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", transpInt.CodigoIntegracao.ToString() } };
-
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "1");
-                }
-                catch (Exception ex)
-                {
-                    _log.Error(string.Format("Erro na integração da Representante: {0}.", transpInt.CodigoIntegracao), ex);
-
-                    continue;
                 }
             }
         }

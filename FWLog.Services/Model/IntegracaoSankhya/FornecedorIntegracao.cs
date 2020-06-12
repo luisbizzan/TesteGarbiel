@@ -63,4 +63,11 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TSIUFS.DESCRICAO")]
         public string Estado { get; set; }
     }
+
+    [TabelaIntegracao(DisplayName = "TGFPAR")]
+    public class FornecedorContadorIntegracao
+    {
+        [TabelaIntegracao(DisplayName = "COUNT(1)")]
+        public string Quantidade { get; set; }
+    }
 }
