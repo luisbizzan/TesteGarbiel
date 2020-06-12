@@ -232,7 +232,7 @@
     <Compile Include="Models\AtividadeEstoque\AtividadesEstoqueResposta.cs" />
     <Compile Include="Models\Armazenagem\ValidarProdutoConferirModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\AjustarVolumeLoteModelRequisicao.cs" />
-    <Compile Include="Models\Armazenagem\ConsultaDetalhesEnderecoArmazenagemResposta.cs" />
+    <Compile Include="Models\Armazenagem\DetalhesEnderecoPickingResposta.cs" />
     <Compile Include="Models\Armazenagem\ConsultaDetalhesVolumeInformadoResposta.cs" />
     <Compile Include="Models\Armazenagem\InstalarVolumeLoteModelRequisicao.cs" />
     <Compile Include="Models\Armazenagem\NiveisPontosArmazenagemPorCorredorResposta.cs" />

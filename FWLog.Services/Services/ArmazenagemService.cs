@@ -669,16 +669,40 @@ namespace FWLog.Services.Services
             }
         }
 
-        public List<LoteProdutoEndereco> ConsultaDetalhesEnderecoArmazenagem(long idEnderecoArmazenagem)
+        public LoteProdutoEndereco ConsultaDetalhesEnderecoPicking(long idEnderecoArmazenagem, long idEmpresa)
         {
-            var listaLoteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(idEnderecoArmazenagem);
+            var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(idEnderecoArmazenagem);
 
-            if (listaLoteProdutoEndereco == null)
+            if (enderecoArmazenagem == null)
+            {
+                throw new BusinessException("Endereço não encontrado.");
+            }
+
+            if (!enderecoArmazenagem.Ativo)
+            {
+                throw new BusinessException("Endereço não está ativo.");
+            }
+
+            if (!enderecoArmazenagem.IsPontoSeparacao || !enderecoArmazenagem.IsPicking)
+            {
+                throw new BusinessException("Endereço não é picking.");
+            }
+
+            var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorEndereco(idEnderecoArmazenagem, idEmpresa);
+
+            if (produtoEstoque == null)
+            {
+                throw new BusinessException("Produto não configurado para o endereço.");
+            }
+
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresaPicking(idEnderecoArmazenagem, produtoEstoque.IdProduto, idEmpresa);
+
+            if (loteProdutoEndereco == null)
             {
                 throw new BusinessException("Nenhum volume instalado no endereço.");
             }
 
-            return listaLoteProdutoEndereco;
+            return loteProdutoEndereco;
         }
 
         public void ValidarLoteAbastecer(long idEnderecoArmazenagem, long idLote, long idProduto)

@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace FWLog.Web.Api.Models.Armazenagem
 {
-    public class ConsultaDetalhesEnderecoArmazenagemResposta
-    {
-        public List<DetalhesEnderecoArmazenagemItem> ListaDetalhes { get; set; }
-    }
-
-    public class DetalhesEnderecoArmazenagemItem
+    public class DetalhesEnderecoPickingResposta
     {
         public long IdLoteProdutoEndereco { get; set; }
 

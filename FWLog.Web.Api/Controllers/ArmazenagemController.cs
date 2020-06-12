@@ -360,29 +360,26 @@ namespace FWLog.Web.Api.Controllers
             return ApiOk();
         }
 
-        [Route("api/v1/armazenagem/detalhes/{idEnderecoArmazenagem}")]
+        [Route("api/v1/armazenagem/detalhes-picking/{idEnderecoArmazenagem}")]
         [HttpGet]
-        public IHttpActionResult ConsultaDetalhesEnderecoArmazenagem(long idEnderecoArmazenagem)
+        public IHttpActionResult ConsultaDetalhesEnderecoPicking(long idEnderecoArmazenagem)
         {
             try
             {
-                var detalhesEnderecoArmazenagem = _armazenagemService.ConsultaDetalhesEnderecoArmazenagem(idEnderecoArmazenagem);
+                var detalhesEnderecoPicking = _armazenagemService.ConsultaDetalhesEnderecoPicking(idEnderecoArmazenagem, IdEmpresa);
 
-                var response = new ConsultaDetalhesEnderecoArmazenagemResposta
+                var response = new DetalhesEnderecoPickingResposta
                 {
-                    ListaDetalhes = detalhesEnderecoArmazenagem.Select(item => new DetalhesEnderecoArmazenagemItem
-                    {
-                        IdLoteProdutoEndereco = item.IdLoteProdutoEndereco,
-                        IdEmpresa = item.IdEmpresa,
-                        IdLote = item.IdLote,
-                        IdProduto = item.IdProduto,
-                        ReferenciaProduto = item.Produto.Referencia,
-                        IdEnderecoArmazenagem = item.IdEnderecoArmazenagem,
-                        Quantidade = item.Quantidade,
-                        CodigoUsuarioInstalacao = item.AspNetUsers.UserName,
-                        DataHoraInstalacao = item.DataHoraInstalacao,
-                        PesoTotal = item.PesoTotal
-                    }).ToList()
+                    IdLoteProdutoEndereco = detalhesEnderecoPicking.IdLoteProdutoEndereco,
+                    IdEmpresa = detalhesEnderecoPicking.IdEmpresa,
+                    IdLote = detalhesEnderecoPicking.IdLote,
+                    IdProduto = detalhesEnderecoPicking.IdProduto,
+                    ReferenciaProduto = detalhesEnderecoPicking.Produto.Referencia,
+                    IdEnderecoArmazenagem = detalhesEnderecoPicking.IdEnderecoArmazenagem,
+                    Quantidade = detalhesEnderecoPicking.Quantidade,
+                    CodigoUsuarioInstalacao = detalhesEnderecoPicking.AspNetUsers.UserName,
+                    DataHoraInstalacao = detalhesEnderecoPicking.DataHoraInstalacao,
+                    PesoTotal = detalhesEnderecoPicking.PesoTotal
                 };
 
                 return ApiOk(response);
