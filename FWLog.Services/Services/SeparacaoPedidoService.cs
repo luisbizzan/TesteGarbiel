@@ -974,7 +974,7 @@ namespace FWLog.Services.Services
         public async Task DividirPedido(long idEmpresa)
         {
             if (idEmpresa == 0)
-                throw new BusinessException("Empresa inválida");
+                throw new BusinessException("Empresa inválida.");
 
             //Captura os corredores por empresa e ordena por corredor inicial.
             var grupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository.Todos().Where(x => x.IdEmpresa == idEmpresa).OrderBy(x => x.CorredorInicial).ToList();
@@ -998,6 +998,9 @@ namespace FWLog.Services.Services
 
                     //Agrupa os itens do pedido por produto. 
                     var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido);
+
+                    if (listaItensDoPedido.Count == 0)
+                        throw new BusinessException("Nenhum item do pedido encontrado.");
 
                     //Usamos o foreach abaixo para capturar e atualizar o IdGrupoCorredorArmazenagem e IdEnderecoArmazenagem de cada item.
                     foreach (var pedidoItem in listaItensDoPedido)
