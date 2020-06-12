@@ -1,4 +1,5 @@
 ﻿using DartDigital.Library.Exceptions;
+using FWLog.AspNet.Identity;
 using FWLog.Services.Model.Armazenagem;
 using FWLog.Services.Services;
 using FWLog.Web.Api.Models.Armazenagem;
@@ -73,16 +74,27 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/armazenagem/instalar/validar-quantidade")]
         [HttpPost]
-        public IHttpActionResult ValidarQuantidadeInstalacao(ValidarQuantidadeInstalacaoModelRequisicao requisicao)
+        public async Task<IHttpActionResult> ValidarQuantidadeInstalacao(ValidarQuantidadeInstalacaoModelRequisicao requisicao)
         {
             try
             {
+                ApplicationUser usuarioPermissaoInstalarForaMultiplo = null;
+                bool permissaoInstalarForaMultiplo = false;
+
+                if (!string.IsNullOrWhiteSpace(requisicao.UsuarioPermissaoInstalarForaMultiplo))
+                {
+                    usuarioPermissaoInstalarForaMultiplo = await UserManager.FindByNameAsync(requisicao.UsuarioPermissaoInstalarForaMultiplo);
+
+                    permissaoInstalarForaMultiplo = await UserManager.ValidatePermissionByIdEmpresaAsync(usuarioPermissaoInstalarForaMultiplo?.Id, IdEmpresa, Permissions.RFArmazenagem.RFArmazenagemInstalarForaMultiplo);
+                }
+                
                 var validarQuantidadeRequisicao = new ValidarQuantidadeInstalacaoRequisicao
                 {
                     IdLote = requisicao.IdLote,
                     IdProduto = requisicao.IdProduto,
                     Quantidade = requisicao.Quantidade,
-                    IdEmpresa = IdEmpresa
+                    IdEmpresa = IdEmpresa,
+                    PermissaoInstalarForaMultiplo = permissaoInstalarForaMultiplo
                 };
 
                 _armazenagemService.ValidarQuantidadeInstalacao(validarQuantidadeRequisicao);
@@ -101,17 +113,28 @@ namespace FWLog.Web.Api.Controllers
 
         [Route("api/v1/armazenagem/instalar/validar-endereco")]
         [HttpPost]
-        public IHttpActionResult ValidarEnderecoInstalacao(ValidarEnderecoInstalacaoModelRequisicao requisicao)
+        public async Task<IHttpActionResult> ValidarEnderecoInstalacao(ValidarEnderecoInstalacaoModelRequisicao requisicao)
         {
             try
             {
+                ApplicationUser usuarioPermissaoInstalarForaMultiplo = null;
+                bool permissaoInstalarForaMultiplo = false;
+
+                if (!string.IsNullOrWhiteSpace(requisicao.UsuarioPermissaoInstalarForaMultiplo))
+                {
+                    usuarioPermissaoInstalarForaMultiplo = await UserManager.FindByNameAsync(requisicao.UsuarioPermissaoInstalarForaMultiplo);
+
+                    permissaoInstalarForaMultiplo = await UserManager.ValidatePermissionByIdEmpresaAsync(usuarioPermissaoInstalarForaMultiplo?.Id, IdEmpresa, Permissions.RFArmazenagem.RFArmazenagemInstalarForaMultiplo);
+                }
+
                 var validarEnderecoRequisicao = new ValidarEnderecoInstalacaoRequisicao
                 {
                     IdLote = requisicao.IdLote,
                     IdProduto = requisicao.IdProduto,
                     Quantidade = requisicao.Quantidade,
                     IdEmpresa = IdEmpresa,
-                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem
+                    IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                    PermissaoInstalarForaMultiplo = permissaoInstalarForaMultiplo
                 };
 
                 _armazenagemService.ValidarEnderecoInstalacao(validarEnderecoRequisicao);
@@ -134,6 +157,16 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
+                ApplicationUser usuarioPermissaoInstalarForaMultiplo = null;
+                bool permissaoInstalarForaMultiplo = false;
+
+                if (!string.IsNullOrWhiteSpace(requisicao.UsuarioPermissaoInstalarForaMultiplo))
+                {
+                    usuarioPermissaoInstalarForaMultiplo = await UserManager.FindByNameAsync(requisicao.UsuarioPermissaoInstalarForaMultiplo);
+
+                    permissaoInstalarForaMultiplo = await UserManager.ValidatePermissionByIdEmpresaAsync(usuarioPermissaoInstalarForaMultiplo?.Id, IdEmpresa, Permissions.RFArmazenagem.RFArmazenagemInstalarForaMultiplo);
+                }
+
                 var instalarVolumeLoteRequisicao = new InstalarVolumeLoteRequisicao
                 {
                     IdLote = requisicao.IdLote,
@@ -142,7 +175,9 @@ namespace FWLog.Web.Api.Controllers
                     IdEmpresa = IdEmpresa,
                     IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
                     IdUsuarioInstalacao = IdUsuario,
-                    QuantidadeCaixas = requisicao.QuantidadeCaixas
+                    QuantidadeCaixas = requisicao.QuantidadeCaixas,
+                    PermissaoInstalarForaMultiplo = permissaoInstalarForaMultiplo,
+                    UsuarioPermissaoInstalarForaMultiplo = requisicao.UsuarioPermissaoInstalarForaMultiplo
                 };
 
                 await _armazenagemService.InstalarVolumeLote(instalarVolumeLoteRequisicao);

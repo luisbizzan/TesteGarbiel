@@ -210,6 +210,7 @@ namespace FWLog.AspNet.Identity
             public const string AtividadeConferenciaEndereco = "RFAtividadeConferenciaEndereco";
             public const string AtividadeAbastecerPicking = "RFAtividadeAbastecerPicking";
             public const string AtividadeConferencia399_400 = "RFAtividadeConferencia399_400";
+            public const string RFArmazenagemInstalarForaMultiplo = "RFArmazenagemInstalarForaMultiplo";
 
             public RFArmazenagem() : base(Display.FromString("Coletor - Armazenagem"))
             {
@@ -225,6 +226,7 @@ namespace FWLog.AspNet.Identity
                 Register(AtividadeConferenciaEndereco, Display.FromString("Atividade - Conferência Endereço"));
                 Register(AtividadeAbastecerPicking, Display.FromString("Atividade - Abastecer Picking"));
                 Register(AtividadeConferencia399_400, Display.FromString("Atividade - Conferência 399/400"));
+                Register(RFArmazenagemInstalarForaMultiplo, Display.FromString("Instalar Fora do Múltiplo"));
             }
         }
 
