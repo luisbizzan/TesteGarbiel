@@ -121,7 +121,7 @@
             if (data.Tipo == 'Entrada') {
                 $(row).addClass('row-green');
             }
-            else if (data.Tipo == 'Saida') {
+            else if (data.Tipo == 'Saída') {
                 $(row).addClass('row-red');
             }
             else if (data.Tipo == 'Ajuste') {
