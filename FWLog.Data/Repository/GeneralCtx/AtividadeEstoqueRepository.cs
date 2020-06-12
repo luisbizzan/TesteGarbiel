@@ -13,10 +13,11 @@ namespace FWLog.Data.Repository.GeneralCtx
     {
         public AtividadeEstoqueRepository(Entities entities) : base(entities) { }
 
-        public AtividadeEstoque Pesquisar(long idEmpresa, AtividadeEstoqueTipoEnum idAtividadeEstoqueTipo, long idEnderecoArmazenagem, long idProduto, bool finalizado)
+        public AtividadeEstoque Pesquisar(long idEmpresa, AtividadeEstoqueTipoEnum idAtividadeEstoqueTipo, long idEnderecoArmazenagem, long idProduto, bool finalizado, long? idLote = null)
         {
-            return Entities.AtividadeEstoque.Where(x => x.IdEmpresa == idEmpresa && x.IdAtividadeEstoqueTipo == idAtividadeEstoqueTipo && x.IdEnderecoArmazenagem == idEnderecoArmazenagem &&
-            x.IdProduto == idProduto && x.Finalizado == finalizado).FirstOrDefault();
+            var query = Entities.AtividadeEstoque.Where(x => x.IdEmpresa == idEmpresa && x.IdAtividadeEstoqueTipo == idAtividadeEstoqueTipo && x.IdEnderecoArmazenagem == idEnderecoArmazenagem && x.IdProduto == idProduto && x.Finalizado == finalizado && x.IdLote == idLote);
+
+            return query.FirstOrDefault();
         }
 
         public List<AtividadeEstoqueListaLinhaTabela> PesquisarAtividade(long idEmpresa, string idUsuario, List<int> tiposAtividade)
@@ -53,7 +54,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                              Referencia = p.Referencia,
                              CodigoEndereco = e.Codigo,
                              Corredor = e.Corredor,
-                             Finalizado = a.Finalizado
+                             Finalizado = a.Finalizado,
+                             IdLote = a.IdLote
                          });
 
             return query.ToList();

@@ -110,28 +110,27 @@ namespace FWLog.Services.Services
         {
             try
             {
-                DateTime dataAtual = DateTime.Now;
-                int diaSemana = (int)dataAtual.DayOfWeek;
+                var dataAtual = DateTime.Now;
 
-                if (diaSemana == 2) //Segunda-feira
+                if (dataAtual.DayOfWeek == DayOfWeek.Monday) //Segunda-feira
                 {
                     var listaEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEmpresa(idEmpresa).Where(x => x.Quantidade > 0 && !x.EnderecoArmazenagem.IsPontoSeparacao);
 
                     foreach (var item in listaEndereco)
                     {
-                        var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(item.IdEmpresa, AtividadeEstoqueTipoEnum.ConferenciaEndereco, item.IdEnderecoArmazenagem,
-                            item.IdProduto, false);
+                        var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(item.IdEmpresa, AtividadeEstoqueTipoEnum.ConferenciaEndereco, item.IdEnderecoArmazenagem, item.IdProduto, false, item.IdLote);
 
                         if (atividadeEstoque == null)
                         {
-                            _unitOfWork.AtividadeEstoqueRepository.Add(new Data.Models.AtividadeEstoque()
+                            _unitOfWork.AtividadeEstoqueRepository.Add(new AtividadeEstoque()
                             {
                                 IdEmpresa = item.IdEmpresa,
                                 IdAtividadeEstoqueTipo = AtividadeEstoqueTipoEnum.ConferenciaEndereco,
                                 IdEnderecoArmazenagem = item.IdEnderecoArmazenagem,
                                 IdProduto = item.IdProduto,
                                 DataSolicitacao = DateTime.Now,
-                                Finalizado = false
+                                Finalizado = false,
+                                IdLote = item.IdLote
                             });
 
                             _unitOfWork.SaveChanges();
@@ -149,18 +148,16 @@ namespace FWLog.Services.Services
         {
             try
             {
-                DateTime dataAtual = DateTime.Now;
-                int diaSemana = (int)dataAtual.DayOfWeek;
+                var dataAtual = DateTime.Now;
 
-                if (diaSemana != 1 && diaSemana != 7) //Diferente de sabado e domingo
+                if (dataAtual.DayOfWeek != DayOfWeek.Saturday && dataAtual.DayOfWeek != DayOfWeek.Sunday) //Diferente de sabado e domingo
                 {
                     var listaEndereco = _unitOfWork.ProdutoEstoqueRepository.ObterProdutoEstoquePorEmpresa(idEmpresa).Where(x => x.Saldo == 0 && x.IdEnderecoArmazenagem.HasValue &&
                     (x.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.LiquidacaoEstoque || x.IdProdutoEstoqueStatus == ProdutoEstoqueStatusEnum.ForaLinha)).ToList();
 
                     foreach (var item in listaEndereco)
                     {
-                        var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(item.IdEmpresa, AtividadeEstoqueTipoEnum.ConferenciaProdutoForaLinha, item.IdEnderecoArmazenagem.Value,
-                            item.IdProduto, false);
+                        var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(item.IdEmpresa, AtividadeEstoqueTipoEnum.ConferenciaProdutoForaLinha, item.IdEnderecoArmazenagem.Value, item.IdProduto, false);
 
                         if (atividadeEstoque == null)
                         {
@@ -388,8 +385,6 @@ namespace FWLog.Services.Services
                 }
             }
 
-            var idLote = 0; //TODO: Recuperar IdLote
-
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
                 var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.Pesquisar(idEmpresa,
@@ -398,7 +393,7 @@ namespace FWLog.Services.Services
                                                                                             idProduto,
                                                                                             false);
 
-                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
+                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresaPicking(idEnderecoArmazenagem, idProduto, idEmpresa);
 
                 var quantidadeFinal = quantidade ?? 0;
 
@@ -458,9 +453,19 @@ namespace FWLog.Services.Services
         {
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                var idLote = 0; //TODO: Recuperar IdLote
+                var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.GetById(requisicao.IdAtividadeEstoque);
 
-                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(requisicao.IdEnderecoArmazenagem, idLote, requisicao.IdProduto, idEmpresa);
+                if (atividadeEstoque == null)
+                {
+                    throw new BusinessException("Atividade não encontrada.");
+                }
+
+                if (atividadeEstoque.IdLote == null)
+                {
+                    throw new BusinessException("Lote não configurado na atividade.");
+                }
+
+                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(requisicao.IdEnderecoArmazenagem, atividadeEstoque.IdLote.Value, requisicao.IdProduto, idEmpresa);
 
                 if (loteProdutoEndereco == null)
                 {
@@ -486,8 +491,6 @@ namespace FWLog.Services.Services
                     });
                     await _unitOfWork.SaveChangesAsync();
                 }
-
-                var atividadeEstoque = _unitOfWork.AtividadeEstoqueRepository.GetById(requisicao.IdAtividadeEstoque);
 
                 atividadeEstoque.QuantidadeInicial = qtdAnterior;
                 atividadeEstoque.QuantidadeFinal = requisicao.QuantidadeFinal;

@@ -9,30 +9,44 @@ namespace FWLog.Data.Models
         [Key]
         [Required]
         public long IdAtividadeEstoque { get; set; }
+
         [Index]
         [Required]
         public long IdEmpresa { get; set; }
+
         [Index]
         [Required]
         public long IdProduto { get; set; }
+
         [Index]
         [Required]
         public long IdEnderecoArmazenagem { get; set; }
+
         [Index]
         [Required]
         public AtividadeEstoqueTipoEnum IdAtividadeEstoqueTipo { get; set; }
+
         public int? QuantidadeInicial { get; set; }
+
         public int? QuantidadeFinal { get; set; }
+
         [Required]
         public DateTime DataSolicitacao { get; set; }
+
         public DateTime? DataExecucao { get; set; }
+
         [Index]
         public string IdUsuarioSolicitacao { get; set; }
+
         [Index]
         public string IdUsuarioExecucao { get; set; }
+
         [Index]
         [Required]
         public bool Finalizado { get; set; }
+
+        [Index]
+        public long? IdLote { get; set; }
 
         [ForeignKey(nameof(IdProduto))]
         public virtual Produto Produto { get; set; }
@@ -51,5 +65,8 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdUsuarioExecucao))]
         public virtual AspNetUsers UsuarioExecucao { get; set; }
+
+        [ForeignKey(nameof(IdLote))]
+        public virtual Lote Lote { get; set; }
     }
 }
