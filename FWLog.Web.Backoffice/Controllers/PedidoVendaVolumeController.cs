@@ -23,10 +23,7 @@ namespace FWLog.Web.Backoffice.Controllers
         [HttpGet]
         public ActionResult SearchModal()
         {
-            SetViewBags();
-
-            var model = new PedidoVendaVolumeSearchModalViewModel();
-            return View(model);
+            return View(new PedidoVendaVolumeSearchModalViewModel());
         }
 
         [HttpPost]

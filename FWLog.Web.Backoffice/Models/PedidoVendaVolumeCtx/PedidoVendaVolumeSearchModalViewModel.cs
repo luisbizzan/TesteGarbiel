@@ -27,13 +27,12 @@ namespace FWLog.Web.Backoffice.Models.PedidoVendaVolumeCtx
 
     public class PedidoVendaVolumeSearchModalFillterViewModel
     {
-        [Display(Name = "Código")]
-        public long? IdCliente { get; set; }
+        public long IdPedidoVendaVolume { get; set; }
 
-        [Display(Name = "Razão Social")]
-        public string RazaoSocial { get; set; }
+        [Display(Name = "Pedido")]
+        public long IdPedido { get; set; }
 
-        [Display(Name = "CNPJ/CPF")]
-        public string CNPJCPF { get; set; }
+        [Display(Name = "Nro. Volume")]
+        public string NroVolume { get; set; }
     }
 }
