@@ -78,6 +78,9 @@ namespace FWLog.Web.Backoffice.Models.BORecebimentoNotaCtx
         public bool EnviarPicking { get; set; }
 
         public string InicioConferencia { get; set; }
+        
+        [Display(Name = "Data de Validade")]
+        public DateTime? DataValidade { get; set; }
 
     }
 }

@@ -335,9 +335,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 //Se a etiqueta for picking, filtra os endereços de picking.
                 if (impressaoItem.IdImpressaoItem == Data.Models.ImpressaoItemEnum.EtiquetaPicking)
-                    listaEnderecos = listaEnderecos.Where(x => x.IsPicking == true).ToList();
+                    listaEnderecos = listaEnderecos.Where(x => x.IsPicking == true).OrderBy(x => x.Codigo).ToList();
                 else
-                    listaEnderecos = listaEnderecos.Where(x => x.IsPicking == false).ToList();
+                    listaEnderecos = listaEnderecos.Where(x => x.IsPicking == false).OrderBy(x => x.Codigo).ToList();
 
                 int quantidadeEtiqueta = 0;
 

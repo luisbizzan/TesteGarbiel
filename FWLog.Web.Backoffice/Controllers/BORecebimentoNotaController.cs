@@ -1746,7 +1746,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.ConferirLote)]
-        public async Task<JsonResult> RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo, int idTipoConferencia)
+        public async Task<JsonResult> RegistrarConferencia(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa, string inicioConferencia, decimal multiplo, int idTipoConferencia, DateTime? dataValidade)
         {
             try
             {
@@ -1763,7 +1763,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
 
                 //Registrar conferência.
-                var conferenciaRegistro = await _conferenciaService.RegistrarConferencia(conferencia.Lote, conferencia.Produto, IdUsuario, inicioConferencia, idTipoConferencia, quantidadePorCaixa, quantidadeCaixa, IdEmpresa).ConfigureAwait(false);
+                var conferenciaRegistro = await _conferenciaService.RegistrarConferencia(conferencia.Lote, conferencia.Produto, IdUsuario, inicioConferencia, idTipoConferencia, quantidadePorCaixa, quantidadeCaixa, IdEmpresa, dataValidade).ConfigureAwait(false);
 
                 #region Impressão Automática de Etiquetas
 

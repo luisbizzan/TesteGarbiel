@@ -29,6 +29,8 @@ namespace FWLog.Data.Models
 
         public DateTime Tempo { get; set; }
 
+        public DateTime? DataValidade { get; set; }
+
         public string IdUsuarioConferente { get; set; }
 
         [ForeignKey(nameof(IdLote))]

@@ -299,7 +299,7 @@ namespace FWLog.Services.Services
             return conferenciaResponse;
         }
 
-        public async Task<ConferenciaResponse> RegistrarConferencia(Lote lote, Produto produto, string idUsuario, string inicioConferencia, int idTipoConferencia, int quantidadePorCaixa, int quantidadeCaixa, long idEmpresa)
+        public async Task<ConferenciaResponse> RegistrarConferencia(Lote lote, Produto produto, string idUsuario, string inicioConferencia, int idTipoConferencia, int quantidadePorCaixa, int quantidadeCaixa, long idEmpresa, DateTime? dataValidade)
         {
             using (var transacao = _uow.CreateTransactionScope())
             {
@@ -334,7 +334,8 @@ namespace FWLog.Services.Services
                     DataHoraInicio = dataHoraInicioConferencia,
                     DataHoraFim = dataHoraFimConferencia,
                     Tempo = tempoConferencia,
-                    IdUsuarioConferente = idUsuario
+                    IdUsuarioConferente = idUsuario,
+                    DataValidade = dataValidade
                 };
 
                 _uow.LoteConferenciaRepository.Add(loteConferencia);
