@@ -803,11 +803,11 @@ namespace FWLog.Services.Services
 
             if (enderecoArmazenagem.EstoqueMaximo.HasValue)
             {
-                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
+                var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresaPicking(idEnderecoArmazenagem, idProduto, idEmpresa);
 
                 if (loteProdutoEndereco == null)
                 {
-                    throw new BusinessException("Nenhum volume instalado no endereço.");
+                    throw new BusinessException("Endereço de picking não configurado.");
                 }
 
                 if (enderecoArmazenagem.EstoqueMaximo.HasValue && loteProdutoEndereco.Quantidade >= enderecoArmazenagem.EstoqueMaximo.Value)
@@ -832,11 +832,11 @@ namespace FWLog.Services.Services
 
             ValidarQuantidadeAbastecer(idEnderecoArmazenagem, idLote, idProduto, quantidade, idEmpresa);
 
-            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(idEnderecoArmazenagem, idLote, idProduto, idEmpresa);
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresaPicking(idEnderecoArmazenagem, idProduto, idEmpresa);
 
             if (loteProdutoEndereco == null)
             {
-                throw new BusinessException("Volume não instalado no endereço.");
+                throw new BusinessException("Endereço de picking não configurado.");
             }
 
             var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(idLote, idProduto);
