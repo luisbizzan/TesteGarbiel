@@ -37,10 +37,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -137,18 +133,18 @@ namespace FWLog.Web.Api.Controllers
                     PermissaoInstalarForaMultiplo = permissaoInstalarForaMultiplo
                 };
 
-                _armazenagemService.ValidarEnderecoInstalacao(validarEnderecoRequisicao);
+                var temOutrosProdutosInstalados = _armazenagemService.ValidarEnderecoInstalacao(validarEnderecoRequisicao);
+
+                return ApiOk(new ValidarEnderecoInstalacaoModelResposta
+                {
+                    TemOutrosProdutosInstalados = temOutrosProdutosInstalados
+                });
             }
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
-            return ApiOk();
         }
 
         [Route("api/v1/armazenagem/instalar")]
@@ -185,10 +181,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
 
             return ApiOk();
@@ -256,7 +248,8 @@ namespace FWLog.Web.Api.Controllers
                     PesoTotal = detalhesVolumeInformado.PesoTotal,
                     LimitePeso = detalhesVolumeInformado.EnderecoArmazenagem.LimitePeso,
                     DataHoraInstalacao = detalhesVolumeInformado.DataHoraInstalacao,
-                    CodigoUsuarioInstalacao = detalhesVolumeInformado.AspNetUsers.UserName
+                    CodigoUsuarioInstalacao = detalhesVolumeInformado.AspNetUsers.UserName,
+                    IdProduto = detalhesVolumeInformado.IdProduto
                 };
 
                 return ApiOk(response);
@@ -300,10 +293,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -320,10 +309,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -339,10 +324,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
 
             return ApiOk();
@@ -368,10 +349,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
 
             return ApiOk();
@@ -399,10 +376,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -419,34 +392,30 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
 
-        [Route("api/v1/armazenagem/detalhes/{idEnderecoArmazenagem}")]
+        [Route("api/v1/armazenagem/detalhes-picking/{idEnderecoArmazenagem}")]
         [HttpGet]
-        public IHttpActionResult ConsultaDetalhesEnderecoArmazenagem(long idEnderecoArmazenagem)
+        public IHttpActionResult ConsultaDetalhesEnderecoPicking(long idEnderecoArmazenagem)
         {
             try
             {
-                var detalhesEnderecoArmazenagem = _armazenagemService.ConsultaDetalhesEnderecoArmazenagem(idEnderecoArmazenagem);
+                var detalhesEnderecoPicking = _armazenagemService.ConsultaDetalhesEnderecoPicking(idEnderecoArmazenagem, IdEmpresa);
 
-                var response = new ConsultaDetalhesEnderecoArmazenagemResposta
+                var response = new DetalhesEnderecoPickingResposta
                 {
-                    IdLoteProdutoEndereco = detalhesEnderecoArmazenagem.IdLoteProdutoEndereco,
-                    IdEmpresa = detalhesEnderecoArmazenagem.IdEmpresa,
-                    IdLote = detalhesEnderecoArmazenagem.IdLote,
-                    IdProduto = detalhesEnderecoArmazenagem.IdProduto,
-                    ReferenciaProduto = detalhesEnderecoArmazenagem.Produto.Referencia,
-                    IdEnderecoArmazenagem = detalhesEnderecoArmazenagem.IdEnderecoArmazenagem,
-                    Quantidade = detalhesEnderecoArmazenagem.Quantidade,
-                    CodigoUsuarioInstalacao = detalhesEnderecoArmazenagem.AspNetUsers.UserName,
-                    DataHoraInstalacao = detalhesEnderecoArmazenagem.DataHoraInstalacao,
-                    PesoTotal = detalhesEnderecoArmazenagem.PesoTotal
+                    IdLoteProdutoEndereco = detalhesEnderecoPicking.IdLoteProdutoEndereco,
+                    IdEmpresa = detalhesEnderecoPicking.IdEmpresa,
+                    IdLote = detalhesEnderecoPicking.IdLote,
+                    IdProduto = detalhesEnderecoPicking.IdProduto,
+                    ReferenciaProduto = detalhesEnderecoPicking.Produto.Referencia,
+                    IdEnderecoArmazenagem = detalhesEnderecoPicking.IdEnderecoArmazenagem,
+                    Quantidade = detalhesEnderecoPicking.Quantidade,
+                    CodigoUsuarioInstalacao = detalhesEnderecoPicking.AspNetUsers.UserName,
+                    DataHoraInstalacao = detalhesEnderecoPicking.DataHoraInstalacao,
+                    PesoTotal = detalhesEnderecoPicking.PesoTotal
                 };
 
                 return ApiOk(response);
@@ -454,10 +423,6 @@ namespace FWLog.Web.Api.Controllers
             catch (BusinessException ex)
             {
                 return ApiBadRequest(ex.Message);
-            }
-            catch
-            {
-                throw;
             }
         }
 
@@ -486,7 +451,8 @@ namespace FWLog.Web.Api.Controllers
                 _armazenagemService.ValidarQuantidadeAbastecer(requisicao?.IdEnderecoArmazenagem ?? 0,
                                                                 requisicao?.IdLote ?? 0,
                                                                 requisicao?.IdProduto ?? 0,
-                                                                requisicao?.Quantidade ?? 0);
+                                                                requisicao?.Quantidade ?? 0,
+                                                                IdEmpresa);
             }
             catch (BusinessException ex)
             {
@@ -515,10 +481,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(exception.Message);
             }
-            catch
-            {
-                throw;
-            }
 
             return ApiOk();
         }
@@ -546,6 +508,27 @@ namespace FWLog.Web.Api.Controllers
             try
             {
                 _armazenagemService.ValidarEnderecoConferir(idEnderecoArmazenagem);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+
+            return ApiOk();
+        }
+
+        [Route("api/v1/armazenagem/conferir/validar-lote")]
+        [HttpPost]
+        public IHttpActionResult ValidarLoteConferir(ValidarLoteConferirModelRequisicao requisicao)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiBadRequest(ModelState);
+            }
+
+            try
+            {
+                _armazenagemService.ValidarLoteConferir(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0, requisicao?.IdLote ?? 0, IdEmpresa);
             }
             catch (BusinessException ex)
             {
@@ -587,7 +570,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                await _armazenagemService.FinalizarConferencia(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0, requisicao?.Quantidade ?? 0, IdEmpresa, IdUsuario, requisicao.ConferenciaManual);
+                await _armazenagemService.FinalizarConferencia(requisicao?.IdEnderecoArmazenagem ?? 0, requisicao?.IdProduto ?? 0, requisicao?.IdLote ?? 0, requisicao?.Quantidade ?? 0, IdEmpresa, IdUsuario, requisicao.ConferenciaManual);
             }
             catch (BusinessException ex)
             {
@@ -695,7 +678,6 @@ namespace FWLog.Web.Api.Controllers
             {
                 return ApiBadRequest(ex.Message);
             }
-
         }
     }
 }

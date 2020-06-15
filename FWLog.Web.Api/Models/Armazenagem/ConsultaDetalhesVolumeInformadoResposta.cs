@@ -13,5 +13,7 @@ namespace FWLog.Web.Api.Models.Armazenagem
         public string CodigoUsuarioInstalacao { get; set; }
 
         public DateTime DataHoraInstalacao { get; set; }
+
+        public long IdProduto { get; set; }
     }
 }

@@ -11,5 +11,6 @@
         public string Referencia { get; set; }
         public string CodigoEndereco { get; set; }
         public bool Finalizado { get; set; }
+        public long? IdLote { get; set; }
     }
 }
