@@ -188,5 +188,14 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return selectQuery.ToList();
         }
+
+        public List<PedidoVendaVolume> BuscarPedidosExpedidosPorEmpresa(long idEmpresa)
+        {
+            return Entities.PedidoVendaVolume.AsNoTracking()
+                .Where(pv => pv.IdPedidoVendaStatus == PedidoVendaStatusEnum.RomaneioImpresso &&
+                             pv.PedidoVenda.IdEmpresa == idEmpresa &&
+                             pv.PedidoVenda.Pedido.NumeroNotaFiscal.HasValue &&
+                             pv.PedidoVenda.Pedido.SerieNotaFiscal != null).ToList();
+        }
     }
 }

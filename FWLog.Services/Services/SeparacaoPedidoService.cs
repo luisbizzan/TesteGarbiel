@@ -299,6 +299,11 @@ namespace FWLog.Services.Services
 
             var novaQuantidade = loteProdutoEndereco.Quantidade += quantidadeAdicionar;
 
+            if (quantidadeAdicionar < 0 && novaQuantidade < 0)
+            {
+                throw new BusinessException($"Saldo insuficiente no endereço.");
+            }
+
             var produto = loteProdutoEndereco.Produto;
 
             var novoPesoInstalacao = produto.PesoLiquido / produto.MultiploVenda * novaQuantidade;
@@ -324,7 +329,14 @@ namespace FWLog.Services.Services
 
                 var loteProduto = _unitOfWork.LoteProdutoRepository.PesquisarProdutoNoLote(idEmpresa, pedidoVendaProduto.IdLote.Value, pedidoVendaProduto.IdProduto);
 
-                loteProduto.Saldo += quantidadeAdicionar;
+                var novoSaldo = loteProduto.Saldo += quantidadeAdicionar;
+
+                if (quantidadeAdicionar < 0 && novoSaldo < 0)
+                {
+                    throw new BusinessException($"Saldo insuficiente no lote.");
+                }
+
+                loteProduto.Saldo = novoSaldo;
 
                 await _unitOfWork.SaveChangesAsync();
 

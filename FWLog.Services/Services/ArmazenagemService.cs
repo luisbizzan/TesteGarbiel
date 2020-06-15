@@ -30,7 +30,8 @@ namespace FWLog.Services.Services
                 IdLote = requisicao.IdLote,
                 IdProduto = requisicao.IdProduto,
                 Quantidade = requisicao.Quantidade,
-                IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem
+                IdEnderecoArmazenagem = requisicao.IdEnderecoArmazenagem,
+                PermissaoInstalarForaMultiplo = requisicao.PermissaoInstalarForaMultiplo
             };
 
             ValidarEnderecoInstalacao(validarEnderecoInstalacaoRequisicao);
@@ -74,11 +75,18 @@ namespace FWLog.Services.Services
                 transacao.Complete();
             }
 
+            string autorizacaoMultiplo = string.Empty;
+
+            if (requisicao.Quantidade < produto.MultiploVenda || (requisicao.Quantidade % produto.MultiploVenda) != 0)
+            {
+                autorizacaoMultiplo = $"Instalação fora do múltiplo autorizada por {requisicao.UsuarioPermissaoInstalarForaMultiplo}.";
+            }
+
             var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
             {
                 IdColetorAplicacao = ColetorAplicacaoEnum.Armazenagem,
                 IdColetorHistoricoTipo = ColetorHistoricoTipoEnum.InstalarProduto,
-                Descricao = $"Instalou o produto {produto.Referencia} quantidade {requisicao.Quantidade} peso {pesoInstalacao} do lote {requisicao.IdLote} no endereço {enderecoArmazenagem.Codigo}",
+                Descricao = $"Instalou o produto {produto.Referencia} quantidade {requisicao.Quantidade} peso {pesoInstalacao} do lote {requisicao.IdLote} no endereço {enderecoArmazenagem.Codigo}.{autorizacaoMultiplo}",
                 IdEmpresa = requisicao.IdEmpresa,
                 IdUsuario = requisicao.IdUsuarioInstalacao
             };
@@ -194,6 +202,11 @@ namespace FWLog.Services.Services
             {
                 throw new BusinessException("Quantidade maior que o saldo do produto no lote.");
             }
+
+            if (!requisicao.PermissaoInstalarForaMultiplo && (requisicao.Quantidade < loteProduto.Produto.MultiploVenda || (requisicao.Quantidade % loteProduto.Produto.MultiploVenda) != 0))
+            {
+                throw new BusinessException("Quantidade ajuste está fora do múltiplo.");
+            }
         }
 
         public void ValidarEnderecoInstalacao(ValidarEnderecoInstalacaoRequisicao requisicao)
@@ -215,7 +228,7 @@ namespace FWLog.Services.Services
             {
                 IdEmpresa = requisicao.IdEmpresa,
                 IdLote = requisicao.IdLote,
-                IdProduto = requisicao.IdProduto
+                IdProduto = requisicao.IdProduto               
             };
 
             ValidarLoteProdutoInstalacao(validarLoteProdutoRequisicao);
@@ -225,7 +238,8 @@ namespace FWLog.Services.Services
                 IdEmpresa = requisicao.IdEmpresa,
                 IdLote = requisicao.IdLote,
                 IdProduto = requisicao.IdProduto,
-                Quantidade = requisicao.Quantidade
+                Quantidade = requisicao.Quantidade,
+                PermissaoInstalarForaMultiplo = requisicao.PermissaoInstalarForaMultiplo
             };
 
             ValidarQuantidadeInstalacao(validarQuantidadeRequisicao);

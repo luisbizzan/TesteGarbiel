@@ -26,6 +26,9 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         [Display(Name = "Nro. Volume")]
         public string NroVolume { get; set; }
 
+        [Display(Name = "Centena")]
+        public string NroCentena { get; set; }
+
         [Display(Name = "Transportadora")]
         public string NomeTransportadora { get; set; }
 
