@@ -184,7 +184,7 @@ namespace FWLog.Services.Services
 
         public bool AtualizarAtividadeAbastecerPicking(AtividadeEstoqueRequisicao atividadeEstoqueRequisicao, long idEmpresa, string idUsuario)
         {
-            bool finalizouuAtividadeEstoque = false;
+            bool finalizouAtividadeEstoque = false;
 
             var atividade = _unitOfWork.AtividadeEstoqueRepository.GetById(atividadeEstoqueRequisicao.IdAtividadeEstoque);
 
@@ -196,7 +196,7 @@ namespace FWLog.Services.Services
 
             var loteProduto = _unitOfWork.LoteProdutoRepository.ConsultarPorLoteProduto(atividadeEstoqueRequisicao.IdLote, atividade.IdProduto);
 
-            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoLoteProdutoEmpresa(atividade.IdEnderecoArmazenagem, atividadeEstoqueRequisicao.IdLote, atividade.IdProduto, idEmpresa);
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresaPicking(atividade.IdEnderecoArmazenagem, atividade.IdProduto, idEmpresa);
 
             var enderecoArmazenagem = _unitOfWork.EnderecoArmazenagemRepository.GetById(atividade.IdEnderecoArmazenagem);
 
@@ -239,7 +239,7 @@ namespace FWLog.Services.Services
 
                         _unitOfWork.SaveChanges();
 
-                        finalizouuAtividadeEstoque = true;
+                        finalizouAtividadeEstoque = true;
                     }
 
                     transacao.Complete();
@@ -256,7 +256,7 @@ namespace FWLog.Services.Services
 
                 _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
 
-                return finalizouuAtividadeEstoque;
+                return finalizouAtividadeEstoque;
             }
             catch
             {
