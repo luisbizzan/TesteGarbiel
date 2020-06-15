@@ -256,6 +256,7 @@ namespace FWLog.AspNet.Identity
         {
             public const string EtiquetaEndereco = "RFImprimirEtiquetaEndereco";
             public const string EtiquetaLote = "RFImprimirEtiquetaLote";
+            public const string RFImprimirEtiquetaLoteForaMultiplo = "RFImprimirEtiquetaLoteForaMultiplo";
             public const string EtiquetaPicking = "RFImprimirEtiquetaPicking";
             public const string EtiquetasProduto = "RFImprimirEtiquetasProduto";
 
@@ -263,6 +264,7 @@ namespace FWLog.AspNet.Identity
             {
                 Register(EtiquetaEndereco, Display.FromString("Etiqueta Endereço"));
                 Register(EtiquetaLote, Display.FromString("Etiqueta Lote"));
+                Register(RFImprimirEtiquetaLoteForaMultiplo, Display.FromString("Etiqueta Lote Fora do Múltiplo"));
                 Register(EtiquetaPicking, Display.FromString("Etiqueta Picking"));
                 Register(EtiquetasProduto, Display.FromString("Etiquetas Produto"));
             }
