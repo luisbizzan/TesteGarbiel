@@ -29,7 +29,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public bool IsReimpressao(long idProduto, long idEmpresa, int idTipoEitquetagem)
         {
-            return Entities.LogEtiquetagem.Any(le => le.IdEmpresa == idEmpresa && le.IdProduto == idProduto && le.IdTipoEtiquetagem.GetHashCode() == idTipoEitquetagem);
+            return Entities.LogEtiquetagem.Any(le => le.IdEmpresa == idEmpresa && le.IdProduto == idProduto && (int)le.IdTipoEtiquetagem == idTipoEitquetagem);
         }
 
         public List<LogEtiquetagemListaLinhaTabela> BuscarLista(DataTableFilter<LogEtiquetagemListaFiltro> model, out int totalRecordsFiltered, out int totalRecords, long idEmpresa)
