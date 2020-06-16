@@ -993,7 +993,7 @@ namespace FWLog.Services.Services
             var grupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository.Todos().Where(x => x.IdEmpresa == idEmpresa).OrderBy(x => x.CorredorInicial).ToList();
 
             //Captura os pedidos por empresa e status pendente separação.
-            var listaPedidos = _unitOfWork.PedidoRepository.PesquisarPendenteSeparacao(idEmpresa).Where(x => x.IdPedido == 261);
+            var listaPedidos = _unitOfWork.PedidoRepository.PesquisarPendenteSeparacao(idEmpresa);
 
             foreach (var pedido in listaPedidos) //Percorre a lista de pedidos.
             {
