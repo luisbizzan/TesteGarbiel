@@ -1445,6 +1445,11 @@ namespace FWLog.Services.Services
                 pedidos = pedidos.Where(pv => (int)pv.IdPedidoVendaStatus == filtro.CustomFilter.IdStatus.Value);
             }
 
+            if (filtro.CustomFilter.IdProduto.HasValue)
+            {
+                pedidos = pedidos.Where(pv => pv.PedidoVenda.PedidoVendaProdutos.Any(x => x.IdProduto == filtro.CustomFilter.IdProduto.Value));
+            }
+
             var query = pedidos.Select(s => new
             {
                 NroPedido = s.PedidoVenda.NroPedidoVenda,
@@ -1456,6 +1461,7 @@ namespace FWLog.Services.Services
                 PedidoSerieNotaFiscal = s.PedidoVenda.Pedido.SerieNotaFiscal,
                 DataSaida = s.PedidoVenda.DataHoraRomaneio,
                 Status = s.PedidoVendaStatus.Descricao,
+                StatusPedido = s.PedidoVenda.PedidoVendaStatus.Descricao,
                 NomeCliente = s.PedidoVenda.Cliente.RazaoSocial
             });
 
@@ -1476,7 +1482,8 @@ namespace FWLog.Services.Services
                     DataCriacao = s.DataCriacao.ToString("dd/MM/yyyy"),
                     NumeroSerieNotaFiscal = s.PedidoNumeroNotaFiscal.HasValue ? $"{s.PedidoNumeroNotaFiscal}/{s.PedidoSerieNotaFiscal}" : "Aguardando Faturamento",
                     DataExpedicao = s.DataSaida.HasValue ? s.DataSaida.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty,
-                    Status = s.Status,
+                    StatusVolume = s.Status,
+                    StatusPedido = s.StatusPedido
                 });
             });
 
