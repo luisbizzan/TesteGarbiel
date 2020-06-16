@@ -6,8 +6,9 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 {
     public class MovimentacaoVolumesDetalheViewModel
     {
-        [Display(Name = "Status")]
         public string Status { get; set; }
+
+        public string CorredorArmazenagemDescricao { get; set; }
 
         public List<MovimentacaoVolumesDetalheListItemViewModel> Items { get; set; }
 

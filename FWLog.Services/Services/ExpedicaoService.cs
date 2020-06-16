@@ -1279,7 +1279,7 @@ namespace FWLog.Services.Services
 
             dadosAgrupados.ForEach(g => dadosRetorno.Add(new MovimentacaoVolumesModel
             {
-                Corredores = $"{g.Key.CorredorInicial} à {g.Key.CorredorFinal}",
+                Corredores = $"{g.Key.CorredorInicial.ToString().PadLeft(2, '0')} à {g.Key.CorredorFinal.ToString().PadLeft(2, '0')}",
                 IdGrupoCorredorArmazenagem = g.Key.IdGrupoCorredorArmazenagem,
                 PontoArmazenagemDescricao = g.Key.PontoArmazenagemDescricao,
                 EnviadoSeparacao = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao),
@@ -1362,7 +1362,7 @@ namespace FWLog.Services.Services
             return resultado;
         }
 
-        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string tipo, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa, out string statusDescricao)
+        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, string tipo, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa, out string statusDescricao, out string corredorArmazenagemDescricao)
         {
             var listaStatus = new List<PedidoVendaStatusEnum>();
 
@@ -1402,6 +1402,18 @@ namespace FWLog.Services.Services
                 default:
                     statusDescricao = "Todos";
                     break;
+            }
+
+            corredorArmazenagemDescricao = null;
+
+            if (idGrupoCorredorArmazenagem.HasValue)
+            {
+                var grupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository.GetById(idGrupoCorredorArmazenagem.Value);
+
+                if (grupoCorredorArmazenagem != null)
+                {
+                    corredorArmazenagemDescricao = $"{grupoCorredorArmazenagem.PontoArmazenagem.Descricao}: {grupoCorredorArmazenagem.CorredorInicial.ToString().PadLeft(2, '0')} à {grupoCorredorArmazenagem.CorredorFinal.ToString().PadLeft(2, '0')}";
+                }
             }
 
             var responseList = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, cartaoCredito, cartaoDebito, dinheiro, requisicao, idEmpresa);
