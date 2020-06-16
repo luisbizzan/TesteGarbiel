@@ -591,54 +591,50 @@ namespace FWLog.Services.Services
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                PedidoVendaStatusEnum novoStatusSeparacao;
                 var dataProcessamento = DateTime.Now;
 
                 if (pedidoVendaVolume.PedidoVendaProdutos.Where(w => w.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProdutoZerado).Count() == pedidoVendaVolume.PedidoVendaProdutos.Count)
                 {
-                    novoStatusSeparacao = PedidoVendaStatusEnum.VolumeExcluido;
+                    pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeExcluido;
                 }
                 else
                 {
-                    novoStatusSeparacao = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
+                    pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
                 }
 
-                pedidoVendaVolume.IdPedidoVendaStatus = novoStatusSeparacao;
                 pedidoVendaVolume.DataHoraFimSeparacao = dataProcessamento;
                 pedidoVendaVolume.IdCaixaVolume = idCaixa;
                 pedidoVendaVolume.IdUsuarioSeparacaoAndamento = null;
-
                 _unitOfWork.SaveChanges();
 
                 var todosProdutosVenda = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVenda(idPedidoVenda);
 
                 var finalizouPedidoVenda = false;
 
-                if (!todosProdutosVenda.Any(produtoVendaProduto => produtoVendaProduto.IdUsuarioAutorizacaoZerar.NullOrEmpty() && produtoVendaProduto.QtdSeparada != produtoVendaProduto.QtdSeparar))
-                {
-                    pedidoVenda.IdPedidoVendaStatus = novoStatusSeparacao;
-                    pedidoVenda.Pedido.IdPedidoVendaStatus = novoStatusSeparacao;
-                    pedidoVenda.DataHoraFimSeparacao = dataProcessamento;
-
-                    _unitOfWork.SaveChanges();
-
-                    await AtualizarQtdConferidaIntegracao(pedidoVenda);
-
-                    await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, novoStatusSeparacao);
-
-                    finalizouPedidoVenda = true;
-                }
-                else if (todosProdutosVenda.Where(produtoVendaProduto => produtoVendaProduto.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProdutoZerado).Count() == todosProdutosVenda.Count)
+                if (todosProdutosVenda.Where(produtoVendaProduto => produtoVendaProduto.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProdutoZerado).Count() == todosProdutosVenda.Count)
                 {
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeExcluido;
                     pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeExcluido;
                     pedidoVenda.DataHoraFimSeparacao = dataProcessamento;
-
                     _unitOfWork.SaveChanges();
 
-                    await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, novoStatusSeparacao);
-
                     finalizouPedidoVenda = true;
+                }
+                else if (todosProdutosVenda.Where(produtoVendaProduto => produtoVendaProduto.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProdutoZerado ||
+                    produtoVendaProduto.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso).Count() == todosProdutosVenda.Count)
+                {
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
+                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
+                    pedidoVenda.DataHoraFimSeparacao = dataProcessamento;
+                    _unitOfWork.SaveChanges();
+                   
+                    finalizouPedidoVenda = true;
+                }
+
+                if (finalizouPedidoVenda)
+                {
+                    await AtualizarQtdConferidaIntegracao(pedidoVenda);
+                    await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, pedidoVenda.IdPedidoVendaStatus);
                 }
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
@@ -649,7 +645,6 @@ namespace FWLog.Services.Services
                     IdEmpresa = idEmpresa,
                     IdUsuario = idUsuarioOperacao
                 };
-
                 _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
 
                 transacao.Complete();
