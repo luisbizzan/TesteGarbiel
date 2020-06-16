@@ -1286,12 +1286,12 @@ namespace FWLog.Services.Services
                 EmSeparacao = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao),
                 FinalizadoSeparacao = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso),
                 InstaladoTransportadora = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovendoDOCA),
-                Doca = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.DespachandoNF || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.NFDespachada),
+                DOC = g.Count(v => v.NumeroNotaFiscal.HasValue && (v.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.InstalandoVolumeTransportadora || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovendoDOCA || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.DespachandoNF || v.IdPedidoVendaStatus == PedidoVendaStatusEnum.NFDespachada)),
                 EnviadoTransportadora = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.RomaneioImpresso),
                 VolumeExcluido = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeExcluido),
             }));
 
-            dadosRetorno.ForEach(dr => dr.Total = dr.EnviadoSeparacao + dr.EmSeparacao + dr.FinalizadoSeparacao + dr.InstaladoTransportadora + dr.Doca + dr.EnviadoTransportadora + dr.VolumeExcluido);
+            dadosRetorno.ForEach(dr => dr.Total = dr.EnviadoSeparacao + dr.EmSeparacao + dr.FinalizadoSeparacao + dr.InstaladoTransportadora + dr.DOC + dr.EnviadoTransportadora + dr.VolumeExcluido);
 
             return dadosRetorno;
         }
@@ -1365,6 +1365,7 @@ namespace FWLog.Services.Services
         public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, string tipo, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa, out string statusDescricao, out string corredorArmazenagemDescricao)
         {
             var listaStatus = new List<PedidoVendaStatusEnum>();
+            var nfFaturada = false;
 
             switch (tipo)
             {
@@ -1385,11 +1386,16 @@ namespace FWLog.Services.Services
                     listaStatus.Add(PedidoVendaStatusEnum.MovendoDOCA);
                     statusDescricao = "Instalado Transportadora	";
                     break;
-                case "Doca":
+                case "DOC":
+                    nfFaturada = true;
+                    listaStatus.Add(PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso);
+                    listaStatus.Add(PedidoVendaStatusEnum.InstalandoVolumeTransportadora);
+                    listaStatus.Add(PedidoVendaStatusEnum.VolumeInstaladoTransportadora);
+                    listaStatus.Add(PedidoVendaStatusEnum.MovendoDOCA);
                     listaStatus.Add(PedidoVendaStatusEnum.MovidoDOCA);
                     listaStatus.Add(PedidoVendaStatusEnum.DespachandoNF);
                     listaStatus.Add(PedidoVendaStatusEnum.NFDespachada);
-                    statusDescricao = "DOCA";
+                    statusDescricao = "DOC";
                     break;
                 case "EnviadoTransportadora":
                     listaStatus.Add(PedidoVendaStatusEnum.RomaneioImpresso);
@@ -1416,7 +1422,7 @@ namespace FWLog.Services.Services
                 }
             }
 
-            var responseList = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, cartaoCredito, cartaoDebito, dinheiro, requisicao, idEmpresa);
+            var responseList = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, cartaoCredito, cartaoDebito, dinheiro, requisicao, nfFaturada, idEmpresa);
 
             responseList.ForEach(dados =>
             {

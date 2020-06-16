@@ -65,8 +65,8 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         [Display(Name = "Instalado Transportadora")]
         public int InstaladoTransportadora { get; set; }
 
-        [Display(Name = "DOCA")]
-        public int Doca { get; set; }
+        [Display(Name = "DOC")]
+        public int DOC { get; set; }
 
         [Display(Name = "Enviado Transportadora")]
         public int EnviadoTransportadora { get; set; }

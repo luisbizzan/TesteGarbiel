@@ -93,7 +93,7 @@
                                         <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().EmSeparacao)</th>
                                         <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().FinalizadoSeparacao)</th>
                                         <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().InstaladoTransportadora)</th>
-                                        <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().Doca)</th>
+                                        <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().DOC)</th>
                                         <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().EnviadoTransportadora)</th>
                                         <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().Total)</th>
                                     </tr>
@@ -167,9 +167,9 @@
                                                     </td>
                                                     <td align="center">
                                                         @{
-                                                            routeValueDictionary["status"] = "Doca";
+                                                            routeValueDictionary["status"] = "DOC";
 
-                                                            @Html.ActionLink(item.Doca.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                            @Html.ActionLink(item.DOC.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
                                                         }
                                                     </td>
                                                     <td align="center">
@@ -242,9 +242,9 @@
                                             <td align="center">
                                                 <b>
                                                     @{
-                                                        routeValueDictionary["status"] = "Doca";
+                                                        routeValueDictionary["status"] = "DOC";
 
-                                                        @Html.ActionLink(Model.Items.Sum(s => s.Doca).ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                        @Html.ActionLink(Model.Items.Sum(s => s.DOC).ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
                                                     }
                                                 </b>
                                             </td>
