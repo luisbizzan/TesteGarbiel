@@ -912,7 +912,7 @@ namespace FWLog.Services.Services
 
             foreach (var vendaProduto in vendaProdutos)
             {
-                var pedidoItens = pedidoVenda.Pedido.PedidoItens.Where(w => w.IdProduto == vendaProduto.Key).OrderBy(o => o.Sequencia).ToList();
+                var pedidoItens = pedidoVenda.Pedido.PedidoItens.Where(w => w.IdProduto == vendaProduto.Key).OrderBy(o => o.Sequencia).ThenByDescending(o => o.QtdPedido).ToList();
 
                 var qtdSeparada = vendaProduto.Value.Sum(s => s.QtdSeparada).Value;
 
@@ -928,7 +928,8 @@ namespace FWLog.Services.Services
                         //TODO Ajustar essa quantidade quando o 
                         QtdSeparada = qtdSeparada,
                         Sequencia = pedidoItens.First().Sequencia,
-                        IdProduto = pedidoItens.First().IdProduto
+                        IdProduto = pedidoItens.First().IdProduto,
+                        QtdFaltante = pedidoItens.First().QtdPedido - qtdSeparada
                     };
 
                     itensIntegracao.Add(itemIntegracao);
@@ -954,12 +955,13 @@ namespace FWLog.Services.Services
                         {
                             QtdSeparada = item.QtdPedido <= qtdPendente ? item.QtdPedido : qtdPendente,
                             Sequencia = item.Sequencia,
-                            IdProduto = item.IdProduto
+                            IdProduto = item.IdProduto,
+                            QtdFaltante = item.QtdPedido <= qtdPendente ? 0 : item.QtdPedido - qtdPendente
                         };
 
                         itensIntegracao.Add(itemDevolucao);
 
-                        if (itensIntegracao.Where(s => s.IdProduto == item.IdProduto).Sum(s => s.QtdSeparada) == qtdSeparada)
+                        if (itensIntegracao.Where(s => s.IdProduto == item.IdProduto).Any(s => s.QtdFaltante > 0))
                         {
                             break;
                         }
@@ -973,7 +975,7 @@ namespace FWLog.Services.Services
                 {
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", pedidoVenda.Pedido.CodigoIntegracao.ToString() }, { "SEQUENCIA", item.Sequencia.ToString() } };
 
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("ItemNota", campoChave, "QTDCONFERIDA", item.QtdSeparada);
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("ItemNota", campoChave, "QTDCONFERIDA", item.QtdFaltante);
                 }
                 catch (Exception ex)
                 {

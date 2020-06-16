@@ -5,5 +5,6 @@
         public int QtdSeparada { get; set; }
         public int Sequencia { get; set; }
         public long IdProduto { get; set; }
+        public int QtdFaltante { get; set; }
     }
 }
