@@ -29,10 +29,7 @@ namespace FWLog.Services.Services
                 loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEnderecoProdutoEmpresaPicking(produtoEstoque.IdEnderecoArmazenagem.Value, produtoEstoque.IdProduto, produtoEstoque.IdEmpresa);
             }
 
-            if (loteProdutoEndereco?.Quantidade > 0)
-            {
-                throw new BusinessException("Existem peças no picking, não é possível alterar");
-            }
+            var quantidadeAnterior = loteProdutoEndereco?.Quantidade;
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
@@ -57,7 +54,7 @@ namespace FWLog.Services.Services
                     newLoteProdutoEndereco.IdEnderecoArmazenagem = idEnderecoArmazenagem;
                     newLoteProdutoEndereco.IdProduto = produtoEstoque.IdProduto;
                     newLoteProdutoEndereco.IdLote = null;
-                    newLoteProdutoEndereco.Quantidade = 0;
+                    newLoteProdutoEndereco.Quantidade = quantidadeAnterior.GetValueOrDefault();
                     newLoteProdutoEndereco.PesoTotal = 0;
                     newLoteProdutoEndereco.IdEmpresa = produtoEstoque.IdEmpresa;
                     newLoteProdutoEndereco.IdUsuarioInstalacao = idUsuario;
