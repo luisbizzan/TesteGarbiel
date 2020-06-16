@@ -903,68 +903,41 @@ namespace FWLog.Services.Services
 
             var itensIntegracao = new List<PedidoItemIntegracao>();
 
-            var vendaProdutos = pedidoVenda.PedidoVendaProdutos.Where(w => w.QtdSeparada.HasValue).GroupBy(g => g.IdProduto).ToDictionary(d => d.Key, d => d.ToList());
+            var vendaProdutos = pedidoVenda.PedidoVendaProdutos.Where(w => w.QtdSeparada.HasValue)
+                .GroupBy(g => g.IdProduto).ToDictionary(d => d.Key, d => d.ToList());
 
             foreach (var vendaProduto in vendaProdutos)
             {
-                var pedidoItens = pedidoVenda.Pedido.PedidoItens.Where(w => w.IdProduto == vendaProduto.Key).OrderBy(o => o.Sequencia).ThenByDescending(o => o.QtdPedido).ToList();
+                var totalSeparado = vendaProduto.Value.Sum(s => s.QtdSeparada).Value;
 
-                var qtdSeparada = vendaProduto.Value.Sum(s => s.QtdSeparada).Value;
+                var pedidoItens = pedidoVenda.Pedido.PedidoItens.Where(w => w.IdProduto == vendaProduto.Key).OrderBy(o => o.Sequencia).ToList();
 
                 if (pedidoItens.NullOrEmpty())
                 {
                     throw new BusinessException("Não foi possível encontrar os itens da nota fiscal para atualizar o pedido no Sankhya.");
                 }
 
-                if (pedidoItens.Count() == 1)
+                foreach (var pedidoItem in pedidoItens)
                 {
-                    var itemIntegracao = new PedidoItemIntegracao()
+                    if(totalSeparado >= pedidoItem.QtdPedido)
                     {
-                        //TODO Ajustar essa quantidade quando o 
-                        QtdSeparada = qtdSeparada,
-                        Sequencia = pedidoItens.First().Sequencia,
-                        IdProduto = pedidoItens.First().IdProduto,
-                        QtdFaltante = pedidoItens.First().QtdPedido - qtdSeparada
-                    };
-
-                    itensIntegracao.Add(itemIntegracao);
-                }
-                else
-                {
-                    foreach (var item in pedidoItens)
-                    {
-                        int qtdAlocada = 0;
-                        int qtdPendente = 0;
-
-                        if (itensIntegracao.Any(s => s.IdProduto == item.IdProduto))
-                        {
-                            qtdAlocada = itensIntegracao.Where(s => s.IdProduto == item.IdProduto).Sum(s => s.QtdSeparada);
-                        }
-
-                        if (qtdSeparada > qtdAlocada)
-                        {
-                            qtdPendente = qtdSeparada - qtdAlocada;
-                        }
-
-                        var itemDevolucao = new PedidoItemIntegracao()
-                        {
-                            QtdSeparada = item.QtdPedido <= qtdPendente ? item.QtdPedido : qtdPendente,
-                            Sequencia = item.Sequencia,
-                            IdProduto = item.IdProduto,
-                            QtdFaltante = item.QtdPedido <= qtdPendente ? 0 : item.QtdPedido - qtdPendente
-                        };
-
-                        itensIntegracao.Add(itemDevolucao);
-
-                        if (itensIntegracao.Where(s => s.IdProduto == item.IdProduto).Any(s => s.QtdFaltante > 0))
-                        {
-                            break;
-                        }
+                        pedidoItem.QtdPedido = 0;
+                        totalSeparado -= pedidoItem.QtdPedido;
                     }
+                    else
+                    {
+                        pedidoItem.QtdPedido -= totalSeparado;
+                    }
+
+                    itensIntegracao.Add(new PedidoItemIntegracao
+                    {
+                        QtdFaltante = pedidoItem.QtdPedido,
+                        Sequencia = pedidoItem.Sequencia
+                    });
                 }
             }
 
-            foreach (var item in itensIntegracao)
+            foreach (var item in itensIntegracao.Where(x => x.QtdFaltante > 0).OrderBy(x => x.Sequencia))
             {
                 try
                 {
