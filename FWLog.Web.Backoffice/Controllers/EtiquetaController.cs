@@ -298,7 +298,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         #endregion
 
-        #region Loacação
+        #region Locação
         [HttpGet]
         public ActionResult Locacao()
         {
@@ -345,27 +345,28 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     foreach (var item in listaEnderecos)
                     {
-                        var produtoInstalado = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(item.IdEnderecoArmazenagem);
-                        
-                        if (produtoInstalado != null)
+                        var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ConsultarPorEndereco(item.IdEnderecoArmazenagem, IdEmpresa);
+
+                        if (produtoEstoque != null)
                         {
                             if (viewModel.TamanhoEtiqueta == 1)
                             {
                                 _etiquetaService.ImprimirEtiquetaPicking(new ImprimirEtiquetaPickingRequest()
                                 {
                                     IdEnderecoArmazenagem = item.IdEnderecoArmazenagem,
-                                    IdProduto = produtoInstalado.IdProduto,
+                                    IdProduto = produtoEstoque.IdProduto,
                                     IdImpressora = viewModel.IdImpressora.Value,
                                     QuantidadeEtiquetas = 1
                                 });
                             }
                             else
                             {
-                                _etiquetaService.ImprimirEtiquetaFilete(produtoInstalado.IdProduto,
+                                _etiquetaService.ImprimirEtiquetaFilete(produtoEstoque.IdProduto,
                                     item.IdEnderecoArmazenagem, viewModel.IdImpressora.Value);
                             }
 
                             quantidadeEtiqueta++;
+
                         }
                     }
 
@@ -391,7 +392,7 @@ namespace FWLog.Web.Backoffice.Controllers
                             IdUsuario = IdUsuario,
                             QuantidadeEtiquetas = 1,
                             TipoImpressao = viewModel.TamanhoEtiqueta == 1 ? EtiquetaEnderecoTipoImpressao.NORMAL_90_70 : EtiquetaEnderecoTipoImpressao.FILETE_104_24
-                            });
+                        });
 
                         quantidadeEtiqueta++;
                     }
@@ -406,9 +407,8 @@ namespace FWLog.Web.Backoffice.Controllers
 
                     _logEtiquetagemService.Registrar(logEtiquetagem);
                 }
-                   
 
-               return Json(new AjaxGenericResultModel
+                return Json(new AjaxGenericResultModel
                 {
                     Success = true,
                     Message = "Impressão enviada com sucesso."

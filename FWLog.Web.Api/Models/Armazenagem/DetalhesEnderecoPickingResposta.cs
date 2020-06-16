@@ -2,7 +2,7 @@
 
 namespace FWLog.Web.Api.Models.Armazenagem
 {
-    public class ConsultaDetalhesEnderecoArmazenagemResposta
+    public class DetalhesEnderecoPickingResposta
     {
         public long IdLoteProdutoEndereco { get; set; }
 
@@ -11,7 +11,7 @@ namespace FWLog.Web.Api.Models.Armazenagem
         public long? IdLote { get; set; }
 
         public long IdProduto { get; set; }
-        
+
         public string ReferenciaProduto { get; set; }
 
         public long IdEnderecoArmazenagem { get; set; }

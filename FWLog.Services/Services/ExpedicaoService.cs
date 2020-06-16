@@ -1349,13 +1349,13 @@ namespace FWLog.Services.Services
             {
                 resultado.Add(new RelatorioPedidosExpedidosLinhaTabela
                 {
-                   NroPedido = s.NroPedido,
-                   NroVolume = s.NroVolume.ToString().PadLeft(3, '0'),
-                   NroCentena = s.NroCentena.ToString().PadLeft(3, '0'),
-                   IdENomeTransportadora = string.Concat(s.IdTransportadora.ToString().PadLeft(3, '0'),"-",s.RazaoSocialTransprotadora),
-                   NotaFiscalESerie = string.Concat(s.NumeroNotaFiscal,"-",s.SerieNotaFiscal),
-                   DataDoPedido = s.DataDoPedido.ToString("dd/MM/yyyy HH:mm"),
-                   DataSaidaDoPedido = s.DataSaidaDoPedido.ToString("dd/MM/yyyy HH:mm")
+                    NroPedido = s.NroPedido,
+                    NroVolume = s.NroVolume.ToString().PadLeft(3, '0'),
+                    NroCentena = s.NroCentena.ToString().PadLeft(3, '0'),
+                    IdENomeTransportadora = string.Concat(s.IdTransportadora.ToString().PadLeft(3, '0'), "-", s.RazaoSocialTransprotadora),
+                    NotaFiscalESerie = string.Concat(s.NumeroNotaFiscal, "-", s.SerieNotaFiscal),
+                    DataDoPedido = s.DataDoPedido.ToString("dd/MM/yyyy HH:mm"),
+                    DataSaidaDoPedido = s.DataSaidaDoPedido.ToString("dd/MM/yyyy HH:mm")
                 });
             });
 
@@ -1404,7 +1404,24 @@ namespace FWLog.Services.Services
                     break;
             }
 
-            return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, cartaoCredito, cartaoDebito, dinheiro, requisicao, idEmpresa);
+            var responseList = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, cartaoCredito, cartaoDebito, dinheiro, requisicao, idEmpresa);
+
+            responseList.ForEach(dados =>
+            {
+                dados.NumeroRomaneio = _unitOfWork.RomaneioNotaFiscalRepository.BuscarPorPedidoVenda(dados.IdPedidoVenda).FirstOrDefault()?.Romaneio?.NroRomaneio;
+
+                if (!dados.UsuarioDespachoNotaFiscal.NullOrEmpty())
+                {
+                    dados.UsuarioDespachoNotaFiscal = _unitOfWork.PerfilUsuarioRepository.GetByUserId(dados.UsuarioDespachoNotaFiscal)?.Nome;
+                }
+
+                if (!dados.UsuarioRomaneio.NullOrEmpty())
+                {
+                    dados.UsuarioRomaneio = _unitOfWork.PerfilUsuarioRepository.GetByUserId(dados.UsuarioRomaneio)?.Nome;
+                }
+            });
+
+            return responseList;
         }
 
         public List<RelatorioPedidosLinhaTabela> BuscarDadosPedidos(DataTableFilter<RelatorioPedidosFiltro> filtro, out int registrosFiltrados, out int totalRegistros)

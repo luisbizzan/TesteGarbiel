@@ -177,16 +177,23 @@ namespace FWLog.Data.Repository.GeneralCtx
             var selectQuery = query.Select(pvv => new MovimentacaoVolumesDetalhesModel
             {
                 IdPedidoVendaVolume = pvv.IdPedidoVendaVolume,
+                IdPedidoVenda = pvv.IdPedidoVenda,
                 PedidoNumero = pvv.PedidoVenda.Pedido.NroPedido,
                 VolumeNumero = pvv.NroVolume,
                 QuantidadeProdutos = pvv.PedidoVendaProdutos.Count,
                 PedidoData = pvv.PedidoVenda.Pedido.DataCriacao,
                 VolumeCentena = pvv.NroCentena,
                 TransportadoraNomeFantasia = pvv.PedidoVenda.Transportadora.NomeFantasia,
-                TipoPagamentoDescricao = pvv.PedidoVenda.Pedido.PagamentoDescricaoIntegracao
+                TipoPagamentoDescricao = pvv.PedidoVenda.Pedido.PagamentoDescricaoIntegracao,
+                UsuarioDespachoNotaFiscal = pvv.PedidoVenda.IdUsuarioDespachoNotaFiscal,
+                DataHoraDespachoNotaFiscal = pvv.PedidoVenda.DataHoraDespachoNotaFiscal,
+                UsuarioRomaneio = pvv.PedidoVenda.IdUsuarioRomaneio,
+                DataHoraRomaneio = pvv.PedidoVenda.DataHoraRomaneio
             });
 
-            return selectQuery.ToList();
+            var responseList = selectQuery.ToList();
+
+            return responseList;
         }
 
         public List<PedidoVendaVolume> BuscarPedidosExpedidosPorEmpresa(long idEmpresa)

@@ -16,6 +16,7 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         public SelectList Status { get; set; }
         public SelectList Picking { get; set; }
         public SelectList PontoSeparacao { get; set; }
+        public SelectList Ocupado { get; set; }
     }
 
     public class EnderecoArmazenagemListaFilterViewModel
@@ -34,6 +35,9 @@ namespace FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx
         public int? PontoSeparacao { get; set; }
         public string DescricaoNivelArmazenagem { get; set; }
         public string DescricaoPontoArmazenagem { get; set; }
+
+        [Display(Name = "Ocupado/Livre?")]
+        public bool? Ocupado { get; set; }
     }
 
     public class EnderecoArmazenagemListaItemViewModel

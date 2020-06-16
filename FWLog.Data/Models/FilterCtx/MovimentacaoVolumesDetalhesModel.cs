@@ -6,6 +6,8 @@ namespace FWLog.Data.Models.FilterCtx
     {
         public long IdPedidoVendaVolume { get; set; }
 
+        public long IdPedidoVenda { get; set; }
+
         public int PedidoNumero { get; set; }
 
         public int VolumeNumero { get; set; }
@@ -19,5 +21,15 @@ namespace FWLog.Data.Models.FilterCtx
         public string TransportadoraNomeFantasia { get; set; }
 
         public string TipoPagamentoDescricao { get; set; }
+
+        public string UsuarioDespachoNotaFiscal { get; set; }
+
+        public DateTime? DataHoraDespachoNotaFiscal { get; set; }
+
+        public int? NumeroRomaneio { get; set; }
+
+        public string UsuarioRomaneio { get; set; }
+
+        public DateTime? DataHoraRomaneio { get; set; }
     }
 }
