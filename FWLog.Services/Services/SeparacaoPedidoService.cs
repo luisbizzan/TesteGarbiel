@@ -680,6 +680,11 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Produto com status inválido para separação.");
             }
 
+            if (!pedidoVendaProduto.IdUsuarioSeparacao.NullOrEmpty() && !pedidoVendaProduto.IdUsuarioSeparacao.Equals(idUsuario))
+            {
+                throw new BusinessException($"Produto já está sendo separado pelo usuário {pedidoVendaProduto.UsuarioSeparacao.UserName}.");
+            }
+
             var salvarSeparacaoProdutoResposta = new SalvarSeparacaoProdutoResposta
             {
                 IdPedidoVenda = pedidoVendaProduto.IdPedidoVenda,
@@ -1035,7 +1040,7 @@ namespace FWLog.Services.Services
                         };
 
                         //Captura o grupo de corredores do item do pedido - FOI ADICIONADO PONTO DE ARMAZENAGEM PELO CLÁUDIO.
-                        var grupoCorredorArmazenagemItemPedido = await BuscarGrupoCorredorArmazenagemItemPedido(enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor,enderecoArmazenagemProduto.EnderecoArmazenagem.IdPontoArmazenagem, grupoCorredorArmazenagem);
+                        var grupoCorredorArmazenagemItemPedido = await BuscarGrupoCorredorArmazenagemItemPedido(enderecoArmazenagemProduto.EnderecoArmazenagem.Corredor, enderecoArmazenagemProduto.EnderecoArmazenagem.IdPontoArmazenagem, grupoCorredorArmazenagem);
 
                         if (grupoCorredorArmazenagemItemPedido == null)
                             throw new Exception("O corredor do endereço " + enderecoArmazenagemProduto.EnderecoArmazenagem.Codigo + " não foi encontrado.");
@@ -1153,7 +1158,7 @@ namespace FWLog.Services.Services
                         }
 
                         transacao.Complete();
-                    }                 
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -1195,7 +1200,7 @@ namespace FWLog.Services.Services
             pedido.IdEmpresa);
         }
 
-        public async Task<GrupoCorredorArmazenagemViewModel> BuscarGrupoCorredorArmazenagemItemPedido(int corredor,long idPontoArmazenagem, List<GrupoCorredorArmazenagem> listaGrupoCorredorArmazenagem)
+        public async Task<GrupoCorredorArmazenagemViewModel> BuscarGrupoCorredorArmazenagemItemPedido(int corredor, long idPontoArmazenagem, List<GrupoCorredorArmazenagem> listaGrupoCorredorArmazenagem)
         {
             GrupoCorredorArmazenagemViewModel grupoArmazenagem = null;
 
