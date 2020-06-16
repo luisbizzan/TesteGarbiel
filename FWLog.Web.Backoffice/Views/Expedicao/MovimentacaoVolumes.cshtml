@@ -90,7 +90,7 @@
                                         <th style="width:8%">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().Corredores)</th>
                                         <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().EnviadoSeparacao)</th>
                                         <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().VolumeExcluido)</th>
-                                        <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().EmSeparacao)</th>                                        
+                                        <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().EmSeparacao)</th>
                                         <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().FinalizadoSeparacao)</th>
                                         <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().InstaladoTransportadora)</th>
                                         <th style="text-align:center">@Html.DisplayNameFor(m => m.Items.FirstOrDefault().Doca)</th>
@@ -100,7 +100,21 @@
                                 </thead>
                                 <tbody>
                                     @{
+                                        var htmlAttributes = new Dictionary<string, object>();
+
+                                        htmlAttributes.Add("class", "abrirDetalhes");
+
                                         var groupedItems = Model.Items.GroupBy(g => g.PontoArmazenagemDescricao).OrderBy(g => g.Key).ToList();
+
+                                        var routeValueDictionary = new RouteValueDictionary();
+
+                                        routeValueDictionary.Add("dataInicial", Model.Filter.DataInicial);
+                                        routeValueDictionary.Add("dataFinal", Model.Filter.DataFinal);
+                                        routeValueDictionary.Add("tipoPagamento", Model.Filter.TipoPagamento);
+                                        routeValueDictionary.Add("requisicao", Model.Filter.Requisicao);
+
+                                        routeValueDictionary.Add("idGrupoCorredorArmazenagem", string.Empty);
+                                        routeValueDictionary.Add("status", string.Empty);
 
                                         foreach (var pontoArmazenagemItems in groupedItems)
                                         {
@@ -110,90 +124,150 @@
                                                 </th>
                                             </tr>
 
-                                            var routeValueDictionary = new RouteValueDictionary();
-
-                                            routeValueDictionary.Add("dataInicial", Model.Filter.DataInicial);
-                                            routeValueDictionary.Add("dataFinal", Model.Filter.DataFinal);
-                                            routeValueDictionary.Add("idGrupoCorredorArmazenagem", string.Empty);
-                                            routeValueDictionary.Add("status", string.Empty);
-                                            routeValueDictionary.Add("tipoPagamento", Model.Filter.TipoPagamento);
-                                            routeValueDictionary.Add("requisicao", Model.Filter.Requisicao);
-
-                                            var htmlAttributes = new Dictionary<string, object>();
-
-                                            htmlAttributes.Add("class", "abrirDetalhes");
-
                                             foreach (var item in pontoArmazenagemItems.ToList())
                                             {
                                                 routeValueDictionary["idGrupoCorredorArmazenagem"] = item.IdGrupoCorredorArmazenagem;
 
-                                <tr>
-                                    <td>@item.Corredores</td>
-                                    <td align="center">
-                                        @{
-                                            routeValueDictionary["status"] = "EnviadoSeparacao";
+                                                <tr>
+                                                    <td>@item.Corredores</td>
+                                                    <td align="center">
+                                                        @{
+                                                            routeValueDictionary["status"] = "EnviadoSeparacao";
 
-                                            @Html.ActionLink(item.EnviadoSeparacao.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
-                                        }
-                                    </td>
-                                    <td align="center">
-                                        @{
-                                            routeValueDictionary["status"] = "VolumeExcluido";
+                                                            @Html.ActionLink(item.EnviadoSeparacao.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                        }
+                                                    </td>
+                                                    <td align="center">
+                                                        @{
+                                                            routeValueDictionary["status"] = "VolumeExcluido";
 
-                                            @Html.ActionLink(item.VolumeExcluido.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
-                                        }
-                                    </td>
-                                    <td align="center">
-                                        @{
-                                            routeValueDictionary["status"] = "EmSeparacao";
+                                                            @Html.ActionLink(item.VolumeExcluido.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                        }
+                                                    </td>
+                                                    <td align="center">
+                                                        @{
+                                                            routeValueDictionary["status"] = "EmSeparacao";
 
-                                            @Html.ActionLink(item.EmSeparacao.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
-                                        }
-                                    </td>
-                                    <td align="center">
-                                        @{
-                                            routeValueDictionary["status"] = "FinalizadoSeparacao";
+                                                            @Html.ActionLink(item.EmSeparacao.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                        }
+                                                    </td>
+                                                    <td align="center">
+                                                        @{
+                                                            routeValueDictionary["status"] = "FinalizadoSeparacao";
 
-                                            @Html.ActionLink(item.FinalizadoSeparacao.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
-                                        }
-                                    </td>
-                                    <td align="center">
-                                        @{
-                                            routeValueDictionary["status"] = "InstaladoTransportadora";
+                                                            @Html.ActionLink(item.FinalizadoSeparacao.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                        }
+                                                    </td>
+                                                    <td align="center">
+                                                        @{
+                                                            routeValueDictionary["status"] = "InstaladoTransportadora";
 
-                                            @Html.ActionLink(item.InstaladoTransportadora.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
-                                        }
-                                    </td>
-                                    <td align="center">
-                                        @{
-                                            routeValueDictionary["status"] = "Doca";
+                                                            @Html.ActionLink(item.InstaladoTransportadora.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                        }
+                                                    </td>
+                                                    <td align="center">
+                                                        @{
+                                                            routeValueDictionary["status"] = "Doca";
 
-                                            @Html.ActionLink(item.Doca.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
-                                        }
-                                    </td>
-                                    <td align="center">
-                                        @{
-                                            routeValueDictionary["status"] = "EnviadoTransportadora";
+                                                            @Html.ActionLink(item.Doca.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                        }
+                                                    </td>
+                                                    <td align="center">
+                                                        @{
+                                                            routeValueDictionary["status"] = "EnviadoTransportadora";
 
-                                            @Html.ActionLink(item.EnviadoTransportadora.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
-                                        }
-                                    </td>
-                                    <td align="center">@item.Total</td>
-                                </tr>
+                                                            @Html.ActionLink(item.EnviadoTransportadora.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                        }
+                                                    </td>
+                                                    <td align="center">
+                                                        @{
+                                                            routeValueDictionary["status"] = null;
+
+                                                            @Html.ActionLink(item.Total.ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                        }
+                                                    </td>
+                                                </tr>
                                             }
                                         }
+
+                                        routeValueDictionary.Remove("idGrupoCorredorArmazenagem");
+
+                                        <tr>
+                                            <td><b>Total</b></td>
+                                            <td align="center">
+                                                <b>
+                                                    @{
+                                                        routeValueDictionary["status"] = "EnviadoSeparacao";
+
+                                                        @Html.ActionLink(Model.Items.Sum(s => s.EnviadoSeparacao).ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                    }
+                                                </b>
+                                            </td>
+                                            <td align="center">
+                                                <b>
+                                                    @{
+                                                        routeValueDictionary["status"] = "VolumeExcluido";
+
+                                                        @Html.ActionLink(Model.Items.Sum(s => s.VolumeExcluido).ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                    }
+                                                </b>
+                                            </td>
+                                            <td align="center">
+                                                <b>
+                                                    @{
+                                                        routeValueDictionary["status"] = "EmSeparacao";
+
+                                                        @Html.ActionLink(Model.Items.Sum(s => s.EmSeparacao).ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                    }
+                                                </b>
+                                            </td>
+                                            <td align="center">
+                                                <b>
+                                                    @{
+                                                        routeValueDictionary["status"] = "FinalizadoSeparacao";
+
+                                                        @Html.ActionLink(Model.Items.Sum(s => s.FinalizadoSeparacao).ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                    }
+                                                </b>
+                                            </td>
+                                            <td align="center">
+                                                <b>
+                                                    @{
+                                                        routeValueDictionary["status"] = "InstaladoTransportadora";
+
+                                                        @Html.ActionLink(Model.Items.Sum(s => s.InstaladoTransportadora).ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                    }
+                                                </b>
+                                            </td>
+                                            <td align="center">
+                                                <b>
+                                                    @{
+                                                        routeValueDictionary["status"] = "Doca";
+
+                                                        @Html.ActionLink(Model.Items.Sum(s => s.Doca).ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                    }
+                                                </b>
+                                            </td>
+                                            <td align="center">
+                                                <b>
+                                                    @{
+                                                        routeValueDictionary["status"] = "EnviadoTransportadora";
+
+                                                        @Html.ActionLink(Model.Items.Sum(s => s.EnviadoTransportadora).ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                    }
+                                                </b>
+                                            </td>
+                                            <td align="center">
+                                                <b>
+                                                    @{
+                                                        routeValueDictionary["status"] = "Total";
+
+                                                        @Html.ActionLink(Model.Items.Sum(s => s.Total).ToString(), "MovimentacaoVolumesDetalhes", "Expedicao", routeValueDictionary, htmlAttributes);
+                                                    }
+                                                </b>
+                                            </td>
+                                        </tr>
                                     }
-                                <tr>
-                                    <td><b>Total</b></td>
-                                    <td align="center"><b>@Model.Items.Sum(s => s.EnviadoSeparacao)</b></td>
-                                    <td align="center"><b>@Model.Items.Sum(s => s.VolumeExcluido)</b></td>
-                                    <td align="center"><b>@Model.Items.Sum(s => s.EmSeparacao)</b></td>
-                                    <td align="center"><b>@Model.Items.Sum(s => s.FinalizadoSeparacao)</b></td>
-                                    <td align="center"><b>@Model.Items.Sum(s => s.InstaladoTransportadora)</b></td>
-                                    <td align="center"><b>@Model.Items.Sum(s => s.Doca)</b></td>
-                                    <td align="center"><b>@Model.Items.Sum(s => s.EnviadoTransportadora)</b></td>
-                                    <td align="center"><b>@Model.Items.Sum(s => s.Total)</b></td>
-                                </tr>
                                 </tbody>
                             </table>
                         </div>

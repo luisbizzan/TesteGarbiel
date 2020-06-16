@@ -143,11 +143,16 @@ namespace FWLog.Data.Repository.GeneralCtx
             return selectQuery.ToList();
         }
 
-        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, List<PedidoVendaStatusEnum> listaStatus, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa)
+        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, List<PedidoVendaStatusEnum> listaStatus, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa)
         {
             dataFinal = dataFinal.Date.AddDays(1).Subtract(new TimeSpan(0, 0, 1));
 
-            var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao >= dataInicial && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao <= dataFinal && pedidoVendaVolume.IdGrupoCorredorArmazenagem == idGrupoCorredorArmazenagem);
+            var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao >= dataInicial && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao <= dataFinal);
+
+            if (idGrupoCorredorArmazenagem.HasValue)
+            {
+                query = query.Where(q => q.IdGrupoCorredorArmazenagem == idGrupoCorredorArmazenagem);
+            }
 
             if (cartaoCredito.HasValue)
             {
@@ -191,7 +196,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 DataHoraRomaneio = pvv.PedidoVenda.DataHoraRomaneio
             });
 
-            var responseList = selectQuery.ToList();
+            var responseList = selectQuery.OrderBy(s => s.PedidoNumero).ThenBy(s => s.VolumeNumero).ToList();
 
             return responseList;
         }
