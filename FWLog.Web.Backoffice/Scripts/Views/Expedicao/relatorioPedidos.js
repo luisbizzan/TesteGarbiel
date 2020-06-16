@@ -11,8 +11,8 @@
     });
 
     function limparProduto() {
-        $("#Filtros_DescricaoProduto").val("");
-        $("#Filtros_IdProduto").val("");
+        $("#Filter_DescricaoProduto").val("");
+        $("#Filter_IdProduto").val("");
     }
 
     $("#limparProduto").click(function () {
@@ -114,7 +114,8 @@
             { data: 'DataCriacao' },
             { data: 'NumeroSerieNotaFiscal' },
             { data: 'DataExpedicao' },
-            { data: 'Status', width: '20%' },
+            { data: 'StatusVolume', width: '20%' },
+            { data: 'StatusPedido', width: '20%' },
             actionsColumn
         ],
         rowGroup: {
@@ -246,8 +247,8 @@ function fechaModalImpressoras() {
 }
 
 function setProduto(idProduto, descricao) {
-    $("#Filtros_DescricaoProduto").val(descricao);
-    $("#Filtros_IdProduto").val(idProduto);
+    $("#Filter_DescricaoProduto").val(descricao);
+    $("#Filter_IdProduto").val(idProduto);
     $("#modalProduto").modal("hide");
     $("#modalProduto").empty();
 }

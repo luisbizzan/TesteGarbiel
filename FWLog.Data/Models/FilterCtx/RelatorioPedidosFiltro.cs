@@ -11,5 +11,6 @@ namespace FWLog.Data.Models.FilterCtx
         public DateTime? DataFinal { get; set; }
         public long? IdTransportadora { get; set; }
         public long? IdStatus { get; set; }
+        public long? IdProduto { get; set; }
     }
 }
