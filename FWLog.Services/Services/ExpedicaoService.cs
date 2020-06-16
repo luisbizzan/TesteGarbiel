@@ -1279,7 +1279,7 @@ namespace FWLog.Services.Services
 
             dadosAgrupados.ForEach(g => dadosRetorno.Add(new MovimentacaoVolumesModel
             {
-                Corredores = $"{g.Key.CorredorInicial} à {g.Key.CorredorFinal}",
+                Corredores = $"{g.Key.CorredorInicial.ToString().PadLeft(2, '0')} à {g.Key.CorredorFinal.ToString().PadLeft(2, '0')}",
                 IdGrupoCorredorArmazenagem = g.Key.IdGrupoCorredorArmazenagem,
                 PontoArmazenagemDescricao = g.Key.PontoArmazenagemDescricao,
                 EnviadoSeparacao = g.Count(v => v.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao),
@@ -1349,20 +1349,20 @@ namespace FWLog.Services.Services
             {
                 resultado.Add(new RelatorioPedidosExpedidosLinhaTabela
                 {
-                   NroPedido = s.NroPedido,
-                   NroVolume = s.NroVolume.ToString().PadLeft(3, '0'),
-                   NroCentena = s.NroCentena.ToString().PadLeft(3, '0'),
-                   IdENomeTransportadora = string.Concat(s.IdTransportadora.ToString().PadLeft(3, '0'),"-",s.RazaoSocialTransprotadora),
-                   NotaFiscalESerie = string.Concat(s.NumeroNotaFiscal,"-",s.SerieNotaFiscal),
-                   DataDoPedido = s.DataDoPedido.ToString("dd/MM/yyyy HH:mm"),
-                   DataSaidaDoPedido = s.DataSaidaDoPedido.ToString("dd/MM/yyyy HH:mm")
+                    NroPedido = s.NroPedido,
+                    NroVolume = s.NroVolume.ToString().PadLeft(3, '0'),
+                    NroCentena = s.NroCentena.ToString().PadLeft(3, '0'),
+                    IdENomeTransportadora = string.Concat(s.IdTransportadora.ToString().PadLeft(3, '0'), "-", s.RazaoSocialTransprotadora),
+                    NotaFiscalESerie = string.Concat(s.NumeroNotaFiscal, "-", s.SerieNotaFiscal),
+                    DataDoPedido = s.DataDoPedido.ToString("dd/MM/yyyy HH:mm"),
+                    DataSaidaDoPedido = s.DataSaidaDoPedido.ToString("dd/MM/yyyy HH:mm")
                 });
             });
 
             return resultado;
         }
 
-        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string tipo, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa, out string statusDescricao)
+        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, string tipo, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa, out string statusDescricao, out string corredorArmazenagemDescricao)
         {
             var listaStatus = new List<PedidoVendaStatusEnum>();
 
@@ -1404,7 +1404,36 @@ namespace FWLog.Services.Services
                     break;
             }
 
-            return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, cartaoCredito, cartaoDebito, dinheiro, requisicao, idEmpresa);
+            corredorArmazenagemDescricao = null;
+
+            if (idGrupoCorredorArmazenagem.HasValue)
+            {
+                var grupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository.GetById(idGrupoCorredorArmazenagem.Value);
+
+                if (grupoCorredorArmazenagem != null)
+                {
+                    corredorArmazenagemDescricao = $"{grupoCorredorArmazenagem.PontoArmazenagem.Descricao}: {grupoCorredorArmazenagem.CorredorInicial.ToString().PadLeft(2, '0')} à {grupoCorredorArmazenagem.CorredorFinal.ToString().PadLeft(2, '0')}";
+                }
+            }
+
+            var responseList = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, cartaoCredito, cartaoDebito, dinheiro, requisicao, idEmpresa);
+
+            responseList.ForEach(dados =>
+            {
+                dados.NumeroRomaneio = _unitOfWork.RomaneioNotaFiscalRepository.BuscarPorPedidoVenda(dados.IdPedidoVenda).FirstOrDefault()?.Romaneio?.NroRomaneio;
+
+                if (!dados.UsuarioDespachoNotaFiscal.NullOrEmpty())
+                {
+                    dados.UsuarioDespachoNotaFiscal = _unitOfWork.PerfilUsuarioRepository.GetByUserId(dados.UsuarioDespachoNotaFiscal)?.Nome;
+                }
+
+                if (!dados.UsuarioRomaneio.NullOrEmpty())
+                {
+                    dados.UsuarioRomaneio = _unitOfWork.PerfilUsuarioRepository.GetByUserId(dados.UsuarioRomaneio)?.Nome;
+                }
+            });
+
+            return responseList;
         }
 
         public List<RelatorioPedidosLinhaTabela> BuscarDadosPedidos(DataTableFilter<RelatorioPedidosFiltro> filtro, out int registrosFiltrados, out int totalRegistros)
@@ -1445,6 +1474,11 @@ namespace FWLog.Services.Services
                 pedidos = pedidos.Where(pv => (int)pv.IdPedidoVendaStatus == filtro.CustomFilter.IdStatus.Value);
             }
 
+            if (filtro.CustomFilter.IdProduto.HasValue)
+            {
+                pedidos = pedidos.Where(pv => pv.PedidoVenda.PedidoVendaProdutos.Any(x => x.IdProduto == filtro.CustomFilter.IdProduto.Value));
+            }
+
             var query = pedidos.Select(s => new
             {
                 NroPedido = s.PedidoVenda.NroPedidoVenda,
@@ -1456,6 +1490,7 @@ namespace FWLog.Services.Services
                 PedidoSerieNotaFiscal = s.PedidoVenda.Pedido.SerieNotaFiscal,
                 DataSaida = s.PedidoVenda.DataHoraRomaneio,
                 Status = s.PedidoVendaStatus.Descricao,
+                StatusPedido = s.PedidoVenda.PedidoVendaStatus.Descricao,
                 NomeCliente = s.PedidoVenda.Cliente.RazaoSocial
             });
 
@@ -1476,7 +1511,8 @@ namespace FWLog.Services.Services
                     DataCriacao = s.DataCriacao.ToString("dd/MM/yyyy"),
                     NumeroSerieNotaFiscal = s.PedidoNumeroNotaFiscal.HasValue ? $"{s.PedidoNumeroNotaFiscal}/{s.PedidoSerieNotaFiscal}" : "Aguardando Faturamento",
                     DataExpedicao = s.DataSaida.HasValue ? s.DataSaida.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty,
-                    Status = s.Status,
+                    StatusVolume = s.Status,
+                    StatusPedido = s.StatusPedido
                 });
             });
 
