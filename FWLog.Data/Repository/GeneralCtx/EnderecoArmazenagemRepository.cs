@@ -46,9 +46,14 @@ namespace FWLog.Data.Repository.GeneralCtx
                     Picking = s.IsPicking ? "Sim" : "Não",
                     EstoqueMinimo = s.EstoqueMinimo ?? 0,
                     Status = s.Ativo ? "Ativo" : "Inativo",
-                    Quantidade = s.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == s.IdEnderecoArmazenagem).FirstOrDefault().Quantidade,
+                    Quantidade = s.LoteProdutoEndereco.Where(x => x.IdEnderecoArmazenagem == s.IdEnderecoArmazenagem).Sum(q => q.Quantidade),
                     Ocupado = s.LoteProdutoEndereco.Any()
                 });
+
+            if (model.CustomFilter.Ocupado.HasValue)
+            {
+                query = query.Where(q => q.Ocupado == model.CustomFilter.Ocupado.Value);
+            }
 
             totalRecordsFiltered = query.Count();
 

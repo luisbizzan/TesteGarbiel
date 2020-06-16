@@ -70,6 +70,10 @@
                     @Html.LabelFor(m => m.Filtros.Picking)
                     @Html.DropDownListFor(m => m.Filtros.Picking, Model.Picking, "Todos", new { @class = "form-control", data_field = "Picking" })
                 </div>
+                <div class="form-group col-xs-12 col-sm-6 col-md-6 col-lg-3">
+                    @Html.LabelFor(m => m.Filtros.Ocupado)
+                    @Html.DropDownListFor(m => m.Filtros.Ocupado, Model.Ocupado, "Todos", new { @class = "form-control", data_field = "Ocupado" })
+                </div>
             </div>
             <div class="row">
                 <div class="col-xs-12 form-buttons">
