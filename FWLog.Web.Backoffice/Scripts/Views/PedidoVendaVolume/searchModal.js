@@ -27,15 +27,16 @@
 
         },
         columns: [
-            { data: 'IdPedido' },
+            { data: 'NroPedido' },
             { data: 'NroVolume' },
+            { data: 'DescricaoStatus' },
             actionsColumn
         ],
         "bInfo": false
     });
 
     $('#dataTableVolumeModal').on('click', '[data-select]', function () {
-        setCliente($(this).attr('data-select'), $(this).attr("name-select"));
+        setVolume($(this).attr('data-select'), $(this).attr("name-select"));
     });
 
     dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));

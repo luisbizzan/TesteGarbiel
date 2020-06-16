@@ -192,15 +192,22 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public IEnumerable<PedidoVendaVolumePesquisaModalLinhaTabela> ObterDadosParaDataTable(DataTableFilter<PedidoVendaVolumePesquisaModalFiltro> filter, out int totalRecordsFiltered, out int totalRecords)
         {
-            totalRecords = Entities.Cliente.Count();
+            totalRecords = Entities.PedidoVendaVolume.Count();
 
             IQueryable<PedidoVendaVolumePesquisaModalLinhaTabela> query = Entities.PedidoVendaVolume.AsNoTracking()
-                .Where(x => x.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido && x.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProdutoZerado &&
+                .Where(x => x.PedidoVenda.Pedido.NroPedido == filter.CustomFilter.NroPedido &&
+                (x.PedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao ||
+                 x.PedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao) &&
+                (x.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao || 
+                 x.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao || 
+                 x.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso) &&
                 (filter.CustomFilter.NroVolume.HasValue == false || x.NroVolume == filter.CustomFilter.NroVolume))
                 .Select(e => new PedidoVendaVolumePesquisaModalLinhaTabela
                 {
-                    IdPedido = e.PedidoVenda.IdPedidoVenda,
-                    NroVolume = e.NroVolume
+                    NroPedido = e.PedidoVenda.NroPedidoVenda,
+                    NroVolume = e.NroVolume.ToString(),
+                    DescricaoStatus = e.PedidoVendaStatus.Descricao,
+                    IdPedidoVendaVolume = e.IdPedidoVendaVolume
                 });
 
             totalRecordsFiltered = query.Count();

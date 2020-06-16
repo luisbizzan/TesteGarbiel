@@ -488,8 +488,8 @@ namespace FWLog.AspNet.Identity
                 Register(MovimentacaoVolumes, Display.FromString("Movimentação de Volumes"));
                 Register(RelatorioPedidosExpedidos, Display.FromString("Relatório Pedidos Expedidos"));
                 Register(RelatorioPedidos, Display.FromString("Relatório de Pedidos"));
-                Register(RelatorioPedidosCadastrarVolume, Display.FromString("Relatório de Pedidos - Criar Volume"));
-                Register(RelatorioPedidosEditarVolume, Display.FromString("Relatório de Pedidos - Editar Volume"));
+                Register(RelatorioPedidosCadastrarVolume, Display.FromString("Gerenciar Volumes - Criar Volume"));
+                Register(RelatorioPedidosEditarVolume, Display.FromString("Gerenciar Volumes - Editar Volume"));
             }
         }
 
@@ -504,8 +504,8 @@ namespace FWLog.AspNet.Identity
             {
                 Register(MovimentacaoVolumes, Display.FromString("Movimentação de Volumes"));
                 Register(RelatorioPedidos, Display.FromString("Relatório de Pedidos"));
-                Register(RelatorioPedidosCadastrarVolume, Display.FromString("Relatório de Pedidos - Criar Volume"));
-                Register(RelatorioPedidosEditarVolume, Display.FromString("Relatório de Pedidos - Editar Volume"));
+                Register(RelatorioPedidosCadastrarVolume, Display.FromString("Gerenciar Volumes - Criar Volume"));
+                Register(RelatorioPedidosEditarVolume, Display.FromString("Gerenciar Volumes - Editar Volume"));
             }
         }
     }

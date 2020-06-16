@@ -3,12 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 {
-    public class CadastrarVolumeViewModel
+    public class GerenciarVolumeViewModel
     {
         public long IdEmpresa { get; set; }
 
         [Display(Name = "Nro. Pedido")]
         [Required]
+        public int NroPedido { get; set; }
+
         public long IdPedido { get; set; }
 
         public long IdProduto { get; set; }
@@ -17,7 +19,9 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         public string DescricaoProduto { get; set; }
 
         [Display(Name = "Nro Volume")]
-        public string Volume { get; set; }
+        public string NroVolume { get; set; }
+
+        public long IdPedidoVendaVolumeOrigem { get; set; }
 
         public long? IdPedidoVendaVolume { get; set; }
 
@@ -26,19 +30,18 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         [Display(Name = "Qtd. Transferir")]
         public int Quantidade { get; set; }
+        public long IdGrupoCorredorArmazenagem { get; set; }
+        public int CorredorInicio { get; set; }
+        public int CorredorFim { get; set; }
 
-        public List<CadastrarVolumeItemViewModel> ListaItens { get; set; } = new List<CadastrarVolumeItemViewModel>();
+        public List<GerenciarVolumeItemViewModel> ListaItens { get; set; } = new List<GerenciarVolumeItemViewModel>();
     }
 
-    public class CadastrarVolumeItemViewModel
+    public class GerenciarVolumeItemViewModel
     {
         public long IdProduto { get; set; }
 
         public long IdPedidoVendaVolumeOrigem { get; set; }
-
-        public long? IdPedidoVendaVolume { get; set; }
-
-        public int QuantidadeOriginal { get; set; }
 
         public int Quantidade { get; set; }
     }

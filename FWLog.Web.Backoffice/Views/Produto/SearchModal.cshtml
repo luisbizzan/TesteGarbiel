@@ -24,6 +24,7 @@
         <div class="modal-body">
             <form data-filter="form" data-filter-for="dataTableModal" class="form-filter" id="form-datatable-modal">
                 @Html.HiddenFor(m => m.Filter.IdLote, new { data_field = "IdLote" })
+                @Html.HiddenFor(m => m.Filter.IdPedidoVendaVolume, new { data_field = "IdPedidoVendaVolume" })
                 <div class="row">
                     <div class="col-xs-12 col-md-4 form-group">
                         @Html.LabelFor(m => m.Filter.Referencia)

@@ -4,10 +4,12 @@ using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Model.Expedicao;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.ExpedicaoCtx;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,15 +24,17 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly ExpedicaoService _expedicaoService;
         private readonly RelatorioService _relatorioService;
         private readonly EtiquetaService _etiquetaService;
+        private readonly ILog _log;
 
         private readonly UnitOfWork _uow;
 
-        public ExpedicaoController(ExpedicaoService expedicaoService, RelatorioService relatorioService, EtiquetaService etiquetaService, UnitOfWork uow)
+        public ExpedicaoController(ExpedicaoService expedicaoService, RelatorioService relatorioService, EtiquetaService etiquetaService, UnitOfWork uow, ILog log)
         {
             _expedicaoService = expedicaoService;
             _relatorioService = relatorioService;
             _etiquetaService = etiquetaService;
             _uow = uow;
+            _log = log;
         }
 
         [HttpGet]
@@ -367,9 +371,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.CaixaRecusa.Cadastrar)]
-        public ActionResult CadastrarVolume()
+        public ActionResult GerenciarVolumes()
         {
-            var model = new CadastrarVolumeViewModel()
+            var model = new GerenciarVolumeViewModel()
             {
                 IdEmpresa = IdEmpresa
             };
@@ -379,28 +383,28 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Caixa.Cadastrar)]
-        public JsonResult CadastrarVolume(List<CadastrarVolumeViewModel> listaCaixaRecusa)
+        public async Task<JsonResult> GerenciarVolumes(int nroPedido, long? idPedidoVendaVolume, long idGrupoCorredorArmazenagem, List<GerenciarVolumeItemViewModel> produtosVolumes)
         {
             try
             {
-                //var caixaRecusa = Mapper.Map<List<CaixaRecusa>>(listaCaixaRecusa);
+                var listaVolumes = Mapper.Map<List<GerenciarVolumeItem>>(produtosVolumes);
 
-                //_caixaRecusaService.Cadastrar(caixaRecusa, IdEmpresa);
+                await _expedicaoService.GerenciarVolumes(nroPedido, idPedidoVendaVolume, listaVolumes, IdEmpresa, idGrupoCorredorArmazenagem, IdUsuario).ConfigureAwait(false);
 
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,
-                    Message = "Caixa e produtos de recusa cadastradros com sucesso."
+                    Message = "Volumes alterados com sucesso."
                 });
             }
-            catch (BusinessException businessException)
+            catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, businessException.Message);
+                _log.Error(ex.Message, ex);
 
                 return Json(new AjaxGenericResultModel
                 {
                     Success = false,
-                    Message = !String.IsNullOrEmpty(businessException.Message) ? businessException.Message : "Erro ao salvar caixa e produtos de recusa."
+                    Message = ex is BusinessException ? ex.Message : "Erro ao salvar volumes."
                 });
             }
         }

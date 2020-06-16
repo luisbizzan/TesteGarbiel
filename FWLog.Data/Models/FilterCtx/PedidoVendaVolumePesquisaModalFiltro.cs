@@ -3,5 +3,7 @@
     public class PedidoVendaVolumePesquisaModalFiltro
     {
         public int? NroVolume { get; set; }
+
+        public int NroPedido { get; set; }
     }
 }

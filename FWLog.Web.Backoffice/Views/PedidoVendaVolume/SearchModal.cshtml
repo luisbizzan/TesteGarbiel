@@ -26,13 +26,13 @@
             <form data-filter="form" data-filter-for="dataTableClienteModal" class="form-filter" id="form-datatable-modal">
                 <div class="row">
                     <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
-                        @Html.LabelFor(m => m.Filter.IdPedido)
-                        @Html.TextBoxFor(m => m.Filter.IdPedido, new { @class = "form-control onlyNumber", data_field = "IdPedido" })
+                        @Html.LabelFor(m => m.Filter.NroPedido)
+                        @Html.TextBoxFor(m => m.Filter.NroPedido, new { @class = "form-control onlyNumber", data_field = "NroPedido", @readonly = "readonly" })
                     </div>
                     <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
                         @Html.LabelFor(m => m.Filter.NroVolume)
-                        @Html.TextBoxFor(m => m.Filter.NroVolume, new { @class = "form-control", data_field = "NroVolume" })
-                    </div>
+                        @Html.TextBoxFor(m => m.Filter.NroVolume, new { @class = "form-control onlyNumber", data_field = "NroVolume" })
+                    </div>                    
                 </div>
                 <div class="row">
                     <div class="col-xs-12 form-buttons">
@@ -46,8 +46,10 @@
                     <table id="dataTableVolumeModal" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
                         <thead>
                             <tr>
-                                <th>@Html.DisplayNameFor(m => m.EmptyItem.IdPedido)</th>
+                                <th>@Html.DisplayNameFor(m => m.EmptyItem.NroPedido)</th>
                                 <th>@Html.DisplayNameFor(m => m.EmptyItem.NroVolume)</th>
+                                <th>@Html.DisplayNameFor(m => m.EmptyItem.DescricaoStatus)</th>
+
                                 <th>@Resources.CommonStrings.ActionsLabel</th>
                             </tr>
                         </thead>

@@ -277,7 +277,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        private async Task AjustarQuantidadeVolume(PedidoVendaProduto pedidoVendaProduto, int quantidadeAdicionar, long idEmpresa, string idUsuarioAjuste)
+        public async Task AjustarQuantidadeVolume(PedidoVendaProduto pedidoVendaProduto, int quantidadeAdicionar, long idEmpresa, string idUsuarioAjuste)
         {
             LoteProdutoEndereco loteProdutoEndereco;
 

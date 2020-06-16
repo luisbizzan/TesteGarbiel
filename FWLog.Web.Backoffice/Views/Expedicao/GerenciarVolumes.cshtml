@@ -1,7 +1,7 @@
-﻿@model FWLog.Web.Backoffice.Models.ExpedicaoCtx.CadastrarVolumeViewModel
+﻿@model FWLog.Web.Backoffice.Models.ExpedicaoCtx.GerenciarVolumeViewModel
 
 @{
-    ViewBag.Title = "Gerenciamento de Volumes";
+    ViewBag.Title = "Gerenciar Volumes";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -19,23 +19,28 @@
             <div class="x_content">
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 <div class="row">
-                    <div class="form-group col-md-3">
-                        @Html.LabelFor(m => m.IdPedido, new { @class = "control-label" })
-                        @Html.TextBoxFor(m => m.IdPedido, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.IdPedido)
+                    <div class="form-group col-sm-2">
+                        @Html.LabelFor(m => m.NroPedido, new { @class = "control-label" })
+                        @Html.TextBoxFor(m => m.NroPedido, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.NroPedido)
+                        @Html.HiddenFor(m => m.IdPedido)
+                        @Html.HiddenFor(m => m.IdGrupoCorredorArmazenagem)
+                        @Html.HiddenFor(m => m.CorredorInicio)
+                        @Html.HiddenFor(m => m.CorredorFim)
+                        @Html.HiddenFor(m => m.IdPedidoVendaVolume, new { data_field = "IdPedidoVendaVolume" })
                     </div>
-                    <div class="form-group col-md-3">
-                        @Html.LabelFor(m => m.IdPedidoVendaVolume)
+                    <div class="form-group col-sm-2">
+                        @Html.LabelFor(m => m.NroVolume)
                         <div class="input-group">
-                            @Html.TextBoxFor(m => m.Volume, null, new { @class = "form-control", @readonly = "true" })
+                            @Html.TextBoxFor(m => m.NroVolume, null, new { @class = "form-control", @readonly = "true" })
                             <span class="input-group-btn">
                                 <a id="pesquisarVolume" class="btn btn-primary"><i class="fa fa-fw fa-search"></i></a>
                                 <a id="limparVolume" class="btn btn-primary"><i class="fa fa-fw fa-eraser"></i></a>
                             </span>
                         </div>
-                        @Html.HiddenFor(m => m.IdPedidoVendaVolume, new { data_field = "IdPedidoVendaVolume" })
+                        @Html.HiddenFor(m => m.IdPedidoVendaVolumeOrigem, new { data_field = "IdPedidoVendaVolumeOrigem" })
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-sm-3">
                         @Html.LabelFor(m => m.DescricaoProduto)
                         <div class="input-group">
                             @Html.TextBoxFor(m => m.DescricaoProduto, null, new { @class = "form-control", @readonly = "true" })
@@ -46,17 +51,17 @@
                         </div>
                         @Html.HiddenFor(m => m.IdProduto, new { data_field = "IdProduto" })
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-sm-2">
                         @Html.LabelFor(m => m.QuantidadeOriginal, new { @class = "control-label" })
-                        @Html.TextBoxFor(m => m.QuantidadeOriginal, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.QuantidadeOriginal, new { @class = "form-control", @readonly = "readonly" })
                         @Html.ValidationMessageFor(m => m.QuantidadeOriginal)
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-sm-2">
                         @Html.LabelFor(m => m.Quantidade, new { @class = "control-label" })
-                        @Html.TextBoxFor(m => m.Quantidade, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.Quantidade, new { @class = "form-control onlynumber" })
                         @Html.ValidationMessageFor(m => m.Quantidade)
                     </div>
-                    <div class="form-group col-lg-1">
+                    <div class="form-group col-sm-1">
                         <button type="button" id="adicionarLinhaTabela" class="btn btn-primary" style="margin-top: 13px;background-color: #337ab7 !important;border-color: #2e6da4 !important;">Adicionar</button>
                     </div>
                 </div>
@@ -66,8 +71,10 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Caixa</th>
+                                <th>Nro. Volume</th>
                                 <th>Produto</th>
+                                <th>Quantidade Original</th>
+                                <th>Quantidade</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -78,7 +85,7 @@
                 <div class="ln_solid"></div>
                 <div class="row col-xs-12 form-buttons">
                     <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
-                    <button id="salvarCaixaRecusa" type="button" class="btn btn-primary">Cadastrar</button>
+                    <button id="salvarVolumes" type="button" class="btn btn-primary">Salvar</button>
                 </div>
             </div>
         </div>
