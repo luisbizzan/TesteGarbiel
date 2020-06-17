@@ -16,11 +16,12 @@
 
         public int InstaladoTransportadora { get; set; }
 
-        public int Doca { get; set; }
+        public int DOC { get; set; }
 
         public int EnviadoTransportadora { get; set; }
 
         public int Total { get; set; }
+
         public int VolumeExcluido { get; set; }
     }
 }

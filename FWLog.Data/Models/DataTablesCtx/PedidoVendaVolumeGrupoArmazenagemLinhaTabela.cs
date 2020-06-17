@@ -13,5 +13,7 @@
         public long IdPedidoVendaVolume { get; set; }
 
         public PedidoVendaStatusEnum IdPedidoVendaStatus { get; set; }
+
+        public int? NumeroNotaFiscal { get; set; }
     }
 }

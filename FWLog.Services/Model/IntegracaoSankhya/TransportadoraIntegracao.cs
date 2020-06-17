@@ -35,6 +35,10 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "AD_ABREVTRANSP")]
         [Required]
         public string CodigoTransportadora { get; set; }
+
+        [Display(Name = "TGFPAR.AD_MOVAUTDOCA")]
+        [TabelaIntegracao(DisplayName = "AD_MOVAUTDOCA")]
+        public string MoverAutomaticamente { get; set; }
     }
 
     [TabelaIntegracao(DisplayName = "TGFPAR")]

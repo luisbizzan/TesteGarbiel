@@ -1,0 +1,1 @@
+INSERT INTO DART."PedidoVendaStatus" ("IdPedidoVendaStatus","Descricao") VALUES (16, 'Aguardando Retirada');
