@@ -1126,7 +1126,7 @@ namespace FWLog.Services.Services
                         //Imprimi as etiquetas.
                         foreach (var item in listaImpressaoSeparacao)
                         {
-                            await ImprimirEtiquetaVolumeSeparacao(item.Volume, item.NumeroVolume, item.GrupoCorredor, pedido, item.Centena, item.CorredorinicioSeparacao);
+                            await ImprimirEtiquetaVolumeSeparacao(item.Volume, item.NumeroVolume, item.GrupoCorredor, pedido, item.Centena);
                         }
 
                         transacao.Complete();
@@ -1139,7 +1139,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, Pedido pedido, int centena, int corredorInicioSeparacao)
+        public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, Pedido pedido, int centena)
         {
             _etiquetaService.ImprimirEtiquetaVolumeSeparacao(new ImprimirEtiquetaVolumeSeparacaoRequest()
             {
@@ -1150,23 +1150,23 @@ namespace FWLog.Services.Services
                 ClienteCidade = pedido.Cliente.Cidade,
                 ClienteUF = pedido.Cliente.UF,
                 ClienteTelefone = pedido.Cliente.Telefone,
-                ClienteCodigo = pedido.Cliente.IdCliente.ToString(),
-                RepresentanteCodigo = pedido.Representante.IdRepresentante.ToString(),
+                ClienteCodigo = pedido.Cliente.CodigoIntegracao.ToString(),
                 PedidoCodigo = pedido.NumeroPedido,
                 PedidoDataCriacao = pedido.DataCriacao,
-                PedidoIsRequisicao = pedido.IsRequisicao,
                 PedidoPagamentoCodigoIntegracao = pedido.PagamentoCodigoIntegracao,
                 PedidoPagamentoIsDebito = pedido.PagamentoIsDebitoIntegracao,
                 PedidoPagamentoIsCredito = pedido.PagamentoIsCreditoIntegracao,
                 PedidoPagamentoIsDinheiro = pedido.PagamentoIsDinheiroIntegracao,
+                PedidoIsRequisicao = pedido.IsRequisicao,
                 Centena = centena.ToString(),
                 TransportadoraSigla = pedido.Transportadora.CodigoTransportadora,
-                TransportadoraCodigo = pedido.Transportadora.IdTransportadora.ToString(),
+                IdTransportadora = pedido.Transportadora.IdTransportadora.ToString(),
                 TransportadoraNome = pedido.Transportadora.RazaoSocial,
                 CorredoresInicio = grupoCorredorArmazenagem.CorredorInicial.ToString(),
                 CorredoresFim = grupoCorredorArmazenagem.CorredorFinal.ToString(),
                 CaixaTextoEtiqueta = volume.Caixa.TextoEtiqueta,
                 Volume = numeroVolume.ToString(),
+                ProdutoReferencia = volume.ListaItensDoPedido?.FirstOrDefault()?.Produto?.Referencia,
                 IdImpressora = grupoCorredorArmazenagem.IdImpressora
             },
             pedido.IdEmpresa);
