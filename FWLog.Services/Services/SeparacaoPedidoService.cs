@@ -623,11 +623,19 @@ namespace FWLog.Services.Services
                 else if (todosProdutosVenda.Where(produtoVendaProduto => produtoVendaProduto.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProdutoZerado ||
                     produtoVendaProduto.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso).Count() == todosProdutosVenda.Count)
                 {
-                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
+                    if (pedidoVenda.Transportadora.MoverAutomaticamente)
+                    {
+                        pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.AguardandoRetirada;
+                    }
+                    else
+                    {
+                        pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
+                    }
+
                     pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
                     pedidoVenda.DataHoraFimSeparacao = dataProcessamento;
                     _unitOfWork.SaveChanges();
-                   
+
                     finalizouPedidoVenda = true;
                 }
 
@@ -924,7 +932,7 @@ namespace FWLog.Services.Services
 
                 foreach (var pedidoItem in pedidoItens)
                 {
-                    if(totalSeparado >= pedidoItem.QtdPedido)
+                    if (totalSeparado >= pedidoItem.QtdPedido)
                     {
                         pedidoItem.QtdPedido = 0;
                         totalSeparado -= pedidoItem.QtdPedido;
@@ -2361,6 +2369,8 @@ namespace FWLog.Services.Services
                     return "Vol. Excluído.";
                 case PedidoVendaStatusEnum.ProdutoZerado:
                     return "Prod. Zerardo.";
+                case PedidoVendaStatusEnum.AguardandoRetirada:
+                    return "Aguard. Retirada";
                 default:
                     return null;
             }

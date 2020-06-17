@@ -39,6 +39,9 @@ namespace FWLog.Data.Models
         [StringLength(3)]
         public string CodigoTransportadora { get; set; }
 
+        [Required]
+        public bool MoverAutomaticamente { get; set; }
+
         public virtual ICollection<TransportadoraEndereco> Enderecos { get; set; }
     }
 }
