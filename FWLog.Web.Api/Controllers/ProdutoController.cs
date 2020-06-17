@@ -26,47 +26,15 @@ namespace FWLog.Web.Api.Controllers
         public async Task<IHttpActionResult> ConsultarProduto(bool somenteNovos = true)
         {
             await _produtoService.ConsultarProdutoIntegracao(somenteNovos);
-
-            return ApiOk();
-        }
-
-        [AllowAnonymous]
-        [Route("api/v1/produto/limpar-integracao")]
-        [HttpPost]
-        public async Task<IHttpActionResult> LimparIntegracao()
-        {
-            await _produtoService.LimparIntegracao();
-
-            return ApiOk();
-        }
-
-        [AllowAnonymous]
-        [Route("api/v1/produto-prazo-entrega/limpar-integracao")]
-        [HttpPost]
-        public async Task<IHttpActionResult> LimparIntegracaoPrazoEntrega()
-        {
-            await _produtoService.LimparIntegracaoMediaVenda();
-
             return ApiOk();
         }
 
         [AllowAnonymous]
         [Route("api/v1/produto-prazo-entrega/integrar")]
         [HttpPost]
-        public async Task<IHttpActionResult> ConsultarProdutoPrazoEntrega()
+        public async Task<IHttpActionResult> ConsultarProdutoPrazoEntrega(bool somenteNovos = true)
         {
-            await _produtoService.ConsultarProdutoPrazoEntrega();
-
-            return ApiOk();
-        }
-
-        [AllowAnonymous]
-        [Route("api/v1/produto-media-venda/limpar-integracao")]
-        [HttpPost]
-        public async Task<IHttpActionResult> LimparIntegracaoMediaVenda()
-        {
-            await _produtoService.LimparIntegracaoMediaVenda();
-
+            await _produtoService.ConsultarProdutoPrazoEntrega(somenteNovos);
             return ApiOk();
         }
 
@@ -76,7 +44,6 @@ namespace FWLog.Web.Api.Controllers
         public async Task<IHttpActionResult> ConsultarMeviaVenda()
         {
             await _produtoService.ConsultarMediaVenda();
-
             return ApiOk();
         }
 
@@ -86,7 +53,6 @@ namespace FWLog.Web.Api.Controllers
         public async Task<IHttpActionResult> ConsultarQuantidadeReservada(ProdutoReservadoModelRequest request)
         {
             var quantidadeReservada = await _produtoService.ConsultarQuantidadeReservada(request.IdProduto, request.IdEmpresa);
-
             return ApiOk(quantidadeReservada);
         }
 
