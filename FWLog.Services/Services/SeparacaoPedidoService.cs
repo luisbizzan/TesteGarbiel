@@ -1670,7 +1670,7 @@ namespace FWLog.Services.Services
                 var listaCaixasMaisComum = await BuscarCaixaMaisComum(listaItensDoPedido);
 
                 //Valida se a lista de caixas mais comum é nula.
-                if (listaCaixasMaisComum == null)
+                if (listaCaixasMaisComum == null || listaCaixasMaisComum.Count == 0)
                     return listaItensDoPedido;
 
                 int agrupador = 1;
@@ -1858,7 +1858,7 @@ namespace FWLog.Services.Services
             List<CaixaViewModel> listaCaixasMaisComum = new List<CaixaViewModel>();
 
             //Valida se a listaRankingCaixas é nula.
-            if (listaRankingCaixas == null)
+            if (listaRankingCaixas == null || listaRankingCaixas.Count == 0)
                 return listaCaixasMaisComum;
 
             //Captura a quantidade do maior da listaRankingCaixas.
