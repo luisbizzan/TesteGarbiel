@@ -15,6 +15,7 @@
             editarVisivel = User.HasPermission(Permissions.Expedicao.EditarTranportadoraEndereco),
             urlExcluir = Url.Action("ExcluirAjax"),
             excluirVisivel = User.HasPermission(Permissions.Expedicao.ExcluirTranportadoraEndereco),
+            imprimirVisivel = true
         })
 }
 
@@ -90,4 +91,6 @@
 </div>
 <div class="modal" id="modalTransportadora"></div>
 <div class="modal" id="modalPesquisaEnderecoArmazenagem"></div>
+<div class="modal" id="confirmarImpressao"></div>
+<div class="modal fade" id="modalImpressoras" data-backdrop="static"></div>
 

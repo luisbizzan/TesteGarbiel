@@ -22,6 +22,7 @@ namespace FWLog.Web.Backoffice.Models.TransporteEnderecoCtx
         [Display(Name = "Endereço")]
         public string Codigo { get; set; }
         public long IdTransportadoraEndereco { get; set; }
+        public long IdEnderecoArmazenagem { get; set; }
 
     }
 

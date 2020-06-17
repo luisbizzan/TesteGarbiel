@@ -58,6 +58,7 @@ namespace FWLog.Services.Services
             }
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorIdPedidoVendaEIdEmpresa(idPedidoVenda, idEmpresa);
+
             if (pedidoVenda == null)
             {
                 throw new BusinessException("O pedido não foi encontrado.");
@@ -73,12 +74,18 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido foi excluído.");
             }
 
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.AguardandoRetirada)
+            {
+                throw new BusinessException("O pedido está aguardando retirada.");
+            }
+
             if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora)
             {
                 throw new BusinessException("A separação do volume não está finalizada.");
             }
 
             var pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.First(f => f.IdPedidoVendaVolume == idPedidoVendaVolume);
+
             if (pedidoVendaVolume == null)
             {
                 throw new BusinessException("O volume não foi encontrado.");

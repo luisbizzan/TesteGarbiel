@@ -33,7 +33,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                     RazaoSocialTransportadora = s.Transportadora.RazaoSocial,
                     IdTransportadora = s.IdTransportadora,
                     Codigo = s.EnderecoArmazenagem.Codigo,
-                    IdTransportadoraEndereco = s.IdTransportadoraEndereco
+                    IdTransportadoraEndereco = s.IdTransportadoraEndereco,
+                    IdEnderecoArmazenagem = s.IdEnderecoArmazenagem
                 });
 
             totalRecordsFiltered = query.Count();
