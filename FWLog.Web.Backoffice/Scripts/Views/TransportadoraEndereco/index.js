@@ -13,6 +13,13 @@
                 visible: view.editarVisivel
             },
             {
+                text: "Imprimir Etiqueta Endereço",
+                action: 'imprimir',
+                icon: 'fa fa-print',
+                attrs: { 'data-id': full.IdEnderecoArmazenagem, 'action': 'imprimir' },
+                visible: view.imprimirVisivel
+            },
+            {
                 action: 'delete',
                 attrs: { 'data-delete-url': view.urlExcluir + '/' + full.IdTransportadoraEndereco },
                 visible: view.excluirVisivel
@@ -57,6 +64,18 @@
             }
         });
     });
+
+    $("#dataTable").on('click', "[action='imprimir']", imprimirEtiquetaEndereco);
+
+    function imprimirEtiquetaEndereco() {
+        let id = $(this).data("id");
+
+        let $modal = $("#confirmarImpressao");
+
+        $modal.load(HOST_URL + "EnderecoArmazenagem/ConfirmarImpressao?IdEnderecoArmazenagem=" + id, function () {
+            $modal.modal();
+        });
+    }
 
     $("#pesquisarTransportadora").click(function () {
         $("#modalTransportadora").load(HOST_URL + "Transportadora/SearchModal", function () {
@@ -107,6 +126,42 @@ function selecionarEnderecoArmazenagem(IdEnderecoArmazenagem, codigo) {
     $("#Filtros_IdEnderecoArmazenagem").val(IdEnderecoArmazenagem);
     $("#modalPesquisaEnderecoArmazenagem").modal("hide");
     $("#modalPesquisaEnderecoArmazenagem").empty();
+}
+
+//Recebendo o id do endereço no parâmetro 'acao'.
+function imprimir(acao, id) {
+    var idImpressora = $("#IdImpressora").val();
+
+    $.ajax({
+        url: HOST_URL + "EnderecoArmazenagem/ImprimirEtiqueta",
+        method: "POST",
+        cache: false,
+        data: {
+            IdImpressora: idImpressora,
+            IdEnderecoArmazenagem: acao,
+            TipoImpressao: id
+        },
+        success: function (result) {
+            if (result.Success) {
+                PNotify.success({ text: result.Message });
+
+                fechaModal();
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+        },
+        error: function (data) {
+            PNotify.error({ text: "Ocorreu um erro na impressão." });
+            NProgress.done();
+        }
+    });
+}
+
+function fechaModal() {
+    var $modal = $("#modalImpressoras");
+
+    $modal.modal("hide");
+    $modal.empty();
 }
 
 
