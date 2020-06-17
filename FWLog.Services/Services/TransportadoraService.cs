@@ -2,7 +2,6 @@
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
-using FWLog.Services.Model.Expedicao;
 using FWLog.Services.Model.IntegracaoSankhya;
 using FWLog.Services.Model.Transportadora;
 using log4net;
@@ -17,8 +16,8 @@ namespace FWLog.Services.Services
 {
     public class TransportadoraService : BaseService
     {
-        private UnitOfWork _uow;
-        private ILog _log;
+        private readonly UnitOfWork _uow;
+        private readonly ILog _log;
 
         public TransportadoraService(UnitOfWork uow, ILog log)
         {
@@ -120,6 +119,7 @@ namespace FWLog.Services.Services
                     transportadora.RazaoSocial = transpInt.RazaoSocial;
                     transportadora.NomeFantasia = transpInt.NomeFantasia;
                     transportadora.CodigoTransportadora = transpInt.CodigoTransportadora;
+                    //transportadora.MoverAutomaticamente = transpInt.MoverAutomaticamente == "S";
 
                     if (transportadoraNova)
                     {
@@ -176,7 +176,7 @@ namespace FWLog.Services.Services
             var transportadora = ValidarERetornarTransportadora(idTransportadora);
 
             var enderecos = _uow.TransportadoraEnderecoRepository.ObterPorIdTransportadoraEmpresa(idTransportadora, idEmpresa);
-            
+
             if (enderecos.NullOrEmpty())
             {
                 throw new BusinessException("Transportadora não contém nenhum endereço de armazenagem");
