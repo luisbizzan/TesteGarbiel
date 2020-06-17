@@ -119,7 +119,7 @@ namespace FWLog.Services.Services
                     transportadora.RazaoSocial = transpInt.RazaoSocial;
                     transportadora.NomeFantasia = transpInt.NomeFantasia;
                     transportadora.CodigoTransportadora = transpInt.CodigoTransportadora;
-                    //transportadora.MoverAutomaticamente = transpInt.MoverAutomaticamente == "S";
+                    transportadora.MoverAutomaticamente = transpInt.MoverAutomaticamente == "S";
 
                     if (transportadoraNova)
                     {
