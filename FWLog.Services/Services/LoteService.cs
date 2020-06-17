@@ -108,18 +108,38 @@ namespace FWLog.Services.Services
                 {
                     var qtdConferida = conferencia.Sum(s => s.Quantidade);
 
-                    if (qtdConferida == qtdOriginal)
+                    if (qtdDevolucao == 0)
                     {
-                        continue;
-                    }
+                        if (qtdConferida == qtdOriginal)
+                        {
+                            continue;
+                        }
 
-                    divergencia = new LoteDivergencia
+                        divergencia = new LoteDivergencia
+                        {
+                            QuantidadeConferencia = qtdConferida,
+                            QuantidadeDevolucao = qtdDevolucao,
+                            QuantidadeConferenciaMais = qtdConferida > qtdOriginal ? qtdConferida - qtdOriginal : 0,
+                            QuantidadeConferenciaMenos = qtdConferida < qtdOriginal ? qtdOriginal - qtdConferida : 0
+                        };
+                    }
+                    else
                     {
-                        QuantidadeConferencia = qtdConferida,
-                        QuantidadeDevolucao = qtdDevolucao,
-                        QuantidadeConferenciaMais = qtdConferida > qtdOriginal ? qtdConferida - qtdOriginal : 0,
-                        QuantidadeConferenciaMenos = qtdConferida < qtdOriginal ? qtdOriginal - qtdConferida : 0
-                    };
+                        int divergenciaMenos = 0;
+
+                        if (qtdConferida < qtdOriginal - qtdDevolucao)
+                            divergenciaMenos = qtdOriginal - qtdConferida;
+                        else
+                            divergenciaMenos = qtdDevolucao;
+
+                        divergencia = new LoteDivergencia
+                        {
+                            QuantidadeConferencia = qtdConferida,
+                            QuantidadeDevolucao = qtdDevolucao,
+                            QuantidadeConferenciaMais = 0,
+                            QuantidadeConferenciaMenos = divergenciaMenos
+                        };
+                    }
                 }
 
                 if (divergencia == null)
@@ -458,7 +478,7 @@ namespace FWLog.Services.Services
                 string referencia = itemNota.First().Produto.Referencia;
                 string descricao = itemNota.First().Produto.Descricao;
 
-                if (itensConferencia.Any())
+                if (itensConferencia.Any() && quantidadeDevolucao == 0)
                 {
                     int quantidadeConferido = itensConferencia.Sum(s => s.Quantidade);
                     int diferencaNotaConferido = quantidadeNota - quantidadeConferido;
@@ -472,6 +492,30 @@ namespace FWLog.Services.Services
                         QuantidadeNota = quantidadeNota,
                         DivergenciaMais = diferencaNotaConferido < 0 ? diferencaNotaConferido * -1 : 0,
                         DivergenciaMenos = diferencaNotaConferido > 0 ? diferencaNotaConferido : 0
+                    };
+
+                    response.Itens.Add(item);
+                }
+                else if (itensConferencia.Any() && quantidadeDevolucao > 0)
+                {
+                    int quantidadeConferido = itensConferencia.Sum(s => s.Quantidade);
+                    int diferencaNotaConferido = quantidadeNota - quantidadeConferido;
+                    int divergenciaMenos = 0;
+
+                    if (quantidadeConferido < quantidadeNota - quantidadeDevolucao)
+                        divergenciaMenos = quantidadeNota - quantidadeConferido;
+                    else
+                        divergenciaMenos = quantidadeDevolucao;
+
+                    var item = new ResumoFinalizarConferenciaItemResponse
+                    {
+                        Referencia = referencia,
+                        DescricaoProduto = descricao,
+                        QuantidadeConferido = quantidadeConferido,
+                        QuantidadeDevolucao = quantidadeDevolucao,
+                        QuantidadeNota = quantidadeNota,
+                        DivergenciaMais = diferencaNotaConferido < 0 ? diferencaNotaConferido * -1 : 0,
+                        DivergenciaMenos = divergenciaMenos
                     };
 
                     response.Itens.Add(item);
