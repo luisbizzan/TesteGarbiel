@@ -1,9 +1,5 @@
 ﻿using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Models.CaixaRecusaCtx

@@ -80,6 +80,7 @@ namespace FWLog.AspNet.Identity
             public const string PermitirConferenciaManual = "PermitirConferenciaManual";
             public const string DevolucaoTotal = "PermitirDevolucaoTotal";
             public const string VisualizarDivergenciaConferencia = "VisualizarDivergenciaConferencia";
+            public const string RelatorioValidadePeca = "RelatorioValidadePeca";
 
             public Recebimento() : base(Display.FromString("Recebimento - Notas Fiscais"))
             {
@@ -95,7 +96,8 @@ namespace FWLog.AspNet.Identity
                 Register(Imprimir, Display.FromString("Imprimir Etiqueta Individual e Personalizada"));
                 Register(PermitirConferenciaManual, Display.FromString("Permitir Conferência Manual"));
                 Register(DevolucaoTotal, Display.FromString("Permitir Devolução Total"));
-                Register(DevolucaoTotal, Display.FromString("Visualizar Divergências na Conferência"));
+                Register(VisualizarDivergenciaConferencia, Display.FromString("Visualizar Divergências na Conferência"));
+                Register(RelatorioValidadePeca, Display.FromString("Relatório Validade de Peça"));
             }
         }
 
@@ -208,6 +210,7 @@ namespace FWLog.AspNet.Identity
             public const string AtividadeConferenciaEndereco = "RFAtividadeConferenciaEndereco";
             public const string AtividadeAbastecerPicking = "RFAtividadeAbastecerPicking";
             public const string AtividadeConferencia399_400 = "RFAtividadeConferencia399_400";
+            public const string RFArmazenagemInstalarForaMultiplo = "RFArmazenagemInstalarForaMultiplo";
 
             public RFArmazenagem() : base(Display.FromString("Coletor - Armazenagem"))
             {
@@ -223,6 +226,7 @@ namespace FWLog.AspNet.Identity
                 Register(AtividadeConferenciaEndereco, Display.FromString("Atividade - Conferência Endereço"));
                 Register(AtividadeAbastecerPicking, Display.FromString("Atividade - Abastecer Picking"));
                 Register(AtividadeConferencia399_400, Display.FromString("Atividade - Conferência 399/400"));
+                Register(RFArmazenagemInstalarForaMultiplo, Display.FromString("Instalar Fora do Múltiplo"));
             }
         }
 
@@ -252,6 +256,7 @@ namespace FWLog.AspNet.Identity
         {
             public const string EtiquetaEndereco = "RFImprimirEtiquetaEndereco";
             public const string EtiquetaLote = "RFImprimirEtiquetaLote";
+            public const string RFImprimirEtiquetaLoteForaMultiplo = "RFImprimirEtiquetaLoteForaMultiplo";
             public const string EtiquetaPicking = "RFImprimirEtiquetaPicking";
             public const string EtiquetasProduto = "RFImprimirEtiquetasProduto";
 
@@ -259,6 +264,7 @@ namespace FWLog.AspNet.Identity
             {
                 Register(EtiquetaEndereco, Display.FromString("Etiqueta Endereço"));
                 Register(EtiquetaLote, Display.FromString("Etiqueta Lote"));
+                Register(RFImprimirEtiquetaLoteForaMultiplo, Display.FromString("Etiqueta Lote Fora do Múltiplo"));
                 Register(EtiquetaPicking, Display.FromString("Etiqueta Picking"));
                 Register(EtiquetasProduto, Display.FromString("Etiquetas Produto"));
             }

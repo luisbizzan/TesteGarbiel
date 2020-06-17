@@ -15,5 +15,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.RomaneioNotaFiscal.Where(romaneioNF => romaneioNF.Romaneio.NroRomaneio == nroRomaneio && romaneioNF.NroNotaFiscal == nroNotaFiscal).ToList();
         }
+
+        public List<RomaneioNotaFiscal> BuscarPorPedidoVenda(long idPedidoVenda)
+        {
+            return Entities.RomaneioNotaFiscal.Where(romaneioNF => romaneioNF.IdPedidoVenda == idPedidoVenda).ToList();
+        }
     }
 }

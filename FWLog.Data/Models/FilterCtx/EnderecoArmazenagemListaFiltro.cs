@@ -9,5 +9,6 @@
         public bool? Status { get; set; }
         public bool? Picking { get; set; }
         public bool? PontoSeparacao { get; set; }
+        public bool? Ocupado { get; set; }
     }
 }

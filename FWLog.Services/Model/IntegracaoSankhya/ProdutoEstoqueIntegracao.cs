@@ -26,4 +26,11 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [Required]
         public string DiasPrazoEntrega { get; set; }
     }
+
+    [TabelaIntegracao(DisplayName = "TGFPEM")]
+    public class ProdutoEstoqueQuantidadeIntegracao
+    {
+        [TabelaIntegracao(DisplayName = "COUNT(1)")]
+        public string QuantidadeRegistro { get; set; }
+    }
 }

@@ -6,8 +6,9 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 {
     public class MovimentacaoVolumesDetalheViewModel
     {
-        [Display(Name = "Status")]
         public string Status { get; set; }
+
+        public string CorredorArmazenagemDescricao { get; set; }
 
         public List<MovimentacaoVolumesDetalheListItemViewModel> Items { get; set; }
 
@@ -27,7 +28,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         [Display(Name = "Quantidade")]
         public int QuantidadeProdutos { get; set; }
 
-        [Display(Name = "Data Pedido")]
+        [Display(Name = "Data Criação")]
         public DateTime PedidoData { get; set; }
 
         [Display(Name = "Centena")]
@@ -38,5 +39,20 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         [Display(Name = "Tipo Pagamento")]
         public string TipoPagamentoDescricao { get; set; }
+
+        [Display(Name = "Usuário Despacho NF")]
+        public string UsuarioDespachoNotaFiscal { get; set; }
+
+        [Display(Name = "Data Despacho NF")]
+        public DateTime? DataHoraDespachoNotaFiscal { get; set; }
+
+        [Display(Name = "Número Romaneio")]
+        public int? NumeroRomaneio { get; set; }
+
+        [Display(Name = "Usuário Romaneio")]
+        public string UsuarioRomaneio { get; set; }
+
+        [Display(Name = "Data Romaneio")]
+        public DateTime? DataHoraRomaneio { get; set; }
     }
 }

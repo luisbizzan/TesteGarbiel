@@ -5,13 +5,13 @@
     @BundleHelper.RenderViewScriptModal()
 }
 
-<div class="modal-dialog modal-lg">
+<div class="modal-dialog modal-lg" style="width: 95%">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">
                 <span aria-hidden="true">×</span>
             </button>
-            <h4 class="modal-title" id="myModalLabel">Detalhes Volumes - @Model.Status</h4>
+            <h4 class="modal-title" id="myModalLabel">Detalhes Volumes @Model.CorredorArmazenagemDescricao - @Model.Status</h4>
         </div>
         <div class="modal-body">
             <div class="row" style="overflow-y: auto; max-height: 600px">
@@ -26,6 +26,11 @@
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().PedidoData)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().TipoPagamentoDescricao)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().TransportadoraNomeFantasia)</th>
+                                <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().UsuarioDespachoNotaFiscal)</th>
+                                <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().DataHoraDespachoNotaFiscal)</th>
+                                <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().NumeroRomaneio)</th>
+                                <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().UsuarioRomaneio)</th>
+                                <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().DataHoraRomaneio)</th>
                                 <th style="width: 50px;">@Resources.CommonStrings.ActionsLabel</th>
                             </tr>
                         </thead>
@@ -40,6 +45,11 @@
                                     <td>@item.PedidoData.ToShortDateString()</td>
                                     <td>@item.TipoPagamentoDescricao</td>
                                     <td>@item.TransportadoraNomeFantasia</td>
+                                    <td>@item.UsuarioDespachoNotaFiscal</td>
+                                    <td>@item.DataHoraDespachoNotaFiscal</td>
+                                    <td>@item.NumeroRomaneio</td>
+                                    <td>@item.UsuarioRomaneio</td>
+                                    <td>@item.DataHoraRomaneio</td>
                                     <td class=" row-actions">
                                         <p data-id="@item.IdPedidoVendaVolume" action="exibirDetalhesVolume" class="btn btn-row-actions btn-default" title="Detalhes do Volume"><i class="fa fa-eye"></i></p>
                                     </td>

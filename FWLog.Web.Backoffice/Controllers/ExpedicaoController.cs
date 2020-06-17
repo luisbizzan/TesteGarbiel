@@ -236,7 +236,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.MovimentacaoVolumes)]
-        public ActionResult MovimentacaoVolumesDetalhes(DateTime dataInicial, DateTime dataFinal, long idGrupoCorredorArmazenagem, string status, string tipoPagamento, bool? requisicao)
+        public ActionResult MovimentacaoVolumesDetalhes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, string status, string tipoPagamento, bool? requisicao)
         {
             bool? dinheiro = null, cartaoCredito = null, cartaoDebito = null;
 
@@ -258,13 +258,14 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             }
 
-            var dadosRetorno = _expedicaoService.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, status, cartaoCredito, cartaoDebito, dinheiro, requisicao, IdEmpresa, out string statusDescricao);
+            var dadosRetorno = _expedicaoService.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, status, cartaoCredito, cartaoDebito, dinheiro, requisicao, IdEmpresa, out string statusDescricao, out string corredorArmazenagemDescricao);
 
             var items = Mapper.Map<List<MovimentacaoVolumesDetalheListItemViewModel>>(dadosRetorno);
 
             var viewModel = new MovimentacaoVolumesDetalheViewModel
             {
                 Status = statusDescricao,
+                CorredorArmazenagemDescricao = corredorArmazenagemDescricao,
                 Items = items,
                 Url = HttpContext.Request.Url.AbsoluteUri
             };

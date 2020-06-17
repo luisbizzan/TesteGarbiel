@@ -4,6 +4,21 @@
 
     $("dateFormat").mask("99/99/9999");
 
+    $("#pesquisarProduto").click(function () {
+        $("#modalProduto").load(HOST_URL + "Produto/SearchModal", function () {
+            $("#modalProduto").modal();
+        });
+    });
+
+    function limparProduto() {
+        $("#Filter_DescricaoProduto").val("");
+        $("#Filter_IdProduto").val("");
+    }
+
+    $("#limparProduto").click(function () {
+        limparProduto();
+    });
+
     $.validator.addMethod('validarDataInicial', function (value, ele) {
         var idPedidoVenda = $("#Filter_NumeroPedido").val();
         var dataInicial = $("#Filter_DataInicial").val();
@@ -95,10 +110,12 @@
         columns: [
             { "defaultContent": "", width: '8%' },
             { data: 'NroVolume', width: '8%' },
+            { data: 'NroCentena', width: '8%' },
             { data: 'DataCriacao' },
             { data: 'NumeroSerieNotaFiscal' },
             { data: 'DataExpedicao' },
-            { data: 'Status', width: '20%' },
+            { data: 'StatusVolume', width: '20%' },
+            { data: 'StatusPedido', width: '20%' },
             actionsColumn
         ],
         rowGroup: {
@@ -227,4 +244,11 @@ function fechaModalImpressoras() {
 
     $modal.modal("hide");
     $modal.empty();
+}
+
+function setProduto(idProduto, descricao) {
+    $("#Filter_DescricaoProduto").val(descricao);
+    $("#Filter_IdProduto").val(idProduto);
+    $("#modalProduto").modal("hide");
+    $("#modalProduto").empty();
 }

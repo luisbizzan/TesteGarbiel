@@ -5,9 +5,11 @@ using FWLog.AspNet.Identity;
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Model.Etiquetas;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
+using FWLog.Web.Backoffice.Models.EnderecoArmazenagemCtx;
 using FWLog.Web.Backoffice.Models.TransporteEnderecoCtx;
 using log4net;
 using System;
@@ -22,12 +24,14 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly ILog _log;
         private readonly TransportadoraEnderecoService _transportadoraEnderecoService;
         private readonly UnitOfWork _unitOfWork;
+        private readonly EtiquetaService _etiquetaService;
 
-        public TransportadoraEnderecoController(ILog log, TransportadoraEnderecoService transportadoraEnderecoService, UnitOfWork unitOfWork)
+        public TransportadoraEnderecoController(ILog log, TransportadoraEnderecoService transportadoraEnderecoService, UnitOfWork unitOfWork, EtiquetaService etiquetaService)
         {
             _log = log;
             _transportadoraEnderecoService = transportadoraEnderecoService;
             _unitOfWork = unitOfWork;
+            _etiquetaService = etiquetaService;
         }
 
         [HttpGet]
@@ -53,7 +57,8 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 DadosTransportadora = string.Concat(te.CnpjTransportadora.CnpjOuCpf(), " - ", te.RazaoSocialTransportadora),
                 Codigo = te.Codigo,
-                IdTransportadoraEndereco = te.IdTransportadoraEndereco
+                IdTransportadoraEndereco = te.IdTransportadoraEndereco,
+                IdEnderecoArmazenagem = te.IdEnderecoArmazenagem
             }));
 
             return DataTableResult.FromModel(new DataTableResponseModel
@@ -227,5 +232,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 Data = list
             });
         }
+       
     }
 }

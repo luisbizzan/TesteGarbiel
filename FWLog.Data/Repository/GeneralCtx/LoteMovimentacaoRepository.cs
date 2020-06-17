@@ -28,6 +28,8 @@ namespace FWLog.Data.Repository.GeneralCtx
                     (dataHoraFinal.HasValue == false || w.DataHora <= dataHoraFinal) &&
                     (String.IsNullOrEmpty(model.CustomFilter.IdUsuarioMovimentacao) || w.IdUsuarioMovimentacao.Contains(model.CustomFilter.IdUsuarioMovimentacao)) &&
                     (model.CustomFilter.IdEnderecoArmazenagem.HasValue == false || w.IdEnderecoArmazenagem == model.CustomFilter.IdEnderecoArmazenagem) &&
+                    (model.CustomFilter.IdPontoArmazenagem.HasValue == false || w.EnderecoArmazenagem.IdPontoArmazenagem == model.CustomFilter.IdPontoArmazenagem) &&
+                    (model.CustomFilter.IdNivelArmazenagem.HasValue == false || w.EnderecoArmazenagem.IdNivelArmazenagem == model.CustomFilter.IdNivelArmazenagem) &&
                     (model.CustomFilter.IdLoteMovimentacaoTipo.HasValue == false || w.IdLoteMovimentacaoTipo == (LoteMovimentacaoTipoEnum)model.CustomFilter.IdLoteMovimentacaoTipo.Value))
                 .Select(s => new RastreabilidadeLoteMovimentacaoListaLinhaTabela
                 {

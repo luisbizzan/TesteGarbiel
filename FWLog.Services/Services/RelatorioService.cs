@@ -1,6 +1,7 @@
 ﻿using ExtensionMethods.String;
 using FWLog.Data;
 using FWLog.Data.Models;
+using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Relatorios;
 using FWLog.Services.Relatorio;
@@ -1888,6 +1889,11 @@ namespace FWLog.Services.Services
             }
 
             return fwRelatorio.GerarCustomizado();
+        }
+
+        public List<RelatorioValidadePecaListaTabela> BuscarListaRelatorioValidadePeca(DataTableFilter<RelatorioValidadePecaListaFiltro> filtro, out int registrosFiltrados, out int totalRegistros)
+        {
+            return _unitiOfWork.LoteProdutoRepository.BuscarListaRelatorioValidadePeca(filtro, out registrosFiltrados, out totalRegistros);
         }
     }
 }

@@ -7,5 +7,6 @@
         public int Quantidade { get; set; }
         public int QuantidadeCaixas { get; set; }
         public long IdEnderecoArmazenagem { get; set; }
+        public string UsuarioPermissaoInstalarForaMultiplo { get; set; }
     }
 }

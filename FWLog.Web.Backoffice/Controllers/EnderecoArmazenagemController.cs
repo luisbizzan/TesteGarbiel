@@ -57,6 +57,11 @@ namespace FWLog.Web.Backoffice.Controllers
                         {
                             new SelectListItem { Text = "Sim", Value = "1"},
                             new SelectListItem { Text = "Não", Value = "0"}
+                        }, "Value", "Text"),
+                Ocupado = new SelectList(new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "Ocupado", Value = "true"},
+                            new SelectListItem { Text = "Livre", Value = "false"}
                         }, "Value", "Text")
             };
 
@@ -68,6 +73,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult DadosLista(DataTableFilter<EnderecoArmazenagemListaFilterViewModel> model)
         {
             var filtro = Mapper.Map<DataTableFilter<EnderecoArmazenagemListaFiltro>>(model);
+           
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
 
             IEnumerable<EnderecoArmazenagemListaLinhaTabela> result = _unitOfWork.EnderecoArmazenagemRepository.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);
@@ -207,7 +213,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
             var viewModel = Mapper.Map<EnderecoArmazenagemDetalhesViewModel>(enderecoArmazenagem);
 
-            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarRegistrosPorEndereco(viewModel.IdEnderecoArmazenagem);
+            var loteProdutoEndereco = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorEndereco(viewModel.IdEnderecoArmazenagem);
 
             // Popula Itens na lista de produtos do Endereço Armazenagem
             loteProdutoEndereco.ForEach(lpe =>

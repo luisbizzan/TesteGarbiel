@@ -6,5 +6,6 @@
         public long IdLote { get; set; }
         public long IdProduto { get; set; }
         public int Quantidade { get; set; }
+        public bool PermissaoInstalarForaMultiplo { get; set; }
     }
 }

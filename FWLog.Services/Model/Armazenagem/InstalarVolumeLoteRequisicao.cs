@@ -9,5 +9,7 @@
         public long IdEnderecoArmazenagem { get; set; }
         public long IdEmpresa { get; set; }
         public string IdUsuarioInstalacao { get; set; }
+        public bool PermissaoInstalarForaMultiplo { get; set; }
+        public string UsuarioPermissaoInstalarForaMultiplo { get; set; }
     }
 }

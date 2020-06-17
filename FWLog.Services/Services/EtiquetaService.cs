@@ -99,6 +99,8 @@ namespace FWLog.Services.Services
             decimal multiplo = request.Multiplo ?? produto.MultiploVenda;
             string codReferencia = produto.CodigoBarras;
 
+            var isReimpressao = _unitOfWork.LogEtiquetagemRepository.IsReimpressao(empresaProduto.IdProduto, empresaProduto.IdEmpresa, TipoEtiquetagemEnum.Lote.GetHashCode());
+
             string endereco = empresaProduto?.EnderecoArmazenagem?.Codigo ?? string.Empty;
 
             var etiquetaImprimir = new StringBuilder();
@@ -148,8 +150,15 @@ namespace FWLog.Services.Services
             // Endereço Picking [5 Linha]
             etiquetaImprimir.Append($"^FO610,30^A0B,50,40^FD{endereco}^FS");
 
+            var dataFormatada = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
+            if (isReimpressao)
+            {
+                dataFormatada = string.Concat(dataFormatada, "*");
+            }
+
             // Data e Hora [5 Linha]
-            etiquetaImprimir.Append($"^FO665,30^A0B,40,25^FD{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}*^FS");
+            etiquetaImprimir.Append($"^FO665,30^A0B,40,25^FD{dataFormatada}^FS");
 
             etiquetaImprimir.Append("^XZ");
 

@@ -2,7 +2,6 @@
 using FWLog.Data;
 using FWLog.Data.Models;
 using FWLog.Services.Integracao;
-using FWLog.Services.Model.Expedicao;
 using FWLog.Services.Model.IntegracaoSankhya;
 using FWLog.Services.Model.Transportadora;
 using log4net;
@@ -17,8 +16,8 @@ namespace FWLog.Services.Services
 {
     public class TransportadoraService : BaseService
     {
-        private UnitOfWork _uow;
-        private ILog _log;
+        private readonly UnitOfWork _uow;
+        private readonly ILog _log;
 
         public TransportadoraService(UnitOfWork uow, ILog log)
         {
@@ -26,49 +25,76 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task LimparIntegracao()
+        public async Task ConsultarTransportadora(bool somenteNovos)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
                 return;
             }
 
-            StringBuilder where = new StringBuilder();
+            var where = new StringBuilder();
             where.Append("WHERE TRANSPORTADORA = 'S' ");
-            where.Append("AND AD_ABREVTRANSP IS NOT NULL ");
 
-            List<TransportadoraIntegracao> transportadorasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<TransportadoraIntegracao>(where: where.ToString());
+            if (somenteNovos)
+            {
+                where.Append("AND AD_INTEGRARFWLOG = '1' ");
+            }
+            else
+            {
+                where.Append("AND AD_INTEGRARFWLOG = '0' ");
+            }
 
-            foreach (var transpInt in transportadorasIntegracao)
+            int quantidadeChamadas = 0;
+
+            var transportadoraContadorIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<TransportadoraContadorIntegracao>(where: where.ToString());
+
+            if (transportadoraContadorIntegracao != null)
             {
                 try
                 {
-                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", transpInt.CodigoIntegracao.ToString() } };
+                    decimal contadorRegistros = Convert.ToInt32(transportadoraContadorIntegracao[0].Quantidade);
 
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "1");
+                    if (contadorRegistros < 4999)
+                    {
+                        quantidadeChamadas = 1;
+                    }
+                    else
+                    {
+                        decimal div = contadorRegistros / 4999;
+                        quantidadeChamadas = Convert.ToInt32(Math.Ceiling(div));
+                    }
+
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(string.Format("Erro na integração da Transportadora: {0}.", transpInt.CodigoIntegracao), ex);
-
-                    continue;
+                    _log.Error("Erro na integração de Transportadoras", ex);
+                    return;
                 }
             }
-        }
 
-        public async Task ConsultarTransportadora()
-        {
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            int offsetRows = 0;
+            var transportadorasIntegracao = new List<TransportadoraIntegracao>();
+
+            for (int i = 0; i < quantidadeChamadas; i++)
             {
-                return;
+                where = new StringBuilder();
+                where.Append("WHERE TRANSPORTADORA = 'S' ");
+
+                if (somenteNovos)
+                {
+                    where.Append("AND AD_INTEGRARFWLOG = '1' ");
+                }
+                else
+                {
+                    where.Append("AND AD_INTEGRARFWLOG = '0' ");
+                }
+
+                where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET " + offsetRows + " ROWS FETCH NEXT 4999 ROWS ONLY ");
+
+                transportadorasIntegracao.AddRange(await IntegracaoSankhya.Instance.PreExecutarQuery<TransportadoraIntegracao>(where: where.ToString()));
+
+                offsetRows += 4999;
             }
-
-            StringBuilder where = new StringBuilder();
-            where.Append("WHERE TRANSPORTADORA = 'S' ");
-            where.Append("AND AD_INTEGRARFWLOG = '1' ");
-            //where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET 0 ROWS FETCH NEXT 5000 ROWS ONLY ");
-
-            List<TransportadoraIntegracao> transportadorasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<TransportadoraIntegracao>(where: where.ToString());
 
             foreach (var transpInt in transportadorasIntegracao)
             {
@@ -93,10 +119,7 @@ namespace FWLog.Services.Services
                     transportadora.RazaoSocial = transpInt.RazaoSocial;
                     transportadora.NomeFantasia = transpInt.NomeFantasia;
                     transportadora.CodigoTransportadora = transpInt.CodigoTransportadora;
-
-                    Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPARC", transportadora.CodigoIntegracao.ToString() } };
-
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
+                    transportadora.MoverAutomaticamente = transpInt.MoverAutomaticamente == "S";
 
                     if (transportadoraNova)
                     {
@@ -108,12 +131,16 @@ namespace FWLog.Services.Services
                     }
 
                     _uow.SaveChanges();
+
+                    if (somenteNovos)
+                    {
+                        var campoChave = new Dictionary<string, string> { { "CODPARC", transportadora.CodigoIntegracao.ToString() } };
+                        await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Parceiro", campoChave, "AD_INTEGRARFWLOG", "0");
+                    }
                 }
                 catch (Exception ex)
                 {
                     _log.Error(string.Format("Erro na integração da Transportadora: {0}.", transpInt.CodigoIntegracao), ex);
-
-                    continue;
                 }
             }
         }
@@ -149,7 +176,7 @@ namespace FWLog.Services.Services
             var transportadora = ValidarERetornarTransportadora(idTransportadora);
 
             var enderecos = _uow.TransportadoraEnderecoRepository.ObterPorIdTransportadoraEmpresa(idTransportadora, idEmpresa);
-            
+
             if (enderecos.NullOrEmpty())
             {
                 throw new BusinessException("Transportadora não contém nenhum endereço de armazenagem");

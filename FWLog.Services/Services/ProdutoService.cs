@@ -26,74 +26,27 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task LimparIntegracao()
+        public async Task ConsultarProdutoIntegracao(bool somenteNovos)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
                 return;
             }
 
-            StringBuilder where = new StringBuilder();
-
-            where.Append("WHERE DESCRPROD IS NOT NULL ");
-            where.Append("AND CODPROD IS NOT NULL AND CODPROD <> 0 ");
-            where.Append("AND AD_INTEGRARFWLOG = '0' ");
-
-            int quantidadeRegistro = 4999;
-            int quantidadeChamada = 0;
-
-            List<ProdutoQuantidadeRegistroIntegracao> produtoQuantidadeRegistroIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoQuantidadeRegistroIntegracao>(where: where.ToString());
-
-            if (produtoQuantidadeRegistroIntegracao != null)
-            {
-                try
-                {
-                    quantidadeRegistro = Convert.ToInt32(produtoQuantidadeRegistroIntegracao[0].QuantidadeRegistro);
-                }
-                catch { }
-            }
-
-            quantidadeChamada = quantidadeRegistro > 4999 ? quantidadeRegistro / 4999 : 1;
-
-            where.Append("ORDER BY CODPROD OFFSET 0 ROWS FETCH NEXT 5000 ROWS ONLY ");
-
-            for (int i = 0; i < quantidadeChamada; i++)
-            {
-                List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoIntegracao>(where: where.ToString());
-
-                foreach (var produtoInt in produtosIntegracao)
-                {
-                    try
-                    {
-                        Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPROD", produtoInt.CodigoIntegracao.ToString() } };
-
-                        await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", campoChave, "AD_INTEGRARFWLOG", "1");
-                    }
-                    catch (Exception ex)
-                    {
-                        _log.Error(string.Format("Erro na limpeza de integração do Produto: {0}.", produtoInt.CodigoIntegracao), ex);
-                    }
-                }
-            }
-        }
-
-        public async Task ConsultarProdutoIntegracao(bool somenteNovos = true)
-        {
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            {
-                return;
-            }
-
-            StringBuilder where = new StringBuilder();
+            var where = new StringBuilder();
 
             if (somenteNovos)
             {
                 where.Append("WHERE AD_INTEGRARFWLOG = '1' ");
             }
+            else
+            {
+                where.Append("WHERE AD_INTEGRARFWLOG = '0' ");
+            }
 
             int quantidadeChamadas = 0;
 
-            List<ProdutoQuantidadeRegistroIntegracao> produtoQuantidadeRegistroIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<Model.IntegracaoSankhya.ProdutoQuantidadeRegistroIntegracao>(where: where.ToString());
+            var produtoQuantidadeRegistroIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoQuantidadeRegistroIntegracao>(where: where.ToString());
 
             if (produtoQuantidadeRegistroIntegracao != null)
             {
@@ -120,132 +73,203 @@ namespace FWLog.Services.Services
             }
 
             int offsetRows = 0;
+            var produtosIntegracao = new List<ProdutoIntegracao>();
+            var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
+            List<Empresa> empresas = _uow.EmpresaRepository.Tabela().Where(emp => !string.IsNullOrEmpty(emp.Sigla)).ToList();
 
             for (int i = 0; i < quantidadeChamadas; i++)
             {
+                where = new StringBuilder();
+
+                if (somenteNovos)
+                {
+                    where.Append("WHERE AD_INTEGRARFWLOG = '1' ");
+                }
+                else
+                {
+                    where.Append("WHERE AD_INTEGRARFWLOG = '0' ");
+                }
+
                 where.Append("ORDER BY CODPROD OFFSET " + offsetRows + " ROWS FETCH NEXT 4999 ROWS ONLY ");
 
-                List<ProdutoIntegracao> produtosIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoIntegracao>(where: where.ToString());
+                produtosIntegracao.AddRange(await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoIntegracao>(where: where.ToString()));
 
-                var unidadesMedida = _uow.UnidadeMedidaRepository.RetornarTodos();
+                offsetRows += 4999;
+            }
 
-                foreach (var produtoInt in produtosIntegracao)
+            foreach (var produtoInt in produtosIntegracao)
+            {
+                try
                 {
-                    try
+                    ValidarDadosIntegracao(produtoInt);
+
+                    var unidade = unidadesMedida.FirstOrDefault(f => f.Sigla == produtoInt.UnidadeMedidaSigla);
+                    if (unidade == null)
                     {
-                        ValidarDadosIntegracao(produtoInt);
+                        string whereUnidade = "WHERE TGFVOL.CODVOL = '" + produtoInt.UnidadeMedidaSigla + "' ";
+                        var unidadeMedidaIntegrar = await IntegracaoSankhya.Instance.PreExecutarQuery<UnidadeMedidaIntegracao>(where: whereUnidade);
 
-                        var unidade = unidadesMedida.FirstOrDefault(f => f.Sigla == produtoInt.UnidadeMedidaSigla);
-                        if (unidade == null)
+                        if (unidadeMedidaIntegrar != null && unidadeMedidaIntegrar.Count > 0)
                         {
-                            throw new Exception("Código da Unidade de Medida (CODVOL) inválido.");
-                        }
-
-                        bool produtoNovo = false;
-
-                        var codProd = Convert.ToInt64(produtoInt.CodigoIntegracao);
-                        if (codProd == 0)
-                        {
-                            throw new Exception("Código da Produto (CODPROD: 0) inválido.");
-                        }
-
-                        Produto produto = _uow.ProdutoRepository.ConsultarPorCodigoIntegracao(codProd);
-
-                        if (produto == null)
-                        {
-                            produtoNovo = true;
-                            produto = new Produto();
-                        }
-
-                        produto.Altura = produtoInt.Altura == null ? (decimal?)null : Convert.ToDecimal(produtoInt.Altura.Replace(".", ","));
-                        produto.Ativo = produtoInt.Ativo == "S" ? true : false;
-                        produto.CodigoFabricante = produtoInt.CodigoFabricante == null ? (long?)null : Convert.ToInt64(produtoInt.CodigoFabricante);
-                        produto.CodigoIntegracao = codProd;
-                        produto.CodigoProdutoNFE = Convert.ToInt32(produtoInt.CodigoProdutoNFE);
-                        produto.Comprimento = produtoInt.Comprimento == null ? (decimal?)null : Convert.ToDecimal(produtoInt.Comprimento.Replace(".", ","));
-                        produto.Descricao = produtoInt.Descricao;
-                        produto.EnderecoImagem = produtoInt.EnderecoImagem;
-                        produto.Largura = produtoInt.Largura == null ? (decimal?)null : Convert.ToDecimal(produtoInt.Largura.Replace(".", ","));
-                        produto.MetroCubico = produtoInt.MetroCubico == null ? (decimal?)null : Convert.ToDecimal(produtoInt.MetroCubico.Replace(".", ","));
-                        produto.MultiploVenda = Convert.ToDecimal(produtoInt.MultiploVenda.Replace(".", ","));
-                        produto.NomeFabricante = produtoInt.NomeFabricante;
-                        produto.PesoBruto = Convert.ToDecimal(produtoInt.PesoBruto.Replace(".", ",")) / 1000;
-                        produto.PesoLiquido = Convert.ToDecimal(produtoInt.PesoLiquido.Replace(".", ",")) / 1000;
-                        produto.Referencia = produtoInt.Referencia;
-                        produto.ReferenciaFornecedor = produtoInt.ReferenciaFornecedor;
-                        produto.CodigoBarras = produtoInt.CodigoBarras;
-                        produto.IdUnidadeMedida = unidade.IdUnidadeMedida;
-                        produto.CodigoBarras2 = produtoInt.CodigoBarras2;
-                        produto.IsEmbalagemFornecedor = produtoInt.IsEmbalagemFornecedor == "S" ? true : false;
-                        produto.IsEmbalagemFornecedorVolume = produtoInt.IsEmbalagemFornecedorVolume == "S" ? true : false;
-
-                        Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() } };
-
-                        await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", campoChave, "AD_INTEGRARFWLOG", "0");
-
-                        if (produtoNovo)
-                        {
-                            _uow.ProdutoRepository.Add(produto);
-
-                            List<Empresa> empresas = _uow.EmpresaRepository.Tabela().Where(emp => !string.IsNullOrEmpty(emp.Sigla)).ToList();
-
-                            foreach (Empresa empresa in empresas)
+                            var unidadeMedida = new UnidadeMedida
                             {
-                                var produtoEstoque = new ProdutoEstoque
-                                {
-                                    IdProduto = produto.IdProduto,
-                                    IdEmpresa = empresa.IdEmpresa,
-                                    Saldo = 0,
-                                    IdProdutoEstoqueStatus = ProdutoEstoqueStatusEnum.Ativo,
-                                    DiasPrazoEntrega = 0
-                                };
+                                Sigla = unidadeMedidaIntegrar[0].Sigla,
+                                Descricao = unidadeMedidaIntegrar[0].Descricao
+                            };
 
-                                _uow.ProdutoEstoqueRepository.Add(produtoEstoque);
-                            }
+                            _uow.UnidadeMedidaRepository.Add(unidadeMedida);
+                            _uow.SaveChanges();
                         }
                         else
                         {
-                            _uow.ProdutoRepository.Update(produto);
+                            throw new Exception("Código da Unidade de Medida (CODVOL: "+ produtoInt.UnidadeMedidaSigla +") inválido.");
                         }
-
-                        _uow.SaveChanges();
-
                     }
-                    catch (Exception ex)
+
+                    bool produtoNovo = false;
+
+                    var codProd = Convert.ToInt64(produtoInt.CodigoIntegracao);
+                    if (codProd == 0)
                     {
-                        _log.Error(string.Format("Erro na integração do Produto: {0}.", produtoInt.CodigoIntegracao), ex);
+                        throw new Exception("Código da Produto (CODPROD: 0) inválido.");
+                    }
+
+                    Produto produto = _uow.ProdutoRepository.ConsultarPorCodigoIntegracao(codProd);
+
+                    if (produto == null)
+                    {
+                        produtoNovo = true;
+                        produto = new Produto();
+                    }
+
+                    produto.Altura = produtoInt.Altura == null ? (decimal?)null : Convert.ToDecimal(produtoInt.Altura.Replace(".", ","));
+                    produto.Ativo = produtoInt.Ativo == "S" ? true : false;
+                    produto.CodigoFabricante = produtoInt.CodigoFabricante == null ? (long?)null : Convert.ToInt64(produtoInt.CodigoFabricante);
+                    produto.CodigoIntegracao = codProd;
+                    produto.CodigoProdutoNFE = Convert.ToInt32(produtoInt.CodigoProdutoNFE);
+                    produto.Comprimento = produtoInt.Comprimento == null ? (decimal?)null : Convert.ToDecimal(produtoInt.Comprimento.Replace(".", ","));
+                    produto.Descricao = produtoInt.Descricao;
+                    produto.EnderecoImagem = produtoInt.EnderecoImagem;
+                    produto.Largura = produtoInt.Largura == null ? (decimal?)null : Convert.ToDecimal(produtoInt.Largura.Replace(".", ","));
+                    produto.MetroCubico = produtoInt.MetroCubico == null ? (decimal?)null : Convert.ToDecimal(produtoInt.MetroCubico.Replace(".", ","));
+                    produto.MultiploVenda = Convert.ToDecimal(produtoInt.MultiploVenda.Replace(".", ","));
+                    produto.NomeFabricante = produtoInt.NomeFabricante;
+                    produto.PesoBruto = Convert.ToDecimal(produtoInt.PesoBruto.Replace(".", ","));
+                    produto.PesoLiquido = Convert.ToDecimal(produtoInt.PesoLiquido.Replace(".", ","));
+                    produto.Referencia = produtoInt.Referencia;
+                    produto.ReferenciaFornecedor = produtoInt.ReferenciaFornecedor;
+                    produto.CodigoBarras = produtoInt.CodigoBarras;
+                    produto.IdUnidadeMedida = unidade.IdUnidadeMedida;
+                    produto.CodigoBarras2 = produtoInt.CodigoBarras2;
+                    produto.IsEmbalagemFornecedor = produtoInt.IsEmbalagemFornecedor == "S" ? true : false;
+                    produto.IsEmbalagemFornecedorVolume = produtoInt.IsEmbalagemFornecedorVolume == "S" ? true : false;
+
+                    if (produtoNovo)
+                    {
+                        _uow.ProdutoRepository.Add(produto);
+
+                        foreach (Empresa empresa in empresas)
+                        {
+                            var produtoEstoque = new ProdutoEstoque
+                            {
+                                IdProduto = produto.IdProduto,
+                                IdEmpresa = empresa.IdEmpresa,
+                                Saldo = 0,
+                                IdProdutoEstoqueStatus = ProdutoEstoqueStatusEnum.Ativo,
+                                DiasPrazoEntrega = 0
+                            };
+
+                            _uow.ProdutoEstoqueRepository.Add(produtoEstoque);
+                        }
+                    }
+                    else
+                    {
+                        _uow.ProdutoRepository.Update(produto);
+                    }
+
+                    _uow.SaveChanges();
+
+                    if (somenteNovos)
+                    {
+                        var campoChave = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() } };
+                        await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Produto", campoChave, "AD_INTEGRARFWLOG", "0");
                     }
                 }
-
-                i++;
-                offsetRows += 4999;
+                catch (Exception ex)
+                {
+                    _log.Error(string.Format("Erro na integração do Produto: {0}.", produtoInt.CodigoIntegracao), ex);
+                }
             }
         }
 
-        public async Task LimparIntegracaoPrazoEntrega()
+        public async Task ConsultarProdutoPrazoEntrega(bool somenteNovos)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
                 return;
             }
 
-            string where = "WHERE AD_INTEGRARFWLOG = '0' ";
+            var where = new StringBuilder();
 
-            List<ProdutoEstoqueIntegracao> produtoPrazoEntregaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoEstoqueIntegracao>(where);
-
-            foreach (var produtoInt in produtoPrazoEntregaIntegracao)
+            if (somenteNovos)
             {
-                Dictionary<string, string> chaves = new Dictionary<string, string> { { "CODPROD", produtoInt.CodigoIntegracaoProduto.ToString() }, { "CODEMP", produtoInt.CodigoIntegracaoEmpresa.ToString() } };
-
-                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("EmpresaProdutoImpostos", chaves, "AD_INTEGRARFWLOG", "0");
+                where.Append("WHERE AD_INTEGRARFWLOG = '1' ");
             }
-        }
+            else
+            {
+                where.Append("WHERE AD_INTEGRARFWLOG = '0' ");
+            }
 
-        public async Task ConsultarProdutoPrazoEntrega()
-        {
-            string where = "WHERE AD_INTEGRARFWLOG = '1' ";
+            int quantidadeChamadas = 0;
 
-            List<ProdutoEstoqueIntegracao> produtoPrazoEntregaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoEstoqueIntegracao>(where);
+            var produtoEstoqueQuantidadeRegistroIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoEstoqueQuantidadeIntegracao>(where: where.ToString());
+
+            if (produtoEstoqueQuantidadeRegistroIntegracao != null)
+            {
+                try
+                {
+                    decimal contadorRegistros = Convert.ToInt32(produtoEstoqueQuantidadeRegistroIntegracao[0].QuantidadeRegistro);
+
+                    if (contadorRegistros < 4999)
+                    {
+                        quantidadeChamadas = 1;
+                    }
+                    else
+                    {
+                        decimal div = contadorRegistros / 4999;
+                        quantidadeChamadas = Convert.ToInt32(Math.Ceiling(div));
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    _log.Error("Erro na integração de prazo de entrega", ex);
+                    return;
+                }
+            }
+
+            int offsetRows = 0;
+            var produtoPrazoEntregaIntegracao = new List<ProdutoEstoqueIntegracao>();
+
+            for (int i = 0; i < quantidadeChamadas; i++)
+            {
+                where = new StringBuilder();
+
+                if (somenteNovos)
+                {
+                    where.Append("WHERE AD_INTEGRARFWLOG = '1' ");
+                }
+                else
+                {
+                    where.Append("WHERE AD_INTEGRARFWLOG = '0' ");
+                }
+
+                where.Append("ORDER BY CODPROD OFFSET " + offsetRows + " ROWS FETCH NEXT 4999 ROWS ONLY ");
+
+                produtoPrazoEntregaIntegracao.AddRange(await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoEstoqueIntegracao>(where: where.ToString()));
+
+                offsetRows += 4999;
+            }
 
             foreach (var produtoInt in produtoPrazoEntregaIntegracao)
             {
@@ -272,10 +296,11 @@ namespace FWLog.Services.Services
                     if (produtoEstoque == null)
                     {
                         produtoEstoqueNovo = true;
-                        produtoEstoque = new ProdutoEstoque();
-
-                        produtoEstoque.IdEmpresa = empresa.IdEmpresa;
-                        produtoEstoque.IdProduto = produto.IdProduto;
+                        produtoEstoque = new ProdutoEstoque
+                        {
+                            IdEmpresa = empresa.IdEmpresa,
+                            IdProduto = produto.IdProduto
+                        };
                     }
 
                     produtoEstoque.DiasPrazoEntrega = Convert.ToInt32(produtoInt.DiasPrazoEntrega);
@@ -288,35 +313,16 @@ namespace FWLog.Services.Services
 
                     await _uow.SaveChangesAsync();
 
-                    Dictionary<string, string> chaves = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() }, { "CODEMP", empresa.CodigoIntegracao.ToString() } };
-
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("EmpresaProdutoImpostos", chaves, "AD_INTEGRARFWLOG", "0");
+                    if (somenteNovos)
+                    {
+                        var chaves = new Dictionary<string, string> { { "CODPROD", produto.CodigoIntegracao.ToString() }, { "CODEMP", empresa.CodigoIntegracao.ToString() } };
+                        await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("EmpresaProdutoImpostos", chaves, "AD_INTEGRARFWLOG", "0");
+                    }
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(string.Format("Erro gerado na integração do Prazo de Entrega do Produto {0} Empresa: {1}.", produtoInt.CodigoIntegracaoProduto, produtoInt.CodigoIntegracaoEmpresa), ex);
-
-                    continue;
+                    _log.Error(string.Format("Erro integração Prazo de Entrega Produto {0} Empresa: {1}.", produtoInt.CodigoIntegracaoProduto, produtoInt.CodigoIntegracaoEmpresa), ex);
                 }
-            }
-        }
-
-        public async Task LimparIntegracaoMediaVenda()
-        {
-            if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            {
-                return;
-            }
-
-            string where = "WHERE AD_INTEGRARFWLOG = '0' ";
-
-            List<ProdutoEstoqueIntegracao> produtoPrazoEntregaIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoEstoqueIntegracao>(where);
-
-            foreach (var produtoInt in produtoPrazoEntregaIntegracao)
-            {
-                Dictionary<string, string> chaves = new Dictionary<string, string> { { "CODPROD", produtoInt.CodigoIntegracaoProduto.ToString() }, { "CODEMP", produtoInt.CodigoIntegracaoEmpresa.ToString() } };
-
-                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("EmpresaProdutoImpostos", chaves, "AD_INTEGRARFWLOG", "1");
             }
         }
 

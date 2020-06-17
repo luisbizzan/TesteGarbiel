@@ -29,8 +29,8 @@ namespace FWLog.Services.Services
             {
                 Dictionary<string, object> fields = new Dictionary<string, object>
                 {
-                    {"AD_ROMANEIO.NUMROMANEIO", nroRomaneio },
-                    {"AD_ROMANEIO.AD_DTEMBROMANEIO",dataHoraRomaneio }
+                    {"NUMROMANEIO", nroRomaneio },
+                    {"DTEMBROMANEIO",dataHoraRomaneio.ToString("dd/MM/yyyy") }
                 };
 
                 await IntegracaoSankhya.Instance.InserirInformacaoIntegracao("AD_ROMANEIO", fields);

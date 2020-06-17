@@ -23,21 +23,26 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task ConsultarEmpresaIntegracao()
+        public async Task ConsultarEmpresaIntegracao(bool somenteNovos = true)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
                 return;
             }
 
-            StringBuilder inner = new StringBuilder();
+            var inner = new StringBuilder();
             inner.Append("INNER JOIN TGFEMP ON TSIEMP.CODEMP = TGFEMP.CODEMP ");
             inner.Append("LEFT JOIN TSIEND ON TSIEMP.CODEND = TSIEND.CODEND ");
             inner.Append("LEFT JOIN TSIBAI ON TSIEMP.CODBAI = TSIBAI.CODBAI ");
             inner.Append("LEFT JOIN TSICID ON TSIEMP.CODCID = TSICID.CODCID ");
             inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF");
 
-            var where = "WHERE TSIEMP.AD_INTEGRARFWLOG = '1'";
+            var where = new StringBuilder();
+
+            if (somenteNovos)
+            {
+                where.Append("WHERE TSIEMP.AD_INTEGRARFWLOG = '1' ");
+            }
 
             List<EmpresaIntegracao> empresasIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<EmpresaIntegracao>(where.ToString(), inner.ToString());
 

@@ -348,7 +348,7 @@ namespace FWLog.Web.Backoffice.Controllers
                     IdLote = string.Empty,
                     ReferenciaProduto = string.Empty,
                     DescricaoProduto = string.Empty,
-                    NroVolume = "<b>Saldo</b>",
+                    NroVolume = "<b>Saldo Movimentação</b>",
                     Quantidade = saldoQuantidadeMovimentacao.ToString()
                 });
             }
