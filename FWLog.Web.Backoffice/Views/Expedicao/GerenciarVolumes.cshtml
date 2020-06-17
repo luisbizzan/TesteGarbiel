@@ -21,14 +21,20 @@
                 <div class="row">
                     <div class="form-group col-sm-2">
                         @Html.LabelFor(m => m.NroPedido, new { @class = "control-label" })
-                        @Html.TextBoxFor(m => m.NroPedido, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.NroPedido, new { @class = "form-control onlyNumber" })
                         @Html.ValidationMessageFor(m => m.NroPedido)
                         @Html.HiddenFor(m => m.IdPedido)
                         @Html.HiddenFor(m => m.IdGrupoCorredorArmazenagem)
                         @Html.HiddenFor(m => m.CorredorInicio)
                         @Html.HiddenFor(m => m.CorredorFim)
                         @Html.HiddenFor(m => m.IdPedidoVendaVolume, new { data_field = "IdPedidoVendaVolume" })
+                        @Html.Hidden("PedidoSelecionado", false)
                     </div>
+                    <div class="form-group col-sm-1">
+                        <button type="button" id="selecionarPedido" class="btn btn-primary" style="margin-top: 13px;background-color: #337ab7 !important;border-color: #2e6da4 !important;">Selecionar Pedido</button>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="form-group col-sm-2">
                         @Html.LabelFor(m => m.NroVolume)
                         <div class="input-group">
@@ -50,6 +56,7 @@
                             </span>
                         </div>
                         @Html.HiddenFor(m => m.IdProduto, new { data_field = "IdProduto" })
+                        @Html.HiddenFor(m => m.ReferenciaProduto, new { data_field = "ReferenciaProduto" })
                     </div>
                     <div class="form-group col-sm-2">
                         @Html.LabelFor(m => m.QuantidadeOriginal, new { @class = "control-label" })
@@ -58,7 +65,7 @@
                     </div>
                     <div class="form-group col-sm-2">
                         @Html.LabelFor(m => m.Quantidade, new { @class = "control-label" })
-                        @Html.TextBoxFor(m => m.Quantidade, new { @class = "form-control onlynumber" })
+                        @Html.TextBoxFor(m => m.Quantidade, new { @class = "form-control onlyNumber" })
                         @Html.ValidationMessageFor(m => m.Quantidade)
                     </div>
                     <div class="form-group col-sm-1">
@@ -72,6 +79,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nro. Volume</th>
+                                <th>Referência</th>
                                 <th>Produto</th>
                                 <th>Quantidade Original</th>
                                 <th>Quantidade</th>
@@ -84,7 +92,7 @@
                 </div>
                 <div class="ln_solid"></div>
                 <div class="row col-xs-12 form-buttons">
-                    <a href="@Url.Action("Index")" class="btn btn-default">Voltar</a>
+                    <a href="@Url.Action("RelatorioPedidos")" class="btn btn-default">Voltar</a>
                     <button id="salvarVolumes" type="button" class="btn btn-primary">Salvar</button>
                 </div>
             </div>

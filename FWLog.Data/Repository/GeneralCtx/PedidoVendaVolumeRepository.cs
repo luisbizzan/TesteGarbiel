@@ -205,7 +205,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 .Select(e => new PedidoVendaVolumePesquisaModalLinhaTabela
                 {
                     NroPedido = e.PedidoVenda.NroPedidoVenda,
-                    NroVolume = e.NroVolume.ToString(),
+                    NroVolume = e.NroVolume,
                     DescricaoStatus = e.PedidoVendaStatus.Descricao,
                     IdPedidoVendaVolume = e.IdPedidoVendaVolume
                 });

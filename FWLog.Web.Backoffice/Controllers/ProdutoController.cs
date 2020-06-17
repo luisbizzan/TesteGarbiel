@@ -101,7 +101,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     IdLote = id,
                     IdPedidoVendaVolume = idPedidoVendaVolume,
-                    ListaStatus = new SelectList(lista, "Value", "Text")
+                    ListaStatus = new SelectList(lista, "Value", "Text"),
+                    ExibirReferenciaProduto = idPedidoVendaVolume.HasValue ? true : false
                 }
             };
 

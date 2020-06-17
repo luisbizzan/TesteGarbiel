@@ -231,6 +231,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
     <Compile Include="Controllers\CaixaRecusaController.cs" />
+    <Compile Include="Controllers\PedidoVendaController.cs" />
     <Compile Include="Controllers\PedidoVendaVolumeController.cs" />
     <Compile Include="Controllers\ExpedicaoController.cs" />
     <Compile Include="Controllers\ArmazenagemController.cs" />
@@ -373,6 +374,7 @@
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\LoteEtiquetaViewModel.cs" />
+    <Compile Include="Models\ExpedicaoCtx\GerenciarVolumeRequisicao.cs" />
     <Compile Include="Models\ExpedicaoCtx\GerenciarVolumeViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\ConfirmaReimpressaoVolumeViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\ReimpressaoEtiquetaVolumeViewModel.cs" />

@@ -6,8 +6,6 @@
 
         public long IdPedidoVendaVolumeOrigem { get; set; }
 
-        public int QuantidadeOriginal { get; set; }
-
         public int Quantidade { get; set; }
     }
 }

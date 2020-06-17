@@ -380,21 +380,21 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return View(model);
         }
-
+       
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.Caixa.Cadastrar)]
-        public async Task<JsonResult> GerenciarVolumes(int nroPedido, long? idPedidoVendaVolume, long idGrupoCorredorArmazenagem, List<GerenciarVolumeItemViewModel> produtosVolumes)
+        [ApplicationAuthorize(Permissions = Permissions.Caixa.Cadastrar)]         
+        public async Task<JsonResult> GerenciarVolumes(GerenciarVolumeRequisicao requisicao)
         {
             try
             {
-                var listaVolumes = Mapper.Map<List<GerenciarVolumeItem>>(produtosVolumes);
+                var listaVolumes = Mapper.Map<List<GerenciarVolumeItem>>(requisicao.ProdutosVolumes);
 
-                await _expedicaoService.GerenciarVolumes(nroPedido, idPedidoVendaVolume, listaVolumes, IdEmpresa, idGrupoCorredorArmazenagem, IdUsuario).ConfigureAwait(false);
+                var excedeuPeso = await _expedicaoService.GerenciarVolumes(requisicao.NroPedido, requisicao.IdPedidoVendaVolume, listaVolumes, IdEmpresa, requisicao.IdGrupoCorredorArmazenagem, IdUsuario).ConfigureAwait(false);
 
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,
-                    Message = "Volumes alterados com sucesso."
+                    Message = excedeuPeso ? "Volumes alterados com sucesso. Atenção, os produtos excederam o peso máximo da caixa." : "Volumes alterados com sucesso."
                 });
             }
             catch (Exception ex)

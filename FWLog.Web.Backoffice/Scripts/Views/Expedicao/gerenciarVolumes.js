@@ -1,11 +1,14 @@
 ﻿(function () {
+    $('.onlyNumber').mask('0#');
+
     $("#adicionarLinhaTabela").click(function () {
         var idProduto = $("#IdProduto").val();
+        var referencia = $("#ReferenciaProduto").val();
         var descricaoProduto = $("#DescricaoProduto").val();
         var nroVolume = $("#NroVolume").val();
         var idPedidoVendaVolumeOrigem = $("#IdPedidoVendaVolumeOrigem").val();
-        var qtdOrigem = $("#QuantidadeOriginal").val();
-        var qtd = $("#Quantidade").val();
+        var qtdOrigem = parseInt($("#QuantidadeOriginal").val());
+        var qtd = parseInt($("#Quantidade").val());
 
         if (!idProduto || !idPedidoVendaVolumeOrigem || !qtd) {
             PNotify.warning({ text: "Preencha os campos volume, produto e quantidade." });
@@ -27,18 +30,16 @@
             return;
         }
 
-        var boo = ConsultarEValidarDadosProduto(idPedidoVendaVolumeOrigem, idProduto, qtd)
-
-        if (!boo) {
+        if (!ConsultarEValidarDadosProduto(idPedidoVendaVolumeOrigem, idProduto, qtd)) {
             return;
         }
-
 
         var markup =
             "<tr>" +
             "<td><input type='checkbox' name='record'></td>" +
             "<td class='hide'>" + idPedidoVendaVolumeOrigem + "</td>" +
             "<td>" + nroVolume + "</td>" +
+            "<td>" + referencia + "</td>" +
             "<td class='hide'>" + idProduto + "</td>" +
             "<td>" + descricaoProduto + "</td>" +
             "<td>" + qtdOrigem + "</td>" +
@@ -48,6 +49,17 @@
         $("table tbody").append(markup);
         limparProduto();
         limpaQuantidade();
+    });
+
+    $("#selecionarPedido").click(function () {
+        var nroPedido = $("#NroPedido").val();
+
+        dart.modalAjaxConfirm.open({
+            title: 'Pedido',
+            message: "Deseja realmente selecionar o Pedido: " + nroPedido + "? Após a confirmação não será possivel trocar o pedido do cadastro.",
+            onConfirm: ConsultarPedidoVenda,
+
+        });
     });
 
     $("#removerLinhaTabela").click(function () {
@@ -82,7 +94,7 @@
     });
 
     $("#pesquisarVolume").on('click', function () {
-        if ($("#NroPedido").val() > 0) {
+        if ($("#PedidoSelecionado").val() === "true" && $("#NroPedido").val() > 0) {
             if (!$(this).attr('disabled')) {
                 $("#modalVolume").load(HOST_URL + "PedidoVendaVolume/SearchModal/" + $("#NroPedido").val(), function () {
                     $("#modalVolume").modal();
@@ -90,7 +102,7 @@
             }
         }
         else {
-            PNotify.warning({ text: "Digite o número do pedido para abrir o filtro de Volumes." });
+            PNotify.warning({ text: "Selecione o número do pedido para abrir o filtro de Volumes." });
         }
     });
 
@@ -116,27 +128,28 @@ function validarItemExisteTabela(idPedidoVendaVolume, idProduto) {
 }
 
 function salvarVoloumes() {
-    debugger
-    var produtosVolumes = new Array();
+    var resposta = {};
+    resposta.ProdutosVolumes = new Array();
+
+    resposta.NroPedido = $("#NroPedido").val();
+    resposta.IdPedidoVendaVolume = $("#IdPedidoVendaVolume").val();
+    resposta.IdGrupoCorredorArmazenagem = $("#IdGrupoCorredorArmazenagem").val();
 
     $("table tbody tr").each(function () {
         var row = $(this);
         var produto = {};
         produto.IdPedidoVendaVolumeOrigem = row.find("td").eq(1).html();
-        produto.IdProduto = row.find("td").eq(3).html();
-        produto.Quantidade = row.find("td").eq(6).html();
-        produtosVolumes.push(produto);
+        produto.IdProduto = row.find("td").eq(4).html();
+        produto.Quantidade = row.find("td").eq(7).html();
+        resposta.ProdutosVolumes.push(produto);
     });
 
     $.ajax({
         url: HOST_URL + CONTROLLER_PATH + "GerenciarVolumes",
         method: "POST",
-        data: {
-            produtosVolumes: JSON.stringify(produtosVolumes),
-            nroPedido: $("#NroPedido").val(),
-            idPedidoVendaVolume: $("#IdPedidoVendaVolume").val(),
-            idGrupoCorredorArmazenagem: $("#IdGrupoCorredorArmazenagem").val()
-        },
+        data: JSON.stringify(resposta),
+        dataType: "json",
+        contentType: 'application/json; charset=utf-8',
         success: function (result) {
             if (result.Success) {
                 PNotify.success({ text: result.Message });
@@ -154,12 +167,13 @@ function salvarVoloumes() {
 }
 
 function redirecionar() {
-    window.location.href = HOST_URL + CONTROLLER_PATH + "Index"
+    window.location.href = HOST_URL + CONTROLLER_PATH + "RelatorioPedidos"
 }
 
-function setProduto(idProduto, descricao) {
+function setProduto(idProduto, descricao, referencia) {
     $("#IdProduto").val(idProduto);
     $("#DescricaoProduto").val(descricao);
+    $("#ReferenciaProduto").val(referencia);
     $("#modalProduto").modal("hide");
     $("#modalProduto").empty();
     limpaQuantidade();
@@ -255,6 +269,31 @@ function ConsultarVolumeProdutoQtd(idPedidoVendaVolume, idProduto) {
             }
             else {
                 PNotify.error({ text: result.Message });
+            }
+        },
+        error: function (data) {
+            PNotify.error({ text: "Ocorreu um erro na consulta de quantidade do volume." });
+            NProgress.done();
+        }
+    });
+}
+
+function ConsultarPedidoVenda() {
+    var nroPedido = $("#NroPedido").val();
+
+    $.ajax({
+        url: HOST_URL + "PedidoVenda/ValidarPedidoVenda/" + nroPedido,
+        method: "POST",
+        async: false,        
+        success: function (result) {
+            if (result.Success) {
+                $("#selecionarPedido").prop('disabled', true);
+                $("#NroPedido").prop('disabled', true);
+                $("#PedidoSelecionado").val(true);
+            }
+            else {
+                PNotify.error({ text: result.Message });
+                $("#PedidoSelecionado").val(false);
             }
         },
         error: function (data) {

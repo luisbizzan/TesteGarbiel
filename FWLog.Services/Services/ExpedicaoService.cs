@@ -1590,7 +1590,7 @@ namespace FWLog.Services.Services
             }
             else
             {
-                PedidoVendaVolume ultimoVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(pedidoVenda.IdPedido).OrderBy(o => o.NroVolume).Last();
+                PedidoVendaVolume ultimoVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(pedidoVenda.IdPedidoVenda).OrderBy(o => o.NroVolume).Last();
                 Caixa caixa = _unitOfWork.CaixaRepository.BuscarTodos(idEmpresa).Where(w => w.Ativo).OrderBy(o => o.Cubagem).LastOrDefault();
 
                 if (caixa == null)
@@ -1611,20 +1611,19 @@ namespace FWLog.Services.Services
                     IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
                     CorredorInicio = grupoCorredorArmazenagem.CorredorInicial,
                     CorredorFim = grupoCorredorArmazenagem.CorredorFinal,
+                    IdImpressora = grupoCorredorArmazenagem.IdImpressora
                 };
             }
 
             foreach (var volume in listaVolumes)
             {
                 var produto = _unitOfWork.ProdutoRepository.GetById(volume.IdProduto);
-                var pedidoVendaProdutoOrigem = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVendaVolumeEIdProduto(volume.IdPedidoVendaVolumeOrigem, volume.IdProduto);
-
                 if (produto == null)
                 {
                     throw new BusinessException("Um dos produtos da lista não foi encontrado;");
                 }
 
-                if (volume.Quantidade > 0)
+                if (!(volume.Quantidade > 0))
                 {
                     throw new BusinessException($"A quantidade digitada do produto {produto.Referencia} deve ser maior que zero.");
                 }
@@ -1634,6 +1633,7 @@ namespace FWLog.Services.Services
                     throw new BusinessException($"O produto {produto.Referencia} está fora do múltiplo.");
                 }
 
+                var pedidoVendaProdutoOrigem = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVendaVolumeEIdProduto(volume.IdPedidoVendaVolumeOrigem, volume.IdProduto);
                 if (pedidoVendaProdutoOrigem == null)
                 {
                     throw new BusinessException($"Ocorreu erro ao encontrar o volume do produto {produto.Referencia}");
@@ -1723,9 +1723,12 @@ namespace FWLog.Services.Services
                     pedidoVendaVolume.PedidoVendaProdutos.Add(volumeProduto);
                 }
 
-                if (idPedidoVendaVolume.HasValue)
+                if (!idPedidoVendaVolume.HasValue)
                 {
                     _unitOfWork.PedidoVendaVolumeRepository.Add(pedidoVendaVolume);
+
+                    pedidoVenda.NroVolumes += 1;
+                    _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
                 }
                 else
                 {
@@ -1757,11 +1760,13 @@ namespace FWLog.Services.Services
                             continue;
                         }
 
-                        if (volumeProduto.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao)
+                        if (volumeProduto.QtdSeparar == 0)
                         {
-                            continue;
+                            volumeProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProdutoZerado;
+                            volumeProduto.IdUsuarioAutorizacaoZerar = idUsuario;
+                            volumeProduto.DataHoraAutorizacaoZerarPedido = DateTime.Now;
                         }
-                        else
+                        else if (volumeProduto.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao)
                         {
                             volumeProduto.DataHoraInicioSeparacao = null;
                             volumeProduto.DataHoraFimSeparacao = null;
@@ -1777,15 +1782,16 @@ namespace FWLog.Services.Services
                         _unitOfWork.PedidoVendaProdutoRepository.Update(volumeProduto);
 
                         await _unitOfWork.SaveChangesAsync();
-                                               
                     }
-
-                    //exclusão automatica de volume. setar volume excluido
 
                     volume.PesoVolume = pesoVolume;
                     volume.CubagemVolume = cubagemVolume;
 
-                    if (volume.PedidoVendaProdutos.Any(a => a.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao))
+                    if (!volume.PedidoVendaProdutos.Any(a => a.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProdutoZerado))
+                    {
+                        volume.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeExcluido;
+                    }                    
+                    else if (!volume.PedidoVendaProdutos.Any(a => a.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao || a.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso))
                     {
                         volume.DataHoraInicioSeparacao = null;
                         volume.DataHoraFimSeparacao = null;
@@ -1794,6 +1800,19 @@ namespace FWLog.Services.Services
                     }
 
                     _unitOfWork.PedidoVendaVolumeRepository.Update(volume);
+                }
+
+                if (!pedidoVenda.PedidoVendaVolumes.Any(a => a.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao || a.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso))
+                {
+                    pedidoVenda.DataHoraInicioSeparacao = null;
+                    pedidoVenda.DataHoraFimSeparacao = null;
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
+                }//pedido
+
+                var pedidoVendaChecagem = _unitOfWork.PedidoVendaRepository.GetById(pedidoVenda.IdPedidoVenda);
+                if (pedidoVendaChecagem.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
+                {
+                    throw new BusinessException("A separação do pedido está concluída, o mesmo não pode ser alterado.");
                 }
 
                 transacao.Complete();

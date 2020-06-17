@@ -4,7 +4,7 @@
             {
                 action: 'select',
                 visible: true,
-                attrs: { 'data-select': full.IdProduto, 'name-select': full.Descricao }
+                attrs: { 'data-select': full.IdProduto, 'name-select': full.Descricao, 'referencia-select': full.Referencia  }
             }
         ];
     });
@@ -31,8 +31,15 @@
         "bInfo": false
     });
 
-    $('#dataTableModal').on('click', '[data-select]', function () {
-        setProduto($(this).attr('data-select'), $(this).attr("name-select"));
+    $('#dataTableModal').on('click', '[data-select]', function ()
+    {
+        debugger;
+        if ($("#Filter_ExibirReferenciaProduto").val() === "True" || $("#ExibirReferenciaProduto").val() === true) {
+            setProduto($(this).attr('data-select'), $(this).attr("name-select"), $(this).attr("referencia-select"));
+        }
+        else {
+            setProduto($(this).attr('data-select'), $(this).attr("name-select"));
+        }
     });
 
     dart.dataTables.loadFormFilterEvents($("#form-datatable-modal"));

@@ -9,7 +9,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         [Display(Name = "Nro. Pedido")]
         [Required]
-        public int NroPedido { get; set; }
+        public int? NroPedido { get; set; }
 
         public long IdPedido { get; set; }
 
@@ -17,6 +17,8 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         [Display(Name = "Produto")]
         public string DescricaoProduto { get; set; }
+
+        public string ReferenciaProduto { get; set; }
 
         [Display(Name = "Nro Volume")]
         public string NroVolume { get; set; }
@@ -26,10 +28,10 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         public long? IdPedidoVendaVolume { get; set; }
 
         [Display(Name = "Qtd. Original")]
-        public int QuantidadeOriginal { get; set; }
+        public int? QuantidadeOriginal { get; set; }
 
         [Display(Name = "Qtd. Transferir")]
-        public int Quantidade { get; set; }
+        public int? Quantidade { get; set; }
         public long IdGrupoCorredorArmazenagem { get; set; }
         public int CorredorInicio { get; set; }
         public int CorredorFim { get; set; }

@@ -44,6 +44,8 @@ namespace FWLog.Web.Backoffice.Models.ProdutoCtx
 
         public long? IdPedidoVendaVolume { get; set; }
 
+        public bool ExibirReferenciaProduto { get; set; }
+
         public SelectList ListaStatus { get; set; }
     }
 }
