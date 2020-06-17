@@ -102,7 +102,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        private void BuscaEValidaDadosPorReferenciaPedido(string referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume)
+        private void BuscaEValidaDadosPorReferenciaPedido(string referenciaPedido, out string numeroPedido, out long idTransportadora, out int numeroVolume)
         {
             if (referenciaPedido.NullOrEmpty())
             {
@@ -114,12 +114,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Código de Barras de pedido inválido.");
             }
 
-            var numeroPedidoString = referenciaPedido.Substring(0, referenciaPedido.Length - 6);
-
-            if (!int.TryParse(numeroPedidoString, out numeroPedido))
-            {
-                throw new BusinessException("Código de Barras de pedido inválido.");
-            }
+            numeroPedido = referenciaPedido.Substring(0, referenciaPedido.Length - 6);
 
             var idTransportadoraString = referenciaPedido.Substring(referenciaPedido.Length - 6, 3);
 
@@ -138,7 +133,7 @@ namespace FWLog.Services.Services
 
         public PedidoVendaVolumeResposta BuscaPedidoVendaVolume(string referenciaPedido, long idEmpresa)
         {
-            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out string numeroPedido, out long idTransportadora, out int numeroVolume);
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
@@ -502,7 +497,7 @@ namespace FWLog.Services.Services
 
         public PedidoVendaVolumeResposta ValidarVolumeDoca(string referenciaPedido, long idEmpresa)
         {
-            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out string numeroPedido, out long idTransportadora, out int numeroVolume);
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
@@ -1193,7 +1188,7 @@ namespace FWLog.Services.Services
 
         public void RemoverVolumeDoca(string referenciaPedido, string idUsuario, long idEmpresa)
         {
-            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out string numeroPedido, out long idTransportadora, out int numeroVolume);
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
@@ -1333,7 +1328,7 @@ namespace FWLog.Services.Services
 
             var query = pedidosExpedidos.Select(x => new
             {
-                NroPedido = x.PedidoVenda.NroPedidoVenda,
+                NroPedido = x.PedidoVenda.Pedido.NumeroPedido,
                 NroVolume = x.NroVolume,
                 NroCentena = x.NroCentena,
                 IdTransportadora = x.PedidoVenda.IdTransportadora,
@@ -1359,7 +1354,7 @@ namespace FWLog.Services.Services
                     NroPedido = s.NroPedido,
                     NroVolume = s.NroVolume.ToString().PadLeft(3, '0'),
                     NroCentena = s.NroCentena.ToString().PadLeft(3, '0'),
-                    IdENomeTransportadora = string.Concat(s.IdTransportadora.ToString().PadLeft(3, '0'), "-", s.RazaoSocialTransprotadora),
+                    IdTransportadora = string.Concat(s.IdTransportadora.ToString().PadLeft(3, '0'), "-", s.RazaoSocialTransprotadora),
                     NotaFiscalESerie = string.Concat(s.NumeroNotaFiscal, "-", s.SerieNotaFiscal),
                     DataDoPedido = s.DataDoPedido.ToString("dd/MM/yyyy HH:mm"),
                     DataSaidaDoPedido = s.DataSaidaDoPedido.ToString("dd/MM/yyyy HH:mm")
@@ -1472,9 +1467,9 @@ namespace FWLog.Services.Services
                 pedidos = pedidos.Where(x => x.PedidoVenda.Pedido.DataCriacao <= dataFinal);
             }
 
-            if (filtro.CustomFilter.NumeroPedido.HasValue)
+            if (!filtro.CustomFilter.NumeroPedido.NullOrEmpty())
             {
-                pedidos = pedidos.Where(pv => pv.PedidoVenda.Pedido.NroPedido == filtro.CustomFilter.NumeroPedido.Value);
+                pedidos = pedidos.Where(pv => pv.PedidoVenda.Pedido.NumeroPedido.Contains(filtro.CustomFilter.NumeroPedido));
             }
 
             if (filtro.CustomFilter.IdCliente.HasValue)
@@ -1494,7 +1489,7 @@ namespace FWLog.Services.Services
 
             var query = pedidos.Select(s => new
             {
-                NroPedido = s.PedidoVenda.NroPedidoVenda,
+                NroPedido = s.PedidoVenda.Pedido.NumeroPedido,
                 NroVolume = s.NroVolume,
                 NroCentena = s.NroCentena,
                 IdPedidoVendaVolume = s.IdPedidoVendaVolume,
@@ -1545,7 +1540,7 @@ namespace FWLog.Services.Services
 
             var pedido = pedidoVendaVolume.PedidoVenda.Pedido;
 
-            retorno.PedidoNro = pedido.NroPedido;
+            retorno.PedidoNro = pedido.NumeroPedido;
 
             retorno.PedidoCliente = pedido.Cliente?.NomeFantasia;
 
@@ -1623,7 +1618,7 @@ namespace FWLog.Services.Services
 
         public string GerarReferenciaPedidoVolume(PedidoVendaVolume volume)
         {
-            return $"{volume.PedidoVenda.NroPedidoVenda.ToString().PadLeft(7, '0')}{volume.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3, '0')}{volume.NroVolume.ToString().PadLeft(3, '0')}";
+            return $"{volume.PedidoVenda.Pedido.NumeroPedido}{volume.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3, '0')}{volume.NroVolume.ToString().PadLeft(3, '0')}";
         }
     }
 }

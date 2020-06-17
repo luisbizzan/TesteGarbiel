@@ -712,7 +712,7 @@ namespace FWLog.Services.Services
             var clienteTelefone = string.Format("{0:(##) #####-####}", requisicao.ClienteTelefone);
             var clienteCodigo = requisicao.ClienteCodigo?.Trim().Normalizar();
             var representanteCodigo = requisicao.RepresentanteCodigo?.Trim().Normalizar();
-            var pedidoCodigo = requisicao.PedidoCodigo?.PadLeft(6, '0')?.Trim().Normalizar();
+            var pedidoCodigo = requisicao.PedidoCodigo?.Trim().Normalizar();
             var centena = requisicao.Centena?.PadLeft(4, '0')?.Trim().Normalizar();
             var transportadoraSigla = requisicao.TransportadoraSigla?.Trim().Normalizar();
             var transportadoraCodigo = requisicao.TransportadoraCodigo.PadLeft(3, '0')?.Trim().Normalizar();
@@ -817,7 +817,7 @@ namespace FWLog.Services.Services
             requisicaoImpressao.ClienteTelefone = cliente.Telefone;
             requisicaoImpressao.ClienteCodigo = cliente.CodigoIntegracao.ToString();
             requisicaoImpressao.RepresentanteCodigo = representante.CodigoIntegracao.ToString();
-            requisicaoImpressao.PedidoCodigo = pedido.NroPedido.ToString();
+            requisicaoImpressao.PedidoCodigo = pedido.NumeroPedido;
             requisicaoImpressao.PedidoDataCriacao = pedido.DataCriacao;
             requisicaoImpressao.PedidoPagamentoCodigoIntegracao = pedido.PagamentoCodigoIntegracao;
             requisicaoImpressao.PedidoPagamentoIsDebito = pedido.PagamentoIsDebitoIntegracao;

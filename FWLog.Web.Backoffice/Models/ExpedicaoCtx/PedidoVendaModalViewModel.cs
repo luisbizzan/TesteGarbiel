@@ -19,10 +19,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         public long IdPedidoVenda { get; set; }
 
         [Display(Name = "Pedido")]
-        public long NumeroPedido { get; set; }
-
-        [Display(Name = "Pedido Venda")]
-        public int NumeroPedidoVenda { get; set; }
+        public string NumeroPedido { get; set; }
 
         [Display(Name = "Cliente")]
         public string ClienteNome { get; set; }

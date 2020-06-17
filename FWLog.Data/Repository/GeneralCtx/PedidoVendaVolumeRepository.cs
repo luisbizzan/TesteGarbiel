@@ -75,7 +75,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 IdTransportadora = pedidoVendaVolume.PedidoVenda.IdTransportadora,
                 TransportadoraNome = pedidoVendaVolume.PedidoVenda.Transportadora.NomeFantasia,
                 CodigoEndereco = pedidoVendaVolume.EnderecoTransportadora.Codigo,
-                NumeroPedido = pedidoVendaVolume.PedidoVenda.NroPedidoVenda,
+                NumeroPedido = pedidoVendaVolume.PedidoVenda.Pedido.NumeroPedido,
                 NumeroVolume = pedidoVendaVolume.NroVolume,
                 StatusVolume = pedidoVendaVolume.PedidoVendaStatus.Descricao
             });
@@ -189,7 +189,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             {
                 IdPedidoVendaVolume = pvv.IdPedidoVendaVolume,
                 IdPedidoVenda = pvv.IdPedidoVenda,
-                PedidoNumero = pvv.PedidoVenda.Pedido.NroPedido,
+                PedidoNumero = pvv.PedidoVenda.Pedido.NumeroPedido,
                 VolumeNumero = pvv.NroVolume,
                 QuantidadeProdutos = pvv.PedidoVendaProdutos.Count,
                 PedidoData = pvv.PedidoVenda.Pedido.DataCriacao,

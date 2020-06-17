@@ -37,9 +37,6 @@ namespace FWLog.Data.Models
         public long IdRepresentante { get; set; }
 
         [Required]
-        public int NroPedidoVenda { get; set; }
-
-        [Required]
         public int NroVolumes { get; set; }
 
         [Index]

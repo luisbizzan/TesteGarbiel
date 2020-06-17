@@ -11,10 +11,13 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [Required]
         public string CodigoIntegracao { get; set; }
 
+        [Display(Name = "TGFCAB.AD_CODSAV")]
+        [TabelaIntegracao(DisplayName = "TGFCAB.AD_CODSAV")]
+        public string CodSav { get; set; }
+
         [Display(Name = "TGFCAB.NUMNOTA")]
         [TabelaIntegracao(DisplayName = "TGFCAB.NUMNOTA")]
-        [Required]
-        public string NroPedidoVenda { get; set; }
+        public string NumNota { get; set; }
 
         [Display(Name = "TGFCAB.CODEMP")]
         [TabelaIntegracao(DisplayName = "TGFCAB.CODEMP")]

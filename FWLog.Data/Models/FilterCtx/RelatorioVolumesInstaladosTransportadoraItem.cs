@@ -8,7 +8,7 @@
 
         public string CodigoEndereco { get; set; }
 
-        public int NumeroPedido { get; set; }
+        public string NumeroPedido { get; set; }
 
         public int NumeroVolume { get; set; }
 

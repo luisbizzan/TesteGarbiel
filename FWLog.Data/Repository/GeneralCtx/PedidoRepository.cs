@@ -17,9 +17,9 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.Pedido.FirstOrDefault(f => f.CodigoIntegracao == codigoIntegracao);
         }
 
-        public Pedido ObterPorNumero(long idEmpresa, long numeroPedido)
+        public Pedido ObterPorNumero(long idEmpresa, string numeroPedido)
         {
-            return Entities.Pedido.FirstOrDefault(f => f.IdEmpresa == idEmpresa && f.NroPedido == numeroPedido);
+            return Entities.Pedido.FirstOrDefault(f => f.IdEmpresa == idEmpresa && f.NumeroPedido == numeroPedido);
         }
 
         public List<Pedido> PesquisarProcessandoSeparacao(long idEmpresa)

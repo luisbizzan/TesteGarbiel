@@ -56,13 +56,13 @@ namespace FWLog.Services.Services
             {
                 IdPedidoVenda = x.IdPedidoVenda,
                 IdPedidoVendaVolume = x.IdPedidoVendaVolume,
-                EtiquetaVolume = $"{x.PedidoVenda.NroPedidoVenda.ToString().PadLeft(7, '0')}{x.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3, '0')}{x.NroVolume.ToString().PadLeft(3, '0')}"
+                EtiquetaVolume = $"{x.PedidoVenda.Pedido.NumeroPedido}{x.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3, '0')}{x.NroVolume.ToString().PadLeft(3, '0')}"
             }).ToList();
 
             return result;
         }
 
-        private void BuscaEValidaDadosPorReferenciaPedido(string referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume)
+        private void BuscaEValidaDadosPorReferenciaPedido(string referenciaPedido, out string numeroPedido, out long idTransportadora, out int numeroVolume)
         {
             if (referenciaPedido.NullOrEmpty())
             {
@@ -74,12 +74,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Código de Barras de pedido inválido.");
             }
 
-            var numeroPedidoString = referenciaPedido.Substring(0, referenciaPedido.Length - 6);
-
-            if (!int.TryParse(numeroPedidoString, out numeroPedido))
-            {
-                throw new BusinessException("Código de Barras de pedido inválido.");
-            }
+            numeroPedido = referenciaPedido.Substring(0, referenciaPedido.Length - 6);
 
             var idTransportadoraString = referenciaPedido.Substring(referenciaPedido.Length - 6, 3);
 
@@ -98,7 +93,7 @@ namespace FWLog.Services.Services
 
         public BuscarPedidoVendaResposta BuscarPedidoVenda(string referenciaPedido, long idEmpresa, string idUsuario, bool temPermissaoF7)
         {
-            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out string numeroPedido, out long idTransportadora, out int numeroVolume);
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
@@ -131,7 +126,7 @@ namespace FWLog.Services.Services
             var model = new BuscarPedidoVendaResposta();
 
             model.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
-            model.NroPedidoVenda = pedidoVenda.NroPedidoVenda;
+            model.NroPedidoVenda = pedidoVenda.Pedido.NumeroPedido;
             model.SeparacaoIniciada = pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao;
             model.IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume;
             model.IdCaixaVolume = pedidoVendaVolume.IdCaixaCubagem;
@@ -807,7 +802,7 @@ namespace FWLog.Services.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 var numeroVolume = pedidoVendaVolume.NroVolume.ToString().PadLeft(3, '0');
-                var numeroPedido = pedidoVenda.Pedido.NroPedido;
+                var numeroPedido = pedidoVenda.Pedido.NumeroPedido;
 
                 if (zerarPedido == false)
                 {
@@ -990,7 +985,6 @@ namespace FWLog.Services.Services
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao;
                     pedidoVenda.IdRepresentante = pedido.IdRepresentante;
                     pedidoVenda.IdTransportadora = pedido.IdTransportadora;
-                    pedidoVenda.NroPedidoVenda = pedido.NroPedido;
 
                     //Agrupa os itens do pedido por produto. 
                     var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido);
@@ -1158,7 +1152,7 @@ namespace FWLog.Services.Services
                 ClienteTelefone = pedido.Cliente.Telefone,
                 ClienteCodigo = pedido.Cliente.IdCliente.ToString(),
                 RepresentanteCodigo = pedido.Representante.IdRepresentante.ToString(),
-                PedidoCodigo = pedido.NroPedido.ToString(),
+                PedidoCodigo = pedido.NumeroPedido,
                 PedidoDataCriacao = pedido.DataCriacao,
                 PedidoIsRequisicao = pedido.IsRequisicao,
                 PedidoPagamentoCodigoIntegracao = pedido.PagamentoCodigoIntegracao,
@@ -2378,16 +2372,11 @@ namespace FWLog.Services.Services
 
         public DetalhePedidoVendaResposta ConsultarDetalhesPedidoVenda(string referenciaOuNumeroPedido, long idEmpresa)
         {
-            PedidoVenda pedidoVenda = null;
-
-            if (int.TryParse(referenciaOuNumeroPedido, out int numeroPedido))
-            {
-                pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
-            }
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(referenciaOuNumeroPedido, idEmpresa);
 
             if (pedidoVenda == null)
             {
-                BuscaEValidaDadosPorReferenciaPedido(referenciaOuNumeroPedido, out numeroPedido, out long _idTransportadora, out int _numeroVolume);
+                BuscaEValidaDadosPorReferenciaPedido(referenciaOuNumeroPedido, out string numeroPedido, out long _idTransportadora, out int _numeroVolume);
 
                 pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
             }
@@ -2397,7 +2386,7 @@ namespace FWLog.Services.Services
             var retorno = new DetalhePedidoVendaResposta()
             {
                 IdPedidoVenda = pedidoVenda.IdPedidoVenda,
-                NroPedidoVenda = pedidoVenda.NroPedidoVenda,
+                NroPedidoVenda = pedidoVenda.Pedido.NumeroPedido,
                 DataCriacao = pedidoVenda.Pedido.DataCriacao,
                 Status = PreparaStatusParaColetor(pedidoVenda.IdPedidoVendaStatus),
                 PesoTotal = pedidoVenda.PedidoVendaVolumes.Sum(pvv => pvv.PesoVolume),

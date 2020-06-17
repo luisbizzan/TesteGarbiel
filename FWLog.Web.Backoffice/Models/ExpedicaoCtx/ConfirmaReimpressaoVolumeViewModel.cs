@@ -7,7 +7,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         public long IdPedidoVendaVolume { get; set; }
 
         [Display(Name = "Pedido")]
-        public int NroPedido { get; set; }
+        public string NroPedido { get; set; }
 
         [Display(Name = "Volume")]
         public int Volume { get; set; }

@@ -7,7 +7,7 @@ namespace FWLog.Services.Model.SeparacaoPedido
     {
         public long IdPedidoVenda { get; set; }
 
-        public int NroPedidoVenda { get; set; }
+        public string NroPedidoVenda { get; set; }
 
         public DateTime DataCriacao { get; set; }
 
