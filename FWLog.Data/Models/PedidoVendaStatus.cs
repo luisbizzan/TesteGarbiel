@@ -21,7 +21,8 @@ namespace FWLog.Data.Models
         RomaneioImpresso = 13,
         VolumeExcluido = 14,
         ProdutoZerado = 15,
-        AguardandoRetirada = 16
+        AguardandoRetirada = 16,
+        RemovidoDOCA = 17
     }
 
     public class PedidoVendaStatus

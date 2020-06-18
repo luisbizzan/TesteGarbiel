@@ -370,7 +370,7 @@ namespace FWLog.Web.Api.Controllers
 
             try
             {
-                _expedicaoService.ReimprimirRomaneio(requisicao.IdRomaneio, requisicao.IdImpressora, IdEmpresa, IdUsuario);
+                _expedicaoService.ReimprimirRomaneio(requisicao.IdRomaneio, requisicao.IdImpressora,requisicao.ImprimeSegundaVia, IdEmpresa, IdUsuario);
 
                 return ApiOk();
             }
