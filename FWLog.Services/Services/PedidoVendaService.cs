@@ -38,7 +38,6 @@ namespace FWLog.Services.Services
                     IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao,
                     IdRepresentante = pedido.IdRepresentante,
                     IdTransportadora = pedido.IdTransportadora,
-                    NroPedidoVenda = pedido.NroPedido,
                     NroVolumes = 0 //Inicialmente salva com 0. Posteriormente, o valor é atualizado.
                 };
 

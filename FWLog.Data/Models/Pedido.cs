@@ -17,7 +17,8 @@ namespace FWLog.Data.Models
         public long IdPedido { get; set; }
 
         [Required]
-        public int NroPedido { get; set; }
+        [StringLength(100)]
+        public string NumeroPedido { get; set; }
 
         [Index]
         [Required]
@@ -73,6 +74,9 @@ namespace FWLog.Data.Models
         [Index]
         [StringLength(3)]
         public string SerieNotaFiscal { get; set; }
+
+        [Required]
+        public DateTime DataIntegracao { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }

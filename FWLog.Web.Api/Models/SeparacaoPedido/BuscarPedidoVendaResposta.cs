@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace FWLog.Web.Api.Models.SeparacaoPedido
 {
     public class BuscarPedidoVendaResposta
     {
         public long IdPedidoVenda { get; set; }
-        public int NroPedidoVenda { get; set; }
+        public string NroPedidoVenda { get; set; }
         public long IdEmpresa { get; set; }
         public int StatusSeparacao { get; set; }
-        //public List<GrupoCorredorArmazenagem> {get;set;}
         public List<EnderecoProduto> EnderecoProduto { get; set; }
     }
 

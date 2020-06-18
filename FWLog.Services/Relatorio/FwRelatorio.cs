@@ -24,10 +24,10 @@ namespace FWLog.Services.Relatorio
             return Renderizar();
         }
 
-        public Document Customizar(FwRelatorioDados data,string fonte = "Verdana", bool mostrarLogo = true)
+        public Document Customizar(FwRelatorioDados data, string fonte = "Verdana", bool mostrarLogo = true)
         {
             Configurar(data);
-            CriarCabecalho(fonte,mostrarLogo);
+            CriarCabecalho(fonte, mostrarLogo);
             CriarRodape();
 
             return _document;
@@ -189,7 +189,7 @@ namespace FWLog.Services.Relatorio
             }
         }
 
-        private void CriarCabecalho(string fonte,bool mostrarLogo)
+        private void CriarCabecalho(string fonte, bool mostrarLogo)
         {
             var header = _document.Sections[0].Headers.Primary;
             var headerTable = header.AddTable();
@@ -374,12 +374,12 @@ namespace FWLog.Services.Relatorio
                     corredores.AddText($"{_dataSource.Filtros.Endereco}");
                 }
 
-                if (_dataSource.Filtros.NumeroPedidoVenda.HasValue)
+                if (!_dataSource.Filtros.NumeroPedido.NullOrEmpty())
                 {
                     var corredores = rowHeader.Cells[0].AddParagraph();
-                    corredores.AddFormattedText("Nro. Pedido Venda: ", TextFormat.Bold);
+                    corredores.AddFormattedText("Nro. Pedido: ", TextFormat.Bold);
                     corredores.Format.Font = new Font(fonte, 10);
-                    corredores.AddText($"{_dataSource.Filtros.NumeroPedidoVenda}");
+                    corredores.AddText($"{_dataSource.Filtros.NumeroPedido}");
                 }
             }
 

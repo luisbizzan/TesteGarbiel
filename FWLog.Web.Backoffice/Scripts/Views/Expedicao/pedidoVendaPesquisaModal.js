@@ -6,7 +6,7 @@
             {
                 action: 'select',
                 visible: true,
-                attrs: { 'data-select': full.IdPedidoVenda, 'numero-select': full.NumeroPedidoVenda }
+                attrs: { 'data-select': full.IdPedidoVenda, 'numero-select': full.NumeroPedido }
             }
         ];
     });
@@ -25,7 +25,6 @@
         },
         columns: [
             { data: 'NumeroPedido' },
-            { data: 'NumeroPedidoVenda' },
             { data: 'ClienteNome' },
             { data: 'TransportadoraNome' },
             actionsColumn

@@ -48,8 +48,9 @@
             { data: 'NroVolume', },
             { data: 'NroCentena', },
             { data: 'DataDoPedido', },
-            { data: 'IdENomeTransportadora', },
-            { data: 'NotaFiscalESerie', },
+            { data: 'DataIntegracaoPedido' },
+            { data: 'IdTransportadora' },
+            { data: 'NotaFiscalESerie', orderable: false },
             { data: 'DataSaidaDoPedido', },
         ]
     });

@@ -4,9 +4,7 @@
     {
         public long IdEmpresa { get; set; }
 
-        public int? NumeroPedido { get; set; }
-
-        public int? NumeroPedidoVenda { get; set; }
+        public string NumeroPedido { get; set; }
 
         public string NomeTransportadora { get; set; }
     }

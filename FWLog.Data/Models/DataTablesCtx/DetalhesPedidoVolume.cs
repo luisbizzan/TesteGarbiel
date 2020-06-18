@@ -7,7 +7,7 @@ namespace FWLog.Data.Models.DataTablesCtx
     public class DetalhesPedidoVolume
     {
         [Display(Name = "Pedido")]
-        public int PedidoNro { get; set; }
+        public string PedidoNro { get; set; }
 
         [Display(Name = "Cliente")]
         public string PedidoCliente { get; set; }
@@ -23,6 +23,9 @@ namespace FWLog.Data.Models.DataTablesCtx
 
         [Display(Name = "Data Criação")]
         public DateTime PedidoDataCriacao { get; set; }
+
+        [Display(Name = "Data Integração")]
+        public DateTime PedidoDataIntegracao { get; set; }
 
         [Display(Name = "Requisição")]
         public bool PedidoIsRequisicao { get; set; }

@@ -806,7 +806,6 @@ namespace FWLog.Services.Services
 
             if (filter.ProdutoStatusId.HasValue)
             {
-                
                 //Ativo
                 if (filter.ProdutoStatusId == 1)
                 {
@@ -977,7 +976,7 @@ namespace FWLog.Services.Services
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Comprimento: ", TextFormat.Bold);
-            paragraph.AddText(produtoEstoque.Produto.Comprimento.HasValue ? produtoEstoque.Produto.Comprimento?.ToString("n2"): "-");
+            paragraph.AddText(produtoEstoque.Produto.Comprimento.HasValue ? produtoEstoque.Produto.Comprimento?.ToString("n2") : "-");
 
             row = tabela.AddRow();
             row.Cells[0].MergeRight = 1;
@@ -988,13 +987,13 @@ namespace FWLog.Services.Services
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
             paragraph.AddFormattedText("Largura: ", TextFormat.Bold);
-            paragraph.AddText(produtoEstoque.Produto.Largura.HasValue ? produtoEstoque.Produto.Largura?.ToString("n2"): "-");
+            paragraph.AddText(produtoEstoque.Produto.Largura.HasValue ? produtoEstoque.Produto.Largura?.ToString("n2") : "-");
 
             row = tabela.AddRow();
             row.Cells[0].MergeRight = 1;
             paragraph = row.Cells[0].AddParagraph();
             paragraph.AddFormattedText("Cubagem: ", TextFormat.Bold);
-            paragraph.AddText(produtoEstoque.Produto.MetroCubico.HasValue ? produtoEstoque.Produto.MetroCubico?.ToString("n2"): "-");
+            paragraph.AddText(produtoEstoque.Produto.MetroCubico.HasValue ? produtoEstoque.Produto.MetroCubico?.ToString("n2") : "-");
 
             row.Cells[2].MergeRight = 1;
             paragraph = row.Cells[2].AddParagraph();
@@ -1808,7 +1807,7 @@ namespace FWLog.Services.Services
                 {
                     Transportadora = transportadora != null ? $"{transportadora.IdTransportadora} - {transportadora.NomeFantasia}" : null,
                     Endereco = !filtro.EnderecoCodigo.NullOrEmpty() ? filtro.EnderecoCodigo : null,
-                    NumeroPedidoVenda = filtro.IdPedidoVenda.HasValue ? _unitiOfWork.PedidoVendaRepository.GetById(filtro.IdPedidoVenda.Value)?.NroPedidoVenda : null,
+                    NumeroPedido = filtro.IdPedidoVenda.HasValue ? _unitiOfWork.PedidoVendaRepository.GetById(filtro.IdPedidoVenda.Value)?.Pedido?.NumeroPedido : null,
                 }
             };
 

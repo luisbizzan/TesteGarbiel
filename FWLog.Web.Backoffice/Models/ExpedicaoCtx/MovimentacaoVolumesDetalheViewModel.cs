@@ -29,7 +29,10 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         public int QuantidadeProdutos { get; set; }
 
         [Display(Name = "Data Criação")]
-        public DateTime PedidoData { get; set; }
+        public DateTime PedidoDataCriacao { get; set; }
+
+        [Display(Name = "Data Integração")]
+        public DateTime PedidoDataIntegracao { get; set; }
 
         [Display(Name = "Centena")]
         public int VolumeCentena { get; set; }

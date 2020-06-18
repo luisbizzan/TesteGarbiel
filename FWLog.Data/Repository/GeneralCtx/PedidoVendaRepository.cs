@@ -15,9 +15,9 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         }
 
-        public PedidoVenda ObterPorNroPedidoEEmpresa(int nroPedido, long idEmpresa)
+        public PedidoVenda ObterPorNroPedidoEEmpresa(string numeroPedido, long idEmpresa)
         {
-            return Entities.PedidoVenda.FirstOrDefault(f => f.NroPedidoVenda == nroPedido && f.IdEmpresa == idEmpresa);
+            return Entities.PedidoVenda.FirstOrDefault(f => f.Pedido.NumeroPedido == numeroPedido && f.IdEmpresa == idEmpresa);
         }
 
         public PedidoVenda ObterPorIdPedidoVendaEIdEmpresa(long idPedidoVenda, long idEmpresa)
@@ -42,7 +42,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                                                                               Select(pedidoVendaVolume => new TransportadoraVolumeForaDoca
                                                                               {
                                                                                   IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume,
-                                                                                  NumeroPedido = pedidoVendaVolume.PedidoVenda.NroPedidoVenda,
+                                                                                  NumeroPedido = pedidoVendaVolume.PedidoVenda.Pedido.NumeroPedido,
                                                                                   NumeroVolume = pedidoVendaVolume.NroVolume,
                                                                                   EnderecoCodigo = pedidoVendaVolume.EnderecoTransportadora.Codigo
                                                                               });
@@ -72,18 +72,11 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             var baseQuery = totalQuery;
 
-            if (filtro.CustomFilter.NumeroPedido.HasValue)
+            if (!filtro.CustomFilter.NumeroPedido.NullOrEmpty())
             {
-                var numeroPedido = filtro.CustomFilter.NumeroPedido.Value;
+                var numeroPedido = filtro.CustomFilter.NumeroPedido;
 
-                baseQuery = baseQuery.Where(pedidoVenda => pedidoVenda.Pedido.NroPedido == numeroPedido);
-            }
-
-            if (filtro.CustomFilter.NumeroPedidoVenda.HasValue)
-            {
-                var numeroPedidoVenda = filtro.CustomFilter.NumeroPedidoVenda.Value;
-
-                baseQuery = baseQuery.Where(pedidoVenda => pedidoVenda.NroPedidoVenda == numeroPedidoVenda);
+                baseQuery = baseQuery.Where(pedidoVenda => pedidoVenda.Pedido.NumeroPedido.Contains(numeroPedido));
             }
 
             if (!filtro.CustomFilter.NomeTransportadora.NullOrEmpty())
@@ -94,8 +87,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             var query = baseQuery.Select(pedidoVenda => new PedidoVendaItem
             {
                 IdPedidoVenda = pedidoVenda.IdPedidoVenda,
-                NumeroPedido = pedidoVenda.Pedido.NroPedido,
-                NumeroPedidoVenda = pedidoVenda.NroPedidoVenda,
+                NumeroPedido = pedidoVenda.Pedido.NumeroPedido,
                 ClienteNome = pedidoVenda.Cliente.NomeFantasia,
                 TransportadoraNome = pedidoVenda.Transportadora.NomeFantasia
             });
@@ -108,8 +100,6 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             return response.ToList();
         }
-
-        
 
         public IQueryable<PedidoVendaVolume> BuscarPedidosVolumePorEmpresa(long idEmpresa)
         {

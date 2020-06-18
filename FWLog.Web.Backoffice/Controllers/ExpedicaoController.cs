@@ -105,7 +105,6 @@ namespace FWLog.Web.Backoffice.Controllers
             {
                 IdPedidoVenda = pv.IdPedidoVenda,
                 NumeroPedido = pv.NumeroPedido,
-                NumeroPedidoVenda = pv.NumeroPedidoVenda,
                 ClienteNome = pv.ClienteNome,
                 TransportadoraNome = pv.TransportadoraNome
             }));
@@ -329,7 +328,7 @@ namespace FWLog.Web.Backoffice.Controllers
             return View(new ConfirmaReimpressaoVolumeViewModel
             {
                 IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume,
-                NroPedido = pedidoVendaVolume.PedidoVenda.Pedido.NroPedido,
+                NroPedido = pedidoVendaVolume.PedidoVenda.Pedido.NumeroPedido,
                 Volume = pedidoVendaVolume.NroVolume
             });
         }
