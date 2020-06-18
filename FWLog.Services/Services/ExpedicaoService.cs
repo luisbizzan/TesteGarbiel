@@ -1336,8 +1336,9 @@ namespace FWLog.Services.Services
                 NumeroNotaFiscal = x.PedidoVenda.Pedido.NumeroNotaFiscal,
                 SerieNotaFiscal = x.PedidoVenda.Pedido.SerieNotaFiscal,
                 DataDoPedido = x.PedidoVenda.Pedido.DataCriacao,
-                DataSaidaDoPedido = x.PedidoVenda.DataHoraRomaneio.Value
-            });
+                DataIntegracao = x.PedidoVenda.Pedido.DataIntegracao,
+                DataSaidaDoPedido = x.PedidoVenda.DataHoraRomaneio
+            }); ;
 
             totalRecordsFiltered = query.Count();
 
@@ -1353,11 +1354,12 @@ namespace FWLog.Services.Services
                 {
                     NroPedido = s.NroPedido,
                     NroVolume = s.NroVolume.ToString().PadLeft(3, '0'),
-                    NroCentena = s.NroCentena.ToString().PadLeft(3, '0'),
-                    IdTransportadora = string.Concat(s.IdTransportadora.ToString().PadLeft(3, '0'), "-", s.RazaoSocialTransprotadora),
+                    NroCentena = s.NroCentena.ToString().PadLeft(4, '0'),
+                    IdTransportadora = string.Concat(s.IdTransportadora.ToString().PadLeft(3, '0'), " - ", s.RazaoSocialTransprotadora),
                     NotaFiscalESerie = string.Concat(s.NumeroNotaFiscal, "-", s.SerieNotaFiscal),
-                    DataDoPedido = s.DataDoPedido.ToString("dd/MM/yyyy HH:mm"),
-                    DataSaidaDoPedido = s.DataSaidaDoPedido.ToString("dd/MM/yyyy HH:mm")
+                    DataDoPedido = s.DataDoPedido.ToString("dd/MM/yyyy"),
+                    DataIntegracao = s.DataIntegracao.ToString("dd/MM/yyyy HH:mm"),
+                    DataSaidaDoPedido = s.DataSaidaDoPedido.HasValue ? s.DataSaidaDoPedido.Value.ToString("dd/MM/yyyy HH:mm") : null
                 });
             });
 
@@ -1494,6 +1496,7 @@ namespace FWLog.Services.Services
                 NroCentena = s.NroCentena,
                 IdPedidoVendaVolume = s.IdPedidoVendaVolume,
                 DataCriacao = s.PedidoVenda.Pedido.DataCriacao,
+                DataIntegracao = s.PedidoVenda.Pedido.DataIntegracao,
                 PedidoNumeroNotaFiscal = s.PedidoVenda.Pedido.NumeroNotaFiscal,
                 PedidoSerieNotaFiscal = s.PedidoVenda.Pedido.SerieNotaFiscal,
                 DataSaida = s.PedidoVenda.DataHoraRomaneio,
@@ -1517,6 +1520,7 @@ namespace FWLog.Services.Services
                     NroCentena = s.NroCentena.ToString().PadLeft(3, '0'),
                     IdPedidoVendaVolume = s.IdPedidoVendaVolume,
                     DataCriacao = s.DataCriacao.ToString("dd/MM/yyyy"),
+                    DataIntegracao = s.DataIntegracao.ToString("dd/MM/yyyy HH:mm"),
                     NumeroSerieNotaFiscal = s.PedidoNumeroNotaFiscal.HasValue ? $"{s.PedidoNumeroNotaFiscal}/{s.PedidoSerieNotaFiscal}" : "Aguardando Faturamento",
                     DataExpedicao = s.DataSaida.HasValue ? s.DataSaida.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty,
                     StatusVolume = s.Status,
@@ -1551,6 +1555,8 @@ namespace FWLog.Services.Services
             retorno.PedidoRepresentante = pedido.Representante.Nome;
 
             retorno.PedidoDataCriacao = pedido.DataCriacao;
+
+            retorno.PedidoDataIntegracao = pedido.DataIntegracao;
 
             retorno.PedidoIsRequisicao = pedido.IsRequisicao;
 

@@ -29,6 +29,9 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         [Display(Name = "Data do Pedido")]
         public string DataDoPedido { get; set; }
 
+        [Display(Name = "Data Integração")]
+        public string DataIntegracao { get; set; }
+
         [Display(Name = "Transportadora")]
         public string IdTransportadora { get; set; }
 

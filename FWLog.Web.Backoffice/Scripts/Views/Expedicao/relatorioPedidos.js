@@ -112,6 +112,7 @@
             { data: 'NroVolume', width: '8%' },
             { data: 'NroCentena', width: '8%' },
             { data: 'DataCriacao' },
+            { data: 'DataIntegracao' },
             { data: 'NumeroSerieNotaFiscal' },
             { data: 'DataExpedicao' },
             { data: 'StatusVolume', width: '20%' },

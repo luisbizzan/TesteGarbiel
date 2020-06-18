@@ -209,6 +209,7 @@ namespace FWLog.Services.Services
                     }
 
                     pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao;
+                    pedido.DataIntegracao = DateTime.Now;
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "NUNOTA", pedido.CodigoIntegracao.ToString() } };
 
