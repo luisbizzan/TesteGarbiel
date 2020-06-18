@@ -11,7 +11,8 @@
         {
             pageDataUrl = Url.Action("RelatorioPedidosPageData"),
             detailsVisible = true,
-            imprimirVisivel = true
+            imprimirVisivel = true,
+            editarVolumeVisivel = User.HasPermission(Permissions.RelatoriosExpedicao.RelatorioPedidosEditarVolume)
         })
 }
 <!-- filter -->

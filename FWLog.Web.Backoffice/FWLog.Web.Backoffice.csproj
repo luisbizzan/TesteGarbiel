@@ -231,7 +231,6 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
     <Compile Include="Controllers\CaixaRecusaController.cs" />
-    <Compile Include="Controllers\PedidoVendaController.cs" />
     <Compile Include="Controllers\PedidoVendaVolumeController.cs" />
     <Compile Include="Controllers\ExpedicaoController.cs" />
     <Compile Include="Controllers\ArmazenagemController.cs" />

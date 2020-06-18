@@ -1510,7 +1510,9 @@ namespace FWLog.Services.Services
                 DataSaida = s.PedidoVenda.DataHoraRomaneio,
                 Status = s.PedidoVendaStatus.Descricao,
                 StatusPedido = s.PedidoVenda.PedidoVendaStatus.Descricao,
-                NomeCliente = s.PedidoVenda.Cliente.RazaoSocial
+                NomeCliente = s.PedidoVenda.Cliente.RazaoSocial,
+                IdStatusPedido = (int)s.PedidoVenda.IdPedidoVendaStatus,
+                IdStatusVolume = (int)s.IdPedidoVendaStatus
             });
 
             registrosFiltrados = query.Count();
@@ -1531,7 +1533,13 @@ namespace FWLog.Services.Services
                     NumeroSerieNotaFiscal = s.PedidoNumeroNotaFiscal.HasValue ? $"{s.PedidoNumeroNotaFiscal}/{s.PedidoSerieNotaFiscal}" : "Aguardando Faturamento",
                     DataExpedicao = s.DataSaida.HasValue ? s.DataSaida.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty,
                     StatusVolume = s.Status,
-                    StatusPedido = s.StatusPedido
+                    StatusPedido = s.StatusPedido,
+                    PermitirEditarVolume = 
+                    (s.IdStatusPedido == PedidoVendaStatusEnum.EnviadoSeparacao.GetHashCode() ||
+                     s.IdStatusPedido == PedidoVendaStatusEnum.ProcessandoSeparacao.GetHashCode() ) && 
+                    (s.IdStatusVolume == PedidoVendaStatusEnum.EnviadoSeparacao.GetHashCode() ||
+                     s.IdStatusVolume == PedidoVendaStatusEnum.ProcessandoSeparacao.GetHashCode() ||
+                     s.IdStatusVolume == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso.GetHashCode())
                 });
             });
 
@@ -1653,88 +1661,14 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Não foi encontrado o grupo de corredores.");
             }
 
-            PedidoVendaVolume pedidoVendaVolume;
-            if (idPedidoVendaVolume.HasValue)
-            {
-                pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume.Value);
-            }
-            else
-            {
-                PedidoVendaVolume ultimoVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(pedidoVenda.IdPedidoVenda).OrderBy(o => o.NroVolume).Last();
-                Caixa caixa = _unitOfWork.CaixaRepository.BuscarTodos(idEmpresa).Where(w => w.Ativo).OrderBy(o => o.Cubagem).LastOrDefault();
-
-                if (caixa == null)
-                {
-                    throw new BusinessException("Nenhuma caixa ativa foi encontrada para a empresa.");
-                }
-
-                pedidoVendaVolume = new PedidoVendaVolume()
-                {
-                    IdPedidoVenda = pedidoVenda.IdPedidoVenda,
-                    NroCentena = await _pedidoVendaVolumeService.GerarNumeroCentena(idEmpresa),
-                    NroVolume = ultimoVolume.NroVolume + 1,
-                    IdCaixaCubagem = caixa.IdCaixa,
-                    EtiquetaVolume = caixa.TextoEtiqueta,
-                    IdGrupoCorredorArmazenagem = idGrupoCorredorArmazenagem,
-                    DataHoraInicioSeparacao = null,
-                    DataHoraFimSeparacao = null,
-                    IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
-                    CorredorInicio = grupoCorredorArmazenagem.CorredorInicial,
-                    CorredorFim = grupoCorredorArmazenagem.CorredorFinal,
-                    IdImpressora = grupoCorredorArmazenagem.IdImpressora
-                };
-            }
+            PedidoVendaVolume pedidoVendaVolume = await GerenciamentoVolumesGerarVolume(idPedidoVendaVolume, idEmpresa, idGrupoCorredorArmazenagem, pedidoVenda, grupoCorredorArmazenagem);
 
             foreach (var volume in listaVolumes)
             {
                 var produto = _unitOfWork.ProdutoRepository.GetById(volume.IdProduto);
-                if (produto == null)
-                {
-                    throw new BusinessException("Um dos produtos da lista não foi encontrado;");
-                }
-
-                if (!(volume.Quantidade > 0))
-                {
-                    throw new BusinessException($"A quantidade digitada do produto {produto.Referencia} deve ser maior que zero.");
-                }
-
-                if (volume.Quantidade < produto.MultiploVenda || (volume.Quantidade % produto.MultiploVenda) != 0)
-                {
-                    throw new BusinessException($"O produto {produto.Referencia} está fora do múltiplo.");
-                }
-
                 var pedidoVendaProdutoOrigem = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVendaVolumeEIdProduto(volume.IdPedidoVendaVolumeOrigem, volume.IdProduto);
-                if (pedidoVendaProdutoOrigem == null)
-                {
-                    throw new BusinessException($"Ocorreu erro ao encontrar o volume do produto {produto.Referencia}");
-                }
 
-                if (pedidoVendaProdutoOrigem.IdPedidoVenda != pedidoVenda.IdPedidoVenda)
-                {
-                    throw new BusinessException($"O volume {pedidoVendaProdutoOrigem.PedidoVendaVolume.NroCentena.ToString().PadLeft(3, '0')} não pertence ao pedido.");
-                }
-
-                if (idGrupoCorredorArmazenagem != pedidoVendaProdutoOrigem.PedidoVendaVolume.IdGrupoCorredorArmazenagem)
-                {
-                    throw new BusinessException($"O produto {produto.Referencia} não pertence ao intervalo de Corredor: {grupoCorredorArmazenagem.CorredorInicial} até {grupoCorredorArmazenagem.CorredorFinal}.");
-                }
-
-                if (pedidoVendaProdutoOrigem.QtdSeparar < volume.Quantidade)
-                {
-                    throw new BusinessException($"A quantidade digitada excede a quanto total produto {produto.Referencia}");
-                }
-
-                if (produto == null)
-                {
-                    throw new BusinessException("Um dos produtos da lista não foi encontrado;");
-                }
-
-                if (pedidoVendaProdutoOrigem.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao &&
-                    pedidoVendaProdutoOrigem.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao &&
-                    pedidoVendaProdutoOrigem.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
-                {
-                    throw new BusinessException("Status do volume está inválido para alteração");
-                }
+                GerneciamentoVolumesValidacaoVolume(idGrupoCorredorArmazenagem, pedidoVenda, grupoCorredorArmazenagem, volume, produto, pedidoVendaProdutoOrigem);
 
                 var pesoProduto = (pedidoVendaProdutoOrigem.PesoProduto / pedidoVendaProdutoOrigem.QtdSeparar) * volume.Quantidade;
 
@@ -1783,22 +1717,19 @@ namespace FWLog.Services.Services
                 excedeuPeso = true;
             }
 
+            foreach (var volumeProduto in listaVolumeProdutosAlterar)
+            {
+                pedidoVendaVolume.CubagemVolume += volumeProduto.CubagemProduto * volumeProduto.QtdSeparar;
+                pedidoVendaVolume.PedidoVendaProdutos.Add(volumeProduto);
+            }
+
+            var volumesOrigemAgrupados = listaVolumeProdutosOrigem.GroupBy(g => g.IdPedidoVendaVolume).ToDictionary(d => d.Key, d => d.ToList());
+
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                pedidoVendaVolume.PesoVolume = pesoTotal;
-
-                foreach (var volumeProduto in listaVolumeProdutosAlterar)
-                {
-                    pedidoVendaVolume.CubagemVolume += volumeProduto.CubagemProduto * volumeProduto.QtdSeparar;
-                    pedidoVendaVolume.PedidoVendaProdutos.Add(volumeProduto);
-                }
-
                 if (!idPedidoVendaVolume.HasValue)
                 {
                     _unitOfWork.PedidoVendaVolumeRepository.Add(pedidoVendaVolume);
-
-                    pedidoVenda.NroVolumes += 1;
-                    _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
                 }
                 else
                 {
@@ -1807,20 +1738,10 @@ namespace FWLog.Services.Services
 
                 await _unitOfWork.SaveChangesAsync();
 
-                var volumesOrigemAgrupados = listaVolumeProdutosOrigem.GroupBy(g => g.IdPedidoVendaVolume).ToDictionary(d => d.Key, d => d.ToList());
-
                 foreach (var volumeOrigem in volumesOrigemAgrupados)
                 {
-                    decimal pesoVolume = 0;
-                    decimal cubagemVolume = 0;
-
-                    var volume = _unitOfWork.PedidoVendaVolumeRepository.GetById(volumeOrigem.Key);
-
                     foreach (var volumeProduto in volumeOrigem.Value)
                     {
-                        pesoVolume += volumeProduto.PesoProduto;
-                        cubagemVolume += (volumeProduto.CubagemProduto * volumeProduto.QtdSeparar);
-
                         if (volumeProduto.IdPedidoVendaProduto == 0)
                         {
                             _unitOfWork.PedidoVendaProdutoRepository.Add(volumeProduto);
@@ -1854,13 +1775,15 @@ namespace FWLog.Services.Services
                         await _unitOfWork.SaveChangesAsync();
                     }
 
-                    volume.PesoVolume = pesoVolume;
-                    volume.CubagemVolume = cubagemVolume;
+                    var volume = _unitOfWork.PedidoVendaVolumeRepository.GetById(volumeOrigem.Key);
+
+                    volume.PesoVolume = volume.PedidoVendaProdutos.Sum(s => s.PesoProduto * s.QtdSeparar);
+                    volume.CubagemVolume = volume.PedidoVendaProdutos.Sum(s => s.CubagemProduto * s.QtdSeparar);
 
                     if (!volume.PedidoVendaProdutos.Any(a => a.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProdutoZerado))
                     {
                         volume.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeExcluido;
-                    }                    
+                    }
                     else if (!volume.PedidoVendaProdutos.Any(a => a.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao || a.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso))
                     {
                         volume.DataHoraInicioSeparacao = null;
@@ -1872,12 +1795,18 @@ namespace FWLog.Services.Services
                     _unitOfWork.PedidoVendaVolumeRepository.Update(volume);
                 }
 
-                if (!pedidoVenda.PedidoVendaVolumes.Any(a => a.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao || a.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso))
+                if (!pedidoVenda.PedidoVendaVolumes.Any(a => a.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido))
+                {
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeExcluido;
+                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeExcluido;
+                }
+                else if (!pedidoVenda.PedidoVendaVolumes.Any(a => a.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao || a.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso))
                 {
                     pedidoVenda.DataHoraInicioSeparacao = null;
                     pedidoVenda.DataHoraFimSeparacao = null;
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
-                }//pedido
+                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
+                }
 
                 var pedidoVendaChecagem = _unitOfWork.PedidoVendaRepository.GetById(pedidoVenda.IdPedidoVenda);
                 if (pedidoVendaChecagem.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
@@ -1885,10 +1814,97 @@ namespace FWLog.Services.Services
                     throw new BusinessException("A separação do pedido está concluída, o mesmo não pode ser alterado.");
                 }
 
+                _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+
                 transacao.Complete();
             }
 
             return excedeuPeso;
+        }
+
+        private async Task<PedidoVendaVolume> GerenciamentoVolumesGerarVolume(long? idPedidoVendaVolume, long idEmpresa, long idGrupoCorredorArmazenagem, PedidoVenda pedidoVenda, GrupoCorredorArmazenagem grupoCorredorArmazenagem)
+        {
+            PedidoVendaVolume pedidoVendaVolume;
+
+            if (idPedidoVendaVolume.HasValue)
+            {
+                pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume.Value);
+            }
+            else
+            {
+                PedidoVendaVolume ultimoVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(pedidoVenda.IdPedidoVenda).OrderBy(o => o.NroVolume).Last();
+                Caixa caixa = _unitOfWork.CaixaRepository.BuscarTodos(idEmpresa).Where(w => w.Ativo).OrderBy(o => o.Cubagem).LastOrDefault();
+
+                if (caixa == null)
+                {
+                    throw new BusinessException("Nenhuma caixa ativa foi encontrada para a empresa.");
+                }
+
+                pedidoVendaVolume = new PedidoVendaVolume()
+                {
+                    IdPedidoVenda = pedidoVenda.IdPedidoVenda,
+                    NroCentena = await _pedidoVendaVolumeService.GerarNumeroCentena(idEmpresa),
+                    NroVolume = ultimoVolume.NroVolume + 1,
+                    IdCaixaCubagem = caixa.IdCaixa,
+                    EtiquetaVolume = caixa.TextoEtiqueta,
+                    IdGrupoCorredorArmazenagem = idGrupoCorredorArmazenagem,
+                    DataHoraInicioSeparacao = null,
+                    DataHoraFimSeparacao = null,
+                    IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
+                    CorredorInicio = grupoCorredorArmazenagem.CorredorInicial,
+                    CorredorFim = grupoCorredorArmazenagem.CorredorFinal,
+                    IdImpressora = grupoCorredorArmazenagem.IdImpressora
+                };
+
+                pedidoVenda.NroVolumes += 1;
+            }
+
+            return pedidoVendaVolume;
+        }
+
+        private void GerneciamentoVolumesValidacaoVolume(long idGrupoCorredorArmazenagem, PedidoVenda pedidoVenda, GrupoCorredorArmazenagem grupoCorredorArmazenagem, GerenciarVolumeItem volume, Produto produto, PedidoVendaProduto pedidoVendaProdutoOrigem)
+        {
+            if (produto == null)
+            {
+                throw new BusinessException("Um dos produtos da lista não foi encontrado;");
+            }
+
+            if (!(volume.Quantidade > 0))
+            {
+                throw new BusinessException($"A quantidade digitada do produto {produto.Referencia} deve ser maior que zero.");
+            }
+
+            if (volume.Quantidade < produto.MultiploVenda || (volume.Quantidade % produto.MultiploVenda) != 0)
+            {
+                throw new BusinessException($"O produto {produto.Referencia} está fora do múltiplo.");
+            }
+
+            if (pedidoVendaProdutoOrigem == null)
+            {
+                throw new BusinessException($"Ocorreu erro ao encontrar o volume do produto {produto.Referencia}");
+            }
+
+            if (pedidoVendaProdutoOrigem.IdPedidoVenda != pedidoVenda.IdPedidoVenda)
+            {
+                throw new BusinessException($"O volume {pedidoVendaProdutoOrigem.PedidoVendaVolume.NroCentena.ToString().PadLeft(3, '0')} não pertence ao pedido.");
+            }
+
+            if (idGrupoCorredorArmazenagem != pedidoVendaProdutoOrigem.PedidoVendaVolume.IdGrupoCorredorArmazenagem)
+            {
+                throw new BusinessException($"O produto {produto.Referencia} não pertence ao intervalo de Corredor: {grupoCorredorArmazenagem.CorredorInicial} até {grupoCorredorArmazenagem.CorredorFinal}.");
+            }
+
+            if (pedidoVendaProdutoOrigem.QtdSeparar < volume.Quantidade)
+            {
+                throw new BusinessException($"A quantidade digitada excede a quanto total produto {produto.Referencia}");
+            }
+
+            if (pedidoVendaProdutoOrigem.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao &&
+                pedidoVendaProdutoOrigem.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao &&
+                pedidoVendaProdutoOrigem.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
+            {
+                throw new BusinessException("Status do volume está inválido para alteração");
+            }
         }
 
         public PedidoVenda GerenciarVolumesValidacaoPedido(int nroPedido, long idEmpresa)
@@ -1896,7 +1912,7 @@ namespace FWLog.Services.Services
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(nroPedido, idEmpresa);
             if (pedidoVenda == null)
             {
-                throw new BusinessException("O Pedido não foi encontrado.");
+                throw new BusinessException("O pedido não foi encontrado.");
             }
 
             if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
@@ -1906,7 +1922,32 @@ namespace FWLog.Services.Services
 
             if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao && pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
             {
-                throw new BusinessException("Pedido com status inválido para alteração.");
+                throw new BusinessException("O pedido está com status inválido para alteração.");
+            }
+
+            return pedidoVenda;
+        }
+
+        public PedidoVenda GerenciarVolumesValidacaoVolume(long idEmpresa, long idPedidoVendaVolume)
+        {
+            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
+            if (pedidoVendaVolume == null)
+            {
+                throw new BusinessException("O Volume não foi encontrado.");
+            }
+
+            var pedidoVenda = GerenciarVolumesValidacaoPedido(pedidoVendaVolume.PedidoVenda.Pedido.NroPedido, idEmpresa);
+
+            if (pedidoVendaVolume.IdPedidoVenda == pedidoVenda.IdPedidoVenda)
+            {
+                throw new BusinessException("O volume e o pedido estão divergêntes.");
+            }
+
+            if (!(pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao || 
+                pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso ||
+                pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao ))
+            {
+                throw new BusinessException("O volume está com status inválido para alteração.");
             }
 
             return pedidoVenda;

@@ -282,7 +282,7 @@ function ConsultarPedidoVenda() {
     var nroPedido = $("#NroPedido").val();
 
     $.ajax({
-        url: HOST_URL + "PedidoVenda/ValidarPedidoVenda/" + nroPedido,
+        url: HOST_URL + CONTROLLER_PATH + "/GerenciarVolumesValidarPedido/" + nroPedido,
         method: "POST",
         async: false,        
         success: function (result) {
