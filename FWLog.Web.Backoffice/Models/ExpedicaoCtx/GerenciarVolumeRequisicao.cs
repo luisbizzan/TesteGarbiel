@@ -10,6 +10,17 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         public string NroPedido { get; set; }
 
-        public List<GerenciarVolumeItemViewModel> ProdutosVolumes { get; set; } = new List<GerenciarVolumeItemViewModel>();
+        public List<GerenciarVolumeItemRequisicao> ProdutosVolumes { get; set; } = new List<GerenciarVolumeItemRequisicao>();
+    }
+
+    public class GerenciarVolumeItemRequisicao
+    {
+        public long IdProduto { get; set; }
+
+        public long IdPedidoVendaVolumeOrigem { get; set; }
+
+        public int Quantidade { get; set; }
+
+        public long? IdLote { get; set; }
     }
 }

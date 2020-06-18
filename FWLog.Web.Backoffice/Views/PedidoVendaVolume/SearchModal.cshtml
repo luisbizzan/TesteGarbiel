@@ -24,19 +24,19 @@
         </div>
         <div class="modal-body">
             <form data-filter="form" data-filter-for="dataTableVolumeModal" class="form-filter" id="form-datatable-modal">
+                @Html.HiddenFor(m => m.Filter.IdPedidoVendaVolume, new { data_field = "IdPedidoVendaVolume" })
                 <div class="row">
                     <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
                         @Html.LabelFor(m => m.Filter.NroPedido)
-                        @Html.TextBoxFor(m => m.Filter.NroPedido, new { @class = "form-control onlyNumber", data_field = "NroPedido", @readonly = "readonly" })
+                        @Html.TextBoxFor(m => m.Filter.NroPedido, new { @class = "form-control", data_field = "NroPedido", @readonly = "readonly" })
                     </div>
                     <div class="col-xs-12 col-sm-6 col-lg-4 form-group">
                         @Html.LabelFor(m => m.Filter.NroVolume)
                         @Html.TextBoxFor(m => m.Filter.NroVolume, new { @class = "form-control onlyNumber", data_field = "NroVolume" })
-                    </div>                    
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12 form-buttons">
-                        <button type="button" class="btn btn-default" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
                         <button type="button" class="btn btn-primary" data-filter="search">@Resources.CommonStrings.SearchAction</button>
                     </div>
                 </div>

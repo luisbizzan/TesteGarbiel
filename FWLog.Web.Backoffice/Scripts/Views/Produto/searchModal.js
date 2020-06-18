@@ -33,7 +33,6 @@
 
     $('#dataTableModal').on('click', '[data-select]', function ()
     {
-        debugger;
         if ($("#Filter_ExibirReferenciaProduto").val() === "True" || $("#ExibirReferenciaProduto").val() === true) {
             setProduto($(this).attr('data-select'), $(this).attr("name-select"), $(this).attr("referencia-select"));
         }

@@ -9,7 +9,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         [Display(Name = "Nro. Pedido")]
         [Required]
-        public int? NroPedido { get; set; }
+        public string NroPedido { get; set; }
 
         public long IdPedido { get; set; }
 
@@ -35,6 +35,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         public long IdGrupoCorredorArmazenagem { get; set; }
         public int CorredorInicio { get; set; }
         public int CorredorFim { get; set; }
+        public long? IdLote { get; set; }
 
         public List<GerenciarVolumeItemViewModel> ListaItens { get; set; } = new List<GerenciarVolumeItemViewModel>();
     }
@@ -43,8 +44,18 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
     {
         public long IdProduto { get; set; }
 
-        public long IdPedidoVendaVolumeOrigem { get; set; }
+        public long? IdPedidoVendaVolumeOrigem { get; set; }
+
+        public long? IdLote { get; set; }
 
         public int Quantidade { get; set; }
+
+        public int QuantidadeOrigem { get; set; }
+
+        public string DescricaoProduto { get; set; }
+
+        public string ReferenciaProduto { get; set; }
+
+        public string NroVolume { get; set; }
     }
 }

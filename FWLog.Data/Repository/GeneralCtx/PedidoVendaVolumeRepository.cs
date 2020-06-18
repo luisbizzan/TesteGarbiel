@@ -223,6 +223,7 @@ namespace FWLog.Data.Repository.GeneralCtx
 
             IQueryable<PedidoVendaVolumePesquisaModalLinhaTabela> query = Entities.PedidoVendaVolume.AsNoTracking()
                 .Where(x => x.PedidoVenda.Pedido.NumeroPedido == filter.CustomFilter.NroPedido &&
+                (filter.CustomFilter.IdPedidoVendaVolume.HasValue == false || x.IdPedidoVendaVolume != filter.CustomFilter.IdPedidoVendaVolume.Value) &&
                 (x.PedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao ||
                  x.PedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao) &&
                 (x.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao || 

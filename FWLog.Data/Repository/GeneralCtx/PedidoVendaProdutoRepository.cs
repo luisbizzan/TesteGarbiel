@@ -31,20 +31,21 @@ namespace FWLog.Data.Repository.GeneralCtx
         public List<ProdutoPesquisaModalListaLinhaTabela> BuscarLista(DataTableFilter<ProdutoPesquisaModalFiltro> model, out int totalRecordsFiltered, out int totalRecords)
         {
             totalRecords = Entities.PedidoVendaProduto.Where(w => w.IdLote == model.CustomFilter.IdLote).Count();
-            
+
             IQueryable<ProdutoPesquisaModalListaLinhaTabela> query = Entities.PedidoVendaProduto.AsNoTracking()
-               .Where(w => w.IdPedidoVendaVolume == model.CustomFilter.IdPedidoVendaVolume.Value &&
+               .Where(w => w.IdLote.HasValue == false &&
+                 w.IdPedidoVendaVolume == model.CustomFilter.IdPedidoVendaVolume.Value &&                
                 (w.PedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao ||
                  w.PedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao) &&
-                (w.PedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao || 
-                 w.PedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao || 
+                (w.PedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao ||
+                 w.PedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao ||
                  w.PedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso) &&
-                (w.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao || 
-                 w.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao || 
+                (w.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao ||
+                 w.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao ||
                  w.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso) &&
-               (model.CustomFilter.Referencia.Equals(string.Empty) || w.Produto.Referencia.Contains(model.CustomFilter.Referencia)) &&
-               (model.CustomFilter.Descricao.Equals(string.Empty) || w.Produto.Descricao.Contains(model.CustomFilter.Descricao)) &&
-               (model.CustomFilter.Status.HasValue == false || w.Produto.Ativo == model.CustomFilter.Status))
+                (model.CustomFilter.Referencia.Equals(string.Empty) || w.Produto.Referencia.Contains(model.CustomFilter.Referencia)) &&
+                (model.CustomFilter.Descricao.Equals(string.Empty) || w.Produto.Descricao.Contains(model.CustomFilter.Descricao)) &&
+                (model.CustomFilter.Status.HasValue == false || w.Produto.Ativo == model.CustomFilter.Status))
                .Select(s => new ProdutoPesquisaModalListaLinhaTabela
                {
                    IdProduto = s.IdProduto,

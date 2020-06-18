@@ -184,12 +184,12 @@
 function editarVolume() {
     let id = $(this).data("id");
     $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + id,
+        url: HOST_URL + CONTROLLER_PATH + "GerenciarVolumesValidarVolume/" + id,
         method: "POST",
         cache: false,
         success: function (result) {
             if (result.Success) {
-                window.location.href = HOST_URL + CONTROLLER_PATH + "RelatorioPedidos"
+                window.location.href = HOST_URL + CONTROLLER_PATH + "GerenciarVolumesEditar/?idPedidoVendaVolume=" + id;
             } else {
                 PNotify.error({ text: result.Message });
             }

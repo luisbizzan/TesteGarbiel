@@ -380,9 +380,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
             return View(model);
         }
-       
+
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosCadastrarVolume)]         
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosCadastrarVolume)]
         public async Task<JsonResult> GerenciarVolumes(GerenciarVolumeRequisicao requisicao)
         {
             try
@@ -411,11 +411,34 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosEditarVolume)]
-        public ActionResult GerenciarVolumesEditar()
+        public ActionResult GerenciarVolumesEditar(long idPedidoVendaVolume)
         {
+            var listVolumes = new List<GerenciarVolumeItemViewModel>();
+            var volume = _uow.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
+
+            foreach (var volumeProduto in volume.PedidoVendaProdutos)
+            {
+                listVolumes.Add(new GerenciarVolumeItemViewModel()
+                {
+                    IdProduto = volumeProduto.IdProduto,
+                    QuantidadeOrigem = volumeProduto.QtdSeparar,
+                    DescricaoProduto = volumeProduto.Produto.Descricao,
+                    ReferenciaProduto = volumeProduto.Produto.Referencia,
+                    NroVolume = volume.NroVolume.ToString().PadLeft(3, '0'),
+                    IdLote = volumeProduto.IdLote
+                });
+            }
+
             var model = new GerenciarVolumeViewModel()
             {
-                IdEmpresa = IdEmpresa
+                IdEmpresa = IdEmpresa,
+                ListaItens = listVolumes,
+                NroPedido = volume.PedidoVenda.Pedido.NumeroPedido,
+                IdPedido = volume.PedidoVenda.IdPedido,
+                IdGrupoCorredorArmazenagem = volume.IdGrupoCorredorArmazenagem,
+                CorredorFim = volume.CorredorFim,
+                CorredorInicio = volume.CorredorInicio,
+                IdPedidoVendaVolume = idPedidoVendaVolume                
             };
 
             return View(model);
@@ -488,6 +511,35 @@ namespace FWLog.Web.Backoffice.Controllers
                 {
                     Success = true,
                     Message = ""
+                });
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = e is BusinessException ? e.Message : "Ocorreu um erro na consulta dos dados do pedido."
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosCadastrarVolume)]
+        public ActionResult GerenciarVolumesValidarPeso(GerenciarVolumeRequisicao requisicao)
+        {
+            try
+            {
+                var listaVolumes = Mapper.Map<List<GerenciarVolumeItem>>(requisicao.ProdutosVolumes);
+                var excedeupeso = _expedicaoService.GerenciarVolumesValidarPeso(requisicao.IdPedidoVendaVolume, listaVolumes);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "",
+                    Data = excedeupeso.ToString()
                 });
             }
             catch (Exception e)

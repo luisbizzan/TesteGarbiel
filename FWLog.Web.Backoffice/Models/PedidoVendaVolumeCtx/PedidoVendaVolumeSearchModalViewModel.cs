@@ -30,10 +30,10 @@ namespace FWLog.Web.Backoffice.Models.PedidoVendaVolumeCtx
 
     public class PedidoVendaVolumeSearchModalFillterViewModel
     {
-        public long IdPedidoVendaVolume { get; set; }
+        public long? IdPedidoVendaVolume { get; set; }
 
         [Display(Name = "Nro. Pedido")]
-        public long NroPedido { get; set; }
+        public string NroPedido { get; set; }
 
         [Display(Name = "Nro. Volume")]
         public string NroVolume { get; set; }

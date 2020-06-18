@@ -231,6 +231,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
     <Compile Include="Controllers\CaixaRecusaController.cs" />
+    <Compile Include="Controllers\PedidoVendaProdutoController.cs" />
     <Compile Include="Controllers\PedidoVendaVolumeController.cs" />
     <Compile Include="Controllers\ExpedicaoController.cs" />
     <Compile Include="Controllers\ArmazenagemController.cs" />
@@ -611,6 +612,7 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Etiqueta\locacao.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
+    <Content Include="Scripts\Views\Expedicao\gerenciarVolumesEditar.js" />
     <Content Include="Scripts\Views\Expedicao\gerenciarVolumes.js" />
     <Content Include="Scripts\Views\Expedicao\confirmarReimpressaoEtiquetaVolume.js" />
     <Content Include="Scripts\Views\Expedicao\detalhesPedidoVolume.js" />
@@ -764,6 +766,7 @@
     <Content Include="Views\Expedicao\GerenciarVolumes.cshtml" />
     <Content Include="Views\PedidoVendaVolume\SearchModal.cshtml" />
     <Content Include="Views\BORecebimentoNota\RelatorioValidadePeca.cshtml" />
+    <Content Include="Views\Expedicao\GerenciarVolumesEditar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

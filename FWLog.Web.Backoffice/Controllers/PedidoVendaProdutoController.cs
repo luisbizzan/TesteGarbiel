@@ -16,44 +16,15 @@ using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
 {
-    public class PedidoVendaVolumeController : BOBaseController
+    public class PedidoVendaProdutoController : BOBaseController
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly ILog _log;
 
-        public PedidoVendaVolumeController(UnitOfWork unitOfWork, ILog log)
+        public PedidoVendaProdutoController(UnitOfWork unitOfWork, ILog log)
         {
             _unitOfWork = unitOfWork;
             _log = log;
-        }
-
-        [HttpGet]
-        public ActionResult SearchModal(string nroPedido, long? idPedidoVendaVolume)
-        {
-            var model = new PedidoVendaVolumeSearchModalViewModel()
-            {
-                Filter = new PedidoVendaVolumeSearchModalFillterViewModel()
-                {
-                    NroPedido = nroPedido,
-                    IdPedidoVendaVolume = idPedidoVendaVolume
-                }
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public ActionResult SearchModalPageData(DataTableFilter<PedidoVendaVolumePesquisaModalFiltro> model)
-        {
-            IEnumerable<PedidoVendaVolumePesquisaModalLinhaTabela> result = _unitOfWork.PedidoVendaVolumeRepository.ObterDadosParaDataTable(model, out int recordsFiltered, out int totalRecords);
-
-            return DataTableResult.FromModel(new DataTableResponseModel
-            {
-                Draw = model.Draw,
-                RecordsTotal = totalRecords,
-                RecordsFiltered = recordsFiltered,
-                Data = Mapper.Map<IEnumerable<PedidoVendaVolumeSearchModalItemViewModel>>(result)
-            });
         }
 
         [HttpPost]
@@ -76,7 +47,8 @@ namespace FWLog.Web.Backoffice.Controllers
                     MultiploVenda = result.Produto.MultiploVenda,
                     QuantidadeSeparar = result.QtdSeparar,
                     CorredorInicio = result.PedidoVendaVolume.CorredorInicio,
-                    CorredorFim = result.PedidoVendaVolume.CorredorFim
+                    CorredorFim = result.PedidoVendaVolume.CorredorFim,
+                    IdLote = result.IdLote
                 };
 
                 return Json(new AjaxGenericResultModel

@@ -5,5 +5,7 @@
         public int? NroVolume { get; set; }
 
         public string NroPedido { get; set; }
+
+        public long? IdPedidoVendaVolume { get; set; }
     }
 }

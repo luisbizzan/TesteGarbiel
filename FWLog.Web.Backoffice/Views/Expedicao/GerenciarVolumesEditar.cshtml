@@ -1,7 +1,7 @@
 ﻿@model FWLog.Web.Backoffice.Models.ExpedicaoCtx.GerenciarVolumeViewModel
 
 @{
-    ViewBag.Title = "Gerenciar Volumes";
+    ViewBag.Title = "Gerenciar Volume - Edição";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -13,7 +13,7 @@
     <div class="col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2>Gerenciar Volumes</h2>
+                <h2>Gerenciar Volume - Edição</h2>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -21,7 +21,7 @@
                 <div class="row">
                     <div class="form-group col-sm-2">
                         @Html.LabelFor(m => m.NroPedido, new { @class = "control-label" })
-                        @Html.TextBoxFor(m => m.NroPedido, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.NroPedido, new { @class = "form-control", @readonly = "true" })
                         @Html.ValidationMessageFor(m => m.NroPedido)
                         @Html.HiddenFor(m => m.IdPedido)
                         @Html.HiddenFor(m => m.IdGrupoCorredorArmazenagem)
@@ -29,13 +29,7 @@
                         @Html.HiddenFor(m => m.CorredorFim)
                         @Html.HiddenFor(m => m.IdLote)
                         @Html.HiddenFor(m => m.IdPedidoVendaVolume, new { data_field = "IdPedidoVendaVolume" })
-                        @Html.Hidden("PedidoSelecionado", false)
                     </div>
-                    <div class="form-group col-sm-1">
-                        <button type="button" id="selecionarPedido" class="btn btn-primary" style="margin-top: 13px;background-color: #337ab7 !important;border-color: #2e6da4 !important;">Selecionar Pedido</button>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="form-group col-sm-2">
                         @Html.LabelFor(m => m.NroVolume)
                         <div class="input-group">
@@ -87,6 +81,20 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach (var item in Model.ListaItens)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td class='hide'>@item.IdPedidoVendaVolumeOrigem</td>
+                                    <td>@item.NroVolume</td>
+                                    <td>@item.ReferenciaProduto</td>
+                                    <td class='hide'>@item.IdProduto</td>
+                                    <td>@item.DescricaoProduto </td>
+                                    <td>@item.QuantidadeOrigem </td>
+                                    <td>@item.Quantidade</td>
+                                    <td class='hide'>@item.IdLote</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                     <button type="button" class="btn btn-danger" id="removerLinhaTabela">Deletar</button>

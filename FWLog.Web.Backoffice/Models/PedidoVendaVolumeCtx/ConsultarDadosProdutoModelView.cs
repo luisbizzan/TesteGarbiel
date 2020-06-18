@@ -3,6 +3,7 @@
     public class ConsultarDadosProdutoModelView
     {
         public long IdProduto { get; set; }
+        public long? IdLote { get; set; }
         public int QuantidadeSeparar { get; set; }
         public decimal MultiploVenda { get; set; }
         public long IdGrupoCorredorArmazenagem { get; set; }

@@ -5,17 +5,6 @@
         AdicionarLinhaTabela();
     });
 
-    $("#selecionarPedido").click(function () {
-        var nroPedido = $("#NroPedido").val();
-
-        dart.modalAjaxConfirm.open({
-            title: 'Pedido',
-            message: "Deseja realmente selecionar o Pedido: " + nroPedido + "? Após a confirmação não será possivel trocar o pedido do cadastro.",
-            onConfirm: ConsultarPedidoVenda,
-
-        });
-    });
-
     $("#removerLinhaTabela").click(function () {
         $("table tbody").find('input[name="record"]').each(function () {
             if ($(this).is(":checked")) {
@@ -48,9 +37,9 @@
     });
 
     $("#pesquisarVolume").on('click', function () {
-        if ($("#PedidoSelecionado").val() === "true" && $("#NroPedido").val() > 0) {
+        if ($("#IdPedido").val() > 0) {
             if (!$(this).attr('disabled')) {
-                $("#modalVolume").load(HOST_URL + "PedidoVendaVolume/SearchModal/?nroPedido=" + $("#NroPedido").val(), function () {
+                $("#modalVolume").load(HOST_URL + "PedidoVendaVolume/SearchModal/?nroPedido=" + $("#NroPedido").val() + "&idPedidoVendaVolume=" + $("#IdPedidoVendaVolume").val(), function () {
                     $("#modalVolume").modal();
                 });
             }
@@ -71,10 +60,11 @@ function validarItemExisteTabela(idPedidoVendaVolume, idProduto) {
     var existe = false;
 
     $('table tbody tr').each(function (i, el) {
-        var _idPedidoVendaVolume = $(el).children().eq(1).text();
+        var _idPedidoVendaVolumeOrigem = $(el).children().eq(1).text();
         var _idProduto = $(el).children().eq(4).text();
+        var _idLote = parseInt($(el).children().eq(8).text());
 
-        if (_idPedidoVendaVolume === idPedidoVendaVolume && _idProduto === idProduto) {
+        if (_idPedidoVendaVolumeOrigem === idPedidoVendaVolume && _idProduto === idProduto) {
             PNotify.warning({ text: "O volume e produto já foram adicionados na tabela." });
             existe = true;
         }
@@ -120,7 +110,7 @@ function salvarVoloumes() {
             if (result.Success) {
                 if (result.Data === "True") {
                     dart.modalAjaxConfirm.open({
-                        title: 'Salvar novo volume',
+                        title: 'Salvar edição do volume',
                         message: "O peso do volume excedeu 22 quilos, deseja continuar?",
                         onConfirm: SalvarVolumesContinuacao,
                     });
@@ -139,7 +129,7 @@ function salvarVoloumes() {
 
 function SalvarVolumesContinuacao() {
     $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "GerenciarVolumes",
+        url: HOST_URL + CONTROLLER_PATH + "GerenciarVolumesEditar",
         method: "POST",
         data: JSON.stringify(CarregarDados()),
         dataType: "json",
@@ -159,7 +149,6 @@ function SalvarVolumesContinuacao() {
         }
     });
 }
-
 function redirecionar() {
     window.location.href = HOST_URL + CONTROLLER_PATH + "RelatorioPedidos"
 }
@@ -191,7 +180,6 @@ function setVolume(idPedidoVendaVolume, nroVolume) {
 function limparProduto() {
     $("#IdProduto").val("");
     $("#DescricaoProduto").val("");
-    $("#IdLote").val("");
 }
 
 function limparVolume() {
@@ -202,7 +190,7 @@ function limparVolume() {
 function ConsultarEValidarDadosProduto(idPedidoVendaVolume, idProduto, qtd) {
     var retorno = false;
     $.ajax({
-        url: HOST_URL + "PedidoVendaProduto/ConsultarDadosProduto",
+        url: HOST_URL + "PedidoVendaVolume/ConsultarDadosProduto",
         method: "POST",
         async: false,
         data: {
@@ -253,7 +241,7 @@ function ConsultarEValidarDadosProduto(idPedidoVendaVolume, idProduto, qtd) {
 
 function ConsultarVolumeProdutoQtd(idPedidoVendaVolume, idProduto) {
     $.ajax({
-        url: HOST_URL + "PedidoVendaProduto/ConsultarVolumeProdutoQtd",
+        url: HOST_URL + "PedidoVendaVolume/ConsultarVolumeProdutoQtd",
         method: "POST",
         async: false,
         data: {
@@ -279,7 +267,7 @@ function ConsultarPedidoVenda() {
     var nroPedido = $("#NroPedido").val();
 
     $.ajax({
-        url: HOST_URL + CONTROLLER_PATH + "/GerenciarVolumesValidarPedido/?nroPedido=" + nroPedido,
+        url: HOST_URL + CONTROLLER_PATH + "/GerenciarVolumesValidarPedido/" + nroPedido,
         method: "POST",
         async: false,
         success: function (result) {
@@ -309,7 +297,6 @@ function AdicionarLinhaTabela() {
     var qtdOrigem = parseInt($("#QuantidadeOriginal").val());
     var qtd = parseInt($("#Quantidade").val());
 
-
     if (!idProduto || !idPedidoVendaVolumeOrigem || !qtd) {
         PNotify.warning({ text: "Preencha os campos volume, produto e quantidade." });
         return;
@@ -325,7 +312,7 @@ function AdicionarLinhaTabela() {
         return;
     }
 
-    if (validarItemExisteTabela(idPedidoVendaVolumeOrigem, idProduto)) {
+    if (validarItemExisteTabela(idPedidoVendaVolumeOrigem, idProduto)) {       
         return;
     }
 
@@ -333,7 +320,7 @@ function AdicionarLinhaTabela() {
         return;
     }
 
-    var idLote = parseInt($("#IdLote").val());
+    var idLote = $("#IdLote").val();
     var markup =
         "<tr>" +
         "<td><input type='checkbox' name='record'></td>" +
