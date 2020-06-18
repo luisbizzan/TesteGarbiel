@@ -14,6 +14,7 @@ using FWLog.Web.Backoffice.Models.ProdutoCtx;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace FWLog.Web.Backoffice.Controllers
@@ -162,6 +163,16 @@ namespace FWLog.Web.Backoffice.Controllers
                 Saldo = produtoEstoque.Saldo.ToString(),
                 ImagemSrc = produtoEstoque.Produto.EnderecoImagem != "0" ? produtoEstoque.Produto.EnderecoImagem : null,
             };
+
+            viewModel.ListaLocaisArmazenagem = _unitOfWork.LoteProdutoEnderecoRepository.PesquisarPorProduto(produtoEstoque.IdProduto, IdEmpresa).Select(lpe => new ProdutoDetalhesLocalArmazenagemViewModel
+            {
+                PontoArmazenagemDescricao = lpe.EnderecoArmazenagem.PontoArmazenagem.Descricao,
+                NivelArmazenagemDescricao = lpe.EnderecoArmazenagem.NivelArmazenagem.Descricao,
+                IdLote = lpe.IdLote,
+                FornecedorNomeFantasia = lpe.Lote?.NotaFiscal?.Fornecedor?.NomeFantasia,
+                EnderecoArmazenagemCodigo = lpe.EnderecoArmazenagem.Codigo,
+                Quantidade = lpe.Quantidade
+            }).ToList();
 
             return View(viewModel);
         }
