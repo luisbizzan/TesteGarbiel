@@ -1117,13 +1117,13 @@ namespace FWLog.Services.Services
             return ultimoRomaneio.Value;
         }
 
-        public void ReimprimirRomaneio(long idRomaneio, long idImpressora, long idEmpresa, string idUsuario)
+        public void ReimprimirRomaneio(long idRomaneio, long idImpressora, bool imprimirSegundaVia, long idEmpresa, string idUsuario)
         {
             var romaneio = ValidarIdRomaneio(idRomaneio, idEmpresa);
 
             var impressora = ValidarIdImpressora(idImpressora);
 
-            ImprimirRomaneio(romaneio.IdRomaneio, impressora.Id, false, idEmpresa, idUsuario);
+            ImprimirRomaneio(romaneio.IdRomaneio, impressora.Id, imprimirSegundaVia, idEmpresa, idUsuario);
 
             _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
             {
