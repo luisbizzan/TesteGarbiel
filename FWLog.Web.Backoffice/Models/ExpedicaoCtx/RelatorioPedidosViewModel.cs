@@ -54,7 +54,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
     public class RelatorioPedidosFilterViewModel
     {
         [Display(Name = "Nro. Pedido")]
-        public long? NumeroPedido { get; set; }
+        public string NumeroPedido { get; set; }
 
         [Display(Name = "Dt. Criação Inícial")]
         public DateTime? DataInicial { get; set; }
