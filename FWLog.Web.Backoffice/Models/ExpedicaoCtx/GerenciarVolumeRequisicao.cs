@@ -8,7 +8,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         public long IdGrupoCorredorArmazenagem { get; set; }
 
-        public int NroPedido { get; set; }
+        public string NroPedido { get; set; }
 
         public List<GerenciarVolumeItemViewModel> ProdutosVolumes { get; set; } = new List<GerenciarVolumeItemViewModel>();
     }

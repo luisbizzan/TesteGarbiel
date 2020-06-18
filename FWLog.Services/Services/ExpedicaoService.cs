@@ -1635,7 +1635,7 @@ namespace FWLog.Services.Services
             return $"{volume.PedidoVenda.Pedido.NumeroPedido}{volume.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3, '0')}{volume.NroVolume.ToString().PadLeft(3, '0')}";
         }
 
-        public async Task<bool> GerenciarVolumes(int nroPedido, long? idPedidoVendaVolume, List<GerenciarVolumeItem> listaVolumes, long idEmpresa, long idGrupoCorredorArmazenagem, string idUsuario)
+        public async Task<bool> GerenciarVolumes(string nroPedido, long? idPedidoVendaVolume, List<GerenciarVolumeItem> listaVolumes, long idEmpresa, long idGrupoCorredorArmazenagem, string idUsuario)
         {
             if (listaVolumes.NullOrEmpty())
             {
@@ -1902,7 +1902,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public PedidoVenda GerenciarVolumesValidacaoPedido(int nroPedido, long idEmpresa)
+        public PedidoVenda GerenciarVolumesValidacaoPedido(string nroPedido, long idEmpresa)
         {
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(nroPedido, idEmpresa);
             if (pedidoVenda == null)
@@ -1931,7 +1931,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O Volume não foi encontrado.");
             }
 
-            var pedidoVenda = GerenciarVolumesValidacaoPedido(pedidoVendaVolume.PedidoVenda.Pedido.NroPedido, idEmpresa);
+            var pedidoVenda = GerenciarVolumesValidacaoPedido(pedidoVendaVolume.PedidoVenda.Pedido.NumeroPedido, idEmpresa);
 
             if (pedidoVendaVolume.IdPedidoVenda == pedidoVenda.IdPedidoVenda)
             {

@@ -3,7 +3,7 @@
     public class PedidoVendaVolumePesquisaModalLinhaTabela
     {
         public long IdPedidoVendaVolume { get; set; }
-        public int NroPedido { get; set; }
+        public string NroPedido { get; set; }
         public int NroVolume { get; set; }
         public string DescricaoStatus { get; set; }
     }

@@ -478,11 +478,11 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosCadastrarVolume)]
-        public ActionResult GerenciarVolumesValidarPedido(int id)
+        public ActionResult GerenciarVolumesValidarPedido(string nroPedido)
         {
             try
             {
-                var result = _expedicaoService.GerenciarVolumesValidacaoPedido(id, IdEmpresa);
+                var result = _expedicaoService.GerenciarVolumesValidacaoPedido(nroPedido, IdEmpresa);
 
                 return Json(new AjaxGenericResultModel
                 {

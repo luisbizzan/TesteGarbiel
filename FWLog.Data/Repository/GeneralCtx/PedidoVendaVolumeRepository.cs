@@ -222,7 +222,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRecords = Entities.PedidoVendaVolume.Count();
 
             IQueryable<PedidoVendaVolumePesquisaModalLinhaTabela> query = Entities.PedidoVendaVolume.AsNoTracking()
-                .Where(x => x.PedidoVenda.Pedido.NroPedido == filter.CustomFilter.NroPedido &&
+                .Where(x => x.PedidoVenda.Pedido.NumeroPedido == filter.CustomFilter.NroPedido &&
                 (x.PedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao ||
                  x.PedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao) &&
                 (x.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao || 
@@ -231,7 +231,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 (filter.CustomFilter.NroVolume.HasValue == false || x.NroVolume == filter.CustomFilter.NroVolume))
                 .Select(e => new PedidoVendaVolumePesquisaModalLinhaTabela
                 {
-                    NroPedido = e.PedidoVenda.NroPedidoVenda,
+                    NroPedido = e.PedidoVenda.Pedido.NumeroPedido,
                     NroVolume = e.NroVolume,
                     DescricaoStatus = e.PedidoVendaStatus.Descricao,
                     IdPedidoVendaVolume = e.IdPedidoVendaVolume

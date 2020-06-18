@@ -4,6 +4,6 @@
     {
         public int? NroVolume { get; set; }
 
-        public int NroPedido { get; set; }
+        public string NroPedido { get; set; }
     }
 }
