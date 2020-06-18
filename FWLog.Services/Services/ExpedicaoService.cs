@@ -79,7 +79,9 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido está aguardando retirada.");
             }
 
-            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora)
+            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && 
+                pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora &&
+                pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA)
             {
                 throw new BusinessException("A separação do volume não está finalizada.");
             }
@@ -96,7 +98,9 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume foi excluído.");
             }
 
-            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora)
+            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && 
+                pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora &&
+                pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.RemovidoDOCA)
             {
                 throw new BusinessException("A separação do volume não está finalizada.");
             }
@@ -441,7 +445,7 @@ namespace FWLog.Services.Services
             {
                 var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
 
-                if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
+                if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.RemovidoDOCA)
                 {
                     throw new BusinessException($"Volume {pedidoVendaVolume.NroVolume} com status inválido.");
                 }
@@ -1228,16 +1232,19 @@ namespace FWLog.Services.Services
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
+                pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.RemovidoDOCA;
                 pedidoVendaVolume.DataHoraRemocaoVolume = DateTime.Now;
                 pedidoVendaVolume.IdUsuarioInstalacaoDOCA = null;
+                pedidoVendaVolume.IdUsuarioInstalTransportadora = null;
+                pedidoVendaVolume.DataHoraInstalTransportadora = null;
+                pedidoVendaVolume.IdEnderecoArmazTransportadora = null;
                 pedidoVendaVolume.DataHoraInstalacaoDOCA = null;
 
                 _unitOfWork.SaveChanges();
 
-                if (pedidoVenda.PedidoVendaVolumes.All(x => x.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora))
+                if (pedidoVenda.PedidoVendaVolumes.Where(w => w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido).All(x => x.IdPedidoVendaStatus == PedidoVendaStatusEnum.RemovidoDOCA))
                 {
-                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
                     _unitOfWork.SaveChanges();
                 }
                 else if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA)
