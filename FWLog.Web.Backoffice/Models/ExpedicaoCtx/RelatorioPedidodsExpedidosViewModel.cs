@@ -30,7 +30,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         public string DataDoPedido { get; set; }
 
         [Display(Name = "Transportadora")]
-        public string IdENomeTransportadora { get; set; }
+        public string IdTransportadora { get; set; }
 
         [Display(Name = "Nota Fiscal")]
         public string NotaFiscalESerie { get; set; }
@@ -41,7 +41,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
     public class RelatorioPedidosExpedidosFilterViewModel
     {
-        [Display(Name="Data Inícial")]
+        [Display(Name = "Data Inícial")]
         [Required]
         public DateTime? DataInicial { get; set; }
 

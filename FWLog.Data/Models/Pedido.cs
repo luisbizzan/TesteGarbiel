@@ -17,7 +17,8 @@ namespace FWLog.Data.Models
         public long IdPedido { get; set; }
 
         [Required]
-        public int NroPedido { get; set; }
+        [StringLength(100)]
+        public string NumeroPedido { get; set; }
 
         [Index]
         [Required]

@@ -7,7 +7,7 @@ namespace FWLog.Data.Models.DataTablesCtx
     public class DetalhesPedidoVolume
     {
         [Display(Name = "Pedido")]
-        public int PedidoNro { get; set; }
+        public string PedidoNro { get; set; }
 
         [Display(Name = "Cliente")]
         public string PedidoCliente { get; set; }

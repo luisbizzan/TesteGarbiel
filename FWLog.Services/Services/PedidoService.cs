@@ -87,16 +87,29 @@ namespace FWLog.Services.Services
                         throw new BusinessException(string.Format("Código do Representante (CODVEND: {0}) inválido", pedidoCabecalho.CodigoIntegracaoRepresentante));
                     }
 
-                    var numeroPedido = Convert.ToInt32(pedidoCabecalho.NroPedidoVenda);
-                    if (numeroPedido == 0)
+                    string numeroPedido = null;
+
+                    var isCodSav = false;
+
+                    if (!pedidoCabecalho.CodSav.NullOrEmpty())
                     {
-                        throw new BusinessException($"Código do Pedido (NUMNOTA: {pedidoCabecalho.NroPedidoVenda}) inválido");
+                        numeroPedido = pedidoCabecalho.CodSav;
+
+                        isCodSav = true;
+                    }
+                    else if (!pedidoCabecalho.NumNota.NullOrEmpty() && pedidoCabecalho.NumNota != "0")
+                    {
+                        numeroPedido = pedidoCabecalho.NumNota;
                     }
 
-                    var pedidoRepository = _uow.PedidoRepository.ObterPorNumero(empresa.IdEmpresa, numeroPedido);
-                    if (pedidoRepository != null)
+                    if (numeroPedido == null)
                     {
-                        throw new BusinessException($"Já existe um pedido com o código (NUMNOTA: {pedidoCabecalho.NroPedidoVenda})");
+                        throw new BusinessException($"Número do Pedido (AD_CODSAV: {pedidoCabecalho.CodSav} / NUMNOTA: {pedidoCabecalho.NumNota}) inválido");
+                    }
+
+                    if (_uow.PedidoRepository.ObterPorNumero(empresa.IdEmpresa, numeroPedido) != null)
+                    {
+                        throw new BusinessException($"Já existe um pedido com {(isCodSav ? "AD_CODSAV" : "NUMNOTA")}: {numeroPedido}");
                     }
 
                     bool pedidoNovo = true;
@@ -118,7 +131,7 @@ namespace FWLog.Services.Services
                         pedido.IsRequisicao = true;
                     }
 
-                    pedido.NroPedido = numeroPedido;
+                    pedido.NumeroPedido = numeroPedido;
                     pedido.CodigoIntegracao = codPedido;
                     pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.ProcessandoIntegracao;
                     pedido.IdCliente = cliente.IdCliente;

@@ -56,13 +56,13 @@ namespace FWLog.Services.Services
             {
                 IdPedidoVenda = x.IdPedidoVenda,
                 IdPedidoVendaVolume = x.IdPedidoVendaVolume,
-                EtiquetaVolume = $"{x.PedidoVenda.NroPedidoVenda.ToString().PadLeft(7, '0')}{x.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3, '0')}{x.NroVolume.ToString().PadLeft(3, '0')}"
+                EtiquetaVolume = $"{x.PedidoVenda.Pedido.NumeroPedido}{x.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3, '0')}{x.NroVolume.ToString().PadLeft(3, '0')}"
             }).ToList();
 
             return result;
         }
 
-        private void BuscaEValidaDadosPorReferenciaPedido(string referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume)
+        private void BuscaEValidaDadosPorReferenciaPedido(string referenciaPedido, out string numeroPedido, out long idTransportadora, out int numeroVolume)
         {
             if (referenciaPedido.NullOrEmpty())
             {
@@ -74,12 +74,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Código de Barras de pedido inválido.");
             }
 
-            var numeroPedidoString = referenciaPedido.Substring(0, referenciaPedido.Length - 6);
-
-            if (!int.TryParse(numeroPedidoString, out numeroPedido))
-            {
-                throw new BusinessException("Código de Barras de pedido inválido.");
-            }
+            numeroPedido = referenciaPedido.Substring(0, referenciaPedido.Length - 6);
 
             var idTransportadoraString = referenciaPedido.Substring(referenciaPedido.Length - 6, 3);
 
@@ -98,7 +93,7 @@ namespace FWLog.Services.Services
 
         public BuscarPedidoVendaResposta BuscarPedidoVenda(string referenciaPedido, long idEmpresa, string idUsuario, bool temPermissaoF7)
         {
-            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out int numeroPedido, out long idTransportadora, out int numeroVolume);
+            BuscaEValidaDadosPorReferenciaPedido(referenciaPedido, out string numeroPedido, out long idTransportadora, out int numeroVolume);
 
             var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
 
@@ -131,7 +126,7 @@ namespace FWLog.Services.Services
             var model = new BuscarPedidoVendaResposta();
 
             model.IdPedidoVenda = pedidoVenda.IdPedidoVenda;
-            model.NroPedidoVenda = pedidoVenda.NroPedidoVenda;
+            model.NroPedidoVenda = pedidoVenda.Pedido.NumeroPedido;
             model.SeparacaoIniciada = pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao;
             model.IdPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaVolume;
             model.IdCaixaVolume = pedidoVendaVolume.IdCaixaCubagem;
@@ -807,7 +802,7 @@ namespace FWLog.Services.Services
                 await _unitOfWork.SaveChangesAsync();
 
                 var numeroVolume = pedidoVendaVolume.NroVolume.ToString().PadLeft(3, '0');
-                var numeroPedido = pedidoVenda.Pedido.NroPedido;
+                var numeroPedido = pedidoVenda.Pedido.NumeroPedido;
 
                 if (zerarPedido == false)
                 {
@@ -990,7 +985,6 @@ namespace FWLog.Services.Services
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.PendenteSeparacao;
                     pedidoVenda.IdRepresentante = pedido.IdRepresentante;
                     pedidoVenda.IdTransportadora = pedido.IdTransportadora;
-                    pedidoVenda.NroPedidoVenda = pedido.NroPedido;
 
                     //Agrupa os itens do pedido por produto. 
                     var listaItensDoPedido = await AgruparItensDoPedidoPorProduto(pedido.IdPedido);
@@ -1132,7 +1126,7 @@ namespace FWLog.Services.Services
                         //Imprimi as etiquetas.
                         foreach (var item in listaImpressaoSeparacao)
                         {
-                            await ImprimirEtiquetaVolumeSeparacao(item.Volume, item.NumeroVolume, item.GrupoCorredor, pedido, item.Centena, item.CorredorinicioSeparacao);
+                            await ImprimirEtiquetaVolumeSeparacao(item.Volume, item.NumeroVolume, item.GrupoCorredor, pedido, item.Centena);
                         }
 
                         transacao.Complete();
@@ -1145,7 +1139,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, Pedido pedido, int centena, int corredorInicioSeparacao)
+        public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, Pedido pedido, int centena)
         {
             _etiquetaService.ImprimirEtiquetaVolumeSeparacao(new ImprimirEtiquetaVolumeSeparacaoRequest()
             {
@@ -1156,23 +1150,23 @@ namespace FWLog.Services.Services
                 ClienteCidade = pedido.Cliente.Cidade,
                 ClienteUF = pedido.Cliente.UF,
                 ClienteTelefone = pedido.Cliente.Telefone,
-                ClienteCodigo = pedido.Cliente.IdCliente.ToString(),
-                RepresentanteCodigo = pedido.Representante.IdRepresentante.ToString(),
-                PedidoCodigo = pedido.NroPedido.ToString(),
+                ClienteCodigo = pedido.Cliente.CodigoIntegracao.ToString(),
+                PedidoCodigo = pedido.NumeroPedido,
                 PedidoDataCriacao = pedido.DataCriacao,
-                PedidoIsRequisicao = pedido.IsRequisicao,
                 PedidoPagamentoCodigoIntegracao = pedido.PagamentoCodigoIntegracao,
                 PedidoPagamentoIsDebito = pedido.PagamentoIsDebitoIntegracao,
                 PedidoPagamentoIsCredito = pedido.PagamentoIsCreditoIntegracao,
                 PedidoPagamentoIsDinheiro = pedido.PagamentoIsDinheiroIntegracao,
+                PedidoIsRequisicao = pedido.IsRequisicao,
                 Centena = centena.ToString(),
                 TransportadoraSigla = pedido.Transportadora.CodigoTransportadora,
-                TransportadoraCodigo = pedido.Transportadora.IdTransportadora.ToString(),
+                IdTransportadora = pedido.Transportadora.IdTransportadora.ToString(),
                 TransportadoraNome = pedido.Transportadora.RazaoSocial,
                 CorredoresInicio = grupoCorredorArmazenagem.CorredorInicial.ToString(),
                 CorredoresFim = grupoCorredorArmazenagem.CorredorFinal.ToString(),
                 CaixaTextoEtiqueta = volume.Caixa.TextoEtiqueta,
                 Volume = numeroVolume.ToString(),
+                ProdutoReferencia = volume.ListaItensDoPedido?.FirstOrDefault()?.Produto?.Referencia,
                 IdImpressora = grupoCorredorArmazenagem.IdImpressora
             },
             pedido.IdEmpresa);
@@ -1676,7 +1670,7 @@ namespace FWLog.Services.Services
                 var listaCaixasMaisComum = await BuscarCaixaMaisComum(listaItensDoPedido);
 
                 //Valida se a lista de caixas mais comum é nula.
-                if (listaCaixasMaisComum == null)
+                if (listaCaixasMaisComum == null || listaCaixasMaisComum.Count == 0)
                     return listaItensDoPedido;
 
                 int agrupador = 1;
@@ -1864,7 +1858,7 @@ namespace FWLog.Services.Services
             List<CaixaViewModel> listaCaixasMaisComum = new List<CaixaViewModel>();
 
             //Valida se a listaRankingCaixas é nula.
-            if (listaRankingCaixas == null)
+            if (listaRankingCaixas == null || listaRankingCaixas.Count == 0)
                 return listaCaixasMaisComum;
 
             //Captura a quantidade do maior da listaRankingCaixas.
@@ -2378,16 +2372,11 @@ namespace FWLog.Services.Services
 
         public DetalhePedidoVendaResposta ConsultarDetalhesPedidoVenda(string referenciaOuNumeroPedido, long idEmpresa)
         {
-            PedidoVenda pedidoVenda = null;
-
-            if (int.TryParse(referenciaOuNumeroPedido, out int numeroPedido))
-            {
-                pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
-            }
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(referenciaOuNumeroPedido, idEmpresa);
 
             if (pedidoVenda == null)
             {
-                BuscaEValidaDadosPorReferenciaPedido(referenciaOuNumeroPedido, out numeroPedido, out long _idTransportadora, out int _numeroVolume);
+                BuscaEValidaDadosPorReferenciaPedido(referenciaOuNumeroPedido, out string numeroPedido, out long _idTransportadora, out int _numeroVolume);
 
                 pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(numeroPedido, idEmpresa);
             }
@@ -2397,7 +2386,7 @@ namespace FWLog.Services.Services
             var retorno = new DetalhePedidoVendaResposta()
             {
                 IdPedidoVenda = pedidoVenda.IdPedidoVenda,
-                NroPedidoVenda = pedidoVenda.NroPedidoVenda,
+                NroPedidoVenda = pedidoVenda.Pedido.NumeroPedido,
                 DataCriacao = pedidoVenda.Pedido.DataCriacao,
                 Status = PreparaStatusParaColetor(pedidoVenda.IdPedidoVendaStatus),
                 PesoTotal = pedidoVenda.PedidoVendaVolumes.Sum(pvv => pvv.PesoVolume),

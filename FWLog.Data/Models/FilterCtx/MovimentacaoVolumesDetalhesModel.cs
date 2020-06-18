@@ -8,7 +8,7 @@ namespace FWLog.Data.Models.FilterCtx
 
         public long IdPedidoVenda { get; set; }
 
-        public int PedidoNumero { get; set; }
+        public string PedidoNumero { get; set; }
 
         public int VolumeNumero { get; set; }
 

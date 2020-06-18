@@ -41,6 +41,6 @@ namespace FWLog.Services.Relatorio
         public int? NumeroRomaneio { get; set; }
         public string Transportadora { get; set; }
         public string Endereco { get; set; }
-        public int? NumeroPedidoVenda { get; set; }
+        public string NumeroPedido { get; set; }
     }
 }

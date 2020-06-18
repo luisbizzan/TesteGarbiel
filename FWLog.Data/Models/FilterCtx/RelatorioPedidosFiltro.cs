@@ -4,7 +4,7 @@ namespace FWLog.Data.Models.FilterCtx
 {
     public class RelatorioPedidosFiltro
     {
-        public long? NumeroPedido { get; set; }
+        public string NumeroPedido { get; set; }
         public long? IdCliente { get; set; }
         public long IdEmpresa { get; set; }
         public DateTime? DataInicial { get; set; }
