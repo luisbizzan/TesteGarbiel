@@ -78,6 +78,9 @@ namespace FWLog.Data.Models
         [Required]
         public DateTime DataIntegracao { get; set; }
 
+        [Required]
+        public bool IsFilial { get; set; }
+
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
 

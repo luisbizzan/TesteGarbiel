@@ -151,6 +151,8 @@ namespace FWLog.Services.Services
                     pedido.PagamentoIsCreditoIntegracao = pedidoCabecalho.TipoPagamentoCartaoCredito == "S";
                     pedido.PagamentoIsDinheiroIntegracao = pedidoCabecalho.TipoPagamentoCartaoDinheiro == "S";
 
+                    pedido.IsFilial = _uow.EmpresaRepository.ConsultaPorIdCliente(pedido.IdCliente) != null;
+
                     var itens = pedidoIntegracao.Value.Select(s => new { s.CodigoIntegracao, s.CodigoIntegracaoProduto, s.QtdPedido, s.Sequencia }).ToList();
 
                     var produtosComQtdePedidoZerado = itens.Where(x => x.QtdPedido == "0" || x.QtdPedido.NullOrEmpty()).Select(x => x.CodigoIntegracaoProduto).ToArray();
