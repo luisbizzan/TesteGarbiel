@@ -203,7 +203,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 DataHoraRomaneio = pvv.PedidoVenda.DataHoraRomaneio
             });
 
-            var responseList = selectQuery.OrderBy(s => s.PedidoNumero).ThenBy(s => s.VolumeNumero).ToList();
+            var responseList = selectQuery.OrderBy(s => s.VolumeCentena).ToList();
 
             return responseList;
         }
