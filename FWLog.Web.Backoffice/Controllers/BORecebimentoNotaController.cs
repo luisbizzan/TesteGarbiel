@@ -1975,6 +1975,83 @@ namespace FWLog.Web.Backoffice.Controllers
             return pecasHaMais;
         }
 
+        [HttpPost]
+        public JsonResult ConsultarItemsDevolver(string codigoBarrasOuReferencia, long idLote, int quantidadePorCaixa, int quantidadeCaixa)
+        {
+            int quantidadeDevolver = 0;
+
+            try
+            {
+                if (quantidadePorCaixa == 0)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Quantidade por caixa não pode ser 0"
+                    });
+                }
+
+                var idNotaFiscal = _uow.LoteRepository.GetById(idLote)?.IdNotaFiscal;
+
+                if (idNotaFiscal == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "NF não encontrada"
+                    });
+                }
+
+                var idProduto = _uow.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(codigoBarrasOuReferencia)?.IdProduto;
+
+                if (idProduto == null)
+                {
+                    return Json(new AjaxGenericResultModel
+                    {
+                        Success = false,
+                        Message = "Produto não encontrado"
+                    });
+                }
+
+                var notaFiscalItem = _uow.NotaFiscalItemRepository.ObterPorItem(idNotaFiscal.Value, idProduto.Value);
+
+                var quantidadeTotalDevolucao = notaFiscalItem.Sum(s => s.QuantidadeDevolucao);
+
+                if (quantidadeTotalDevolucao > 0)
+                {
+                    var conferencia = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, idProduto.Value);
+
+                    var quantidadeConferida = conferencia.Sum(s => s.Quantidade);
+
+                    var quantidadeTotalPecas = quantidadePorCaixa * quantidadeCaixa;
+
+                    quantidadeDevolver = (quantidadeConferida + quantidadeTotalPecas) - quantidadeTotalDevolucao;
+                    quantidadeDevolver = quantidadeDevolver < 0 ? 0 : quantidadeDevolver;
+
+                    if (quantidadeDevolver > quantidadeTotalPecas && quantidadeTotalPecas > 0)
+                    {
+                        quantidadeDevolver = quantidadeTotalPecas;
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                _log.Error("Erro consultando items a devolver", exception);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Data = Convert.ToString(quantidadeDevolver)
+                });
+            }
+
+            return Json(new AjaxGenericResultModel
+            {
+                Success = true,
+                Data = Convert.ToString(quantidadeDevolver)
+            });
+        }
+
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
         public JsonResult ValidarModalTratarDivergencia(long id)
         {

@@ -417,6 +417,11 @@
     }
 
     function confirmarConferencia_Click() {
+
+        let temItensDevolver = consultarItemsDevolverEExibeMensagem();
+
+        $('#MensagemPecasHaMais').text('');
+
         //Se o tipo da conferência é 100%. 
         //Caso seja, solicita confirmação do usuário. 
         //Caso contrário, chama o método para validar o múltiplo da conferência e posteriormente o registro da conferência.
@@ -430,13 +435,18 @@
 
                     $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + total + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
 
-                    $('#MensagemPecasHaMais').text('');
                     if (qtdePecasHaMais > 0)
                         $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+. As etiquetas de PC A serão impressas.');
                 }
             });
         }
-        else {
+        else if (temItensDevolver) {
+            var total = $quantidadePorCaixa.val() * $quantidadeCaixa.val();
+
+            $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + total + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
+
+            $('#modalRegistrarConferencia').modal('show');
+        } else {
             validarDiferencaMultiploConferencia();
         }
     }
@@ -551,7 +561,9 @@
                                     }
                                 }
 
-                                if ($tipoConferencia.text() != "Por Quantidade" || ($tipoConferencia.text() == "Por Quantidade" && qtdePecasHaMais > 0 && $quantidadeCaixa.val() > 0)) {
+                                let temItensDevolver = consultarItemsDevolverEExibeMensagem();
+
+                                if ($tipoConferencia.text() != "Por Quantidade" || ($tipoConferencia.text() == "Por Quantidade" && qtdePecasHaMais > 0 && $quantidadeCaixa.val() > 0) || temItensDevolver) {
                                     $('#modalRegistrarConferencia').modal('show');
 
                                     var total = $quantidadePorCaixa.val() * $quantidadeCaixa.val();
@@ -702,6 +714,52 @@ function consultarPecasHaMaisConferencia() {
     });
 
     return retorno;
+}
+
+function consultarItemsDevolverEExibeMensagem() {
+    let referencia = $("#Referencia").val();
+    let quantidadePorCaixa = $("#QuantidadePorCaixa").val() || 0;
+    let quantidadeCaixa = $("#QuantidadeCaixa").val() || 0;
+    let idLote = $("#IdLote").val();
+    let quantidadeItemsDevolver = undefined;
+
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "ConsultarItemsDevolver",
+        cache: false,
+        global: false,
+        async: false,
+        method: "POST",
+        data: {
+            codigoBarrasOuReferencia: referencia,
+            idLote: idLote,
+            quantidadePorCaixa: quantidadePorCaixa,
+            quantidadeCaixa: quantidadeCaixa
+        },
+        success: function (result) {
+            if (result.Success) {
+                quantidadeItemsDevolver = result.Data;
+            }
+            else {
+                PNotify.warning({ text: result.Message });
+            }
+        },
+        error: function (request, status, error) {
+            PNotify.error({ text: request.Message });
+        }
+    });
+
+    $('#MensagemItemsDevolver').text('');
+
+    let mostraItemsDevolver = false;
+
+    if (quantidadeItemsDevolver && quantidadeItemsDevolver > 0) {
+
+        $('#MensagemItemsDevolver').text('Atenção! Foi identificado devolução para o pedido de compra. Separar ' + quantidadeItemsDevolver + ' peça(s) para devolução.');
+
+        mostraItemsDevolver = true;
+    }
+
+    return mostraItemsDevolver;
 }
 
 function resetarTipoConferencia() {
