@@ -14,6 +14,8 @@
 
         public long IdImpressora { get; set; }
 
+        public long IdImpressoraPedidoFilial { get; set; }
+
         public bool Ativo { get; set; }
     }
 }

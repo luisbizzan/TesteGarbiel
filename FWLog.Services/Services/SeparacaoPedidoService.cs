@@ -1168,7 +1168,7 @@ namespace FWLog.Services.Services
                 CaixaTextoEtiqueta = volume.Caixa.TextoEtiqueta,
                 Volume = numeroVolume.ToString(),
                 ProdutoReferencia = volume.ListaItensDoPedido?.FirstOrDefault()?.Produto?.Referencia,
-                IdImpressora = grupoCorredorArmazenagem.IdImpressora
+                IdImpressora = pedido.IsFilial ? grupoCorredorArmazenagem.IdImpressoraPedidoFilial : grupoCorredorArmazenagem.IdImpressora
             },
             pedido.IdEmpresa);
         }
@@ -1187,6 +1187,7 @@ namespace FWLog.Services.Services
                         IdPontoArmazenagem = item.IdPontoArmazenagem,
                         IdEmpresa = item.IdEmpresa,
                         IdImpressora = item.IdImpressora,
+                        IdImpressoraPedidoFilial = item.IdImpressoraPedidoFilial,
                         CorredorInicial = item.CorredorInicial,
                         CorredorFinal = item.CorredorFinal,
                         Ativo = item.Ativo

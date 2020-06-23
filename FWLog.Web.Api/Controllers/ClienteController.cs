@@ -19,7 +19,7 @@ namespace FWLog.Web.Api.Controllers
         [HttpPost]
         public async Task<IHttpActionResult> ConsultarCliente(bool somenteNovos = true)
         {
-            await _clienteService.ConsultarCliente(somenteNovos);
+            await _clienteService.ConsultarCliente(somenteNovos, null);
 
             return ApiOk();
         }
