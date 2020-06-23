@@ -23,6 +23,8 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         public SelectList ListaRequisicao { get; set; }
 
+        public SelectList ListaReposicao { get; set; }
+
         public MovimentacaoVolumesFilterViewModel Filter { get; set; }
         public List<MovimentacaoVolumesListItemViewModel> Items { get; set; }
     }
@@ -42,6 +44,9 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         [Display(Name = "Requisição")]
         public bool? Requisicao { get; set; }
+
+        [Display(Name = "Reposição")]
+        public bool? Reposicao { get; set; }
     }
 
     public class MovimentacaoVolumesListItemViewModel

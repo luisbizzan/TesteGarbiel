@@ -79,7 +79,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido está aguardando retirada.");
             }
 
-            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && 
+            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso &&
                 pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora &&
                 pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA)
             {
@@ -98,7 +98,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume foi excluído.");
             }
 
-            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && 
+            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso &&
                 pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora &&
                 pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.RemovidoDOCA)
             {
@@ -1272,9 +1272,9 @@ namespace FWLog.Services.Services
             return _unitOfWork.PedidoVendaRepository.BuscarDadosPedidoVendaParaTabela(filtro, out registrosFiltrados, out totalRegistros);
         }
 
-        public List<MovimentacaoVolumesModel> BuscarDadosMovimentacaoVolumes(DateTime dataInicial, DateTime dataFinal, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa)
+        public List<MovimentacaoVolumesModel> BuscarDadosMovimentacaoVolumes(DateTime dataInicial, DateTime dataFinal, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, bool? reposicao, long idEmpresa)
         {
-            var dados = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumeGrupoArmazenagem(dataInicial, dataFinal, cartaoCredito, cartaoDebito, dinheiro, requisicao, idEmpresa);
+            var dados = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumeGrupoArmazenagem(dataInicial, dataFinal, cartaoCredito, cartaoDebito, dinheiro, requisicao, reposicao, idEmpresa);
 
             var dadosAgrupados = dados.GroupBy(g => new
             {
@@ -1321,7 +1321,7 @@ namespace FWLog.Services.Services
             return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosPedidosExpedidos(filtro, out totalRecordsFiltered, out totalRecords);
         }
 
-        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, string tipo, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa, out string statusDescricao, out string corredorArmazenagemDescricao)
+        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, string tipo, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, bool? reposicao, long idEmpresa, out string statusDescricao, out string corredorArmazenagemDescricao)
         {
             var listaStatus = new List<PedidoVendaStatusEnum>();
             var nfFaturada = false;
@@ -1381,7 +1381,7 @@ namespace FWLog.Services.Services
                 }
             }
 
-            var responseList = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, cartaoCredito, cartaoDebito, dinheiro, requisicao, nfFaturada, idEmpresa);
+            var responseList = _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, listaStatus, cartaoCredito, cartaoDebito, dinheiro, requisicao, reposicao, nfFaturada, idEmpresa);
 
             responseList.ForEach(dados =>
             {

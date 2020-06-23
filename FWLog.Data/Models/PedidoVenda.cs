@@ -55,6 +55,9 @@ namespace FWLog.Data.Models
 
         public DateTime? DataHoraRomaneio { get; set; }
 
+        [Required]
+        public DateTime DataProcessamento { get; set; }
+
         [ForeignKey(nameof(IdPedido))]
         public virtual Pedido Pedido { get; set; }
 

@@ -24,7 +24,7 @@
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().VolumeCentena)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().QuantidadeProdutos)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().PedidoDataCriacao)</th>
-                                <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().PedidoDataIntegracao)</th>
+                                <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().PedidoVendaDataProcessamento)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().TipoPagamentoDescricao)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().TransportadoraNomeFantasia)</th>
                                 <th>@Html.DisplayNameFor(m => m.Items.FirstOrDefault().UsuarioDespachoNotaFiscal)</th>
@@ -44,7 +44,7 @@
                                     <td>@item.VolumeCentena.ToString().PadLeft(4, '0')</td>
                                     <td>@item.QuantidadeProdutos</td>
                                     <td>@item.PedidoDataCriacao.ToShortDateString()</td>
-                                    <td>@item.PedidoDataIntegracao</td>
+                                    <td>@item.PedidoVendaDataProcessamento</td>
                                     <td>@item.TipoPagamentoDescricao</td>
                                     <td>@item.TransportadoraNomeFantasia</td>
                                     <td>@item.UsuarioDespachoNotaFiscal</td>

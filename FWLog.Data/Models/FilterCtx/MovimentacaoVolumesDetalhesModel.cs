@@ -16,7 +16,7 @@ namespace FWLog.Data.Models.FilterCtx
 
         public DateTime PedidoDataCriacao { get; set; }
 
-        public DateTime PedidoDataIntegracao { get; set; }
+        public DateTime PedidoVendaDataProcessamento { get; set; }
 
         public int VolumeCentena { get; set; }
 

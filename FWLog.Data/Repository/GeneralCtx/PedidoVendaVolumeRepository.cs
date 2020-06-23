@@ -104,11 +104,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return query.ToList();
         }
 
-        public List<PedidoVendaVolumeGrupoArmazenagemLinhaTabela> BuscarDadosVolumeGrupoArmazenagem(DateTime dataInicial, DateTime dataFinal, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa)
+        public List<PedidoVendaVolumeGrupoArmazenagemLinhaTabela> BuscarDadosVolumeGrupoArmazenagem(DateTime dataInicial, DateTime dataFinal, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, bool? reposicao, long idEmpresa)
         {
             dataFinal = dataFinal.Date.AddDays(1).Subtract(new TimeSpan(0, 0, 1));
 
-            var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao >= dataInicial && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao <= dataFinal);
+            var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa && pedidoVendaVolume.PedidoVenda.DataProcessamento >= dataInicial && pedidoVendaVolume.PedidoVenda.DataProcessamento <= dataFinal);
 
             if (cartaoCredito.HasValue)
             {
@@ -130,6 +130,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                 query = query.Where(q => q.PedidoVenda.Pedido.IsRequisicao == requisicao.Value);
             }
 
+            if (reposicao.HasValue)
+            {
+                query = query.Where(q => q.PedidoVenda.Pedido.IsFilial == reposicao.Value);
+            }
+
             var selectQuery = query.Select(q => new PedidoVendaVolumeGrupoArmazenagemLinhaTabela
             {
                 IdGrupoCorredorArmazenagem = q.GrupoCorredorArmazenagem.IdGrupoCorredorArmazenagem,
@@ -144,11 +149,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return selectQuery.ToList();
         }
 
-        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, List<PedidoVendaStatusEnum> listaStatus, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, bool nfFaturada, long idEmpresa)
+        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, List<PedidoVendaStatusEnum> listaStatus, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, bool? reposicao, bool nfFaturada, long idEmpresa)
         {
             dataFinal = dataFinal.Date.AddDays(1).Subtract(new TimeSpan(0, 0, 1));
 
-            var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao >= dataInicial && pedidoVendaVolume.PedidoVenda.Pedido.DataCriacao <= dataFinal);
+            var query = Entities.PedidoVendaVolume.Where(pedidoVendaVolume => pedidoVendaVolume.PedidoVenda.IdEmpresa == idEmpresa && pedidoVendaVolume.PedidoVenda.DataProcessamento >= dataInicial && pedidoVendaVolume.PedidoVenda.DataProcessamento <= dataFinal);
 
             if (idGrupoCorredorArmazenagem.HasValue)
             {
@@ -175,6 +180,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                 query = query.Where(q => q.PedidoVenda.Pedido.IsRequisicao == requisicao.Value);
             }
 
+            if (reposicao.HasValue)
+            {
+                query = query.Where(q => q.PedidoVenda.Pedido.IsFilial == reposicao.Value);
+            }
+
             if (!listaStatus.NullOrEmpty())
             {
                 query = query.Where(pedidoVendaVolume => listaStatus.Contains(pedidoVendaVolume.IdPedidoVendaStatus));
@@ -193,7 +203,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 VolumeNumero = pvv.NroVolume,
                 QuantidadeProdutos = pvv.PedidoVendaProdutos.Count,
                 PedidoDataCriacao = pvv.PedidoVenda.Pedido.DataCriacao,
-                PedidoDataIntegracao = pvv.PedidoVenda.Pedido.DataIntegracao,
+                PedidoVendaDataProcessamento = pvv.PedidoVenda.DataProcessamento,
                 VolumeCentena = pvv.NroCentena,
                 TransportadoraNomeFantasia = pvv.PedidoVenda.Transportadora.NomeFantasia,
                 TipoPagamentoDescricao = pvv.PedidoVenda.Pedido.PagamentoDescricaoIntegracao,
@@ -203,7 +213,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 DataHoraRomaneio = pvv.PedidoVenda.DataHoraRomaneio
             });
 
-            var responseList = selectQuery.OrderBy(s => s.PedidoNumero).ThenBy(s => s.VolumeNumero).ToList();
+            var responseList = selectQuery.OrderBy(s => s.VolumeCentena).ToList();
 
             return responseList;
         }
