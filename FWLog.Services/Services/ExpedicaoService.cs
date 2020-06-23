@@ -1700,6 +1700,7 @@ namespace FWLog.Services.Services
             foreach (var volumeProduto in listaVolumeProdutosAlterar)
             {
                 pedidoVendaVolume.CubagemVolume += volumeProduto.CubagemProduto * volumeProduto.QtdSeparar;
+                pedidoVendaVolume.PesoVolume += volumeProduto.PesoProduto * volumeProduto.QtdSeparar;
                 pedidoVendaVolume.PedidoVendaProdutos.Add(volumeProduto);
             }
 
@@ -1789,6 +1790,8 @@ namespace FWLog.Services.Services
                 }
 
                 _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+
+                await _unitOfWork.SaveChangesAsync();
 
                 transacao.Complete();
             }
