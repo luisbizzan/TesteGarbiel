@@ -35,7 +35,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Somente são permitidos corredores de 01 a 99.");
             }
 
-            if (corredorInicial >= corredorFinal)
+            if (corredorInicial > corredorFinal)
             {
                 throw new BusinessException("Corredor inicial deve ser menor que o corredor final.");
             }
