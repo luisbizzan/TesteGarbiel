@@ -24,7 +24,7 @@
                     </div>
                     @Html.ValidationMessageFor(m => m.Filter.DataInicial)
                 </div>
-                <div class="col-xs-3 col-md-2 col-lg-2">
+                <div class="col-xs-3 col-md-3 col-lg-3">
                     @Html.LabelFor(m => m.Filter.DataFinal)
                     <div class='input-group date'>
                         @Html.TextBox("DataFinal", Model.Filter.DataFinal, new { @class = "form-control dateFormat", id = "Filter_DataFinal" })
@@ -42,7 +42,13 @@
                     @Html.LabelFor(m => m.Filter.Requisicao)
                     @Html.DropDownList("Requisicao", Model.ListaRequisicao, "Todos", new { @class = "form-control", data_field = "Filter_Requisicao" })
                 </div>
-                <div class="col-xs-2 col-md-2 col-lg-2 form-buttons" style="margin-top:12px">
+                <div class="col-xs-2 col-md-2 col-lg-2">
+                    @Html.LabelFor(m => m.Filter.Reposicao)
+                    @Html.DropDownList("Reposicao", Model.ListaReposicao, "Todos", new { @class = "form-control", data_field = "Filter_Reposicao" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-md-4 col-lg-4 form-buttons" style="margin-top:12px">
                     <button type="submit" class="btn btn-primary" id="submitButton" data-filter="search">@Resources.CommonStrings.SearchAction</button>
                     <button type="button" class="btn btn-default clearButton" data-filter="clear">@Resources.CommonStrings.ClearAction</button>
                 </div>
@@ -112,6 +118,7 @@
                                         routeValueDictionary.Add("dataFinal", Model.Filter.DataFinal);
                                         routeValueDictionary.Add("tipoPagamento", Model.Filter.TipoPagamento);
                                         routeValueDictionary.Add("requisicao", Model.Filter.Requisicao);
+                                        routeValueDictionary.Add("reposicao", Model.Filter.Reposicao);
 
                                         routeValueDictionary.Add("idGrupoCorredorArmazenagem", string.Empty);
                                         routeValueDictionary.Add("status", string.Empty);
