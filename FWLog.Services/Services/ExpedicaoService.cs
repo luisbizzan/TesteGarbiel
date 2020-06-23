@@ -1517,6 +1517,8 @@ namespace FWLog.Services.Services
 
             retorno.PedidoDataIntegracao = pedido.DataIntegracao;
 
+            retorno.PedidoDataImpressao = pedidoVendaVolume.PedidoVenda.DataProcessamento;
+
             retorno.PedidoIsRequisicao = pedido.IsRequisicao;
 
             retorno.PedidoCodigoIntegracaoNotaFiscal = pedido.CodigoIntegracaoNotaFiscal;

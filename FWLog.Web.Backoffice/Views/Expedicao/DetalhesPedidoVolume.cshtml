@@ -43,13 +43,16 @@
                         </div>
                         <div class="row" style="margin-bottom:4px;">
                             <div class="col-xs-12 col-sm-6 col-lg-6">
-                                @Html.LabelFor(m => m.PedidoCliente): @Model.PedidoCliente
+                                @Html.LabelFor(m => m.PedidoDataImpressao): @Model.PedidoDataImpressao.ToString("dd/MM/yyyy HH:mm")
                             </div>
                             <div class="col-xs-12 col-sm-6 col-lg-6">
-                                @Html.LabelFor(m => m.PedidoTransportadora): @Model.PedidoTransportadora
+                                @Html.LabelFor(m => m.PedidoCliente): @Model.PedidoCliente
                             </div>
                         </div>
                         <div class="row" style="margin-bottom:4px;">
+                            <div class="col-xs-12 col-sm-6 col-lg-6">
+                                @Html.LabelFor(m => m.PedidoTransportadora): @Model.PedidoTransportadora
+                            </div>
                             <div class="col-xs-12 col-sm-6 col-lg-6">
                                 @Html.LabelFor(m => m.PedidoRepresentante): @Model.PedidoRepresentante
                             </div>

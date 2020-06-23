@@ -27,6 +27,9 @@ namespace FWLog.Data.Models.DataTablesCtx
         [Display(Name = "Data Integração")]
         public DateTime PedidoDataIntegracao { get; set; }
 
+        [Display(Name = "Data Impressão")]
+        public DateTime PedidoDataImpressao { get; set; }
+
         [Display(Name = "Requisição")]
         public bool PedidoIsRequisicao { get; set; }
 
