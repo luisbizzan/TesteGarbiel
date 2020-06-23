@@ -19,6 +19,7 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
     public class RelatorioPedidosListItemViewModel
     {
         public long IdPedidoVendaVolume { get; set; }
+        public bool PermitirEditarVolume { get; set; }
 
         [Display(Name = "Nro. Pedido")]
         public string NroPedido { get; set; }

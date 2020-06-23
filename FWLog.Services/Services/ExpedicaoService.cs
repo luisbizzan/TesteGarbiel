@@ -28,6 +28,8 @@ namespace FWLog.Services.Services
         private readonly RelatorioService _relatorioService;
         private readonly TransportadoraService _transportadoraService;
         private readonly RomaneioService _romaneioService;
+        private readonly PedidoVendaVolumeService _pedidoVendaVolumeService;
+        private readonly SeparacaoPedidoService _separacaoPedidoService;
 
         public ExpedicaoService(
             UnitOfWork unitOfWork,
@@ -37,7 +39,9 @@ namespace FWLog.Services.Services
             PedidoService pedidoService,
             RelatorioService relatorioService,
             TransportadoraService transportadoraService,
-            RomaneioService romaneioService)
+            RomaneioService romaneioService,
+            PedidoVendaVolumeService pedidoVendaVolumeService,
+            SeparacaoPedidoService separacaoPedidoService)
         {
             _unitOfWork = unitOfWork;
             _log = log;
@@ -47,6 +51,8 @@ namespace FWLog.Services.Services
             _relatorioService = relatorioService;
             _transportadoraService = transportadoraService;
             _romaneioService = romaneioService;
+            _pedidoVendaVolumeService = pedidoVendaVolumeService;
+            _separacaoPedidoService = separacaoPedidoService;
         }
 
         public void IniciarExpedicaoPedidoVenda(long idPedidoVenda, long idPedidoVendaVolume, long idEmpresa)
@@ -1460,7 +1466,9 @@ namespace FWLog.Services.Services
                 DataSaida = s.PedidoVenda.DataHoraRomaneio,
                 Status = s.PedidoVendaStatus.Descricao,
                 StatusPedido = s.PedidoVenda.PedidoVendaStatus.Descricao,
-                NomeCliente = s.PedidoVenda.Cliente.RazaoSocial
+                NomeCliente = s.PedidoVenda.Cliente.RazaoSocial,
+                IdStatusPedido = (int)s.PedidoVenda.IdPedidoVendaStatus,
+                IdStatusVolume = (int)s.IdPedidoVendaStatus
             });
 
             registrosFiltrados = query.Count();
@@ -1483,7 +1491,13 @@ namespace FWLog.Services.Services
                     NumeroSerieNotaFiscal = s.PedidoNumeroNotaFiscal.HasValue ? $"{s.PedidoNumeroNotaFiscal}/{s.PedidoSerieNotaFiscal}" : "Aguardando Faturamento",
                     DataExpedicao = s.DataSaida.HasValue ? s.DataSaida.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty,
                     StatusVolume = s.Status,
-                    StatusPedido = s.StatusPedido
+                    StatusPedido = s.StatusPedido,
+                    PermitirEditarVolume =
+                    (s.IdStatusPedido == PedidoVendaStatusEnum.EnviadoSeparacao.GetHashCode() ||
+                     s.IdStatusPedido == PedidoVendaStatusEnum.ProcessandoSeparacao.GetHashCode()) &&
+                    (s.IdStatusVolume == PedidoVendaStatusEnum.EnviadoSeparacao.GetHashCode() ||
+                     s.IdStatusVolume == PedidoVendaStatusEnum.ProcessandoSeparacao.GetHashCode() ||
+                     s.IdStatusVolume == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso.GetHashCode())
                 });
             });
 
@@ -1586,6 +1600,373 @@ namespace FWLog.Services.Services
         public string GerarReferenciaPedidoVolume(PedidoVendaVolume volume)
         {
             return $"{volume.PedidoVenda.Pedido.NumeroPedido}{volume.PedidoVenda.Transportadora.IdTransportadora.ToString().PadLeft(3, '0')}{volume.NroVolume.ToString().PadLeft(3, '0')}";
+        }
+
+        public async Task<bool> GerenciarVolumes(string nroPedido, long? idPedidoVendaVolume, List<GerenciarVolumeItem> listaVolumesProdutos, long idEmpresa, long idGrupoCorredorArmazenagem, string idUsuario)
+        {
+            if (listaVolumesProdutos.NullOrEmpty())
+            {
+                throw new BusinessException("Nenhum volume adicionado.");
+            }
+
+            List<PedidoVendaProduto> listaVolumeProdutosOrigem = new List<PedidoVendaProduto>();
+            List<PedidoVendaProduto> listaVolumeProdutosAlterar = new List<PedidoVendaProduto>();
+
+            decimal pesoTotal = 0;
+            bool excedeuPeso = false;
+
+            PedidoVenda pedidoVenda = GerenciarVolumesValidacaoPedido(nroPedido, idEmpresa);
+
+            var grupoCorredorArmazenagem = _unitOfWork.GrupoCorredorArmazenagemRepository.GetById(idGrupoCorredorArmazenagem);
+            if (grupoCorredorArmazenagem == null)
+            {
+                throw new BusinessException("Não foi encontrado o grupo de corredores.");
+            }
+
+            PedidoVendaVolume pedidoVendaVolume = await GerenciamentoVolumesGerarVolume(idPedidoVendaVolume, idEmpresa, idGrupoCorredorArmazenagem, pedidoVenda, grupoCorredorArmazenagem);
+
+            var listaVolumesProdutosAgrupados = listaVolumesProdutos.GroupBy(g => g.IdProduto).ToDictionary(d => d.Key, d => d.ToList());
+
+            foreach (var volumeProdutoAgrupado in listaVolumesProdutosAgrupados)
+            {
+                PedidoVendaProduto pedidoVendaProdutoOrigem = null;
+
+                var produto = _unitOfWork.ProdutoRepository.GetById(volumeProdutoAgrupado.Key);
+
+                foreach (var volumeProduto in volumeProdutoAgrupado.Value)
+                {
+                    pedidoVendaProdutoOrigem = _unitOfWork.PedidoVendaProdutoRepository.ObterPorIdPedidoVendaVolumeEIdProduto(volumeProduto.IdPedidoVendaVolumeOrigem, volumeProdutoAgrupado.Key);
+
+                    if (produto == null)
+                    {
+                        throw new BusinessException("Um dos produtos da lista não foi encontrado;");
+                    }
+
+                    if (!(volumeProduto.Quantidade > 0))
+                    {
+                        throw new BusinessException($"A quantidade digitada do produto {produto.Referencia} deve ser maior que zero.");
+                    }
+
+                    if (volumeProduto.Quantidade < produto.MultiploVenda || (volumeProduto.Quantidade % produto.MultiploVenda) != 0)
+                    {
+                        throw new BusinessException($"O produto {produto.Referencia} está fora do múltiplo.");
+                    }
+
+                    GerneciamentoVolumesValidacaoVolume(idGrupoCorredorArmazenagem, pedidoVenda, grupoCorredorArmazenagem, volumeProduto, produto, pedidoVendaProdutoOrigem);
+
+                    pedidoVendaProdutoOrigem.QtdSeparar -= volumeProduto.Quantidade;
+
+                    listaVolumeProdutosOrigem.Add(pedidoVendaProdutoOrigem);
+                }
+
+                var qtdTransferencia = volumeProdutoAgrupado.Value.Sum(s => s.Quantidade);
+                var pesoProduto = produto.PesoBruto * qtdTransferencia;
+
+                PedidoVendaProduto pedidoVendaProduto = pedidoVendaVolume.PedidoVendaProdutos.Where(w => w.IdProduto == volumeProdutoAgrupado.Key).FirstOrDefault();
+
+                if (pedidoVendaProduto != null)
+                {
+                    pesoTotal += pedidoVendaProduto.PesoProduto + produto.PesoBruto;
+
+                    pedidoVendaProduto.PesoProduto = pedidoVendaProduto.PesoProduto + produto.PesoBruto;
+                    pedidoVendaProduto.QtdSeparar += qtdTransferencia;
+                }
+                else
+                {
+                    var largura = produto.Largura.HasValue ? produto.Largura.Value : 0;
+                    var comprimento = produto.Comprimento.HasValue ? produto.Comprimento.Value : 0;
+                    var altura = produto.Altura.HasValue ? produto.Altura.Value : 0;
+
+                    pedidoVendaProduto = new PedidoVendaProduto()
+                    {
+                        IdPedidoVenda = pedidoVenda.IdPedidoVenda,
+                        IdProduto = volumeProdutoAgrupado.Key,
+                        IdEnderecoArmazenagem = pedidoVendaProdutoOrigem.IdEnderecoArmazenagem,
+                        IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
+                        QtdSeparar = qtdTransferencia,
+                        QtdSeparada = null,
+                        CubagemProduto = largura * comprimento * altura,
+                        PesoProduto = produto.PesoBruto,
+                        DataHoraInicioSeparacao = null,
+                        DataHoraFimSeparacao = null
+                    };
+
+                    pedidoVendaVolume.PedidoVendaProdutos.Add(pedidoVendaProduto);
+                    pesoTotal += pesoProduto;
+                }
+                
+                listaVolumeProdutosAlterar.Add(pedidoVendaProduto);
+            }
+
+            if (pesoTotal > 22)
+            {
+                excedeuPeso = true;
+            }
+
+            foreach (var volumeProduto in listaVolumeProdutosAlterar)
+            {
+                pedidoVendaVolume.CubagemVolume += volumeProduto.CubagemProduto * volumeProduto.QtdSeparar;
+                pedidoVendaVolume.PesoVolume += volumeProduto.PesoProduto * volumeProduto.QtdSeparar;
+                pedidoVendaVolume.PedidoVendaProdutos.Add(volumeProduto);
+            }
+
+            var volumesOrigemAgrupados = listaVolumeProdutosOrigem.GroupBy(g => g.IdPedidoVendaVolume).ToDictionary(d => d.Key, d => d.ToList());
+
+            using (var transacao = _unitOfWork.CreateTransactionScope())
+            {
+                if (!idPedidoVendaVolume.HasValue)
+                {
+                    _unitOfWork.PedidoVendaVolumeRepository.Add(pedidoVendaVolume);
+                }
+                else
+                {
+                    _unitOfWork.PedidoVendaVolumeRepository.Update(pedidoVendaVolume);
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+
+                foreach (var volumeOrigem in volumesOrigemAgrupados)
+                {
+                    foreach (var volumeProduto in volumeOrigem.Value)
+                    {
+                        if (volumeProduto.IdPedidoVendaProduto == 0)
+                        {
+                            _unitOfWork.PedidoVendaProdutoRepository.Add(volumeProduto);
+
+                            await _unitOfWork.SaveChangesAsync();
+
+                            continue;
+                        }
+
+                        if (volumeProduto.QtdSeparar == 0)
+                        {
+                            volumeProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeExcluido;
+                            volumeProduto.DataHoraAutorizacaoZerarPedido = DateTime.Now;
+                        }
+                        else if (volumeProduto.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao)
+                        {
+                            volumeProduto.DataHoraInicioSeparacao = null;
+                            volumeProduto.DataHoraFimSeparacao = null;
+                            volumeProduto.IdUsuarioSeparacao = null;
+                            volumeProduto.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
+
+                            if (volumeProduto.QtdSeparada.GetValueOrDefault() > 0)
+                            {
+                                await _separacaoPedidoService.AjustarQuantidadeVolume(volumeProduto, volumeProduto.QtdSeparada.Value, idEmpresa, idUsuario);
+                            }
+                        }
+
+                        _unitOfWork.PedidoVendaProdutoRepository.Update(volumeProduto);
+
+                        await _unitOfWork.SaveChangesAsync();
+                    }
+
+                    var volume = _unitOfWork.PedidoVendaVolumeRepository.GetById(volumeOrigem.Key);
+
+                    volume.PesoVolume = volume.PedidoVendaProdutos.Sum(s => s.PesoProduto * s.QtdSeparar);
+                    volume.CubagemVolume = volume.PedidoVendaProdutos.Sum(s => s.CubagemProduto * s.QtdSeparar);
+
+                    if (!volume.PedidoVendaProdutos.Any(a => a.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido))
+                    {
+                        volume.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeExcluido;
+                    }
+                    else if (!volume.PedidoVendaProdutos.Any(a => a.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao || a.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso))
+                    {
+                        volume.DataHoraInicioSeparacao = null;
+                        volume.DataHoraFimSeparacao = null;
+                        volume.IdUsuarioSeparacaoAndamento = null;
+                        volume.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
+                    }
+
+                    _unitOfWork.PedidoVendaVolumeRepository.Update(volume);
+                }
+
+                if (!pedidoVenda.PedidoVendaVolumes.Any(a => a.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao || a.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso))
+                {
+                    pedidoVenda.DataHoraInicioSeparacao = null;
+                    pedidoVenda.DataHoraFimSeparacao = null;
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
+                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
+                }
+
+                var pedidoVendaChecagem = _unitOfWork.PedidoVendaRepository.GetById(pedidoVenda.IdPedidoVenda);
+                if (pedidoVendaChecagem.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
+                {
+                    throw new BusinessException("A separação do pedido está concluída, o mesmo não pode ser alterado.");
+                }
+
+                _unitOfWork.PedidoVendaRepository.Update(pedidoVenda);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                transacao.Complete();
+            }
+
+            return excedeuPeso;
+        }
+
+        private async Task<PedidoVendaVolume> GerenciamentoVolumesGerarVolume(long? idPedidoVendaVolume, long idEmpresa, long idGrupoCorredorArmazenagem, PedidoVenda pedidoVenda, GrupoCorredorArmazenagem grupoCorredorArmazenagem)
+        {
+            PedidoVendaVolume pedidoVendaVolume;
+
+            if (idPedidoVendaVolume.HasValue)
+            {
+                pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume.Value);
+            }
+            else
+            {
+                PedidoVendaVolume ultimoVolume = _unitOfWork.PedidoVendaVolumeRepository.ObterPorIdPedidoVenda(pedidoVenda.IdPedidoVenda).OrderBy(o => o.NroVolume).Last();
+                Caixa caixa = _unitOfWork.CaixaRepository.BuscarTodos(idEmpresa).Where(w => w.Ativo).OrderBy(o => o.Cubagem).LastOrDefault();
+
+                if (caixa == null)
+                {
+                    throw new BusinessException("Nenhuma caixa ativa foi encontrada para a empresa.");
+                }
+
+                pedidoVendaVolume = new PedidoVendaVolume()
+                {
+                    IdPedidoVenda = pedidoVenda.IdPedidoVenda,
+                    NroCentena = ultimoVolume.NroCentena,
+                    NroVolume = ultimoVolume.NroVolume + 1,
+                    IdCaixaCubagem = caixa.IdCaixa,
+                    EtiquetaVolume = caixa.TextoEtiqueta,
+                    IdGrupoCorredorArmazenagem = idGrupoCorredorArmazenagem,
+                    DataHoraInicioSeparacao = null,
+                    DataHoraFimSeparacao = null,
+                    IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
+                    CorredorInicio = grupoCorredorArmazenagem.CorredorInicial,
+                    CorredorFim = grupoCorredorArmazenagem.CorredorFinal,
+                    IdImpressora = grupoCorredorArmazenagem.IdImpressora
+                };
+
+                pedidoVenda.NroVolumes += 1;
+            }
+
+            return pedidoVendaVolume;
+        }
+
+        private void GerneciamentoVolumesValidacaoVolume(long idGrupoCorredorArmazenagem, PedidoVenda pedidoVenda, GrupoCorredorArmazenagem grupoCorredorArmazenagem, GerenciarVolumeItem volume, Produto produto, PedidoVendaProduto pedidoVendaProdutoOrigem)
+        {
+            var nroVolume = pedidoVendaProdutoOrigem.PedidoVendaVolume.NroVolume.ToString().PadLeft(3, '0');
+           
+            if (pedidoVendaProdutoOrigem == null)
+            {
+                throw new BusinessException($"Ocorreu erro ao encontrar o volume do produto {produto.Referencia}");
+            }
+
+            if (pedidoVendaProdutoOrigem.IdPedidoVenda != pedidoVenda.IdPedidoVenda)
+            {
+                throw new BusinessException($"O volume {nroVolume} não pertence ao pedido.");
+            }
+
+            if (idGrupoCorredorArmazenagem != pedidoVendaProdutoOrigem.PedidoVendaVolume.IdGrupoCorredorArmazenagem)
+            {
+                throw new BusinessException($"O produto {produto.Referencia} do volume {nroVolume} não pertence ao intervalo de Corredor: {grupoCorredorArmazenagem.CorredorInicial} até {grupoCorredorArmazenagem.CorredorFinal}.");
+            }
+
+            if (pedidoVendaProdutoOrigem.QtdSeparar < volume.Quantidade)
+            {
+                throw new BusinessException($"A quantidade digitada excede a quanto total produto {produto.Referencia} do volume {nroVolume}");
+            }
+
+            if (pedidoVendaProdutoOrigem.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao &&
+                pedidoVendaProdutoOrigem.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao &&
+                pedidoVendaProdutoOrigem.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
+            {
+                throw new BusinessException($"Status do volume {nroVolume} está inválido para alteração");
+            }
+
+            if (pedidoVendaProdutoOrigem.PedidoVendaVolume.EtiquetaVolume == "F")
+            {
+                throw new BusinessException($"O produto {pedidoVendaProdutoOrigem.Produto.Referencia} do volume {nroVolume} não pode ser incluído no volume. No volume atual do produto, a caixa do produto é do fornecedor.");
+            }
+
+            if (pedidoVendaProdutoOrigem.IdLote.HasValue)
+            {
+                throw new BusinessException($"O produto {pedidoVendaProdutoOrigem.Produto.Referencia} do volume {nroVolume} não pode ser incluído no volume. No volume atual do produto, a separação do produto é fora do picking.");
+            }
+        }
+
+        public PedidoVenda GerenciarVolumesValidacaoPedido(string nroPedido, long idEmpresa)
+        {
+            var pedidoVenda = _unitOfWork.PedidoVendaRepository.ObterPorNroPedidoEEmpresa(nroPedido, idEmpresa);
+            if (pedidoVenda == null)
+            {
+                throw new BusinessException("O pedido não foi encontrado.");
+            }
+
+            if (pedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
+            {
+                throw new BusinessException("A separação do pedido está concluída, o mesmo não pode ser alterado.");
+            }
+
+            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.EnviadoSeparacao && pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
+            {
+                throw new BusinessException("O pedido está com status inválido para alteração.");
+            }
+
+            return pedidoVenda;
+        }
+
+        public PedidoVenda GerenciarVolumesValidacaoVolume(long idEmpresa, long idPedidoVendaVolume)
+        {
+            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
+            if (pedidoVendaVolume == null)
+            {
+                throw new BusinessException("O Volume não foi encontrado.");
+            }
+
+            var pedidoVenda = GerenciarVolumesValidacaoPedido(pedidoVendaVolume.PedidoVenda.Pedido.NumeroPedido, idEmpresa);
+
+            if (pedidoVendaVolume.IdPedidoVenda != pedidoVenda.IdPedidoVenda)
+            {
+                throw new BusinessException("O volume e o pedido estão divergêntes.");
+            }
+
+            if (!(pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao ||
+                pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso ||
+                pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao))
+            {
+                throw new BusinessException("O volume está com status inválido para alteração.");
+            }
+
+            return pedidoVenda;
+        }
+
+        public bool GerenciarVolumesValidarPeso(long? idPedidoVendaVolume, List<GerenciarVolumeItem> listaVolumes)
+        {
+            decimal pesoTotal = 0;
+
+            if (idPedidoVendaVolume.HasValue)
+            {
+                var volume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume.Value);
+                if (volume == null)
+                {
+                    throw new BusinessException("Volume não encontrado para validar o peso.");
+                }
+
+                pesoTotal += volume.PedidoVendaProdutos.Sum(s => s.PesoProduto * s.QtdSeparar);
+            }
+
+            foreach (var item in listaVolumes)
+            {
+                var produto = _unitOfWork.ProdutoRepository.GetById(item.IdProduto);
+                if (produto == null)
+                {
+                    throw new BusinessException("Produto não encontrado para validar o peso.");
+                }
+
+                pesoTotal += produto.PesoBruto * item.Quantidade;
+            }
+
+            if (pesoTotal > 22)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

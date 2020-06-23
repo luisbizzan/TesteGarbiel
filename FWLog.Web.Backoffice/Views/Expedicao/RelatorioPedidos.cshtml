@@ -11,7 +11,8 @@
         {
             pageDataUrl = Url.Action("RelatorioPedidosPageData"),
             detailsVisible = true,
-            imprimirVisivel = true
+            imprimirVisivel = true,
+            editarVolumeVisivel = User.HasPermission(Permissions.RelatoriosExpedicao.RelatorioPedidosEditarVolume)
         })
 }
 <!-- filter -->
@@ -102,6 +103,12 @@
         <div class="x_panel">
             <div class="x_title">
                 <h2>Relatório de Pedidos</h2>
+                <div class="nav navbar-right panel_toolbox">
+                    @if (User.HasPermission(Permissions.RelatoriosExpedicao.RelatorioPedidosCadastrarVolume))
+                    {
+                        <a class="btn btn-primary btn-dt-action" href="@Url.Action("GerenciarVolumes")"><i class="fa fa-fw fa-plus"></i> Gerenciar Volumes</a>
+                    }
+                </div>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">

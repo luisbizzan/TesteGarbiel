@@ -148,6 +148,7 @@
     <Compile Include="Model\Etiquetas\ImprimirEtiquetaVolumeRecebimento.cs" />
     <Compile Include="Model\Etiquetas\ValidarEnderecoPickingRequestResposta.cs" />
     <Compile Include="Model\Etiquetas\ValidarEnderecoPickingRequest.cs" />
+    <Compile Include="Model\Expedicao\GerenciarVolumeItem.cs" />
     <Compile Include="Model\Expedicao\EnderecosPorTransportadoraResposta.cs" />
     <Compile Include="Model\Expedicao\RomaneioResposta.cs" />
     <Compile Include="Model\Expedicao\RomaneioFinalizarNFResposta.cs" />

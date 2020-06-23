@@ -115,6 +115,7 @@
     <Compile Include="Models\DataTablesCtx\AtividadeEstoqueListaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\CaixaListaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\CaixaRecusaListaTabela.cs" />
+    <Compile Include="Models\DataTablesCtx\PedidoVendaVolumePesquisaModalLinhaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\CorredorImpressoraListaTabela.cs" />
     <Compile Include="Models\DataTablesCtx\DetalhesPedidoVolume.cs" />
     <Compile Include="Models\DataTablesCtx\EnderecoArmazenagemTotalPorAlasLinhaTabela.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Models\FilterCtx\AtividadeEstoqueListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\CaixaListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\CaixaRecusaListaFiltro.cs" />
+    <Compile Include="Models\FilterCtx\PedidoVendaVolumePesquisaModalFiltro.cs" />
     <Compile Include="Models\FilterCtx\CorredorImpressoraListaFiltro.cs" />
     <Compile Include="Models\FilterCtx\EnderecoArmazenagemPesquisaModalFiltro.cs" />
     <Compile Include="Models\FilterCtx\GarantiaFilter.cs" />

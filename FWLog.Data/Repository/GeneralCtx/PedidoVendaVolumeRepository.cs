@@ -1,4 +1,5 @@
-﻿using FWLog.Data.Models;
+﻿using ExtensionMethods.List;
+using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Data.Repository.CommonCtx;
@@ -279,6 +280,32 @@ namespace FWLog.Data.Repository.GeneralCtx
             });
 
             return resultado;
+        }
+
+        public IEnumerable<PedidoVendaVolumePesquisaModalLinhaTabela> ObterDadosParaDataTable(DataTableFilter<PedidoVendaVolumePesquisaModalFiltro> filter, out int totalRecordsFiltered, out int totalRecords)
+        {
+            totalRecords = Entities.PedidoVendaVolume.Count();
+
+            IQueryable<PedidoVendaVolumePesquisaModalLinhaTabela> query = Entities.PedidoVendaVolume.AsNoTracking()
+                .Where(x => x.PedidoVenda.Pedido.NumeroPedido == filter.CustomFilter.NroPedido &&
+                (filter.CustomFilter.IdPedidoVendaVolume.HasValue == false || x.IdPedidoVendaVolume != filter.CustomFilter.IdPedidoVendaVolume.Value) &&
+                (x.PedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao ||
+                 x.PedidoVenda.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao) &&
+                (x.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao || 
+                 x.IdPedidoVendaStatus == PedidoVendaStatusEnum.ProcessandoSeparacao || 
+                 x.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso) &&
+                (filter.CustomFilter.NroVolume.HasValue == false || x.NroVolume == filter.CustomFilter.NroVolume))
+                .Select(e => new PedidoVendaVolumePesquisaModalLinhaTabela
+                {
+                    NroPedido = e.PedidoVenda.Pedido.NumeroPedido,
+                    NroVolume = e.NroVolume,
+                    DescricaoStatus = e.PedidoVendaStatus.Descricao,
+                    IdPedidoVendaVolume = e.IdPedidoVendaVolume
+                });
+
+            totalRecordsFiltered = query.Count();
+
+            return query.PaginationResult(filter);
         }
     }
 }

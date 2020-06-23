@@ -2,12 +2,15 @@
 using DartDigital.Library.Exceptions;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
+using FWLog.Services.Model.Expedicao;
 using FWLog.Services.Services;
 using FWLog.Web.Backoffice.Helpers;
 using FWLog.Web.Backoffice.Models.CommonCtx;
 using FWLog.Web.Backoffice.Models.ExpedicaoCtx;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,15 +25,17 @@ namespace FWLog.Web.Backoffice.Controllers
         private readonly ExpedicaoService _expedicaoService;
         private readonly RelatorioService _relatorioService;
         private readonly EtiquetaService _etiquetaService;
+        private readonly ILog _log;
 
         private readonly UnitOfWork _uow;
 
-        public ExpedicaoController(ExpedicaoService expedicaoService, RelatorioService relatorioService, EtiquetaService etiquetaService, UnitOfWork uow)
+        public ExpedicaoController(ExpedicaoService expedicaoService, RelatorioService relatorioService, EtiquetaService etiquetaService, UnitOfWork uow, ILog log)
         {
             _expedicaoService = expedicaoService;
             _relatorioService = relatorioService;
             _etiquetaService = etiquetaService;
             _uow = uow;
+            _log = log;
         }
 
         [HttpGet]
@@ -369,6 +374,191 @@ namespace FWLog.Web.Backoffice.Controllers
                     Success = false,
                     Message = exception.Message
                 }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosCadastrarVolume)]
+        public ActionResult GerenciarVolumes()
+        {
+            var model = new GerenciarVolumeViewModel()
+            {
+                IdEmpresa = IdEmpresa
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosCadastrarVolume)]
+        public async Task<JsonResult> GerenciarVolumes(GerenciarVolumeRequisicao requisicao)
+        {
+            try
+            {
+                var listaVolumes = Mapper.Map<List<GerenciarVolumeItem>>(requisicao.ProdutosVolumes);
+
+                var excedeuPeso = await _expedicaoService.GerenciarVolumes(requisicao.NroPedido, requisicao.IdPedidoVendaVolume, listaVolumes, IdEmpresa, requisicao.IdGrupoCorredorArmazenagem, IdUsuario).ConfigureAwait(false);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = excedeuPeso ? "Volume criado com sucesso. Atenção, os produtos excederam o peso máximo da caixa." : "Volume criado com sucesso."
+                });
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex.Message, ex);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = ex is BusinessException ? ex.Message : "Erro ao criar o volume."
+                });
+            }
+        }
+
+        [HttpGet]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosEditarVolume)]
+        public ActionResult GerenciarVolumesEditar(long idPedidoVendaVolume)
+        {
+            var listVolumes = new List<GerenciarVolumeItemViewModel>();
+            var volume = _uow.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
+
+            foreach (var volumeProduto in volume.PedidoVendaProdutos.Where(w => w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido).ToList())
+            {
+                listVolumes.Add(new GerenciarVolumeItemViewModel()
+                {
+                    IdProduto = volumeProduto.IdProduto,
+                    QuantidadeOrigem = volumeProduto.QtdSeparar,
+                    DescricaoProduto = volumeProduto.Produto.Descricao,
+                    ReferenciaProduto = volumeProduto.Produto.Referencia,
+                    NroVolume = volume.NroVolume.ToString().PadLeft(3, '0'),
+                    IdLote = volumeProduto.IdLote
+                });
+            }
+
+            var model = new GerenciarVolumeViewModel()
+            {
+                IdEmpresa = IdEmpresa,
+                ListaItens = listVolumes,
+                NroPedido = volume.PedidoVenda.Pedido.NumeroPedido,
+                IdPedido = volume.PedidoVenda.IdPedido,
+                IdGrupoCorredorArmazenagem = volume.IdGrupoCorredorArmazenagem,
+                CorredorFim = volume.CorredorFim,
+                CorredorInicio = volume.CorredorInicio,
+                IdPedidoVendaVolume = idPedidoVendaVolume                
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosEditarVolume)]
+        public async Task<JsonResult> GerenciarVolumesEditar(GerenciarVolumeRequisicao requisicao)
+        {
+            try
+            {
+                var listaVolumes = Mapper.Map<List<GerenciarVolumeItem>>(requisicao.ProdutosVolumes);
+
+                var excedeuPeso = await _expedicaoService.GerenciarVolumes(requisicao.NroPedido, requisicao.IdPedidoVendaVolume, listaVolumes, IdEmpresa, requisicao.IdGrupoCorredorArmazenagem, IdUsuario).ConfigureAwait(false);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = excedeuPeso ? "Volume editado com sucesso. Atenção, os produtos excederam o peso máximo da caixa." : "Volume editado com sucesso."
+                });
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex.Message, ex);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = ex is BusinessException ? ex.Message : "Erro ao editado o volume."
+                });
+            }
+        }
+
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.Caixa.Cadastrar)]
+        public async Task<JsonResult> GerenciarVolumesValidarVolume(long id)
+        {
+            try
+            {
+                var result = _expedicaoService.GerenciarVolumesValidacaoVolume(IdEmpresa, id);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = ""
+                });
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = e is BusinessException ? e.Message : "Ocorreu um erro na consulta dos dados do volume."
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosCadastrarVolume)]
+        public ActionResult GerenciarVolumesValidarPedido(string nroPedido)
+        {
+            try
+            {
+                var result = _expedicaoService.GerenciarVolumesValidacaoPedido(nroPedido, IdEmpresa);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = ""
+                });
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = e is BusinessException ? e.Message : "Ocorreu um erro na consulta dos dados do pedido."
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosCadastrarVolume)]
+        public ActionResult GerenciarVolumesValidarPeso(GerenciarVolumeRequisicao requisicao)
+        {
+            try
+            {
+                var listaVolumes = Mapper.Map<List<GerenciarVolumeItem>>(requisicao.ProdutosVolumes);
+                var excedeupeso = _expedicaoService.GerenciarVolumesValidarPeso(requisicao.IdPedidoVendaVolume, listaVolumes);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "",
+                    Data = excedeupeso.ToString()
+                });
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = e is BusinessException ? e.Message : "Ocorreu um erro na consulta dos dados do pedido."
+                }, JsonRequestBehavior.DenyGet);
             }
         }
     }

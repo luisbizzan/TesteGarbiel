@@ -484,6 +484,8 @@ namespace FWLog.AspNet.Identity
             public const string RelatorioVolumesInstaladosTransportadora = "RelatorioVolumesInstaladosTransportadora";
             public const string MovimentacaoVolumes = "MovimentacaoVolumes";
             public const string RelatorioPedidos = "RelatorioPedidos";
+            public const string RelatorioPedidosCadastrarVolume = "RelatorioPedidosCadastrarVolume";
+            public const string RelatorioPedidosEditarVolume = "RelatorioPedidosEditarVolume";
             public const string RelatorioPedidosExpedidos = "RelatorioPedidosExpedidos";
 
             public RelatoriosExpedicao() : base(Display.FromString("Expedição - Relatórios"))
@@ -492,6 +494,8 @@ namespace FWLog.AspNet.Identity
                 Register(MovimentacaoVolumes, Display.FromString("Movimentação de Volumes"));
                 Register(RelatorioPedidosExpedidos, Display.FromString("Relatório Pedidos Expedidos"));
                 Register(RelatorioPedidos, Display.FromString("Relatório de Pedidos"));
+                Register(RelatorioPedidosCadastrarVolume, Display.FromString("Gerenciar Volumes - Criar Volume"));
+                Register(RelatorioPedidosEditarVolume, Display.FromString("Gerenciar Volumes - Editar Volume"));
             }
         }
 
@@ -499,11 +503,15 @@ namespace FWLog.AspNet.Identity
         {
             public const string MovimentacaoVolumes = "MovimentacaoVolumes";
             public const string RelatorioPedidos = "RelatorioPedidos";
+            public const string RelatorioPedidosCadastrarVolume = "RelatorioPedidosCadastrarVolume";
+            public const string RelatorioPedidosEditarVolume = "RelatorioPedidosEditarVolume";
 
             public RelatoriosSeparacao() : base(Display.FromString("Separação - Relatórios"))
             {
                 Register(MovimentacaoVolumes, Display.FromString("Movimentação de Volumes"));
                 Register(RelatorioPedidos, Display.FromString("Relatório de Pedidos"));
+                Register(RelatorioPedidosCadastrarVolume, Display.FromString("Gerenciar Volumes - Criar Volume"));
+                Register(RelatorioPedidosEditarVolume, Display.FromString("Gerenciar Volumes - Editar Volume"));
             }
         }
     }

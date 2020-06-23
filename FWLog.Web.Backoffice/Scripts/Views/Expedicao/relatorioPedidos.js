@@ -66,6 +66,8 @@
     };
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
+        var editarVolumeVisivel = view.editarVolumeVisivel && full.PermitirEditarVolume;
+
         return [
             {
                 text: "Detalhes do Volume",
@@ -79,6 +81,13 @@
                 icon: 'fa fa-print',
                 attrs: { 'data-id': full.IdPedidoVendaVolume, 'action': 'reimprimir' },
                 visible: view.imprimirVisivel
+            },
+            {
+                text: "Editar Volume",
+                action: 'editarVolume',
+                icon: 'fa fa-edit',
+                attrs: { 'data-id': full.IdPedidoVendaVolume, 'action': 'editarVolume' },
+                visible: editarVolumeVisivel
             }
         ];
     });
@@ -161,6 +170,7 @@
     });
 
     $("#dataTable").on('click', "[action='reimprimir']", confirmarReimpressaoEtiqueta);
+    $("#dataTable").on('click', "[action='editarVolume']", editarVolume);
 
     function confirmarReimpressaoEtiqueta() {
         let id = $(this).data("id");
@@ -172,6 +182,26 @@
         });
     }
 })();
+
+function editarVolume() {
+    let id = $(this).data("id");
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "GerenciarVolumesValidarVolume/" + id,
+        method: "POST",
+        cache: false,
+        success: function (result) {
+            if (result.Success) {
+                window.location.href = HOST_URL + CONTROLLER_PATH + "GerenciarVolumesEditar/?idPedidoVendaVolume=" + id;
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+        },
+        error: function (data) {
+            PNotify.error({ text: "Ocorreu um erro na inicilização da edição do volume." });
+            NProgress.done();
+        }
+    });
+}
 
 function setCliente(idCliente, nomeFantasia) {
     $("#Filter_NomeCliente").val(nomeFantasia);
