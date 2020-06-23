@@ -24,6 +24,10 @@ namespace FWLog.Web.Backoffice.Models.CorredorImpressoraCtx
         [Required]
         public long IdImpressora { get; set; }
 
+        [Display(Name = "Impressora Filial")]
+        [Required]
+        public long IdImpressoraPedidoFilial { get; set; }
+
         [Display(Name = "Ativo")]
         [Required]
         public bool Ativo { get; set; }

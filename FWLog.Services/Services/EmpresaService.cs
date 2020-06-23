@@ -16,11 +16,13 @@ namespace FWLog.Services.Services
     {
         private UnitOfWork _unitOfWork;
         private ILog _log;
+        private readonly ClienteService _clienteService;
 
-        public EmpresaService(UnitOfWork uow, ILog log)
+        public EmpresaService(UnitOfWork uow, ILog log, ClienteService clienteService)
         {
             _unitOfWork = uow;
             _log = log;
+            _clienteService = clienteService;
         }
 
         public async Task ConsultarEmpresaIntegracao(bool somenteNovos = true)
@@ -35,7 +37,7 @@ namespace FWLog.Services.Services
             inner.Append("LEFT JOIN TSIEND ON TSIEMP.CODEND = TSIEND.CODEND ");
             inner.Append("LEFT JOIN TSIBAI ON TSIEMP.CODBAI = TSIBAI.CODBAI ");
             inner.Append("LEFT JOIN TSICID ON TSIEMP.CODCID = TSICID.CODCID ");
-            inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF");
+            inner.Append("LEFT JOIN TSIUFS ON TSICID.UF = TSIUFS.CODUF ");
 
             var where = new StringBuilder();
 
@@ -53,6 +55,19 @@ namespace FWLog.Services.Services
                 try
                 {
                     ValidarDadosIntegracao(empInt);
+
+                    Cliente cliente = null;
+
+                    if(empInt.CodigoParceiro != null && !empInt.CodigoParceiro.Equals("0"))
+                    {
+                        var codParc = Convert.ToInt32(empInt.CodigoParceiro);
+                        cliente = _unitOfWork.ClienteRepository.ConsultarPorCodigoIntegracao(codParc);
+
+                        if(cliente == null)
+                        {
+                            cliente = await _clienteService.ConsultarClientePorCodigoIntegracao(empInt.CodigoParceiro);
+                        }
+                    }
 
                     bool empresaNova = false;
 
@@ -84,6 +99,7 @@ namespace FWLog.Services.Services
                     empresaConfig.Empresa.Telefone = empInt.Telefone;
                     empresaConfig.Empresa.TelefoneSAC = empInt.TelefoneSAC;
                     empresaConfig.IdEmpresaTipo = empInt.EmpresaMatriz == empInt.CodigoIntegracao ? EmpresaTipoEnum.Matriz : EmpresaTipoEnum.Filial;
+                    empresaConfig.Empresa.IdCliente = cliente?.IdCliente;
 
                     if (empresaNova)
                     {

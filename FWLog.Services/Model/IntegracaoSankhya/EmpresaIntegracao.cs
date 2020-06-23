@@ -74,5 +74,9 @@ namespace FWLog.Services.Model.IntegracaoSankhya
         [TabelaIntegracao(DisplayName = "TGFEMP.AD_FONE_SAC")]
         [Required]
         public string TelefoneSAC { get; set; }
+
+        [Display(Name = "TSIEMP.CODPARC")]
+        [TabelaIntegracao(DisplayName = "TSIEMP.CODPARC")]
+        public string CodigoParceiro { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task ConsultarCliente(bool somenteNovos)
+        public async Task ConsultarCliente(bool somenteNovos, string codParceiro)
         {
             if (!Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
             {
@@ -40,6 +40,11 @@ namespace FWLog.Services.Services
             else
             {
                 where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
+            }
+
+            if(codParceiro != null)
+            {
+                where.Append($"AND TGFPAR.CODPARC = '{codParceiro}' ");
             }
 
             int quantidadeChamadas = 0;
@@ -90,6 +95,11 @@ namespace FWLog.Services.Services
                 else
                 {
                     where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
+                }
+
+                if (codParceiro != null)
+                {
+                    where.Append($"AND TGFPAR.CODPARC = '{codParceiro}' ");
                 }
 
                 where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET " + offsetRows + " ROWS FETCH NEXT 4999 ROWS ONLY ");
@@ -163,6 +173,13 @@ namespace FWLog.Services.Services
                     _log.Error(string.Format("Erro na integração do Cliente: {0}.", clienteInt.CodigoIntegracao), ex);
                 }
             }
+        }
+
+        public async Task<Cliente> ConsultarClientePorCodigoIntegracao(string codParceiro)
+        {
+            await ConsultarCliente(true, codParceiro);
+
+            return _unitOfWork.ClienteRepository.ConsultarPorCodigoIntegracao(Convert.ToInt32(codParceiro));
         }
     }
 }

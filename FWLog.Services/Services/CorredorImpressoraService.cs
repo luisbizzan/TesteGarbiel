@@ -57,7 +57,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("Não é permitido cadastro de intervalo de corredores sobrepostos para um mesmo ponto de armazenagem.");
 
             var _grupoCorredorArmazenagemPorImpressora = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorImpressora(grupoCorredorArmazenagem.IdEmpresa, grupoCorredorArmazenagem.CorredorInicial,
-                grupoCorredorArmazenagem.CorredorFinal, grupoCorredorArmazenagem.IdImpressora);
+                grupoCorredorArmazenagem.CorredorFinal, grupoCorredorArmazenagem.IdImpressora, grupoCorredorArmazenagem.IdImpressoraPedidoFilial);
 
             if (_grupoCorredorArmazenagemPorImpressora != null)
                 throw new BusinessException("Existem corredores no intervalo informado com impressora configurada.");
@@ -98,12 +98,13 @@ namespace FWLog.Services.Services
             if (IntevaloSobrepostos(listGrupoCorredorArmazenagem.Where(gca => gca.IdGrupoCorredorArmazenagem != grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem).ToList(), grupoCorredorArmazenagem.CorredorInicial, grupoCorredorArmazenagem.CorredorFinal))
                 throw new BusinessException("Não é permitido cadastro de intervalo de corredores sobrepostos para um mesmo ponto de armazenagem.");
 
-            var _grupoCorredorArmazenagemPorImpressora = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorImpressora(idEmpresaUsuarioLogado, grupoCorredorArmazenagem.CorredorInicial, grupoCorredorArmazenagem.CorredorFinal, grupoCorredorArmazenagem.IdImpressora);
+            var _grupoCorredorArmazenagemPorImpressora = _unitOfWork.GrupoCorredorArmazenagemRepository.BuscarPorImpressora(idEmpresaUsuarioLogado, grupoCorredorArmazenagem.CorredorInicial, grupoCorredorArmazenagem.CorredorFinal, grupoCorredorArmazenagem.IdImpressora, grupoCorredorArmazenagem.IdImpressoraPedidoFilial);
 
             if (_grupoCorredorArmazenagemPorImpressora != null && _grupoCorredorArmazenagemPorImpressora.IdGrupoCorredorArmazenagem != grupoCorredorArmazenagem.IdGrupoCorredorArmazenagem)
                 throw new BusinessException("Existem corredores no intervalo informado com impressora configurada.");
 
             grupoCorredorArmazenagemAntigo.IdImpressora = grupoCorredorArmazenagem.IdImpressora;
+            grupoCorredorArmazenagemAntigo.IdImpressoraPedidoFilial = grupoCorredorArmazenagem.IdImpressoraPedidoFilial;
             grupoCorredorArmazenagemAntigo.IdPontoArmazenagem = grupoCorredorArmazenagem.IdPontoArmazenagem;
             grupoCorredorArmazenagemAntigo.CorredorInicial = grupoCorredorArmazenagem.CorredorInicial;
             grupoCorredorArmazenagemAntigo.CorredorFinal = grupoCorredorArmazenagem.CorredorFinal;

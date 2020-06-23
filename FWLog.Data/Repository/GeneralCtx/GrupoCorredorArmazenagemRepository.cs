@@ -23,9 +23,9 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.GrupoCorredorArmazenagem.Where(x => x.IdEmpresa == idEmpresa && x.CorredorInicial == corredorInicial && x.CorredorFinal == corredorFinal && x.IdPontoArmazenagem == idPontoArmazenagem).FirstOrDefault();
         }
 
-        public GrupoCorredorArmazenagem BuscarPorImpressora(long idEmpresa, int corredorInicial, int corredorFinal, long idImpressora)
+        public GrupoCorredorArmazenagem BuscarPorImpressora(long idEmpresa, int corredorInicial, int corredorFinal, long idImpressora, long idImpressoraPedidoFilial)
         {
-            return Entities.GrupoCorredorArmazenagem.Where(x => x.IdEmpresa == idEmpresa && x.CorredorInicial == corredorInicial && x.CorredorFinal == corredorFinal && x.IdImpressora == idImpressora).FirstOrDefault();
+            return Entities.GrupoCorredorArmazenagem.Where(x => x.IdEmpresa == idEmpresa && x.CorredorInicial == corredorInicial && x.CorredorFinal == corredorFinal && x.IdImpressora == idImpressora && x.IdImpressoraPedidoFilial == idImpressoraPedidoFilial).FirstOrDefault();
         }
 
         public List<CorredorImpressoraListaTabela> BuscarLista(DataTableFilter<CorredorImpressoraListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
@@ -47,6 +47,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                     s.CorredorInicial,
                     s.CorredorFinal,
                     Impressora = s.Impressora.Name,
+                    ImpressoraPedidoFilial = s.ImpressoraPedidoFilial.Name,
                     Status = s.Ativo
                 });
 
@@ -67,6 +68,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                 CorredorInicial = q.CorredorInicial.ToString().PadLeft(2, '0'),
                 CorredorFinal = q.CorredorFinal.ToString().PadLeft(2, '0'),
                 Impressora = q.Impressora,
+                ImpressoraPedidoFilial = q.ImpressoraPedidoFilial,
                 Status = q.Status ? "Sim" : "Não"
             }).ToList();
         }

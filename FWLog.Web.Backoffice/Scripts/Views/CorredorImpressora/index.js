@@ -62,6 +62,7 @@
             { data: 'CorredorFinal' },
             { data: 'DescricaoPontoArmazenagem' },
             { data: 'Impressora' },
+            { data: 'ImpressoraPedidoFilial'},
             { data: 'Status' },
             actionsColumn
         ]

@@ -23,6 +23,10 @@ namespace FWLog.Web.Backoffice.Models.CorredorImpressoraCtx
         [Required]
         public string DescricaoImpressora { get; set; }
 
+        [Display(Name = "Impressora Filial")]
+        [Required]
+        public string DescricaoImpressoraPedidoFilial { get; set; }
+
         [Display(Name = "Ativo")]
         [Required]
         public string Ativo { get; set; }
