@@ -104,7 +104,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return query.ToList();
         }
 
-        public List<PedidoVendaVolumeGrupoArmazenagemLinhaTabela> BuscarDadosVolumeGrupoArmazenagem(DateTime dataInicial, DateTime dataFinal, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa)
+        public List<PedidoVendaVolumeGrupoArmazenagemLinhaTabela> BuscarDadosVolumeGrupoArmazenagem(DateTime dataInicial, DateTime dataFinal, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, bool? reposicao, long idEmpresa)
         {
             dataFinal = dataFinal.Date.AddDays(1).Subtract(new TimeSpan(0, 0, 1));
 
@@ -130,6 +130,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                 query = query.Where(q => q.PedidoVenda.Pedido.IsRequisicao == requisicao.Value);
             }
 
+            if (reposicao.HasValue)
+            {
+                query = query.Where(q => q.PedidoVenda.Pedido.IsFilial == reposicao.Value);
+            }
+
             var selectQuery = query.Select(q => new PedidoVendaVolumeGrupoArmazenagemLinhaTabela
             {
                 IdGrupoCorredorArmazenagem = q.GrupoCorredorArmazenagem.IdGrupoCorredorArmazenagem,
@@ -144,7 +149,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             return selectQuery.ToList();
         }
 
-        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, List<PedidoVendaStatusEnum> listaStatus, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, bool nfFaturada, long idEmpresa)
+        public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, List<PedidoVendaStatusEnum> listaStatus, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, bool? reposicao, bool nfFaturada, long idEmpresa)
         {
             dataFinal = dataFinal.Date.AddDays(1).Subtract(new TimeSpan(0, 0, 1));
 
@@ -173,6 +178,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             if (requisicao.HasValue)
             {
                 query = query.Where(q => q.PedidoVenda.Pedido.IsRequisicao == requisicao.Value);
+            }
+
+            if (reposicao.HasValue)
+            {
+                query = query.Where(q => q.PedidoVenda.Pedido.IsFilial == reposicao.Value);
             }
 
             if (!listaStatus.NullOrEmpty())
