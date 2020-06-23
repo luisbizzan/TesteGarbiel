@@ -12,9 +12,10 @@
             pageDataUrl = Url.Action("RelatorioPedidosPageData"),
             detailsVisible = true,
             imprimirVisivel = true,
-            editarVolumeVisivel = User.HasPermission(Permissions.RelatoriosExpedicao.RelatorioPedidosEditarVolume)
+            editarVolumeVisivel = User.HasPermission(Permissions.RelatoriosExpedicao.RelatorioPedidosEditarVolume),
+            removerUsuarioSeparacaoVisivel = User.HasPermission(Permissions.RelatoriosExpedicao.RelatorioPedidosRemoverUsuarioSeparacao)
         })
-}
+} 
 <!-- filter -->
 <form id="relatorioPedidosForm" data-filter="form" data-filter-for="dataTable" class="form-filter">
     <div class="x_panel">
@@ -139,3 +140,4 @@
 <div class="modal fade" id="modalImpressoras" data-backdrop="static"></div>
 <div class="modal" id="confirmarReimpressao"></div>
 <div class="modal" id="modalProduto"></div>
+<div class="modal" id="confirmarRemoverUsuarioSeparacao"></div>

@@ -67,6 +67,7 @@
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         var editarVolumeVisivel = view.editarVolumeVisivel && full.PermitirEditarVolume;
+        var removerUsuarioSeparacaoVisivel = view.removerUsuarioSeparacaoVisivel;
 
         return [
             {
@@ -88,6 +89,13 @@
                 icon: 'fa fa-edit',
                 attrs: { 'data-id': full.IdPedidoVendaVolume, 'action': 'editarVolume' },
                 visible: editarVolumeVisivel
+            },
+            {
+                text: "Remover Usuário Separação",
+                action: 'confirmaRemocaoUsuarioSeparacao',
+                icon: 'fa fa-repeat',
+                attrs: { 'data-id': full.IdPedidoVendaVolume, 'data-pedido': full.NroPedido, 'data-volume': full.NroVolume, 'action': 'confirmaRemocaoUsuarioSeparacao' },
+                visible: removerUsuarioSeparacaoVisivel
             }
         ];
     });
@@ -171,6 +179,7 @@
 
     $("#dataTable").on('click', "[action='reimprimir']", confirmarReimpressaoEtiqueta);
     $("#dataTable").on('click', "[action='editarVolume']", editarVolume);
+    $("#dataTable").on('click', "[action='confirmaRemocaoUsuarioSeparacao']", confirmaRemocaoUsuarioSeparacao);
 
     function confirmarReimpressaoEtiqueta() {
         let id = $(this).data("id");
@@ -283,4 +292,39 @@ function setProduto(idProduto, descricao) {
     $("#Filter_IdProduto").val(idProduto);
     $("#modalProduto").modal("hide");
     $("#modalProduto").empty();
+}
+
+function confirmaRemocaoUsuarioSeparacao() {
+
+    let id = $(this).data("id");
+    let pedido = $(this).data("pedido");
+    let volume = $(this).data("volume");
+
+    dart.modalAjaxConfirm.open({
+        title: 'Confirmação de Remoção',
+        message: "Deseja realmente remover o usuário da separação do Volume " + volume + " - " + pedido + " ?",
+        onConfirm: function () {
+            removeUsuarioSeparacao(id)
+        }
+    });
+}
+
+function removeUsuarioSeparacao(id) {
+
+    $.ajax({
+        url: '/Expedicao/RemoverUsuarioSeparacao/' + id,
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        processData: false,
+        contentType: false,
+        success: function (result) {
+
+            if (result.Success) {
+                PNotify.success({ text: result.Message });
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+        }
+    });
 }

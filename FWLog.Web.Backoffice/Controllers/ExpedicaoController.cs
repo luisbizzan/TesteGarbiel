@@ -446,7 +446,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 IdGrupoCorredorArmazenagem = volume.IdGrupoCorredorArmazenagem,
                 CorredorFim = volume.CorredorFim,
                 CorredorInicio = volume.CorredorInicio,
-                IdPedidoVendaVolume = idPedidoVendaVolume                
+                IdPedidoVendaVolume = idPedidoVendaVolume
             };
 
             return View(model);
@@ -479,7 +479,6 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
         }
-
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.Caixa.Cadastrar)]
@@ -533,7 +532,6 @@ namespace FWLog.Web.Backoffice.Controllers
             }
         }
 
-
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosCadastrarVolume)]
         public ActionResult GerenciarVolumesValidarPeso(GerenciarVolumeRequisicao requisicao)
@@ -559,6 +557,30 @@ namespace FWLog.Web.Backoffice.Controllers
                     Success = false,
                     Message = e is BusinessException ? e.Message : "Ocorreu um erro na consulta dos dados do pedido."
                 }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
+        [HttpPost]
+        [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosRemoverUsuarioSeparacao)]
+        public JsonResult RemoverUsuarioSeparacao(long id)
+        {
+            try
+            {
+                //TODO: Remover usuário
+
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = true,
+                    Message = "Usuário removido com sucesso."
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (BusinessException exception)
+            {
+                return Json(new AjaxGenericResultModel
+                {
+                    Success = false,
+                    Message = exception.Message
+                }, JsonRequestBehavior.AllowGet);
             }
         }
     }
