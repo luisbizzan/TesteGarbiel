@@ -1820,7 +1820,7 @@ namespace FWLog.Services.Services
                 pedidoVendaVolume = new PedidoVendaVolume()
                 {
                     IdPedidoVenda = pedidoVenda.IdPedidoVenda,
-                    NroCentena = await _pedidoVendaVolumeService.GerarNumeroCentena(idEmpresa),
+                    NroCentena = ultimoVolume.NroCentena,
                     NroVolume = ultimoVolume.NroVolume + 1,
                     IdCaixaCubagem = caixa.IdCaixa,
                     EtiquetaVolume = caixa.TextoEtiqueta,
