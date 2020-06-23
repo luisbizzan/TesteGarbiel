@@ -44,14 +44,14 @@
                                     <td>@item.VolumeCentena.ToString().PadLeft(4, '0')</td>
                                     <td>@item.QuantidadeProdutos</td>
                                     <td>@item.PedidoDataCriacao.ToShortDateString()</td>
-                                    <td>@item.PedidoVendaDataProcessamento</td>
+                                    <td>@item.PedidoVendaDataProcessamento.ToString("dd/MM/yyyy HH:mm")</td>
                                     <td>@item.TipoPagamentoDescricao</td>
                                     <td>@item.TransportadoraNomeFantasia</td>
                                     <td>@item.UsuarioDespachoNotaFiscal</td>
-                                    <td>@item.DataHoraDespachoNotaFiscal</td>
+                                    <td>@(item.DataHoraDespachoNotaFiscal.HasValue ? item.DataHoraDespachoNotaFiscal.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty)</td>
                                     <td>@item.NumeroRomaneio</td>
                                     <td>@item.UsuarioRomaneio</td>
-                                    <td>@item.DataHoraRomaneio</td>
+                                    <td>@(item.DataHoraRomaneio.HasValue ? item.DataHoraRomaneio.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty)</td>
                                     <td class=" row-actions">
                                         <p data-id="@item.IdPedidoVendaVolume" action="exibirDetalhesVolume" class="btn btn-row-actions btn-default" title="Detalhes do Volume"><i class="fa fa-eye"></i></p>
                                     </td>
