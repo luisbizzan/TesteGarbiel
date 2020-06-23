@@ -9,5 +9,7 @@ namespace FWLog.Web.Api.Models.Expedicao
 
         [Required(ErrorMessage = "A impressora deve ser informada.")]
         public long IdImpressora { get; set; }
+
+        public bool ImprimeSegundaVia { get; set; }
     }
 }

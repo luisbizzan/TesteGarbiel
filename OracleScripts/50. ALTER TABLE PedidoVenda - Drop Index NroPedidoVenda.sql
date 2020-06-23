@@ -1,0 +1,1 @@
+DROP INDEX DART."PedidoVenda_INDEX7";

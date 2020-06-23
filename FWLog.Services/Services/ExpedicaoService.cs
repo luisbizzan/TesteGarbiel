@@ -85,7 +85,9 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido está aguardando retirada.");
             }
 
-            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora)
+            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso &&
+                pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora &&
+                pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA)
             {
                 throw new BusinessException("A separação do volume não está finalizada.");
             }
@@ -102,7 +104,9 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume foi excluído.");
             }
 
-            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora)
+            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso &&
+                pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora &&
+                pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.RemovidoDOCA)
             {
                 throw new BusinessException("A separação do volume não está finalizada.");
             }
@@ -442,7 +446,7 @@ namespace FWLog.Services.Services
             {
                 var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
 
-                if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso)
+                if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.RemovidoDOCA)
                 {
                     throw new BusinessException($"Volume {pedidoVendaVolume.NroVolume} com status inválido.");
                 }
@@ -1119,13 +1123,13 @@ namespace FWLog.Services.Services
             return ultimoRomaneio.Value;
         }
 
-        public void ReimprimirRomaneio(long idRomaneio, long idImpressora, long idEmpresa, string idUsuario)
+        public void ReimprimirRomaneio(long idRomaneio, long idImpressora, bool imprimirSegundaVia, long idEmpresa, string idUsuario)
         {
             var romaneio = ValidarIdRomaneio(idRomaneio, idEmpresa);
 
             var impressora = ValidarIdImpressora(idImpressora);
 
-            ImprimirRomaneio(romaneio.IdRomaneio, impressora.Id, false, idEmpresa, idUsuario);
+            ImprimirRomaneio(romaneio.IdRomaneio, impressora.Id, imprimirSegundaVia, idEmpresa, idUsuario);
 
             _coletorHistoricoService.GravarHistoricoColetor(new GravarHistoricoColetorRequisicao
             {
@@ -1229,16 +1233,19 @@ namespace FWLog.Services.Services
 
             using (var transacao = _unitOfWork.CreateTransactionScope())
             {
-                pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
+                pedidoVendaVolume.IdPedidoVendaStatus = PedidoVendaStatusEnum.RemovidoDOCA;
                 pedidoVendaVolume.DataHoraRemocaoVolume = DateTime.Now;
                 pedidoVendaVolume.IdUsuarioInstalacaoDOCA = null;
+                pedidoVendaVolume.IdUsuarioInstalTransportadora = null;
+                pedidoVendaVolume.DataHoraInstalTransportadora = null;
+                pedidoVendaVolume.IdEnderecoArmazTransportadora = null;
                 pedidoVendaVolume.DataHoraInstalacaoDOCA = null;
 
                 _unitOfWork.SaveChanges();
 
-                if (pedidoVenda.PedidoVendaVolumes.All(x => x.IdPedidoVendaStatus == PedidoVendaStatusEnum.VolumeInstaladoTransportadora))
+                if (pedidoVenda.PedidoVendaVolumes.Where(w => w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido).All(x => x.IdPedidoVendaStatus == PedidoVendaStatusEnum.RemovidoDOCA))
                 {
-                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.VolumeInstaladoTransportadora;
+                    pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
                     _unitOfWork.SaveChanges();
                 }
                 else if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA)
@@ -1317,57 +1324,7 @@ namespace FWLog.Services.Services
 
         public List<RelatorioPedidosExpedidosLinhaTabela> BuscarDadosPedidosExpedidos(DataTableFilter<RelatorioPedidosExpedidosFilter> filtro, out int totalRecordsFiltered, out int totalRecords)
         {
-            var pedidosExpedidos = _unitOfWork.PedidoVendaVolumeRepository.BuscarPedidosExpedidosPorEmpresa(filtro.CustomFilter.IdEmpresa).AsQueryable();
-
-            var dataInicial = new DateTime(filtro.CustomFilter.DataInicial.Value.Year, filtro.CustomFilter.DataInicial.Value.Month, filtro.CustomFilter.DataInicial.Value.Day, 00, 00, 00);
-            var dataFinal = new DateTime(filtro.CustomFilter.DataFinal.Value.Year, filtro.CustomFilter.DataFinal.Value.Month, filtro.CustomFilter.DataFinal.Value.Day, 23, 59, 59);
-
-            pedidosExpedidos = pedidosExpedidos.Where(pe => pe.PedidoVenda.Pedido.DataCriacao >= dataInicial);
-            pedidosExpedidos = pedidosExpedidos.Where(pe => pe.PedidoVenda.Pedido.DataCriacao <= dataFinal);
-
-            totalRecords = pedidosExpedidos.Count();
-
-            if (filtro.CustomFilter.IdTransportadora.HasValue)
-            {
-                pedidosExpedidos = pedidosExpedidos.Where(pv => pv.PedidoVenda.IdTransportadora == filtro.CustomFilter.IdTransportadora.Value);
-            }
-
-            var query = pedidosExpedidos.Select(x => new
-            {
-                NroPedido = x.PedidoVenda.Pedido.NumeroPedido,
-                NroVolume = x.NroVolume,
-                NroCentena = x.NroCentena,
-                IdTransportadora = x.PedidoVenda.IdTransportadora,
-                RazaoSocialTransprotadora = x.PedidoVenda.Transportadora.RazaoSocial,
-                NumeroNotaFiscal = x.PedidoVenda.Pedido.NumeroNotaFiscal,
-                SerieNotaFiscal = x.PedidoVenda.Pedido.SerieNotaFiscal,
-                DataDoPedido = x.PedidoVenda.Pedido.DataCriacao,
-                DataSaidaDoPedido = x.PedidoVenda.DataHoraRomaneio.Value
-            });
-
-            totalRecordsFiltered = query.Count();
-
-            query.OrderBy(filtro.OrderByColumn, filtro.OrderByDirection)
-                                .Skip(filtro.Start)
-                                .Take(filtro.Length);
-
-            List<RelatorioPedidosExpedidosLinhaTabela> resultado = new List<RelatorioPedidosExpedidosLinhaTabela>();
-
-            query.ToList().ForEach(s =>
-            {
-                resultado.Add(new RelatorioPedidosExpedidosLinhaTabela
-                {
-                    NroPedido = s.NroPedido,
-                    NroVolume = s.NroVolume.ToString().PadLeft(3, '0'),
-                    NroCentena = s.NroCentena.ToString().PadLeft(3, '0'),
-                    IdTransportadora = string.Concat(s.IdTransportadora.ToString().PadLeft(3, '0'), "-", s.RazaoSocialTransprotadora),
-                    NotaFiscalESerie = string.Concat(s.NumeroNotaFiscal, "-", s.SerieNotaFiscal),
-                    DataDoPedido = s.DataDoPedido.ToString("dd/MM/yyyy HH:mm"),
-                    DataSaidaDoPedido = s.DataSaidaDoPedido.ToString("dd/MM/yyyy HH:mm")
-                });
-            });
-
-            return resultado;
+            return _unitOfWork.PedidoVendaVolumeRepository.BuscarDadosPedidosExpedidos(filtro, out totalRecordsFiltered, out totalRecords);
         }
 
         public List<MovimentacaoVolumesDetalhesModel> BuscarDadosVolumes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, string tipo, bool? cartaoCredito, bool? cartaoDebito, bool? dinheiro, bool? requisicao, long idEmpresa, out string statusDescricao, out string corredorArmazenagemDescricao)
@@ -1500,6 +1457,7 @@ namespace FWLog.Services.Services
                 NroCentena = s.NroCentena,
                 IdPedidoVendaVolume = s.IdPedidoVendaVolume,
                 DataCriacao = s.PedidoVenda.Pedido.DataCriacao,
+                DataIntegracao = s.PedidoVenda.Pedido.DataIntegracao,
                 PedidoNumeroNotaFiscal = s.PedidoVenda.Pedido.NumeroNotaFiscal,
                 PedidoSerieNotaFiscal = s.PedidoVenda.Pedido.SerieNotaFiscal,
                 DataSaida = s.PedidoVenda.DataHoraRomaneio,
@@ -1525,6 +1483,7 @@ namespace FWLog.Services.Services
                     NroCentena = s.NroCentena.ToString().PadLeft(3, '0'),
                     IdPedidoVendaVolume = s.IdPedidoVendaVolume,
                     DataCriacao = s.DataCriacao.ToString("dd/MM/yyyy"),
+                    DataIntegracao = s.DataIntegracao.ToString("dd/MM/yyyy HH:mm"),
                     NumeroSerieNotaFiscal = s.PedidoNumeroNotaFiscal.HasValue ? $"{s.PedidoNumeroNotaFiscal}/{s.PedidoSerieNotaFiscal}" : "Aguardando Faturamento",
                     DataExpedicao = s.DataSaida.HasValue ? s.DataSaida.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty,
                     StatusVolume = s.Status,
@@ -1565,6 +1524,8 @@ namespace FWLog.Services.Services
             retorno.PedidoRepresentante = pedido.Representante.Nome;
 
             retorno.PedidoDataCriacao = pedido.DataCriacao;
+
+            retorno.PedidoDataIntegracao = pedido.DataIntegracao;
 
             retorno.PedidoIsRequisicao = pedido.IsRequisicao;
 

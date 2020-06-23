@@ -2,9 +2,9 @@
 @{
     Layout = null;
     @BundleHelper.RenderViewScriptModal(new
-    {
-         idProduto = Model.IdProduto
-    })
+{
+    idProduto = Model.IdProduto
+})
 }
 
 <div class="modal-dialog modal-lg">
@@ -16,83 +16,108 @@
             <h4 class="modal-title">Detalhes do Produto</h4>
         </div>
         <div class="modal-body" style="overflow: auto; max-height: calc(100vh - 150px);">
-            <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
-                <li class="nav-item active">
-                    <a class="nav-link" id="produtoTab" data-toggle="tab" href="#detalheProduto" role="tab" aria-controls="detalheProduto" aria-selected="true">Produto</a>
-                </li>
-                @*<li class="nav-item">
-                        <a class="nav-link" id="divergenciasTab" data-toggle="tab" href="#divergencias" role="tab" aria-controls="divergencias" aria-selected="false">Divergências</a>
-                    </li>*@
-            </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade active in" id="notaFiscalTab" role="tabpanel" aria-labelledby="produtoTab">
-                    <div class="informacoes">
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-4 col-lg-3 col-md-3">
-                                @Html.LabelFor(m => m.Referencia): @Model.Referencia
-                            </div>
-                            <div class="col-xs-12 col-sm-5 col-lg-5 col-md-5">
-                                @Html.LabelFor(m => m.Descricao): @Model.Descricao
-                            </div>
-                            <div class="col-xs-12 col-sm-3 col-lg-4 col-md-4">
-                                @Html.LabelFor(m => m.EnderecoArmazenagem): @Model.EnderecoArmazenagem
-                            </div>
+                <div class="informacoes">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 col-lg-3 col-md-3">
+                            @Html.LabelFor(m => m.Referencia): @Model.Referencia
                         </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-4 col-lg-3 col-md-3">
-                                @Html.LabelFor(m => m.Comprimento): @Model.Comprimento
-                            </div>
-                            <div class="col-xs-12 col-sm-5 col-lg-5 col-md-5">
-                                @Html.LabelFor(m => m.Peso): @Model.Peso
-                            </div>
-                            <div class="col-xs-12 col-sm-3 col-lg-4 col-md-4">
-                                @Html.LabelFor(m => m.Largura): @Model.Largura
-                            </div>
+                        <div class="col-xs-12 col-sm-5 col-lg-5 col-md-5">
+                            @Html.LabelFor(m => m.Descricao): @Model.Descricao
                         </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-4 col-lg-3 col-md-3">
-                                @Html.LabelFor(m => m.Cubagem): @Model.Cubagem
-                            </div>
-                            <div class="col-xs-12 col-sm-4 col-lg-5 col-md-5">
-                                @Html.LabelFor(m => m.Altura): @Model.Altura
-                            </div>
-                            <div class="col-xs-12 col-sm-3 col-lg-4 col-md-4">
-                                @Html.LabelFor(m => m.Multiplo): @Model.Multiplo
-                            </div>
+                        <div class="col-xs-12 col-sm-3 col-lg-4 col-md-4">
+                            @Html.LabelFor(m => m.EnderecoArmazenagem): @Model.EnderecoArmazenagem
                         </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-5 col-lg-3 col-md-3">
-                                @Html.LabelFor(m => m.Unidade): @Model.Unidade
-                            </div>
-                            <div class="col-xs-12 col-sm-4 col-lg-5 col-md-5">
-                                @Html.LabelFor(m => m.Status): @Model.Status
-                            </div>
-                            <div class="col-xs-12 col-sm-5 col-lg-4 col-md-4">
-                                @Html.LabelFor(m => m.Saldo): @Model.Saldo
-                            </div>
-                        </div>
-                        @if (@Model.ImagemSrc != null)
-                        {
-                            <div class="row">
-                                <div class="col-xs-12 col-sm-4 col-lg-3 col-md-3" style="margin-top:20px; margin-bottom:20px;">
-                                    <span class="image view-first">
-                                        <img class="img-responsive" src="@Url.Content(@Model.ImagemSrc)" />
-                                    </span>
-                                </div>
-                            </div>
-                        }
                     </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 col-lg-3 col-md-3">
+                            @Html.LabelFor(m => m.Comprimento): @Model.Comprimento
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-lg-5 col-md-5">
+                            @Html.LabelFor(m => m.Peso): @Model.Peso
+                        </div>
+                        <div class="col-xs-12 col-sm-3 col-lg-4 col-md-4">
+                            @Html.LabelFor(m => m.Largura): @Model.Largura
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 col-lg-3 col-md-3">
+                            @Html.LabelFor(m => m.Cubagem): @Model.Cubagem
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-lg-5 col-md-5">
+                            @Html.LabelFor(m => m.Altura): @Model.Altura
+                        </div>
+                        <div class="col-xs-12 col-sm-3 col-lg-4 col-md-4">
+                            @Html.LabelFor(m => m.Multiplo): @Model.Multiplo
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-5 col-lg-3 col-md-3">
+                            @Html.LabelFor(m => m.Unidade): @Model.Unidade
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-lg-5 col-md-5">
+                            @Html.LabelFor(m => m.Status): @Model.Status
+                        </div>
+                        <div class="col-xs-12 col-sm-5 col-lg-4 col-md-4">
+                            @Html.LabelFor(m => m.Saldo): @Model.Saldo
+                        </div>
+                    </div>
+                    @if (@Model.ImagemSrc != null)
+                    {
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-4 col-lg-3 col-md-3" style="margin-top:20px; margin-bottom:20px;">
+                                <span class="image view-first">
+                                    <img class="img-responsive" src="@Url.Content(@Model.ImagemSrc)" />
+                                </span>
+                            </div>
+                        </div>
+                    }
                 </div>
-                <div class="modal-footer">
-                    <div class="col-sm-6 col-lg-6">
-                        <div class="nav navbar-left impressao">
-                            <a id="downloadDetalhesProduto" data-toggle="tooltip" title="Download Detalhes do Produto" class="btn btn-default"><i class="fa fa-fw fa-download"></i></a>
-                            <a id="imprimirDetalhesProduto" data-toggle="tooltip" title="Imprimir Detalhes do Produto" class="btn btn-default"><i class="fa fa-fw fa-print"></i></a>
-                        </div>
-                    </div>
+            </div>
+            <div class="row" style="overflow-y: auto; max-height: 600px">
+                <div class="col-xs-12">
+                    <h2>Locais de Armazenagem</h2>
+                </div>
+                <div class="col-xs-12">
+                    <table id="tableLocaisArmazenagem" class="table table-striped table-bordered dt-responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>@Html.DisplayName("Lote")</th>
+                                <th>@Html.DisplayName("Fornecedor")</th>
+                                <th>@Html.DisplayName("Endereço")</th>
+                                <th>@Html.DisplayName("Quantidade")</th>
+                            </tr>
+                        </thead>
+                        @if (!Model.ListaLocaisArmazenagem.NullOrEmpty())
+                        {
+                            var groupedItems = Model.ListaLocaisArmazenagem.GroupBy(m => new { m.PontoArmazenagemDescricao, m.NivelArmazenagemDescricao }).
+                                OrderBy(g => g.Key.PontoArmazenagemDescricao).ThenBy(g => g.Key.NivelArmazenagemDescricao).ToList();
+
+                            <tbody>
+                                @foreach (var groupItem in groupedItems)
+                                {
+                                    <tr>
+                                        <td colspan="5">
+                                            @groupItem.Key.PontoArmazenagemDescricao - @groupItem.Key.NivelArmazenagemDescricao
+                                        </td>
+                                    </tr>
+                                    foreach (var item in groupItem.OrderBy(o => o.IdLote))
+                                    {
+                                        <tr>
+                                            <td></td>
+                                            <td>@item.IdLote</td>
+                                            <td>@item.FornecedorNomeFantasia</td>
+                                            <td>@item.EnderecoArmazenagemCodigo</td>
+                                            <td>@item.Quantidade</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        }
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
-

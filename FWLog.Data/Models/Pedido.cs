@@ -75,6 +75,12 @@ namespace FWLog.Data.Models
         [StringLength(3)]
         public string SerieNotaFiscal { get; set; }
 
+        [Required]
+        public DateTime DataIntegracao { get; set; }
+
+        [Required]
+        public bool IsFilial { get; set; }
+
         [ForeignKey(nameof(IdEmpresa))]
         public virtual Empresa Empresa { get; set; }
 

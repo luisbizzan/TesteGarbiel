@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FWLog.Web.Backoffice.Models.ProdutoCtx
 {
@@ -30,5 +31,28 @@ namespace FWLog.Web.Backoffice.Models.ProdutoCtx
         public string ImagemSrc { get; set; }
         [Display(Name = "Endereco Armazenagem")]
         public string EnderecoArmazenagem { get; set; }
+
+        public List<ProdutoDetalhesLocalArmazenagemViewModel> ListaLocaisArmazenagem { get; set; }
+    }
+
+    public class ProdutoDetalhesLocalArmazenagemViewModel
+    {
+        [Display(Name = "Nível")]
+        public string NivelArmazenagemDescricao { get; set; }
+
+        [Display(Name = "Ponto")]
+        public string PontoArmazenagemDescricao { get; set; }
+
+        [Display(Name = "Lote")]
+        public long? IdLote { get; set; }
+
+        [Display(Name = "Fornecedor")]
+        public string FornecedorNomeFantasia { get; set; }
+
+        [Display(Name = "Endereço")]
+        public string EnderecoArmazenagemCodigo { get; set; }
+
+        [Display(Name = "Quantidade")]
+        public int Quantidade { get; set; }
     }
 }

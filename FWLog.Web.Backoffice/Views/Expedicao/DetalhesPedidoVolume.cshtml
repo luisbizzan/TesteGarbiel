@@ -27,24 +27,29 @@
                         </div>
                         <div class="row" style="margin-bottom:4px;">
                             <div class="col-xs-12 col-sm-6 col-lg-6">
-                                @Html.LabelFor(m => m.PedidoPagamentoDescricaoIntegracao): @Model.PedidoPagamentoDescricaoIntegracao
-                            </div>
-                            <div class="col-xs-12 col-sm-6 col-lg-6">
-                                @Html.LabelFor(m => m.PedidoDataCriacao): @Model.PedidoDataCriacao.ToShortDateString()
-                            </div>
-                        </div>
-                        <div class="row" style="margin-bottom:4px;">
-                            <div class="col-xs-12 col-sm-6 col-lg-6">
                                 @Html.LabelFor(m => m.PedidoNumeroNotaFiscal): @Model.PedidoNumeroNotaFiscal @Html.LabelFor(m => m.PedidoSerieNotaFiscal): @Model.PedidoSerieNotaFiscal
                             </div>
                             <div class="col-xs-12 col-sm-6 col-lg-6">
-                                @Html.LabelFor(m => m.PedidoCliente): @Model.PedidoCliente
+                                @Html.LabelFor(m => m.PedidoPagamentoDescricaoIntegracao): @Model.PedidoPagamentoDescricaoIntegracao
                             </div>
                         </div>
                         <div class="row" style="margin-bottom:4px;">
                             <div class="col-xs-12 col-sm-6 col-lg-6">
+                                @Html.LabelFor(m => m.PedidoDataCriacao): @Model.PedidoDataCriacao.ToShortDateString()
+                            </div>
+                            <div class="col-xs-12 col-sm-6 col-lg-6">
+                                @Html.LabelFor(m => m.PedidoDataIntegracao): @Model.PedidoDataIntegracao.ToString("dd/MM/yyyy HH:mm")
+                            </div>
+                        </div>
+                        <div class="row" style="margin-bottom:4px;">
+                            <div class="col-xs-12 col-sm-6 col-lg-6">
+                                @Html.LabelFor(m => m.PedidoCliente): @Model.PedidoCliente
+                            </div>
+                            <div class="col-xs-12 col-sm-6 col-lg-6">
                                 @Html.LabelFor(m => m.PedidoTransportadora): @Model.PedidoTransportadora
                             </div>
+                        </div>
+                        <div class="row" style="margin-bottom:4px;">
                             <div class="col-xs-12 col-sm-6 col-lg-6">
                                 @Html.LabelFor(m => m.PedidoRepresentante): @Model.PedidoRepresentante
                             </div>

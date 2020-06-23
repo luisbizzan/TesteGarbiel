@@ -10,6 +10,7 @@
         public string NroVolume { get; set; }
         public string NroCentena { get; set; }
         public string DataCriacao { get; set; }
+        public string DataIntegracao { get; set; }
         public string NumeroSerieNotaFiscal { get; set; }
         public string DataExpedicao { get; set; }
         public bool PermitirEditarVolume { get; set; }
