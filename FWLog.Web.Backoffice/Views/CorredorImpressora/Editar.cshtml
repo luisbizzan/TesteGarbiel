@@ -46,6 +46,11 @@
                     @Html.DropDownListFor(m => m.IdImpressora, Model.ListaImpressora, "Todos...", new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.IdImpressora)
                 </div>
+                <div class="form-group col-sm-3 col-xs-12">
+                    @Html.LabelFor(m => m.IdImpressoraPedidoFilial, new { @class = "control-label" })
+                    @Html.DropDownListFor(m => m.IdImpressoraPedidoFilial, Model.ListaImpressora, "Todos...", new { @class = "form-control"})
+                    @Html.ValidationMessageFor(m => m.IdImpressoraPedidoFilial)
+                </div>
                 <div class="form-group col-sm-2 col-xs-12">
                     @Html.LabelFor(m => m.Ativo, new { @class = "control-label" })
                     <div class="checkbox">

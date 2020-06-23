@@ -30,7 +30,7 @@
         </div>
         <div class="x_content" style="display: block;">
             <div class="row">
-                <div class="form-group col-sm-4 col-xs-12 col-lg-4">
+                <div class="form-group col-sm-3 col-xs-12 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.IdPontoArmazenagem, new { @class = "control-label" })
                     <div class="input-group">
                         @Html.TextBoxFor(m => m.Filtros.DescricaoPontoArmazenagem, null, new { @class = "form-control", @readonly = "true", data_field = "DescricaoPontoArmazenagem" })
@@ -41,11 +41,15 @@
                     </div>
                     @Html.HiddenFor(m => m.Filtros.IdPontoArmazenagem, new { data_field = "IdPontoArmazenagem" })
                 </div>
-                <div class="form-group col-sm-4 col-xs-12 col-lg-4">
+                <div class="form-group col-sm-3 col-xs-12 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.IdImpressora)
                     @Html.DropDownListFor(m => m.Filtros.IdImpressora, Model.Filtros.ListaImpressora, "Todos...", new { @class = "form-control", data_field = "IdImpressora" })
                 </div>
-                <div class="form-group col-sm-4 col-xs-12 col-lg-4">
+                <div class="form-group col-sm-3 col-xs-12 col-lg-3">
+                    @Html.LabelFor(m => m.Filtros.IdImpressoraPedidoFilial)
+                    @Html.DropDownListFor(m => m.Filtros.IdImpressoraPedidoFilial, Model.Filtros.ListaImpressora, "Todos...", new { @class = "form-control", data_field = "IdImpressora" })
+                </div>
+                <div class="form-group col-sm-3 col-xs-12 col-lg-3">
                     @Html.LabelFor(m => m.Filtros.Status)
                     @Html.DropDownListFor(m => m.Filtros.Status, Model.Filtros.ListaStatus, "Todos...", new { @class = "form-control", data_field = "Status" })
                 </div>
@@ -111,6 +115,7 @@
                             <th>@Html.DisplayNameFor(m => m.Itens.CorredorFinal)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.DescricaoPontoArmazenagem)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Impressora)</th>
+                            <th>@Html.DisplayNameFor(m => m.Itens.ImpressoraPedidoFilial)</th>
                             <th>@Html.DisplayNameFor(m => m.Itens.Status)</th>
                             <th>@Resources.CommonStrings.ActionsLabel</th>
                         </tr>

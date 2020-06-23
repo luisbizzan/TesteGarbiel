@@ -124,7 +124,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.MovimentacaoVolumes)]
-        public async Task<ActionResult> MovimentacaoVolumes(string dataInicial, string dataFinal, string tipoPagamento, bool? requisicao)
+        public async Task<ActionResult> MovimentacaoVolumes(string dataInicial, string dataFinal, string tipoPagamento, bool? requisicao, bool? reposicao)
         {
             if (dataInicial.NullOrEmpty() || dataFinal.NullOrEmpty())
             {
@@ -159,7 +159,8 @@ namespace FWLog.Web.Backoffice.Controllers
                 DataInicial = dataInicialPtBr,
                 DataFinal = dataFinalPtBr,
                 TipoPagamento = tipoPagamento,
-                Requisicao = requisicao
+                Requisicao = requisicao,
+                Reposicao = reposicao
             };
 
             viewModel.ListaTiposPagamento = new SelectList(new List<SelectListItem>
@@ -170,6 +171,12 @@ namespace FWLog.Web.Backoffice.Controllers
             }, "Value", "Text");
 
             viewModel.ListaRequisicao = new SelectList(new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Não", Value = "false"},
+                new SelectListItem { Text = "Sim", Value = "true"},
+            }, "Value", "Text");
+
+            viewModel.ListaReposicao = new SelectList(new List<SelectListItem>
             {
                 new SelectListItem { Text = "Não", Value = "false"},
                 new SelectListItem { Text = "Sim", Value = "true"},
@@ -201,7 +208,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             }
 
-            var dadosRetorno = _expedicaoService.BuscarDadosMovimentacaoVolumes(viewModel.Filter.DataInicial.Value, viewModel.Filter.DataFinal.Value, cartaoCredito, cartaoDebito, dinheiro, requisicao, IdEmpresa);
+            var dadosRetorno = _expedicaoService.BuscarDadosMovimentacaoVolumes(viewModel.Filter.DataInicial.Value, viewModel.Filter.DataFinal.Value, cartaoCredito, cartaoDebito, dinheiro, requisicao, reposicao, IdEmpresa);
 
             viewModel.Items = Mapper.Map<List<MovimentacaoVolumesListItemViewModel>>(dadosRetorno);
 
@@ -236,7 +243,7 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpGet]
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.MovimentacaoVolumes)]
-        public ActionResult MovimentacaoVolumesDetalhes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, string status, string tipoPagamento, bool? requisicao)
+        public ActionResult MovimentacaoVolumesDetalhes(DateTime dataInicial, DateTime dataFinal, long? idGrupoCorredorArmazenagem, string status, string tipoPagamento, bool? requisicao, bool? reposicao)
         {
             bool? dinheiro = null, cartaoCredito = null, cartaoDebito = null;
 
@@ -258,7 +265,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 }
             }
 
-            var dadosRetorno = _expedicaoService.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, status, cartaoCredito, cartaoDebito, dinheiro, requisicao, IdEmpresa, out string statusDescricao, out string corredorArmazenagemDescricao);
+            var dadosRetorno = _expedicaoService.BuscarDadosVolumes(dataInicial, dataFinal, idGrupoCorredorArmazenagem, status, cartaoCredito, cartaoDebito, dinheiro, requisicao, reposicao, IdEmpresa, out string statusDescricao, out string corredorArmazenagemDescricao);
 
             var items = Mapper.Map<List<MovimentacaoVolumesDetalheListItemViewModel>>(dadosRetorno);
 

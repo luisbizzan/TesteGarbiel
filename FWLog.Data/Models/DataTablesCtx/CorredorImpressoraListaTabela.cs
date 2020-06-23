@@ -8,6 +8,7 @@
         public string CorredorFinal { get; set; }
         public string DescricaoPontoArmazenagem { get; set; }
         public string Impressora { get; set; }
+        public string ImpressoraPedidoFilial { get; set; }
         public string Status { get; set; }
     }
 }

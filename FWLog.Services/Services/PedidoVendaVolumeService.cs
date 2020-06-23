@@ -4,7 +4,6 @@ using FWLog.Services.Model.Caixa;
 using FWLog.Services.Model.GrupoCorredorArmazenagem;
 using log4net;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FWLog.Services.Services
@@ -43,7 +42,7 @@ namespace FWLog.Services.Services
                     CubagemVolume = cubagem
                 };
             }
-            catch 
+            catch
             {
                 throw new Exception("Erro ao salvar o volume do pedido de venda.");
             }
@@ -53,7 +52,7 @@ namespace FWLog.Services.Services
 
         public async Task<int> GerarNumeroCentena(long idEmpresa)
         {
-            int numero = 0;
+            int numero;
 
             try
             {
@@ -80,11 +79,11 @@ namespace FWLog.Services.Services
                     _uow.CentenaVolumeRepository.Update(centena);
                 }
 
-                _uow.SaveChangesAsync();
+                await _uow.SaveChangesAsync();
             }
-            catch
+            catch (Exception exception)
             {
-                throw new Exception("Erro ao salvar a centena do pedido de venda.");
+                throw new Exception("Erro ao salvar a centena do pedido de venda.", exception);
             }
 
             return numero;

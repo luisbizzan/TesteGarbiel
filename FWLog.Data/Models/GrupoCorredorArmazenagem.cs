@@ -26,6 +26,9 @@ namespace FWLog.Data.Models
         public long IdImpressora { get; set; }
 
         [Required]
+        public long IdImpressoraPedidoFilial { get; set; }
+
+        [Required]
         public bool Ativo { get; set; }
 
         [ForeignKey(nameof(IdEmpresa))]
@@ -36,5 +39,8 @@ namespace FWLog.Data.Models
 
         [ForeignKey(nameof(IdImpressora))]
         public virtual Printer Impressora { get; set; }
+
+        [ForeignKey(nameof(IdImpressoraPedidoFilial))]
+        public virtual Printer ImpressoraPedidoFilial { get; set; }
     }
 }
