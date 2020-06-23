@@ -1420,14 +1420,16 @@ namespace FWLog.Services.Services
 
             if (filtro.CustomFilter.DataInicial.HasValue)
             {
-                DateTime dataInicial = new DateTime(filtro.CustomFilter.DataInicial.Value.Year, filtro.CustomFilter.DataInicial.Value.Month, filtro.CustomFilter.DataInicial.Value.Day, 00, 00, 00);
-                pedidos = pedidos.Where(x => x.PedidoVenda.Pedido.DataCriacao >= dataInicial);
+                var dataInicial = new DateTime(filtro.CustomFilter.DataInicial.Value.Year, filtro.CustomFilter.DataInicial.Value.Month, filtro.CustomFilter.DataInicial.Value.Day);
+
+                pedidos = pedidos.Where(x => x.PedidoVenda.DataProcessamento >= dataInicial);
             }
 
             if (filtro.CustomFilter.DataFinal.HasValue)
             {
-                DateTime dataFinal = new DateTime(filtro.CustomFilter.DataFinal.Value.Year, filtro.CustomFilter.DataFinal.Value.Month, filtro.CustomFilter.DataFinal.Value.Day, 23, 59, 59);
-                pedidos = pedidos.Where(x => x.PedidoVenda.Pedido.DataCriacao <= dataFinal);
+                var dataFinal = new DateTime(filtro.CustomFilter.DataFinal.Value.Year, filtro.CustomFilter.DataFinal.Value.Month, filtro.CustomFilter.DataFinal.Value.Day, 23, 59, 59);
+
+                pedidos = pedidos.Where(x => x.PedidoVenda.DataProcessamento <= dataFinal);
             }
 
             if (!filtro.CustomFilter.NumeroPedido.NullOrEmpty())
@@ -1458,6 +1460,7 @@ namespace FWLog.Services.Services
                 IdPedidoVendaVolume = s.IdPedidoVendaVolume,
                 DataCriacao = s.PedidoVenda.Pedido.DataCriacao,
                 DataIntegracao = s.PedidoVenda.Pedido.DataIntegracao,
+                DataImpressao = s.PedidoVenda.DataProcessamento,
                 PedidoNumeroNotaFiscal = s.PedidoVenda.Pedido.NumeroNotaFiscal,
                 PedidoSerieNotaFiscal = s.PedidoVenda.Pedido.SerieNotaFiscal,
                 DataSaida = s.PedidoVenda.DataHoraRomaneio,
@@ -1470,7 +1473,7 @@ namespace FWLog.Services.Services
 
             registrosFiltrados = query.Count();
 
-            query = query.OrderBy(o => o.NroPedido).ThenBy(o => o.NroVolume).Skip(filtro.Start).Take(filtro.Length);
+            query = query.OrderBy(o => o.NroCentena).ThenBy(o => o.NroPedido).ThenBy(o => o.NroVolume).Skip(filtro.Start).Take(filtro.Length);
 
             List<RelatorioPedidosLinhaTabela> resultado = new List<RelatorioPedidosLinhaTabela>();
 
@@ -1480,10 +1483,11 @@ namespace FWLog.Services.Services
                 {
                     NroPedido = $"Pedido: {s.NroPedido} - Cliente: {s.NomeCliente}",
                     NroVolume = s.NroVolume.ToString().PadLeft(3, '0'),
-                    NroCentena = s.NroCentena.ToString().PadLeft(3, '0'),
+                    NroCentena = s.NroCentena.ToString().PadLeft(4, '0'),
                     IdPedidoVendaVolume = s.IdPedidoVendaVolume,
                     DataCriacao = s.DataCriacao.ToString("dd/MM/yyyy"),
                     DataIntegracao = s.DataIntegracao.ToString("dd/MM/yyyy HH:mm"),
+                    DataImpressao = s.DataImpressao.ToString("dd/MM/yyyy HH:mm"),
                     NumeroSerieNotaFiscal = s.PedidoNumeroNotaFiscal.HasValue ? $"{s.PedidoNumeroNotaFiscal}/{s.PedidoSerieNotaFiscal}" : "Aguardando Faturamento",
                     DataExpedicao = s.DataSaida.HasValue ? s.DataSaida.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty,
                     StatusVolume = s.Status,

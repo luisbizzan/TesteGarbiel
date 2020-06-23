@@ -45,6 +45,9 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         [Display(Name = "Data Integração")]
         public string DataIntegracao { get; set; }
 
+        [Display(Name = "Data Impressão")]
+        public string DataImpressao { get; set; }
+
         [Display(Name = "Número/Série NF")]
         public string NumeroSerieNotaFiscal { get; set; }
 
@@ -57,10 +60,10 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
         [Display(Name = "Nro. Pedido")]
         public string NumeroPedido { get; set; }
 
-        [Display(Name = "Dt. Criação Inícial")]
+        [Display(Name = "Dt. Impressão Inícial")]
         public DateTime? DataInicial { get; set; }
 
-        [Display(Name = "Dt. Criação Final")]
+        [Display(Name = "Dt. Impressão Final")]
         public DateTime? DataFinal { get; set; }
 
         [Display(Name = "Transportadora")]
