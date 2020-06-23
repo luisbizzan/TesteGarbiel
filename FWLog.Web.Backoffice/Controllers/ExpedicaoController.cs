@@ -2,6 +2,7 @@
 using DartDigital.Library.Exceptions;
 using FWLog.AspNet.Identity;
 using FWLog.Data;
+using FWLog.Data.Models;
 using FWLog.Data.Models.DataTablesCtx;
 using FWLog.Data.Models.FilterCtx;
 using FWLog.Services.Model.Expedicao;
@@ -416,7 +417,7 @@ namespace FWLog.Web.Backoffice.Controllers
             var listVolumes = new List<GerenciarVolumeItemViewModel>();
             var volume = _uow.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
 
-            foreach (var volumeProduto in volume.PedidoVendaProdutos)
+            foreach (var volumeProduto in volume.PedidoVendaProdutos.Where(w => w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido).ToList())
             {
                 listVolumes.Add(new GerenciarVolumeItemViewModel()
                 {

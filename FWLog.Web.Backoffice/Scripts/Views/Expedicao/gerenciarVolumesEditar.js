@@ -86,13 +86,17 @@ function CarregarDados() {
     requisicao.IdGrupoCorredorArmazenagem = $("#IdGrupoCorredorArmazenagem").val();
 
     $("table tbody tr").each(function () {
-        var row = $(this);
-        var produto = {};
-        produto.IdPedidoVendaVolumeOrigem = row.find("td").eq(1).html();
-        produto.IdProduto = row.find("td").eq(4).html();
-        produto.Quantidade = row.find("td").eq(7).html();
-        produto.IdLote = row.find("td").eq(8).html();
-        requisicao.ProdutosVolumes.push(produto);
+        var quantidade = row.find("td").eq(7).html();
+
+        if (quantidade > 0) {
+            var row = $(this);
+            var produto = {};
+            produto.IdPedidoVendaVolumeOrigem = row.find("td").eq(1).html();
+            produto.IdProduto = row.find("td").eq(4).html();
+            produto.Quantidade = quantidade;
+            produto.IdLote = row.find("td").eq(8).html();
+            requisicao.ProdutosVolumes.push(produto);
+        }
     });
 
     return requisicao;
