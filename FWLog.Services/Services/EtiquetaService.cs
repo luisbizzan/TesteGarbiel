@@ -662,7 +662,7 @@ namespace FWLog.Services.Services
 
             if (enderecoArmazenagem == null)
             {
-                var produto = _unitOfWork.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(requisicao.referenciaProdutoOuEndereco);
+                var produto = _unitOfWork.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(requisicao.referenciaProdutoOuEndereco.ToUpper());
 
                 if (produto == null)
                 {
