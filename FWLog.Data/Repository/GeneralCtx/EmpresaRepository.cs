@@ -80,5 +80,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.Empresa.AsNoTracking().FirstOrDefault(f => f.IdEmpresa == idEmpresa);
         }
+
+        public Empresa ConsultaPorIdCliente(long idCliente)
+        {
+            return Entities.Empresa.FirstOrDefault(f => f.IdCliente == idCliente);
+        }
     }
 }

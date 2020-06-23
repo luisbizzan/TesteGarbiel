@@ -779,7 +779,7 @@ namespace FWLog.Services.Services
             //Adcionando o logo somente para empresas com essa informação preenchida no cadastro
             if (empresa != null && empresa.NomeLogoEtiqueta != null)
             {
-                stringEtiqueta.AppendLine($"^FO70,214^{empresa.NomeLogoEtiqueta.Trim()},1,1^FS");
+                //stringEtiqueta.AppendLine($"^FO70,214^{empresa.NomeLogoEtiqueta.Trim()},1,1^FS");
                 stringEtiqueta.AppendLine($"^FO75,75^{empresa.NomeLogoEtiqueta.Trim()},1,1^FS");
             }
 

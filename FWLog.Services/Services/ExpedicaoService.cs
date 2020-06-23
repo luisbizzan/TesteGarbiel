@@ -79,7 +79,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O pedido está aguardando retirada.");
             }
 
-            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && 
+            if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso &&
                 pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora &&
                 pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA)
             {
@@ -98,7 +98,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O volume foi excluído.");
             }
 
-            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso && 
+            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso &&
                 pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.InstalandoVolumeTransportadora &&
                 pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.RemovidoDOCA)
             {

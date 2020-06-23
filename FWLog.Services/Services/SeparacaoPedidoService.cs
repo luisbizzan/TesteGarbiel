@@ -996,19 +996,19 @@ namespace FWLog.Services.Services
                     foreach (var pedidoItem in listaItensDoPedido)
                     {
                         //Captura o endereço de picking do produto.
-                        var produtoEstoqueRepository = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresaPicking(pedidoItem.Produto.IdProduto, idEmpresa);
+                        var produtoEstoque = _unitOfWork.ProdutoEstoqueRepository.ObterPorProdutoEmpresaPicking(pedidoItem.Produto.IdProduto, idEmpresa);
 
-                        if (produtoEstoqueRepository == null)
+                        if (produtoEstoque == null)
                             throw new Exception("O endereço de picking do produto " + pedidoItem.Produto.Referencia + " - " + pedidoItem.Produto.Descricao + " não foi encontrado.");
 
                         var enderecoArmazenagemProduto = new ProdutoEstoqueViewModel()
                         {
-                            IdProduto = produtoEstoqueRepository.IdProduto,
-                            IdEmpresa = produtoEstoqueRepository.IdEmpresa,
-                            IdEnderecoArmazenagem = produtoEstoqueRepository.IdEnderecoArmazenagem,
-                            Saldo = produtoEstoqueRepository.Saldo,
-                            IdProdutoEstoqueStatus = produtoEstoqueRepository.IdProdutoEstoqueStatus,
-                            EnderecoArmazenagem = produtoEstoqueRepository.EnderecoArmazenagem
+                            IdProduto = produtoEstoque.IdProduto,
+                            IdEmpresa = produtoEstoque.IdEmpresa,
+                            IdEnderecoArmazenagem = produtoEstoque.IdEnderecoArmazenagem,
+                            Saldo = produtoEstoque.Saldo,
+                            IdProdutoEstoqueStatus = produtoEstoque.IdProdutoEstoqueStatus,
+                            EnderecoArmazenagem = produtoEstoque.EnderecoArmazenagem
                         };
 
                         //Captura o grupo de corredores do item do pedido - FOI ADICIONADO PONTO DE ARMAZENAGEM PELO CLÁUDIO.
@@ -1112,6 +1112,7 @@ namespace FWLog.Services.Services
 
                     pedidoVenda.PedidoVendaVolumes = pedidoVendaVolumes;
 
+                    pedidoVenda.DataProcessamento = DateTime.Now;
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
                     pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao;
 
@@ -1123,7 +1124,7 @@ namespace FWLog.Services.Services
 
                         _unitOfWork.SaveChanges();
 
-                        //Imprimi as etiquetas.
+                        //Imprime as etiquetas.
                         foreach (var item in listaImpressaoSeparacao)
                         {
                             await ImprimirEtiquetaVolumeSeparacao(item.Volume, item.NumeroVolume, item.GrupoCorredor, pedido, item.Centena);
