@@ -1647,6 +1647,10 @@ namespace FWLog.Services.Services
                     }
 
                     GerneciamentoVolumesValidacaoVolume(idGrupoCorredorArmazenagem, pedidoVenda, grupoCorredorArmazenagem, volumeProduto, produto, pedidoVendaProdutoOrigem);
+
+                    pedidoVendaProdutoOrigem.QtdSeparar -= volumeProduto.Quantidade;
+
+                    listaVolumeProdutosOrigem.Add(pedidoVendaProdutoOrigem);
                 }
 
                 var qtdTransferencia = volumeProdutoAgrupado.Value.Sum(s => s.Quantidade);
@@ -1684,10 +1688,7 @@ namespace FWLog.Services.Services
                     pedidoVendaVolume.PedidoVendaProdutos.Add(pedidoVendaProduto);
                     pesoTotal += pesoProduto;
                 }
-
-                pedidoVendaProdutoOrigem.QtdSeparar -= qtdTransferencia;
-
-                listaVolumeProdutosOrigem.Add(pedidoVendaProdutoOrigem);
+                
                 listaVolumeProdutosAlterar.Add(pedidoVendaProduto);
             }
 

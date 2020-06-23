@@ -54,6 +54,14 @@
             limparVolume();
         }
     });
+
+    $("#modalVolume").on("hidden.bs.modal", function () {
+        $("#modalVolume").text('');
+    });
+
+    $("#modalProduto").on("hidden.bs.modal", function () {
+        $("#modalProduto").text('');
+    });
 })();
 
 function validarItemExisteTabela(idPedidoVendaVolume, idProduto) {
@@ -66,10 +74,6 @@ function validarItemExisteTabela(idPedidoVendaVolume, idProduto) {
 
         if (_idPedidoVendaVolumeOrigem === idPedidoVendaVolume && _idProduto === idProduto) {
             PNotify.warning({ text: "O volume e produto já foram adicionados na tabela." });
-            existe = true;
-        }
-        else if (_idProduto === idProduto && _idLote > 0) {
-            PNotify.warning({ text: "O produto do volume tem lote, portanto não pode ser adicionado novamente ao volume." });
             existe = true;
         }
     });
@@ -86,10 +90,10 @@ function CarregarDados() {
     requisicao.IdGrupoCorredorArmazenagem = $("#IdGrupoCorredorArmazenagem").val();
 
     $("table tbody tr").each(function () {
+        var row = $(this);
         var quantidade = row.find("td").eq(7).html();
 
         if (quantidade > 0) {
-            var row = $(this);
             var produto = {};
             produto.IdPedidoVendaVolumeOrigem = row.find("td").eq(1).html();
             produto.IdProduto = row.find("td").eq(4).html();
@@ -118,6 +122,9 @@ function salvarVoloumes() {
                         message: "O peso do volume excedeu 22 quilos, deseja continuar?",
                         onConfirm: SalvarVolumesContinuacao,
                     });
+                }
+                else {
+                    SalvarVolumesContinuacao();
                 }
             }
             else {

@@ -65,6 +65,14 @@
             limparVolume();
         }
     });
+
+    $("#modalVolume").on("hidden.bs.modal", function () {
+        $("#modalVolume").text('');
+    });
+
+    $("#modalProduto").on("hidden.bs.modal", function () {
+        $("#modalProduto").text('');
+    });
 })();
 
 function validarItemExisteTabela(idPedidoVendaVolume, idProduto) {
@@ -76,10 +84,6 @@ function validarItemExisteTabela(idPedidoVendaVolume, idProduto) {
 
         if (_idPedidoVendaVolume === idPedidoVendaVolume && _idProduto === idProduto) {
             PNotify.warning({ text: "O volume e produto já foram adicionados na tabela." });
-            existe = true;
-        }
-        else if (_idProduto === idProduto && _idLote > 0) {
-            PNotify.warning({ text: "O produto do volume tem lote, portanto não pode ser adicionado novamente ao volume." });
             existe = true;
         }
     });
@@ -124,6 +128,9 @@ function salvarVoloumes() {
                         message: "O peso do volume excedeu 22 quilos, deseja continuar?",
                         onConfirm: SalvarVolumesContinuacao,
                     });
+                }
+                else {
+                    SalvarVolumesContinuacao();
                 }
             }
             else {

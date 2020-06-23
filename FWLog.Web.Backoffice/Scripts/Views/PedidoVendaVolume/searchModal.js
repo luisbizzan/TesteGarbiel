@@ -27,8 +27,8 @@
 
         },
         columns: [
-            { data: 'NroPedido' },
             { data: 'NroVolume' },
+            { data: 'NroPedido' },            
             { data: 'DescricaoStatus' },
             actionsColumn
         ],
