@@ -33,18 +33,20 @@ namespace FWLog.Services.Services
             var where = new StringBuilder();
             where.Append("WHERE TGFPAR.CLIENTE = 'S' ");
 
-            if (somenteNovos)
-            {
-                where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
-            }
-            else
-            {
-                where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
-            }
-
             if(codParceiro != null)
             {
                 where.Append($"AND TGFPAR.CODPARC = '{codParceiro}' ");
+            }
+            else
+            {
+                if (somenteNovos)
+                {
+                    where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
+                }
+                else
+                {
+                    where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
+                }
             }
 
             int quantidadeChamadas = 0;
@@ -88,18 +90,20 @@ namespace FWLog.Services.Services
                 where = new StringBuilder();
                 where.Append("WHERE TGFPAR.CLIENTE = 'S' ");
 
-                if (somenteNovos)
-                {
-                    where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
-                }
-                else
-                {
-                    where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
-                }
-
                 if (codParceiro != null)
                 {
                     where.Append($"AND TGFPAR.CODPARC = '{codParceiro}' ");
+                }
+                else
+                {
+                    if (somenteNovos)
+                    {
+                        where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '1' ");
+                    }
+                    else
+                    {
+                        where.Append("AND TGFPAR.AD_INTEGRARFWLOG = '0' ");
+                    }
                 }
 
                 where.Append("ORDER BY TGFPAR.CODPARC ASC OFFSET " + offsetRows + " ROWS FETCH NEXT 4999 ROWS ONLY ");
