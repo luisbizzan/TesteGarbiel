@@ -15,5 +15,6 @@
         public string NumeroSerieNotaFiscal { get; set; }
         public string DataExpedicao { get; set; }
         public bool PermitirEditarVolume { get; set; }
+        public bool PodeRemoverUsuarioSeparacao { get; set; }
     }
 }
