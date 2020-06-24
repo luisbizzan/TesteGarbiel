@@ -347,12 +347,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 list.Insert(indiceUltimoRegistro + 1, new RelatorioLoteMovimentacaoListItemViewModel
                 {
-                    IdLote = string.Empty,
-                    ReferenciaProduto = string.Empty,
-                    DescricaoProduto = string.Empty,
-                    NroVolume = "<b>Saldo Movimentação</b>",
+                    Tipo = "<b>Qtde Movimentada</b>",
                     Quantidade = saldoQuantidadeMovimentacao.ToString(),
-                    DataHora = "<b>Qtde Movimentação</b>",
+                    DataHora = "<b>Qtde Movimentações</b>",
                     UsuarioMovimentacao = quantidadeMovimentacao.ToString()
                 });
             }
