@@ -79,11 +79,11 @@ namespace FWLog.Data.Repository.GeneralCtx
                 Largura = caixa.Largura.ToString("N2"),
                 Altura = caixa.Altura.ToString("N2"),
                 Comprimento = caixa.Comprimento.ToString("N2"),
-                PesoMaximo = caixa.PesoMaximo.ToString("N2"),
+                PesoMaximo = caixa.PesoMaximo.ToString("N4"),
                 Cubagem = caixa.Cubagem.ToString("N2"),
                 Sobra = caixa.Sobra.ToString("N2"),
                 CaixaTipoDescricao = caixa.CaixaTipo.Descricao,
-                PesoCaixa = caixa.PesoCaixa.ToString("N2"),
+                PesoCaixa = caixa.PesoCaixa.ToString("N4"),
                 Status = caixa.Ativo ? "Ativo" : "Inativo"
             }).ToList();
 
