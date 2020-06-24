@@ -505,6 +505,11 @@ namespace FWLog.Services.Services
 
             var pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.First(f => f.IdPedidoVendaVolume == idPedidoVendaVolume);
 
+            if(!pedidoVendaVolume.IdUsuarioSeparacaoAndamento.NullOrEmpty() && !pedidoVendaVolume.IdUsuarioSeparacaoAndamento.Equals(idUsuarioOperacao))
+            {
+                throw new BusinessException($"O volume já está sendo separado pelo usuário {pedidoVendaVolume.UsuarioSeparacaoAndamento.UserName}.");
+            }
+
             var atualizaPedidoVendaVolume = pedidoVendaVolume.IdPedidoVendaStatus == PedidoVendaStatusEnum.EnviadoSeparacao;
 
             if (atualizaPedidoVenda || atualizaPedidoVendaVolume)
@@ -692,9 +697,12 @@ namespace FWLog.Services.Services
                 QtdSeparar = pedidoVendaProduto.QtdSeparar,
             };
 
-            if (pedidoVendaProduto.EnderecoArmazenagem.IsPicking && !temPermissaoF7)
+            if(pedidoVendaProduto.EnderecoArmazenagem.IsPicking == false)
             {
-                throw new BusinessException("Você não tem permissão para separar pedidos fora do picking.");
+                if(temPermissaoF7 == false)
+                {
+                    throw new BusinessException("Você não tem permissão para separar pedidos fora do picking.");
+                }
             }
 
             var multiploProduto = pedidoVendaProduto.Produto.MultiploVenda;
@@ -2403,6 +2411,7 @@ namespace FWLog.Services.Services
                 {
                     IdPedidoVendaVolume = pvv.IdPedidoVendaVolume,
                     Numero = pvv.NroVolume,
+                    PesoTotalVolume = pvv.PesoVolume,
                     Status = PreparaStatusParaColetor(pvv.IdPedidoVendaStatus),
                     ListaProdutos = pvv.PedidoVendaProdutos.Select(pvp => new DetalhePedidoVendaVolumeProdutoResposta()
                     {
@@ -2413,6 +2422,7 @@ namespace FWLog.Services.Services
                         DescricaoPontoArmazenagem = pvp.EnderecoArmazenagem.PontoArmazenagem.Descricao,
                         QuantidadeSeparar = pvp.QtdSeparar,
                         QuantidadeSeparada = pvp.QtdSeparada.GetValueOrDefault(),
+                        Status = PreparaStatusParaColetor(pvp.IdPedidoVendaStatus),
                         Corredor = 2,
                         UsuarioSeparacao = pvp.IdUsuarioSeparacao,
                         DataHoraSeparacao = pvp.DataHoraFimSeparacao,

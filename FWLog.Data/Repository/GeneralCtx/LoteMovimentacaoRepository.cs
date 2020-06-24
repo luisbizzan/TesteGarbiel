@@ -48,7 +48,7 @@ namespace FWLog.Data.Repository.GeneralCtx
             totalRecordsFiltered = query.Count();
 
             query = query
-                .OrderBy(model.OrderByColumn, model.OrderByDirection)
+                .OrderBy(o => o.IdUsuarioMovimentacao)
                 .Skip(model.Start)
                 .Take(model.Length);
 

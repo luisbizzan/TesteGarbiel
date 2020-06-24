@@ -1468,7 +1468,8 @@ namespace FWLog.Services.Services
                 StatusPedido = s.PedidoVenda.PedidoVendaStatus.Descricao,
                 NomeCliente = s.PedidoVenda.Cliente.RazaoSocial,
                 IdStatusPedido = (int)s.PedidoVenda.IdPedidoVendaStatus,
-                IdStatusVolume = (int)s.IdPedidoVendaStatus
+                IdStatusVolume = (int)s.IdPedidoVendaStatus,
+                s.IdUsuarioSeparacaoAndamento
             });
 
             registrosFiltrados = query.Count();
@@ -1497,7 +1498,8 @@ namespace FWLog.Services.Services
                      s.IdStatusPedido == PedidoVendaStatusEnum.ProcessandoSeparacao.GetHashCode()) &&
                     (s.IdStatusVolume == PedidoVendaStatusEnum.EnviadoSeparacao.GetHashCode() ||
                      s.IdStatusVolume == PedidoVendaStatusEnum.ProcessandoSeparacao.GetHashCode() ||
-                     s.IdStatusVolume == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso.GetHashCode())
+                     s.IdStatusVolume == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso.GetHashCode()),
+                    PodeRemoverUsuarioSeparacao = s.IdStatusPedido == PedidoVendaStatusEnum.ProcessandoSeparacao.GetHashCode() && !s.IdUsuarioSeparacaoAndamento.NullOrEmpty()
                 });
             });
 
@@ -1694,7 +1696,7 @@ namespace FWLog.Services.Services
                     pedidoVendaVolume.PedidoVendaProdutos.Add(pedidoVendaProduto);
                     pesoTotal += pesoProduto;
                 }
-                
+
                 listaVolumeProdutosAlterar.Add(pedidoVendaProduto);
             }
 
@@ -1848,7 +1850,7 @@ namespace FWLog.Services.Services
         private void GerneciamentoVolumesValidacaoVolume(long idGrupoCorredorArmazenagem, PedidoVenda pedidoVenda, GrupoCorredorArmazenagem grupoCorredorArmazenagem, GerenciarVolumeItem volume, Produto produto, PedidoVendaProduto pedidoVendaProdutoOrigem)
         {
             var nroVolume = pedidoVendaProdutoOrigem.PedidoVendaVolume.NroVolume.ToString().PadLeft(3, '0');
-           
+
             if (pedidoVendaProdutoOrigem == null)
             {
                 throw new BusinessException($"Ocorreu erro ao encontrar o volume do produto {produto.Referencia}");
@@ -1967,6 +1969,30 @@ namespace FWLog.Services.Services
             {
                 return false;
             }
+        }
+
+        public async Task RemoverUsuarioSeparacao(long idPedidoVendaVolume)
+        {
+            var pedidoVendaVolume = _unitOfWork.PedidoVendaVolumeRepository.GetById(idPedidoVendaVolume);
+
+            if (pedidoVendaVolume == null)
+            {
+                throw new BusinessException("Volume não encontrado");
+            }
+
+            if (pedidoVendaVolume.IdPedidoVendaStatus != PedidoVendaStatusEnum.ProcessandoSeparacao)
+            {
+                throw new BusinessException("Volume com status inválido");
+            }
+
+            if (pedidoVendaVolume.IdUsuarioSeparacaoAndamento.NullOrEmpty())
+            {
+                throw new BusinessException("Não existe usuário associado ao volume");
+            }
+
+            pedidoVendaVolume.IdUsuarioSeparacaoAndamento = null;
+
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

@@ -339,17 +339,18 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 var saldoQuantidadeMovimentacao = itemAgrupado.Sum(ia => int.Parse(ia.Quantidade));
 
+                var quantidadeMovimentacao = itemAgrupado.Count();
+
                 var ultimoRegistro = list.Last(l => l.UsuarioMovimentacao == referenciaProduto);
 
                 var indiceUltimoRegistro = list.IndexOf(ultimoRegistro);
 
-                list.Insert(indiceUltimoRegistro + 1 , new RelatorioLoteMovimentacaoListItemViewModel
+                list.Insert(indiceUltimoRegistro + 1, new RelatorioLoteMovimentacaoListItemViewModel
                 {
-                    IdLote = string.Empty,
-                    ReferenciaProduto = string.Empty,
-                    DescricaoProduto = string.Empty,
-                    NroVolume = "<b>Saldo Movimentação</b>",
-                    Quantidade = saldoQuantidadeMovimentacao.ToString()
+                    Tipo = "<b>Qtde Movimentada</b>",
+                    Quantidade = saldoQuantidadeMovimentacao.ToString(),
+                    DataHora = "<b>Qtde Movimentações</b>",
+                    UsuarioMovimentacao = quantidadeMovimentacao.ToString()
                 });
             }
 

@@ -53,6 +53,8 @@ namespace FWLog.Web.Backoffice.Models.ExpedicaoCtx
 
         [Display(Name = "Data Expedição")]
         public string DataExpedicao { get; set; }
+
+        public bool PodeRemoverUsuarioSeparacao { get; set; }
     }
 
     public class RelatorioPedidosFilterViewModel
