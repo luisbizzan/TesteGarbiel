@@ -499,6 +499,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             var filtro = Mapper.Map<DataTableFilter<RelatorioPosicaoInventarioListaFiltro>>(model);
+
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
 
             var loteProdutoEnderecos = _uow.LoteProdutoEnderecoRepository.BuscarDadosPosicaoInventario(filtro, out int totalRecordsFiltered, out int totalRecords);

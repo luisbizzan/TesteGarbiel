@@ -7,5 +7,7 @@
         public long? IdNivelArmazenagem { get; set; }
         public long? IdPontoArmazenagem { get; set; }
         public long? IdProduto { get; set; }
+        public int? CorredorInicial { get; set; }
+        public int? CorredorFinal { get; set; }
     }
 }
