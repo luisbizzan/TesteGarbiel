@@ -84,7 +84,7 @@ namespace FWLog.Data.Repository.GeneralCtx
                          (filtros.CustomFilter.Codigo.Equals(string.Empty) || e.Codigo.Contains(filtros.CustomFilter.Codigo)) &&
                          (filtros.CustomFilter.IdPontoArmazenagem.HasValue == false || e.IdPontoArmazenagem == filtros.CustomFilter.IdPontoArmazenagem) &&
                          (filtros.CustomFilter.BuscarTodos == true || (!(from p in Entities.ProdutoEstoque where p.IdEnderecoArmazenagem == e.IdEnderecoArmazenagem select p.IdEnderecoArmazenagem).Any() && e.Ativo == true &&
-                         e.IsPontoSeparacao == true)) &&
+                         e.IsPicking == true)) &&
                          (filtros.CustomFilter.IsExpedicao.HasValue == false || !(from te in Entities.TransportadoraEndereco where te.IdEnderecoArmazenagem == e.IdEnderecoArmazenagem select te.IdEnderecoArmazenagem).Any() && e.IsFifo == false && e.IsPontoSeparacao == false && e.IsPicking == false)
                          select new EnderecoArmazenagemPesquisaModalListaLinhaTabela
                          {
