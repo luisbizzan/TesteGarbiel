@@ -1062,7 +1062,9 @@ namespace FWLog.Services.Services
 
                                     //Adicionado pelo Ponto de Armazenagem pelo Cláudio
                                     if (grupoCorredorItem == null)
+                                    {
                                         throw new Exception("Na criação do volume, o corredor do endereço " + itemVolume.ListaItensDoPedido[0].EnderecoSeparacao.EnderecoArmazenagem.Codigo + " não foi encontrado.");
+                                    }
 
                                     var pedidoVendaVolume = await _pedidoVendaVolumeService.RetornarParaSalvar(itemVolume.Caixa, grupoCorredorItem, quantidadeVolume, pedido.IdEmpresa, itemVolume.Peso, itemVolume.Cubagem, numeroCentena);
 
@@ -1087,11 +1089,16 @@ namespace FWLog.Services.Services
                                         });
                                     }
 
-                                    pedidoVendaVolume.PedidoVendaProdutos = pedidoVendaProdutos;
-
-                                    pedidoVendaVolumes.Add(pedidoVendaVolume);
-
                                     //Captura o primeiro corredor de separação.
+                                    var primeiroProduto = itemVolume.ListaItensDoPedido.OrderBy(o => o.EnderecoSeparacao.EnderecoArmazenagem.Corredor).FirstOrDefault();
+                                    if (primeiroProduto != null)
+                                    {
+                                        pedidoVendaVolume.CorredorInicio = primeiroProduto.EnderecoSeparacao.EnderecoArmazenagem.Corredor;
+                                    }
+
+                                    pedidoVendaVolume.PedidoVendaProdutos = pedidoVendaProdutos;
+                                    pedidoVendaVolumes.Add(pedidoVendaVolume);
+                                  
                                     int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
 
                                     //Atualiza a quantidade de volumes na PedidoVenda.
@@ -1103,7 +1110,7 @@ namespace FWLog.Services.Services
                                         NumeroVolume = quantidadeVolume,
                                         GrupoCorredor = grupoCorredorItem,
                                         Centena = pedidoVendaVolume.NroCentena,
-                                        CorredorinicioSeparacao = corredorInicioSeparacao
+                                        CorredorinicioSeparacao = pedidoVendaVolume.CorredorInicio
                                     });
                                 }
                             }
@@ -1127,7 +1134,7 @@ namespace FWLog.Services.Services
                         //Imprime as etiquetas.
                         foreach (var item in listaImpressaoSeparacao)
                         {
-                            await ImprimirEtiquetaVolumeSeparacao(item.Volume, item.NumeroVolume, item.GrupoCorredor, pedido, item.Centena);
+                            await ImprimirEtiquetaVolumeSeparacao(item.Volume, item.NumeroVolume, item.GrupoCorredor, pedido, item.Centena, item.CorredorinicioSeparacao);
                         }
 
                         transacao.Complete();
@@ -1140,7 +1147,7 @@ namespace FWLog.Services.Services
             }
         }
 
-        public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, Pedido pedido, int centena)
+        public async Task ImprimirEtiquetaVolumeSeparacao(VolumeViewModel volume, int numeroVolume, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, Pedido pedido, int centena, int corredorinicioSeparacao)
         {
             _etiquetaService.ImprimirEtiquetaVolumeSeparacao(new ImprimirEtiquetaVolumeSeparacaoRequest()
             {
@@ -1163,7 +1170,7 @@ namespace FWLog.Services.Services
                 TransportadoraSigla = pedido.Transportadora.CodigoTransportadora,
                 IdTransportadora = pedido.Transportadora.IdTransportadora.ToString(),
                 TransportadoraNome = pedido.Transportadora.RazaoSocial,
-                CorredoresInicio = grupoCorredorArmazenagem.CorredorInicial.ToString(),
+                CorredoresInicio = corredorinicioSeparacao.ToString(),
                 CorredoresFim = grupoCorredorArmazenagem.CorredorFinal.ToString(),
                 CaixaTextoEtiqueta = volume.Caixa.TextoEtiqueta,
                 Volume = numeroVolume.ToString(),
