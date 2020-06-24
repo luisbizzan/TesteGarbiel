@@ -67,7 +67,7 @@
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
         var editarVolumeVisivel = view.editarVolumeVisivel && full.PermitirEditarVolume;
-        var removerUsuarioSeparacaoVisivel = view.removerUsuarioSeparacaoVisivel;
+        var removerUsuarioSeparacaoVisivel = view.removerUsuarioSeparacaoVisivel && full.PodeRemoverUsuarioSeparacao;
 
         return [
             {
@@ -299,17 +299,18 @@ function confirmaRemocaoUsuarioSeparacao() {
     let id = $(this).data("id");
     let pedido = $(this).data("pedido");
     let volume = $(this).data("volume");
+    let dataTable = $(this).closest('table');
 
     dart.modalAjaxConfirm.open({
         title: 'Confirmação de Remoção',
         message: "Deseja realmente remover o usuário da separação do Volume " + volume + " - " + pedido + " ?",
         onConfirm: function () {
-            removeUsuarioSeparacao(id)
+            removeUsuarioSeparacao(id, dataTable);
         }
     });
 }
 
-function removeUsuarioSeparacao(id) {
+function removeUsuarioSeparacao(id, dataTable) {
 
     $.ajax({
         url: '/Expedicao/RemoverUsuarioSeparacao/' + id,
@@ -322,6 +323,8 @@ function removeUsuarioSeparacao(id) {
 
             if (result.Success) {
                 PNotify.success({ text: result.Message });
+
+                dataTable.DataTable().ajax.reload(null, false);
             } else {
                 PNotify.error({ text: result.Message });
             }

@@ -562,16 +562,16 @@ namespace FWLog.Web.Backoffice.Controllers
 
         [HttpPost]
         [ApplicationAuthorize(Permissions = Permissions.RelatoriosExpedicao.RelatorioPedidosRemoverUsuarioSeparacao)]
-        public JsonResult RemoverUsuarioSeparacao(long id)
+        public async Task<JsonResult> RemoverUsuarioSeparacao(long id)
         {
             try
             {
-                //TODO: Remover usuário
+                await _expedicaoService.RemoverUsuarioSeparacao(id);
 
                 return Json(new AjaxGenericResultModel
                 {
                     Success = true,
-                    Message = "Usuário removido com sucesso."
+                    Message = "Usuário removido com sucesso"
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (BusinessException exception)
