@@ -122,7 +122,7 @@ namespace FWLog.Services.Services
                         }
                         else
                         {
-                            throw new Exception("Código da Unidade de Medida (CODVOL: "+ produtoInt.UnidadeMedidaSigla +") inválido.");
+                            throw new Exception("Código da Unidade de Medida (CODVOL: " + produtoInt.UnidadeMedidaSigla + ") inválido.");
                         }
                     }
 
@@ -151,7 +151,6 @@ namespace FWLog.Services.Services
                     produto.Descricao = produtoInt.Descricao;
                     produto.EnderecoImagem = produtoInt.EnderecoImagem;
                     produto.Largura = produtoInt.Largura == null ? (decimal?)null : Convert.ToDecimal(produtoInt.Largura.Replace(".", ","));
-                    produto.MetroCubico = produtoInt.MetroCubico == null ? (decimal?)null : Convert.ToDecimal(produtoInt.MetroCubico.Replace(".", ","));
                     produto.MultiploVenda = Convert.ToDecimal(produtoInt.MultiploVenda.Replace(".", ","));
                     produto.NomeFabricante = produtoInt.NomeFabricante;
                     produto.PesoBruto = Convert.ToDecimal(produtoInt.PesoBruto.Replace(".", ","));
@@ -163,6 +162,19 @@ namespace FWLog.Services.Services
                     produto.CodigoBarras2 = produtoInt.CodigoBarras2;
                     produto.IsEmbalagemFornecedor = produtoInt.IsEmbalagemFornecedor == "S" ? true : false;
                     produto.IsEmbalagemFornecedorVolume = produtoInt.IsEmbalagemFornecedorVolume == "S" ? true : false;
+
+                    if (produtoInt.MetroCubico == null)
+                    {
+                        var largura = produto.Largura.HasValue ? produto.Largura.Value : 0;
+                        var comprimento = produto.Comprimento.HasValue ? produto.Comprimento.Value : 0;
+                        var altura = produto.Altura.HasValue ? produto.Altura.Value : 0;
+
+                        produto.MetroCubico = largura * comprimento * altura;
+                    }
+                    else
+                    {
+                        produto.MetroCubico = Convert.ToDecimal(produtoInt.MetroCubico.Replace(".", ","));
+                    }
 
                     if (produtoNovo)
                     {
