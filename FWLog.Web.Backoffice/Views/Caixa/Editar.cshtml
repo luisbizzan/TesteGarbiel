@@ -34,17 +34,17 @@
             <div class="row">
                 <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.Largura, new { @class = "control-label" })
-                    @Html.TextBoxFor(m => m.Largura, new { @class = "form-control integer" })
+                    @Html.TextBoxFor(m => m.Largura, new { @class = "form-control decimal" })
                     @Html.ValidationMessageFor(m => m.Largura)
                 </div>
                 <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.Altura, new { @class = "control-label" })
-                    @Html.TextBoxFor(m => m.Altura, new { @class = "form-control integer" })
+                    @Html.TextBoxFor(m => m.Altura, new { @class = "form-control decimal" })
                     @Html.ValidationMessageFor(m => m.Altura)
                 </div>
                 <div class="form-group col-sm-4 col-xs-12">
                     @Html.LabelFor(m => m.Comprimento, new { @class = "control-label" })
-                    @Html.TextBoxFor(m => m.Comprimento, new { @class = "form-control integer" })
+                    @Html.TextBoxFor(m => m.Comprimento, new { @class = "form-control decimal" })
                     @Html.ValidationMessageFor(m => m.Comprimento)
                 </div>
             </div>

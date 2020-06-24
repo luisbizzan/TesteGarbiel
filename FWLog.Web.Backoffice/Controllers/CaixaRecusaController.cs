@@ -96,7 +96,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [HttpPost]
-        [ApplicationAuthorize(Permissions = Permissions.Caixa.Cadastrar)]
+        [ApplicationAuthorize(Permissions = Permissions.CaixaRecusa.Cadastrar)]
         public JsonResult Cadastrar(List<CaixaRecusaCadastroViewModel> listaCaixaRecusa)
         {
             try

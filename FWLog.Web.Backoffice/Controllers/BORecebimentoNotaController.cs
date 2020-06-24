@@ -1777,7 +1777,8 @@ namespace FWLog.Web.Backoffice.Controllers
                         QuantidadePorCaixa = quantidadePorCaixa,
                         ReferenciaProduto = conferenciaRegistro.Produto.Referencia,
                         Usuario = _uow.PerfilUsuarioRepository.GetByUserId(User.Identity.GetUserId())?.Nome,
-                        IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(2).IdImpressaoItem).First().Id
+                        IdImpressora = _uow.BOPrinterRepository.ObterPorPerfil(IdPerfilImpressora, _uow.ImpressaoItemRepository.Obter(2).IdImpressaoItem).First().Id,
+                        IsReimpressao = false
                     };
 
                     _etiquetaService.ImprimirEtiquetaArmazenagemVolume(request);

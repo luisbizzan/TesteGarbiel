@@ -231,6 +231,8 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebAppTimeZoneResolver.cs" />
     <Compile Include="Controllers\CaixaRecusaController.cs" />
+    <Compile Include="Controllers\PedidoVendaProdutoController.cs" />
+    <Compile Include="Controllers\PedidoVendaVolumeController.cs" />
     <Compile Include="Controllers\ExpedicaoController.cs" />
     <Compile Include="Controllers\ArmazenagemController.cs" />
     <Compile Include="Controllers\ClienteController.cs" />
@@ -289,6 +291,7 @@
     <Compile Include="Mapping\ClienteProfile.cs" />
     <Compile Include="Mapping\HistoricoAcaoUsuarioProfile.cs" />
     <Compile Include="Mapping\MotivoLaudoProfile.cs" />
+    <Compile Include="Mapping\PedidoVendaVolumeProfile.cs" />
     <Compile Include="Mapping\PerfilImpressoraProfile.cs" />
     <Compile Include="Mapping\EmpresaProfile.cs" />
     <Compile Include="Mapping\EnderecoArmazenagemProfile.cs" />
@@ -372,6 +375,8 @@
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemListaViewModel.cs" />
     <Compile Include="Models\EnderecoArmazenagemCtx\EnderecoArmazenagemPesquisaModalViewModel.cs" />
     <Compile Include="Models\EtiquetaCtx\LoteEtiquetaViewModel.cs" />
+    <Compile Include="Models\ExpedicaoCtx\GerenciarVolumeRequisicao.cs" />
+    <Compile Include="Models\ExpedicaoCtx\GerenciarVolumeViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\ConfirmaReimpressaoVolumeViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\ReimpressaoEtiquetaVolumeViewModel.cs" />
     <Compile Include="Models\ExpedicaoCtx\MovimentacaoVolumesDetalheViewModel.cs" />
@@ -396,6 +401,8 @@
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemDetailsViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemListViewModel.cs" />
     <Compile Include="Models\NivelArmazenagemCtx\NivelArmazenagemPesquisaModalViewModel.cs" />
+    <Compile Include="Models\PedidoVendaVolumeCtx\ConsultarDadosProdutoModelView.cs" />
+    <Compile Include="Models\PedidoVendaVolumeCtx\PedidoVendaVolumeSearchModalViewModel.cs" />
     <Compile Include="Models\PerfilImpressoraCtx\PerfilImpressoraCreateViewModel.cs" />
     <Compile Include="Models\PerfilImpressoraCtx\PerfilImpressoraListViewModel.cs" />
     <Compile Include="Models\PontoArmazenagemCtx\PontoArmazenagemCadastroViewModel.cs" />
@@ -605,6 +612,8 @@
     <Content Include="Scripts\Views\EnderecoArmazenagem\pesquisaModal.js" />
     <Content Include="Scripts\Views\Etiqueta\locacao.js" />
     <Content Include="Scripts\Views\Etiqueta\recebimento.js" />
+    <Content Include="Scripts\Views\Expedicao\gerenciarVolumesEditar.js" />
+    <Content Include="Scripts\Views\Expedicao\gerenciarVolumes.js" />
     <Content Include="Scripts\Views\Expedicao\confirmarReimpressaoEtiquetaVolume.js" />
     <Content Include="Scripts\Views\Expedicao\detalhesPedidoVolume.js" />
     <Content Include="Scripts\Views\Expedicao\movimentacaoVolumesDetalhes.js" />
@@ -619,6 +628,7 @@
     <Content Include="Scripts\Views\MotivoLaudo\motivoLaudo.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\index.js" />
     <Content Include="Scripts\Views\NivelArmazenagem\pesquisaModal.js" />
+    <Content Include="Scripts\Views\PedidoVendaVolume\searchModal.js" />
     <Content Include="Scripts\Views\PerfilImpressora\cadastrar.js" />
     <Content Include="Scripts\Views\PerfilImpressora\editar.js" />
     <Content Include="Scripts\Views\PerfilImpressora\index.js" />
@@ -753,7 +763,10 @@
     <Content Include="Views\CaixaRecusa\Editar.cshtml" />
     <Content Include="Views\CaixaRecusa\Detalhes.cshtml" />
     <Content Include="Views\Expedicao\ConfirmarReimpressaoEtiquetaVolume.cshtml" />
+    <Content Include="Views\Expedicao\GerenciarVolumes.cshtml" />
+    <Content Include="Views\PedidoVendaVolume\SearchModal.cshtml" />
     <Content Include="Views\BORecebimentoNota\RelatorioValidadePeca.cshtml" />
+    <Content Include="Views\Expedicao\GerenciarVolumesEditar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap\bootstrap-theme.css" />

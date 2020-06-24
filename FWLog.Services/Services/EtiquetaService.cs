@@ -152,7 +152,7 @@ namespace FWLog.Services.Services
 
             var dataFormatada = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
-            if (isReimpressao)
+            if (request.IsReimpressao)
             {
                 dataFormatada = string.Concat(dataFormatada, "*");
             }
@@ -629,7 +629,8 @@ namespace FWLog.Services.Services
                 QuantidadePorCaixa = requisicao.QuantidadeProdutos,
                 Usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(requisicao.IdUsuario)?.Nome,
                 IdImpressora = requisicao.IdImpressora,
-                IdEmpresa = requisicao.IdEmpresa
+                IdEmpresa = requisicao.IdEmpresa,
+                IsReimpressao = true
             });
 
             var gravarHistoricoColetorRequisciao = new GravarHistoricoColetorRequisicao
@@ -662,7 +663,7 @@ namespace FWLog.Services.Services
 
             if (enderecoArmazenagem == null)
             {
-                var produto = _unitOfWork.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(requisicao.referenciaProdutoOuEndereco);
+                var produto = _unitOfWork.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(requisicao.referenciaProdutoOuEndereco.ToUpper());
 
                 if (produto == null)
                 {
