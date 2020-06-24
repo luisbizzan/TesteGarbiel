@@ -10,5 +10,6 @@
         public long IdImpressora { get; set; }
         public long IdEmpresa { get; set; }
         public decimal? Multiplo { get; set; }
+        public bool IsReimpressao { get; set; }
     }
 }
