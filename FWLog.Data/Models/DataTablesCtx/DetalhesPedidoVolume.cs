@@ -96,6 +96,9 @@ namespace FWLog.Data.Models.DataTablesCtx
         [Display(Name = "Data Remoção DOCA")]
         public DateTime? VolumeDataHoraRemocaoVolume { get; set; }
 
+        [Display(Name = "Nro. Romaneio")]
+        public int? NroRomaneio { get; set; }
+
         public List<DetalhesPedidoProdutoVolume> ListaProdutos { get; set; }
     }
 

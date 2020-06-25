@@ -1585,6 +1585,8 @@ namespace FWLog.Services.Services
 
             retorno.VolumeDataHoraRemocaoVolume = pedidoVendaVolume.DataHoraRemocaoVolume;
 
+            retorno.NroRomaneio = _unitOfWork.RomaneioNotaFiscalRepository.BuscarPorPedidoVenda(pedidoVendaVolume.IdPedidoVenda).FirstOrDefault()?.Romaneio?.NroRomaneio;
+
             retorno.ListaProdutos = pedidoVendaVolume.PedidoVendaProdutos.Select(pvp => new DetalhesPedidoProdutoVolume
             {
                 ProdutoReferencia = pvp.Produto.Referencia,
