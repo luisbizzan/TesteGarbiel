@@ -10,6 +10,10 @@ namespace FWLog.Services.Model.SeparacaoPedido
 
         public bool SeparacaoIniciada { get; set; }
 
+        public string IdUsuarioSeparacaoAndamento { get; set; }
+
+        public string UserNameSeparacaoAndamento { get; set; }
+
         public long IdPedidoVendaVolume { get; set; }
 
         public int NroVolume { get; set; }
