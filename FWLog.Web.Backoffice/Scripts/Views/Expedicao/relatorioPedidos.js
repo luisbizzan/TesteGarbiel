@@ -30,7 +30,7 @@
             return false
         else
             return true;
-    }, 'Informe a data criação inicial para pesquisar');
+    }, 'Informe a data impressão inicial para pesquisar');
 
     $.validator.addMethod('validarDataFinal', function (value, ele) {
         var idPedidoVenda = $("#Filter_NumeroPedido").val();
@@ -43,7 +43,7 @@
             return false
         else
             return true;
-    }, 'Informe a data criação final para pesquisar');
+    }, 'Informe a data impressão final para pesquisar');
 
     var $DataInicial = $('#Filter_DataInicial').closest('.date');
     var $DataFinal = $('#Filter_DataFinal').closest('.date');
@@ -66,6 +66,9 @@
     };
 
     var actionsColumn = dart.dataTables.renderActionsColumn(function (data, type, full, meta) {
+        var editarVolumeVisivel = view.editarVolumeVisivel && full.PermitirEditarVolume;
+        var removerUsuarioSeparacaoVisivel = view.removerUsuarioSeparacaoVisivel && full.PodeRemoverUsuarioSeparacao;
+
         return [
             {
                 text: "Detalhes do Volume",
@@ -79,6 +82,20 @@
                 icon: 'fa fa-print',
                 attrs: { 'data-id': full.IdPedidoVendaVolume, 'action': 'reimprimir' },
                 visible: view.imprimirVisivel
+            },
+            {
+                text: "Editar Volume",
+                action: 'editarVolume',
+                icon: 'fa fa-edit',
+                attrs: { 'data-id': full.IdPedidoVendaVolume, 'action': 'editarVolume' },
+                visible: editarVolumeVisivel
+            },
+            {
+                text: "Remover Usuário Separação",
+                action: 'confirmaRemocaoUsuarioSeparacao',
+                icon: 'fa fa-repeat',
+                attrs: { 'data-id': full.IdPedidoVendaVolume, 'data-pedido': full.NroPedido, 'data-volume': full.NroVolume, 'action': 'confirmaRemocaoUsuarioSeparacao' },
+                visible: removerUsuarioSeparacaoVisivel
             }
         ];
     });
@@ -113,6 +130,7 @@
             { data: 'NroCentena', width: '8%' },
             { data: 'DataCriacao' },
             { data: 'DataIntegracao' },
+            { data: 'DataImpressao' },
             { data: 'NumeroSerieNotaFiscal' },
             { data: 'DataExpedicao' },
             { data: 'StatusVolume', width: '20%' },
@@ -160,6 +178,8 @@
     });
 
     $("#dataTable").on('click', "[action='reimprimir']", confirmarReimpressaoEtiqueta);
+    $("#dataTable").on('click', "[action='editarVolume']", editarVolume);
+    $("#dataTable").on('click', "[action='confirmaRemocaoUsuarioSeparacao']", confirmaRemocaoUsuarioSeparacao);
 
     function confirmarReimpressaoEtiqueta() {
         let id = $(this).data("id");
@@ -171,6 +191,26 @@
         });
     }
 })();
+
+function editarVolume() {
+    let id = $(this).data("id");
+    $.ajax({
+        url: HOST_URL + CONTROLLER_PATH + "GerenciarVolumesValidarVolume/" + id,
+        method: "POST",
+        cache: false,
+        success: function (result) {
+            if (result.Success) {
+                window.location.href = HOST_URL + CONTROLLER_PATH + "GerenciarVolumesEditar/?idPedidoVendaVolume=" + id;
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+        },
+        error: function (data) {
+            PNotify.error({ text: "Ocorreu um erro na inicilização da edição do volume." });
+            NProgress.done();
+        }
+    });
+}
 
 function setCliente(idCliente, nomeFantasia) {
     $("#Filter_NomeCliente").val(nomeFantasia);
@@ -252,4 +292,42 @@ function setProduto(idProduto, descricao) {
     $("#Filter_IdProduto").val(idProduto);
     $("#modalProduto").modal("hide");
     $("#modalProduto").empty();
+}
+
+function confirmaRemocaoUsuarioSeparacao() {
+
+    let id = $(this).data("id");
+    let pedido = $(this).data("pedido");
+    let volume = $(this).data("volume");
+    let dataTable = $(this).closest('table');
+
+    dart.modalAjaxConfirm.open({
+        title: 'Confirmação de Remoção',
+        message: "Deseja realmente remover o usuário da separação do Volume " + volume + " - " + pedido + " ?",
+        onConfirm: function () {
+            removeUsuarioSeparacao(id, dataTable);
+        }
+    });
+}
+
+function removeUsuarioSeparacao(id, dataTable) {
+
+    $.ajax({
+        url: '/Expedicao/RemoverUsuarioSeparacao/' + id,
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        processData: false,
+        contentType: false,
+        success: function (result) {
+
+            if (result.Success) {
+                PNotify.success({ text: result.Message });
+
+                dataTable.DataTable().ajax.reload(null, false);
+            } else {
+                PNotify.error({ text: result.Message });
+            }
+        }
+    });
 }

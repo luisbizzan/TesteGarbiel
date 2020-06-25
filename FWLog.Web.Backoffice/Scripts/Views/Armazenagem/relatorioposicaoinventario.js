@@ -1,8 +1,50 @@
 ﻿(function () {
     $('.onlyNumber').mask('0#');
 
+    $.validator.addMethod('validateCorredorInicial', function (value, ele) {
+        var corredorInicial = $("#Filter_CorredorInicial").val();
+        var corredorFinal = $("#Filter_CorredorFinal").val();
+
+        if (corredorInicial == "" && corredorFinal == "")
+            return true
+        else if (corredorInicial == "" && corredorFinal != "")
+            return false
+        else
+            return true;
+    }, 'Informe o corredor inicial para prosseguir');
+
+    $.validator.addMethod('validateCorredorFinal', function (value, ele) {
+        var corredorInicial = $("#Filter_CorredorInicial").val();
+        var corredorFinal = $("#Filter_CorredorFinal").val();
+
+        if (corredorInicial == "" && corredorFinal == "")
+            return true
+        else if (corredorInicial != "" && corredorFinal == "")
+            return false
+        else
+            return true
+    }, 'Informe o corredor final para prosseguir');
+
+    $.validator.addMethod('validateCorredorFinalMaiorQue', function (value, ele) {
+        var corredorInicial = $("#Filter_CorredorInicial").val();
+
+        if (!value || !corredorInicial) {
+            return true;
+        }
+
+        value = parseInt(value);
+        corredorInicial = parseInt(corredorInicial);
+
+        if (value >= corredorInicial)
+            return true;
+        else
+            return false;
+    }, 'O corredor final deve ser maior que o corredor inicial');
+
     $(document.body).on('click', "#pesquisar", function () {
-        validarOsFiltrosParaPesquisa();
+        if ($("#formPesquisa").valid()) {
+            validarOsFiltrosParaPesquisa();
+        }
     });
 
     $('#dataTable').DataTable({

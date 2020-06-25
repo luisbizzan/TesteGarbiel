@@ -13,19 +13,19 @@ namespace FWLog.Data.Models.DataTablesCtx
         public string TextoEtiqueta { get; set; }
 
         [Display(Name = "Largura (CM)")]
-        public decimal Largura { get; set; }
+        public string Largura { get; set; }
 
         [Display(Name = "Altura (CM)")]
-        public decimal Altura { get; set; }
+        public string Altura { get; set; }
 
         [Display(Name = "Comprimento (CM)")]
-        public decimal Comprimento { get; set; }
+        public string Comprimento { get; set; }
 
         [Display(Name = "Peso Máximo (Kg)")]
         public string PesoMaximo { get; set; }
 
         [Display(Name = "Cubagem (CM³)")]
-        public decimal Cubagem { get; set; }
+        public string Cubagem { get; set; }
 
         [Display(Name = "Sobra (%)")]
         public string Sobra { get; set; }

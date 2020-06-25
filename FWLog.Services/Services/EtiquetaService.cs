@@ -152,7 +152,7 @@ namespace FWLog.Services.Services
 
             var dataFormatada = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
 
-            if (isReimpressao)
+            if (request.IsReimpressao)
             {
                 dataFormatada = string.Concat(dataFormatada, "*");
             }
@@ -629,7 +629,8 @@ namespace FWLog.Services.Services
                 QuantidadePorCaixa = requisicao.QuantidadeProdutos,
                 Usuario = _unitOfWork.PerfilUsuarioRepository.GetByUserId(requisicao.IdUsuario)?.Nome,
                 IdImpressora = requisicao.IdImpressora,
-                IdEmpresa = requisicao.IdEmpresa
+                IdEmpresa = requisicao.IdEmpresa,
+                IsReimpressao = true
             });
 
             var gravarHistoricoColetorRequisciao = new GravarHistoricoColetorRequisicao
@@ -662,7 +663,7 @@ namespace FWLog.Services.Services
 
             if (enderecoArmazenagem == null)
             {
-                var produto = _unitOfWork.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(requisicao.referenciaProdutoOuEndereco);
+                var produto = _unitOfWork.ProdutoRepository.ConsultarPorCodigoBarrasOuReferencia(requisicao.referenciaProdutoOuEndereco.ToUpper());
 
                 if (produto == null)
                 {
@@ -811,7 +812,6 @@ namespace FWLog.Services.Services
             var pedido = pedidoVenda.Pedido;
             var transportadora = pedidoVenda.Transportadora;
             var caixa = volume.CaixaCubagem;
-            var grupoCorredorArmazenagem = volume.GrupoCorredorArmazenagem;
 
             requisicaoImpressao.ClienteNomeFantasia = cliente.NomeFantasia;
             requisicaoImpressao.ClienteEndereco = cliente.Endereco;
@@ -832,8 +832,8 @@ namespace FWLog.Services.Services
             requisicaoImpressao.TransportadoraSigla = transportadora.CodigoTransportadora;
             requisicaoImpressao.IdTransportadora = transportadora.IdTransportadora.ToString();
             requisicaoImpressao.TransportadoraNome = transportadora.NomeFantasia;
-            requisicaoImpressao.CorredoresInicio = grupoCorredorArmazenagem.CorredorInicial.ToString();
-            requisicaoImpressao.CorredoresFim = grupoCorredorArmazenagem.CorredorFinal.ToString();
+            requisicaoImpressao.CorredoresInicio = volume.CorredorInicio.ToString();
+            requisicaoImpressao.CorredoresFim = volume.CorredorFim.ToString();
             requisicaoImpressao.CaixaTextoEtiqueta = caixa.TextoEtiqueta;
             requisicaoImpressao.Volume = volume.NroVolume.ToString();
             requisicaoImpressao.ProdutoReferencia = volume.PedidoVendaProdutos.FirstOrDefault()?.Produto?.Referencia;

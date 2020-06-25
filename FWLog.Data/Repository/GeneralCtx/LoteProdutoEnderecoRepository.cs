@@ -156,18 +156,15 @@ namespace FWLog.Data.Repository.GeneralCtx
 
         public IEnumerable<PosicaoInventarioListaLinhaTabela> BuscarDadosPosicaoInventario(DataTableFilter<RelatorioPosicaoInventarioListaFiltro> model, out int totalRecordsFiltered, out int totalRecords)
         {
-            totalRecords = Entities.LoteProdutoEndereco
-                .Where(x => x.IdEmpresa == model.CustomFilter.IdEmpresa &&
-                      (model.CustomFilter.IdNivelArmazenagem.HasValue == false || x.EnderecoArmazenagem.IdNivelArmazenagem == model.CustomFilter.IdNivelArmazenagem) &&
-                      (model.CustomFilter.IdPontoArmazenagem.HasValue == false || x.EnderecoArmazenagem.IdPontoArmazenagem == model.CustomFilter.IdPontoArmazenagem) &&
-                      (model.CustomFilter.IdProduto.HasValue == false || x.IdProduto == model.CustomFilter.IdProduto.Value)).Count();
+            var queryBase = Entities.LoteProdutoEndereco.AsNoTracking().Where(x => x.IdEmpresa == model.CustomFilter.IdEmpresa);
 
+            totalRecords = queryBase.Count();
 
-            IQueryable<PosicaoInventarioListaLinhaTabela> query = Entities.LoteProdutoEndereco.AsNoTracking()
-                .Where(x => x.IdEmpresa == model.CustomFilter.IdEmpresa &&
+            IQueryable<PosicaoInventarioListaLinhaTabela> query = queryBase.Where(x =>
                 (model.CustomFilter.IdNivelArmazenagem.HasValue == false || x.EnderecoArmazenagem.IdNivelArmazenagem == model.CustomFilter.IdNivelArmazenagem) &&
                 (model.CustomFilter.IdPontoArmazenagem.HasValue == false || x.EnderecoArmazenagem.IdPontoArmazenagem == model.CustomFilter.IdPontoArmazenagem) &&
-                (model.CustomFilter.IdProduto.HasValue == false || x.IdProduto == model.CustomFilter.IdProduto.Value))
+                (model.CustomFilter.IdProduto.HasValue == false || x.IdProduto == model.CustomFilter.IdProduto.Value) &&
+                (model.CustomFilter.CorredorInicial.HasValue == false && model.CustomFilter.CorredorFinal.HasValue == false || (x.EnderecoArmazenagem.Corredor >= model.CustomFilter.CorredorInicial && x.EnderecoArmazenagem.Corredor <= model.CustomFilter.CorredorFinal)))
                 .Select(s => new PosicaoInventarioListaLinhaTabela
                 {
                     Codigo = s.EnderecoArmazenagem.Codigo,

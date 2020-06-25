@@ -45,5 +45,11 @@ namespace FWLog.Web.Backoffice.Models.ArmazenagemCtx
         [Display(Name = "Produto")]
         public long? IdProduto { get; set; }
         public string DescricaoProduto { get; set; }
+
+        [Display(Name = "Corredor Início")]
+        public int? CorredorInicial { get; set; }
+
+        [Display(Name = "Corredor Fim")]
+        public int? CorredorFinal { get; set; }
     }
 }

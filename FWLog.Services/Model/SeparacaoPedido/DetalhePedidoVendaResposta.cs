@@ -26,6 +26,8 @@ namespace FWLog.Services.Model.SeparacaoPedido
 
         public string Status { get; set; }
 
+        public decimal PesoTotalVolume { get; set; }
+
         public List<DetalhePedidoVendaVolumeProdutoResposta> ListaProdutos { get; set; }
     }
 
@@ -42,6 +44,8 @@ namespace FWLog.Services.Model.SeparacaoPedido
         public string DescricaoPontoArmazenagem { get; set; }
 
         public int QuantidadeSeparar { get; set; }
+
+        public string Status { get; set; }
 
         public int QuantidadeSeparada { get; set; }
 
