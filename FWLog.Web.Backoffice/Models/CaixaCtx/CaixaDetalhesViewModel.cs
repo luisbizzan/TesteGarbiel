@@ -28,10 +28,10 @@ namespace FWLog.Web.Backoffice.Models.CaixaCtx
         public decimal Comprimento { get; set; }
 
         [Display(Name = "Peso Caixa (Kg)")]
-        public string PesoCaixa { get; set; }
+        public decimal PesoCaixa { get; set; }
 
         [Display(Name = "Peso Máximo (Kg)")]
-        public string PesoMaximo { get; set; }
+        public decimal PesoMaximo { get; set; }
 
         [Display(Name = "Sobra (%)")]
         public string Sobra { get; set; }

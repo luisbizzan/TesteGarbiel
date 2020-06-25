@@ -73,7 +73,7 @@ namespace FWLog.Web.Backoffice.Controllers
         public ActionResult DadosLista(DataTableFilter<EnderecoArmazenagemListaFilterViewModel> model)
         {
             var filtro = Mapper.Map<DataTableFilter<EnderecoArmazenagemListaFiltro>>(model);
-           
+
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
 
             IEnumerable<EnderecoArmazenagemListaLinhaTabela> result = _unitOfWork.EnderecoArmazenagemRepository.BuscarLista(filtro, out int registrosFiltrados, out int totalRegistros);

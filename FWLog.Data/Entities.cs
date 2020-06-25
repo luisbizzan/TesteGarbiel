@@ -13,6 +13,10 @@ namespace FWLog.Data
         {
             modelBuilder.HasDefaultSchema(ConfigurationManager.AppSettings["DatabaseSchema"]);
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+
+            modelBuilder.Entity<Caixa>().Property(x => x.PesoCaixa).HasPrecision(38, 4);
+            modelBuilder.Entity<Caixa>().Property(x => x.PesoMaximo).HasPrecision(38, 4);
+
             base.OnModelCreating(modelBuilder);
         }
 

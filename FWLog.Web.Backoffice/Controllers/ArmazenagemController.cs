@@ -347,12 +347,9 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 list.Insert(indiceUltimoRegistro + 1, new RelatorioLoteMovimentacaoListItemViewModel
                 {
-                    IdLote = string.Empty,
-                    ReferenciaProduto = string.Empty,
-                    DescricaoProduto = string.Empty,
-                    NroVolume = "<b>Saldo Movimentação</b>",
+                    Tipo = "<b>Qtde Movimentada</b>",
                     Quantidade = saldoQuantidadeMovimentacao.ToString(),
-                    DataHora = "<b>Qtde Movimentação</b>",
+                    DataHora = "<b>Qtde Movimentações</b>",
                     UsuarioMovimentacao = quantidadeMovimentacao.ToString()
                 });
             }
@@ -502,6 +499,7 @@ namespace FWLog.Web.Backoffice.Controllers
             }
 
             var filtro = Mapper.Map<DataTableFilter<RelatorioPosicaoInventarioListaFiltro>>(model);
+
             filtro.CustomFilter.IdEmpresa = IdEmpresa;
 
             var loteProdutoEnderecos = _uow.LoteProdutoEnderecoRepository.BuscarDadosPosicaoInventario(filtro, out int totalRecordsFiltered, out int totalRecords);

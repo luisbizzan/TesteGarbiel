@@ -30,7 +30,7 @@
             return false
         else
             return true;
-    }, 'Informe a data criação inicial para pesquisar');
+    }, 'Informe a data impressão inicial para pesquisar');
 
     $.validator.addMethod('validarDataFinal', function (value, ele) {
         var idPedidoVenda = $("#Filter_NumeroPedido").val();
@@ -43,7 +43,7 @@
             return false
         else
             return true;
-    }, 'Informe a data criação final para pesquisar');
+    }, 'Informe a data impressão final para pesquisar');
 
     var $DataInicial = $('#Filter_DataInicial').closest('.date');
     var $DataFinal = $('#Filter_DataFinal').closest('.date');

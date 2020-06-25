@@ -228,7 +228,7 @@ namespace FWLog.Services.Services
             {
                 IdEmpresa = requisicao.IdEmpresa,
                 IdLote = requisicao.IdLote,
-                IdProduto = requisicao.IdProduto               
+                IdProduto = requisicao.IdProduto
             };
 
             ValidarLoteProdutoInstalacao(validarLoteProdutoRequisicao);
@@ -251,7 +251,7 @@ namespace FWLog.Services.Services
                 throw new BusinessException("O endereço não foi encontrado.");
             }
 
-            if (enderecoArmazenagem.IsPontoSeparacao || enderecoArmazenagem.IsPicking)
+            if (enderecoArmazenagem.IsPicking)
             {
                 throw new BusinessException("Não é possível instalar volume em endereço de Picking.");
             }

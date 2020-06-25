@@ -23,15 +23,15 @@ namespace FWLog.Web.Backoffice.Models.CaixaCtx
 
         [Display(Name = "Largura (CM)")]
         [Required]
-        public decimal? Largura { get; set; }
+        public string Largura { get; set; }
 
         [Display(Name = "Altura (CM)")]
         [Required]
-        public decimal? Altura { get; set; }
+        public string Altura { get; set; }
 
         [Display(Name = "Comprimento (CM)")]
         [Required]
-        public decimal? Comprimento { get; set; }
+        public string Comprimento { get; set; }
 
         [Display(Name = "Peso Caixa (Kg)")]
         [Required]

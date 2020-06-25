@@ -5,13 +5,13 @@
 
     $.validator.addMethod('validateFilters', function (value, ele) {
         var produto = $("#Filter_DescricaoProduto").val();
-        var dataHoraInicial = $("#Filter_DataHoraInicial").val(); 
-        var dataHoraFinal = $("#Filter_DataHoraFinal").val(); 
-        var userNameMovimentacao = $("#Filter_UserNameMovimentacao").val(); 
+        var dataHoraInicial = $("#Filter_DataHoraInicial").val();
+        var dataHoraFinal = $("#Filter_DataHoraFinal").val();
+        var userNameMovimentacao = $("#Filter_UserNameMovimentacao").val();
         var codigoEnderecoArmazenagem = $("#Filter_CodigoEnderecoArmazenagem").val();
         var DescricaoPontoArmazenagem = $("#Filter_DescricaoPontoArmazenagem").val();
         var DescricaoNivelArmazenagem = $("#Filter_DescricaoNivelArmazenagem").val();
-        
+
         if (value != "")
             return true
         else if (produto != "")
@@ -36,7 +36,7 @@
     $.validator.addMethod('validateInitialDateWithUser', function (value, ele) {
         var dataHoraInicial = $("#Filter_DataHoraInicial").val();
         var userNameMovimentacao = $("#Filter_UserNameMovimentacao").val();
-       
+
         if (userNameMovimentacao != "" && dataHoraInicial == "")
             return false
         else
@@ -48,8 +48,8 @@
         var endDate = $DataFinal.data('DateTimePicker');
         var userNameMovimentacao = $("#Filter_UserNameMovimentacao").val();
         var period = Math.round((endDate.date() - startDate.date()) / (1000 * 60 * 60 * 24));
-       
-        if (userNameMovimentacao != "" && period > 31) 
+
+        if (userNameMovimentacao != "" && period > 31)
             return false
         else
             return true;
@@ -58,7 +58,7 @@
     $.validator.addMethod('validateEndDateWithUser', function (value, ele) {
         var dataHoraFinal = $("#Filter_DataHoraFinal").val();
         var userNameMovimentacao = $("#Filter_UserNameMovimentacao").val();
-       
+
         if (userNameMovimentacao != "" && dataHoraFinal == "")
             return false
         else
@@ -111,7 +111,7 @@
         stateSaveParams: function (settings, data) {
             dart.dataTables.saveFilterToData(data);
         },
-        order: [[6, "ASC"]],
+        ordering: false,
         columns: [
             { data: 'IdLote' },
             { data: 'ReferenciaProduto' },
