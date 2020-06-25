@@ -129,7 +129,7 @@ namespace FWLog.Services.Services
 
                     Dictionary<string, string> campoChave = new Dictionary<string, string> { { "CODEMP", empresaConfig.Empresa.CodigoIntegracao.ToString() } };
 
-                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", campoChave, "TSIEMP.AD_INTEGRARFWLOG", "0");
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("Empresa", campoChave, "AD_INTEGRARFWLOG", "0");
                 }
                 catch (Exception ex)
                 {
