@@ -505,7 +505,7 @@ namespace FWLog.Services.Services
 
             var pedidoVendaVolume = pedidoVenda.PedidoVendaVolumes.First(f => f.IdPedidoVendaVolume == idPedidoVendaVolume);
 
-            if(!pedidoVendaVolume.IdUsuarioSeparacaoAndamento.NullOrEmpty() && !pedidoVendaVolume.IdUsuarioSeparacaoAndamento.Equals(idUsuarioOperacao))
+            if (!pedidoVendaVolume.IdUsuarioSeparacaoAndamento.NullOrEmpty() && !pedidoVendaVolume.IdUsuarioSeparacaoAndamento.Equals(idUsuarioOperacao))
             {
                 throw new BusinessException($"O volume já está sendo separado pelo usuário {pedidoVendaVolume.UsuarioSeparacaoAndamento.UserName}.");
             }
@@ -642,7 +642,12 @@ namespace FWLog.Services.Services
                 if (finalizouPedidoVenda)
                 {
                     await AtualizarQtdConferidaIntegracao(pedidoVenda);
+
                     await _pedidoService.AtualizarStatusPedido(pedidoVenda.Pedido, pedidoVenda.IdPedidoVendaStatus);
+
+                    await _pedidoService.AtualizarQuantidadeVolumesPedidoSankhya(pedidoVenda.Pedido, pedidoVenda.NroVolumes);
+
+                    await AtualizarVolumesSankhya(pedidoVenda);
                 }
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
@@ -656,6 +661,54 @@ namespace FWLog.Services.Services
                 _coletorHistoricoService.GravarHistoricoColetor(gravarHistoricoColetorRequisicao);
 
                 transacao.Complete();
+            }
+        }
+
+        private async Task AtualizarVolumesSankhya(PedidoVenda pedidoVenda)
+        {
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                var listaPedidoVendaProdutos = pedidoVenda.PedidoVendaProdutos.ToList();
+
+                var dicionarioSequenciaNumeroVolume = new Dictionary<int, int>();
+
+                foreach (var pedidoVendaProduto in listaPedidoVendaProdutos)
+                {
+                    var pedidoItens = pedidoVenda.Pedido.PedidoItens.Where(w => w.IdProduto == pedidoVendaProduto.IdProduto).OrderBy(o => o.Sequencia).ToList();
+
+                    if (pedidoItens.NullOrEmpty())
+                    {
+                        throw new BusinessException("Não foi possível encontrar os itens da nota fiscal para atualizar o pedido no Sankhya.");
+                    }
+
+                    foreach (var pedidoItem in pedidoItens)
+                    {
+                        dicionarioSequenciaNumeroVolume.Add(pedidoItem.Sequencia, pedidoVendaProduto.PedidoVendaVolume.NroVolume);
+                    }
+                }
+
+                foreach (var item in dicionarioSequenciaNumeroVolume.Distinct())
+                {
+                    var sequencia = item.Key.ToString();
+
+                    try
+                    {
+                        var campoChave = new Dictionary<string, string>();
+
+                        campoChave.Add("NUNOTA", pedidoVenda.Pedido.CodigoIntegracao.ToString());
+                        campoChave.Add("SEQUENCIA", sequencia);
+
+                        await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("ItemNota", campoChave, "AD_CODVOLUME", item.Value);
+                    }
+                    catch (Exception exception)
+                    {
+                        var errorMessage = $"Erro na atualização da quantidade/volume no Sankhya: {pedidoVenda.Pedido.CodigoIntegracao} / Sequência: {sequencia}";
+
+                        _log.Error(errorMessage, exception);
+
+                        throw new BusinessException(errorMessage);
+                    }
+                }
             }
         }
 
@@ -697,9 +750,9 @@ namespace FWLog.Services.Services
                 QtdSeparar = pedidoVendaProduto.QtdSeparar,
             };
 
-            if(pedidoVendaProduto.EnderecoArmazenagem.IsPicking == false)
+            if (pedidoVendaProduto.EnderecoArmazenagem.IsPicking == false)
             {
-                if(temPermissaoF7 == false)
+                if (temPermissaoF7 == false)
                 {
                     throw new BusinessException("Você não tem permissão para separar pedidos fora do picking.");
                 }
@@ -1106,7 +1159,7 @@ namespace FWLog.Services.Services
 
                                     pedidoVendaVolume.PedidoVendaProdutos = pedidoVendaProdutos;
                                     pedidoVendaVolumes.Add(pedidoVendaVolume);
-                                  
+
                                     int corredorInicioSeparacao = listaItensDoPedidoDividido.Min(x => x.EnderecoSeparacao.EnderecoArmazenagem.Corredor);
 
                                     //Atualiza a quantidade de volumes na PedidoVenda.
@@ -1883,9 +1936,9 @@ namespace FWLog.Services.Services
 
             /*
              * A condição abaixo pega a caixa melhor posicionada na listaRankingCaixas e
-	         * enquanto houver outras caixas com a mesma quantidade que
-	         * ela, estas caixas serão adicionadas na listaCaixasMaisComum;
-	         * Saiba que tem uma tolerância de 10% do valor da caixa melhor ranqueado; isso ajuda na margem.
+             * enquanto houver outras caixas com a mesma quantidade que
+             * ela, estas caixas serão adicionadas na listaCaixasMaisComum;
+             * Saiba que tem uma tolerância de 10% do valor da caixa melhor ranqueado; isso ajuda na margem.
              */
             for (int i = 0; i < listaRankingCaixas.Count &&
                 listaRankingCaixas[i].QuantidadeRanking <= quantidadeDoMaiorDaListaRankingCaixas &&

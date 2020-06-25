@@ -289,5 +289,28 @@ namespace FWLog.Services.Services
 
             return null;
         }
+
+        public async Task AtualizarQuantidadeVolumesPedidoSankhya(Pedido pedido, int quantidadeVolumes)
+        {
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                try
+                {
+                    var campoChave = new Dictionary<string, string>();
+
+                    campoChave.Add("NUNOTA", pedido.CodigoIntegracao.ToString());
+
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "QTDVOL", quantidadeVolumes);
+                }
+                catch (Exception exception)
+                {
+                    var errorMessage = string.Format("Erro na atualização de quantidade volumes do pedido de venda: {0}.", pedido.CodigoIntegracao);
+
+                    _log.Error(errorMessage, exception);
+
+                    throw new BusinessException(errorMessage);
+                }
+            }
+        }
     }
 }
