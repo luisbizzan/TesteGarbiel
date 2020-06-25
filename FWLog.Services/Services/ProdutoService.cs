@@ -44,8 +44,6 @@ namespace FWLog.Services.Services
                 where.Append("WHERE AD_INTEGRARFWLOG = '0' ");
             }
 
-            where.Append("AND TGFPRO.CODPROD IN('44940', '44941') ");
-
             int quantidadeChamadas = 0;
 
             var produtoQuantidadeRegistroIntegracao = await IntegracaoSankhya.Instance.PreExecutarQuery<ProdutoQuantidadeRegistroIntegracao>(where: where.ToString());
@@ -91,8 +89,6 @@ namespace FWLog.Services.Services
                 {
                     where.Append("WHERE AD_INTEGRARFWLOG = '0' ");
                 }
-
-                where.Append("AND TGFPRO.CODPROD IN('44940', '44941') ");
 
                 where.Append("ORDER BY CODPROD OFFSET " + offsetRows + " ROWS FETCH NEXT 4999 ROWS ONLY ");
 

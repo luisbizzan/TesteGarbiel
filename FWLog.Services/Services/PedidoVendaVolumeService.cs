@@ -71,9 +71,13 @@ namespace FWLog.Services.Services
                 else
                 {
                     if (centena.Numero == 9999)
+                    {
                         numero = 1;
+                    }
                     else
+                    {
                         numero = centena.Numero + 1;
+                    }
 
                     centena.Numero = numero;
                     _uow.CentenaVolumeRepository.Update(centena);
