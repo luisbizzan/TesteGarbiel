@@ -647,7 +647,7 @@ namespace FWLog.Services.Services
 
                     await _pedidoService.AtualizarQuantidadeVolumesPedidoSankhya(pedidoVenda.Pedido, pedidoVenda.NroVolumes);
 
-                    await AtualizarVolumesSankhya(pedidoVenda);
+                    //await AtualizarVolumesSankhya(pedidoVenda);
                 }
 
                 var gravarHistoricoColetorRequisicao = new GravarHistoricoColetorRequisicao
@@ -664,53 +664,53 @@ namespace FWLog.Services.Services
             }
         }
 
-        private async Task AtualizarVolumesSankhya(PedidoVenda pedidoVenda)
-        {
-            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
-            {
-                var listaPedidoVendaProdutos = pedidoVenda.PedidoVendaProdutos.ToList();
+        //private async Task AtualizarVolumesSankhya(PedidoVenda pedidoVenda)
+        //{
+        //    if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+        //    {
+        //        var listaPedidoVendaProdutos = pedidoVenda.PedidoVendaProdutos.ToList();
 
-                var dicionarioSequenciaNumeroVolume = new Dictionary<int, int>();
+        //        var dicionarioSequenciaNumeroVolume = new Dictionary<int, int>();
 
-                foreach (var pedidoVendaProduto in listaPedidoVendaProdutos)
-                {
-                    var pedidoItens = pedidoVenda.Pedido.PedidoItens.Where(w => w.IdProduto == pedidoVendaProduto.IdProduto).OrderBy(o => o.Sequencia).ToList();
+        //        foreach (var pedidoVendaProduto in listaPedidoVendaProdutos)
+        //        {
+        //            var pedidoItens = pedidoVenda.Pedido.PedidoItens.Where(w => w.IdProduto == pedidoVendaProduto.IdProduto).OrderBy(o => o.Sequencia).ToList();
 
-                    if (pedidoItens.NullOrEmpty())
-                    {
-                        throw new BusinessException("Não foi possível encontrar os itens da nota fiscal para atualizar o pedido no Sankhya.");
-                    }
+        //            if (pedidoItens.NullOrEmpty())
+        //            {
+        //                throw new BusinessException("Não foi possível encontrar os itens da nota fiscal para atualizar o pedido no Sankhya.");
+        //            }
 
-                    foreach (var pedidoItem in pedidoItens)
-                    {
-                        dicionarioSequenciaNumeroVolume.Add(pedidoItem.Sequencia, pedidoVendaProduto.PedidoVendaVolume.NroVolume);
-                    }
-                }
+        //            foreach (var pedidoItem in pedidoItens)
+        //            {
+        //                dicionarioSequenciaNumeroVolume.Add(pedidoItem.Sequencia, pedidoVendaProduto.PedidoVendaVolume.NroVolume);
+        //            }
+        //        }
 
-                foreach (var item in dicionarioSequenciaNumeroVolume.Distinct())
-                {
-                    var sequencia = item.Key.ToString();
+        //        foreach (var item in dicionarioSequenciaNumeroVolume.Distinct())
+        //        {
+        //            var sequencia = item.Key.ToString();
 
-                    try
-                    {
-                        var campoChave = new Dictionary<string, string>();
+        //            try
+        //            {
+        //                var campoChave = new Dictionary<string, string>();
 
-                        campoChave.Add("NUNOTA", pedidoVenda.Pedido.CodigoIntegracao.ToString());
-                        campoChave.Add("SEQUENCIA", sequencia);
+        //                campoChave.Add("NUNOTA", pedidoVenda.Pedido.CodigoIntegracao.ToString());
+        //                campoChave.Add("SEQUENCIA", sequencia);
 
-                        await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("ItemNota", campoChave, "AD_CODVOLUME", item.Value);
-                    }
-                    catch (Exception exception)
-                    {
-                        var errorMessage = $"Erro na atualização da quantidade/volume no Sankhya: {pedidoVenda.Pedido.CodigoIntegracao} / Sequência: {sequencia}";
+        //                await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("ItemNota", campoChave, "AD_CODVOLUME", item.Value);
+        //            }
+        //            catch (Exception exception)
+        //            {
+        //                var errorMessage = $"Erro na atualização da quantidade/volume no Sankhya: {pedidoVenda.Pedido.CodigoIntegracao} / Sequência: {sequencia}";
 
-                        _log.Error(errorMessage, exception);
+        //                _log.Error(errorMessage, exception);
 
-                        throw new BusinessException(errorMessage);
-                    }
-                }
-            }
-        }
+        //                throw new BusinessException(errorMessage);
+        //            }
+        //        }
+        //    }
+        //}
 
         public async Task<SalvarSeparacaoProdutoResposta> SalvarSeparacaoProduto(long idPedidoVendaVolume, long idProduto, long? idProdutoSeparacao, string idUsuario, long idEmpresa, int? quantidadeAjuste, bool temPermissaoF7, string idUsuarioAutorizacaoZerarPedido, bool temPermissaoF8)
         {
