@@ -1111,16 +1111,17 @@ namespace FWLog.Services.Services
 
         private int GetNextNroRomaneioByEmpresa(long idEmpresa)
         {
-            int? ultimoRomaneio;
-
-            ultimoRomaneio = _unitOfWork.RomaneioRepository.BuscaUltimoNroRomaneioPorEmpresa(idEmpresa);
+            int? ultimoRomaneio = _unitOfWork.RomaneioRepository.BuscaUltimoNroRomaneioPorEmpresa(idEmpresa);
 
             if (ultimoRomaneio.HasValue)
-                ultimoRomaneio = +1;
+            {
+                ultimoRomaneio++;
+                return ultimoRomaneio.Value;
+            }
             else
-                ultimoRomaneio = 1;
-
-            return ultimoRomaneio.Value;
+            {
+                return 1;
+            }
         }
 
         public void ReimprimirRomaneio(long idRomaneio, long idImpressora, bool imprimirSegundaVia, long idEmpresa, string idUsuario)

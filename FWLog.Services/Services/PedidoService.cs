@@ -17,11 +17,13 @@ namespace FWLog.Services.Services
     {
         private UnitOfWork _uow;
         private ILog _log;
+        private readonly ClienteService _clienteService;
 
-        public PedidoService(UnitOfWork uow, ILog log)
+        public PedidoService(UnitOfWork uow, ILog log, ClienteService clienteService)
         {
             _uow = uow;
             _log = log;
+            _clienteService = clienteService;
         }
 
         public async Task ConsultarPedidoIntegracao()
@@ -76,12 +78,25 @@ namespace FWLog.Services.Services
 
                     var codCliente = Convert.ToInt32(pedidoCabecalho.CodigoIntegracaoCliente);
                     Cliente cliente = _uow.ClienteRepository.ConsultarPorCodigoIntegracao(codCliente);
+
                     if (cliente == null)
                     {
+                        try
+                        {
+                            await _clienteService.ConsultarCliente(false, pedidoCabecalho.CodigoIntegracaoCliente);
+
+                            cliente = _uow.ClienteRepository.ConsultarPorCodigoIntegracao(codCliente);
+                        }
+                        catch (Exception ex)
+                        {
+                            _log.Error(string.Format("Erro na integração do Cliente (CODPARC: {0}) do Pedido (TGFCAB.NUNOTA: {1})", pedidoCabecalho.CodigoIntegracaoCliente, pedidoCabecalho.CodigoIntegracao), ex);
+                        }
+
                         throw new BusinessException(string.Format("Código do Cliente (CODPARC: {0}) inválido", pedidoCabecalho.CodigoIntegracaoCliente));
                     }
 
                     Representante representante = _uow.RepresentanteRepository.BuscarPorCodigoIntegracaoVendedor(pedidoCabecalho.CodigoIntegracaoRepresentante);
+                    
                     if (representante == null)
                     {
                         throw new BusinessException(string.Format("Código do Representante (CODVEND: {0}) inválido", pedidoCabecalho.CodigoIntegracaoRepresentante));
@@ -288,6 +303,29 @@ namespace FWLog.Services.Services
             }
 
             return null;
+        }
+
+        public async Task AtualizarQuantidadeVolumesPedidoSankhya(Pedido pedido, int quantidadeVolumes)
+        {
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["IntegracaoSankhya_Habilitar"]))
+            {
+                try
+                {
+                    var campoChave = new Dictionary<string, string>();
+
+                    campoChave.Add("NUNOTA", pedido.CodigoIntegracao.ToString());
+
+                    await IntegracaoSankhya.Instance.AtualizarInformacaoIntegracao("CabecalhoNota", campoChave, "QTDVOL", quantidadeVolumes);
+                }
+                catch (Exception exception)
+                {
+                    var errorMessage = string.Format("Erro na atualização de quantidade volumes do pedido de venda: {0}.", pedido.CodigoIntegracao);
+
+                    _log.Error(errorMessage, exception);
+
+                    throw new BusinessException(errorMessage);
+                }
+            }
         }
     }
 }

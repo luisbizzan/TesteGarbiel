@@ -36,11 +36,7 @@ namespace FWLog.Web.Api.Controllers
         {
             try
             {
-                var permissions = await UserManager.GetPermissionsByIdEmpresaAsync(IdUsuario, IdEmpresa);
-
-                var temPermissaoF7 = permissions.Contains(Permissions.RFSeparacao.FuncaoF7);
-
-                var response = _separacaoPedidoService.BuscarPedidoVenda(referenciaPedido, IdEmpresa, IdUsuario, temPermissaoF7);
+                var response = _separacaoPedidoService.BuscarPedidoVenda(referenciaPedido, IdEmpresa, IdUsuario);
 
                 return ApiOk(response);
             }
@@ -182,6 +178,23 @@ namespace FWLog.Web.Api.Controllers
                 var response = _separacaoPedidoService.ConsultarDetalhesPedidoVenda(referenciaOuNumeroPedido, IdEmpresa);
 
                 return ApiOk(response);
+            }
+            catch (BusinessException ex)
+            {
+                return ApiBadRequest(ex.Message);
+            }
+        }
+
+
+        [Route("api/v1/separacao-pedido/remover-usuario-separacao/{idPedidoVendaVolume}")]
+        [HttpPost]
+        public async Task<IHttpActionResult> RemoverUsuarioSeparacao(long idPedidoVendaVolume)
+        {
+            try
+            {
+                await _separacaoPedidoService.RemoverUsuarioSeparacao(idPedidoVendaVolume);
+
+                return ApiOk();
             }
             catch (BusinessException ex)
             {
