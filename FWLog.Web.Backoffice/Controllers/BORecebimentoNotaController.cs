@@ -610,7 +610,7 @@ namespace FWLog.Web.Backoffice.Controllers
         }
 
         [ApplicationAuthorize(Permissions = Permissions.Recebimento.RegistrarRecebimento)]
-        public JsonResult ValidarNotaRecebimento(string chaveAcesso, long? idFornecedor, int? numeroNF, string serie, decimal? valor, int? quantidadeVolumes)
+        public JsonResult ValidarNotaRecebimento(string chaveAcesso, long? idFornecedor, int? numeroNF, string serie, string valor, int? quantidadeVolumes)
         {
             //Valida chave de cesso
             var chaveValida = false;
@@ -718,7 +718,7 @@ namespace FWLog.Web.Backoffice.Controllers
                 });
             }
 
-            if (!(valor > 0))
+            if (string.IsNullOrEmpty(valor) || !decimal.TryParse(valor, out decimal valornf) || valornf <= 0)
             {
                 return Json(new AjaxGenericResultModel
                 {
