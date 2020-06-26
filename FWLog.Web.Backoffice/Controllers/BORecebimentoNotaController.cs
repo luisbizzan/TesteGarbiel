@@ -1983,12 +1983,12 @@ namespace FWLog.Web.Backoffice.Controllers
 
             try
             {
-                if (quantidadePorCaixa == 0)
+                if (quantidadePorCaixa <= 0)
                 {
                     return Json(new AjaxGenericResultModel
                     {
-                        Success = false,
-                        Message = "Quantidade por caixa não pode ser 0"
+                        Success = true,
+                        Message = "0"
                     });
                 }
 

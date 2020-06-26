@@ -572,6 +572,34 @@
 
         return $(listaModais[0].elem).is('#modalConferencia');
     }
+
+    function confirmaEFinalizaRegistro() {
+        //Se o tipo da conferência é 100%.
+        //Caso seja, solicita confirmação do usuário. 
+        //Caso contrário, chama o método para validar o múltiplo da conferência e posteriormente o registro da conferência.
+        let qtdePecasHaMais = consultarPecasHaMaisConferencia();
+
+        if (!qtdePecasHaMais)
+            return;
+        else {
+            $('#MensagemPecasHaMais').text('');
+            if (qtdePecasHaMais > 0) {
+                $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+. A etiqueta de PC A+ será impressa.');
+            }
+        }
+
+        let temItensDevolver = consultarItemsDevolverEExibeMensagem();
+
+        if ($tipoConferencia.text() != "Por Quantidade" || ($tipoConferencia.text() == "Por Quantidade" && qtdePecasHaMais > 0 && $quantidadeCaixa.val() > 0) || temItensDevolver) {
+            $('#modalRegistrarConferencia').modal('show');
+
+            var total = $quantidadePorCaixa.val() * $quantidadeCaixa.val();
+            $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + total + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
+        }
+        else {
+            validarDiferencaMultiploConferencia();
+        }
+    }
 })();
 
 var confirmRegistrarConferencia = Confirm;
@@ -730,36 +758,4 @@ function resetarTipoConferencia() {
             PNotify.error({ text: request.responseText });
         }
     });
-}
-
-function confirmaEFinalizaRegistro() {
-    //Se o tipo da conferência é 100%.
-    //Caso seja, solicita confirmação do usuário. 
-    //Caso contrário, chama o método para validar o múltiplo da conferência e posteriormente o registro da conferência.
-    let qtdePecasHaMais = consultarPecasHaMaisConferencia();
-
-    if (!qtdePecasHaMais)
-        return;
-    else {
-        $('#MensagemPecasHaMais').text('');
-        if (qtdePecasHaMais > 0) {
-            $('#MensagemPecasHaMais').text('Atenção! Foi identificado divergência com o pedido de compra. Separar ' + qtdePecasHaMais + ' peças A+. A etiqueta de PC A+ será impressa.');
-        }
-    }
-
-    let temItensDevolver = consultarItemsDevolverEExibeMensagem();
-
-    let $tipoConferencia = $("#TipoConferencia");
-    let $quantidadeCaixa = $("#QuantidadeCaixa");
-    let $quantidadePorCaixa = $("#QuantidadePorCaixa");
-
-    if ($tipoConferencia.text() != "Por Quantidade" || ($tipoConferencia.text() == "Por Quantidade" && qtdePecasHaMais > 0 && $quantidadeCaixa.val() > 0) || temItensDevolver) {
-        $('#modalRegistrarConferencia').modal('show');
-
-        var total = $quantidadePorCaixa.val() * $quantidadeCaixa.val();
-        $('#MensagemRegistrarConferencia').text('Deseja realmente registrar a quantidade ' + total + '? É importante saber que após a confirmação, a etiqueta de volume será impressa.');
-    }
-    else {
-        validarDiferencaMultiploConferencia();
-    }
 }
