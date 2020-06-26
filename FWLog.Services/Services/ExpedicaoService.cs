@@ -1243,15 +1243,17 @@ namespace FWLog.Services.Services
                 pedidoVendaVolume.DataHoraInstalacaoDOCA = null;
 
                 _unitOfWork.SaveChanges();
-
-                if (pedidoVenda.PedidoVendaVolumes.Where(w => w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido).All(x => x.IdPedidoVendaStatus == PedidoVendaStatusEnum.RemovidoDOCA))
+                
+                if (pedidoVenda.PedidoVendaVolumes.Where(w => w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido).All(x => x.IdPedidoVendaStatus == PedidoVendaStatusEnum.RemovidoDOCA || x.IdPedidoVendaStatus == PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso))
                 {
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
+                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.SeparacaoConcluidaComSucesso;
                     _unitOfWork.SaveChanges();
                 }
-                else if (pedidoVenda.IdPedidoVendaStatus != PedidoVendaStatusEnum.MovendoDOCA)
+                else if (pedidoVenda.PedidoVendaVolumes.Where(w => w.IdPedidoVendaStatus != PedidoVendaStatusEnum.VolumeExcluido).Any(x => x.IdPedidoVendaStatus == PedidoVendaStatusEnum.MovidoDOCA))
                 {
                     pedidoVenda.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovendoDOCA;
+                    pedidoVenda.Pedido.IdPedidoVendaStatus = PedidoVendaStatusEnum.MovendoDOCA;
                     _unitOfWork.SaveChanges();
                 }
 
