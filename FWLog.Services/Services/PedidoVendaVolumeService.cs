@@ -19,7 +19,7 @@ namespace FWLog.Services.Services
             _log = log;
         }
 
-        public async Task<PedidoVendaVolume> RetornarParaSalvar(CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, int numeroVolume, long idEmpresa, decimal peso, decimal cubagem, int numeroCentena)
+        public async Task<PedidoVendaVolume> RetornarParaSalvar(CaixaViewModel caixaEscolhida, GrupoCorredorArmazenagemViewModel grupoCorredorArmazenagem, int numeroVolume, long idEmpresa, decimal peso, decimal cubagem)
         {
             PedidoVendaVolume pedidoVendaVolume = new PedidoVendaVolume();
 
@@ -32,7 +32,6 @@ namespace FWLog.Services.Services
                     DataHoraInicioSeparacao = null,
                     DataHoraFimSeparacao = null,
                     IdPedidoVendaStatus = PedidoVendaStatusEnum.EnviadoSeparacao,
-                    NroCentena = numeroCentena,
                     NroVolume = numeroVolume,
                     PesoVolume = peso,
                     CorredorInicio = grupoCorredorArmazenagem.CorredorInicial,

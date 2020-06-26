@@ -77,5 +77,10 @@ namespace FWLog.Data.Repository.GeneralCtx
         {
             return Entities.GrupoCorredorArmazenagem.Where(x => x.IdEmpresa == idEmpresa && x.IdPontoArmazenagem == idPontoArmazenagem).ToList();
         }
+
+        public List<GrupoCorredorArmazenagem> BuscarPorEmpresa(long idEmpresa)
+        {
+            return Entities.GrupoCorredorArmazenagem.Where(x => x.IdEmpresa == idEmpresa).ToList();
+        }
     }
 }
