@@ -2020,18 +2020,18 @@ namespace FWLog.Web.Backoffice.Controllers
 
                 if (quantidadeTotalDevolucao > 0)
                 {
-                    var conferencia = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, idProduto.Value);
+                    var quantidadeConferida = _uow.LoteConferenciaRepository.ObterPorProduto(idLote, idProduto.Value).Sum(s => s.Quantidade);
 
-                    var quantidadeConferida = conferencia.Sum(s => s.Quantidade);
-
-                    var quantidadeTotalPecas = quantidadePorCaixa * quantidadeCaixa;
-
-                    quantidadeDevolver = (quantidadeConferida + quantidadeTotalPecas) - quantidadeTotalDevolucao;
-                    quantidadeDevolver = quantidadeDevolver < 0 ? 0 : quantidadeDevolver;
-
-                    if (quantidadeDevolver > quantidadeTotalPecas && quantidadeTotalPecas > 0)
+                    if (quantidadeConferida < quantidadeTotalDevolucao)
                     {
-                        quantidadeDevolver = quantidadeTotalPecas;
+                        quantidadeDevolver = quantidadeTotalDevolucao - quantidadeConferida;
+
+                        var quantidadeTotalPecas = quantidadePorCaixa * quantidadeCaixa;
+
+                        if (quantidadeDevolver > quantidadeTotalPecas)
+                        {
+                            quantidadeDevolver = quantidadeTotalPecas;
+                        }
                     }
                 }
             }
