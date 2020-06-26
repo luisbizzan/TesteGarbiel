@@ -18,6 +18,11 @@ namespace FWLog.Data.Repository.GeneralCtx
             return Entities.Caixa.Where(x => x.IdEmpresa == idEmpresa).ToList();
         }
 
+        public List<Caixa> BuscarAtivoPorEmpresaTipo(long idEmpresa, CaixaTipoEnum caixaTipo)
+        {
+            return Entities.Caixa.Where(w => w.IdEmpresa == idEmpresa && w.Ativo && w.IdCaixaTipo == caixaTipo).ToList();
+        }
+
         public List<CaixaListaTabela> BuscarLista(DataTableFilter<CaixaListaFiltro> filtro, out int totalRecordsFiltered, out int totalRecords)
         {
             totalRecords = Entities.Caixa.Where(w => w.IdEmpresa == filtro.CustomFilter.IdEmpresa).Count();

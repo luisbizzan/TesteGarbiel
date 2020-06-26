@@ -7,14 +7,16 @@ namespace FWLog.Data.Repository.GeneralCtx
 {
     public class PedidoItemRepository : GenericRepository<PedidoItem>
     {
-        public PedidoItemRepository(Entities entities) : base(entities)
-        {
-
-        }
+        public PedidoItemRepository(Entities entities) : base(entities) { }
 
         public List<PedidoItem> BuscarPorIdPedido(long idPedido)
         {
             return Entities.PedidoItem.Where(x => x.IdPedido == idPedido).ToList();
+        }
+
+        public List<PedidoItem> BuscarParaSeparacao(long idPedido)
+        {
+            return Entities.PedidoItem.Where(w => w.IdPedido == idPedido && w.QtdPedido > 0).ToList();
         }
     }
 }
